@@ -1,19 +1,26 @@
 """
-VÉLØ Oracle 2.0 - External Integrations
-========================================
-
-This package contains integrations with external racing data APIs:
-- Betfair API: Live odds streaming and market analysis
-- The Racing API: Historical race data and statistics
+VÉLØ v10 - Integrations Module
+External API clients with Pydantic contracts
 """
 
-from .betfair_api import BetfairAPIClient, BetfairMarketAnalyzer
-from .racing_api import RacingAPIClient, RacingDataAnalyzer
+# Modern contract-based clients (v10)
+from .betfair_client import BetfairClient
+from .racing_client import RacingClient
+from .http import HttpClient, HttpError, get, post
+
+# Legacy clients (for backward compatibility)
+from .betfair_api import BetfairAPIClient as LegacyBetfairClient
+from .racing_api import RacingAPIClient as LegacyRacingClient
 
 __all__ = [
-    'BetfairAPIClient',
-    'BetfairMarketAnalyzer',
-    'RacingAPIClient',
-    'RacingDataAnalyzer'
+    # Modern clients
+    'BetfairClient',
+    'RacingClient',
+    'HttpClient',
+    'HttpError',
+    'get',
+    'post',
+    # Legacy clients
+    'LegacyBetfairClient',
+    'LegacyRacingClient',
 ]
-
