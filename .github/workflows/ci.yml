@@ -1,0 +1,59 @@
+name: VÉLØ v10 CI
+
+on:
+  push:
+    branches: [ main, feature/v10-launch ]
+  pull_request:
+    branches: [ main, feature/v10-launch ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: velo
+          POSTGRES_PASSWORD: velo
+          POSTGRES_DB: velo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U velo"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Run Alembic migrations
+        env:
+          DATABASE_URL: postgresql+psycopg2://velo:velo@localhost:5432/velo
+        run: |
+          export DB_URL=$DATABASE_URL
+          alembic upgrade head || echo "Migrations not yet configured"
+      
+      - name: Run tests
+        run: |
+          pytest -q
+      
+      - name: Check code formatting
+        run: |
+          black --check src/ tests/ || echo "Black not yet enforced"
+      
+      - name: Run linter
+        run: |
+          flake8 src/ tests/ || echo "Flake8 not yet enforced"
