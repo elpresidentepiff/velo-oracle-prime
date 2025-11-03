@@ -1,0 +1,29 @@
+alpha: 0.5
+beta: 0.5
+features:
+- trainer_sr_14d
+- trainer_sr_30d
+- trainer_sr_90d
+- jockey_sr_14d
+- jockey_sr_30d
+- jockey_sr_90d
+- tj_combo_uplift
+- class_drop
+- classdrop_flag
+- layoff_days
+- layoff_penalty
+- freshness_flag
+- course_going_iv
+- draw_iv
+- bias_persist_flag
+- form_ewma
+- form_slope
+- form_var
+- odds
+odds_range:
+- 5.0
+- 21.0
+trained_at: '2025-11-03T04:51:06.200391'
+training_records: 4324
+validation_records: 1082
+version: 1.1.0
