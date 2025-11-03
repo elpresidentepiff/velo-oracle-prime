@@ -200,17 +200,23 @@ class FeatureStore:
         """Add physical features (weight, age, sex)."""
         logger.debug("Computing physical features...")
         
-        if 'weight' in df.columns:
-            df['weight_carried'] = df['weight']
-            df['weight_vs_avg'] = 0.0  # Weight vs field average
+        # Weight features (placeholder - would need parsing from UK format like '11-6')
+        df['weight_carried'] = 0.0
+        df['weight_vs_avg'] = 0.0
         
         if 'age' in df.columns:
-            df['age'] = df['age']
+            df['age_value'] = df['age']
             df['age_optimal'] = 0  # Binary: in optimal age range
+        else:
+            df['age_value'] = 0
+            df['age_optimal'] = 0
         
         if 'sex' in df.columns:
             df['is_gelding'] = (df['sex'] == 'G').astype(int)
             df['is_mare'] = (df['sex'] == 'M').astype(int)
+        else:
+            df['is_gelding'] = 0
+            df['is_mare'] = 0
         
         return df
     
@@ -294,7 +300,7 @@ class FeatureStore:
             'days_since_last_run', 'optimal_layoff', 'too_fresh', 'too_stale',
             
             # Physical features
-            'weight_carried', 'weight_vs_avg', 'age', 'age_optimal',
+            'weight_carried', 'weight_vs_avg', 'age_value', 'age_optimal',
             'is_gelding', 'is_mare',
             
             # Market features (if available)
