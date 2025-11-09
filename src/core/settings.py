@@ -6,6 +6,7 @@ Type-safe configuration with Pydantic validation
 from pydantic_settings import BaseSettings
 from pydantic import Field
 from typing import Optional
+import os
 
 
 class Settings(BaseSettings):
@@ -82,10 +83,12 @@ class Settings(BaseSettings):
         """
         if self.DATABASE_URL:
             return self.DATABASE_URL
-        return (
-            f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        )
+        
+        # Use SQLite for simplicity (no server needed)
+        db_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+        os.makedirs(db_dir, exist_ok=True)
+        db_path = os.path.join(db_dir, 'velo.db')
+        return f"sqlite:///{db_path}"
     
     def is_production(self) -> bool:
         """Check if running in production environment"""
