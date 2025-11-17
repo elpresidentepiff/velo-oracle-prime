@@ -1,0 +1,57 @@
+{
+  "run_id": "Benter_Plus_SQPE_run2_20251111_062536",
+  "run_name": "Benter_Plus_SQPE_run2",
+  "experiment_name": "velo_v12_backtest",
+  "start_time": "2025-11-11T06:25:36.904496",
+  "end_time": "2025-11-11T06:25:36.904732",
+  "status": "FINISHED",
+  "params": {
+    "model_name": "Benter_Plus_SQPE",
+    "kelly_fraction": 0.1,
+    "min_edge": 0.05,
+    "backtest_years": "2023-2024",
+    "bankroll": 1000
+  },
+  "metrics": {
+    "roi": [
+      {
+        "value": 0.980334889392585,
+        "timestamp": "2025-11-11T06:25:36.904681",
+        "step": null
+      }
+    ],
+    "sharpe_ratio": [
+      {
+        "value": 1.4410673248587396,
+        "timestamp": "2025-11-11T06:25:36.904689",
+        "step": null
+      }
+    ],
+    "max_drawdown": [
+      {
+        "value": 0.21282580775058596,
+        "timestamp": "2025-11-11T06:25:36.904692",
+        "step": null
+      }
+    ],
+    "win_rate": [
+      {
+        "value": 0.29765235229627246,
+        "timestamp": "2025-11-11T06:25:36.904695",
+        "step": null
+      }
+    ],
+    "total_bets": [
+      {
+        "value": 464,
+        "timestamp": "2025-11-11T06:25:36.904698",
+        "step": null
+      }
+    ]
+  },
+  "tags": {
+    "version": "v12",
+    "status": "completed"
+  },
+  "artifacts": []
+}

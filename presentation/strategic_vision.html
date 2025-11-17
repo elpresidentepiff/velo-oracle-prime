@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VÉLØ represents convergence of AI research and production discipline</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 50px;
+            position: relative;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .diagram-container {
+            border: 2px solid #00d9ff;
+            overflow: hidden;
+            height: 520px;
+            background: #0a0d1a;
+        }
+        
+        .diagram-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .pillars-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        .pillar-card {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid;
+            padding: 22px;
+        }
+        
+        .pillar-card.research {
+            border-color: #00d9ff;
+        }
+        
+        .pillar-card.production {
+            border-color: #c4ff0e;
+        }
+        
+        .pillar-card.domain {
+            border-color: #7b68ee;
+        }
+        
+        .pillar-card.vision {
+            border-color: #ff6b9d;
+        }
+        
+        .pillar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .pillar-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 2px solid;
+        }
+        
+        .pillar-card.research .pillar-icon {
+            color: #00d9ff;
+            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.12);
+        }
+        
+        .pillar-card.production .pillar-icon {
+            color: #c4ff0e;
+            border-color: #c4ff0e;
+            background: rgba(196, 255, 14, 0.12);
+        }
+        
+        .pillar-card.domain .pillar-icon {
+            color: #7b68ee;
+            border-color: #7b68ee;
+            background: rgba(123, 104, 238, 0.12);
+        }
+        
+        .pillar-card.vision .pillar-icon {
+            color: #ff6b9d;
+            border-color: #ff6b9d;
+            background: rgba(255, 107, 157, 0.12);
+        }
+        
+        .pillar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e8eef7;
+            line-height: 1.2;
+        }
+        
+        .pillar-description {
+            font-size: 15px;
+            color: #e8eef7;
+            line-height: 1.6;
+        }
+        
+        .highlight-research {
+            color: #00d9ff;
+            font-weight: 600;
+        }
+        
+        .highlight-production {
+            color: #c4ff0e;
+            font-weight: 600;
+        }
+        
+        .highlight-domain {
+            color: #7b68ee;
+            font-weight: 600;
+        }
+        
+        .highlight-vision {
+            color: #ff6b9d;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <h1 class="page-title">VÉLØ represents convergence of AI research and production discipline</h1>
+        
+        <div class="content-layout">
+            <div class="diagram-container">
+                <img src="/home/ubuntu/upload/search_images/G5p5Eoqg9frY.jpg" alt="Multi-Agent System Architecture">
+            </div>
+            
+            <div class="pillars-column">
+                <div class="pillar-card research">
+                    <div class="pillar-header">
+                        <div class="pillar-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div class="pillar-title">Research-Driven Architecture</div>
+                    </div>
+                    <div class="pillar-description">
+                        Built on <span class="highlight-research">Prototypical Networks</span> for few-shot learning, <span class="highlight-research">TimeSeriesSplit</span> for rigorous validation, and <span class="highlight-research">Portfolio Kelly Criterion</span> from academic finance—not cobbled-together heuristics.
+                    </div>
+                </div>
+                
+                <div class="pillar-card production">
+                    <div class="pillar-header">
+                        <div class="pillar-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="pillar-title">Production Engineering</div>
+                    </div>
+                    <div class="pillar-description">
+                        <span class="highlight-production">17,171 lines</span> of modular, tested code with Champion/Challenger deployment, MLflow tracking, circuit breakers, and comprehensive error handling—enterprise-grade reliability.
+                    </div>
+                </div>
+                
+                <div class="pillar-card domain">
+                    <div class="pillar-header">
+                        <div class="pillar-icon">
+                            <i class="fas fa-horse-head"></i>
+                        </div>
+                        <div class="pillar-title">Domain Expertise</div>
+                    </div>
+                    <div class="pillar-description">
+                        Deep understanding of <span class="highlight-domain">racing fundamentals</span> (Benter model), <span class="highlight-domain">market psychology</span> (narrative traps), and <span class="highlight-domain">betting dynamics</span>—not generic ML applied blindly.
+                    </div>
+                </div>
+                
+                <div class="pillar-card vision">
+                    <div class="pillar-header">
+                        <div class="pillar-icon">
+                            <i class="fas fa-chess"></i>
+                        </div>
+                        <div class="pillar-title">Strategic Vision (v12 → v13)</div>
+                    </div>
+                    <div class="pillar-description">
+                        Evolution from <span class="highlight-vision">predicting outcomes</span> (v12) to <span class="highlight-vision">understanding rival strategies</span> (v13 RAM)—the shift from playing the game to mastering the meta-game.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAM detects five rival types and enables meta-game mastery</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 40px 60px;
+            position: relative;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(123, 104, 238, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(123, 104, 238, 0.06) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .version-badge {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            background: rgba(123, 104, 238, 0.2);
+            border: 2px solid #7b68ee;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #7b68ee;
+            letter-spacing: 1px;
+            z-index: 20;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 25px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .rival-types-section {
+            background: rgba(0, 217, 255, 0.08);
+            border: 2px solid #00d9ff;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .section-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: #00d9ff;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .rival-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        
+        .rival-card {
+            background: rgba(123, 104, 238, 0.12);
+            border: 2px solid #7b68ee;
+            padding: 16px;
+        }
+        
+        .rival-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #7b68ee;
+            margin-bottom: 6px;
+        }
+        
+        .rival-description {
+            font-size: 15px;
+            color: #e8eef7;
+            line-height: 1.5;
+        }
+        
+        .strategic-advantage {
+            background: rgba(196, 255, 14, 0.1);
+            border: 2px solid #c4ff0e;
+            padding: 25px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .advantage-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .advantage-text {
+            font-size: 16px;
+            color: #e8eef7;
+            line-height: 1.6;
+        }
+        
+        .highlight-text {
+            color: #c4ff0e;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <div class="version-badge">v13 CAPABILITY</div>
+        
+        <h1 class="page-title">RAM detects five rival types and enables meta-game mastery</h1>
+        
+        <div class="rival-types-section">
+            <div class="section-header">
+                <i class="fas fa-users"></i>
+                DETECTED RIVAL TYPES
+            </div>
+            <div class="rival-grid">
+                <div class="rival-card">
+                    <div class="rival-title">Value Hunters</div>
+                    <div class="rival-description">Sharp bettors seeking mispriced odds</div>
+                </div>
+                <div class="rival-card">
+                    <div class="rival-title">Momentum Chasers</div>
+                    <div class="rival-description">Following late market movements</div>
+                </div>
+                <div class="rival-card">
+                    <div class="rival-title">Contrarians</div>
+                    <div class="rival-description">Betting against public sentiment</div>
+                </div>
+                <div class="rival-card">
+                    <div class="rival-title">Favorite Backers</div>
+                    <div class="rival-description">Systematic low-odds strategies</div>
+                </div>
+                <div class="rival-card">
+                    <div class="rival-title">Longshot Hunters</div>
+                    <div class="rival-description">High-risk, high-reward players</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategic-advantage">
+            <div class="advantage-header">
+                <i class="fas fa-chess"></i>
+                Strategic Advantage
+            </div>
+            <div class="advantage-text">
+                RAM transforms VÉLØ from a prediction system into a <span class="highlight-text">meta-game player</span>. By understanding how other AIs and sharp bettors behave, VÉLØ can anticipate market movements before they happen and position itself optimally. This is the evolution from "what will happen" to "how will everyone else react to what might happen."
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

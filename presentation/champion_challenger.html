@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Champion/Challenger deployment eliminates upgrade risk</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 60px;
+            position: relative;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 35px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .deployment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .model-card {
+            background: rgba(26, 31, 58, 0.8);
+            padding: 25px;
+            border: 2px solid;
+            min-height: 180px;
+        }
+        
+        .model-card.champion {
+            border-color: #00d9ff;
+        }
+        
+        .model-card.challenger {
+            border-color: #c4ff0e;
+        }
+        
+        .model-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .model-header.champion {
+            color: #00d9ff;
+        }
+        
+        .model-header.challenger {
+            color: #c4ff0e;
+        }
+        
+        .model-description {
+            font-size: 15px;
+            color: #e8eef7;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid;
+            margin-top: 10px;
+        }
+        
+        .status-badge.live {
+            color: #00d9ff;
+            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.1);
+        }
+        
+        .status-badge.shadow {
+            color: #c4ff0e;
+            border-color: #c4ff0e;
+            background: rgba(196, 255, 14, 0.1);
+        }
+        
+        .process-section {
+            background: rgba(123, 104, 238, 0.1);
+            border: 1px solid #7b68ee;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .process-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: #7b68ee;
+            margin-bottom: 18px;
+        }
+        
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        .step {
+            text-align: center;
+        }
+        
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: #7b68ee;
+            color: #1a1f3a;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+        
+        .step-text {
+            font-size: 14px;
+            color: #e8eef7;
+            line-height: 1.4;
+        }
+        
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .metric-box {
+            background: rgba(0, 217, 255, 0.08);
+            border: 1px solid #00d9ff;
+            padding: 18px;
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: #00d9ff;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metric-value {
+            font-size: 20px;
+            color: #c4ff0e;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <h1 class="page-title">Champion/Challenger deployment eliminates upgrade risk</h1>
+        
+        <div class="deployment-grid">
+            <div class="model-card champion">
+                <div class="model-header champion">
+                    <i class="fas fa-trophy"></i>
+                    CHAMPION MODEL
+                </div>
+                <div class="model-description">
+                    Current trusted production model (e.g., Benter Baseline) serves 100% of live bets. Proven track record with established performance metrics.
+                </div>
+                <div class="status-badge live">
+                    <i class="fas fa-circle"></i> LIVE BETTING
+                </div>
+            </div>
+            
+            <div class="model-card challenger">
+                <div class="model-header challenger">
+                    <i class="fas fa-flask"></i>
+                    CHALLENGER MODEL
+                </div>
+                <div class="model-description">
+                    New model (e.g., Full Intelligence Stack) runs in shadow mode. Makes predictions that are logged but NOT executed. Zero capital risk during testing.
+                </div>
+                <div class="status-badge shadow">
+                    <i class="fas fa-eye"></i> SHADOW MODE
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-section">
+            <div class="process-header">VALIDATION PROCESS</div>
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Champion and challengers process 100+ races in parallel</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Compare ROI, Sharpe ratio, win rate, max drawdown</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Promote challenger when 5%+ ROI improvement over 100+ predictions</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">Maintain audit trail of all promotions</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="metrics-row">
+            <div class="metric-box">
+                <div class="metric-label">Comparison Criteria</div>
+                <div class="metric-value">ROI + Sharpe</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">Minimum Sample</div>
+                <div class="metric-value">100+ Races</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">Capital Risk</div>
+                <div class="metric-value">ZERO</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

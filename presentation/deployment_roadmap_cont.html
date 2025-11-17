@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v12 pilot launch and v13 data collection complete the roadmap</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 50px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 50px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .roadmap-column {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .phase-block {
+            background: rgba(0, 217, 255, 0.08);
+            border: 2px solid #00d9ff;
+            padding: 30px 35px;
+        }
+        
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+        
+        .phase-number {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 217, 255, 0.2);
+            border: 2px solid #00d9ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #00d9ff;
+        }
+        
+        .phase-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #00d9ff;
+            flex: 1;
+        }
+        
+        .phase-content {
+            font-size: 16px;
+            color: #e8eef7;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+        
+        .success-metric {
+            background: rgba(196, 255, 14, 0.1);
+            border-left: 4px solid #c4ff0e;
+            padding: 12px 16px;
+            font-size: 15px;
+            color: #e8eef7;
+            margin-top: 12px;
+        }
+        
+        .metric-label {
+            color: #c4ff0e;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <h1 class="page-title">v12 pilot launch and v13 data collection complete the roadmap</h1>
+        
+        <div class="roadmap-column">
+            <div class="phase-block">
+                <div class="phase-header">
+                    <div class="phase-number">3</div>
+                    <div class="phase-title">v12 PILOT LAUNCH</div>
+                </div>
+                <div class="phase-content">
+                    Deploy Champion/Challenger framework in shadow mode, run VÉLØ-10 pilot (£100 bankroll, 10 races), track performance with circuit breakers active
+                </div>
+                <div class="success-metric">
+                    <div class="metric-label">Success Metric</div>
+                    10 races completed, positive ROI, zero circuit breaker triggers
+                </div>
+            </div>
+            
+            <div class="phase-block">
+                <div class="phase-header">
+                    <div class="phase-number">4</div>
+                    <div class="phase-title">v13 DATA COLLECTION</div>
+                </div>
+                <div class="phase-content">
+                    Begin collecting market movement data for RAM module, log rival betting patterns, prepare ProtoNet training dataset for meta-game analysis
+                </div>
+                <div class="success-metric">
+                    <div class="metric-label">Success Metric</div>
+                    100+ races logged with market data, rival patterns identified
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

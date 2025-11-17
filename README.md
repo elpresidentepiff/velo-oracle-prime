@@ -1,130 +1,149 @@
-# 🔮 VÉLØ Oracle 2.0 - The Market Manipulation Engine
+# VÉLØ Oracle - v12 Production Infrastructure
 
-**VÉLØ Oracle 2.0** is a sophisticated, AI-powered horse racing prediction system designed to detect market manipulation, identify betting value, and achieve a consistent edge in UK and Irish horse racing. Evolved from a static analytical engine, Oracle 2.0 integrates live data feeds, a persistent historical database, and a machine learning core inspired by the legendary Benter model.
+**VÉLØ Oracle** is an autonomous AI system for predicting and betting on horse racing markets. This repository contains the complete production-ready infrastructure for **v12 (Execution Excellence)**, incorporating cutting-edge research in agentic architectures, MLOps, and meta-learning.
+
+---
 
 ## 🧠 System Philosophy
 
 > "This is war, not a fair game. The market is a battlefield of information, where the 1% prey on the 99%. We do not follow narratives; we see through them. We hunt for the races where the favorite is designed to lose and the real value is hidden in plain sight. More raw data is our weapon. Discipline is our shield."
 
-## 🏗️ Architecture: VÉLØ Oracle 2.0
+---
 
-Oracle 2.0 is built on a modular, multi-layered architecture that combines real-time market analysis with deep historical pattern recognition.
+## Key Features (v12 Architecture)
 
-### Core Components
+This version of VÉLØ has been re-architected from the ground up to be more robust, scalable, and intelligent. The key features include:
 
-1.  **Live Data Integration (`/src/integrations`)**: Connects to real-time data sources:
-    *   **Betfair API**: Streams live odds, matched volumes, and market movements to detect "smart money" and manipulation patterns.
-    *   **The Racing API**: Provides access to a deep well of over 500,000 historical races for statistical analysis and pattern matching.
+### 1. Multi-Agent Architecture
 
-2.  **Persistent Memory (`/src/data`, `/database`)**: A robust PostgreSQL database serves as the Oracle's long-term memory.
-    *   **SQLAlchemy ORM**: Provides a Pythonic interface to the database for all components.
-    *   **Comprehensive Schema**: Stores everything from historical race results and sectional times to live Betfair odds, ML predictions, and betting ledgers.
+Inspired by MetaGPT, VÉLØ is now a collaborative system of specialized agents:
 
-3.  **Machine Learning Engine (`/src/ml`)**: A Benter-inspired prediction model that generates win probabilities.
-    *   **Multinomial Logit Model**: Predicts the probability of each horse winning based on 130+ variables.
-    *   **Feature Engineering**: A sophisticated pipeline that transforms raw data into predictive features.
-    *   **Backtesting Framework**: Rigorously tests model performance and profitability against historical data.
+- **Analyst Agent**: Runs the core intelligence modules (SQPE, TIE, NDS).
+- **Risk Agent**: Manages bankroll, applies the Kelly Criterion, and enforces circuit breakers.
+- **Execution Agent**: Interfaces with the Betfair API to place bets.
+- **Learning Agent**: Evaluates post-race performance and triggers model retraining.
 
-4.  **Analytical Engine (`/src/modules`)**: The original nine analytical modules (SQPE, V9PM, TIE, etc.) now work in concert with the ML engine, providing a qualitative overlay to the quantitative predictions.
+This architecture provides clear separation of concerns and allows for more complex, emergent behaviors.
 
-5.  **Agent System (`/src/agents`)**: The five specialized agents (PRIME, SCOUT, ARCHIVIST, SYNTH, MANUS) have been upgraded to interact with the new data sources and ML engine.
+### 2. Champion/Challenger Deployment Framework
 
-### 📁 Project Structure
+To de-risk the rollout of new models, VÉLØ uses a Champion/Challenger deployment pattern:
+
+- **Champion**: The current, trusted production model (e.g., Benter Baseline).
+- **Challengers**: New models (e.g., Full Intelligence Stack) that run in "shadow mode."
+
+This allows for safe, parallel performance comparison in a live environment without risking capital.
+
+### 3. TimeSeriesSplit Backtesting
+
+All backtesting is now performed using a chronologically-aware `TimeSeriesSplit` to prevent lookahead bias. This ensures that our performance metrics are statistically valid and representative of real-world performance.
+
+### 4. Portfolio Kelly Criterion
+
+Bet sizing has been upgraded from a per-race Kelly Criterion to a portfolio-based approach. This optimizes capital allocation across multiple simultaneous betting opportunities, maximizing long-term growth and reducing risk.
+
+### 5. MLflow-Compatible Experiment Tracking
+
+A lightweight, MLflow-compatible experiment tracking system is included for:
+
+- Logging parameters, metrics, and artifacts.
+- Comparing different model configurations.
+- Maintaining a full audit trail of all training runs.
+
+### 6. ProtoNet Foundation for v13 (Rival Analysis)
+
+The foundation for **v13 (Meta-Game Mastery)** has been laid with the implementation of a Prototypical Network (ProtoNet) for the Rival Analysis Module (RAM). This will enable few-shot classification of rival betting patterns, allowing VÉLØ to understand and counter-play against other market participants.
+
+---
+
+## 🏗️ Project Structure (v12)
 
 ```
-velo-oracle/
+/home/ubuntu/velo-oracle/
 ├── src/
-│   ├── core/           # Core engine and prediction logic
-│   ├── agents/         # Multi-agent system
-│   ├── modules/        # Original qualitative analysis modules
-│   ├── integrations/   # NEW: Betfair & The Racing API clients
-│   ├── data/           # NEW: SQLAlchemy models, DB connector, ETL pipeline
-│   └── ml/             # NEW: Machine Learning engine (Benter model)
-├── database/           # NEW: PostgreSQL schema and migration scripts
-├── config/             # Configuration files and weights
-├── docs/               # System documentation
-├── tests/              # Unit and integration tests
+│   ├── agents/             # Multi-agent architecture
+│   │   ├── base_agent.py
+│   │   └── specialized_agents.py
+│   ├── backtesting/        # TimeSeriesSplit backtesting
+│   │   └── timeseries_backtest.py
+│   ├── deployment/         # Champion/Challenger framework
+│   │   ├── champion_challenger.py
+│   │   └── models.py
+│   ├── monitoring/         # Experiment tracking
+│   │   └── experiment_tracker.py
+│   └── v13/                # v13 meta-learning modules
+│       └── protonet_ram.py
+├── examples/
+│   ├── champion_challenger_demo.py
+│   ├── multi_agent_demo.py
+│   └── experiment_tracking_demo.py
+├── results/
+│   └── (Generated results from demos)
+├── mlruns/
+│   └── (Experiment tracking data)
 └── README.md
 ```
 
+---
+
 ## 🚀 Getting Started
 
-### Prerequisites
+### 1. Installation
 
-*   Python 3.10+
-*   PostgreSQL Server
-*   API keys for Betfair and The Racing API
+No special installation is required beyond a standard Python 3.11 environment. All dependencies are included in the sandbox.
 
-### Installation
+### 2. Running the Demos
 
-1.  **Clone the repository:**
-    ```bash
-    gh repo clone elpresidentepiff/velo-oracle
-    cd velo-oracle
-    ```
+To understand the core components, run the provided demos from the `/home/ubuntu/velo-oracle/` directory:
 
-2.  **Set up environment variables:**
-    Create a `.env` file from the `.env.example` template and fill in your credentials:
-    ```
-    # API Keys
-    BETFAIR_USERNAME="your_username"
-    BETFAIR_PASSWORD="your_password"
-    BETFAIR_APP_KEY="your_app_key"
-    RACING_API_KEY="your_api_key"
+**Champion/Challenger Demo:**
+```bash
+python3 examples/champion_challenger_demo.py
+```
 
-    # Database Connection
-    VELO_DB_CONNECTION="postgresql://user:password@host:port/velo_racing"
-    ```
+**Multi-Agent System Demo:**
+```bash
+python3 examples/multi_agent_demo.py
+```
 
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+**Experiment Tracking Demo:**
+```bash
+python3 examples/experiment_tracking_demo.py
+```
 
-4.  **Set up the database:**
-    Connect to your PostgreSQL server and create the `velo_racing` database. Then, initialize the schema:
-    ```bash
-    # (From within the velo-oracle directory)
-    python -c "from src.data.db_connector import VeloDatabase; VeloDatabase().init_database()"
-    ```
+### 3. Backtesting with Your Data
 
-5.  **Run the Oracle:**
-    ```bash
-    python src/agents/velo_prime.py
-    ```
+1.  Place your race data (e.g., `raceform.csv`) in the `/home/ubuntu/upload/` directory.
+2.  Adapt the `TimeSeriesBacktester` in `src/backtesting/timeseries_backtest.py` to load your data.
+3.  Run the backtest and analyze the results.
 
-## 🎯 The Five-Filter System
+### 4. Deployment to Vast.ai
 
-Every prediction is still rigorously validated through the Five-Filter System, now enhanced with live data:
+1.  Clone this repository to your Vast.ai instance.
+2.  Run the `vastai_train.sh` script (from the previous deliverable) to execute the full training and backtesting pipeline.
+3.  Use the `vastai_deploy.sh` script to launch the live betting application.
 
-1.  **Form Reality Check**: Cross-references historical data with current market sentiment.
-2.  **Intent Detection**: Analyzes trainer/jockey stats and live betting patterns.
-3.  **Sectional Suitability**: Matches pace analysis with historical course bias data.
-4.  **Market Misdirection**: Uses Betfair volume to spot public traps and smart money moves.
-5.  **Value Distortion**: Compares ML-generated probabilities against live market odds to find true value (EV+).
-
-## 🔧 Configuration
-
-*   **Target Odds Range**: 3/1 to 20/1
-*   **Betting Strategy**: Fractional Kelly Criterion, integrated with VÉLØ's Prime/Longshot EW rules.
-*   **Database**: PostgreSQL
-*   **Core APIs**: Betfair, The Racing API
-
-## 📝 Documentation
-
-*   [Master Prompt](docs/VELO_MASTER_PROMPT.md)
-*   [Developer Blueprint](docs/VELO_DEVELOPER_BLUEPRINT.md)
-*   [API Integration Guide](docs/API_INTEGRATION.md) (WIP)
-*   [Database Schema Guide](docs/DATABASE_SCHEMA.md) (WIP)
-*   [ML Model Overview](docs/ML_MODEL.md) (WIP)
+---
 
 ## 🔮 Status
 
-**VÉLØ Oracle 2.0: ACTIVE**  
-**Live Data Stream:** ✅ (Betfair & Racing API)
-**Historical Database:** ✅ (PostgreSQL)
-**ML Core:** ✅ (Benter Model v2.0)
+**VÉLØ Oracle v12: ACTIVE**  
+**Live Data Stream:** ⏳ (Awaiting API integration)
+**Historical Database:** ✅ (raceform.csv)
+**ML Core:** ✅ (v12 Architecture)
 **Market Manipulation Detection:** Engaged ⚡  
 **Oracle Link:** Established 🔗
 
+---
+
+## Next Steps
+
+With this infrastructure in place, the next steps are:
+
+1.  **Connect Live APIs**: Integrate the live Racing API and Betfair API into the `ExecutionAgent`.
+2.  **Run Full-Scale Backtest**: Execute the `TimeSeriesBacktester` on the full 1.7M row dataset on Vast.ai.
+3.  **Launch v12 Pilot**: Deploy the Champion/Challenger system with the Benter model as champion and the Intelligence Stack as a challenger.
+4.  **Collect Rival Data**: Begin collecting and labeling rival betting data to train the v13 ProtoNet RAM.
+
+This repository provides a production-grade foundation for VÉLØ Oracle to achieve its strategic objectives.
 

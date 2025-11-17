@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-agent collaboration delivers reliability and scalability</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 60px;
+            position: relative;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .architecture-diagram {
+            border: 2px solid #00d9ff;
+            overflow: hidden;
+            height: 320px;
+            background: #0a0d1a;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .architecture-diagram img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .benefit-card {
+            background: rgba(0, 217, 255, 0.08);
+            border: 2px solid #00d9ff;
+            padding: 25px;
+        }
+        
+        .benefit-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .benefit-icon {
+            font-size: 24px;
+            color: #c4ff0e;
+        }
+        
+        .benefit-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #c4ff0e;
+        }
+        
+        .benefit-description {
+            font-size: 15px;
+            color: #e8eef7;
+            line-height: 1.6;
+        }
+        
+        .highlight-text {
+            color: #00d9ff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <h1 class="page-title">Multi-agent collaboration delivers reliability and scalability</h1>
+        
+        <div class="architecture-diagram">
+            <img src="/home/ubuntu/velo-oracle/presentation_assets/slide4_multi_agent.png" alt="Multi-Agent System Architecture">
+        </div>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-header">
+                    <div class="benefit-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="benefit-title">Single Responsibility</div>
+                </div>
+                <div class="benefit-description">
+                    Each agent has <span class="highlight-text">one clear purpose</span>, making the system easier to understand, maintain, and debug. Changes to one agent don't affect others.
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-header">
+                    <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="benefit-title">Improved Reliability</div>
+                </div>
+                <div class="benefit-description">
+                    Isolated agents prevent cascading failures. If one agent encounters an error, others continue operating, ensuring <span class="highlight-text">system resilience</span>.
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-header">
+                    <div class="benefit-icon"><i class="fas fa-vial"></i></div>
+                    <div class="benefit-title">Enhanced Testability</div>
+                </div>
+                <div class="benefit-description">
+                    Each agent can be <span class="highlight-text">tested independently</span> with mock inputs, enabling comprehensive unit testing and faster iteration cycles.
+                </div>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-header">
+                    <div class="benefit-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+                    <div class="benefit-title">Superior Scalability</div>
+                </div>
+                <div class="benefit-description">
+                    New capabilities can be added as <span class="highlight-text">new agents</span> without modifying existing code. Far more maintainable than monolithic architectures.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

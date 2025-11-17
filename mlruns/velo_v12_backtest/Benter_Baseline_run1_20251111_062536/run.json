@@ -1,0 +1,57 @@
+{
+  "run_id": "Benter_Baseline_run1_20251111_062536",
+  "run_name": "Benter_Baseline_run1",
+  "experiment_name": "velo_v12_backtest",
+  "start_time": "2025-11-11T06:25:36.903845",
+  "end_time": "2025-11-11T06:25:36.904095",
+  "status": "FINISHED",
+  "params": {
+    "model_name": "Benter_Baseline",
+    "kelly_fraction": 0.1,
+    "min_edge": 0.05,
+    "backtest_years": "2023-2024",
+    "bankroll": 1000
+  },
+  "metrics": {
+    "roi": [
+      {
+        "value": 1.197149537553887,
+        "timestamp": "2025-11-11T06:25:36.904045",
+        "step": null
+      }
+    ],
+    "sharpe_ratio": [
+      {
+        "value": 0.7822065174166091,
+        "timestamp": "2025-11-11T06:25:36.904051",
+        "step": null
+      }
+    ],
+    "max_drawdown": [
+      {
+        "value": 0.28878705518381187,
+        "timestamp": "2025-11-11T06:25:36.904054",
+        "step": null
+      }
+    ],
+    "win_rate": [
+      {
+        "value": 0.2864517618364057,
+        "timestamp": "2025-11-11T06:25:36.904056",
+        "step": null
+      }
+    ],
+    "total_bets": [
+      {
+        "value": 409,
+        "timestamp": "2025-11-11T06:25:36.904059",
+        "step": null
+      }
+    ]
+  },
+  "tags": {
+    "version": "v12",
+    "status": "completed"
+  },
+  "artifacts": []
+}

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeSeriesSplit prevents lookahead bias</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 40px 60px;
+            position: relative;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 25px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .content-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .method-box {
+            background: rgba(0, 217, 255, 0.08);
+            border: 2px solid #00d9ff;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .method-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #00d9ff;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .method-content {
+            font-size: 16px;
+            color: #e8eef7;
+            line-height: 1.6;
+        }
+        
+        .method-point {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .method-point:last-child {
+            margin-bottom: 0;
+        }
+        
+        .method-point::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #00d9ff;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .highlight-stat {
+            color: #c4ff0e;
+            font-weight: 700;
+        }
+        
+        .timeline-section {
+            background: rgba(26, 31, 58, 0.9);
+            border: 2px solid #7b68ee;
+            padding: 25px;
+        }
+        
+        .timeline-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: #7b68ee;
+            margin-bottom: 15px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #e8eef7;
+        }
+        
+        .timeline-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .fold-label {
+            width: 70px;
+            font-weight: 700;
+            color: #7b68ee;
+            text-align: right;
+            font-size: 13px;
+        }
+        
+        .timeline-boxes {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .timeline-box {
+            padding: 10px 12px;
+            border: 2px solid;
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        
+        .train-box {
+            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.15);
+            color: #00d9ff;
+        }
+        
+        .test-box {
+            border-color: #c4ff0e;
+            background: rgba(196, 255, 14, 0.15);
+            color: #c4ff0e;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(232, 238, 247, 0.2);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #e8eef7;
+        }
+        
+        .legend-box {
+            width: 28px;
+            height: 18px;
+            border: 2px solid;
+        }
+        
+        .legend-train {
+            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.15);
+        }
+        
+        .legend-test {
+            border-color: #c4ff0e;
+            background: rgba(196, 255, 14, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <h1 class="page-title">TimeSeriesSplit prevents lookahead bias through chronological cross-validation</h1>
+        
+        <div class="content-wrapper">
+            <div class="method-box">
+                <div class="method-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    CHRONOLOGICAL CROSS-VALIDATION METHODOLOGY
+                </div>
+                <div class="method-content">
+                    <div class="method-point">
+                        Data sorted strictly by race date to prevent lookahead bias—models never see future data during training
+                    </div>
+                    <div class="method-point">
+                        Training data always comes <span class="highlight-stat">before</span> test data in chronological order, mimicking real-world deployment
+                    </div>
+                    <div class="method-point">
+                        <span class="highlight-stat">5-fold</span> validation with expanding training window ensures robust performance estimation
+                    </div>
+                    <div class="method-point">
+                        Example: Train on 2020-2022 data → Test on Q1 2023 → Expand to train on 2020-Q1 2023 → Test on Q2 2023
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-section">
+                <div class="timeline-header">Expanding Window Validation (5 Folds)</div>
+                
+                <div class="timeline-row">
+                    <div class="fold-label">Fold 1:</div>
+                    <div class="timeline-boxes">
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box test-box">TEST</div>
+                        <div style="flex: 3;"></div>
+                    </div>
+                </div>
+                
+                <div class="timeline-row">
+                    <div class="fold-label">Fold 2:</div>
+                    <div class="timeline-boxes">
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box test-box">TEST</div>
+                        <div style="flex: 2;"></div>
+                    </div>
+                </div>
+                
+                <div class="timeline-row">
+                    <div class="fold-label">Fold 3:</div>
+                    <div class="timeline-boxes">
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box test-box">TEST</div>
+                        <div style="flex: 1;"></div>
+                    </div>
+                </div>
+                
+                <div class="timeline-row">
+                    <div class="fold-label">Fold 4:</div>
+                    <div class="timeline-boxes">
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box test-box">TEST</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-row">
+                    <div class="fold-label">Fold 5:</div>
+                    <div class="timeline-boxes">
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box train-box">TRAIN</div>
+                        <div class="timeline-box test-box">TEST</div>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box legend-train"></div>
+                        <span>Training Period</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box legend-test"></div>
+                        <span>Testing Period</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
