@@ -14,8 +14,8 @@ Author: VÉLØ Oracle Team
 Version: 1.0
 """
 
-from .sqpe import SQPE, SQPESignal, SignalStrength
-from .tie import TIE, TIESignal, TrainerIntent
+from .sqpe import SQPEEngine, SQPE, SQPESignal, SignalStrength, SQPEConfig
+from .tie import TrainerIntentEngine, TIE, TIEConfig
 from .nds import NDS, NDSSignal, DisruptionStrength, NarrativeType
 from .orchestrator import (
     IntelligenceOrchestrator,
@@ -25,14 +25,16 @@ from .orchestrator import (
 
 __all__ = [
     # SQPE
+    'SQPEEngine',
     'SQPE',
     'SQPESignal',
     'SignalStrength',
+    'SQPEConfig',
     
     # TIE
+    'TrainerIntentEngine',
     'TIE',
-    'TIESignal',
-    'TrainerIntent',
+    'TIEConfig',
     
     # NDS
     'NDS',
