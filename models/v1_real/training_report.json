@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-11-17T15:07:44.682386",
+  "config": {
+    "data_path": "/home/ubuntu/velo-oracle/data/train_5k_clean.csv",
+    "output_dir": "/home/ubuntu/velo-oracle/models/v1_real",
+    "test_size": 0.2,
+    "min_date": null,
+    "max_date": null,
+    "sqpe_n_estimators": 400,
+    "sqpe_learning_rate": 0.05,
+    "sqpe_max_depth": 3,
+    "sqpe_min_samples_leaf": 40,
+    "sqpe_time_splits": 5,
+    "tie_min_trainer_runs": 50,
+    "tie_lookback_days": 90,
+    "tie_regularization_c": 0.5,
+    "intent_class_drop_threshold": -1.0,
+    "intent_rest_days_min": 14,
+    "intent_rest_days_max": 28,
+    "intent_trainer_wr_min": 0.15,
+    "log_level": "INFO",
+    "save_artifacts": true
+  },
+  "artifacts": {
+    "sqpe_cv_metrics": {
+      "log_loss_mean": 0.09695027882450939,
+      "log_loss_std": 0.018310738388780452,
+      "brier_mean": 0.03020902547921629,
+      "brier_std": 0.0039980609971007434
+    },
+    "sqpe_test_metrics": {
+      "test_log_loss": 0.18851579284107897,
+      "test_brier_score": 0.03448580893962401,
+      "test_auc": 0.9802252906228441,
+      "test_samples": 1000,
+      "test_positives": 109
+    },
+    "tie_test_metrics": {
+      "test_accuracy": 0.981,
+      "test_precision": 1.0,
+      "test_recall": 0.9344827586206896,
+      "test_f1": 0.966131907308378,
+      "test_samples": 1000,
+      "test_positives": 290
+    },
+    "sqpe_path": "/home/ubuntu/velo-oracle/models/v1_real/sqpe",
+    "tie_path": "/home/ubuntu/velo-oracle/models/v1_real/tie"
+  }
+}
