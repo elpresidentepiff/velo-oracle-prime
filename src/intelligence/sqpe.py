@@ -190,7 +190,7 @@ class _MLCore:
             fold_model.fit(X_train, y_train)
             proba_val = fold_model.predict_proba(X_val)[:, 1]
             
-            log_losses.append(log_loss(y_val, proba_val, eps=1e-15))
+            log_losses.append(log_loss(y_val, proba_val))
             briers.append(brier_score_loss(y_val, proba_val))
         
         self._cv_metrics = {

@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from .sqpe import SQPE, SQPESignal, SignalStrength
-from .tie import TIE, TIESignal, TrainerIntent
+from .tie import TIE, TrainerIntentEngine
 from .nds import NDS, NDSSignal, DisruptionStrength, NarrativeType
 
 

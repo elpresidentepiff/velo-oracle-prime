@@ -17,11 +17,12 @@ Version: 1.0
 from .sqpe import SQPEEngine, SQPE, SQPESignal, SignalStrength, SQPEConfig
 from .tie import TrainerIntentEngine, TIE, TIEConfig
 from .nds import NDS, NDSSignal, DisruptionStrength, NarrativeType
-from .orchestrator import (
-    IntelligenceOrchestrator,
-    IntelligenceSignal,
-    BetRecommendation
-)
+# Orchestrator temporarily disabled - needs update for new TIE interface
+# from .orchestrator import (
+#     IntelligenceOrchestrator,
+#     IntelligenceSignal,
+#     BetRecommendation
+# )
 
 __all__ = [
     # SQPE
@@ -42,8 +43,8 @@ __all__ = [
     'DisruptionStrength',
     'NarrativeType',
     
-    # Orchestrator
-    'IntelligenceOrchestrator',
-    'IntelligenceSignal',
-    'BetRecommendation',
+    # Orchestrator (temporarily disabled)
+    # 'IntelligenceOrchestrator',
+    # 'IntelligenceSignal',
+    # 'BetRecommendation',
 ]
