@@ -27,6 +27,8 @@ from .builder import (
     FeatureExtractor,
 )
 
+from .cache import FeatureCache
+
 __all__ = [
     # Schema
     'FeatureType',
@@ -45,5 +47,8 @@ __all__ = [
     'FeatureBuilder',
     'FeatureBuilderConfig',
     'FeatureExtractor',
+    
+    # Cache
+    'FeatureCache',
 ]
 
