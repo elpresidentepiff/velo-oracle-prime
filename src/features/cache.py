@@ -64,6 +64,10 @@ class FeatureCache:
             history_df: Historical race data
             date: Cache cutoff date (only use data before this)
         """
+        # Convert date column to datetime
+        history_df = history_df.copy()
+        history_df["date"] = pd.to_datetime(history_df["date"])
+        
         if date:
             history_df = history_df[history_df['date'] < date].copy()
         
@@ -80,6 +84,9 @@ class FeatureCache:
         
         # Build per-horse stats
         self._build_horse_stats(history_df)
+        
+        # Build form stats
+        self._build_form_stats(history_df)
         
         self.is_loaded = True
         logger.info("Feature cache built successfully")
@@ -172,6 +179,41 @@ class FeatureCache:
         
         logger.info(f"  Cached course: {len(course_stats):,}, going: {len(going_stats):,}, class: {len(class_stats):,}")
     
+
+    
+    def _build_form_stats(self, df: pd.DataFrame):
+        """Build form statistics (last N runs per horse)."""
+        logger.info("Building form stats...")
+        
+        # Sort by date
+        df_sorted = df.sort_values('date')
+        
+        # For each horse, get last 5 runs before cache date
+        self.form_stats = {}
+        
+        for horse in df_sorted['horse'].unique():
+            horse_df = df_sorted[df_sorted['horse'] == horse]
+            
+            # Get last 5 runs
+            last_5 = horse_df.tail(5)
+            
+            if len(last_5) == 0:
+                continue
+            
+            # Calculate form features
+            positions = last_5['pos_int'].fillna(0).values
+            
+            self.form_stats[horse] = {
+                'last_pos': float(positions[-1]) if len(positions) > 0 else 0.0,
+                'avg_pos_3': float(positions[-3:].mean()) if len(positions) >= 3 else 0.0,
+                'avg_pos_5': float(positions.mean()) if len(positions) > 0 else 0.0,
+                'wins_3': int((positions[-3:] == 1).sum()) if len(positions) >= 3 else 0,
+                'wins_5': int((positions == 1).sum()),
+                'places_3': int((positions[-3:] <= 3).sum()) if len(positions) >= 3 else 0,
+            }
+        
+        logger.info(f"  Cached form for {len(self.form_stats):,} horses")
+
     def get_trainer_stats(self, trainer: str) -> Dict:
         """Get trainer statistics (O(1) lookup)."""
         return self.trainer_stats.get(trainer, {

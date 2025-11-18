@@ -45,8 +45,9 @@ class FeatureExtractor:
     from the raw data.
     """
     
-    def __init__(self, name: str):
+    def __init__(self, name: str, cache=None):
         self.name = name
+        self.cache = cache
         self.logger = logging.getLogger(f"{__name__}.{name}")
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
@@ -75,7 +76,7 @@ class RatingExtractor(FeatureExtractor):
     """Extract and normalize rating features (OR, RPR, TS)."""
     
     def __init__(self):
-        super().__init__("RatingExtractor")
+        super().__init__("RatingExtractor", cache=None)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract rating features."""
@@ -107,12 +108,36 @@ class RatingExtractor(FeatureExtractor):
 class FormExtractor(FeatureExtractor):
     """Extract form features from historical runs."""
     
-    def __init__(self):
-        super().__init__("FormExtractor")
+    def __init__(self, cache=None):
+        super().__init__("FormExtractor", cache=cache)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract form features."""
         result = df.copy()
+
+        # Use cache if available
+        if self.cache is not None:
+            form_features = []
+            for idx, row in df.iterrows():
+                horse = row['horse']
+                stats = self.cache.form_stats.get(horse, {})
+                
+                form_features.append({
+                    'form_last_pos': stats.get('last_pos', 0.0),
+                    'form_avg_pos_3': stats.get('avg_pos_3', 0.0),
+                    'form_avg_pos_5': stats.get('avg_pos_5', 0.0),
+                    'form_wins_3': stats.get('wins_3', 0),
+                    'form_wins_5': stats.get('wins_5', 0),
+                    'form_places_3': stats.get('places_3', 0),
+                })
+            
+            form_df = pd.DataFrame(form_features, index=df.index)
+            result = pd.concat([result, form_df], axis=1)
+            self.logger.info(f"Extracted {6} form features (from cache)")
+            return result
+        
+        # Fallback to history-based extraction
+
         
         if history is None or history.empty:
             self.logger.warning("No history provided - using default form features")
@@ -190,8 +215,8 @@ class FormExtractor(FeatureExtractor):
 class ClassExtractor(FeatureExtractor):
     """Extract class-related features."""
     
-    def __init__(self):
-        super().__init__("ClassExtractor")
+    def __init__(self, cache=None):
+        super().__init__("ClassExtractor", cache=cache)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract class features."""
@@ -259,8 +284,8 @@ class ClassExtractor(FeatureExtractor):
 class DistanceExtractor(FeatureExtractor):
     """Extract distance-related features."""
     
-    def __init__(self):
-        super().__init__("DistanceExtractor")
+    def __init__(self, cache=None):
+        super().__init__("DistanceExtractor", cache=cache)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract distance features."""
@@ -344,8 +369,8 @@ class GoingExtractor(FeatureExtractor):
         'heavy': 4,
     }
     
-    def __init__(self):
-        super().__init__("GoingExtractor")
+    def __init__(self, cache=None):
+        super().__init__("GoingExtractor", cache=cache)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract going features."""
@@ -401,8 +426,8 @@ class GoingExtractor(FeatureExtractor):
 class CourseExtractor(FeatureExtractor):
     """Extract course-specific features."""
     
-    def __init__(self):
-        super().__init__("CourseExtractor")
+    def __init__(self, cache=None):
+        super().__init__("CourseExtractor", cache=cache)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract course features."""
@@ -454,8 +479,8 @@ class CourseExtractor(FeatureExtractor):
 class TrainerExtractor(FeatureExtractor):
     """Extract trainer statistics."""
     
-    def __init__(self):
-        super().__init__("TrainerExtractor")
+    def __init__(self, cache=None):
+        super().__init__("TrainerExtractor", cache=cache)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract trainer features."""
@@ -498,8 +523,8 @@ class TrainerExtractor(FeatureExtractor):
 class JockeyExtractor(FeatureExtractor):
     """Extract jockey statistics."""
     
-    def __init__(self):
-        super().__init__("JockeyExtractor")
+    def __init__(self, cache=None):
+        super().__init__("JockeyExtractor", cache=cache)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract jockey features."""
@@ -544,7 +569,7 @@ class WeightExtractor(FeatureExtractor):
     """Extract weight-related features."""
     
     def __init__(self):
-        super().__init__("WeightExtractor")
+        super().__init__("WeightExtractor", cache=None)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract weight features."""
@@ -591,7 +616,7 @@ class AgeExtractor(FeatureExtractor):
     """Extract age-related features."""
     
     def __init__(self):
-        super().__init__("AgeExtractor")
+        super().__init__("AgeExtractor", cache=None)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract age features."""
@@ -616,7 +641,7 @@ class TemporalExtractor(FeatureExtractor):
     """Extract temporal/recency features."""
     
     def __init__(self):
-        super().__init__("TemporalExtractor")
+        super().__init__("TemporalExtractor", cache=None)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract temporal features."""
@@ -679,7 +704,7 @@ class MarketExtractor(FeatureExtractor):
     """Extract market-derived features."""
     
     def __init__(self):
-        super().__init__("MarketExtractor")
+        super().__init__("MarketExtractor", cache=None)
     
     def extract(self, df: pd.DataFrame, history: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Extract market features."""
@@ -713,23 +738,27 @@ class FeatureBuilder:
     This is the main entry point for feature engineering.
     """
     
-    def __init__(self, config: Optional[FeatureBuilderConfig] = None):
+    def __init__(self, config: Optional[FeatureBuilderConfig] = None, cache=None):
         self.config = config or FeatureBuilderConfig()
+        self.cache = cache
         
         # Configure logging
         logging.basicConfig(level=self.config.log_level)
         self.logger = logging.getLogger(__name__)
         
-        # Initialize extractors
+        if self.cache is not None:
+            self.logger.info("FeatureBuilder initialized with cache (fast mode)")
+        
+        # Initialize extractors (pass cache to those that support it)
         self.extractors = [
             RatingExtractor(),
-            FormExtractor(),
-            ClassExtractor(),
-            DistanceExtractor(),
-            GoingExtractor(),
-            CourseExtractor(),
-            TrainerExtractor(),
-            JockeyExtractor(),
+            FormExtractor(cache=cache),
+            ClassExtractor(cache=cache),
+            DistanceExtractor(cache=cache),
+            GoingExtractor(cache=cache),
+            CourseExtractor(cache=cache),
+            TrainerExtractor(cache=cache),
+            JockeyExtractor(cache=cache),
             WeightExtractor(),
             AgeExtractor(),
             TemporalExtractor(),
