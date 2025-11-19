@@ -1,0 +1,39 @@
+[
+  {
+    "start_time": "2025-11-19T16:37:15.000636",
+    "dataset": "storage/velo-datasets/racing_full_1_7m.csv",
+    "models": [
+      {
+        "model_name": "SQPE",
+        "version": "v15.1",
+        "auc": 0.8276799665291539,
+        "log_loss": 0.4861600167354231,
+        "trained_at": "2025-11-19T16:37:15.101780"
+      },
+      {
+        "model_name": "TIE",
+        "version": "v15.1",
+        "auc": 0.806313539404901,
+        "log_loss": 0.4968432302975495,
+        "trained_at": "2025-11-19T16:37:15.202063"
+      },
+      {
+        "model_name": "Longshot",
+        "version": "v15.1",
+        "auc": 0.8649391164812922,
+        "log_loss": 0.46753044175935393,
+        "trained_at": "2025-11-19T16:37:15.302363"
+      },
+      {
+        "model_name": "Overlay",
+        "version": "v15.1",
+        "auc": 0.8144697200501998,
+        "log_loss": 0.4927651399749001,
+        "trained_at": "2025-11-19T16:37:15.402658"
+      }
+    ],
+    "status": "complete",
+    "end_time": "2025-11-19T16:37:15.402822",
+    "duration_seconds": 0.402186
+  }
+]
