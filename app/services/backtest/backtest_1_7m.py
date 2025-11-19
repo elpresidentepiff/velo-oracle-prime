@@ -177,9 +177,9 @@ class Backtest1_7M:
             month_roi = ((data['return'] - data['stake']) / data['stake'] * 100) if data['stake'] > 0 else 0
             monthly_results.append({
                 'month': month,
-                'bets': data['bets'],
-                'roi': round(month_roi, 2),
-                'profit': round(data['return'] - data['stake'], 2)
+                'bets': int(data['bets']),
+                'roi': round(float(month_roi), 2),
+                'profit': round(float(data['return'] - data['stake']), 2)
             })
         
         # Results
