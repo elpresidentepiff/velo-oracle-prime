@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def run_backtest_50k_v2(
-    dataset_path: str = "data/train_1_7m.parquet",
+    dataset_path: str = "storage/velo-datasets/racing_full_1_7m.csv",
     sample_size: int = 50_000,
     seed: int = 2025,
     date_range: Optional[tuple] = None

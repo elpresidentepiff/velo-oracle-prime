@@ -30,7 +30,7 @@ def main():
     )
     parser.add_argument(
         "--dataset",
-        default="data/train_1_7m.parquet",
+        default="storage/velo-datasets/racing_full_1_7m.csv",
         help="Path to training dataset"
     )
     parser.add_argument(

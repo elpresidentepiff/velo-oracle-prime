@@ -71,7 +71,7 @@ def load_model_versions(model_name: str, limit: int = 5) -> List[Dict[str, Any]]
     return versions[:limit]
 
 
-def compare_on_dataset(versions: List[Dict], dataset_path: str = "data/test.parquet") -> Dict[str, Any]:
+def compare_on_dataset(versions: List[Dict], dataset_path: str = "storage/velo-datasets/racing_full_1_7m.csv") -> Dict[str, Any]:
     """Run comparison on same dataset"""
     
     logger.info(f"Running comparison on dataset: {dataset_path}")
