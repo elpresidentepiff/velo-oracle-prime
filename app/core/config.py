@@ -3,7 +3,8 @@ Core configuration management for VÉLØ Oracle API
 """
 import os
 from typing import Optional
-from pydantic import BaseSettings
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -11,19 +12,19 @@ class Settings(BaseSettings):
     
     # API Configuration
     API_VERSION: str = "v1"
-    API_ENV: str = os.getenv("API_ENV", "production")
+    API_ENV: str = Field(default="production")
     API_TITLE: str = "VÉLØ Oracle API"
     API_DESCRIPTION: str = "Production ML API for horse racing predictions"
     
     # Supabase Configuration
-    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
-    SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
-    SUPABASE_SERVICE_ROLE_KEY: str = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+    SUPABASE_URL: str = Field(default="")
+    SUPABASE_KEY: str = Field(default="")
+    SUPABASE_SERVICE_ROLE_KEY: str = Field(default="")
     
     # Model Registry
-    MODEL_REGISTRY_PATH: str = os.getenv("MODEL_REGISTRY_PATH", "ml/models/")
-    ACTIVE_MODEL_NAME: str = os.getenv("ACTIVE_MODEL_NAME", "SQPE")
-    ACTIVE_MODEL_VERSION: str = os.getenv("ACTIVE_MODEL_VERSION", "v1_real")
+    MODEL_REGISTRY_PATH: str = Field(default="ml/models/")
+    ACTIVE_MODEL_NAME: str = Field(default="SQPE")
+    ACTIVE_MODEL_VERSION: str = Field(default="v1_real")
     
     # Feature Engineering
     FEATURE_MAP_PATH: str = "app/ml/feature_map.json"
@@ -32,18 +33,20 @@ class Settings(BaseSettings):
     CORS_ORIGINS: list = ["*"]
     
     # Logging
-    LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
-    LOG_JSON: bool = os.getenv("LOG_JSON", "true").lower() == "true"
+    LOG_LEVEL: str = Field(default="INFO")
+    LOG_JSON: bool = Field(default=True)
     
     # Performance
     MODEL_CACHE_SIZE: int = 3
     REQUEST_TIMEOUT: int = 30
     
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="ignore",
+    )
 
 
 # Global settings instance
 settings = Settings()
-
