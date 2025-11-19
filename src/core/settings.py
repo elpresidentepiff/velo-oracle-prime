@@ -3,7 +3,7 @@ VÉLØ v10 - Centralized Settings
 Type-safe configuration with Pydantic validation
 """
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from typing import Optional
 import os
@@ -70,11 +70,12 @@ class Settings(BaseSettings):
     ENV: str = Field("development", description="Environment (development/production)")
     DEBUG: bool = Field(False, description="Enable debug mode")
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False
+    )
     
     @property
     def db_url(self) -> str:
