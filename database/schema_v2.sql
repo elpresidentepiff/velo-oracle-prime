@@ -463,7 +463,7 @@ RETURNS TABLE (
     course VARCHAR,
     distance VARCHAR,
     going VARCHAR,
-    position VARCHAR,
+    "position" VARCHAR,
     btn DECIMAL,
     jockey VARCHAR,
     odds VARCHAR
