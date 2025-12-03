@@ -12,7 +12,7 @@ import pandas as pd
 from pathlib import Path
 from src.monitoring.evidently_monitor import VeloModelMonitor
 
-router = APIRouter(prefix="/monitoring", tags=["monitoring"])
+router = APIRouter()
 
 # Initialize Evidently monitor
 try:

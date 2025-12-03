@@ -10,7 +10,7 @@ sys.path.insert(0, '/home/ubuntu/velo-oracle')
 
 from src.features.feast_integration import VeloFeatureStore
 
-router = APIRouter(prefix="/features", tags=["features"])
+router = APIRouter()
 
 # Initialize Feast feature store
 try:
