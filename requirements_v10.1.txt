@@ -1,6 +1,4 @@
-# VÉLØ v9.0++ CHAREX - Oracle of Odds
-# Python Dependencies
-
+# VÉLØ v10.1 - Python Dependencies
 # Core
 requests>=2.31.0
 python-dotenv>=1.0.0
@@ -8,14 +6,12 @@ python-dotenv>=1.0.0
 # Data Processing
 pandas>=2.0.0
 numpy>=1.24.0
+pyarrow>=14.0.0  # For Parquet support
 
 # API Integration
 flask>=3.0.0
 fastapi>=0.104.0
-uvicorn[standard]>=0.24.0
-pydantic>=2.7,<3.0
-pydantic-settings>=2.0,<3.0
-orjson>=3.9.0
+uvicorn>=0.24.0
 
 # Database & Storage
 pymongo>=4.5.0
@@ -26,12 +22,11 @@ sqlalchemy>=2.0.23
 # Analysis & ML
 scikit-learn>=1.3.0
 scipy>=1.11.0
-lightgbm>=4.0.0
-joblib>=1.3.0
 
 # Utilities
 python-dateutil>=2.8.2
 pytz>=2023.3
+pyyaml>=6.0.1  # For YAML manifests
 
 # Logging & Monitoring
 loguru>=0.7.0
@@ -45,4 +40,3 @@ pytest-cov>=4.1.0
 black>=23.0.0
 flake8>=6.1.0
 mypy>=1.5.0
-

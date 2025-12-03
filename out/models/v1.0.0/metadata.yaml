@@ -1,0 +1,69 @@
+alpha: !!python/object/apply:numpy._core.multiarray.scalar
+- &id001 !!python/object/apply:numpy.dtype
+  args:
+  - f8
+  - false
+  - true
+  state: !!python/tuple
+  - 3
+  - <
+  - null
+  - null
+  - null
+  - -1
+  - -1
+  - 0
+- !!binary |
+  AAAAAAAAAAA=
+beta: !!python/object/apply:numpy._core.multiarray.scalar
+- *id001
+- !!binary |
+  AAAAAAAA8D8=
+created_at: '2025-11-02T19:52:56.912631'
+description: ''
+metrics:
+  accuracy: 0.8986116700201208
+  ae_ratio: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    yWv7AB3T6z8=
+  auc: 0.7824398890453093
+  brier_score: 0.08204970380776154
+  calibration_error: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    dfIz5SR9qD8=
+  log_loss: 0.2828031546704498
+  max_calibration_error: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    wAMPdNI6xD8=
+  max_drawdown: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    /n2xXaI5x0A=
+  roi_all: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    DYewRUemN8A=
+  roi_top10: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    6CfKDNNFGcA=
+  roi_top20: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    7iJ6iAaHIMA=
+  roi_top30: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    5x82NTgAI8A=
+  sharpe_ratio: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id001
+  - !!binary |
+    zul56Nm7sL8=
+metrics_path: out/models/v1.0.0/metrics.json
+model_hash: e0a86cae59a23a5f
+model_path: out/models/v1.0.0/model.pkl
+n_features: 47
+version: v1.0.0
