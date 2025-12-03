@@ -10,6 +10,7 @@ from app.core import log, settings
 from app.core.security import get_cors_config
 from app.api import api_router
 from app.services import model_registry
+from app.routers import features, monitoring
 
 # Track startup time
 startup_time = time.time()
@@ -125,6 +126,10 @@ async def shutdown_event():
 
 # Include API router
 app.include_router(api_router)
+
+# Include feature and monitoring routers
+app.include_router(features.router)
+app.include_router(monitoring.router)
 
 
 # Root endpoint

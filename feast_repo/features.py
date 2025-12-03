@@ -142,18 +142,18 @@ race_context_features = FeatureView(
     description="Race context and environmental features"
 )
 
-trainer_jockey_combo_features = FeatureView(
-    name="trainer_jockey_combo_features",
-    entities=[trainer_entity, jockey_entity],
-    ttl=timedelta(days=90),
-    schema=[
-        Field(name="tj_combo_uplift", dtype=Float32),
-        Field(name="tj_combo_runs", dtype=Int64),
-        Field(name="tj_combo_win_rate", dtype=Float32),
-    ],
-    source=trainer_features_source,  # Combined in trainer source
-    description="Trainer-Jockey combination synergy metrics"
-)
+# trainer_jockey_combo_features = FeatureView(
+#     name="trainer_jockey_combo_features",
+#     entities=[trainer_entity, jockey_entity],
+#     ttl=timedelta(days=90),
+#     schema=[
+#         Field(name="tj_combo_uplift", dtype=Float32),
+#         Field(name="tj_combo_runs", dtype=Int64),
+#         Field(name="tj_combo_win_rate", dtype=Float32),
+#     ],
+#     source=trainer_features_source,  # Combined in trainer source
+#     description="Trainer-Jockey combination synergy metrics"
+# )
 
 
 # ============================================================================
