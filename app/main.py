@@ -31,6 +31,17 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+# Import and include routers
+try:
+    from app.routers.features import router as features_router
+    from app.routers.monitoring import router as monitoring_router
+    
+    app.include_router(features_router, prefix="/features", tags=["features"])
+    app.include_router(monitoring_router, prefix="/monitoring", tags=["monitoring"])
+    logger.info("✅ Feast Feature Store and Evidently Monitoring routers loaded")
+except ImportError as e:
+    logger.warning(f"⚠️  Feature/Monitoring routers not available: {e}")
+
 # Environment
 ENV = os.getenv("ENV", "production")
 API_KEY = os.getenv("API_KEY", "")
