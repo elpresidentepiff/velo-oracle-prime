@@ -22,8 +22,10 @@ Date: December 17, 2025
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-from typing import Optional, List
+from typing import Optional, List, Dict
 import logging
+import json
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(
@@ -31,6 +33,9 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Feature version constant
+FEATURE_VERSION = "v12"
 
 
 class V12FeatureEngineer:
@@ -40,9 +45,51 @@ class V12FeatureEngineer:
     Transforms raw racing data into 61+ engineered features for ML models.
     """
     
-    def __init__(self):
+    def __init__(self, schema_path: Optional[str] = None):
         self.feature_count = 0
         self.core_features = ['ran', 'num', 'age', 'rpr', 'or', 'ts', 'wgt_num', 'draw']
+        self.schema = self._load_schema(schema_path)
+        
+    def _load_schema(self, schema_path: Optional[str] = None) -> Dict:
+        """Load feature schema from JSON file."""
+        if schema_path is None:
+            schema_path = Path(__file__).parent / "feature_schema_v12.json"
+        
+        try:
+            with open(schema_path, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            logger.warning(f"Schema file not found: {schema_path}. Proceeding without schema validation.")
+            return {}
+    
+    def get_feature_names(self) -> List[str]:
+        """Get list of feature names from schema (contract enforcement)."""
+        if not self.schema:
+            return self.get_feature_list()
+        return [f['name'] for f in self.schema.get('features', [])]
+    
+    def validate_schema(self, df: pd.DataFrame) -> bool:
+        """Validate that DataFrame matches feature schema exactly."""
+        if not self.schema:
+            logger.warning("No schema loaded. Skipping validation.")
+            return True
+        
+        schema_features = set(self.get_feature_names())
+        df_features = set(df.columns) - {'win', 'place'}  # Exclude targets
+        
+        missing = schema_features - df_features
+        extra = df_features - schema_features
+        
+        if missing:
+            logger.error(f"Missing features: {missing}")
+            return False
+        
+        if extra:
+            logger.error(f"Extra features not in schema: {extra}")
+            return False
+        
+        logger.info("✓ Schema validation passed")
+        return True
         
     def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """Clean raw data: handle en-dashes, convert to numeric, parse weights."""
@@ -337,6 +384,10 @@ class V12FeatureEngineer:
         df_v12 = df_v12.dropna(thresh=len(final_features) * 0.7)  # Keep rows with 70%+ data
         
         self.feature_count = len(final_features)
+        
+        # Validate schema
+        if not self.validate_schema(df_v12):
+            raise ValueError("Feature schema validation failed. Output does not match contract.")
         
         # Save if output path provided
         if output_path:
