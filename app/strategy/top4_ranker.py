@@ -63,7 +63,8 @@ def calculate_runner_score(
     if isinstance(profile, dict):
         runner_id = profile.get('runner_id', 'unknown')
         market_role = profile.get('market_role', 'Noise')
-        odds = profile.get('evidence', {}).get('odds', 10.0)
+        # Try multiple paths for odds
+        odds = profile.get('odds_decimal') or profile.get('evidence', {}).get('odds', 10.0)
     else:
         runner_id = getattr(profile, 'runner_id', 'unknown')
         market_role = getattr(profile, 'market_role', None)
@@ -81,16 +82,19 @@ def calculate_runner_score(
     # boost anchor weight to prevent Release bias
     implied_prob = 1.0 / odds if odds > 0 else 0.0
     is_strong_favorite = (implied_prob >= 0.62 and manipulation_risk < 0.45)
-    anchor_boost = 0.10 if (is_strong_favorite and market_role == 'Liquidity_Anchor') else 0.0
+    anchor_boost = 0.10 if (is_strong_favorite and market_role in ['Liquidity_Anchor', 'ANCHOR']) else 0.0
     
     # Component 1: Market role strength (40% base + anchor boost)
     role_scores = {
         'Liquidity_Anchor': 1.0,      # Favorite
+        'ANCHOR': 1.0,                 # Alias
         'Release_Horse': 0.75,         # Second fav / mid-band
+        'RELEASE': 0.75,               # Alias
         'Steam': 0.70,                 # Sharp money
         'Drift_Bait': 0.40,            # Drifting
         'Spoiler': 0.30,               # Tactical
-        'Noise': 0.20                  # Outsider
+        'Noise': 0.20,                 # Outsider
+        'NOISE': 0.20                  # Alias
     }
     role_score = role_scores.get(market_role, 0.5) * 0.40 + anchor_boost
     

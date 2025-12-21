@@ -29,6 +29,37 @@ from app.core.errors import validate_odds, validate_runner_profile, V12Error
 logger = logging.getLogger(__name__)
 
 
+def classify_market_role(odds: float, all_odds: List[float]) -> tuple[str, str]:
+    """
+    Standalone helper for market role classification (for tests).
+    
+    Args:
+        odds: Runner's decimal odds
+        all_odds: All odds in the race
+        
+    Returns:
+        (role, reason) tuple
+    """
+    if not all_odds:
+        return ("NOISE", "No odds data")
+    
+    # Convert to implied probabilities
+    implied_probs = [1.0 / o for o in all_odds if o > 0]
+    runner_prob = 1.0 / odds if odds > 0 else 0.0
+    
+    # Sort to find favorite
+    sorted_odds = sorted(all_odds)
+    lowest_odds = sorted_odds[0] if sorted_odds else 10.0
+    
+    # Classification logic
+    if odds == lowest_odds:
+        return ("ANCHOR", "Lowest odds (favorite)")
+    elif odds <= 5.0:
+        return ("RELEASE", "Mid-range odds")
+    else:
+        return ("NOISE", "High odds (outsider)")
+
+
 class IntentClass(Enum):
     """Trainer/owner intent classification."""
     WIN = "Win"
@@ -67,6 +98,7 @@ class OpponentProfile:
     stable_tactic: StableTactic
     confidence: float = 0.0
     evidence: Dict = field(default_factory=dict)
+    role_reason: str = ""  # Why this market role was assigned
     
     def to_dict(self) -> Dict:
         return {
@@ -76,7 +108,8 @@ class OpponentProfile:
             'market_role': self.market_role.value,
             'stable_tactic': self.stable_tactic.value,
             'confidence': self.confidence,
-            'evidence': self.evidence
+            'evidence': self.evidence,
+            'role_reason': self.role_reason
         }
 
 
@@ -145,7 +178,7 @@ class MarketAgentModel:
         runner_data: Dict,
         market_ctx: Dict,
         race_ctx: Dict
-    ) -> MarketRole:
+    ) -> tuple[MarketRole, str]:
         """
         Classify market role for this runner.
         
@@ -163,7 +196,7 @@ class MarketAgentModel:
             race_ctx: Race context
             
         Returns:
-            MarketRole
+            tuple[MarketRole, str]: (market_role, reason)
         """
         odds = runner_data.get('odds_decimal', 10.0)
         runner_id = runner_data.get('runner_id', 'unknown')
@@ -174,13 +207,13 @@ class MarketAgentModel:
             # Fallback: use is_favorite flag
             is_favorite = runner_data.get('is_favorite', False)
             if is_favorite:
-                return MarketRole.LIQUIDITY_ANCHOR
+                return MarketRole.LIQUIDITY_ANCHOR, "Favorite (no market context)"
             elif odds < 3.0:
-                return MarketRole.LIQUIDITY_ANCHOR
+                return MarketRole.LIQUIDITY_ANCHOR, f"Low odds {odds:.2f} (no market context)"
             elif odds < 10.0:
-                return MarketRole.RELEASE_HORSE
+                return MarketRole.RELEASE_HORSE, f"Mid odds {odds:.2f} (no market context)"
             else:
-                return MarketRole.NOISE
+                return MarketRole.NOISE, f"High odds {odds:.2f} (no market context)"
         
         # Sort runners by odds (ascending)
         sorted_runners = sorted(all_runners, key=lambda r: r.get('odds_decimal', 999.0))
@@ -196,11 +229,11 @@ class MarketAgentModel:
             # Fallback if runner not found
             logger.warning(f"Runner {runner_id} not found in market_ctx, using odds-only classification")
             if odds < 3.0:
-                return MarketRole.LIQUIDITY_ANCHOR
+                return MarketRole.LIQUIDITY_ANCHOR, f"Low odds {odds:.2f} (runner not in context)"
             elif odds < 10.0:
-                return MarketRole.RELEASE_HORSE
+                return MarketRole.RELEASE_HORSE, f"Mid odds {odds:.2f} (runner not in context)"
             else:
-                return MarketRole.NOISE
+                return MarketRole.NOISE, f"High odds {odds:.2f} (runner not in context)"
         
         # Get top 2 odds for gap analysis
         fav_odds = sorted_runners[0].get('odds_decimal', 1.0)
@@ -238,7 +271,7 @@ class MarketAgentModel:
         # Log classification
         logger.info(f"Runner {runner_id}: odds={odds:.2f}, implied_prob={1.0/odds:.1%}, role={role.value}, reason={reason}")
         
-        return role
+        return role, reason
 
 
 class StableAgentModel:
@@ -350,7 +383,7 @@ class OpponentModelEngine:
             intent = self.trainer_model.classify_intent(runner, race_ctx)
             
             # Classify market role
-            market_role = self.market_model.classify_market_role(runner, market_ctx, race_ctx)
+            market_role, role_reason = self.market_model.classify_market_role(runner, market_ctx, race_ctx)
             
             # Get stable tactic
             stable_tactic = stable_tactics.get(runner_id, StableTactic.SOLO)
@@ -373,7 +406,8 @@ class OpponentModelEngine:
                 market_role=market_role,
                 stable_tactic=stable_tactic,
                 confidence=confidence,
-                evidence=evidence
+                evidence=evidence,
+                role_reason=role_reason
             )
             
             profiles.append(profile)
