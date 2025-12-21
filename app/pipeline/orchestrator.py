@@ -39,7 +39,7 @@ from app.ml.learning_gate import evaluate_learning_gate
 from app.strategy.decision_policy import make_decision
 
 # Engine & storage
-from app.engine.engine_run import EngineRun, store_engine_run
+from app.engine.engine_run import EngineRun, EngineRunRepository
 from app.learning.post_race_critique import perform_post_race_critique
 
 logger = logging.getLogger(__name__)
@@ -316,10 +316,13 @@ class VELOPipeline:
         logger.info("Stage 7: Learning gate (ADLG)")
         
         # Evaluate learning gate
+        # Note: integrity_check is performed post-race, so we pass empty dict for pre-race
+        integrity_check = {'status': 'pending', 'checks': []}
         ctx.learning_gate_result = evaluate_learning_gate(
             ctx.signal_outputs,
             ctx.ablation_results,
-            ctx.decision
+            ctx.decision,
+            integrity_check
         ).to_dict()
         
         logger.info(f"Learning gate: status={ctx.learning_gate_result['learning_status']}")
@@ -330,16 +333,21 @@ class VELOPipeline:
         logger.info("Stage 8: Storage")
         
         # Create EngineRun
+        # Note: EngineRun uses RaceContext and MarketContext objects, not dicts
+        # For now, store key info in metadata
         ctx.engine_run = EngineRun(
             engine_run_id=ctx.engine_run_id,
-            race_id=ctx.race_id,
-            timestamp=ctx.timestamp,
-            race_ctx=ctx.race_ctx,
-            market_ctx=ctx.market_ctx,
-            features_hash=ctx.features_hash,
-            runner_scores=[p.to_dict() for p in ctx.opponent_profiles],
-            verdict=ctx.decision,
-            learning_gate_status=ctx.learning_gate_result.get('learning_status', 'unknown')
+            decision_timestamp=ctx.timestamp,
+            mode="RACE",
+            chaos_level=ctx.signal_outputs.get('chaos_level', 0.0),
+            metadata={
+                'race_id': ctx.race_id,
+                'race_ctx': ctx.race_ctx,
+                'market_ctx': ctx.market_ctx,
+                'features_hash': ctx.features_hash,
+                'learning_gate_status': ctx.learning_gate_result.get('learning_status', 'unknown'),
+                'decision': ctx.decision
+            }
         )
         
         # Store (would persist to DB)
