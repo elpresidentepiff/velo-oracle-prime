@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 from enum import Enum
 import logging
+from app.core.errors import validate_odds, validate_runner_profile, V12Error
 
 logger = logging.getLogger(__name__)
 
@@ -396,9 +397,22 @@ def profile_race_opponents(
         
     Returns:
         List of OpponentProfile
+        
+    Raises:
+        V12Error: If any runner has missing/invalid odds
     """
+    # Phase 1.1: Fail-fast validation
+    for runner in runners:
+        validate_odds(runner)
+    
     engine = OpponentModelEngine()
-    return engine.profile_runners(runners, race_ctx, market_ctx)
+    profiles = engine.profile_runners(runners, race_ctx, market_ctx)
+    
+    # Phase 1.1: Validate all profiles
+    for profile in profiles:
+        validate_runner_profile(profile)
+    
+    return profiles
 
 
 if __name__ == "__main__":

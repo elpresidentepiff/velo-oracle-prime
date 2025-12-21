@@ -17,6 +17,7 @@ Date: December 21, 2025
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
 import logging
+from app.core.errors import validate_scores, validate_top4, V12Error
 
 logger = logging.getLogger(__name__)
 
@@ -42,10 +43,14 @@ def calculate_runner_score(
     Calculate composite score for a runner.
     
     Components:
-    1. Market role strength (40%)
+    1. Market role strength (40% base, adjusted for strong favorites)
     2. Odds-derived probability (30%)
     3. Chaos adjustment (20%)
     4. Field position (10%)
+    
+    Phase 1.1 Anchor Guard:
+    If top_prob >= 0.62 AND manipulation_risk < 0.45,
+    allow anchor to regain weight to prevent Release bias.
     
     Args:
         profile: OpponentProfile (object or dict)
@@ -69,8 +74,16 @@ def calculate_runner_score(
     # Extract race context
     chaos_level = race_ctx.get('chaos_level', 0.5)
     field_size = race_ctx.get('field_size', 10)
+    manipulation_risk = race_ctx.get('manipulation_risk', 0.5)
     
-    # Component 1: Market role strength (40%)
+    # Phase 1.1: Anchor weight guard
+    # If strong favorite (top_prob >= 0.62) AND low manipulation,
+    # boost anchor weight to prevent Release bias
+    implied_prob = 1.0 / odds if odds > 0 else 0.0
+    is_strong_favorite = (implied_prob >= 0.62 and manipulation_risk < 0.45)
+    anchor_boost = 0.10 if (is_strong_favorite and market_role == 'Liquidity_Anchor') else 0.0
+    
+    # Component 1: Market role strength (40% base + anchor boost)
     role_scores = {
         'Liquidity_Anchor': 1.0,      # Favorite
         'Release_Horse': 0.75,         # Second fav / mid-band
@@ -79,10 +92,10 @@ def calculate_runner_score(
         'Spoiler': 0.30,               # Tactical
         'Noise': 0.20                  # Outsider
     }
-    role_score = role_scores.get(market_role, 0.5) * 0.40
+    role_score = role_scores.get(market_role, 0.5) * 0.40 + anchor_boost
     
     # Component 2: Odds-derived probability (30%)
-    implied_prob = 1.0 / odds if odds > 0 else 0.0
+    # (implied_prob already calculated above for anchor guard)
     # Normalize to 0-1 range (cap at 80% prob)
     odds_score = min(implied_prob / 0.80, 1.0) * 0.30
     
@@ -117,7 +130,8 @@ def calculate_runner_score(
         'role': role_score,
         'odds': odds_score,
         'chaos': chaos_boost,
-        'field': field_score
+        'field': field_score,
+        'anchor_guard': anchor_boost  # Phase 1.1
     }
     
     return ScoreBreakdown(total=total, components=components)
@@ -176,6 +190,14 @@ def rank_top4(
         score = s['score']
         bd = score_breakdowns[str(rid)]
         logger.info(f"  #{i}: {rid} | score={score:.3f} | role={bd.components['role']:.3f} odds={bd.components['odds']:.3f} chaos={bd.components['chaos']:.3f}")
+    
+    # Phase 1.1: Validate score contract
+    field_size = len(opponent_profiles)
+    validate_scores(score_breakdowns, field_size)
+    
+    # Phase 1.1: Validate Top-4 output
+    top4_ids = [s['runner_id'] for s in scores[:4]]
+    validate_top4(top4_ids, field_size)
     
     return top4_profiles, score_breakdowns
 
