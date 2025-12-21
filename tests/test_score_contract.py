@@ -150,8 +150,11 @@ def test_score_components_sum_to_total():
     profile = create_test_profile('r1', 3.0, MarketRole.LIQUIDITY_ANCHOR)
     breakdown = calculate_runner_score(profile, race_ctx)
     
-    # Sum components
-    component_sum = sum(breakdown.components.values())
+    # Sum numeric components only (exclude reason strings)
+    component_sum = sum(
+        v for v in breakdown.components.values() 
+        if isinstance(v, (int, float))
+    )
     
     # Check within tolerance (0.01)
     assert abs(breakdown.total - component_sum) < 0.01, \

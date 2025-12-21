@@ -42,11 +42,13 @@ def calculate_runner_score(
     """
     Calculate composite score for a runner.
     
-    Components:
-    1. Market role strength (40% base, adjusted for strong favorites)
-    2. Odds-derived probability (30%)
-    3. Chaos adjustment (20%)
-    4. Field position (10%)
+    Components (Phase 2A order):
+    1. Stability modifier (±0.10)
+    2. Historical stats modifier (±0.05)
+    3. Market role strength (40% base, adjusted for strong favorites)
+    4. Odds-derived probability (30%)
+    5. Chaos adjustment (20%)
+    6. Field position (10%)
     
     Phase 1.1 Anchor Guard:
     If top_prob >= 0.62 AND manipulation_risk < 0.45,
@@ -127,15 +129,50 @@ def calculate_runner_score(
     # Smaller fields = higher scores (less competition)
     field_score = max(0.0, (20 - field_size) / 20.0) * 0.10
     
+    # Phase 2A: Stability modifier (±0.10)
+    stability_modifier = 0.0
+    stability_reason = "not_available"
+    if isinstance(profile, dict) and 'stability_profile' in profile:
+        from app.ml.stability_clusters import get_cluster_trust_modifier
+        cluster_id = profile['stability_profile'].get('cluster_id', '')
+        if cluster_id:
+            stability_modifier = get_cluster_trust_modifier(cluster_id)
+            stability_reason = cluster_id
+    
+    # Phase 2A: Historical stats modifier (±0.05)
+    historical_modifier = 0.0
+    historical_reason = "not_available"
+    if isinstance(profile, dict) and 'historical_stats' in profile:
+        from app.ml.historical_stats import calculate_historical_modifier
+        hist_result = calculate_historical_modifier(
+            profile['historical_stats'],
+            use_trainer=True,
+            use_jockey=True,
+            use_combo=False
+        )
+        historical_modifier = hist_result['total_modifier']
+        historical_reason = hist_result['reason']
+    
     # Total score
-    total = role_score + odds_score + chaos_boost + field_score
+    total = (
+        stability_modifier +
+        historical_modifier +
+        role_score +
+        odds_score +
+        chaos_boost +
+        field_score
+    )
     
     components = {
+        'stability': stability_modifier,
+        'historical': historical_modifier,
         'role': role_score,
         'odds': odds_score,
         'chaos': chaos_boost,
         'field': field_score,
-        'anchor_guard': anchor_boost  # Phase 1.1
+        'anchor_guard': anchor_boost,  # Phase 1.1
+        'stability_reason': stability_reason,
+        'historical_reason': historical_reason
     }
     
     return ScoreBreakdown(total=total, components=components)
