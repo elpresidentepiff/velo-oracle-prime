@@ -36,6 +36,7 @@ from app.ml.opponent_models import profile_race_opponents
 from app.ml.cognitive_trap_firewall import scan_cognitive_traps
 from app.ml.ablation_tests import run_ablation_tests
 from app.ml.learning_gate import evaluate_learning_gate
+from app.ml.chaos_calculator import calculate_chaos_level, calculate_manipulation_risk
 from app.strategy.decision_policy import make_decision
 
 # Engine & storage
@@ -241,16 +242,20 @@ class VELOPipeline:
         """Stage 4: Signal Engines (SQPE, Chaos, SSES, TIE, HBI)."""
         logger.info("Stage 4: Signal engines")
         
-        # Placeholder - would run actual signal engines
+        # Patch 3: Calculate real chaos and manipulation risk from odds
+        chaos_level = calculate_chaos_level(ctx.runners)
+        manipulation_risk = calculate_manipulation_risk(ctx.runners)
+        
+        # Other signals still placeholder (will be Phase 2)
         ctx.signal_outputs = {
-            'chaos_level': 0.45,  # Placeholder
-            'manipulation_risk': 0.30,  # Placeholder
+            'chaos_level': chaos_level,
+            'manipulation_risk': manipulation_risk,
             'stability_score': 0.72,  # Placeholder
             'pace_geometry_score': 0.68,  # Placeholder
-            'top_predictions': ctx.runners[:4]  # Placeholder
+            'top_predictions': ctx.runners[:4]  # Placeholder (will be fixed in Patch 4)
         }
         
-        logger.info(f"Signal engines complete: chaos={ctx.signal_outputs['chaos_level']:.2f}")
+        logger.info(f"Signal engines complete: chaos={chaos_level:.3f}, manipulation={manipulation_risk:.3f}")
         return ctx
     
     def _stage_5_strategic_intelligence(self, ctx: PipelineContext) -> PipelineContext:
@@ -322,7 +327,8 @@ class VELOPipeline:
             ctx.signal_outputs,
             ctx.ablation_results,
             ctx.decision,
-            integrity_check
+            integrity_check,
+            ctx.race_ctx
         ).to_dict()
         
         logger.info(f"Learning gate: status={ctx.learning_gate_result['learning_status']}")

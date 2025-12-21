@@ -148,46 +148,96 @@ class MarketAgentModel:
         """
         Classify market role for this runner.
         
-        CRITICAL HEURISTIC (War Mode v1):
-        - Liquidity Anchor: short price, absorbs money, often places but doesn't win
-        - Release Horse: mid price, stable cluster, intent markers, wins more than implied
+        LIVE-ONLY v1 (single snapshot, no history required):
+        - ANCHOR: Lowest odds runner (market favorite)
+        - SECOND_FAV: 2nd lowest odds
+        - MID_BAND: Middle odds range (3.0-10.0)
+        - OUTSIDER: Highest odds (>10.0)
+        
+        CRITICAL RULE: Lowest odds runner NEVER classified as NOISE.
         
         Args:
             runner_data: Runner data
-            market_ctx: Market context
+            market_ctx: Market context (contains all_runners_odds for ranking)
             race_ctx: Race context
             
         Returns:
             MarketRole
         """
         odds = runner_data.get('odds_decimal', 10.0)
-        is_favorite = runner_data.get('is_favorite', False)
+        runner_id = runner_data.get('runner_id', 'unknown')
         
-        # Get historical win rate vs implied probability
-        win_rate = runner_data.get('win_rate_historical', 0.0)
-        implied_prob = 1.0 / odds if odds > 0 else 0.0
+        # Get all runners' odds from market_ctx for ranking
+        all_runners = market_ctx.get('all_runners', [])
+        if not all_runners:
+            # Fallback: use is_favorite flag
+            is_favorite = runner_data.get('is_favorite', False)
+            if is_favorite:
+                return MarketRole.LIQUIDITY_ANCHOR
+            elif odds < 3.0:
+                return MarketRole.LIQUIDITY_ANCHOR
+            elif odds < 10.0:
+                return MarketRole.RELEASE_HORSE
+            else:
+                return MarketRole.NOISE
         
-        # Liquidity Anchor detection
-        # Short price + trades strong but underperforms win expectation
-        if is_favorite and win_rate < implied_prob * 0.7:
-            return MarketRole.LIQUIDITY_ANCHOR
+        # Sort runners by odds (ascending)
+        sorted_runners = sorted(all_runners, key=lambda r: r.get('odds_decimal', 999.0))
         
-        # Release Horse detection
-        # Mid price + wins more than market implies
-        if 3.0 <= odds <= 8.0 and win_rate > implied_prob * 1.2:
-            return MarketRole.RELEASE_HORSE
+        # Find this runner's rank
+        runner_rank = None
+        for i, r in enumerate(sorted_runners):
+            if r.get('runner_id') == runner_id:
+                runner_rank = i + 1  # 1-indexed
+                break
         
-        # Steam detection (sharp money)
-        odds_drift = runner_data.get('odds_drift', 0.0)
-        if odds_drift < -0.3:  # Significant shortening
-            return MarketRole.STEAM
+        if runner_rank is None:
+            # Fallback if runner not found
+            logger.warning(f"Runner {runner_id} not found in market_ctx, using odds-only classification")
+            if odds < 3.0:
+                return MarketRole.LIQUIDITY_ANCHOR
+            elif odds < 10.0:
+                return MarketRole.RELEASE_HORSE
+            else:
+                return MarketRole.NOISE
         
-        # Drift Bait detection
-        if odds_drift > 0.3:  # Significant drifting
-            return MarketRole.DRIFT_BAIT
+        # Get top 2 odds for gap analysis
+        fav_odds = sorted_runners[0].get('odds_decimal', 1.0)
+        second_odds = sorted_runners[1].get('odds_decimal', 2.0) if len(sorted_runners) > 1 else 2.0
         
-        # Default
-        return MarketRole.NOISE
+        # Calculate implied probabilities
+        fav_prob = 1.0 / fav_odds if fav_odds > 0 else 0.0
+        second_prob = 1.0 / second_odds if second_odds > 0 else 0.0
+        prob_gap = fav_prob - second_prob
+        
+        # Classify by rank and odds (DETERMINISTIC - no silent fallbacks)
+        role = None
+        reason = ""
+        
+        if runner_rank == 1:
+            # CRITICAL: Lowest odds = ANCHOR (never NOISE)
+            role = MarketRole.LIQUIDITY_ANCHOR
+            reason = f"Rank 1, odds {odds:.2f}, prob {1.0/odds:.1%}, gap to #2: {prob_gap:.1%}"
+        elif runner_rank == 2:
+            role = MarketRole.RELEASE_HORSE  # Second favorite
+            reason = f"Rank 2, odds {odds:.2f}, prob {1.0/odds:.1%}"
+        elif odds >= 20.0:
+            # Long outsider
+            role = MarketRole.NOISE
+            reason = f"Rank {runner_rank}, odds {odds:.2f} (outsider)"
+        elif odds >= 10.0:
+            # Mid-long outsider
+            role = MarketRole.DRIFT_BAIT if runner_rank > len(sorted_runners) * 0.7 else MarketRole.RELEASE_HORSE
+            reason = f"Rank {runner_rank}, odds {odds:.2f} (mid-long)"
+        else:
+            # Mid-band (3rd-Nth, odds < 10.0)
+            role = MarketRole.RELEASE_HORSE
+            reason = f"Rank {runner_rank}, odds {odds:.2f} (mid-band)"
+        
+        # Log classification
+        logger.info(f"Runner {runner_id}: odds={odds:.2f}, implied_prob={1.0/odds:.1%}, role={role.value}, reason={reason}")
+        
+        return role
 
 
 class StableAgentModel:
@@ -282,6 +332,9 @@ class OpponentModelEngine:
             List of OpponentProfile
         """
         logger.info(f"Profiling {len(runners)} runners")
+        
+        # Add all_runners to market_ctx for ranking (Patch 2)
+        market_ctx['all_runners'] = runners
         
         # Detect stable tactics first (requires all runners)
         stable_tactics = self.stable_model.detect_multi_runner_tactics(runners, race_ctx)

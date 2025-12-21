@@ -29,6 +29,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Patch 4: Import top4_ranker
+from app.strategy.top4_ranker import rank_top4
+
 
 class BetChassisType(Enum):
     """Bet chassis types."""
@@ -107,7 +110,9 @@ class DecisionPolicy:
         Returns:
             DecisionOutput
         """
-        logger.info(f"Decision Policy evaluating race: {race_ctx.get('race_id', 'unknown')}")
+        race_id = race_ctx.get('race_id', 'unknown')
+        race_name = f"{race_ctx.get('course', 'unknown')}_{race_ctx.get('off_time', 'unknown')}"
+        logger.info(f"Decision Policy evaluating race: {race_id} ({race_name})")
         
         # Extract key metrics
         chaos_level = engine_outputs.get('chaos_level', 0.0)
@@ -129,18 +134,34 @@ class DecisionPolicy:
             market_role = profile.get('market_role', 'Noise')
             market_roles[runner_id] = market_role
         
-        # Get top predictions
-        top_predictions = engine_outputs.get('top_predictions', [])
-        if not top_predictions:
-            # Fallback: create from runner profiles
-            top_predictions = sorted(
-                runner_profiles,
-                key=lambda r: r.get('final_score', 0.0),
-                reverse=True
-            )[:4]
+        # Patch 4: Use score-based Top-4 ranking
+        race_ctx_for_ranking = {
+            'race_id': race_id,
+            'race_name': race_name,
+            'chaos_level': chaos_level,
+            'manipulation_risk': manipulation_risk,
+            'field_size': len(runner_profiles),
+            'runners_count': len(runner_profiles)
+        }
         
-        top_4_ids = [r.get('runner_id') for r in top_predictions[:4]]
+        top4_profiles, score_breakdowns = rank_top4(runner_profiles, race_ctx_for_ranking)
+        
+        # Extract top-4 IDs
+        top_4_ids = []
+        for p in top4_profiles:
+            rid = getattr(p, 'runner_id', None) if not isinstance(p, dict) else p.get('runner_id')
+            if rid:
+                top_4_ids.append(rid)
+        
         top_selection = top_4_ids[0] if top_4_ids else None
+        
+        # Log score breakdowns
+        for prof in runner_profiles:
+            rid = getattr(prof, 'runner_id', None) if not isinstance(prof, dict) else prof.get('runner_id')
+            name = getattr(prof, 'horse_name', None) if not isinstance(prof, dict) else prof.get('horse_name')
+            bd = score_breakdowns.get(str(rid))
+            if bd:
+                logger.info(f"Patch4 Score | {rid} | {name} | total={bd.total:.3f} | {bd.components}")
         
         # Decision logic
         if is_chaos:
@@ -178,6 +199,26 @@ class DecisionPolicy:
             'is_fragile': is_fragile,
             'ctf_adjusted': ctf_adjusted
         }
+        
+        # Patch 4: Check win margin (TopStrike logic)
+        if not decision.win_suppressed and len(top4_profiles) >= 2:
+            # Compute margin between #1 and #2
+            rid1 = getattr(top4_profiles[0], 'runner_id', None) if not isinstance(top4_profiles[0], dict) else top4_profiles[0].get('runner_id')
+            rid2 = getattr(top4_profiles[1], 'runner_id', None) if not isinstance(top4_profiles[1], dict) else top4_profiles[1].get('runner_id')
+            s1 = score_breakdowns[str(rid1)].total
+            s2 = score_breakdowns[str(rid2)].total
+            margin = s1 - s2
+            
+            # Margin threshold tightens as chaos increases
+            thr = 0.12 + (chaos_level * 0.10)
+            if margin >= thr:
+                decision.top_strike_selection = rid1
+                logger.info(f"TopStrike ACTIVE | rid={rid1} margin={margin:.3f} thr={thr:.3f}")
+            else:
+                decision.top_strike_selection = None
+                decision.win_suppressed = True
+                decision.suppression_reason = f"Insufficient margin: {margin:.3f} < {thr:.3f}"
+                logger.info(f"TopStrike SUPPRESSED | margin={margin:.3f} thr={thr:.3f}")
         
         logger.info(f"Decision: Chassis={decision.chassis_type.value}, Win suppressed={decision.win_suppressed}")
         return decision

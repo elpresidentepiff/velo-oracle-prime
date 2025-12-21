@@ -94,7 +94,8 @@ class ActivityDependentLearningGate:
         engine_outputs: Dict,
         ablation_results: Dict,
         race_outcome: Dict,
-        integrity_check: Dict
+        integrity_check: Dict,
+        race_ctx: Dict = None
     ) -> LearningGateResult:
         """
         Evaluate whether to commit learning from this race.
@@ -108,7 +109,15 @@ class ActivityDependentLearningGate:
         Returns:
             LearningGateResult with status and reasons
         """
-        logger.info(f"ADLG evaluating race: {race_outcome.get('race_id', 'unknown')}")
+        # Get race ID from race_ctx first, fallback to race_outcome
+        race_id = 'unknown'
+        race_name = 'unknown'
+        if race_ctx:
+            race_id = race_ctx.get('race_id', 'unknown')
+            race_name = f"{race_ctx.get('course', 'unknown')}_{race_ctx.get('off_time', 'unknown')}"
+        else:
+            race_id = race_outcome.get('race_id', 'unknown')
+        logger.info(f"ADLG evaluating race: {race_id} ({race_name})")
         
         conditions = []
         
@@ -247,7 +256,8 @@ def evaluate_learning_gate(
     engine_outputs: Dict,
     ablation_results: Dict,
     race_outcome: Dict,
-    integrity_check: Dict
+    integrity_check: Dict,
+    race_ctx: Dict = None
 ) -> LearningGateResult:
     """
     Convenience function to evaluate learning gate.
@@ -262,7 +272,7 @@ def evaluate_learning_gate(
         LearningGateResult
     """
     gate = ActivityDependentLearningGate()
-    return gate.evaluate(engine_outputs, ablation_results, race_outcome, integrity_check)
+    return gate.evaluate(engine_outputs, ablation_results, race_outcome, integrity_check, race_ctx)
 
 
 if __name__ == "__main__":
