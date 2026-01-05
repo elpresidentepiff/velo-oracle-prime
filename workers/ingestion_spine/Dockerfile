@@ -30,7 +30,7 @@ EXPOSE 8000
 # Health check to ensure service is running
 # Railway uses this to verify deployment success
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:' + __import__('os').getenv('PORT', '8000') + '/health')" || exit 1
+  CMD python healthcheck.py
 
 # Start command using Railway's PORT environment variable
 # Railway dynamically assigns PORT, so we must use $PORT
