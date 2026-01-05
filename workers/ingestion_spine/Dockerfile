@@ -3,7 +3,7 @@
 
 FROM python:3.11-slim
 
-# Set working directory
+# Set working directory to parent
 WORKDIR /app
 
 # Install system dependencies required for Python packages
@@ -15,17 +15,20 @@ RUN apt-get update && apt-get install -y \
 
 # Copy requirements first for better Docker layer caching
 # This layer will only rebuild if requirements.txt changes
-COPY requirements.txt .
+COPY requirements.txt ./ingestion_spine/
 
 # Install Python dependencies
 # --no-cache-dir: Don't cache pip packages to reduce image size
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r ./ingestion_spine/requirements.txt
 
-# Copy application code
-COPY . .
+# Copy application code into ingestion_spine subdirectory
+COPY . ./ingestion_spine/
 
 # Make start script executable
-RUN chmod +x start.sh
+RUN chmod +x ./ingestion_spine/start.sh
+
+# Set working directory to ingestion_spine
+WORKDIR /app/ingestion_spine
 
 # Expose port 8000 (Railway will override with PORT env var)
 EXPOSE 8000
