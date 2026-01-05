@@ -32,7 +32,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD python healthcheck.py
 
-# Start command using Railway's PORT environment variable
-# Railway dynamically assigns PORT, so we must use $PORT
-# Using shell form to properly expand PORT environment variable
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Start command is defined in railway.json to properly use $PORT env var
