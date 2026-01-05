@@ -28,6 +28,9 @@ COPY . ./ingestion_spine/
 RUN chmod +x ./ingestion_spine/start.sh
 
 # Set working directory to ingestion_spine
+# Note: Working dir is /app/ingestion_spine (where code lives)
+#       PYTHONPATH is /app (so Python finds ingestion_spine as a package)
+#       This allows relative imports like "from .db import ..." to work
 WORKDIR /app/ingestion_spine
 
 # Expose port 8000 (Railway will override with PORT env var)

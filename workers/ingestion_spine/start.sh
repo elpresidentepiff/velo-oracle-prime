@@ -8,7 +8,8 @@ set -e  # Exit on error
 PORT=${PORT:-8000}
 
 # Set PYTHONPATH to parent directory so relative imports work
-export PYTHONPATH="/app:${PYTHONPATH}"
+# This allows Python to find the ingestion_spine package at /app/ingestion_spine/
+export PYTHONPATH="/app${PYTHONPATH:+:$PYTHONPATH}"
 
 echo "🚀 Starting VÉLØ Ingestion Spine..."
 echo "   Port: $PORT"
