@@ -22,25 +22,40 @@ router = APIRouter(prefix="/trpc")
 # HELPER FUNCTIONS
 # ============================================================================
 
+def serialize_result(result: Any) -> Any:
+    """
+    Safely serialize result to JSON-compatible format
+    
+    Handles Pydantic models (v1 and v2) and plain dicts/lists
+    """
+    if hasattr(result, 'dict'):
+        # Pydantic v1
+        return result.dict()
+    elif hasattr(result, 'model_dump'):
+        # Pydantic v2
+        return result.model_dump()
+    else:
+        # Already serializable (dict, list, etc.)
+        return result
+
 async def parse_trpc_request(request: Request) -> Dict[str, Any]:
     """
     Parse tRPC request format and extract input data
     
     tRPC sends requests with structure:
-    {
-        "input": {
-            "param1": "value1",
-            "param2": "value2"
-        }
-    }
+    POST: { "input": { "param1": "value1" } }
+    GET: ?input={"param1":"value1"} (JSON-encoded query parameter)
     """
     try:
         if request.method == "POST":
             body = await request.json()
             return body.get("input", {})
         else:
-            # For GET requests, check query parameters
-            # tRPC can send input as a query parameter
+            # For GET requests, tRPC sends input as JSON-encoded query parameter
+            import json
+            input_param = request.query_params.get("input")
+            if input_param:
+                return json.loads(input_param)
             return {}
     except Exception as e:
         logger.error(f"Failed to parse tRPC request: {e}")
@@ -108,7 +123,7 @@ async def trpc_create_batch(request: Request):
         result = await create_batch(batch_request)
         
         # Return tRPC response format
-        return format_trpc_response(result.dict())
+        return format_trpc_response(serialize_result(result))
         
     except HTTPException as e:
         return format_trpc_error(e.detail, "BAD_REQUEST")
@@ -127,22 +142,25 @@ async def trpc_register_files(request: Request):
     try:
         input_data = await parse_trpc_request(request)
         
-        # Extract batch_id from input
-        batch_id = input_data.pop("batch_id", None)
+        # Extract batch_id from input (use get to avoid mutation)
+        batch_id = input_data.get("batch_id")
         if not batch_id:
             return format_trpc_error("batch_id is required", "BAD_REQUEST")
         
         from .main import register_files
         from .models import RegisterFilesRequest
         
+        # Remove batch_id from input_data for RegisterFilesRequest
+        files_input = {k: v for k, v in input_data.items() if k != "batch_id"}
+        
         # Convert input to FastAPI request model
-        files_request = RegisterFilesRequest(**input_data)
+        files_request = RegisterFilesRequest(**files_input)
         
         # Call existing FastAPI endpoint logic
         result = await register_files(batch_id, files_request)
         
         # Return tRPC response format
-        return format_trpc_response(result.dict())
+        return format_trpc_response(serialize_result(result))
         
     except HTTPException as e:
         return format_trpc_error(e.detail, "BAD_REQUEST")
@@ -172,7 +190,7 @@ async def trpc_parse_batch(request: Request):
         result = await parse_batch(batch_id)
         
         # Return tRPC response format
-        return format_trpc_response(result.dict())
+        return format_trpc_response(serialize_result(result))
         
     except HTTPException as e:
         return format_trpc_error(e.detail, "BAD_REQUEST")
@@ -202,7 +220,7 @@ async def trpc_get_batch_status(request: Request):
         result = await get_batch_status(batch_id)
         
         # Return tRPC response format
-        return format_trpc_response(result.dict())
+        return format_trpc_response(serialize_result(result))
         
     except HTTPException as e:
         return format_trpc_error(e.detail, "BAD_REQUEST")
@@ -235,7 +253,7 @@ async def trpc_list_races(request: Request):
         result = await list_races(import_date)
         
         # Return tRPC response format
-        return format_trpc_response(result)
+        return format_trpc_response(serialize_result(result))
         
     except ValueError as e:
         return format_trpc_error(f"Invalid date format: {str(e)}", "BAD_REQUEST")
@@ -267,7 +285,7 @@ async def trpc_get_race_details(request: Request):
         result = await get_race_details(race_id)
         
         # Return tRPC response format
-        return format_trpc_response(result)
+        return format_trpc_response(serialize_result(result))
         
     except HTTPException as e:
         return format_trpc_error(e.detail, "BAD_REQUEST")
