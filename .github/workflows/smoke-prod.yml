@@ -34,15 +34,22 @@ jobs:
             curl -i --fail --max-time 20 -X POST https://ingestion-spine-production.up.railway.app/trpc/ingestion.createBatch \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $OPS_API_KEY" \
-              -d '{"input":{"import_date":"2026-01-07","source":"racing_post","notes":"gh-smoke-test"}}'
+              -d '{"input":{"import_date":"2026-01-07","source":"smoke_test","notes":"automated-smoke-test"}}'
           else
             curl -i --fail --max-time 20 -X POST https://ingestion-spine-production.up.railway.app/trpc/ingestion.createBatch \
               -H "Content-Type: application/json" \
-              -d '{"input":{"import_date":"2026-01-07","source":"racing_post","notes":"gh-smoke-test"}}'
+              -d '{"input":{"import_date":"2026-01-07","source":"smoke_test","notes":"automated-smoke-test"}}'
           fi
       
-      - name: Test debug routes endpoint
+      - name: Test debug routes endpoint (with auth)
+        env:
+          DEBUG_KEY: ${{ secrets.DEBUG_KEY }}
         run: |
           set -e
           echo "Testing /debug/routes endpoint..."
-          curl -i --fail --max-time 20 https://ingestion-spine-production.up.railway.app/debug/routes
+          if [ -n "$DEBUG_KEY" ]; then
+            curl -i --fail --max-time 20 https://ingestion-spine-production.up.railway.app/debug/routes \
+              -H "X-Debug-Key: $DEBUG_KEY"
+          else
+            echo "DEBUG_KEY not configured, skipping debug routes test"
+          fi

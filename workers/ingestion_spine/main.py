@@ -9,14 +9,16 @@ Silent skipping is how "cheating" happens.
 Date: 2026-01-04
 """
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from datetime import date, time, datetime
+from datetime import date, time, datetime, timedelta
 from enum import Enum
 import logging
 from contextlib import asynccontextmanager
+import asyncio
+import os
 
 # Import our modules
 from .db import get_db_client, DatabaseClient
@@ -45,6 +47,33 @@ logger = logging.getLogger(__name__)
 # APPLICATION LIFECYCLE
 # ============================================================================
 
+# Background task to clean up smoke test batches
+async def cleanup_smoke_batches():
+    """
+    Runs every hour, deletes smoke test batches older than 1 hour
+    Prevents test data pollution in production
+    """
+    while True:
+        try:
+            db: DatabaseClient = app.state.db
+            
+            # Find smoke batches older than 1 hour
+            cutoff_time = datetime.utcnow() - timedelta(hours=1)
+            
+            deleted = await db.delete_old_smoke_batches(
+                source="smoke_test",
+                older_than=cutoff_time
+            )
+            
+            if deleted > 0:
+                logger.info(f"🧹 Cleaned up {deleted} smoke test batches")
+        
+        except Exception as e:
+            logger.error(f"Error cleaning smoke batches: {e}")
+        
+        # Sleep for 1 hour
+        await asyncio.sleep(3600)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager"""
@@ -69,12 +98,24 @@ async def lifespan(app: FastAPI):
         logger.error(f"❌ Storage connection failed: {e}")
         raise
     
+    # Start background cleanup task (only in production)
+    cleanup_task = None
+    if os.getenv("RAILWAY_ENVIRONMENT") == "production":
+        cleanup_task = asyncio.create_task(cleanup_smoke_batches())
+        logger.info("🧹 Smoke batch cleanup task started")
+    
     logger.info("✅ VÉLØ Ingestion Spine ready")
     
     yield
     
     # Cleanup
     logger.info("🛑 VÉLØ Ingestion Spine shutting down...")
+    if cleanup_task:
+        cleanup_task.cancel()
+        try:
+            await cleanup_task
+        except asyncio.CancelledError:
+            pass
     await app.state.db.close()
     await app.state.storage.close()
 
@@ -651,6 +692,48 @@ async def root():
             "list_races": "GET /races/{import_date}",
             "get_race_details": "GET /races/{race_id}/details"
         }
+    }
+
+# ============================================================================
+# DEBUG ENDPOINT
+# ============================================================================
+
+@app.get("/debug/routes")
+async def debug_routes(x_debug_key: str = Header(None)):
+    """
+    Debug endpoint - lists all registered routes
+    
+    SECURITY: Protected by X-Debug-Key header in production
+    Returns 404 without valid key to prevent attack surface mapping
+    """
+    # Get debug key from environment
+    required_key = os.getenv("DEBUG_KEY")
+    
+    # In production, require auth
+    if os.getenv("RAILWAY_ENVIRONMENT") == "production":
+        if not required_key:
+            # No debug key configured = disabled in prod
+            raise HTTPException(status_code=404, detail="Not found")
+        
+        if x_debug_key != required_key:
+            # Wrong/missing key = 404 (don't reveal endpoint exists)
+            raise HTTPException(status_code=404, detail="Not found")
+    
+    # Auth passed or non-prod environment
+    routes = []
+    for route in app.routes:
+        if hasattr(route, "path") and hasattr(route, "methods"):
+            routes.append({
+                "path": route.path,
+                "methods": list(route.methods) if route.methods else [],
+                "name": route.name if hasattr(route, "name") else None
+            })
+    
+    return {
+        "total_routes": len(routes),
+        "routes": sorted(routes, key=lambda x: x["path"]),
+        "trpc_routes": [r for r in routes if "/trpc/" in r["path"]],
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
     }
 
 # ============================================================================
