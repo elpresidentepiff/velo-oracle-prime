@@ -1,4 +1,4 @@
-# Ruff configuration for VELO
+# Ruff configuration for VÉLØ Oracle
 # https://docs.astral.sh/ruff/
 
 # Exclude common directories
@@ -12,30 +12,31 @@ exclude = [
     "dist",
 ]
 
-# Line length
 line-length = 120
-
-# Target Python 3.11
 target-version = "py311"
 
 [lint]
-# Enable select rule sets
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
     "F",   # pyflakes
     "I",   # isort
-    "N",   # pep8-naming
-    "UP",  # pyupgrade
     "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
 ]
 
-# Ignore specific rules
 ignore = [
     "E501",  # Line too long (handled by formatter)
-    "B008",  # Do not perform function call in argument defaults
+    "B008",  # Do not perform function calls in argument defaults
+    "C901",  # Too complex (let humans decide)
 ]
 
 [lint.per-file-ignores]
-"__init__.py" = ["F401"]  # Unused imports in __init__.py
-"tests/*" = ["F401", "F811"]  # Allow unused imports and redefinitions in tests
+"__init__.py" = ["F401"]  # Unused imports OK in __init__
+"tests/*" = ["F401", "F811"]  # Test files can have duplicates
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

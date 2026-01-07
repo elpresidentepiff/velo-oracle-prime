@@ -1,0 +1,76 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: ["feature/v10-launch", "main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r workers/ingestion_spine/requirements.txt
+          # Install dev dependencies if they exist
+          if [ -f workers/ingestion_spine/requirements-dev.txt ]; then
+            pip install -r workers/ingestion_spine/requirements-dev.txt
+          else
+            pip install pytest pytest-asyncio pytest-cov
+          fi
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --cov=workers/ingestion_spine --cov-report=term-missing
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install ruff
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+      
+      - name: Run ruff check
+        run: |
+          ruff check workers/ingestion_spine/ app/ --output-format=github
+      
+      - name: Run ruff format check
+        run: |
+          ruff format --check workers/ingestion_spine/ app/
+
+  type-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install mypy
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy types-redis
+          pip install -r workers/ingestion_spine/requirements.txt
+      
+      - name: Run mypy
+        run: |
+          mypy workers/ingestion_spine/ --ignore-missing-imports --no-strict-optional

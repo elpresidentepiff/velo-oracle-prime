@@ -13,7 +13,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from datetime import date, time
+from datetime import date, time, datetime
 from enum import Enum
 import logging
 from contextlib import asynccontextmanager
@@ -109,6 +109,20 @@ app.include_router(trpc_router)
 # ============================================================================
 # HEALTH CHECK
 # ============================================================================
+
+@app.get("/healthz")
+async def healthz():
+    """
+    Lightweight health check - NO database/external dependencies
+    Use this for load balancers and smoke tests
+    Returns immediately without I/O
+    """
+    return {
+        "status": "ok",
+        "service": "velo-ingestion-spine",
+        "version": "1.0.0",
+        "timestamp": datetime.utcnow().isoformat()
+    }
 
 @app.get("/health")
 async def health_check():
