@@ -8,7 +8,7 @@ Date: 2026-01-04
 import os
 import logging
 from typing import List, Optional, Dict, Any
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from supabase import create_client, Client
 from .models import BatchStatus, FileType, RaceData, RunnerData
 
@@ -339,6 +339,34 @@ class DatabaseClient:
             .execute()
         
         return result.data or []
+
+    # ========================================================================
+    # SMOKE BATCH CLEANUP
+    # ========================================================================
+    
+    async def delete_old_smoke_batches(
+        self, 
+        source: str = "smoke_test", 
+        older_than: datetime = None
+    ) -> int:
+        """
+        Delete smoke test batches older than specified time
+        
+        Args:
+            source: Source identifier for smoke batches (default: "smoke_test")
+            older_than: Delete batches created before this datetime
+        
+        Returns:
+            Number of batches deleted
+        """
+        if older_than is None:
+            older_than = datetime.utcnow() - timedelta(hours=1)
+        
+        result = self.client.table("import_batches").delete().match({
+            "source": source
+        }).lt("created_at", older_than.isoformat()).execute()
+        
+        return len(result.data) if result.data else 0
 
 # ============================================================================
 # CLIENT FACTORY
