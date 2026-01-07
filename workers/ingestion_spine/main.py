@@ -102,9 +102,17 @@ app.add_middleware(
 # tRPC COMPATIBILITY LAYER
 # ============================================================================
 
-# Import and include tRPC adapter
-from .trpc_adapter import router as trpc_router
-app.include_router(trpc_router)
+# Force redeploy: 2026-01-07 - Fix tRPC 404 errors
+try:
+    from .trpc_adapter import router as trpc_router
+    app.include_router(trpc_router)
+    logger.info("✅ tRPC adapter loaded successfully")
+except ImportError as e:
+    logger.error(f"❌ Failed to import tRPC adapter: {e}")
+    logger.error("tRPC endpoints will NOT be available")
+except Exception as e:
+    logger.error(f"❌ Failed to register tRPC router: {e}")
+    logger.error("tRPC endpoints may not work correctly")
 
 # ============================================================================
 # HEALTH CHECK
@@ -118,6 +126,40 @@ async def health_check():
         "service": "velo-ingestion-spine",
         "version": "1.0.0",
         "phase": "1"
+    }
+
+@app.get("/debug/routes")
+async def debug_routes():
+    """Debug endpoint to list all registered routes"""
+    routes = []
+    for route in app.routes:
+        if hasattr(route, "path") and hasattr(route, "methods"):
+            routes.append({
+                "path": route.path,
+                "methods": list(route.methods) if route.methods else [],
+                "name": route.name if hasattr(route, "name") else None
+            })
+    return {
+        "total_routes": len(routes),
+        "routes": sorted(routes, key=lambda x: x["path"]),
+        "trpc_routes": [r for r in routes if "/trpc/" in r["path"]]
+    }
+
+@app.get("/trpc/health")
+async def trpc_health_check():
+    """tRPC-specific health check"""
+    return {
+        "status": "healthy",
+        "service": "trpc-adapter",
+        "version": "1.0.0",
+        "endpoints": [
+            "/trpc/ingestion.createBatch",
+            "/trpc/ingestion.registerFiles",
+            "/trpc/ingestion.parseBatch",
+            "/trpc/ingestion.getBatchStatus",
+            "/trpc/ingestion.listRaces",
+            "/trpc/ingestion.getRaceDetails"
+        ]
     }
 
 # ============================================================================

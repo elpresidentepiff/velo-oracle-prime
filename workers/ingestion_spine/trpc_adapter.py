@@ -15,6 +15,7 @@ import logging
 from datetime import date
 
 logger = logging.getLogger(__name__)
+logger.info("🔧 tRPC adapter module loaded")
 
 router = APIRouter(prefix="/trpc")
 
