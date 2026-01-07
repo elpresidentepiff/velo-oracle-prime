@@ -113,9 +113,23 @@ class DatabaseClient:
         error_summary: Optional[str] = None,
         counts: Optional[Dict[str, Any]] = None
     ):
-        """Update batch status"""
+        """
+        Update batch status with validation
+        
+        Valid transitions:
+        - uploaded -> parsing -> parsed -> validated | needs_review
+        """
+        valid_statuses = [
+            "uploaded", "parsing", "parsed", "validated", "needs_review", "ready", "failed"
+        ]
+        
+        status_value = status.value if isinstance(status, BatchStatus) else status
+        
+        if status_value not in valid_statuses:
+            raise ValueError(f"Invalid status: {status_value}")
+        
         data = {
-            "status": status.value,
+            "status": status_value,
             "updated_at": datetime.utcnow().isoformat()
         }
         
@@ -216,7 +230,11 @@ class DatabaseClient:
             "field_size": race_data.get('field_size'),
             "prize": race_data.get('prize'),
             "join_key": race_data.get('join_key'),
-            "raw": race_data.get('raw', {})
+            "raw": race_data.get('raw', {}),
+            # Quality metadata
+            "parse_confidence": race_data.get('parse_confidence', 1.0),
+            "quality_score": race_data.get('quality_score', 1.0),
+            "quality_flags": race_data.get('quality_flags', [])
         }
         
         result = self.client.table('races').insert(data).execute()
@@ -275,7 +293,11 @@ class DatabaseClient:
             "draw": runner_data.get('draw'),
             "headgear": runner_data.get('headgear'),
             "form_figures": runner_data.get('form_figures'),
-            "raw": runner_data.get('raw', {})
+            "raw": runner_data.get('raw', {}),
+            # Quality metadata
+            "confidence": runner_data.get('confidence', 1.0),
+            "extraction_method": runner_data.get('extraction_method', 'table'),
+            "quality_flags": runner_data.get('quality_flags', [])
         }
         
         result = self.client.table('runners').insert(data).execute()
@@ -367,6 +389,44 @@ class DatabaseClient:
         }).lt("created_at", older_than.isoformat()).execute()
         
         return len(result.data) if result.data else 0
+
+    # ========================================================================
+    # VALIDATION OPERATIONS
+    # ========================================================================
+    
+    async def store_validation_report(self, batch_id: str, report: dict) -> Optional[Dict[str, Any]]:
+        """
+        Store validation report on batch record
+        
+        Args:
+            batch_id: UUID of the batch
+            report: Validation report dictionary
+        
+        Returns:
+            Updated batch record
+        """
+        result = self.client.table("import_batches").update({
+            "validation_report": report,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq("id", batch_id).execute()
+        
+        return result.data[0] if result.data else None
+
+    async def get_batch_races(self, batch_id: str) -> List[Dict[str, Any]]:
+        """
+        Get all races for a batch
+        
+        Args:
+            batch_id: UUID of the batch
+        
+        Returns:
+            List of race records with all fields
+        """
+        result = self.client.table("races").select("*").eq(
+            "batch_id", batch_id
+        ).execute()
+        
+        return result.data if result.data else []
 
 # ============================================================================
 # CLIENT FACTORY

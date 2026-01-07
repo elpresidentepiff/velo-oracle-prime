@@ -33,8 +33,11 @@ from .models import (
     RegisterFilesResponse,
     ParseBatchResponse,
     BatchStatusResponse,
+    ValidateBatchResponse,
+    RaceValidationResult,
     ErrorDetail
 )
+from .parsers.quality import calculate_runner_confidence, calculate_race_quality
 
 # Configure logging
 logging.basicConfig(
@@ -538,6 +541,188 @@ async def parse_batch(batch_id: str):
         )
 
 # ============================================================================
+# ENDPOINT: VALIDATE BATCH
+# POST /imports/{batch_id}/validate
+# ============================================================================
+
+@app.post(
+    "/imports/{batch_id}/validate",
+    response_model=ValidateBatchResponse
+)
+async def validate_batch(batch_id: str):
+    """
+    Run RIC+ validation on a parsed batch
+    
+    Categorizes races as:
+    - valid: Ready for V12 engine
+    - needs_review: Manual inspection required
+    - rejected: Too poor quality, ignore
+    
+    Updates batch status based on results.
+    """
+    logger.info(f"Validating batch: {batch_id}")
+    
+    try:
+        db: DatabaseClient = app.state.db
+        
+        # Get batch
+        batch = await db.get_batch_by_id(batch_id)
+        if not batch:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Batch not found"
+            )
+        
+        # Check batch status - must be parsed or ready
+        if batch["status"] not in ["parsed", "ready"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Batch must be 'parsed' or 'ready' to validate (current: {batch['status']})"
+            )
+        
+        # Get all races in batch
+        races = await db.get_batch_races(batch_id)
+        
+        if not races:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No races found in batch"
+            )
+        
+        # Validate each race
+        validation_results = []
+        valid_count = 0
+        needs_review_count = 0
+        rejected_count = 0
+        
+        for race in races:
+            # Get runners for this race
+            runners = await db.get_race_runners(race["id"])
+            race["runners"] = runners
+            
+            result = validate_race(race)
+            validation_results.append(result)
+            
+            if result["status"] == "valid":
+                valid_count += 1
+            elif result["status"] == "needs_review":
+                needs_review_count += 1
+            elif result["status"] == "rejected":
+                rejected_count += 1
+        
+        # Calculate average quality
+        avg_quality = sum(r["quality_score"] for r in validation_results) / len(races) if races else 0.0
+        
+        # Determine new batch status
+        if rejected_count > 0 or needs_review_count > 0:
+            new_status = BatchStatus.NEEDS_REVIEW
+        else:
+            new_status = BatchStatus.VALIDATED
+        
+        # Update batch
+        await db.update_batch_status(batch_id, new_status)
+        
+        # Store validation report
+        validation_report = {
+            "validated_at": datetime.utcnow().isoformat(),
+            "total_races": len(races),
+            "valid_count": valid_count,
+            "needs_review_count": needs_review_count,
+            "rejected_count": rejected_count,
+            "avg_quality_score": avg_quality,
+            "races": validation_results
+        }
+        
+        await db.store_validation_report(batch_id, validation_report)
+        
+        logger.info(
+            f"✅ Batch {batch_id} validated: {valid_count} valid, "
+            f"{needs_review_count} review, {rejected_count} rejected"
+        )
+        
+        return ValidateBatchResponse(
+            batch_id=batch_id,
+            total_races=len(races),
+            valid_count=valid_count,
+            needs_review_count=needs_review_count,
+            rejected_count=rejected_count,
+            avg_quality_score=round(avg_quality, 3),
+            new_status=new_status.value,
+            races=[RaceValidationResult(**r) for r in validation_results]
+        )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Failed to validate batch: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to validate batch: {str(e)}"
+        )
+
+
+def validate_race(race: dict) -> dict:
+    """
+    Apply RIC+ validation rules to a single race
+    
+    Returns: {
+        "race_id": str,
+        "status": "valid" | "needs_review" | "rejected",
+        "issues": List[str],
+        "quality_score": float
+    }
+    """
+    issues = []
+    status_result = "valid"
+    quality_score = race.get("quality_score", 0.0)
+    
+    # Hard rejections (critical failures)
+    if not race.get("course"):
+        issues.append("REJECT: Missing course")
+        status_result = "rejected"
+    
+    if not race.get("distance"):
+        issues.append("REJECT: Missing distance")
+        status_result = "rejected"
+    
+    runners = race.get("runners", [])
+    if len(runners) == 0:
+        issues.append("REJECT: No runners")
+        status_result = "rejected"
+    
+    # Check for duplicate names (data corruption)
+    if "duplicate_horse_names" in race.get("quality_flags", []):
+        issues.append("REJECT: Duplicate horse names detected")
+        status_result = "rejected"
+    
+    # Needs review (suspicious but not critical)
+    if status_result == "valid":  # Only check if not already rejected
+        if len(runners) < 4:
+            issues.append("FLAG: Unusually few runners (<4)")
+            status_result = "needs_review"
+        
+        if len(runners) > 30:
+            issues.append("FLAG: Unusually many runners (>30)")
+            status_result = "needs_review"
+        
+        if quality_score < 0.5:
+            issues.append("FLAG: Low quality score (<0.5)")
+            status_result = "needs_review"
+        
+        # Check runner data quality
+        low_confidence_runners = [r for r in runners if r.get("confidence", 1.0) < 0.6]
+        if len(low_confidence_runners) > len(runners) * 0.3:  # >30% low confidence
+            issues.append("FLAG: Many low-confidence runners")
+            status_result = "needs_review"
+    
+    return {
+        "race_id": race["id"],
+        "status": status_result,
+        "issues": issues,
+        "quality_score": round(quality_score, 3)
+    }
+
+# ============================================================================
 # ENDPOINT 4: GET BATCH STATUS
 # GET /imports/{batch_id}
 # ============================================================================
@@ -690,6 +875,7 @@ async def root():
             "create_batch": "POST /imports/batch",
             "register_files": "POST /imports/{batch_id}/files",
             "parse_batch": "POST /imports/{batch_id}/parse",
+            "validate_batch": "POST /imports/{batch_id}/validate",
             "get_batch_status": "GET /imports/{batch_id}",
             "list_races": "GET /races/{import_date}",
             "get_race_details": "GET /races/{race_id}/details"

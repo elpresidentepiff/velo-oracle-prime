@@ -18,6 +18,9 @@ class BatchStatus(str, Enum):
     """Batch processing status"""
     UPLOADED = "uploaded"
     PARSING = "parsing"
+    PARSED = "parsed"
+    VALIDATED = "validated"
+    NEEDS_REVIEW = "needs_review"
     READY = "ready"
     FAILED = "failed"
 
@@ -263,3 +266,48 @@ class FormLineData(BaseModel):
     or_rating: Optional[int] = None
     notes: Optional[str] = None
     raw: Dict[str, Any] = Field(default_factory=dict)
+
+
+# ============================================================================
+# VALIDATION MODELS
+# ============================================================================
+
+class RaceValidationResult(BaseModel):
+    """Validation result for a single race"""
+    race_id: str = Field(..., description="UUID of the race")
+    status: str = Field(..., description="valid | needs_review | rejected")
+    issues: List[str] = Field(default_factory=list, description="List of validation issues")
+    quality_score: float = Field(..., description="Quality score 0.0-1.0")
+
+
+class ValidateBatchResponse(BaseModel):
+    """Response from validating a batch"""
+    batch_id: str = Field(..., description="UUID of the batch")
+    total_races: int = Field(..., description="Total number of races")
+    valid_count: int = Field(..., description="Number of valid races")
+    needs_review_count: int = Field(..., description="Number of races needing review")
+    rejected_count: int = Field(..., description="Number of rejected races")
+    avg_quality_score: float = Field(..., description="Average quality score")
+    new_status: str = Field(..., description="New batch status")
+    races: List[RaceValidationResult] = Field(default_factory=list, description="Validation results per race")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "batch_id": "550e8400-e29b-41d4-a716-446655440000",
+                "total_races": 45,
+                "valid_count": 42,
+                "needs_review_count": 2,
+                "rejected_count": 1,
+                "avg_quality_score": 0.87,
+                "new_status": "needs_review",
+                "races": [
+                    {
+                        "race_id": "race-123",
+                        "status": "valid",
+                        "issues": [],
+                        "quality_score": 0.95
+                    }
+                ]
+            }
+        }
