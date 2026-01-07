@@ -8,7 +8,7 @@ Date: 2026-01-04
 import os
 import logging
 from typing import List, Optional, Dict, Any
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from supabase import create_client, Client
 from .models import BatchStatus, FileType, RaceData, RunnerData
 
@@ -360,7 +360,6 @@ class DatabaseClient:
             Number of batches deleted
         """
         if older_than is None:
-            from datetime import timedelta
             older_than = datetime.utcnow() - timedelta(hours=1)
         
         result = self.client.table("import_batches").delete().match({

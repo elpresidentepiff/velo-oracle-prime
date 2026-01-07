@@ -48,15 +48,16 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 # Background task to clean up smoke test batches
-async def cleanup_smoke_batches():
+async def cleanup_smoke_batches(db: DatabaseClient):
     """
     Runs every hour, deletes smoke test batches older than 1 hour
     Prevents test data pollution in production
+    
+    Args:
+        db: DatabaseClient instance for database operations
     """
     while True:
         try:
-            db: DatabaseClient = app.state.db
-            
             # Find smoke batches older than 1 hour
             cutoff_time = datetime.utcnow() - timedelta(hours=1)
             
@@ -101,7 +102,8 @@ async def lifespan(app: FastAPI):
     # Start background cleanup task (only in production)
     cleanup_task = None
     if os.getenv("RAILWAY_ENVIRONMENT") == "production":
-        cleanup_task = asyncio.create_task(cleanup_smoke_batches())
+        # Pass db client to cleanup task to avoid scope issues
+        cleanup_task = asyncio.create_task(cleanup_smoke_batches(app.state.db))
         logger.info("🧹 Smoke batch cleanup task started")
     
     logger.info("✅ VÉLØ Ingestion Spine ready")
