@@ -30,12 +30,16 @@ jobs:
         run: |
           set -e
           echo "Testing tRPC createBatch endpoint..."
-          AUTH=""
-          if [ -n "$OPS_API_KEY" ]; then AUTH="-H \"Authorization: Bearer $OPS_API_KEY\""; fi
-          eval curl -i --fail --max-time 20 -X POST https://ingestion-spine-production.up.railway.app/trpc/ingestion.createBatch \
-            -H "Content-Type: application/json" \
-            $AUTH \
-            -d '{"input":{"import_date":"2026-01-07","source":"racing_post","notes":"gh-smoke-test"}}'
+          if [ -n "$OPS_API_KEY" ]; then
+            curl -i --fail --max-time 20 -X POST https://ingestion-spine-production.up.railway.app/trpc/ingestion.createBatch \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $OPS_API_KEY" \
+              -d '{"input":{"import_date":"2026-01-07","source":"racing_post","notes":"gh-smoke-test"}}'
+          else
+            curl -i --fail --max-time 20 -X POST https://ingestion-spine-production.up.railway.app/trpc/ingestion.createBatch \
+              -H "Content-Type: application/json" \
+              -d '{"input":{"import_date":"2026-01-07","source":"racing_post","notes":"gh-smoke-test"}}'
+          fi
       
       - name: Test debug routes endpoint
         run: |
