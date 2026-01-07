@@ -304,6 +304,37 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ---
 
+## Development Workflow
+
+### Local Development
+1. Install dependencies: `pip install -r workers/ingestion_spine/requirements.txt -r workers/ingestion_spine/requirements-dev.txt`
+2. Run tests: `pytest`
+3. Run linter: `ruff check .`
+4. Run formatter: `ruff format .`
+5. Run type checker: `mypy workers/ingestion_spine/`
+
+### CI/CD
+- **CI Pipeline:** Runs on every PR (tests + lint + type check)
+- **Smoke Tests:** Run every 30 minutes + on every push to main
+- **Dependabot:** Weekly dependency updates (Mondays 9am)
+
+### Pull Request Process
+1. Create feature branch from `feature/v10-launch`
+2. Make changes + add tests
+3. Run local checks: `pytest && ruff check . && mypy workers/ingestion_spine/`
+4. Push and create PR (template will auto-populate)
+5. Wait for CI to pass
+6. Request review
+7. Address feedback
+8. Merge after approval + CI green
+
+### Health Endpoints
+- `/healthz` - Fast check (no DB) - Use for load balancers
+- `/health` - Full check (includes DB) - Use for monitoring
+- `/debug/routes` - List all registered routes
+
+---
+
 ## Contact
 
 **VÉLØ Oracle Team**  
