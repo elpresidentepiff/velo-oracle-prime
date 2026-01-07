@@ -148,18 +148,19 @@ async def debug_routes():
 @app.get("/trpc/health")
 async def trpc_health_check():
     """tRPC-specific health check"""
+    # Get actual tRPC routes from the app
+    trpc_routes = []
+    for route in app.routes:
+        if hasattr(route, "path") and "/trpc/" in route.path and route.path != "/trpc/health":
+            # Only include POST methods for tRPC endpoints (primary method)
+            if hasattr(route, "methods") and "POST" in route.methods:
+                trpc_routes.append(route.path)
+    
     return {
         "status": "healthy",
         "service": "trpc-adapter",
         "version": "1.0.0",
-        "endpoints": [
-            "/trpc/ingestion.createBatch",
-            "/trpc/ingestion.registerFiles",
-            "/trpc/ingestion.parseBatch",
-            "/trpc/ingestion.getBatchStatus",
-            "/trpc/ingestion.listRaces",
-            "/trpc/ingestion.getRaceDetails"
-        ]
+        "endpoints": sorted(set(trpc_routes))  # Remove duplicates and sort
     }
 
 # ============================================================================
