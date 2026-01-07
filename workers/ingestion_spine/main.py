@@ -368,7 +368,7 @@ async def parse_batch(batch_id: str):
             )
         
         # Check if already parsed
-        if batch['status'] in [BatchStatus.READY, BatchStatus.PARSING]:
+        if batch['status'] in [BatchStatus.PARSED, BatchStatus.VALIDATED, BatchStatus.READY, BatchStatus.PARSING]:
             return ParseBatchResponse(
                 batch_id=batch_id,
                 status=batch['status'],
@@ -488,11 +488,47 @@ async def parse_batch(batch_id: str):
                 counts['form_lines_inserted'] = len(form_lines)
                 logger.info(f"✅ Parsed {counts['form_lines_inserted']} form lines")
             
+            # STEP 4: Calculate quality metadata for all races and runners
+            logger.info("Step 4: Calculating quality metadata...")
+            from .parsers.quality import calculate_runner_confidence, calculate_race_quality
+            
+            for join_key, race_id in race_id_map.items():
+                # Get runners for this race
+                runners = await db.get_race_runners(race_id)
+                
+                # Calculate confidence for each runner
+                for runner in runners:
+                    confidence, flags, method = calculate_runner_confidence(runner)
+                    # Update runner with quality metadata
+                    await db.client.table('runners').update({
+                        'confidence': confidence,
+                        'extraction_method': method,
+                        'quality_flags': flags
+                    }).eq('id', runner['id']).execute()
+                
+                # Re-fetch runners with updated confidence
+                runners = await db.get_race_runners(race_id)
+                
+                # Get race data
+                race = await db.get_race_by_id(race_id)
+                
+                # Calculate race quality
+                parse_conf, quality, race_flags = calculate_race_quality(race, runners)
+                
+                # Update race with quality metadata
+                await db.client.table('races').update({
+                    'parse_confidence': parse_conf,
+                    'quality_score': quality,
+                    'quality_flags': race_flags
+                }).eq('id', race_id).execute()
+            
+            logger.info("✅ Quality metadata calculated")
+            
             # SUCCESS: All validations passed
             if counts['races_inserted'] > 0 and counts['runners_inserted'] > 0 and counts['unmatched_runner_rows'] == 0:
                 await db.update_batch_status(
                     batch_id,
-                    BatchStatus.READY,
+                    BatchStatus.PARSED,
                     counts=counts
                 )
                 
@@ -500,8 +536,8 @@ async def parse_batch(batch_id: str):
                 
                 return ParseBatchResponse(
                     batch_id=batch_id,
-                    status=BatchStatus.READY,
-                    message="Batch parsed successfully",
+                    status=BatchStatus.PARSED,
+                    message="Batch parsed successfully - ready for validation",
                     counts=counts
                 )
             else:
