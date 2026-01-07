@@ -5,12 +5,14 @@ Supabase PostgreSQL operations with service role access
 Date: 2026-01-04
 """
 
-import os
 import logging
-from typing import List, Optional, Dict, Any
-from datetime import date, datetime, time, timedelta
-from supabase import create_client, Client
-from .models import BatchStatus, FileType, RaceData, RunnerData
+import os
+from datetime import date, datetime, timedelta
+from typing import Any
+
+from supabase import Client, create_client
+
+from .models import BatchStatus, FileType
 
 logger = logging.getLogger(__name__)
 
@@ -23,18 +25,18 @@ class DatabaseClient:
     Supabase database client for VÉLØ Ingestion Spine.
     Uses service role for full write access.
     """
-    
+
     def __init__(self):
         """Initialize Supabase client with service role"""
         self.url = os.getenv("SUPABASE_URL")
         self.key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")  # Service role, not anon key
-        
+
         if not self.url or not self.key:
             raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
-        
+
         self.client: Client = create_client(self.url, self.key)
         logger.info("Database client initialized")
-    
+
     async def verify_connection(self):
         """Verify database connection"""
         try:
@@ -44,22 +46,22 @@ class DatabaseClient:
         except Exception as e:
             logger.error(f"Database connection failed: {e}")
             raise
-    
+
     async def close(self):
         """Close database connection"""
         # Supabase client doesn't require explicit close
         logger.info("Database client closed")
-    
+
     # ========================================================================
     # BATCH OPERATIONS
     # ========================================================================
-    
+
     async def create_batch(
         self,
         import_date: date,
         source: str = "racing_post",
-        notes: Optional[str] = None
-    ) -> Dict[str, Any]:
+        notes: str | None = None
+    ) -> dict[str, Any]:
         """
         Create a new import batch.
         
@@ -72,46 +74,46 @@ class DatabaseClient:
             "notes": notes,
             "counts": {}
         }
-        
+
         result = self.client.table('import_batches').insert(data).execute()
-        
+
         if not result.data:
             raise ValueError("Failed to create batch")
-        
+
         return result.data[0]
-    
-    async def get_batch_by_id(self, batch_id: str) -> Optional[Dict[str, Any]]:
+
+    async def get_batch_by_id(self, batch_id: str) -> dict[str, Any] | None:
         """Get batch by ID"""
         result = self.client.table('import_batches').select('*').eq('id', batch_id).execute()
-        
+
         if not result.data:
             return None
-        
+
         return result.data[0]
-    
+
     async def get_batch_by_date(
         self,
         import_date: date,
         source: str = "racing_post"
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Get batch by import date and source"""
         result = self.client.table('import_batches')\
             .select('*')\
             .eq('import_date', import_date.isoformat())\
             .eq('source', source)\
             .execute()
-        
+
         if not result.data:
             return None
-        
+
         return result.data[0]
-    
+
     async def update_batch_status(
         self,
         batch_id: str,
         status: BatchStatus,
-        error_summary: Optional[str] = None,
-        counts: Optional[Dict[str, Any]] = None
+        error_summary: str | None = None,
+        counts: dict[str, Any] | None = None
     ):
         """
         Update batch status with validation
@@ -122,48 +124,48 @@ class DatabaseClient:
         valid_statuses = [
             "uploaded", "parsing", "parsed", "validated", "needs_review", "ready", "failed"
         ]
-        
+
         status_value = status.value if isinstance(status, BatchStatus) else status
-        
+
         if status_value not in valid_statuses:
             raise ValueError(f"Invalid status: {status_value}")
-        
+
         data = {
             "status": status_value,
             "updated_at": datetime.utcnow().isoformat()
         }
-        
+
         if error_summary:
             data["error_summary"] = error_summary
-        
+
         if counts:
             data["counts"] = counts
-        
+
         self.client.table('import_batches').update(data).eq('id', batch_id).execute()
-    
-    async def get_batch_stats(self, batch_id: str) -> Dict[str, Any]:
+
+    async def get_batch_stats(self, batch_id: str) -> dict[str, Any]:
         """Get batch statistics using helper function"""
         result = self.client.rpc('get_batch_stats', {'p_batch_id': batch_id}).execute()
-        
+
         if not result.data:
             return {}
-        
+
         return result.data
-    
+
     # ========================================================================
     # FILE OPERATIONS
     # ========================================================================
-    
+
     async def register_file(
         self,
         batch_id: str,
         file_type: FileType,
         storage_path: str,
         original_filename: str,
-        mime_type: Optional[str] = None,
-        checksum_sha256: Optional[str] = None,
-        size_bytes: Optional[int] = None
-    ) -> Dict[str, Any]:
+        mime_type: str | None = None,
+        checksum_sha256: str | None = None,
+        size_bytes: int | None = None
+    ) -> dict[str, Any]:
         """Register a file for a batch"""
         data = {
             "batch_id": batch_id,
@@ -174,43 +176,43 @@ class DatabaseClient:
             "checksum_sha256": checksum_sha256,
             "size_bytes": size_bytes
         }
-        
+
         result = self.client.table('import_files').insert(data).execute()
-        
+
         if not result.data:
             raise ValueError("Failed to register file")
-        
+
         return result.data[0]
-    
-    async def get_batch_files(self, batch_id: str) -> List[Dict[str, Any]]:
+
+    async def get_batch_files(self, batch_id: str) -> list[dict[str, Any]]:
         """Get all files for a batch"""
         result = self.client.table('import_files')\
             .select('*')\
             .eq('batch_id', batch_id)\
             .execute()
-        
+
         return result.data or []
-    
-    async def mark_file_parsed(self, file_id: str, error: Optional[str] = None):
+
+    async def mark_file_parsed(self, file_id: str, error: str | None = None):
         """Mark a file as parsed"""
         data = {
             "parsed_at": datetime.utcnow().isoformat()
         }
-        
+
         if error:
             data["error"] = error
-        
+
         self.client.table('import_files').update(data).eq('id', file_id).execute()
-    
+
     # ========================================================================
     # RACE OPERATIONS
     # ========================================================================
-    
+
     async def insert_race(
         self,
         batch_id: str,
         import_date: date,
-        race_data: Dict[str, Any]
+        race_data: dict[str, Any]
     ) -> str:
         """
         Insert a race record.
@@ -236,41 +238,41 @@ class DatabaseClient:
             "quality_score": race_data.get('quality_score', 1.0),
             "quality_flags": race_data.get('quality_flags', [])
         }
-        
+
         result = self.client.table('races').insert(data).execute()
-        
+
         if not result.data:
             raise ValueError("Failed to insert race")
-        
+
         return result.data[0]['id']
-    
-    async def get_race_by_id(self, race_id: str) -> Optional[Dict[str, Any]]:
+
+    async def get_race_by_id(self, race_id: str) -> dict[str, Any] | None:
         """Get race by ID"""
         result = self.client.table('races').select('*').eq('id', race_id).execute()
-        
+
         if not result.data:
             return None
-        
+
         return result.data[0]
-    
-    async def get_races_by_date(self, import_date: date) -> List[Dict[str, Any]]:
+
+    async def get_races_by_date(self, import_date: date) -> list[dict[str, Any]]:
         """Get all races for a date"""
         result = self.client.table('races')\
             .select('*')\
             .eq('import_date', import_date.isoformat())\
             .order('off_time')\
             .execute()
-        
+
         return result.data or []
-    
+
     # ========================================================================
     # RUNNER OPERATIONS
     # ========================================================================
-    
+
     async def insert_runner(
         self,
         race_id: str,
-        runner_data: Dict[str, Any]
+        runner_data: dict[str, Any]
     ) -> str:
         """
         Insert a runner record.
@@ -299,32 +301,32 @@ class DatabaseClient:
             "extraction_method": runner_data.get('extraction_method', 'table'),
             "quality_flags": runner_data.get('quality_flags', [])
         }
-        
+
         result = self.client.table('runners').insert(data).execute()
-        
+
         if not result.data:
             raise ValueError("Failed to insert runner")
-        
+
         return result.data[0]['id']
-    
-    async def get_race_runners(self, race_id: str) -> List[Dict[str, Any]]:
+
+    async def get_race_runners(self, race_id: str) -> list[dict[str, Any]]:
         """Get all runners for a race"""
         result = self.client.table('runners')\
             .select('*')\
             .eq('race_id', race_id)\
             .order('cloth_no')\
             .execute()
-        
+
         return result.data or []
-    
+
     # ========================================================================
     # FORM LINE OPERATIONS
     # ========================================================================
-    
+
     async def insert_form_line(
         self,
         runner_id: str,
-        form_data: Dict[str, Any]
+        form_data: dict[str, Any]
     ) -> str:
         """
         Insert a form line record.
@@ -344,31 +346,31 @@ class DatabaseClient:
             "notes": form_data.get('notes'),
             "raw": form_data.get('raw', {})
         }
-        
+
         result = self.client.table('runner_form_lines').insert(data).execute()
-        
+
         if not result.data:
             raise ValueError("Failed to insert form line")
-        
+
         return result.data[0]['id']
-    
-    async def get_runner_form_lines(self, runner_id: str) -> List[Dict[str, Any]]:
+
+    async def get_runner_form_lines(self, runner_id: str) -> list[dict[str, Any]]:
         """Get all form lines for a runner"""
         result = self.client.table('runner_form_lines')\
             .select('*')\
             .eq('runner_id', runner_id)\
             .order('run_date', desc=True)\
             .execute()
-        
+
         return result.data or []
 
     # ========================================================================
     # SMOKE BATCH CLEANUP
     # ========================================================================
-    
+
     async def delete_old_smoke_batches(
-        self, 
-        source: str = "smoke_test", 
+        self,
+        source: str = "smoke_test",
         older_than: datetime = None
     ) -> int:
         """
@@ -383,18 +385,18 @@ class DatabaseClient:
         """
         if older_than is None:
             older_than = datetime.utcnow() - timedelta(hours=1)
-        
+
         result = self.client.table("import_batches").delete().match({
             "source": source
         }).lt("created_at", older_than.isoformat()).execute()
-        
+
         return len(result.data) if result.data else 0
 
     # ========================================================================
     # VALIDATION OPERATIONS
     # ========================================================================
-    
-    async def store_validation_report(self, batch_id: str, report: dict) -> Optional[Dict[str, Any]]:
+
+    async def store_validation_report(self, batch_id: str, report: dict) -> dict[str, Any] | None:
         """
         Store validation report on batch record
         
@@ -409,10 +411,10 @@ class DatabaseClient:
             "validation_report": report,
             "updated_at": datetime.utcnow().isoformat()
         }).eq("id", batch_id).execute()
-        
+
         return result.data[0] if result.data else None
 
-    async def get_batch_races(self, batch_id: str) -> List[Dict[str, Any]]:
+    async def get_batch_races(self, batch_id: str) -> list[dict[str, Any]]:
         """
         Get all races for a batch
         
@@ -425,20 +427,20 @@ class DatabaseClient:
         result = self.client.table("races").select("*").eq(
             "batch_id", batch_id
         ).execute()
-        
+
         return result.data if result.data else []
 
 # ============================================================================
 # CLIENT FACTORY
 # ============================================================================
 
-_db_client: Optional[DatabaseClient] = None
+_db_client: DatabaseClient | None = None
 
 def get_db_client() -> DatabaseClient:
     """Get or create database client singleton"""
     global _db_client
-    
+
     if _db_client is None:
         _db_client = DatabaseClient()
-    
+
     return _db_client
