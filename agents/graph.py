@@ -10,21 +10,65 @@ Version: 1.0.0
 """
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, TypedDict, List, Optional
+from typing_extensions import Annotated
 from datetime import datetime
+import operator
 
 from langgraph.graph import StateGraph, END
 from langchain_core.runnables import RunnableConfig
 
 from agents.models import (
-    AgentState,
-    ScoutInput, ValidateInput, AnalyzeInput, CriticInput, ArchiveInput
+    AgentState, Race,
+    ScoutInput, ValidateInput, AnalyzeInput, CriticInput, ArchiveInput,
+    AnalyzeOutput, CriticOutput, ArchiveOutput
 )
 from agents.tools import (
     scout_races, validate_race, analyze_race, critic_race, archive_results
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# STATE TYPE
+# ============================================================================
+
+class GraphState(TypedDict):
+    """State that flows through the graph"""
+    # Input
+    date: str
+    dry_run: bool
+    
+    # Scout output
+    races: List[Race]
+    races_count: int
+    
+    # Validate output
+    valid_races: List[Race]
+    invalid_races: List[Dict[str, Any]]
+    validation_errors: List[str]
+    
+    # Analyze output (per race)
+    analyze_results: Dict[str, AnalyzeOutput]
+    
+    # Critic output (per race)
+    critic_results: Dict[str, CriticOutput]
+    
+    # Archive output (per race)
+    archive_results: Dict[str, ArchiveOutput]
+    
+    # Summary metrics
+    races_processed: int
+    successes: int
+    failures: int
+    failure_details: List[Dict[str, Any]]
+    
+    # Execution metadata
+    run_id: str
+    start_time: Optional[str]
+    end_time: Optional[str]
+    total_time_seconds: float
 
 
 # ============================================================================
@@ -161,7 +205,7 @@ def archive_node(state: Dict[str, Any]) -> Dict[str, Any]:
     logger.info("ARCHIVE NODE: Writing results to Supabase")
     logger.info("=" * 80)
     
-    archive_results = {}
+    results = {}
     successes = 0
     failures = 0
     failure_details = []
@@ -190,7 +234,7 @@ def archive_node(state: Dict[str, Any]) -> Dict[str, Any]:
         )
         
         archive_output = archive_results(archive_input, dry_run=state.get("dry_run", False))
-        archive_results[race_id] = archive_output
+        results[race_id] = archive_output
         
         if archive_output.success:
             successes += 1
@@ -215,7 +259,7 @@ def archive_node(state: Dict[str, Any]) -> Dict[str, Any]:
     logger.info("=" * 80)
     
     return {
-        "archive_results": archive_results,
+        "archive_results": results,
         "races_processed": len(state["analyze_results"]),
         "successes": successes,
         "failures": failures,
@@ -263,8 +307,8 @@ def create_agent_graph() -> StateGraph:
     Returns:
         StateGraph instance
     """
-    # Create state graph
-    workflow = StateGraph(dict)
+    # Create state graph with TypedDict
+    workflow = StateGraph(GraphState)
     
     # Add nodes
     workflow.add_node("scout", scout_node)
