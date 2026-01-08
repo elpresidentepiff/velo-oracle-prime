@@ -1,0 +1,53 @@
+{
+  "expectations": [
+    {
+      "id": "67bd303b-2bfb-490c-aee5-ed4a374d2ee0",
+      "kwargs": {
+        "column": "horse_name"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "27bff115-9507-491e-9e0e-1fee7f9a68ef",
+      "kwargs": {
+        "column": "odds",
+        "max_value": 1000.0,
+        "min_value": 1.01
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "a08ed1f6-0d0a-4afb-8545-1d4a2d7c9c2e",
+      "kwargs": {
+        "column": "confidence",
+        "max_value": 1.0,
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "0122df61-b158-4169-ba7f-2341b8260d25",
+      "kwargs": {
+        "column_list": [
+          "race_id",
+          "horse_name"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_compound_columns_to_be_unique"
+    }
+  ],
+  "id": "66fc4e85-aec3-4c8a-be5c-019f83e4bedd",
+  "meta": {
+    "great_expectations_version": "1.10.0"
+  },
+  "name": "runners_validation_suite",
+  "notes": null
+}

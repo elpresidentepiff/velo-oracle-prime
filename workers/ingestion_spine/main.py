@@ -33,11 +33,8 @@ from .models import (
     RegisterFilesResponse,
     ParseBatchResponse,
     BatchStatusResponse,
-    ValidateBatchResponse,
-    RaceValidationResult,
     ErrorDetail
 )
-from .parsers.quality import calculate_runner_confidence, calculate_race_quality
 
 # Configure logging
 logging.basicConfig(
@@ -368,7 +365,7 @@ async def parse_batch(batch_id: str):
             )
         
         # Check if already parsed
-        if batch['status'] in [BatchStatus.PARSED, BatchStatus.VALIDATED, BatchStatus.READY, BatchStatus.PARSING]:
+        if batch['status'] in [BatchStatus.READY, BatchStatus.PARSING]:
             return ParseBatchResponse(
                 batch_id=batch_id,
                 status=batch['status'],
@@ -406,7 +403,7 @@ async def parse_batch(batch_id: str):
         }
         
         try:
-            # STEP 1: Parse racecards → insert races
+            # STEP 1: Parse racecards
             logger.info("Step 1: Parsing racecards...")
             racecards_file = file_map[FileType.RACECARDS]
             racecards_data = await storage.download_file(racecards_file['storage_path'])
@@ -417,20 +414,9 @@ async def parse_batch(batch_id: str):
             if not races:
                 raise ValueError("No races found in racecards file")
             
-            # Insert races
-            race_id_map = {}  # join_key -> race_id
-            for race_data in races:
-                race_id = await db.insert_race(
-                    batch_id=batch_id,
-                    import_date=batch['import_date'],
-                    race_data=race_data
-                )
-                race_id_map[race_data['join_key']] = race_id
-                counts['races_inserted'] += 1
+            logger.info(f"✅ Parsed {len(races)} races from racecards")
             
-            logger.info(f"✅ Inserted {counts['races_inserted']} races")
-            
-            # STEP 2: Parse runners → insert runners linked to race_id
+            # STEP 2: Parse runners
             logger.info("Step 2: Parsing runners...")
             runners_file = file_map[FileType.RUNNERS]
             runners_data = await storage.download_file(runners_file['storage_path'])
@@ -441,22 +427,87 @@ async def parse_batch(batch_id: str):
             if not runners:
                 raise ValueError("No runners found in runners file")
             
-            # Match runners to races and insert
+            logger.info(f"✅ Parsed {len(runners)} runners")
+            
+            # STEP 3: Group runners by race and calculate quality
+            logger.info("Step 3: Calculating quality metadata...")
+            from .quality import calculate_runner_confidence, calculate_race_quality
+            
+            # Group runners by race join key
+            runners_by_race = {}
             unmatched_runners = []
+            
             for runner_data in runners:
                 runner_join_key = runner_data.pop('race_join_key')
                 
-                if runner_join_key not in race_id_map:
-                    unmatched_runners.append({
-                        'horse_name': runner_data.get('horse_name'),
-                        'join_key': runner_join_key
-                    })
-                    counts['unmatched_runner_rows'] += 1
+                # Calculate runner confidence
+                confidence, flags, method = calculate_runner_confidence(runner_data)
+                runner_data['confidence'] = confidence
+                runner_data['extraction_method'] = method
+                runner_data['quality_flags'] = flags
+                
+                # Group by race
+                if runner_join_key not in runners_by_race:
+                    runners_by_race[runner_join_key] = []
+                runners_by_race[runner_join_key].append(runner_data)
+            
+            # STEP 4: Insert races with quality metadata
+            logger.info("Step 4: Inserting races with quality metadata...")
+            race_id_map = {}  # join_key -> race_id
+            race_join_key_map = {}  # Store join_key_base -> full join_key mapping
+            
+            for race_data in races:
+                # Build full join_key with import_date
+                join_key_base = race_data.get('join_key_base', '')
+                import_date_str = batch['import_date'].isoformat()
+                full_join_key = f"{import_date_str}|{join_key_base}"
+                race_data['join_key'] = full_join_key
+                race_join_key_map[join_key_base] = full_join_key
+                
+                # Get runners for this race
+                race_runners = runners_by_race.get(full_join_key, [])
+                
+                # Calculate race quality
+                race_metadata = {
+                    'course': race_data.get('course'),
+                    'distance': race_data.get('distance'),
+                    'race_time': race_data.get('off_time')  # off_time is the race time
+                }
+                parse_conf, quality, race_flags = calculate_race_quality(race_metadata, race_runners)
+                
+                # Add quality metadata to race
+                race_data['parse_confidence'] = parse_conf
+                race_data['quality_score'] = quality
+                race_data['quality_flags'] = race_flags
+                
+                # Insert race
+                race_id = await db.insert_race(
+                    batch_id=batch_id,
+                    import_date=batch['import_date'],
+                    race_data=race_data
+                )
+                race_id_map[full_join_key] = race_id
+                counts['races_inserted'] += 1
+            
+            logger.info(f"✅ Inserted {counts['races_inserted']} races")
+            
+            # STEP 5: Insert runners with quality metadata
+            logger.info("Step 5: Inserting runners with quality metadata...")
+            for join_key, race_runners in runners_by_race.items():
+                if join_key not in race_id_map:
+                    # Unmatched runners
+                    for runner in race_runners:
+                        unmatched_runners.append({
+                            'horse_name': runner.get('horse_name'),
+                            'join_key': join_key
+                        })
+                        counts['unmatched_runner_rows'] += 1
                     continue
                 
-                race_id = race_id_map[runner_join_key]
-                await db.insert_runner(race_id=race_id, runner_data=runner_data)
-                counts['runners_inserted'] += 1
+                race_id = race_id_map[join_key]
+                for runner_data in race_runners:
+                    await db.insert_runner(race_id=race_id, runner_data=runner_data)
+                    counts['runners_inserted'] += 1
             
             logger.info(f"✅ Inserted {counts['runners_inserted']} runners")
             
@@ -474,9 +525,9 @@ async def parse_batch(batch_id: str):
                 
                 raise ValueError(error_msg)
             
-            # STEP 3: Parse form/comments (optional)
+            # STEP 6: Parse form/comments (optional)
             if FileType.FORM in file_map:
-                logger.info("Step 3: Parsing form...")
+                logger.info("Step 6: Parsing form...")
                 form_file = file_map[FileType.FORM]
                 form_data = await storage.download_file(form_file['storage_path'])
                 
@@ -488,56 +539,20 @@ async def parse_batch(batch_id: str):
                 counts['form_lines_inserted'] = len(form_lines)
                 logger.info(f"✅ Parsed {counts['form_lines_inserted']} form lines")
             
-            # STEP 4: Calculate quality metadata for all races and runners
-            logger.info("Step 4: Calculating quality metadata...")
-            from .parsers.quality import calculate_runner_confidence, calculate_race_quality
-            
-            for join_key, race_id in race_id_map.items():
-                # Get runners for this race
-                runners = await db.get_race_runners(race_id)
-                
-                # Calculate confidence for each runner
-                for runner in runners:
-                    confidence, flags, method = calculate_runner_confidence(runner)
-                    # Update runner with quality metadata
-                    await db.client.table('runners').update({
-                        'confidence': confidence,
-                        'extraction_method': method,
-                        'quality_flags': flags
-                    }).eq('id', runner['id']).execute()
-                
-                # Re-fetch runners with updated confidence
-                runners = await db.get_race_runners(race_id)
-                
-                # Get race data
-                race = await db.get_race_by_id(race_id)
-                
-                # Calculate race quality
-                parse_conf, quality, race_flags = calculate_race_quality(race, runners)
-                
-                # Update race with quality metadata
-                await db.client.table('races').update({
-                    'parse_confidence': parse_conf,
-                    'quality_score': quality,
-                    'quality_flags': race_flags
-                }).eq('id', race_id).execute()
-            
-            logger.info("✅ Quality metadata calculated")
-            
-            # SUCCESS: All validations passed
+            # SUCCESS: All validations passed - set status to PARSED (ready for validation)
             if counts['races_inserted'] > 0 and counts['runners_inserted'] > 0 and counts['unmatched_runner_rows'] == 0:
                 await db.update_batch_status(
                     batch_id,
-                    BatchStatus.PARSED,
+                    BatchStatus.PARSED,  # Changed from READY to PARSED
                     counts=counts
                 )
                 
-                logger.info(f"✅ Batch {batch_id} parsed successfully")
+                logger.info(f"✅ Batch {batch_id} parsed successfully with quality metadata")
                 
                 return ParseBatchResponse(
                     batch_id=batch_id,
                     status=BatchStatus.PARSED,
-                    message="Batch parsed successfully - ready for validation",
+                    message="Batch parsed successfully with quality metadata",
                     counts=counts
                 )
             else:
@@ -577,25 +592,24 @@ async def parse_batch(batch_id: str):
         )
 
 # ============================================================================
-# ENDPOINT: VALIDATE BATCH
+# ENDPOINT 3.5: VALIDATE BATCH
 # POST /imports/{batch_id}/validate
 # ============================================================================
 
-@app.post(
-    "/imports/{batch_id}/validate",
-    response_model=ValidateBatchResponse
-)
+@app.post("/imports/{batch_id}/validate")
 async def validate_batch(batch_id: str):
     """
-    Run RIC+ validation on a parsed batch
+    Run RIC+ validation + Great Expectations on a parsed batch
     
-    Categorizes races as:
-    - valid: Ready for V12 engine
-    - needs_review: Manual inspection required
-    - rejected: Too poor quality, ignore
+    Categorizes races as valid/needs_review/rejected
+    Updates batch status accordingly
     
-    Updates batch status based on results.
+    Returns validation report with per-race breakdown
     """
+    import pandas as pd
+    from .quality import validate_race
+    from data_quality.gx_context import get_gx_context, create_races_suite, create_runners_suite
+    
     logger.info(f"Validating batch: {batch_id}")
     
     try:
@@ -604,15 +618,12 @@ async def validate_batch(batch_id: str):
         # Get batch
         batch = await db.get_batch_by_id(batch_id)
         if not batch:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Batch not found"
-            )
+            raise HTTPException(status_code=404, detail="Batch not found")
         
-        # Check batch status - must be parsed or ready
+        # Check batch status - must be 'parsed' or 'ready' to validate
         if batch["status"] not in ["parsed", "ready"]:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=400,
                 detail=f"Batch must be 'parsed' or 'ready' to validate (current: {batch['status']})"
             )
         
@@ -620,22 +631,15 @@ async def validate_batch(batch_id: str):
         races = await db.get_batch_races(batch_id)
         
         if not races:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No races found in batch"
-            )
+            raise HTTPException(status_code=400, detail="Batch has no races")
         
-        # Validate each race
+        # --- ORIGINAL RIC+ VALIDATION ---
         validation_results = []
         valid_count = 0
         needs_review_count = 0
         rejected_count = 0
         
         for race in races:
-            # Get runners for this race
-            runners = await db.get_race_runners(race["id"])
-            race["runners"] = runners
-            
             result = validate_race(race)
             validation_results.append(result)
             
@@ -646,47 +650,96 @@ async def validate_batch(batch_id: str):
             elif result["status"] == "rejected":
                 rejected_count += 1
         
+        # --- GREAT EXPECTATIONS VALIDATION ---
+        gx_context = get_gx_context()
+        
+        # Convert races to DataFrame
+        races_df = pd.DataFrame([
+            {
+                "id": r["id"],
+                "course": r.get("course"),
+                "distance": r.get("distance"),
+                "quality_score": r.get("quality_score", 0.0),
+                "batch_id": batch_id
+            }
+            for r in races
+        ])
+        
+        # Get all runners
+        all_runners = []
+        for race in races:
+            for runner in race.get("runners", []):
+                all_runners.append({
+                    "race_id": race["id"],
+                    "horse_name": runner.get("horse_name"),
+                    "odds": runner.get("odds"),
+                    "confidence": runner.get("confidence", 0.0)
+                })
+        
+        runners_df = pd.DataFrame(all_runners)
+        
+        # Create and run validations with GX 1.0 API
+        races_validator = create_races_suite(gx_context, races_df)
+        races_results = races_validator.validate()
+        
+        runners_validator = create_runners_suite(gx_context, runners_df)
+        runners_results = runners_validator.validate()
+        
+        # Combine results
+        gx_success = races_results.success and runners_results.success
+        
         # Calculate average quality
-        avg_quality = sum(r["quality_score"] for r in validation_results) / len(races) if races else 0.0
+        avg_quality = sum(r["quality_score"] for r in validation_results) / len(validation_results)
         
         # Determine new batch status
-        if rejected_count > 0 or needs_review_count > 0:
+        if not gx_success or rejected_count > 0 or needs_review_count > 0:
             new_status = BatchStatus.NEEDS_REVIEW
         else:
             new_status = BatchStatus.VALIDATED
         
-        # Update batch
+        # Build validation report
+        validation_report = {
+            "validated_at": datetime.utcnow().isoformat(),
+            "total_races": len(races),
+            "ric_validation": {
+                "valid_count": valid_count,
+                "needs_review_count": needs_review_count,
+                "rejected_count": rejected_count,
+                "races": validation_results
+            },
+            "gx_validation": {
+                "races_success": races_results.success,
+                "runners_success": runners_results.success,
+                "races_results": races_results.to_json_dict(),
+                "runners_results": runners_results.to_json_dict()
+            },
+            "avg_quality_score": round(avg_quality, 3)
+        }
+        
+        # Update batch status
         await db.update_batch_status(batch_id, new_status)
         
         # Store validation report
-        validation_report = {
-            "validated_at": datetime.utcnow().isoformat(),
+        await db.store_validation_report(batch_id, validation_report)
+        
+        logger.info(
+            f"✅ Batch {batch_id} validated: "
+            f"RIC+: {valid_count} valid, {needs_review_count} review, {rejected_count} rejected | "
+            f"GX: races={races_results.success}, runners={runners_results.success}"
+        )
+        
+        return {
+            "batch_id": batch_id,
             "total_races": len(races),
             "valid_count": valid_count,
             "needs_review_count": needs_review_count,
             "rejected_count": rejected_count,
-            "avg_quality_score": avg_quality,
+            "avg_quality_score": round(avg_quality, 3),
+            "new_status": new_status.value,
+            "gx_success": gx_success,
             "races": validation_results
         }
         
-        await db.store_validation_report(batch_id, validation_report)
-        
-        logger.info(
-            f"✅ Batch {batch_id} validated: {valid_count} valid, "
-            f"{needs_review_count} review, {rejected_count} rejected"
-        )
-        
-        return ValidateBatchResponse(
-            batch_id=batch_id,
-            total_races=len(races),
-            valid_count=valid_count,
-            needs_review_count=needs_review_count,
-            rejected_count=rejected_count,
-            avg_quality_score=round(avg_quality, 3),
-            new_status=new_status.value,
-            races=[RaceValidationResult(**r) for r in validation_results]
-        )
-    
     except HTTPException:
         raise
     except Exception as e:
@@ -695,68 +748,6 @@ async def validate_batch(batch_id: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to validate batch: {str(e)}"
         )
-
-
-def validate_race(race: dict) -> dict:
-    """
-    Apply RIC+ validation rules to a single race
-    
-    Returns: {
-        "race_id": str,
-        "status": "valid" | "needs_review" | "rejected",
-        "issues": List[str],
-        "quality_score": float
-    }
-    """
-    issues = []
-    status_result = "valid"
-    quality_score = race.get("quality_score", 0.0)
-    
-    # Hard rejections (critical failures)
-    if not race.get("course"):
-        issues.append("REJECT: Missing course")
-        status_result = "rejected"
-    
-    if not race.get("distance"):
-        issues.append("REJECT: Missing distance")
-        status_result = "rejected"
-    
-    runners = race.get("runners", [])
-    if len(runners) == 0:
-        issues.append("REJECT: No runners")
-        status_result = "rejected"
-    
-    # Check for duplicate names (data corruption)
-    if "duplicate_horse_names" in race.get("quality_flags", []):
-        issues.append("REJECT: Duplicate horse names detected")
-        status_result = "rejected"
-    
-    # Needs review (suspicious but not critical)
-    if status_result == "valid":  # Only check if not already rejected
-        if len(runners) < 4:
-            issues.append("FLAG: Unusually few runners (<4)")
-            status_result = "needs_review"
-        
-        if len(runners) > 30:
-            issues.append("FLAG: Unusually many runners (>30)")
-            status_result = "needs_review"
-        
-        if quality_score < 0.5:
-            issues.append("FLAG: Low quality score (<0.5)")
-            status_result = "needs_review"
-        
-        # Check runner data quality
-        low_confidence_runners = [r for r in runners if r.get("confidence", 1.0) < 0.6]
-        if len(low_confidence_runners) > len(runners) * 0.3:  # >30% low confidence
-            issues.append("FLAG: Many low-confidence runners")
-            status_result = "needs_review"
-    
-    return {
-        "race_id": race["id"],
-        "status": status_result,
-        "issues": issues,
-        "quality_score": round(quality_score, 3)
-    }
 
 # ============================================================================
 # ENDPOINT 4: GET BATCH STATUS
@@ -911,7 +902,6 @@ async def root():
             "create_batch": "POST /imports/batch",
             "register_files": "POST /imports/{batch_id}/files",
             "parse_batch": "POST /imports/{batch_id}/parse",
-            "validate_batch": "POST /imports/{batch_id}/validate",
             "get_batch_status": "GET /imports/{batch_id}",
             "list_races": "GET /races/{import_date}",
             "get_race_details": "GET /races/{race_id}/details"
