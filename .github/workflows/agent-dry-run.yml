@@ -1,0 +1,60 @@
+name: Agent Dry Run
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * *'  # 2am daily UTC
+
+jobs:
+  agent-dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r workers/ingestion_spine/requirements.txt
+          # Install pytest for tests
+          pip install pytest pytest-asyncio
+
+      - name: Run agent dry run
+        run: |
+          python -m agents.run --date 2026-01-08 --dry-run > output.json
+
+      - name: Validate output
+        run: |
+          # Check that output.json is valid JSON
+          python -c "import json; json.load(open('output.json'))"
+          
+          # Check for required fields
+          python -c "
+          import json
+          data = json.load(open('output.json'))
+          required = ['run_id', 'date', 'races_processed', 'successes', 'failures', 'total_time_seconds']
+          for field in required:
+              assert field in data, f'Missing field: {field}'
+          print('✓ Output validation passed')
+          "
+
+      - name: Upload agent run summary
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-run-summary
+          path: output.json
+          retention-days: 30
+
+      - name: Display summary
+        if: always()
+        run: |
+          echo "=== Agent Run Summary ==="
+          cat output.json | python -m json.tool
