@@ -15,6 +15,7 @@ import sys
 import json
 import logging
 import argparse
+import uuid
 from datetime import datetime
 from typing import Dict, Any
 
@@ -72,7 +73,7 @@ def run_agent(date: str, dry_run: bool = False, verbose: bool = False) -> Dict[s
         "successes": 0,
         "failures": 0,
         "failure_details": [],
-        "run_id": f"run_{int(datetime.utcnow().timestamp())}",
+        "run_id": f"run_{uuid.uuid4().hex[:16]}",
         "start_time": None,
         "end_time": None,
         "total_time_seconds": 0.0

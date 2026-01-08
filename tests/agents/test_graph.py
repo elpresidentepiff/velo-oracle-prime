@@ -132,7 +132,8 @@ def test_analyze_node(initial_state, validated_races):
     assert analyze_output.race_id == "race_001"
     assert len(analyze_output.predictions) > 0
     assert analyze_output.confidence > 0
-    assert analyze_output.execution_time_ms >= 0  # Allow 0 or greater
+    # Execution time may be 0 in tests due to fast execution with mocked data
+    assert analyze_output.execution_time_ms >= 0
 
 
 def test_critic_node(initial_state, validated_races):

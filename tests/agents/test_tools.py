@@ -251,7 +251,8 @@ def test_analyze_race_dry_run(sample_race):
     assert result.race_id == sample_race.race_id
     assert len(result.predictions) == len(sample_race.runners)
     assert result.confidence == 0.75
-    assert result.execution_time_ms >= 0  # Allow 0 or greater
+    # Execution time may be 0 in tests due to fast execution with mocked data
+    assert result.execution_time_ms >= 0
 
 
 @patch("agents.tools.get_engine_runner")

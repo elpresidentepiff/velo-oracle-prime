@@ -10,6 +10,7 @@ Version: 1.0.0
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional, Any
 from datetime import datetime
+import uuid
 
 
 # ============================================================================
@@ -100,7 +101,7 @@ class CriticInput(BaseModel):
 
 class LearningEvent(BaseModel):
     """Learning event for feedback loop"""
-    event_id: str = Field(default_factory=lambda: f"evt_{datetime.utcnow().timestamp()}")
+    event_id: str = Field(default_factory=lambda: f"evt_{uuid.uuid4().hex[:16]}")
     race_id: str
     event_type: str = Field(..., description="Type: prediction_accuracy, data_quality, anomaly")
     severity: str = Field(default="info", description="Severity: info, warning, error")
@@ -169,7 +170,7 @@ class AgentState(BaseModel):
     failure_details: List[Dict[str, Any]] = Field(default_factory=list)
     
     # Execution metadata
-    run_id: str = Field(default_factory=lambda: f"run_{datetime.utcnow().timestamp()}")
+    run_id: str = Field(default_factory=lambda: f"run_{uuid.uuid4().hex[:16]}")
     start_time: Optional[str] = None
     end_time: Optional[str] = None
     total_time_seconds: float = 0.0
