@@ -9,7 +9,6 @@ class TestGXValidation:
     def test_valid_races_pass_validation(self):
         """Valid races should pass all GX expectations"""
         context = get_gx_context()
-        create_races_suite()
         
         valid_races = pd.DataFrame([
             {
@@ -28,26 +27,14 @@ class TestGXValidation:
             }
         ])
         
-        batch = context.sources.add_pandas("test_races")
-        batch_request = batch.add_batch(valid_races)
+        validator = create_races_suite(context, valid_races)
+        results = validator.validate()
         
-        checkpoint = context.add_checkpoint(
-            name="test_races_checkpoint",
-            validations=[
-                {
-                    "batch_request": batch_request.dict(),
-                    "expectation_suite_name": "races_validation_suite"
-                }
-            ]
-        )
-        
-        results = checkpoint.run()
         assert results.success is True
     
     def test_invalid_races_fail_validation(self):
         """Races with missing critical fields should fail"""
         context = get_gx_context()
-        create_races_suite()
         
         invalid_races = pd.DataFrame([
             {
@@ -59,26 +46,14 @@ class TestGXValidation:
             }
         ])
         
-        batch = context.sources.add_pandas("test_invalid_races")
-        batch_request = batch.add_batch(invalid_races)
+        validator = create_races_suite(context, invalid_races)
+        results = validator.validate()
         
-        checkpoint = context.add_checkpoint(
-            name="test_invalid_races_checkpoint",
-            validations=[
-                {
-                    "batch_request": batch_request.dict(),
-                    "expectation_suite_name": "races_validation_suite"
-                }
-            ]
-        )
-        
-        results = checkpoint.run()
         assert results.success is False
     
     def test_duplicate_runners_fail_validation(self):
         """Duplicate horse names in same race should fail"""
         context = get_gx_context()
-        create_runners_suite()
         
         duplicate_runners = pd.DataFrame([
             {
@@ -95,26 +70,14 @@ class TestGXValidation:
             }
         ])
         
-        batch = context.sources.add_pandas("test_duplicate_runners")
-        batch_request = batch.add_batch(duplicate_runners)
+        validator = create_runners_suite(context, duplicate_runners)
+        results = validator.validate()
         
-        checkpoint = context.add_checkpoint(
-            name="test_duplicate_runners_checkpoint",
-            validations=[
-                {
-                    "batch_request": batch_request.dict(),
-                    "expectation_suite_name": "runners_validation_suite"
-                }
-            ]
-        )
-        
-        results = checkpoint.run()
         assert results.success is False
     
     def test_distance_out_of_range_fails(self):
         """Distance outside reasonable range should fail"""
         context = get_gx_context()
-        create_races_suite()
         
         invalid_distance = pd.DataFrame([
             {
@@ -126,26 +89,14 @@ class TestGXValidation:
             }
         ])
         
-        batch = context.sources.add_pandas("test_distance_range")
-        batch_request = batch.add_batch(invalid_distance)
+        validator = create_races_suite(context, invalid_distance)
+        results = validator.validate()
         
-        checkpoint = context.add_checkpoint(
-            name="test_distance_range_checkpoint",
-            validations=[
-                {
-                    "batch_request": batch_request.dict(),
-                    "expectation_suite_name": "races_validation_suite"
-                }
-            ]
-        )
-        
-        results = checkpoint.run()
         assert results.success is False
     
     def test_odds_out_of_range_fails(self):
         """Odds outside reasonable range should fail"""
         context = get_gx_context()
-        create_runners_suite()
         
         invalid_odds = pd.DataFrame([
             {
@@ -156,18 +107,44 @@ class TestGXValidation:
             }
         ])
         
-        batch = context.sources.add_pandas("test_odds_range")
-        batch_request = batch.add_batch(invalid_odds)
+        validator = create_runners_suite(context, invalid_odds)
+        results = validator.validate()
         
-        checkpoint = context.add_checkpoint(
-            name="test_odds_range_checkpoint",
-            validations=[
-                {
-                    "batch_request": batch_request.dict(),
-                    "expectation_suite_name": "runners_validation_suite"
-                }
-            ]
-        )
+        assert results.success is False
+    
+    def test_quality_score_out_of_range_fails(self):
+        """Quality score outside 0-1 range should fail"""
+        context = get_gx_context()
         
-        results = checkpoint.run()
+        invalid_quality = pd.DataFrame([
+            {
+                "id": "race-1",
+                "course": "Kempton",
+                "distance": 2000,
+                "quality_score": 1.5,  # Above maximum 1.0
+                "batch_id": "batch-1"
+            }
+        ])
+        
+        validator = create_races_suite(context, invalid_quality)
+        results = validator.validate()
+        
+        assert results.success is False
+    
+    def test_missing_horse_name_fails(self):
+        """Missing horse name should fail"""
+        context = get_gx_context()
+        
+        missing_name = pd.DataFrame([
+            {
+                "race_id": "race-1",
+                "horse_name": None,  # Missing name
+                "odds": 5.0,
+                "confidence": 1.0
+            }
+        ])
+        
+        validator = create_runners_suite(context, missing_name)
+        results = validator.validate()
+        
         assert results.success is False

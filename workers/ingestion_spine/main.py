@@ -678,40 +678,12 @@ async def validate_batch(batch_id: str):
         
         runners_df = pd.DataFrame(all_runners)
         
-        # Run GX validations
-        races_batch = gx_context.sources.add_pandas("races_data")
-        races_batch_request = races_batch.add_batch(races_df)
+        # Create and run validations with GX 1.0 API
+        races_validator = create_races_suite(gx_context, races_df)
+        races_results = races_validator.validate()
         
-        runners_batch = gx_context.sources.add_pandas("runners_data")
-        runners_batch_request = runners_batch.add_batch(runners_df)
-        
-        # Ensure suites exist
-        create_races_suite()
-        create_runners_suite()
-        
-        # Run checkpoints
-        races_checkpoint = gx_context.add_checkpoint(
-            name="validate_races_checkpoint",
-            validations=[
-                {
-                    "batch_request": races_batch_request.dict(),
-                    "expectation_suite_name": "races_validation_suite"
-                }
-            ]
-        )
-        
-        runners_checkpoint = gx_context.add_checkpoint(
-            name="validate_runners_checkpoint",
-            validations=[
-                {
-                    "batch_request": runners_batch_request.dict(),
-                    "expectation_suite_name": "runners_validation_suite"
-                }
-            ]
-        )
-        
-        races_results = races_checkpoint.run()
-        runners_results = runners_checkpoint.run()
+        runners_validator = create_runners_suite(gx_context, runners_df)
+        runners_results = runners_validator.validate()
         
         # Combine results
         gx_success = races_results.success and runners_results.success
