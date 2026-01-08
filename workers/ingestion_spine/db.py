@@ -234,8 +234,8 @@ class DatabaseClient:
             "join_key": race_data.get('join_key'),
             "raw": race_data.get('raw', {}),
             # Quality metadata
-            "parse_confidence": race_data.get('parse_confidence', 1.0),
-            "quality_score": race_data.get('quality_score', 1.0),
+            "parse_confidence": race_data.get('parse_confidence'),
+            "quality_score": race_data.get('quality_score'),
             "quality_flags": race_data.get('quality_flags', [])
         }
 
@@ -297,8 +297,8 @@ class DatabaseClient:
             "form_figures": runner_data.get('form_figures'),
             "raw": runner_data.get('raw', {}),
             # Quality metadata
-            "confidence": runner_data.get('confidence', 1.0),
-            "extraction_method": runner_data.get('extraction_method', 'table'),
+            "confidence": runner_data.get('confidence'),
+            "extraction_method": runner_data.get('extraction_method'),
             "quality_flags": runner_data.get('quality_flags', [])
         }
 
