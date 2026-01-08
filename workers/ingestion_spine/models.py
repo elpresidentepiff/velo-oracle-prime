@@ -18,7 +18,10 @@ class BatchStatus(str, Enum):
     """Batch processing status"""
     UPLOADED = "uploaded"
     PARSING = "parsing"
+    PARSED = "parsed"
     READY = "ready"
+    VALIDATED = "validated"
+    NEEDS_REVIEW = "needs_review"
     FAILED = "failed"
 
 class FileType(str, Enum):

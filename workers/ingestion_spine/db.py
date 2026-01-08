@@ -341,6 +341,27 @@ class DatabaseClient:
         return result.data or []
 
     # ========================================================================
+    # VALIDATION OPERATIONS
+    # ========================================================================
+    
+    async def get_batch_races(self, batch_id: str) -> List[dict]:
+        """Get all races for a batch with runners"""
+        result = self.client.table("races").select(
+            "*, runners(*)"
+        ).eq("batch_id", batch_id).execute()
+        
+        return result.data if result.data else []
+    
+    async def store_validation_report(self, batch_id: str, report: dict):
+        """Store validation report on batch record"""
+        result = self.client.table("import_batches").update({
+            "validation_report": report,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq("id", batch_id).execute()
+        
+        return result.data[0] if result.data else None
+
+    # ========================================================================
     # SMOKE BATCH CLEANUP
     # ========================================================================
     

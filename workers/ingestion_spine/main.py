@@ -538,6 +538,114 @@ async def parse_batch(batch_id: str):
         )
 
 # ============================================================================
+# ENDPOINT 3.5: VALIDATE BATCH
+# POST /imports/{batch_id}/validate
+# ============================================================================
+
+@app.post("/imports/{batch_id}/validate")
+async def validate_batch(batch_id: str):
+    """
+    Run RIC+ validation on a parsed batch
+    
+    Categorizes races as valid/needs_review/rejected
+    Updates batch status accordingly
+    
+    Returns validation report with per-race breakdown
+    """
+    from .quality import validate_race
+    
+    logger.info(f"Validating batch: {batch_id}")
+    
+    try:
+        db: DatabaseClient = app.state.db
+        
+        # Get batch
+        batch = await db.get_batch_by_id(batch_id)
+        if not batch:
+            raise HTTPException(status_code=404, detail="Batch not found")
+        
+        # Check batch status - must be 'parsed' or 'ready' to validate
+        if batch["status"] not in ["parsed", "ready"]:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Batch must be 'parsed' or 'ready' to validate (current: {batch['status']})"
+            )
+        
+        # Get all races in batch
+        races = await db.get_batch_races(batch_id)
+        
+        if not races:
+            raise HTTPException(status_code=400, detail="Batch has no races")
+        
+        # Validate each race
+        validation_results = []
+        valid_count = 0
+        needs_review_count = 0
+        rejected_count = 0
+        
+        for race in races:
+            result = validate_race(race)
+            validation_results.append(result)
+            
+            if result["status"] == "valid":
+                valid_count += 1
+            elif result["status"] == "needs_review":
+                needs_review_count += 1
+            elif result["status"] == "rejected":
+                rejected_count += 1
+        
+        # Calculate average quality
+        avg_quality = sum(r["quality_score"] for r in validation_results) / len(validation_results)
+        
+        # Determine new batch status
+        if rejected_count > 0 or needs_review_count > 0:
+            new_status = BatchStatus.NEEDS_REVIEW
+        else:
+            new_status = BatchStatus.VALIDATED
+        
+        # Build validation report
+        validation_report = {
+            "validated_at": datetime.utcnow().isoformat(),
+            "total_races": len(races),
+            "valid_count": valid_count,
+            "needs_review_count": needs_review_count,
+            "rejected_count": rejected_count,
+            "avg_quality_score": round(avg_quality, 3),
+            "races": validation_results
+        }
+        
+        # Update batch status
+        await db.update_batch_status(batch_id, new_status)
+        
+        # Store validation report
+        await db.store_validation_report(batch_id, validation_report)
+        
+        logger.info(
+            f"✅ Batch {batch_id} validated: "
+            f"{valid_count} valid, {needs_review_count} review, {rejected_count} rejected"
+        )
+        
+        return {
+            "batch_id": batch_id,
+            "total_races": len(races),
+            "valid_count": valid_count,
+            "needs_review_count": needs_review_count,
+            "rejected_count": rejected_count,
+            "avg_quality_score": round(avg_quality, 3),
+            "new_status": new_status.value,
+            "races": validation_results
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Failed to validate batch: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to validate batch: {str(e)}"
+        )
+
+# ============================================================================
 # ENDPOINT 4: GET BATCH STATUS
 # GET /imports/{batch_id}
 # ============================================================================
