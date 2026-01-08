@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "velo-oracle-prime"
+version = "1.0.0"
+description = "VÉLØ Oracle Prime - Horse Racing Prediction System"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "VÉLØ Team"}
+]
+
+[tool.pytest.ini_options]
+pythonpath = "."
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[tool.setuptools]
+packages = ["agents", "app", "src", "workers"]

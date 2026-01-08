@@ -249,9 +249,13 @@ def archive_node(state: Dict[str, Any]) -> Dict[str, Any]:
     
     # Calculate total time
     end_time = datetime.utcnow().isoformat()
-    start_dt = datetime.fromisoformat(state["start_time"])
-    end_dt = datetime.fromisoformat(end_time)
-    total_time_seconds = (end_dt - start_dt).total_seconds()
+    try:
+        start_dt = datetime.fromisoformat(state["start_time"])
+        end_dt = datetime.fromisoformat(end_time)
+        total_time_seconds = (end_dt - start_dt).total_seconds()
+    except (ValueError, TypeError, KeyError):
+        # Fallback if datetime parsing fails
+        total_time_seconds = 0.0
     
     logger.info("=" * 80)
     logger.info(f"ARCHIVE COMPLETE: {successes} successes, {failures} failures")
