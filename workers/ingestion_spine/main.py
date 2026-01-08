@@ -599,14 +599,16 @@ async def parse_batch(batch_id: str):
 @app.post("/imports/{batch_id}/validate")
 async def validate_batch(batch_id: str):
     """
-    Run RIC+ validation on a parsed batch
+    Run RIC+ validation + Great Expectations on a parsed batch
     
     Categorizes races as valid/needs_review/rejected
     Updates batch status accordingly
     
     Returns validation report with per-race breakdown
     """
+    import pandas as pd
     from .quality import validate_race
+    from data_quality.gx_context import get_gx_context, create_races_suite, create_runners_suite
     
     logger.info(f"Validating batch: {batch_id}")
     
@@ -631,7 +633,7 @@ async def validate_batch(batch_id: str):
         if not races:
             raise HTTPException(status_code=400, detail="Batch has no races")
         
-        # Validate each race
+        # --- ORIGINAL RIC+ VALIDATION ---
         validation_results = []
         valid_count = 0
         needs_review_count = 0
@@ -648,11 +650,77 @@ async def validate_batch(batch_id: str):
             elif result["status"] == "rejected":
                 rejected_count += 1
         
+        # --- GREAT EXPECTATIONS VALIDATION ---
+        gx_context = get_gx_context()
+        
+        # Convert races to DataFrame
+        races_df = pd.DataFrame([
+            {
+                "id": r["id"],
+                "course": r.get("course"),
+                "distance": r.get("distance"),
+                "quality_score": r.get("quality_score", 0.0),
+                "batch_id": batch_id
+            }
+            for r in races
+        ])
+        
+        # Get all runners
+        all_runners = []
+        for race in races:
+            for runner in race.get("runners", []):
+                all_runners.append({
+                    "race_id": race["id"],
+                    "horse_name": runner.get("horse_name"),
+                    "odds": runner.get("odds"),
+                    "confidence": runner.get("confidence", 0.0)
+                })
+        
+        runners_df = pd.DataFrame(all_runners)
+        
+        # Run GX validations
+        races_batch = gx_context.sources.add_pandas("races_data")
+        races_batch_request = races_batch.add_batch(races_df)
+        
+        runners_batch = gx_context.sources.add_pandas("runners_data")
+        runners_batch_request = runners_batch.add_batch(runners_df)
+        
+        # Ensure suites exist
+        create_races_suite()
+        create_runners_suite()
+        
+        # Run checkpoints
+        races_checkpoint = gx_context.add_checkpoint(
+            name="validate_races_checkpoint",
+            validations=[
+                {
+                    "batch_request": races_batch_request.dict(),
+                    "expectation_suite_name": "races_validation_suite"
+                }
+            ]
+        )
+        
+        runners_checkpoint = gx_context.add_checkpoint(
+            name="validate_runners_checkpoint",
+            validations=[
+                {
+                    "batch_request": runners_batch_request.dict(),
+                    "expectation_suite_name": "runners_validation_suite"
+                }
+            ]
+        )
+        
+        races_results = races_checkpoint.run()
+        runners_results = runners_checkpoint.run()
+        
+        # Combine results
+        gx_success = races_results.success and runners_results.success
+        
         # Calculate average quality
         avg_quality = sum(r["quality_score"] for r in validation_results) / len(validation_results)
         
         # Determine new batch status
-        if rejected_count > 0 or needs_review_count > 0:
+        if not gx_success or rejected_count > 0 or needs_review_count > 0:
             new_status = BatchStatus.NEEDS_REVIEW
         else:
             new_status = BatchStatus.VALIDATED
@@ -661,11 +729,19 @@ async def validate_batch(batch_id: str):
         validation_report = {
             "validated_at": datetime.utcnow().isoformat(),
             "total_races": len(races),
-            "valid_count": valid_count,
-            "needs_review_count": needs_review_count,
-            "rejected_count": rejected_count,
-            "avg_quality_score": round(avg_quality, 3),
-            "races": validation_results
+            "ric_validation": {
+                "valid_count": valid_count,
+                "needs_review_count": needs_review_count,
+                "rejected_count": rejected_count,
+                "races": validation_results
+            },
+            "gx_validation": {
+                "races_success": races_results.success,
+                "runners_success": runners_results.success,
+                "races_results": races_results.to_json_dict(),
+                "runners_results": runners_results.to_json_dict()
+            },
+            "avg_quality_score": round(avg_quality, 3)
         }
         
         # Update batch status
@@ -676,7 +752,8 @@ async def validate_batch(batch_id: str):
         
         logger.info(
             f"✅ Batch {batch_id} validated: "
-            f"{valid_count} valid, {needs_review_count} review, {rejected_count} rejected"
+            f"RIC+: {valid_count} valid, {needs_review_count} review, {rejected_count} rejected | "
+            f"GX: races={races_results.success}, runners={runners_results.success}"
         )
         
         return {
@@ -687,6 +764,7 @@ async def validate_batch(batch_id: str):
             "rejected_count": rejected_count,
             "avg_quality_score": round(avg_quality, 3),
             "new_status": new_status.value,
+            "gx_success": gx_success,
             "races": validation_results
         }
         
