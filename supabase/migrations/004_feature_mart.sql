@@ -176,9 +176,11 @@ HAVING COUNT(*) >= 3;  -- Minimum sample size
 
 -- Course bias by distance band (36 months)
 CREATE MATERIALIZED VIEW IF NOT EXISTS course_distance_stats_36m AS
-SELECT 
+SELECT
   ra.course,
-  CASE 
+  CASE
+    WHEN ra.distance IS NULL OR REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') = ''
+      THEN 'unknown'
     WHEN CAST(REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') AS INTEGER) < 1200 THEN 'sprint'
     WHEN CAST(REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') AS INTEGER) < 1600 THEN 'mile'
     WHEN CAST(REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') AS INTEGER) < 2000 THEN 'middle'
@@ -195,7 +197,7 @@ WHERE ra.import_date >= NOW() - INTERVAL '36 months'
   AND b.status IN ('validated', 'ready')
   AND r.position = 1
   AND ra.distance IS NOT NULL
-  AND REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') ~ '^[0-9]+$'
+  AND REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') != ''
 GROUP BY ra.course, distance_band, ra.surface;
 
 -- ============================================================================

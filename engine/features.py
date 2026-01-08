@@ -8,6 +8,7 @@ Date: 2026-01-08
 """
 
 import logging
+import re
 
 import pandas as pd
 
@@ -88,6 +89,8 @@ async def get_features_for_racecard(
     LEFT JOIN course_distance_stats_36m cd
         ON ra.course = cd.course
         AND CASE
+            WHEN ra.distance IS NULL OR REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') = ''
+                THEN 'unknown'
             WHEN CAST(REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') AS INTEGER) < 1200 THEN 'sprint'
             WHEN CAST(REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') AS INTEGER) < 1600 THEN 'mile'
             WHEN CAST(REGEXP_REPLACE(ra.distance, '[^0-9]', '', 'g') AS INTEGER) < 2000 THEN 'middle'
@@ -204,7 +207,6 @@ def calculate_distance_band(distance_text: str) -> str:
 
     try:
         # Extract numeric value
-        import re
         numeric = re.sub(r'[^0-9]', '', distance_text)
         if not numeric:
             return 'unknown'

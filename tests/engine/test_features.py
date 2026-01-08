@@ -39,6 +39,10 @@ calculate_distance_band = engine_features.calculate_distance_band
 # Test Fixtures
 # ============================================================================
 
+# Test constants
+EXPECTED_RUNNER_COUNT = 15  # Typical field size for testing
+
+
 @pytest.fixture
 def mock_db_client():
     """Mock database client with fetch method"""
@@ -107,7 +111,7 @@ async def test_feature_query_performance(mock_db_client, sample_race_data):
     """
     # Setup mock to return 15 runners
     race_data = sample_race_data * 8  # 16 runners
-    race_data = race_data[:15]  # trim to 15
+    race_data = race_data[:EXPECTED_RUNNER_COUNT]  # trim to 15
     mock_db_client.fetch.return_value = race_data
 
     race_id = "test_race_123"
@@ -120,7 +124,7 @@ async def test_feature_query_performance(mock_db_client, sample_race_data):
     assert elapsed < 1.0, f"Query took {elapsed:.2f}s (target: <1s)"
 
     # Verify data
-    assert len(df) == 15, f"Expected 15 runners, got {len(df)}"
+    assert len(df) == EXPECTED_RUNNER_COUNT, f"Expected {EXPECTED_RUNNER_COUNT} runners, got {len(df)}"
     assert 'runner_id' in df.columns
     assert 'horse_name' in df.columns
 

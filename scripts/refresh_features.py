@@ -70,7 +70,9 @@ async def refresh_all_features():
                 # 3. Manual execution via Supabase SQL editor
                 try:
                     # Try using rpc if exec_sql function exists (must be created in DB)
-                    db.client.rpc('exec_sql', {'sql': query}).execute()
+                    # Note: Supabase client is synchronous, no await needed
+                    result = db.client.rpc('exec_sql', {'sql': query}).execute()
+                    logger.debug(f"RPC result: {result}")
                 except Exception as rpc_error:
                     logger.warning(
                         f"Cannot refresh {view} via RPC. "
@@ -115,7 +117,9 @@ async def refresh_single_view(view_name: str):
 
         query = f"REFRESH MATERIALIZED VIEW {view_name}"
         try:
-            db.client.rpc('exec_sql', {'sql': query}).execute()
+            # Note: Supabase client is synchronous
+            result = db.client.rpc('exec_sql', {'sql': query}).execute()
+            logger.debug(f"RPC result: {result}")
         except Exception as rpc_error:
             logger.error(
                 f"Cannot refresh {view_name} via RPC. "
