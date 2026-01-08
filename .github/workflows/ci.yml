@@ -27,6 +27,8 @@ jobs:
           else
             pip install pytest pytest-asyncio pytest-cov
           fi
+          # Install package in editable mode for tests
+          pip install -e .
 
       - name: Run tests
         run: |

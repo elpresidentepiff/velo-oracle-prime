@@ -25,6 +25,8 @@ jobs:
           pip install -r workers/ingestion_spine/requirements.txt
           # Install pytest for tests
           pip install pytest pytest-asyncio
+          # Install package in editable mode
+          pip install -e .
 
       - name: Run agent dry run
         run: |
