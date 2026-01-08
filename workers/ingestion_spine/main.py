@@ -403,7 +403,7 @@ async def parse_batch(batch_id: str):
         }
         
         try:
-            # STEP 1: Parse racecards → insert races
+            # STEP 1: Parse racecards
             logger.info("Step 1: Parsing racecards...")
             racecards_file = file_map[FileType.RACECARDS]
             racecards_data = await storage.download_file(racecards_file['storage_path'])
@@ -414,20 +414,9 @@ async def parse_batch(batch_id: str):
             if not races:
                 raise ValueError("No races found in racecards file")
             
-            # Insert races
-            race_id_map = {}  # join_key -> race_id
-            for race_data in races:
-                race_id = await db.insert_race(
-                    batch_id=batch_id,
-                    import_date=batch['import_date'],
-                    race_data=race_data
-                )
-                race_id_map[race_data['join_key']] = race_id
-                counts['races_inserted'] += 1
+            logger.info(f"✅ Parsed {len(races)} races from racecards")
             
-            logger.info(f"✅ Inserted {counts['races_inserted']} races")
-            
-            # STEP 2: Parse runners → insert runners linked to race_id
+            # STEP 2: Parse runners
             logger.info("Step 2: Parsing runners...")
             runners_file = file_map[FileType.RUNNERS]
             runners_data = await storage.download_file(runners_file['storage_path'])
@@ -438,22 +427,87 @@ async def parse_batch(batch_id: str):
             if not runners:
                 raise ValueError("No runners found in runners file")
             
-            # Match runners to races and insert
+            logger.info(f"✅ Parsed {len(runners)} runners")
+            
+            # STEP 3: Group runners by race and calculate quality
+            logger.info("Step 3: Calculating quality metadata...")
+            from .quality import calculate_runner_confidence, calculate_race_quality
+            
+            # Group runners by race join key
+            runners_by_race = {}
             unmatched_runners = []
+            
             for runner_data in runners:
                 runner_join_key = runner_data.pop('race_join_key')
                 
-                if runner_join_key not in race_id_map:
-                    unmatched_runners.append({
-                        'horse_name': runner_data.get('horse_name'),
-                        'join_key': runner_join_key
-                    })
-                    counts['unmatched_runner_rows'] += 1
+                # Calculate runner confidence
+                confidence, flags, method = calculate_runner_confidence(runner_data)
+                runner_data['confidence'] = confidence
+                runner_data['extraction_method'] = method
+                runner_data['quality_flags'] = flags
+                
+                # Group by race
+                if runner_join_key not in runners_by_race:
+                    runners_by_race[runner_join_key] = []
+                runners_by_race[runner_join_key].append(runner_data)
+            
+            # STEP 4: Insert races with quality metadata
+            logger.info("Step 4: Inserting races with quality metadata...")
+            race_id_map = {}  # join_key -> race_id
+            race_join_key_map = {}  # Store join_key_base -> full join_key mapping
+            
+            for race_data in races:
+                # Build full join_key with import_date
+                join_key_base = race_data.get('join_key_base', '')
+                import_date_str = batch['import_date'].isoformat()
+                full_join_key = f"{import_date_str}|{join_key_base}"
+                race_data['join_key'] = full_join_key
+                race_join_key_map[join_key_base] = full_join_key
+                
+                # Get runners for this race
+                race_runners = runners_by_race.get(full_join_key, [])
+                
+                # Calculate race quality
+                race_metadata = {
+                    'course': race_data.get('course'),
+                    'distance': race_data.get('distance'),
+                    'race_time': race_data.get('off_time')  # off_time is the race time
+                }
+                parse_conf, quality, race_flags = calculate_race_quality(race_metadata, race_runners)
+                
+                # Add quality metadata to race
+                race_data['parse_confidence'] = parse_conf
+                race_data['quality_score'] = quality
+                race_data['quality_flags'] = race_flags
+                
+                # Insert race
+                race_id = await db.insert_race(
+                    batch_id=batch_id,
+                    import_date=batch['import_date'],
+                    race_data=race_data
+                )
+                race_id_map[full_join_key] = race_id
+                counts['races_inserted'] += 1
+            
+            logger.info(f"✅ Inserted {counts['races_inserted']} races")
+            
+            # STEP 5: Insert runners with quality metadata
+            logger.info("Step 5: Inserting runners with quality metadata...")
+            for join_key, race_runners in runners_by_race.items():
+                if join_key not in race_id_map:
+                    # Unmatched runners
+                    for runner in race_runners:
+                        unmatched_runners.append({
+                            'horse_name': runner.get('horse_name'),
+                            'join_key': join_key
+                        })
+                        counts['unmatched_runner_rows'] += 1
                     continue
                 
-                race_id = race_id_map[runner_join_key]
-                await db.insert_runner(race_id=race_id, runner_data=runner_data)
-                counts['runners_inserted'] += 1
+                race_id = race_id_map[join_key]
+                for runner_data in race_runners:
+                    await db.insert_runner(race_id=race_id, runner_data=runner_data)
+                    counts['runners_inserted'] += 1
             
             logger.info(f"✅ Inserted {counts['runners_inserted']} runners")
             
@@ -471,9 +525,9 @@ async def parse_batch(batch_id: str):
                 
                 raise ValueError(error_msg)
             
-            # STEP 3: Parse form/comments (optional)
+            # STEP 6: Parse form/comments (optional)
             if FileType.FORM in file_map:
-                logger.info("Step 3: Parsing form...")
+                logger.info("Step 6: Parsing form...")
                 form_file = file_map[FileType.FORM]
                 form_data = await storage.download_file(form_file['storage_path'])
                 
@@ -485,20 +539,20 @@ async def parse_batch(batch_id: str):
                 counts['form_lines_inserted'] = len(form_lines)
                 logger.info(f"✅ Parsed {counts['form_lines_inserted']} form lines")
             
-            # SUCCESS: All validations passed
+            # SUCCESS: All validations passed - set status to PARSED (ready for validation)
             if counts['races_inserted'] > 0 and counts['runners_inserted'] > 0 and counts['unmatched_runner_rows'] == 0:
                 await db.update_batch_status(
                     batch_id,
-                    BatchStatus.READY,
+                    BatchStatus.PARSED,  # Changed from READY to PARSED
                     counts=counts
                 )
                 
-                logger.info(f"✅ Batch {batch_id} parsed successfully")
+                logger.info(f"✅ Batch {batch_id} parsed successfully with quality metadata")
                 
                 return ParseBatchResponse(
                     batch_id=batch_id,
-                    status=BatchStatus.READY,
-                    message="Batch parsed successfully",
+                    status=BatchStatus.PARSED,
+                    message="Batch parsed successfully with quality metadata",
                     counts=counts
                 )
             else:

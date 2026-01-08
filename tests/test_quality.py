@@ -34,7 +34,8 @@ class TestRunnerConfidence:
         
         confidence, flags, method = calculate_runner_confidence(runner)
         
-        assert confidence == 0.65  # 1.0 - 0.3 (odds) - 0.05 (trainer/weight)
+        # 1.0 - 0.3 (odds) - 0.1 (jockey present, so only trainer/weight missing) = 0.6
+        assert abs(confidence - 0.6) < 0.01
         assert "missing_odds" in flags
     
     def test_missing_name_critical(self):

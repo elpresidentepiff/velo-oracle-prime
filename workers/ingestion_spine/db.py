@@ -216,7 +216,11 @@ class DatabaseClient:
             "field_size": race_data.get('field_size'),
             "prize": race_data.get('prize'),
             "join_key": race_data.get('join_key'),
-            "raw": race_data.get('raw', {})
+            "raw": race_data.get('raw', {}),
+            # Quality metadata
+            "parse_confidence": race_data.get('parse_confidence'),
+            "quality_score": race_data.get('quality_score'),
+            "quality_flags": race_data.get('quality_flags', [])
         }
         
         result = self.client.table('races').insert(data).execute()
@@ -275,7 +279,11 @@ class DatabaseClient:
             "draw": runner_data.get('draw'),
             "headgear": runner_data.get('headgear'),
             "form_figures": runner_data.get('form_figures'),
-            "raw": runner_data.get('raw', {})
+            "raw": runner_data.get('raw', {}),
+            # Quality metadata
+            "confidence": runner_data.get('confidence'),
+            "extraction_method": runner_data.get('extraction_method'),
+            "quality_flags": runner_data.get('quality_flags', [])
         }
         
         result = self.client.table('runners').insert(data).execute()
