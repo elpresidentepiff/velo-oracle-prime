@@ -99,13 +99,18 @@ async def get_features_for_racecard(
     try:
         # Execute query
         if hasattr(db, 'fetch'):
-            # asyncpg-style client
+            # asyncpg-style client (preferred for best performance)
             results = await db.fetch(query, race_id)
         elif hasattr(db, 'execute'):
             # Supabase-style client
+            # NOTE: This fallback is incomplete - it doesn't include the joins
+            # For production use with Supabase, implement a custom PostgreSQL function
+            # that executes the full query with joins, or use asyncpg client directly
+            logger.warning(
+                "Using incomplete Supabase fallback - "
+                "features will be missing. Use asyncpg client for full feature set."
+            )
             response = db.table('runners').select('*').eq('race_id', race_id).execute()
-            # For Supabase, we need to do manual joins - fallback to simpler query
-            logger.warning("Using fallback query for Supabase client")
             results = response.data
         else:
             raise ValueError("Unsupported database client type")

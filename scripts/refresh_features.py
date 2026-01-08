@@ -59,12 +59,25 @@ async def refresh_all_features():
             logger.info(f"Refreshing {view}...")
 
             try:
-                # Use the Supabase client to execute raw SQL
+                # For Supabase, we need to execute raw SQL
+                # This requires a custom PostgreSQL function or direct psql connection
                 query = f"REFRESH MATERIALIZED VIEW {view}"
 
-                # For Supabase client, we need to use the underlying connection
-                # This is a direct SQL execution
-                db.client.rpc('exec_sql', {'sql': query}).execute()
+                # Note: Supabase Python client doesn't support raw SQL execution directly
+                # This would need either:
+                # 1. A custom PostgreSQL function called via RPC
+                # 2. A direct psycopg2/asyncpg connection
+                # 3. Manual execution via Supabase SQL editor
+                try:
+                    # Try using rpc if exec_sql function exists (must be created in DB)
+                    db.client.rpc('exec_sql', {'sql': query}).execute()
+                except Exception as rpc_error:
+                    logger.warning(
+                        f"Cannot refresh {view} via RPC. "
+                        f"Please run manually: {query}"
+                    )
+                    logger.debug(f"RPC Error: {rpc_error}")
+                    continue
 
                 view_elapsed = (datetime.now() - view_start).total_seconds()
                 logger.info(f"✅ {view} refreshed in {view_elapsed:.2f}s")
@@ -101,7 +114,15 @@ async def refresh_single_view(view_name: str):
         logger.info(f"Refreshing {view_name}...")
 
         query = f"REFRESH MATERIALIZED VIEW {view_name}"
-        db.client.rpc('exec_sql', {'sql': query}).execute()
+        try:
+            db.client.rpc('exec_sql', {'sql': query}).execute()
+        except Exception as rpc_error:
+            logger.error(
+                f"Cannot refresh {view_name} via RPC. "
+                f"Please run manually: {query}"
+            )
+            logger.debug(f"RPC Error: {rpc_error}")
+            raise
 
         logger.info(f"✅ {view_name} refreshed successfully")
 
