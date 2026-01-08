@@ -17,13 +17,21 @@ import sys
 from pathlib import Path
 
 # Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
-from engine.features import (
-    get_features_for_racecard,
-    get_features_batch,
-    calculate_distance_band
+# Import from engine module
+import importlib.util
+spec = importlib.util.spec_from_file_location(
+    "engine.features",
+    project_root / "engine" / "features.py"
 )
+engine_features = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(engine_features)
+
+get_features_for_racecard = engine_features.get_features_for_racecard
+get_features_batch = engine_features.get_features_batch
+calculate_distance_band = engine_features.calculate_distance_band
 
 
 # ============================================================================

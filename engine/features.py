@@ -118,18 +118,37 @@ async def get_features_for_racecard(
         
         df = pd.DataFrame([dict(r) for r in results])
         
+        # Fill NaNs first (new trainers/jockeys with no history)
+        # Convert numeric columns properly
+        for col in df.columns:
+            if df[col].dtype == 'object':
+                # Try to convert to numeric if possible
+                try:
+                    converted = pd.to_numeric(df[col])
+                    df[col] = converted
+                except (ValueError, TypeError):
+                    # Keep as object if conversion fails
+                    pass
+        
+        # Fill numeric NaNs
+        numeric_cols = df.select_dtypes(include=['float64', 'int64', 'number']).columns
+        df[numeric_cols] = df[numeric_cols].fillna(0.0)
+        
+        # Handle remaining None/NaN values for non-numeric columns
+        object_cols = df.select_dtypes(include=['object']).columns
+        for col in object_cols:
+            df[col] = df[col].fillna('')
+        
         # Derived features
         df['trainer_form_trend'] = (
-            df.get('trainer_win_pct_14d', 0) - df.get('trainer_win_pct_90d', 0)
+            df.get('trainer_win_pct_14d', pd.Series([0.0] * len(df))).fillna(0.0) - 
+            df.get('trainer_win_pct_90d', pd.Series([0.0] * len(df))).fillna(0.0)
         )
         df['jockey_form_trend'] = (
-            df.get('jockey_win_pct_14d', 0) - df.get('jockey_win_pct_90d', 0)
+            df.get('jockey_win_pct_14d', pd.Series([0.0] * len(df))).fillna(0.0) - 
+            df.get('jockey_win_pct_90d', pd.Series([0.0] * len(df))).fillna(0.0)
         )
-        df['has_combo_history'] = df.get('jt_combo_starts', 0) >= 3
-        
-        # Fill NaNs (new trainers/jockeys with no history)
-        numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
-        df[numeric_cols] = df[numeric_cols].fillna(0.0)
+        df['has_combo_history'] = df.get('jt_combo_starts', pd.Series([0] * len(df))).fillna(0) >= 3
         
         logger.info(f"Extracted features for {len(df)} runners in race {race_id}")
         return df
