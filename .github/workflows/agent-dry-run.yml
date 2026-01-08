@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 2 * * *'  # 2am daily UTC
 
+permissions:
+  contents: read
+
 jobs:
   agent-dry-run:
     runs-on: ubuntu-latest
