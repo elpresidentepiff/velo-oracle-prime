@@ -454,6 +454,7 @@ async def parse_batch(batch_id: str):
             # STEP 4: Insert races with quality metadata
             logger.info("Step 4: Inserting races with quality metadata...")
             race_id_map = {}  # join_key -> race_id
+            race_data_map = {}  # join_key -> race_data (for enriching runners)
             race_join_key_map = {}  # Store join_key_base -> full join_key mapping
             
             for race_data in races:
@@ -487,6 +488,7 @@ async def parse_batch(batch_id: str):
                     race_data=race_data
                 )
                 race_id_map[full_join_key] = race_id
+                race_data_map[full_join_key] = race_data
                 counts['races_inserted'] += 1
             
             logger.info(f"✅ Inserted {counts['races_inserted']} races")
@@ -505,8 +507,23 @@ async def parse_batch(batch_id: str):
                     continue
                 
                 race_id = race_id_map[join_key]
+                race_data = race_data_map[join_key]
+                
+                # Insert runners with race context fields
                 for runner_data in race_runners:
-                    await db.insert_runner(race_id=race_id, runner_data=runner_data)
+                    # Create enriched data with race context (avoid mutating original)
+                    enriched_runner = {
+                        **runner_data,
+                        'date': batch['import_date'],
+                        'course': race_data.get('course'),
+                        'off_time': race_data.get('off_time'),
+                        'race_name': race_data.get('race_name', ''),
+                        'distance': race_data.get('distance'),
+                        'going': race_data.get('going')
+                    }
+                    
+                    # Now insert
+                    await db.insert_runner(race_id=race_id, runner_data=enriched_runner)
                     counts['runners_inserted'] += 1
             
             logger.info(f"✅ Inserted {counts['runners_inserted']} runners")
