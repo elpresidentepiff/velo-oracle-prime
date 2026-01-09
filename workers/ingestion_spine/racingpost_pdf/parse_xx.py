@@ -109,7 +109,7 @@ def _parse_xx_page(page: pdfplumber.page.Page, course_name: str, meeting_date: s
             hour = int(time_parts[0])
             minute = int(time_parts[1])
             off_time = time(hour=hour, minute=minute)
-        except:
+        except Exception:
             continue
         
         # Parse distance
@@ -184,19 +184,19 @@ def _parse_runners_from_block(race_block: str) -> List[Runner]:
             # Pattern: number, form (optional), name (uppercase words), days
             name_match = re.search(r"([A-Z][A-Z\s\']+?)(?:\s+\d+\s+D|\s+$)", line)
             if name_match:
-                horse_name = name_match.group(1).strip()
+                raw_name = name_match.group(1).strip()
             else:
                 # Fallback: take text after form figures
                 parts = line.split()
                 if len(parts) >= 3:
                     # Skip number and form, take rest
-                    horse_name = " ".join(parts[2:5])  # Take a few words
+                    raw_name = " ".join(parts[2:5])  # Take a few words
                 else:
                     i += 1
                     continue
             
             # Normalize name
-            horse_name = normalize_horse_name(horse_name)
+            horse_name = normalize_horse_name(raw_name)
             
             # Extract days since run
             days_since_run = extract_days_since_run(line)

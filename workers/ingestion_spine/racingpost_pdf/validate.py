@@ -101,17 +101,15 @@ def block_bad_output(batch_id: str, errors: List[str]) -> None:
         errors: List of validation errors
         
     Raises:
-        ValidationError: Always raised to block insert
+        ValueError: Always raised to block insert
     """
-    from pydantic import ValidationError as PydanticValidationError
-    
     # Log errors (would use proper logger in production)
     print(f"❌ Batch {batch_id} REJECTED: {len(errors)} validation errors")
     for error in errors:
         print(f"  - {error}")
     
-    # Raise validation error to block insert
-    raise PydanticValidationError(
+    # Raise ValueError to block insert
+    raise ValueError(
         f"Batch {batch_id} rejected. "
         f"{len(errors)} hard gate violations. NO INSERT."
     )

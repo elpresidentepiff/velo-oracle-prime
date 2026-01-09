@@ -4,7 +4,7 @@ Pydantic models for Meeting, Race, Runner, and ParseReport.
 """
 
 from datetime import date, time
-from typing import Any, Optional
+from typing import Any, Optional, List, Dict
 
 from pydantic import BaseModel, Field
 
@@ -47,7 +47,7 @@ class Runner(BaseModel):
     form_figures: Optional[str] = None
     
     # Raw data from source
-    raw: dict[str, Any] = Field(default_factory=dict)
+    raw: Dict[str, Any] = Field(default_factory=dict)
 
 
 class Race(BaseModel):
@@ -74,15 +74,15 @@ class Race(BaseModel):
     prize: Optional[str] = None
     
     # Runners
-    runners: list[Runner] = Field(default_factory=list)
+    runners: List[Runner] = Field(default_factory=list)
     runners_count: int = Field(..., description="Declared runner count from PDF")
     has_non_runners: bool = Field(default=False, description="True if non-runners marker found")
     
     # Predictions (optional)
-    top_4_predictions: list[Prediction] = Field(default_factory=list)
+    top_4_predictions: List[Prediction] = Field(default_factory=list)
     
     # Raw data from source
-    raw: dict[str, Any] = Field(default_factory=dict)
+    raw: Dict[str, Any] = Field(default_factory=dict)
 
 
 class Meeting(BaseModel):
@@ -93,14 +93,14 @@ class Meeting(BaseModel):
     meeting_date: date
     
     # Races
-    races: list[Race] = Field(default_factory=list)
+    races: List[Race] = Field(default_factory=list)
     
     # Metadata
     source: str = Field(default="racing_post", description="Data source")
     parsed_at: Optional[str] = None
     
     # Raw metadata
-    raw: dict[str, Any] = Field(default_factory=dict)
+    raw: Dict[str, Any] = Field(default_factory=dict)
 
 
 class ParseError(BaseModel):
@@ -115,11 +115,11 @@ class ParseReport(BaseModel):
     """Report on parse success/failures"""
     success: bool
     meeting: Optional[Meeting] = None
-    errors: list[ParseError] = Field(default_factory=list)
-    warnings: list[ParseError] = Field(default_factory=list)
+    errors: List[ParseError] = Field(default_factory=list)
+    warnings: List[ParseError] = Field(default_factory=list)
     
     # Statistics
-    stats: dict[str, Any] = Field(default_factory=dict)
+    stats: Dict[str, Any] = Field(default_factory=dict)
     
     # Input files processed
-    input_files: list[str] = Field(default_factory=list)
+    input_files: List[str] = Field(default_factory=list)
