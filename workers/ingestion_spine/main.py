@@ -454,6 +454,7 @@ async def parse_batch(batch_id: str):
             # STEP 4: Insert races with quality metadata
             logger.info("Step 4: Inserting races with quality metadata...")
             race_id_map = {}  # join_key -> race_id
+            race_data_map = {}  # join_key -> race_data (for enriching runners)
             race_join_key_map = {}  # Store join_key_base -> full join_key mapping
             
             for race_data in races:
@@ -487,6 +488,7 @@ async def parse_batch(batch_id: str):
                     race_data=race_data
                 )
                 race_id_map[full_join_key] = race_id
+                race_data_map[full_join_key] = race_data
                 counts['races_inserted'] += 1
             
             logger.info(f"✅ Inserted {counts['races_inserted']} races")
@@ -505,7 +507,19 @@ async def parse_batch(batch_id: str):
                     continue
                 
                 race_id = race_id_map[join_key]
+                race_data = race_data_map[join_key]
+                
+                # Enrich runner_data with race context fields that racecards table needs
                 for runner_data in race_runners:
+                    # Add race context fields
+                    runner_data['date'] = batch['import_date']
+                    runner_data['course'] = race_data.get('course')
+                    runner_data['off_time'] = race_data.get('off_time')
+                    runner_data['race_name'] = race_data.get('race_name', '')
+                    runner_data['distance'] = race_data.get('distance')
+                    runner_data['going'] = race_data.get('going')
+                    
+                    # Now insert
                     await db.insert_runner(race_id=race_id, runner_data=runner_data)
                     counts['runners_inserted'] += 1
             

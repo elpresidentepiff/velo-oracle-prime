@@ -275,46 +275,53 @@ class DatabaseClient:
         runner_data: dict[str, Any]
     ) -> str:
         """
-        Insert a runner record.
+        Insert runner into racecards table (one row per horse).
         
-        Returns the runner_id.
+        NOTE: Database schema uses 'racecards' not 'runners' table.
+        Each row = one horse in one race.
+        
+        Returns the racecard_id.
         """
         data = {
+            # Link to race
             "race_id": race_id,
-            "cloth_no": runner_data.get('cloth_no'),
-            "horse_name": runner_data.get('horse_name'),
-            "age": runner_data.get('age'),
-            "sex": runner_data.get('sex'),
-            "weight": runner_data.get('weight'),
-            "or_rating": runner_data.get('or_rating'),
-            "rpr": runner_data.get('rpr'),
-            "ts": runner_data.get('ts'),
-            "trainer": runner_data.get('trainer'),
+            
+            # Race context (from parent race or passed in runner_data)
+            "date": runner_data.get('date'),
+            "course": runner_data.get('course'),
+            "off_time": runner_data.get('off_time'),
+            "race_name": runner_data.get('race_name', ''),
+            "distance": runner_data.get('distance'),
+            "going": runner_data.get('going'),
+            
+            # Runner-specific data
+            "horse": runner_data.get('horse_name'),
             "jockey": runner_data.get('jockey'),
-            "owner": runner_data.get('owner'),
+            "trainer": runner_data.get('trainer'),
+            "weight": runner_data.get('weight'),
             "draw": runner_data.get('draw'),
-            "headgear": runner_data.get('headgear'),
-            "form_figures": runner_data.get('form_figures'),
-            "raw": runner_data.get('raw', {}),
-            # Quality metadata
-            "confidence": runner_data.get('confidence'),
-            "extraction_method": runner_data.get('extraction_method'),
-            "quality_flags": runner_data.get('quality_flags', [])
+            "age": runner_data.get('age'),
+            "official_rating": runner_data.get('or_rating'),
+            "form": runner_data.get('form_figures'),
+            "odds": runner_data.get('odds'),
+            "last_run_date": runner_data.get('last_run_date'),
+            "scraped_at": "now()"
         }
 
-        result = self.client.table('runners').insert(data).execute()
+        # INSERT INTO racecards (not runners!)
+        result = self.client.table('racecards').insert(data).execute()
 
         if not result.data:
-            raise ValueError("Failed to insert runner")
+            raise ValueError("Failed to insert runner into racecards")
 
         return result.data[0]['id']
 
     async def get_race_runners(self, race_id: str) -> list[dict[str, Any]]:
-        """Get all runners for a race"""
-        result = self.client.table('runners')\
+        """Get all runners for a race from racecards table"""
+        result = self.client.table('racecards')\
             .select('*')\
             .eq('race_id', race_id)\
-            .order('cloth_no')\
+            .order('draw')\
             .execute()
 
         return result.data or []
