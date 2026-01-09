@@ -15,8 +15,9 @@ No silent runs allowed.
 """
 
 import sys
+import uuid
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date
 from typing import Optional, List
 
 from prefect import flow, task, get_run_logger
@@ -67,9 +68,6 @@ def ingest_pdfs(as_of_date: str) -> str:
         # 1. Download PDFs from storage/API
         # 2. Create batch record in DB
         # 3. Register files
-        
-        from datetime import date
-        import uuid
         
         # Create mock batch_id
         batch_id = str(uuid.uuid4())
@@ -303,8 +301,9 @@ def daily_meeting_pipeline(as_of_date: str):
     
     # If rejected, log and exit cleanly
     if parse_result.status == "REJECTED_BAD_OUTPUT":
-        logger.error(f"Batch {batch_id} rejected. Errors: {parse_result.errors}")
-        persist_rejection_report(batch_id, parse_result.errors)
+        errors = parse_result.errors if parse_result.errors is not None else []
+        logger.error(f"Batch {batch_id} rejected. Errors: {errors}")
+        persist_rejection_report(batch_id, errors)
         raise ValueError(f"Batch {batch_id} rejected. No inserts.")
     
     # STEP 3: Insert to Supabase
