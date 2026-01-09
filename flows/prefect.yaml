@@ -1,0 +1,19 @@
+name: velo-oracle-prime
+prefect-version: 3.6.10
+
+build: null
+push: null
+pull:
+- prefect.deployments.steps.git_clone:
+    repository: https://github.com/elpresidentepiff/velo-oracle-prime.git
+    branch: feature/v10-launch
+
+deployments:
+- name: daily-meeting-pipeline
+  entrypoint: prefect_flow/daily_pipeline.py:daily_meeting_pipeline
+  schedule:
+    cron: "0 9 * * *"
+    timezone: "Europe/London"
+  work_pool:
+    name: default-agent-pool
+    work_queue_name: production
