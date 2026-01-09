@@ -24,6 +24,7 @@ class BatchStatus(str, Enum):
     NEEDS_REVIEW = "needs_review"
     READY = "ready"
     FAILED = "failed"
+    REJECTED_BAD_OUTPUT = "rejected_bad_output"  # Hard validation gate failure
 
 class FileType(str, Enum):
     """File type classification"""
