@@ -331,7 +331,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION build_feature_mart IS 'Build deterministic feature mart for a specific as_of_date. Computes trainer, jockey, JT combo, and course/distance stats using historical data in [as_of_date - window, as_of_date) time range.';
+COMMENT ON FUNCTION build_feature_mart IS 'Build deterministic feature mart for a specific as_of_date. Computes trainer, jockey, JT combo, and course/distance stats using historical data from as_of_date minus window days up to but not including as_of_date.';
 
 -- ============================================================================
 -- VERIFY SCHEMA
@@ -341,7 +341,7 @@ COMMENT ON FUNCTION build_feature_mart IS 'Build deterministic feature mart for 
 DO $$
 BEGIN
   IF EXISTS (
-    SELECT FROM information_schema.tables 
+    SELECT 1 FROM information_schema.tables 
     WHERE table_name IN ('trainer_stats_window', 'jockey_stats_window', 
                           'jt_combo_stats_window', 'course_distance_stats_window')
   ) THEN
