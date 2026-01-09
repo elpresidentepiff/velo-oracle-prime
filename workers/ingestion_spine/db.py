@@ -429,6 +429,36 @@ class DatabaseClient:
         ).execute()
 
         return result.data if result.data else []
+    
+    # ========================================================================
+    # FEATURE MART OPERATIONS
+    # ========================================================================
+    
+    async def build_feature_mart(self, as_of_date: date) -> None:
+        """
+        Build feature mart for a specific as_of_date.
+        
+        Calls the PostgreSQL build_feature_mart function to compute
+        deterministic trainer, jockey, JT combo, and course/distance stats.
+        
+        Args:
+            as_of_date: Date to use as reference for feature computation
+        """
+        try:
+            # Supabase uses RPC to call PostgreSQL functions
+            date_str = as_of_date.isoformat() if isinstance(as_of_date, date) else as_of_date
+            
+            # Note: Supabase RPC requires the function to return something
+            # Our function returns VOID, so this might need adjustment
+            result = self.client.rpc('build_feature_mart', {
+                'p_as_of_date': date_str
+            }).execute()
+            
+            logger.info(f"Feature mart built for as_of_date: {date_str}")
+            
+        except Exception as e:
+            logger.error(f"Failed to build feature mart: {e}")
+            raise
 
 # ============================================================================
 # CLIENT FACTORY
