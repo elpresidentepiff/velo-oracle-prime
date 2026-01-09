@@ -304,8 +304,8 @@ class DatabaseClient:
             "official_rating": runner_data.get('or_rating'),
             "form": runner_data.get('form_figures'),
             "odds": runner_data.get('odds'),
-            "last_run_date": runner_data.get('last_run_date'),
-            "scraped_at": "now()"
+            "last_run_date": runner_data.get('last_run_date')
+            # scraped_at uses database DEFAULT NOW()
         }
 
         # INSERT INTO racecards (not runners!)

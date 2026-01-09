@@ -509,18 +509,21 @@ async def parse_batch(batch_id: str):
                 race_id = race_id_map[join_key]
                 race_data = race_data_map[join_key]
                 
-                # Enrich runner_data with race context fields that racecards table needs
+                # Insert runners with race context fields
                 for runner_data in race_runners:
-                    # Add race context fields
-                    runner_data['date'] = batch['import_date']
-                    runner_data['course'] = race_data.get('course')
-                    runner_data['off_time'] = race_data.get('off_time')
-                    runner_data['race_name'] = race_data.get('race_name', '')
-                    runner_data['distance'] = race_data.get('distance')
-                    runner_data['going'] = race_data.get('going')
+                    # Create enriched data with race context (avoid mutating original)
+                    enriched_runner = {
+                        **runner_data,
+                        'date': batch['import_date'],
+                        'course': race_data.get('course'),
+                        'off_time': race_data.get('off_time'),
+                        'race_name': race_data.get('race_name', ''),
+                        'distance': race_data.get('distance'),
+                        'going': race_data.get('going')
+                    }
                     
                     # Now insert
-                    await db.insert_runner(race_id=race_id, runner_data=runner_data)
+                    await db.insert_runner(race_id=race_id, runner_data=enriched_runner)
                     counts['runners_inserted'] += 1
             
             logger.info(f"✅ Inserted {counts['runners_inserted']} runners")
