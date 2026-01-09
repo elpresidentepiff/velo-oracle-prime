@@ -64,3 +64,11 @@ data/*.csv
 # Great Expectations
 data_quality/great_expectations/uncommitted/
 data_quality/great_expectations/*.db
+
+# Benchmark artifacts (exclude runtime outputs, keep baselines)
+benchmark/shard_*.json
+benchmark/merged_*.json
+benchmark/run_*.json
+benchmark/report_*.json
+benchmark/current_*.json
+benchmark/*_hash_temp.txt
