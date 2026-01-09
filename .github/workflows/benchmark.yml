@@ -1,0 +1,192 @@
+# Benchmark Regression Check
+# Runs deterministic benchmark on 2,000 frozen races with matrix sharding
+
+name: Benchmark Regression Check
+
+on:
+  pull_request:
+    paths:
+      - 'app/engine/**'
+      - 'app/strategy/**'
+      - 'app/ml/**'
+      - 'workers/ingestion_spine/**'
+      - 'benchmark/**'
+      - '.github/workflows/benchmark.yml'
+
+jobs:
+  benchmark-shard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      fail-fast: false
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r workers/ingestion_spine/requirements.txt
+      
+      - name: Verify benchmark manifest exists
+        run: |
+          if [ ! -f "benchmark/manifest_2000.json" ]; then
+            echo "❌ Error: benchmark/manifest_2000.json not found"
+            echo "This file must be committed before running benchmarks"
+            exit 1
+          fi
+          echo "✅ Manifest found"
+      
+      - name: Run benchmark shard
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python -m benchmark.runner \
+            --manifest benchmark/manifest_2000.json \
+            --as-of-date 2026-01-09 \
+            --shard ${{ matrix.shard }} \
+            --total-shards 10 \
+            --out /tmp/shard_${{ matrix.shard }}.json
+      
+      - name: Upload shard results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-shard-${{ matrix.shard }}
+          path: /tmp/shard_${{ matrix.shard }}.json
+          retention-days: 1
+  
+  benchmark-verdict:
+    runs-on: ubuntu-latest
+    needs: benchmark-shard
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Download all shards
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/shards
+      
+      - name: Merge shards
+        run: |
+          python -m benchmark.merge_shards \
+            --shards-dir /tmp/shards \
+            --out /tmp/merged.json
+      
+      - name: Calculate metrics
+        run: |
+          python -m benchmark.metrics \
+            --input /tmp/merged.json \
+            --out /tmp/current_metrics.json
+      
+      - name: Calculate hash
+        run: |
+          python -m benchmark.metrics \
+            --input /tmp/merged.json \
+            --hash \
+            --out /tmp/current_hash.txt
+      
+      - name: Check baseline exists
+        run: |
+          if [ ! -f "benchmark/baseline_metrics.json" ]; then
+            echo "⚠️  Warning: benchmark/baseline_metrics.json not found"
+            echo "Skipping regression check - this should be the baseline run"
+            echo "ACTION_REQUIRED=true" >> $GITHUB_ENV
+          else
+            echo "✅ Baseline found"
+            echo "ACTION_REQUIRED=false" >> $GITHUB_ENV
+          fi
+      
+      - name: Generate report
+        if: env.ACTION_REQUIRED == 'false'
+        run: |
+          python -m benchmark.report \
+            --current /tmp/merged.json \
+            --baseline benchmark/baseline_metrics.json \
+            --out /tmp/report.json
+      
+      - name: Check regression
+        if: env.ACTION_REQUIRED == 'false'
+        run: |
+          python -m benchmark.check_regression \
+            --report /tmp/report.json \
+            --fail-on-violation
+      
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-report
+          path: |
+            /tmp/merged.json
+            /tmp/current_metrics.json
+            /tmp/current_hash.txt
+            /tmp/report.json
+          retention-days: 7
+      
+      - name: Comment PR with results
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let comment = '## 📊 Benchmark Results\n\n';
+            
+            try {
+              const metrics = JSON.parse(fs.readFileSync('/tmp/current_metrics.json', 'utf8'));
+              
+              comment += `### Metrics\n`;
+              comment += `- **Coverage**: ${metrics.coverage_pct}% (${metrics.scored_runners}/${metrics.total_runners} runners)\n`;
+              comment += `- **Races Processed**: ${metrics.races_processed}\n`;
+              comment += `- **Runtime**: ${metrics.runtime.total_seconds.toFixed(1)}s (${metrics.runtime.avg_per_race.toFixed(3)}s/race)\n\n`;
+              
+              if (fs.existsSync('/tmp/report.json')) {
+                const report = JSON.parse(fs.readFileSync('/tmp/report.json', 'utf8'));
+                
+                comment += `### Regression Check: ${report.status === 'PASS' ? '✅ PASS' : '❌ FAIL'}\n\n`;
+                
+                if (report.violations && report.violations.length > 0) {
+                  comment += '#### Violations:\n';
+                  report.violations.forEach(v => {
+                    comment += `- ⚠️ ${v}\n`;
+                  });
+                } else {
+                  comment += '✅ No violations detected\n';
+                }
+                
+                comment += `\n#### Deltas vs Baseline\n`;
+                comment += `- Coverage: ${report.deltas.coverage_delta > 0 ? '+' : ''}${report.deltas.coverage_delta}%\n`;
+                if (report.deltas.runtime_delta !== null) {
+                  comment += `- Runtime: ${report.deltas.runtime_delta > 0 ? '+' : ''}${report.deltas.runtime_delta}s/race\n`;
+                }
+              } else {
+                comment += '⚠️ No baseline available - this may be the first run\n';
+              }
+            } catch (error) {
+              comment += `⚠️ Error reading metrics: ${error.message}\n`;
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
