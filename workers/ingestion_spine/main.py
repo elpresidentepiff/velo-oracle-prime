@@ -722,10 +722,33 @@ async def validate_batch(batch_id: str):
         # Store validation report
         await db.store_validation_report(batch_id, validation_report)
         
+        # ========================================================================
+        # BUILD FEATURE MART (if validation successful)
+        # ========================================================================
+        features_built = False
+        feature_build_error = None
+        
+        if new_status == BatchStatus.VALIDATED:
+            try:
+                logger.info(f"Building feature mart for batch {batch_id} (as_of_date={batch['import_date']})")
+                
+                # Call build_feature_mart PostgreSQL function
+                # Note: This uses the batch import_date as as_of_date
+                await db.build_feature_mart(batch['import_date'])
+                
+                features_built = True
+                logger.info(f"✅ Feature mart built successfully for batch {batch_id}")
+                
+            except Exception as e:
+                logger.error(f"⚠️ Failed to build feature mart for batch {batch_id}: {e}")
+                feature_build_error = str(e)
+                # Don't fail the validation, but log the error
+        
         logger.info(
             f"✅ Batch {batch_id} validated: "
             f"RIC+: {valid_count} valid, {needs_review_count} review, {rejected_count} rejected | "
-            f"GX: races={races_results.success}, runners={runners_results.success}"
+            f"GX: races={races_results.success}, runners={runners_results.success} | "
+            f"Features: {features_built}"
         )
         
         return {
@@ -737,6 +760,8 @@ async def validate_batch(batch_id: str):
             "avg_quality_score": round(avg_quality, 3),
             "new_status": new_status.value,
             "gx_success": gx_success,
+            "features_built": features_built,
+            "feature_build_error": feature_build_error,
             "races": validation_results
         }
         
