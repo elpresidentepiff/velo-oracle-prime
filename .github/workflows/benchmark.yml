@@ -57,7 +57,7 @@ jobs:
             --out /tmp/shard_${{ matrix.shard }}.json
       
       - name: Upload shard results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: benchmark-shard-${{ matrix.shard }}
           path: /tmp/shard_${{ matrix.shard }}.json
@@ -131,7 +131,7 @@ jobs:
       
       - name: Upload report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: benchmark-report
           path: |

@@ -30,7 +30,7 @@ jobs:
       
       - name: Upload GX artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: gx-validation-results
           path: data_quality/great_expectations/uncommitted/
