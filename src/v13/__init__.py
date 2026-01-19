@@ -18,10 +18,7 @@ from .doctrine import (
     DOCTRINE_CRITIC_AUTHORITY,
     DOCTRINE_EPISTEMIC_TIME,
     DOCTRINE_FEATURE_FIREWALL,
-    DOCTRINE_NO_AUTO_APPLY,
-    DOCTRINE_READ_ONLY,
-    enforce_episode_bound,
-    enforce_read_only,
+    DOCTRINE_NO_SILENT_MODIFICATION,
 )
 
 __version__ = "13.0.0"
@@ -32,8 +29,5 @@ __all__ = [
     "DOCTRINE_CRITIC_AUTHORITY",
     "DOCTRINE_EPISTEMIC_TIME",
     "DOCTRINE_FEATURE_FIREWALL",
-    "DOCTRINE_NO_AUTO_APPLY",
-    "DOCTRINE_READ_ONLY",
-    "enforce_episode_bound",
-    "enforce_read_only",
+    "DOCTRINE_NO_SILENT_MODIFICATION",
 ]
