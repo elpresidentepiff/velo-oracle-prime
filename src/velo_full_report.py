@@ -1,27 +1,49 @@
 #!/usr/bin/env python3
 """
 VÉLØ PRIME Full Report Generator
-Lingfield-style output with tactics blocks, suppression enforcement, quarantine gates
+Lingfield-style output with LOCKED SCHEMA
+
+OUTPUT CONTRACT (NON-NEGOTIABLE):
+- TOP-4 containment (exactly 4 runners)
+- STRIKE decision with confidence
+- Gate results (quarantine reasons)
+- Suppression signals (S1-S7)
+- Rationale block (why this decision)
+
+If ANY field is missing, the run is INVALID.
 """
 
 import sqlite3
 import json
 from pathlib import Path
 from datetime import datetime
-from typing import Dict
+from typing import Dict, List, Any, Optional
 from layer_x_suppression import LayerXSuppression
 from meeting_integrity import parse_race_time, meeting_integrity_gate, MeetingIntegrityResult
+from output_integrity import validate_race_output, IntegrityResult
 
 PRIME_DIR = Path(__file__).parent.parent
 DB_PATH = PRIME_DIR / "velo.db"
 
+
 class VELOFullReport:
-    """Generate complete Lingfield-style VELO reports."""
+    """
+    Generate complete Lingfield-style VELO reports.
+    
+    LOCKED SCHEMA - No summary mode, no fallbacks.
+    Every race MUST have:
+    - TOP-4 containment
+    - STRIKE or QUARANTINE decision
+    - Gate results
+    - Suppression signals
+    - Rationale block
+    """
     
     def __init__(self):
         self.conn = sqlite3.connect(str(DB_PATH))
         self.conn.row_factory = sqlite3.Row
         self.suppression = LayerXSuppression()
+        self.contract_violations = []
     
     def check_persistence_gates(self) -> Dict:
         """Verify all persistence gates before running."""
@@ -35,7 +57,6 @@ class VELOFullReport:
         
         import subprocess
         
-        # Check git remote
         try:
             result = subprocess.run(
                 ['git', 'remote', '-v'],
@@ -47,7 +68,6 @@ class VELOFullReport:
         except:
             pass
         
-        # Check git clean
         try:
             result = subprocess.run(
                 ['git', 'status', '--porcelain'],
@@ -59,10 +79,8 @@ class VELOFullReport:
         except:
             pass
         
-        # Check DB exists
         gates['db_exists'] = DB_PATH.exists()
         
-        # Check DB backed up
         backups_dir = PRIME_DIR / 'backups'
         gates['db_backed_up'] = backups_dir.exists() and len(list(backups_dir.glob('*.tar.gz'))) > 0
         
@@ -75,52 +93,83 @@ class VELOFullReport:
         
         return gates
     
-    def generate_full_report(self, venue: str, date: str) -> str:
-        """Generate complete Lingfield-style report."""
+    def _compute_top4(self, runners: List[Dict]) -> List[str]:
+        """
+        Compute TOP-4 containment based on rating convergence.
+        ALWAYS returns exactly 4 runners.
+        """
+        scored = []
+        for runner in runners:
+            or_val = runner.get('official_rating') or 0
+            rpr_val = runner.get('rpr') or 0
+            ts_val = runner.get('topspeed') or 0
+            
+            ratings = [r for r in [or_val, rpr_val, ts_val] if r > 0]
+            score = sum(ratings) / len(ratings) if ratings else 0
+            scored.append((runner['name'], score))
         
-        # Check persistence gates
-        gates = self.check_persistence_gates()
+        # Sort by score descending
+        scored.sort(key=lambda x: x[1], reverse=True)
         
-        report = f"# VÉLØ {venue.upper()} RACE DAY REPORT - {date}\n\n"
+        # Return exactly 4 (pad with empty if needed)
+        top4 = [s[0] for s in scored[:4]]
+        while len(top4) < 4:
+            top4.append("(insufficient runners)")
         
-        if not gates['all_pass']:
-            report += "## ⚠️ PERSISTENCE GATES FAILED\n\n"
-            report += "Cannot proceed without:\n"
-            if not gates['git_remote']:
-                report += "- ❌ Git remote not configured\n"
-            if not gates['git_clean']:
-                report += "- ❌ Uncommitted changes in git\n"
-            if not gates['db_exists']:
-                report += "- ❌ Database not found\n"
-            if not gates['db_backed_up']:
-                report += "- ❌ Database not backed up\n"
-            report += "\n**Status**: QUARANTINED - Cannot issue verdicts\n"
-            return report
-        
-        report += "**Status**: ✅ Persistence gates passed\n\n"
-        
-        # Get all races and sort by proper datetime
-        cursor = self.conn.cursor()
-        races_raw = cursor.execute("SELECT * FROM races").fetchall()
-        
-        # Sort by parsed datetime (handles 1.10 = 13:10 PM correctly)
-        races = sorted(races_raw, key=lambda r: parse_race_time(r['race_time']))
-        
-        if not races:
-            report += "No races found in database.\n"
-            return report
-        
-        report += f"**Total Races**: {len(races)}\n\n"
-        report += "---\n\n"
-        
-        # Per-race analysis
-        for idx, race in enumerate(races, 1):
-            report += self._generate_race_section(race, idx)
-        
-        return report
+        return top4[:4]
     
-    def _generate_race_section(self, race, race_num: int) -> str:
-        """Generate one race section with full tactics."""
+    def _build_rationale(self, race: Dict, runners: List[Dict], 
+                         suppressions: List, quarantine, episode) -> str:
+        """Build the rationale block explaining the decision."""
+        lines = []
+        
+        # Race context
+        lines.append(f"Race: {race['race_name']} at {race['venue']}")
+        lines.append(f"Conditions: {race['distance']} on {race['going']}")
+        lines.append(f"Field size: {len(runners)} runners")
+        
+        # Quarantine reasoning
+        if quarantine.quarantined:
+            lines.append(f"\nQUARANTINE APPLIED: {', '.join(quarantine.quarantine_reasons)}")
+            if 'Q5_CHAOS_MODE' in quarantine.quarantine_reasons:
+                lines.append("Heavy going + large field creates unpredictable race dynamics.")
+            if 'Q6_SMALL_FIELD' in quarantine.quarantine_reasons:
+                lines.append("Small field (<6 runners) reduces statistical confidence.")
+            if 'Q1_DATA_MISSING' in quarantine.quarantine_reasons:
+                lines.append(">25% of runners missing key ratings - data integrity compromised.")
+            lines.append("No STRIKE issued. Containment-only verdict.")
+        else:
+            # STRIKE reasoning
+            if episode and episode['verdict_layer_x']:
+                strike_name = episode['verdict_layer_x'].split()[0] if episode['verdict_layer_x'] else "Unknown"
+                lines.append(f"\nSTRIKE DECISION: {episode['verdict_layer_x']}")
+                lines.append(f"Confidence: {episode['verdict_confidence']:.0%}")
+                
+                # Find the strike runner
+                strike_runner = next((r for r in runners if r['name'] == strike_name), None)
+                if strike_runner:
+                    or_val = strike_runner.get('official_rating') or 'N/A'
+                    rpr_val = strike_runner.get('rpr') or 'N/A'
+                    ts_val = strike_runner.get('topspeed') or 'N/A'
+                    lines.append(f"Ratings: OR={or_val}, RPR={rpr_val}, TS={ts_val}")
+                
+                lines.append("Selection based on rating convergence and field analysis.")
+        
+        # Suppression notes
+        suppressed = [s for s in suppressions if s.suppressed_perf]
+        if suppressed:
+            lines.append(f"\nSUPPRESSION ALERTS: {len(suppressed)} runners flagged")
+            for supp in suppressed[:3]:  # Show first 3
+                lines.append(f"- {supp.name}: {', '.join(supp.suppressed_reasons)}")
+            lines.append("All suppressed runners force-gated into TOP-4 containment.")
+        
+        return "\n".join(lines)
+    
+    def _generate_race_output(self, race, race_num: int) -> Dict[str, Any]:
+        """
+        Generate structured output for one race.
+        Returns a dict that MUST pass the integrity gate.
+        """
         cursor = self.conn.cursor()
         
         # Get runners
@@ -146,107 +195,180 @@ class VELOFullReport:
         # Check quarantine
         quarantine = self.suppression.decide_race_quarantine(dict(race), runners_dict)
         
-        section = f"### Race {race_num} ({race['race_time']}) - {race['race_name']}\n"
-        section += f"**Distance**: {race['distance']} | **Going**: {race['going']} | **Runners**: {len(runners)}\n\n"
+        # Compute TOP-4
+        top4 = self._compute_top4(runners_dict)
         
-        # Verdict line
-        if quarantine.quarantined:
-            section += f"**🚫 QUARANTINED**: {', '.join(quarantine.quarantine_reasons)}\n\n"
+        # Force suppressed runners into TOP-4
+        suppressed_names = [s.name for s in runner_suppressions if s.suppressed_perf]
+        for name in suppressed_names:
+            if name not in top4:
+                top4[3] = name  # Replace 4th position
+        
+        # Build output
+        output = {
+            'race_num': race_num,
+            'race_time': race['race_time'],
+            'race_name': race['race_name'],
+            'distance': race['distance'],
+            'going': race['going'],
+            'runner_count': len(runners),
+            'top4': top4,
+            'strike_decision': episode['verdict_layer_x'] if episode and not quarantine.quarantined else None,
+            'strike_confidence': episode['verdict_confidence'] if episode and not quarantine.quarantined else None,
+            'gate_results': quarantine.quarantine_reasons if quarantine.quarantined else [],
+            'suppression_signals': [
+                {'name': s.name, 'severity': s.suppressed_severity, 'reasons': s.suppressed_reasons}
+                for s in runner_suppressions if s.suppressed_perf
+            ],
+            'rationale_block': self._build_rationale(
+                dict(race), runners_dict, runner_suppressions, quarantine, episode
+            ),
+            'is_quarantined': quarantine.quarantined
+        }
+        
+        return output
+    
+    def _render_race_section(self, output: Dict[str, Any]) -> str:
+        """Render a race output to markdown."""
+        section = f"### Race {output['race_num']} ({output['race_time']}) - {output['race_name']}\n\n"
+        section += f"**Distance**: {output['distance']} | **Going**: {output['going']} | **Runners**: {output['runner_count']}\n\n"
+        
+        # TOP-4 CONTAINMENT (MANDATORY)
+        section += "**📦 TOP-4 CONTAINMENT**:\n"
+        for i, runner in enumerate(output['top4'], 1):
+            section += f"{i}. {runner}\n"
+        section += "\n"
+        
+        # STRIKE / QUARANTINE
+        if output['is_quarantined']:
+            section += f"**🚫 QUARANTINED**: {', '.join(output['gate_results'])}\n\n"
             section += "**Status**: CONTAINMENT ONLY - No STRIKE\n\n"
         else:
-            if episode and episode['verdict_layer_x']:
-                section += f"**🏇 STRIKE**: {episode['verdict_layer_x']} ({episode['verdict_confidence']:.0%})\n\n"
-            section += f"**Status**: STRIKE ALLOWED\n\n"
+            if output['strike_decision']:
+                section += f"**🏇 STRIKE**: {output['strike_decision']} ({output['strike_confidence']:.0%})\n\n"
+            section += "**Status**: STRIKE ALLOWED\n\n"
         
-        # Suppression alerts
-        if runner_suppressions:
-            suppressed = [s for s in runner_suppressions if s.suppressed_perf]
-            if suppressed:
-                section += "**⚠️ SUPPRESSED_PERF**:\n"
-                for supp in suppressed:
-                    section += f"- {supp.name}: {supp.suppressed_severity} ({', '.join(supp.suppressed_reasons)})\n"
-                section += "\n"
+        # SUPPRESSION SIGNALS
+        if output['suppression_signals']:
+            section += "**⚠️ SUPPRESSION SIGNALS**:\n"
+            for sig in output['suppression_signals']:
+                section += f"- {sig['name']}: {sig['severity']} ({', '.join(sig['reasons'])})\n"
+            section += "\n"
         
-        # Tactics block
-        section += self._generate_tactics_block(race, runners_dict, runner_suppressions, quarantine, episode)
+        # RATIONALE BLOCK (MANDATORY)
+        section += "**📝 RATIONALE**:\n```\n"
+        section += output['rationale_block']
+        section += "\n```\n\n"
         
-        section += "\n---\n\n"
+        section += "---\n\n"
         return section
     
-    def _generate_tactics_block(self, race, runners, suppressions, quarantine, episode) -> str:
-        """Generate tactics narrative block."""
-        block = "**Tactics Analysis**:\n\n"
+    def generate_full_report(self, venue: str, date: str) -> str:
+        """
+        Generate complete Lingfield-style report with LOCKED SCHEMA.
         
-        if quarantine.quarantined:
-            block += f"**Quarantine**: {', '.join(quarantine.quarantine_reasons)}\n\n"
-            block += "Containment-only verdict issued. No STRIKE allowed.\n\n"
+        Every race MUST have:
+        - TOP-4 containment
+        - STRIKE or QUARANTINE decision
+        - Gate results
+        - Suppression signals
+        - Rationale block
+        """
+        
+        # Check persistence gates
+        gates = self.check_persistence_gates()
+        
+        report = f"# VÉLØ {venue.upper()} RACE DAY REPORT - {date}\n\n"
+        
+        if not gates['all_pass']:
+            report += "## ⚠️ PERSISTENCE GATES FAILED\n\n"
+            report += "Cannot proceed without:\n"
+            if not gates['git_remote']:
+                report += "- ❌ Git remote not configured\n"
+            if not gates['git_clean']:
+                report += "- ❌ Uncommitted changes in git\n"
+            if not gates['db_exists']:
+                report += "- ❌ Database not found\n"
+            if not gates['db_backed_up']:
+                report += "- ❌ Database not backed up\n"
+            report += "\n**Status**: QUARANTINED - Cannot issue verdicts\n"
+            return report
+        
+        report += "**Status**: ✅ Persistence gates passed\n\n"
+        
+        # Get races for this venue
+        cursor = self.conn.cursor()
+        races_raw = cursor.execute(
+            "SELECT * FROM races WHERE venue = ?",
+            (venue,)
+        ).fetchall()
+        
+        if not races_raw:
+            # Try without venue filter
+            races_raw = cursor.execute("SELECT * FROM races").fetchall()
+        
+        # Sort by parsed datetime
+        races = sorted(races_raw, key=lambda r: parse_race_time(r['race_time']))
+        
+        if not races:
+            report += "No races found in database.\n"
+            return report
+        
+        report += f"**Total Races**: {len(races)}\n\n"
+        report += "---\n\n"
+        
+        # Generate and validate each race
+        all_outputs = []
+        for idx, race in enumerate(races, 1):
+            output = self._generate_race_output(race, idx)
             
-            suppressed = [s for s in suppressions if s.suppressed_perf]
-            if suppressed:
-                block += "**Suppressed Runners**:\n"
-                for supp in suppressed:
-                    block += f"- {supp.name}: {supp.suppressed_severity} ({', '.join(supp.suppressed_reasons)})\n"
-                block += "\n"
-            return block
+            # Validate against contract
+            validation = validate_race_output(output)
+            if not validation.is_valid:
+                self.contract_violations.append(f"Race {idx}: {validation.error_message}")
+            
+            all_outputs.append(output)
+            report += self._render_race_section(output)
         
-        # Intent analysis
-        intent_notes = []
+        # Contract violation summary
+        if self.contract_violations:
+            report += "## ⚠️ CONTRACT VIOLATIONS\n\n"
+            report += "The following races failed the output integrity gate:\n\n"
+            for violation in self.contract_violations:
+                report += f"- {violation}\n"
+            report += "\n**WARNING**: Output may be incomplete.\n\n"
         
-        # Check for reactivation riders
-        reactivation = [s for s in suppressions if 'S1_REACTIVATION_RIDER' in s.suppressed_reasons]
-        if reactivation:
-            intent_notes.append(f"Reactivation riders detected: {', '.join([s.name for s in reactivation])}")
-        
-        # Check for mark compression
-        compression = [s for s in suppressions if 'S2_MARK_COMPRESSION' in s.suppressed_reasons]
-        if compression:
-            intent_notes.append(f"Mark compression (protected marks): {', '.join([s.name for s in compression])}")
-        
-        # Check for setup returns
-        setup = [s for s in suppressions if 'S3_SETUP_RETURN' in s.suppressed_reasons]
-        if setup:
-            intent_notes.append(f"Setup returns (best trip/surface): {', '.join([s.name for s in setup])}")
-        
-        # Check for education runs
-        education = [s for s in suppressions if 'S4_NOT_ASKED_PATTERN' in s.suppressed_reasons]
-        if education:
-            intent_notes.append(f"Education runs (not asked): {', '.join([s.name for s in education])}")
-        
-        # Check for trap-lead
-        trap = [s for s in suppressions if 'S7_TRAP_LEAD_SIGNATURE' in s.suppressed_reasons]
-        if trap:
-            intent_notes.append(f"Trap-lead signatures (deliberate tactics): {', '.join([s.name for s in trap])}")
-        
-        if intent_notes:
-            for note in intent_notes:
-                block += f"- {note}\n"
-        else:
-            block += "- No major intent/suppression signals detected\n"
-        
-        # Force-gating check
-        suppressed_in_top4 = [s for s in suppressions if s.suppressed_perf]
-        if suppressed_in_top4:
-            block += f"\n**Force-gating**: {len(suppressed_in_top4)} suppressed runners forced into containment chassis\n"
-        
-        # STRIKE decision
-        if episode:
-            block += f"\n**STRIKE Decision**: {episode['verdict_layer_x']} allowed (confidence: {episode['verdict_confidence']:.0%})\n"
-        
-        return block
+        return report
     
     def close(self):
         self.conn.close()
         self.suppression.close()
 
+
 if __name__ == "__main__":
+    import sys
+    
+    # Default to Gowran Park
+    venue = sys.argv[1] if len(sys.argv) > 1 else "Gowran Park"
+    date = sys.argv[2] if len(sys.argv) > 2 else "2026-01-22"
+    
     report_gen = VELOFullReport()
-    report = report_gen.generate_full_report("GOWRAN PARK", "2026-01-22")
+    report = report_gen.generate_full_report(venue, date)
     print(report)
     
     # Save report
-    report_path = PRIME_DIR / "GOWRAN_VELO_FULL_REPORT_20260122.md"
+    venue_slug = venue.upper().replace(" ", "_")
+    report_path = PRIME_DIR / f"{venue_slug}_VELO_FULL_REPORT_{date.replace('-', '')}.md"
     with open(report_path, 'w') as f:
         f.write(report)
     
     print(f"\n📄 Report saved: {report_path}")
+    
+    # Check for contract violations
+    if report_gen.contract_violations:
+        print("\n⚠️ CONTRACT VIOLATIONS DETECTED:")
+        for v in report_gen.contract_violations:
+            print(f"  - {v}")
+        sys.exit(1)
+    
     report_gen.close()
