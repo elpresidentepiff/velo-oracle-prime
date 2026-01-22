@@ -1,0 +1,25 @@
+{
+  "quarantined_episodes": [
+    {
+      "episode_id": "kempton_20260121",
+      "integrity_status": "QUARANTINED",
+      "integrity_reason": "duplicate_race_times (17:30 appears twice)",
+      "quarantine_date": "2026-01-21T20:42:00Z",
+      "action": "exclude_from_metrics",
+      "notes": "Source data integrity issue - race times not canonical. Do not use for learning."
+    }
+  ],
+  "valid_episodes": [
+    {
+      "episode_id": "lingfield_20260121",
+      "integrity_status": "VALID",
+      "integrity_reason": "all_required_fields_present",
+      "validation_date": "2026-01-21T16:08:00Z",
+      "metrics": {
+        "containment_rate": 0.536,
+        "betfair_lay_wins": 0.87,
+        "races_processed": 7
+      }
+    }
+  ]
+}
