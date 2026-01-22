@@ -202,27 +202,23 @@ class LayerX:
         self.conn.close()
 
 if __name__ == "__main__":
-    layer_x = LayerX()
-    
-    # Get all races
-    cursor = layer_x.conn.cursor()
-    races = cursor.execute("SELECT id FROM races").fetchall()
-    
-    print("🎯 VÉLØ LAYER X - VERDICT GENERATION")
-    print("=" * 60)
-    
-    for race in races:
-        verdict = layer_x.generate_verdict(race['id'])
-        episode_id = layer_x.save_verdict(verdict)
-        
-        print(f"\n📍 {verdict['race_name']}")
-        print(f"   Time: {verdict['race_time']} | Going: {verdict['going']}")
-        print(f"   Top Pick: {verdict['top_pick']}")
-        print(f"   Confidence: {verdict['confidence']:.0%}")
-        print(f"   Rationale: {verdict['rationale']}")
-        if verdict['anomalies']:
-            print(f"   ⚠️  Anomalies: {', '.join(verdict['anomalies'])}")
-        print(f"   Episode ID: {episode_id}")
-    
-    layer_x.close()
-    print("\n✅ Verdicts generated and saved")
+    raise RuntimeError("""
+╔══════════════════════════════════════════════════════════════════╗
+║  OUTPUT CONTRACT BREACH - DIRECT LAYER X OUTPUT DISABLED         ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                  ║
+║  Layer X is a DATA GENERATOR, not an OUTPUT RENDERER.            ║
+║                                                                  ║
+║  ALL output MUST go through:                                     ║
+║    python3 src/velo_full_report.py <venue> <date>                ║
+║                                                                  ║
+║  This ensures:                                                   ║
+║    ✓ TOP-4 containment (exactly 4 runners)                       ║
+║    ✓ Full rationale block                                        ║
+║    ✓ Suppression signals                                         ║
+║    ✓ Gate results                                                ║
+║                                                                  ║
+║  No partial output. No summary mode. No fallbacks.               ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+""")
