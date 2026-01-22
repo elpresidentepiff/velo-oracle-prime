@@ -98,10 +98,10 @@ class VELOFullReport:
         
         report += "**Status**: ✅ Persistence gates passed\n\n"
         
-        # Get all races
+        # Get all races - sort by actual time (HH.MM format)
         cursor = self.conn.cursor()
         races = cursor.execute(
-            "SELECT * FROM races ORDER BY race_time"
+            "SELECT * FROM races ORDER BY CAST(SUBSTR(race_time, 1, INSTR(race_time, '.') - 1) AS INTEGER) * 60 + CAST(SUBSTR(race_time, INSTR(race_time, '.') + 1) AS INTEGER)"
         ).fetchall()
         
         if not races:
@@ -176,8 +176,15 @@ class VELOFullReport:
         block = "**Tactics Analysis**:\n\n"
         
         if quarantine.quarantined:
-            block += f"Race quarantined due to: {', '.join(quarantine.quarantine_reasons)}\n"
-            block += "Containment-only verdict issued. No STRIKE allowed.\n"
+            block += f"**Quarantine**: {', '.join(quarantine.quarantine_reasons)}\n\n"
+            block += "Containment-only verdict issued. No STRIKE allowed.\n\n"
+            
+            suppressed = [s for s in suppressions if s.suppressed_perf]
+            if suppressed:
+                block += "**Suppressed Runners**:\n"
+                for supp in suppressed:
+                    block += f"- {supp.name}: {supp.suppressed_severity} ({', '.join(supp.suppressed_reasons)})\n"
+                block += "\n"
             return block
         
         # Intent analysis
