@@ -10,6 +10,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict
 from layer_x_suppression import LayerXSuppression
+from meeting_integrity import parse_race_time, meeting_integrity_gate, MeetingIntegrityResult
 
 PRIME_DIR = Path(__file__).parent.parent
 DB_PATH = PRIME_DIR / "velo.db"
@@ -98,11 +99,12 @@ class VELOFullReport:
         
         report += "**Status**: ✅ Persistence gates passed\n\n"
         
-        # Get all races - sort by actual time (HH.MM format)
+        # Get all races and sort by proper datetime
         cursor = self.conn.cursor()
-        races = cursor.execute(
-            "SELECT * FROM races ORDER BY CAST(SUBSTR(race_time, 1, INSTR(race_time, '.') - 1) AS INTEGER) * 60 + CAST(SUBSTR(race_time, INSTR(race_time, '.') + 1) AS INTEGER)"
-        ).fetchall()
+        races_raw = cursor.execute("SELECT * FROM races").fetchall()
+        
+        # Sort by parsed datetime (handles 1.10 = 13:10 PM correctly)
+        races = sorted(races_raw, key=lambda r: parse_race_time(r['race_time']))
         
         if not races:
             report += "No races found in database.\n"
