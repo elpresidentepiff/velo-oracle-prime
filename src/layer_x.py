@@ -167,10 +167,11 @@ class LayerX:
         
         # Create episode_id: venue_date_time
         venue = verdict['venue'].upper().replace(' ', '_')
-        race_date = cursor.execute(
+        race = cursor.execute(
             "SELECT race_date FROM races WHERE id = ?",
             (verdict['race_id'],)
-        ).fetchone()['race_date'].replace('-', '')
+        ).fetchone()
+        race_date = race['race_date'].replace('-', '')
         race_time = verdict['race_time'].replace('.', '')
         
         episode_id = f"{venue}_{race_date}_{race_time}"

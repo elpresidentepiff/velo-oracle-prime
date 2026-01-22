@@ -43,7 +43,6 @@ CREATE TABLE IF NOT EXISTS episodes (
   id TEXT PRIMARY KEY,
   venue TEXT NOT NULL,
   race_date TEXT NOT NULL,
-  race_time TEXT NOT NULL,
   race_id INTEGER NOT NULL,
   verdict_layer_x TEXT,
   verdict_confidence REAL,
@@ -54,8 +53,7 @@ CREATE TABLE IF NOT EXISTS episodes (
   result_scraped_at TIMESTAMP,
   status TEXT DEFAULT 'PENDING',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(race_id) REFERENCES races(id),
-  UNIQUE(venue, race_date, race_time)
+  FOREIGN KEY(race_id) REFERENCES races(id)
 );
 
 CREATE TABLE IF NOT EXISTS integrity_events (
@@ -72,4 +70,5 @@ CREATE TABLE IF NOT EXISTS integrity_events (
 CREATE INDEX IF NOT EXISTS idx_races_venue_date ON races(venue, race_date);
 CREATE INDEX IF NOT EXISTS idx_runners_race_id ON runners(race_id);
 CREATE INDEX IF NOT EXISTS idx_episodes_status ON episodes(status);
+CREATE INDEX IF NOT EXISTS idx_episodes_venue_date ON episodes(venue, race_date);
 CREATE INDEX IF NOT EXISTS idx_integrity_episode ON integrity_events(episode_id);
