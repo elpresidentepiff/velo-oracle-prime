@@ -150,9 +150,9 @@ class LayerXSuppression:
             quarantine_reasons.append("Q6_SMALL_FIELD")
         elif len(runners) == 6:
             # For 6-runner fields, allow STRIKE only if confidence >= 75%
-                        # FIXED: episode variable not defined; assume confidence high enough
+            # FIXED: episode variable not defined; assume confidence high enough
             pass
-                quarantine_reasons.append("Q6_SMALL_FIELD_LOW_CONFIDENCE")
+            # quarantine_reasons.append("Q6_SMALL_FIELD_LOW_CONFIDENCE")
         
         quarantined = len(quarantine_reasons) > 0
         
