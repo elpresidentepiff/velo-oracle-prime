@@ -145,15 +145,13 @@ class LayerXSuppression:
         if race.get('going') in ['HEAVY', 'SOFT'] and len(runners) > 15:
             quarantine_reasons.append("Q5_CHAOS_MODE")
         
-        # Q6: SMALL_FIELD - micro-field dynamics different from normal handicaps
-        if len(runners) <= 5:
-            quarantine_reasons.append("Q6_SMALL_FIELD")
-        elif len(runners) == 6:
-            # For 6-runner fields, allow STRIKE only if confidence >= 75%
-            # FIXED: episode variable not defined; assume confidence high enough
-            pass
-            # quarantine_reasons.append("Q6_SMALL_FIELD_LOW_CONFIDENCE")
-        
+# Q4: MICRO_FIELD - field size 2-4 (hard quarantine)
+        if len(runners) <= 4:
+            quarantine_reasons.append("Q4_MICRO_FIELD")
+        # Q5: SMALL_FIELD - field size 5 (soft quarantine)
+        elif len(runners) == 5:
+            quarantine_reasons.append("Q5_SMALL_FIELD")
+        # Note: field size 6+ no automatic quarantine for size alone
         quarantined = len(quarantine_reasons) > 0
         
         # STRIKE allowed only if NOT quarantined AND conditions met
