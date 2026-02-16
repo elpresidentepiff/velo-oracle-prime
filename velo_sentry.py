@@ -5,6 +5,7 @@ import sqlite3
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import pdfplumber
+import velo_parser  # Import the new parser
 
 # Configuration
 BASE_DIR = os.path.abspath(".")
@@ -19,15 +20,15 @@ class RaceCardHandler(FileSystemEventHandler):
             return
         if event.src_path.endswith(".pdf"):
             print(f"👀 SENTRY: New Race Card Detected: {event.src_path}")
-            # Wait a moment for file copy to finish
             time.sleep(2)
             self.process_pdf(event.src_path)
 
     def process_pdf(self, pdf_path):
-        print(f"⚙️ SENTRY: Processing {os.path.basename(pdf_path)}...")
+        filename = os.path.basename(pdf_path)
+        print(f"⚙️ SENTRY: Processing {filename}...")
         
         try:
-            # 1. Extract Text (Simple Extraction for now)
+            # 1. Extract Text
             text_content = ""
             with pdfplumber.open(pdf_path) as pdf:
                 for page in pdf.pages:
@@ -35,33 +36,37 @@ class RaceCardHandler(FileSystemEventHandler):
             
             print(f"   - Extracted {len(text_content)} characters.")
             
-            # 2. Log to Database (The "Memory")
-            # For now, we just log that we saw the file. 
-            # In the future, we parse the runners here.
+            # 2. Parse Data (The Upgrade)
+            runners = velo_parser.parse_racing_post_pdf(text_content)
+            print(f"   - Identified {len(runners)} potential data points.")
+            
+            # 3. Log to Database
             conn = sqlite3.connect(DB_PATH)
             cursor = conn.cursor()
             
-            filename = os.path.basename(pdf_path)
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
             
-            # Create an ingestion log table if not exists
+            # Log the file
+            cursor.execute("INSERT INTO ingestion_log (filename, timestamp, status) VALUES (?, ?, ?)",
+                           (filename, timestamp, "PARSED"))
+            
+            # Store the raw text for deep analysis later
+            # (We create a new table for raw dumps)
             cursor.execute('''
-            CREATE TABLE IF NOT EXISTS ingestion_log (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                filename TEXT,
-                timestamp TEXT,
-                status TEXT
+            CREATE TABLE IF NOT EXISTS raw_pdf_dumps (
+                filename TEXT PRIMARY KEY,
+                content TEXT,
+                timestamp TEXT
             )
             ''')
-            
-            cursor.execute("INSERT INTO ingestion_log (filename, timestamp, status) VALUES (?, ?, ?)",
-                           (filename, timestamp, "RECEIVED"))
+            cursor.execute("INSERT OR REPLACE INTO raw_pdf_dumps (filename, content, timestamp) VALUES (?, ?, ?)",
+                           (filename, text_content, timestamp))
             
             conn.commit()
             conn.close()
-            print("   - Logged to Memory Vault.")
+            print("   - Data & Content committed to Memory Vault.")
             
-            # 3. Archive the File
+            # 4. Archive
             shutil.move(pdf_path, os.path.join(ARCHIVE_DIR, filename))
             print(f"✅ SENTRY: File archived. Ready for next race.")
             
@@ -79,9 +84,8 @@ def start_sentry():
     observer.schedule(event_handler, INCOMING_DIR, recursive=False)
     observer.start()
     
-    print(f"🛡️ VÉLØ SENTRY ACTIVE")
+    print(f"🛡️ VÉLØ SENTRY v2.0 (PARSER ENABLED) ACTIVE")
     print(f"   Watching: {INCOMING_DIR}")
-    print("   Drop a PDF to test me.")
     
     try:
         while True:
