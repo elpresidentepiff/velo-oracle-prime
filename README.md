@@ -1,177 +1,135 @@
-# Supabase CLI
+# VÉLØ ORACLE PRIME
 
-[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
-](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
+**A strategic intelligence engine for horse racing prediction, built on verifiable signal, strict quarantine doctrine, and probabilistic scoring.**
 
-[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
+---
 
-This repository contains all the functionality for Supabase CLI.
+## What Is VÉLØ?
 
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Creating and deploying Supabase Functions
-- [x] Generating types directly from your database schema
-- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
+VÉLØ Oracle Prime is a data-driven racing intelligence system. It ingests race card data, applies a structured analytical engine (SQPE + quarantine gates), and produces scored strike recommendations with explicit confidence levels. It does not guess. It does not bet on noise. It quarantines races where signal is insufficient.
 
-## Getting started
+The engine is built around a core doctrine:
 
-### Install the CLI
+> **Truth before optimization. Memory before learning. Doctrine before power.**
 
-Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
+---
+
+## Core Architecture
+
+```
+[Race Card Ingest]
+       │
+       ▼
+[Feature Forge]  →  Form, Going, Field Size, Trainer Intent, Market Shape
+       │
+       ▼
+[VÉLØ Engine]    →  Quarantine Gates → SQPE Scoring → Verdict
+       │
+       ▼
+[Output Layer]   →  Prediction JSON + Strike Report + Supabase Write
+```
+
+**Key Components:**
+
+| Layer | Location | Purpose |
+|:---|:---|:---|
+| API Gateway | `app/api/` | Agent registration, observation, action endpoints |
+| Engine Core | `app/engine/` | SQPE scoring, quarantine gate logic |
+| ML Models | `app/ml/` | Glicko-2 rating, ablation tests, learning gate |
+| Strategy | `app/strategy/` | Value overlay, Kelly staking, market analysis |
+| Workers | `workers/` | Background prediction jobs |
+| Scrapers | `scrapers/` | Race card data ingestion |
+
+---
+
+## Quarantine Doctrine
+
+The engine enforces strict quarantine gates before issuing any strike:
+
+| Gate | Condition | Action |
+|:---|:---|:---|
+| Q5 | Heavy/Soft going + 12+ runners | QUARANTINE |
+| Q6 | < 5 runners | Conditional strike only |
+| Q7 | Maiden with no form data | QUARANTINE |
+| Q8 | Market chaos detected | QUARANTINE |
+| Q9 | Conflicting picks + high chaos | QUARANTINE or LOW |
+
+**Target quarantine rate: 45%.** If the engine is quarantining fewer than 40% of races, the gates are too loose.
+
+---
+
+## Confidence Levels
+
+| Level | Conditions |
+|:---|:---|
+| **HIGH** | Small field + consensus OR AW + consensus + chaos ≤ 2 |
+| **MEDIUM** | Consensus + chaos ≤ 3 OR AW + chaos ≤ 3 |
+| **LOW** | Conflicting picks OR chaos 4 OR soft/heavy going |
+| **NONE** | Quarantined — no strike issued |
+
+---
+
+## Strike Report Format
+
+Predictions are saved to `predictions/` as JSON and compiled into Markdown/PDF reports in `results/`.
+
+**Sample prediction JSON:**
+```json
+{
+  "race_id": "naas_20260308_race4",
+  "meeting": "Naas",
+  "date": "2026-03-08",
+  "race_number": 4,
+  "time": "16:37",
+  "distance": "2m4f",
+  "going": "HEAVY",
+  "chaos_rating": 3,
+  "quarantine_status": "STRIKE_CONDITIONAL",
+  "top_strike": "Ballygunner Castle",
+  "confidence": "MEDIUM",
+  "suppression_signals": ["S7"]
+}
+```
+
+---
+
+## Quick Start
 
 ```bash
-npm i supabase --save-dev
+# Install dependencies
+pip install -r requirements.txt
+
+# Run engine on a race meeting
+python run_daily_predictions.py
+
+# Run tests
+pytest tests/
 ```
 
-When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
+---
 
-```
-NODE_OPTIONS=--no-experimental-fetch yarn add supabase
-```
+## Documentation
 
-> **Note**
-For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
+Full documentation lives in `/docs`:
 
-<details>
-  <summary><b>macOS</b></summary>
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — System design
+- [`docs/VELO_DEVELOPER_BLUEPRINT.md`](docs/VELO_DEVELOPER_BLUEPRINT.md) — Developer guide
+- [`docs/ML_INTEGRATION_GUIDE.md`](docs/ML_INTEGRATION_GUIDE.md) — ML model details
+- [`docs/DATABASE_SCHEMA.md`](docs/DATABASE_SCHEMA.md) — Supabase schema
+- [`docs/QUICK_START.md`](docs/QUICK_START.md) — Getting started
 
-  Available via [Homebrew](https://brew.sh). To install:
+---
 
-  ```sh
-  brew install supabase/tap/supabase
-  ```
+## Tech Stack
 
-  To install the beta release channel:
-  
-  ```sh
-  brew install supabase/tap/supabase-beta
-  brew link --overwrite supabase-beta
-  ```
-  
-  To upgrade:
+- **Backend:** Python 3.11, FastAPI, Prefect
+- **Database:** Supabase (PostgreSQL)
+- **Deployment:** Railway
+- **ML:** Scikit-learn, XGBoost, Glicko-2
+- **Data:** Racing Post, Racing API, Betfair
 
-  ```sh
-  brew upgrade supabase
-  ```
-</details>
+---
 
-<details>
-  <summary><b>Windows</b></summary>
+## Doctrine
 
-  Available via [Scoop](https://scoop.sh). To install:
-
-  ```powershell
-  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-  scoop install supabase
-  ```
-
-  To upgrade:
-
-  ```powershell
-  scoop update supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Linux</b></summary>
-
-  Available via [Homebrew](https://brew.sh) and Linux packages.
-
-  #### via Homebrew
-
-  To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-
-  #### via Linux packages
-
-  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
-
-  ```sh
-  sudo apk add --allow-untrusted <...>.apk
-  ```
-
-  ```sh
-  sudo dpkg -i <...>.deb
-  ```
-
-  ```sh
-  sudo rpm -i <...>.rpm
-  ```
-
-  ```sh
-  sudo pacman -U <...>.pkg.tar.zst
-  ```
-</details>
-
-<details>
-  <summary><b>Other Platforms</b></summary>
-
-  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
-
-  ```sh
-  go install github.com/supabase/cli@latest
-  ```
-
-  Add a symlink to the binary in `$PATH` for easier access:
-
-  ```sh
-  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
-  ```
-
-  This works on other non-standard Linux distros.
-</details>
-
-<details>
-  <summary><b>Community Maintained Packages</b></summary>
-
-  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
-  To install in your working directory:
-
-  ```bash
-  pkgx install supabase
-  ```
-
-  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
-</details>
-
-### Run the CLI
-
-```bash
-supabase bootstrap
-```
-
-Or using npx:
-
-```bash
-npx supabase bootstrap
-```
-
-The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
-
-## Docs
-
-Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
-
-## Breaking changes
-
-We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
-
-However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
-
-## Developing
-
-To run from source:
-
-```sh
-# Go >= 1.22
-go run . help
-```
+*The engine runs when you call it. It learns while it waits.*
