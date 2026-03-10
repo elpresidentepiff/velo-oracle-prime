@@ -14,10 +14,14 @@ Core loop: observe → classify → compare → imprint → evolve → redeploy
 FIX (sentient-feedback-loop):
 - Kingmaker: replaced string match on horse names with running_style field lookup
   from oracle_data['runners'] (the only correct source of pace/style data)
+- Kingmaker: normalises run_style field variants from the real API schema:
+  the fixture schema uses 'run_style' (e.g. 'FRONT', 'CLOSER') not 'running_style'.
+  Both keys are now read and normalised to a canonical set.
 - _compute_error_vector: replaced brittle exact string match with fuzzy matching
   using difflib.SequenceMatcher (handles abbreviations, "The" prefix, etc.)
 - State backup: _save_state now writes a dated backup copy alongside the primary
-  state file to prevent silent data loss on read errors
+  state file AND upserts to Supabase 'learned_patterns' table for cloud persistence.
+  If Supabase is unavailable, falls back to local backup silently.
 - appetite_state now includes directive_firing_threshold (read by Playbook F)
 - get_evolutionary_state now exposes structural_drift weights (read by Playbook F)
 - emotion_laws pain/anger rules now include a 'key' field so Playbook E can apply
@@ -32,6 +36,37 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Canonical running style values used internally by Playbook G.
+# The real Racing API fixture schema uses 'run_style' with uppercase values
+# (e.g. 'FRONT', 'CLOSER', 'HOLD UP', 'PROMINENT', 'REAR').
+# This map normalises both 'running_style' and 'run_style' to canonical keys.
+_RUN_STYLE_NORMALISE = {
+    # Front-runners / pace-setters
+    "front": "front_runner",
+    "front_runner": "front_runner",
+    "pace_setter": "front_runner",
+    "pace setter": "front_runner",
+    "prominent": "prominent",
+    # Closers / hold-up horses
+    "closer": "closer",
+    "hold up": "hold_up",
+    "hold_up": "hold_up",
+    "hold-up": "hold_up",
+    "holdup": "hold_up",
+    "late_closer": "closer",
+    "stalker": "closer",
+    # Off-pace
+    "off_pace": "off_pace",
+    "off pace": "off_pace",
+    # Rear
+    "rear": "hold_up",
+    "rear of field": "hold_up",
+}
+
+# Kingmaker: which canonical styles map to which role
+_PACE_DESTABILISER_STYLES = {"front_runner", "prominent", "pace_setter"}
+_CHAOS_NAVIGATOR_STYLES = {"closer", "hold_up", "off_pace"}
 
 
 def _fuzzy_match(a: str, b: str, threshold: float = 0.85) -> bool:
@@ -78,10 +113,14 @@ class SentientLoopbackEngine:
 
     def _save_state(self):
         """
-        Save sentient state to disk.
+        Save sentient state to disk AND upsert to Supabase for cloud persistence.
 
-        Also writes a dated backup copy alongside the primary file to prevent
-        silent data loss on read errors (e.g. disk full, corruption).
+        Three-layer backup strategy:
+        1. Primary local file (self.state_file)
+        2. Dated local backup alongside the primary file
+        3. Supabase 'learned_patterns' table upsert (cloud — survives Railway restarts)
+
+        If Supabase is unavailable or not configured, layers 1 and 2 still run.
         """
         try:
             os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
@@ -95,7 +134,44 @@ class SentientLoopbackEngine:
             with open(backup_path, 'w') as f:
                 json.dump(self.state, f, indent=2)
         except Exception as e:
-            logger.error("[G] Could not save sentient state: %s", e)
+            logger.error("[G] Could not save sentient state to disk: %s", e)
+
+        # Layer 3: Supabase cloud backup
+        self._backup_to_supabase()
+
+    def _backup_to_supabase(self):
+        """
+        Upsert the current sentient state to Supabase 'learned_patterns' table.
+
+        Uses the existing SupabaseClient from app.database.supabase_client.
+        Fails silently if Supabase is not configured — local backup is sufficient
+        for development; Supabase backup is critical for Railway production.
+
+        Row key: pattern_name = 'SENTIENT_STATE_BACKUP'
+        """
+        try:
+            from app.database.supabase_client import SupabaseClient
+            db = SupabaseClient()
+            if not db.client:
+                logger.debug("[G] Supabase not configured — skipping cloud backup")
+                return
+            payload = {
+                "pattern_name": "SENTIENT_STATE_BACKUP",
+                "pattern_type": "sentient_state",
+                "pattern_data": json.dumps(self.state),
+                "confidence": self.state["appetite_state"]["aggression_level"],
+                "occurrences": self.state["total_races_observed"],
+                "last_seen": self.state["last_updated"],
+                "created_at": self.state["last_updated"],
+            }
+            db.client.table("learned_patterns").upsert(
+                payload,
+                on_conflict="pattern_name"
+            ).execute()
+            logger.debug("[G] Sentient state backed up to Supabase (races=%d)",
+                         self.state["total_races_observed"])
+        except Exception as e:
+            logger.warning("[G] Supabase backup failed (non-fatal): %s", e)
 
     def _initialize_state(self) -> Dict[str, Any]:
         """Initialize fresh sentient state"""
@@ -454,20 +530,41 @@ class SentientLoopbackEngine:
         favourite = race_data.get("story_anchor", "")
         runners = race_data.get("runners", [])
 
-        # Build a running_style lookup from the runners list
-        # Runners are expected to be dicts with at least 'name' and 'running_style'
+        # Build a running_style lookup from the runners list.
+        # The real Racing API fixture uses 'run_style' (e.g. 'FRONT', 'CLOSER').
+        # The oracle_data layer may use 'running_style' or 'horse' instead of 'name'.
+        # We read both key variants and normalise to canonical values.
         style_map: Dict[str, str] = {}
         for runner in runners:
             if isinstance(runner, dict):
-                name = runner.get("name", "")
-                style = runner.get("running_style", "").lower()
+                # Name: try 'name' first, then 'horse' (fixture schema)
+                name = runner.get("name") or runner.get("horse", "")
+                # Style: try 'running_style' first, then 'run_style' (fixture schema)
+                raw_style = (
+                    runner.get("running_style") or runner.get("run_style", "")
+                ).lower().strip()
+                canonical = _RUN_STYLE_NORMALISE.get(raw_style, raw_style)
                 if name:
-                    style_map[name] = style
+                    style_map[name] = canonical
 
         def get_style(horse_name: str) -> str:
-            """Fuzzy-match horse name to style_map"""
+            """
+            Look up running style for a horse name.
+
+            Strategy:
+            1. Exact match (case-insensitive) — always preferred
+            2. Fuzzy match with threshold 0.92 — for minor variations only
+               (higher than the default 0.85 to prevent cross-matching
+               similar names like 'Test Horse 1' and 'Test Horse 2')
+            """
+            horse_lower = horse_name.lower().strip()
+            # Pass 1: exact match
             for name, style in style_map.items():
-                if _fuzzy_match(horse_name, name):
+                if name.lower().strip() == horse_lower:
+                    return style
+            # Pass 2: tight fuzzy match (0.92 threshold)
+            for name, style in style_map.items():
+                if _fuzzy_match(horse_name, name, threshold=0.92):
                     return style
             return ""
 
@@ -475,7 +572,7 @@ class SentientLoopbackEngine:
         if race_data.get("fav_trip_blocked"):
             for horse in threat_cluster:
                 style = get_style(str(horse))
-                if style in ("front_runner", "pace_setter", "prominent", "front"):
+                if style in _PACE_DESTABILISER_STYLES:
                     return {
                         "kingmaker": horse,
                         "role": "pace_destabiliser",
@@ -487,7 +584,7 @@ class SentientLoopbackEngine:
         if race_data.get("chaos_bloom", 0) > 40:
             for horse in threat_cluster:
                 style = get_style(str(horse))
-                if style in ("closer", "hold_up", "stalker", "late_closer"):
+                if style in _CHAOS_NAVIGATOR_STYLES:
                     return {
                         "kingmaker": horse,
                         "role": "chaos_navigator",
