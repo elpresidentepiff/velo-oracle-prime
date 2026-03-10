@@ -26,8 +26,8 @@ def main():
     # Step 1: Initialize Betfair client
     print("\n1. Initializing Betfair client...")
     betfair = BetfairClient(
-        username="Purorestrepo1981@gmail.com",
-        password="colombiano@1",
+        username=os.environ.get("BETFAIR_USERNAME", ""),
+        password=os.environ.get("BETFAIR_PASSWORD", ""),
         app_key="DELAY"  # Need to set actual app key
     )
     

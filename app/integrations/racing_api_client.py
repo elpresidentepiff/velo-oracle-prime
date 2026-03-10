@@ -116,6 +116,6 @@ class RacingAPIClient:
 
 # Initialize with credentials
 racing_api = RacingAPIClient(
-    username="VkP2i6RRIDp2GGrxR6XAaViB",
-    password="fqvqglMujliFV94D38uPvwUA"
+    username=os.environ.get("RACING_API_USERNAME", ""),
+    password=os.environ.get("RACING_API_PASSWORD", "")
 )

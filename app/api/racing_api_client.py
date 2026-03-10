@@ -144,8 +144,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
     client = RacingAPIClient(
-        username="VkP2i6RRIDp2GGrxR6XAaViB",
-        password="fqvqglMujliFV94D38uPvwUA"
+        username=os.environ.get("RACING_API_USERNAME", ""),
+        password=os.environ.get("RACING_API_PASSWORD", "")
     )
     
     print("Testing RacingAPI connection...")
