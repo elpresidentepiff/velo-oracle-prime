@@ -26,12 +26,39 @@ state into E and F before every race analysis. This closes the sentient loop:
     Next race: E and F are different because G evolved
         ↓
     Repeat forever
+
+SPOTLIGHT INTEGRATION (5-step sequence — enforced):
+    STEP 1: Structural layers run (Class, Differential, Setup, Stamina, Survivability)
+    STEP 2: Intent Override and Market layers run
+    STEP 3: Spotlight NLP pass — SpotlightGate.apply_modifiers() called
+             → Flags modify existing scores ONLY
+             → No new chassis entry via spotlight alone
+             → Regime blocks cannot be lifted by spotlight
+    STEP 4: Day Classification Engine runs (spotlight push is one input, not the driver)
+    STEP 5: Verdict assembled — structural case is primary, spotlight tags are annotations
+
+Doctrine: docs/VELO_SPOTLIGHT_HARD_LIMITS.md
 """
 
-from typing import Dict, List, Any
+import sys
+import os
+from typing import Dict, List, Any, Optional
 from .playbook_e_attack_doctrine import create_attack_doctrine_engine
 from .playbook_f_execution_sequencer import create_execution_sequencer
 from .playbook_g_sentient_loopback import create_sentient_loopback_engine
+
+# Spotlight gate — enforces the hard architectural rule:
+# "A spotlight comment cannot generate a selection. It can only modify one."
+try:
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'workers'))
+    from spotlight_parser import SpotlightGate
+    _SPOTLIGHT_AVAILABLE = True
+except ImportError:
+    _SPOTLIGHT_AVAILABLE = False
+    import logging
+    logging.getLogger(__name__).warning(
+        "spotlight_parser not found — spotlight modifier layer disabled."
+    )
 
 
 class PlaybookOrchestrator:
@@ -63,18 +90,28 @@ class PlaybookOrchestrator:
         self.attack_doctrine.update_sentient_state(current_state)
         self.execution_sequencer.update_sentient_state(current_state)
 
-    def analyze_race(self, oracle_data: Dict[str, Any]) -> Dict[str, Any]:
+    def analyze_race(
+        self,
+        oracle_data: Dict[str, Any],
+        spotlight_records: Optional[Dict[str, dict]] = None,
+    ) -> Dict[str, Any]:
         """
         Complete race analysis through all playbooks.
 
-        Flow:
+        Flow (5-step spotlight integration enforced):
         1. Sync G's evolved state into E and F (closes the feedback loop)
         2. Playbook E evaluates doctrines using G's threshold + emotion laws
-        3. Playbook F determines positioning directive using G's doctrine strengths + drift
-        4. Output complete tactical intelligence
+           (structural layers — Steps 1 & 2 of spotlight sequence)
+        3. Spotlight NLP pass via SpotlightGate — modifiers applied to runners
+           already in the preliminary chassis ONLY (Step 3)
+        4. Playbook F determines positioning directive (Step 4 — Day Classification)
+        5. Output assembled — structural case primary, spotlight tags as annotations
 
         Args:
-            oracle_data: Complete Oracle dossier
+            oracle_data:        Complete Oracle dossier
+            spotlight_records:  Optional dict of {horse_name: spotlight_record}
+                                from spotlight_parser.extract_spotlight_signals().
+                                If None, spotlight modifier layer is skipped.
 
         Returns:
             Complete playbook output
@@ -82,9 +119,48 @@ class PlaybookOrchestrator:
         # SYNC: Push G's current state into E and F before every analysis
         self._sync_sentient_state()
 
-        # PLAYBOOK E: Evaluate attack doctrines (G-aware)
+        # STEP 1 & 2: Structural layers + Intent/Market (Playbook E)
         doctrine_output = self.attack_doctrine.generate_doctrine_output(oracle_data)
         doctrines_triggered = doctrine_output["doctrines_triggered"]
+
+        # STEP 3: Spotlight NLP pass — SpotlightGate enforces hard limits
+        # NULL PATHWAY CONTRACT:
+        #   If spotlight_records is None, empty, or the spotlight module is
+        #   unavailable, the engine continues cleanly on structural-only verdict.
+        #   No exception is raised. No warning noise is emitted to the caller.
+        #   The output will carry spotlight_layer.active = False and
+        #   spotlight_layer.null_reason explaining why.
+        #   This is the correct behaviour on days when card data is unavailable,
+        #   PDF parse fails, or the source has no per-horse comments.
+        spotlight_gate_summary = {"applied": 0, "blocked": 0, "total": 0}
+        spotlight_null_reason = None
+        try:
+            if not _SPOTLIGHT_AVAILABLE:
+                spotlight_null_reason = "SPOTLIGHT_MODULE_UNAVAILABLE"
+            elif spotlight_records is None:
+                spotlight_null_reason = "NO_SPOTLIGHT_RECORDS_PROVIDED"
+            elif len(spotlight_records) == 0:
+                spotlight_null_reason = "SPOTLIGHT_RECORDS_EMPTY"
+            else:
+                gate = SpotlightGate()
+                runners = oracle_data.get("runners", [])
+                for runner in runners:
+                    horse_name = runner.get("horse_name", runner.get("name", ""))
+                    spotlight_record = spotlight_records.get(horse_name)
+                    if spotlight_record:
+                        gate.apply_modifiers(runner, spotlight_record)
+                spotlight_gate_summary = gate.summary()
+        except Exception as exc:  # noqa: BLE001
+            # Pipeline failure must never block the engine.
+            # Log the error, set null reason, continue on structural-only verdict.
+            import logging
+            logging.getLogger(__name__).error(
+                f"[SPOTLIGHT_PIPELINE_FAILURE] Exception in spotlight gate: {exc}. "
+                "Continuing on structural-only verdict.",
+                exc_info=True,
+            )
+            spotlight_null_reason = f"PIPELINE_EXCEPTION: {type(exc).__name__}"
+            spotlight_gate_summary = {"applied": 0, "blocked": 0, "total": 0}
 
         # PLAYBOOK F: Execute positioning sequence (G-aware)
         execution_output = self.execution_sequencer.execute_sequence(
@@ -147,10 +223,22 @@ class PlaybookOrchestrator:
             # Kingmaker
             "kingmaker": kingmaker,
 
+            # Spotlight Layer (Step 3 gate summary)
+            # null_reason is set when spotlight data was absent or pipeline failed.
+            # The engine always returns a valid verdict regardless.
+            "spotlight_layer": {
+                "active": spotlight_null_reason is None,
+                "modifiers_applied": spotlight_gate_summary["applied"],
+                "modifiers_blocked": spotlight_gate_summary["blocked"],
+                "null_reason": spotlight_null_reason,
+                "doctrine": "docs/VELO_SPOTLIGHT_HARD_LIMITS.md"
+            },
+
             # Meta
-            "playbooks_version": "1.1",
+            "playbooks_version": "1.2",
             "system": "VÉLØ PRIME",
-            "sentient_loop_active": True
+            "sentient_loop_active": True,
+            "spotlight_gate_active": True
         }
 
     def record_outcome(
