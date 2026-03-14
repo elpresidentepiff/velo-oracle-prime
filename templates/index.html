@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>VELO Oracle Prime</title>
+    <style>
+        body { font-family: monospace; background: #0d1117; color: #c9d1d9; padding: 20px; }
+        h1 { color: #58a6ff; border-bottom: 1px solid #30363d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #30363d; padding: 10px; text-align: left; }
+        th { background: #161b22; color: #8b949e; }
+        .status-PARSED { color: #3fb950; }
+    </style>
+</head>
+<body>
+    <h1>VELO Oracle Prime // Command Center</h1>
+    <p>System Status: <span style='color: #3fb950;'>ONLINE</span></p>
+    
+    <h2>Recent Ingestions</h2>
+    <table>
+        <thead><tr><th>Filename</th><th>Timestamp</th><th>Status</th></tr></thead>
+        <tbody>
+            {% for log in ingestions %}
+            <tr>
+                <td>{{ log.filename }}</td>
+                <td>{{ log.timestamp }}</td>
+                <td class='status-{{ log.status }}'>{{ log.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Parsed Intelligence</h2>
+    <table>
+        <thead><tr><th>Horse</th><th>Odds</th><th>Comment</th></tr></thead>
+        <tbody>
+            {% for runner in runners %}
+            <tr>
+                <td>{{ runner.horse_name }}</td>
+                <td>{{ runner.odds_opening }}</td>
+                <td>{{ runner.comment }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
