@@ -170,19 +170,69 @@ data/backtest_50k.csv               50k row training dataset
 
 ---
 
+## Real Agent System — MERGED AND TESTED
+
+### 5-Agent Orchestrator (`app/engine/`)
+All merged from `copilot/replace-placeholder-agents`. **20/20 tests passing.**
+
+```
+app/engine/orchestrator.py              — Orchestrator: runs all 5 agents, produces BettingVerdict
+app/engine/agents/form_analyzer.py      — FormAnalyzer: recent form figures, consistency
+app/engine/agents/market_analyzer.py   — MarketAnalyzer: odds, value identification
+app/engine/agents/connections_analyzer.py    — trainer/jockey connections scoring
+app/engine/agents/course_distance_analyzer.py — course/distance specialist analysis
+app/engine/agents/ratings_analyzer.py  — OR/RPR/TS ratings engine
+app/engine/run_analysis.py             — CLI runner
+```
+
+**Agent weights:** Connections 25% | Ratings 20% | Form 20% | Course/Distance 20% | Market 15%
+**Betting rules:** BACK 2% if score>70, BACK 1% if score>60, LAY 0.5% if score<40, PASS otherwise
+
+### Sentient Loop — FIXED (PR #52)
+`app/playbooks/playbook_g_sentient_loopback.py` — upgraded version:
+- Kingmaker uses `run_style` field (correct API schema)
+- Fuzzy horse name matching via `difflib.SequenceMatcher`
+- State backup to Supabase `learned_patterns` (cloud persistence)
+- Playbook F receives `directive_firing_threshold` from appetite state
+
+### Spotlight NLP Layer — MERGED (PR #53)
+```
+workers/spotlight_parser.py             — NLP parser for horse comment flags
+workers/spotlight_ingestion_worker.py   — autonomous ingestion pipeline
+docs/VELO_MASTER_OPERATING_PROMPT.md   — full doctrine document
+docs/VELO_MODULE_SPEC_V1.md            — module specifications (PJI, Day Classification etc.)
+docs/VELO_SPOTLIGHT_HARD_LIMITS.md     — Spotlight CANNOT override structural verdict
+```
+
+### LangGraph Pipeline — NOT YET MERGED
+`copilot/add-langgraph-agent-orchestration` — held back. Needs `langgraph>=0.2.0` + `langchain-core>=0.3.0`. Add deliberately when ready.
+
+### New Supabase Tables (created this session)
+- `horse_comments` — NLP flags from horse comments (Spotlight layer)
+- `race_spotlight_verdict` — structural gate log, override tracking
+
+**Total: 27 tables in Supabase**
+
+### Evidence Archive
+`evidence/cheltenham-2026/` — Cheltenham Day 3 (March 12) prediction data preserved as benchmark
+
 ## What Was Done This Session
-- Built `workers/racing_api_fetcher.py` (full HTTP client with retry, cache, normalisation)
+- Merged 4 branches: harden-production-security, sentient-feedback-loop, spotlight-layer, replace-placeholder-agents
+- All merges conflict-resolved, all syntax clean
+- 20/20 agent tests passing
+- Created `horse_comments` + `race_spotlight_verdict` tables in Supabase
+- Built `workers/racing_api_fetcher.py` (token bucket rate limiter, zero silent failures)
 - Created `.env` with all confirmed credentials
-- Created `plot_memory_spine` table in Supabase (25/25 tables now exist)
 - Set all env vars on Railway `velo-oracle` service
 - Registered Supabase MCP + Racing API MCP servers
 - Linked Railway to `sincere-empathy` project
-- Wrote `scripts/test_supabase.py` and `scripts/test_claude.py`
-- Fixed Racing API password typo (l→I) in `app/integrations/racing_api_client.py`
+- CLAUDE.md written as permanent session memory
 
 ## What Is Still Needed
-- `ANTHROPIC_API_KEY` — add to `.env` then run `scripts/test_claude.py`
+- `ANTHROPIC_API_KEY` — add to `.env` then run `scripts/test_claude.py` (user getting this now)
+- Racing API subscription upgrade — user getting this now
 - Supabase DB password — update `SUPABASE_DB_URL` in `.env`
-- Fix 5 known bugs in prediction pipeline (listed above)
+- Wire agents to Racing API fetcher output
+- Fix 5 prediction pipeline bugs (listed above in Known Bugs section)
 - Rotate Racing API credentials (exposed in git history on public repo)
-- v11 repo — check GitHub under `elpresidentepiff` for `velo-oracle-v11`
+- Push to main + verify Railway auto-deploy
