@@ -124,16 +124,43 @@ class PlaybookOrchestrator:
         doctrines_triggered = doctrine_output["doctrines_triggered"]
 
         # STEP 3: Spotlight NLP pass — SpotlightGate enforces hard limits
+        # NULL PATHWAY CONTRACT:
+        #   If spotlight_records is None, empty, or the spotlight module is
+        #   unavailable, the engine continues cleanly on structural-only verdict.
+        #   No exception is raised. No warning noise is emitted to the caller.
+        #   The output will carry spotlight_layer.active = False and
+        #   spotlight_layer.null_reason explaining why.
+        #   This is the correct behaviour on days when card data is unavailable,
+        #   PDF parse fails, or the source has no per-horse comments.
         spotlight_gate_summary = {"applied": 0, "blocked": 0, "total": 0}
-        if spotlight_records and _SPOTLIGHT_AVAILABLE:
-            gate = SpotlightGate()
-            runners = oracle_data.get("runners", [])
-            for runner in runners:
-                horse_name = runner.get("horse_name", runner.get("name", ""))
-                spotlight_record = spotlight_records.get(horse_name)
-                if spotlight_record:
-                    gate.apply_modifiers(runner, spotlight_record)
-            spotlight_gate_summary = gate.summary()
+        spotlight_null_reason = None
+        try:
+            if not _SPOTLIGHT_AVAILABLE:
+                spotlight_null_reason = "SPOTLIGHT_MODULE_UNAVAILABLE"
+            elif spotlight_records is None:
+                spotlight_null_reason = "NO_SPOTLIGHT_RECORDS_PROVIDED"
+            elif len(spotlight_records) == 0:
+                spotlight_null_reason = "SPOTLIGHT_RECORDS_EMPTY"
+            else:
+                gate = SpotlightGate()
+                runners = oracle_data.get("runners", [])
+                for runner in runners:
+                    horse_name = runner.get("horse_name", runner.get("name", ""))
+                    spotlight_record = spotlight_records.get(horse_name)
+                    if spotlight_record:
+                        gate.apply_modifiers(runner, spotlight_record)
+                spotlight_gate_summary = gate.summary()
+        except Exception as exc:  # noqa: BLE001
+            # Pipeline failure must never block the engine.
+            # Log the error, set null reason, continue on structural-only verdict.
+            import logging
+            logging.getLogger(__name__).error(
+                f"[SPOTLIGHT_PIPELINE_FAILURE] Exception in spotlight gate: {exc}. "
+                "Continuing on structural-only verdict.",
+                exc_info=True,
+            )
+            spotlight_null_reason = f"PIPELINE_EXCEPTION: {type(exc).__name__}"
+            spotlight_gate_summary = {"applied": 0, "blocked": 0, "total": 0}
 
         # PLAYBOOK F: Execute positioning sequence (G-aware)
         execution_output = self.execution_sequencer.execute_sequence(
@@ -197,10 +224,13 @@ class PlaybookOrchestrator:
             "kingmaker": kingmaker,
 
             # Spotlight Layer (Step 3 gate summary)
+            # null_reason is set when spotlight data was absent or pipeline failed.
+            # The engine always returns a valid verdict regardless.
             "spotlight_layer": {
-                "active": _SPOTLIGHT_AVAILABLE and spotlight_records is not None,
+                "active": spotlight_null_reason is None,
                 "modifiers_applied": spotlight_gate_summary["applied"],
                 "modifiers_blocked": spotlight_gate_summary["blocked"],
+                "null_reason": spotlight_null_reason,
                 "doctrine": "docs/VELO_SPOTLIGHT_HARD_LIMITS.md"
             },
 
