@@ -439,8 +439,9 @@ async def get_predictions(
 
 
 if __name__ == "__main__":
-    # Set environment variables for local testing
-    os.environ['SUPABASE_URL'] = os.getenv('SUPABASE_URL', 'https://ltbsxbvfsxtnharjvqcm.supabase.co')
-    os.environ['SUPABASE_KEY'] = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0YnN4YnZmc3h0bmhhcmp2cWNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODgzNjksImV4cCI6MjA3OTA2NDM2OX0.iS1Sixo77BhZ2UQVwqVQcGOyBocSIy9ApABvsgLGmhY')
-    
+    # Credentials must be set via environment variables — no hardcoded fallbacks
+    import sys
+    if not os.environ.get('SUPABASE_URL') or not os.environ.get('SUPABASE_KEY'):
+        print("FATAL: SUPABASE_URL and SUPABASE_KEY must be set as environment variables.")
+        sys.exit(2)
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -35,14 +35,21 @@ from datetime import datetime, date, timezone
 from typing import Optional
 
 # ─── Configuration ────────────────────────────────────────────────────────────
+# FAIL-FAST: No fallbacks. Missing env vars = immediate crash.
+_REQUIRED = ["RACING_API_USERNAME", "RACING_API_PASSWORD", "SUPABASE_URL", "SUPABASE_SERVICE_KEY"]
+_missing = [k for k in _REQUIRED if not os.environ.get(k)]
+if _missing:
+    import sys as _sys
+    print(f"FATAL: Missing required environment variables: {_missing}", file=_sys.stderr)
+    _sys.exit(2)
 
 RACING_API_BASE = "https://api.theracingapi.com"
-RACING_API_USER = os.environ.get("RACING_API_USERNAME", "cHHxKCt4ePK3TpFrWNq3sax6")
-RACING_API_PASS = os.environ.get("RACING_API_PASSWORD", "D2Zlg9VcD4Sjbjcb7pMzpwwy")
+RACING_API_USER = os.environ["RACING_API_USERNAME"]
+RACING_API_PASS = os.environ["RACING_API_PASSWORD"]
 RACING_API_AUTH = (RACING_API_USER, RACING_API_PASS)
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://ltbsxbvfsxtnharjvqcm.supabase.co")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0YnN4YnZmc3h0bmhhcmp2cWNtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzQ4ODM2OSwiZXhwIjoyMDc5MDY0MzY5fQ.MmQiC3kt6UJ0e2BQ6k32oWbSNbWmv2U0G9E6l6k2C18"))
+SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
+SUPABASE_KEY = os.environ["SUPABASE_SERVICE_KEY"]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -103,7 +110,7 @@ def sb_select(table: str, params: dict = None) -> list:
 
 def sb_run_sql(sql: str, access_token: str) -> dict:
     """Run raw SQL via Supabase Management API."""
-    PROJECT_REF = "ltbsxbvfsxtnharjvqcm"
+    PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF", "ltbsxbvfsxtnharjvqcm")
     r = requests.post(
         f"https://api.supabase.com/v1/projects/{PROJECT_REF}/database/query",
         headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
@@ -413,7 +420,10 @@ def job_create_tables():
     Requires SUPABASE_ACCESS_TOKEN env var.
     """
     log.info("=== JOB: create_tables ===")
-    access_token = os.environ.get("SUPABASE_ACCESS_TOKEN", "sbp_ce68eebbcf70f9a73c6e1efdfb43f4ede19ff949")
+    access_token = os.environ.get("SUPABASE_ACCESS_TOKEN")
+    if not access_token:
+        log.error("SUPABASE_ACCESS_TOKEN env var not set. Cannot run migrations.")
+        return
 
     migrations = [
         # Raw payloads archive
@@ -649,7 +659,7 @@ def job_create_tables():
         """,
     ]
 
-    PROJECT_REF = "ltbsxbvfsxtnharjvqcm"
+    PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF", "ltbsxbvfsxtnharjvqcm")
     success_count = 0
     for i, sql in enumerate(migrations):
         r = requests.post(
