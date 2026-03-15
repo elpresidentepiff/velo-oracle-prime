@@ -23,5 +23,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD python healthcheck.py
 
-# Use sh -c so Railway's PORT env var is expanded at runtime
-CMD ["/bin/sh", "-c", "python -m uvicorn ingestion_spine.main:app --host 0.0.0.0 --port ${PORT:-8000} --log-level info --no-access-log"]
+# Use Python to read PORT env var — avoids shell expansion issues
+CMD ["python", "-c", "import os,uvicorn; uvicorn.run('ingestion_spine.main:app', host='0.0.0.0', port=int(os.environ.get('PORT',8000)), log_level='info', access_log=False)"]
