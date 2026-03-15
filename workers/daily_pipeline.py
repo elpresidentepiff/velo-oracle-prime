@@ -597,11 +597,40 @@ def reconcile_results_for_date(target_date: str, known_race_ids: set, run_id, st
 
 # ── MAIN PIPELINE ─────────────────────────────────────────────────────────────
 
+def check_already_running(target_date):
+    """Return True if an in_progress daily_ingestion run exists for this date."""
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/pipeline_runs",
+            headers=SUPABASE_HEADERS,
+            params={
+                "source_date": f"eq.{target_date}",
+                "status": "eq.in_progress",
+                "run_type": "eq.daily_ingestion",
+                "select": "id,started_at",
+            },
+            timeout=10,
+        )
+        if r.status_code == 200:
+            rows = r.json()
+            if rows:
+                log.warning(f"[guard] Active run already in_progress for {target_date}: {rows[0]['id']} (started {rows[0]['started_at']}). Aborting.")
+                return True
+    except Exception as exc:
+        log.warning(f"[guard] Could not check for active runs: {exc}")
+    return False
+
+
 def run_pipeline(target_date=None):
     if not target_date:
         target_date = date.today().isoformat()
 
     log.info(f"=== VÉLØ DAILY PIPELINE v{PARSER_VERSION} | {target_date} ===")
+
+    # Single-run guard: abort if another run is already in progress for this date
+    if check_already_running(target_date):
+        return {"status": "SKIPPED", "reason": "run already in_progress for this date"}
+
     stats = {
         "date": target_date,
         "races_total": 0, "races_ok": 0, "races_fail": 0,
@@ -728,9 +757,11 @@ def run_pipeline(target_date=None):
                             "race_date":   target_date,
                         })
 
-            # Batch write runners
+            # Batch write runners — conflict on (race_id, horse_id) so re-runs upsert
             if runner_rows:
-                ok = supabase_upsert("runners", runner_rows, run_id=run_id, stats=stats)
+                ok = supabase_upsert("runners", runner_rows,
+                                     conflict_keys=["race_id", "horse_id"],
+                                     run_id=run_id, stats=stats)
                 if ok:
                     stats["runners_ok"] += len(runner_rows)
                 else:
