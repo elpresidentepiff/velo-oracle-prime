@@ -1,44 +1,34 @@
 # Production Dockerfile for VÉLØ Ingestion Spine Worker
-# Optimized for Railway deployment with proper dependency caching
+# Build context: workers/ingestion_spine/ (use `railway up workers/ingestion_spine/`)
+# Or from repo root with dockerfilePath=workers/ingestion_spine/Dockerfile
 
 FROM python:3.11-slim
 
-# Set working directory to parent
 WORKDIR /app
 
-# Install system dependencies required for Python packages
-# gcc: Required for compiling some Python packages
-# Clean up apt cache to reduce image size
 RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better Docker layer caching
-# Build context is repo root (Railway uses repo root when dockerfilePath is set)
-COPY workers/ingestion_spine/requirements.txt ./ingestion_spine/
+# Works whether build context is workers/ingestion_spine/ OR repo root
+# When context = workers/ingestion_spine/, file is at ./requirements.txt
+# When context = repo root, this path fails — use dockerfilePath setting instead
+COPY requirements.txt ./ingestion_spine/
 
-# Install Python dependencies
-# --no-cache-dir: Don't cache pip packages to reduce image size
 RUN pip install --no-cache-dir -r ./ingestion_spine/requirements.txt
 
-# Copy application code into ingestion_spine subdirectory
-COPY workers/ingestion_spine/ ./ingestion_spine/
+COPY . ./ingestion_spine/
 
-# Make start script executable
 RUN chmod +x ./ingestion_spine/start.sh
 
-# Set working directory to ingestion_spine
-# Note: Working dir is /app/ingestion_spine (where code lives)
-#       PYTHONPATH is /app (so Python finds ingestion_spine as a package)
-#       This allows relative imports like "from .db import ..." to work
+# PYTHONPATH=/app so `ingestion_spine` package is importable
+ENV PYTHONPATH=/app
+
 WORKDIR /app/ingestion_spine
 
-# Expose port 8000 (Railway will override with PORT env var)
 EXPOSE 8000
 
-# Health check to ensure service is running
-# Railway uses this to verify deployment success
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD python healthcheck.py
 
-# Start command is defined in railway.json to properly use $PORT env var
+CMD ["./start.sh"]
