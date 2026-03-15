@@ -6,8 +6,10 @@ import os
 from typing import Optional
 
 # Supabase Project Configuration
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ltbsxbvfsxtnharjvqcm.supabase.co")
-SUPABASE_PROJECT_ID = "ltbsxbvfsxtnharjvqcm"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+if not SUPABASE_URL:
+    raise ValueError("SUPABASE_URL environment variable is required")
+SUPABASE_PROJECT_ID = os.getenv("SUPABASE_PROJECT_REF", "")
 
 # API Keys (use environment variables in production)
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
