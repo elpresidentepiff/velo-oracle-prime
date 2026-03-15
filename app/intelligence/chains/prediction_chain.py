@@ -41,7 +41,7 @@ async def run_prediction_chain(race: Dict[str, Any], runners: List[Dict[str, Any
         # Step 3-6: Run model predictions
         predictions = []
         for runner, features in zip(runners, features_list):
-            pred = await run_model_predictions(runner, features, models)
+            pred = await run_model_predictions(runner, features, models, race=race)
             predictions.append(pred)
         
         # Step 7: Apply risk layer
@@ -99,29 +99,49 @@ async def load_models() -> Dict[str, Any]:
 
 
 async def extract_features_batch(runners: List[Dict], race: Dict) -> List[Dict]:
-    """Extract features for all runners"""
+    """Extract v16 base features + v17 doctrine features for all runners."""
     from app.services.feature_engineering import extract_features
-    
+    from app.services.v17_feature_extractor import V17FeatureExtractor
+
+    extractor = V17FeatureExtractor()
     features_list = []
     for runner in runners:
+        # v16 base features (20 legacy features — used by downstream intelligence layers)
         features = extract_features(runner, race, historical=None)
+
+        # v17 doctrine features — fetched from Racing API horse form
+        horse_id = runner.get("horse_id") or runner.get("id", "")
+        race_context = {
+            "course": race.get("course", ""),
+            "going": race.get("going", "Good"),
+            "dist_f": race.get("distance_f") or race.get("dist_f"),
+            "or_num": runner.get("or") or runner.get("official_rating"),
+            "sp_dec": runner.get("sp_dec") or runner.get("odds"),
+            "jockey": runner.get("jockey", ""),
+            "is_fav": runner.get("is_fav", 0),
+        }
+        if horse_id:
+            doctrine = extractor.extract(horse_id, race_context)
+            features.update(doctrine)
+
         features_list.append(features)
-    
+
     return features_list
 
 
 async def run_model_predictions(
     runner: Dict,
     features: Dict,
-    models: Dict
+    models: Dict,
+    race: Dict = None,
 ) -> Dict[str, Any]:
     """Run all model predictions for a runner"""
     from app.services.model_manager import get_model_manager
-    
+
     mm = get_model_manager()
-    
-    # SQPE
-    sqpe_score = mm.predict_sqpe(features)
+
+    # SQPE v17 — pass raw runner+race so model_manager builds the correct 37-feature vector
+    sqpe_score = mm.predict_sqpe(features, runner=runner, race=race or {})
     
     # Trainer Intent
     tie_signal = mm.predict_trainer_intent(features)

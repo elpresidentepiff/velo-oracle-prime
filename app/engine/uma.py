@@ -45,7 +45,7 @@ class UMA:
     def __init__(self):
         self.models = {}
         self.weights = {
-            'sqpe_v14': 0.40,
+            'sqpe_v17': 0.40,
             'tie_v9': 0.25,
             'longshot_v6': 0.15,
             'overlay_v5': 0.20
@@ -59,7 +59,7 @@ class UMA:
         """Load all models"""
         if model_paths is None:
             model_paths = {
-                'sqpe_v14': 'models/sqpe_v14/sqpe_v14.pkl',
+                'sqpe_v17': 'models/sqpe_v17/sqpe_v17.pkl',
                 'tie_v9': 'models/tie_v9/tie_v9.pkl',
                 'longshot_v6': 'models/longshot_v6/longshot_v6.pkl',
                 'overlay_v5': 'models/overlay_v5/overlay_v5.pkl'

@@ -2,8 +2,12 @@
 VÉLØ Oracle - Model Manager
 Load and manage ML models for prediction
 """
+import math
+import re
+from pathlib import Path
 from typing import Dict, Any, Optional
 import logging
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -41,45 +45,42 @@ class ModelManager:
             self.initialize()
         return self.models
     
-    def load_sqpe(self) -> Dict[str, Any]:
-        """
-        Load SQPE (Speed, Quality, Pace, Efficiency) model
-        
-        Returns:
-            Model stub with metadata
-        """
-        logger.info("Loading SQPE model...")
-        
-        model_stub = {
-            "name": "SQPE",
-            "version": "v13.0",
-            "type": "gradient_boosting",
-            "features": [
-                "speed_normalized",
-                "quality_score",
-                "pace_map_position",
-                "efficiency_score",
-                "sectional_delta"
-            ],
-            "weights": {
-                "speed": 0.30,
-                "quality": 0.25,
-                "pace": 0.25,
-                "efficiency": 0.20
-            },
-            "performance": {
-                "accuracy": 0.78,
-                "auc": 0.85,
-                "log_loss": 0.42
-            },
-            "status": "stub",
-            "loaded": True
-        }
-        
-        self.model_versions["sqpe"] = model_stub["version"]
-        logger.info(f"SQPE model {model_stub['version']} loaded (stub)")
-        
-        return model_stub
+    # ── v17 feature column order (must match training) ────────────────────
+    V16_FEATURES = [
+        "sp_dec", "log_sp", "implied_prob",
+        "dist_f", "going_code", "is_aw",
+        "class_num", "wgt_lbs",
+        "or_num", "rpr_num", "ts_num",
+        "or_vs_field", "rpr_vs_field",
+        "field_size", "draw_num", "draw_pct",
+        "age_num", "sp_rank", "is_fav",
+    ]
+    V17_DOCTRINE_FEATURES = [
+        "runs_since_win", "runs_since_place", "runs_since_mkt_support",
+        "curr_or_minus_last_win_or", "curr_or_minus_best_or",
+        "mark_compression_score", "release_window_score",
+        "course_fit_score", "going_fit_score", "distance_fit_score",
+        "quiet_run_score", "trainer_timing_score", "jockey_switch_intent",
+        "odds_resilience_score", "odds_contraction_score",
+        "decoy_support_flag", "setup_run_flag", "cash_run_flag",
+    ]
+    ALL_V17_FEATURES = V16_FEATURES + V17_DOCTRINE_FEATURES  # 37
+
+    def load_sqpe(self) -> Any:
+        """Load SQPE v17 model from disk using joblib/pickle."""
+        import joblib
+        model_path = Path("models/sqpe_v17/sqpe_v17.pkl")
+        if not model_path.exists():
+            # Fallback to v16 if v17 not present
+            model_path = Path("models/sqpe_v16/sqpe_v16.pkl")
+        if not model_path.exists():
+            logger.warning("No SQPE model found at models/sqpe_v17/ or models/sqpe_v16/ — returning None")
+            return None
+        model = joblib.load(model_path)
+        version = "v17" if "v17" in str(model_path) else "v16"
+        self.model_versions["sqpe"] = version
+        logger.info(f"SQPE {version} loaded from {model_path}")
+        return model
     
     def load_trainer_intent(self) -> Dict[str, Any]:
         """
@@ -198,30 +199,157 @@ class ModelManager:
         """Get version of a specific model"""
         return self.model_versions.get(model_name)
     
-    def predict_sqpe(self, features: Dict[str, float]) -> float:
+    def predict_sqpe(self, features: Dict[str, float],
+                     runner: Optional[Dict] = None,
+                     race: Optional[Dict] = None) -> float:
         """
-        Generate SQPE prediction
-        
-        Args:
-            features: Engineered features dictionary
-            
+        Generate SQPE v17 prediction.
+
+        Accepts either a pre-built features dict (must contain all 37 v17 keys)
+        or raw runner+race dicts (will build features internally).
+
         Returns:
-            SQPE score [0, 1]
+            Win probability [0, 1]
         """
         model = self.get_model("sqpe")
-        if not model:
+        if model is None:
             return 0.5
-        
-        # Stub prediction: weighted average of components
-        weights = model["weights"]
-        score = (
-            features.get("speed_normalized", 0.5) * weights["speed"] +
-            features.get("quality_score", 0.5) * weights["quality"] +
-            features.get("pace_map_position", 0.5) * weights["pace"] +
-            features.get("efficiency_score", 0.5) * weights["efficiency"]
-        )
-        
-        return min(max(score, 0.0), 1.0)
+
+        # Build feature vector from raw dicts if provided, else use features dict
+        if runner is not None and race is not None:
+            fvec = self._build_v17_feature_vector(runner, race)
+        else:
+            fvec = np.array(
+                [float(features.get(f, 0.0)) for f in self.ALL_V17_FEATURES],
+                dtype=np.float64,
+            )
+
+        try:
+            prob = model.predict_proba(fvec.reshape(1, -1))[0, 1]
+            return float(prob)
+        except Exception as e:
+            logger.warning("SQPE predict_proba failed: %s", e)
+            return 0.5
+
+    # ── v17 feature builder ────────────────────────────────────────────────
+    @staticmethod
+    def _parse_sp(sp_str) -> float:
+        if not sp_str or str(sp_str).strip() in ("", "–", "-"):
+            return 10.0
+        s = str(sp_str).strip().upper().rstrip("F").rstrip("J").strip()
+        if s in ("EVENS", "EVS"):
+            return 2.0
+        m = re.match(r"^(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)$", s)
+        if m:
+            return float(m.group(1)) / float(m.group(2)) + 1.0
+        try:
+            return float(s) + 1.0
+        except ValueError:
+            return 10.0
+
+    @staticmethod
+    def _parse_dist(dist_str) -> float:
+        if not dist_str:
+            return 16.0
+        s = str(dist_str).strip().lower()
+        total = 0.0
+        m_miles = re.search(r"(\d+(?:\.\d+)?)m", s)
+        m_fur = re.search(r"(\d+(?:\.\d+)?)f", s)
+        m_yds = re.search(r"(\d+)y", s)
+        if m_miles:
+            total += float(m_miles.group(1)) * 8
+        if m_fur:
+            total += float(m_fur.group(1))
+        if m_yds:
+            total += float(m_yds.group(1)) / 220
+        return total if total > 0 else 16.0
+
+    @staticmethod
+    def _parse_going(going_str):
+        g = str(going_str or "").strip().upper()
+        aw = 1 if any(x in g for x in ["STANDARD", "SLOW", "FAST", "TAPETA", "POLYTRACK"]) else 0
+        codes = {
+            "FIRM": 2.0, "GOOD TO FIRM": 1.5, "GOOD": 1.0,
+            "GOOD TO SOFT": 0.5, "SOFT": 0.0, "HEAVY": -1.0,
+            "YIELDING": 0.3, "STANDARD": 1.0,
+        }
+        for key, val in codes.items():
+            if key in g:
+                return val, aw
+        return 0.5, aw
+
+    @staticmethod
+    def _parse_class(class_str) -> float:
+        s = str(class_str or "").strip().upper()
+        m = re.search(r"CLASS\s*(\d)", s)
+        if m:
+            return float(m.group(1))
+        if "GROUP 1" in s or "GRADE 1" in s:
+            return 1.0
+        if "GROUP 2" in s or "GRADE 2" in s:
+            return 2.0
+        if "LISTED" in s:
+            return 2.5
+        return 4.0
+
+    @staticmethod
+    def _parse_wgt(wgt_str) -> float:
+        s = str(wgt_str or "").strip()
+        m = re.match(r"(\d+)-(\d+)", s)
+        if m:
+            return float(m.group(1)) * 14 + float(m.group(2))
+        try:
+            return float(s)
+        except ValueError:
+            return 126.0
+
+    @staticmethod
+    def _parse_num(val) -> float:
+        try:
+            v = float(str(val).strip())
+            return v if not math.isnan(v) else 0.0
+        except (ValueError, TypeError):
+            return 0.0
+
+    def _build_v17_feature_vector(self, runner: Dict, race: Dict) -> np.ndarray:
+        """Build 37-element v17 feature vector from raw runner+race dicts."""
+        # ── v16 base (19) ──
+        sp_dec = self._parse_sp(runner.get("sp") or runner.get("odds"))
+        log_sp = math.log(max(sp_dec, 1.01))
+        implied_prob = 1.0 / max(sp_dec, 1.01)
+        dist_f = self._parse_dist(race.get("dist") or race.get("distance_f"))
+        going_code, is_aw = self._parse_going(race.get("going"))
+        class_num = self._parse_class(race.get("class") or race.get("class_raw"))
+        wgt_lbs = self._parse_wgt(runner.get("wgt") or runner.get("weight"))
+        or_num = self._parse_num(runner.get("or") or runner.get("or_rating") or runner.get("official_rating"))
+        rpr_num = self._parse_num(runner.get("rpr"))
+        ts_num = self._parse_num(runner.get("ts"))
+        field_size = self._parse_num(race.get("ran") or race.get("runners_count", 10))
+        draw_num = self._parse_num(runner.get("draw") or runner.get("stall"))
+        draw_pct = draw_num / max(field_size, 1)
+        age_num = self._parse_num(runner.get("age"))
+
+        # Field-relative features — need full field; use defaults if unavailable
+        or_vs_field = self._parse_num(runner.get("or_vs_field", 0.0))
+        rpr_vs_field = self._parse_num(runner.get("rpr_vs_field", 0.0))
+        sp_rank = self._parse_num(runner.get("sp_rank", 3.0))
+        is_fav = 1.0 if sp_rank == 1.0 else 0.0
+
+        v16 = [
+            sp_dec, log_sp, implied_prob, dist_f, going_code, float(is_aw),
+            class_num, wgt_lbs, or_num, rpr_num, ts_num,
+            or_vs_field, rpr_vs_field, field_size, draw_num, draw_pct,
+            age_num, sp_rank, is_fav,
+        ]
+
+        # ── v17 doctrine (18) — from pre-computed values if present ──
+        from app.services.v17_feature_extractor import DEFAULTS
+        doctrine = [
+            float(runner.get(f, DEFAULTS.get(f, 0.0)))
+            for f in self.V17_DOCTRINE_FEATURES
+        ]
+
+        return np.array(v16 + doctrine, dtype=np.float64)
     
     def predict_trainer_intent(self, features: Dict[str, float]) -> float:
         """
