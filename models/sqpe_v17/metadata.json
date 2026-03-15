@@ -1,0 +1,163 @@
+{
+  "version": "v17.0",
+  "model_type": "GradientBoostingClassifier + IsotonicCalibration",
+  "n_estimators": 300,
+  "learning_rate": 0.05,
+  "max_depth": 5,
+  "auc": 0.9399733776118785,
+  "auc_v16_baseline": 0.9427213233380518,
+  "auc_delta": -0.0027479457261733176,
+  "log_loss": 0.19771474316590257,
+  "n_features": 37,
+  "v16_features": [
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "sp_rank",
+    "is_fav"
+  ],
+  "v17_doctrine_features": [
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "feature_names": [
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "sp_rank",
+    "is_fav",
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "n_train": 99638,
+  "n_test": 24910,
+  "win_rate": 0.12152744323473681,
+  "trained_at": "2026-03-15T20:44:38.255424",
+  "data_sources": [
+    "backtest_50k.csv (2015)",
+    "raw_races_2024_2025.txt (UK/IRE)"
+  ],
+  "top_15_features": [
+    {
+      "feature": "rpr_vs_field",
+      "importance": 0.4376868818134208
+    },
+    {
+      "feature": "rpr_num",
+      "importance": 0.10285696537869768
+    },
+    {
+      "feature": "log_sp",
+      "importance": 0.07941808969812025
+    },
+    {
+      "feature": "or_num",
+      "importance": 0.05677776227024604
+    },
+    {
+      "feature": "or_vs_field",
+      "importance": 0.04329265772955429
+    },
+    {
+      "feature": "implied_prob",
+      "importance": 0.03723937642370096
+    },
+    {
+      "feature": "sp_dec",
+      "importance": 0.034449810224790704
+    },
+    {
+      "feature": "ts_num",
+      "importance": 0.033240241030628295
+    },
+    {
+      "feature": "field_size",
+      "importance": 0.028844853426977665
+    },
+    {
+      "feature": "class_num",
+      "importance": 0.024931133352989306
+    },
+    {
+      "feature": "wgt_lbs",
+      "importance": 0.022182304247146838
+    },
+    {
+      "feature": "sp_rank",
+      "importance": 0.021990786438741448
+    },
+    {
+      "feature": "decoy_support_flag",
+      "importance": 0.011037616169314982
+    },
+    {
+      "feature": "is_fav",
+      "importance": 0.008772809632502598
+    },
+    {
+      "feature": "mark_compression_score",
+      "importance": 0.0071850635235106396
+    }
+  ],
+  "doctrine_feature_importance_total": 0.04806540760069487
+}
