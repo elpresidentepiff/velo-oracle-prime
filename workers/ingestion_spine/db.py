@@ -27,10 +27,11 @@ class DatabaseClient:
     def __init__(self):
         """Initialize Supabase client with service role"""
         self.url = os.getenv("SUPABASE_URL")
-        self.key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")  # Service role, not anon key
-        
+        # Accept both key names — Railway uses SUPABASE_SERVICE_KEY, some envs use _ROLE_KEY
+        self.key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY")
+
         if not self.url or not self.key:
-            raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
+            raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_KEY (or SUPABASE_SERVICE_ROLE_KEY) must be set")
         
         self.client: Client = create_client(self.url, self.key)
         logger.info("Database client initialized")
@@ -205,26 +206,26 @@ class DatabaseClient:
         """
         data = {
             "batch_id": batch_id,
-            "import_date": import_date.isoformat(),
+            "date": import_date.isoformat(),           # races.date
+            "time": race_data.get('off_time'),          # races.time
             "course": race_data.get('course'),
-            "off_time": race_data.get('off_time'),
             "race_name": race_data.get('race_name'),
             "race_type": race_data.get('race_type'),
-            "distance": race_data.get('distance'),
-            "class_band": race_data.get('class_band'),
+            "distance_f": race_data.get('distance'),    # races.distance_f
+            "class": race_data.get('class_band'),       # races.class
             "going": race_data.get('going'),
-            "field_size": race_data.get('field_size'),
-            "prize": race_data.get('prize'),
+            "runners_count": race_data.get('field_size'),  # races.runners_count
+            "prize_money": race_data.get('prize'),
             "join_key": race_data.get('join_key'),
-            "raw": race_data.get('raw', {})
+            "raw": race_data.get('raw', {}),
         }
-        
+
         result = self.client.table('races').insert(data).execute()
-        
+
         if not result.data:
             raise ValueError("Failed to insert race")
-        
-        return result.data[0]['id']
+
+        return result.data[0]['race_id']  # PK is race_id (text), not id
     
     async def get_race_by_id(self, race_id: str) -> Optional[Dict[str, Any]]:
         """Get race by ID"""
@@ -268,13 +269,13 @@ class DatabaseClient:
             "weight": runner_data.get('weight'),
             "or_rating": runner_data.get('or_rating'),
             "rpr": runner_data.get('rpr'),
-            "ts": runner_data.get('ts'),
+            "ts_rating": runner_data.get('ts'),         # runners.ts_rating
             "trainer": runner_data.get('trainer'),
             "jockey": runner_data.get('jockey'),
             "owner": runner_data.get('owner'),
             "draw": runner_data.get('draw'),
             "headgear": runner_data.get('headgear'),
-            "form_figures": runner_data.get('form_figures'),
+            "form": runner_data.get('form_figures'),    # runners.form
             "raw": runner_data.get('raw', {})
         }
         
