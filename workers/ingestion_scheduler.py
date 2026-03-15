@@ -110,7 +110,10 @@ def sb_select(table: str, params: dict = None) -> list:
 
 def sb_run_sql(sql: str, access_token: str) -> dict:
     """Run raw SQL via Supabase Management API."""
-    PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF", "ltbsxbvfsxtnharjvqcm")
+    PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF")
+    if not PROJECT_REF:
+        log.error("SUPABASE_PROJECT_REF env var not set. Cannot run SQL.")
+        return {"error": "SUPABASE_PROJECT_REF not set"}
     r = requests.post(
         f"https://api.supabase.com/v1/projects/{PROJECT_REF}/database/query",
         headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
@@ -659,7 +662,10 @@ def job_create_tables():
         """,
     ]
 
-    PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF", "ltbsxbvfsxtnharjvqcm")
+    PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF")
+    if not PROJECT_REF:
+        log.error("SUPABASE_PROJECT_REF env var not set. Cannot run migrations.")
+        return
     success_count = 0
     for i, sql in enumerate(migrations):
         r = requests.post(
