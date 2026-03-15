@@ -683,6 +683,85 @@ def job_create_tables():
     log.info(f"create_tables complete. {success_count}/{len(migrations)} migrations succeeded.")
 
 
+# ─── Job: Market Snapshot (T-60m, T-30m, T-10m, T-3m) ──────────────────────────
+
+def job_market_snapshot(snapshot_label: str = None):
+    """
+    Pull current odds for all today's UK/Ireland races and write to market_snapshots.
+    Designed to be called at T-60m, T-30m, T-10m, T-3m before the first race.
+
+    snapshot_label must be one of: pre_off_60m, pre_off_30m, pre_off_10m, pre_off_3m
+    Pass via --label argument or SNAPSHOT_LABEL env var.
+
+    Writes to: market_snapshots
+    Deduplication: unique index on (race_id, horse_id, source, snapshot_label, captured_at_hour)
+    Volume estimate: ~200 runners x 4 snapshots = ~800 rows/day
+    """
+    log.info("=== JOB: market_snapshot ===")
+
+    # Resolve label
+    label = snapshot_label or os.environ.get("SNAPSHOT_LABEL", "")
+    valid_labels = {"pre_off_60m", "pre_off_30m", "pre_off_10m", "pre_off_3m"}
+    if label not in valid_labels:
+        log.error(f"Invalid or missing SNAPSHOT_LABEL: '{label}'. Must be one of {valid_labels}. Aborting.")
+        return
+
+    today = date.today().isoformat()
+    now_utc = datetime.now(timezone.utc)
+    now_iso = now_utc.isoformat()
+    # Truncate to the hour for deduplication (matches captured_at_hour column)
+    captured_at_hour = now_utc.replace(minute=0, second=0, microsecond=0).isoformat()
+
+    # Fetch GB and Ireland
+    data_gb = api_get("/v1/racecards/standard", {"day": "today", "region_codes": "gb"})
+    data_ire = api_get("/v1/racecards/standard", {"day": "today", "region_codes": "ire"})
+    if not data_gb and not data_ire:
+        log.error("Failed to fetch racecards for market snapshot. Aborting.")
+        return
+
+    all_racecards = []
+    if data_gb:
+        all_racecards.extend(data_gb.get("racecards", []))
+    if data_ire:
+        all_racecards.extend(data_ire.get("racecards", []))
+
+    log.info(f"Building market snapshots for {len(all_racecards)} races, label={label}")
+
+    rows = []
+    for race in all_racecards:
+        race_id = race.get("race_id", "")
+        if not race_id:
+            continue
+        for runner in race.get("runners", []):
+            horse_id = runner.get("horse_id", "")
+            if not horse_id:
+                continue
+
+            # Extract odds — Racing API Standard returns 'sp' or 'odds'
+            raw_odds = runner.get("sp") or runner.get("odds") or runner.get("morning_price")
+            decimal_odds = _parse_float(raw_odds) if raw_odds else None
+
+            rows.append({
+                "race_id":          race_id,
+                "horse_id":         horse_id,
+                "horse_name":       runner.get("horse", ""),
+                "source":           "racing_api_standard",
+                "snapshot_label":   label,
+                "decimal_odds":     decimal_odds,
+                "fractional_odds":  str(raw_odds) if raw_odds else None,
+                "captured_at":      now_iso,
+                "captured_at_hour": captured_at_hour,
+            })
+
+    if not rows:
+        log.warning("No odds data found in racecards. market_snapshots not written.")
+        return
+
+    log.info(f"Writing {len(rows)} market_snapshots rows (label={label})")
+    result = sb_upsert("market_snapshots", rows)
+    log.info(f"market_snapshot complete. Result: {result}")
+
+
 # ─── Utility Functions ────────────────────────────────────────────────────────
 
 def _parse_int(val) -> int:
@@ -712,6 +791,7 @@ def _parse_distance(val) -> float:
 JOB_MAP = {
     "morning_card": job_morning_card,
     "odds_snapshot": job_odds_snapshot,
+    "market_snapshot": job_market_snapshot,
     "results": job_results,
     "entity_enrichment": job_entity_enrichment,
     "create_tables": job_create_tables,
@@ -721,12 +801,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="VÉLØ Ingestion Scheduler")
     parser.add_argument("--job", required=True, choices=list(JOB_MAP.keys()),
                         help="The job to run")
+    parser.add_argument("--label", default=None,
+                        help="Snapshot label for market_snapshot job (pre_off_60m, pre_off_30m, pre_off_10m, pre_off_3m)")
     args = parser.parse_args()
 
     log.info(f"Starting job: {args.job}")
     start = datetime.now(timezone.utc)
     try:
-        JOB_MAP[args.job]()
+        if args.job == "market_snapshot":
+            JOB_MAP[args.job](snapshot_label=args.label)
+        else:
+            JOB_MAP[args.job]()
         elapsed = (datetime.now(timezone.utc) - start).total_seconds()
         log.info(f"Job {args.job} completed in {elapsed:.1f}s")
     except Exception as e:

@@ -160,6 +160,11 @@ def supabase_upsert(table: str, rows, conflict_keys=None, run_id=None, stats=Non
     if not rows:
         return True
 
+    # Build URL — pass on_conflict for composite key resolution
+    url = f"{SUPABASE_URL}/rest/v1/{table}"
+    if conflict_keys:
+        url += f"?on_conflict={','.join(conflict_keys)}"
+
     # Batch writes
     for batch_start in range(0, len(rows), BATCH_SIZE):
         batch = rows[batch_start:batch_start + BATCH_SIZE]
@@ -167,7 +172,7 @@ def supabase_upsert(table: str, rows, conflict_keys=None, run_id=None, stats=Non
         for attempt, delay in enumerate(RETRY_BACKOFF[:MAX_RETRIES]):
             try:
                 r = requests.post(
-                    f"{SUPABASE_URL}/rest/v1/{table}",
+                    url,
                     headers=SUPABASE_HEADERS,
                     json=batch if len(batch) > 1 else batch[0],
                     timeout=15,
@@ -441,7 +446,7 @@ def upsert_runner_race_fact(race, runner, race_date, run_id, stats):
         "morning_odds_dec": morning_odds,
         "updated_at": datetime.utcnow().isoformat() + "Z",
     }
-    supabase_upsert("runner_race_facts", row, run_id=run_id, stats=stats)
+    supabase_upsert("runner_race_facts", row, conflict_keys=["race_id", "horse_id"], run_id=run_id, stats=stats)
 
 
 # ── SPOTLIGHT PARSING ─────────────────────────────────────────────────────────
@@ -495,9 +500,24 @@ def reconcile_results_for_date(target_date: str, known_race_ids: set, run_id, st
         results = payload.get("results", [])
         log.info(f"[results] {len(results)} result races returned for {target_date}")
 
+        # Pre-fetch all race_ids we have ingested for this date to avoid FK violations
+        # The results API returns all regions; we only store UK/Ireland races
+        known_races_r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/races",
+            headers=SUPABASE_HEADERS,
+            params={"date": f"eq.{target_date}", "select": "race_id"},
+            timeout=15,
+        )
+        known_race_ids = set()
+        if known_races_r.status_code == 200:
+            known_race_ids = {r["race_id"] for r in known_races_r.json()}
+        log.info(f"[results] Known race IDs for {target_date}: {len(known_race_ids)}")
+
         for result_race in results:
             race_id = result_race.get("race_id")
-            # Write race_results for any race we have in DB (not just today's)
+            # Skip races not in our DB (non-UK/Ireland or races we didn't ingest)
+            if race_id not in known_race_ids:
+                continue
             supabase_upsert("race_results", {
                 "race_id": race_id,
                 "winning_time_detail": result_race.get("winning_time_detail"),
@@ -557,19 +577,17 @@ def reconcile_results_for_date(target_date: str, known_race_ids: set, run_id, st
             supabase_upsert("runner_results", runner_results_batch, run_id=run_id, stats=stats)
             stats["results_ok"] = stats.get("results_ok", 0) + len(runner_results_batch)
 
-            # Back-fill runner_race_facts one by one (PATCH requires filter)
-            for patch in rrf_patches:
-                rid = patch.pop("race_id")
-                hid = patch.pop("horse_id")
-                try:
-                    requests.patch(
-                        f"{SUPABASE_URL}/rest/v1/runner_race_facts?race_id=eq.{rid}&horse_id=eq.{hid}",
-                        headers=SUPABASE_HEADERS,
-                        json=patch,
-                        timeout=10,
-                    )
-                except Exception as exc:
-                    log.warning(f"[runner_race_facts] Patch failed for {rid}/{hid}: {exc}")
+            # Back-fill runner_race_facts via bulk upsert (conflict on race_id + horse_id)
+            # This replaces the previous per-runner PATCH loop which caused timeouts.
+            if rrf_patches:
+                supabase_upsert(
+                    "runner_race_facts",
+                    rrf_patches,
+                    conflict_keys=["race_id", "horse_id"],
+                    run_id=run_id,
+                    stats=stats,
+                )
+                log.info(f"[runner_race_facts] Bulk back-fill: {len(rrf_patches)} rows for race {race_id}")
 
     except Exception as exc:
         log.error(f"[results] Reconciliation failed for {target_date}: {exc}")
@@ -685,8 +703,8 @@ def run_pipeline(target_date=None):
                     "age":        safe_int(runner.get("age")),
                     "sex":        runner.get("sex", ""),
                     "headgear":   runner.get("headgear", ""),
-                    "wind_surgery": runner.get("wind_surgery", ""),
-                    "wind_surgery_run": runner.get("wind_surgery_run", ""),
+                    "wind_surgery": True if runner.get("wind_surgery") else None,
+                    "wind_surgery_run": safe_int(runner.get("wind_surgery_run")) or None,
                     "sire":       runner.get("sire", ""),
                     "sire_id":    runner.get("sire_id", ""),
                     "dam":        runner.get("dam", ""),
