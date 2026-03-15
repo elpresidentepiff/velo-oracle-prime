@@ -28,11 +28,13 @@ All credentials live in `.env` — never hardcode, never commit. Read with `os.g
 ---
 
 ## Railway Services (sincere-empathy project)
-- `velo-oracle` — main FastAPI prediction engine (`app/main.py`)
-- `ingestion-spine` — Racing Post PDF parser (`workers/ingestion_spine/`)
-- `enchanting-exploration` — purpose unclear, likely legacy
+- `velo-oracle` — main FastAPI prediction engine (`app/main.py`). nixpacks.
+- `ingestion-spine` — Racing Post PDF parser (`workers/ingestion_spine/`). **FIXED 2026-03-15. /healthz returns 200.** DOCKERFILE builder, rootDirectory=workers/ingestion_spine, startCommand=`python -u -m uvicorn ingestion_spine.main:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info`. Service ID: `b9a52e75-6d98-4077-98d0-d9e68b16033e`.
+- `enchanting-exploration` — duplicate of velo-oracle. Both running against same DB. Not decommissioned yet.
 
-Railway config: `railway.toml` — builds with nixpacks, starts `uvicorn app.main:app`
+Railway config: `railway.toml` — builds velo-oracle with nixpacks, starts `uvicorn app.main:app`
+
+**CRITICAL Railway lesson**: Service configuration (startCommand, cronSchedule, rootDirectory) is stored server-side in Railway's DB, NOT derived from local railway.json on each deploy. Change it via Railway GraphQL API: `serviceInstanceUpdate(serviceId, environmentId, input: { startCommand, cronSchedule, rootDirectory, restartPolicyType })`. ingestion-spine was wrongly set to cron mode (cronSchedule="0 6 * * *", buildOnly=true) from day one — fixed by setting cronSchedule=null, restartPolicyType=ON_FAILURE.
 
 ---
 

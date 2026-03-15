@@ -27,6 +27,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD python healthcheck.py
 
-# Diagnostic startup script — prints checkpoints at each import step.
-# Reveals exactly where the container crashes even on OOM/import errors.
-CMD ["python", "-u", "start_server.py"]
+# Production start command — matches Railway service config.
+# start_server.py is kept in repo as a diagnostic fallback only.
+CMD python -u -m uvicorn ingestion_spine.main:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info
