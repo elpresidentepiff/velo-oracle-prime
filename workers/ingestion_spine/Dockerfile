@@ -14,15 +14,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better Docker layer caching
-# This layer will only rebuild if requirements.txt changes
-COPY requirements.txt ./ingestion_spine/
+# Build context is repo root (Railway uses repo root when dockerfilePath is set)
+COPY workers/ingestion_spine/requirements.txt ./ingestion_spine/
 
 # Install Python dependencies
 # --no-cache-dir: Don't cache pip packages to reduce image size
 RUN pip install --no-cache-dir -r ./ingestion_spine/requirements.txt
 
 # Copy application code into ingestion_spine subdirectory
-COPY . ./ingestion_spine/
+COPY workers/ingestion_spine/ ./ingestion_spine/
 
 # Make start script executable
 RUN chmod +x ./ingestion_spine/start.sh

@@ -36,35 +36,90 @@ Railway config: `railway.toml` — builds with nixpacks, starts `uvicorn app.mai
 
 ---
 
-## Supabase Database — All 25 Tables
+## Supabase Database — 51 Tables (live count as of 2026-03-15)
 
+**Core prediction data**
 | Table | Rows | Purpose |
 |---|---|---|
-| `races` | 10 | Race-level data |
-| `runners` | 0 | Runner-level data per race |
+| `races` | 32 | Race-level data |
+| `runners` | 2,756 | Runner-level data per race |
+| `runner_race_facts` | 243 | Derived per-runner facts |
+| `runner_derived_features` | 0 | ML feature store |
+| `velo_features` | 0 | VELO feature mart |
 | `predictions` | 0 | Engine prediction outputs |
+| `velo_verdicts` | 22 | Final betting verdicts |
 | `results` | 0 | Actual race outcomes |
+| `race_results` | 0 | Race-level results |
+| `runner_results` | 0 | Runner-level results |
+
+**Profiles & entities**
+| Table | Rows | Purpose |
+|---|---|---|
+| `horse_profiles` | 243 | Horse profiles |
+| `trainer_profiles` | 132 | Trainer profiles |
+| `jockey_profiles` | 118 | Jockey profiles |
+| `owner_profiles` | 226 | Owner profiles |
+| `course_profiles` | 3 | Course profiles |
+| `horses` | 0 | Horse registry |
+| `trainers` | 0 | Trainer registry |
+| `jockeys` | 0 | Jockey registry |
+
+**NLP / comments / events**
+| Table | Rows | Purpose |
+|---|---|---|
+| `horse_comments` | 1,765 | NLP flags from horse comments (Spotlight) |
+| `comments_archive` | 1,130 | Raw comments archive |
+| `gear_medical_events` | 440 | Gear/medical event log |
+| `horse_event_history` | 0 | Full event history |
+| `trainer_switch_events` | 0 | Trainer change events |
+| `race_spotlight_verdict` | 0 | Spotlight gate log |
 | `plot_memory_spine` | 0 | PJI scoring, jockey changes, market moves |
-| `selections` | 0 | Betting selections made |
-| `betting_ledger` | 0 | P&L tracking |
-| `sigma_audits` | 37 | Audit log (the "sigma" — DB table not code) |
-| `permanent_principles` | 43 | Oracle belief system / rules |
-| `learned_patterns` | 3 | Self-learned race patterns |
-| `model_versions` | 1 | ML model registry |
-| `model_comparison` | 0 | Model A/B results |
-| `system_performance` | 1 | System health tracking |
-| `race_analysis` | 0 | Deep race analysis output |
-| `manipulation_alerts` | 0 | Market manipulation flags |
-| `manipulation_effectiveness` | 0 | Manipulation detection accuracy |
-| `daily_performance` | 0 | Daily P&L summary |
-| `course_profitability` | 0 | Course-level ROI tracking |
-| `racecards` | 0 | Live racecard data |
-| `betfair_odds` | 0 | Betfair market snapshots |
+
+**Market data**
+| Table | Rows | Purpose |
+|---|---|---|
 | `betfair_markets` | 0 | Betfair market metadata |
+| `betfair_odds` | 0 | Betfair market snapshots |
+| `market_snapshots` | 0 | General market snapshots |
+| `odds_snapshots` | 0 | Odds movement snapshots |
+| `racecards` | 0 | Live racecard data |
 | `sectional_data` | 0 | Sectional timing data |
 | `racing_data` | 0 | Historical racing data |
+
+**Ingestion / pipeline**
+| Table | Rows | Purpose |
+|---|---|---|
+| `pipeline_runs` | 14 | Pipeline execution log |
+| `import_batches` | 0 | Data ingestion tracking |
+| `raw_payloads` | 0 | Raw API payload store |
+| `raw_payload_archive` | 25 | Archived raw payloads |
+| `ingestion_anomalies` | 0 | Ingestion error log |
+| `api_coverage_audit` | 0 | API field coverage audit |
+
+**Intelligence / analysis**
+| Table | Rows | Purpose |
+|---|---|---|
+| `race_analysis` | 0 | Deep race analysis output |
+| `manipulation_alerts` | 0 | Market manipulation flags |
+| `intent_cases` | 0 | Trainer/jockey intent signals |
+| `velo_anomaly_flags` | 0 | System anomaly flags |
+| `post_race_reviews` | 0 | Post-race review store |
+| `velo_post_race_reviews` | 0 | VELO post-race analysis |
+
+**Betting / ledger**
+| Table | Rows | Purpose |
+|---|---|---|
+| `selections` | 0 | Betting selections made |
+| `betting_ledger` | 0 | P&L tracking |
+
+**System / config**
+| Table | Rows | Purpose |
+|---|---|---|
+| `sigma_audits` | 0 | Audit log |
+| `permanent_principles` | 0 | Oracle belief system / rules |
+| `learned_patterns` | 0 | Self-learned race patterns |
+| `model_versions` | 0 | ML model registry |
 | `rpd_tags` | 0 | Racing Post Digger tags |
-| `import_batches` | 2 | Data ingestion tracking |
 
 ---
 
@@ -207,11 +262,7 @@ docs/VELO_SPOTLIGHT_HARD_LIMITS.md     — Spotlight CANNOT override structural 
 ### LangGraph Pipeline — NOT YET MERGED
 `copilot/add-langgraph-agent-orchestration` — held back. Needs `langgraph>=0.2.0` + `langchain-core>=0.3.0`. Add deliberately when ready.
 
-### New Supabase Tables (created this session)
-- `horse_comments` — NLP flags from horse comments (Spotlight layer)
-- `race_spotlight_verdict` — structural gate log, override tracking
-
-**Total: 27 tables in Supabase**
+**Total: 51 tables in Supabase** (verified via MCP 2026-03-15)
 
 ### Evidence Archive
 `evidence/cheltenham-2026/` — Cheltenham Day 3 (March 12) prediction data preserved as benchmark
