@@ -18,9 +18,9 @@
 | Supabase | CONNECTED | `ltbsxbvfsxtnharjvqcm.supabase.co`, eu-west-2, 25 tables |
 | Railway | CONNECTED | Project `sincere-empathy`, service `velo-oracle` |
 | GitHub | CONNECTED | `elpresidentepiff/velo-oracle-prime`, default branch `main` |
-| The Racing API | CONFIGURED | Basic Auth, MCP registered |
-| Supabase MCP | REGISTERED | `mcp.supabase.com` — active next session |
-| Racing API MCP | REGISTERED | `mcp.theracingapi.com` — active next session |
+| The Racing API | CONNECTED | Basic Auth + MCP active |
+| Supabase MCP | CONNECTED | `mcp.supabase.com` — live |
+| Racing API MCP | CONNECTED | `mcp.theracingapi.com` — live |
 | Claude API | MISSING KEY | Add `ANTHROPIC_API_KEY` to `.env` |
 
 All credentials live in `.env` — never hardcode, never commit. Read with `os.getenv()`.
