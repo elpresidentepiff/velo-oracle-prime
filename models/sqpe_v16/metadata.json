@@ -1,0 +1,81 @@
+{
+  "version": "v16.0",
+  "model_type": "GradientBoostingClassifier + IsotonicCalibration",
+  "n_estimators": 300,
+  "learning_rate": 0.05,
+  "max_depth": 5,
+  "auc": 0.9427856369068841,
+  "log_loss": 0.20515344318260548,
+  "n_features": 19,
+  "feature_names": [
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "sp_rank",
+    "is_fav"
+  ],
+  "n_train": 138231,
+  "n_test": 34558,
+  "win_rate": 0.11887909531278033,
+  "trained_at": "2026-03-15T15:45:54.908350",
+  "data_sources": [
+    "backtest_50k.csv (2015)",
+    "raw_races_2024_2025.txt (UK/IRE)"
+  ],
+  "top_10_features": [
+    {
+      "feature": "rpr_vs_field",
+      "importance": 0.4094604866034623
+    },
+    {
+      "feature": "rpr_num",
+      "importance": 0.12017557729455193
+    },
+    {
+      "feature": "sp_dec",
+      "importance": 0.07272536394762683
+    },
+    {
+      "feature": "or_num",
+      "importance": 0.06536091536919715
+    },
+    {
+      "feature": "implied_prob",
+      "importance": 0.06432834227673594
+    },
+    {
+      "feature": "log_sp",
+      "importance": 0.05023830836258113
+    },
+    {
+      "feature": "or_vs_field",
+      "importance": 0.03957913110720633
+    },
+    {
+      "feature": "ts_num",
+      "importance": 0.038905487977911886
+    },
+    {
+      "feature": "field_size",
+      "importance": 0.02890293627503999
+    },
+    {
+      "feature": "sp_rank",
+      "importance": 0.028276514606655905
+    }
+  ]
+}
