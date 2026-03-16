@@ -102,39 +102,73 @@ class ConnectionsAnalyzer:
         )
     
     def _get_trainer_stats(self, trainer: str) -> Optional[Dict[str, Any]]:
-        """Query trainer velocity stats from database"""
+        """Query trainer velocity stats; falls back to trainer_profiles if table absent."""
         if not trainer or not self.client:
             return None
-        
+
+        # Primary: trainer_velocity (real-time 14-day rolling stats)
         try:
             result = self.client.table('trainer_velocity') \
                 .select('*') \
                 .eq('trainer_name', trainer) \
                 .execute()
-            
             if result.data and len(result.data) > 0:
                 return result.data[0]
         except Exception as e:
-            logger.warning(f"Failed to query trainer stats for {trainer}: {e}")
-        
+            logger.debug(f"trainer_velocity unavailable ({e}), falling back to trainer_profiles")
+
+        # Fallback: trainer_profiles (static profile data — 132 rows known to exist)
+        try:
+            result = self.client.table('trainer_profiles') \
+                .select('*') \
+                .eq('trainer_name', trainer) \
+                .execute()
+            if result.data and len(result.data) > 0:
+                profile = result.data[0]
+                # Map profile fields to velocity-schema field names
+                return {
+                    'trainer_name': trainer,
+                    'last_14d_sr': float(profile.get('win_pct', 0) or 0),
+                    'last_14d_pl': 0.0,
+                    'overall_sr': float(profile.get('win_pct', 0) or 0),
+                }
+        except Exception as e:
+            logger.warning(f"trainer_profiles fallback also failed for {trainer}: {e}")
+
         return None
-    
+
     def _get_jockey_stats(self, jockey: str) -> Optional[Dict[str, Any]]:
-        """Query jockey velocity stats from database"""
+        """Query jockey velocity stats; falls back to jockey_profiles if table absent."""
         if not jockey or not self.client:
             return None
-        
+
+        # Primary: jockey_velocity
         try:
             result = self.client.table('jockey_velocity') \
                 .select('*') \
                 .eq('jockey_name', jockey) \
                 .execute()
-            
             if result.data and len(result.data) > 0:
                 return result.data[0]
         except Exception as e:
-            logger.warning(f"Failed to query jockey stats for {jockey}: {e}")
-        
+            logger.debug(f"jockey_velocity unavailable ({e}), falling back to jockey_profiles")
+
+        # Fallback: jockey_profiles (static profile data — 118 rows known to exist)
+        try:
+            result = self.client.table('jockey_profiles') \
+                .select('*') \
+                .eq('jockey_name', jockey) \
+                .execute()
+            if result.data and len(result.data) > 0:
+                profile = result.data[0]
+                return {
+                    'jockey_name': jockey,
+                    'last_14d_sr': float(profile.get('win_pct', 0) or 0),
+                    'last_14d_pl': 0.0,
+                }
+        except Exception as e:
+            logger.warning(f"jockey_profiles fallback also failed for {jockey}: {e}")
+
         return None
     
     def _score_trainer(self, stats: Dict[str, Any], evidence: Dict[str, Any]) -> float:

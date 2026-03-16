@@ -241,7 +241,7 @@ def unify_output(
     top_pick = max(predictions, key=lambda p: p["final_probability"])
     
     # Count overlays
-    overlay_count = sum(1 for p in p["overlay"]["is_overlay"] for p in predictions if p.get("overlay"))
+    overlay_count = sum(1 for p in predictions if p.get("overlay", {}).get("is_overlay"))
     
     return {
         "predictions": predictions,

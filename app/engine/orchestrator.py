@@ -321,7 +321,7 @@ class Orchestrator:
             logger.error(f"Failed to save agent executions: {e}")
     
     def _save_verdict(self, race_id: str, verdict: BettingVerdict) -> None:
-        """Save verdict to database"""
+        """Save verdict to velo_verdicts (race_verdicts table does not exist)."""
         try:
             record = {
                 'race_id': race_id,
@@ -329,11 +329,10 @@ class Orchestrator:
                 'final_score': verdict.final_score,
                 'action': verdict.action,
                 'stake_pct': verdict.stake_pct,
-                'reason': verdict.reason
+                'reason': verdict.reason,
             }
-            
-            self.client.table('race_verdicts').insert(record).execute()
-            logger.debug(f"Saved verdict for {verdict.horse_name}")
-        
+            self.client.table('velo_verdicts').insert(record).execute()
+            logger.debug(f"Saved verdict for {verdict.horse_name} to velo_verdicts")
+
         except Exception as e:
-            logger.error(f"Failed to save verdict: {e}")
+            logger.error(f"Failed to save verdict to velo_verdicts: {e}")

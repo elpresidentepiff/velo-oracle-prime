@@ -9,8 +9,8 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-# Model paths
-MODEL_DIR = Path("/home/ubuntu/velo-oracle/models")
+# Model paths — resolve relative to repo root regardless of OS/cwd
+MODEL_DIR = Path(__file__).resolve().parent.parent.parent.parent / "models"
 MODEL_REGISTRY = {}
 
 

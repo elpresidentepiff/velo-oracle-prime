@@ -6,7 +6,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Dict, List, Optional
 import sys
-sys.path.insert(0, '/home/ubuntu/velo-oracle')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import pandas as pd
 from pathlib import Path
@@ -52,7 +53,7 @@ async def check_drift(request: DriftCheckRequest):
     
     try:
         # Load reference data
-        reference_path = Path("/home/ubuntu/velo-oracle/reports/evidently/reference/reference_data.parquet")
+        reference_path = Path(__file__).resolve().parent.parent.parent / "reports" / "evidently" / "reference" / "reference_data.parquet"
         
         if not reference_path.exists():
             raise HTTPException(status_code=404, detail="Reference data not found")
@@ -140,7 +141,7 @@ async def get_monitoring_stats():
     
     try:
         # Load reference data
-        reference_path = Path("/home/ubuntu/velo-oracle/reports/evidently/reference/reference_data.parquet")
+        reference_path = Path(__file__).resolve().parent.parent.parent / "reports" / "evidently" / "reference" / "reference_data.parquet"
         
         if not reference_path.exists():
             return {

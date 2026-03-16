@@ -112,21 +112,44 @@ class CourseDistanceAnalyzer:
         )
     
     def _get_horse_stats(self, horse_name: str) -> List[Dict[str, Any]]:
-        """Query horse velocity stats from database"""
+        """Query horse velocity stats; falls back to horse_profiles if table absent."""
         if not horse_name or not self.client:
             return []
-        
+
+        # Primary: horse_velocity (pre-computed course/dist/going stats)
         try:
             result = self.client.table('horse_velocity') \
                 .select('*') \
                 .eq('horse_name', horse_name) \
                 .execute()
-            
             if result.data:
                 return result.data
         except Exception as e:
-            logger.warning(f"Failed to query horse stats for {horse_name}: {e}")
-        
+            logger.debug(f"horse_velocity unavailable ({e}), falling back to horse_profiles")
+
+        # Fallback: horse_profiles (243 rows known to exist)
+        # horse_profiles won't have per-course stats so we return empty list
+        # (caller handles empty list as "no data" and returns neutral score 50, confidence 0.2)
+        try:
+            result = self.client.table('horse_profiles') \
+                .select('horse_name, total_runs, wins') \
+                .eq('horse_name', horse_name) \
+                .execute()
+            if result.data and len(result.data) > 0:
+                profile = result.data[0]
+                total_runs = int(profile.get('total_runs') or 0)
+                wins = int(profile.get('wins') or 0)
+                sr = (wins / total_runs * 100) if total_runs > 0 else 0
+                # Synthetic overall stat — no course/dist breakdown available
+                return [{
+                    'horse_name': horse_name,
+                    'stat_type': 'overall',
+                    'sr': sr,
+                    'record': f"{wins}-{total_runs}",
+                }]
+        except Exception as e:
+            logger.warning(f"horse_profiles fallback also failed for {horse_name}: {e}")
+
         return []
     
     def _find_stat(self, stats: List[Dict[str, Any]], stat_type: str) -> Optional[Dict[str, Any]]:

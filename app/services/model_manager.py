@@ -225,7 +225,9 @@ class ModelManager:
             )
 
         try:
-            prob = model.predict_proba(fvec.reshape(1, -1))[0, 1]
+            import pandas as pd
+            df = pd.DataFrame([fvec], columns=self.ALL_V17_FEATURES)
+            prob = model.predict_proba(df)[0, 1]
             return float(prob)
         except Exception as e:
             logger.warning("SQPE predict_proba failed: %s", e)

@@ -2,6 +2,7 @@
 VÉLØ Oracle - FastAPI Main Application
 Production-ready with CORS, health checks, and API routing
 """
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -13,13 +14,25 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load models once at startup, release on shutdown."""
+    from app.services.model_manager import get_model_manager
+    mm = get_model_manager()
+    logger.info(f"Models initialised at startup: {mm.model_versions}")
+    yield
+    logger.info("VÉLØ Oracle API shutting down")
+
+
 # Create FastAPI app
 app = FastAPI(
     title="VÉLØ Oracle API",
     version="v1.0",
     description="Production horse racing prediction engine",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # CORS Middleware - CRITICAL for Cloudflare Worker
@@ -116,22 +129,26 @@ async def predict_quick(
         Prediction with probability, edge, confidence
     """
     try:
-        # Import UMA
-        from app.engine.uma import UMA
-        
-        # Create UMA instance
-        uma = UMA()
-        
-        # Run prediction
-        result = uma.predict(
-            race_id=race_data.get("race_id"),
-            runner_id=race_data.get("runner_id"),
-            features=race_data.get("features", {}),
-            market_odds=race_data.get("market_odds")
+        from app.services.model_manager import get_model_manager
+        mm = get_model_manager()
+
+        runner = race_data.get("runner", {})
+        race = race_data.get("race", {})
+        prob = mm.predict_sqpe(
+            features={},
+            runner=runner,
+            race=race,
         )
-        
-        return result
-        
+
+        odds = runner.get("odds") or runner.get("sp") or 0
+        overlay = mm.detect_overlay(prob, float(odds)) if odds else {"is_overlay": False, "edge": 0.0}
+
+        return {
+            "probability": round(prob, 4),
+            "overlay": overlay,
+            "model_version": mm.model_versions.get("sqpe", "unknown"),
+        }
+
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -153,11 +170,14 @@ async def predict_full(
     """
     try:
         from app.intelligence.chains.prediction_chain import run_prediction_chain
-        
-        result = run_prediction_chain(race_data)
-        
+
+        race = race_data.get("race", race_data)
+        runners = race_data.get("runners", [])
+
+        result = await run_prediction_chain(race, runners)
+
         return result
-        
+
     except Exception as e:
         logger.error(f"Full prediction failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -247,23 +267,7 @@ async def server_error_handler(request, exc):
     )
 
 
-# Startup event
-@app.on_event("startup")
-async def startup_event():
-    """Startup tasks"""
-    logger.info("="*60)
-    logger.info("VÉLØ Oracle API Starting")
-    logger.info("="*60)
-    logger.info(f"Environment: {ENV}")
-    logger.info(f"API Key configured: {bool(API_KEY)}")
-    logger.info("="*60)
-
-
-# Shutdown event
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Shutdown tasks"""
-    logger.info("VÉLØ Oracle API Shutting Down")
+# Startup/shutdown are handled by the lifespan context manager above.
 
 
 if __name__ == "__main__":
