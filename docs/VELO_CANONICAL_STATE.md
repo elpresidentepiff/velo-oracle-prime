@@ -33,11 +33,12 @@ Environment:  production (4d829a93-1cea-4211-8e62-e229288fefb1)
 Domain:       https://velo-oracle-production.up.railway.app
 ```
 
-**IMPORTANT — Post-incident state (2026-03-17):**
-- Deployment trigger was wrong repo (`velo-oracle`). Now fixed to `velo-oracle-prime`.
-- startCommand was broken (`$PORT` literal). Now set to `bash start.sh`.
-- `start.sh` exists in repo root: `exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8080}"`
-- Awaiting first clean build from correct repo post-fixes.
+**Post-incident state (resolved 2026-03-17T14:25 UTC):**
+- Deployment trigger: `elpresidentepiff/velo-oracle-prime` ✓ (was wrong repo, fixed)
+- Tracked branch: `feature/v10-launch` ✓
+- startCommand: `bash start.sh` ✓ (was `$PORT` literal, fixed)
+- `start.sh` in repo root: `exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8080}"` ✓
+- STATUS: **LIVE** — all 3 proof checks passing as of 2026-03-17T14:25 UTC
 
 ---
 
@@ -140,7 +141,7 @@ A build saying `SUCCESS` means nothing without route proof.
 
 | Service | ID | Repo | Status | Label |
 |---|---|---|---|---|
-| `velo-oracle` | `0992976e` | `velo-oracle-prime` (fixed 2026-03-17) | Live but running stale code | **LIVE — PRIMARY — BEING FIXED** |
+| `velo-oracle` | `0992976e` | `velo-oracle-prime` (fixed 2026-03-17) | LIVE — velo_prime_v1 proven @ 14:25 UTC | **LIVE — PRIMARY — USE THIS** |
 | `velo-oracle-prime` | `e48d14ce` | `velo-oracle-prime` | SKIPPED | **LEGACY — DO NOT USE (duplicate, never had clean deploy)** |
 | `enchanting-exploration` | `cfd844fb` | `velo-oracle` (WRONG REPO) | SUCCESS | **LEGACY — DO NOT USE (wrong repo, orphaned)** |
 | `ingestion-spine` | `b9a52e75` | `velo-oracle-prime` | CRASHED | **LIVE — INGESTION — PLATFORM INCIDENT** |
@@ -197,4 +198,4 @@ SHA parity is secondary to live proof. A deployment is LIVE only if `scripts/dep
 
 ---
 
-*Last updated: 2026-03-17T14:25 UTC — STATUS: LIVE. Rollback anchor set. All 3 proof checks passing.*
+*Last updated: 2026-03-17T14:30 UTC — STATUS: LIVE. Rollback anchor set. All 3 proof checks passing. Stale text removed. VELO_WORKFLOW_LOCK.md and VELO_INCIDENT_LOG.md created.*
