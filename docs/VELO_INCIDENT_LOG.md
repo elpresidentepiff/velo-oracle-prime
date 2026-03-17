@@ -80,4 +80,25 @@ bucket_names = [b['name'] for b in buckets]
 
 ---
 
-*Last updated: 2026-03-17T15:10 UTC*
+## INC-0004 — 2026-03-17 — 37 verdicts generated, only 1 persisted to Supabase
+
+**Status:** RESOLVED
+**Detected:** 2026-03-17T15:30 UTC (persistence audit)
+**Resolved:** 2026-03-17T16:00 UTC (persist wired in, safety rails built)
+**Impact:** 36 of 37 race-day verdicts existed only in local JSON and Telegram. Supabase had 1 row. System of record was empty.
+**Root cause:** `scripts/run_todays_races.py` called the 5-agent orchestrator locally but never called `persist_race_predictions()`. The function existed and was correct in `app/services/velo_prime_service.py` but was never wired into the daily script. Supabase persistence only fired when the Railway API endpoint was called directly.
+**Fix:**
+- Wired `persist_race_predictions()` into the full-card loop in `run_todays_races.py`
+- Each race now persists immediately after scoring
+- Telegram PERSISTENCE REPORT added after every run
+- `post_run_persistence_check.py` auto-runs after every race-day run
+- Supabase row deficit triggers Telegram FAIL alert
+**Prevention:**
+- `docs/VELO_PERSISTENCE_RULE.md` — Supabase is system of record, not JSON or Telegram
+- `scripts/post_run_persistence_check.py` — compares expected vs actual row counts
+- `scripts/velo_ops_check.py` — full cross-check GREEN/RED before any run
+- `scripts/preflight_10am_check.py` — now includes Supabase write check, Telegram check, normalizer smoke test
+
+---
+
+*Last updated: 2026-03-17T16:00 UTC*
