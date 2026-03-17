@@ -538,6 +538,23 @@ def load_backtest_csv(path):
     return df
 
 
+def load_raceform_parquet(path):
+    """Load data/raceform_clean.parquet (output of build_training_data.py)."""
+    import pandas as pd
+    print(f"  Loading raceform parquet: {path} ...")
+    df = pd.read_parquet(path)
+    # Ensure correct column names (build_training_data.py already renames them)
+    df = df.rename(columns={"class": "class_raw", "or": "or_rating"}, errors="ignore")
+    if "race_id" not in df.columns:
+        df["race_id"] = (
+            df.get("course", pd.Series(["unk"] * len(df))).astype(str) + "_" +
+            df.get("date",   pd.Series(["0"]   * len(df))).astype(str) + "_" +
+            df.get("off",    pd.Series(["0"]   * len(df))).astype(str)
+        )
+    print(f"  {len(df):,} rows loaded from parquet")
+    return df
+
+
 def load_raw_txt(path, max_rows=None):
     print(f"  Loading {path} (UK/IRE filter) ...")
     rows = []
@@ -730,14 +747,124 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train SQPE v17")
     parser.add_argument("--backtest", default="data/backtest_50k_clean.csv")
     parser.add_argument("--raw", default="data/raw_races_2024_2025.txt")
+    parser.add_argument("--raceform", default=None,
+                        help="Path to data/raceform_clean.parquet (1.7M row dataset). "
+                             "If provided, used instead of --backtest + --raw.")
     parser.add_argument("--output", default="models/sqpe_v17")
     parser.add_argument("--sample", type=int, default=None)
     parser.add_argument("--no-backtest", action="store_true")
     args = parser.parse_args()
-    train(
-        backtest_path=args.backtest,
-        raw_path=args.raw,
-        output_dir=args.output,
-        sample_size=args.sample,
-        no_backtest=args.no_backtest,
-    )
+
+    if args.raceform:
+        # ── Raceform path: single 1.7M-row dataset ──────────────────────────
+        from pathlib import Path as _Path
+        import pandas as _pd, pickle as _pickle
+        from sklearn.calibration import CalibratedClassifierCV as _Cal
+        from sklearn.ensemble import GradientBoostingClassifier as _GBC
+        from sklearn.metrics import roc_auc_score as _auc, log_loss as _ll
+        from datetime import datetime as _dt
+
+        df = load_raceform_parquet(args.raceform)
+
+        if args.sample:
+            df = df.sample(n=min(args.sample, len(df)), random_state=42)
+            print(f"Sampled to {len(df):,} rows")
+
+        # Remove non-starters
+        df = df[~df["pos"].astype(str).str.strip().isin(["", "nan", "NaN"])]
+        numeric_pos = _pd.to_numeric(df["pos"].astype(str).str.strip(), errors="coerce")
+        df = df[numeric_pos.notna() | df["pos"].astype(str).str.strip().isin(["PU","F","UR","BD","RO","SU","CO","DQ"])]
+
+        print(f"Rows after filter: {len(df):,}")
+
+        print("\nEngineering v16 features ...")
+        df = engineer_v16_features(df)
+
+        print("Sorting for v17 lookback ...")
+        df["date_parsed"] = _pd.to_datetime(df["date"], errors="coerce")
+        df = df.sort_values(["horse", "date_parsed"]).reset_index(drop=True)
+
+        print(f"Computing v17 doctrine features ({df['horse'].nunique():,} horses) ...")
+        df = engineer_v17_doctrine(df)
+
+        df = df.sort_values("date_parsed").reset_index(drop=True)
+
+        # Temporal split: 2024+ = test
+        df["_yr"] = df["date_parsed"].dt.year
+        train_df = df[df["_yr"] < 2024]
+        test_df  = df[df["_yr"] >= 2024]
+        print(f"\nTrain: {len(train_df):,}  Test: {len(test_df):,}")
+
+        X_tr = train_df[ALL_FEATURES].fillna(0)
+        X_te = test_df[ALL_FEATURES].fillna(0)
+        y_tr = train_df["target"]
+        y_te = test_df["target"]
+
+        print(f"Win rate train: {y_tr.mean():.3f}  test: {y_te.mean():.3f}")
+
+        print("\nTraining GBM + isotonic calibration ...")
+        model = _Cal(
+            _GBC(n_estimators=500, learning_rate=0.04, max_depth=5,
+                 min_samples_leaf=50, subsample=0.8, max_features="sqrt",
+                 random_state=42, verbose=1),
+            method="isotonic", cv=3,
+        )
+        model.fit(X_tr, y_tr)
+
+        probs = model.predict_proba(X_te)[:, 1]
+        auc_score = _auc(y_te, probs)
+        ll_score  = _ll(y_te, probs)
+
+        # MRR
+        test_df = test_df.copy()
+        test_df["pred"] = probs
+        test_df["pred_rank"] = test_df.groupby("race_id")["pred"].rank(ascending=False, method="min")
+        winner_ranks = test_df[test_df["target"] == 1]["pred_rank"]
+        mrr   = (1.0 / winner_ranks).mean()
+        top1  = (winner_ranks == 1).mean()
+
+        print(f"\n{'='*55}")
+        print(f"  AUC-ROC   : {auc_score:.4f}")
+        print(f"  Log Loss  : {ll_score:.4f}")
+        print(f"  MRR       : {mrr:.4f}")
+        print(f"  Top-1 Acc : {top1*100:.1f}%  (winner ranked #1)")
+        print(f"{'='*55}")
+
+        # Feature importance
+        base = model.calibrated_classifiers_[0].estimator
+        imp = sorted(zip(ALL_FEATURES, base.feature_importances_), key=lambda x: -x[1])
+        print("\nTop 15 features:")
+        for feat, val in imp[:15]:
+            print(f"  {feat:<30} {val:.4f}")
+
+        out_dir = _Path(args.output)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        model_path = out_dir / "sqpe_v17.pkl"
+        with open(model_path, "wb") as fh:
+            _pickle.dump(model, fh)
+
+        import json as _json
+        meta = {
+            "version": "v17.0",
+            "trained_at": _dt.utcnow().isoformat(),
+            "source": args.raceform,
+            "train_rows": int(len(X_tr)),
+            "test_rows": int(len(X_te)),
+            "auc": round(float(auc_score), 4),
+            "log_loss": round(float(ll_score), 4),
+            "mrr": round(float(mrr), 4),
+            "top1_accuracy": round(float(top1), 4),
+            "features": ALL_FEATURES,
+        }
+        (_Path(args.output) / "metadata.json").write_text(_json.dumps(meta, indent=2))
+        print(f"\nSaved: {model_path}")
+        print(f"SQPE v17 DONE  AUC={auc_score:.4f}  Top-1={top1*100:.1f}%")
+
+    else:
+        train(
+            backtest_path=args.backtest,
+            raw_path=args.raw,
+            output_dir=args.output,
+            sample_size=args.sample,
+            no_backtest=args.no_backtest,
+        )
