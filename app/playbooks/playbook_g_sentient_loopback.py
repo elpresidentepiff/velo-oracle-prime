@@ -31,9 +31,12 @@ FIX (sentient-feedback-loop):
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from difflib import SequenceMatcher
+from pathlib import Path
 import json
 import os
 import logging
+
+_DEFAULT_STATE_FILE = str(Path(__file__).parent.parent.parent / "data" / "sentient_state.json")
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +101,9 @@ class SentientLoopbackEngine:
     Plus: KINGMAKER MODULE — Identifies which horse shapes/decides/collapses the race
     """
 
-    def __init__(self, state_file: str = "/home/ubuntu/velo-oracle/data/sentient_state.json"):
+    def __init__(self, state_file: str = None):
+        if state_file is None:
+            state_file = _DEFAULT_STATE_FILE
         self.state_file = state_file
         self.state = self._load_state()
 

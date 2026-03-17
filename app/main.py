@@ -120,37 +120,87 @@ async def predict_quick(
     authorized: bool = Depends(verify_api_key)
 ):
     """
-    Quick prediction endpoint
-    
-    Args:
-        race_data: Race and runner data
-        
-    Returns:
-        Prediction with probability, edge, confidence
+    Quick single-runner prediction (SQPE v17 + VELO_PRIME_prob where available).
+
+    Accepts: {"runner": {...}, "race": {...}}
+    Returns: probability, velo_prime_prob, overlay, model_version
     """
     try:
         from app.services.model_manager import get_model_manager
-        mm = get_model_manager()
+        from workers.racing_api_normalizer import normalize_runner, normalize_race
 
+        mm     = get_model_manager()
         runner = race_data.get("runner", {})
-        race = race_data.get("race", {})
-        prob = mm.predict_sqpe(
-            features={},
-            runner=runner,
-            race=race,
-        )
+        race   = race_data.get("race", {})
 
-        odds = runner.get("odds") or runner.get("sp") or 0
-        overlay = mm.detect_overlay(prob, float(odds)) if odds else {"is_overlay": False, "edge": 0.0}
+        # Normalize inputs through canonical schema
+        norm_runner = normalize_runner(runner)
+        norm_race   = normalize_race({**race, "runners": [runner]})
+
+        sqpe_prob = mm.predict_sqpe(runner=norm_runner, race=norm_race)
+
+        odds    = norm_runner.get("best_odds_decimal") or 0
+        overlay = mm.detect_overlay(sqpe_prob, float(odds)) if odds else {"is_overlay": False, "edge": 0.0}
 
         return {
-            "probability": round(prob, 4),
-            "overlay": overlay,
-            "model_version": mm.model_versions.get("sqpe", "unknown"),
+            "probability":     round(sqpe_prob, 4),
+            "velo_prime_prob": round(sqpe_prob, 4),   # same as SQPE for single-runner; use /predict/race for full ensemble
+            "overlay":         overlay,
+            "model_version":   mm.model_versions.get("sqpe", "unknown"),
+            "ensemble_version": "sqpe_only_single_runner",
         }
 
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/v1/predict/race")
+async def predict_race(
+    race_data: dict,
+    persist: bool = False,
+    authorized: bool = Depends(verify_api_key)
+):
+    """
+    Full race prediction using VELO_PRIME_prob meta-ensemble.
+
+    Accepts a normalized race dict (output of racing_api_normalizer.normalize_race())
+    OR a raw Racing API Standard racecard entry.
+
+    Query param:  ?persist=true  to write top verdict to velo_verdicts in Supabase.
+
+    Returns:
+        Ranked list of runners with velo_prime_prob + all specialist scores
+        + macro regime context.
+    """
+    try:
+        from workers.racing_api_normalizer import normalize_race
+        from app.services.velo_prime_service import score_race_velo_prime, persist_race_predictions
+
+        # Accept either pre-normalized or raw racecard
+        if "runners" not in race_data:
+            raise HTTPException(status_code=400, detail="race_data must contain 'runners' list")
+
+        norm_race   = normalize_race(race_data)
+        predictions = score_race_velo_prime(norm_race)
+
+        if persist:
+            persist_race_predictions(norm_race, predictions)
+
+        return {
+            "race_id":          norm_race.get("race_id"),
+            "course":           norm_race.get("course"),
+            "off_time":         norm_race.get("off_time"),
+            "field_size":       len(norm_race.get("runners", [])),
+            "ensemble_version": "velo_prime_v1",
+            "predictions":      predictions,
+            "top_pick":         predictions[0] if predictions else None,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Race prediction failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

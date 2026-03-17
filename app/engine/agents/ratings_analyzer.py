@@ -26,10 +26,24 @@ class RatingsAnalyzer:
     - Identifies well-handicapped horses (rating vs field)
     """
     
+    @staticmethod
+    def _r_to_float(r: Dict[str, Any], *keys) -> float:
+        """Safe float extraction from a runner dict, trying multiple keys."""
+        for k in keys:
+            v = r.get(k)
+            if v:
+                try:
+                    f = float(str(v).replace('-', '0') or 0)
+                    if f > 0:
+                        return f
+                except (ValueError, TypeError):
+                    pass
+        return 0.0
+
     def __init__(self, supabase_client=None):
         """
         Initialize Ratings Analyzer
-        
+
         Args:
             supabase_client: Supabase client (not used in this agent)
         """
@@ -48,9 +62,16 @@ class RatingsAnalyzer:
             RatingsAnalysisResult with score, confidence, and evidence
         """
         horse_name = runner.get('horse_name', '')
-        or_rating = runner.get('or_rating') or runner.get('or') or 0
-        rpr = runner.get('rpr', 0)
-        ts = runner.get('ts', 0)
+
+        def _to_float(val, default=0):
+            try:
+                return float(str(val).replace('-', '0') or 0)
+            except (ValueError, TypeError):
+                return default
+
+        or_rating = _to_float(runner.get('or_rating') or runner.get('or') or runner.get('ofr') or 0)
+        rpr = _to_float(runner.get('rpr', 0))
+        ts = _to_float(runner.get('ts', 0))
         
         evidence = {
             'horse_name': horse_name,
@@ -121,9 +142,9 @@ class RatingsAnalyzer:
         
         # Get all OR ratings in race
         all_or = [
-            r.get('or_rating') or r.get('or', 0)
+            self._r_to_float(r, 'or_rating', 'or', 'ofr')
             for r in all_runners
-            if (r.get('or_rating') or r.get('or', 0)) > 0
+            if self._r_to_float(r, 'or_rating', 'or', 'ofr') > 0
         ]
         
         if not all_or or len(all_or) < 2:
@@ -184,9 +205,9 @@ class RatingsAnalyzer:
         
         # Get all RPR in race
         all_rpr = [
-            r.get('rpr', 0)
+            self._r_to_float(r, 'rpr')
             for r in all_runners
-            if r.get('rpr', 0) > 0
+            if self._r_to_float(r, 'rpr') > 0
         ]
         
         if not all_rpr or len(all_rpr) < 2:
@@ -247,9 +268,9 @@ class RatingsAnalyzer:
         
         # Get all TS in race
         all_ts = [
-            r.get('ts', 0)
+            self._r_to_float(r, 'ts')
             for r in all_runners
-            if r.get('ts', 0) > 0
+            if self._r_to_float(r, 'ts') > 0
         ]
         
         if not all_ts or len(all_ts) < 2:

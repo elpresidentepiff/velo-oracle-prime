@@ -47,24 +47,20 @@ class MarketAnalyzer:
             MarketAnalysisResult with score, confidence, and evidence
         """
         horse_name = runner.get('horse_name', '')
-        
-        # Try different odds field names
-        odds = (
-            runner.get('odds') or 
-            runner.get('win_odds') or 
-            runner.get('sp') or 
-            0
-        )
-        
-        or_rating = runner.get('or_rating') or runner.get('or') or 0
-        
+
+        # Canonical schema fields — set by racing_api_normalizer before reaching agents
+        odds      = float(runner.get('best_odds_decimal') or runner.get('win_odds') or
+                          runner.get('sp') or 0)
+        or_rating = float(runner.get('official_rating') or runner.get('or') or
+                          runner.get('or_rating') or 0)
+
         evidence = {
             'horse_name': horse_name,
             'odds': odds,
             'or_rating': or_rating,
             'factors': []
         }
-        
+
         # If no odds available, return neutral score
         if not odds or odds <= 0:
             return MarketAnalysisResult(
@@ -156,52 +152,39 @@ class MarketAnalyzer:
         """
         score = 50.0
         
-        # Get odds for this runner
-        odds = (
-            runner.get('odds') or 
-            runner.get('win_odds') or 
-            runner.get('sp') or 
-            0
-        )
-        
-        or_rating = runner.get('or_rating') or runner.get('or') or 0
-        
+        # Use canonical schema fields set by racing_api_normalizer
+        def _r_odds(r):
+            return float(r.get('best_odds_decimal') or r.get('win_odds') or r.get('sp') or 0)
+
+        def _r_or(r):
+            return float(r.get('official_rating') or r.get('or') or r.get('or_rating') or 0)
+
+        odds      = _r_odds(runner)
+        or_rating = _r_or(runner)
+
         if not odds or not or_rating:
             return score
-        
+
         # Calculate market rank (1 = shortest odds)
-        runners_with_odds = [
-            r for r in all_runners 
-            if (r.get('odds') or r.get('win_odds') or r.get('sp') or 0) > 0
-        ]
-        
+        runners_with_odds = [r for r in all_runners if _r_odds(r) > 0]
+
         if len(runners_with_odds) < 2:
             return score
-        
-        sorted_by_odds = sorted(
-            runners_with_odds,
-            key=lambda r: r.get('odds') or r.get('win_odds') or r.get('sp') or 999
-        )
+
+        sorted_by_odds = sorted(runners_with_odds, key=_r_odds)
         market_rank = next(
             (i + 1 for i, r in enumerate(sorted_by_odds) 
              if r.get('horse_name') == runner.get('horse_name')),
             999
         )
         
-        # Calculate ratings rank (1 = highest rating)
-        runners_with_ratings = [
-            r for r in all_runners 
-            if (r.get('or_rating') or r.get('or') or 0) > 0
-        ]
-        
+        # Calculate ratings rank (1 = highest rating) — use canonical schema
+        runners_with_ratings = [r for r in all_runners if _r_or(r) > 0]
+
         if len(runners_with_ratings) < 2:
             return score
-        
-        sorted_by_rating = sorted(
-            runners_with_ratings,
-            key=lambda r: r.get('or_rating') or r.get('or') or 0,
-            reverse=True
-        )
+
+        sorted_by_rating = sorted(runners_with_ratings, key=_r_or, reverse=True)
         ratings_rank = next(
             (i + 1 for i, r in enumerate(sorted_by_rating) 
              if r.get('horse_name') == runner.get('horse_name')),

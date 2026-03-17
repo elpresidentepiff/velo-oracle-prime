@@ -15,7 +15,7 @@
 
 | Service | Status | Detail |
 |---|---|---|
-| Supabase | CONNECTED | `ltbsxbvfsxtnharjvqcm.supabase.co`, eu-west-2, 25 tables |
+| Supabase | CONNECTED | `ltbsxbvfsxtnharjvqcm.supabase.co`, eu-west-2, 54 tables |
 | Railway | CONNECTED | Project `sincere-empathy`, service `velo-oracle` |
 | GitHub | CONNECTED | `elpresidentepiff/velo-oracle-prime`, default branch `main` |
 | The Racing API | CONNECTED | Basic Auth + MCP active |
@@ -38,7 +38,7 @@ Railway config: `railway.toml` — builds velo-oracle with nixpacks, starts `uvi
 
 ---
 
-## Supabase Database — 51 Tables (live count as of 2026-03-15)
+## Supabase Database — 54 Tables (live count as of 2026-03-16)
 
 **Core prediction data**
 | Table | Rows | Purpose |
@@ -122,6 +122,13 @@ Railway config: `railway.toml` — builds velo-oracle with nixpacks, starts `uvi
 | `learned_patterns` | 0 | Self-learned race patterns |
 | `model_versions` | 0 | ML model registry |
 | `rpd_tags` | 0 | Racing Post Digger tags |
+
+**BHA Macro data** (added 2026-03-16)
+| Table | Rows | Purpose |
+|---|---|---|
+| `bha_industry_stats` | 246 | Atomic BHA Data Pack metrics, 2012-2024 |
+| `bha_yearly_summary` | 13 | One row per year: fixtures, field sizes, fav compression |
+| `bha_macro_specialty_metrics` | 132 | Going distribution, race type mix, HIT breakdown, prize money |
 
 ---
 
@@ -281,11 +288,47 @@ docs/VELO_SPOTLIGHT_HARD_LIMITS.md     — Spotlight CANNOT override structural 
 - Linked Railway to `sincere-empathy` project
 - CLAUDE.md written as permanent session memory
 
+## MACRO + MICRO + LIVE Integration — In Progress (2026-03-16)
+
+### Phase A — DONE
+- `data/bha_industry_stats.json` — complete BHA Data Pack extraction (all metrics, all years, ambiguity flags)
+- `data/bha_macro_features.parquet` — derived macro indices: competitiveness, fixture_strain, abandonment_stress, favourite_compression, run_density, field_size_regime
+- Supabase tables: `bha_industry_stats` (246 rows), `bha_yearly_summary` (13 rows), `bha_macro_specialty_metrics` (132 rows)
+- Scripts: `scripts/load_bha_to_supabase.py`, `scripts/cache_bha_macro_features.py`
+
+### Phase B — DONE
+- `src/intelligence/macro_regime/bha_macro_context.py` — MacroContext dataclass + get_macro_context(year, race_code)
+- Outputs: competitiveness_index, favourite_compression_index, regime_label, chaos_mode, favourite_trap_risk, low_field_warning
+- 13 macro features exposed via .to_feature_dict() for race-level feature attachment
+
+### Phase C — DONE (2026-03-16)
+- `scripts/train_specialist_models.py` — 7 specialist models trained and saved
+- `src/intelligence/specialist_models/loader.py` — batch inference loader
+- Output: `models/specialist/[name]/[name].pkl + metadata.json`
+
+| Model | AUC | Top-1 | Status |
+|---|---|---|---|
+| improvement_model | 0.896 | 65.4% | LIVE-USABLE |
+| market_deception_model | 0.920 | 63.6% | LIVE-USABLE |
+| release_window_model | 0.703 | 25.6% | LIVE-USABLE (additive only) |
+| comment_intelligence_model | 0.670 | 27.0% | LIVE-USABLE (additive only) |
+| draw_bias_model | 0.614 | 12.5% | LIVE-USABLE (additive only) |
+| place_model | 0.949 | 75.6% | LIVE-USABLE (each-way target) |
+| longshot_model | 0.936 | 80.6% | LIVE-USABLE (sp>=10 only) |
+
+### Phase D — CORE DONE (2026-03-16)
+- `src/intelligence/velo_prime_ensemble.py` — VeloPrimeEnsemble producing VELO_PRIME_prob
+- `scripts/generate_macro_reports.py` — 3 reports in reports/: structural_trend, macro_volatility, doctrine_linkage
+- End-to-end smoke test PASSING: race 856450 (Huntingdon 2024-01-12), winner correctly ranked #1
+- Still needed: wire to live prediction pipeline, specialist score persistence to Supabase `velo_verdicts`
+
 ## What Is Still Needed
-- `ANTHROPIC_API_KEY` — add to `.env` then run `scripts/test_claude.py` (user getting this now)
-- Racing API subscription upgrade — user getting this now
+- `ANTHROPIC_API_KEY` — add to `.env` then run `scripts/test_claude.py`
+- Racing API subscription upgrade for full racecards
 - Supabase DB password — update `SUPABASE_DB_URL` in `.env`
 - Wire agents to Racing API fetcher output
 - Fix 5 prediction pipeline bugs (listed above in Known Bugs section)
 - Rotate Racing API credentials (exposed in git history on public repo)
+- Wire VeloPrimeEnsemble to live prediction endpoint (app/main.py /predict routes)
+- Persist specialist scores + VELO_PRIME_prob to Supabase `velo_verdicts` table
 - Push to main + verify Railway auto-deploy

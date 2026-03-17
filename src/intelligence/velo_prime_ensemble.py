@@ -1,0 +1,247 @@
+"""
+VELO_PRIME_prob — Phase D Meta-Ensemble
+Combines base SQPE v17 + specialist scores + macro regime context
+into a single final production probability.
+
+Per D003 (decisions.md):
+  final production probability = meta-ensemble of:
+    base SQPE v17, improvement_score, release_day_prob,
+    market_deception_score, place_prob, macro_competitiveness_index,
+    macro_favourite_compression_index
+
+Per D004: macro context is structural, joined at race level, NOT runner level.
+Per D007: all inputs are LIVE-USABLE (pre-race available).
+"""
+from __future__ import annotations
+
+import warnings
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Optional
+
+import numpy as np
+
+from src.intelligence.macro_regime.bha_macro_context import MacroContext
+
+# ─── Weights ───────────────────────────────────────────────────────────────────
+# Tunable. Defaults based on architecture brief.
+_WEIGHTS = {
+    "sqpe_v17":              0.45,  # base model (strongest single signal per L004)
+    "improvement_score":     0.12,
+    "release_window_score":  0.10,
+    "market_deception_score":0.10,
+    "place_prob":            0.08,
+    "comment_intel_score":   0.08,
+    "longshot_score":        0.07,  # only applied when sp > 10.0
+}
+
+# Macro modifiers — these adjust confidence/weight, don't replace probabilities
+_MACRO_CHAOS_CONFIDENCE_DAMPER    = 0.80  # reduce model confidence in chaos regime
+_MACRO_COMPRESSION_FAV_PENALTY    = 0.05  # subtract from favourite's prob when trap=high
+_MACRO_THIN_MARKET_UNCERTAINTY    = 0.10  # spread probability when field_size_regime=tight
+
+
+@dataclass
+class VeloPrimePrediction:
+    horse: str
+    race_id: str
+    sqpe_v17_prob: float
+
+    # Specialist scores (optional — if model not available, excluded from ensemble)
+    improvement_score: Optional[float] = None
+    release_window_score: Optional[float] = None
+    market_deception_score: Optional[float] = None
+    place_prob: Optional[float] = None
+    comment_intel_score: Optional[float] = None
+    longshot_score: Optional[float] = None
+
+    # Market context
+    sp_dec: Optional[float] = None
+    is_fav: bool = False
+
+    # Macro regime (applied at race level)
+    macro_context: Optional[MacroContext] = None
+
+    # Outputs (populated by compute())
+    velo_prime_prob: float = 0.0
+    confidence_level: str = "normal"  # low / normal / high
+    regime_override: Optional[str] = None
+    verdict_flags: list = field(default_factory=list)
+
+    def compute(self) -> "VeloPrimePrediction":
+        """Build VELO_PRIME_prob from all available signals."""
+        scores = {"sqpe_v17": self.sqpe_v17_prob}
+
+        if self.improvement_score is not None:
+            scores["improvement_score"] = self.improvement_score
+        if self.release_window_score is not None:
+            scores["release_window_score"] = self.release_window_score
+        if self.market_deception_score is not None:
+            scores["market_deception_score"] = self.market_deception_score
+        if self.place_prob is not None:
+            scores["place_prob"] = self.place_prob
+        if self.comment_intel_score is not None:
+            scores["comment_intel_score"] = self.comment_intel_score
+        if self.longshot_score is not None and (self.sp_dec or 0) >= 10.0:
+            scores["longshot_score"] = self.longshot_score
+
+        # Weighted average of available scores
+        total_weight = sum(_WEIGHTS[k] for k in scores)
+        prob = sum(_WEIGHTS[k] * v for k, v in scores.items()) / total_weight
+
+        # ── Macro adjustments ──────────────────────────────────────────────────
+        if self.macro_context is not None:
+            ctx = self.macro_context
+
+            # Chaos mode: dampen confidence (flatten towards 1/field_size)
+            if ctx.chaos_mode:
+                field_size = 8  # default if unknown
+                uniform = 1.0 / field_size
+                prob = _MACRO_CHAOS_CONFIDENCE_DAMPER * prob + (1 - _MACRO_CHAOS_CONFIDENCE_DAMPER) * uniform
+                self.verdict_flags.append("macro:chaos_regime_dampened")
+                self.regime_override = "chaos"
+
+            # Favourite trap: if market is heavily compressed AND this is the favourite,
+            # apply a small penalty (the market may be over-efficient on hot-pots)
+            if ctx.favourite_trap_risk == "high" and self.is_fav:
+                prob = max(0.01, prob - _MACRO_COMPRESSION_FAV_PENALTY)
+                self.verdict_flags.append("macro:fav_trap_penalty_applied")
+
+            # Thin market: if field size regime is tight, increase uncertainty
+            if ctx.field_size_regime == "tight":
+                field_size = 8
+                uniform = 1.0 / field_size
+                prob = (1 - _MACRO_THIN_MARKET_UNCERTAINTY) * prob + _MACRO_THIN_MARKET_UNCERTAINTY * uniform
+                self.verdict_flags.append("macro:thin_market_uncertainty")
+
+        # Clip to valid probability range
+        self.velo_prime_prob = max(0.001, min(0.999, prob))
+
+        # Confidence classification (calibration insight from L005: model underconfident at top)
+        if self.velo_prime_prob >= 0.50:
+            self.confidence_level = "high"
+        elif self.velo_prime_prob >= 0.25:
+            self.confidence_level = "normal"
+        else:
+            self.confidence_level = "low"
+
+        return self
+
+    def to_dict(self) -> dict:
+        return {
+            "horse": self.horse,
+            "race_id": self.race_id,
+            "sqpe_v17_prob": round(self.sqpe_v17_prob, 4),
+            "velo_prime_prob": round(self.velo_prime_prob, 4),
+            "improvement_score": self.improvement_score,
+            "release_window_score": self.release_window_score,
+            "market_deception_score": self.market_deception_score,
+            "place_prob": self.place_prob,
+            "comment_intel_score": self.comment_intel_score,
+            "longshot_score": self.longshot_score,
+            "confidence_level": self.confidence_level,
+            "regime_override": self.regime_override,
+            "verdict_flags": self.verdict_flags,
+            "macro_regime": self.macro_context.regime_label if self.macro_context else None,
+            "macro_favourite_trap": self.macro_context.favourite_trap_risk if self.macro_context else None,
+        }
+
+
+class VeloPrimeEnsemble:
+    """
+    Builds VELO_PRIME_prob for a full race field.
+
+    Usage:
+        ensemble = VeloPrimeEnsemble()
+        predictions = ensemble.predict_race(race_runners, macro_context)
+    """
+
+    def predict_race(
+        self,
+        runners: list[dict],
+        macro_context: Optional[MacroContext] = None,
+    ) -> list[VeloPrimePrediction]:
+        """
+        Args:
+            runners: list of dicts, each with at minimum:
+                     horse, race_id, sqpe_v17_prob
+                     Optional: improvement_score, release_window_score,
+                               market_deception_score, place_prob,
+                               comment_intel_score, longshot_score,
+                               sp_dec, is_fav
+            macro_context: MacroContext from get_macro_context()
+
+        Returns:
+            List of VeloPrimePrediction, sorted by velo_prime_prob desc.
+        """
+        predictions = []
+        for r in runners:
+            pred = VeloPrimePrediction(
+                horse=r["horse"],
+                race_id=r["race_id"],
+                sqpe_v17_prob=r["sqpe_v17_prob"],
+                improvement_score=r.get("improvement_score"),
+                release_window_score=r.get("release_window_score"),
+                market_deception_score=r.get("market_deception_score"),
+                place_prob=r.get("place_prob"),
+                comment_intel_score=r.get("comment_intel_score"),
+                longshot_score=r.get("longshot_score"),
+                sp_dec=r.get("sp_dec"),
+                is_fav=bool(r.get("is_fav", False)),
+                macro_context=macro_context,
+            )
+            pred.compute()
+            predictions.append(pred)
+
+        # Re-normalise so race probabilities sum to 1.0
+        total = sum(p.velo_prime_prob for p in predictions)
+        if total > 0:
+            for p in predictions:
+                p.velo_prime_prob = round(p.velo_prime_prob / total, 4)
+
+        predictions.sort(key=lambda p: p.velo_prime_prob, reverse=True)
+        return predictions
+
+
+# ─── Quick self-test ──────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    from src.intelligence.macro_regime.bha_macro_context import get_macro_context
+
+    test_runners = [
+        {"horse": "Alpha", "race_id": "T001", "sqpe_v17_prob": 0.35,
+         "improvement_score": 0.60, "release_window_score": 0.70,
+         "market_deception_score": 0.55, "place_prob": 0.55,
+         "sp_dec": 3.5, "is_fav": True},
+        {"horse": "Beta",  "race_id": "T001", "sqpe_v17_prob": 0.25,
+         "improvement_score": 0.40, "sp_dec": 6.0, "is_fav": False},
+        {"horse": "Gamma", "race_id": "T001", "sqpe_v17_prob": 0.15,
+         "longshot_score": 0.55, "sp_dec": 14.0, "is_fav": False},
+        {"horse": "Delta", "race_id": "T001", "sqpe_v17_prob": 0.10,
+         "sp_dec": 8.0, "is_fav": False},
+        {"horse": "Epsilon", "race_id": "T001", "sqpe_v17_prob": 0.08,
+         "sp_dec": 20.0, "is_fav": False},
+        {"horse": "Zeta",  "race_id": "T001", "sqpe_v17_prob": 0.07,
+         "sp_dec": 25.0, "is_fav": False},
+    ]
+
+    # Test with normal 2023 flat regime
+    ctx = get_macro_context(2023, "flat")
+    ensemble = VeloPrimeEnsemble()
+
+    preds = ensemble.predict_race(test_runners, macro_context=ctx)
+    print(f"\nRegime: {ctx.regime_label} | fav_trap={ctx.favourite_trap_risk}")
+    print(f"{'Horse':<10} {'SQPE':>6} {'VELO_PRIME':>10} {'Conf':>8} {'Flags'}")
+    print("-" * 60)
+    for p in preds:
+        flags = ", ".join(p.verdict_flags) if p.verdict_flags else "-"
+        print(f"{p.horse:<10} {p.sqpe_v17_prob:>6.3f} {p.velo_prime_prob:>10.4f} {p.confidence_level:>8} {flags}")
+
+    # Test chaos regime (2020)
+    ctx_chaos = get_macro_context(2020, "jump")
+    preds_chaos = ensemble.predict_race(test_runners, macro_context=ctx_chaos)
+    print(f"\nChaos regime (2020 jump):")
+    print(f"{'Horse':<10} {'VELO_PRIME':>10} {'Flags'}")
+    for p in preds_chaos:
+        flags = ", ".join(p.verdict_flags) if p.verdict_flags else "-"
+        print(f"{p.horse:<10} {p.velo_prime_prob:>10.4f} {flags}")

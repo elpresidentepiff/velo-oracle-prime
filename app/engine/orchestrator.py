@@ -223,13 +223,10 @@ class Orchestrator:
         Returns:
             (action, stake_pct, reason) tuple
         """
-        odds = (
-            runner.get('odds') or 
-            runner.get('win_odds') or 
-            runner.get('sp') or 
-            0
-        )
-        
+        # Use canonical odds field set by racing_api_normalizer
+        odds = float(runner.get('best_odds_decimal') or runner.get('win_odds') or
+                     runner.get('sp') or 0)
+
         # Check odds range (3/1 to 20/1)
         if odds > 0 and (odds < 3.0 or odds > 21.0):
             return ('PASS', 0.0, f'Outside acceptable odds range ({odds:.1f})')
