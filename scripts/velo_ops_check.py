@@ -101,11 +101,12 @@ def check_git():
         status = subprocess.check_output(
             ["git", "status", "--porcelain"], cwd=ROOT, text=True
         ).strip()
-        dirty = bool(status)
-        if dirty:
-            results.append(_fail("working tree clean", f"{len(status.splitlines())} uncommitted changes"))
+        # Only count modified/staged tracked files — ignore untracked (??) files
+        tracked_dirty = [l for l in status.splitlines() if not l.startswith("??")]
+        if tracked_dirty:
+            results.append(_fail("tracked files clean", f"{len(tracked_dirty)} modified tracked files: {[l[:40] for l in tracked_dirty[:3]]}"))
         else:
-            results.append(_pass("working tree clean"))
+            results.append(_pass("tracked files clean (untracked data/model files OK)"))
     except Exception as e:
         results.append(_fail("working tree clean", str(e)))
 
@@ -131,9 +132,12 @@ def check_railway():
     results = []
 
     try:
-        status_out = subprocess.check_output(
-            ["railway", "status"], cwd=ROOT, text=True, stderr=subprocess.STDOUT
-        ).strip()
+        # Use shell=True on Windows; strip RAILWAY_TOKEN from env so CLI uses stored auth
+        env = {k: v for k, v in os.environ.items() if k != "RAILWAY_TOKEN"}
+        r = subprocess.run(
+            "railway status", cwd=ROOT, text=True, capture_output=True, shell=True, env=env
+        )
+        status_out = (r.stdout + r.stderr).strip()
         if CANONICAL_SERVICE in status_out:
             results.append(_pass("service linked", CANONICAL_SERVICE))
         else:
