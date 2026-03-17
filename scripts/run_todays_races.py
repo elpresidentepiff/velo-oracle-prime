@@ -29,6 +29,7 @@ load_dotenv(ROOT / ".env")
 
 # ── imports ──────────────────────────────────────────────────────────────────
 from workers.racing_api_normalizer import normalize_race
+from app.services.velo_prime_service import persist_race_predictions
 
 TOKEN   = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -255,10 +256,29 @@ def main():
     print(f"=== FULL CARD: {len(races)} races ===")
     results = []
     verdicts_by_course: dict = {}
+    persist_ok = 0
+    persist_fail = 0
     for i, race in enumerate(races, 1):
         v = analyse_race(race, orch, i)
         results.append(v)
         verdicts_by_course.setdefault(v["course"], []).append(v)
+        # Persist to Supabase immediately after each verdict — system of record
+        try:
+            from app.services.velo_prime_service import score_race_velo_prime
+            prime_preds = score_race_velo_prime(race)
+        except Exception as e:
+            print(f"      [prime_score error] {race.get('race_id')}: {e}")
+            prime_preds = []
+        if prime_preds:
+            if persist_race_predictions(race, prime_preds):
+                persist_ok += 1
+            else:
+                persist_fail += 1
+                print(f"      [persist FAIL] {race.get('race_id')}")
+        else:
+            # Fallback: persist orchestrator verdict as minimal row
+            persist_fail += 1
+            print(f"      [persist SKIP — no prime scores] {race.get('race_id')}")
 
     # ── STEP 6: Save ──────────────────────────────────────────────────────────
     date_tag  = args.date.replace("-", "_") if args.date else TODAY
@@ -266,10 +286,37 @@ def main():
     with open(out_path, "w") as f:
         json.dump(results, f, indent=2)
     print(f"\nSaved: {out_path.name}")
+    print(f"Supabase persist: {persist_ok} OK / {persist_fail} FAIL / {len(races)} total")
 
     # ── STEP 7: Telegram ──────────────────────────────────────────────────────
     send_verdicts_by_course(results, verdicts_by_course)
     print("\nDone. All verdicts sent to Telegram.")
+
+    # ── STEP 8: Persistence report to Telegram ────────────────────────────────
+    persist_status = "PASS" if persist_fail == 0 else "FAIL"
+    tg(
+        f"VELO PERSISTENCE REPORT -- {TODAY_DISPLAY}\n"
+        f"Races generated: {len(races)}\n"
+        f"Rows written to Supabase: {persist_ok}\n"
+        f"Failures: {persist_fail}\n"
+        f"Table: velo_verdicts\n"
+        f"Status: {persist_status}"
+    )
+    if persist_fail > 0:
+        print(f"\n[WARNING] {persist_fail} races failed Supabase persistence.")
+        print("Run: python scripts/post_run_persistence_check.py")
+
+    # ── STEP 9: Post-run persistence check ────────────────────────────────────
+    import subprocess
+    check_date = args.date or datetime.now().strftime("%Y-%m-%d")
+    print(f"\nRunning post-run persistence check for {check_date}...")
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "post_run_persistence_check.py"),
+         "--date", check_date],
+        cwd=ROOT,
+    )
+    if result.returncode != 0:
+        print("[WARNING] Persistence check reported FAIL — review Supabase row counts.")
 
 
 if __name__ == "__main__":
