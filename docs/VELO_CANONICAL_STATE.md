@@ -51,9 +51,14 @@ Project:      sincere-empathy
 Repo:         elpresidentepiff/velo-oracle-prime (CORRECT)
 rootDirectory: workers/ingestion_spine
 startCommand: python -u -m uvicorn ingestion_spine.main:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info
-Health:       /healthz
-Status as of 2026-03-17: CRASHED — believed to be Railway EU West platform incident
+Health:       /healthz → https://ingestion-spine-production.up.railway.app/healthz
+Status as of 2026-03-17T15:10 UTC: LIVE — /healthz {"status":"ok"} — deployment 36c3dc27
 ```
+
+**Post-incident fix (INC-0003, resolved 2026-03-17T15:10 UTC):**
+- Root cause: `storage.py` line 45 — `b['name']` subscript on `SyncBucket` object (supabase-py v2+ returns objects, not dicts)
+- Fix: `b.name if hasattr(b, 'name') else b['name']`
+- Commit: `9459110` on `feature/v10-launch`
 
 Do not attempt to fix ingestion-spine during Railway EU West incidents. Check incident banner first.
 
@@ -144,7 +149,7 @@ A build saying `SUCCESS` means nothing without route proof.
 | `velo-oracle` | `0992976e` | `velo-oracle-prime` (fixed 2026-03-17) | LIVE — velo_prime_v1 proven @ 14:25 UTC | **LIVE — PRIMARY — USE THIS** |
 | `velo-oracle-prime` | `e48d14ce` | `velo-oracle-prime` | SKIPPED | **LEGACY — DO NOT USE (duplicate, never had clean deploy)** |
 | `enchanting-exploration` | `cfd844fb` | `velo-oracle` (WRONG REPO) | SUCCESS | **LEGACY — DO NOT USE (wrong repo, orphaned)** |
-| `ingestion-spine` | `b9a52e75` | `velo-oracle-prime` | CRASHED | **LIVE — INGESTION — PLATFORM INCIDENT** |
+| `ingestion-spine` | `b9a52e75` | `velo-oracle-prime` | LIVE — /healthz ok @ 15:10 UTC | **LIVE — INGESTION — USE THIS** |
 
 ---
 
@@ -198,4 +203,4 @@ SHA parity is secondary to live proof. A deployment is LIVE only if `scripts/dep
 
 ---
 
-*Last updated: 2026-03-17T14:30 UTC — STATUS: LIVE. Rollback anchor set. All 3 proof checks passing. Stale text removed. VELO_WORKFLOW_LOCK.md and VELO_INCIDENT_LOG.md created.*
+*Last updated: 2026-03-17T15:10 UTC — STATUS: BOTH SERVICES LIVE. velo-oracle: 3 proof checks passing. ingestion-spine: /healthz ok (INC-0003 resolved — SyncBucket bug fixed).*

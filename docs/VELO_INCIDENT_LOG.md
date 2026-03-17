@@ -59,4 +59,25 @@
 
 ---
 
-*Last updated: 2026-03-17*
+## INC-0003 — 2026-03-17 — ingestion-spine crashing on startup (SyncBucket bug)
+
+**Status:** RESOLVED
+**Detected:** 2026-03-17T15:00 UTC (log analysis after EU West incident cleared)
+**Resolved:** 2026-03-17T15:10 UTC (/healthz confirmed ok)
+**Impact:** `ingestion-spine` failed to start on every boot. Was misattributed to Railway EU West platform incident in INC-0002. Actual cause was a code bug.
+**Root cause:** `workers/ingestion_spine/storage.py` line 45:
+```python
+bucket_names = [b['name'] for b in buckets]
+```
+`supabase-py` v2+ returns `SyncBucket` objects from `list_buckets()`, not plain dicts. Subscripting with `['name']` raises `TypeError: 'SyncBucket' object is not subscriptable`. The app crashed during lifespan startup before serving any requests.
+**Fix:** Changed to `b.name if hasattr(b, 'name') else b['name']` — handles both object and dict return types.
+- Commit: `9459110` on `feature/v10-launch`
+- Deployed: Railway build `36c3dc27`
+- Proof: `/healthz` → `{"status":"ok","service":"velo-ingestion-spine"}` @ 2026-03-17T15:10 UTC
+**Prevention:**
+- This bug existed since ingestion-spine was first written. It was previously masked because Railway EU West incident caused the service to appear down for platform reasons.
+- Lesson: always read startup logs to completion before attributing crashes to platform incidents.
+
+---
+
+*Last updated: 2026-03-17T15:10 UTC*
