@@ -175,5 +175,26 @@ ANTHROPIC_API_KEY            # MISSING — add before using Claude chain
 
 ---
 
-*Last updated: 2026-03-17 by Claude Sonnet 4.6 post-deploy-surgery session.*
-*Next update required: after first confirmed clean DEPLOYED status (all 6 proof checks pass).*
+---
+
+## 13. Rollback Anchor
+
+```
+Last proven-good deployment ID: a340bf86-2df0-42d2-b16f-8ed0ef76346f
+Deployment timestamp:           2026-03-17T11:36:46 UTC
+Railway branch at time:         feature/v10-launch
+Proof confirmed:                2026-03-17T14:25 UTC (post-EU-West-incident)
+```
+
+**Rollback rule:** If any newer deploy fails the 6-point proof check, immediately rollback to the anchor using:
+```
+deploymentRedeploy(id: "a340bf86-2df0-42d2-b16f-8ed0ef76346f")
+```
+
+SHA parity is secondary to live proof. A deployment is LIVE only if `scripts/deploy_proof_check.py` passes.
+
+**10am rule:** Do NOT mix deploy surgery with race-day operations. Run `scripts/preflight_10am_check.py` before 10am workflow. If it fails, fix the problem — do not run predictions against a broken endpoint.
+
+---
+
+*Last updated: 2026-03-17T14:25 UTC — STATUS: LIVE. Rollback anchor set. All 3 proof checks passing.*
