@@ -42,7 +42,7 @@ class StorageClient:
             buckets = self.client.storage.list_buckets()
             
             # Check if rp_imports bucket exists
-            bucket_names = [b['name'] for b in buckets]
+            bucket_names = [b.name if hasattr(b, 'name') else b['name'] for b in buckets]
             if self.BUCKET_NAME not in bucket_names:
                 logger.warning(f"Bucket '{self.BUCKET_NAME}' not found. Available: {bucket_names}")
             else:
