@@ -2,23 +2,31 @@
 VELO PRIME Race-Day Execution
 ==============================
 Canonical race-day chain using REAL PRIME scoring path.
+Self-contained: fetches racecards from Racing API if local cache is absent.
 
 Chain:
-  CACHED RACECARDS -> NORMALIZE -> score_race_velo_prime -> persist_race_predictions -> TELEGRAM
+  RACECARDS (cache or API) -> NORMALIZE -> score_race_velo_prime -> persist_race_predictions -> TELEGRAM
 
 Rules:
   - Raw payloads NEVER reach workers — normalize first, always
   - Supabase is system of record
   - Run is not complete unless all 3: generated + Telegram + Supabase
+  - Cache is used when present; direct API fetch is the fallback
+  - No shared filesystem required — safe for Railway cron
 
 Usage:
     python scripts/run_prime_today.py [--date YYYY-MM-DD]
+
+Railway cron command:
+    python scripts/run_prime_today.py
 """
 import sys
 import os
 import json
+import base64
 import argparse
 import urllib.request
+from urllib.parse import urlencode
 from datetime import datetime
 from pathlib import Path
 
@@ -34,6 +42,18 @@ TODAY   = datetime.now().strftime("%Y_%m_%d")
 TODAY_DISPLAY = datetime.now().strftime("%d %b %Y")
 
 CANONICAL_ENDPOINT = "https://velo-oracle-production.up.railway.app"
+
+RACING_USER = os.getenv("RACING_API_USERNAME", "")
+RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
+RACING_BASE = "https://api.theracingapi.com/v1"
+# User-Agent required — Cloudflare blocks requests without it
+RACING_HEADERS = {
+    "Authorization": "Basic " + base64.b64encode(
+        f"{RACING_USER}:{RACING_PASS}".encode()
+    ).decode(),
+    "User-Agent": "Mozilla/5.0",
+    "Accept": "application/json",
+}
 
 
 def tg(text: str):
@@ -53,14 +73,42 @@ def tg(text: str):
         return False
 
 
-def load_cached_racecards(date_tag: str) -> list:
+def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
+    """Return (races_list, source) where source is 'cache' or 'api'.
+
+    Tries local cache first. If absent, fetches directly from Racing API
+    (requires RACING_API_USERNAME + RACING_API_PASSWORD in env).
+    Saves the API response to cache as a best-effort local backup.
+    Safe to run with no pre-existing local files (Railway cron compatible).
+    """
     cache_path = ROOT / "data" / f"racecards_{date_tag}_standard.json"
-    if not cache_path.exists():
-        raise FileNotFoundError(f"No cached racecards at {cache_path}")
-    raw = json.loads(cache_path.read_text())
-    if isinstance(raw, list):
-        return raw
-    return raw.get("racecards", [])
+
+    if cache_path.exists():
+        raw = json.loads(cache_path.read_text())
+        races = raw if isinstance(raw, list) else raw.get("racecards", [])
+        return races, "cache"
+
+    # Cache absent — fetch directly from Racing API
+    if not RACING_USER or not RACING_PASS:
+        raise RuntimeError(
+            "No cached racecards and RACING_API_USERNAME/PASSWORD not set — cannot fetch"
+        )
+    qs = urlencode({"day": "today"}) if date_tag == TODAY else urlencode({"date": date_str})
+    url = f"{RACING_BASE}/racecards/standard?{qs}"
+    req = urllib.request.Request(url, headers=RACING_HEADERS)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        raw = json.loads(r.read())
+
+    # Best-effort cache write — skipped silently on Railway ephemeral storage
+    try:
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        cache_path.write_text(json.dumps(raw, indent=2))
+        print(f"  Saved to cache: {cache_path.name}")
+    except Exception as e:
+        print(f"  Cache write skipped: {e}")
+
+    races = raw if isinstance(raw, list) else raw.get("racecards", [])
+    return races, "api"
 
 
 def main():
@@ -76,11 +124,11 @@ def main():
     from workers.racing_api_normalizer import normalize_race
     from app.services.velo_prime_service import score_race_velo_prime, persist_race_predictions
 
-    # ── STEP 1: Load cached racecards ─────────────────────────────────────────
+    # ── STEP 1: Load racecards (cache or direct API fetch) ────────────────────
     print("\nSTEP 1: Load racecards")
-    raw_races = load_cached_racecards(date_tag)
+    raw_races, racecard_source = load_racecards(date_tag, date_str)
     races_with_runners = [r for r in raw_races if r.get("runners")]
-    print(f"  Cached races: {len(raw_races)}  with runners: {len(races_with_runners)}")
+    print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
 
     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
     print("\nSTEP 2: Normalize (canonical schema — no raw payloads to workers)")
@@ -135,6 +183,7 @@ def main():
         f"branch:     feature/v10-launch\n"
         f"service:    velo-oracle\n"
         f"PRIME live: YES (velo_prime_v1)\n"
+        f"racecards:  {racecard_source}\n"
         f"supabase:   OK\n"
         f"telegram:   OK\n"
         f"STATUS:     READY"
@@ -210,19 +259,24 @@ def main():
     print(f"  Sent: final report ({final_status})")
 
     # ── STEP 6: Save local JSON (backup only — NOT system of record) ──────────
-    out_path = ROOT / "data" / f"velo_prime_verdicts_{date_tag}.json"
-    results_out = []
-    for race, preds in scored:
-        results_out.append({
-            "race_id":    race.get("race_id"),
-            "course":     race.get("course"),
-            "off_time":   race.get("off_time"),
-            "race_name":  race.get("race_name"),
-            "scored":     len(preds),
-            "top":        preds[0] if preds else {},
-        })
-    out_path.write_text(json.dumps(results_out, indent=2, default=str))
-    print(f"\nLocal backup: {out_path.name} (NOT system of record)")
+    # Best-effort only — skipped silently on Railway ephemeral storage
+    try:
+        out_path = ROOT / "data" / f"velo_prime_verdicts_{date_tag}.json"
+        results_out = []
+        for race, preds in scored:
+            results_out.append({
+                "race_id":    race.get("race_id"),
+                "course":     race.get("course"),
+                "off_time":   race.get("off_time"),
+                "race_name":  race.get("race_name"),
+                "scored":     len(preds),
+                "top":        preds[0] if preds else {},
+            })
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(results_out, indent=2, default=str))
+        print(f"\nLocal backup: {out_path.name} (NOT system of record)")
+    except Exception as e:
+        print(f"\nLocal backup skipped: {e}")
 
     # ── STEP 7: Verify counts ─────────────────────────────────────────────────
     print("\nSTEP 7: Count verification")
