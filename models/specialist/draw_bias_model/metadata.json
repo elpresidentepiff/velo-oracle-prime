@@ -1,0 +1,28 @@
+{
+  "name": "draw_bias_model",
+  "trained": "2026-03-17T01:22:25.187957",
+  "features": [
+    "draw_pct",
+    "draw_num",
+    "draw_going",
+    "draw_dist",
+    "draw_aw",
+    "draw_class",
+    "draw_size",
+    "going_code",
+    "dist_f",
+    "is_aw",
+    "field_size",
+    "class_num"
+  ],
+  "live_usable": true,
+  "train_cutoff": "2024-01-01",
+  "source": "C:\\Users\\puror\\velo-oracle-prime\\data\\raceform_v17_features.parquet",
+  "n_train": 1448990,
+  "n_test": 253751,
+  "auc": 0.6144,
+  "log_loss": 0.3219,
+  "top1_accuracy": 0.1246,
+  "target": "target",
+  "label": "draw_bias"
+}

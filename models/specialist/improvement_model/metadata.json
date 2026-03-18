@@ -1,0 +1,28 @@
+{
+  "name": "improvement_model",
+  "trained": "2026-03-17T00:12:06.741471",
+  "features": [
+    "mark_compression_score",
+    "curr_or_minus_best_or",
+    "curr_or_minus_last_win_or",
+    "release_window_score",
+    "runs_since_win",
+    "runs_since_place",
+    "trainer_timing_score",
+    "distance_fit_score",
+    "course_fit_score",
+    "or_vs_field",
+    "rpr_vs_field",
+    "age_num"
+  ],
+  "live_usable": true,
+  "train_cutoff": "2024-01-01",
+  "source": "C:\\Users\\puror\\velo-oracle-prime\\data\\raceform_v17_features.parquet",
+  "n_train": 1448990,
+  "n_test": 253751,
+  "auc": 0.8958,
+  "log_loss": 0.2177,
+  "top1_accuracy": 0.6544,
+  "target": "target",
+  "label": "improvement_signal"
+}

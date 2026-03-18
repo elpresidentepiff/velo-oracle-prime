@@ -1,0 +1,28 @@
+{
+  "name": "market_deception_model",
+  "trained": "2026-03-17T00:42:03.097787",
+  "features": [
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "rpr_vs_field",
+    "or_vs_field",
+    "sp_rank",
+    "is_fav",
+    "rating_mkt_gap",
+    "or_mkt_gap",
+    "decoy_support_flag",
+    "mark_compression_score",
+    "log_sp",
+    "field_size"
+  ],
+  "live_usable": true,
+  "train_cutoff": "2024-01-01",
+  "source": "C:\\Users\\puror\\velo-oracle-prime\\data\\raceform_v17_features.parquet",
+  "n_train": 1448990,
+  "n_test": 253751,
+  "auc": 0.9196,
+  "log_loss": 0.197,
+  "top1_accuracy": 0.636,
+  "target": "target",
+  "label": "market_deception"
+}

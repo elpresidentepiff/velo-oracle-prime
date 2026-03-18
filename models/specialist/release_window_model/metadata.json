@@ -1,0 +1,26 @@
+{
+  "name": "release_window_model",
+  "trained": "2026-03-17T00:56:42.141079",
+  "features": [
+    "setup_run_flag",
+    "cash_run_flag",
+    "trainer_timing_score",
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "jockey_switch_intent",
+    "release_window_score",
+    "mark_compression_score",
+    "odds_contraction_score"
+  ],
+  "live_usable": true,
+  "train_cutoff": "2024-01-01",
+  "source": "C:\\Users\\puror\\velo-oracle-prime\\data\\raceform_v17_features.parquet",
+  "n_train": 1448990,
+  "n_test": 253751,
+  "auc": 0.7033,
+  "log_loss": 0.3046,
+  "top1_accuracy": 0.2558,
+  "target": "target",
+  "label": "release_window"
+}
