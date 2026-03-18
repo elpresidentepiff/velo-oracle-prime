@@ -347,7 +347,9 @@ def main():
     from supabase import create_client as _sb_create
 
     _sb_url = os.getenv("SUPABASE_URL", "")
-    _sb_key = os.getenv("SUPABASE_KEY", "")
+    _sb_key = (os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+               or os.getenv("SUPABASE_SERVICE_KEY")
+               or os.getenv("SUPABASE_ANON_KEY", ""))
     db = _sb_create(_sb_url, _sb_key) if _sb_url and _sb_key else None
     run_id = _open_pipeline_run(db, date_str) if db else None
     print(f"  pipeline_run: {run_id or 'skipped (no Supabase creds)'}")
