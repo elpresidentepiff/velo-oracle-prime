@@ -45,6 +45,25 @@ SUPA_KEY        = (os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 RUN_TYPE = "results_reconciliation"
 
+TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TG_CHAT  = os.getenv("TELEGRAM_CHAT_ID", "")
+
+
+def tg(text: str) -> None:
+    """Send a message to Telegram. Silent no-op if credentials missing."""
+    if not TG_TOKEN or not TG_CHAT:
+        return
+    try:
+        import urllib.request as _ur, json as _j
+        body = _j.dumps({"chat_id": TG_CHAT, "text": text[:4096]}).encode()
+        req = _ur.Request(
+            f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
+            data=body, headers={"Content-Type": "application/json"},
+        )
+        _ur.urlopen(req, timeout=10)
+    except Exception as _e:
+        log.warning("Telegram send failed: %s", _e)
+
 
 # ─────────────────────────────────────────────────────────────
 # Single-run guard
@@ -512,6 +531,34 @@ def main(target_date: str) -> None:
             if reviews_done > 0:
                 strike = wins / reviews_done * 100
                 log.info("  strike rate: %.1f%%", strike)
+
+        # ── Telegram sigma report ──────────────────────────────────────────────
+        if reviews_done > 0:
+            frame  = wins + placed
+            misses_n = reviews_done - frame
+            strike_pct = wins / reviews_done * 100
+            frame_pct  = frame / reviews_done * 100
+            tg_status  = "PASS" if wins > 0 else "MISS"
+            tg(
+                f"VELO SIGMA REPORT — {target_date}\n"
+                f"{'─' * 30}\n"
+                f"Races reconciled: {reviews_done}\n"
+                f"Wins:   {wins}  ({strike_pct:.1f}% strike rate)\n"
+                f"Placed: {placed}\n"
+                f"Misses: {misses_n}  (frame rate: {frame_pct:.1f}%)\n"
+                f"Supabase rows: sigma_audits {reviews_done} | reviews {reviews_done}\n"
+                f"Status: {tg_status}"
+            )
+            log.info("Telegram sigma report sent")
+        else:
+            tg(
+                f"VELO SIGMA REPORT — {target_date}\n"
+                f"{'─' * 30}\n"
+                f"No reviews generated — results may not be available yet.\n"
+                f"Races processed: {races_done}\n"
+                f"Status: PARTIAL"
+            )
+            log.info("Telegram sigma report sent (partial)")
 
         release_run_lock(db, run_id, "completed",
                          races=races_done, runners=runners_done, results=reviews_done)

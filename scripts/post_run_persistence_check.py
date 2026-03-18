@@ -47,15 +47,19 @@ def tg_alert(text: str):
 
 
 def get_local_count(date_tag: str) -> tuple[int, str]:
-    """Return (count, path) from local JSON file for the date."""
-    json_path = ROOT / "data" / f"velo_verdicts_{date_tag}.json"
-    if not json_path.exists():
-        return 0, str(json_path)
-    try:
-        data = json.loads(json_path.read_text())
-        return len(data), str(json_path)
-    except Exception:
-        return 0, str(json_path)
+    """Return (count, path) from local JSON file for the date.
+    Checks PRIME output first (velo_prime_verdicts_*), then orchestrator output.
+    """
+    for name in (f"velo_prime_verdicts_{date_tag}.json", f"velo_verdicts_{date_tag}.json"):
+        json_path = ROOT / "data" / name
+        if json_path.exists():
+            try:
+                data = json.loads(json_path.read_text())
+                return len(data), str(json_path)
+            except Exception:
+                return 0, str(json_path)
+    # Neither file exists — return the PRIME path as the expected location
+    return 0, str(ROOT / "data" / f"velo_prime_verdicts_{date_tag}.json")
 
 
 def get_supabase_count(date_str: str) -> tuple[int, str]:
