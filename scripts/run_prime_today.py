@@ -295,6 +295,43 @@ def card_overall_label(a: int, b: int, total: int) -> str:
     return "weak card — pass"
 
 
+def _open_pipeline_run(db, date_str: str) -> str | None:
+    """Open a pipeline_runs row for this scoring run. Returns run_id or None."""
+    try:
+        row = {
+            "service_name": "velo-prime-scoring",
+            "run_type":     "daily_scoring",
+            "source_date":  date_str,
+            "status":       "in_progress",
+            "started_at":   datetime.utcnow().isoformat() + "Z",
+            "environment":  os.getenv("RAILWAY_ENVIRONMENT", "local"),
+        }
+        resp = db.table("pipeline_runs").insert(row).execute()
+        return resp.data[0]["id"] if resp.data else None
+    except Exception as e:
+        print(f"  [pipeline_runs] open failed (non-fatal): {e}")
+        return None
+
+
+def _close_pipeline_run(db, run_id: str | None, status: str,
+                        races: int, runners: int, error: str | None = None):
+    """Close a pipeline_runs row with final stats."""
+    if not run_id:
+        return
+    try:
+        patch = {
+            "status":            status,
+            "finished_at":       datetime.utcnow().isoformat() + "Z",
+            "races_processed":   races,
+            "runners_processed": runners,
+        }
+        if error:
+            patch["error_message"] = error[:500]
+        db.table("pipeline_runs").update(patch).eq("id", run_id).execute()
+    except Exception as e:
+        print(f"  [pipeline_runs] close failed (non-fatal): {e}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
@@ -307,6 +344,13 @@ def main():
 
     from workers.racing_api_normalizer import normalize_race
     from app.services.velo_prime_service import score_race_velo_prime, persist_race_predictions
+    from supabase import create_client as _sb_create
+
+    _sb_url = os.getenv("SUPABASE_URL", "")
+    _sb_key = os.getenv("SUPABASE_KEY", "")
+    db = _sb_create(_sb_url, _sb_key) if _sb_url and _sb_key else None
+    run_id = _open_pipeline_run(db, date_str) if db else None
+    print(f"  pipeline_run: {run_id or 'skipped (no Supabase creds)'}")
 
     # ── STEP 1: Load racecards (cache or direct API fetch) ────────────────────
     print("\nSTEP 1: Load racecards")
@@ -324,6 +368,7 @@ def main():
     print(f"  Normalized: {len(normalized)} races")
 
     # ── STEP 3: Score through REAL PRIME path ─────────────────────────────────
+    # scored entries: (race, preds, tier, reasons)
     print("\nSTEP 3: Score through score_race_velo_prime (velo_prime_v1)")
     scored = []
     score_errors = []
@@ -332,9 +377,13 @@ def main():
         try:
             preds = score_race_velo_prime(race)
             if preds:
-                scored.append((race, preds))
-                top = preds[0]
-                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}")
+                top       = preds[0]
+                second    = preds[1] if len(preds) > 1 else {}
+                sec_prob  = float(second.get("velo_prime_prob") or 0)
+                tier, reasons = synthesize_decision(top, sec_prob)
+                _add_secondary_signals(top, reasons)
+                scored.append((race, preds, tier, reasons))
+                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}")
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")
@@ -348,8 +397,8 @@ def main():
     print("\nSTEP 4: Persist to velo_verdicts (system of record)")
     persist_ok = 0
     persist_fail = 0
-    for race, preds in scored:
-        if persist_race_predictions(race, preds):
+    for race, preds, tier, _reasons in scored:
+        if persist_race_predictions(race, preds, decision_tier=tier):
             persist_ok += 1
         else:
             persist_fail += 1
@@ -374,15 +423,12 @@ def main():
     )
     print("  Sent: pre-flight report")
 
-    # B. Decision Synthesis Layer — 5-tier classification
+    # B. Decision Synthesis Layer — bucket already computed in STEP 3
     buckets: dict = {"A": [], "B": [], "C": [], "D": [], "X": []}
 
-    for race, preds in scored:
+    for race, preds, tier, reasons in scored:
         top    = preds[0]
         second = preds[1] if len(preds) > 1 else {}
-        sec_prob = float(second.get("velo_prime_prob") or 0)
-        tier, reasons = synthesize_decision(top, sec_prob)
-        _add_secondary_signals(top, reasons)
         buckets[tier].append((race, top, second, reasons))
 
     a_n = len(buckets["A"])
@@ -481,13 +527,14 @@ def main():
     try:
         out_path = ROOT / "data" / f"velo_prime_verdicts_{date_tag}.json"
         results_out = []
-        for race, preds in scored:
+        for race, preds, tier, _reasons in scored:
             results_out.append({
                 "race_id":    race.get("race_id"),
                 "course":     race.get("course"),
                 "off_time":   race.get("off_time"),
                 "race_name":  race.get("race_name"),
                 "scored":     len(preds),
+                "tier":       tier,
                 "top":        preds[0] if preds else {},
             })
         out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -506,13 +553,18 @@ def main():
     print(f"  Persisted (FAIL): {persist_fail}")
     print(f"  Score errors:     {len(score_errors)}")
 
+    total_runners = sum(len(race.get("runners") or []) for race, _, _t, _r in scored)
+
     if persist_fail > 0 or len(score_errors) > 0:
+        err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
+        _close_pipeline_run(db, run_id, "failed", persist_ok, total_runners, err_summary)
         print(f"\nFAIL — deficit: {len(normalized) - persist_ok} races not in Supabase")
         if score_errors:
             for race, err in score_errors[:5]:
                 print(f"  SCORE ERROR: {race.get('course')} {race.get('off_time')} — {err[:100]}")
         sys.exit(1)
     else:
+        _close_pipeline_run(db, run_id, "completed", persist_ok, total_runners)
         print(f"\nPASS — {persist_ok}/{len(normalized)} races in velo_verdicts")
         sys.exit(0)
 

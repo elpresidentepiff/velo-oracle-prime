@@ -215,7 +215,8 @@ def score_race_velo_prime(race: dict) -> list[dict]:
 
 # ── Supabase persistence ──────────────────────────────────────────────────────
 
-def persist_race_predictions(race: dict, predictions: list[dict]) -> bool:
+def persist_race_predictions(race: dict, predictions: list[dict],
+                             decision_tier: str | None = None) -> bool:
     """
     Write top verdict + specialist scores to velo_verdicts.
     One row per race (top pick). Returns True on success.
@@ -253,6 +254,7 @@ def persist_race_predictions(race: dict, predictions: list[dict]) -> bool:
             "macro_regime_label":    top.get("macro_regime_label"),
             "macro_chaos_mode":      top.get("macro_chaos_mode"),
             "favourite_trap_risk":   top.get("favourite_trap_risk"),
+            "decision_tier":         decision_tier,
             # Full ranked field
             "full_analysis":         predictions,
         }

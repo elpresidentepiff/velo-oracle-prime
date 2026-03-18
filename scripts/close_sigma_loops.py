@@ -420,7 +420,7 @@ def main(target_date: str) -> None:
         # Step 2: Load verdicts for target_date from DB
         rows = (
             db.table("velo_verdicts")
-            .select("id, race_id, confidence_level, top_rank_horse_id, top_rank_score, selections")
+            .select("id, race_id, confidence_level, top_rank_horse_id, top_rank_score, selections, decision_tier")
             .execute()
         )
         # Filter to verdicts whose race is on target_date
