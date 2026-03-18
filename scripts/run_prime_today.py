@@ -111,120 +111,180 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
     return races, "api"
 
 
-def _fmt_prob(val):
-    if val is None:
-        return "n/a"
-    try:
-        return f"{float(val):.3f}"
-    except (TypeError, ValueError):
-        return str(val)
+# ── Decision Synthesis Layer ──────────────────────────────────────────────────
+# Tiers: A-STRIKE | B-PLAYABLE | C-WATCH | D-NO BET | X-CHAOS
+#
+# Rules (applied in order — first match wins):
+#
+# X-CHAOS  : prob < 0.12  OR  gap < 0.015  OR  longshot > 0.28
+#             OR  macro_chaos_mode == True
+#
+# A-STRIKE : prob >= 0.32  AND  gap >= 0.08  AND  place >= 0.52
+#             AND  conf != 'low'  AND  trap != 'high'
+#
+# B-PLAYABLE: prob >= 0.22  AND  gap >= 0.05
+#             AND  (place >= 0.45  OR  gap >= 0.12  OR  improve >= 0.20)
+#
+# C-WATCH  : (prob >= 0.15 AND gap >= 0.025)
+#             OR  (place >= 0.65 AND prob >= 0.13)   ← high each-way floor
+#
+# D-NO BET : everything else (not chaos, but no usable edge)
+#
+# Secondary modifiers (added to reason stack, do not change tier):
+#   market_deception_score > 0.55 → "possible overlay"
+#   market_deception_score < 0.15 → "market aligned"
+#   release_day_prob > 0.40       → "trainer release signal"
+#   improvement_score > 0.20      → "form improvement signal"
+#   favourite_trap_risk != normal → "favourite trap risk"
+# ─────────────────────────────────────────────────────────────────────────────
+
+TIER_LABELS = {
+    "A": "A-STRIKE",
+    "B": "B-PLAYABLE",
+    "C": "C-WATCH",
+    "D": "D-NO BET",
+    "X": "X-CHAOS",
+}
+
+TIER_ACTIONS = {
+    "A": "back win — primary selection",
+    "B": "playable if price >= fair value — check market",
+    "C": "watch price — each-way angle if generous",
+    "D": "no bet — insufficient edge",
+    "X": "pass — race shape unreliable",
+}
 
 
-def classify_race(top: dict, second_prob: float) -> tuple[str, list[str], str]:
+def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     """
-    Returns (status, reasons, action) where status is STRIKE/WATCH/NO BET/CHAOS.
-
-    Rules applied in order — first match wins:
-      CHAOS   : prob < 0.15  OR  longshot_prob > 0.25  OR  gap < 0.02
-      STRIKE  : prob >= 0.28 AND gap >= 0.06 AND place_prob >= 0.42
-                AND confidence in (medium, high)
-      NO BET  : prob < 0.22 AND gap < 0.05 AND confidence == low/missing
-      WATCH   : everything else
+    Returns (tier, reasons) where tier is A/B/C/D/X.
+    Uses full available signal stack from velo_prime_v1 output.
     """
     prob      = float(top.get("velo_prime_prob") or 0)
     place     = float(top.get("place_prob") or 0)
     longshot  = float(top.get("longshot_prob") or 0)
-    improve   = top.get("improvement_score")
+    improve   = float(top.get("improvement_score") or 0)
     mkt_dec   = top.get("market_deception_score")
+    release   = float(top.get("release_day_prob") or 0)
+    chaos_m   = bool(top.get("macro_chaos_mode") or False)
+    trap      = (top.get("favourite_trap_risk") or "normal").lower()
     conf      = (top.get("confidence_level") or "low").lower()
     gap       = prob - second_prob
 
     reasons = []
 
-    # ── CHAOS ─────────────────────────────────────────────────────────────────
-    if prob < 0.15 or longshot > 0.25 or gap < 0.02:
-        if prob < 0.15:
-            reasons.append(f"flat field — top prob only {prob:.3f}")
-        if longshot > 0.25:
-            reasons.append(f"outsider pressure — longshot prob {longshot:.3f}")
-        if gap < 0.02:
-            reasons.append(f"no separation — gap to 2nd only {gap:.3f}")
-        reasons.append("model cannot identify clear leader")
-        return "CHAOS", reasons, "do not bet — chaotic race shape"
+    # ── X-CHAOS ───────────────────────────────────────────────────────────────
+    if prob < 0.12 or gap < 0.015 or longshot > 0.28 or chaos_m:
+        if prob < 0.12:
+            reasons.append(f"flat field — top prob {prob:.3f} below threshold")
+        if gap < 0.015:
+            reasons.append(f"no separation — gap {gap:.3f} to 2nd")
+        if longshot > 0.28:
+            reasons.append(f"outsider pressure — longshot signal {longshot:.3f}")
+        if chaos_m:
+            reasons.append("macro chaos mode active")
+        reasons.append("model cannot identify reliable leader")
+        return "X", reasons
 
-    # ── STRIKE ────────────────────────────────────────────────────────────────
-    if prob >= 0.28 and gap >= 0.06 and place >= 0.42 and conf in ("medium", "high"):
-        reasons.append(f"top prob {prob:.3f} — clear field leader")
-        reasons.append(f"gap to 2nd: {gap:.3f} — meaningful separation")
-        reasons.append(f"place profile: {place:.3f}")
-        if improve and float(improve) > 0.5:
-            reasons.append(f"improvement signal: {float(improve):.3f}")
-        return "STRIKE", reasons, "main win candidate — playable"
+    # ── Core numbers always logged ─────────────────────────────────────────────
+    reasons.append(f"win {prob:.3f} | gap {gap:.3f} | place {place:.3f}")
 
-    # ── NO BET ────────────────────────────────────────────────────────────────
-    if prob < 0.22 and gap < 0.05 and conf in ("low", ""):
-        reasons.append(f"top prob {prob:.3f} — below threshold")
-        reasons.append(f"gap to 2nd only {gap:.3f} — insufficient separation")
-        if conf in ("low", ""):
-            reasons.append("confidence: low — no conviction signal")
-        return "NO BET", reasons, "skip — no identifiable edge"
+    # ── A-STRIKE ──────────────────────────────────────────────────────────────
+    if (prob >= 0.32 and gap >= 0.08 and place >= 0.52
+            and conf not in ("low",) and trap != "high"):
+        reasons.append(f"strong separation gap {gap:.3f}")
+        reasons.append(f"place floor solid {place:.3f}")
+        if improve > 0.20:
+            reasons.append(f"form improvement signal {improve:.2f}")
+        return "A", reasons
 
-    # ── WATCH ─────────────────────────────────────────────────────────────────
-    reasons.append(f"top prob {prob:.3f} — some signal, not enough conviction")
-    reasons.append(f"gap to 2nd: {gap:.3f}")
-    if place >= 0.40:
-        reasons.append(f"place profile acceptable: {place:.3f}")
-    else:
-        reasons.append(f"place profile weak: {place:.3f}")
-    return "WATCH", reasons, "monitor only — wait for stronger signal"
+    # ── B-PLAYABLE ────────────────────────────────────────────────────────────
+    b_place_ok = place >= 0.45
+    b_gap_ok   = gap >= 0.12
+    b_improve  = improve >= 0.20
+    if prob >= 0.22 and gap >= 0.05 and (b_place_ok or b_gap_ok or b_improve):
+        if b_gap_ok:
+            reasons.append(f"large field separation gap {gap:.3f}")
+        if b_place_ok:
+            reasons.append(f"strong place floor {place:.3f}")
+        if b_improve:
+            reasons.append(f"form improvement signal {improve:.2f}")
+        if not b_place_ok and not b_gap_ok and not b_improve:
+            reasons.append("marginal signal — price dependent")
+        return "B", reasons
+
+    # ── C-WATCH ───────────────────────────────────────────────────────────────
+    if (prob >= 0.15 and gap >= 0.025) or (place >= 0.65 and prob >= 0.13):
+        if place >= 0.65:
+            reasons.append(f"high place floor {place:.3f} — each-way angle possible")
+        if prob >= 0.15 and gap >= 0.025:
+            reasons.append(f"some win signal but not enough separation")
+        return "C", reasons
+
+    # ── D-NO BET ──────────────────────────────────────────────────────────────
+    reasons.append("win signal weak — no clear betting angle")
+    if place < 0.35:
+        reasons.append(f"place floor also weak {place:.3f}")
+    return "D", reasons
 
 
-def market_posture(top: dict) -> str:
-    mkt = top.get("market_deception_score")
-    if mkt is None:
-        return "unknown"
-    m = float(mkt)
-    if m >= 0.55:
-        return f"possible overlay ({m:.2f})"
-    if m <= 0.30:
-        return f"market aligned ({m:.2f})"
-    return f"neutral ({m:.2f})"
+def _add_secondary_signals(top: dict, reasons: list) -> None:
+    """Append market/intent signals to an existing reason list (in-place)."""
+    mkt_dec = top.get("market_deception_score")
+    release = float(top.get("release_day_prob") or 0)
+    trap    = (top.get("favourite_trap_risk") or "normal").lower()
+    if mkt_dec is not None:
+        m = float(mkt_dec)
+        if m > 0.55:
+            reasons.append(f"market deception {m:.2f} — possible overlay")
+        elif m < 0.15:
+            reasons.append(f"market aligned {m:.2f}")
+    if release > 0.40:
+        reasons.append(f"trainer release signal {release:.2f}")
+    if trap != "normal":
+        reasons.append(f"favourite trap risk: {trap}")
 
 
-def build_race_card(race: dict, top: dict, second: dict, status: str,
-                    reasons: list, action: str) -> str:
+def build_decision_card(race: dict, top: dict, second: dict,
+                        tier: str, reasons: list) -> str:
     course   = race.get("course", "?").upper()
     off      = race.get("off_time", "?")
     primary  = top.get("horse", "?")
-    contain  = second.get("horse", "?") if second else "none"
+    contain  = second.get("horse", "?") if second else "—"
     conf     = top.get("confidence_level") or "low"
-    mkt      = market_posture(top)
-    longshot = float(top.get("longshot_prob") or 0)
-    value    = "none"
-    if longshot >= 0.20:
-        value = f"{primary} (longshot prob {longshot:.3f})"
-
-    status_prefix = {
-        "STRIKE": "⚡ STRIKE",
-        "WATCH":  "👁 WATCH",
-        "NO BET": "✗ NO BET",
-        "CHAOS":  "⚠ CHAOS",
-    }.get(status, status)
+    action   = TIER_ACTIONS[tier]
+    label    = TIER_LABELS[tier]
+    prob     = float(top.get("velo_prime_prob") or 0)
+    gap      = prob - float(second.get("velo_prime_prob") or 0)
+    place    = float(top.get("place_prob") or 0)
 
     lines = [
-        f"{course} {off} | {status_prefix}",
-        "─" * 32,
+        f"{course} {off} | {label}",
+        "─" * 34,
         f"PRIMARY:     {primary}",
         f"CONTAINMENT: {contain}",
-        f"VALUE:       {value}",
-        f"CONFIDENCE:  {conf}",
-        f"MARKET:      {mkt}",
-        "REASONS:",
+        f"CONF:        {conf}",
+        f"KEY:         prob {prob:.3f} | gap {gap:.3f} | place {place:.3f}",
+        "SIGNALS:",
     ]
     for r in reasons[:4]:
-        lines.append(f"• {r}")
+        lines.append(f"  • {r}")
     lines.append(f"ACTION: {action}")
     return "\n".join(lines)
+
+
+def card_overall_label(a: int, b: int, total: int) -> str:
+    actionable = a + b
+    if total == 0:
+        return "no data"
+    ratio = actionable / total
+    if a > 0 and ratio >= 0.25:
+        return "strong card"
+    if actionable > 0 and ratio >= 0.15:
+        return "selective card"
+    if b > 0:
+        return "lean card — selective only"
+    return "weak card — pass"
 
 
 def main():
@@ -306,72 +366,82 @@ def main():
     )
     print("  Sent: pre-flight report")
 
-    # B. Decision-layer cards
-    # Classify every race, then send:
-    #   - STRIKE races: individual card per race
-    #   - WATCH races:  one grouped message
-    #   - NO BET/CHAOS: one summary message
-    strikes, watches, nobets = [], [], []
+    # B. Decision Synthesis Layer — 5-tier classification
+    buckets: dict = {"A": [], "B": [], "C": [], "D": [], "X": []}
 
     for race, preds in scored:
         top    = preds[0]
         second = preds[1] if len(preds) > 1 else {}
         sec_prob = float(second.get("velo_prime_prob") or 0)
-        status, reasons, action = classify_race(top, sec_prob)
-        entry = (race, top, second, status, reasons, action)
-        if status == "STRIKE":
-            strikes.append(entry)
-        elif status == "WATCH":
-            watches.append(entry)
-        else:
-            nobets.append(entry)
+        tier, reasons = synthesize_decision(top, sec_prob)
+        _add_secondary_signals(top, reasons)
+        buckets[tier].append((race, top, second, reasons))
+
+    a_n = len(buckets["A"])
+    b_n = len(buckets["B"])
+    c_n = len(buckets["C"])
+    d_n = len(buckets["D"])
+    x_n = len(buckets["X"])
+    overall = card_overall_label(a_n, b_n, len(scored))
 
     # Day posture header
     tg(
         f"VELO DAY POSTURE — {TODAY_DISPLAY}\n"
-        f"{'─' * 32}\n"
-        f"⚡ STRIKE:  {len(strikes)}\n"
-        f"👁 WATCH:   {len(watches)}\n"
-        f"✗ NO BET:  {len([e for e in nobets if e[3] == 'NO BET'])}\n"
-        f"⚠ CHAOS:   {len([e for e in nobets if e[3] == 'CHAOS'])}\n"
-        f"Total races: {len(scored)}"
+        f"{'─' * 34}\n"
+        f"A-STRIKE:   {a_n}\n"
+        f"B-PLAYABLE: {b_n}\n"
+        f"C-WATCH:    {c_n}\n"
+        f"D-NO BET:   {d_n}\n"
+        f"X-CHAOS:    {x_n}\n"
+        f"Total:      {len(scored)}\n"
+        f"Overall:    {overall}"
     )
-    print(f"  Sent: day posture ({len(strikes)} STRIKE, {len(watches)} WATCH, {len(nobets)} NO BET/CHAOS)")
+    print(f"  Sent: day posture  A={a_n} B={b_n} C={c_n} D={d_n} X={x_n}  [{overall}]")
 
-    # Individual STRIKE cards
-    for race, top, second, status, reasons, action in strikes:
-        card = build_race_card(race, top, second, status, reasons, action)
+    # A-STRIKE — individual full card per race
+    for race, top, second, reasons in buckets["A"]:
+        card = build_decision_card(race, top, second, "A", reasons)
         tg(card)
-        print(f"  Sent: STRIKE — {race.get('course')} {race.get('off_time')}")
+        print(f"  Sent: A-STRIKE — {race.get('course')} {race.get('off_time')}")
 
-    # WATCH races grouped
-    if watches:
-        lines = [f"VELO WATCH LIST — {TODAY_DISPLAY}", "─" * 32]
-        for race, top, second, status, reasons, action in watches:
+    # B-PLAYABLE — individual full card per race
+    for race, top, second, reasons in buckets["B"]:
+        card = build_decision_card(race, top, second, "B", reasons)
+        tg(card)
+        print(f"  Sent: B-PLAYABLE — {race.get('course')} {race.get('off_time')}")
+
+    # C-WATCH — grouped brief list
+    if buckets["C"]:
+        lines = [f"C-WATCH LIST — {TODAY_DISPLAY}", "─" * 34]
+        for race, top, second, reasons in buckets["C"]:
             course  = race.get("course", "?").upper()
             off     = race.get("off_time", "?")
             primary = top.get("horse", "?")
             prob    = float(top.get("velo_prime_prob") or 0)
+            place   = float(top.get("place_prob") or 0)
             gap     = prob - float(second.get("velo_prime_prob") or 0)
+            r0      = reasons[1] if len(reasons) > 1 else reasons[0] if reasons else ""
             lines.append(
-                f"{course} {off}\n"
-                f"  {primary} | prob {prob:.3f} | gap {gap:.3f}\n"
-                f"  {action}"
+                f"{course} {off}  {primary}\n"
+                f"  prob {prob:.3f} | gap {gap:.3f} | place {place:.3f}\n"
+                f"  {r0}"
             )
         tg("\n".join(lines))
-        print(f"  Sent: WATCH list ({len(watches)} races)")
+        print(f"  Sent: C-WATCH list ({c_n} races)")
 
-    # NO BET / CHAOS summary
-    if nobets:
-        lines = [f"VELO NO-BET / CHAOS — {TODAY_DISPLAY}", "─" * 32]
-        for race, top, second, status, reasons, action in nobets:
-            course  = race.get("course", "?").upper()
-            off     = race.get("off_time", "?")
-            primary = top.get("horse", "?")
-            tag     = "✗" if status == "NO BET" else "⚠"
-            lines.append(f"{tag} {course} {off}  {primary}  — {reasons[0] if reasons else status}")
+    # D / X — summary pass list
+    pass_races = buckets["D"] + buckets["X"]
+    if pass_races:
+        lines = [f"D/X PASS LIST — {TODAY_DISPLAY}", "─" * 34]
+        for tier_tag, bucket in (("D", buckets["D"]), ("X", buckets["X"])):
+            for race, top, second, reasons in bucket:
+                course  = race.get("course", "?").upper()
+                off     = race.get("off_time", "?")
+                primary = top.get("horse", "?")
+                r0      = reasons[0] if reasons else tier_tag
+                lines.append(f"{tier_tag} {course} {off}  {primary}  — {r0}")
         tg("\n".join(lines))
-        print(f"  Sent: NO BET/CHAOS list ({len(nobets)} races)")
+        print(f"  Sent: D/X pass list ({d_n + x_n} races)")
 
     # C. Persistence report
     persist_status = "PASS" if persist_fail == 0 else "FAIL"
