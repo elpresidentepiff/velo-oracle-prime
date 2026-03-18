@@ -116,25 +116,30 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 #
 # Rules (applied in order — first match wins):
 #
-# X-CHAOS  : prob < 0.12  OR  gap < 0.015  OR  longshot > 0.28
+# X-CHAOS  : prob < 0.10  (truly flat — model sees no leader)
+#             OR  (gap < 0.015 AND place < 0.40)  (no separation + no place floor)
+#             OR  longshot > 0.35  (outsider pressure dominates)
 #             OR  macro_chaos_mode == True
+#
+#   NOTE: gap=0.000 alone does NOT trigger X if place >= 0.40.
+#         That becomes D-NO BET or C-WATCH depending on prob/place.
 #
 # A-STRIKE : prob >= 0.32  AND  gap >= 0.08  AND  place >= 0.52
 #             AND  conf != 'low'  AND  trap != 'high'
 #
-# B-PLAYABLE: prob >= 0.22  AND  gap >= 0.05
-#             AND  (place >= 0.45  OR  gap >= 0.12  OR  improve >= 0.20)
+# B-PLAYABLE: prob >= 0.18  AND  gap >= 0.03
+#             AND  (place >= 0.45  OR  gap >= 0.08  OR  improve >= 0.18)
 #
-# C-WATCH  : (prob >= 0.15 AND gap >= 0.025)
-#             OR  (place >= 0.65 AND prob >= 0.13)   ← high each-way floor
+# C-WATCH  : (prob >= 0.13 AND gap >= 0.02)
+#             OR  (place >= 0.55 AND prob >= 0.11)   ← each-way floor rescue
 #
-# D-NO BET : everything else (not chaos, but no usable edge)
+# D-NO BET : everything else (some signal but not enough edge to act)
 #
 # Secondary modifiers (added to reason stack, do not change tier):
 #   market_deception_score > 0.55 → "possible overlay"
 #   market_deception_score < 0.15 → "market aligned"
 #   release_day_prob > 0.40       → "trainer release signal"
-#   improvement_score > 0.20      → "form improvement signal"
+#   improvement_score > 0.18      → "form improvement signal"
 #   favourite_trap_risk != normal → "favourite trap risk"
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -174,12 +179,15 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     reasons = []
 
     # ── X-CHAOS ───────────────────────────────────────────────────────────────
-    if prob < 0.12 or gap < 0.015 or longshot > 0.28 or chaos_m:
-        if prob < 0.12:
+    # Trigger X only when model is genuinely blind: flat field, no place floor,
+    # outsider dominance, or macro chaos. gap=0 alone does NOT trigger X if
+    # place >= 0.40 (uniform scoring from broken numpy — still has place signal).
+    if prob < 0.10 or (gap < 0.015 and place < 0.40) or longshot > 0.35 or chaos_m:
+        if prob < 0.10:
             reasons.append(f"flat field — top prob {prob:.3f} below threshold")
-        if gap < 0.015:
-            reasons.append(f"no separation — gap {gap:.3f} to 2nd")
-        if longshot > 0.28:
+        if gap < 0.015 and place < 0.40:
+            reasons.append(f"no separation (gap {gap:.3f}) and weak place floor ({place:.3f})")
+        if longshot > 0.35:
             reasons.append(f"outsider pressure — longshot signal {longshot:.3f}")
         if chaos_m:
             reasons.append("macro chaos mode active")
@@ -200,11 +208,11 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
 
     # ── B-PLAYABLE ────────────────────────────────────────────────────────────
     b_place_ok = place >= 0.45
-    b_gap_ok   = gap >= 0.12
-    b_improve  = improve >= 0.20
-    if prob >= 0.22 and gap >= 0.05 and (b_place_ok or b_gap_ok or b_improve):
+    b_gap_ok   = gap >= 0.08
+    b_improve  = improve >= 0.18
+    if prob >= 0.18 and gap >= 0.03 and (b_place_ok or b_gap_ok or b_improve):
         if b_gap_ok:
-            reasons.append(f"large field separation gap {gap:.3f}")
+            reasons.append(f"field separation gap {gap:.3f}")
         if b_place_ok:
             reasons.append(f"strong place floor {place:.3f}")
         if b_improve:
@@ -214,10 +222,10 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
         return "B", reasons
 
     # ── C-WATCH ───────────────────────────────────────────────────────────────
-    if (prob >= 0.15 and gap >= 0.025) or (place >= 0.65 and prob >= 0.13):
-        if place >= 0.65:
-            reasons.append(f"high place floor {place:.3f} — each-way angle possible")
-        if prob >= 0.15 and gap >= 0.025:
+    if (prob >= 0.13 and gap >= 0.02) or (place >= 0.55 and prob >= 0.11):
+        if place >= 0.55:
+            reasons.append(f"place floor {place:.3f} — each-way angle possible")
+        if prob >= 0.13 and gap >= 0.02:
             reasons.append(f"some win signal but not enough separation")
         return "C", reasons
 
