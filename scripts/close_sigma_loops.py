@@ -16,13 +16,14 @@ import logging
 import argparse
 import uuid
 from datetime import datetime, date, timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
-load_dotenv()
+load_dotenv(Path(__file__).parent.parent / ".env")
 
 logging.basicConfig(
     level=logging.INFO,
