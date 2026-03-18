@@ -291,7 +291,7 @@ def generate_review(
             miss_reason = "market_decoy_followed"
 
     # Full review outcome
-    selections = verdict.get("selections", [])
+    selections = verdict.get("selections") or []
     placed_selections = []
     for sel in selections:
         horse_id = sel.get("horse_id", "")
