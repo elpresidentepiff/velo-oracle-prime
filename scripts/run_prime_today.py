@@ -343,7 +343,9 @@ def main():
     print("=" * 60)
 
     from workers.racing_api_normalizer import normalize_race
-    from app.services.velo_prime_service import score_race_velo_prime, persist_race_predictions
+    from app.services.velo_prime_service import (
+        score_race_velo_prime, persist_race_predictions, persist_runner_derived_features
+    )
     from supabase import create_client as _sb_create
 
     _sb_url = os.getenv("SUPABASE_URL", "")
@@ -396,17 +398,22 @@ def main():
     print(f"\n  Scored: {len(scored)}  Errors: {len(score_errors)}")
 
     # ── STEP 4: Persist to Supabase ───────────────────────────────────────────
-    print("\nSTEP 4: Persist to velo_verdicts (system of record)")
+    print("\nSTEP 4: Persist to velo_verdicts + runner_derived_features")
     persist_ok = 0
     persist_fail = 0
+    derived_total = 0
     for race, preds, tier, _reasons in scored:
         if persist_race_predictions(race, preds, decision_tier=tier):
             persist_ok += 1
+            # Write per-runner derived features (FK: race must exist in races table)
+            n_derived = persist_runner_derived_features(race, preds)
+            derived_total += n_derived
         else:
             persist_fail += 1
             print(f"  PERSIST FAIL: {race.get('race_id')} {race.get('course')}")
 
-    print(f"  Persisted: {persist_ok} OK  /  {persist_fail} FAIL  /  {len(scored)} total scored")
+    print(f"  Verdicts: {persist_ok} OK / {persist_fail} FAIL / {len(scored)} total")
+    print(f"  runner_derived_features: {derived_total} rows written")
 
     # ── STEP 5: Build Telegram output ─────────────────────────────────────────
     print("\nSTEP 5: Send to Telegram")

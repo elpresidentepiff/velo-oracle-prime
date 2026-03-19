@@ -266,3 +266,79 @@ def persist_race_predictions(race: dict, predictions: list[dict],
     except Exception as e:
         log.error("Persist failed for race %s: %s", race.get("race_id"), e)
         return False
+
+
+def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
+    """
+    Write one runner_derived_features row per runner in the scored field.
+    Uses specialist scores from predictions as the derived feature store.
+    Returns count of rows written (0 on failure).
+    """
+    if not predictions:
+        return 0
+
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY")
+    if not url or not key:
+        return 0
+
+    try:
+        from supabase import create_client
+        sb = create_client(url, key)
+
+        race_id     = race.get("race_id")
+        computed_at = datetime.utcnow().isoformat()
+        rows = []
+
+        for pred in predictions:
+            horse_id = pred.get("horse_id", "") or pred.get("horse", "")
+            if not horse_id or not race_id:
+                continue
+
+            imp  = pred.get("improvement_score")
+            mkt  = pred.get("market_deception_score")
+            pp   = pred.get("place_prob")
+            ls   = pred.get("longshot_prob")
+            rd   = pred.get("release_day_prob")
+            ci   = pred.get("comment_intel_score")
+            vp   = pred.get("velo_prime_prob")
+
+            rows.append({
+                "race_id":                 race_id,
+                "horse_id":                horse_id,
+                "computed_at":             computed_at,
+                "feature_schema_version":  "velo_prime_v1",
+                # Specialist model outputs mapped to doctrine feature columns
+                "form_cycle_score":        imp,
+                "market_confidence_score": mkt,
+                "release_day_score":       rd,
+                "survivability_score":     pp,
+                "chaos_score":             ls,
+                "trainer_intent_score":    ci,
+                # Full feature vector for retraining
+                "feature_vector": {
+                    "velo_prime_prob":         vp,
+                    "improvement_score":       imp,
+                    "market_deception_score":  mkt,
+                    "place_prob":              pp,
+                    "longshot_prob":           ls,
+                    "release_day_prob":        rd,
+                    "comment_intel_score":     ci,
+                    "confidence_level":        pred.get("confidence_level"),
+                    "draw_bias_score":         pred.get("draw_bias_score"),
+                },
+            })
+
+        if not rows:
+            return 0
+
+        sb.table("runner_derived_features").upsert(
+            rows, on_conflict="race_id,horse_id"
+        ).execute()
+        log.info("Persisted %d runner_derived_features for race %s", len(rows), race_id)
+        return len(rows)
+
+    except Exception as e:
+        log.warning("runner_derived_features persist failed for race %s: %s",
+                    race.get("race_id"), e)
+        return 0
