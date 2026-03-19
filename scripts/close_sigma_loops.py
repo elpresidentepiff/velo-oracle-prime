@@ -130,7 +130,12 @@ def release_run_lock(
 def fetch_results(target_date: str) -> List[Dict]:
     """
     Fetch results from Racing API.
-    Uses /v1/results/today for today, /v1/results?date=YYYY-MM-DD for past dates.
+
+    Same-day:  GET /v1/results/today          (Basic+ plan)
+    Past-date: GET /v1/results?start_date=&end_date=  (Standard+ plan)
+
+    NOTE: the historical endpoint uses start_date / end_date — NOT a bare
+    'date' parameter. Sending 'date=' returns 422 Unprocessable Entity.
     """
     if not RACING_USER or not RACING_PASS:
         raise EnvironmentError("RACING_API_USERNAME / RACING_API_PASSWORD not set")
@@ -146,18 +151,37 @@ def fetch_results(target_date: str) -> List[Dict]:
         url = f"{base}/v1/results/today"
         params = {}
     else:
+        # Historical endpoint — requires Standard plan.
+        # Correct params: start_date + end_date (not 'date').
         url = f"{base}/v1/results"
-        params = {"date": target_date}
+        params = {"start_date": target_date, "end_date": target_date}
 
     log.info("GET %s %s", url, params or "")
     resp = session.get(url, params=params, timeout=30)
 
     if resp.status_code == 402:
-        log.error("Racing API returned 402 — subscription tier does not include results. "
-                  "Upgrade to Standard/Pro plan.")
+        log.error(
+            "Racing API 402 — subscription does not include results. "
+            "Upgrade to Standard/Pro plan. Marking run partial."
+        )
+        return []
+    if resp.status_code == 403:
+        log.error(
+            "Racing API 403 — historical results (/v1/results) require Standard plan. "
+            "Same-day cron (/v1/results/today) requires Basic. "
+            "Current plan does not cover past-date rerun for %s. Marking run partial.",
+            target_date,
+        )
         return []
     if resp.status_code == 404:
         log.warning("No results found for %s (404)", target_date)
+        return []
+    if resp.status_code == 422:
+        log.error(
+            "Racing API 422 — unprocessable request for %s. "
+            "Check endpoint params. URL: %s params: %s",
+            target_date, resp.url, params,
+        )
         return []
 
     resp.raise_for_status()
