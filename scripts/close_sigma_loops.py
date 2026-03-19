@@ -359,6 +359,112 @@ def write_sigma_audit(db: Client, race_id: str, review: Dict, verdict: Dict) -> 
 
 
 # ─────────────────────────────────────────────────────────────
+# Learned patterns writer
+# ─────────────────────────────────────────────────────────────
+def _update_learned_patterns(db: Client, run_reviews: List[Dict], target_date: str) -> int:
+    """
+    Derive patterns from today's sigma run_reviews and upsert into learned_patterns.
+    Returns count of patterns written.
+    """
+    from collections import defaultdict
+    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+    written = 0
+
+    def _upsert_pattern(name: str, p_type: str, desc: str,
+                        conditions: dict, n: int, wins: int) -> None:
+        nonlocal written
+        sr = round(wins / n, 4) if n else 0.0
+        # Check if exists
+        existing = (
+            db.table("learned_patterns")
+            .select("id, occurrences, successful_predictions, first_observed")
+            .eq("pattern_name", name)
+            .execute()
+        )
+        if existing.data:
+            row = existing.data[0]
+            total_n    = (row["occurrences"] or 0) + n
+            total_wins = (row["successful_predictions"] or 0) + wins
+            new_sr     = round(total_wins / total_n, 4) if total_n else 0.0
+            db.table("learned_patterns").update({
+                "occurrences":            total_n,
+                "successful_predictions": total_wins,
+                "success_rate":           new_sr,
+                "confidence_level":       round(min(total_n / 50, 1.0), 4),
+                "conditions":             conditions,
+                "description":            desc,
+                "last_observed":          now,
+                "updated_at":             now,
+                "is_active":              True,
+            }).eq("id", row["id"]).execute()
+        else:
+            db.table("learned_patterns").insert({
+                "pattern_name":           name,
+                "pattern_type":           p_type,
+                "description":            desc,
+                "conditions":             conditions,
+                "occurrences":            n,
+                "successful_predictions": wins,
+                "success_rate":           sr,
+                "avg_roi":                None,
+                "confidence_level":       round(min(n / 50, 1.0), 4),
+                "first_observed":         now,
+                "last_observed":          now,
+                "created_at":             now,
+                "updated_at":             now,
+                "is_active":              True,
+            }).execute()
+        written += 1
+
+    # 1. Per-tier accuracy patterns
+    tier_stats: dict = defaultdict(lambda: {"n": 0, "wins": 0})
+    for rr in run_reviews:
+        t = rr["decision_tier"]
+        tier_stats[t]["n"] += 1
+        if rr["outcome"] == "WIN":
+            tier_stats[t]["wins"] += 1
+
+    for tier, s in tier_stats.items():
+        _upsert_pattern(
+            name=f"tier_{tier}_accuracy",
+            p_type="tier_accuracy",
+            desc=f"Decision tier {tier}: cumulative win accuracy from sigma reconciliation",
+            conditions={"decision_tier": tier, "source_date": target_date},
+            n=s["n"], wins=s["wins"],
+        )
+
+    # 2. Miss-reason frequency patterns
+    miss_stats: dict = defaultdict(int)
+    for rr in run_reviews:
+        if rr["outcome"] not in ("WIN", "PLACED") and rr.get("miss_reason"):
+            miss_stats[rr["miss_reason"]] += 1
+
+    for reason, count in miss_stats.items():
+        _upsert_pattern(
+            name=f"miss_reason_{reason}",
+            p_type="miss_pattern",
+            desc=f"Miss reason '{reason}' — cumulative frequency from sigma",
+            conditions={"miss_reason": reason, "source_date": target_date},
+            n=count, wins=0,
+        )
+
+    # 3. High-confidence accuracy pattern
+    hc = [r for r in run_reviews if r.get("confidence") == "HIGH"]
+    if hc:
+        hc_wins = sum(1 for r in hc if r["outcome"] == "WIN")
+        _upsert_pattern(
+            name="high_confidence_accuracy",
+            p_type="confidence_accuracy",
+            desc="Accuracy when verdict confidence_level=HIGH",
+            conditions={"confidence_level": "HIGH", "source_date": target_date},
+            n=len(hc), wins=hc_wins,
+        )
+
+    log.info("Learned patterns written: %d", written)
+    return written
+
+
+# ─────────────────────────────────────────────────────────────
 # Create rp_imports storage bucket
 # ─────────────────────────────────────────────────────────────
 def ensure_rp_imports_bucket(db: Client) -> None:
@@ -605,6 +711,13 @@ def main(target_date: str) -> None:
                 f"Status: PARTIAL"
             )
             log.info("Telegram sigma report sent (partial)")
+
+        # Step 6: Write learned patterns
+        if run_reviews:
+            try:
+                _update_learned_patterns(db, run_reviews, target_date)
+            except Exception as e:
+                log.warning("learned_patterns write failed (non-fatal): %s", e)
 
         release_run_lock(db, run_id, "completed",
                          races=races_done, runners=runners_done, results=reviews_done)
