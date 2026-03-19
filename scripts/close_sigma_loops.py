@@ -350,6 +350,7 @@ def write_sigma_audit(db: Client, race_id: str, review: Dict, verdict: Dict) -> 
         "patch_note": outcome.get("patch_note"),
         "confidence_level": verdict.get("confidence_level"),
         "verdict_score": float(verdict.get("top_rank_score", 0)),
+        "decision_tier": verdict.get("decision_tier"),
         "top_pick_position": review.get("top_pick_position"),
         "actual_winner_id": review.get("actual_winner_id"),
         "actual_winner_sp": review.get("actual_winner_sp"),
@@ -415,6 +416,7 @@ def main(target_date: str) -> None:
     races_done = 0
     runners_done = 0
     reviews_done = 0
+    run_reviews: list = []  # per-execution review records for tier-split reporting
 
     try:
         # Step 2: Load verdicts for target_date from DB
@@ -507,6 +509,17 @@ def main(target_date: str) -> None:
                     review.get("actual_winner_sp"),
                 )
                 reviews_done += 1
+                run_reviews.append({
+                    "race_id":           race_id,
+                    "outcome":           outcome,
+                    "decision_tier":     verdict.get("decision_tier") or "?",
+                    "miss_reason":       review["review_outcome"].get("miss_reason"),
+                    "top_pick_position": review.get("top_pick_position"),
+                    "actual_winner_sp":  review.get("actual_winner_sp"),
+                    "winner_id":         review.get("actual_winner_id"),
+                    "score":             float(verdict.get("top_rank_score") or 0),
+                    "confidence":        verdict.get("confidence_level"),
+                })
 
         # Step 5: Summary
         log.info("")
@@ -515,39 +528,72 @@ def main(target_date: str) -> None:
         log.info("  runners processed: %d", runners_done)
         log.info("  reviews generated: %d", reviews_done)
 
-        # Counts by outcome
         if reviews_done > 0:
-            review_rows = (
-                db.table("velo_post_race_reviews")
-                .select("top_pick_won, top_pick_placed, verdict_accuracy_score")
-                .execute()
-            )
-            wins   = sum(1 for r in review_rows.data if r.get("top_pick_won"))
-            placed = sum(1 for r in review_rows.data if r.get("top_pick_placed") and not r.get("top_pick_won"))
-            misses = sum(1 for r in review_rows.data if not r.get("top_pick_placed"))
+            from collections import defaultdict
+            wins   = sum(1 for r in run_reviews if r["outcome"] == "WIN")
+            placed = sum(1 for r in run_reviews if r["outcome"] == "PLACED")
+            misses_n = reviews_done - wins - placed
+            strike_pct = wins / reviews_done * 100
+            frame_pct  = (wins + placed) / reviews_done * 100
+
             log.info("  wins    : %d", wins)
             log.info("  placed  : %d", placed)
-            log.info("  misses  : %d", misses)
-            if reviews_done > 0:
-                strike = wins / reviews_done * 100
-                log.info("  strike rate: %.1f%%", strike)
+            log.info("  misses  : %d", misses_n)
+            log.info("  strike rate: %.1f%%", strike_pct)
 
-        # ── Telegram sigma report ──────────────────────────────────────────────
-        if reviews_done > 0:
-            frame  = wins + placed
-            misses_n = reviews_done - frame
-            strike_pct = wins / reviews_done * 100
-            frame_pct  = frame / reviews_done * 100
-            tg_status  = "PASS" if wins > 0 else "MISS"
+            # ── Tier-split stats ──────────────────────────────────────────────
+            tier_stats: dict = defaultdict(lambda: {"W": 0, "P": 0, "M": 0, "n": 0})
+            for rr in run_reviews:
+                t = rr["decision_tier"]
+                tier_stats[t]["n"] += 1
+                if rr["outcome"] == "WIN":    tier_stats[t]["W"] += 1
+                elif rr["outcome"] == "PLACED": tier_stats[t]["P"] += 1
+                else:                           tier_stats[t]["M"] += 1
+
+            tier_order = ["A", "B", "C", "D", "X", "?"]
+            tier_lines = []
+            for t in tier_order:
+                if t not in tier_stats:
+                    continue
+                s = tier_stats[t]
+                sr = s["W"] / s["n"] * 100 if s["n"] else 0
+                tier_lines.append(
+                    f"  {t}: {s['n']} races | W{s['W']} P{s['P']} M{s['M']} | {sr:.0f}% strike"
+                )
+                log.info("Tier %s: n=%d W=%d P=%d M=%d strike=%.0f%%",
+                         t, s["n"], s["W"], s["P"], s["M"], sr)
+
+            # ── Forensic audit: A/B tier misses ──────────────────────────────
+            ab_misses = [
+                rr for rr in run_reviews
+                if rr["decision_tier"] in ("A", "B") and rr["outcome"] not in ("WIN", "PLACED")
+            ]
+            forensic_lines = []
+            for rr in ab_misses:
+                forensic_lines.append(
+                    f"  ⚠ {rr['decision_tier']}-tier miss | race {rr['race_id']} | "
+                    f"pos={rr['top_pick_position']} | winner@{rr['actual_winner_sp']}SP | "
+                    f"{rr['miss_reason'] or 'unknown'}"
+                )
+                log.warning("A/B tier miss: race=%s pos=%s winner_sp=%s reason=%s",
+                            rr["race_id"], rr["top_pick_position"],
+                            rr["actual_winner_sp"], rr["miss_reason"])
+
+            # ── Telegram sigma report ─────────────────────────────────────────
+            tg_status = "PASS" if wins > 0 else ("FRAME" if placed > 0 else "MISS")
+            tier_block = "\n".join(tier_lines) if tier_lines else "  (no tier data)"
+            forensic_block = ("\n" + "\n".join(forensic_lines)) if forensic_lines else ""
+
             tg(
                 f"VELO SIGMA REPORT — {target_date}\n"
                 f"{'─' * 30}\n"
                 f"Races reconciled: {reviews_done}\n"
-                f"Wins:   {wins}  ({strike_pct:.1f}% strike rate)\n"
-                f"Placed: {placed}\n"
-                f"Misses: {misses_n}  (frame rate: {frame_pct:.1f}%)\n"
-                f"Supabase rows: sigma_audits {reviews_done} | reviews {reviews_done}\n"
-                f"Status: {tg_status}"
+                f"Wins:   {wins}  ({strike_pct:.1f}% strike)\n"
+                f"Placed: {placed}  (frame: {frame_pct:.1f}%)\n"
+                f"Misses: {misses_n}\n"
+                f"\nTIER SPLIT:\n{tier_block}"
+                f"{forensic_block}\n"
+                f"\nStatus: {tg_status}"
             )
             log.info("Telegram sigma report sent")
         else:
