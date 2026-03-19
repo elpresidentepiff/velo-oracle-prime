@@ -1,163 +1,110 @@
 """
-Governance Ledger
+Governance Ledger — Supabase adaptation
 
 Immutable audit log for all governance decisions (accept, reject, rollback).
+Writes to the governance_ledger table. Rows are never deleted or updated.
+
+episode_count_at_decision: sourced from sigma_audits row count (proxy for
+observations in the system at decision time).
 """
 
-from datetime import datetime, UTC
-from typing import Dict, Any, Optional
-from uuid import uuid4
-import sqlite3
-import json
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
 
 
 class GovernanceLedger:
     """
-    Writes immutable audit log entries for governance decisions.
-    
-    Every proposal review (accept/reject/rollback) is logged with:
-    - Timestamp
-    - Actor (reviewer ID)
-    - Rationale
-    - Doctrine version snapshot
-    - Episode count at decision time
+    Append-only audit log for governance decisions.
+
+    Every proposal review (accept/reject/rollback) produces one ledger row.
+    Ledger rows are immutable by convention — no UPDATE or DELETE is issued.
     """
-    
-    def __init__(self, db_connection: sqlite3.Connection):
-        self.db = db_connection
-    
+
+    def __init__(self, db):
+        self.db = db
+
+    # ── Writes ────────────────────────────────────────────────────────────────
+
     def write_entry(
         self,
         proposal_id: str,
-        action: str,  # ACCEPT, REJECT, ROLLBACK
+        action: str,
         actor: str,
         rationale: str,
         doctrine_version: str,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
-        Write governance decision to immutable ledger.
-        
+        Write one immutable governance decision entry to the ledger.
+
         Args:
-            proposal_id: Proposal ID
-            action: ACCEPT, REJECT, or ROLLBACK
-            actor: Reviewer username/ID
-            rationale: Human rationale for decision
-            doctrine_version: Current doctrine version
-            metadata: Optional additional context
-        
+            proposal_id:      UUID of the proposal being reviewed
+            action:           ACCEPT / REJECT / ROLLBACK
+            actor:            Reviewer ID
+            rationale:        Human rationale for the decision
+            doctrine_version: Active doctrine version at decision time
+            metadata:         Optional additional context
+
         Returns:
-            Ledger entry ID
+            ID of the new ledger row (UUID string)
         """
-        # Get episode count at decision time
-        cursor = self.db.execute(
-            "SELECT COUNT(*) FROM episodes WHERE finalized = TRUE"
+        # Observation count: sigma_audits rows at decision time
+        try:
+            audit_result = self.db.table("sigma_audits").select("id").execute()
+            observation_count = len(audit_result.data) if audit_result.data else 0
+        except Exception:
+            observation_count = 0
+
+        row = {
+            "proposal_id":                proposal_id,
+            "action":                     action,
+            "actor":                      actor,
+            "timestamp":                  datetime.now(timezone.utc).isoformat(),
+            "rationale":                  rationale,
+            "doctrine_version_snapshot":  doctrine_version,
+            "episode_count_at_decision":  observation_count,
+            "metadata":                   metadata or {},
+        }
+        result = self.db.table("governance_ledger").insert(row).execute()
+        return result.data[0]["id"] if result.data else ""
+
+    # ── Reads ─────────────────────────────────────────────────────────────────
+
+    def get_entries_by_proposal(self, proposal_id: str) -> List[Dict[str, Any]]:
+        """All ledger entries for a proposal, newest first."""
+        result = (
+            self.db.table("governance_ledger")
+            .select("*")
+            .eq("proposal_id", proposal_id)
+            .order("timestamp", desc=True)
+            .execute()
         )
-        episode_count = cursor.fetchone()[0]
-        
-        ledger_id = str(uuid4())
-        
-        self.db.execute(
-            """
-            INSERT INTO governance_ledger (
-                id, proposal_id, action, actor, timestamp,
-                rationale, doctrine_version_snapshot, episode_count_at_decision, metadata
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                ledger_id,
-                proposal_id,
-                action,
-                actor,
-                datetime.now(UTC).isoformat(),
-                rationale,
-                doctrine_version,
-                episode_count,
-                json.dumps(metadata or {}),
-            )
+        return result.data or []
+
+    def get_recent_entries(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """Recent ledger entries across all proposals, newest first."""
+        result = (
+            self.db.table("governance_ledger")
+            .select("*")
+            .order("timestamp", desc=True)
+            .limit(limit)
+            .execute()
         )
-        
-        self.db.commit()
-        return ledger_id
-    
-    def get_entries_by_proposal(self, proposal_id: str) -> list[Dict[str, Any]]:
-        """Get all ledger entries for a proposal."""
-        cursor = self.db.execute(
-            """
-            SELECT id, proposal_id, action, actor, timestamp,
-                   rationale, doctrine_version_snapshot, episode_count_at_decision, metadata
-            FROM governance_ledger
-            WHERE proposal_id = ?
-            ORDER BY timestamp DESC
-            """,
-            (proposal_id,)
-        )
-        
-        entries = []
-        for row in cursor.fetchall():
-            entries.append({
-                "id": row[0],
-                "proposal_id": row[1],
-                "action": row[2],
-                "actor": row[3],
-                "timestamp": row[4],
-                "rationale": row[5],
-                "doctrine_version_snapshot": row[6],
-                "episode_count_at_decision": row[7],
-                "metadata": json.loads(row[8]),
-            })
-        
-        return entries
-    
-    def get_recent_entries(self, limit: int = 50) -> list[Dict[str, Any]]:
-        """Get recent ledger entries."""
-        cursor = self.db.execute(
-            """
-            SELECT id, proposal_id, action, actor, timestamp,
-                   rationale, doctrine_version_snapshot, episode_count_at_decision, metadata
-            FROM governance_ledger
-            ORDER BY timestamp DESC
-            LIMIT ?
-            """,
-            (limit,)
-        )
-        
-        entries = []
-        for row in cursor.fetchall():
-            entries.append({
-                "id": row[0],
-                "proposal_id": row[1],
-                "action": row[2],
-                "actor": row[3],
-                "timestamp": row[4],
-                "rationale": row[5],
-                "doctrine_version_snapshot": row[6],
-                "episode_count_at_decision": row[7],
-                "metadata": json.loads(row[8]),
-            })
-        
-        return entries
-    
+        return result.data or []
+
     def count_by_action(self, action: str) -> int:
-        """Count ledger entries by action type."""
-        cursor = self.db.execute(
-            "SELECT COUNT(*) FROM governance_ledger WHERE action = ?",
-            (action,)
+        """Count ledger rows for a specific action type."""
+        result = (
+            self.db.table("governance_ledger")
+            .select("id")
+            .eq("action", action)
+            .execute()
         )
-        return cursor.fetchone()[0]
-    
+        return len(result.data) if result.data else 0
+
     def get_acceptance_rate(self) -> float:
-        """
-        Calculate acceptance rate (accepted / (accepted + rejected)).
-        
-        Returns:
-            Acceptance rate (0.0 to 1.0)
-        """
+        """Acceptance rate = accepted / (accepted + rejected). 0.0 if no decisions."""
         accepted = self.count_by_action("ACCEPT")
         rejected = self.count_by_action("REJECT")
         total = accepted + rejected
-        
-        if total == 0:
-            return 0.0
-        
-        return accepted / total
+        return round(accepted / total, 4) if total else 0.0

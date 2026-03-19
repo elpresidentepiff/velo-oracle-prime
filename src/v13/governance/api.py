@@ -1,13 +1,15 @@
 """
-Governance API
+Governance API — Supabase adaptation
 
-Minimal REST API for proposal management (list, get, accept, reject).
+Orchestrates proposal management: list, get, accept, reject, rollback.
 
-No UI, no auto-apply, no doctrine mutation without explicit human action.
+Hard rules:
+- No automatic doctrine changes — human sign-off is mandatory for ACCEPT.
+- Every decision is immutably logged to governance_ledger.
+- Rollback is always available for any ACCEPTED proposal.
 """
 
-from typing import Optional, List, Dict, Any
-import sqlite3
+from typing import Any, Dict, List, Optional
 
 from .persistence import ProposalPersistence
 from .transitions import ProposalTransitions
@@ -17,124 +19,126 @@ from .doctrine_manager import DoctrineManager
 
 class GovernanceAPI:
     """
-    Governance API for proposal management.
-    
-    Endpoints:
-    - list_proposals: List proposals with optional filters
-    - get_proposal: Get proposal details
-    - accept_proposal: Accept proposal and bump doctrine version
-    - reject_proposal: Reject proposal
-    - get_ledger: Get governance ledger entries
-    - get_doctrine_versions: Get doctrine version history
+    Single entry point for all governance operations.
+
+    Usage:
+        from supabase import create_client
+        db = create_client(url, key)
+        gov = GovernanceAPI(db)
+        gov.list_proposals(status="PENDING")
+        gov.accept_proposal(proposal_id, reviewer_id, rationale)
     """
-    
-    def __init__(self, db_connection: sqlite3.Connection):
-        self.db = db_connection
-        self.persistence = ProposalPersistence(db_connection)
-        self.transitions = ProposalTransitions(db_connection)
-        self.ledger = GovernanceLedger(db_connection)
-        self.doctrine = DoctrineManager(db_connection)
-    
+
+    def __init__(self, db):
+        self.db = db
+        self.persistence = ProposalPersistence(db)
+        self.transitions = ProposalTransitions(db)
+        self.ledger = GovernanceLedger(db)
+        self.doctrine = DoctrineManager(db)
+
+    # ── Reads ─────────────────────────────────────────────────────────────────
+
     def list_proposals(
         self,
         status: Optional[str] = None,
         critic_type: Optional[str] = None,
         limit: int = 100,
-        offset: int = 0
     ) -> List[Dict[str, Any]]:
         """
         List proposals with optional filters.
-        
+
         Args:
-            status: Optional status filter (DRAFT, PENDING, ACCEPTED, REJECTED)
-            critic_type: Optional critic type filter (LEAKAGE, BIAS, FEATURE, DECISION)
-            limit: Max results (default 100)
-            offset: Pagination offset (default 0)
-        
-        Returns:
-            List of proposal dicts
+            status:      DRAFT / PENDING / ACCEPTED / REJECTED / ROLLED_BACK
+            critic_type: SIGMA / RPD / FEATURE / DECISION / MANUAL
+            limit:       Max results (default 100)
         """
         return self.persistence.list_proposals(
             status=status,
             critic_type=critic_type,
             limit=limit,
-            offset=offset
         )
-    
+
     def get_proposal(self, proposal_id: str) -> Optional[Dict[str, Any]]:
         """
-        Get proposal details.
-        
-        Args:
-            proposal_id: Proposal ID
-        
-        Returns:
-            Proposal dict or None if not found
+        Get a proposal with its ledger history.
+
+        Returns None if not found.
         """
         proposal = self.persistence.get_proposal_by_id(proposal_id)
-        
         if not proposal:
             return None
-        
-        # Add similar proposals (same fingerprint)
-        similar = self.persistence.find_similar_proposals(proposal["fingerprint"])
-        proposal["similar_episodes"] = similar
-        
-        # Add ledger history
         proposal["ledger_history"] = self.ledger.get_entries_by_proposal(proposal_id)
-        
         return proposal
-    
+
+    def get_ledger(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """Recent governance ledger entries across all proposals."""
+        return self.ledger.get_recent_entries(limit=limit)
+
+    def get_doctrine_versions(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """Doctrine version history, newest first."""
+        return self.doctrine.get_version_history(limit=limit)
+
+    def get_stats(self) -> Dict[str, Any]:
+        """Governance dashboard: proposal counts, acceptance rate, active doctrine version."""
+        return {
+            "proposals_draft":       self.transitions.count_by_status("DRAFT"),
+            "proposals_pending":     self.transitions.count_by_status("PENDING"),
+            "proposals_accepted":    self.transitions.count_by_status("ACCEPTED"),
+            "proposals_rejected":    self.transitions.count_by_status("REJECTED"),
+            "proposals_rolled_back": self.transitions.count_by_status("ROLLED_BACK"),
+            "acceptance_rate":       self.ledger.get_acceptance_rate(),
+            "doctrine_version":      self.doctrine.get_active_version(),
+            "doctrine_version_count": self.doctrine.count_versions(),
+        }
+
+    # ── Human-gated mutations ─────────────────────────────────────────────────
+
     def accept_proposal(
         self,
         proposal_id: str,
         reviewer_id: str,
         rationale: str,
-        metadata: Optional[Dict[str, Any]] = None
+        change_type: str = "MINOR",
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Accept a proposal and bump doctrine version.
-        
+        Accept a PENDING proposal and bump the doctrine version.
+
         Args:
-            proposal_id: Proposal ID
-            reviewer_id: Reviewer username/ID
-            rationale: Human rationale for acceptance
-            metadata: Optional additional context
-        
+            proposal_id:  UUID of the proposal
+            reviewer_id:  Human reviewer ID
+            rationale:    Rationale for acceptance
+            change_type:  MAJOR / MINOR / PATCH (default MINOR)
+            metadata:     Optional context dict
+
         Returns:
-            Dict with status and new doctrine version
-        
+            {"status": "accepted", "doctrine_version": "13.1.0", "previous_version": "13.0.0"}
+
         Raises:
             ValueError: If proposal not found or not PENDING
         """
-        # Verify proposal exists and is PENDING
         proposal = self.persistence.get_proposal_by_id(proposal_id)
-        
         if not proposal:
-            raise ValueError(f"Proposal {proposal_id} not found")
-        
+            raise ValueError(f"Proposal {proposal_id!r} not found")
         if proposal["status"] != "PENDING":
-            raise ValueError(f"Proposal is {proposal['status']}, not PENDING")
-        
-        # Get current doctrine version
+            raise ValueError(f"Proposal is {proposal['status']!r}, not PENDING")
+
         current_version = self.doctrine.get_active_version()
-        
-        # Bump doctrine version (no actual rule application yet)
+
         new_version = self.doctrine.bump_version(
-            change_type="MINOR",  # New rule added
-            description=f"Accepted proposal {proposal_id}: {proposal['finding_type']}",
+            change_type=change_type,
+            description=f"Accepted proposal {proposal_id}: {proposal.get('finding_type', '')}",
             created_by=reviewer_id,
         )
-        
-        # Transition proposal to ACCEPTED
+
         self.transitions.transition_to_accepted(
             proposal_id=proposal_id,
             reviewer_id=reviewer_id,
             rationale=rationale,
+            doctrine_version_before=current_version,
             doctrine_version_after=new_version,
         )
-        
-        # Write ledger entry
+
         self.ledger.write_entry(
             proposal_id=proposal_id,
             action="ACCEPT",
@@ -143,55 +147,43 @@ class GovernanceAPI:
             doctrine_version=new_version,
             metadata=metadata,
         )
-        
+
         return {
-            "status": "accepted",
+            "status":           "accepted",
             "doctrine_version": new_version,
             "previous_version": current_version,
         }
-    
+
     def reject_proposal(
         self,
         proposal_id: str,
         reviewer_id: str,
         rationale: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Reject a proposal.
-        
-        Args:
-            proposal_id: Proposal ID
-            reviewer_id: Reviewer username/ID
-            rationale: Human rationale for rejection
-            metadata: Optional additional context
-        
+        Reject a PENDING proposal. Doctrine version does not change.
+
         Returns:
-            Dict with status
-        
+            {"status": "rejected"}
+
         Raises:
             ValueError: If proposal not found or not PENDING
         """
-        # Verify proposal exists and is PENDING
         proposal = self.persistence.get_proposal_by_id(proposal_id)
-        
         if not proposal:
-            raise ValueError(f"Proposal {proposal_id} not found")
-        
+            raise ValueError(f"Proposal {proposal_id!r} not found")
         if proposal["status"] != "PENDING":
-            raise ValueError(f"Proposal is {proposal['status']}, not PENDING")
-        
-        # Get current doctrine version
+            raise ValueError(f"Proposal is {proposal['status']!r}, not PENDING")
+
         current_version = self.doctrine.get_active_version()
-        
-        # Transition proposal to REJECTED
+
         self.transitions.transition_to_rejected(
             proposal_id=proposal_id,
             reviewer_id=reviewer_id,
             rationale=rationale,
         )
-        
-        # Write ledger entry
+
         self.ledger.write_entry(
             proposal_id=proposal_id,
             action="REJECT",
@@ -200,46 +192,48 @@ class GovernanceAPI:
             doctrine_version=current_version,
             metadata=metadata,
         )
-        
+
         return {"status": "rejected"}
-    
-    def get_ledger(self, limit: int = 50) -> List[Dict[str, Any]]:
+
+    def rollback_proposal(
+        self,
+        proposal_id: str,
+        reviewer_id: str,
+        rationale: str,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
         """
-        Get recent governance ledger entries.
-        
-        Args:
-            limit: Max results (default 50)
-        
+        Roll back a previously ACCEPTED proposal.
+
+        Does NOT revert the doctrine version bump — that requires a separate
+        doctrine rollback decision.
+
         Returns:
-            List of ledger entry dicts
+            {"status": "rolled_back"}
+
+        Raises:
+            ValueError: If proposal not found or not ACCEPTED
         """
-        return self.ledger.get_recent_entries(limit=limit)
-    
-    def get_doctrine_versions(self, limit: int = 50) -> List[Dict[str, Any]]:
-        """
-        Get doctrine version history.
-        
-        Args:
-            limit: Max results (default 50)
-        
-        Returns:
-            List of version dicts
-        """
-        return self.doctrine.get_version_history(limit=limit)
-    
-    def get_stats(self) -> Dict[str, Any]:
-        """
-        Get governance statistics.
-        
-        Returns:
-            Dict with proposal counts, acceptance rate, doctrine version
-        """
-        return {
-            "proposals_draft": self.transitions.count_by_status("DRAFT"),
-            "proposals_pending": self.transitions.count_by_status("PENDING"),
-            "proposals_accepted": self.transitions.count_by_status("ACCEPTED"),
-            "proposals_rejected": self.transitions.count_by_status("REJECTED"),
-            "acceptance_rate": self.ledger.get_acceptance_rate(),
-            "doctrine_version": self.doctrine.get_active_version(),
-            "doctrine_version_count": self.doctrine.count_versions(),
-        }
+        proposal = self.persistence.get_proposal_by_id(proposal_id)
+        if not proposal:
+            raise ValueError(f"Proposal {proposal_id!r} not found")
+        if proposal["status"] != "ACCEPTED":
+            raise ValueError(f"Proposal is {proposal['status']!r}, not ACCEPTED")
+
+        current_version = self.doctrine.get_active_version()
+
+        self.transitions.transition_to_rolled_back(
+            proposal_id=proposal_id,
+            reviewer_id=reviewer_id,
+        )
+
+        self.ledger.write_entry(
+            proposal_id=proposal_id,
+            action="ROLLBACK",
+            actor=reviewer_id,
+            rationale=rationale,
+            doctrine_version=current_version,
+            metadata=metadata,
+        )
+
+        return {"status": "rolled_back"}

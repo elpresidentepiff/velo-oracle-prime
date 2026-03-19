@@ -696,6 +696,129 @@ def _update_learned_patterns(db: Client, run_reviews: List[Dict], target_date: s
 
 
 # ─────────────────────────────────────────────────────────────
+# Governance: create sigma proposals from learned_patterns
+# ─────────────────────────────────────────────────────────────
+_PROPOSAL_THRESHOLD = 5          # min occurrences before a pattern triggers a proposal
+_PROPOSAL_HIGH_THRESHOLD = 15   # occurrences above which severity escalates to HIGH
+
+
+def _create_sigma_proposals(db: Client, target_date: str) -> int:
+    """
+    Read learned_patterns rows above _PROPOSAL_THRESHOLD occurrences and create
+    DRAFT proposals in patch_proposals via GovernanceAPI.
+
+    At end of run, transitions all DRAFTs to PENDING so human review can begin.
+    Returns count of new proposals created (duplicates silently skipped).
+
+    Called as Step 8 in sigma main() after learned_patterns are written.
+    Does NOT alter scores, rankings, or any prediction artefact.
+    """
+    try:
+        from src.v13.governance.api import GovernanceAPI
+        from src.v13.governance.persistence import ProposalPersistence
+    except ImportError as e:
+        log.warning("Governance module not importable — skipping proposals: %s", e)
+        return 0
+
+    # Load patterns above threshold
+    try:
+        patt_rows = (
+            db.table("learned_patterns")
+            .select("pattern_name, pattern_type, description, conditions, "
+                    "occurrences, success_rate, confidence_level")
+            .gte("occurrences", _PROPOSAL_THRESHOLD)
+            .eq("is_active", True)
+            .execute()
+        )
+    except Exception as e:
+        log.warning("learned_patterns query failed — skipping proposals: %s", e)
+        return 0
+
+    patterns = patt_rows.data or []
+    if not patterns:
+        log.info("No learned_patterns above threshold — no proposals created")
+        return 0
+
+    log.info("Creating sigma proposals from %d patterns above threshold=%d",
+             len(patterns), _PROPOSAL_THRESHOLD)
+
+    persistence = ProposalPersistence(db)
+    created = 0
+
+    _PATTERN_TYPE_MAP = {
+        "tier_accuracy":      ("SIGMA", "TIER_ACCURACY"),
+        "miss_pattern":       ("SIGMA", "MISS_PATTERN"),
+        "signal_attribution": ("SIGMA", "SIGNAL_UNDERWEIGHTED"),
+        "tier_signal_profile": ("SIGMA", "SIGNAL_UNDERWEIGHTED"),
+        "confidence_accuracy": ("SIGMA", "CONFIDENCE_CALIBRATION"),
+        "rpd_tag_accuracy":   ("RPD",   "RPD_TAG_ACCURACY"),
+    }
+
+    for p in patterns:
+        n         = p.get("occurrences") or 0
+        sr        = p.get("success_rate")
+        ptype     = p.get("pattern_type", "")
+        pname     = p.get("pattern_name", "")
+        desc      = p.get("description", "")
+        conditions = p.get("conditions") or {}
+
+        # Determine critic_type and finding_type from pattern_type
+        critic_type, finding_type = _PATTERN_TYPE_MAP.get(ptype, ("SIGMA", "UNKNOWN_PATTERN"))
+
+        # Severity
+        if n >= _PROPOSAL_HIGH_THRESHOLD:
+            severity = "HIGH"
+        elif n >= _PROPOSAL_THRESHOLD * 2:
+            severity = "MEDIUM"
+        else:
+            severity = "LOW"
+
+        # Escalate miss / signal patterns that have high frequency and low win rate
+        if sr is not None and sr < 0.15 and n >= _PROPOSAL_HIGH_THRESHOLD:
+            severity = "CRITICAL"
+
+        proposed_change = {
+            "pattern_name":   pname,
+            "pattern_type":   ptype,
+            "occurrences":    n,
+            "success_rate":   sr,
+            "conditions":     conditions,
+            "suggested_action": (
+                f"Review doctrine weighting for pattern '{pname}'. "
+                f"Seen {n}× with success_rate={sr}. "
+                f"Evidence from sigma run {target_date}."
+            ),
+        }
+
+        pid = persistence.persist_proposal(
+            source_race_id=None,          # pattern-level, not single-race
+            source_pattern_name=pname,
+            critic_type=critic_type,
+            severity=severity,
+            finding_type=finding_type,
+            description=desc,
+            proposed_change=proposed_change,
+        )
+        if pid:
+            log.info("  Proposal created: %s [%s/%s] n=%d sr=%s severity=%s",
+                     pname, critic_type, finding_type, n, sr, severity)
+            created += 1
+        else:
+            log.debug("  Proposal deduplicated (already exists): %s", pname)
+
+    # Transition all DRAFTs to PENDING at end of sigma run
+    if created > 0:
+        try:
+            transitioned = persistence.transition_all_drafts_to_pending()
+            log.info("Governance: %d new proposals → PENDING (%d DRAFTs transitioned total)",
+                     created, transitioned)
+        except Exception as e:
+            log.warning("transition_all_drafts_to_pending failed (non-fatal): %s", e)
+
+    return created
+
+
+# ─────────────────────────────────────────────────────────────
 # Create rp_imports storage bucket
 # ─────────────────────────────────────────────────────────────
 def ensure_rp_imports_bucket(db: Client) -> None:
@@ -961,6 +1084,13 @@ def main(target_date: str) -> None:
             log.info("Entity bibles updated: %s", bible_counts)
         except Exception as e:
             log.warning("Entity bible update failed (non-fatal): %s", e)
+
+        # Step 8: Governance — create proposals from learned_patterns above threshold
+        try:
+            proposals_n = _create_sigma_proposals(db, target_date)
+            log.info("Governance proposals created this run: %d", proposals_n)
+        except Exception as e:
+            log.warning("Governance proposal creation failed (non-fatal): %s", e)
 
         release_run_lock(db, run_id, "completed",
                          races=races_done, runners=runners_done, results=reviews_done)

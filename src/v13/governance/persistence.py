@@ -1,318 +1,173 @@
 """
-Proposal Persistence Layer
+Proposal Persistence Layer — Supabase adaptation
 
-Writes proposals to database in DRAFT state, handles deduplication via fingerprinting.
+Writes proposals to patch_proposals table in DRAFT state.
+Deduplicates via SHA256 fingerprint (UNIQUE constraint on fingerprint column).
+source_race_id replaces the SQLite episode_id / proposal_episodes junction.
 """
 
-from datetime import datetime, UTC
-from typing import List, Optional, Any, Dict
-from uuid import uuid4
-import sqlite3
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
 
 from .fingerprint import fingerprint_proposal
 
 
 class ProposalPersistence:
     """
-    Handles persistence of critic proposals to database.
-    
-    Features:
-    - Automatic deduplication via fingerprinting
-    - Many-to-many episode linking
-    - DRAFT state initialization
+    Handles persistence of proposals to Supabase patch_proposals table.
+
+    Deduplication: fingerprint UNIQUE constraint — duplicate fingerprints
+    are silently skipped. Callers check the return value (None = duplicate).
     """
-    
-    def __init__(self, db_connection: sqlite3.Connection):
-        self.db = db_connection
-    
-    def persist_proposals(
+
+    def __init__(self, db):
+        self.db = db
+
+    def persist_proposal(
         self,
-        episode_id: str,
-        critic_type: str,
-        proposals: List[Dict[str, Any]],
-    ) -> List[str]:
-        """
-        Persist proposals from critique to database.
-        
-        Args:
-            episode_id: Episode ID
-            critic_type: Type of critic (LEAKAGE, BIAS, FEATURE, DECISION)
-            proposals: List of proposal dicts with keys:
-                - severity (CRITICAL, HIGH, MEDIUM, LOW)
-                - finding_type (e.g., FUTURE_MARKET_LEAKAGE)
-                - description (human-readable text)
-                - proposed_change (dict, structured patch payload)
-        
-        Returns:
-            List of proposal IDs (new or existing)
-        """
-        proposal_ids = []
-        
-        for proposal in proposals:
-            # Generate fingerprint
-            fp = fingerprint_proposal(
-                critic_type=critic_type,
-                finding_type=proposal["finding_type"],
-                proposed_change=proposal["proposed_change"],
-            )
-            
-            # Check if proposal already exists (any status)
-            existing = self._find_by_fingerprint(fp)
-            
-            if existing:
-                # Link existing proposal to this episode
-                self._link_to_episode(existing["id"], episode_id)
-                proposal_ids.append(existing["id"])
-                continue
-            
-            # Create new proposal
-            proposal_id = self._create_proposal(
-                episode_id=episode_id,
-                critic_type=critic_type,
-                severity=proposal["severity"],
-                finding_type=proposal["finding_type"],
-                description=proposal["description"],
-                proposed_change=proposal["proposed_change"],
-                fingerprint=fp,
-            )
-            
-            proposal_ids.append(proposal_id)
-        
-        self.db.commit()
-        return proposal_ids
-    
-    def _find_by_fingerprint(self, fingerprint: str) -> Optional[Dict[str, Any]]:
-        """Find existing proposal by fingerprint."""
-        cursor = self.db.execute(
-            "SELECT id, status FROM patch_proposals WHERE fingerprint = ?",
-            (fingerprint,)
-        )
-        row = cursor.fetchone()
-        
-        if row:
-            return {"id": row[0], "status": row[1]}
-        return None
-    
-    def _create_proposal(
-        self,
-        episode_id: str,
+        source_race_id: Optional[str],
+        source_pattern_name: Optional[str],
         critic_type: str,
         severity: str,
         finding_type: str,
         description: str,
         proposed_change: Dict[str, Any],
-        fingerprint: str,
-    ) -> str:
-        """Create new proposal in DRAFT state."""
-        import json
-        
-        proposal_id = str(uuid4())
-        
-        self.db.execute(
-            """
-            INSERT INTO patch_proposals (
-                id, episode_id, critic_type, severity, finding_type,
-                description, proposed_change, fingerprint, status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                proposal_id,
-                episode_id,
-                critic_type,
-                severity,
-                finding_type,
-                description,
-                json.dumps(proposed_change),
-                fingerprint,
-                "DRAFT",
-                datetime.now(UTC).isoformat(),
-            )
-        )
-        
-        return proposal_id
-    
-    def _link_to_episode(self, proposal_id: str, episode_id: str):
-        """Link existing proposal to new episode (many-to-many)."""
-        try:
-            self.db.execute(
-                """
-                INSERT INTO proposal_episodes (proposal_id, episode_id)
-                VALUES (?, ?)
-                """,
-                (proposal_id, episode_id)
-            )
-        except sqlite3.IntegrityError:
-            # Already linked, ignore
-            pass
-    
-    def get_proposals_by_episode(
-        self,
-        episode_id: str,
-        status: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> Optional[str]:
         """
-        Get all proposals for an episode.
-        
+        Persist a single proposal. Returns proposal ID if new, None if duplicate.
+
         Args:
-            episode_id: Episode ID
-            status: Optional status filter (DRAFT, PENDING, ACCEPTED, REJECTED)
-        
-        Returns:
-            List of proposal dicts
+            source_race_id:      Race that generated this proposal (nullable)
+            source_pattern_name: learned_patterns.pattern_name that triggered this
+            critic_type:         SIGMA / RPD / FEATURE / DECISION / MANUAL
+            severity:            CRITICAL / HIGH / MEDIUM / LOW
+            finding_type:        e.g. SIGNAL_UNDERWEIGHTED / RPD_TAG_MISS
+            description:         Human-readable finding
+            proposed_change:     Structured patch payload (dict)
         """
-        import json
-        
-        query = """
-            SELECT id, episode_id, critic_type, severity, finding_type,
-                   description, proposed_change, fingerprint, status, created_at
-            FROM patch_proposals
-            WHERE episode_id = ?
-        """
-        params = [episode_id]
-        
-        if status:
-            query += " AND status = ?"
-            params.append(status)
-        
-        query += " ORDER BY created_at DESC"
-        
-        cursor = self.db.execute(query, params)
-        rows = cursor.fetchall()
-        
-        proposals = []
-        for row in rows:
-            proposals.append({
-                "id": row[0],
-                "episode_id": row[1],
-                "critic_type": row[2],
-                "severity": row[3],
-                "finding_type": row[4],
-                "description": row[5],
-                "proposed_change": json.loads(row[6]),
-                "fingerprint": row[7],
-                "status": row[8],
-                "created_at": row[9],
-            })
-        
-        return proposals
-    
-    def get_proposal_by_id(self, proposal_id: str) -> Optional[Dict[str, Any]]:
-        """Get proposal by ID."""
-        import json
-        
-        cursor = self.db.execute(
-            """
-            SELECT id, episode_id, critic_type, severity, finding_type,
-                   description, proposed_change, fingerprint, status, created_at,
-                   reviewed_at, reviewer_id, review_rationale,
-                   doctrine_version_before, doctrine_version_after
-            FROM patch_proposals
-            WHERE id = ?
-            """,
-            (proposal_id,)
+        fp = fingerprint_proposal(
+            critic_type=critic_type,
+            finding_type=finding_type,
+            proposed_change=proposed_change,
         )
-        row = cursor.fetchone()
-        
-        if not row:
-            return None
-        
-        return {
-            "id": row[0],
-            "episode_id": row[1],
-            "critic_type": row[2],
-            "severity": row[3],
-            "finding_type": row[4],
-            "description": row[5],
-            "proposed_change": json.loads(row[6]),
-            "fingerprint": row[7],
-            "status": row[8],
-            "created_at": row[9],
-            "reviewed_at": row[10],
-            "reviewer_id": row[11],
-            "review_rationale": row[12],
-            "doctrine_version_before": row[13],
-            "doctrine_version_after": row[14],
+        existing = (
+            self.db.table("patch_proposals")
+            .select("id, status")
+            .eq("fingerprint", fp)
+            .execute()
+        )
+        if existing.data:
+            return None  # duplicate — silent skip
+
+        row = {
+            "source_race_id":      source_race_id,
+            "source_pattern_name": source_pattern_name,
+            "critic_type":         critic_type,
+            "severity":            severity,
+            "finding_type":        finding_type,
+            "description":         description,
+            "proposed_change":     proposed_change,
+            "fingerprint":         fp,
+            "status":              "DRAFT",
         }
-    
+        result = self.db.table("patch_proposals").insert(row).execute()
+        return result.data[0]["id"] if result.data else None
+
+    def transition_all_drafts_to_pending(self) -> int:
+        """
+        Transition all DRAFT proposals to PENDING at end of a sigma run.
+        Returns count transitioned.
+        """
+        result = (
+            self.db.table("patch_proposals")
+            .update({"status": "PENDING"})
+            .eq("status", "DRAFT")
+            .execute()
+        )
+        return len(result.data) if result.data else 0
+
     def list_proposals(
         self,
         status: Optional[str] = None,
         critic_type: Optional[str] = None,
-        limit: int = 100,
-        offset: int = 0
+        limit: int = 50,
     ) -> List[Dict[str, Any]]:
-        """
-        List proposals with optional filters.
-        
-        Args:
-            status: Optional status filter
-            critic_type: Optional critic type filter
-            limit: Max results
-            offset: Pagination offset
-        
-        Returns:
-            List of proposal dicts
-        """
-        import json
-        
-        query = """
-            SELECT id, episode_id, critic_type, severity, finding_type,
-                   description, proposed_change, fingerprint, status, created_at
-            FROM patch_proposals
-            WHERE 1=1
-        """
-        params = []
-        
+        """List proposals with optional filters, newest first."""
+        q = self.db.table("patch_proposals").select("*")
         if status:
-            query += " AND status = ?"
-            params.append(status)
-        
+            q = q.eq("status", status)
         if critic_type:
-            query += " AND critic_type = ?"
-            params.append(critic_type)
-        
-        query += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
-        params.extend([limit, offset])
-        
-        cursor = self.db.execute(query, params)
-        rows = cursor.fetchall()
-        
-        proposals = []
-        for row in rows:
-            proposals.append({
-                "id": row[0],
-                "episode_id": row[1],
-                "critic_type": row[2],
-                "severity": row[3],
-                "finding_type": row[4],
-                "description": row[5],
-                "proposed_change": json.loads(row[6]),
-                "fingerprint": row[7],
-                "status": row[8],
-                "created_at": row[9],
-            })
-        
-        return proposals
-    
-    def find_similar_proposals(self, fingerprint: str) -> List[str]:
-        """
-        Find all episode IDs with the same proposal fingerprint.
-        
-        Args:
-            fingerprint: Proposal fingerprint
-        
-        Returns:
-            List of episode IDs
-        """
-        cursor = self.db.execute(
-            """
-            SELECT DISTINCT pe.episode_id
-            FROM proposal_episodes pe
-            WHERE pe.proposal_id IN (
-                SELECT id FROM patch_proposals WHERE fingerprint = ?
-            )
-            """,
-            (fingerprint,)
+            q = q.eq("critic_type", critic_type)
+        result = q.order("created_at", desc=True).limit(limit).execute()
+        return result.data or []
+
+    def get_proposal_by_id(self, proposal_id: str) -> Optional[Dict[str, Any]]:
+        """Get a proposal by UUID."""
+        result = (
+            self.db.table("patch_proposals")
+            .select("*")
+            .eq("id", proposal_id)
+            .execute()
         )
-        
-        return [row[0] for row in cursor.fetchall()]
+        return result.data[0] if result.data else None
+
+    def accept_proposal(
+        self,
+        proposal_id: str,
+        reviewer_id: str,
+        rationale: str,
+        doctrine_version_before: str,
+        doctrine_version_after: str,
+    ) -> bool:
+        """Transition proposal to ACCEPTED. Returns True on success."""
+        result = (
+            self.db.table("patch_proposals")
+            .update({
+                "status":                  "ACCEPTED",
+                "reviewed_at":             datetime.now(timezone.utc).isoformat(),
+                "reviewer_id":             reviewer_id,
+                "review_rationale":        rationale,
+                "doctrine_version_before": doctrine_version_before,
+                "doctrine_version_after":  doctrine_version_after,
+            })
+            .eq("id", proposal_id)
+            .eq("status", "PENDING")
+            .execute()
+        )
+        return bool(result.data)
+
+    def reject_proposal(
+        self,
+        proposal_id: str,
+        reviewer_id: str,
+        rationale: str,
+    ) -> bool:
+        """Transition proposal to REJECTED. Returns True on success."""
+        result = (
+            self.db.table("patch_proposals")
+            .update({
+                "status":           "REJECTED",
+                "reviewed_at":      datetime.now(timezone.utc).isoformat(),
+                "reviewer_id":      reviewer_id,
+                "review_rationale": rationale,
+            })
+            .eq("id", proposal_id)
+            .eq("status", "PENDING")
+            .execute()
+        )
+        return bool(result.data)
+
+    def rollback_proposal(self, proposal_id: str, reviewer_id: str) -> bool:
+        """Mark a previously ACCEPTED proposal as ROLLED_BACK."""
+        result = (
+            self.db.table("patch_proposals")
+            .update({
+                "status":      "ROLLED_BACK",
+                "reviewed_at": datetime.now(timezone.utc).isoformat(),
+                "reviewer_id": reviewer_id,
+            })
+            .eq("id", proposal_id)
+            .eq("status", "ACCEPTED")
+            .execute()
+        )
+        return bool(result.data)
