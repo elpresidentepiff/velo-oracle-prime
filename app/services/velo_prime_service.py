@@ -329,21 +329,16 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
                 },
             })
 
-        print(f"  [RDF] race={race_id} built {len(rows)} rows (preds={len(predictions)})")
         if not rows:
             return 0
 
         result = sb.table("runner_derived_features").upsert(
             rows, on_conflict="race_id,horse_id"
         ).execute()
-        print(f"  [RDF] upsert result rows={len(result.data) if result.data else 0}")
         log.info("Persisted %d runner_derived_features for race %s", len(rows), race_id)
         return len(rows)
 
     except Exception as e:
-        import traceback
-        print(f"  [RDF FAIL] race={race.get('race_id')} err={e}")
-        traceback.print_exc()
         log.warning("runner_derived_features persist failed for race %s: %s",
                     race.get("race_id"), e)
         return 0
