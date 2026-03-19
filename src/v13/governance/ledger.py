@@ -62,7 +62,7 @@ class GovernanceLedger:
             "timestamp":                  datetime.now(timezone.utc).isoformat(),
             "rationale":                  rationale,
             "doctrine_version_snapshot":  doctrine_version,
-            "episode_count_at_decision":  observation_count,
+            "pattern_count_at_decision":  observation_count,
             "metadata":                   metadata or {},
         }
         result = self.db.table("governance_ledger").insert(row).execute()

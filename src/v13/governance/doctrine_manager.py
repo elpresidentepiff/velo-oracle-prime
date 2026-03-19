@@ -70,7 +70,7 @@ class DoctrineManager:
 
     def count_versions(self) -> int:
         """Count total doctrine version rows."""
-        result = self.db.table("doctrine_versions").select("id").execute()
+        result = self.db.table("doctrine_versions").select("version").execute()
         return len(result.data) if result.data else 0
 
     # ── Mutations ─────────────────────────────────────────────────────────────
