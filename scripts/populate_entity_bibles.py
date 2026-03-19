@@ -82,15 +82,27 @@ def populate_bibles(db) -> dict:
     log.info("Loading runner_race_facts...")
     rrf_rows = (
         db.table("runner_race_facts")
-        .select("race_id, horse_id, trainer_id, trainer_name, jockey_id, jockey_name")
+        .select("race_id, horse_id, trainer_id, jockey_id")
         .execute()
     )
-    # Map (race_id, horse_id) → {trainer_id, trainer_name, jockey_id, jockey_name}
+    # Map (race_id, horse_id) → {trainer_id, jockey_id}
     runner_map: dict = {}
     for r in rrf_rows.data:
         key = (r.get("race_id"), r.get("horse_id"))
         runner_map[key] = r
     log.info("  %d runner_race_facts loaded", len(runner_map))
+
+    # Load name lookups from profiles tables
+    tr_names: dict = {}
+    jk_names: dict = {}
+    try:
+        for row in db.table("trainer_profiles").select("id, name").execute().data:
+            tr_names[row["id"]] = row.get("name", "")
+        for row in db.table("jockey_profiles").select("id, name").execute().data:
+            jk_names[row["id"]] = row.get("name", "")
+        log.info("  %d trainer names, %d jockey names loaded", len(tr_names), len(jk_names))
+    except Exception as e:
+        log.warning("Profile name lookup failed (non-fatal): %s", e)
 
     # ── Accumulators ─────────────────────────────────────────────────────────
     horse_acc:   dict = defaultdict(lambda: {
@@ -121,6 +133,13 @@ def populate_bibles(db) -> dict:
                 full = []
 
         for runner in full:
+            if isinstance(runner, str):
+                try:
+                    runner = json.loads(runner)
+                except Exception:
+                    continue
+            if not isinstance(runner, dict):
+                continue
             horse_id   = runner.get("horse_id") or runner.get("horse", "")
             horse_name = runner.get("horse", "")
             vp  = _safe_float(runner.get("velo_prime_prob"))
@@ -148,13 +167,11 @@ def populate_bibles(db) -> dict:
             rrf = runner_map.get((race_id, horse_id))
             if rrf:
                 tr_id   = rrf.get("trainer_id") or ""
-                tr_name = rrf.get("trainer_name") or ""
                 jk_id   = rrf.get("jockey_id") or ""
-                jk_name = rrf.get("jockey_name") or ""
 
                 if tr_id:
                     ta = trainer_acc[tr_id]
-                    ta["name"] = tr_name or ta["name"]
+                    ta["name"] = ta["name"] or tr_names.get(tr_id, "")
                     ta["horses"].add(horse_id)
                     if horse_id == top_id:
                         ta["top_picks"] += 1
@@ -163,7 +180,7 @@ def populate_bibles(db) -> dict:
 
                 if jk_id:
                     ja = jockey_acc[jk_id]
-                    ja["name"] = jk_name or ja["name"]
+                    ja["name"] = ja["name"] or jk_names.get(jk_id, "")
                     ja["mounts"] += 1
                     if horse_id == top_id:
                         ja["top_picks"] += 1
