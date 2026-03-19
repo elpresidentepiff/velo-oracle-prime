@@ -329,12 +329,14 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
                 },
             })
 
+        print(f"  [RDF] race={race_id} built {len(rows)} rows (preds={len(predictions)})")
         if not rows:
             return 0
 
-        sb.table("runner_derived_features").upsert(
+        result = sb.table("runner_derived_features").upsert(
             rows, on_conflict="race_id,horse_id"
         ).execute()
+        print(f"  [RDF] upsert result rows={len(result.data) if result.data else 0}")
         log.info("Persisted %d runner_derived_features for race %s", len(rows), race_id)
         return len(rows)
 
