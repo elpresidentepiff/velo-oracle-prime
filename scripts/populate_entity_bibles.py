@@ -95,12 +95,16 @@ def populate_bibles(db) -> dict:
     # Load name lookups from profiles tables
     tr_names: dict = {}
     jk_names: dict = {}
+    h_names:  dict = {}
     try:
         for row in db.table("trainer_profiles").select("id, name").execute().data:
             tr_names[row["id"]] = row.get("name", "")
         for row in db.table("jockey_profiles").select("id, name").execute().data:
             jk_names[row["id"]] = row.get("name", "")
-        log.info("  %d trainer names, %d jockey names loaded", len(tr_names), len(jk_names))
+        for row in db.table("horse_profiles").select("id, name").execute().data:
+            h_names[row["id"]] = row.get("name", "")
+        log.info("  %d trainer / %d jockey / %d horse names loaded",
+                 len(tr_names), len(jk_names), len(h_names))
     except Exception as e:
         log.warning("Profile name lookup failed (non-fatal): %s", e)
 
@@ -151,7 +155,7 @@ def populate_bibles(db) -> dict:
                 continue
 
             ha = horse_acc[horse_id]
-            ha["name"] = horse_name or ha["name"]
+            ha["name"] = horse_name or ha["name"] or h_names.get(horse_id, "")
             ha["runs"] += 1
             if vp is not None: ha["velo_probs"].append(vp)
             if pp is not None: ha["place_probs"].append(pp)
