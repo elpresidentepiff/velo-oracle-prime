@@ -1,33 +1,37 @@
 """
-VÉLØ V13 - Living Intelligence System
+VÉLØ V13 — Constitutional Doctrine Layer
 
-Constitutional Layer:
-- Episodic memory with epistemic time separation (decisionTime vs createdAt)
-- Read-only critics (Leakage, Cognitive Bias, Feature Extractor, Decision)
-- Doctrine guards (no auto-apply, no silent mutation, no learning without audit)
+Exposes the six immutable laws and the doctrine compliance validator.
+Critics, episodes, and governance are NOT imported here — they require
+separate adaptation to the Supabase/velo_verdicts environment.
 
-Author: VÉLØ Team
-Date: 2026-01-19
-Status: LOCKED
-Checkpoint: V13_COGNITIVE_LOOP_COMPLETE
+Import only doctrine here. Wire critics and governance separately.
 """
 
-from . import critics
-from . import episodes
 from .doctrine import (
-    DOCTRINE_CRITIC_AUTHORITY,
     DOCTRINE_EPISTEMIC_TIME,
+    DOCTRINE_CRITIC_AUTHORITY,
     DOCTRINE_FEATURE_FIREWALL,
     DOCTRINE_NO_SILENT_MODIFICATION,
+    DOCTRINE_REPLAY_INTEGRITY,
+    DOCTRINE_TRUTH_BEFORE_OPTIMIZATION,
+    DOCTRINE_REGISTRY,
+    get_doctrine,
+    validate_doctrine_compliance,
+    enforce_read_only,
 )
 
 __version__ = "13.0.0"
 
 __all__ = [
-    "critics",
-    "episodes",
-    "DOCTRINE_CRITIC_AUTHORITY",
     "DOCTRINE_EPISTEMIC_TIME",
+    "DOCTRINE_CRITIC_AUTHORITY",
     "DOCTRINE_FEATURE_FIREWALL",
     "DOCTRINE_NO_SILENT_MODIFICATION",
+    "DOCTRINE_REPLAY_INTEGRITY",
+    "DOCTRINE_TRUTH_BEFORE_OPTIMIZATION",
+    "DOCTRINE_REGISTRY",
+    "get_doctrine",
+    "validate_doctrine_compliance",
+    "enforce_read_only",
 ]
