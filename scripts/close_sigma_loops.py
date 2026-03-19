@@ -227,6 +227,88 @@ def store_race_result(db: Client, race_id: str, api_result: Dict) -> int:
 
 
 # ─────────────────────────────────────────────────────────────
+# Signal attribution — forensic miss analysis
+# ─────────────────────────────────────────────────────────────
+_SPECIALIST_SIGNALS = [
+    "improvement_score",
+    "market_deception_score",
+    "place_prob",
+    "longshot_prob",
+    "release_day_prob",
+    "draw_bias_score",
+    "comment_intel_score",
+]
+_ATTRIBUTION_THRESHOLD = 0.05  # winner must lead by this margin to count
+
+
+def _attribute_miss_signals(
+    full_analysis: list,
+    top_pick_id: str,
+    winner_id: str,
+) -> dict:
+    """
+    Compare specialist signal scores between winner and top_pick.
+    Returns dict with:
+      top_pick_scores, winner_scores,
+      winner_dominated_signals {signal: delta},
+      primary_miss_signal (signal winner dominated most)
+    Returns {} if data is absent or winner == top_pick.
+    """
+    if not full_analysis or not winner_id or winner_id == top_pick_id:
+        return {}
+
+    top_scores: dict = {}
+    winner_scores: dict = {}
+
+    for runner in full_analysis:
+        if isinstance(runner, str):
+            try:
+                runner = json.loads(runner)
+            except Exception:
+                continue
+        if not isinstance(runner, dict):
+            continue
+        rid = runner.get("horse_id") or runner.get("horse", "")
+        if rid == top_pick_id:
+            for s in _SPECIALIST_SIGNALS:
+                v = runner.get(s)
+                if v is not None:
+                    try:
+                        top_scores[s] = float(v)
+                    except (TypeError, ValueError):
+                        pass
+        elif rid == winner_id:
+            for s in _SPECIALIST_SIGNALS:
+                v = runner.get(s)
+                if v is not None:
+                    try:
+                        winner_scores[s] = float(v)
+                    except (TypeError, ValueError):
+                        pass
+
+    winner_dominated: dict = {}
+    for s in _SPECIALIST_SIGNALS:
+        ws = winner_scores.get(s)
+        ts = top_scores.get(s)
+        if ws is not None and ts is not None:
+            delta = ws - ts
+            if delta > _ATTRIBUTION_THRESHOLD:
+                winner_dominated[s] = round(delta, 4)
+
+    primary = (
+        max(winner_dominated, key=winner_dominated.get)
+        if winner_dominated else None
+    )
+
+    return {
+        "top_pick_scores": top_scores,
+        "winner_scores": winner_scores,
+        "winner_dominated_signals": winner_dominated,
+        "primary_miss_signal": primary,
+    }
+
+
+# ─────────────────────────────────────────────────────────────
 # Generate post-race reviews
 # ─────────────────────────────────────────────────────────────
 def generate_review(
@@ -267,26 +349,48 @@ def generate_review(
         accuracy = 0.0
         outcome_label = "MISS"
 
-    # Classify miss reason
+    # Signal attribution — forensic miss analysis
+    signal_attribution: dict = {}
     miss_reason = None
     patch_note  = None
-    if not top_pick_won:
-        top_score = float(verdict.get("top_rank_score", 0))
-        confidence = verdict.get("confidence_level", "")
-        selections = verdict.get("selections", [])
 
-        if confidence == "HIGH" and not top_pick_won:
-            miss_reason = "high_confidence_miss"
-            patch_note = (
-                f"HIGH confidence pick {top_pick_id} finished pos={top_pick_pos}. "
-                f"Winner was {winner_id} (SP {winner_sp}). "
-                f"Review: class_anchor_overtrusted or release_window_missed."
-            )
-        elif top_pick_pos is None:
+    if not top_pick_won:
+        confidence = verdict.get("confidence_level", "")
+
+        # Pull full_analysis for signal comparison
+        raw_fa = verdict.get("full_analysis") or []
+        if isinstance(raw_fa, str):
+            try:
+                raw_fa = json.loads(raw_fa)
+            except Exception:
+                raw_fa = []
+
+        signal_attribution = _attribute_miss_signals(raw_fa, top_pick_id, winner_id)
+        primary_signal = signal_attribution.get("primary_miss_signal")
+
+        # Classify miss reason — signal-attributed first, then structural fallbacks
+        if top_pick_pos is None:
             miss_reason = "non_runner_or_untracked"
+        elif primary_signal:
+            # Winner dominated on a specific signal the model underweighted
+            miss_reason = f"signal_underweighted_{primary_signal}"
+            dominated = signal_attribution.get("winner_dominated_signals", {})
+            patch_note = (
+                f"Winner {winner_id} (SP {winner_sp}) dominated on {primary_signal} "
+                f"by {dominated.get(primary_signal, '?'):.3f}. "
+                f"Top pick {top_pick_id} pos={top_pick_pos}. "
+                f"Signals: {dominated}"
+            )
+        elif confidence == "HIGH":
+            miss_reason = "high_confidence_no_signal_gap"
+            patch_note = (
+                f"HIGH confidence miss — winner {winner_id} (SP {winner_sp}) "
+                f"not distinguishable from full_analysis signals. "
+                f"Possible class/going factor not in feature set."
+            )
         elif winner_sp and winner_sp > 10:
             miss_reason = "outsider_hedge_omitted"
-            patch_note = f"Winner {winner_id} was {winner_sp} SP — longshot not in selections."
+            patch_note = f"Winner {winner_id} was SP {winner_sp} — longshot signal missed."
         else:
             miss_reason = "market_decoy_followed"
 
@@ -312,6 +416,7 @@ def generate_review(
         "winner_sp": winner_sp,
         "miss_reason": miss_reason,
         "patch_note": patch_note,
+        "signal_attribution": signal_attribution,
         "selections_results": placed_selections,
         "verdict_confidence": verdict.get("confidence_level"),
         "verdict_score": float(verdict.get("top_rank_score", 0)),
@@ -460,6 +565,74 @@ def _update_learned_patterns(db: Client, run_reviews: List[Dict], target_date: s
             n=len(hc), wins=hc_wins,
         )
 
+    # 4. Signal attribution patterns — forensic layer
+    # For each miss with a primary_miss_signal, track which signals are
+    # systematically underweighted vs winners.
+    signal_miss_counts: dict = defaultdict(lambda: {"n": 0, "tiers": []})
+    for rr in run_reviews:
+        if rr["outcome"] in ("WIN", "PLACED"):
+            continue
+        attr = rr.get("signal_attribution") or {}
+        primary = attr.get("primary_miss_signal")
+        if not primary:
+            continue
+        signal_miss_counts[primary]["n"] += 1
+        signal_miss_counts[primary]["tiers"].append(rr["decision_tier"])
+
+    for signal, data in signal_miss_counts.items():
+        n = data["n"]
+        tiers = data["tiers"]
+        tier_freq = {}
+        for t in tiers:
+            tier_freq[t] = tier_freq.get(t, 0) + 1
+        dominant_tier = max(tier_freq, key=tier_freq.get) if tier_freq else "?"
+        _upsert_pattern(
+            name=f"signal_miss_{signal}",
+            p_type="signal_attribution",
+            desc=(
+                f"Winner dominated top_pick on '{signal}' — signal underweighted. "
+                f"Most frequent in {dominant_tier}-tier races."
+            ),
+            conditions={
+                "signal": signal,
+                "dominant_tier": dominant_tier,
+                "tier_distribution": tier_freq,
+                "source_date": target_date,
+            },
+            n=n,
+            wins=0,  # these are misses — wins always 0 for this pattern type
+        )
+
+    # 5. Per-tier primary miss signal — which signal fails each tier most
+    tier_signal_acc: dict = defaultdict(lambda: defaultdict(int))
+    for rr in run_reviews:
+        if rr["outcome"] in ("WIN", "PLACED"):
+            continue
+        attr = rr.get("signal_attribution") or {}
+        primary = attr.get("primary_miss_signal")
+        if not primary:
+            continue
+        tier_signal_acc[rr["decision_tier"]][primary] += 1
+
+    for tier, signal_counts in tier_signal_acc.items():
+        worst_signal = max(signal_counts, key=signal_counts.get)
+        _upsert_pattern(
+            name=f"tier_{tier}_primary_miss_signal",
+            p_type="tier_signal_profile",
+            desc=(
+                f"In {tier}-tier misses, '{worst_signal}' is the most common "
+                f"signal the winner dominated. Implies {tier}-tier scoring "
+                f"may underweight this signal."
+            ),
+            conditions={
+                "decision_tier": tier,
+                "signal_counts": dict(signal_counts),
+                "source_date": target_date,
+            },
+            n=sum(signal_counts.values()),
+            wins=0,
+        )
+
     log.info("Learned patterns written: %d", written)
     return written
 
@@ -528,7 +701,7 @@ def main(target_date: str) -> None:
         # Step 2: Load verdicts for target_date from DB
         rows = (
             db.table("velo_verdicts")
-            .select("id, race_id, confidence_level, top_rank_horse_id, top_rank_score, selections, decision_tier")
+            .select("id, race_id, confidence_level, top_rank_horse_id, top_rank_score, selections, decision_tier, full_analysis, velo_prime_prob, place_prob, improvement_score, market_deception_score")
             .execute()
         )
         # Filter to verdicts whose race is on target_date
@@ -616,15 +789,16 @@ def main(target_date: str) -> None:
                 )
                 reviews_done += 1
                 run_reviews.append({
-                    "race_id":           race_id,
-                    "outcome":           outcome,
-                    "decision_tier":     verdict.get("decision_tier") or "?",
-                    "miss_reason":       review["review_outcome"].get("miss_reason"),
-                    "top_pick_position": review.get("top_pick_position"),
-                    "actual_winner_sp":  review.get("actual_winner_sp"),
-                    "winner_id":         review.get("actual_winner_id"),
-                    "score":             float(verdict.get("top_rank_score") or 0),
-                    "confidence":        verdict.get("confidence_level"),
+                    "race_id":            race_id,
+                    "outcome":            outcome,
+                    "decision_tier":      verdict.get("decision_tier") or "?",
+                    "miss_reason":        review["review_outcome"].get("miss_reason"),
+                    "signal_attribution": review["review_outcome"].get("signal_attribution", {}),
+                    "top_pick_position":  review.get("top_pick_position"),
+                    "actual_winner_sp":   review.get("actual_winner_sp"),
+                    "winner_id":          review.get("actual_winner_id"),
+                    "score":              float(verdict.get("top_rank_score") or 0),
+                    "confidence":         verdict.get("confidence_level"),
                 })
 
         # Step 5: Summary
