@@ -339,6 +339,9 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
         return len(rows)
 
     except Exception as e:
+        import traceback
+        print(f"  [RDF FAIL] race={race.get('race_id')} err={e}")
+        traceback.print_exc()
         log.warning("runner_derived_features persist failed for race %s: %s",
                     race.get("race_id"), e)
         return 0
