@@ -157,15 +157,6 @@ def score_race_velo_prime(race: dict) -> list[dict]:
         log.warning("Macro context unavailable: %s", e)
         macro_ctx = None
 
-    # Diagnostic: verify specialist models are accessible on this host
-    try:
-        from pathlib import Path as _P
-        _mdir = _P(__file__).parent.parent.parent / "models" / "specialist"
-        _present = [d.name for d in _mdir.iterdir() if d.is_dir()] if _mdir.exists() else []
-        print(f"  [DIAG] specialist MODELS_DIR={_mdir} exists={_mdir.exists()} dirs={_present}")
-    except Exception as _de:
-        print(f"  [DIAG] specialist dir check failed: {_de}")
-
     # Score each runner
     ensemble_inputs = []
     for runner in runners:
@@ -178,17 +169,8 @@ def score_race_velo_prime(race: dict) -> list[dict]:
         # Specialist scores — graceful on missing features
         try:
             spec_scores = score_runner(feats)
-            if not spec_scores:
-                import traceback
-                from pathlib import Path as _Path
-                _mdir = _Path(__file__).parent.parent.parent / "models" / "specialist"
-                print(f"  [DIAG] score_runner returned empty for {horse_name}. "
-                      f"MODELS_DIR exists={_mdir.exists()}, "
-                      f"contents={list(_mdir.iterdir()) if _mdir.exists() else 'N/A'}")
         except Exception as e:
-            import traceback
-            print(f"  [DIAG] Specialist scoring EXCEPTION for {horse_name}: {e}")
-            traceback.print_exc()
+            log.warning("Specialist scoring failed for %s: %s", horse_name, e)
             spec_scores = {}
 
         sp_dec = feats["sp_dec"]
