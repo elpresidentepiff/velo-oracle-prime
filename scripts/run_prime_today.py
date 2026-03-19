@@ -295,6 +295,70 @@ def card_overall_label(a: int, b: int, total: int) -> str:
     return "weak card — pass"
 
 
+# ── RPD-C evidence derivation ─────────────────────────────────────────────────
+
+def _derive_rpd_evidence(runner: dict, race: dict) -> tuple[list, bool, bool]:
+    """
+    Derive RPD-C evidence codes from a normalized runner dict.
+    Returns (evidence_codes, market_shortening, won_last_time).
+
+    Evidence is derived conservatively — only from clearly available fields.
+    Missing or ambiguous data defaults to H (Honest) via engine fallback.
+    market_shortening is always False here (no intraday movement data available).
+    """
+    evidence = []
+
+    # Form string — only digit characters
+    form_raw = str(runner.get("form", "") or "")
+    form_digits = [c for c in form_raw if c.isdigit()]
+
+    # won_last_time: last meaningful figure is "1"
+    won_last_time = bool(form_digits) and form_digits[-1] == "1"
+
+    # no form reference: fewer than 2 runs on record → S evidence
+    if len(form_digits) < 2:
+        evidence.append("no_form_reference")
+
+    # declining_positions: last 3 non-zero positions strictly worsening → E evidence
+    if len(form_digits) >= 3:
+        last3 = [int(d) for d in form_digits[-3:] if d != "0"]
+        if len(last3) == 3 and last3[0] < last3[1] < last3[2]:
+            evidence.append("declining_positions")
+
+    # consistent_form: last 4 non-zero positions within a 2-position band → H evidence
+    if len(form_digits) >= 4:
+        last4 = [int(d) for d in form_digits[-4:] if d != "0"]
+        if last4 and (max(last4) - min(last4)) <= 2:
+            evidence.append("consistent_form")
+
+    # Days since last run (if populated by normalizer)
+    days = runner.get("days_since_last_run")
+    if days is not None:
+        try:
+            days = int(days)
+            if days >= 60:
+                evidence.append("long_absence")      # P evidence
+            elif days < 10:
+                evidence.append("quick_turnaround")  # E evidence
+        except (ValueError, TypeError):
+            pass
+
+    # Gear additions: visor, cheekpieces, tongue-tie, hood → T evidence
+    gear = str(runner.get("gear", "") or "").lower()
+    if any(kw in gear for kw in ["visor", "cheek", "tongue", "hood", "blinkers"]):
+        evidence.append("gear_additions")
+
+    # Market volatility: very long price (20+) → S evidence
+    try:
+        odds = float(runner.get("best_odds_decimal") or 0)
+        if odds >= 20.0:
+            evidence.append("market_volatility")
+    except (ValueError, TypeError):
+        pass
+
+    return evidence, False, won_last_time
+
+
 def _open_pipeline_run(db, date_str: str) -> str | None:
     """Open a pipeline_runs row for this scoring run. Returns run_id or None."""
     try:
@@ -347,6 +411,7 @@ def main():
         score_race_velo_prime, persist_race_predictions
     )
     from supabase import create_client as _sb_create
+    from src.rpd import RPDv2Engine, RPDTag
 
     _sb_url = os.getenv("SUPABASE_URL", "")
     _sb_key = (os.getenv("SUPABASE_SERVICE_ROLE_KEY")
@@ -374,6 +439,12 @@ def main():
     # ── STEP 3: Score through REAL PRIME path ─────────────────────────────────
     # scored entries: (race, preds, tier, reasons)
     print("\nSTEP 3: Score through score_race_velo_prime (velo_prime_v1)")
+
+    # RPD-C engine — passive metadata layer, does not alter scores or ranking
+    _rpd_db = str(ROOT / "data" / "rpd_tags.db")
+    rpd_engine = RPDv2Engine(db_path=_rpd_db)
+    print(f"  RPD-C engine: ready (db={_rpd_db})")
+
     scored = []
     score_errors = []
     for race in normalized:
@@ -381,6 +452,26 @@ def main():
         try:
             preds = score_race_velo_prime(race)
             if preds:
+                # RPD-C tagging — passive metadata only, no score/rank mutation
+                runner_map = {
+                    r.get("horse_name", ""): r
+                    for r in race.get("runners", [])
+                }
+                for pred in preds:
+                    raw_runner = runner_map.get(pred.get("horse", ""), {})
+                    rpd_evidence, rpd_mkt_short, rpd_won_last = _derive_rpd_evidence(
+                        raw_runner, race
+                    )
+                    rpd_suggestion = rpd_engine.suggest_tag(
+                        pred.get("horse", ""),
+                        rpd_evidence,
+                        market_shortening=rpd_mkt_short,
+                        won_last_time=rpd_won_last,
+                    )
+                    pred["rpd_tag"]            = rpd_suggestion.suggested_tag.value
+                    pred["rpd_confidence"]     = rpd_suggestion.confidence
+                    pred["rpd_evidence_codes"] = rpd_evidence
+
                 top       = preds[0]
                 second    = preds[1] if len(preds) > 1 else {}
                 sec_prob  = float(second.get("velo_prime_prob") or 0)

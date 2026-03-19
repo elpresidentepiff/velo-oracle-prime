@@ -349,6 +349,32 @@ def generate_review(
         accuracy = 0.0
         outcome_label = "MISS"
 
+    # RPD-C tag extraction — passive metadata from full_analysis
+    top_pick_rpd_tag: str | None = None
+    winner_rpd_tag: str | None = None
+
+    # Pull full_analysis once for both signal attribution and RPD tags
+    raw_fa = verdict.get("full_analysis") or []
+    if isinstance(raw_fa, str):
+        try:
+            raw_fa = json.loads(raw_fa)
+        except Exception:
+            raw_fa = []
+
+    for _runner in raw_fa:
+        if isinstance(_runner, str):
+            try:
+                _runner = json.loads(_runner)
+            except Exception:
+                continue
+        if not isinstance(_runner, dict):
+            continue
+        _rid = _runner.get("horse_id") or _runner.get("horse", "")
+        if _rid == top_pick_id and "rpd_tag" in _runner:
+            top_pick_rpd_tag = _runner["rpd_tag"]
+        elif _rid == winner_id and "rpd_tag" in _runner:
+            winner_rpd_tag = _runner["rpd_tag"]
+
     # Signal attribution — forensic miss analysis
     signal_attribution: dict = {}
     miss_reason = None
@@ -357,14 +383,7 @@ def generate_review(
     if not top_pick_won:
         confidence = verdict.get("confidence_level", "")
 
-        # Pull full_analysis for signal comparison
-        raw_fa = verdict.get("full_analysis") or []
-        if isinstance(raw_fa, str):
-            try:
-                raw_fa = json.loads(raw_fa)
-            except Exception:
-                raw_fa = []
-
+        # raw_fa already parsed above (RPD-C extraction)
         signal_attribution = _attribute_miss_signals(raw_fa, top_pick_id, winner_id)
         primary_signal = signal_attribution.get("primary_miss_signal")
 
@@ -420,6 +439,9 @@ def generate_review(
         "selections_results": placed_selections,
         "verdict_confidence": verdict.get("confidence_level"),
         "verdict_score": float(verdict.get("top_rank_score", 0)),
+        # RPD-C doctrine layer — passive metadata, does not alter outcome
+        "top_pick_rpd_tag": top_pick_rpd_tag,
+        "winner_rpd_tag": winner_rpd_tag,
     }
 
     notes = (
@@ -633,6 +655,42 @@ def _update_learned_patterns(db: Client, run_reviews: List[Dict], target_date: s
             wins=0,
         )
 
+    # 6. RPD tag vs outcome — how often each tag appears on winners and top-picks
+    rpd_winner_acc: dict = defaultdict(lambda: {"n": 0, "wins": 0})
+    rpd_top_pick_acc: dict = defaultdict(lambda: {"n": 0, "wins": 0})
+    for rr in run_reviews:
+        winner_tag   = rr.get("winner_rpd_tag")
+        top_pick_tag = rr.get("top_pick_rpd_tag")
+        if winner_tag:
+            rpd_winner_acc[winner_tag]["n"] += 1
+            # Every winner is a "win" for this pattern — counts how often tag appears on winner
+            rpd_winner_acc[winner_tag]["wins"] += 1
+        if top_pick_tag:
+            rpd_top_pick_acc[top_pick_tag]["n"] += 1
+            if rr["outcome"] == "WIN":
+                rpd_top_pick_acc[top_pick_tag]["wins"] += 1
+
+    for tag, stats in rpd_winner_acc.items():
+        _upsert_pattern(
+            name=f"rpd_winner_tag_{tag}",
+            p_type="rpd_tag_accuracy",
+            desc=f"Race winners tagged RPD-C '{tag}' — observation frequency",
+            conditions={"rpd_tag": tag, "role": "winner", "source_date": target_date},
+            n=stats["n"], wins=stats["wins"],
+        )
+
+    for tag, stats in rpd_top_pick_acc.items():
+        _upsert_pattern(
+            name=f"rpd_top_pick_tag_{tag}_accuracy",
+            p_type="rpd_tag_accuracy",
+            desc=(
+                f"Top-pick horses tagged RPD-C '{tag}': win rate. "
+                f"If low, '{tag}' selections need requalification."
+            ),
+            conditions={"rpd_tag": tag, "role": "top_pick", "source_date": target_date},
+            n=stats["n"], wins=stats["wins"],
+        )
+
     log.info("Learned patterns written: %d", written)
     return written
 
@@ -799,6 +857,8 @@ def main(target_date: str) -> None:
                     "winner_id":          review.get("actual_winner_id"),
                     "score":              float(verdict.get("top_rank_score") or 0),
                     "confidence":         verdict.get("confidence_level"),
+                    "top_pick_rpd_tag":   review["review_outcome"].get("top_pick_rpd_tag"),
+                    "winner_rpd_tag":     review["review_outcome"].get("winner_rpd_tag"),
                 })
 
         # Step 5: Summary
