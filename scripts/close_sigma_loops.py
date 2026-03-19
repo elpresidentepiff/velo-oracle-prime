@@ -719,6 +719,15 @@ def main(target_date: str) -> None:
             except Exception as e:
                 log.warning("learned_patterns write failed (non-fatal): %s", e)
 
+        # Step 7: Update entity bibles
+        try:
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from scripts.populate_entity_bibles import populate_bibles
+            bible_counts = populate_bibles(db)
+            log.info("Entity bibles updated: %s", bible_counts)
+        except Exception as e:
+            log.warning("Entity bible update failed (non-fatal): %s", e)
+
         release_run_lock(db, run_id, "completed",
                          races=races_done, runners=runners_done, results=reviews_done)
 
