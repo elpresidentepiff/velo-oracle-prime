@@ -405,9 +405,41 @@ def main():
     for race, preds, tier, _reasons in scored:
         if persist_race_predictions(race, preds, decision_tier=tier):
             persist_ok += 1
-            # Write per-runner derived features (FK: race must exist in races table)
+            # Write per-runner derived features via service function
             n_derived = persist_runner_derived_features(race, preds)
             derived_total += n_derived
+            # Fallback: write directly via the working db client if service returned 0
+            if n_derived == 0 and db:
+                race_id = race.get("race_id", "")
+                from datetime import datetime as _dt
+                cat = _dt.utcnow().isoformat()
+                direct_rows = []
+                for pred in preds:
+                    hid = pred.get("horse_id", "") or pred.get("horse", "")
+                    if hid and race_id:
+                        direct_rows.append({
+                            "race_id": race_id, "horse_id": hid,
+                            "computed_at": cat,
+                            "feature_schema_version": "velo_prime_v1_direct",
+                            "form_cycle_score":        pred.get("improvement_score"),
+                            "market_confidence_score": pred.get("market_deception_score"),
+                            "release_day_score":       pred.get("release_day_prob"),
+                            "survivability_score":     pred.get("place_prob"),
+                            "chaos_score":             pred.get("longshot_prob"),
+                            "feature_vector": {
+                                "velo_prime_prob": pred.get("velo_prime_prob"),
+                            },
+                        })
+                if direct_rows:
+                    try:
+                        res = db.table("runner_derived_features").upsert(
+                            direct_rows, on_conflict="race_id,horse_id"
+                        ).execute()
+                        n_direct = len(res.data) if res.data else len(direct_rows)
+                        derived_total += n_direct
+                        print(f"  [RDF direct] race={race_id} wrote {n_direct} rows")
+                    except Exception as e:
+                        print(f"  [RDF direct FAIL] race={race_id}: {e}")
         else:
             persist_fail += 1
             print(f"  PERSIST FAIL: {race.get('race_id')} {race.get('course')}")
