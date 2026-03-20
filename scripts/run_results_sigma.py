@@ -132,7 +132,7 @@ def main():
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
     print("\nSTEP 1: Load predictions from velo_verdicts")
     verdicts_raw = sb_get(
-        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob"
+        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,generated_at"
         f"&generated_at=gte.{race_date}T00:00:00"
         f"&generated_at=lt.{race_date}T23:59:59"
         f"&order=generated_at"
@@ -364,6 +364,81 @@ def main():
 
     print(f"  Learned patterns saved: {patterns_saved}")
 
+    # ── STEP 7b: Betting ledger write ─────────────────────────────────────────
+    # For each B/C tier verdict with a matched result, write a ledger row.
+    # Idempotent: UNIQUE constraint on race_id — duplicate runs are ignored.
+    print("\nSTEP 7b: Betting ledger")
+    STAKE = {"B": 10.0, "C": 5.0}
+    ledger_ok = 0
+    ledger_skip = 0
+
+    # Get current bankroll tail — used as base for sequential bankroll
+    try:
+        bankroll_rows = sb_get("/betting_ledger?select=bankroll_after&order=placed_at.desc&limit=1")
+        current_bankroll = float(bankroll_rows[0]["bankroll_after"]) if bankroll_rows else 1000.0
+    except Exception:
+        current_bankroll = 1000.0
+
+    # Build a lookup for decision_tier + generated_at from verdicts
+    verdict_meta = {v["race_id"]: v for v in verdicts_raw}
+
+    for row in all_matched:
+        rid   = row["race_id"]
+        vmeta = verdict_meta.get(rid, {})
+        tier  = (vmeta.get("decision_tier") or "").upper()
+        if tier not in STAKE:
+            continue
+
+        stake = STAKE[tier]
+        # Find predicted horse's SP from full_runners list
+        full_runners = results_by_id.get(rid, {}).get("full_runners", [])
+        pred_sp = None
+        for runner in full_runners:
+            if runner.get("horse_id") == row["predicted_id"]:
+                try:
+                    pred_sp = float(runner.get("sp_dec") or 0) or None
+                except (ValueError, TypeError):
+                    pass
+                break
+
+        if not pred_sp or pred_sp <= 1.0:
+            ledger_skip += 1
+            continue  # no valid SP — cannot compute P/L
+
+        is_win     = row["outcome"] == "HIT"
+        pl         = round(stake * (pred_sp - 1), 2) if is_win else round(-stake, 2)
+        returns    = round(stake * pred_sp, 2) if is_win else 0.0
+        bankroll_before = round(current_bankroll, 2)
+        bankroll_after  = round(current_bankroll + pl, 2)
+        current_bankroll = bankroll_after
+
+        placed_at = vmeta.get("generated_at") or datetime.utcnow().isoformat() + "Z"
+        ledger_row = {
+            "race_id":          rid,
+            "date":             race_date,
+            "course":           row["course"],
+            "race_time":        f"{race_date}T{row['off']}:00" if row.get("off") else placed_at,
+            "horse":            row["predicted"],
+            "bet_type":         tier,
+            "stake":            stake,
+            "odds":             pred_sp,
+            "result":           "WIN" if is_win else "LOSS",
+            "returns":          returns,
+            "profit_loss":      pl,
+            "bankroll_before":  bankroll_before,
+            "bankroll_after":   bankroll_after,
+            "confidence_level": row["velo_prime_prob"],
+            "reasoning":        f"velo_prime_v1 | tier={tier} | outcome={row['outcome']} | sp={pred_sp}",
+            "placed_at":        placed_at,
+            "settled_at":       datetime.utcnow().isoformat() + "Z",
+        }
+        if sb_upsert("/betting_ledger", ledger_row, "race_id"):
+            ledger_ok += 1
+        else:
+            ledger_skip += 1
+
+    print(f"  Ledger rows written: {ledger_ok}  skipped: {ledger_skip}")
+
     # ── STEP 8: Telegram sigma report ─────────────────────────────────────────
     print("\nSTEP 8: Telegram sigma report")
 
@@ -435,6 +510,7 @@ def main():
         f"Races: {total_matched}\n"
         f"Strike rate: {strike_rate:.1%}\n"
         f"Frame rate:  {frame_rate:.1%}\n"
+        f"Ledger bets: {ledger_ok}  bankroll: £{current_bankroll:.2f}\n"
         f"Supabase: sigma_audits={sigma_ok}  learned_patterns={patterns_saved}\n"
         f"Status: COMPLETE"
     )

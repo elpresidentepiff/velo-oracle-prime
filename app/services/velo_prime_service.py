@@ -22,7 +22,7 @@ from __future__ import annotations
 import logging
 import math
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from dotenv import load_dotenv
@@ -213,6 +213,202 @@ def score_race_velo_prime(race: dict) -> list[dict]:
     return results
 
 
+# ── Warehouse enrichment (passive, non-scoring) ───────────────────────────────
+
+def _dist_tenths_to_label(dist_f_tenths: float) -> str:
+    """
+    Convert races.distance_f (tenths-of-furlongs encoding, e.g. 70 = 7.0f) to
+    the Racing API human-readable dist label used in trainer_distance_analysis.dist
+    and horse_racecard_history.dist  (e.g. "7f", "1m", "1m2f", "1m½f").
+
+    Only handles the tenths-of-furlongs range (50–360).
+    Returns "" for values outside that range or on any error.
+
+    Examples:
+        50  -> "5f"      70  -> "7f"    75  -> "7½f"
+        80  -> "1m"      85  -> "1m½f"  100 -> "1m2f"
+        160 -> "2m"      195 -> "2m3½f" 240 -> "3m"
+    """
+    if not (50 <= dist_f_tenths <= 360):
+        return ""
+    f = dist_f_tenths / 10.0          # 70 -> 7.0, 85 -> 8.5
+    miles     = int(f) // 8
+    remaining = f - miles * 8         # furlongs after subtracting whole miles
+    whole_f   = int(remaining)
+    is_half   = abs(remaining - whole_f - 0.5) < 0.05
+
+    if miles == 0:
+        return f"{whole_f}½f" if is_half else f"{whole_f}f"
+    else:
+        if is_half:
+            return f"{miles}m{whole_f}½f" if whole_f > 0 else f"{miles}m½f"
+        elif whole_f > 0:
+            return f"{miles}m{whole_f}f"
+        else:
+            return f"{miles}m"
+
+
+def _enrich_full_analysis_from_warehouse(
+    predictions: list[dict],
+    race: dict,
+    sb,
+) -> list[dict]:
+    """
+    Passively inject warehouse features into each runner block.
+    Never raises — any failure logs a warning and returns predictions unchanged.
+    Scoring outputs and rankings are not touched.
+
+    Injects per runner:
+      From horse_racecard_history:
+        horse_recent_runs_90d, horse_recent_avg_pos,
+        horse_course_runs, horse_distance_runs, horse_avg_pos_all
+      From trainer_course_analysis (course match):
+        trainer_course_runners, trainer_course_1st,
+        trainer_course_ae, trainer_course_win_pct
+      From trainer_distance_analysis (dist match):
+        trainer_dist_runners, trainer_dist_1st, trainer_dist_ae
+    """
+    try:
+        race_course   = (race.get("course") or "").strip()
+
+        # Prefer race["distance"] (API string e.g. "7f", "1m2f") set by normalize_race().
+        # Fallback: if missing, convert distance_f (tenths-of-furlongs encoding) to label.
+        _dist_raw = (race.get("distance") or race.get("dist") or "").strip()
+        if not _dist_raw:
+            _df = race.get("distance_f")
+            if _df is not None:
+                try:
+                    _dist_raw = _dist_tenths_to_label(float(_df))
+                except Exception:
+                    pass
+        race_dist = _dist_raw
+
+        race_date_str = race.get("date") or datetime.utcnow().strftime("%Y-%m-%d")
+        try:
+            race_date = datetime.strptime(race_date_str[:10], "%Y-%m-%d").date()
+        except Exception:
+            race_date = datetime.utcnow().date()
+        cutoff_90d = (race_date - timedelta(days=90)).isoformat()
+
+        # Build horse_id -> normalized runner lookup for trainer_id resolution
+        runner_map = {r.get("horse_id", ""): r for r in race.get("runners", [])}
+
+        horse_ids = [p.get("horse_id", "") for p in predictions if p.get("horse_id")]
+        if not horse_ids:
+            return predictions
+
+        # horse_id -> trainer_id mapping
+        pred_trainer: dict[str, str | None] = {}
+        trainer_ids: list[str] = []
+        for p in predictions:
+            hid = p.get("horse_id", "")
+            tid = runner_map.get(hid, {}).get("trainer_id")
+            pred_trainer[hid] = tid
+            if tid and tid not in trainer_ids:
+                trainer_ids.append(tid)
+
+        # -- Query 1: horse_racecard_history (all history, batch by horse_ids) --
+        hrh_data: dict[str, list[dict]] = {}
+        try:
+            result = (
+                sb.table("horse_racecard_history")
+                .select("horse_id,race_date,course,dist,position")
+                .in_("horse_id", horse_ids)
+                .execute()
+            )
+            for r in (result.data or []):
+                hid = r["horse_id"]
+                hrh_data.setdefault(hid, []).append(r)
+        except Exception as e:
+            log.warning("warehouse: horse_racecard_history fetch failed: %s", e)
+
+        # -- Query 2: trainer_course_analysis (trainer_id IN list AND course match) --
+        tca_data: dict[str, dict] = {}
+        if trainer_ids and race_course:
+            try:
+                result = (
+                    sb.table("trainer_course_analysis")
+                    .select("trainer_id,runners,wins_1st,ae,win_pct")
+                    .in_("trainer_id", trainer_ids)
+                    .eq("course", race_course)
+                    .execute()
+                )
+                for r in (result.data or []):
+                    tca_data[r["trainer_id"]] = r
+            except Exception as e:
+                log.warning("warehouse: trainer_course_analysis fetch failed: %s", e)
+
+        # -- Query 3: trainer_distance_analysis (trainer_id IN list AND dist match) --
+        tda_data: dict[str, dict] = {}
+        if trainer_ids and race_dist:
+            try:
+                result = (
+                    sb.table("trainer_distance_analysis")
+                    .select("trainer_id,runners,wins_1st,ae")
+                    .in_("trainer_id", trainer_ids)
+                    .eq("dist", race_dist)
+                    .execute()
+                )
+                for r in (result.data or []):
+                    tda_data[r["trainer_id"]] = r
+            except Exception as e:
+                log.warning("warehouse: trainer_distance_analysis fetch failed: %s", e)
+
+        # -- Helpers --
+        def _sf(v):
+            try:
+                return float(v) if v is not None else None
+            except (TypeError, ValueError):
+                return None
+
+        def _si(v):
+            try:
+                return int(v) if v is not None else None
+            except (TypeError, ValueError):
+                return None
+
+        def _pos_num(pos_str):
+            try:
+                return float(str(pos_str).strip())
+            except (TypeError, ValueError):
+                return None
+
+        # -- Inject into each runner block --
+        for pred in predictions:
+            hid = pred.get("horse_id", "")
+            tid = pred_trainer.get(hid)
+
+            runs = hrh_data.get(hid, [])
+            recent   = [r for r in runs if (r.get("race_date") or "") >= cutoff_90d]
+            all_pos  = [_pos_num(r["position"]) for r in runs   if _pos_num(r["position"]) is not None]
+            rec_pos  = [_pos_num(r["position"]) for r in recent if _pos_num(r["position"]) is not None]
+            crs_runs = sum(1 for r in runs if (r.get("course") or "").strip() == race_course)
+            dst_runs = sum(1 for r in runs if (r.get("dist")   or "").strip() == race_dist)
+
+            pred["horse_recent_runs_90d"] = len(recent)
+            pred["horse_recent_avg_pos"]  = round(sum(rec_pos) / len(rec_pos), 2) if rec_pos else None
+            pred["horse_course_runs"]     = crs_runs
+            pred["horse_distance_runs"]   = dst_runs
+            pred["horse_avg_pos_all"]     = round(sum(all_pos) / len(all_pos), 2) if all_pos else None
+
+            tca = tca_data.get(tid) if tid else None
+            pred["trainer_course_runners"] = _si(_sf(tca["runners"]))   if tca else None
+            pred["trainer_course_1st"]     = _si(_sf(tca["wins_1st"]))  if tca else None
+            pred["trainer_course_ae"]      = _sf(tca["ae"])             if tca else None
+            pred["trainer_course_win_pct"] = _sf(tca["win_pct"])        if tca else None
+
+            tda = tda_data.get(tid) if tid else None
+            pred["trainer_dist_runners"]   = _si(_sf(tda["runners"]))  if tda else None
+            pred["trainer_dist_1st"]       = _si(_sf(tda["wins_1st"])) if tda else None
+            pred["trainer_dist_ae"]        = _sf(tda["ae"])            if tda else None
+
+        return predictions
+
+    except Exception as e:
+        log.warning("warehouse enrichment failed — full_analysis untouched: %s", e)
+        return predictions
+
+
 # ── Supabase persistence ──────────────────────────────────────────────────────
 
 def persist_race_predictions(race: dict, predictions: list[dict],
@@ -255,9 +451,15 @@ def persist_race_predictions(race: dict, predictions: list[dict],
             "macro_chaos_mode":      top.get("macro_chaos_mode"),
             "favourite_trap_risk":   top.get("favourite_trap_risk"),
             "decision_tier":         decision_tier,
-            # Full ranked field
+            # Full ranked field — enriched below before upsert
             "full_analysis":         predictions,
         }
+
+        # Passive warehouse enrichment — injects into runner blocks only.
+        # Scoring outputs, rankings, and top-level row columns are unchanged.
+        enriched = _enrich_full_analysis_from_warehouse(predictions, race, sb)
+        row["full_analysis"] = enriched
+
         sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
         log.info("Persisted verdict for race %s — top: %s (%.4f)",
                  race.get("race_id"), top.get("horse"), top.get("velo_prime_prob"))
