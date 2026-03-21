@@ -132,7 +132,7 @@ def main():
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
     print("\nSTEP 1: Load predictions from velo_verdicts")
     verdicts_raw = sb_get(
-        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,generated_at"
+        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at"
         f"&generated_at=gte.{race_date}T00:00:00"
         f"&generated_at=lt.{race_date}T23:59:59"
         f"&order=generated_at"
@@ -317,7 +317,7 @@ def main():
 
     # ── STEP 6: Persist sigma audit to Supabase ───────────────────────────────
     # Schema: race_id, date (date), track, outcome, miss_reason, top_pick_position,
-    #         actual_winner_id, actual_winner_sp, notes, event_type
+    #         actual_winner_id, actual_winner_sp, notes, event_type, decision_tier
     # One row per race — insert (no unique key on run_date)
     print("\nSTEP 6: Persist sigma audit")
     sigma_ok = 0
@@ -330,6 +330,7 @@ def main():
             "track":             row["course"],
             "event_type":        "sigma_reconciliation",
             "outcome":           row["outcome"],
+            "decision_tier":     predictions.get(row["race_id"], {}).get("decision_tier"),
             "miss_reason":       miss_reason,
             "top_pick_position": top_pos,
             "actual_winner_id":  row["actual_winner"],
@@ -366,11 +367,17 @@ def main():
 
     # ── STEP 7b: Betting ledger write ─────────────────────────────────────────
     # For each B/C tier verdict with a matched result, write a ledger row.
-    # Idempotent: UNIQUE constraint on race_id — duplicate runs are ignored.
+    # Idempotent: race_ids already in ledger for this date are skipped explicitly.
     print("\nSTEP 7b: Betting ledger")
     STAKE = {"B": 10.0, "C": 5.0}
     ledger_ok = 0
-    ledger_skip = 0
+    skip_reasons: dict = {
+        "no_tier_match":   0,  # tier is A/D/X/null — not a betting tier
+        "already_written": 0,  # race_id already in betting_ledger for this date
+        "non_runner":      0,  # predicted horse absent from result set entirely
+        "no_sp":           0,  # horse ran but sp_dec missing or ≤ 1.0
+        "write_error":     0,  # DB upsert failed
+    }
 
     # Get current bankroll tail — used as base for sequential bankroll
     try:
@@ -379,22 +386,38 @@ def main():
     except Exception:
         current_bankroll = 1000.0
 
-    # Build a lookup for decision_tier + generated_at from verdicts
+    # Duplicate guard — load race_ids already written for this date
+    try:
+        existing_rows = sb_get(f"/betting_ledger?select=race_id&date=eq.{race_date}")
+        existing_ledger_ids = {r["race_id"] for r in existing_rows}
+    except Exception:
+        existing_ledger_ids = set()
+
+    # Build a lookup for decision_tier + confidence_level + generated_at from verdicts
     verdict_meta = {v["race_id"]: v for v in verdicts_raw}
 
     for row in all_matched:
         rid   = row["race_id"]
         vmeta = verdict_meta.get(rid, {})
         tier  = (vmeta.get("decision_tier") or "").upper()
+
         if tier not in STAKE:
+            skip_reasons["no_tier_match"] += 1
+            continue
+
+        if rid in existing_ledger_ids:
+            skip_reasons["already_written"] += 1
+            print(f"    skip [already_written]: {row['predicted']} ({rid})")
             continue
 
         stake = STAKE[tier]
         # Find predicted horse's SP from full_runners list
         full_runners = results_by_id.get(rid, {}).get("full_runners", [])
         pred_sp = None
+        horse_in_results = False
         for runner in full_runners:
             if runner.get("horse_id") == row["predicted_id"]:
+                horse_in_results = True
                 try:
                     pred_sp = float(runner.get("sp_dec") or 0) or None
                 except (ValueError, TypeError):
@@ -402,8 +425,13 @@ def main():
                 break
 
         if not pred_sp or pred_sp <= 1.0:
-            ledger_skip += 1
-            continue  # no valid SP — cannot compute P/L
+            if not horse_in_results:
+                skip_reasons["non_runner"] += 1
+                print(f"    skip [non_runner]: {row['predicted']} ({rid}) — not in result set")
+            else:
+                skip_reasons["no_sp"] += 1
+                print(f"    skip [no_sp]: {row['predicted']} ({rid}) — sp_dec absent or ≤ 1.0")
+            continue
 
         is_win     = row["outcome"] == "HIT"
         pl         = round(stake * (pred_sp - 1), 2) if is_win else round(-stake, 2)
@@ -413,6 +441,13 @@ def main():
         current_bankroll = bankroll_after
 
         placed_at = vmeta.get("generated_at") or datetime.utcnow().isoformat() + "Z"
+
+        # confidence_level stores the verdict label as a numeric proxy:
+        #   high → 1.0 | normal → 0.5 | low → 0.25
+        # velo_prime_prob (raw win probability) is captured in reasoning.
+        conf_label   = (vmeta.get("confidence_level") or "low").lower()
+        conf_numeric = {"high": 1.0, "normal": 0.5, "low": 0.25}.get(conf_label, 0.25)
+
         ledger_row = {
             "race_id":          rid,
             "date":             race_date,
@@ -427,17 +462,21 @@ def main():
             "profit_loss":      pl,
             "bankroll_before":  bankroll_before,
             "bankroll_after":   bankroll_after,
-            "confidence_level": row["velo_prime_prob"],
-            "reasoning":        f"velo_prime_v1 | tier={tier} | outcome={row['outcome']} | sp={pred_sp}",
+            "confidence_level": conf_numeric,
+            "reasoning":        f"velo_prime_v1 | tier={tier} | conf={conf_label} | prob={row['velo_prime_prob']:.4f} | outcome={row['outcome']} | sp={pred_sp}",
             "placed_at":        placed_at,
             "settled_at":       datetime.utcnow().isoformat() + "Z",
         }
         if sb_upsert("/betting_ledger", ledger_row, "race_id"):
             ledger_ok += 1
         else:
-            ledger_skip += 1
+            skip_reasons["write_error"] += 1
+            print(f"    skip [write_error]: {row['predicted']} ({rid})")
 
-    print(f"  Ledger rows written: {ledger_ok}  skipped: {ledger_skip}")
+    print(f"  Ledger rows written: {ledger_ok}")
+    for reason, count in skip_reasons.items():
+        if count:
+            print(f"    skip [{reason}]: {count}")
 
     # ── STEP 8: Telegram sigma report ─────────────────────────────────────────
     print("\nSTEP 8: Telegram sigma report")
