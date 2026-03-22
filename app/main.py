@@ -15,12 +15,34 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+_sentient_state: dict | None = None
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load models once at startup, release on shutdown."""
+    global _sentient_state
     from app.services.model_manager import get_model_manager
     mm = get_model_manager()
     logger.info(f"Models initialised at startup: {mm.model_versions}")
+
+    # Sentient bridge — Phase 1 (audit only, no scoring change)
+    try:
+        from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine
+        _g = SentientLoopbackEngine()
+        _raw = _g.get_evolutionary_state()
+        _source = "disk" if _raw.get("total_races_observed", 0) > 0 else "unknown"
+        _sentient_state = {**_raw, "_source": _source}
+        logger.info(
+            "[sentient] G state loaded at startup — source=%s races_observed=%d aggression=%.3f",
+            _source,
+            _raw.get("total_races_observed", 0),
+            _raw.get("appetite_state", {}).get("aggression_level", -1.0),
+        )
+    except Exception as e:
+        _sentient_state = None
+        logger.warning("[sentient] G state load failed at startup (non-fatal): %s", e)
+
     yield
     logger.info("VÉLØ Oracle API shutting down")
 
@@ -182,7 +204,7 @@ async def predict_race(
             raise HTTPException(status_code=400, detail="race_data must contain 'runners' list")
 
         norm_race   = normalize_race(race_data)
-        predictions = score_race_velo_prime(norm_race)
+        predictions = score_race_velo_prime(norm_race, sentient_state=_sentient_state)
 
         if persist:
             persist_race_predictions(norm_race, predictions)
@@ -242,11 +264,11 @@ async def get_narrative(
     """Get narrative intelligence for race"""
     try:
         from app.intelligence.chains.narrative_chain import run_narrative_chain
-        
-        result = run_narrative_chain(race_id)
-        
+        from workers.racing_api_fetcher import RacingAPIFetcher
+        fetcher = RacingAPIFetcher()
+        race = fetcher.get_race(race_id)
+        result = await run_narrative_chain(race)
         return result
-        
     except Exception as e:
         logger.error(f"Narrative analysis failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -260,11 +282,11 @@ async def get_market_intel(
     """Get market manipulation intelligence"""
     try:
         from app.intelligence.chains.market_chain import run_market_chain
-        
-        result = run_market_chain(race_id)
-        
+        from workers.racing_api_fetcher import RacingAPIFetcher
+        fetcher = RacingAPIFetcher()
+        race = fetcher.get_race(race_id)
+        result = await run_market_chain(race, odds_history=[])
         return result
-        
     except Exception as e:
         logger.error(f"Market analysis failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))

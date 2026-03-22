@@ -118,7 +118,7 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 #
 # X-CHAOS  : prob < 0.10  (truly flat — model sees no leader)
 #             OR  (gap < 0.015 AND place < 0.40)  (no separation + no place floor)
-#             OR  longshot > 0.35  (outsider pressure dominates)
+#             OR  (longshot > 0.35 AND sp_dec >= 10)  (SP-gated outsider pressure)
 #             OR  macro_chaos_mode == True
 #
 #   NOTE: gap=0.000 alone does NOT trigger X if place >= 0.40.
@@ -127,7 +127,7 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 # A-STRIKE : prob >= 0.32  AND  gap >= 0.08  AND  place >= 0.52
 #             AND  conf != 'low'  AND  trap != 'high'
 #
-# B-PLAYABLE: prob >= 0.18  AND  gap >= 0.03
+# B-PLAYABLE: prob >= 0.18  AND  gap >= 0.03  AND  conf != 'low'
 #             AND  (place >= 0.45  OR  gap >= 0.08  OR  improve >= 0.18)
 #
 # C-WATCH  : (prob >= 0.13 AND gap >= 0.02)
@@ -168,6 +168,7 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     prob      = float(top.get("velo_prime_prob") or 0)
     place     = float(top.get("place_prob") or 0)
     longshot  = float(top.get("longshot_prob") or 0)
+    sp_dec    = float(top.get("sp_dec") or 0)
     improve   = float(top.get("improvement_score") or 0)
     mkt_dec   = top.get("market_deception_score")
     release   = float(top.get("release_day_prob") or 0)
@@ -176,19 +177,24 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     conf      = (top.get("confidence_level") or "low").lower()
     gap       = prob - second_prob
 
+    # Longshot gate: only meaningful when horse is genuinely a longshot (SP >= 10).
+    # The specialist longshot model scores all runners but was trained on SP >= 10 data.
+    # Without the SP guard, short-priced favourites with high longshot_score trigger X.
+    longshot_trigger = longshot > 0.35 and sp_dec >= 10.0
+
     reasons = []
 
     # ── X-CHAOS ───────────────────────────────────────────────────────────────
     # Trigger X only when model is genuinely blind: flat field, no place floor,
-    # outsider dominance, or macro chaos. gap=0 alone does NOT trigger X if
-    # place >= 0.40 (uniform scoring from broken numpy — still has place signal).
-    if prob < 0.10 or (gap < 0.015 and place < 0.40) or longshot > 0.35 or chaos_m:
+    # outsider dominance (longshot SP-gated), or macro chaos.
+    # gap=0 alone does NOT trigger X if place >= 0.40.
+    if prob < 0.10 or (gap < 0.015 and place < 0.40) or longshot_trigger or chaos_m:
         if prob < 0.10:
             reasons.append(f"flat field — top prob {prob:.3f} below threshold")
         if gap < 0.015 and place < 0.40:
             reasons.append(f"no separation (gap {gap:.3f}) and weak place floor ({place:.3f})")
-        if longshot > 0.35:
-            reasons.append(f"outsider pressure — longshot signal {longshot:.3f}")
+        if longshot_trigger:
+            reasons.append(f"outsider pressure — longshot signal {longshot:.3f} (SP {sp_dec:.1f})")
         if chaos_m:
             reasons.append("macro chaos mode active")
         reasons.append("model cannot identify reliable leader")
@@ -210,7 +216,8 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     b_place_ok = place >= 0.45
     b_gap_ok   = gap >= 0.08
     b_improve  = improve >= 0.18
-    if prob >= 0.18 and gap >= 0.03 and (b_place_ok or b_gap_ok or b_improve):
+    if (prob >= 0.18 and gap >= 0.03 and conf not in ("low",)
+            and (b_place_ok or b_gap_ok or b_improve)):
         if b_gap_ok:
             reasons.append(f"field separation gap {gap:.3f}")
         if b_place_ok:
@@ -440,6 +447,27 @@ def main():
     # scored entries: (race, preds, tier, reasons)
     print("\nSTEP 3: Score through score_race_velo_prime (velo_prime_v1)")
 
+    # Sentient bridge — Phase 1 (audit only, no scoring change)
+    _sentient_state = None
+    try:
+        from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine
+        _g = SentientLoopbackEngine()
+        _raw_state = _g.get_evolutionary_state()
+        _source = "disk"
+        # Detect if state was restored from Supabase (G logs this; we probe total_races_observed)
+        if _raw_state.get("total_races_observed", 0) == 0:
+            # Fresh default — may still be disk or supabase, mark as unknown
+            _source = "unknown"
+        _sentient_state = {**_raw_state, "_source": _source}
+        print(
+            f"  [sentient] G state loaded — source={_source} "
+            f"races_observed={_raw_state.get('total_races_observed', 0)} "
+            f"aggression={_raw_state.get('appetite_state', {}).get('aggression_level', '?')}"
+        )
+    except Exception as _g_err:
+        print(f"  [sentient] G state load failed (non-fatal, scoring unaffected): {_g_err}")
+        _sentient_state = None
+
     # RPD-C engine — passive metadata layer, does not alter scores or ranking
     _rpd_db = str(ROOT / "data" / "rpd_tags.db")
     rpd_engine = RPDv2Engine(db_path=_rpd_db)
@@ -450,7 +478,7 @@ def main():
     for race in normalized:
         cid = f"{race.get('course')} {race.get('off_time','?')}"
         try:
-            preds = score_race_velo_prime(race)
+            preds = score_race_velo_prime(race, sentient_state=_sentient_state)
             if preds:
                 # RPD-C tagging — passive metadata only, no score/rank mutation
                 runner_map = {

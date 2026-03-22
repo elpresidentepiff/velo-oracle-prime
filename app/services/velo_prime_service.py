@@ -6,6 +6,7 @@ Canonical wire-in layer: Standard API racecard → VELO_PRIME_prob
 Calling contract:
   from app.services.velo_prime_service import score_race_velo_prime
   predictions = score_race_velo_prime(normalized_race)
+  predictions = score_race_velo_prime(normalized_race, sentient_state=g_state)  # Phase 1+
 
 'normalized_race' must be the output of workers.racing_api_normalizer.normalize_race().
 
@@ -22,11 +23,14 @@ from __future__ import annotations
 import logging
 import math
 import os
+import re
 from datetime import datetime, timedelta
 from typing import Any
 
 from dotenv import load_dotenv
 load_dotenv()
+
+from src.intelligence.track_context import get_track_context, resolve_draw_bias
 
 log = logging.getLogger("velo.prime_service")
 
@@ -112,7 +116,60 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float],
 
 # ── main entry point ──────────────────────────────────────────────────────────
 
-def score_race_velo_prime(race: dict) -> list[dict]:
+def _apply_sentient_modifiers(results: list[dict], sentient_state: dict | None) -> list[dict]:
+    """
+    Phase 1 — AUDIT ONLY. No probability change. No ranking change.
+
+    Injects sentient bridge audit fields into every runner result.
+    These fields are machine-checkable proof that G state reached the scorer.
+
+    Fields added to every runner:
+        sentient_state_loaded     : bool
+        sentient_state_source     : "disk" | "supabase" | "none"
+        sentient_races_observed   : int
+        sentient_aggression_level : float
+        sentient_modifier_applied : False (always, Phase 1)
+        sentient_modifier_mode    : "audit_only"
+    """
+    if sentient_state is None:
+        audit = {
+            "sentient_state_loaded":     False,
+            "sentient_state_source":     "none",
+            "sentient_races_observed":   0,
+            "sentient_aggression_level": None,
+            "sentient_modifier_applied": False,
+            "sentient_modifier_mode":    "audit_only",
+        }
+        for row in results:
+            row.update(audit)
+        return results
+
+    source = sentient_state.get("_source", "unknown")
+    races_observed = sentient_state.get("total_races_observed", 0)
+    appetite = sentient_state.get("appetite_state", {})
+    aggression = appetite.get("aggression_level", None)
+
+    audit = {
+        "sentient_state_loaded":     True,
+        "sentient_state_source":     source,
+        "sentient_races_observed":   races_observed,
+        "sentient_aggression_level": round(float(aggression), 4) if aggression is not None else None,
+        "sentient_modifier_applied": False,
+        "sentient_modifier_mode":    "audit_only",
+    }
+
+    log.info(
+        "[sentient] bridge active — source=%s races_observed=%d aggression=%.3f mode=audit_only",
+        source, races_observed, aggression if aggression is not None else -1.0,
+    )
+
+    for row in results:
+        row.update(audit)
+
+    return results
+
+
+def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> list[dict]:
     """
     Score a full normalized race through:
       1. SQPE v17 (per runner)
@@ -210,10 +267,44 @@ def score_race_velo_prime(race: dict) -> list[dict]:
                 break
         results.append(row)
 
+    # Phase 1 sentient bridge — audit only, no scoring change
+    results = _apply_sentient_modifiers(results, sentient_state)
+
     return results
 
 
 # ── Warehouse enrichment (passive, non-scoring) ───────────────────────────────
+
+_DIST_LABEL_RE = re.compile(r'^(?:(\d+)m)?(?:(\d+)?(½)?f)?$', re.IGNORECASE)
+
+
+def _dist_label_to_yards(label: str) -> int:
+    """
+    Convert a warehouse dist label to integer yards.
+    Inverse of _dist_tenths_to_label. Returns 0 on failure.
+
+    Examples:
+        '5f'    -> 1100    '5½f'   -> 1210
+        '7f'    -> 1540    '7½f'   -> 1650
+        '1m'    -> 1760    '1m½f'  -> 1870
+        '1m2f'  -> 2200    '1m2½f' -> 2310
+        '2m4½f' -> 4510
+    """
+    if not label:
+        return 0
+    m = _DIST_LABEL_RE.match(label.strip().lower())
+    if not m:
+        return 0
+    miles_s, furlongs_s, half = m.group(1), m.group(2), m.group(3)
+    furlongs = (
+        (int(miles_s) * 8 if miles_s else 0)
+        + (int(furlongs_s) if furlongs_s else 0)
+        + (0.5 if half else 0)
+    )
+    if furlongs == 0 and not miles_s:
+        return 0
+    return round(furlongs * 220)
+
 
 def _dist_tenths_to_label(dist_f_tenths: float) -> str:
     """
@@ -271,17 +362,31 @@ def _enrich_full_analysis_from_warehouse(
     try:
         race_course   = (race.get("course") or "").strip()
 
-        # Prefer race["distance"] (API string e.g. "7f", "1m2f") set by normalize_race().
-        # Fallback: if missing, convert distance_f (tenths-of-furlongs encoding) to label.
-        _dist_raw = (race.get("distance") or race.get("dist") or "").strip()
-        if not _dist_raw:
+        # Canonical distance resolution.
+        # API distance strings (e.g. "7f14y", "1m13y") include yard suffixes that
+        # do not match warehouse labels ("7f", "1m").  Use distance_y (yards) derived
+        # from distance_f (furlongs, already rounded to nearest ½f by the Racing API)
+        # to generate the exact label stored in trainer_distance_analysis.dist and
+        # horse_racecard_history.dist.
+        #
+        # distance_y is set by normalize_race() via _dist_f_to_yards(distance_f).
+        # Fallback chain: race["distance_y"] -> distance_f*220 -> 0.
+        race_dist_y: int = race.get("distance_y") or 0
+        if not race_dist_y:
             _df = race.get("distance_f")
             if _df is not None:
                 try:
-                    _dist_raw = _dist_tenths_to_label(float(_df))
+                    race_dist_y = round(float(_df) * 220)
                 except Exception:
                     pass
-        race_dist = _dist_raw
+
+        # Derive canonical warehouse label from yards for trainer_distance_analysis query.
+        # _dist_tenths_to_label takes tenths-of-furlongs: yards / 22 = tenths.
+        if race_dist_y:
+            race_dist = _dist_tenths_to_label(race_dist_y / 22)
+        else:
+            # Last resort: raw distance string (old behaviour — may miss on yard-suffixed strings)
+            race_dist = (race.get("distance") or race.get("dist") or "").strip()
 
         race_date_str = race.get("date") or datetime.utcnow().strftime("%Y-%m-%d")
         try:
@@ -354,6 +459,24 @@ def _enrich_full_analysis_from_warehouse(
             except Exception as e:
                 log.warning("warehouse: trainer_distance_analysis fetch failed: %s", e)
 
+        # -- Query 4: horse_distance_time_analysis (horse_id IN list AND dist label match) --
+        # Primary match: exact dist label (e.g. "7f") — same canonical label resolved above.
+        # Passive only. hdta_pl_1 is intentionally excluded.
+        hdta_data: dict[str, dict] = {}
+        if horse_ids and race_dist:
+            try:
+                result = (
+                    sb.table("horse_distance_time_analysis")
+                    .select("horse_id,runs,wins_1st,ae,win_pct")
+                    .in_("horse_id", horse_ids)
+                    .eq("dist", race_dist)
+                    .execute()
+                )
+                for r in (result.data or []):
+                    hdta_data[r["horse_id"]] = r
+            except Exception as e:
+                log.warning("warehouse: horse_distance_time_analysis fetch failed: %s", e)
+
         # -- Helpers --
         def _sf(v):
             try:
@@ -383,7 +506,14 @@ def _enrich_full_analysis_from_warehouse(
             all_pos  = [_pos_num(r["position"]) for r in runs   if _pos_num(r["position"]) is not None]
             rec_pos  = [_pos_num(r["position"]) for r in recent if _pos_num(r["position"]) is not None]
             crs_runs = sum(1 for r in runs if (r.get("course") or "").strip() == race_course)
-            dst_runs = sum(1 for r in runs if (r.get("dist")   or "").strip() == race_dist)
+            # yards comparison with ±2y tolerance for float-to-int rounding
+            if race_dist_y:
+                dst_runs = sum(
+                    1 for r in runs
+                    if abs(_dist_label_to_yards(r.get("dist") or "") - race_dist_y) <= 2
+                )
+            else:
+                dst_runs = sum(1 for r in runs if (r.get("dist") or "").strip() == race_dist)
 
             pred["horse_recent_runs_90d"] = len(recent)
             pred["horse_recent_avg_pos"]  = round(sum(rec_pos) / len(rec_pos), 2) if rec_pos else None
@@ -402,10 +532,55 @@ def _enrich_full_analysis_from_warehouse(
             pred["trainer_dist_1st"]       = _si(_sf(tda["wins_1st"])) if tda else None
             pred["trainer_dist_ae"]        = _sf(tda["ae"])            if tda else None
 
+            hdta = hdta_data.get(hid)
+            pred["hdta_dist_runs"] = _si(_sf(hdta["runs"]))     if hdta else None
+            pred["hdta_dist_1st"]  = _si(_sf(hdta["wins_1st"])) if hdta else None
+            pred["hdta_ae"]        = _sf(hdta["ae"])             if hdta else None
+            pred["hdta_win_pct"]   = _sf(hdta["win_pct"])        if hdta else None
+
         return predictions
 
     except Exception as e:
         log.warning("warehouse enrichment failed — full_analysis untouched: %s", e)
+        return predictions
+
+
+def _enrich_full_analysis_with_track_context(
+    predictions: list[dict],
+    race: dict,
+) -> list[dict]:
+    """
+    Passively inject track context into each runner block.
+    Never raises — any failure returns predictions unchanged.
+    Scoring outputs and rankings are not touched.
+
+    Injects per runner (same fields for every runner in the race):
+        track_chaos_rating      int | None
+        track_pace_bias         str | None
+        track_draw_bias         str | None   (distance-specific if matched)
+        track_key_characteristics list[str]
+    """
+    try:
+        course   = (race.get("course") or "").strip()
+        distance = (race.get("distance") or race.get("dist") or "").strip()
+
+        profile = get_track_context(course)
+
+        chaos_rating      = profile.get("chaos_rating")        # int 1-5 or None
+        pace_bias         = profile.get("pace_bias")           # str or None
+        draw_bias         = resolve_draw_bias(profile, distance) if distance else None
+        key_chars         = list(profile.get("key_characteristics") or [])
+
+        for pred in predictions:
+            pred["track_chaos_rating"]       = chaos_rating
+            pred["track_pace_bias"]          = pace_bias
+            pred["track_draw_bias"]          = draw_bias
+            pred["track_key_characteristics"] = key_chars
+
+        return predictions
+
+    except Exception as e:
+        log.warning("track context enrichment failed — full_analysis untouched: %s", e)
         return predictions
 
 
@@ -458,6 +633,9 @@ def persist_race_predictions(race: dict, predictions: list[dict],
         # Passive warehouse enrichment — injects into runner blocks only.
         # Scoring outputs, rankings, and top-level row columns are unchanged.
         enriched = _enrich_full_analysis_from_warehouse(predictions, race, sb)
+        # Passive track context enrichment — adds track_chaos_rating, track_pace_bias,
+        # track_draw_bias, track_key_characteristics to each runner block.
+        enriched = _enrich_full_analysis_with_track_context(enriched, race)
         row["full_analysis"] = enriched
 
         sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
