@@ -1,16 +1,26 @@
 """
-Feed March 16th results into the Sentient Loopback Engine (Playbook G).
-Also writes to Supabase post_race_reviews and updates learned_patterns.
+VÉLØ — Sigma → Playbook G Doctrine Feed (Supabase-native, v2)
+=============================================================
+Standalone trigger for the auto-pipeline between sigma reconciliation outputs
+and Playbook G doctrine ingestion. Replaces the old sigma_input JSON file reader.
 
-Usage:
-    python scripts/feed_sigma_loop.py --date 2026-03-16
+VOX calls this after a sigma debrief has been written to Supabase.
+Can also be run manually: python scripts/feed_sigma_loop.py --date YYYY-MM-DD
+
+Reads velo_post_race_reviews + velo_verdicts from Supabase for the given date,
+reconstructs run_reviews, and feeds them into SentientLoopbackEngine.
+
+Idempotent — re-running for the same date is a safe no-op (dedup via
+learned_patterns.pattern_name = 'playbook_g_fed_{date}').
 """
+
 import json
 import sys
 import os
+import logging
 import argparse
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date, timezone
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
@@ -18,143 +28,162 @@ sys.path.insert(0, str(ROOT))
 from dotenv import load_dotenv
 load_dotenv(ROOT / ".env")
 
-from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] — %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+log = logging.getLogger("velo.feed_sigma_loop")
 
-def load_sigma_input(date_str: str) -> list:
-    path = ROOT / "data" / f"sigma_input_{date_str.replace('-','_')}.json"
-    if not path.exists():
-        print(f"ERROR: {path} not found — run results fetch first")
-        sys.exit(1)
-    with open(path) as f:
-        return json.load(f)
+SUPA_URL = os.getenv("SUPABASE_URL", "")
+SUPA_KEY = (
+    os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    or os.getenv("SUPABASE_SERVICE_KEY")
+    or os.getenv("SUPABASE_KEY", "")
+)
 
-def build_prediction_dict(row: dict) -> dict:
-    """Map sigma_input row to Playbook G prediction format."""
-    return {
-        "power_anchor": row["picked_name"],
-        "confidence_level": row["confidence"],
-        "score": row["score"],
-        "race_id": row["race_id"],
-        "horse_id": row["horse_id"],
+
+def load_reviews_from_db(db, target_date: str):
+    """
+    Reconstruct run_reviews + verdicts_by_race from Supabase for a given date.
+    Returns (run_reviews, verdicts_by_race). Both empty if nothing found.
+    """
+    # Load races for date
+    race_rows = (
+        db.table("races")
+        .select("race_id, date, course")
+        .eq("date", target_date)
+        .execute()
+    )
+    race_context = {
+        r["race_id"]: {"date": r.get("date", ""), "course": r.get("course", "")}
+        for r in race_rows.data
     }
+    dated_race_ids = set(race_context.keys())
+    if not dated_race_ids:
+        log.warning("No races found in DB for %s", target_date)
+        return [], {}
 
-def build_result_dict(row: dict) -> dict:
-    """Map sigma_input row to Playbook G actual_result format."""
-    return {
-        "winner": row["winner_name"],
-        "winner_sp": row["winner_sp"],
-        "picked_position": row["picked_pos"],
-        "correct": row["correct"],
-    }
+    # Load verdicts
+    verdict_rows = (
+        db.table("velo_verdicts")
+        .select(
+            "id, race_id, confidence_level, top_rank_horse_id, top_rank_score, "
+            "decision_tier, full_analysis, velo_prime_prob"
+        )
+        .in_("race_id", list(dated_race_ids))
+        .execute()
+    )
+    verdicts_by_race = {}
+    for v in verdict_rows.data:
+        verdicts_by_race[v["race_id"]] = {
+            **v,
+            "verdict_id":  v["id"],
+            "race_date":   race_context.get(v["race_id"], {}).get("date", ""),
+            "race_course": race_context.get(v["race_id"], {}).get("course", ""),
+        }
 
-def build_race_data_dict(row: dict) -> dict:
-    """Minimal race_data dict for Playbook G context."""
-    return {
-        "race_id": row["race_id"],
-        "course": row["course"],
-        "off": row["off"],
-        "runners": [],  # Full runner data not available post-hoc
-    }
+    # Load post-race reviews
+    review_rows = (
+        db.table("velo_post_race_reviews")
+        .select(
+            "verdict_id, race_id, top_pick_won, top_pick_placed, top_pick_position, "
+            "actual_winner_id, actual_winner_sp, verdict_accuracy_score, review_outcome"
+        )
+        .in_("race_id", list(dated_race_ids))
+        .execute()
+    )
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--date", default="2026-03-16")
-    args = parser.parse_args()
+    run_reviews = []
+    for r in review_rows.data:
+        race_id = r["race_id"]
+        verdict = verdicts_by_race.get(race_id, {})
+        ro = r.get("review_outcome") or {}
+        if isinstance(ro, str):
+            try:
+                ro = json.loads(ro)
+            except Exception:
+                ro = {}
 
-    date_str = args.date
-    rows = load_sigma_input(date_str)
-    print(f"Loading {len(rows)} race outcomes for {date_str} into sigma loop...\n")
-
-    engine = SentientLoopbackEngine()
-
-    evolution_log = []
-    wins = 0
-    medium_wins = 0
-    medium_total = 0
-    low_wins = 0
-    low_total = 0
-
-    for row in rows:
-        prediction  = build_prediction_dict(row)
-        actual      = build_result_dict(row)
-        race_data   = build_race_data_dict(row)
-
-        report = engine.observe_race_outcome(race_data, prediction, actual)
-
-        conf = row["confidence"]
-        if conf == "MEDIUM":
-            medium_total += 1
-            if row["correct"]: medium_wins += 1
-        elif conf == "LOW":
-            low_total += 1
-            if row["correct"]: low_wins += 1
-
-        if row["correct"]:
-            wins += 1
-            status = "WIN"
+        if r.get("top_pick_won"):
+            outcome = "WIN"
+        elif r.get("top_pick_placed"):
+            outcome = "PLACED"
         else:
-            status = "---"
+            outcome = "MISS"
 
-        print(f"[{status}] {row['course']:<20} {row['off']}  {conf:<7} "
-              f"pick={row['picked_name'][:24]:<24} pos={row['picked_pos']:<4} "
-              f"winner={row['winner_name'][:22]:<22} {row['winner_sp']}")
-
-        evolution_log.append({
-            "race_id": row["race_id"],
-            "correct": row["correct"],
-            "confidence": conf,
-            "error_vector": report.get("error_vector", {}),
-            "appetite": report.get("appetite_state"),
+        run_reviews.append({
+            "race_id":           race_id,
+            "outcome":           outcome,
+            "decision_tier":     verdict.get("decision_tier") or "?",
+            "miss_reason":       ro.get("miss_reason"),
+            "signal_attribution": ro.get("signal_attribution", {}),
+            "top_pick_position": r.get("top_pick_position"),
+            "actual_winner_sp":  r.get("actual_winner_sp"),
+            "winner_id":         r.get("actual_winner_id", ""),
+            "score":             float(verdict.get("top_rank_score") or 0),
+            "confidence":        verdict.get("confidence_level"),
         })
 
-    # ── Final state snapshot ────────────────────────────────────────────────
-    state = engine.get_evolutionary_state()
+    log.info(
+        "Loaded %d reviews + %d verdicts for %s",
+        len(run_reviews), len(verdicts_by_race), target_date,
+    )
+    return run_reviews, verdicts_by_race
 
-    print(f"\n{'='*60}")
-    print(f"SIGMA LOOP COMPLETE — {date_str}")
-    print(f"{'='*60}")
-    print(f"Races processed : {len(rows)}")
-    print(f"Wins            : {wins}/{len(rows)} = {wins/len(rows):.1%}")
-    if medium_total:
-        print(f"MEDIUM accuracy : {medium_wins}/{medium_total} = {medium_wins/medium_total:.1%}")
-    if low_total:
-        print(f"LOW accuracy    : {low_wins}/{low_total} = {low_wins/low_total:.1%}")
-    print()
-    print(f"Aggression level : {state.get('appetite_state', {}).get('aggression_level', 'N/A')}")
-    print(f"Total races seen : {state.get('total_races_observed', 'N/A')}")
-    print()
 
-    # Doctrine adjustments
-    recent_adj = state.get("doctrine_strengths", {})
-    if recent_adj:
-        print("Doctrine strength updates:")
-        for doctrine, strength in sorted(recent_adj.items(), key=lambda x: -x[1])[:8]:
-            bar = '#' * int(strength * 20)
-            print(f"  {doctrine:<30} {strength:.3f} |{bar}")
+def feed(target_date: str) -> dict:
+    """
+    Entry point callable by VOX or run directly.
+    Returns a summary dict.
+    """
+    if not SUPA_URL or not SUPA_KEY:
+        raise EnvironmentError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
 
-    # ── Sigma anomaly: LOW > MEDIUM is significant ──────────────────────────
-    if low_total >= 3 and medium_total >= 3:
-        print()
-        if low_wins / low_total > medium_wins / medium_total:
-            delta = (low_wins/low_total) - (medium_wins/medium_total)
-            print(f"[SIGMA ALERT] LOW confidence outperforms MEDIUM by {delta:.1%}")
-            print("  -> Confidence calibration may be inverted on low-score races")
-            print("  -> Recommend: review confidence threshold in orchestrator.py")
-            print("  -> Check: LOW picks may be better-rated horses the market undervalued")
+    from supabase import create_client
+    db = create_client(SUPA_URL, SUPA_KEY)
+    log.info("=== Sigma → Playbook G Feed — %s ===", target_date)
 
-    # Save evolution log
-    log_path = ROOT / "data" / f"sigma_log_{date_str.replace('-','_')}.json"
-    with open(log_path, "w") as f:
-        json.dump({
-            "date": date_str,
-            "races": len(rows),
-            "wins": wins,
-            "medium_accuracy": round(medium_wins/medium_total, 4) if medium_total else None,
-            "low_accuracy": round(low_wins/low_total, 4) if low_total else None,
-            "final_state_snapshot": state,
-            "evolution_log": evolution_log,
-        }, f, indent=2)
-    print(f"\nEvolution log saved: data/sigma_log_{date_str.replace('-','_')}.json")
+    run_reviews, verdicts_by_race = load_reviews_from_db(db, target_date)
+    if not run_reviews:
+        return {
+            "status":  "no_reviews",
+            "date":    target_date,
+            "fed":     0,
+            "message": f"No post-race reviews found in DB for {target_date}.",
+        }
+
+    # Delegate to close_sigma_loops._feed_playbook_g (shared implementation)
+    from scripts.close_sigma_loops import _feed_playbook_g
+    fed_n = _feed_playbook_g(db, run_reviews, verdicts_by_race, target_date)
+
+    wins = sum(1 for r in run_reviews if r["outcome"] == "WIN")
+    summary = {
+        "status":  "fed" if fed_n > 0 else "already_fed",
+        "date":    target_date,
+        "fed":     fed_n,
+        "reviews": len(run_reviews),
+        "wins":    wins,
+        "message": (
+            f"Playbook G ingested {fed_n} races from sigma run {target_date}. "
+            f"Doctrine state updated."
+        ) if fed_n > 0 else (
+            f"Playbook G already fed for {target_date} (dedup). No new mutations written."
+        ),
+    }
+    log.info("Feed summary: %s", summary)
+    return summary
+
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description="Feed sigma reconciliation outputs into Playbook G doctrine state."
+    )
+    parser.add_argument(
+        "--date",
+        default=str(date.today()),
+        help="Target date (YYYY-MM-DD). Defaults to today.",
+    )
+    args = parser.parse_args()
+    result = feed(args.date)
+    print(json.dumps(result, indent=2))

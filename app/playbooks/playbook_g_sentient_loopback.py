@@ -108,13 +108,68 @@ class SentientLoopbackEngine:
         self.state = self._load_state()
 
     def _load_state(self) -> Dict[str, Any]:
-        """Load sentient state from disk"""
+        """
+        Load sentient state.
+
+        Priority order:
+        1. Local sentient_state.json (fast, survives within a deployment)
+        2. Supabase SENTIENT_STATE_BACKUP row (survives Railway restarts / redeploys)
+        3. Fresh initialised state (first-ever run)
+        """
         try:
             with open(self.state_file, 'r') as f:
-                return json.load(f)
+                state = json.load(f)
+                logger.debug("[G] Sentient state loaded from disk (races=%d)",
+                             state.get("total_races_observed", 0))
+                return state
         except Exception as e:
-            logger.warning("[G] Could not load state file (%s): %s — initialising fresh state", self.state_file, e)
+            logger.warning("[G] Could not load state file (%s): %s — trying Supabase backup",
+                           self.state_file, e)
+        return self._restore_from_supabase()
+
+    def _restore_from_supabase(self) -> Dict[str, Any]:
+        """
+        Restore sentient state from Supabase learned_patterns backup.
+
+        Reads the SENTIENT_STATE_BACKUP row and extracts full state from
+        the 'conditions' JSONB column. Falls back to fresh state if unavailable.
+
+        Uses os.getenv() directly — bypasses SupabaseClient wrapper whose
+        settings object may not see .env credentials at import time.
+        """
+        import os
+        supa_url = os.getenv("SUPABASE_URL", "")
+        supa_key = (
+            os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+            or os.getenv("SUPABASE_SERVICE_KEY")
+            or os.getenv("SUPABASE_KEY", "")
+        )
+        if not supa_url or not supa_key:
+            logger.warning("[G] Supabase env vars not set — initialising fresh state")
             return self._initialize_state()
+        try:
+            from supabase import create_client
+            db = create_client(supa_url, supa_key)
+            result = (
+                db.table("learned_patterns")
+                .select("conditions, occurrences, last_observed")
+                .eq("pattern_name", "SENTIENT_STATE_BACKUP")
+                .execute()
+            )
+            if result.data and result.data[0].get("conditions"):
+                state = result.data[0]["conditions"]
+                if isinstance(state, dict) and "doctrine_strengths" in state:
+                    logger.info(
+                        "[G] Sentient state restored from Supabase backup "
+                        "(races=%d last_observed=%s)",
+                        state.get("total_races_observed", 0),
+                        result.data[0].get("last_observed", "?"),
+                    )
+                    return state
+            logger.warning("[G] No valid SENTIENT_STATE_BACKUP in Supabase — initialising fresh state")
+        except Exception as e:
+            logger.warning("[G] Supabase restore failed (%s) — initialising fresh state", e)
+        return self._initialize_state()
 
     def _save_state(self):
         """
@@ -148,33 +203,54 @@ class SentientLoopbackEngine:
         """
         Upsert the current sentient state to Supabase 'learned_patterns' table.
 
-        Uses the existing SupabaseClient from app.database.supabase_client.
-        Fails silently if Supabase is not configured — local backup is sufficient
-        for development; Supabase backup is critical for Railway production.
+        Stores full state JSON in the 'conditions' JSONB column so it can be
+        restored by _restore_from_supabase() after a Railway restart/redeploy.
 
-        Row key: pattern_name = 'SENTIENT_STATE_BACKUP'
+        Column mapping (actual learned_patterns schema):
+          conditions      ← full state dict (JSONB)
+          confidence_level ← appetite aggression_level (0.0–1.0)
+          occurrences     ← total_races_observed
+          last_observed   ← last_updated timestamp
+          updated_at      ← now
+          description     ← human-readable summary
+          is_active       ← True
+
+        Row key: pattern_name = 'SENTIENT_STATE_BACKUP' (unique, upserted on conflict)
         """
         try:
-            from app.database.supabase_client import SupabaseClient
-            db = SupabaseClient()
-            if not db.client:
-                logger.debug("[G] Supabase not configured — skipping cloud backup")
+            import os
+            supa_url = os.getenv("SUPABASE_URL", "")
+            supa_key = (
+                os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+                or os.getenv("SUPABASE_SERVICE_KEY")
+                or os.getenv("SUPABASE_KEY", "")
+            )
+            if not supa_url or not supa_key:
+                logger.debug("[G] Supabase env vars not set — skipping cloud backup")
                 return
+            from supabase import create_client
+            db = create_client(supa_url, supa_key)
+            now_str = datetime.now().isoformat()
+            races = self.state.get("total_races_observed", 0)
             payload = {
-                "pattern_name": "SENTIENT_STATE_BACKUP",
-                "pattern_type": "sentient_state",
-                "pattern_data": json.dumps(self.state),
-                "confidence": self.state["appetite_state"]["aggression_level"],
-                "occurrences": self.state["total_races_observed"],
-                "last_seen": self.state["last_updated"],
-                "created_at": self.state["last_updated"],
+                "pattern_name":    "SENTIENT_STATE_BACKUP",
+                "pattern_type":    "sentient_state",
+                "description":     (
+                    f"Full sentient state — {races} races observed, "
+                    f"last_updated={self.state.get('last_updated', '?')}"
+                ),
+                "conditions":      self.state,          # full state as JSONB
+                "confidence_level": self.state["appetite_state"]["aggression_level"],
+                "occurrences":     races,
+                "last_observed":   self.state.get("last_updated", now_str),
+                "updated_at":      now_str,
+                "is_active":       True,
             }
-            db.client.table("learned_patterns").upsert(
+            db.table("learned_patterns").upsert(
                 payload,
                 on_conflict="pattern_name"
             ).execute()
-            logger.debug("[G] Sentient state backed up to Supabase (races=%d)",
-                         self.state["total_races_observed"])
+            logger.debug("[G] Sentient state backed up to Supabase (races=%d)", races)
         except Exception as e:
             logger.warning("[G] Supabase backup failed (non-fatal): %s", e)
 

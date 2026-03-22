@@ -129,15 +129,9 @@ def calculate_runner_score(
     # Smaller fields = higher scores (less competition)
     field_score = max(0.0, (20 - field_size) / 20.0) * 0.10
     
-    # Phase 2A: Stability modifier (±0.10)
+    # Phase 2A: Stability modifier — archived (v11 legacy, stability_clusters.py moved to archive/)
     stability_modifier = 0.0
     stability_reason = "not_available"
-    if isinstance(profile, dict) and 'stability_profile' in profile:
-        from app.ml.stability_clusters import get_cluster_trust_modifier
-        cluster_id = profile['stability_profile'].get('cluster_id', '')
-        if cluster_id:
-            stability_modifier = get_cluster_trust_modifier(cluster_id)
-            stability_reason = cluster_id
     
     # Phase 2A: Historical stats modifier (±0.05)
     historical_modifier = 0.0

@@ -19,6 +19,7 @@ from datetime import datetime, date, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+import hashlib
 import requests
 from dotenv import load_dotenv
 from supabase import create_client, Client
@@ -377,13 +378,18 @@ def generate_review(
     top_pick_rpd_tag: str | None = None
     winner_rpd_tag: str | None = None
 
-    # Pull full_analysis once for both signal attribution and RPD tags
+    # Pull full_analysis once for signal attribution, RPD tags, and track context
     raw_fa = verdict.get("full_analysis") or []
     if isinstance(raw_fa, str):
         try:
             raw_fa = json.loads(raw_fa)
         except Exception:
             raw_fa = []
+
+    # Track context — from top runner block (passive enrichment, injected at persist time)
+    _top_runner = raw_fa[0] if raw_fa and isinstance(raw_fa[0], dict) else {}
+    track_chaos_rating = _top_runner.get("track_chaos_rating")
+    track_pace_bias    = _top_runner.get("track_pace_bias")
 
     for _runner in raw_fa:
         if isinstance(_runner, str):
@@ -437,21 +443,7 @@ def generate_review(
         else:
             miss_reason = "market_decoy_followed"
 
-    # Full review outcome
-    selections = verdict.get("selections") or []
-    placed_selections = []
-    for sel in selections:
-        horse_id = sel.get("horse_id", "")
-        result = next((r for r in runners_result if r.get("horse_id") == horse_id), None)
-        if result:
-            placed_selections.append({
-                "horse_id": horse_id,
-                "position": result.get("position"),
-                "sp": result.get("sp_dec"),
-                "outcome": "win" if _safe_int(result.get("position")) == 1 else
-                           "placed" if (_safe_int(result.get("position")) or 99) <= 3 else "miss",
-            })
-
+    # Full review outcome — selections_results removed (velo_verdicts.selections not populated)
     review_outcome = {
         "outcome": outcome_label,
         "top_pick_position": top_pick_pos,
@@ -460,17 +452,22 @@ def generate_review(
         "miss_reason": miss_reason,
         "patch_note": patch_note,
         "signal_attribution": signal_attribution,
-        "selections_results": placed_selections,
         "verdict_confidence": verdict.get("confidence_level"),
         "verdict_score": float(verdict.get("top_rank_score", 0)),
-        # RPD-C doctrine layer — passive metadata, does not alter outcome
+        # RPD-C doctrine layer — passive metadata
         "top_pick_rpd_tag": top_pick_rpd_tag,
         "winner_rpd_tag": winner_rpd_tag,
+        # Track context — from passive enrichment in full_analysis
+        "race_course": verdict.get("race_course"),
+        "track_chaos_rating": track_chaos_rating,
+        "track_pace_bias": track_pace_bias,
     }
 
     notes = (
         f"{outcome_label}: {top_pick_id} pos={top_pick_pos}, "
         f"winner={winner_id}@{winner_sp}SP. "
+        f"course={verdict.get('race_course') or 'unknown'} "
+        f"chaos={track_chaos_rating}. "
         f"{'Patch: ' + patch_note if patch_note else ''}"
     )
 
@@ -491,22 +488,31 @@ def generate_review(
 
 def write_sigma_audit(db: Client, race_id: str, review: Dict, verdict: Dict) -> None:
     outcome = review["review_outcome"]
-    db.table("sigma_audits").insert({
-        "event_type": "post_race_review",
-        "race_id": race_id,
-        "horse_id": verdict.get("top_rank_horse_id"),
-        "verdict_id": review["verdict_id"],
-        "outcome": outcome.get("outcome"),
-        "miss_reason": outcome.get("miss_reason"),
-        "patch_note": outcome.get("patch_note"),
+    chaos   = outcome.get("track_chaos_rating")
+    pace    = outcome.get("track_pace_bias")
+    course  = outcome.get("race_course") or verdict.get("race_course") or ""
+    notes   = f"chaos={chaos} pace={pace}"
+    if outcome.get("patch_note"):
+        notes += f" | {outcome['patch_note']}"
+    db.table("sigma_audits").upsert({
+        "event_type":       "post_race_review",
+        "race_id":          race_id,
+        "horse_id":         verdict.get("top_rank_horse_id"),
+        "verdict_id":       review["verdict_id"],
+        "date":             verdict.get("race_date") or "",
+        "track":            course,
+        "outcome":          outcome.get("outcome"),
+        "miss_reason":      outcome.get("miss_reason"),
+        "patch_note":       outcome.get("patch_note"),
         "confidence_level": verdict.get("confidence_level"),
-        "verdict_score": float(verdict.get("top_rank_score", 0)),
-        "decision_tier": verdict.get("decision_tier"),
+        "verdict_score":    float(verdict.get("top_rank_score", 0)),
+        "decision_tier":    verdict.get("decision_tier"),
         "top_pick_position": review.get("top_pick_position"),
         "actual_winner_id": review.get("actual_winner_id"),
         "actual_winner_sp": review.get("actual_winner_sp"),
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }).execute()
+        "notes":            notes[:500],
+        "created_at":       datetime.now(timezone.utc).isoformat(),
+    }, on_conflict="race_id").execute()
 
 
 # ─────────────────────────────────────────────────────────────
@@ -843,6 +849,222 @@ def _create_sigma_proposals(db: Client, target_date: str) -> int:
 
 
 # ─────────────────────────────────────────────────────────────
+# Phase 1 — Sigma → Playbook G doctrine auto-pipeline
+# ─────────────────────────────────────────────────────────────
+def _feed_playbook_g(
+    db: Client,
+    run_reviews: List[Dict],
+    verdicts_by_race: Dict[str, Dict],
+    target_date: str,
+) -> int:
+    """
+    Step 9 — Feed sigma reconciliation outcomes into SentientLoopbackEngine (Playbook G).
+
+    Converts each race review into an observe_race_outcome() call, updating
+    doctrine_strengths, emotion_laws, and appetite_state in sentient_state.json.
+    State is also backed up to Supabase learned_patterns (SENTIENT_STATE_BACKUP).
+
+    Idempotent: a dedup marker (pattern_name='playbook_g_fed_{date}') in
+    learned_patterns prevents double-ingestion on re-run for the same date.
+
+    Returns count of races fed into playbook_g.
+    """
+    if not run_reviews:
+        log.info("Step 9: no reviews to feed — skipping playbook_g")
+        return 0
+
+    # ── Dedup guard ──────────────────────────────────────────────────────────
+    dedup_name = f"playbook_g_fed_{target_date}"
+    try:
+        existing = (
+            db.table("learned_patterns")
+            .select("id")
+            .eq("pattern_name", dedup_name)
+            .execute()
+        )
+        if existing.data:
+            log.info(
+                "Step 9: playbook_g already fed for %s (dedup_name=%s) — skipping",
+                target_date, dedup_name,
+            )
+            return 0
+    except Exception as e:
+        log.warning("Step 9: dedup check failed (%s) — proceeding cautiously", e)
+
+    # ── Lazy import Playbook G ────────────────────────────────────────────────
+    try:
+        from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine
+        engine = SentientLoopbackEngine()
+    except Exception as e:
+        log.warning("Step 9: SentientLoopbackEngine import failed — skipping: %s", e)
+        return 0
+
+    fed = 0
+    wins_fed = 0
+
+    # ── Enrich with race context from Supabase (batch, non-fatal) ────────────
+    race_ids = [rr["race_id"] for rr in run_reviews]
+    race_meta: Dict[str, Dict] = {}
+    winner_sp_map: Dict[str, Optional[float]] = {}
+
+    try:
+        meta_rows = (
+            db.table("races")
+            .select("race_id, going, class, runners_count, distance_f")
+            .in_("race_id", race_ids)
+            .execute()
+        )
+        for r in meta_rows.data:
+            race_meta[r["race_id"]] = r
+        log.debug("Step 9: race meta loaded for %d races", len(race_meta))
+    except Exception as e:
+        log.warning("Step 9: race meta enrichment failed (non-fatal): %s", e)
+
+    try:
+        sp_rows = (
+            db.table("runner_results")
+            .select("race_id, sp_dec")
+            .eq("is_winner", True)
+            .in_("race_id", race_ids)
+            .execute()
+        )
+        for r in sp_rows.data:
+            winner_sp_map[r["race_id"]] = _safe_float(r.get("sp_dec"))
+        log.debug("Step 9: winner SP loaded for %d races", len(winner_sp_map))
+    except Exception as e:
+        log.warning("Step 9: winner SP enrichment failed (non-fatal): %s", e)
+
+    for rr in run_reviews:
+        race_id = rr["race_id"]
+        verdict = verdicts_by_race.get(race_id, {})
+        outcome = rr["outcome"]
+        meta    = race_meta.get(race_id, {})
+        winner_sp = winner_sp_map.get(race_id) or rr.get("actual_winner_sp")
+
+        # Going → chaos_bloom proxy
+        going = (meta.get("going") or "").lower()
+        if "heavy" in going:
+            chaos_bloom = 75
+        elif "soft" in going:
+            chaos_bloom = 65
+        elif "good to soft" in going:
+            chaos_bloom = 50
+        elif "good" in going:
+            chaos_bloom = 30
+        elif "firm" in going:
+            chaos_bloom = 20
+        else:
+            chaos_bloom = 40   # unknown going — neutral
+
+        # Class → narrative_disruption proxy (lower class = more upsets)
+        race_class = str(meta.get("class") or "")
+        if race_class in ("5", "6", "7"):
+            narrative_disruption = 65
+        elif race_class in ("3", "4"):
+            narrative_disruption = 45
+        else:
+            narrative_disruption = 25   # class 1/2 or unknown
+
+        # Winner SP → mpi (market pressure index) proxy
+        if winner_sp and winner_sp > 10:
+            mpi = 80   # big-priced winner — market was wrong
+        elif winner_sp and winner_sp > 5:
+            mpi = 50
+        elif winner_sp:
+            mpi = 20   # short-priced winner — market was right
+        else:
+            mpi = 0    # no data
+
+        # Build enriched race_data
+        race_data = {
+            "race_id":              race_id,
+            "story_anchor":         verdict.get("top_rank_horse_id", ""),
+            "power_anchor":         verdict.get("top_rank_horse_id", ""),
+            "mpi":                  mpi,
+            "chaos_bloom":          chaos_bloom,
+            "narrative_disruption": narrative_disruption,
+            "runners":              [],
+            "going":                meta.get("going", ""),
+            "race_class":           race_class,
+            "distance_f":           meta.get("distance_f"),
+            "runners_count":        meta.get("runners_count", 0),
+        }
+
+        # Build prediction stub from verdict
+        prediction = {
+            "power_anchor":  verdict.get("top_rank_horse_id", ""),
+            "confidence":    float(verdict.get("top_rank_score") or 0),
+            "doctrines_fired": [],
+        }
+
+        # Build actual_result
+        actual_result = {
+            "winner":         rr.get("winner_id", ""),
+            "favourite_won":  (outcome == "WIN"),
+            "winner_profile": {},
+        }
+
+        try:
+            engine.observe_race_outcome(race_data, prediction, actual_result)
+            fed += 1
+            if outcome == "WIN":
+                wins_fed += 1
+            log.debug(
+                "Step 9: race %s fed → playbook_g (outcome=%s)", race_id, outcome
+            )
+        except Exception as e:
+            log.warning("Step 9: observe_race_outcome failed for %s: %s", race_id, e)
+
+    if fed == 0:
+        log.info("Step 9: no races successfully fed to playbook_g")
+        return 0
+
+    # ── Write mutation summary + dedup marker to learned_patterns ─────────────
+    now_naive = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+    source_hash = hashlib.sha256(
+        f"playbook_g:{target_date}:{fed}".encode()
+    ).hexdigest()[:16]
+
+    try:
+        db.table("learned_patterns").insert({
+            "pattern_name":           dedup_name,
+            "pattern_type":           "system_marker",
+            "description":            (
+                f"Playbook G fed from sigma run {target_date}: "
+                f"{fed} races, {wins_fed} wins"
+            ),
+            "conditions": {
+                "source_date":   target_date,
+                "fed_count":     fed,
+                "wins_fed":      wins_fed,
+                "source_hash":   source_hash,
+                "doctrine_family": "SENTIENT_LOOPBACK",
+                "mutation_type": "observe_race_outcome",
+                "sigma_report":  f"pipeline_runs/{target_date}",
+            },
+            "occurrences":            fed,
+            "successful_predictions": wins_fed,
+            "success_rate":           round(wins_fed / fed, 4) if fed else 0.0,
+            "confidence_level":       round(min(fed / 20, 1.0), 4),
+            "first_observed":         now_naive,
+            "last_observed":          now_naive,
+            "created_at":             now_naive,
+            "updated_at":             now_naive,
+            "is_active":              True,
+        }).execute()
+        log.info("Step 9: dedup marker written — pattern_name=%s", dedup_name)
+    except Exception as e:
+        log.warning("Step 9: dedup marker write failed (non-fatal): %s", e)
+
+    log.info(
+        "Step 9: playbook_g fed — %d races ingested (%d wins), "
+        "doctrine state updated in sentient_state.json + Supabase backup",
+        fed, wins_fed,
+    )
+    return fed
+
+
+# ─────────────────────────────────────────────────────────────
 # Create rp_imports storage bucket
 # ─────────────────────────────────────────────────────────────
 def ensure_rp_imports_bucket(db: Client) -> None:
@@ -912,13 +1134,19 @@ def main(target_date: str) -> None:
         # Filter to verdicts whose race is on target_date
         race_rows = (
             db.table("races")
-            .select("race_id, date")
+            .select("race_id, date, course")
             .eq("date", target_date)
             .execute()
         )
-        dated_race_ids = {r["race_id"] for r in race_rows.data}
+        race_context = {
+            r["race_id"]: {"date": r.get("date", ""), "course": r.get("course", "")}
+            for r in race_rows.data
+        }
+        dated_race_ids = set(race_context.keys())
         verdicts = [
-            {**v, "verdict_id": v["id"]}
+            {**v, "verdict_id": v["id"],
+             "race_date": race_context.get(v["race_id"], {}).get("date", ""),
+             "race_course": race_context.get(v["race_id"], {}).get("course", "")}
             for v in rows.data
             if v["race_id"] in dated_race_ids
         ]
@@ -1115,6 +1343,14 @@ def main(target_date: str) -> None:
             log.info("Governance proposals created this run: %d", proposals_n)
         except Exception as e:
             log.warning("Governance proposal creation failed (non-fatal): %s", e)
+
+        # Step 9: Feed sigma outcomes into Playbook G doctrine state (auto-pipeline)
+        if run_reviews:
+            try:
+                fed_n = _feed_playbook_g(db, run_reviews, verdict_by_race, target_date)
+                log.info("Playbook G doctrine feed complete: %d races ingested", fed_n)
+            except Exception as e:
+                log.warning("Playbook G feed failed (non-fatal): %s", e)
 
         release_run_lock(db, run_id, "completed",
                          races=races_done, runners=runners_done, results=reviews_done)
