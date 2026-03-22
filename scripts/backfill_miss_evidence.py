@@ -85,34 +85,64 @@ MISS_RECORDS = [
         },
         "learning_ready": False,  # data gap — root cause not yet confirmed
     },
-    # outsider_hedge_omitted misses — no fusion evidence yet, mark for review
+    # data_gap misses — winner was NOT in the scored racecard (confirmed 2026-03-22)
+    # runner counts in full_analysis match races.runners_count, but winner horse_id
+    # absent from full_analysis. Classification revised from outsider_hedge_omitted.
+    # T1.3 check required: is winner's horse_id in Racing API racecard? In runners table?
     {
         "race_id": "rac_11875344",
-        "miss_category": "outsider_hedge_omitted",
+        "miss_category": "data_gap",
         "miss_evidence": {
             "winner_sp": 15.0,
             "top_pick_position": 5,
-            "note": "Winner at 15.0SP — outside longshot model threshold. Needs longshot_prob check.",
+            "runners_in_full_analysis": 8,
+            "runners_in_races_table": 8,
+            "winner_in_full_analysis": False,
+            "root_cause": "winner horse absent from scored racecard — counts match so not a count mismatch. Possible late addition, reserve runner, or API racecard gap. Not a model or fusion failure.",
+            "t1_3_checks": [
+                "confirm winner horse_id in Racing API racecard for this race",
+                "confirm winner horse_id in Supabase runners table",
+                "confirm why Service B did not score this horse",
+            ],
         },
         "learning_ready": False,
     },
     {
         "race_id": "rac_11906492",
-        "miss_category": "outsider_hedge_omitted",
+        "miss_category": "data_gap",
         "miss_evidence": {
             "winner_sp": 26.0,
             "top_pick_position": 6,
-            "note": "Winner at 26.0SP — genuine chaos. Acceptable blind spot unless longshot_prob was non-zero.",
+            "runners_in_full_analysis": 12,
+            "runners_in_races_table": 12,
+            "winner_in_full_analysis": False,
+            "root_cause": "winner horse absent from scored racecard — same pattern as rac_11875344. Not a model or fusion failure.",
+            "t1_3_checks": [
+                "confirm winner horse_id in Racing API racecard for this race",
+                "confirm winner horse_id in Supabase runners table",
+                "confirm why Service B did not score this horse",
+            ],
         },
         "learning_ready": False,
     },
     {
         "race_id": "rac_11875279",
-        "miss_category": "outsider_hedge_omitted",
+        "miss_category": "data_gap",
         "miss_evidence": {
             "winner_sp": 11.0,
             "top_pick_position": 4,
-            "note": "Winner at 11.0SP — borderline longshot. Needs longshot_prob check for this runner.",
+            "runners_in_full_analysis": 10,
+            "runners_in_races_table": 10,
+            "winner_in_full_analysis": False,
+            "dead_heat": True,
+            "dead_heat_detail": "Two horses at position=1 in runner_results: hrs_23537759 (Two Brothers @11.0) and hrs_40494076 (Ryebridge @3.0). Both is_winner=TRUE. Sigma reported winner@11.0SP (higher-priced half). Sigma reconciliation logic does not handle dead heats — picks first is_winner row.",
+            "root_cause": "horse set divergence between runners table and full_analysis — counts match (10=10) but winner horses absent from scored racecard. Structural ingestion sequencing bug: Service B scored an earlier racecard fetch; runners table populated later with updated field. Late declaration or reserve entry not present at scoring time.",
+            "t1_3_checks": [
+                "confirm winner horse_id in Racing API racecard for this race",
+                "confirm when runners table row was written vs Service B scoring time",
+                "fix sigma reconciliation to handle dead heats",
+                "fix Service B to re-fetch racecard closer to off time or after declarations close",
+            ],
         },
         "learning_ready": False,
     },
