@@ -54,7 +54,7 @@ _agents: dict[int, VoxAgent] = {}
 
 def _get_agent(user_id: int) -> VoxAgent:
     if user_id not in _agents:
-        _agents[user_id] = VoxAgent()
+        _agents[user_id] = VoxAgent(user_id=user_id)
     return _agents[user_id]
 
 

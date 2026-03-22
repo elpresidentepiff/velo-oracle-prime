@@ -851,6 +851,73 @@ def _create_sigma_proposals(db: Client, target_date: str) -> int:
 # ─────────────────────────────────────────────────────────────
 # Phase 1 — Sigma → Playbook G doctrine auto-pipeline
 # ─────────────────────────────────────────────────────────────
+def _write_zep_outcomes(db: Client, run_reviews: List[Dict], target_date: str) -> None:
+    """
+    Step 10 — Write race outcomes to Zep Cloud graph memory.
+
+    Each closed race review becomes one or more graph facts:
+      - The winner's result (horse + trainer + jockey + course + SP + OR + RPD-C)
+      - VELO's pick outcome (WIN / PLACED / MISS)
+
+    Zep parses these into entity nodes and temporal edges, making them available
+    to VOX for cross-session intelligence retrieval without re-querying Supabase.
+
+    Completely optional — if ZEP_API_KEY is not set, this is a silent no-op.
+    """
+    try:
+        from src.intelligence.zep_memory import zep_client as _zep
+    except ImportError:
+        log.debug("Step 10: zep_client not available — skipping")
+        return
+
+    if not os.getenv("ZEP_API_KEY", ""):
+        log.debug("Step 10: ZEP_API_KEY not set — skipping Zep graph write")
+        return
+
+    # Fetch winner details from runner_results for richer graph facts
+    race_ids = [rr["race_id"] for rr in run_reviews]
+    winner_rows: Dict[str, Dict] = {}
+    try:
+        rows = (
+            db.table("runner_results")
+            .select("race_id, horse_name, trainer, jockey, sp_dec, or_rating, course, distance")
+            .eq("is_winner", True)
+            .in_("race_id", race_ids)
+            .execute()
+        )
+        for r in rows.data:
+            winner_rows[r["race_id"]] = r
+    except Exception as e:
+        log.debug("Step 10: winner row fetch failed (non-fatal): %s", e)
+
+    written = 0
+    for rr in run_reviews:
+        race_id = rr["race_id"]
+        outcome = rr["outcome"]
+        winner  = winner_rows.get(race_id, {})
+        verdict = rr.get("decision_tier", "?")
+
+        # Write winner outcome to Zep graph
+        try:
+            _zep.write_race_outcome(
+                horse_name  = winner.get("horse_name") or rr.get("winner_id", "unknown"),
+                trainer     = winner.get("trainer", ""),
+                jockey      = winner.get("jockey", ""),
+                course      = winner.get("course", ""),
+                race_date   = target_date,
+                position    = 1,
+                sp_decimal  = _safe_float(winner.get("sp_dec")),
+                or_rating   = winner.get("or_rating"),
+                rpdc_tag    = rr.get("winner_rpd_tag"),
+                velo_verdict= f"VELO-{verdict}-{outcome}",
+            )
+            written += 1
+        except Exception as e:
+            log.debug("Step 10: write_race_outcome failed for %s: %s", race_id, e)
+
+    log.info("Step 10: Zep graph write complete — %d outcome facts written", written)
+
+
 def _feed_playbook_g(
     db: Client,
     run_reviews: List[Dict],
@@ -1351,6 +1418,13 @@ def main(target_date: str) -> None:
                 log.info("Playbook G doctrine feed complete: %d races ingested", fed_n)
             except Exception as e:
                 log.warning("Playbook G feed failed (non-fatal): %s", e)
+
+        # Step 10: Write race outcomes to Zep graph memory (entity intelligence persistence)
+        if run_reviews:
+            try:
+                _write_zep_outcomes(db, run_reviews, target_date)
+            except Exception as e:
+                log.warning("Zep graph write failed (non-fatal): %s", e)
 
         release_run_lock(db, run_id, "completed",
                          races=races_done, runners=runners_done, results=reviews_done)
