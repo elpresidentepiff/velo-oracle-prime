@@ -622,6 +622,7 @@ def persist_race_predictions(race: dict, predictions: list[dict],
             "release_day_prob":      top.get("release_day_prob"),
             "place_prob":            top.get("place_prob"),
             "longshot_prob":         top.get("longshot_prob"),
+            # DISPLAY-ONLY: not read by sigma, not consumed by Playbook G — see TRUTH_REGISTRY.md
             "macro_regime_label":    top.get("macro_regime_label"),
             "macro_chaos_mode":      top.get("macro_chaos_mode"),
             "favourite_trap_risk":   top.get("favourite_trap_risk"),
@@ -632,9 +633,13 @@ def persist_race_predictions(race: dict, predictions: list[dict],
 
         # Passive warehouse enrichment — injects into runner blocks only.
         # Scoring outputs, rankings, and top-level row columns are unchanged.
+        # FIELD_TYPE: display-only — horse_recent_*, trainer_course_*, trainer_dist_*
+        # not read by sigma or Playbook G — see TRUTH_REGISTRY.md §4
         enriched = _enrich_full_analysis_from_warehouse(predictions, race, sb)
         # Passive track context enrichment — adds track_chaos_rating, track_pace_bias,
         # track_draw_bias, track_key_characteristics to each runner block.
+        # FIELD_TYPE: track_chaos_rating + track_pace_bias are LIVE (read by sigma)
+        # FIELD_TYPE: track_draw_bias + track_key_characteristics are display-only
         enriched = _enrich_full_analysis_with_track_context(enriched, race)
         row["full_analysis"] = enriched
 

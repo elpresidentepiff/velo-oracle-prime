@@ -426,7 +426,12 @@ def main():
                or os.getenv("SUPABASE_ANON_KEY", ""))
     db = _sb_create(_sb_url, _sb_key) if _sb_url and _sb_key else None
     run_id = _open_pipeline_run(db, date_str) if db else None
-    print(f"  pipeline_run: {run_id or 'skipped (no Supabase creds)'}")
+    if not db:
+        print("  pipeline_run: SKIPPED — no Supabase creds (monitoring blind this run) ⚠")
+    elif not run_id:
+        print("  pipeline_run: OPEN FAILED — monitoring blind for this run ⚠")
+    else:
+        print(f"  pipeline_run: {run_id}")
 
     # ── STEP 1: Load racecards (cache or direct API fetch) ────────────────────
     print("\nSTEP 1: Load racecards")
@@ -678,10 +683,20 @@ def main():
 
     total_runners = sum(len(race.get("runners") or []) for race, _, _t, _r in scored)
 
-    if persist_fail > 0 or len(score_errors) > 0:
+    if persist_fail > 0 and persist_ok == 0:
+        # Total failure — nothing persisted
         err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
         _close_pipeline_run(db, run_id, "failed", persist_ok, total_runners, err_summary)
-        print(f"\nFAIL — deficit: {len(normalized) - persist_ok} races not in Supabase")
+        print(f"\nFAIL — 0/{len(normalized)} races in velo_verdicts")
+        if score_errors:
+            for race, err in score_errors[:5]:
+                print(f"  SCORE ERROR: {race.get('course')} {race.get('off_time')} — {err[:100]}")
+        sys.exit(1)
+    elif persist_fail > 0:
+        # Partial run — some persisted, some failed
+        err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
+        _close_pipeline_run(db, run_id, "partial", persist_ok, total_runners, err_summary)
+        print(f"\nPARTIAL — {persist_ok}/{len(normalized)} races in velo_verdicts ({persist_fail} failed)")
         if score_errors:
             for race, err in score_errors[:5]:
                 print(f"  SCORE ERROR: {race.get('course')} {race.get('off_time')} — {err[:100]}")
