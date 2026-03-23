@@ -486,11 +486,31 @@ def generate_review(
     }
 
 
+def _get_race_record(db: Client, race_id: str) -> Dict:
+    """
+    Look up a race's metadata (date, course) from the races table.
+    Returns a dict with 'date' and 'course' keys, or empty dict if not found.
+    """
+    try:
+        result = db.table("races").select("date, course").eq("race_id", race_id).limit(1).execute()
+        if result.data:
+            return result.data[0]
+    except Exception as e:
+        log.warning("  [races lookup] failed for %s: %s", race_id, e)
+    return {}
+
+
 def write_sigma_audit(db: Client, race_id: str, review: Dict, verdict: Dict) -> None:
+    # Look up race metadata from races table (not from verdict which lacks these fields)
+    race_record = _get_race_record(db, race_id)
+    race_date = race_record.get("date", "") or ""
+    race_course = race_record.get("course", "") or ""
+
     outcome = review["review_outcome"]
     chaos   = outcome.get("track_chaos_rating")
     pace    = outcome.get("track_pace_bias")
-    course  = outcome.get("race_course") or verdict.get("race_course") or ""
+    # Use race_course from races table as primary; fall back to verdict enrichment
+    course  = race_course or outcome.get("race_course") or verdict.get("race_course") or ""
     notes   = f"chaos={chaos} pace={pace}"
     if outcome.get("patch_note"):
         notes += f" | {outcome['patch_note']}"
@@ -499,7 +519,7 @@ def write_sigma_audit(db: Client, race_id: str, review: Dict, verdict: Dict) -> 
         "race_id":          race_id,
         "horse_id":         verdict.get("top_rank_horse_id"),
         "verdict_id":       review["verdict_id"],
-        "date":             verdict.get("race_date") or "",
+        "date":             race_date,
         "track":            course,
         "outcome":          outcome.get("outcome"),
         "miss_reason":      outcome.get("miss_reason"),

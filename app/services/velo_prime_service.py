@@ -608,6 +608,7 @@ def persist_race_predictions(race: dict, predictions: list[dict],
         top = predictions[0]
         row = {
             "race_id":               race.get("race_id"),
+            "region":                race.get("region", ""),   # UK/IRE filter verification — persisted at scoring time
             "generated_at":          datetime.utcnow().isoformat(),
             "engine_version":        "velo_prime_v1",
             "doctrine_version":      "d010",
