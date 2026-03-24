@@ -144,7 +144,6 @@ def _load_macro_df() -> pd.DataFrame:
             "Run: python scripts/cache_bha_macro_features.py to restore.",
             _DATA_PATH,
         )
-        import pandas as pd
         return pd.DataFrame({
             "year": [2024],
             "race_code": ["flat"],
