@@ -51,22 +51,61 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float],
                           field_rpr_vals: list[float]) -> dict:
     """
     Build the feature dict for SQPE v17 + specialist models from a canonical
-    normalized runner + race.  Missing doctrine features default to 0.0
-    (handled by model_manager DEFAULTS and loader.py fill-with-zero logic).
+    normalized runner + race.
+
+    Rating fields (official_rating, rpr, ts) may be None — this is legitimate
+    absence, not zero. When absent:
+      - or_vs_field / rpr_vs_field are set to 0.0 (neutral, not worst-in-field)
+      - or_missing / rpr_missing / ts_missing flags are set to 1.0
+    Downstream models use these flags as explicit uncertainty signals.
     """
-    or_num   = _safe(runner.get("official_rating") or runner.get("or"))
-    rpr_num  = _safe(runner.get("rpr"))
-    ts_num   = _safe(runner.get("ts"))
+    # Ratings: None = genuinely absent. Do NOT coerce to 0.0 here.
+    or_raw   = runner.get("official_rating")  # Optional[float]
+    rpr_raw  = runner.get("rpr")              # Optional[float]
+    ts_raw   = runner.get("ts")               # Optional[float]
+
+    or_missing  = float(runner.get("or_missing",  or_raw  is None))
+    rpr_missing = float(runner.get("rpr_missing", rpr_raw is None))
+    ts_missing  = float(runner.get("ts_missing",  ts_raw  is None))
+
     odds     = _safe(runner.get("best_odds_decimal"))
     sp_dec   = odds if odds > 1.0 else 10.0
     log_sp   = math.log(max(sp_dec, 1.01))
     imp_prob = 1.0 / max(sp_dec, 1.01)
 
-    field_size = max(len(field_or_vals), 1)
-    avg_or     = sum(field_or_vals) / field_size if field_or_vals else 0.0
-    avg_rpr    = sum(field_rpr_vals) / field_size if field_rpr_vals else 0.0
-    or_vs_field  = or_num  - avg_or
-    rpr_vs_field = rpr_num - avg_rpr
+    # Field averages computed only from rated runners (those with real values).
+    # field_or_vals / field_rpr_vals are pre-filtered to > 0 by caller.
+    avg_or  = sum(field_or_vals)  / len(field_or_vals)  if field_or_vals  else 0.0
+    avg_rpr = sum(field_rpr_vals) / len(field_rpr_vals) if field_rpr_vals else 0.0
+
+    # vs_field: neutral (0.0) when the runner has no rating.
+    # This avoids fabricating a negative penalty for unrated horses.
+    if or_raw is not None:
+        or_num      = float(or_raw)
+        or_vs_field = or_num - avg_or
+    else:
+        or_num      = avg_or  # placeholder only — not used in model when or_missing=1
+        or_vs_field = 0.0
+
+    if rpr_raw is not None:
+        rpr_num      = float(rpr_raw)
+        rpr_vs_field = rpr_num - avg_rpr
+    else:
+        rpr_num      = avg_rpr  # placeholder only
+        rpr_vs_field = 0.0
+
+    ts_num = float(ts_raw) if ts_raw is not None else 0.0
+
+    # Emit structured log for any fallback so incidence can be counted
+    if or_missing or rpr_missing or ts_missing:
+        missing = [f for f, v in [("or", or_missing), ("rpr", rpr_missing), ("ts", ts_missing)] if v]
+        log.debug(
+            "rating_fallback race=%s horse=%s missing=%s or_vs_field=neutral",
+            race.get("race_id"), runner.get("horse_name"), missing,
+        )
+
+    # Total field size — use actual runner count, not rated-runner count
+    field_size = max(len(race.get("runners", [])), 1)
 
     # Market rank (1 = shortest odds)
     all_odds = sorted([r.get("best_odds_decimal", 0) or 999 for r in race.get("runners", [])
@@ -105,6 +144,11 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float],
         # market deception extras
         "rating_mkt_gap": rating_mkt_gap,
         "or_mkt_gap":     or_mkt_gap,
+        # explicit missingness flags (1.0 = absent, 0.0 = present)
+        # models can use these as uncertainty signals rather than inferring from zero
+        "or_missing":  or_missing,
+        "rpr_missing": rpr_missing,
+        "ts_missing":  ts_missing,
     }
     # v17 doctrine features — filled with 0.0 / defaults when not pre-computed
     from app.services.v17_feature_extractor import DEFAULTS
@@ -198,11 +242,13 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
     if not runners:
         return []
 
-    # Pre-compute field OR/RPR arrays for relative features
-    field_or  = [_safe(r.get("official_rating") or r.get("or")) for r in runners]
-    field_rpr = [_safe(r.get("rpr")) for r in runners]
-    field_or  = [v for v in field_or  if v > 0]
-    field_rpr = [v for v in field_rpr if v > 0]
+    # Pre-compute field OR/RPR arrays for relative features.
+    # official_rating and rpr are Optional[float] from the normalizer.
+    # Only include runners with a real rating — exclude None and any stray zeros.
+    field_or  = [r["official_rating"] for r in runners
+                 if r.get("official_rating") is not None and r["official_rating"] > 0]
+    field_rpr = [r["rpr"] for r in runners
+                 if r.get("rpr") is not None and r["rpr"] > 0]
 
     # Macro context — current year, race type
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")

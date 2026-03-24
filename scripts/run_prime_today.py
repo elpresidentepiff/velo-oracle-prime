@@ -448,9 +448,17 @@ def main():
             normalized.append(n)
     print(f"  Normalized: {len(normalized)} races")
 
-    # ── STEP 2b: UK/IRE filter REMOVED — 2026-03-23 ─────────────────────
-    # All regions now scored. UK/IRE filter removed per operator request.
-    # To restrict: add region filter here. Currently scoring all jurisdictions.
+    # ── STEP 2b: UK/IRE jurisdiction filter ──────────────────────────────
+    # Jurisdiction is resolved canonically by normalize_race() via _resolve_jurisdiction().
+    # Raw API region "GB" → "uk", "IRE" → "ire", anything else → "other"/"unknown".
+    # We score only UK and Irish racing. France/HK/US are out of scope for VÉLØ.
+    pre_filter = len(normalized)
+    normalized = [r for r in normalized if r.get("jurisdiction") in ("uk", "ire")]
+    filtered_out = pre_filter - len(normalized)
+    if filtered_out:
+        print(f"  Jurisdiction filter: kept {len(normalized)} UK/IRE races, dropped {filtered_out} other/unknown")
+    else:
+        print(f"  Jurisdiction filter: {len(normalized)} UK/IRE races (no other jurisdictions in feed)")
 
     # ── STEP 3: Score through REAL PRIME path ─────────────────────────────────
     # scored entries: (race, preds, tier, reasons)
