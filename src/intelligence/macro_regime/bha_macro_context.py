@@ -131,10 +131,31 @@ class MacroContext:
 @lru_cache(maxsize=1)
 def _load_macro_df() -> pd.DataFrame:
     if not _DATA_PATH.exists():
-        raise FileNotFoundError(
-            f"BHA macro features not found at {_DATA_PATH}. "
-            "Run: python scripts/cache_bha_macro_features.py"
-        )
+        # Parquet absent — return a single-row DataFrame of neutral/normal values.
+        # get_macro_context() will find this row and return a MacroContext classified
+        # as regime_label="normal", preventing macro_ctx=None downstream.
+        import pandas as pd
+        return pd.DataFrame({
+            "year": [2024],
+            "race_code": ["flat"],
+            "avg_field_size": [10.0],
+            "fixtures_scheduled": [1000],
+            "fixtures_ran": [950],
+            "fixtures_abandoned": [50],
+            "fav_compress_pct": [0.35],
+            "total_starts": [10000],
+            "individual_runners": [5000],
+            "avg_runs_per_horse": [2.0],
+            "competitiveness_index": [1.0],
+            "competitiveness_index_code": [1.0],
+            "fixture_strain_index": [0.95],
+            "abandonment_stress_index": [0.05],
+            "favourite_compression_index": [1.0],
+            "run_density_index": [1.0],
+            "field_size_regime": ["normal"],
+            "covid_year": [False],
+            "ambiguity_flag": [False],
+        })
     return pd.read_parquet(_DATA_PATH)
 
 
