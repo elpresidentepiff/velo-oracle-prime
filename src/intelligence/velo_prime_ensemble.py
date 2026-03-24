@@ -144,6 +144,7 @@ class VeloPrimePrediction:
             "verdict_flags": self.verdict_flags,
             "macro_regime": self.macro_context.regime_label if self.macro_context else None,
             "macro_favourite_trap": self.macro_context.favourite_trap_risk if self.macro_context else None,
+            "macro_available": self.macro_context.macro_available if self.macro_context else None,
         }
 
 

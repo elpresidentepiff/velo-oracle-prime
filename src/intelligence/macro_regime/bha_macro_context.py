@@ -13,6 +13,7 @@ This module is STRUCTURAL CONTEXT only. Per D004 (decisions.md):
 """
 from __future__ import annotations
 
+import logging
 import warnings
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -20,6 +21,8 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 _DATA_PATH = Path(__file__).parent.parent.parent.parent / "data" / "bha_macro_features.parquet"
 
@@ -56,6 +59,7 @@ class MacroContext:
     # Flags
     covid_year: bool = False
     ambiguity_flag: bool = False
+    macro_available: bool = True  # False when served from fallback (no real parquet)
 
     # Derived classifications (set by classify())
     chaos_mode: bool = False
@@ -134,6 +138,12 @@ def _load_macro_df() -> pd.DataFrame:
         # Parquet absent — return a single-row DataFrame of neutral/normal values.
         # get_macro_context() will find this row and return a MacroContext classified
         # as regime_label="normal", preventing macro_ctx=None downstream.
+        logger.warning(
+            "BHA macro features parquet not found at %s. "
+            "Using fallback neutral regime — regime corrections are DISABLED. "
+            "Run: python scripts/cache_bha_macro_features.py to restore.",
+            _DATA_PATH,
+        )
         import pandas as pd
         return pd.DataFrame({
             "year": [2024],
@@ -155,6 +165,7 @@ def _load_macro_df() -> pd.DataFrame:
             "field_size_regime": ["normal"],
             "covid_year": [False],
             "ambiguity_flag": [False],
+            "macro_available": [False],
         })
     return pd.read_parquet(_DATA_PATH)
 
@@ -228,6 +239,7 @@ def get_macro_context(year: int, race_code: str) -> MacroContext:
         field_size_regime=str(r.get("field_size_regime", "unknown")),
         covid_year=bool(r.get("covid_year", 0)),
         ambiguity_flag=bool(r.get("ambiguity_flag", 0)),
+        macro_available=bool(r.get("macro_available", True)),
     )
 
     return ctx.classify()
