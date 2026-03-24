@@ -30,7 +30,7 @@ from typing import Any
 from dotenv import load_dotenv
 load_dotenv()
 
-from src.intelligence.track_context import get_track_context, resolve_draw_bias
+# from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
 
 log = logging.getLogger("velo.prime_service")
 
@@ -545,43 +545,45 @@ def _enrich_full_analysis_from_warehouse(
         return predictions
 
 
-def _enrich_full_analysis_with_track_context(
-    predictions: list[dict],
-    race: dict,
-) -> list[dict]:
-    """
-    Passively inject track context into each runner block.
-    Never raises — any failure returns predictions unchanged.
-    Scoring outputs and rankings are not touched.
-
-    Injects per runner (same fields for every runner in the race):
-        track_chaos_rating      int | None
-        track_pace_bias         str | None
-        track_draw_bias         str | None   (distance-specific if matched)
-        track_key_characteristics list[str]
-    """
-    try:
-        course   = (race.get("course") or "").strip()
-        distance = (race.get("distance") or race.get("dist") or "").strip()
-
-        profile = get_track_context(course)
-
-        chaos_rating      = profile.get("chaos_rating")        # int 1-5 or None
-        pace_bias         = profile.get("pace_bias")           # str or None
-        draw_bias         = resolve_draw_bias(profile, distance) if distance else None
-        key_chars         = list(profile.get("key_characteristics") or [])
-
-        for pred in predictions:
-            pred["track_chaos_rating"]       = chaos_rating
-            pred["track_pace_bias"]          = pace_bias
-            pred["track_draw_bias"]          = draw_bias
-            pred["track_key_characteristics"] = key_chars
-
-        return predictions
-
-    except Exception as e:
-        log.warning("track context enrichment failed — full_analysis untouched: %s", e)
-        return predictions
+# def _enrich_full_analysis_with_track_context(
+#     predictions: list[dict],
+#     race: dict,
+# ) -> list[dict]:
+#     """
+#     Passively inject track context into each runner block.
+#     Never raises — any failure returns predictions unchanged.
+#     Scoring outputs and rankings are not touched.
+#
+#     Injects per runner (same fields for every runner in the race):
+#         track_chaos_rating      int | None
+#         track_pace_bias         str | None
+#         track_draw_bias         str | None   (distance-specific if matched)
+#         track_key_characteristics list[str]
+#     """
+#     try:
+#         course   = (race.get("course") or "").strip()
+#         distance = (race.get("distance") or race.get("dist") or "").strip()
+#
+#         profile = get_track_context(course)
+#
+#         chaos_rating      = profile.get("chaos_rating")        # int 1-5 or None
+#         pace_bias         = profile.get("pace_bias")           # str or None
+#         draw_bias         = resolve_draw_bias(profile, distance) if distance else None
+#         key_chars         = list(profile.get("key_characteristics") or [])
+#
+#         for pred in predictions:
+#             pred["track_chaos_rating"]       = chaos_rating
+#             pred["track_pace_bias"]          = pace_bias
+#             pred["track_draw_bias"]          = draw_bias
+#             pred["track_key_characteristics"] = key_chars
+#
+#         return predictions
+#
+#     except Exception as e:
+#         log.warning("track context enrichment failed — full_analysis untouched: %s", e)
+#         return predictions
+# NOTE: disabled — src/intelligence/track_context.py does not exist yet.
+#       Re-enable once the module is added to the repo.
 
 
 # ── Supabase persistence ──────────────────────────────────────────────────────
@@ -637,11 +639,11 @@ def persist_race_predictions(race: dict, predictions: list[dict],
         # FIELD_TYPE: display-only — horse_recent_*, trainer_course_*, trainer_dist_*
         # not read by sigma or Playbook G — see TRUTH_REGISTRY.md §4
         enriched = _enrich_full_analysis_from_warehouse(predictions, race, sb)
-        # Passive track context enrichment — adds track_chaos_rating, track_pace_bias,
-        # track_draw_bias, track_key_characteristics to each runner block.
-        # FIELD_TYPE: track_chaos_rating + track_pace_bias are LIVE (read by sigma)
-        # FIELD_TYPE: track_draw_bias + track_key_characteristics are display-only
-        enriched = _enrich_full_analysis_with_track_context(enriched, race)
+        # Passive track context enrichment — disabled: src/intelligence/track_context.py missing
+        # # adds track_chaos_rating, track_pace_bias, track_draw_bias, track_key_characteristics
+        # # FIELD_TYPE: track_chaos_rating + track_pace_bias are LIVE (read by sigma)
+        # # FIELD_TYPE: track_draw_bias + track_key_characteristics are display-only
+        # enriched = _enrich_full_analysis_with_track_context(enriched, race)
         row["full_analysis"] = enriched
 
         sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
