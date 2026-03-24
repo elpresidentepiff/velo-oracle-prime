@@ -448,14 +448,9 @@ def main():
             normalized.append(n)
     print(f"  Normalized: {len(normalized)} races")
 
-    # ── STEP 2b: UK/IRE only — hard production filter ───────────────────────
-    # France, HK, and all non-GB/IRE jurisdictions are excluded from scoring.
-    # This filter is the production safety net. Do not remove.
-    # To add HK research: use workers/hk_daily_ingest.py — NOT this pipeline.
-    UK_ALLOWED = {"GB", "IRE"}
-    normalized = [r for r in normalized if r.get("region", "") in UK_ALLOWED]
-    skipped_regions = len([r for r in races_with_runners if r.get("region", "") not in UK_ALLOWED])
-    print(f"  UK/IRE filter: {len(normalized)} races scored | {skipped_regions} excluded (non-UK/IRE)")
+    # ── STEP 2b: UK/IRE filter REMOVED — 2026-03-23 ─────────────────────
+    # All regions now scored. UK/IRE filter removed per operator request.
+    # To restrict: add region filter here. Currently scoring all jurisdictions.
 
     # ── STEP 3: Score through REAL PRIME path ─────────────────────────────────
     # scored entries: (race, preds, tier, reasons)
