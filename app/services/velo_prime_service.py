@@ -290,6 +290,10 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
             "longshot_score":          spec_scores.get("longshot_score"),
             "sp_dec":                  sp_dec,
             "is_fav":                  feats["is_fav"] == 1.0,
+            # Rating missingness — forwarded to full_analysis for observability
+            "or_missing":              bool(feats["or_missing"]),
+            "rpr_missing":             bool(feats["rpr_missing"]),
+            "ts_missing":              bool(feats["ts_missing"]),
         })
 
     # Run VeloPrimeEnsemble
@@ -306,10 +310,13 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
         row["macro_chaos_mode"]   = (macro_ctx.chaos_mode if macro_ctx else False)
         row["favourite_trap_risk"]= (macro_ctx.favourite_trap_risk if macro_ctx else "normal")
         row["ensemble_version"]   = ENSEMBLE_VERSION
-        # Add horse_id from ensemble_inputs lookup
+        # Add horse_id + rating missingness flags from ensemble_inputs lookup
         for ei in ensemble_inputs:
             if ei["horse"] == row["horse"]:
-                row["horse_id"] = ei["horse_id"]
+                row["horse_id"]   = ei["horse_id"]
+                row["or_missing"] = ei["or_missing"]
+                row["rpr_missing"]= ei["rpr_missing"]
+                row["ts_missing"] = ei["ts_missing"]
                 break
         results.append(row)
 
