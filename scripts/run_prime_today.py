@@ -184,6 +184,11 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     conf      = (top.get("confidence_level") or "low").lower()
     gap       = prob - second_prob
 
+    # confidence_level is assigned pre-normalization in the ensemble, then the field
+    # normalization step raises the top horse's prob without updating the label.
+    # Recompute from the already-normalized prob so A/B gates see the real signal.
+    eff_conf = "high" if prob >= 0.45 else "normal" if prob >= 0.20 else "low"
+
     # Longshot gate: only meaningful when horse is genuinely a longshot (SP >= 10).
     # The specialist longshot model scores all runners but was trained on SP >= 10 data.
     # Without the SP guard, short-priced favourites with high longshot_score trigger X.
@@ -212,7 +217,7 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
 
     # ── A-STRIKE ──────────────────────────────────────────────────────────────
     if (prob >= 0.32 and gap >= 0.08 and place >= 0.52
-            and conf not in ("low",) and trap != "high"):
+            and eff_conf not in ("low",) and trap != "high"):
         reasons.append(f"strong separation gap {gap:.3f}")
         reasons.append(f"place floor solid {place:.3f}")
         if improve > 0.20:
@@ -223,7 +228,7 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     b_place_ok = place >= 0.45
     b_gap_ok   = gap >= 0.08
     b_improve  = improve >= 0.18
-    if (prob >= 0.18 and gap >= 0.03 and conf not in ("low",)
+    if (prob >= 0.18 and gap >= 0.03 and eff_conf not in ("low",)
             and (b_place_ok or b_gap_ok or b_improve)):
         if b_gap_ok:
             reasons.append(f"field separation gap {gap:.3f}")
