@@ -26,6 +26,7 @@ import json
 import base64
 import argparse
 import urllib.request
+import urllib.error
 from urllib.parse import urlencode
 from datetime import datetime
 from pathlib import Path
@@ -56,7 +57,7 @@ RACING_HEADERS = {
 }
 
 
-def tg(text: str):
+def tg(text: str) -> bool:
     if not TOKEN or not CHAT_ID:
         print(f"  [TG SKIP — no token/chat]: {text[:80]}")
         return False
@@ -66,8 +67,14 @@ def tg(text: str):
             f"https://api.telegram.org/bot{TOKEN}/sendMessage",
             data=body, headers={"Content-Type": "application/json"}
         )
-        urllib.request.urlopen(req, timeout=10)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            if resp.status != 200:
+                print(f"  [TG FAIL — HTTP {resp.status}]: {text[:60]}")
+                return False
         return True
+    except urllib.error.HTTPError as e:
+        print(f"  [TG FAIL — HTTP {e.code} {e.reason}]: {text[:60]}")
+        return False
     except Exception as e:
         print(f"  [TG FAIL]: {e}")
         return False
@@ -367,8 +374,20 @@ def _derive_rpd_evidence(runner: dict, race: dict) -> tuple[list, bool, bool]:
 
 
 def _open_pipeline_run(db, date_str: str) -> str | None:
-    """Open a pipeline_runs row for this scoring run. Returns run_id or None."""
+    """Open a pipeline_runs row. Closes any stale in_progress rows for same date first."""
     try:
+        # Close stale in_progress rows — prevents orphan accumulation on retries/crashes
+        try:
+            db.table("pipeline_runs").update({
+                "status":        "abandoned",
+                "finished_at":   datetime.utcnow().isoformat() + "Z",
+                "error_message": "Superseded by new run start",
+            }).eq("service_name", "velo-prime-scoring").eq(
+                "source_date", date_str
+            ).eq("status", "in_progress").execute()
+        except Exception:
+            pass  # non-fatal — orphan cleanup best-effort
+
         row = {
             "service_name": "velo-prime-scoring",
             "run_type":     "daily_scoring",

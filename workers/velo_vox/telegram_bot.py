@@ -45,7 +45,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("velo_vox_bot")
 
-_TOKEN = os.getenv("TELEGRAM_VOX_TOKEN", "")
+_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "") or os.getenv("TELEGRAM_VOX_TOKEN", "")
 _MAX_MSG = 4096
 
 # One agent instance per user — maintains conversation history
@@ -209,7 +209,7 @@ async def handle_message(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 def main():
     if not _TOKEN:
-        print("ERROR: TELEGRAM_VOX_TOKEN not set in .env")
+        print("ERROR: TELEGRAM_BOT_TOKEN not set in .env")
         sys.exit(1)
 
     app = Application.builder().token(_TOKEN).build()

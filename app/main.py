@@ -3,12 +3,16 @@ VÉLØ Oracle - FastAPI Main Application
 Production-ready with CORS, health checks, and API routing
 """
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Header, Depends
+from fastapi import FastAPI, HTTPException, Header, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from datetime import datetime
+import asyncio
 import logging
 import os
+import json
+import urllib.request
+import urllib.error
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -42,6 +46,9 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         _sentient_state = None
         logger.warning("[sentient] G state load failed at startup (non-fatal): %s", e)
+
+    # Register Telegram webhook so velo_agent_bot can receive messages
+    _register_webhook()
 
     yield
     logger.info("VÉLØ Oracle API shutting down")
@@ -85,12 +92,13 @@ API_KEY = os.getenv("API_KEY", "")
 async def verify_api_key(x_api_key: str = Header(None)):
     """Verify API key from header"""
     if not API_KEY:
-        # If no API key configured, skip validation
-        return True
-    
+        # API_KEY env var not set — refuse all requests rather than silently bypass
+        logger.warning("API_KEY not configured — rejecting request")
+        raise HTTPException(status_code=503, detail="API key not configured on this server")
+
     if x_api_key != API_KEY:
         raise HTTPException(status_code=403, detail="Invalid API key")
-    
+
     return True
 
 
@@ -232,27 +240,13 @@ async def predict_full(
     authorized: bool = Depends(verify_api_key)
 ):
     """
-    Full prediction with intelligence layers
-    
-    Args:
-        race_data: Complete race data
-        
-    Returns:
-        Full prediction with intelligence signals
+    Full prediction with intelligence layers — NOT YET IMPLEMENTED.
+    Use /api/v1/predict/race for the live scoring path.
     """
-    try:
-        from app.intelligence.chains.prediction_chain import run_prediction_chain
-
-        race = race_data.get("race", race_data)
-        runners = race_data.get("runners", [])
-
-        result = await run_prediction_chain(race, runners)
-
-        return result
-
-    except Exception as e:
-        logger.error(f"Full prediction failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    raise HTTPException(
+        status_code=501,
+        detail="Not implemented — use /api/v1/predict/race for live scoring"
+    )
 
 
 # Intelligence endpoints
@@ -310,6 +304,134 @@ async def get_models(authorized: bool = Depends(verify_api_key)):
     except Exception as e:
         logger.error(f"Get models failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Telegram Bot Webhook ──────────────────────────────────────────────────────
+# velo_agent_bot — conversational intelligence via VoxAgent
+# Token: TELEGRAM_BOT_TOKEN  |  Webhook set at startup
+
+_TG_TOKEN  = os.getenv("TELEGRAM_BOT_TOKEN", "")
+_TG_BOT_URL = os.getenv("RAILWAY_SERVICE_VELO_ORACLE_URL", "")
+
+# Per-user VoxAgent instances (maintains conversation history)
+_vox_agents: dict[int, object] = {}
+
+
+def _get_vox_agent(user_id: int):
+    if user_id not in _vox_agents:
+        try:
+            from workers.velo_vox.agent_loop import VoxAgent
+            _vox_agents[user_id] = VoxAgent(user_id=user_id)
+        except Exception as e:
+            logger.error(f"[bot] VoxAgent init failed for user {user_id}: {e}")
+            return None
+    return _vox_agents[user_id]
+
+
+def _tg_send(chat_id: int, text: str) -> bool:
+    """Send a message via the bot token (sync, stdlib only)."""
+    if not _TG_TOKEN:
+        return False
+    try:
+        body = json.dumps({"chat_id": chat_id, "text": text[:4096]}).encode()
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{_TG_TOKEN}/sendMessage",
+            data=body, headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status == 200
+    except urllib.error.HTTPError as e:
+        logger.warning(f"[bot] Telegram send HTTP {e.code}: {e.reason}")
+        return False
+    except Exception as e:
+        logger.warning(f"[bot] Telegram send failed: {e}")
+        return False
+
+
+def _register_webhook() -> None:
+    """Tell Telegram to POST updates to our /telegram/webhook endpoint."""
+    if not _TG_TOKEN or not _TG_BOT_URL:
+        logger.warning("[bot] Skipping webhook registration — TELEGRAM_BOT_TOKEN or RAILWAY_SERVICE_VELO_ORACLE_URL not set")
+        return
+    webhook_url = f"https://{_TG_BOT_URL}/telegram/webhook"
+    try:
+        body = json.dumps({"url": webhook_url, "drop_pending_updates": True}).encode()
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{_TG_TOKEN}/setWebhook",
+            data=body, headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read())
+            if result.get("ok"):
+                logger.info(f"[bot] Webhook registered → {webhook_url}")
+            else:
+                logger.warning(f"[bot] Webhook registration failed: {result}")
+    except Exception as e:
+        logger.warning(f"[bot] Webhook registration error: {e}")
+
+
+@app.post("/telegram/webhook")
+async def telegram_webhook(request: Request):
+    """Receive Telegram updates. No auth — Telegram posts here directly."""
+    try:
+        update = await request.json()
+    except Exception:
+        return JSONResponse(status_code=200, content={"ok": True})
+
+    # Extract message — handle regular messages only
+    message = update.get("message") or update.get("edited_message")
+    if not message:
+        return JSONResponse(status_code=200, content={"ok": True})
+
+    chat_id  = message.get("chat", {}).get("id")
+    user_id  = message.get("from", {}).get("id")
+    text     = message.get("text", "").strip()
+
+    if not chat_id or not text:
+        return JSONResponse(status_code=200, content={"ok": True})
+
+    # /start command
+    if text == "/start":
+        agent = _get_vox_agent(user_id)
+        if agent:
+            try:
+                agent.reset()
+            except Exception:
+                pass
+        _tg_send(chat_id,
+            "VELO Agent online.\n\n"
+            "Ask me about today's races, a horse, trainer, or tomorrow's card.\n"
+            "Talk naturally — no commands needed."
+        )
+        return JSONResponse(status_code=200, content={"ok": True})
+
+    # /reset command
+    if text == "/reset":
+        if user_id in _vox_agents:
+            del _vox_agents[user_id]
+        _tg_send(chat_id, "Conversation cleared.")
+        return JSONResponse(status_code=200, content={"ok": True})
+
+    # All other text → VoxAgent
+    agent = _get_vox_agent(user_id)
+    if not agent:
+        _tg_send(chat_id, "Agent unavailable — check server logs.")
+        return JSONResponse(status_code=200, content={"ok": True})
+
+    # Run VoxAgent in thread executor (it's synchronous)
+    loop = asyncio.get_event_loop()
+    try:
+        response = await loop.run_in_executor(None, lambda: agent.chat(text))
+    except Exception as e:
+        logger.error(f"[bot] VoxAgent error user={user_id}: {e}")
+        _tg_send(chat_id, f"Error: {e}")
+        return JSONResponse(status_code=200, content={"ok": True})
+
+    # Split long responses at Telegram's 4096 char limit
+    for i in range(0, len(response), 4096):
+        _tg_send(chat_id, response[i:i + 4096])
+
+    return JSONResponse(status_code=200, content={"ok": True})
 
 
 # Error handlers
