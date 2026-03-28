@@ -1,0 +1,46 @@
+# Virtual environment — never deploy
+venv/
+ENV/
+env/
+.venv/
+
+# Local data caches — not needed on Railway
+# Macro falls back gracefully if parquets absent
+data/
+
+# Runtime outputs — generated at runtime, not deployed
+logs/
+out/
+results/
+training_data/
+predictions/
+mlruns/
+storage/
+incoming/
+
+# Dev/research artifacts
+reports/
+analyses/
+presentation/
+presentation_assets/
+sigma/
+feast_repo/
+docs/
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.local
+config/credentials.json
+config/api_keys.json

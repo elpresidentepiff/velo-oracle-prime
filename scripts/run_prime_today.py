@@ -28,7 +28,7 @@ import argparse
 import urllib.request
 import urllib.error
 from urllib.parse import urlencode
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -379,27 +379,58 @@ def _derive_rpd_evidence(runner: dict, race: dict) -> tuple[list, bool, bool]:
 
 
 def _open_pipeline_run(db, date_str: str) -> str | None:
-    """Open a pipeline_runs row. Closes any stale in_progress rows for same date first."""
-    try:
-        # Close stale in_progress rows — prevents orphan accumulation on retries/crashes
-        try:
-            db.table("pipeline_runs").update({
-                "status":        "abandoned",
-                "finished_at":   datetime.utcnow().isoformat() + "Z",
-                "error_message": "Superseded by new run start",
-            }).eq("service_name", "velo-prime-scoring").eq(
-                "source_date", date_str
-            ).eq("status", "in_progress").execute()
-        except Exception:
-            pass  # non-fatal — orphan cleanup best-effort
+    """Open a pipeline_runs row.
 
+    Age-gate cleanup: any running row for this service + date older than 24h is
+    closed as FAIL before inserting the new row.  Rows newer than 24h abort the
+    new run (prevents duplicate concurrent runs).
+    """
+    SERVICE = "velo-prime-scoring"
+    AGE_GATE_HOURS = 24
+    now = datetime.utcnow()
+
+    try:
+        # Find existing running rows scoped to this service + date
+        try:
+            existing = db.table("pipeline_runs").select(
+                "id, started_at"
+            ).eq("service_name", SERVICE).eq(
+                "source_date", date_str
+            ).eq("run_state", "running").execute()
+
+            for row in (existing.data or []):
+                try:
+                    started = datetime.fromisoformat(row["started_at"].rstrip("Z"))
+                except Exception:
+                    started = now - timedelta(hours=AGE_GATE_HOURS + 1)  # treat as stale
+
+                age_hours = (now - started).total_seconds() / 3600
+                if age_hours >= AGE_GATE_HOURS:
+                    # Stale — close as FAIL and allow new run
+                    db.table("pipeline_runs").update({
+                        "run_state":     "completed",
+                        "status":        "FAIL",
+                        "finished_at":   now.isoformat() + "Z",
+                        "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new run",
+                    }).eq("id", row["id"]).execute()
+                    print(f"  [pipeline_runs] age-gate closed stale run {row['id']} ({age_hours:.1f}h)")
+                else:
+                    # Recent running row — abort to prevent duplicate
+                    print(f"  [pipeline_runs] run already running (id={row['id']}, age={age_hours:.1f}h). Aborting open.")
+                    return None
+        except Exception as e:
+            print(f"  [pipeline_runs] stale-run cleanup failed (non-fatal): {e}")
+
+        trigger_src = os.getenv("TRIGGER_SOURCE", "manual") or "manual"
+        env_str = os.getenv("RAILWAY_ENVIRONMENT", "local")
         row = {
-            "service_name": "velo-prime-scoring",
-            "run_type":     "daily_scoring",
-            "source_date":  date_str,
-            "status":       "in_progress",
-            "started_at":   datetime.utcnow().isoformat() + "Z",
-            "environment":  os.getenv("RAILWAY_ENVIRONMENT", "local"),
+            "service_name":  SERVICE,
+            "run_type":      "daily_scoring",
+            "source_date":   date_str,
+            "run_state":     "running",
+            "trigger_source": trigger_src,
+            "started_at":    now.isoformat() + "Z",
+            "environment":   env_str,
         }
         resp = db.table("pipeline_runs").insert(row).execute()
         return resp.data[0]["id"] if resp.data else None
@@ -415,6 +446,7 @@ def _close_pipeline_run(db, run_id: str | None, status: str,
         return
     try:
         patch = {
+            "run_state":         "completed",
             "status":            status,
             "finished_at":       datetime.utcnow().isoformat() + "Z",
             "races_processed":   races,
@@ -436,6 +468,15 @@ def main():
 
     print(f"\nVELO PRIME RACE-DAY EXECUTION — {date_str}")
     print("=" * 60)
+
+    # ── PREFLIGHT GATE — must pass before anything else runs ─────────────────
+    print("\nPREFLIGHT")
+    print("-" * 40)
+    from src.preflight import preflight_or_die
+    pf_result = preflight_or_die(tg_fn=tg)   # exits with sys.exit(1) on FAIL
+    print(f"  Status: {pf_result.status}")
+    print("-" * 40)
+    # ─────────────────────────────────────────────────────────────────────────
 
     from workers.racing_api_normalizer import normalize_race
     from app.services.velo_prime_service import (
@@ -573,17 +614,15 @@ def main():
     # ── STEP 5: Build Telegram output ─────────────────────────────────────────
     print("\nSTEP 5: Send to Telegram")
 
-    # A. Pre-flight report
+    # A. Pre-flight report — reflects actual preflight result
+    pf_lines = [f"  {c.name}: {'OK' if c.passed else c.detail}"
+                for c in pf_result.checks]
     tg(
         f"VELO PRE-FLIGHT REPORT — {TODAY_DISPLAY}\n"
         f"repo:       elpresidentepiff/velo-oracle-prime\n"
-        f"branch:     feature/v10-launch\n"
-        f"service:    velo-oracle\n"
-        f"PRIME live: YES (velo_prime_v1)\n"
         f"racecards:  {racecard_source}\n"
-        f"supabase:   OK\n"
-        f"telegram:   OK\n"
-        f"STATUS:     READY"
+        + "\n".join(pf_lines) + "\n"
+        f"STATUS:     {pf_result.status}"
     )
     print("  Sent: pre-flight report")
 
@@ -662,7 +701,7 @@ def main():
         print(f"  Sent: D/X pass list ({d_n + x_n} races)")
 
     # C. Persistence report
-    persist_status = "PASS" if persist_fail == 0 else "FAIL"
+    persist_status = "PASS" if (persist_fail == 0 and len(score_errors) == 0) else "FAIL"
     tg(
         f"VELO PERSISTENCE REPORT — {TODAY_DISPLAY}\n"
         f"Races fetched:   {len(raw_races)}\n"
@@ -722,23 +761,37 @@ def main():
     if persist_fail > 0 and persist_ok == 0:
         # Total failure — nothing persisted
         err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
-        _close_pipeline_run(db, run_id, "failed", persist_ok, total_runners, err_summary)
+        _close_pipeline_run(db, run_id, "FAIL", persist_ok, total_runners, err_summary)
         print(f"\nFAIL — 0/{len(normalized)} races in velo_verdicts")
+        tg(
+            f"VELO ALERT — FAIL — {TODAY_DISPLAY}\n"
+            f"Persist failures: {persist_fail}\n"
+            f"Score errors:     {len(score_errors)}\n"
+            f"Races in DB:      0 / {len(normalized)}\n"
+            f"Status:           FAIL — investigate immediately"
+        )
         if score_errors:
             for race, err in score_errors[:5]:
                 print(f"  SCORE ERROR: {race.get('course')} {race.get('off_time')} — {err[:100]}")
         sys.exit(1)
     elif persist_fail > 0:
-        # Partial run — some persisted, some failed
+        # Partial run — some persisted, some failed → DEGRADED
         err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
-        _close_pipeline_run(db, run_id, "partial", persist_ok, total_runners, err_summary)
-        print(f"\nPARTIAL — {persist_ok}/{len(normalized)} races in velo_verdicts ({persist_fail} failed)")
+        _close_pipeline_run(db, run_id, "DEGRADED", persist_ok, total_runners, err_summary)
+        print(f"\nDEGRADED — {persist_ok}/{len(normalized)} races in velo_verdicts ({persist_fail} failed)")
+        tg(
+            f"VELO ALERT — DEGRADED — {TODAY_DISPLAY}\n"
+            f"Persist failures: {persist_fail}\n"
+            f"Score errors:     {len(score_errors)}\n"
+            f"Races in DB:      {persist_ok} / {len(normalized)}\n"
+            f"Status:           DEGRADED — partial truth only"
+        )
         if score_errors:
             for race, err in score_errors[:5]:
                 print(f"  SCORE ERROR: {race.get('course')} {race.get('off_time')} — {err[:100]}")
         sys.exit(1)
     else:
-        _close_pipeline_run(db, run_id, "completed", persist_ok, total_runners)
+        _close_pipeline_run(db, run_id, "PASS", persist_ok, total_runners)
         print(f"\nPASS — {persist_ok}/{len(normalized)} races in velo_verdicts")
         sys.exit(0)
 

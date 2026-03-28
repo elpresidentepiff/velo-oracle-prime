@@ -4,7 +4,8 @@ VÉLØ — Sigma Loop Closer
 Pulls today's results from Racing API, reconciles against stored verdicts,
 populates race_results / runner_results / velo_post_race_reviews / sigma_audits.
 
-Single-run guard via pipeline_runs table — aborts if a run is already in_progress.
+Single-run guard via pipeline_runs table — aborts if a run is already running (< 24h).
+Stale running rows older than 24h are auto-closed as FAIL (age gate).
 
 Run: python scripts/close_sigma_loops.py [--date YYYY-MM-DD]
 """
@@ -15,7 +16,7 @@ import json
 import logging
 import argparse
 import uuid
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -71,35 +72,57 @@ def tg(text: str) -> None:
 # ─────────────────────────────────────────────────────────────
 def acquire_run_lock(db: Client, source_date: str) -> Optional[str]:
     """
-    Insert a pipeline_run row with status=in_progress.
-    Returns run_id if acquired, None if a run is already in_progress.
+    Insert a pipeline_runs row with run_state=running.
+    Returns run_id if acquired, None if a recent run is already running (< 24h).
+    Running rows older than 24h are closed as FAIL (age gate) and a new row is inserted.
     """
-    # Check for stale/active runs for this type + date
+    SERVICE = "velo_sigma_closer"
+    AGE_GATE_HOURS = 24
+    now = datetime.now(timezone.utc)
+
     existing = (
         db.table("pipeline_runs")
-        .select("id, status, started_at")
-        .eq("run_type", RUN_TYPE)
+        .select("id, started_at")
+        .eq("service_name", SERVICE)
         .eq("source_date", source_date)
-        .eq("status", "in_progress")
+        .eq("run_state", "running")
         .execute()
     )
-    if existing.data:
-        run = existing.data[0]
-        log.warning(
-            "Run already in_progress (id=%s started_at=%s). Aborting.",
-            run["id"], run["started_at"],
-        )
-        return None
+
+    for row in (existing.data or []):
+        try:
+            started_raw = row["started_at"]
+            started = datetime.fromisoformat(started_raw.rstrip("Z")).replace(tzinfo=timezone.utc)
+        except Exception:
+            started = now - timedelta(hours=AGE_GATE_HOURS + 1)  # treat as stale
+
+        age_hours = (now - started).total_seconds() / 3600
+        if age_hours >= AGE_GATE_HOURS:
+            # Stale — close as FAIL and allow new run
+            db.table("pipeline_runs").update({
+                "run_state":     "completed",
+                "status":        "FAIL",
+                "finished_at":   now.isoformat(),
+                "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new run",
+            }).eq("id", row["id"]).execute()
+            log.warning("Age gate closed stale run %s (%.1fh old)", row["id"], age_hours)
+        else:
+            log.warning(
+                "Run already running (id=%s, age=%.1fh). Aborting.",
+                row["id"], age_hours,
+            )
+            return None
 
     run_id = str(uuid.uuid4())
     db.table("pipeline_runs").insert({
-        "id": run_id,
-        "service_name": "velo_sigma_closer",
-        "run_type": RUN_TYPE,
-        "started_at": datetime.now(timezone.utc).isoformat(),
-        "status": "in_progress",
-        "source_date": source_date,
-        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development"),
+        "id":             run_id,
+        "service_name":   SERVICE,
+        "run_type":       RUN_TYPE,
+        "started_at":     now.isoformat(),
+        "run_state":      "running",
+        "trigger_source": os.getenv("TRIGGER_SOURCE", "manual") or "manual",
+        "source_date":    source_date,
+        "environment":    os.getenv("RAILWAY_ENVIRONMENT", "production"),
     }).execute()
     log.info("Run lock acquired: %s", run_id)
     return run_id
@@ -115,12 +138,13 @@ def release_run_lock(
     error: Optional[str] = None,
 ) -> None:
     db.table("pipeline_runs").update({
-        "finished_at": datetime.now(timezone.utc).isoformat(),
-        "status": status,
-        "races_processed": races,
+        "run_state":        "completed",
+        "finished_at":      datetime.now(timezone.utc).isoformat(),
+        "status":           status,
+        "races_processed":  races,
         "runners_processed": runners,
         "results_processed": results,
-        "error_message": error,
+        "error_message":    error,
     }).eq("id", run_id).execute()
     log.info("Run lock released: %s → %s", run_id, status)
 
@@ -1195,6 +1219,12 @@ def main(target_date: str) -> None:
     if not SUPA_URL or not SUPA_KEY:
         raise EnvironmentError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
 
+    # ── Preflight gate — must pass before any DB access or reconciliation ─────
+    print("\nPREFLIGHT")
+    from src.preflight import preflight_or_die
+    preflight_or_die(tg_fn=tg)   # exits sys.exit(1) on FAIL
+    # ─────────────────────────────────────────────────────────────────────────
+
     db = create_client(SUPA_URL, SUPA_KEY)
     log.info("=== VÉLØ Sigma Loop Closer — %s ===", target_date)
 
@@ -1241,7 +1271,7 @@ def main(target_date: str) -> None:
 
         if not verdicts:
             log.warning("No verdicts found for %s — nothing to reconcile", target_date)
-            release_run_lock(db, run_id, "completed", 0, 0, 0)
+            release_run_lock(db, run_id, "PASS", 0, 0, 0)
             return
 
         verdict_by_race = {v["race_id"]: v for v in verdicts}
@@ -1257,7 +1287,7 @@ def main(target_date: str) -> None:
                 "may not include results. Marking run as partial.",
                 target_date,
             )
-            release_run_lock(db, run_id, "partial", 0, 0, 0,
+            release_run_lock(db, run_id, "DEGRADED", 0, 0, 0,
                              error="Racing API returned 0 results")
             return
 
@@ -1382,7 +1412,7 @@ def main(target_date: str) -> None:
                             rr["actual_winner_sp"], rr["miss_reason"])
 
             # ── Telegram sigma report ─────────────────────────────────────────
-            tg_status = "PASS" if wins > 0 else ("FRAME" if placed > 0 else "MISS")
+            tg_status = "PASS" if wins > 0 else ("PLACED" if placed > 0 else "MISS")
             tier_block = "\n".join(tier_lines) if tier_lines else "  (no tier data)"
             forensic_block = ("\n" + "\n".join(forensic_lines)) if forensic_lines else ""
 
@@ -1446,12 +1476,12 @@ def main(target_date: str) -> None:
             except Exception as e:
                 log.warning("Zep graph write failed (non-fatal): %s", e)
 
-        release_run_lock(db, run_id, "completed",
+        release_run_lock(db, run_id, "PASS",
                          races=races_done, runners=runners_done, results=reviews_done)
 
     except Exception as exc:
         log.exception("Fatal error in sigma loop closer")
-        release_run_lock(db, run_id, "failed", error=str(exc))
+        release_run_lock(db, run_id, "FAIL", error=str(exc))
         sys.exit(1)
 
 

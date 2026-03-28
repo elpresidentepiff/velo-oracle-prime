@@ -175,7 +175,7 @@ class VeloArchivist:
             "top_pick_won": top_pick_hit,
             "top_pick_placed": top_pick_placed,
             "top_pick_position": top_pick_position,
-            "verdict_status": "✅ HIT" if top_pick_hit else ("⚠️ PLACE" if top_pick_placed else "❌ MISS")
+            "verdict_status": "✅ WIN" if top_pick_hit else ("⚠️ PLACED" if top_pick_placed else "❌ MISS")
         }
     
     def get_ledger_stats(self) -> Dict:

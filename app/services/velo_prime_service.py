@@ -650,6 +650,16 @@ def persist_race_predictions(race: dict, predictions: list[dict],
     if not predictions:
         return False
 
+    # Validate tier before any DB write — non-canonical tier rejected
+    if decision_tier is not None:
+        from src.constants import validate_tier
+        try:
+            validate_tier(decision_tier)
+        except ValueError as e:
+            log.error("persist_race_predictions: tier rejected for %s — %s",
+                      race.get("race_id"), e)
+            return False
+
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY")
     if not url or not key:

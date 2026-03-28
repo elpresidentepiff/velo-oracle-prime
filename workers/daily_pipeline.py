@@ -227,11 +227,12 @@ def _log_anomaly(run_id, table_name, anomaly_type, detail, context_row=None):
 
 def open_pipeline_run(run_type, source_date):
     row = {
-        "service_name": "ingestion-spine",
-        "run_type": run_type,
-        "status": "in_progress",
-        "source_date": source_date,
-        "environment": os.environ.get("RAILWAY_ENVIRONMENT", "production"),
+        "service_name":  "ingestion-spine",
+        "run_type":       run_type,
+        "run_state":      "running",
+        "trigger_source": "manual",
+        "source_date":    source_date,
+        "environment":    os.environ.get("RAILWAY_ENVIRONMENT", "production"),
     }
     r = requests.post(
         f"{SUPABASE_URL}/rest/v1/pipeline_runs",
@@ -252,8 +253,9 @@ def close_pipeline_run(run_id, status, stats, error_msg=None, error_trace=None):
     if not run_id:
         return
     patch = {
+        "run_state":   "completed",
         "finished_at": datetime.utcnow().isoformat() + "Z",
-        "status": status,
+        "status":      status,
         "races_processed":   stats.get("races_ok", 0),
         "runners_processed": stats.get("runners_ok", 0),
         "comments_processed": stats.get("spotlight_ok", 0),
@@ -602,24 +604,34 @@ def reconcile_results_for_date(target_date: str, known_race_ids: set, run_id, st
 # ── MAIN PIPELINE ─────────────────────────────────────────────────────────────
 
 def check_already_running(target_date):
-    """Return True if an in_progress daily_ingestion run exists for this date."""
+    """Return True if a running daily_ingestion run (< 24h old) exists for this date."""
     try:
         r = requests.get(
             f"{SUPABASE_URL}/rest/v1/pipeline_runs",
             headers=SUPABASE_HEADERS,
             params={
                 "source_date": f"eq.{target_date}",
-                "status": "eq.in_progress",
-                "run_type": "eq.daily_ingestion",
-                "select": "id,started_at",
+                "run_state":   "eq.running",
+                "run_type":    "eq.daily_ingestion",
+                "select":      "id,started_at",
             },
             timeout=10,
         )
         if r.status_code == 200:
             rows = r.json()
-            if rows:
-                log.warning(f"[guard] Active run already in_progress for {target_date}: {rows[0]['id']} (started {rows[0]['started_at']}). Aborting.")
-                return True
+            for row in rows:
+                try:
+                    from datetime import datetime, timedelta, timezone
+                    started = datetime.fromisoformat(row["started_at"].rstrip("Z")).replace(tzinfo=timezone.utc)
+                    age_hours = (datetime.now(timezone.utc) - started).total_seconds() / 3600
+                except Exception:
+                    age_hours = 25  # treat as stale
+                if age_hours < 24:
+                    log.warning(
+                        "[guard] Active run already running for %s: %s (started %s, %.1fh ago). Aborting.",
+                        target_date, row["id"], row["started_at"], age_hours,
+                    )
+                    return True
     except Exception as exc:
         log.warning(f"[guard] Could not check for active runs: {exc}")
     return False
@@ -633,7 +645,7 @@ def run_pipeline(target_date=None):
 
     # Single-run guard: abort if another run is already in progress for this date
     if check_already_running(target_date):
-        return {"status": "SKIPPED", "reason": "run already in_progress for this date"}
+        return {"status": "SKIPPED", "reason": "run already running for this date"}
 
     stats = {
         "date": target_date,
@@ -660,7 +672,7 @@ def run_pipeline(target_date=None):
             data = resp.json()
         except Exception as exc:
             log.error(f"Racing API fetch failed: {exc}")
-            close_pipeline_run(run_id, "failed", stats, str(exc))
+            close_pipeline_run(run_id, "FAIL", stats, str(exc))
             return {"status": "FAILED", "error": str(exc)}
 
         # ── 2. Archive raw payload ────────────────────────────────────────────
@@ -798,7 +810,7 @@ def run_pipeline(target_date=None):
         log.info(f"Payloads:   {stats['raw_payloads']} archived")
         log.info(f"Errors:     {stats['write_errors']} write errors")
 
-        final_status = "success" if stats["write_errors"] == 0 else "partial"
+        final_status = "PASS" if stats["write_errors"] == 0 else "DEGRADED"
         close_pipeline_run(run_id, final_status, stats)
         return {"status": "OK", "stats": stats}
 
@@ -806,7 +818,7 @@ def run_pipeline(target_date=None):
         tb = traceback.format_exc()
         log.error(f"Pipeline crashed: {exc}")
         log.error(tb)
-        close_pipeline_run(run_id, "failed", stats, str(exc), tb)
+        close_pipeline_run(run_id, "FAIL", stats, str(exc), tb)
         return {"status": "FAILED", "error": str(exc)}
 
 

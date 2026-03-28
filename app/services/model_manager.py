@@ -353,81 +353,83 @@ class ModelManager:
 
         return np.array(v16 + doctrine, dtype=np.float64)
     
-    def predict_trainer_intent(self, features: Dict[str, float]) -> float:
+    def predict_trainer_intent(self, features: Dict[str, float]) -> Dict[str, Any]:
         """
-        Generate Trainer Intent signal
-        
-        Args:
-            features: Engineered features dictionary
-            
-        Returns:
-            Intent signal strength [0, 1]
+        Generate Trainer Intent signal.
+
+        Returns a dict with is_stub=True when the underlying model is a stub.
+        Callers MUST check is_stub before using the signal in truth analytics.
         """
         model = self.get_model("trainer_intent")
         if not model:
-            return 0.5
-        
+            return {"signal": 0.5, "is_stub": True, "reason": "model_not_loaded"}
+
+        is_stub = model.get("status") == "stub"
+        if is_stub:
+            logger.warning("predict_trainer_intent: returning stub signal — exclude from truth analytics")
+
         # Stub prediction: trainer intent factor with boost
         intent = features.get("trainer_intent_factor", 0.5)
         jockey_synergy = features.get("jockey_synergy", 0.5)
-        
+
         signal = (intent * 0.7) + (jockey_synergy * 0.3)
-        return min(max(signal, 0.0), 1.0)
-    
-    def predict_longshot(self, features: Dict[str, float], odds: float) -> float:
+        return {"signal": min(max(signal, 0.0), 1.0), "is_stub": is_stub}
+
+    def predict_longshot(self, features: Dict[str, float], odds: float) -> Dict[str, Any]:
         """
-        Generate Longshot detection score
-        
-        Args:
-            features: Engineered features dictionary
-            odds: Current market odds
-            
-        Returns:
-            Longshot score [0, 1]
+        Generate Longshot detection score.
+
+        Returns a dict with is_stub=True when the underlying model is a stub.
+        Callers MUST check is_stub before using the score in truth analytics.
         """
         model = self.get_model("longshot")
-        if not model or odds < model["odds_threshold"]:
-            return 0.0
-        
+        if not model or odds < model.get("odds_threshold", 10.0):
+            return {"score": 0.0, "is_stub": True, "reason": "model_not_loaded_or_odds_below_threshold"}
+
+        is_stub = model.get("status") == "stub"
+        if is_stub:
+            logger.warning("predict_longshot: returning stub score — exclude from truth analytics")
+
         # Stub prediction: value gap + market movement
         value_gap = features.get("odds_value_gap", 0.5)
         market_move = features.get("market_move_24h", 0.5)
         trainer_intent = features.get("trainer_intent_factor", 0.5)
-        
+
         score = (value_gap * 0.4) + (market_move * 0.3) + (trainer_intent * 0.3)
-        return min(max(score, 0.0), 1.0)
-    
+        return {"score": min(max(score, 0.0), 1.0), "is_stub": is_stub}
+
     def detect_overlay(self, model_prob: float, market_odds: float) -> Dict[str, Any]:
         """
-        Detect betting overlay opportunity
-        
-        Args:
-            model_prob: Model probability
-            market_odds: Market odds
-            
-        Returns:
-            Overlay analysis dictionary
+        Detect betting overlay opportunity.
+
+        Returns is_stub=True when the underlying model is a stub.
+        Callers MUST check is_stub before acting on overlay signal.
         """
         model = self.get_model("benter_overlay")
         if not model:
-            return {"is_overlay": False, "edge": 0.0}
-        
+            return {"is_overlay": False, "edge": 0.0, "is_stub": True, "reason": "model_not_loaded"}
+
+        is_stub = model.get("status") == "stub"
+        if is_stub:
+            logger.warning("detect_overlay: returning stub overlay signal — exclude from truth analytics")
+
         implied_prob = 1.0 / market_odds if market_odds > 0 else 0.0
         edge = model_prob - implied_prob
-        
+
         is_overlay = edge >= model["overlay_threshold"]
-        
+
         # Kelly criterion bet sizing
         kelly_fraction = model["kelly_fraction"]
         bet_size = kelly_fraction * edge if is_overlay else 0.0
-        
+
         return {
             "is_overlay": is_overlay,
             "edge": edge,
             "model_probability": model_prob,
             "implied_probability": implied_prob,
             "kelly_bet_size": bet_size,
-            "expected_value": edge * market_odds if is_overlay else 0.0
+            "expected_value": edge * market_odds if is_overlay else 0.0,
+            "is_stub": is_stub,
         }
     
     def get_status(self) -> Dict[str, Any]:

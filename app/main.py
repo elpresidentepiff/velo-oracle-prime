@@ -106,18 +106,173 @@ async def verify_api_key(x_api_key: str = Header(None)):
 @app.get("/health")
 async def health_check():
     """
-    Health check endpoint for Railway and monitoring
-    
-    Returns:
-        Status and metadata
+    Real health check — fails if DB unreachable or last scoring run is stale.
+    Returns HTTP 503 on any critical failure so Railway detects the problem.
     """
-    return {
-        "status": "ok",
+    import urllib.request, urllib.error, json as _json, os as _os
+
+    issues = []
+    details: dict = {
         "app": "VÉLØ Oracle",
         "version": "v1.0",
         "environment": ENV,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
+
+    # ── 1. Supabase reachability ──────────────────────────────────────────────
+    sb_url = _os.getenv("SUPABASE_URL", "")
+    sb_key = _os.getenv("SUPABASE_SERVICE_ROLE_KEY") or _os.getenv("SUPABASE_SERVICE_KEY", "")
+    if not sb_url or not sb_key:
+        issues.append("SUPABASE_URL or SUPABASE_SERVICE_KEY env vars missing")
+        details["db"] = "UNCONFIGURED"
+    else:
+        try:
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/pipeline_runs?select=id&limit=1",
+                headers={
+                    "apikey": sb_key,
+                    "Authorization": f"Bearer {sb_key}",
+                    "Accept": "application/json",
+                }
+            )
+            with urllib.request.urlopen(req, timeout=5):
+                details["db"] = "REACHABLE"
+        except Exception as e:
+            issues.append(f"Supabase unreachable: {e}")
+            details["db"] = "UNREACHABLE"
+
+    # ── 2. Last successful scoring run freshness (must be < 26 hours ago) ────
+    STALE_HOURS = 26
+    if sb_url and sb_key and "UNREACHABLE" not in details.get("db", ""):
+        try:
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/pipeline_runs?select=started_at,status&status=eq.PASS&order=started_at.desc&limit=1",
+                headers={
+                    "apikey": sb_key,
+                    "Authorization": f"Bearer {sb_key}",
+                    "Accept": "application/json",
+                    "Prefer": "",
+                }
+            )
+            with urllib.request.urlopen(req, timeout=5) as r:
+                rows = _json.loads(r.read())
+            if not rows:
+                issues.append("No PASS pipeline_run found — scoring may never have run successfully")
+                details["last_scoring_run"] = "NEVER"
+            else:
+                last_ts_str = rows[0].get("started_at", "")
+                if last_ts_str:
+                    # Accept ISO strings with or without trailing Z
+                    last_ts = datetime.fromisoformat(last_ts_str.rstrip("Z"))
+                    age_hours = (datetime.utcnow() - last_ts).total_seconds() / 3600
+                    details["last_scoring_run"] = f"{age_hours:.1f}h ago"
+                    if age_hours > STALE_HOURS:
+                        issues.append(f"Last PASS scoring run is {age_hours:.1f}h ago (threshold: {STALE_HOURS}h)")
+                        details["last_scoring_run_status"] = "STALE"
+                    else:
+                        details["last_scoring_run_status"] = "FRESH"
+        except Exception as e:
+            issues.append(f"Could not check last scoring run: {e}")
+            details["last_scoring_run"] = "UNKNOWN"
+
+    # ── 3. Model artifact present and loadable ───────────────────────────────
+    # Mirrors model_manager.load_sqpe() exactly: sqpe_v17 first, sqpe_v16 fallback.
+    # File existence is not enough — a corrupt pickle must also fail this check.
+    import pathlib as _pathlib
+    import joblib as _joblib
+    _model_root = _pathlib.Path(__file__).parent.parent / "models"
+    _sqpe_candidates = [
+        _model_root / "sqpe_v17" / "sqpe_v17.pkl",
+        _model_root / "sqpe_v16" / "sqpe_v16.pkl",
+    ]
+    _sqpe_found = None
+    for _p in _sqpe_candidates:
+        if _p.exists():
+            _sqpe_found = _p
+            break
+    if _sqpe_found is None:
+        issues.append(
+            f"SQPE model artifact missing — checked: "
+            f"{[str(p.relative_to(_model_root.parent)) for p in _sqpe_candidates]}"
+        )
+        details["sqpe_model"] = "MISSING"
+    else:
+        try:
+            _joblib.load(_sqpe_found)
+            details["sqpe_model"] = f"LOADED ({_sqpe_found.name})"
+        except Exception as _e:
+            issues.append(f"SQPE model load failed ({_sqpe_found.name}): {_e}")
+            details["sqpe_model"] = "CORRUPT"
+
+    # ── Result ───────────────────────────────────────────────────────────────
+    if issues:
+        details["status"] = "FAIL"
+        details["issues"] = issues
+        return JSONResponse(status_code=503, content=details)
+
+    details["status"] = "ok"
+    return details
+
+
+# ── Scoring trigger — called by GitHub Actions scheduler ─────────────────────
+@app.post("/api/trigger/score-daily", status_code=202)
+async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(None)):
+    """
+    Trigger daily scoring run from an external scheduler (GitHub Actions).
+    Returns 202 immediately — scoring runs as a background subprocess.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
+    """
+    import subprocess, sys, pathlib
+
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if not trigger_secret:
+        logger.error("TRIGGER_SCORE_SECRET not configured — trigger endpoint disabled")
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if x_trigger_secret != trigger_secret:
+        logger.warning("Trigger attempt with invalid secret")
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    body: dict = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    trigger_source = body.get("trigger_source") or "api_manual"
+    target_date    = body.get("target_date") or ""
+
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_prime_today.py"
+    if not script_path.exists():
+        raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
+
+    env = os.environ.copy()
+    env["TRIGGER_SOURCE"] = trigger_source
+
+    cmd = [sys.executable, str(script_path)]
+    if target_date:
+        cmd += ["--date", target_date]
+
+    proc = subprocess.Popen(
+        cmd,
+        env=env,
+        cwd=str(script_path.parent.parent),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    logger.info(
+        "Scoring triggered — source=%s pid=%d target_date=%s",
+        trigger_source, proc.pid, target_date or "today",
+    )
+
+    return JSONResponse(status_code=202, content={
+        "status":         "triggered",
+        "trigger_source": trigger_source,
+        "target_date":    target_date or "today",
+        "pid":            proc.pid,
+    })
 
 
 # Root endpoint

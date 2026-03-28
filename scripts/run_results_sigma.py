@@ -29,6 +29,11 @@ sys.path.insert(0, str(ROOT))
 from dotenv import load_dotenv
 load_dotenv(ROOT / ".env")
 
+from src.constants import (
+    OUTCOME_WIN, OUTCOME_PLACED, OUTCOME_MISS, OUTCOME_NO_RESULT,
+    validate_outcome, validate_tier,
+)
+
 TOKEN   = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 TODAY   = date.today().strftime("%Y-%m-%d")
@@ -129,10 +134,16 @@ def main():
     print(f"\nVELO RESULTS + SIGMA — {race_date}")
     print("=" * 60)
 
+    # ── PREFLIGHT GATE ────────────────────────────────────────────────────────
+    print("\nPREFLIGHT")
+    from src.preflight import preflight_or_die
+    preflight_or_die(tg_fn=tg)   # exits with sys.exit(1) on FAIL
+    # ─────────────────────────────────────────────────────────────────────────
+
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
     print("\nSTEP 1: Load predictions from velo_verdicts")
     verdicts_raw = sb_get(
-        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at"
+        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis"
         f"&generated_at=gte.{race_date}T00:00:00"
         f"&generated_at=lt.{race_date}T23:59:59"
         f"&order=generated_at"
@@ -143,20 +154,91 @@ def main():
         tg(f"VELO SIGMA ABORT — {race_date}\nNo predictions found in velo_verdicts.")
         sys.exit(1)
 
-    # Build lookup: race_id -> {horse_id, velo_prime_prob}
-    predictions = {v["race_id"]: v for v in verdicts_raw}
+    # Build lookup: race_id -> verdict row (keep latest generated_at if duplicates exist)
+    predictions: dict = {}
+    for v in verdicts_raw:
+        rid = v["race_id"]
+        if rid not in predictions:
+            predictions[rid] = v
+        else:
+            # Keep the row with the latest generated_at
+            existing_ts = predictions[rid].get("generated_at") or ""
+            new_ts      = v.get("generated_at") or ""
+            if new_ts > existing_ts:
+                if (predictions[rid].get("top_rank_horse_id") or "") != (v.get("top_rank_horse_id") or ""):
+                    print(f"  [WARN] multiple conflicting verdicts for {rid}, using latest generated_at")
+                predictions[rid] = v
 
-    # Load horse names from local backup
+    # ── Gap 2: resolve pick horse names from velo_verdicts.selections ─────────
+    # Primary source: Supabase velo_verdicts.selections JSON array.
+    # Fallback: local backup JSON (flagged with [fallback] tag).
+    horse_names: dict = {}
+
+    # Build local backup index first (used as fallback below)
     backup = ROOT / "data" / f"velo_prime_verdicts_{race_date.replace('-','_')}.json"
-    horse_names = {}
+    local_backup: dict = {}
     if backup.exists():
-        for r in json.loads(backup.read_text()):
-            top = r.get("top", {})
-            horse_names[r["race_id"]] = {
-                "horse": top.get("horse", "?"),
-                "course": r.get("course", "?"),
-                "off_time": r.get("off_time", "?"),
+        try:
+            for r in json.loads(backup.read_text()):
+                top = r.get("top", {})
+                local_backup[r["race_id"]] = {
+                    "horse": top.get("horse", "?"),
+                    "course": r.get("course", "?"),
+                    "off_time": r.get("off_time", "?"),
+                }
+        except Exception as e:
+            print(f"  [WARN] local backup JSON unreadable: {e}")
+
+    for rid, v in predictions.items():
+        top_horse_id  = v.get("top_rank_horse_id") or ""
+        selections_raw = v.get("full_analysis")
+
+        # Parse selections — may arrive as string or list depending on Supabase client
+        selections = []
+        if isinstance(selections_raw, list):
+            selections = selections_raw
+        elif isinstance(selections_raw, str):
+            try:
+                selections = json.loads(selections_raw)
+            except Exception:
+                selections = []
+
+        pick_name = None
+        if top_horse_id and selections:
+            for sel in selections:
+                if not isinstance(sel, dict):
+                    continue
+                # selections entries may use horse_id or id
+                sel_hid = sel.get("horse_id") or sel.get("id") or ""
+                if sel_hid == top_horse_id:
+                    pick_name = sel.get("horse") or sel.get("name") or sel.get("horse_name")
+                    break
+            # If top_rank_horse_id not matched in selections, try rank position 0
+            if pick_name is None and selections:
+                first = selections[0]
+                if isinstance(first, dict):
+                    pick_name = first.get("horse") or first.get("name") or first.get("horse_name")
+
+        if pick_name:
+            horse_names[rid] = {
+                "horse":    pick_name,
+                "course":   "?",   # not in velo_verdicts; filled from results lookup below
+                "off_time": "?",
+                "from_db":  True,
             }
+        else:
+            # Fallback to local JSON backup
+            fb = local_backup.get(rid)
+            if fb:
+                print(f"  [WARN] pick name from local fallback for race {rid}")
+                horse_names[rid] = {
+                    "horse":    fb["horse"],
+                    "course":   fb.get("course", "?"),
+                    "off_time": fb.get("off_time", "?"),
+                    "from_db":  False,
+                }
+            else:
+                horse_names[rid] = {"horse": "?", "course": "?", "off_time": "?", "from_db": False}
 
     # ── STEP 2: Fetch results from Racing API ─────────────────────────────────
     print("\nSTEP 2: Fetch results from Racing API")
@@ -216,16 +298,31 @@ def main():
             no_result.append(race_id)
             continue
 
+        # ── Integrity gate: reject unresolvable predictions ───────────────────
+        # Gate 1: no horse ID → cannot score, never force-MISS
+        if not predicted_horse_id:
+            print(f"  [SKIP] {race_id}: predicted_horse_id empty — no_result (unresolvable)")
+            no_result.append(race_id)
+            continue
+
+        # Gate 2: horse name not from velo_verdicts DB → reject to prevent
+        #         fallback-name flip (local JSON may not match canonical selection)
+        pick_from_db = info.get("from_db", False)
+        if not pick_from_db:
+            print(f"  [SKIP] {race_id}: pick name not from velo_verdicts — no_result (fallback source rejected)")
+            no_result.append(race_id)
+            continue
+
         is_hit   = predicted_horse_id == result["winner_id"]
         is_frame = predicted_horse_id in result["top3_ids"]
         miss_class = "n/a"
 
         if is_hit:
             hits.append(race_id)
-            outcome = "HIT"
+            outcome = "WIN"
         elif is_frame:
             frames.append(race_id)
-            outcome = "FRAME"
+            outcome = "PLACED"
         else:
             outcome = "MISS"
             # Classify miss
@@ -238,12 +335,17 @@ def main():
                 miss_class = "mid_priced_won"
             misses.append(race_id)
 
+        raw_horse_name = info.get("horse", "?")
+        pick_display   = raw_horse_name  # pick_from_db is guaranteed True by gate above
+
         all_matched.append({
             "race_id":       race_id,
             "course":        result["course"],
             "off":           result["off"],
-            "predicted":     info.get("horse", "?"),
+            "predicted":     pick_display,
+            "predicted_raw": raw_horse_name,
             "predicted_id":  predicted_horse_id,
+            "pick_from_db":  pick_from_db,
             "actual_winner": result["winner_id"],
             "actual_name":   result["winner_name"] if "winner_name" in result else result["winner_horse"],
             "winner_sp":     result["winner_sp"],
@@ -253,10 +355,9 @@ def main():
             "top3":          result["top3_names"],
         })
 
-        symbol = "HIT" if is_hit else ("FRAME" if is_frame else f"MISS({miss_class})")
-        pred_name = info.get("horse", "?")
+        symbol = "WIN" if is_hit else ("PLACED" if is_frame else f"MISS({miss_class})")
         print(f"  {symbol:<25} {result['course']:<22} {result['off']}  "
-              f"pred={pred_name:<22} actual={result['winner_horse']}")
+              f"pred={pick_display:<30} actual={result['winner_horse']}")
 
     total_matched = len(all_matched)
     total_hits    = len(hits)
@@ -291,14 +392,14 @@ def main():
     print("\nSTEP 5: Sigma analysis")
 
     # Calibration: average velo_prime_prob for hits vs misses
-    hit_probs  = [r["velo_prime_prob"] for r in all_matched if r["outcome"] == "HIT"]
+    hit_probs  = [r["velo_prime_prob"] for r in all_matched if r["outcome"] == "WIN"]
     miss_probs = [r["velo_prime_prob"] for r in all_matched if r["outcome"] == "MISS"]
     avg_hit_prob  = sum(hit_probs)  / len(hit_probs)  if hit_probs  else 0
     avg_miss_prob = sum(miss_probs) / len(miss_probs) if miss_probs else 0
 
     # High-confidence picks (velo_prime_prob >= 0.30)
     high_conf = [r for r in all_matched if r["velo_prime_prob"] >= 0.30]
-    high_hits = [r for r in high_conf if r["outcome"] == "HIT"]
+    high_hits = [r for r in high_conf if r["outcome"] == "WIN"]
     high_strike = len(high_hits) / len(high_conf) if high_conf else 0
 
     print(f"  avg prob (hits):    {avg_hit_prob:.4f}")
@@ -323,19 +424,107 @@ def main():
     sigma_ok = 0
     for row in all_matched:
         miss_reason = row["miss_class"] if row["outcome"] == "MISS" else None
-        top_pos = 1 if row["outcome"] == "HIT" else (3 if row["outcome"] == "FRAME" else 99)
+
+        # Gap 1: fetch actual finishing_position from runner_race_facts.
+        # If position is NULL or query fails: write None — never manufacture 1/3/99.
+        top_pos = None
+        _pos_note = ""
+        try:
+            rrf_rows = sb_get(
+                f"/runner_race_facts"
+                f"?select=finishing_position"
+                f"&race_id=eq.{row['race_id']}"
+                f"&horse_id=eq.{row['predicted_id']}"
+                f"&limit=1"
+            )
+            if rrf_rows and rrf_rows[0].get("finishing_position") is not None:
+                top_pos = int(rrf_rows[0]["finishing_position"])
+            else:
+                _pos_note = "finishing_position_null"
+                print(f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: finishing_position not in DB — writing NULL (no bucket fallback)")
+        except Exception as _fp_err:
+            _pos_note = f"finishing_position_error: {_fp_err}"
+            print(f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: finishing_position fetch failed — writing NULL: {_fp_err}")
+
+        # Full-field RPD: read rpd_tag per runner from velo_verdicts.selections
+        # Primary source: selections already stored by run_prime_today.py.
+        # Runners absent from selections get rpd_tag=UNKNOWN.
+        _pred_sel_raw = predictions.get(row["race_id"], {}).get("full_analysis")
+        if isinstance(_pred_sel_raw, list):
+            _pred_sel = _pred_sel_raw
+        elif isinstance(_pred_sel_raw, str):
+            try:
+                _pred_sel = json.loads(_pred_sel_raw)
+            except Exception:
+                _pred_sel = []
+        else:
+            _pred_sel = []
+
+        _sel_by_hid: dict = {}
+        for _s in _pred_sel:
+            if isinstance(_s, dict):
+                _hid = _s.get("horse_id") or _s.get("id") or ""
+                if _hid:
+                    _sel_by_hid[_hid] = {
+                        "rpd_tag":        _s.get("rpd_tag"),
+                        "rpd_confidence": _s.get("rpd_confidence"),
+                        "rpd_evidence":   _s.get("rpd_evidence_codes") or _s.get("rpd_evidence"),
+                    }
+
+        _full_runners = results_by_id.get(row["race_id"], {}).get("full_runners", [])
+        _sorted_runners = sorted(
+            [_r for _r in _full_runners if str(_r.get("position", "")).isdigit()],
+            key=lambda _r: int(_r["position"])
+        )
+        full_field_rpd = []
+        for _r in _sorted_runners:
+            _rhid = _r.get("horse_id", "")
+            _rpd  = _sel_by_hid.get(_rhid, {})
+            full_field_rpd.append({
+                "pos":            int(_r["position"]),
+                "horse":          _r.get("horse", "?"),
+                "horse_id":       _rhid,
+                "rpd_tag":        _rpd.get("rpd_tag") or "UNKNOWN",
+                "rpd_confidence": _rpd.get("rpd_confidence"),
+                "rpd_evidence":   _rpd.get("rpd_evidence"),
+            })
+
+        _notes_summary = (
+            f"pred={row['predicted']}"
+            f" | prob={row['velo_prime_prob']:.4f} {sigma_note}"
+            f" | winner_name={row['top3'][0] if row['top3'] else '?'}"
+            f" | place2={row['top3'][1] if len(row['top3']) > 1 else 'unknown'}"
+            f" | place3={row['top3'][2] if len(row['top3']) > 2 else 'unknown'}"
+            + (f" | pos_note={_pos_note}" if _pos_note else "")
+        )
+
+        # Hard validate before write — non-canonical outcome raises ValueError (aborts row)
+        try:
+            validate_outcome(row["outcome"])
+            _tier_raw = predictions.get(row["race_id"], {}).get("decision_tier")
+            if _tier_raw:
+                validate_tier(_tier_raw)
+        except ValueError as _ve:
+            print(f"  [CANON REJECT] {row['race_id']}: {_ve}")
+            continue
+
         sigma_row = {
-            "race_id":           row["race_id"],
-            "date":              race_date,
-            "track":             row["course"],
-            "event_type":        "sigma_reconciliation",
-            "outcome":           row["outcome"],
-            "decision_tier":     predictions.get(row["race_id"], {}).get("decision_tier"),
-            "miss_reason":       miss_reason,
-            "top_pick_position": top_pos,
-            "actual_winner_id":  row["actual_winner"],
-            "actual_winner_sp":  float(row["winner_sp"]) if row["winner_sp"] else None,
-            "notes":             f"pred={row['predicted']} prob={row['velo_prime_prob']:.4f} {sigma_note}",
+            "race_id":             row["race_id"],
+            "date":                race_date,
+            "track":               row["course"],
+            "off_time":            row.get("off") or None,          # race start time
+            "event_type":          "sigma_reconciliation",
+            "outcome":             row["outcome"],
+            "decision_tier":       predictions.get(row["race_id"], {}).get("decision_tier"),
+            "miss_reason":         miss_reason,
+            "top_pick_position":   top_pos,
+            "actual_winner_id":    row["actual_winner"],
+            "actual_winner_name":  row.get("actual_name") or None,  # winner name
+            "actual_winner_sp":    float(row["winner_sp"]) if row["winner_sp"] else None,
+            "notes":               json.dumps({
+                "summary":         _notes_summary,
+                "full_field_rpd":  full_field_rpd,
+            }),
         }
         if sb_post("/sigma_audits", sigma_row):
             sigma_ok += 1
@@ -348,7 +537,7 @@ def main():
     now_iso = datetime.utcnow().isoformat()
     patterns_saved = 0
     for r in all_matched:
-        if r["outcome"] == "HIT" and r["velo_prime_prob"] >= 0.25:
+        if r["outcome"] == "WIN" and r["velo_prime_prob"] >= 0.25:
             pattern = {
                 "pattern_name":    f"prime_hit_{r['race_id']}",
                 "description":     f"PRIME hit: {r['predicted']} @ prob={r['velo_prime_prob']:.4f} won {r['course']} {r['off']}",
@@ -433,7 +622,7 @@ def main():
                 print(f"    skip [no_sp]: {row['predicted']} ({rid}) — sp_dec absent or ≤ 1.0")
             continue
 
-        is_win     = row["outcome"] == "HIT"
+        is_win     = row["outcome"] == "WIN"
         pl         = round(stake * (pred_sp - 1), 2) if is_win else round(-stake, 2)
         returns    = round(stake * pred_sp, 2) if is_win else 0.0
         bankroll_before = round(current_bankroll, 2)
@@ -484,8 +673,8 @@ def main():
     # A. Hits
     hit_lines = []
     for r in all_matched:
-        if r["outcome"] == "HIT":
-            hit_lines.append(f"  HIT  {r['course']:<18} {r['off']}  {r['predicted']} (prob={r['velo_prime_prob']:.4f})")
+        if r["outcome"] == "WIN":
+            hit_lines.append(f"  WIN  {r['course']:<18} {r['off']}  {r['predicted']} (prob={r['velo_prime_prob']:.4f})")
 
     # B. Notable misses (high prob but missed)
     notable_misses = sorted(
@@ -494,7 +683,7 @@ def main():
     )
 
     # C. Frame picks (2nd/3rd)
-    frame_lines = [r for r in all_matched if r["outcome"] == "FRAME"]
+    frame_lines = [r for r in all_matched if r["outcome"] == "PLACED"]
 
     # Main sigma report
     sigma_msg = (
@@ -517,7 +706,7 @@ def main():
 
     # Hits breakdown
     if hit_lines:
-        tg("VELO HITS — " + TODAY_DISPLAY + "\n" + "\n".join(hit_lines))
+        tg("VELO WINS — " + TODAY_DISPLAY + "\n" + "\n".join(hit_lines))
         print(f"  Sent: {len(hit_lines)} hits")
 
     # Miss class breakdown
@@ -535,7 +724,7 @@ def main():
 
     # Frame picks
     if frame_lines:
-        frame_msg = "VELO FRAMES (placed 2nd/3rd) — " + TODAY_DISPLAY + "\n"
+        frame_msg = "VELO PLACED (2nd/3rd) — " + TODAY_DISPLAY + "\n"
         frame_msg += "\n".join([
             f"  {r['course']} {r['off']}  {r['predicted']} placed — won: {r['actual_name']}"
             for r in frame_lines[:10]
@@ -543,17 +732,28 @@ def main():
         tg(frame_msg)
         print(f"  Sent: {len(frame_lines)} frames")
 
-    # Final report
+    # Final report — status reflects sigma write truth
+    sigma_status = "PASS" if sigma_ok > 0 else "FAIL"
     tg(
         f"VELO RESULTS COMPLETE — {TODAY_DISPLAY}\n"
         f"Races: {total_matched}\n"
         f"Strike rate: {strike_rate:.1%}\n"
         f"Frame rate:  {frame_rate:.1%}\n"
         f"Ledger bets: {ledger_ok}  bankroll: £{current_bankroll:.2f}\n"
-        f"Supabase: sigma_audits={sigma_ok}  learned_patterns={patterns_saved}\n"
-        f"Status: COMPLETE"
+        f"Supabase: sigma_audits={sigma_ok}/{total_matched}  learned_patterns={patterns_saved}\n"
+        f"Status: {sigma_status}"
     )
-    print(f"  Sent: final report")
+    print(f"  Sent: final report ({sigma_status})")
+
+    # Hard fail if all sigma writes failed — this run produced no truth
+    if sigma_ok == 0 and total_matched > 0:
+        tg(
+            f"VELO ALERT — SIGMA FAIL — {TODAY_DISPLAY}\n"
+            f"All {total_matched} sigma_audits writes failed.\n"
+            f"Post-race truth not persisted. Investigate immediately."
+        )
+        print("\nFAIL — sigma_ok=0: no reconciliation truth persisted")
+        sys.exit(1)
 
     # ── Summary ───────────────────────────────────────────────────────────────
     print(f"\n{'=' * 60}")

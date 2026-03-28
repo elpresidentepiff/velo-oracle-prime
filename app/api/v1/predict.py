@@ -123,8 +123,9 @@ async def predict_quick(
 
         try:
             prob = predictor.predict(runner, [runner], race)
-        except Exception:
-            prob = 0.15  # Fallback
+        except Exception as _model_err:
+            logger.error("Core model prediction failed — refusing to return fake probability: %s", _model_err)
+            raise HTTPException(status_code=503, detail=f"Core model unavailable: {_model_err}")
 
         # Calculate edge
         edge = prob - (1.0 / request.market_odds) if request.market_odds else 0.0
@@ -224,21 +225,27 @@ async def predict_ensemble(
             except:
                 models[name] = None
         
-        # Get predictions
+        # Get predictions — only from models that actually loaded
         feature_array = np.array(list(request.features.values())).reshape(1, -1)
-        
+
         preds = []
-        for model in models.values():
-            if model:
-                try:
-                    pred = model.predict_proba(feature_array)[0, 1]
-                    preds.append(pred)
-                except:
-                    preds.append(0.15)
-            else:
-                preds.append(0.15)
-        
-        # Ensemble (average)
+        failed_models = []
+        for name, model in models.items():
+            if model is None:
+                failed_models.append(f"{name}:not_loaded")
+                continue
+            try:
+                pred = model.predict_proba(feature_array)[0, 1]
+                preds.append(pred)
+            except Exception as _me:
+                failed_models.append(f"{name}:{_me}")
+
+        # Refuse to return fake probability if no real model produced output
+        if not preds:
+            logger.error("Ensemble: all models failed to produce output — refusing to return fake probability. failed=%s", failed_models)
+            raise HTTPException(status_code=503, detail=f"All ensemble models unavailable: {failed_models}")
+
+        # Ensemble (average of loaded-only models)
         ensemble_prob = float(np.mean(preds))
         
         edge = ensemble_prob - (1.0 / request.market_odds) if request.market_odds else 0.0
@@ -252,7 +259,9 @@ async def predict_ensemble(
             risk_band="MEDIUM",
             signals={
                 'mode': 'ensemble',
-                'model_predictions': dict(zip(models.keys(), preds))
+                'models_loaded': len(preds),
+                'models_failed': len(failed_models),
+                'failed_detail': failed_models if failed_models else None,
             }
         )
     

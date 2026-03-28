@@ -9,3 +9,12 @@ cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 path = "/health"
 timeout = 30
 interval = 60
+
+# ── Scoring cron ──────────────────────────────────────────────────────────────
+# This documents the intended schedule. Railway stores service config server-side.
+# If the cron is lost after a redeploy, re-register via Railway dashboard or API:
+#   serviceInstanceUpdate(serviceId, environmentId, { cronSchedule: "0 9 * * 1-6" })
+# Service: velo-prime-scoring
+# Schedule: 09:00 UTC Mon-Sat (covers UK flat/NH season)
+# Command: python scripts/run_prime_today.py
+# cronSchedule = "0 9 * * 1-6"
