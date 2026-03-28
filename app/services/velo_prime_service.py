@@ -18,6 +18,7 @@ Returns:
     macro_regime_label, macro_chaos_mode, favourite_trap_risk,
     confidence_level, verdict_flags, ensemble_version
 """
+
 from __future__ import annotations
 
 import logging
@@ -25,9 +26,9 @@ import math
 import os
 import re
 from datetime import datetime, timedelta
-from typing import Any
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
@@ -39,6 +40,7 @@ ENSEMBLE_VERSION = "velo_prime_v1"
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
+
 def _safe(val, default=0.0):
     try:
         v = float(val)
@@ -47,8 +49,7 @@ def _safe(val, default=0.0):
         return default
 
 
-def _build_live_features(runner: dict, race: dict, field_or_vals: list[float],
-                          field_rpr_vals: list[float]) -> dict:
+def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], field_rpr_vals: list[float]) -> dict:
     """
     Build the feature dict for SQPE v17 + specialist models from a canonical
     normalized runner + race.
@@ -60,38 +61,38 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float],
     Downstream models use these flags as explicit uncertainty signals.
     """
     # Ratings: None = genuinely absent. Do NOT coerce to 0.0 here.
-    or_raw   = runner.get("official_rating")  # Optional[float]
-    rpr_raw  = runner.get("rpr")              # Optional[float]
-    ts_raw   = runner.get("ts")               # Optional[float]
+    or_raw = runner.get("official_rating")  # Optional[float]
+    rpr_raw = runner.get("rpr")  # Optional[float]
+    ts_raw = runner.get("ts")  # Optional[float]
 
-    or_missing  = float(runner.get("or_missing",  or_raw  is None))
+    or_missing = float(runner.get("or_missing", or_raw is None))
     rpr_missing = float(runner.get("rpr_missing", rpr_raw is None))
-    ts_missing  = float(runner.get("ts_missing",  ts_raw  is None))
+    ts_missing = float(runner.get("ts_missing", ts_raw is None))
 
-    odds     = _safe(runner.get("best_odds_decimal"))
-    sp_dec   = odds if odds > 1.0 else 10.0
-    log_sp   = math.log(max(sp_dec, 1.01))
+    odds = _safe(runner.get("best_odds_decimal"))
+    sp_dec = odds if odds > 1.0 else 10.0
+    log_sp = math.log(max(sp_dec, 1.01))
     imp_prob = 1.0 / max(sp_dec, 1.01)
 
     # Field averages computed only from rated runners (those with real values).
     # field_or_vals / field_rpr_vals are pre-filtered to > 0 by caller.
-    avg_or  = sum(field_or_vals)  / len(field_or_vals)  if field_or_vals  else 0.0
+    avg_or = sum(field_or_vals) / len(field_or_vals) if field_or_vals else 0.0
     avg_rpr = sum(field_rpr_vals) / len(field_rpr_vals) if field_rpr_vals else 0.0
 
     # vs_field: neutral (0.0) when the runner has no rating.
     # This avoids fabricating a negative penalty for unrated horses.
     if or_raw is not None:
-        or_num      = float(or_raw)
+        or_num = float(or_raw)
         or_vs_field = or_num - avg_or
     else:
-        or_num      = avg_or  # placeholder only — not used in model when or_missing=1
+        or_num = avg_or  # placeholder only — not used in model when or_missing=1
         or_vs_field = 0.0
 
     if rpr_raw is not None:
-        rpr_num      = float(rpr_raw)
+        rpr_num = float(rpr_raw)
         rpr_vs_field = rpr_num - avg_rpr
     else:
-        rpr_num      = avg_rpr  # placeholder only
+        rpr_num = avg_rpr  # placeholder only
         rpr_vs_field = 0.0
 
     ts_num = float(ts_raw) if ts_raw is not None else 0.0
@@ -101,57 +102,73 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float],
         missing = [f for f, v in [("or", or_missing), ("rpr", rpr_missing), ("ts", ts_missing)] if v]
         log.debug(
             "rating_fallback race=%s horse=%s missing=%s or_vs_field=neutral",
-            race.get("race_id"), runner.get("horse_name"), missing,
+            race.get("race_id"),
+            runner.get("horse_name"),
+            missing,
         )
 
     # Total field size — use actual runner count, not rated-runner count
     field_size = max(len(race.get("runners", [])), 1)
 
     # Market rank (1 = shortest odds)
-    all_odds = sorted([r.get("best_odds_decimal", 0) or 999 for r in race.get("runners", [])
-                       if (r.get("best_odds_decimal") or 0) > 0])
+    all_odds = sorted(
+        [r.get("best_odds_decimal", 0) or 999 for r in race.get("runners", []) if (r.get("best_odds_decimal") or 0) > 0]
+    )
     sp_rank = (all_odds.index(sp_dec) + 1) if sp_dec in all_odds else field_size
-    is_fav  = 1.0 if sp_rank == 1 else 0.0
+    is_fav = 1.0 if sp_rank == 1 else 0.0
 
     # Race-level
     from app.services.model_manager import ModelManager
-    dist_f    = ModelManager._parse_dist(race.get("distance_f") or race.get("distance"))
+
+    dist_f = ModelManager._parse_dist(race.get("distance_f") or race.get("distance"))
     going_code, is_aw = ModelManager._parse_going(race.get("going"))
     class_num = ModelManager._parse_class(race.get("race_class"))
-    draw_num  = _safe(runner.get("draw"))
-    draw_pct  = draw_num / field_size
+    draw_num = _safe(runner.get("draw"))
+    draw_pct = draw_num / field_size
 
     # Rating/market gap helpers for market_deception_model
     rating_mkt_gap = rpr_vs_field - (1.0 / max(sp_dec, 1.01)) * 100
-    or_mkt_gap     = or_vs_field  - (1.0 / max(sp_dec, 1.01)) * 100
+    or_mkt_gap = or_vs_field - (1.0 / max(sp_dec, 1.01)) * 100
 
     feats = {
         # v16 base
-        "sp_dec": sp_dec, "log_sp": log_sp, "implied_prob": imp_prob,
-        "dist_f": dist_f, "going_code": going_code, "is_aw": float(is_aw),
-        "class_num": class_num, "wgt_lbs": _safe(runner.get("weight_lbs"), 126.0),
-        "or_num": or_num, "rpr_num": rpr_num, "ts_num": ts_num,
-        "or_vs_field": or_vs_field, "rpr_vs_field": rpr_vs_field,
-        "field_size": float(field_size), "draw_num": draw_num,
-        "draw_pct": draw_pct, "age_num": _safe(runner.get("age")),
-        "sp_rank": float(sp_rank), "is_fav": is_fav,
+        "sp_dec": sp_dec,
+        "log_sp": log_sp,
+        "implied_prob": imp_prob,
+        "dist_f": dist_f,
+        "going_code": going_code,
+        "is_aw": float(is_aw),
+        "class_num": class_num,
+        "wgt_lbs": _safe(runner.get("weight_lbs"), 126.0),
+        "or_num": or_num,
+        "rpr_num": rpr_num,
+        "ts_num": ts_num,
+        "or_vs_field": or_vs_field,
+        "rpr_vs_field": rpr_vs_field,
+        "field_size": float(field_size),
+        "draw_num": draw_num,
+        "draw_pct": draw_pct,
+        "age_num": _safe(runner.get("age")),
+        "sp_rank": float(sp_rank),
+        "is_fav": is_fav,
         # draw model extras
         "draw_going": going_code * draw_pct,
-        "draw_dist":  dist_f    * draw_pct,
-        "draw_aw":    float(is_aw) * draw_pct,
+        "draw_dist": dist_f * draw_pct,
+        "draw_aw": float(is_aw) * draw_pct,
         "draw_class": class_num * draw_pct,
-        "draw_size":  field_size * draw_pct,
+        "draw_size": field_size * draw_pct,
         # market deception extras
         "rating_mkt_gap": rating_mkt_gap,
-        "or_mkt_gap":     or_mkt_gap,
+        "or_mkt_gap": or_mkt_gap,
         # explicit missingness flags (1.0 = absent, 0.0 = present)
         # models can use these as uncertainty signals rather than inferring from zero
-        "or_missing":  or_missing,
+        "or_missing": or_missing,
         "rpr_missing": rpr_missing,
-        "ts_missing":  ts_missing,
+        "ts_missing": ts_missing,
     }
     # v17 doctrine features — filled with 0.0 / defaults when not pre-computed
     from app.services.v17_feature_extractor import DEFAULTS
+
     for k, v in DEFAULTS.items():
         feats.setdefault(k, v)
 
@@ -159,6 +176,7 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float],
 
 
 # ── main entry point ──────────────────────────────────────────────────────────
+
 
 def _apply_sentient_modifiers(results: list[dict], sentient_state: dict | None) -> list[dict]:
     """
@@ -177,12 +195,12 @@ def _apply_sentient_modifiers(results: list[dict], sentient_state: dict | None) 
     """
     if sentient_state is None:
         audit = {
-            "sentient_state_loaded":     False,
-            "sentient_state_source":     "none",
-            "sentient_races_observed":   0,
+            "sentient_state_loaded": False,
+            "sentient_state_source": "none",
+            "sentient_races_observed": 0,
             "sentient_aggression_level": None,
             "sentient_modifier_applied": False,
-            "sentient_modifier_mode":    "audit_only",
+            "sentient_modifier_mode": "audit_only",
         }
         for row in results:
             row.update(audit)
@@ -194,17 +212,19 @@ def _apply_sentient_modifiers(results: list[dict], sentient_state: dict | None) 
     aggression = appetite.get("aggression_level", None)
 
     audit = {
-        "sentient_state_loaded":     True,
-        "sentient_state_source":     source,
-        "sentient_races_observed":   races_observed,
+        "sentient_state_loaded": True,
+        "sentient_state_source": source,
+        "sentient_races_observed": races_observed,
         "sentient_aggression_level": round(float(aggression), 4) if aggression is not None else None,
         "sentient_modifier_applied": False,
-        "sentient_modifier_mode":    "audit_only",
+        "sentient_modifier_mode": "audit_only",
     }
 
     log.info(
         "[sentient] bridge active — source=%s races_observed=%d aggression=%.3f mode=audit_only",
-        source, races_observed, aggression if aggression is not None else -1.0,
+        source,
+        races_observed,
+        aggression if aggression is not None else -1.0,
     )
 
     for row in results:
@@ -230,14 +250,14 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
     list[dict]  sorted by velo_prime_prob desc
     """
     from app.services.model_manager import get_model_manager
+    from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
     from src.intelligence.specialist_models.loader import score_runner
     from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble
-    from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
 
-    mm       = get_model_manager()
+    mm = get_model_manager()
     ensemble = VeloPrimeEnsemble()
-    runners  = race.get("runners", [])
-    race_id  = race.get("race_id", "unknown")
+    runners = race.get("runners", [])
+    race_id = race.get("race_id", "unknown")
 
     if not runners:
         return []
@@ -245,10 +265,10 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
     # Pre-compute field OR/RPR arrays for relative features.
     # official_rating and rpr are Optional[float] from the normalizer.
     # Only include runners with a real rating — exclude None and any stray zeros.
-    field_or  = [r["official_rating"] for r in runners
-                 if r.get("official_rating") is not None and r["official_rating"] > 0]
-    field_rpr = [r["rpr"] for r in runners
-                 if r.get("rpr") is not None and r["rpr"] > 0]
+    field_or = [
+        r["official_rating"] for r in runners if r.get("official_rating") is not None and r["official_rating"] > 0
+    ]
+    field_rpr = [r["rpr"] for r in runners if r.get("rpr") is not None and r["rpr"] > 0]
 
     # Macro context — current year, race type
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")
@@ -277,24 +297,26 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
             spec_scores = {}
 
         sp_dec = feats["sp_dec"]
-        ensemble_inputs.append({
-            "horse":                   horse_name,
-            "horse_id":                runner.get("horse_id", ""),
-            "race_id":                 race_id,
-            "sqpe_v17_prob":           sqpe_prob,
-            "improvement_score":       spec_scores.get("improvement_score"),
-            "release_window_score":    spec_scores.get("release_window_score"),
-            "market_deception_score":  spec_scores.get("market_deception_score"),
-            "place_prob":              spec_scores.get("place_prob"),
-            "comment_intel_score":     spec_scores.get("comment_intelligence_score"),
-            "longshot_score":          spec_scores.get("longshot_score"),
-            "sp_dec":                  sp_dec,
-            "is_fav":                  feats["is_fav"] == 1.0,
-            # Rating missingness — forwarded to full_analysis for observability
-            "or_missing":              bool(feats["or_missing"]),
-            "rpr_missing":             bool(feats["rpr_missing"]),
-            "ts_missing":              bool(feats["ts_missing"]),
-        })
+        ensemble_inputs.append(
+            {
+                "horse": horse_name,
+                "horse_id": runner.get("horse_id", ""),
+                "race_id": race_id,
+                "sqpe_v17_prob": sqpe_prob,
+                "improvement_score": spec_scores.get("improvement_score"),
+                "release_window_score": spec_scores.get("release_window_score"),
+                "market_deception_score": spec_scores.get("market_deception_score"),
+                "place_prob": spec_scores.get("place_prob"),
+                "comment_intel_score": spec_scores.get("comment_intelligence_score"),
+                "longshot_score": spec_scores.get("longshot_score"),
+                "sp_dec": sp_dec,
+                "is_fav": feats["is_fav"] == 1.0,
+                # Rating missingness — forwarded to full_analysis for observability
+                "or_missing": bool(feats["or_missing"]),
+                "rpr_missing": bool(feats["rpr_missing"]),
+                "ts_missing": bool(feats["ts_missing"]),
+            }
+        )
 
     # Run VeloPrimeEnsemble
     predictions = ensemble.predict_race(ensemble_inputs, macro_context=macro_ctx)
@@ -304,18 +326,18 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
     for pred in predictions:
         row = pred.to_dict()
         # Rename keys to canonical output names
-        row["release_day_prob"]   = row.pop("release_window_score", None)
-        row["longshot_prob"]      = row.pop("longshot_score", None)
+        row["release_day_prob"] = row.pop("release_window_score", None)
+        row["longshot_prob"] = row.pop("longshot_score", None)
         row["macro_regime_label"] = row.pop("macro_regime", None)
-        row["macro_chaos_mode"]   = (macro_ctx.chaos_mode if macro_ctx else False)
-        row["favourite_trap_risk"]= (macro_ctx.favourite_trap_risk if macro_ctx else "normal")
-        row["ensemble_version"]   = ENSEMBLE_VERSION
+        row["macro_chaos_mode"] = macro_ctx.chaos_mode if macro_ctx else False
+        row["favourite_trap_risk"] = macro_ctx.favourite_trap_risk if macro_ctx else "normal"
+        row["ensemble_version"] = ENSEMBLE_VERSION
         # Add horse_id + rating missingness flags from ensemble_inputs lookup
         for ei in ensemble_inputs:
             if ei["horse"] == row["horse"]:
-                row["horse_id"]   = ei["horse_id"]
+                row["horse_id"] = ei["horse_id"]
                 row["or_missing"] = ei["or_missing"]
-                row["rpr_missing"]= ei["rpr_missing"]
+                row["rpr_missing"] = ei["rpr_missing"]
                 row["ts_missing"] = ei["ts_missing"]
                 break
         results.append(row)
@@ -328,7 +350,7 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
 
 # ── Warehouse enrichment (passive, non-scoring) ───────────────────────────────
 
-_DIST_LABEL_RE = re.compile(r'^(?:(\d+)m)?(?:(\d+)?(½)?f)?$', re.IGNORECASE)
+_DIST_LABEL_RE = re.compile(r"^(?:(\d+)m)?(?:(\d+)?(½)?f)?$", re.IGNORECASE)
 
 
 def _dist_label_to_yards(label: str) -> int:
@@ -349,11 +371,7 @@ def _dist_label_to_yards(label: str) -> int:
     if not m:
         return 0
     miles_s, furlongs_s, half = m.group(1), m.group(2), m.group(3)
-    furlongs = (
-        (int(miles_s) * 8 if miles_s else 0)
-        + (int(furlongs_s) if furlongs_s else 0)
-        + (0.5 if half else 0)
-    )
+    furlongs = (int(miles_s) * 8 if miles_s else 0) + (int(furlongs_s) if furlongs_s else 0) + (0.5 if half else 0)
     if furlongs == 0 and not miles_s:
         return 0
     return round(furlongs * 220)
@@ -375,11 +393,11 @@ def _dist_tenths_to_label(dist_f_tenths: float) -> str:
     """
     if not (50 <= dist_f_tenths <= 360):
         return ""
-    f = dist_f_tenths / 10.0          # 70 -> 7.0, 85 -> 8.5
-    miles     = int(f) // 8
-    remaining = f - miles * 8         # furlongs after subtracting whole miles
-    whole_f   = int(remaining)
-    is_half   = abs(remaining - whole_f - 0.5) < 0.05
+    f = dist_f_tenths / 10.0  # 70 -> 7.0, 85 -> 8.5
+    miles = int(f) // 8
+    remaining = f - miles * 8  # furlongs after subtracting whole miles
+    whole_f = int(remaining)
+    is_half = abs(remaining - whole_f - 0.5) < 0.05
 
     if miles == 0:
         return f"{whole_f}½f" if is_half else f"{whole_f}f"
@@ -413,7 +431,7 @@ def _enrich_full_analysis_from_warehouse(
         trainer_dist_runners, trainer_dist_1st, trainer_dist_ae
     """
     try:
-        race_course   = (race.get("course") or "").strip()
+        race_course = (race.get("course") or "").strip()
 
         # Canonical distance resolution.
         # API distance strings (e.g. "7f14y", "1m13y") include yard suffixes that
@@ -474,7 +492,7 @@ def _enrich_full_analysis_from_warehouse(
                 .in_("horse_id", horse_ids)
                 .execute()
             )
-            for r in (result.data or []):
+            for r in result.data or []:
                 hid = r["horse_id"]
                 hrh_data.setdefault(hid, []).append(r)
         except Exception as e:
@@ -491,7 +509,7 @@ def _enrich_full_analysis_from_warehouse(
                     .eq("course", race_course)
                     .execute()
                 )
-                for r in (result.data or []):
+                for r in result.data or []:
                     tca_data[r["trainer_id"]] = r
             except Exception as e:
                 log.warning("warehouse: trainer_course_analysis fetch failed: %s", e)
@@ -507,7 +525,7 @@ def _enrich_full_analysis_from_warehouse(
                     .eq("dist", race_dist)
                     .execute()
                 )
-                for r in (result.data or []):
+                for r in result.data or []:
                     tda_data[r["trainer_id"]] = r
             except Exception as e:
                 log.warning("warehouse: trainer_distance_analysis fetch failed: %s", e)
@@ -525,7 +543,7 @@ def _enrich_full_analysis_from_warehouse(
                     .eq("dist", race_dist)
                     .execute()
                 )
-                for r in (result.data or []):
+                for r in result.data or []:
                     hdta_data[r["horse_id"]] = r
             except Exception as e:
                 log.warning("warehouse: horse_distance_time_analysis fetch failed: %s", e)
@@ -555,41 +573,38 @@ def _enrich_full_analysis_from_warehouse(
             tid = pred_trainer.get(hid)
 
             runs = hrh_data.get(hid, [])
-            recent   = [r for r in runs if (r.get("race_date") or "") >= cutoff_90d]
-            all_pos  = [_pos_num(r["position"]) for r in runs   if _pos_num(r["position"]) is not None]
-            rec_pos  = [_pos_num(r["position"]) for r in recent if _pos_num(r["position"]) is not None]
+            recent = [r for r in runs if (r.get("race_date") or "") >= cutoff_90d]
+            all_pos = [_pos_num(r["position"]) for r in runs if _pos_num(r["position"]) is not None]
+            rec_pos = [_pos_num(r["position"]) for r in recent if _pos_num(r["position"]) is not None]
             crs_runs = sum(1 for r in runs if (r.get("course") or "").strip() == race_course)
             # yards comparison with ±2y tolerance for float-to-int rounding
             if race_dist_y:
-                dst_runs = sum(
-                    1 for r in runs
-                    if abs(_dist_label_to_yards(r.get("dist") or "") - race_dist_y) <= 2
-                )
+                dst_runs = sum(1 for r in runs if abs(_dist_label_to_yards(r.get("dist") or "") - race_dist_y) <= 2)
             else:
                 dst_runs = sum(1 for r in runs if (r.get("dist") or "").strip() == race_dist)
 
             pred["horse_recent_runs_90d"] = len(recent)
-            pred["horse_recent_avg_pos"]  = round(sum(rec_pos) / len(rec_pos), 2) if rec_pos else None
-            pred["horse_course_runs"]     = crs_runs
-            pred["horse_distance_runs"]   = dst_runs
-            pred["horse_avg_pos_all"]     = round(sum(all_pos) / len(all_pos), 2) if all_pos else None
+            pred["horse_recent_avg_pos"] = round(sum(rec_pos) / len(rec_pos), 2) if rec_pos else None
+            pred["horse_course_runs"] = crs_runs
+            pred["horse_distance_runs"] = dst_runs
+            pred["horse_avg_pos_all"] = round(sum(all_pos) / len(all_pos), 2) if all_pos else None
 
             tca = tca_data.get(tid) if tid else None
-            pred["trainer_course_runners"] = _si(_sf(tca["runners"]))   if tca else None
-            pred["trainer_course_1st"]     = _si(_sf(tca["wins_1st"]))  if tca else None
-            pred["trainer_course_ae"]      = _sf(tca["ae"])             if tca else None
-            pred["trainer_course_win_pct"] = _sf(tca["win_pct"])        if tca else None
+            pred["trainer_course_runners"] = _si(_sf(tca["runners"])) if tca else None
+            pred["trainer_course_1st"] = _si(_sf(tca["wins_1st"])) if tca else None
+            pred["trainer_course_ae"] = _sf(tca["ae"]) if tca else None
+            pred["trainer_course_win_pct"] = _sf(tca["win_pct"]) if tca else None
 
             tda = tda_data.get(tid) if tid else None
-            pred["trainer_dist_runners"]   = _si(_sf(tda["runners"]))  if tda else None
-            pred["trainer_dist_1st"]       = _si(_sf(tda["wins_1st"])) if tda else None
-            pred["trainer_dist_ae"]        = _sf(tda["ae"])            if tda else None
+            pred["trainer_dist_runners"] = _si(_sf(tda["runners"])) if tda else None
+            pred["trainer_dist_1st"] = _si(_sf(tda["wins_1st"])) if tda else None
+            pred["trainer_dist_ae"] = _sf(tda["ae"]) if tda else None
 
             hdta = hdta_data.get(hid)
-            pred["hdta_dist_runs"] = _si(_sf(hdta["runs"]))     if hdta else None
-            pred["hdta_dist_1st"]  = _si(_sf(hdta["wins_1st"])) if hdta else None
-            pred["hdta_ae"]        = _sf(hdta["ae"])             if hdta else None
-            pred["hdta_win_pct"]   = _sf(hdta["win_pct"])        if hdta else None
+            pred["hdta_dist_runs"] = _si(_sf(hdta["runs"])) if hdta else None
+            pred["hdta_dist_1st"] = _si(_sf(hdta["wins_1st"])) if hdta else None
+            pred["hdta_ae"] = _sf(hdta["ae"]) if hdta else None
+            pred["hdta_win_pct"] = _sf(hdta["win_pct"]) if hdta else None
 
         return predictions
 
@@ -641,8 +656,8 @@ def _enrich_full_analysis_from_warehouse(
 
 # ── Supabase persistence ──────────────────────────────────────────────────────
 
-def persist_race_predictions(race: dict, predictions: list[dict],
-                             decision_tier: str | None = None) -> bool:
+
+def persist_race_predictions(race: dict, predictions: list[dict], decision_tier: str | None = None) -> bool:
     """
     Write top verdict + specialist scores to velo_verdicts.
     One row per race (top pick). Returns True on success.
@@ -653,11 +668,11 @@ def persist_race_predictions(race: dict, predictions: list[dict],
     # Validate tier before any DB write — non-canonical tier rejected
     if decision_tier is not None:
         from src.constants import validate_tier
+
         try:
             validate_tier(decision_tier)
         except ValueError as e:
-            log.error("persist_race_predictions: tier rejected for %s — %s",
-                      race.get("race_id"), e)
+            log.error("persist_race_predictions: tier rejected for %s — %s", race.get("race_id"), e)
             return False
 
     url = os.getenv("SUPABASE_URL")
@@ -668,33 +683,34 @@ def persist_race_predictions(race: dict, predictions: list[dict],
 
     try:
         from supabase import create_client
+
         sb = create_client(url, key)
 
         top = predictions[0]
         row = {
-            "race_id":               race.get("race_id"),
-            "region":                race.get("region", ""),   # UK/IRE filter verification — persisted at scoring time
-            "generated_at":          datetime.utcnow().isoformat(),
-            "engine_version":        "velo_prime_v1",
-            "doctrine_version":      "d010",
-            "ensemble_version":      top.get("ensemble_version", ENSEMBLE_VERSION),
-            "top_rank_horse_id":     top.get("horse_id", ""),
-            "top_rank_score":        top.get("velo_prime_prob"),
-            "confidence_level":      top.get("confidence_level"),
+            "race_id": race.get("race_id"),
+            "region": race.get("region", ""),  # UK/IRE filter verification — persisted at scoring time
+            "generated_at": datetime.utcnow().isoformat(),
+            "engine_version": "velo_prime_v1",
+            "doctrine_version": "d010",
+            "ensemble_version": top.get("ensemble_version", ENSEMBLE_VERSION),
+            "top_rank_horse_id": top.get("horse_id", ""),
+            "top_rank_score": top.get("velo_prime_prob"),
+            "confidence_level": top.get("confidence_level"),
             # VELO_PRIME fields
-            "velo_prime_prob":       top.get("velo_prime_prob"),
-            "improvement_score":     top.get("improvement_score"),
-            "market_deception_score":top.get("market_deception_score"),
-            "release_day_prob":      top.get("release_day_prob"),
-            "place_prob":            top.get("place_prob"),
-            "longshot_prob":         top.get("longshot_prob"),
+            "velo_prime_prob": top.get("velo_prime_prob"),
+            "improvement_score": top.get("improvement_score"),
+            "market_deception_score": top.get("market_deception_score"),
+            "release_day_prob": top.get("release_day_prob"),
+            "place_prob": top.get("place_prob"),
+            "longshot_prob": top.get("longshot_prob"),
             # DISPLAY-ONLY: not read by sigma, not consumed by Playbook G — see TRUTH_REGISTRY.md
-            "macro_regime_label":    top.get("macro_regime_label"),
-            "macro_chaos_mode":      top.get("macro_chaos_mode"),
-            "favourite_trap_risk":   top.get("favourite_trap_risk"),
-            "decision_tier":         decision_tier,
+            "macro_regime_label": top.get("macro_regime_label"),
+            "macro_chaos_mode": top.get("macro_chaos_mode"),
+            "favourite_trap_risk": top.get("favourite_trap_risk"),
+            "decision_tier": decision_tier,
             # Full ranked field — enriched below before upsert
-            "full_analysis":         predictions,
+            "full_analysis": predictions,
         }
 
         # Passive warehouse enrichment — injects into runner blocks only.
@@ -710,8 +726,12 @@ def persist_race_predictions(race: dict, predictions: list[dict],
         row["full_analysis"] = enriched
 
         sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
-        log.info("Persisted verdict for race %s — top: %s (%.4f)",
-                 race.get("race_id"), top.get("horse"), top.get("velo_prime_prob"))
+        log.info(
+            "Persisted verdict for race %s — top: %s (%.4f)",
+            race.get("race_id"),
+            top.get("horse"),
+            top.get("velo_prime_prob"),
+        )
         return True
 
     except Exception as e:
@@ -735,9 +755,10 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
 
     try:
         from supabase import create_client
+
         sb = create_client(url, key)
 
-        race_id     = race.get("race_id")
+        race_id = race.get("race_id")
         computed_at = datetime.utcnow().isoformat()
         rows = []
 
@@ -746,50 +767,49 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
             if not horse_id or not race_id:
                 continue
 
-            imp  = pred.get("improvement_score")
-            mkt  = pred.get("market_deception_score")
-            pp   = pred.get("place_prob")
-            ls   = pred.get("longshot_prob")
-            rd   = pred.get("release_day_prob")
-            ci   = pred.get("comment_intel_score")
-            vp   = pred.get("velo_prime_prob")
+            imp = pred.get("improvement_score")
+            mkt = pred.get("market_deception_score")
+            pp = pred.get("place_prob")
+            ls = pred.get("longshot_prob")
+            rd = pred.get("release_day_prob")
+            ci = pred.get("comment_intel_score")
+            vp = pred.get("velo_prime_prob")
 
-            rows.append({
-                "race_id":                 race_id,
-                "horse_id":                horse_id,
-                "computed_at":             computed_at,
-                "feature_schema_version":  "velo_prime_v1",
-                # Specialist model outputs mapped to doctrine feature columns
-                "form_cycle_score":        imp,
-                "market_confidence_score": mkt,
-                "release_day_score":       rd,
-                "survivability_score":     pp,
-                "chaos_score":             ls,
-                "trainer_intent_score":    ci,
-                # Full feature vector for retraining
-                "feature_vector": {
-                    "velo_prime_prob":         vp,
-                    "improvement_score":       imp,
-                    "market_deception_score":  mkt,
-                    "place_prob":              pp,
-                    "longshot_prob":           ls,
-                    "release_day_prob":        rd,
-                    "comment_intel_score":     ci,
-                    "confidence_level":        pred.get("confidence_level"),
-                    "draw_bias_score":         pred.get("draw_bias_score"),
-                },
-            })
+            rows.append(
+                {
+                    "race_id": race_id,
+                    "horse_id": horse_id,
+                    "computed_at": computed_at,
+                    "feature_schema_version": "velo_prime_v1",
+                    # Specialist model outputs mapped to doctrine feature columns
+                    "form_cycle_score": imp,
+                    "market_confidence_score": mkt,
+                    "release_day_score": rd,
+                    "survivability_score": pp,
+                    "chaos_score": ls,
+                    "trainer_intent_score": ci,
+                    # Full feature vector for retraining
+                    "feature_vector": {
+                        "velo_prime_prob": vp,
+                        "improvement_score": imp,
+                        "market_deception_score": mkt,
+                        "place_prob": pp,
+                        "longshot_prob": ls,
+                        "release_day_prob": rd,
+                        "comment_intel_score": ci,
+                        "confidence_level": pred.get("confidence_level"),
+                        "draw_bias_score": pred.get("draw_bias_score"),
+                    },
+                }
+            )
 
         if not rows:
             return 0
 
-        result = sb.table("runner_derived_features").upsert(
-            rows, on_conflict="race_id,horse_id"
-        ).execute()
+        sb.table("runner_derived_features").upsert(rows, on_conflict="race_id,horse_id").execute()
         log.info("Persisted %d runner_derived_features for race %s", len(rows), race_id)
         return len(rows)
 
     except Exception as e:
-        log.warning("runner_derived_features persist failed for race %s: %s",
-                    race.get("race_id"), e)
+        log.warning("runner_derived_features persist failed for race %s: %s", race.get("race_id"), e)
         return 0
