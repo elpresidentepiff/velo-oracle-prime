@@ -216,10 +216,21 @@ async def health_check():
             details["sqpe_model"] = "CORRUPT"
 
     # ── Result ───────────────────────────────────────────────────────────────
-    if issues:
+    # Critical failures (503): DB unreachable, model missing/corrupt.
+    # Warnings (200): stale scoring run, unknown last run — service is up but degraded.
+    critical_keywords = ("Supabase unreachable", "SUPABASE_URL", "SQPE model")
+    critical_issues = [i for i in issues if any(k in i for k in critical_keywords)]
+    warning_issues = [i for i in issues if i not in critical_issues]
+
+    if critical_issues:
         details["status"] = "FAIL"
         details["issues"] = issues
         return JSONResponse(status_code=503, content=details)
+
+    if warning_issues:
+        details["status"] = "DEGRADED"
+        details["issues"] = warning_issues
+        return JSONResponse(status_code=200, content=details)
 
     details["status"] = "ok"
     return details
