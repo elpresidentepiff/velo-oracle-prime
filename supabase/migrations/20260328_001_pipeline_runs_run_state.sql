@@ -88,6 +88,10 @@ ALTER TABLE pipeline_runs
 ALTER TABLE pipeline_runs
   DROP CONSTRAINT IF EXISTS pipeline_runs_status_enum;
 
+-- Drop the old DEFAULT 'in_progress' — status is now written only on close (NULL while running).
+-- Without this, INSERT without explicit status gets 'in_progress' which violates the new constraint.
+ALTER TABLE pipeline_runs ALTER COLUMN status DROP DEFAULT;
+
 -- New status constraint: terminal truth only. NULL is allowed (run in flight).
 -- PostgreSQL CHECK constraints allow NULL by default — this is intentional.
 ALTER TABLE pipeline_runs

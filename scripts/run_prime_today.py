@@ -428,6 +428,7 @@ def _open_pipeline_run(db, date_str: str) -> str | None:
             "run_type":      "daily_scoring",
             "source_date":   date_str,
             "run_state":     "running",
+            "status":        None,  # explicit NULL overrides DB DEFAULT 'in_progress'
             "trigger_source": trigger_src,
             "started_at":    now.isoformat() + "Z",
             "environment":   env_str,
