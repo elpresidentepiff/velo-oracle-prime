@@ -171,7 +171,8 @@ async def health_check():
                 last_ts_str = rows[0].get("started_at", "")
                 if last_ts_str:
                     # Accept ISO strings with or without trailing Z
-                    last_ts = datetime.fromisoformat(last_ts_str.rstrip("Z"))
+                    # Strip timezone info to compare as naive UTC
+                    last_ts = datetime.fromisoformat(last_ts_str.rstrip("Z")).replace(tzinfo=None)
                     age_hours = (datetime.utcnow() - last_ts).total_seconds() / 3600
                     details["last_scoring_run"] = f"{age_hours:.1f}h ago"
                     if age_hours > STALE_HOURS:
