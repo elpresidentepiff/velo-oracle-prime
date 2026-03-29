@@ -7,6 +7,6 @@ Complete tactical intelligence framework:
 - Playbook G: Sentient Loopback Engine (5 evolution pillars)
 """
 
-from .playbook_orchestrator import create_playbook_orchestrator, PlaybookOrchestrator
+from .playbook_orchestrator import PlaybookOrchestrator, create_playbook_orchestrator
 
 __all__ = ["create_playbook_orchestrator", "PlaybookOrchestrator"]

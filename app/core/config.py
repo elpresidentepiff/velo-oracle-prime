@@ -1,9 +1,10 @@
 """
 Core configuration management for VÉLØ Oracle API
 """
+
 import json
-import os
-from typing import Any, List, Optional, Union
+from typing import Any
+
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -31,11 +32,11 @@ class Settings(BaseSettings):
     FEATURE_MAP_PATH: str = "app/ml/feature_map.json"
 
     # CORS — accepts plain string ("*"), comma-separated string, or JSON list
-    CORS_ORIGINS: Union[List[str], str] = ["*"]
+    CORS_ORIGINS: list[str] | str = ["*"]
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v: Any) -> List[str]:
+    def parse_cors_origins(cls, v: Any) -> list[str]:
         if isinstance(v, list):
             return v
         if isinstance(v, str):

@@ -10,10 +10,10 @@ Usage:
     # Returns dict of 18 feature values, ready to append to v16 features
 """
 
-import os
 import logging
+import os
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 import requests
@@ -59,7 +59,7 @@ def _going_bucket(going_str: str) -> int:
     return 1
 
 
-def _parse_sp_dec(sp_str: str) -> Optional[float]:
+def _parse_sp_dec(sp_str: str) -> float | None:
     if not sp_str or str(sp_str).strip() in ("", "–", "-"):
         return None
     s = str(sp_str).strip().upper().rstrip("F").rstrip("J").strip()
@@ -74,7 +74,7 @@ def _parse_sp_dec(sp_str: str) -> Optional[float]:
         return None
 
 
-def _safe_float(val: Any) -> Optional[float]:
+def _safe_float(val: Any) -> float | None:
     if val is None:
         return None
     try:
@@ -103,7 +103,7 @@ class V17FeatureExtractor:
             self._session = s
         return self._session
 
-    def _fetch_horse_results(self, horse_id: str) -> List[Dict]:
+    def _fetch_horse_results(self, horse_id: str) -> list[dict]:
         """
         Fetch historical results for a horse from Racing API.
         Returns list of result dicts, sorted chronologically (oldest first).
@@ -131,9 +131,9 @@ class V17FeatureExtractor:
     def extract(
         self,
         horse_id: str,
-        race_context: Dict,
-        trainer_recent_form: Optional[Dict] = None,
-    ) -> Dict[str, float]:
+        race_context: dict,
+        trainer_recent_form: dict | None = None,
+    ) -> dict[str, float]:
         """
         Compute all 18 v17 doctrine features for a runner.
 
@@ -207,9 +207,9 @@ class V17FeatureExtractor:
         same_course = [(wins[i], places[i]) for i in range(n) if courses_hist[i] == course]
         same_going = [(wins[i], places[i]) for i in range(n) if goings_hist[i] == going_bkt]
         same_dist = [
-            (wins[i], places[i]) for i in range(n)
-            if dists_hist[i] is not None and dist_f is not None
-            and abs(dists_hist[i] - dist_f) <= dist_f * 0.2
+            (wins[i], places[i])
+            for i in range(n)
+            if dists_hist[i] is not None and dist_f is not None and abs(dists_hist[i] - dist_f) <= dist_f * 0.2
         ]
 
         if same_course:
@@ -255,9 +255,11 @@ class V17FeatureExtractor:
             features["setup_run_flag"] = 1.0
 
         # ── cash_run_flag __ (trainer in form + dry spell + mark compressed)
-        if (features["trainer_timing_score"] > 0.15
-                and 3.0 <= features["runs_since_win"] <= 6.0
-                and features["mark_compression_score"] > 0.0):
+        if (
+            features["trainer_timing_score"] > 0.15
+            and 3.0 <= features["runs_since_win"] <= 6.0
+            and features["mark_compression_score"] > 0.0
+        ):
             features["cash_run_flag"] = 1.0
 
         return features

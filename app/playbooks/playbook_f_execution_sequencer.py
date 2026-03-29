@@ -21,34 +21,35 @@ FIX (sentient-feedback-loop):
   with G's appetite_state['directive_firing_threshold'] (falls back to 0.6)
 """
 
-from typing import Dict, List, Any, Optional, Tuple
-from enum import Enum
 import logging
+from enum import StrEnum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 # Mapping: execution_hierarchy pillar → PositioningDirective
 HIERARCHY_DIRECTIVE_MAP = {
-    "power":       "POWER_ANCHOR_MODE",
+    "power": "POWER_ANCHOR_MODE",
     "manipulation": "FAVOURITE_LIABILITY_MODE",
-    "chaos":       "CHAOS_CONTAINMENT_MODE",
+    "chaos": "CHAOS_CONTAINMENT_MODE",
     "vetp_memory": "VETP_IMPRINT_MODE",
-    "narrative":   "NARRATIVE_FRACTURE_MODE",
-    "market":      "HOUSE_REVERSAL_MODE",
+    "narrative": "NARRATIVE_FRACTURE_MODE",
+    "market": "HOUSE_REVERSAL_MODE",
 }
 
 # Mapping: structural_drift key → directive that benefits from it
 DRIFT_DIRECTIVE_BOOST = {
-    "off_pace_wins":     "POWER_ANCHOR_MODE",
-    "late_money_wins":   "FAVOURITE_LIABILITY_MODE",
-    "front_pace_wins":   "POWER_ANCHOR_MODE",
-    "chaos_wins":        "CHAOS_CONTAINMENT_MODE",
-    "narrative_wins":    "NARRATIVE_FRACTURE_MODE",
+    "off_pace_wins": "POWER_ANCHOR_MODE",
+    "late_money_wins": "FAVOURITE_LIABILITY_MODE",
+    "front_pace_wins": "POWER_ANCHOR_MODE",
+    "chaos_wins": "CHAOS_CONTAINMENT_MODE",
+    "narrative_wins": "NARRATIVE_FRACTURE_MODE",
 }
 
 
-class PositioningDirective(str, Enum):
+class PositioningDirective(StrEnum):
     """The 7 Positioning Directives"""
+
     FAVOURITE_LIABILITY = "FAVOURITE_LIABILITY_MODE"
     POWER_ANCHOR = "POWER_ANCHOR_MODE"
     MULTI_THREAT_ZONE = "MULTI_THREAT_ZONE_MODE"
@@ -72,19 +73,19 @@ class ExecutionSequencer:
     - execution_hierarchy (used to break ties between triggered directives)
     """
 
-    def __init__(self, sentient_state: Optional[Dict[str, Any]] = None):
+    def __init__(self, sentient_state: dict[str, Any] | None = None):
         self.directive_rules = self._initialize_directive_rules()
         self.execution_hierarchy = [
-            "power",           # Power Anchor beats all
-            "manipulation",    # Rigged structure voids engine edge
-            "chaos",           # Chaos collapses all logic
-            "vetp_memory",     # Memory overrides arrogance
-            "narrative",       # Narrative structure
-            "market"           # Market behaviour
+            "power",  # Power Anchor beats all
+            "manipulation",  # Rigged structure voids engine edge
+            "chaos",  # Chaos collapses all logic
+            "vetp_memory",  # Memory overrides arrogance
+            "narrative",  # Narrative structure
+            "market",  # Market behaviour
         ]
         self._sentient_state = sentient_state  # Injected from Playbook G via orchestrator
 
-    def update_sentient_state(self, state: Dict[str, Any]) -> None:
+    def update_sentient_state(self, state: dict[str, Any]) -> None:
         """Receive updated state from Playbook G before each race evaluation."""
         self._sentient_state = state
 
@@ -96,11 +97,7 @@ class ExecutionSequencer:
         Falls back to 0.6 if G has not yet evolved.
         """
         if self._sentient_state:
-            threshold = (
-                self._sentient_state
-                .get("appetite_state", {})
-                .get("directive_firing_threshold")
-            )
+            threshold = self._sentient_state.get("appetite_state", {}).get("directive_firing_threshold")
             if threshold is not None:
                 logger.debug("[F] Using G's dynamic directive threshold: %.3f", threshold)
                 return float(threshold)
@@ -131,13 +128,12 @@ class ExecutionSequencer:
                 weight = drift.get(drift_key, 0.0)
                 if weight > 0.6:
                     logger.debug(
-                        "[F] Structural drift boost: %s → %s (weight=%.2f)",
-                        drift_key, directive_value, weight
+                        "[F] Structural drift boost: %s → %s (weight=%.2f)", drift_key, directive_value, weight
                     )
                     return 1.2
         return 1.0
 
-    def _initialize_directive_rules(self) -> Dict[PositioningDirective, Dict[str, Any]]:
+    def _initialize_directive_rules(self) -> dict[PositioningDirective, dict[str, Any]]:
         """Initialize rules for each positioning directive"""
         return {
             PositioningDirective.FAVOURITE_LIABILITY: {
@@ -145,102 +141,95 @@ class ExecutionSequencer:
                     "story_power_mismatch": lambda oracle: oracle.get("story_anchor") != oracle.get("power_anchor"),
                     "high_mpi": lambda oracle: oracle.get("mpi", 0) > 65,
                     "vetp_trap_match": lambda oracle: any(
-                        "mesaafi" in str(p).lower() or "trap" in str(p).lower()
-                        for p in oracle.get("vetp_patterns", [])
-                    )
+                        "mesaafi" in str(p).lower() or "trap" in str(p).lower() for p in oracle.get("vetp_patterns", [])
+                    ),
                 },
                 "effect": {
                     "favourite_confidence_multiplier": 0.15,
                     "power_cluster_boost": 1.5,
-                    "description": "Oracle downgrades favourite confidence by -40 to -85%. Power cluster boosted."
+                    "description": "Oracle downgrades favourite confidence by -40 to -85%. Power cluster boosted.",
                 },
-                "hierarchy_pillar": "manipulation"
+                "hierarchy_pillar": "manipulation",
             },
-
             PositioningDirective.POWER_ANCHOR: {
                 "triggers": {
                     "stable_engine_superiority": lambda oracle: oracle.get("engine_superiority") == "dominant",
                     "low_chaos": lambda oracle: oracle.get("chaos_bloom", 100) < 35,
-                    "adequate_integrity": lambda oracle: oracle.get("integrity_score", 0) > 50
+                    "adequate_integrity": lambda oracle: oracle.get("integrity_score", 0) > 50,
                 },
                 "effect": {
                     "engine_horse_lock": True,
                     "others_downweighted": 0.5,
-                    "description": "Oracle locks target on the engine horse. All other horses downweighted."
+                    "description": "Oracle locks target on the engine horse. All other horses downweighted.",
                 },
-                "hierarchy_pillar": "power"
+                "hierarchy_pillar": "power",
             },
-
             PositioningDirective.MULTI_THREAT_ZONE: {
                 "triggers": {
                     "large_threat_cluster": lambda oracle: len(oracle.get("threat_cluster", [])) > 3,
                     "moderate_integrity": lambda oracle: oracle.get("integrity_score", 100) < 65,
-                    "controlled_chaos": lambda oracle: oracle.get("chaos_bloom", 100) < 40
+                    "controlled_chaos": lambda oracle: oracle.get("chaos_bloom", 100) < 40,
                 },
                 "effect": {
                     "focus_mode": "group",
                     "individual_confidence_reduction": 0.7,
-                    "description": "Oracle widens focus to group instead of individual."
+                    "description": "Oracle widens focus to group instead of individual.",
                 },
-                "hierarchy_pillar": "market"
+                "hierarchy_pillar": "market",
             },
-
             PositioningDirective.NARRATIVE_FRACTURE: {
                 "triggers": {
                     "extreme_narrative_disruption": lambda oracle: oracle.get("narrative_disruption", 0) > 80,
-                    "media_reality_gap": lambda oracle: oracle.get("media_sync", 0) > 0.75
+                    "media_reality_gap": lambda oracle: oracle.get("media_sync", 0) > 0.75,
                 },
                 "effect": {
                     "suppress_narrative_favourites": True,
                     "mid_range_power_boost": 1.8,
-                    "description": "Oracle suppresses all favourites with narrative inflation. Mid-range power gets heavy promotion."
+                    "description": "Oracle suppresses all favourites with narrative inflation. Mid-range power gets heavy promotion.",
                 },
-                "hierarchy_pillar": "narrative"
+                "hierarchy_pillar": "narrative",
             },
-
             PositioningDirective.HOUSE_REVERSAL: {
                 "triggers": {
                     "excessive_bookmaker_pressure": lambda oracle: oracle.get("bookmaker_comfort_fav") == "high",
-                    "price_power_divergence": lambda oracle: oracle.get("price_power_divergence", 0) > 18
+                    "price_power_divergence": lambda oracle: oracle.get("price_power_divergence", 0) > 18,
                 },
                 "effect": {
                     "bookmaker_comfort_inversion": True,
                     "comfort_zone_penalty": 0.6,
-                    "description": "Oracle treats bookmaker comfort zone as a danger zone."
+                    "description": "Oracle treats bookmaker comfort zone as a danger zone.",
                 },
-                "hierarchy_pillar": "market"
+                "hierarchy_pillar": "market",
             },
-
             PositioningDirective.CHAOS_CONTAINMENT: {
                 "triggers": {
                     "high_chaos": lambda oracle: oracle.get("chaos_bloom", 0) > 60,
                     "low_integrity": lambda oracle: oracle.get("integrity_score", 100) < 30,
-                    "no_stable_engine": lambda oracle: oracle.get("engine_superiority") != "dominant"
+                    "no_stable_engine": lambda oracle: oracle.get("engine_superiority") != "dominant",
                 },
                 "effect": {
                     "structure_collapse_flag": True,
                     "actionable": False,
-                    "description": "Oracle outputs 'structure collapse' flag. Race marked informational, not actionable."
+                    "description": "Oracle outputs 'structure collapse' flag. Race marked informational, not actionable.",
                 },
-                "hierarchy_pillar": "chaos"
+                "hierarchy_pillar": "chaos",
             },
-
             PositioningDirective.VETP_IMPRINT: {
                 "triggers": {
-                    "high_pattern_match": lambda oracle: max(
-                        [p.get("score", 0) for p in oracle.get("vetp_patterns", [{}])], default=0
-                    ) > 65
+                    "high_pattern_match": lambda oracle: (
+                        max([p.get("score", 0) for p in oracle.get("vetp_patterns", [{}])], default=0) > 65
+                    )
                 },
                 "effect": {
                     "memory_penalties_active": True,
                     "behavioural_classification_adjusted": True,
-                    "description": "Oracle enforces memory penalties or bonuses. Adjusts behavioural classification."
+                    "description": "Oracle enforces memory penalties or bonuses. Adjusts behavioural classification.",
                 },
-                "hierarchy_pillar": "vetp_memory"
-            }
+                "hierarchy_pillar": "vetp_memory",
+            },
         }
 
-    def execute_sequence(self, oracle_data: Dict[str, Any], doctrines: List[str]) -> Dict[str, Any]:
+    def execute_sequence(self, oracle_data: dict[str, Any], doctrines: list[str]) -> dict[str, Any]:
         """
         Execute the full decision sequence.
 
@@ -276,16 +265,16 @@ class ExecutionSequencer:
         # STEP 8: Build execution output
         return self._build_execution_output(oracle_data, anchors, doctrines, directive)
 
-    def _identify_anchors(self, oracle_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _identify_anchors(self, oracle_data: dict[str, Any]) -> dict[str, Any]:
         """Identify power, story, chaos, and VETP anchors"""
         return {
             "power": oracle_data.get("power_anchor", "Unknown"),
             "story": oracle_data.get("story_anchor", "Favourite"),
             "chaos": "High" if oracle_data.get("chaos_bloom", 0) > 60 else "Low",
-            "vetp_match": self._get_top_vetp_match(oracle_data)
+            "vetp_match": self._get_top_vetp_match(oracle_data),
         }
 
-    def _get_top_vetp_match(self, oracle_data: Dict[str, Any]) -> str:
+    def _get_top_vetp_match(self, oracle_data: dict[str, Any]) -> str:
         """Get the top VETP pattern match"""
         vetp_patterns = oracle_data.get("vetp_patterns", [])
         if not vetp_patterns:
@@ -296,9 +285,7 @@ class ExecutionSequencer:
         return "None"
 
     def _determine_positioning_directive(
-        self,
-        oracle_data: Dict[str, Any],
-        doctrines: List[str]
+        self, oracle_data: dict[str, Any], doctrines: list[str]
     ) -> PositioningDirective:
         """
         Determine the primary positioning directive.
@@ -311,12 +298,11 @@ class ExecutionSequencer:
         G's directive_firing_threshold replaces the hardcoded 0.6.
         """
         threshold = self._get_directive_threshold()
-        triggered_directives: List[Tuple[PositioningDirective, float]] = []
+        triggered_directives: list[tuple[PositioningDirective, float]] = []
 
         for directive, rules in self.directive_rules.items():
             satisfied = sum(
-                1 for trigger in rules["triggers"].values()
-                if self._safe_trigger_check(trigger, oracle_data)
+                1 for trigger in rules["triggers"].values() if self._safe_trigger_check(trigger, oracle_data)
             )
             total = len(rules["triggers"])
             base_score = satisfied / total if total > 0 else 0.0
@@ -339,7 +325,7 @@ class ExecutionSequencer:
             # Use execution_hierarchy to break ties: higher hierarchy rank wins
             hierarchy_order = {v: i for i, v in enumerate(self.execution_hierarchy)}
 
-            def sort_key(item: Tuple[PositioningDirective, float]):
+            def sort_key(item: tuple[PositioningDirective, float]):
                 directive, score = item
                 pillar = self.directive_rules[directive].get("hierarchy_pillar", "market")
                 rank = hierarchy_order.get(pillar, len(self.execution_hierarchy))
@@ -348,8 +334,7 @@ class ExecutionSequencer:
 
             triggered_directives.sort(key=sort_key, reverse=True)
             logger.debug(
-                "[F] Triggered directives (sorted): %s",
-                [(d.value, round(s, 3)) for d, s in triggered_directives]
+                "[F] Triggered directives (sorted): %s", [(d.value, round(s, 3)) for d, s in triggered_directives]
             )
             return triggered_directives[0][0]
 
@@ -369,7 +354,7 @@ class ExecutionSequencer:
         else:
             return PositioningDirective.POWER_ANCHOR  # Default
 
-    def _safe_trigger_check(self, trigger_func, oracle_data: Dict[str, Any]) -> bool:
+    def _safe_trigger_check(self, trigger_func, oracle_data: dict[str, Any]) -> bool:
         """Safely check a trigger function"""
         try:
             return trigger_func(oracle_data)
@@ -378,11 +363,11 @@ class ExecutionSequencer:
 
     def _build_execution_output(
         self,
-        oracle_data: Dict[str, Any],
-        anchors: Dict[str, Any],
-        doctrines: List[str],
-        directive: PositioningDirective
-    ) -> Dict[str, Any]:
+        oracle_data: dict[str, Any],
+        anchors: dict[str, Any],
+        doctrines: list[str],
+        directive: PositioningDirective,
+    ) -> dict[str, Any]:
         """Build the complete execution output"""
         effect = self.directive_rules[directive]["effect"]
 
@@ -391,9 +376,7 @@ class ExecutionSequencer:
             "chaos": 1.0 - (oracle_data.get("chaos_bloom", 50) / 100.0),
             "manipulation": oracle_data.get("mpi", 50) / 100.0,
             "narrative": oracle_data.get("narrative_disruption", 50) / 100.0,
-            "vetp_bias": max(
-                [p.get("score", 0) for p in oracle_data.get("vetp_patterns", [{}])], default=0
-            ) / 100.0
+            "vetp_bias": max([p.get("score", 0) for p in oracle_data.get("vetp_patterns", [{}])], default=0) / 100.0,
         }
 
         return {
@@ -405,12 +388,10 @@ class ExecutionSequencer:
             "oracle_sentence": oracle_data.get("oracle_sentence", ""),
             "actionable": effect.get("actionable", True),
             "threshold_used": self._get_directive_threshold(),  # Audit trail
-            "hierarchy_applied": True
+            "hierarchy_applied": True,
         }
 
 
-def create_execution_sequencer(
-    sentient_state: Optional[Dict[str, Any]] = None
-) -> "ExecutionSequencer":
+def create_execution_sequencer(sentient_state: dict[str, Any] | None = None) -> "ExecutionSequencer":
     """Factory function to create Execution Sequencer"""
     return ExecutionSequencer(sentient_state=sentient_state)

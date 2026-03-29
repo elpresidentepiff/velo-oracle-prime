@@ -9,30 +9,44 @@ Usage:
     ranked = p.rank_field(runners, race)  # list of runner dicts
 """
 
+import logging
 import pickle
 import re
-import logging
+from pathlib import Path
+from typing import Any
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 
 log = logging.getLogger(__name__)
 
 MODEL_PATH = Path("models/sqpe_v16/sqpe_v16.pkl")
 
 FEATURE_COLS = [
-    "sp_dec", "log_sp", "implied_prob",
-    "dist_f", "going_code", "is_aw",
-    "class_num", "wgt_lbs",
-    "or_num", "rpr_num", "ts_num",
-    "or_vs_field", "rpr_vs_field",
-    "field_size", "draw_num", "draw_pct",
-    "age_num", "sp_rank", "is_fav",
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "sp_rank",
+    "is_fav",
 ]
 
 
 # ── feature parsers (mirrors train_sqpe_v16.py) ──────────────────────────────
+
 
 def _parse_sp(sp_str) -> float:
     if not sp_str or str(sp_str).strip() in ("", "–", "-", "nan"):
@@ -72,9 +86,18 @@ def _parse_going(going_str):
     g = str(going_str).strip().upper()
     aw = 1 if any(x in g for x in ["STANDARD", "SLOW", "FAST", "TAPETA", "POLYTRACK", "FIBRESAND"]) else 0
     codes = {
-        "FIRM": 2.0, "GOOD TO FIRM": 1.5, "GOOD": 1.0, "GOOD TO SOFT": 0.5,
-        "SOFT": 0.0, "HEAVY": -1.0, "YIELDING": 0.3, "YIELDING TO SOFT": 0.1,
-        "STANDARD": 1.0, "STANDARD TO SLOW": 0.5, "SLOW": 0.0, "FAST": 1.5,
+        "FIRM": 2.0,
+        "GOOD TO FIRM": 1.5,
+        "GOOD": 1.0,
+        "GOOD TO SOFT": 0.5,
+        "SOFT": 0.0,
+        "HEAVY": -1.0,
+        "YIELDING": 0.3,
+        "YIELDING TO SOFT": 0.1,
+        "STANDARD": 1.0,
+        "STANDARD TO SLOW": 0.5,
+        "SLOW": 0.0,
+        "FAST": 1.5,
     }
     for key, val in codes.items():
         if key in g:
@@ -127,7 +150,8 @@ def _num(val) -> float:
 
 # ── field-level feature builder ──────────────────────────────────────────────
 
-def build_features(runners: List[Dict[str, Any]], race: Dict[str, Any]) -> np.ndarray:
+
+def build_features(runners: list[dict[str, Any]], race: dict[str, Any]) -> np.ndarray:
     """
     Build the 19-feature matrix for a full field.
 
@@ -198,6 +222,7 @@ def build_features(runners: List[Dict[str, Any]], race: Dict[str, Any]) -> np.nd
 
 # ── predictor class ───────────────────────────────────────────────────────────
 
+
 class V16Predictor:
     def __init__(self, model_path: Path = MODEL_PATH):
         self._model = None
@@ -209,7 +234,7 @@ class V16Predictor:
                 self._model = pickle.load(f)
             log.info(f"SQPE v16 loaded from {self._path}")
 
-    def predict(self, runner: Dict[str, Any], all_runners: List[Dict[str, Any]], race: Dict[str, Any]) -> float:
+    def predict(self, runner: dict[str, Any], all_runners: list[dict[str, Any]], race: dict[str, Any]) -> float:
         """Return win probability for one runner, given full field context."""
         self._load()
         X = build_features(all_runners, race)
@@ -217,7 +242,7 @@ class V16Predictor:
         proba = self._model.predict_proba(X)[idx, 1]
         return float(proba)
 
-    def rank_field(self, runners: List[Dict[str, Any]], race: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def rank_field(self, runners: list[dict[str, Any]], race: dict[str, Any]) -> list[dict[str, Any]]:
         """
         Score and rank all runners in a field.
         Returns list sorted by v16_prob descending, each entry has:
@@ -229,17 +254,19 @@ class V16Predictor:
 
         results = []
         for i, r in enumerate(runners):
-            results.append({
-                "rank": 0,
-                "horse": r.get("horse") or r.get("horse_name", f"Runner {i+1}"),
-                "v16_prob": round(float(probs[i]), 4),
-                "v16_score": round(float(probs[i]) * 100, 1),
-                "sp": r.get("sp", ""),
-                "or_rating": r.get("or_rating") or r.get("or", ""),
-                "rpr": r.get("rpr", ""),
-                "ts": r.get("ts", ""),
-                "draw": r.get("draw", ""),
-            })
+            results.append(
+                {
+                    "rank": 0,
+                    "horse": r.get("horse") or r.get("horse_name", f"Runner {i + 1}"),
+                    "v16_prob": round(float(probs[i]), 4),
+                    "v16_score": round(float(probs[i]) * 100, 1),
+                    "sp": r.get("sp", ""),
+                    "or_rating": r.get("or_rating") or r.get("or", ""),
+                    "rpr": r.get("rpr", ""),
+                    "ts": r.get("ts", ""),
+                    "draw": r.get("draw", ""),
+                }
+            )
 
         results.sort(key=lambda x: x["v16_prob"], reverse=True)
         for i, res in enumerate(results):

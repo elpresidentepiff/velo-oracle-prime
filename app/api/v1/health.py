@@ -1,10 +1,13 @@
 """
 Health check endpoint
 """
+
 import time
+
 from fastapi import APIRouter
+
+from app.core import log, settings
 from app.schemas import HealthResponse
-from app.core import settings, log
 from app.services.model_registry import model_registry
 
 router = APIRouter()
@@ -22,23 +25,23 @@ async def health_check():
     try:
         # Check model loaded
         model_loaded = model_registry.is_model_loaded()
-        
+
         # Check connected services
         connected_services = []
         if settings.SUPABASE_URL:
             connected_services.append("supabase")
         if model_registry.get_active_model():
             connected_services.append("model_registry")
-        
+
         # Calculate uptime
         uptime = time.time() - startup_time
-        
+
         return HealthResponse(
             status="ok",
             model_loaded=model_loaded,
             connected_services=connected_services,
             uptime_seconds=round(uptime, 2),
-            version=settings.API_VERSION
+            version=settings.API_VERSION,
         )
     except Exception as e:
         log.error(f"Health check failed: {e}")
@@ -47,6 +50,5 @@ async def health_check():
             model_loaded=False,
             connected_services=[],
             uptime_seconds=round(time.time() - startup_time, 2),
-            version=settings.API_VERSION
+            version=settings.API_VERSION,
         )
-

@@ -5,9 +5,9 @@ Every meaningful race we live through becomes permanent memory.
 Every time they shaft us or we nail them, it becomes code.
 """
 
-from .vetp_event import VETPEvent, Base
-from .schemas.vetp import VETPEventIn, VETPEventOut, VETPEventSummary, KeyRival
+from .schemas.vetp import KeyRival, VETPEventIn, VETPEventOut, VETPEventSummary
 from .services.vetp_layer1 import VETPLayer1
+from .vetp_event import Base, VETPEvent
 
 __all__ = [
     "VETPEvent",

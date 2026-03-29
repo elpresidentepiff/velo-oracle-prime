@@ -5,14 +5,15 @@ Uses TS/RPR/OR ratings to identify value bets vs market odds
 """
 
 import json
-from pathlib import Path
 from datetime import datetime
-import numpy as np
+from pathlib import Path
 
+import numpy as np
 
 # -----------------------------
 # Utility Functions
 # -----------------------------
+
 
 def odds_to_probability(odds_str):
     """Convert fractional odds (e.g. '5/2') to (probability, decimal_odds)."""
@@ -57,6 +58,7 @@ def rating_to_probability(rating, max_rating):
 # -----------------------------
 # Core Engine
 # -----------------------------
+
 
 def analyze_race(race):
     print("\n" + "=" * 70)
@@ -117,10 +119,10 @@ def analyze_race(race):
     for i, r in enumerate(runners_sorted, 1):
         marker = "🎯" if r in value_bets else "  "
         print(
-            f"{marker}{i:<2} {str(r.get('horse',''))[:25]:<25} "
-            f"{str(r.get('odds','')):<8} "
-            f"{r['market_prob']*100:<7.1f} "
-            f"{r['model_prob']*100:<7.1f} "
+            f"{marker}{i:<2} {str(r.get('horse', ''))[:25]:<25} "
+            f"{str(r.get('odds', '')):<8} "
+            f"{r['market_prob'] * 100:<7.1f} "
+            f"{r['model_prob'] * 100:<7.1f} "
             f"{r['edge_pct']:<7.1f} "
             f"{r['ev_pct']:<7.1f}"
         )
@@ -131,6 +133,7 @@ def analyze_race(race):
 # -----------------------------
 # JSON Loader
 # -----------------------------
+
 
 def extract_races(payload):
     if isinstance(payload, dict):
@@ -150,6 +153,7 @@ def extract_races(payload):
 # Main
 # -----------------------------
 
+
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
     race_file = Path(f"data/velo_races_{today}.json")
@@ -167,18 +171,16 @@ def main():
     for race in races:
         bets = analyze_race(race)
         if bets:
-            all_value_bets.append({
-                "race": f"{race.get('course','?')} {race.get('time','?')}",
-                "url": race.get("url", ""),
-                "bets": bets
-            })
+            all_value_bets.append(
+                {"race": f"{race.get('course', '?')} {race.get('time', '?')}", "url": race.get("url", ""), "bets": bets}
+            )
 
     result = {
         "date": today,
         "generated_at": datetime.now().isoformat(),
         "races_analyzed": len(races),
         "races_with_value_bets": len(all_value_bets),
-        "value_bets": all_value_bets
+        "value_bets": all_value_bets,
     }
 
     output_file.write_text(json.dumps(result, indent=2, default=str), encoding="utf-8")
@@ -187,5 +189,5 @@ def main():
     print("#" * 70)
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()

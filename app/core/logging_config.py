@@ -1,9 +1,12 @@
 """
 Structured logging configuration using loguru
 """
-import sys
+
 import json
+import sys
+
 from loguru import logger
+
 from app.core.config import settings
 
 
@@ -17,20 +20,20 @@ def serialize_log(record):
         "function": record["function"],
         "line": record["line"],
     }
-    
+
     # Add extra fields if present
     if record["extra"]:
         subset["extra"] = record["extra"]
-    
+
     return json.dumps(subset)
 
 
 def setup_logging():
     """Configure loguru for production logging"""
-    
+
     # Remove default handler
     logger.remove()
-    
+
     if settings.LOG_JSON:
         # JSON logging for production
         logger.add(
@@ -46,10 +49,9 @@ def setup_logging():
             format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
             level=settings.LOG_LEVEL,
         )
-    
+
     return logger
 
 
 # Initialize logger
 log = setup_logging()
-

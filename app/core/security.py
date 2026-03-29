@@ -1,8 +1,10 @@
 """
 Security utilities for API authentication and authorization
 """
-from fastapi import Security, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from fastapi import Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from app.core.config import settings
 
 security = HTTPBearer(auto_error=False)
@@ -26,4 +28,3 @@ def get_cors_config():
         "allow_methods": ["*"],
         "allow_headers": ["*"],
     }
-

@@ -6,7 +6,7 @@ Date: 2026-01-04
 """
 
 from datetime import date, datetime, time
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field, validator
@@ -15,8 +15,10 @@ from pydantic import BaseModel, Field, validator
 # ENUMS
 # ============================================================================
 
-class BatchStatus(str, Enum):
+
+class BatchStatus(StrEnum):
     """Batch processing status"""
+
     UPLOADED = "uploaded"
     PARSING = "parsing"
     PARSED = "parsed"
@@ -26,35 +28,38 @@ class BatchStatus(str, Enum):
     FAILED = "failed"
     REJECTED_BAD_OUTPUT = "rejected_bad_output"  # Hard validation gate failure
 
-class FileType(str, Enum):
+
+class FileType(StrEnum):
     """File type classification"""
+
     RACECARDS = "racecards"
     RUNNERS = "runners"
     FORM = "form"
     COMMENTS = "comments"
     OTHER = "other"
 
+
 # ============================================================================
 # REQUEST MODELS
 # ============================================================================
 
+
 class CreateBatchRequest(BaseModel):
     """Request to create a new import batch"""
+
     import_date: date = Field(..., description="Date of the racing data (YYYY-MM-DD)")
     source: str = Field(default="racing_post", description="Data source identifier")
     notes: str | None = Field(None, description="Optional notes about this import")
 
     class Config:
         json_schema_extra = {
-            "example": {
-                "import_date": "2026-01-04",
-                "source": "racing_post",
-                "notes": "Saturday racing - full card"
-            }
+            "example": {"import_date": "2026-01-04", "source": "racing_post", "notes": "Saturday racing - full card"}
         }
+
 
 class FileMetadata(BaseModel):
     """Metadata for a single uploaded file"""
+
     file_type: FileType = Field(..., description="Type of file (racecards, runners, etc.)")
     storage_path: str = Field(..., description="Path in Supabase storage")
     original_filename: str = Field(..., description="Original filename from upload")
@@ -62,10 +67,10 @@ class FileMetadata(BaseModel):
     checksum_sha256: str | None = Field(None, description="SHA256 checksum for integrity")
     size_bytes: int | None = Field(None, description="File size in bytes")
 
-    @validator('storage_path')
+    @validator("storage_path")
     def validate_storage_path(cls, v):
         """Ensure storage path follows convention"""
-        if not v.startswith('rp_imports/'):
+        if not v.startswith("rp_imports/"):
             raise ValueError("Storage path must start with 'rp_imports/'")
         return v
 
@@ -77,15 +82,17 @@ class FileMetadata(BaseModel):
                 "original_filename": "racecards.csv",
                 "mime_type": "text/csv",
                 "checksum_sha256": "abc123...",
-                "size_bytes": 102400
+                "size_bytes": 102400,
             }
         }
 
+
 class RegisterFilesRequest(BaseModel):
     """Request to register multiple files for a batch"""
+
     files: list[FileMetadata] = Field(..., description="List of file metadata to register")
 
-    @validator('files')
+    @validator("files")
     def validate_required_files(cls, v):
         """Ensure required files are present"""
         file_types = {f.file_type for f in v}
@@ -106,25 +113,28 @@ class RegisterFilesRequest(BaseModel):
                         "storage_path": "rp_imports/2026-01-04/racecards.csv",
                         "original_filename": "racecards.csv",
                         "mime_type": "text/csv",
-                        "size_bytes": 102400
+                        "size_bytes": 102400,
                     },
                     {
                         "file_type": "runners",
                         "storage_path": "rp_imports/2026-01-04/runners.csv",
                         "original_filename": "runners.csv",
                         "mime_type": "text/csv",
-                        "size_bytes": 204800
-                    }
+                        "size_bytes": 204800,
+                    },
                 ]
             }
         }
+
 
 # ============================================================================
 # RESPONSE MODELS
 # ============================================================================
 
+
 class CreateBatchResponse(BaseModel):
     """Response from creating a batch"""
+
     batch_id: str = Field(..., description="UUID of the created/existing batch")
     status: BatchStatus = Field(..., description="Current batch status")
     message: str = Field(..., description="Human-readable message")
@@ -136,12 +146,14 @@ class CreateBatchResponse(BaseModel):
                 "batch_id": "550e8400-e29b-41d4-a716-446655440000",
                 "status": "uploaded",
                 "message": "Batch created successfully",
-                "created_at": "2026-01-04T10:00:00Z"
+                "created_at": "2026-01-04T10:00:00Z",
             }
         }
 
+
 class RegisterFilesResponse(BaseModel):
     """Response from registering files"""
+
     batch_id: str = Field(..., description="UUID of the batch")
     files_registered: int = Field(..., description="Number of files successfully registered")
     message: str = Field(..., description="Human-readable message")
@@ -151,18 +163,22 @@ class RegisterFilesResponse(BaseModel):
             "example": {
                 "batch_id": "550e8400-e29b-41d4-a716-446655440000",
                 "files_registered": 2,
-                "message": "Files registered successfully"
+                "message": "Files registered successfully",
             }
         }
 
+
 class ErrorDetail(BaseModel):
     """Detailed error information"""
+
     code: str = Field(..., description="Error code")
     message: str = Field(..., description="Error message")
     details: dict[str, Any] | None = Field(None, description="Additional error details")
 
+
 class ParseBatchResponse(BaseModel):
     """Response from parsing a batch"""
+
     batch_id: str = Field(..., description="UUID of the batch")
     status: BatchStatus = Field(..., description="Current batch status")
     message: str = Field(..., description="Human-readable message")
@@ -179,13 +195,15 @@ class ParseBatchResponse(BaseModel):
                     "races_inserted": 45,
                     "runners_inserted": 387,
                     "form_lines_inserted": 0,
-                    "unmatched_runner_rows": 0
-                }
+                    "unmatched_runner_rows": 0,
+                },
             }
         }
 
+
 class BatchStatusResponse(BaseModel):
     """Detailed batch status response"""
+
     batch_id: str = Field(..., description="UUID of the batch")
     import_date: date = Field(..., description="Import date")
     source: str = Field(..., description="Data source")
@@ -208,24 +226,24 @@ class BatchStatusResponse(BaseModel):
                 "status": "ready",
                 "notes": "Saturday racing - full card",
                 "error_summary": None,
-                "counts": {
-                    "races_inserted": 45,
-                    "runners_inserted": 387
-                },
+                "counts": {"races_inserted": 45, "runners_inserted": 387},
                 "files_count": 2,
                 "races_count": 45,
                 "runners_count": 387,
                 "created_at": "2026-01-04T10:00:00Z",
-                "updated_at": "2026-01-04T10:05:00Z"
+                "updated_at": "2026-01-04T10:05:00Z",
             }
         }
+
 
 # ============================================================================
 # DATABASE MODELS (for internal use)
 # ============================================================================
 
+
 class RaceData(BaseModel):
     """Canonical race data structure"""
+
     course: str
     off_time: time
     race_name: str | None = None
@@ -238,8 +256,10 @@ class RaceData(BaseModel):
     join_key: str
     raw: dict[str, Any] = Field(default_factory=dict)
 
+
 class RunnerData(BaseModel):
     """Canonical runner data structure"""
+
     cloth_no: int | None = None
     horse_name: str
     age: int | None = None
@@ -256,8 +276,10 @@ class RunnerData(BaseModel):
     form_figures: str | None = None
     raw: dict[str, Any] = Field(default_factory=dict)
 
+
 class FormLineData(BaseModel):
     """Form line data structure"""
+
     run_date: date | None = None
     course: str | None = None
     distance: str | None = None
@@ -274,8 +296,10 @@ class FormLineData(BaseModel):
 # VALIDATION MODELS
 # ============================================================================
 
+
 class RaceValidationResult(BaseModel):
     """Validation result for a single race"""
+
     race_id: str = Field(..., description="UUID of the race")
     status: str = Field(..., description="valid | needs_review | rejected")
     issues: list[str] = Field(default_factory=list, description="List of validation issues")
@@ -284,6 +308,7 @@ class RaceValidationResult(BaseModel):
 
 class ValidateBatchResponse(BaseModel):
     """Response from validating a batch"""
+
     batch_id: str = Field(..., description="UUID of the batch")
     total_races: int = Field(..., description="Total number of races")
     valid_count: int = Field(..., description="Number of valid races")
@@ -303,13 +328,6 @@ class ValidateBatchResponse(BaseModel):
                 "rejected_count": 1,
                 "avg_quality_score": 0.87,
                 "new_status": "needs_review",
-                "races": [
-                    {
-                        "race_id": "race-123",
-                        "status": "valid",
-                        "issues": [],
-                        "quality_score": 0.95
-                    }
-                ]
+                "races": [{"race_id": "race-123", "status": "valid", "issues": [], "quality_score": 0.95}],
             }
         }

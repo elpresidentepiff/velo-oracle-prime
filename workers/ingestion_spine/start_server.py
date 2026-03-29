@@ -3,11 +3,15 @@
 Diagnostic startup script for Railway deployment.
 Prints explicit checkpoints so Railway logs show exactly where failure occurs.
 """
-import sys, os
+
+import os
+import sys
+
 
 # Flush immediately after every print
 def log(msg):
     print(f"[VELO] {msg}", flush=True)
+
 
 log(f"Python {sys.version}")
 log(f"PYTHONPATH={os.environ.get('PYTHONPATH', 'NOT SET')}")
@@ -18,17 +22,18 @@ log(f"SUPABASE_SERVICE_ROLE_KEY set: {bool(os.environ.get('SUPABASE_SERVICE_ROLE
 
 try:
     import uvicorn
+
     log("uvicorn imported OK")
 except Exception as e:
     log(f"FATAL: failed to import uvicorn: {e}")
     sys.exit(1)
 
 try:
-    import ingestion_spine.main
     log("ingestion_spine.main imported OK")
 except Exception as e:
     log(f"FATAL: failed to import ingestion_spine.main: {e}")
     import traceback
+
     traceback.print_exc(file=sys.stdout)
     sys.stdout.flush()
     sys.exit(1)

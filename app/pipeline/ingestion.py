@@ -3,6 +3,7 @@ from pathlib import Path
 
 DATA_DIR = Path("data/incoming_races")
 
+
 def ingest_local_pdfs():
     """
     Short-term ingestion layer.
@@ -17,7 +18,7 @@ def ingest_local_pdfs():
 
     for file in DATA_DIR.glob("*.json"):
         try:
-            with open(file, "r", encoding="utf-8") as f:
+            with open(file, encoding="utf-8") as f:
                 race_data = json.load(f)
                 races.append(race_data)
                 print(f"[INGESTION] Loaded {file.name}")

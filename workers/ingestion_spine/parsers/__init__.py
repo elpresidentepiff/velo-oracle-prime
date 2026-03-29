@@ -9,7 +9,8 @@ Container layout (PYTHONPATH=/app):
   /app/ingestion_spine/parsers/          →  ingestion_spine.parsers  (this package)
 """
 
-from ingestion_spine._parsers_base import RacecardsParser, RunnersParser, FormParser
+from ingestion_spine._parsers_base import FormParser, RacecardsParser, RunnersParser
+
 from .quality import calculate_race_quality, calculate_runner_confidence
 
 __all__ = [

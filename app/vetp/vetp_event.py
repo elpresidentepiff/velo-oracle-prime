@@ -8,19 +8,17 @@ This is the spine. This is how VÉLØ learns.
 """
 
 from datetime import datetime
-from typing import Optional, List, Dict, Any
 
 from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Date,
-    Time,
-    Float,
-    Boolean,
     JSON,
-    Text,
+    Column,
+    Date,
     DateTime,
+    Float,
+    Integer,
+    String,
+    Text,
+    Time,
 )
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -30,7 +28,7 @@ Base = declarative_base()
 class VETPEvent(Base):
     """
     The Event Memory Table.
-    
+
     Every race we analyze, every bet we place, every result we witness
     gets logged here with:
     - What happened (facts)
@@ -39,14 +37,15 @@ class VETPEvent(Base):
     - What actually happened (reality)
     - What we learned (rules)
     - How it felt (emotion)
-    
+
     This is not just data. This is lived experience turned into architecture.
     """
+
     __tablename__ = "vetp_events"
 
     # Primary key
     id = Column(Integer, primary_key=True, autoincrement=True)
-    
+
     # Unique event identifier (e.g. "2025-12-03_KEM_19:40_MESAAFI")
     event_id = Column(String(80), unique=True, nullable=False, index=True)
 
@@ -89,7 +88,7 @@ class VETPEvent(Base):
 
     # Learning extraction
     key_learning = Column(Text, nullable=True)  # 1-3 sentences in human language
-    
+
     # Rule extraction (for future pattern matching)
     rule_trigger = Column(Text, nullable=True)  # When this pattern appears...
     rule_action = Column(Text, nullable=True)  # ...do this
@@ -103,12 +102,7 @@ class VETPEvent(Base):
 
     # Timestamps
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
-    updated_at = Column(
-        DateTime, 
-        nullable=False, 
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __repr__(self):
         return f"<VETPEvent {self.event_id} | {self.emotion_tag} | PnL: {self.pnl_units}>"

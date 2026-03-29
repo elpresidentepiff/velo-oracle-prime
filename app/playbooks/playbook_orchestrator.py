@@ -40,9 +40,10 @@ SPOTLIGHT INTEGRATION (5-step sequence — enforced):
 Doctrine: docs/VELO_SPOTLIGHT_HARD_LIMITS.md
 """
 
-import sys
 import os
-from typing import Dict, List, Any, Optional
+import sys
+from typing import Any
+
 from .playbook_e_attack_doctrine import create_attack_doctrine_engine
 from .playbook_f_execution_sequencer import create_execution_sequencer
 from .playbook_g_sentient_loopback import create_sentient_loopback_engine
@@ -50,15 +51,15 @@ from .playbook_g_sentient_loopback import create_sentient_loopback_engine
 # Spotlight gate — enforces the hard architectural rule:
 # "A spotlight comment cannot generate a selection. It can only modify one."
 try:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'workers'))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "workers"))
     from spotlight_parser import SpotlightGate
+
     _SPOTLIGHT_AVAILABLE = True
 except ImportError:
     _SPOTLIGHT_AVAILABLE = False
     import logging
-    logging.getLogger(__name__).warning(
-        "spotlight_parser not found — spotlight modifier layer disabled."
-    )
+
+    logging.getLogger(__name__).warning("spotlight_parser not found — spotlight modifier layer disabled.")
 
 
 class PlaybookOrchestrator:
@@ -92,9 +93,9 @@ class PlaybookOrchestrator:
 
     def analyze_race(
         self,
-        oracle_data: Dict[str, Any],
-        spotlight_records: Optional[Dict[str, dict]] = None,
-    ) -> Dict[str, Any]:
+        oracle_data: dict[str, Any],
+        spotlight_records: dict[str, dict] | None = None,
+    ) -> dict[str, Any]:
         """
         Complete race analysis through all playbooks.
 
@@ -154,6 +155,7 @@ class PlaybookOrchestrator:
             # Pipeline failure must never block the engine.
             # Log the error, set null reason, continue on structural-only verdict.
             import logging
+
             logging.getLogger(__name__).error(
                 f"[SPOTLIGHT_PIPELINE_FAILURE] Exception in spotlight gate: {exc}. "
                 "Continuing on structural-only verdict.",
@@ -163,10 +165,7 @@ class PlaybookOrchestrator:
             spotlight_gate_summary = {"applied": 0, "blocked": 0, "total": 0}
 
         # PLAYBOOK F: Execute positioning sequence (G-aware)
-        execution_output = self.execution_sequencer.execute_sequence(
-            oracle_data,
-            doctrines_triggered
-        )
+        execution_output = self.execution_sequencer.execute_sequence(oracle_data, doctrines_triggered)
 
         # PLAYBOOK G: Get evolutionary state for output
         evolutionary_state = self.sentient_loopback.get_evolutionary_state()
@@ -178,16 +177,14 @@ class PlaybookOrchestrator:
         return {
             "race_id": oracle_data.get("race_id", "unknown"),
             "timestamp": oracle_data.get("timestamp", ""),
-
             # Oracle Intelligence
             "oracle": {
                 "narrative_disruption": oracle_data.get("narrative_disruption", 0),
                 "mpi": oracle_data.get("mpi", 0),
                 "chaos_bloom": oracle_data.get("chaos_bloom", 0),
                 "integrity_score": oracle_data.get("integrity_score", 0),
-                "oracle_sentence": oracle_data.get("oracle_sentence", "")
+                "oracle_sentence": oracle_data.get("oracle_sentence", ""),
             },
-
             # Playbook E: Attack Doctrines
             "attack_doctrines": {
                 "triggered": doctrines_triggered,
@@ -196,9 +193,8 @@ class PlaybookOrchestrator:
                 "power_anchor": doctrine_output.get("power_anchor", ""),
                 "story_anchor": doctrine_output.get("story_anchor", ""),
                 "threshold_used": doctrine_output.get("threshold_used", 0.6),
-                "emotion_penalties_active": doctrine_output.get("emotion_penalties_active", False)
+                "emotion_penalties_active": doctrine_output.get("emotion_penalties_active", False),
             },
-
             # Playbook F: Execution
             "execution": {
                 "positioning_directive": execution_output.get("positioning_directive", ""),
@@ -207,9 +203,8 @@ class PlaybookOrchestrator:
                 "actionable": execution_output.get("actionable", True),
                 "anchors": execution_output.get("anchors", {}),
                 "threshold_used": execution_output.get("threshold_used", 0.6),
-                "hierarchy_applied": execution_output.get("hierarchy_applied", False)
+                "hierarchy_applied": execution_output.get("hierarchy_applied", False),
             },
-
             # Playbook G: Evolution (includes structural_drift for transparency)
             "sentient_state": {
                 "total_races_observed": evolutionary_state["total_races_observed"],
@@ -217,12 +212,10 @@ class PlaybookOrchestrator:
                 "doctrine_strengths": evolutionary_state["doctrine_strengths"],
                 "structural_drift": evolutionary_state["structural_drift"],
                 "emotion_laws_count": evolutionary_state["emotion_laws_count"],
-                "last_updated": evolutionary_state["last_updated"]
+                "last_updated": evolutionary_state["last_updated"],
             },
-
             # Kingmaker
             "kingmaker": kingmaker,
-
             # Spotlight Layer (Step 3 gate summary)
             # null_reason is set when spotlight data was absent or pipeline failed.
             # The engine always returns a valid verdict regardless.
@@ -231,22 +224,18 @@ class PlaybookOrchestrator:
                 "modifiers_applied": spotlight_gate_summary["applied"],
                 "modifiers_blocked": spotlight_gate_summary["blocked"],
                 "null_reason": spotlight_null_reason,
-                "doctrine": "docs/VELO_SPOTLIGHT_HARD_LIMITS.md"
+                "doctrine": "docs/VELO_SPOTLIGHT_HARD_LIMITS.md",
             },
-
             # Meta
             "playbooks_version": "1.2",
             "system": "VÉLØ PRIME",
             "sentient_loop_active": True,
-            "spotlight_gate_active": True
+            "spotlight_gate_active": True,
         }
 
     def record_outcome(
-        self,
-        race_data: Dict[str, Any],
-        prediction: Dict[str, Any],
-        actual_result: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, race_data: dict[str, Any], prediction: dict[str, Any], actual_result: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Record race outcome and trigger sentient evolution.
 
@@ -260,13 +249,9 @@ class PlaybookOrchestrator:
         Returns:
             Evolution report
         """
-        return self.sentient_loopback.observe_race_outcome(
-            race_data,
-            prediction,
-            actual_result
-        )
+        return self.sentient_loopback.observe_race_outcome(race_data, prediction, actual_result)
 
-    def get_system_status(self) -> Dict[str, Any]:
+    def get_system_status(self) -> dict[str, Any]:
         """Get complete system status"""
         evolutionary_state = self.sentient_loopback.get_evolutionary_state()
 
@@ -281,7 +266,7 @@ class PlaybookOrchestrator:
             "evolution_pillars": 5,
             "self_improving": True,
             "sentient_loop_active": True,
-            "status": "operational"
+            "status": "operational",
         }
 
 

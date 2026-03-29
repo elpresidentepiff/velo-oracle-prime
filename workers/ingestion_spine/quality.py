@@ -9,10 +9,10 @@ from typing import Any
 def calculate_runner_confidence(runner_data: dict) -> tuple[float, list[str], str]:
     """
     Calculate confidence score for a single runner
-    
+
     Args:
         runner_data: Raw parsed runner data
-    
+
     Returns:
         (confidence, quality_flags, extraction_method)
         - confidence: 0.0-1.0 (1.0 = perfect)
@@ -71,11 +71,11 @@ def calculate_runner_confidence(runner_data: dict) -> tuple[float, list[str], st
 def calculate_race_quality(race_data: dict, runners: list[dict]) -> tuple[float, float, list[str]]:
     """
     Calculate aggregate quality metrics for a race
-    
+
     Args:
         race_data: Race metadata (course, distance, etc.)
         runners: List of runner dicts (must include 'confidence' field)
-    
+
     Returns:
         (parse_confidence, quality_score, quality_flags)
         - parse_confidence: average runner confidence
@@ -135,10 +135,10 @@ def calculate_race_quality(race_data: dict, runners: list[dict]) -> tuple[float,
 def validate_race(race: dict) -> dict[str, Any]:
     """
     Apply RIC+ validation rules to categorize a race
-    
+
     Args:
         race: Race dict with quality metadata
-    
+
     Returns:
         {
             "race_id": str,
@@ -194,5 +194,5 @@ def validate_race(race: dict) -> dict[str, Any]:
         "race_id": race.get("id", "unknown"),
         "status": status,
         "issues": issues,
-        "quality_score": round(quality_score, 3)
+        "quality_score": round(quality_score, 3),
     }

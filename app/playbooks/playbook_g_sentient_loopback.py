@@ -28,13 +28,13 @@ FIX (sentient-feedback-loop):
   them as trigger penalties
 """
 
-from typing import Dict, List, Any, Optional
+import json
+import logging
+import os
 from datetime import datetime
 from difflib import SequenceMatcher
 from pathlib import Path
-import json
-import os
-import logging
+from typing import Any
 
 _DEFAULT_STATE_FILE = str(Path(__file__).parent.parent.parent / "data" / "sentient_state.json")
 
@@ -107,7 +107,7 @@ class SentientLoopbackEngine:
         self.state_file = state_file
         self.state = self._load_state()
 
-    def _load_state(self) -> Dict[str, Any]:
+    def _load_state(self) -> dict[str, Any]:
         """
         Load sentient state.
 
@@ -117,17 +117,15 @@ class SentientLoopbackEngine:
         3. Fresh initialised state (first-ever run)
         """
         try:
-            with open(self.state_file, 'r') as f:
+            with open(self.state_file) as f:
                 state = json.load(f)
-                logger.debug("[G] Sentient state loaded from disk (races=%d)",
-                             state.get("total_races_observed", 0))
+                logger.debug("[G] Sentient state loaded from disk (races=%d)", state.get("total_races_observed", 0))
                 return state
         except Exception as e:
-            logger.warning("[G] Could not load state file (%s): %s — trying Supabase backup",
-                           self.state_file, e)
+            logger.warning("[G] Could not load state file (%s): %s — trying Supabase backup", self.state_file, e)
         return self._restore_from_supabase()
 
-    def _restore_from_supabase(self) -> Dict[str, Any]:
+    def _restore_from_supabase(self) -> dict[str, Any]:
         """
         Restore sentient state from Supabase learned_patterns backup.
 
@@ -138,17 +136,17 @@ class SentientLoopbackEngine:
         settings object may not see .env credentials at import time.
         """
         import os
+
         supa_url = os.getenv("SUPABASE_URL", "")
         supa_key = (
-            os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-            or os.getenv("SUPABASE_SERVICE_KEY")
-            or os.getenv("SUPABASE_KEY", "")
+            os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_KEY", "")
         )
         if not supa_url or not supa_key:
             logger.warning("[G] Supabase env vars not set — initialising fresh state")
             return self._initialize_state()
         try:
             from supabase import create_client
+
             db = create_client(supa_url, supa_key)
             result = (
                 db.table("learned_patterns")
@@ -160,8 +158,7 @@ class SentientLoopbackEngine:
                 state = result.data[0]["conditions"]
                 if isinstance(state, dict) and "doctrine_strengths" in state:
                     logger.info(
-                        "[G] Sentient state restored from Supabase backup "
-                        "(races=%d last_observed=%s)",
+                        "[G] Sentient state restored from Supabase backup (races=%d last_observed=%s)",
                         state.get("total_races_observed", 0),
                         result.data[0].get("last_observed", "?"),
                     )
@@ -184,14 +181,11 @@ class SentientLoopbackEngine:
         """
         try:
             os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
-            with open(self.state_file, 'w') as f:
+            with open(self.state_file, "w") as f:
                 json.dump(self.state, f, indent=2)
             # Write dated backup
-            backup_path = self.state_file.replace(
-                ".json",
-                f"_backup_{datetime.now().strftime('%Y%m%d')}.json"
-            )
-            with open(backup_path, 'w') as f:
+            backup_path = self.state_file.replace(".json", f"_backup_{datetime.now().strftime('%Y%m%d')}.json")
+            with open(backup_path, "w") as f:
                 json.dump(self.state, f, indent=2)
         except Exception as e:
             logger.error("[G] Could not save sentient state to disk: %s", e)
@@ -219,6 +213,7 @@ class SentientLoopbackEngine:
         """
         try:
             import os
+
             supa_url = os.getenv("SUPABASE_URL", "")
             supa_key = (
                 os.getenv("SUPABASE_SERVICE_ROLE_KEY")
@@ -229,47 +224,42 @@ class SentientLoopbackEngine:
                 logger.debug("[G] Supabase env vars not set — skipping cloud backup")
                 return
             from supabase import create_client
+
             db = create_client(supa_url, supa_key)
             now_str = datetime.now().isoformat()
             races = self.state.get("total_races_observed", 0)
             payload = {
-                "pattern_name":    "SENTIENT_STATE_BACKUP",
-                "pattern_type":    "sentient_state",
-                "description":     (
-                    f"Full sentient state — {races} races observed, "
-                    f"last_updated={self.state.get('last_updated', '?')}"
+                "pattern_name": "SENTIENT_STATE_BACKUP",
+                "pattern_type": "sentient_state",
+                "description": (
+                    f"Full sentient state — {races} races observed, last_updated={self.state.get('last_updated', '?')}"
                 ),
-                "conditions":      self.state,          # full state as JSONB
+                "conditions": self.state,  # full state as JSONB
                 "confidence_level": self.state["appetite_state"]["aggression_level"],
-                "occurrences":     races,
-                "last_observed":   self.state.get("last_updated", now_str),
-                "updated_at":      now_str,
-                "is_active":       True,
+                "occurrences": races,
+                "last_observed": self.state.get("last_updated", now_str),
+                "updated_at": now_str,
+                "is_active": True,
             }
-            db.table("learned_patterns").upsert(
-                payload,
-                on_conflict="pattern_name"
-            ).execute()
+            db.table("learned_patterns").upsert(payload, on_conflict="pattern_name").execute()
             logger.debug("[G] Sentient state backed up to Supabase (races=%d)", races)
         except Exception as e:
             logger.warning("[G] Supabase backup failed (non-fatal): %s", e)
 
-    def _initialize_state(self) -> Dict[str, Any]:
+    def _initialize_state(self) -> dict[str, Any]:
         """Initialize fresh sentient state"""
         return {
             "version": "1.1",
             "last_updated": datetime.now().isoformat(),
             "total_races_observed": 0,
-
             # Pillar 1: Behaviour Echo Chamber
             "house_behaviour_map": {
                 "favourites_protected": 0,
                 "favourites_abandoned": 0,
                 "market_lies_detected": 0,
                 "safe_bets_imploded": 0,
-                "recurring_setups": {}
+                "recurring_setups": {},
             },
-
             # Pillar 2: Structural Drift Engine
             # Stored as raw counts; get_evolutionary_state normalises to weights
             "structural_weights": {
@@ -278,9 +268,8 @@ class SentientLoopbackEngine:
                 "hidden_improver_wins": 0,
                 "short_burst_wins": 0,
                 "stamina_collapse_wins": 0,
-                "late_money_wins": 0
+                "late_money_wins": 0,
             },
-
             # Pillar 3: Manipulation Memory Core
             "manipulation_genome": {
                 "regulated_deception_patterns": [],
@@ -288,30 +277,27 @@ class SentientLoopbackEngine:
                 "market_steering_behaviours": [],
                 "narrative_traps": [],
                 "integrity_collapses": [],
-                "suspicious_volatility_events": []
+                "suspicious_volatility_events": [],
             },
-
             # Pillar 4: VETP Recursive Emotion Engine
             # Each rule now includes a 'key' field so Playbook E can apply penalties
             "emotion_laws": {
-                "pain_rules": [],      # "Never fall for this structure again"
-                "triumph_rules": [],   # "This configuration is true"
-                "anger_rules": [],     # "This story is a trap"
-                "regret_rules": []     # "Avoid unfocused multi-threat zones"
+                "pain_rules": [],  # "Never fall for this structure again"
+                "triumph_rules": [],  # "This configuration is true"
+                "anger_rules": [],  # "This story is a trap"
+                "regret_rules": [],  # "Avoid unfocused multi-threat zones"
             },
-
             # Pillar 5: Appetite Multiplier
             "appetite_state": {
-                "recent_performance": [],          # Last 10 predictions
-                "aggression_level": 0.5,           # 0.0 to 1.0
+                "recent_performance": [],  # Last 10 predictions
+                "aggression_level": 0.5,  # 0.0 to 1.0
                 "pattern_recognition_sensitivity": 0.5,
                 "doctrine_firing_threshold": 0.6,  # Read by Playbook E
-                "directive_firing_threshold": 0.6, # Read by Playbook F
+                "directive_firing_threshold": 0.6,  # Read by Playbook F
                 "narrative_skepticism": 0.7,
                 "chaos_tolerance": 0.4,
-                "manipulation_sensitivity": 0.7
+                "manipulation_sensitivity": 0.7,
             },
-
             # Doctrine Strength Tracking (read by Playbook F)
             "doctrine_strengths": {
                 "LAY_THE_STORY": 1.0,
@@ -325,16 +311,13 @@ class SentientLoopbackEngine:
                 "CHAOS_BLEED": 1.0,
                 "DRAW_SKEW": 1.0,
                 "GATEKEEPER": 1.0,
-                "VETP_ECHO": 1.0
-            }
+                "VETP_ECHO": 1.0,
+            },
         }
 
     def observe_race_outcome(
-        self,
-        race_data: Dict[str, Any],
-        prediction: Dict[str, Any],
-        actual_result: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, race_data: dict[str, Any], prediction: dict[str, Any], actual_result: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         The core sentient loop.
 
@@ -371,14 +354,10 @@ class SentientLoopbackEngine:
             "evolution_applied": True,
             "error_vector": error_vector,
             "appetite_state": self.state["appetite_state"]["aggression_level"],
-            "doctrine_adjustments": self._get_recent_doctrine_adjustments()
+            "doctrine_adjustments": self._get_recent_doctrine_adjustments(),
         }
 
-    def _compute_error_vector(
-        self,
-        prediction: Dict[str, Any],
-        actual_result: Dict[str, Any]
-    ) -> Dict[str, float]:
+    def _compute_error_vector(self, prediction: dict[str, Any], actual_result: dict[str, Any]) -> dict[str, float]:
         """
         Compute prediction error vector.
 
@@ -393,22 +372,15 @@ class SentientLoopbackEngine:
         correct = _fuzzy_match(predicted_winner, actual_winner)
 
         if predicted_winner and actual_winner and not correct:
-            logger.debug(
-                "[G] Prediction mismatch: predicted='%s' actual='%s'",
-                predicted_winner, actual_winner
-            )
+            logger.debug("[G] Prediction mismatch: predicted='%s' actual='%s'", predicted_winner, actual_winner)
 
         return {
             "prediction_correct": 1.0 if correct else 0.0,
             "confidence_error": abs(prediction.get("confidence", 0.5) - (1.0 if correct else 0.0)),
-            "directive_effectiveness": 1.0 if correct else 0.0
+            "directive_effectiveness": 1.0 if correct else 0.0,
         }
 
-    def _update_behaviour_echo_chamber(
-        self,
-        race_data: Dict[str, Any],
-        actual_result: Dict[str, Any]
-    ):
+    def _update_behaviour_echo_chamber(self, race_data: dict[str, Any], actual_result: dict[str, Any]):
         """Pillar 1: Log house behavior patterns"""
         bec = self.state["house_behaviour_map"]
 
@@ -427,11 +399,7 @@ class SentientLoopbackEngine:
         if race_data.get("chaos_bloom", 0) < 30 and not favourite_won:
             bec["safe_bets_imploded"] += 1
 
-    def _update_structural_drift_engine(
-        self,
-        race_data: Dict[str, Any],
-        actual_result: Dict[str, Any]
-    ):
+    def _update_structural_drift_engine(self, race_data: dict[str, Any], actual_result: dict[str, Any]):
         """Pillar 2: Continuous structural adaptation"""
         sde = self.state["structural_weights"]
 
@@ -447,30 +415,30 @@ class SentientLoopbackEngine:
             sde["late_money_wins"] += 1
 
     def _update_manipulation_memory_core(
-        self,
-        race_data: Dict[str, Any],
-        actual_result: Dict[str, Any],
-        error_vector: Dict[str, float]
+        self, race_data: dict[str, Any], actual_result: dict[str, Any], error_vector: dict[str, float]
     ):
         """Pillar 3: Build manipulation genome"""
         mmc = self.state["manipulation_genome"]
 
         # Detect narrative trap
-        if (race_data.get("narrative_disruption", 0) > 80 and
-                not actual_result.get("favourite_won", False)):
-            mmc["narrative_traps"].append({
-                "race_id": race_data.get("race_id"),
-                "narrative_score": race_data.get("narrative_disruption"),
-                "timestamp": datetime.now().isoformat()
-            })
+        if race_data.get("narrative_disruption", 0) > 80 and not actual_result.get("favourite_won", False):
+            mmc["narrative_traps"].append(
+                {
+                    "race_id": race_data.get("race_id"),
+                    "narrative_score": race_data.get("narrative_disruption"),
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
         # Detect integrity collapse
         if race_data.get("integrity_score", 100) < 30:
-            mmc["integrity_collapses"].append({
-                "race_id": race_data.get("race_id"),
-                "integrity": race_data.get("integrity_score"),
-                "timestamp": datetime.now().isoformat()
-            })
+            mmc["integrity_collapses"].append(
+                {
+                    "race_id": race_data.get("race_id"),
+                    "integrity": race_data.get("integrity_score"),
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
         # Keep only recent 100 entries
         for key in mmc:
@@ -478,10 +446,7 @@ class SentientLoopbackEngine:
                 mmc[key] = mmc[key][-100:]
 
     def _update_emotion_engine(
-        self,
-        race_data: Dict[str, Any],
-        actual_result: Dict[str, Any],
-        error_vector: Dict[str, float]
+        self, race_data: dict[str, Any], actual_result: dict[str, Any], error_vector: dict[str, float]
     ):
         """
         Pillar 4: Convert emotions to machine laws.
@@ -493,40 +458,46 @@ class SentientLoopbackEngine:
 
         # Pain → Never fall for this again
         if error_vector["prediction_correct"] == 0.0 and race_data.get("mpi", 0) > 70:
-            ree["pain_rules"].append({
-                "rule": f"Avoid {race_data.get('story_anchor')} when MPI > 70",
-                "key": "mpi",  # Playbook E uses this to apply penalty to 'mpi' triggers
-                "pattern": "high_mpi_narrative_trap",
-                "strength": 1.0,
-                "timestamp": datetime.now().isoformat()
-            })
+            ree["pain_rules"].append(
+                {
+                    "rule": f"Avoid {race_data.get('story_anchor')} when MPI > 70",
+                    "key": "mpi",  # Playbook E uses this to apply penalty to 'mpi' triggers
+                    "pattern": "high_mpi_narrative_trap",
+                    "strength": 1.0,
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
         # Anger → This story is a trap
         if error_vector["prediction_correct"] == 0.0 and race_data.get("narrative_disruption", 0) > 75:
-            ree["anger_rules"].append({
-                "rule": f"Narrative disruption > 75 was a trap",
-                "key": "narrative_disruption",  # Playbook E penalises this trigger
-                "pattern": "narrative_trap_confirmed",
-                "strength": 1.0,
-                "timestamp": datetime.now().isoformat()
-            })
+            ree["anger_rules"].append(
+                {
+                    "rule": "Narrative disruption > 75 was a trap",
+                    "key": "narrative_disruption",  # Playbook E penalises this trigger
+                    "pattern": "narrative_trap_confirmed",
+                    "strength": 1.0,
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
         # Triumph → This configuration is true
         if error_vector["prediction_correct"] == 1.0:
-            ree["triumph_rules"].append({
-                "rule": f"Trust {race_data.get('power_anchor')} engine supremacy",
-                "key": "engine_superiority",
-                "pattern": "engine_dominance_confirmed",
-                "strength": 1.0,
-                "timestamp": datetime.now().isoformat()
-            })
+            ree["triumph_rules"].append(
+                {
+                    "rule": f"Trust {race_data.get('power_anchor')} engine supremacy",
+                    "key": "engine_superiority",
+                    "pattern": "engine_dominance_confirmed",
+                    "strength": 1.0,
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
         # Keep only recent 50 rules per category
         for emotion in ree:
             if len(ree[emotion]) > 50:
                 ree[emotion] = ree[emotion][-50:]
 
-    def _update_appetite_multiplier(self, error_vector: Dict[str, float]):
+    def _update_appetite_multiplier(self, error_vector: dict[str, float]):
         """Pillar 5: Risk-aware momentum"""
         appetite = self.state["appetite_state"]
 
@@ -559,11 +530,7 @@ class SentientLoopbackEngine:
                 if isinstance(appetite[key], float):
                     appetite[key] = max(0.0, min(1.0, appetite[key]))
 
-    def _update_doctrine_strengths(
-        self,
-        prediction: Dict[str, Any],
-        error_vector: Dict[str, float]
-    ):
+    def _update_doctrine_strengths(self, prediction: dict[str, Any], error_vector: dict[str, float]):
         """Update doctrine effectiveness scores using exponential moving average"""
         doctrines_fired = prediction.get("doctrines_fired", [])
         correct = error_vector["prediction_correct"]
@@ -571,15 +538,13 @@ class SentientLoopbackEngine:
         for doctrine in doctrines_fired:
             if doctrine in self.state["doctrine_strengths"]:
                 current = self.state["doctrine_strengths"][doctrine]
-                self.state["doctrine_strengths"][doctrine] = (
-                    0.9 * current + 0.1 * correct
-                )
+                self.state["doctrine_strengths"][doctrine] = 0.9 * current + 0.1 * correct
 
-    def _get_recent_doctrine_adjustments(self) -> Dict[str, float]:
+    def _get_recent_doctrine_adjustments(self) -> dict[str, float]:
         """Get recent doctrine strength changes"""
         return {k: round(v, 3) for k, v in self.state["doctrine_strengths"].items()}
 
-    def _get_structural_drift_weights(self) -> Dict[str, float]:
+    def _get_structural_drift_weights(self) -> dict[str, float]:
         """
         Normalise raw structural_weights counts into 0.0–1.0 weights.
         Used by get_evolutionary_state and read by Playbook F.
@@ -588,7 +553,7 @@ class SentientLoopbackEngine:
         total = sum(raw.values()) or 1
         return {k: round(v / total, 3) for k, v in raw.items()}
 
-    def identify_kingmaker(self, race_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def identify_kingmaker(self, race_data: dict[str, Any]) -> dict[str, Any] | None:
         """
         KINGMAKER MODULE
 
@@ -615,15 +580,13 @@ class SentientLoopbackEngine:
         # The real Racing API fixture uses 'run_style' (e.g. 'FRONT', 'CLOSER').
         # The oracle_data layer may use 'running_style' or 'horse' instead of 'name'.
         # We read both key variants and normalise to canonical values.
-        style_map: Dict[str, str] = {}
+        style_map: dict[str, str] = {}
         for runner in runners:
             if isinstance(runner, dict):
                 # Name: try 'name' first, then 'horse' (fixture schema)
                 name = runner.get("name") or runner.get("horse", "")
                 # Style: try 'running_style' first, then 'run_style' (fixture schema)
-                raw_style = (
-                    runner.get("running_style") or runner.get("run_style", "")
-                ).lower().strip()
+                raw_style = (runner.get("running_style") or runner.get("run_style", "")).lower().strip()
                 canonical = _RUN_STYLE_NORMALISE.get(raw_style, raw_style)
                 if name:
                     style_map[name] = canonical
@@ -658,7 +621,7 @@ class SentientLoopbackEngine:
                         "kingmaker": horse,
                         "role": "pace_destabiliser",
                         "effect": "Blocks favourite's optimal trip",
-                        "confidence": 0.8
+                        "confidence": 0.8,
                     }
 
         # Look for chaos navigators (closers, hold-up horses)
@@ -670,7 +633,7 @@ class SentientLoopbackEngine:
                         "kingmaker": horse,
                         "role": "chaos_navigator",
                         "effect": "Thrives in unstable pace",
-                        "confidence": 0.7
+                        "confidence": 0.7,
                     }
 
         # Look for narrative collapsers (power anchor ≠ favourite)
@@ -681,12 +644,12 @@ class SentientLoopbackEngine:
                     "kingmaker": power_anchor,
                     "role": "narrative_collapser",
                     "effect": "Reality defeats story",
-                    "confidence": 0.85
+                    "confidence": 0.85,
                 }
 
         return None
 
-    def get_evolutionary_state(self) -> Dict[str, Any]:
+    def get_evolutionary_state(self) -> dict[str, Any]:
         """
         Get current evolutionary state for API output and for injection into E/F.
 
@@ -699,14 +662,13 @@ class SentientLoopbackEngine:
             "appetite_multiplier": round(self.state["appetite_state"]["aggression_level"], 3),
             "appetite_state": self.state["appetite_state"],  # Full state for E/F injection
             "structural_drift": self._get_structural_drift_weights(),  # Read by Playbook F
-            "emotion_laws": self.state["emotion_laws"],                # Read by Playbook E
+            "emotion_laws": self.state["emotion_laws"],  # Read by Playbook E
             "manipulation_genome_size": sum(
-                len(v) if isinstance(v, list) else 0
-                for v in self.state["manipulation_genome"].values()
+                len(v) if isinstance(v, list) else 0 for v in self.state["manipulation_genome"].values()
             ),
             "emotion_laws_count": sum(len(v) for v in self.state["emotion_laws"].values()),
             "structural_drift_active": True,
-            "last_updated": self.state["last_updated"]
+            "last_updated": self.state["last_updated"],
         }
 
 

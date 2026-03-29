@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 def calculate_runner_confidence(runner_data: dict) -> tuple[float, list[str], str]:
     """
     Calculate confidence score for a single runner
-    
+
     Args:
         runner_data: Dictionary containing runner information
-    
+
     Returns:
         Tuple of (confidence, flags, extraction_method)
         - confidence: float 0.0-1.0 (1.0 = perfect extraction)
@@ -58,11 +58,11 @@ def calculate_runner_confidence(runner_data: dict) -> tuple[float, list[str], st
 def calculate_race_quality(race_data: dict, runners: list[dict]) -> tuple[float, float, list[str]]:
     """
     Calculate aggregate quality for a race
-    
+
     Args:
         race_data: Dictionary containing race information
         runners: List of runner dictionaries with confidence scores
-    
+
     Returns:
         Tuple of (parse_confidence, quality_score, flags)
         - parse_confidence: Average of runner confidences (0.0-1.0)

@@ -2,43 +2,48 @@
 VÉLØ Oracle - Race Card Schema
 Comprehensive race card data model
 """
-from typing import List, Optional
+
+from datetime import date, datetime, time
+
 from pydantic import BaseModel, Field
-from datetime import datetime, date, time
+
 from .runner import RunnerSchema
 
 
 class RaceCardSchema(BaseModel):
     """Complete race card with all runners and metadata"""
+
     race_id: str = Field(..., description="Unique race identifier")
     course: str = Field(..., min_length=1, max_length=100, description="Race course/venue name")
     date: date = Field(..., description="Race date")
     time: time = Field(..., description="Race scheduled time")
     distance: int = Field(..., ge=800, le=4000, description="Race distance in meters")
     going: str = Field(..., max_length=50, description="Track condition (e.g., 'Good', 'Soft 7')")
-    runners: List[RunnerSchema] = Field(..., min_items=2, max_items=24, description="List of runners")
-    
+    runners: list[RunnerSchema] = Field(..., min_items=2, max_items=24, description="List of runners")
+
     # Optional race metadata
-    race_name: Optional[str] = Field(None, max_length=200, description="Race name/title")
-    race_number: Optional[int] = Field(None, ge=1, le=12, description="Race number on card")
-    race_class: Optional[str] = Field(None, max_length=50, description="Race class/grade")
-    prize_money: Optional[float] = Field(None, ge=0, description="Total prize pool")
-    track_type: Optional[str] = Field(None, max_length=20, description="Track type (e.g., 'Turf', 'Dirt', 'Synthetic')")
-    track_direction: Optional[str] = Field(None, max_length=20, description="Track direction (e.g., 'Clockwise', 'Anti-clockwise')")
-    rail_position: Optional[str] = Field(None, max_length=20, description="Rail position (e.g., 'True', '+3m')")
-    weather: Optional[str] = Field(None, max_length=50, description="Weather conditions")
-    temperature: Optional[float] = Field(None, ge=-10, le=50, description="Temperature in Celsius")
-    
+    race_name: str | None = Field(None, max_length=200, description="Race name/title")
+    race_number: int | None = Field(None, ge=1, le=12, description="Race number on card")
+    race_class: str | None = Field(None, max_length=50, description="Race class/grade")
+    prize_money: float | None = Field(None, ge=0, description="Total prize pool")
+    track_type: str | None = Field(None, max_length=20, description="Track type (e.g., 'Turf', 'Dirt', 'Synthetic')")
+    track_direction: str | None = Field(
+        None, max_length=20, description="Track direction (e.g., 'Clockwise', 'Anti-clockwise')"
+    )
+    rail_position: str | None = Field(None, max_length=20, description="Rail position (e.g., 'True', '+3m')")
+    weather: str | None = Field(None, max_length=50, description="Weather conditions")
+    temperature: float | None = Field(None, ge=-10, le=50, description="Temperature in Celsius")
+
     # Race type flags
-    is_handicap: Optional[bool] = Field(False, description="Is this a handicap race")
-    is_stakes: Optional[bool] = Field(False, description="Is this a stakes race")
-    is_group_race: Optional[bool] = Field(False, description="Is this a group/graded race")
-    group_level: Optional[int] = Field(None, ge=1, le=3, description="Group level (1, 2, or 3)")
-    
+    is_handicap: bool | None = Field(False, description="Is this a handicap race")
+    is_stakes: bool | None = Field(False, description="Is this a stakes race")
+    is_group_race: bool | None = Field(False, description="Is this a group/graded race")
+    group_level: int | None = Field(None, ge=1, le=3, description="Group level (1, 2, or 3)")
+
     # Timing metadata
-    created_at: Optional[datetime] = Field(default_factory=datetime.utcnow, description="Record creation timestamp")
-    updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
-    
+    created_at: datetime | None = Field(default_factory=datetime.utcnow, description="Record creation timestamp")
+    updated_at: datetime | None = Field(None, description="Last update timestamp")
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -71,8 +76,8 @@ class RaceCardSchema(BaseModel):
                         "jockey": "James McDonald",
                         "odds": 5.50,
                         "draw": 12,
-                        "form": "1-2-1-3-1"
+                        "form": "1-2-1-3-1",
                     }
-                ]
+                ],
             }
         }

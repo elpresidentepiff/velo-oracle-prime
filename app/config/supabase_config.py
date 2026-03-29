@@ -2,8 +2,8 @@
 Supabase Configuration for VELO
 Centralized configuration for Supabase database connection
 """
+
 import os
-from typing import Optional
 
 # Supabase Project Configuration
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -42,17 +42,17 @@ def get_supabase_client():
     Returns a client instance for database operations
     """
     try:
-        from supabase import create_client, Client
-        
+        from supabase import Client, create_client
+
         if not SUPABASE_SERVICE_KEY:
             raise ValueError("SUPABASE_SERVICE_KEY environment variable not set")
-        
+
         client: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
         return client
-    except ImportError:
-        raise ImportError("supabase-py not installed. Run: pip install supabase")
+    except ImportError as import_err:
+        raise ImportError("supabase-py not installed. Run: pip install supabase") from import_err
     except Exception as e:
-        raise Exception(f"Failed to create Supabase client: {e}")
+        raise Exception(f"Failed to create Supabase client: {e}") from e
 
 
 def get_database_url() -> str:
