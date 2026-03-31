@@ -38,21 +38,12 @@ SUPABASE_STORAGE_URL = f"{SUPABASE_URL}/storage/v1"
 
 def get_supabase_client():
     """
-    Get configured Supabase client
-    Returns a client instance for database operations
+    Get configured Supabase client.
+    Delegates to the canonical singleton at src/data/supabase_client.py.
+    Kept here for backwards-compatibility with scripts that import from this path.
     """
-    try:
-        from supabase import Client, create_client
-
-        if not SUPABASE_SERVICE_KEY:
-            raise ValueError("SUPABASE_SERVICE_KEY environment variable not set")
-
-        client: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
-        return client
-    except ImportError as import_err:
-        raise ImportError("supabase-py not installed. Run: pip install supabase") from import_err
-    except Exception as e:
-        raise Exception(f"Failed to create Supabase client: {e}") from e
+    from src.data.supabase_client import get_supabase_client as _canonical
+    return _canonical()
 
 
 def get_database_url() -> str:
