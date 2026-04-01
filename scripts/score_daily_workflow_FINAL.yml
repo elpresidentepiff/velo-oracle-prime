@@ -1,0 +1,104 @@
+name: VELO Score Daily
+
+# SOURCE-CONTROLLED SCHEDULER — replaces Railway UI cron fragility.
+# This workflow owns the scoring cadence. Railway cron is intentionally
+# NOT configured — this file IS the schedule.
+#
+# Required GitHub secret: TRIGGER_SCORE_SECRET
+# Required Railway env var: TRIGGER_SCORE_SECRET (same value)
+# Required Railway env var: VELO_ORACLE_URL (or update the env block below)
+
+on:
+  schedule:
+    # 09:00 UTC Mon–Sat — covers UK flat and NH season
+    # Timezone: UTC explicit. No ambiguity.
+    - cron: '0 9 * * 1-6'
+
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: 'Date to score (YYYY-MM-DD). Leave blank for today.'
+        required: false
+        default: ''
+
+env:
+  VELO_ORACLE_URL: https://velo-oracle-production.up.railway.app
+
+jobs:
+  trigger-scoring:
+    name: Trigger Daily Scoring
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Set trigger metadata
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "trigger_source=github_actions_manual" >> $GITHUB_OUTPUT
+          else
+            echo "trigger_source=github_actions_scheduled" >> $GITHUB_OUTPUT
+          fi
+          echo "utc_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+
+      - name: Trigger score-daily endpoint
+        id: trigger
+        run: |
+          set -e
+
+          echo "Trigger source : ${{ steps.meta.outputs.trigger_source }}"
+          echo "UTC time       : ${{ steps.meta.outputs.utc_time }}"
+          echo "Target date    : ${{ github.event.inputs.target_date || 'today' }}"
+          echo "Workflow run   : ${{ github.run_id }}"
+          echo ""
+
+          BODY=$(printf '{"trigger_source":"%s","target_date":"%s"}' \
+            "${{ steps.meta.outputs.trigger_source }}" \
+            "${{ github.event.inputs.target_date }}")
+
+          RESPONSE=$(curl -s -o /tmp/trigger_response.json -w "%{http_code}" \
+            --max-time 30 \
+            -X POST \
+            "${{ env.VELO_ORACLE_URL }}/api/trigger/score-daily" \
+            -H "Content-Type: application/json" \
+            -H "X-Trigger-Secret: ${{ secrets.TRIGGER_SCORE_SECRET }}" \
+            -d "$BODY")
+
+          echo "HTTP status: ${RESPONSE}"
+          echo "Response body:"
+          cat /tmp/trigger_response.json
+          echo ""
+
+          if [ "${RESPONSE}" != "202" ]; then
+            echo "FAIL: expected HTTP 202, got ${RESPONSE}"
+            exit 1
+          fi
+
+          echo "SUCCESS: scoring process launched"
+
+      - name: Verify trigger response
+        run: |
+          STATUS=$(python3 -c "import json,sys; d=json.load(open('/tmp/trigger_response.json')); print(d.get('status',''))")
+          SOURCE=$(python3 -c "import json,sys; d=json.load(open('/tmp/trigger_response.json')); print(d.get('trigger_source',''))")
+          PID=$(python3 -c    "import json,sys; d=json.load(open('/tmp/trigger_response.json')); print(d.get('pid',''))")
+
+          echo "status         : ${STATUS}"
+          echo "trigger_source : ${SOURCE}"
+          echo "pid            : ${PID}"
+
+          if [ "${STATUS}" != "triggered" ]; then
+            echo "FAIL: response status was not 'triggered'"
+            exit 1
+          fi
+
+          echo "Trigger confirmed. Run will appear in pipeline_runs with trigger_source=${SOURCE}"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=== VELO Score Daily — Trigger Summary ==="
+          echo "Event          : ${{ github.event_name }}"
+          echo "Trigger source : ${{ steps.meta.outputs.trigger_source }}"
+          echo "Triggered at   : ${{ steps.meta.outputs.utc_time }}"
+          echo "Workflow run   : https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "Actor          : ${{ github.actor }}"
