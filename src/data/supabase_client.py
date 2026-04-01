@@ -25,19 +25,38 @@ class SupabaseClient:
     def __init__(self, url: str = None, key: str = None):
         """
         Initialize Supabase client.
-        
+
+        Key resolution order (most privileged first, so writes always succeed):
+          1. Explicit ``key`` argument
+          2. SUPABASE_SERVICE_ROLE_KEY  — full write access, bypasses RLS
+          3. SUPABASE_SERVICE_KEY       — Railway alias for the same secret
+          4. SUPABASE_KEY               — legacy / anon key (read-only on most tables)
+
         Args:
             url: Supabase project URL (or from SUPABASE_URL env var)
-            key: Supabase anon/service key (or from SUPABASE_KEY env var)
+            key: Explicit key override (optional)
         """
         self.url = url or os.getenv('SUPABASE_URL')
-        self.key = key or os.getenv('SUPABASE_KEY')
-        
+        self.key = (
+            key
+            or os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+            or os.getenv('SUPABASE_SERVICE_KEY')
+            or os.getenv('SUPABASE_KEY')
+        )
+
         if not self.url or not self.key:
-            raise ValueError("Supabase URL and KEY must be provided or set in environment")
-        
+            raise ValueError(
+                "Supabase URL and a service-role key must be provided. "
+                "Set SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SERVICE_KEY) in your environment."
+            )
+
         self.client: Client = create_client(self.url, self.key)
-        logger.info(f"✅ Supabase client initialized: {self.url}")
+        # Log which key type is in use to make debugging easy
+        _key_type = (
+            'service_role' if os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('SUPABASE_SERVICE_KEY')
+            else 'anon/legacy'
+        )
+        logger.info(f"✅ Supabase client initialised [{_key_type}]: {self.url}")
     
     # ========================================================================
     # PREDICTIONS
