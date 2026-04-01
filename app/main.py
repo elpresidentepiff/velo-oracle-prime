@@ -51,6 +51,28 @@ async def lifespan(app: FastAPI):
         _sentient_state = None
         logger.warning("[sentient] G state load failed at startup (non-fatal): %s", e)
 
+    # ── Security hardening validator ─────────────────────────────────────────
+    # Permanent guard against DB security regression.
+    # Runs on every startup. Logs CRITICAL if hardening has been lost.
+    # Non-fatal: app continues to run but operator is alerted immediately.
+    # If regression is detected, run: scripts/migrations/002_full_security_hardening.sql
+    try:
+        from app.services.security_validator import run_security_check
+        _sec = run_security_check()
+        if not _sec.get("passed") and not _sec.get("error"):
+            logger.critical(
+                "[startup] ❌ SECURITY REGRESSION DETECTED — "
+                "Run scripts/migrations/002_full_security_hardening.sql immediately. "
+                "tables_rls_disabled=%d views_not_invoker=%d "
+                "functions_mutable_search_path=%d matviews_exposed=%d",
+                _sec.get("tables_rls_disabled", -1),
+                _sec.get("views_not_invoker", -1),
+                _sec.get("functions_mutable_search_path", -1),
+                _sec.get("matviews_exposed", -1),
+            )
+    except Exception as _sec_err:
+        logger.warning("[startup] Security validator failed to load (non-fatal): %s", _sec_err)
+
     # Register Telegram webhook so velo_agent_bot can receive messages
     _register_webhook()
 
