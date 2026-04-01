@@ -74,10 +74,16 @@ class DatabaseClient:
             "counts": {},
         }
 
-        result = self.client.table("import_batches").insert(data).execute()
+        # UPSERT on (import_date, source) — prevents 409 on re-runs for the same day.
+        # On conflict the row is refreshed (status reset, notes updated) rather than duplicated.
+        result = (
+            self.client.table("import_batches")
+            .upsert(data, on_conflict="import_date,source")
+            .execute()
+        )
 
         if not result.data:
-            raise ValueError("Failed to create batch")
+            raise ValueError("Failed to create/upsert batch")
 
         return result.data[0]
 
@@ -201,10 +207,15 @@ class DatabaseClient:
             "raw": race_data.get("raw", {}),
         }
 
-        result = self.client.table("races").insert(data).execute()
+        # UPSERT on join_key (natural race identifier) — prevents 409 on re-ingestion.
+        result = (
+            self.client.table("races")
+            .upsert(data, on_conflict="join_key")
+            .execute()
+        )
 
         if not result.data:
-            raise ValueError("Failed to insert race")
+            raise ValueError("Failed to insert/upsert race")
 
         return result.data[0]["race_id"]  # PK is race_id (text), not id
 
@@ -258,10 +269,15 @@ class DatabaseClient:
             "raw": runner_data.get("raw", {}),
         }
 
-        result = self.client.table("runners").insert(data).execute()
+        # UPSERT on (race_id, cloth_no) — prevents 409 on re-ingestion of the same runner.
+        result = (
+            self.client.table("runners")
+            .upsert(data, on_conflict="race_id,cloth_no")
+            .execute()
+        )
 
         if not result.data:
-            raise ValueError("Failed to insert runner")
+            raise ValueError("Failed to insert/upsert runner")
 
         return result.data[0]["id"]
 
@@ -295,10 +311,15 @@ class DatabaseClient:
             "raw": form_data.get("raw", {}),
         }
 
-        result = self.client.table("runner_form_lines").insert(data).execute()
+        # UPSERT on (runner_id, run_date, course) — prevents 409 on re-ingestion.
+        result = (
+            self.client.table("runner_form_lines")
+            .upsert(data, on_conflict="runner_id,run_date,course")
+            .execute()
+        )
 
         if not result.data:
-            raise ValueError("Failed to insert form line")
+            raise ValueError("Failed to insert/upsert form line")
 
         return result.data[0]["id"]
 
