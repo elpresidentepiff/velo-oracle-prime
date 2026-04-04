@@ -51,6 +51,28 @@ async def lifespan(app: FastAPI):
         _sentient_state = None
         logger.warning("[sentient] G state load failed at startup (non-fatal): %s", e)
 
+    # ── Security hardening validator ─────────────────────────────────────────
+    # Permanent guard against DB security regression.
+    # Runs on every startup. Logs CRITICAL if hardening has been lost.
+    # Non-fatal: app continues to run but operator is alerted immediately.
+    # If regression is detected, run: scripts/migrations/002_full_security_hardening.sql
+    try:
+        from app.services.security_validator import run_security_check
+        _sec = run_security_check()
+        if not _sec.get("passed") and not _sec.get("error"):
+            logger.critical(
+                "[startup] ❌ SECURITY REGRESSION DETECTED — "
+                "Run scripts/migrations/002_full_security_hardening.sql immediately. "
+                "tables_rls_disabled=%d views_not_invoker=%d "
+                "functions_mutable_search_path=%d matviews_exposed=%d",
+                _sec.get("tables_rls_disabled", -1),
+                _sec.get("views_not_invoker", -1),
+                _sec.get("functions_mutable_search_path", -1),
+                _sec.get("matviews_exposed", -1),
+            )
+    except Exception as _sec_err:
+        logger.warning("[startup] Security validator failed to load (non-fatal): %s", _sec_err)
+
     # Register Telegram webhook so velo_agent_bot can receive messages
     _register_webhook()
 
@@ -305,10 +327,12 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
 
 
 # ── Sigma trigger — called by GitHub Actions at 21:00 UTC ────────────────────
+# /api/trigger/sigma      → run_results_sigma.py  (lightweight stdlib reconciliation)
+# /api/trigger/sigma-daily → close_sigma_loops.py (full reconciliation + Zep + G feed)
 @app.post("/api/trigger/sigma", status_code=202)
 async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
     """
-    Trigger sigma reconciliation run from an external scheduler (GitHub Actions).
+    Trigger sigma reconciliation via run_results_sigma.py.
     Returns 202 immediately — sigma runs as a background subprocess.
 
     Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
@@ -365,6 +389,76 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
         status_code=202,
         content={
             "status": "triggered",
+            "trigger_source": trigger_source,
+            "target_date": target_date or "today",
+            "pid": proc.pid,
+        },
+    )
+
+
+@app.post("/api/trigger/sigma-daily", status_code=202)
+async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(None)):
+    """
+    Trigger full sigma reconciliation via close_sigma_loops.py.
+    Writes race_results, runner_results, velo_post_race_reviews, sigma_audits,
+    learned_patterns, Playbook G doctrine feed, Zep graph memory.
+    Returns 202 immediately — sigma runs as a background subprocess.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
+    """
+    import pathlib
+    import subprocess
+    import sys
+
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if not trigger_secret:
+        logger.error("TRIGGER_SCORE_SECRET not configured — sigma trigger endpoint disabled")
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if x_trigger_secret != trigger_secret:
+        logger.warning("Sigma trigger attempt with invalid secret")
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    body: dict = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    trigger_source = body.get("trigger_source") or "api_manual"
+    target_date = body.get("target_date") or ""
+
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "close_sigma_loops.py"
+    if not script_path.exists():
+        raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
+
+    env = os.environ.copy()
+    env["TRIGGER_SOURCE"] = trigger_source
+
+    cmd = [sys.executable, str(script_path)]
+    if target_date:
+        cmd += ["--date", target_date]
+
+    proc = subprocess.Popen(
+        cmd,
+        env=env,
+        cwd=str(script_path.parent.parent),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    logger.info(
+        "Sigma reconciliation triggered — source=%s pid=%d target_date=%s",
+        trigger_source,
+        proc.pid,
+        target_date or "today",
+    )
+
+    return JSONResponse(
+        status_code=202,
+        content={
+            "status": "triggered",
+            "service": "sigma-daily",
             "trigger_source": trigger_source,
             "target_date": target_date or "today",
             "pid": proc.pid,
