@@ -35,6 +35,27 @@ _WEIGHTS = {
     "longshot_score":        0.07,  # only applied when sp > 10.0
 }
 
+# ─── Disabled components ────────────────────────────────────────────────────────
+# Components listed here are excluded from the ensemble regardless of weight.
+# Condition for disabling: required input features are not available in the live
+# scoring pipeline, causing the specialist model to return a constant output that
+# adds zero ranking signal while distorting probability scaling.
+#
+# release_window_score — requires RPD timing features (setup_run_flag,
+#   cash_run_flag, trainer_timing_score, runs_since_win/place …)
+#   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
+#
+# comment_intel_score — requires RPD intent features (quiet_run_score,
+#   decoy_support_flag, jockey_switch_intent, setup_run_flag, cash_run_flag …)
+#   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
+#
+# Re-enable only when the required feature pipeline is fully wired and
+# the field-level zero-variance kill switch (in predict_race) does NOT fire.
+_DISABLED_COMPONENTS: set[str] = {
+    "release_window_score",
+    "comment_intel_score",
+}
+
 # Macro modifiers — these adjust confidence/weight, don't replace probabilities
 _MACRO_CHAOS_CONFIDENCE_DAMPER    = 0.80  # reduce model confidence in chaos regime
 _MACRO_COMPRESSION_FAV_PENALTY    = 0.05  # subtract from favourite's prob when trap=high
@@ -68,21 +89,29 @@ class VeloPrimePrediction:
     regime_override: Optional[str] = None
     verdict_flags: list = field(default_factory=list)
 
-    def compute(self) -> "VeloPrimePrediction":
-        """Build VELO_PRIME_prob from all available signals."""
+    def compute(self, killed: set[str] | None = None) -> "VeloPrimePrediction":
+        """Build VELO_PRIME_prob from all available signals.
+
+        Args:
+            killed: additional components to exclude this race (from field-level
+                    zero-variance kill switch in predict_race).
+        """
+        excluded = _DISABLED_COMPONENTS | (killed or set())
         scores = {"sqpe_v17": self.sqpe_v17_prob}
 
-        if self.improvement_score is not None:
+        if "improvement_score" not in excluded and self.improvement_score is not None:
             scores["improvement_score"] = self.improvement_score
-        if self.release_window_score is not None:
+        if "release_window_score" not in excluded and self.release_window_score is not None:
             scores["release_window_score"] = self.release_window_score
-        if self.market_deception_score is not None:
+        if "market_deception_score" not in excluded and self.market_deception_score is not None:
             scores["market_deception_score"] = self.market_deception_score
-        if self.place_prob is not None:
+        if "place_prob" not in excluded and self.place_prob is not None:
             scores["place_prob"] = self.place_prob
-        if self.comment_intel_score is not None:
+        if "comment_intel_score" not in excluded and self.comment_intel_score is not None:
             scores["comment_intel_score"] = self.comment_intel_score
-        if self.longshot_score is not None and (self.sp_dec or 0) >= 10.0:
+        if ("longshot_score" not in excluded
+                and self.longshot_score is not None
+                and (self.sp_dec or 0) >= 10.0):
             scores["longshot_score"] = self.longshot_score
 
         # Weighted average of available scores
@@ -175,6 +204,32 @@ class VeloPrimeEnsemble:
         Returns:
             List of VeloPrimePrediction, sorted by velo_prime_prob desc.
         """
+        # ── Field-level zero-variance kill switch ──────────────────────────────
+        # If all runners in this race have the same value for a component, that
+        # component is adding zero ranking signal and distorting normalization.
+        # Exclude it for this race and log in verdict_flags.
+        _score_keys = {
+            "improvement_score":      "improvement_score",
+            "release_window_score":   "release_window_score",
+            "market_deception_score": "market_deception_score",
+            "place_prob":             "place_prob",
+            "comment_intel_score":    "comment_intel_score",
+            "longshot_score":         "longshot_score",
+        }
+        field_killed: set[str] = set()
+        for comp_key, runner_key in _score_keys.items():
+            if comp_key in _DISABLED_COMPONENTS:
+                continue
+            vals = [r.get(runner_key) for r in runners if r.get(runner_key) is not None]
+            if len(vals) >= 2 and (max(vals) - min(vals)) < 1e-6:
+                field_killed.add(comp_key)
+                import warnings
+                warnings.warn(
+                    f"VeloPrimeEnsemble: {comp_key} is constant across field "
+                    f"(val={vals[0]:.4f}) — excluded from this race",
+                    stacklevel=2,
+                )
+
         predictions = []
         for r in runners:
             pred = VeloPrimePrediction(
@@ -191,7 +246,9 @@ class VeloPrimeEnsemble:
                 is_fav=bool(r.get("is_fav", False)),
                 macro_context=macro_context,
             )
-            pred.compute()
+            pred.compute(killed=field_killed)
+            if field_killed:
+                pred.verdict_flags.append(f"killed:{','.join(sorted(field_killed))}")
             predictions.append(pred)
 
         # Re-normalise so race probabilities sum to 1.0
