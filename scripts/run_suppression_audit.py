@@ -39,18 +39,30 @@ def get_client():
 # ── Threshold variants ────────────────────────────────────────────────────────
 
 VARIANTS = {
-    "current_prod": {
+    "baseline_v1": {
+        # Pre-calibration thresholds — kept for before/after comparison only
         "a_prob": 0.32, "a_gap": 0.08, "a_place": 0.52,
         "b_prob": 0.18, "b_gap": 0.03,
         "c_prob": 0.13, "c_gap": 0.02,
         "x_prob": 0.10, "x_longshot": 0.35,
-        "desc": "Current production thresholds",
+        "x_strong_escape": False,  # escape hatch disabled
+        "desc": "Pre-calibration baseline (b=0.18, no escape hatch)",
+    },
+    "calibrated_v1": {
+        # Active thresholds after 2026-04-04 calibration
+        "a_prob": 0.32, "a_gap": 0.08, "a_place": 0.52,
+        "b_prob": 0.15, "b_gap": 0.03,
+        "c_prob": 0.13, "c_gap": 0.02,
+        "x_prob": 0.10, "x_longshot": 0.35,
+        "x_strong_escape": True,   # escape: prob>=0.18 + place>=0.35 skips gap/longshot X
+        "desc": "Calibrated v1 (b=0.15, strong-signal escape hatch active)",
     },
     "relaxed": {
         "a_prob": 0.26, "a_gap": 0.05, "a_place": 0.44,
         "b_prob": 0.15, "b_gap": 0.02,
         "c_prob": 0.10, "c_gap": 0.01,
         "x_prob": 0.08, "x_longshot": 0.50,
+        "x_strong_escape": True,
         "desc": "Relaxed thresholds — more bets, lower bar",
     },
     "sqpe_direct": {
@@ -58,6 +70,7 @@ VARIANTS = {
         "b_prob": 0.18, "b_gap": 0.02,
         "c_prob": 0.11, "c_gap": 0.01,
         "x_prob": 0.08, "x_longshot": 0.99,   # disable longshot X gate
+        "x_strong_escape": False,
         "desc": "SQPE-direct — no place floor, longshot gate disabled",
     },
 }
@@ -74,7 +87,15 @@ def classify(p: dict, v: dict) -> str:
 
     longshot_trigger = longshot > v["x_longshot"] and sp_dec >= 10.0
 
-    if prob < v["x_prob"] or (gap < 0.015 and place < 0.40) or longshot_trigger or chaos:
+    # Strong-signal escape: horses with real edge bypass gap/longshot X gates.
+    # macro_chaos_mode is always a hard block regardless of escape setting.
+    use_escape = v.get("x_strong_escape", False)
+    strong_escape = use_escape and (prob >= 0.18 and place >= 0.35)
+
+    if (prob < v["x_prob"]
+            or (gap < 0.015 and place < 0.40 and not strong_escape)
+            or (longshot_trigger and not strong_escape)
+            or chaos):
         return "X"
     if prob >= v["a_prob"] and gap >= v["a_gap"] and place >= v["a_place"]:
         return "A"

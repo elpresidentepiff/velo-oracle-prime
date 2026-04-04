@@ -134,7 +134,7 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 # A-STRIKE : prob >= 0.32  AND  gap >= 0.08  AND  place >= 0.52
 #             AND  conf != 'low'  AND  trap != 'high'
 #
-# B-PLAYABLE: prob >= 0.18  AND  gap >= 0.03  AND  conf != 'low'
+# B-PLAYABLE: prob >= 0.15  AND  gap >= 0.03  AND  conf != 'low'
 #             AND  (place >= 0.45  OR  gap >= 0.08  OR  improve >= 0.18)
 #
 # C-WATCH  : (prob >= 0.13 AND gap >= 0.02)
@@ -187,7 +187,8 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     # confidence_level is assigned pre-normalization in the ensemble, then the field
     # normalization step raises the top horse's prob without updating the label.
     # Recompute from the already-normalized prob so A/B gates see the real signal.
-    eff_conf = "high" if prob >= 0.45 else "normal" if prob >= 0.20 else "low"
+    # Boundary set at 0.15 to match the B-PLAYABLE win prob floor.
+    eff_conf = "high" if prob >= 0.45 else "normal" if prob >= 0.15 else "low"
 
     # Longshot gate: only meaningful when horse is genuinely a longshot (SP >= 10).
     # The specialist longshot model scores all runners but was trained on SP >= 10 data.
@@ -200,7 +201,15 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     # Trigger X only when model is genuinely blind: flat field, no place floor,
     # outsider dominance (longshot SP-gated), or macro chaos.
     # gap=0 alone does NOT trigger X if place >= 0.40.
-    if prob < 0.10 or (gap < 0.015 and place < 0.40) or longshot_trigger or chaos_m:
+    #
+    # Strong-signal escape: if the horse itself shows real edge (prob ≥ 0.18,
+    # place ≥ 0.35), race-shape signals (tight gap, outsider pressure) should not
+    # bury it in X-CHAOS. macro_chaos_mode is market-wide — it stays a hard block.
+    strong_escape = prob >= 0.18 and place >= 0.35
+    if (prob < 0.10
+            or (gap < 0.015 and place < 0.40 and not strong_escape)
+            or (longshot_trigger and not strong_escape)
+            or chaos_m):
         if prob < 0.10:
             reasons.append(f"flat field — top prob {prob:.3f} below threshold")
         if gap < 0.015 and place < 0.40:
@@ -228,7 +237,7 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     b_place_ok = place >= 0.45
     b_gap_ok   = gap >= 0.08
     b_improve  = improve >= 0.18
-    if (prob >= 0.18 and gap >= 0.03 and eff_conf not in ("low",)
+    if (prob >= 0.15 and gap >= 0.03 and eff_conf not in ("low",)
             and (b_place_ok or b_gap_ok or b_improve)):
         if b_gap_ok:
             reasons.append(f"field separation gap {gap:.3f}")
