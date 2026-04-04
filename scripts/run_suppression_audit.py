@@ -111,6 +111,42 @@ def _pct(n, d):
     return f"{n/d*100:.1f}%" if d else "0%"
 
 
+def _extract_top_pick(verdict: dict, sp_by_horse: dict | None = None) -> dict:
+    """
+    velo_verdicts is race-level: one row per race, with the top horse's summary
+    fields as direct columns and full runner details in full_analysis (list).
+    Returns a flat dict ready for classify().
+    """
+    fa = verdict.get("full_analysis") or []
+    if isinstance(fa, str):
+        fa = json.loads(fa)
+
+    # Sort full_analysis runners by velo_prime_prob to find top + second
+    runners = sorted(fa, key=lambda x: float(x.get("velo_prime_prob") or 0), reverse=True)
+    top_runner = runners[0] if runners else {}
+    second_prob = float(runners[1].get("velo_prime_prob") or 0) if len(runners) > 1 else 0.0
+    top_prob = float(top_runner.get("velo_prime_prob") or 0)
+
+    race_id   = verdict["race_id"]
+    horse_id  = top_runner.get("horse_id") or verdict.get("top_rank_horse_id") or ""
+    sp_key    = f"{race_id}:{horse_id}"
+    sp_dec    = float((sp_by_horse or {}).get(sp_key) or 0)
+
+    return {
+        "race_id":            race_id,
+        "horse_name":         top_runner.get("horse") or horse_id,
+        "horse_id":           horse_id,
+        "velo_prime_prob":    verdict.get("velo_prime_prob") or top_prob,
+        "place_prob":         verdict.get("place_prob") or float(top_runner.get("place_prob") or 0),
+        "improvement_score":  verdict.get("improvement_score") or float(top_runner.get("improvement_score") or 0),
+        "longshot_prob":      verdict.get("longshot_prob") or float(top_runner.get("longshot_prob") or 0),
+        "macro_chaos_mode":   verdict.get("macro_chaos_mode") or bool(top_runner.get("macro_chaos_mode")),
+        "gap":                top_prob - second_prob,
+        "sp_dec":             sp_dec,
+        "stored_tier":        verdict.get("decision_tier"),
+    }
+
+
 def run_audit(days: int = 30, show_blocked: bool = False):
     print(f"\n{'='*65}")
     print(f"  VÉLØ SUPPRESSION AUDIT — last {days} days")
@@ -119,12 +155,13 @@ def run_audit(days: int = 30, show_blocked: bool = False):
     sb = get_client()
     since = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
 
-    # Pull verdicts
+    # velo_verdicts is race-level (one row per race / top selection).
+    # full_analysis carries per-runner detail including second runner for gap calc.
     resp = sb.table("velo_verdicts") \
-        .select("race_id,horse_name,velo_prime_prob,place_prob,improvement_score,"
-                "longshot_prob,sp_dec,macro_chaos_mode,confidence_level,"
-                "release_day_prob,market_deception_score") \
-        .gte("created_at", since) \
+        .select("race_id,generated_at,decision_tier,velo_prime_prob,place_prob,"
+                "improvement_score,longshot_prob,macro_chaos_mode,top_rank_horse_id,full_analysis") \
+        .gte("generated_at", since) \
+        .not_.is_("velo_prime_prob", "null") \
         .execute()
 
     verdicts = resp.data or []
@@ -133,36 +170,29 @@ def run_audit(days: int = 30, show_blocked: bool = False):
         print("Check table name or date range.")
         return
 
-    # Pull results for outcome mapping
-    result_resp = sb.table("race_results") \
-        .select("race_id,winner_horse_name,top4_horse_names") \
-        .gte("race_date", since) \
+    # Pull results for outcome mapping — runner_results has is_winner + sp_dec per horse
+    result_resp = sb.table("runner_results") \
+        .select("race_id,horse_id,position,is_winner,sp_dec") \
         .execute()
 
+    # Build lookup: race_id → winner horse_id, and race_id+horse_id → sp_dec
     results_by_race: dict[str, dict] = {}
+    sp_by_horse: dict[str, float] = {}   # key = race_id + ":" + horse_id
     for r in (result_resp.data or []):
-        results_by_race[r["race_id"]] = r
+        rid = r["race_id"]
+        if r.get("is_winner"):
+            results_by_race[rid] = {"winner_horse_id": r["horse_id"]}
+        if r.get("sp_dec") and r.get("horse_id"):
+            sp_by_horse[f"{rid}:{r['horse_id']}"] = float(r["sp_dec"])
 
-    # Need gap — compute per race
-    races: dict[str, list] = {}
-    for v in verdicts:
-        races.setdefault(v["race_id"], []).append(v)
+    # Flatten to top-pick dicts (one per verdict row = one per race)
+    top_picks = [_extract_top_pick(v, sp_by_horse) for v in verdicts]
 
-    for race_id, runners in races.items():
-        sorted_r = sorted(runners, key=lambda x: float(x.get("velo_prime_prob") or 0), reverse=True)
-        top_prob = float(sorted_r[0].get("velo_prime_prob") or 0) if sorted_r else 0
-        second_prob = float(sorted_r[1].get("velo_prime_prob") or 0) if len(sorted_r) > 1 else 0
-        for r in runners:
-            r["gap"] = top_prob - second_prob if float(r.get("velo_prime_prob") or 0) == top_prob else 0
+    print(f"Loaded {len(top_picks)} race verdicts  |  results available: {len(results_by_race)}\n")
 
-    print(f"Loaded {len(verdicts)} runner predictions across {len(races)} races\n")
-
-    # Only analyze top pick per race
-    top_picks = [sorted(runners, key=lambda x: float(x.get("velo_prime_prob") or 0), reverse=True)[0]
-                 for runners in races.values()]
-
-    print(f"{'Variant':<20} {'A':>5} {'B':>5} {'C':>7} {'D':>7} {'X':>7} {'Act%':>8}  Description")
-    print("-" * 75)
+    # Tier distribution comparison across all variants
+    print(f"{'Variant':<22} {'A':>5} {'B':>5} {'C':>7} {'D':>7} {'X':>7} {'Act%':>8}  Description")
+    print("-" * 80)
 
     detailed: dict[str, list] = {}
     for vname, vthresh in VARIANTS.items():
@@ -175,9 +205,20 @@ def run_audit(days: int = 30, show_blocked: bool = False):
 
         total = sum(counts.values())
         actionable = counts["A"] + counts["B"]
-        print(f"{vname:<20} {counts['A']:>5} {counts['B']:>5} {counts['C']:>7} "
+        print(f"{vname:<22} {counts['A']:>5} {counts['B']:>5} {counts['C']:>7} "
               f"{counts['D']:>7} {counts['X']:>7} {_pct(actionable, total):>8}  {vthresh['desc']}")
         detailed[vname] = picks_by_tier
+
+    # Stored-tier vs re-classified comparison (shows drift from what was actually filed)
+    stored_counts = {"A": 0, "B": 0, "C": 0, "D": 0, "X": 0, "None": 0}
+    for p in top_picks:
+        t = p.get("stored_tier") or "None"
+        stored_counts[t] = stored_counts.get(t, 0) + 1
+    total = len(top_picks)
+    act_stored = stored_counts.get("A", 0) + stored_counts.get("B", 0)
+    print(f"\n{'stored_in_db':<22} {stored_counts.get('A',0):>5} {stored_counts.get('B',0):>5} "
+          f"{stored_counts.get('C',0):>7} {stored_counts.get('D',0):>7} {stored_counts.get('X',0):>7} "
+          f"{_pct(act_stored, total):>8}  Tiers actually written to velo_verdicts")
 
     # Outcome analysis (if results available)
     if results_by_race:
@@ -185,52 +226,59 @@ def run_audit(days: int = 30, show_blocked: bool = False):
         print("OUTCOME ANALYSIS (where results available)")
         print(f"{'─'*65}")
         for vname, vthresh in VARIANTS.items():
-            a_picks = detailed[vname]["A"]
-            b_picks = detailed[vname]["B"]
-            actionable = a_picks + b_picks
+            actionable = detailed[vname]["A"] + detailed[vname]["B"]
             if not actionable:
                 continue
-            wins = 0
+            wins = matched = 0
             for p in actionable:
-                res = results_by_race.get(p.get("race_id"), {})
-                winner = (res.get("winner_horse_name") or "").lower()
-                if p.get("horse_name", "").lower() == winner:
+                res = results_by_race.get(p.get("race_id"))
+                if not res:
+                    continue
+                matched += 1
+                if p.get("horse_id") == res.get("winner_horse_id"):
                     wins += 1
-            print(f"  {vname:<20} actionable={len(actionable):>3}  wins={wins:>3}  hit={_pct(wins, len(actionable))}")
+            print(f"  {vname:<22} actionable={len(actionable):>3}  matched={matched:>3}  wins={wins:>3}  hit%={_pct(wins, matched)}")
 
-    # Blocked bet investigation
+    # Blocked bet investigation: baseline_v1 (old) vs calibrated_v1 (new)
     if show_blocked:
         print(f"\n{'─'*65}")
-        print("BETS FIRED BY current_prod vs sqpe_direct (differences)")
+        print("RESCUED RACES: baseline_v1 suppressed → calibrated_v1 fires")
         print(f"{'─'*65}")
-        prod_v   = VARIANTS["current_prod"]
-        direct_v = VARIANTS["sqpe_direct"]
-        unblocked = []
+        base_v  = VARIANTS["baseline_v1"]
+        cal_v   = VARIANTS["calibrated_v1"]
+        rescued = []
         for p in top_picks:
-            prod_tier   = classify(p, prod_v)
-            direct_tier = classify(p, direct_v)
-            if prod_tier in ("D", "X", "C") and direct_tier in ("A", "B"):
-                res = results_by_race.get(p.get("race_id"), {})
-                winner = (res.get("winner_horse_name") or "").lower()
-                won = p.get("horse_name", "").lower() == winner
-                unblocked.append({
-                    "horse": p.get("horse_name"),
-                    "prob":  round(float(p.get("velo_prime_prob") or 0), 3),
-                    "place": round(float(p.get("place_prob") or 0), 3),
-                    "gap":   round(float(p.get("gap") or 0), 3),
-                    "longshot": round(float(p.get("longshot_prob") or 0), 3),
-                    "sp":    round(float(p.get("sp_dec") or 0), 1),
-                    "chaos": p.get("macro_chaos_mode"),
-                    "prod_tier":   prod_tier,
-                    "direct_tier": direct_tier,
-                    "won": won if res else "?",
+            base_tier = classify(p, base_v)
+            cal_tier  = classify(p, cal_v)
+            if base_tier in ("D", "X", "C") and cal_tier in ("A", "B"):
+                res = results_by_race.get(p.get("race_id"))
+                if res:
+                    won = p.get("horse_id") == res.get("winner_horse_id")
+                else:
+                    won = "?"
+                rescued.append({
+                    "horse":      p.get("horse_name", ""),
+                    "prob":       round(float(p.get("velo_prime_prob") or 0), 3),
+                    "place":      round(float(p.get("place_prob") or 0), 3),
+                    "gap":        round(float(p.get("gap") or 0), 3),
+                    "longshot":   round(float(p.get("longshot_prob") or 0), 3),
+                    "sp":         round(float(p.get("sp_dec") or 0), 1),
+                    "chaos":      p.get("macro_chaos_mode"),
+                    "base_tier":  base_tier,
+                    "cal_tier":   cal_tier,
+                    "won":        won,
                 })
-        print(f"  Races blocked by PROD but would fire under SQPE_DIRECT: {len(unblocked)}")
-        for row in unblocked[:20]:
-            won_marker = "✓WIN" if row["won"] is True else ("✗" if row["won"] is False else "?")
-            print(f"  {row['horse']:<28} prob={row['prob']:.3f} gap={row['gap']:.3f} "
-                  f"place={row['place']:.3f} longshot={row['longshot']:.3f} sp={row['sp']:>6.1f} "
-                  f"prod={row['prod_tier']} → direct={row['direct_tier']}  {won_marker}")
+
+        print(f"  Total rescued races: {len(rescued)}")
+        if rescued:
+            wins_r = sum(1 for r in rescued if r["won"] is True)
+            print(f"  Win hit rate (rescued): {_pct(wins_r, len(rescued))}")
+        print()
+        for row in rescued[:30]:
+            won_marker = "WIN" if row["won"] is True else ("---" if row["won"] is False else "  ?")
+            print(f"  {row['horse']:<30} prob={row['prob']:.3f} gap={row['gap']:.3f} "
+                  f"place={row['place']:.3f} ls={row['longshot']:.3f} sp={row['sp']:>5.1f} "
+                  f"{row['base_tier']}→{row['cal_tier']}  {won_marker}")
 
     print()
 
