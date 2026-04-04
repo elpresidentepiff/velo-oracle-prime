@@ -1,0 +1,29 @@
+services:
+  velo:
+    build: .
+    container_name: velo-oracle
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+      - ENV=development
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - velo-models:/app/models
+      - velo-logs:/app/logs
+      - velo-storage:/app/storage
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 60s
+      timeout: 30s
+      start_period: 40s
+      retries: 3
+
+volumes:
+  velo-models:
+  velo-logs:
+  velo-storage:
