@@ -538,7 +538,7 @@ def main():
                 }
             ),
         }
-        if sb_post("/sigma_audits", sigma_row):
+        if sb_upsert("/sigma_audits", sigma_row, "race_id"):
             sigma_ok += 1
     print(
         f"  PASS: {sigma_ok}/{total_matched} sigma_audits rows written"
