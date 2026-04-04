@@ -1,0 +1,124 @@
+name: VELO Backfill Sigma
+
+# One-shot backfill: runs sigma reconciliation for every date in a range.
+# Use this to recover missed sigma days when the scheduler was down.
+#
+# Required GitHub secret : TRIGGER_SCORE_SECRET
+# Required Railway env   : TRIGGER_SCORE_SECRET (same value)
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'First date to backfill (YYYY-MM-DD)'
+        required: true
+      end_date:
+        description: 'Last date to backfill (YYYY-MM-DD, inclusive)'
+        required: true
+
+env:
+  VELO_ORACLE_URL: https://velo-oracle-production.up.railway.app
+  # Seconds between each sigma trigger — gives Railway time to finish one before the next
+  SLEEP_BETWEEN: 300
+
+jobs:
+  backfill:
+    name: Backfill Sigma (${{ inputs.start_date }} → ${{ inputs.end_date }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Validate inputs
+        run: |
+          python3 -c "
+          from datetime import date
+          s = date.fromisoformat('${{ inputs.start_date }}')
+          e = date.fromisoformat('${{ inputs.end_date }}')
+          assert s <= e, f'start_date {s} must be <= end_date {e}'
+          delta = (e - s).days + 1
+          assert delta <= 30, f'Range {delta} days exceeds 30-day limit'
+          print(f'Backfill: {delta} day(s) from {s} to {e}')
+          "
+
+      - name: Build date list
+        id: dates
+        run: |
+          DATES=$(python3 -c "
+          from datetime import date, timedelta
+          s = date.fromisoformat('${{ inputs.start_date }}')
+          e = date.fromisoformat('${{ inputs.end_date }}')
+          days = []
+          current = s
+          while current <= e:
+              # Only Mon(0)–Sat(5) — no Sunday racing
+              if current.weekday() <= 5:
+                  days.append(current.isoformat())
+              current += timedelta(days=1)
+          print(' '.join(days))
+          ")
+          echo "date_list=${DATES}" >> $GITHUB_OUTPUT
+          echo "Dates to backfill: ${DATES}"
+
+      - name: Trigger sigma for each date
+        run: |
+          set -e
+
+          DATES="${{ steps.dates.outputs.date_list }}"
+          SLEEP_SECS="${{ env.SLEEP_BETWEEN }}"
+
+          if [ -z "${DATES}" ]; then
+            echo "No racing days in range (weekend only?). Nothing to backfill."
+            exit 0
+          fi
+
+          SUCCESS=0
+          FAIL=0
+
+          for DATE in ${DATES}; do
+            echo ""
+            echo "===== Triggering sigma for ${DATE} ====="
+
+            BODY=$(printf '{"trigger_source":"github_actions_manual","target_date":"%s"}' "${DATE}")
+
+            RESPONSE=$(curl -s -o /tmp/sigma_${DATE}.json -w "%{http_code}" \
+              --max-time 30 \
+              -X POST \
+              "${{ env.VELO_ORACLE_URL }}/api/trigger/sigma" \
+              -H "Content-Type: application/json" \
+              -H "X-Trigger-Secret: ${{ secrets.TRIGGER_SCORE_SECRET }}" \
+              -d "${BODY}")
+
+            echo "HTTP ${RESPONSE} for ${DATE}"
+            cat /tmp/sigma_${DATE}.json
+            echo ""
+
+            if [ "${RESPONSE}" = "202" ]; then
+              STATUS=$(python3 -c "import json; d=json.load(open('/tmp/sigma_${DATE}.json')); print(d.get('status',''))")
+              if [ "${STATUS}" = "triggered" ]; then
+                echo "OK: sigma triggered for ${DATE}"
+                SUCCESS=$((SUCCESS + 1))
+              else
+                echo "WARN: unexpected status '${STATUS}' for ${DATE}"
+                FAIL=$((FAIL + 1))
+              fi
+            else
+              echo "FAIL: HTTP ${RESPONSE} for ${DATE}"
+              FAIL=$((FAIL + 1))
+            fi
+
+            # Wait between triggers so Railway can process each one
+            if [ "${DATE}" != "$(echo ${DATES} | awk '{print $NF}')" ]; then
+              echo "Waiting ${SLEEP_SECS}s before next date..."
+              sleep ${SLEEP_SECS}
+            fi
+          done
+
+          echo ""
+          echo "===== Backfill Complete ====="
+          echo "Success : ${SUCCESS}"
+          echo "Failed  : ${FAIL}"
+
+          if [ "${FAIL}" -gt 0 ]; then
+            echo "Some triggers failed — check Railway logs for each date above"
+            exit 1
+          fi

@@ -304,6 +304,74 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     )
 
 
+# ── Sigma trigger — called by GitHub Actions at 21:00 UTC ────────────────────
+@app.post("/api/trigger/sigma", status_code=202)
+async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
+    """
+    Trigger sigma reconciliation run from an external scheduler (GitHub Actions).
+    Returns 202 immediately — sigma runs as a background subprocess.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
+    """
+    import pathlib
+    import subprocess
+    import sys
+
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if not trigger_secret:
+        logger.error("TRIGGER_SCORE_SECRET not configured — sigma trigger disabled")
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if x_trigger_secret != trigger_secret:
+        logger.warning("Sigma trigger attempt with invalid secret")
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    body: dict = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    trigger_source = body.get("trigger_source") or "api_manual"
+    target_date = body.get("target_date") or ""
+
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
+    if not script_path.exists():
+        raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
+
+    env = os.environ.copy()
+    env["TRIGGER_SOURCE"] = trigger_source
+
+    cmd = [sys.executable, str(script_path)]
+    if target_date:
+        cmd += ["--date", target_date]
+
+    proc = subprocess.Popen(
+        cmd,
+        env=env,
+        cwd=str(script_path.parent.parent),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    logger.info(
+        "Sigma triggered — source=%s pid=%d target_date=%s",
+        trigger_source,
+        proc.pid,
+        target_date or "today",
+    )
+
+    return JSONResponse(
+        status_code=202,
+        content={
+            "status": "triggered",
+            "trigger_source": trigger_source,
+            "target_date": target_date or "today",
+            "pid": proc.pid,
+        },
+    )
+
+
 # Root endpoint
 @app.get("/")
 async def root():

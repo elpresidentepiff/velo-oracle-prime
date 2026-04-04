@@ -1,23 +1,32 @@
 name: VELO Score Daily
 
-# SOURCE-CONTROLLED SCHEDULER — replaces Railway UI cron fragility.
-# This workflow owns the scoring cadence. Railway cron is intentionally
-# NOT configured — this file IS the schedule.
+# SOURCE-CONTROLLED SCHEDULER — owns both scoring and sigma cadence.
+# Railway cron is intentionally NOT configured — this file IS the schedule.
 #
-# Required GitHub secret: TRIGGER_SCORE_SECRET
-# Required Railway env var: TRIGGER_SCORE_SECRET (same value)
-# Required Railway env var: VELO_ORACLE_URL (or update the env block below)
+# Required GitHub secret : TRIGGER_SCORE_SECRET
+# Required Railway env   : TRIGGER_SCORE_SECRET (same value)
+# Required Railway env   : VELO_ORACLE_URL
 
 on:
   schedule:
-    # 09:00 UTC Mon–Sat — covers UK flat and NH season
-    # Timezone: UTC explicit. No ambiguity.
+    # 09:00 UTC Mon–Sat — predictions before UK racing starts
     - cron: '0 9 * * 1-6'
+    # 21:00 UTC Mon–Sat — sigma reconciliation after last UK race
+    - cron: '0 21 * * 1-6'
 
   workflow_dispatch:
     inputs:
+      job:
+        description: 'Which job to run: score, sigma, or both'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - score
+          - sigma
+          - both
       target_date:
-        description: 'Date to score (YYYY-MM-DD). Leave blank for today.'
+        description: 'Date to process (YYYY-MM-DD). Leave blank for today.'
         required: false
         default: ''
 
@@ -25,10 +34,14 @@ env:
   VELO_ORACLE_URL: https://velo-oracle-production.up.railway.app
 
 jobs:
+  # ── Morning: generate today's predictions ──────────────────────────────────
   trigger-scoring:
-    name: Trigger Daily Scoring
+    name: Trigger Daily Scoring (09:00 UTC)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 9 * * 1-6') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.job == 'score' || inputs.job == 'both'))
 
     steps:
       - name: Set trigger metadata
@@ -56,7 +69,7 @@ jobs:
             "${{ steps.meta.outputs.trigger_source }}" \
             "${{ github.event.inputs.target_date }}")
 
-          RESPONSE=$(curl -s -o /tmp/trigger_response.json -w "%{http_code}" \
+          RESPONSE=$(curl -s -o /tmp/score_response.json -w "%{http_code}" \
             --max-time 30 \
             -X POST \
             "${{ env.VELO_ORACLE_URL }}/api/trigger/score-daily" \
@@ -66,7 +79,7 @@ jobs:
 
           echo "HTTP status: ${RESPONSE}"
           echo "Response body:"
-          cat /tmp/trigger_response.json
+          cat /tmp/score_response.json
           echo ""
 
           if [ "${RESPONSE}" != "202" ]; then
@@ -76,29 +89,94 @@ jobs:
 
           echo "SUCCESS: scoring process launched"
 
-      - name: Verify trigger response
+      - name: Verify score trigger response
         run: |
-          STATUS=$(python3 -c "import json,sys; d=json.load(open('/tmp/trigger_response.json')); print(d.get('status',''))")
-          SOURCE=$(python3 -c "import json,sys; d=json.load(open('/tmp/trigger_response.json')); print(d.get('trigger_source',''))")
-          PID=$(python3 -c    "import json,sys; d=json.load(open('/tmp/trigger_response.json')); print(d.get('pid',''))")
-
+          STATUS=$(python3 -c "import json; d=json.load(open('/tmp/score_response.json')); print(d.get('status',''))")
+          SOURCE=$(python3 -c "import json; d=json.load(open('/tmp/score_response.json')); print(d.get('trigger_source',''))")
+          PID=$(python3 -c    "import json; d=json.load(open('/tmp/score_response.json')); print(d.get('pid',''))")
           echo "status         : ${STATUS}"
           echo "trigger_source : ${SOURCE}"
           echo "pid            : ${PID}"
-
-          if [ "${STATUS}" != "triggered" ]; then
-            echo "FAIL: response status was not 'triggered'"
-            exit 1
-          fi
-
+          [ "${STATUS}" = "triggered" ] || { echo "FAIL: response status was not 'triggered'"; exit 1; }
           echo "Trigger confirmed. Run will appear in pipeline_runs with trigger_source=${SOURCE}"
 
       - name: Summary
         if: always()
         run: |
-          echo "=== VELO Score Daily — Trigger Summary ==="
-          echo "Event          : ${{ github.event_name }}"
+          echo "=== VELO Score — Trigger Summary ==="
+          echo "Event        : ${{ github.event_name }}"
+          echo "Triggered at : ${{ steps.meta.outputs.utc_time }}"
+          echo "Run URL      : https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "Actor        : ${{ github.actor }}"
+
+  # ── Evening: sigma reconciliation after racing finishes ───────────────────
+  trigger-sigma:
+    name: Trigger Sigma Reconciliation (21:00 UTC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 21 * * 1-6') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.job == 'sigma' || inputs.job == 'both'))
+
+    steps:
+      - name: Set trigger metadata
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "trigger_source=github_actions_manual" >> $GITHUB_OUTPUT
+          else
+            echo "trigger_source=github_actions_scheduled" >> $GITHUB_OUTPUT
+          fi
+          echo "utc_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+
+      - name: Trigger sigma endpoint
+        id: trigger
+        run: |
+          set -e
+
           echo "Trigger source : ${{ steps.meta.outputs.trigger_source }}"
-          echo "Triggered at   : ${{ steps.meta.outputs.utc_time }}"
-          echo "Workflow run   : https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          echo "Actor          : ${{ github.actor }}"
+          echo "UTC time       : ${{ steps.meta.outputs.utc_time }}"
+          echo "Target date    : ${{ github.event.inputs.target_date || 'today' }}"
+          echo "Workflow run   : ${{ github.run_id }}"
+          echo ""
+
+          BODY=$(printf '{"trigger_source":"%s","target_date":"%s"}' \
+            "${{ steps.meta.outputs.trigger_source }}" \
+            "${{ github.event.inputs.target_date }}")
+
+          RESPONSE=$(curl -s -o /tmp/sigma_response.json -w "%{http_code}" \
+            --max-time 30 \
+            -X POST \
+            "${{ env.VELO_ORACLE_URL }}/api/trigger/sigma" \
+            -H "Content-Type: application/json" \
+            -H "X-Trigger-Secret: ${{ secrets.TRIGGER_SCORE_SECRET }}" \
+            -d "$BODY")
+
+          echo "HTTP status: ${RESPONSE}"
+          echo "Response body:"
+          cat /tmp/sigma_response.json
+          echo ""
+
+          if [ "${RESPONSE}" != "202" ]; then
+            echo "FAIL: expected HTTP 202, got ${RESPONSE}"
+            exit 1
+          fi
+
+          echo "SUCCESS: sigma process launched"
+
+      - name: Verify sigma trigger response
+        run: |
+          STATUS=$(python3 -c "import json; d=json.load(open('/tmp/sigma_response.json')); print(d.get('status',''))")
+          PID=$(python3 -c    "import json; d=json.load(open('/tmp/sigma_response.json')); print(d.get('pid',''))")
+          echo "status : ${STATUS}"
+          echo "pid    : ${PID}"
+          [ "${STATUS}" = "triggered" ] || { echo "FAIL: status was not 'triggered'"; exit 1; }
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=== VELO Sigma — Trigger Summary ==="
+          echo "Event        : ${{ github.event_name }}"
+          echo "Triggered at : ${{ steps.meta.outputs.utc_time }}"
+          echo "Run URL      : https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "Actor        : ${{ github.actor }}"
