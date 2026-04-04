@@ -188,7 +188,13 @@ def run_audit(days: int = 30, show_blocked: bool = False):
     # Flatten to top-pick dicts (one per verdict row = one per race)
     top_picks = [_extract_top_pick(v, sp_by_horse) for v in verdicts]
 
-    print(f"Loaded {len(top_picks)} race verdicts  |  results available: {len(results_by_race)}\n")
+    sp_coverage = sum(1 for p in top_picks if float(p.get("sp_dec") or 0) > 0)
+    print(f"Loaded {len(top_picks)} race verdicts  |  results available: {len(results_by_race)}"
+          f"  |  SP data: {sp_coverage}/{len(top_picks)} ({_pct(sp_coverage, len(top_picks))})")
+    if sp_coverage < len(top_picks) * 0.5:
+        print("  WARNING: SP coverage <50% — longshot trigger is SP-blind for missing races.")
+        print("           This causes false X classifications on short-priced horses with high longshot_prob.")
+    print()
 
     # Tier distribution comparison across all variants
     print(f"{'Variant':<22} {'A':>5} {'B':>5} {'C':>7} {'D':>7} {'X':>7} {'Act%':>8}  Description")
