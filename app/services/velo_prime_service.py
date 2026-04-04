@@ -666,7 +666,14 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         return False
 
     # Validate tier before any DB write — non-canonical tier rejected
-    if decision_tier is not None:
+    if decision_tier is None:
+        log.warning(
+            "persist_race_predictions: decision_tier is None for race %s — "
+            "verdict will be written without a tier (audit gap). "
+            "Caller must pass decision_tier from synthesize_decision().",
+            race.get("race_id"),
+        )
+    else:
         from src.constants import validate_tier
 
         try:
