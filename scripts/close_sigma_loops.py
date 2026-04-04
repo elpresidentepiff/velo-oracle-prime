@@ -575,46 +575,22 @@ def _update_learned_patterns(db: Client, run_reviews: List[Dict], target_date: s
                         conditions: dict, n: int, wins: int) -> None:
         nonlocal written
         sr = round(wins / n, 4) if n else 0.0
-        # Check if exists
-        existing = (
-            db.table("learned_patterns")
-            .select("id, occurrences, successful_predictions, first_observed")
-            .eq("pattern_name", name)
-            .execute()
-        )
-        if existing.data:
-            row = existing.data[0]
-            total_n    = (row["occurrences"] or 0) + n
-            total_wins = (row["successful_predictions"] or 0) + wins
-            new_sr     = round(total_wins / total_n, 4) if total_n else 0.0
-            db.table("learned_patterns").update({
-                "occurrences":            total_n,
-                "successful_predictions": total_wins,
-                "success_rate":           new_sr,
-                "confidence_level":       round(min(total_n / 50, 1.0), 4),
-                "conditions":             conditions,
-                "description":            desc,
-                "last_observed":          now,
-                "updated_at":             now,
-                "is_active":              True,
-            }).eq("id", row["id"]).execute()
-        else:
-            db.table("learned_patterns").insert({
-                "pattern_name":           name,
-                "pattern_type":           p_type,
-                "description":            desc,
-                "conditions":             conditions,
-                "occurrences":            n,
-                "successful_predictions": wins,
-                "success_rate":           sr,
-                "avg_roi":                None,
-                "confidence_level":       round(min(n / 50, 1.0), 4),
-                "first_observed":         now,
-                "last_observed":          now,
-                "created_at":             now,
-                "updated_at":             now,
-                "is_active":              True,
-            }).execute()
+        db.table("learned_patterns").upsert({
+            "pattern_name":           name,
+            "pattern_type":           p_type,
+            "description":            desc,
+            "conditions":             conditions,
+            "occurrences":            n,
+            "successful_predictions": wins,
+            "success_rate":           sr,
+            "avg_roi":                None,
+            "confidence_level":       round(min(n / 50, 1.0), 4),
+            "first_observed":         now,
+            "last_observed":          now,
+            "created_at":             now,
+            "updated_at":             now,
+            "is_active":              True,
+        }, on_conflict="pattern_name").execute()
         written += 1
 
     # 1. Per-tier accuracy patterns
@@ -1137,7 +1113,7 @@ def _feed_playbook_g(
     ).hexdigest()[:16]
 
     try:
-        db.table("learned_patterns").insert({
+        db.table("learned_patterns").upsert({
             "pattern_name":           dedup_name,
             "pattern_type":           "system_marker",
             "description":            (
@@ -1162,7 +1138,7 @@ def _feed_playbook_g(
             "created_at":             now_naive,
             "updated_at":             now_naive,
             "is_active":              True,
-        }).execute()
+        }, on_conflict="pattern_name").execute()
         log.info("Step 9: dedup marker written — pattern_name=%s", dedup_name)
     except Exception as e:
         log.warning("Step 9: dedup marker write failed (non-fatal): %s", e)
