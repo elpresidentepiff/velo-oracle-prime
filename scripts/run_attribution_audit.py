@@ -170,9 +170,9 @@ def run_audit(days: int = 35, verbose: bool = False):
     components = list(_WEIGHTS.keys())
 
     # ── 1. LIVENESS ───────────────────────────────────────────────────────────
-    print(f"{'─'*70}")
+    print(f"{'-'*70}")
     print("1. LIVENESS — variance and coverage per component")
-    print(f"{'─'*70}")
+    print(f"{'-'*70}")
     print(f"{'Component':<26} {'non-null%':>9} {'non-zero%':>10} {'std':>8} {'unique':>8} {'mean':>8} {'status'}")
     print("-" * 82)
 
@@ -204,9 +204,9 @@ def run_audit(days: int = 35, verbose: bool = False):
               f"{std_v:>8.4f} {unique:>8} {mean_v:>8.4f}  {status}")
 
     # ── 2. CORRELATION ────────────────────────────────────────────────────────
-    print(f"\n{'─'*70}")
+    print(f"\n{'-'*70}")
     print("2. CORRELATION — relationship with SQPE and final velo_prime_prob")
-    print(f"{'─'*70}")
+    print(f"{'-'*70}")
     print(f"{'Component':<26} {'r(SQPE)':>10} {'r(velo_prime)':>14} {'note'}")
     print("-" * 65)
 
@@ -244,9 +244,9 @@ def run_audit(days: int = 35, verbose: bool = False):
         print(f"{label:<26} {r_sqpe:>10.3f} {r_vpp:>14.3f}  {note}")
 
     # ── 3. INFLUENCE — top-pick flips and tier changes ────────────────────────
-    print(f"\n{'─'*70}")
+    print(f"\n{'-'*70}")
     print("3. INFLUENCE — how often removing each component changes top pick / tier")
-    print(f"{'─'*70}")
+    print(f"{'-'*70}")
     print(f"{'Component':<26} {'top_flip%':>10} {'tier_flip%':>12} {'note'}")
     print("-" * 65)
 
@@ -292,9 +292,9 @@ def run_audit(days: int = 35, verbose: bool = False):
         print(f"{label:<26} {_pct(top_flips, n):>10} {_pct(tier_flips, n):>12}  {note}")
 
     # ── 4. FEATURE GAP ────────────────────────────────────────────────────────
-    print(f"\n{'─'*70}")
+    print(f"\n{'-'*70}")
     print("4. FEATURE GAP — specialist models receiving all-zero input")
-    print(f"{'─'*70}")
+    print(f"{'-'*70}")
 
     import json as _json
     models_dir = ROOT / "models" / "specialist"
@@ -333,9 +333,9 @@ def run_audit(days: int = 35, verbose: bool = False):
         print()
 
     # ── Summary verdict ────────────────────────────────────────────────────────
-    print(f"{'─'*70}")
+    print(f"{'-'*70}")
     print("SUMMARY")
-    print(f"{'─'*70}")
+    print(f"{'-'*70}")
 
     dead = [c for c in components if liveness[c]["unique"] <= 1]
     weak = [c for c in components if 1 < liveness[c]["unique"] <= 3]
