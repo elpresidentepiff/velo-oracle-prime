@@ -44,6 +44,10 @@ DEFAULTS = {
     "decoy_support_flag": 0.0,
     "setup_run_flag": 0.0,
     "cash_run_flag": 0.0,
+    # TIE v1 features — computed from Racing API form history
+    # Defaults represent "typical" values: 14 days rest, no class change
+    "days_since_run": 14.0,
+    "class_delta": 0.0,
 }
 
 
@@ -261,5 +265,26 @@ class V17FeatureExtractor:
             and features["mark_compression_score"] > 0.0
         ):
             features["cash_run_flag"] = 1.0
+
+        # ── days_since_run ── (days from last run to today's race)
+        race_date_str = race_context.get("race_date") or race_context.get("date")
+        last_result = results[-1] if results else None
+        if last_result and race_date_str:
+            try:
+                from datetime import datetime as _dt
+                race_dt = _dt.strptime(str(race_date_str)[:10], "%Y-%m-%d")
+                last_dt = _dt.strptime(str(last_result.get("date", ""))[:10], "%Y-%m-%d")
+                days = (race_dt - last_dt).days
+                features["days_since_run"] = float(max(1, min(days, 365)))
+            except Exception:
+                pass  # keep default 14.0
+
+        # ── class_delta ── (current class minus class at last run; negative = class drop)
+        current_class = _safe_float(race_context.get("class_num"))
+        if last_result is not None and current_class is not None:
+            last_class_raw = last_result.get("class") or last_result.get("class_num")
+            last_class = _safe_float(last_class_raw)
+            if last_class is not None:
+                features["class_delta"] = float(max(-6, min(current_class - last_class, 6)))
 
         return features

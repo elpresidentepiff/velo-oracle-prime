@@ -1,0 +1,23 @@
+{
+  "name": "tie_v1",
+  "trained": "2026-04-05T10:47:49.360706",
+  "train_cutoff": "2024-01-01",
+  "train_rows": 1448990,
+  "test_rows": 253751,
+  "train_auc": 0.6449,
+  "test_auc": 0.6103,
+  "train_top1": 0.2119,
+  "test_top1": 0.1902,
+  "features": [
+    "trainer_runs_clipped",
+    "trainer_win_rate",
+    "trainer_recent_runs_clipped",
+    "trainer_recent_win_rate",
+    "days_since_run",
+    "class_delta",
+    "jockey_switch_intent"
+  ],
+  "label": "target (is_winner)",
+  "model_type": "LogisticRegression + isotonic calibration",
+  "status": "experimental \u2014 ablate vs core before promoting to live"
+}
