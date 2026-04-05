@@ -286,9 +286,11 @@ def score_race_velo_prime(
 
     # Score each runner
     ensemble_inputs = []
+    _feats_by_horse: dict[str, dict] = {}  # captured for Horse State Brain below
     for runner in runners:
         horse_name = runner.get("horse_name", "Unknown")
         feats = _build_live_features(runner, race, field_or, field_rpr)
+        _feats_by_horse[horse_name] = feats
 
         # SQPE v17 — features={} triggers the runner/race path internally
         sqpe_prob = mm.predict_sqpe(features={}, runner=runner, race=race)
@@ -351,6 +353,27 @@ def score_race_velo_prime(
 
     # Phase 1 sentient bridge — audit only, no scoring change
     results = _apply_sentient_modifiers(results, sentient_state)
+
+    # ── Horse State Brain — tag every runner ──────────────────────────────────
+    # Runs after ensemble scoring, before persist.
+    # Does NOT alter velo_prime_prob, decision_tier, or active_components.
+    # Adds row["horse_state"] = {...} to every runner in results.
+    # The full raw state flows into full_analysis; compact fields are extracted
+    # at persist time for top-level velo_verdicts columns.
+    from src.intelligence.horse_state_engine import HorseStateEngine as _HorseStateEngine
+    _state_engine = _HorseStateEngine()
+    for row in results:
+        # Merge: live feats supply doctrine signals (days_since_run, trainer_timing_score,
+        # course_fit_score etc.); row supplies ensemble outputs (velo_prime_prob, place_prob).
+        # Row fields take priority so scored values are used where they overlap.
+        _live_feats = _feats_by_horse.get(row.get("horse", ""), {})
+        _merged = {**_live_feats, **row}
+        try:
+            _state = _state_engine.tag(_merged)
+            row["horse_state"] = _state.to_dict()
+        except Exception as _e:
+            log.warning("Horse state tagging failed for %s: %s", row.get("horse"), _e)
+            row["horse_state"] = {}
 
     return results
 
@@ -701,6 +724,7 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         sb = create_client(url, key)
 
         top = predictions[0]
+        _hs = top.get("horse_state") or {}  # compact horse-state for top selection
         row = {
             "race_id": race.get("race_id"),
             "region": race.get("region", ""),  # UK/IRE filter verification — persisted at scoring time
@@ -729,6 +753,20 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             # Requires migration: supabase/migrations/20260405_001_velo_verdicts_observability.sql
             "active_components": top.get("active_components") or [],
             "excluded_from_ensemble": top.get("excluded_from_ensemble") or [],
+            # Horse State Brain — compact queryable state for top selection.
+            # Full raw per-runner state lives in full_analysis[*].horse_state.
+            # Requires migration: supabase/migrations/20260405_002_velo_verdicts_horse_state.sql
+            "top_horse_readiness_state":  _hs.get("readiness_state"),
+            "top_horse_release_state":    _hs.get("release_state"),
+            "top_horse_rest_pattern":     _hs.get("rest_pattern"),
+            "top_horse_class_move_state": _hs.get("class_move_state"),
+            "top_horse_stable_heat":      _hs.get("stable_heat"),
+            "top_horse_jockey_signal":    _hs.get("jockey_signal"),
+            "top_horse_market_state":     _hs.get("market_state"),
+            "top_horse_race_fit_state":   _hs.get("race_fit_state"),
+            "top_horse_chaos_exposure":   _hs.get("chaos_exposure"),
+            "top_horse_signal_count":     _hs.get("live_signals"),
+            "top_horse_state_evidence":   _hs.get("state_evidence") or [],
             # Full ranked field — enriched below before upsert
             "full_analysis": predictions,
         }
@@ -745,21 +783,45 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         # enriched = _enrich_full_analysis_with_track_context(enriched, race)
         row["full_analysis"] = enriched
 
-        try:
-            sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
-        except Exception as col_err:
-            # Observability columns may not exist until migration 20260405_001 is applied.
-            # Fall back to persisting without them so scoring is never blocked.
-            if "active_components" in str(col_err) or "excluded_from_ensemble" in str(col_err):
+        # Upsert with graceful degradation for optional column groups.
+        # Each group is stripped on its first error so scoring is never blocked
+        # by a missing migration. Core fields (race_id, velo_prime_prob etc.) always persist.
+        _optional_col_groups = [
+            (
+                "observability",
+                ["active_components", "excluded_from_ensemble"],
+                "Apply supabase/migrations/20260405_001_velo_verdicts_observability.sql",
+            ),
+            (
+                "horse_state",
+                [
+                    "top_horse_readiness_state", "top_horse_release_state",
+                    "top_horse_rest_pattern", "top_horse_class_move_state",
+                    "top_horse_stable_heat", "top_horse_jockey_signal",
+                    "top_horse_market_state", "top_horse_race_fit_state",
+                    "top_horse_chaos_exposure", "top_horse_signal_count",
+                    "top_horse_state_evidence",
+                ],
+                "Apply supabase/migrations/20260405_002_velo_verdicts_horse_state.sql",
+            ),
+        ]
+        for _attempt, (_grp_name, _grp_cols, _grp_hint) in enumerate(
+            [(None, [], None)] + _optional_col_groups  # attempt 0 = full row
+        ):
+            if _grp_name is not None:
                 log.warning(
-                    "Observability columns missing — persisting without them. "
-                    "Apply supabase/migrations/20260405_001_velo_verdicts_observability.sql"
+                    "velo_verdicts upsert: %s columns missing, retrying without them. %s",
+                    _grp_name, _grp_hint,
                 )
-                row.pop("active_components", None)
-                row.pop("excluded_from_ensemble", None)
+                for _col in _grp_cols:
+                    row.pop(_col, None)
+            try:
                 sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
-            else:
-                raise
+                break  # success
+            except Exception as _upsert_err:
+                if _attempt < len(_optional_col_groups):
+                    continue  # strip next group and retry
+                raise  # all groups stripped, propagate
         log.info(
             "Persisted verdict for race %s — top: %s (%.4f)",
             race.get("race_id"),
