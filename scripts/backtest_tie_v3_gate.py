@@ -2,25 +2,27 @@
 """
 TIE v3 Gate Backtest
 ====================
-Evaluates the rule-based TIE v3 gate against PLACE outcomes, NOT top-1.
+Measures upgrade and EW cohorts SEPARATELY.
 
-Measures:
-  Gate precision     — when gate fires, what % of horses placed (pos <= 3)?
-  Base rate          — what % of all horses placed (for comparison)?
-  Precision ratio    — gate precision / base rate (want >= 1.3x)
-  EW precision       — when EW flag fires on longshots (SP > 8), what % placed?
-  Tier upgrade lift  — win/place rate on gate-upgraded runners vs non-upgraded
+The previous version called gate.evaluate() without current_tier, so the
+upgrade path (current_tier in C/D) never fired and only EW fires were counted.
+This version bypasses evaluate() and tests each cohort independently.
 
-The backtest uses the same raceform parquet as SQPE training.
-No lookahead: gate only sees features available before the race.
+Cohort definitions:
+  Upgrade cohort  — signal_count >= MIN_SIGNALS_FOR_UPGRADE (any runner)
+                    Baseline: all runners with signal_count < MIN_SIGNALS_FOR_UPGRADE
+  EW cohort       — signal_count >= MIN_SIGNALS_FOR_EW_FLAG AND sp_dec > 8
+                    Baseline: all longshots (sp_dec > 8) regardless of signal count
 
 Usage:
     python scripts/backtest_tie_v3_gate.py
+    python scripts/backtest_tie_v3_gate.py --year 2024
+    python scripts/backtest_tie_v3_gate.py --year 2025
     python scripts/backtest_tie_v3_gate.py --sample 200000
-    python scripts/backtest_tie_v3_gate.py --year 2024   # test-year only
 """
 
 import argparse
+from collections import Counter
 from pathlib import Path
 import sys
 sys.path.insert(0, ".")
@@ -28,12 +30,15 @@ sys.path.insert(0, ".")
 import numpy as np
 import pandas as pd
 
-from src.intelligence.tie_v3_gate import TIEv3Gate, MIN_SIGNALS_FOR_UPGRADE, MIN_SIGNALS_FOR_EW_FLAG
+from src.intelligence.tie_v3_gate import (
+    TIEv3Gate,
+    MIN_SIGNALS_FOR_UPGRADE,
+    MIN_SIGNALS_FOR_EW_FLAG,
+    LONGSHOT_SP_THRESHOLD,
+)
 
 
-# ─── Build feature dicts from parquet row ─────────────────────────────────────
 def row_to_features(row: pd.Series) -> dict:
-    """Map parquet columns to TIEv3Gate feature dict."""
     return {
         "days_since_run":       row.get("days_since_run"),
         "class_delta":          row.get("class_delta"),
@@ -60,13 +65,52 @@ def is_winner(pos_val) -> bool:
         return False
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+def pct(val: float) -> str:
+    return f"{val * 100:.1f}%"
+
+
+def ratio(a: float, b: float) -> str:
+    if b > 0:
+        return f"{a / b:.2f}x"
+    return "n/a"
+
+
+def cohort_stats(df_cohort: pd.DataFrame, df_base: pd.DataFrame, label: str) -> None:
+    n_cohort = len(df_cohort)
+    n_base = len(df_base)
+    if n_cohort == 0:
+        print(f"  {label}: 0 runners (no fires)")
+        return
+
+    c_win   = df_cohort["won"].mean()
+    c_place = df_cohort["placed"].mean()
+    b_win   = df_base["won"].mean() if n_base > 0 else 0.0
+    b_place = df_base["placed"].mean() if n_base > 0 else 0.0
+    fire_rate = n_cohort / (n_cohort + n_base)
+
+    print(f"  {'Metric':<30} {'Baseline':>10} {'Cohort':>10} {'Uplift':>10}")
+    print(f"  {'-'*62}")
+    print(f"  {'Runners':<30} {n_base:>10,} {n_cohort:>10,}")
+    print(f"  {'Fire rate (cohort/total)':<30} {'':>10} {pct(fire_rate):>10}")
+    print(f"  {'Place rate (pos<=3)':<30} {pct(b_place):>10} {pct(c_place):>10} {ratio(c_place, b_place):>10}")
+    print(f"  {'Win rate':<30} {pct(b_win):>10} {pct(c_win):>10} {ratio(c_win, b_win):>10}")
+
+    place_ratio = c_place / b_place if b_place > 0 else float("nan")
+    if place_ratio >= 1.3:
+        verdict = f"LIFT ({place_ratio:.2f}x >= 1.3x target)"
+    elif place_ratio >= 1.1:
+        verdict = f"MARGINAL ({place_ratio:.2f}x — tune thresholds)"
+    else:
+        verdict = f"NO LIFT ({place_ratio:.2f}x)"
+    print(f"\n  VERDICT: {verdict}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--parquet", default="data/raceform_v17_features.parquet")
     parser.add_argument("--sample", type=int, default=None)
     parser.add_argument("--year", type=int, default=None,
-                        help="Only evaluate rows from this year (e.g. 2024)")
+                        help="Filter to a single year (e.g. 2024)")
     args = parser.parse_args()
 
     path = Path(args.parquet)
@@ -78,7 +122,7 @@ def main():
     df = pd.read_parquet(path)
     print(f"  {len(df):,} rows")
 
-    # Need days_since_run and class_delta — compute if missing
+    # Compute days_since_run / class_delta if missing
     if "days_since_run" not in df.columns or "class_delta" not in df.columns:
         print("Computing days_since_run / class_delta ...")
         if not pd.api.types.is_datetime64_any_dtype(df["date_parsed"]):
@@ -89,13 +133,12 @@ def main():
         df["days_since_run"] = (df["date_parsed"] - prev_date).dt.days.clip(1, 365).fillna(14.0)
         df["class_delta"]    = (df["class_num"] - prev_class).clip(-6, 6).fillna(0.0)
 
-    # Filter to numeric positions only
+    # Keep only rows with numeric finishing positions
     numeric_pos = pd.to_numeric(df["pos"].astype(str).str.strip(), errors="coerce")
     df = df[numeric_pos.notna()].copy()
     df["pos_num"] = numeric_pos[df.index]
     print(f"  {len(df):,} rows after non-runner filter")
 
-    # Year filter
     if args.year:
         if not pd.api.types.is_datetime64_any_dtype(df["date_parsed"]):
             df["date_parsed"] = pd.to_datetime(df["date_parsed"], errors="coerce")
@@ -106,89 +149,95 @@ def main():
         df = df.sample(n=min(args.sample, len(df)), random_state=42).copy()
         print(f"  Sampled to {len(df):,} rows")
 
-    # ── Run gate on every row ──────────────────────────────────────────────────
-    print(f"\nEvaluating TIE v3 gate on {len(df):,} runners ...")
+    # ── Score every runner (signal count only, no current_tier dependency) ──
+    print(f"\nScoring {len(df):,} runners ...")
     gate = TIEv3Gate()
-    results = []
+    records = []
     for _, row in df.iterrows():
         feats = row_to_features(row)
-        res = gate.evaluate(feats)
-        results.append({
-            "fires":        res.fires,
+        # Evaluate without current_tier so we get the raw signal count
+        # Tier upgrade eligibility is handled by cohort split below
+        res = gate.evaluate(feats, current_tier=None)
+        sp  = feats.get("sp_dec") or 0.0
+        records.append({
             "signal_count": res.signal_count,
-            "ew_flag":      res.ew_flag,
             "signals":      "|".join(res.signals_found),
+            "sp_dec":       sp,
+            "is_fav":       feats.get("is_fav", False),
             "placed":       is_placed(row["pos"]),
             "won":          is_winner(row["pos"]),
-            "sp_dec":       row.get("sp_dec", np.nan),
         })
 
-    rdf = pd.DataFrame(results)
+    rdf = pd.DataFrame(records)
+    n_total = len(rdf)
 
-    # ── Metrics ───────────────────────────────────────────────────────────────
-    n_total       = len(rdf)
-    n_fired       = rdf["fires"].sum()
-    n_ew_fired    = rdf["ew_flag"].sum()
-    base_place    = rdf["placed"].mean()
-    base_win      = rdf["won"].mean()
+    # ─────────────────────────────────────────────────────────────────────────
+    # COHORT 1 — Upgrade cohort
+    #   All runners with signal_count >= MIN_SIGNALS_FOR_UPGRADE
+    #   Baseline: runners with signal_count < MIN_SIGNALS_FOR_UPGRADE
+    # ─────────────────────────────────────────────────────────────────────────
+    upgrade_mask    = rdf["signal_count"] >= MIN_SIGNALS_FOR_UPGRADE
+    upgrade_cohort  = rdf[upgrade_mask]
+    upgrade_baseline = rdf[~upgrade_mask]
 
-    gate_place    = rdf[rdf["fires"]]["placed"].mean() if n_fired > 0 else float("nan")
-    gate_win      = rdf[rdf["fires"]]["won"].mean()    if n_fired > 0 else float("nan")
-    ew_place      = rdf[rdf["ew_flag"]]["placed"].mean() if n_ew_fired > 0 else float("nan")
-    ew_win        = rdf[rdf["ew_flag"]]["won"].mean()    if n_ew_fired > 0 else float("nan")
+    # ─────────────────────────────────────────────────────────────────────────
+    # COHORT 2 — EW cohort
+    #   Longshots (sp_dec > LONGSHOT_SP_THRESHOLD) with signal_count >= MIN_SIGNALS_FOR_EW_FLAG
+    #   Baseline: all longshots regardless of signal count
+    # ─────────────────────────────────────────────────────────────────────────
+    longshot_mask   = rdf["sp_dec"] > LONGSHOT_SP_THRESHOLD
+    ew_mask         = longshot_mask & (rdf["signal_count"] >= MIN_SIGNALS_FOR_EW_FLAG) & ~rdf["is_fav"]
+    ew_cohort       = rdf[ew_mask]
+    ew_baseline     = rdf[longshot_mask]
 
-    precision_ratio = gate_place / base_place if base_place > 0 else float("nan")
-    ew_precision_ratio = ew_place / base_place if base_place > 0 else float("nan")
+    year_label = f" ({args.year})" if args.year else ""
 
-    fire_rate = n_fired / n_total
+    print(f"\n{'='*62}")
+    print(f"  TIE v3 Gate Backtest{year_label}")
+    print(f"  Upgrade threshold : >= {MIN_SIGNALS_FOR_UPGRADE} signals (any runner)")
+    print(f"  EW threshold      : >= {MIN_SIGNALS_FOR_EW_FLAG} signals + SP > {LONGSHOT_SP_THRESHOLD:.0f}")
+    print(f"  Total runners     : {n_total:,}")
+    print(f"{'='*62}")
 
-    print(f"\n{'='*60}")
-    print(f"  TIE v3 Gate Backtest")
-    print(f"  Upgrade threshold : >= {MIN_SIGNALS_FOR_UPGRADE} signals")
-    print(f"  EW threshold      : >= {MIN_SIGNALS_FOR_EW_FLAG} signals + SP > 8")
-    print(f"{'='*60}")
-    print(f"  Runners total     : {n_total:,}")
-    print(f"  Gate fires        : {n_fired:,}  ({fire_rate*100:.1f}% of runners)")
-    print(f"  EW flags          : {n_ew_fired:,}")
-    print(f"")
-    print(f"  {'Metric':<28} {'Base':>8} {'Gate':>8} {'Ratio':>8}")
-    print(f"  {'-'*54}")
-    print(f"  {'Place rate (pos<=3)':<28} {base_place*100:>7.1f}% {gate_place*100:>7.1f}% {precision_ratio:>8.2f}x")
-    print(f"  {'Win rate':<28} {base_win*100:>7.1f}% {gate_win*100:>7.1f}% {gate_win/base_win:>8.2f}x")
-    print(f"  {'EW place rate (SP>8)':<28} {base_place*100:>7.1f}% {ew_place*100:>7.1f}% {ew_precision_ratio:>8.2f}x")
-    print(f"{'='*60}")
+    print(f"\n--- COHORT 1: Upgrade (signal_count >= {MIN_SIGNALS_FOR_UPGRADE}) ---")
+    cohort_stats(upgrade_cohort, upgrade_baseline, "Upgrade")
 
-    if precision_ratio >= 1.3:
-        print(f"\n  VERDICT: LIFT — precision ratio {precision_ratio:.2f}x >= 1.3x target")
-    elif precision_ratio >= 1.1:
-        print(f"\n  VERDICT: MARGINAL — precision ratio {precision_ratio:.2f}x (tune thresholds)")
-    else:
-        print(f"\n  VERDICT: NO LIFT — precision ratio {precision_ratio:.2f}x (revise signals)")
+    print(f"\n--- COHORT 2: EW Flag (signal_count >= {MIN_SIGNALS_FOR_EW_FLAG}, SP > {LONGSHOT_SP_THRESHOLD:.0f}) ---")
+    cohort_stats(ew_cohort, ew_baseline, "EW")
 
-    # ── Signal breakdown ──────────────────────────────────────────────────────
-    print(f"\n  Signal frequency (% of all runners):")
-    all_signals = []
+    # -- Signal count distribution ------------------------------------------
+    print(f"\n--- Signal count distribution ---")
+    print(f"  {'Signals':<10} {'Count':>9} {'%Total':>8} {'Place%':>8}  Notes")
+    print(f"  {'-'*55}")
+    for n in range(0, 8):
+        mask = rdf["signal_count"] == n
+        cnt  = mask.sum()
+        if cnt == 0:
+            continue
+        pct_total = cnt / n_total * 100
+        place_r   = rdf[mask]["placed"].mean() * 100
+        notes = []
+        if n >= MIN_SIGNALS_FOR_UPGRADE:
+            notes.append("UPGRADE fires")
+        if n >= MIN_SIGNALS_FOR_EW_FLAG:
+            notes.append("EW eligible")
+        print(f"  {n:<10} {cnt:>9,} {pct_total:>7.1f}% {place_r:>7.1f}%  {', '.join(notes)}")
+
+    # -- Signal frequency ---------------------------------------------------
+    print(f"\n--- Signal frequency (% of all runners, place% when present) ---")
+    all_signals: list[str] = []
     for sigs in rdf["signals"]:
-        all_signals.extend(sigs.split("|") if sigs else [])
-    from collections import Counter
+        all_signals.extend(s for s in sigs.split("|") if s)
     sig_counts = Counter(all_signals)
+    print(f"  {'Signal':<34} {'Count':>8} {'%All':>7} {'Place%':>8}")
+    print(f"  {'-'*60}")
     for sig, cnt in sorted(sig_counts.items(), key=lambda x: -x[1]):
-        pct = cnt / n_total * 100
-        # place rate when this specific signal fires
-        rows_with_sig = rdf[rdf["signals"].str.contains(sig, na=False)]
-        sig_place = rows_with_sig["placed"].mean() * 100 if len(rows_with_sig) > 0 else 0
-        print(f"    {sig:<32} {cnt:>7,}  ({pct:>4.1f}%)  place%={sig_place:.1f}%")
+        pct_all  = cnt / n_total * 100
+        rows_sig = rdf[rdf["signals"].str.contains(sig, na=False)]
+        sig_pl   = rows_sig["placed"].mean() * 100 if len(rows_sig) > 0 else 0.0
+        print(f"  {sig:<34} {cnt:>8,} {pct_all:>6.1f}% {sig_pl:>7.1f}%")
 
-    # ── Count distribution ─────────────────────────────────────────────────────
-    print(f"\n  Signal count distribution:")
-    for n in range(0, 7):
-        cnt = (rdf["signal_count"] == n).sum()
-        pct = cnt / n_total * 100
-        place = rdf[rdf["signal_count"] == n]["placed"].mean() * 100 if cnt > 0 else 0
-        marker = " <-- gate fires" if n >= MIN_SIGNALS_FOR_UPGRADE else ""
-        print(f"    {n} signals: {cnt:>7,}  ({pct:>4.1f}%)  place%={place:.1f}%{marker}")
-
-    print(f"\n{'='*60}\n")
+    print(f"\n{'='*62}\n")
 
 
 if __name__ == "__main__":
