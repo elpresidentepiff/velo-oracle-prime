@@ -723,6 +723,12 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "macro_chaos_mode": top.get("macro_chaos_mode"),
             "favourite_trap_risk": top.get("favourite_trap_risk"),
             "decision_tier": decision_tier,
+            # Ensemble observability — queryable without reading source code.
+            # active_components: what actually entered the weighted average this race.
+            # excluded_from_ensemble: what was computed but excluded (_DISABLED or zero-variance).
+            # Requires migration: supabase/migrations/20260405_001_velo_verdicts_observability.sql
+            "active_components": top.get("active_components") or [],
+            "excluded_from_ensemble": top.get("excluded_from_ensemble") or [],
             # Full ranked field — enriched below before upsert
             "full_analysis": predictions,
         }
@@ -739,7 +745,21 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         # enriched = _enrich_full_analysis_with_track_context(enriched, race)
         row["full_analysis"] = enriched
 
-        sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
+        try:
+            sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
+        except Exception as col_err:
+            # Observability columns may not exist until migration 20260405_001 is applied.
+            # Fall back to persisting without them so scoring is never blocked.
+            if "active_components" in str(col_err) or "excluded_from_ensemble" in str(col_err):
+                log.warning(
+                    "Observability columns missing — persisting without them. "
+                    "Apply supabase/migrations/20260405_001_velo_verdicts_observability.sql"
+                )
+                row.pop("active_components", None)
+                row.pop("excluded_from_ensemble", None)
+                sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
+            else:
+                raise
         log.info(
             "Persisted verdict for race %s — top: %s (%.4f)",
             race.get("race_id"),

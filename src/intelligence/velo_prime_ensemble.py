@@ -26,13 +26,19 @@ from src.intelligence.macro_regime.bha_macro_context import MacroContext
 # ─── Weights ───────────────────────────────────────────────────────────────────
 # Tunable. Defaults based on architecture brief.
 _WEIGHTS = {
+    # ── LIVE components (enter the weighted average) ──────────────────────────
     "sqpe_v17":              0.45,  # base model (strongest single signal per L004)
-    "improvement_score":     0.12,
-    "release_window_score":  0.10,
     "market_deception_score":0.10,
     "place_prob":            0.08,
-    "comment_intel_score":   0.08,
     "longshot_score":        0.07,  # only applied when sp > 10.0
+    # ── STORED FOR OBSERVABILITY — NOT IN ENSEMBLE ────────────────────────────
+    # These weights are defined for reference but the components are all listed
+    # in _DISABLED_COMPONENTS below and will NEVER enter the weighted average.
+    # They are computed and persisted in velo_verdicts for auditing only.
+    # See excluded_from_ensemble field on every verdict row for confirmation.
+    "improvement_score":     0.12,  # DISABLED — ablation 2026-04-04: hurts top-1 (-0.6 ppts)
+    "release_window_score":  0.10,  # DISABLED — RPD features not wired in live pipeline
+    "comment_intel_score":   0.08,  # DISABLED — RPD features not wired in live pipeline
 }
 
 # ─── Disabled components ────────────────────────────────────────────────────────
