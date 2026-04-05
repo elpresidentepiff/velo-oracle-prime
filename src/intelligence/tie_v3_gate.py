@@ -44,8 +44,8 @@ from typing import Optional
 # ─── Thresholds ───────────────────────────────────────────────────────────────
 # How many intent signals must be present for the gate to fire.
 # Higher = fewer fires, better precision. Lower = more coverage, lower precision.
-MIN_SIGNALS_FOR_UPGRADE = 3    # to upgrade tier (C→B or D→C)
-MIN_SIGNALS_FOR_EW_FLAG = 2    # to enable EW flag on longshots
+MIN_SIGNALS_FOR_UPGRADE = 4    # to upgrade tier (C→B or D→C) — validated: 1.35-1.49x place precision
+MIN_SIGNALS_FOR_EW_FLAG = 3    # to enable EW flag on longshots
 
 # Individual signal thresholds
 MAX_DAYS_SINCE_RUN = 42       # within 6 weeks = "fit and ready"
