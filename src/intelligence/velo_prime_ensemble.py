@@ -62,9 +62,12 @@ _DISABLED_COMPONENTS: set[str] = {
 # Used for backtesting only. Production always runs FULL_MINUS_DEAD.
 # Each mode maps to an additional set of components to exclude on top of
 # _DISABLED_COMPONENTS. These are passed as forced_exclude into predict_race().
-ABLATION_SQPE_ONLY      = "SQPE_ONLY"       # only sqpe_v17 — pure baseline
-ABLATION_SQPE_PLUS_PLACE = "SQPE_PLUS_PLACE" # sqpe_v17 + place_prob — tests Place lift
-ABLATION_FULL_MINUS_DEAD = "FULL_MINUS_DEAD" # current live stack — all except disabled
+ABLATION_SQPE_ONLY                     = "SQPE_ONLY"
+ABLATION_SQPE_PLUS_PLACE               = "SQPE_PLUS_PLACE"
+ABLATION_SQPE_PLUS_PLACE_PLUS_IMPROVE  = "SQPE_PLUS_PLACE_PLUS_IMPROVEMENT"
+ABLATION_SQPE_PLUS_PLACE_PLUS_MKT     = "SQPE_PLUS_PLACE_PLUS_MARKET_DECEPTION"
+ABLATION_SQPE_PLUS_PLACE_PLUS_LONG    = "SQPE_PLUS_PLACE_PLUS_LONGSHOT"
+ABLATION_FULL_MINUS_DEAD               = "FULL_MINUS_DEAD"
 
 _ALL_SPECIALIST_KEYS: set[str] = {
     "improvement_score", "release_window_score", "market_deception_score",
@@ -73,9 +76,12 @@ _ALL_SPECIALIST_KEYS: set[str] = {
 
 # mode → set of components to force-exclude (beyond _DISABLED_COMPONENTS)
 _MODE_FORCED_EXCLUDE: dict[str, set[str]] = {
-    ABLATION_SQPE_ONLY:       _ALL_SPECIALIST_KEYS,
-    ABLATION_SQPE_PLUS_PLACE: _ALL_SPECIALIST_KEYS - {"place_prob"},
-    ABLATION_FULL_MINUS_DEAD: set(),
+    ABLATION_SQPE_ONLY:                    _ALL_SPECIALIST_KEYS,
+    ABLATION_SQPE_PLUS_PLACE:              _ALL_SPECIALIST_KEYS - {"place_prob"},
+    ABLATION_SQPE_PLUS_PLACE_PLUS_IMPROVE: _ALL_SPECIALIST_KEYS - {"place_prob", "improvement_score"},
+    ABLATION_SQPE_PLUS_PLACE_PLUS_MKT:    _ALL_SPECIALIST_KEYS - {"place_prob", "market_deception_score"},
+    ABLATION_SQPE_PLUS_PLACE_PLUS_LONG:   _ALL_SPECIALIST_KEYS - {"place_prob", "longshot_score"},
+    ABLATION_FULL_MINUS_DEAD:              set(),
 }
 
 # Macro modifiers — these adjust confidence/weight, don't replace probabilities
