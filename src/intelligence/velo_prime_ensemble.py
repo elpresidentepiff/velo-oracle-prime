@@ -44,16 +44,38 @@ _WEIGHTS = {
 # release_window_score — requires RPD timing features (setup_run_flag,
 #   cash_run_flag, trainer_timing_score, runs_since_win/place …)
 #   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
+#   Persisted in velo_verdicts as release_day_prob for observability — NOT used.
 #
 # comment_intel_score — requires RPD intent features (quiet_run_score,
 #   decoy_support_flag, jockey_switch_intent, setup_run_flag, cash_run_flag …)
 #   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
+#   Persisted in full_analysis for observability — NOT used.
 #
 # Re-enable only when the required feature pipeline is fully wired and
 # the field-level zero-variance kill switch (in predict_race) does NOT fire.
 _DISABLED_COMPONENTS: set[str] = {
     "release_window_score",
     "comment_intel_score",
+}
+
+# ─── Ablation modes ─────────────────────────────────────────────────────────────
+# Used for backtesting only. Production always runs FULL_MINUS_DEAD.
+# Each mode maps to an additional set of components to exclude on top of
+# _DISABLED_COMPONENTS. These are passed as forced_exclude into predict_race().
+ABLATION_SQPE_ONLY      = "SQPE_ONLY"       # only sqpe_v17 — pure baseline
+ABLATION_SQPE_PLUS_PLACE = "SQPE_PLUS_PLACE" # sqpe_v17 + place_prob — tests Place lift
+ABLATION_FULL_MINUS_DEAD = "FULL_MINUS_DEAD" # current live stack — all except disabled
+
+_ALL_SPECIALIST_KEYS: set[str] = {
+    "improvement_score", "release_window_score", "market_deception_score",
+    "place_prob", "comment_intel_score", "longshot_score",
+}
+
+# mode → set of components to force-exclude (beyond _DISABLED_COMPONENTS)
+_MODE_FORCED_EXCLUDE: dict[str, set[str]] = {
+    ABLATION_SQPE_ONLY:       _ALL_SPECIALIST_KEYS,
+    ABLATION_SQPE_PLUS_PLACE: _ALL_SPECIALIST_KEYS - {"place_prob"},
+    ABLATION_FULL_MINUS_DEAD: set(),
 }
 
 # Macro modifiers — these adjust confidence/weight, don't replace probabilities
@@ -88,6 +110,9 @@ class VeloPrimePrediction:
     confidence_level: str = "normal"  # low / normal / high
     regime_override: Optional[str] = None
     verdict_flags: list = field(default_factory=list)
+    # Observability: populated by compute() so callers can audit what actually ran
+    active_components: list = field(default_factory=list)
+    excluded_from_ensemble: list = field(default_factory=list)
 
     def compute(self, killed: set[str] | None = None) -> "VeloPrimePrediction":
         """Build VELO_PRIME_prob from all available signals.
@@ -98,6 +123,7 @@ class VeloPrimePrediction:
         """
         excluded = _DISABLED_COMPONENTS | (killed or set())
         scores = {"sqpe_v17": self.sqpe_v17_prob}
+        # Track for observability (populated after scores dict is built below)
 
         if "improvement_score" not in excluded and self.improvement_score is not None:
             scores["improvement_score"] = self.improvement_score
@@ -113,6 +139,10 @@ class VeloPrimePrediction:
                 and self.longshot_score is not None
                 and (self.sp_dec or 0) >= 10.0):
             scores["longshot_score"] = self.longshot_score
+
+        # Store observability — what actually contributed vs what was excluded
+        self.active_components = sorted(scores.keys())
+        self.excluded_from_ensemble = sorted(excluded)
 
         # Weighted average of available scores
         total_weight = sum(_WEIGHTS[k] for k in scores)
@@ -174,6 +204,9 @@ class VeloPrimePrediction:
             "macro_regime": self.macro_context.regime_label if self.macro_context else None,
             "macro_favourite_trap": self.macro_context.favourite_trap_risk if self.macro_context else None,
             "macro_available": self.macro_context.macro_available if self.macro_context else None,
+            # Observability: explicit audit trail of what ran vs what was excluded
+            "active_components": self.active_components,
+            "excluded_from_ensemble": self.excluded_from_ensemble,
         }
 
 
@@ -190,6 +223,7 @@ class VeloPrimeEnsemble:
         self,
         runners: list[dict],
         macro_context: Optional[MacroContext] = None,
+        mode: str | None = None,
     ) -> list[VeloPrimePrediction]:
         """
         Args:
@@ -200,14 +234,21 @@ class VeloPrimeEnsemble:
                                comment_intel_score, longshot_score,
                                sp_dec, is_fav
             macro_context: MacroContext from get_macro_context()
+            mode: ablation mode (SQPE_ONLY, SQPE_PLUS_PLACE, FULL_MINUS_DEAD).
+                  None = FULL_MINUS_DEAD (production default).
+                  Use ABLATION_* constants from this module.
 
         Returns:
             List of VeloPrimePrediction, sorted by velo_prime_prob desc.
         """
+        effective_mode = mode or ABLATION_FULL_MINUS_DEAD
+        mode_forced: set[str] = _MODE_FORCED_EXCLUDE.get(effective_mode, set())
+
         # ── Field-level zero-variance kill switch ──────────────────────────────
         # If all runners in this race have the same value for a component, that
         # component is adding zero ranking signal and distorting normalization.
         # Exclude it for this race and log in verdict_flags.
+        # Skip components already excluded by _DISABLED_COMPONENTS or mode_forced.
         _score_keys = {
             "improvement_score":      "improvement_score",
             "release_window_score":   "release_window_score",
@@ -216,19 +257,21 @@ class VeloPrimeEnsemble:
             "comment_intel_score":    "comment_intel_score",
             "longshot_score":         "longshot_score",
         }
+        already_excluded = _DISABLED_COMPONENTS | mode_forced
         field_killed: set[str] = set()
         for comp_key, runner_key in _score_keys.items():
-            if comp_key in _DISABLED_COMPONENTS:
+            if comp_key in already_excluded:
                 continue
             vals = [r.get(runner_key) for r in runners if r.get(runner_key) is not None]
             if len(vals) >= 2 and (max(vals) - min(vals)) < 1e-6:
                 field_killed.add(comp_key)
-                import warnings
                 warnings.warn(
                     f"VeloPrimeEnsemble: {comp_key} is constant across field "
                     f"(val={vals[0]:.4f}) — excluded from this race",
                     stacklevel=2,
                 )
+
+        all_killed = mode_forced | field_killed
 
         predictions = []
         for r in runners:
@@ -246,9 +289,15 @@ class VeloPrimeEnsemble:
                 is_fav=bool(r.get("is_fav", False)),
                 macro_context=macro_context,
             )
-            pred.compute(killed=field_killed)
+            pred.compute(killed=all_killed)
+            # Verdict flags: mode + field-level kills
+            pred.verdict_flags.append(f"mode:{effective_mode}")
+            if mode_forced - _DISABLED_COMPONENTS:
+                pred.verdict_flags.append(
+                    f"mode_excluded:{','.join(sorted(mode_forced - _DISABLED_COMPONENTS))}"
+                )
             if field_killed:
-                pred.verdict_flags.append(f"killed:{','.join(sorted(field_killed))}")
+                pred.verdict_flags.append(f"field_killed:{','.join(sorted(field_killed))}")
             predictions.append(pred)
 
         # Re-normalise so race probabilities sum to 1.0

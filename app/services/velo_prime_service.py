@@ -233,7 +233,11 @@ def _apply_sentient_modifiers(results: list[dict], sentient_state: dict | None) 
     return results
 
 
-def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> list[dict]:
+def score_race_velo_prime(
+    race: dict,
+    sentient_state: dict | None = None,
+    ablation_mode: str | None = None,
+) -> list[dict]:
     """
     Score a full normalized race through:
       1. SQPE v17 (per runner)
@@ -319,13 +323,16 @@ def score_race_velo_prime(race: dict, sentient_state: dict | None = None) -> lis
         )
 
     # Run VeloPrimeEnsemble
-    predictions = ensemble.predict_race(ensemble_inputs, macro_context=macro_ctx)
+    predictions = ensemble.predict_race(ensemble_inputs, macro_context=macro_ctx, mode=ablation_mode)
 
     # Flatten to dicts
     results = []
     for pred in predictions:
         row = pred.to_dict()
-        # Rename keys to canonical output names
+        # Rename keys to canonical output names.
+        # NOTE: release_day_prob and comment_intel_score are raw specialist model outputs
+        # stored here for observability only. They are NOT included in the active ensemble
+        # when their components are in _DISABLED_COMPONENTS (see excluded_from_ensemble field).
         row["release_day_prob"] = row.pop("release_window_score", None)
         row["longshot_prob"] = row.pop("longshot_score", None)
         row["macro_regime_label"] = row.pop("macro_regime", None)
