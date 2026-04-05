@@ -56,6 +56,10 @@ _WEIGHTS = {
 _DISABLED_COMPONENTS: set[str] = {
     "release_window_score",
     "comment_intel_score",
+    # Ablation backtest (2026-04-04, 647 races): improvement_score hurts top-1
+    # (-0.6 ppts vs SQPE+Place) and avgWinP (-0.003). No compensating case.
+    # Re-enable only if a retrained model demonstrates lift over SQPE+Place+MktDeception.
+    "improvement_score",
 }
 
 # ─── Ablation modes ─────────────────────────────────────────────────────────────
