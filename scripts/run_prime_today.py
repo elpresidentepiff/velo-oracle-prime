@@ -167,6 +167,86 @@ TIER_ACTIONS = {
 }
 
 
+def _apply_tie_v3_gate(
+    top: dict,
+    tier: str,
+    reasons: list[str],
+    preds: list[dict],
+) -> tuple[str, list[str]]:
+    """
+    Apply TIE v3 conviction gate after synthesize_decision().
+
+    Signal counts are pre-computed in score_race_velo_prime() where live
+    doctrine features (days_since_run, sp_rank, trainer_timing_score etc.)
+    are available. This function applies the policy decisions now that
+    current_tier is known.
+
+    Upgrade path : top pick tie_gate_signal_count >= MIN_SIGNALS_FOR_UPGRADE
+                   AND tier in (C, D) → promote to B or C
+    EW path      : any runner with signal_count >= MIN_SIGNALS_FOR_EW_FLAG
+                   AND SP > LONGSHOT_SP_THRESHOLD AND not fav → annotate
+
+    Does NOT alter velo_prime_prob or ensemble ranking.
+    """
+    try:
+        from src.intelligence.tie_v3_gate import (
+            MIN_SIGNALS_FOR_UPGRADE,
+            MIN_SIGNALS_FOR_EW_FLAG,
+            LONGSHOT_SP_THRESHOLD,
+        )
+
+        # ── Upgrade path — top pick only ──────────────────────────────────────
+        n       = top.get("tie_gate_signal_count", 0)
+        signals = top.get("tie_gate_signals", [])
+        sp_top  = float(top.get("sp_dec") or 0)
+        is_fav  = bool(top.get("is_fav"))
+
+        top["tie_gate_fires"]        = False
+        top["tie_gate_tier_upgrade"] = None
+        top["tie_gate_ew_flag"]      = False
+
+        if n >= MIN_SIGNALS_FOR_UPGRADE and tier in ("C", "D"):
+            upgraded = "B" if tier == "C" else "C"
+            top["tie_gate_fires"]        = True
+            top["tie_gate_tier_upgrade"] = upgraded
+            reasons.append(
+                f"TIE v3: {n} intent signals → upgrade {tier}→{upgraded} "
+                f"[{', '.join(signals)}]"
+            )
+            tier = upgraded
+
+        # ── EW path — top pick ────────────────────────────────────────────────
+        if (n >= MIN_SIGNALS_FOR_EW_FLAG
+                and sp_top > LONGSHOT_SP_THRESHOLD
+                and not is_fav):
+            top["tie_gate_fires"]   = True
+            top["tie_gate_ew_flag"] = True
+            if not top.get("tie_gate_tier_upgrade"):
+                reasons.append(
+                    f"TIE v3 EW: {n} signals + SP {sp_top:.1f} → each-way angle"
+                )
+
+        # ── EW scan — rest of field (observability only, no tier change) ──────
+        for runner in preds[1:]:
+            rn  = runner.get("tie_gate_signal_count", 0)
+            rsp = float(runner.get("sp_dec") or 0)
+            rfav = bool(runner.get("is_fav"))
+            runner["tie_gate_fires"]   = False
+            runner["tie_gate_ew_flag"] = (
+                rn >= MIN_SIGNALS_FOR_EW_FLAG
+                and rsp > LONGSHOT_SP_THRESHOLD
+                and not rfav
+            )
+            if runner["tie_gate_ew_flag"]:
+                runner["tie_gate_fires"] = True
+
+    except Exception as e:
+        import logging
+        logging.getLogger("velo.run_prime").warning("TIE v3 gate policy failed: %s", e)
+
+    return tier, reasons
+
+
 def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     """
     Returns (tier, reasons) where tier is A/B/C/D/X.
@@ -596,9 +676,11 @@ def main():
                 second    = preds[1] if len(preds) > 1 else {}
                 sec_prob  = float(second.get("velo_prime_prob") or 0)
                 tier, reasons = synthesize_decision(top, sec_prob)
+                tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _add_secondary_signals(top, reasons)
                 scored.append((race, preds, tier, reasons))
-                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}")
+                gate_note = f" [TIE↑{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
+                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}")
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")

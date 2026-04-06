@@ -354,18 +354,22 @@ def score_race_velo_prime(
     # Phase 1 sentient bridge — audit only, no scoring change
     results = _apply_sentient_modifiers(results, sentient_state)
 
-    # ── Horse State Brain — tag every runner ──────────────────────────────────
+    # ── Horse State Brain + TIE v3 signal computation ────────────────────────
     # Runs after ensemble scoring, before persist.
+    # Uses merged live feats (doctrine signals) + row (ensemble outputs).
     # Does NOT alter velo_prime_prob, decision_tier, or active_components.
-    # Adds row["horse_state"] = {...} to every runner in results.
-    # The full raw state flows into full_analysis; compact fields are extracted
-    # at persist time for top-level velo_verdicts columns.
+    #
+    # Horse State: row["horse_state"] = full state dict → into full_analysis
+    # TIE signals: row["tie_gate_signal_count"] + row["tie_gate_signals"]
+    #   — signals computed here (live feats available); upgrade/EW decision
+    #   deferred to run_prime_today.py after synthesize_decision() when
+    #   current_tier is known.
     from src.intelligence.horse_state_engine import HorseStateEngine as _HorseStateEngine
+    from src.intelligence.tie_v3_gate import TIEv3Gate as _TIEv3Gate
     _state_engine = _HorseStateEngine()
+    _tie_gate = _TIEv3Gate()
     for row in results:
-        # Merge: live feats supply doctrine signals (days_since_run, trainer_timing_score,
-        # course_fit_score etc.); row supplies ensemble outputs (velo_prime_prob, place_prob).
-        # Row fields take priority so scored values are used where they overlap.
+        # Merge: live feats supply doctrine signals; row fields take priority
         _live_feats = _feats_by_horse.get(row.get("horse", ""), {})
         _merged = {**_live_feats, **row}
         try:
@@ -374,6 +378,15 @@ def score_race_velo_prime(
         except Exception as _e:
             log.warning("Horse state tagging failed for %s: %s", row.get("horse"), _e)
             row["horse_state"] = {}
+        try:
+            # Evaluate without current_tier — signals only, no upgrade logic yet
+            _gate_pre = _tie_gate.evaluate(_merged, current_tier=None)
+            row["tie_gate_signal_count"] = _gate_pre.signal_count
+            row["tie_gate_signals"]      = _gate_pre.signals_found
+        except Exception as _e:
+            log.warning("TIE gate signal computation failed for %s: %s", row.get("horse"), _e)
+            row["tie_gate_signal_count"] = 0
+            row["tie_gate_signals"]      = []
 
     return results
 
