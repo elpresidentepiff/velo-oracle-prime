@@ -167,6 +167,30 @@ TIER_ACTIONS = {
 }
 
 
+def _apply_archetype(
+    top: dict,
+    preds: list[dict],
+    tier: str,
+    sec_prob: float,
+) -> None:
+    """
+    Classify race archetype and store result on top dict.
+
+    Runs after TIE v3 gate so it can see the final tier.
+    Stores archetype fields directly on top so they persist with the verdict
+    and appear in build_decision_card.
+    """
+    try:
+        from src.intelligence.race_archetypes import RaceArchetypeClassifier
+        prob       = float(top.get("velo_prime_prob") or 0)
+        separation = prob - float(sec_prob or 0)
+        archetype  = RaceArchetypeClassifier().classify(top, preds, tier, separation)
+        top.update(archetype.to_dict())
+    except Exception as e:
+        import logging
+        logging.getLogger("velo.run_prime").warning("Archetype classification failed: %s", e)
+
+
 def _apply_tie_v3_gate(
     top: dict,
     tier: str,
@@ -386,6 +410,12 @@ def build_decision_card(race: dict, top: dict, second: dict,
     for r in reasons[:4]:
         lines.append(f"  • {r}")
     lines.append(f"ACTION: {action}")
+    arch = top.get("race_archetype")
+    if arch:
+        arch_conf  = (top.get("archetype_confidence") or "?")[0].upper()
+        arch_style = top.get("archetype_bet_style") or ""
+        trap_mark  = " ⚠ TRAP" if top.get("archetype_trap_flag") else ""
+        lines.append(f"ARCHETYPE: [{arch}:{arch_conf}]{trap_mark}  {arch_style}")
     return "\n".join(lines)
 
 
@@ -677,10 +707,12 @@ def main():
                 sec_prob  = float(second.get("velo_prime_prob") or 0)
                 tier, reasons = synthesize_decision(top, sec_prob)
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
+                _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
                 scored.append((race, preds, tier, reasons))
-                gate_note = f" [TIE↑{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
-                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}")
+                gate_note  = f" [TIE↑{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
+                arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
+                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")

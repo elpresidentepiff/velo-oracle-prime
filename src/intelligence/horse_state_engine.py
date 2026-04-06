@@ -54,6 +54,8 @@ class HorseState:
         # Flatten evidence into a list of strings for easy persistence
         d["state_evidence"] = [f"{tag}:{rule}" for tag, rule in self.evidence.items()]
         del d["evidence"]
+        # Include computed signal count so persist layer can read it without recomputing
+        d["live_signals"] = self.live_signals
         return d
 
     @property
