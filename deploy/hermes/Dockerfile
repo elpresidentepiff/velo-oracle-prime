@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y wget gpg ca-certificates curl git unzip
  && SUPABASE_VERSION=$(curl -sL https://api.github.com/repos/supabase/cli/releases/latest | jq -r '.tag_name | ltrimstr("v")') \
  && wget -qO /tmp/supabase.tar.gz "https://github.com/supabase/cli/releases/latest/download/supabase_${SUPABASE_VERSION}_${SUPABASE_ARCH}.tar.gz" \
  && mkdir -p /usr/local/bin \
- && tar -xzf /tmp/supabase.tar.gz -C /usr/local/bin supabase \
+ && tar -xzf /tmp/supabase.tar.gz -C /usr/local/bin \
  && chmod +x /usr/local/bin/supabase \
  && rm -rf /var/lib/apt/lists/* /tmp/supabase.tar.gz
 
