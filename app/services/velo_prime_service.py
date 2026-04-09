@@ -736,7 +736,10 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
 
         sb = create_client(url, key)
 
-        top = predictions[0]
+        # predictions is list[VeloPrimePrediction] (dataclass objects).
+        # results is list[dict] — same data but serialized via to_dict().
+        # Use results for all column access since .get() doesn't work on dataclasses.
+        top = results[0]
         _hs = top.get("horse_state") or {}  # compact horse-state for top selection
 
         # ── G Shadow instrumentation: top-3 runners with G-adjusted scores ──────
@@ -744,19 +747,19 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         # G-adjusted scores. This is the key instrumentation for measuring whether
         # G changes shortlist shape, favourite suppression, and decoy exposure.
         top3_scores = []
-        for pred in predictions[:3]:
-            g_mult = pred.get("g_shadow_multiplier", 1.0)
+        for pred_dict in results[:3]:
+            g_mult = pred_dict.get("g_shadow_multiplier", 1.0)
             top3_scores.append({
-                "horse_id": pred.get("horse_id", ""),
-                "velo_prime_prob": pred.get("velo_prime_prob"),  # AFTER G adjustment (live)
-                "g_base_prob": pred.get("g_base_prob"),           # BEFORE G adjustment
+                "horse_id": pred_dict.get("horse_id", ""),
+                "velo_prime_prob": pred_dict.get("velo_prime_prob"),
+                "g_base_prob": pred_dict.get("g_base_prob"),
                 "g_shadow_multiplier": g_mult,
                 "g_adjusted_prob": round(
-                    pred.get("g_base_prob", 0.0) * g_mult, 4
-                ) if pred.get("g_base_prob") else None,
-                "g_shadow_flags": pred.get("g_shadow_flags") or [],
-                "doctrines_fired": pred.get("doctrines_fired") or [],
-                "is_top_pick": (pred == top),
+                    pred_dict.get("g_base_prob", 0.0) * g_mult, 4
+                ) if pred_dict.get("g_base_prob") else None,
+                "g_shadow_flags": pred_dict.get("g_shadow_flags") or [],
+                "doctrines_fired": pred_dict.get("doctrines_fired") or [],
+                "is_top_pick": (pred_dict == top),
             })
 
         row = {
