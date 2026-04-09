@@ -1,0 +1,159 @@
+{
+  "generated_at": "2026-04-09 09:31 UTC",
+  "architecture": "Shadow Lab \u2014 G/Sigma Refresh",
+  "training_source": {
+    "sigma_audits": {
+      "total_rows": 500,
+      "unique_races": 500
+    },
+    "source": "sigma_audits (closed-loop post-race reviews)",
+    "note": "sigma_audits is a separate system from velo_verdicts (older race_id format)"
+  },
+  "doctrine_rules_applied": {
+    "RULE_1_MID_PRICED_DECOY": {
+      "condition": "top_prob 0.08-0.30 AND top3 has MDS>0.15",
+      "evidence": "112/266 misses (42.1%)",
+      "confidence": "HIGH",
+      "tier_applies": "ALL"
+    },
+    "RULE_2_MDS_DECOY": {
+      "condition": "top3 MDS > 0.25",
+      "evidence": "23% of misses + strong tier-A false-positive rate",
+      "confidence": "HIGH",
+      "tier_applies": "ALL"
+    },
+    "RULE_3_AE_PLACE_ADJUST": {
+      "condition": "place_prob \u00d7 tier_AE_place_multiplier",
+      "tier_AE": {
+        "A": 0.68,
+        "B": 0.39,
+        "C": 0.48,
+        "D": 0.32,
+        "X": 0.44
+      },
+      "threshold_confirmed": "adj_place > 0.30",
+      "evidence": "sigma_audits 500 races"
+    },
+    "RULE_4_TIER_A_EDGE": {
+      "condition": "Tier A HR=0.34 vs Tier B HR=0.20",
+      "edge": "1.7x more reliable for place betting",
+      "confidence": "MEDIUM"
+    }
+  },
+  "card_summary_new": {
+    "total": 50,
+    "confirmed": 4,
+    "watch": 18,
+    "caution": 21,
+    "decoy": 7
+  },
+  "material_changes": {
+    "total_tracked": 18,
+    "material_change": 12,
+    "unchanged": 6,
+    "downgrades_from_confirmed": [
+      {
+        "race": "Diomed Spirit",
+        "old": "CONFIRMED",
+        "new": "CAUTION",
+        "reason": "adj_place=0.271 < 0.30 threshold"
+      },
+      {
+        "race": "Incredible Army",
+        "old": "CONFIRMED",
+        "new": "CAUTION",
+        "reason": "adj_place=0.289 < 0.30 threshold"
+      },
+      {
+        "race": "Brighterdaysahead",
+        "old": "CONFIRMED",
+        "new": "CAUTION",
+        "reason": "adj_place=0.188 weak"
+      },
+      {
+        "race": "Queue Dos",
+        "old": "CONFIRMED",
+        "new": "CAUTION",
+        "reason": "adj_place=0.284 < 0.30 threshold"
+      }
+    ],
+    "new_decoys": [
+      {
+        "race": "Game Point",
+        "old": "WATCH",
+        "new": "DECOY",
+        "reason": "MID_PRICED_TRAP mid_priced top MDS decoy"
+      },
+      {
+        "race": "Got The Booty",
+        "old": "CAUTION",
+        "new": "DECOY",
+        "reason": "MDS=0.484 >> 0.25 threshold"
+      },
+      {
+        "race": "Minella Yoga",
+        "old": "CAUTION",
+        "new": "DECOY",
+        "reason": "MDS=0.455 >> 0.25 threshold"
+      },
+      {
+        "race": "Lulamba",
+        "old": "CAUTION",
+        "new": "DECOY",
+        "reason": "MDS=0.357 >> 0.25 threshold"
+      },
+      {
+        "race": "On The Inlet",
+        "old": "CAUTION",
+        "new": "DECOY",
+        "reason": "MDS=0.317 >> 0.25 threshold"
+      },
+      {
+        "race": "Suir Monad",
+        "old": "CAUTION",
+        "new": "DECOY",
+        "reason": "MDS=0.308 >> 0.25 threshold"
+      },
+      {
+        "race": "Astrological",
+        "old": "CAUTION",
+        "new": "DECOY",
+        "reason": "MDS=0.317 + HIGH_IMPR noise"
+      }
+    ],
+    "stable_confirmed": [
+      {
+        "race": "Senor Cortez",
+        "adj_place": 0.6072,
+        "flags": [
+          "clean"
+        ]
+      },
+      {
+        "race": "Inferno Sacree",
+        "adj_place": 0.3701,
+        "flags": [
+          "clean"
+        ]
+      },
+      {
+        "race": "Pearly Squirrel",
+        "adj_place": 0.39,
+        "flags": [
+          "clean"
+        ]
+      },
+      {
+        "race": "Rock Of Ireland",
+        "adj_place": 0.3301,
+        "flags": [
+          "clean"
+        ]
+      }
+    ]
+  },
+  "g_state_change": {
+    "materially_changed": true,
+    "note": "G shadow still returns G_TOO_FEW_RACES for all races. The material change comes from sigma_audits A/E doctrine, not G itself. G is neutral (1.0). Sigma A/E doctrine is the active edge."
+  }
+}
