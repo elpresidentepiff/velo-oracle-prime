@@ -12,15 +12,16 @@ Policy:
 
 Usage:
     from src.preflight import preflight, PreflightStatus
-
-    result = preflight()
-    if result.status == "FAIL":
-        tg_alert(result.summary())
-        sys.exit(1)
-    if result.status == "DEGRADED":
-        tg_alert(result.summary())
-        # continue only if policy allows
 """
+import sys
+from pathlib import Path
+
+# Ensure 'src' is in sys.path before any constants import.
+# This fixes the relative import issue when preflight is invoked
+# before run_prime_today.py sets sys.path.
+_SRC_ROOT = Path(__file__).parent.parent
+if str(_SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(_SRC_ROOT))
 
 from __future__ import annotations
 
