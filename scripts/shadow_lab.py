@@ -9,10 +9,12 @@ Rules:
   - Never modifies production state
   - Failure is isolated — does not affect scoring
 
-Trigger:
-  - Wakes via cron (30 min after production)
-  - Uses pipeline_run.status = 'completed' as batch completeness signal
-  - Idempotent: re-running same pipeline_run_id is a no-op
+Batch detection:
+  - velo_verdicts may or may not have pipeline_run_id column
+  - Primary: use generated_at as watermark
+  - If pipeline_run_id column exists, use that for extra safety
+  - Only process rows with generated_at > last_watermark_ts
+  - Idempotent: re-running same batch is a no-op (upsert on race_id)
 """
 
 import sys
@@ -51,72 +53,42 @@ SERVICE_NAME   = "velo-shadow-lab"
 # STEP 1 — Watermark detection
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _get_watermark(sb) -> dict:
-    """Return most recent processed pipeline_run_id, or empty if none."""
+def _get_last_watermark(sb) -> Optional[str]:
+    """Return the last_processed_at timestamp of the most recent shadow run."""
     rows = sb.table("shadow_watermarks") \
-        .select("*") \
+        .select("last_processed_at") \
         .eq("service_name", SERVICE_NAME) \
         .order("last_processed_at", desc=True) \
         .limit(1) \
         .execute()
     if rows.data:
-        return rows.data[0]
-    return {}
+        return rows.data[0].get("last_processed_at")
+    return None
 
 
-def _is_already_processed(sb, pipeline_run_id: str) -> bool:
-    row = sb.table("shadow_watermarks") \
-        .select("id") \
-        .eq("service_name", SERVICE_NAME) \
-        .eq("pipeline_run_id", pipeline_run_id) \
-        .execute()
-    return len(row.data) > 0
-
-
-def _advance_watermark(sb, pipeline_run_id: str, rows_processed: int) -> None:
-    """Upsert watermark entry for this pipeline_run_id."""
-    sb.table("shadow_watermarks").upsert({
-        "service_name":     SERVICE_NAME,
-        "pipeline_run_id":  pipeline_run_id,
-        "last_processed_at": datetime.now(timezone.utc).isoformat(),
-        "rows_processed":   rows_processed,
-    }, on_conflict="service_name,pipeline_run_id").execute()
-    log.info(f"Watermark advanced: pipeline_run_id={pipeline_run_id} rows={rows_processed}")
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 2 — Batch detection
-# ══════════════════════════════════════════════════════════════════════════════
-
-def _get_latest_completed_batch(sb) -> Optional[dict]:
-    """Find the most recent completed velo-prime-scoring-prod batch."""
-    rows = sb.table("pipeline_runs") \
-        .select("*") \
-        .eq("service_name", "velo-prime-scoring") \
-        .eq("status", "PASS") \
-        .eq("run_state", "completed") \
-        .order("started_at", desc=True) \
-        .limit(1) \
-        .execute()
-    if not rows.data:
-        log.info("No completed production batch found.")
-        return None
-    batch = rows.data[0]
-    log.info(f"Found batch: pipeline_run_id={batch.get('id')} started={batch.get('started_at')}")
-    return batch
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 3 — Fetch production verdicts for completed batch
-# ══════════════════════════════════════════════════════════════════════════════
-
-def _fetch_verdicts(sb, pipeline_run_id: str) -> list[dict]:
-    rows = sb.table("velo_verdicts") \
-        .select("*") \
-        .eq("pipeline_run_id", pipeline_run_id) \
-        .execute()
-    log.info(f"Fetched {len(rows.data)} verdict rows for pipeline_run_id={pipeline_run_id}")
+def _fetch_new_verdicts(sb, since: Optional[str]) -> list[dict]:
+    """
+    Fetch verdict rows newer than the watermark timestamp.
+    Uses generated_at as the batch completeness signal.
+    """
+    query = sb.table("velo_verdicts").select("*")
+    if since:
+        query = query.gt("generated_at", since)
+    query = query.order("generated_at", desc=False)
+    rows = query.execute()
+    log.info(f"Fetched {len(rows.data)} verdict rows (since={since})")
     return rows.data
+
+
+def _advance_watermark(sb, rows_processed: int, cutoff_at: str) -> None:
+    """Upsert watermark entry for this run."""
+    sb.table("shadow_watermarks").upsert({
+        "service_name":      SERVICE_NAME,
+        "pipeline_run_id":   f"generated_at:{cutoff_at}",  # backward compat key
+        "last_processed_at": cutoff_at,
+        "rows_processed":    rows_processed,
+    }, on_conflict="service_name,pipeline_run_id").execute()
+    log.info(f"Watermark advanced: cutoff={cutoff_at} rows={rows_processed}")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -355,7 +327,7 @@ def _log_processed(sb, run_id: str, verdict: dict, pipeline_run_id: str, status:
 
 def main():
     log.info(f"=== VELO Shadow Lab v{SCRIPT_VERSION} ===")
-    log.info(f"Service: {SERVICE_NAME} | Version: {SCRIPT_VERSION}")
+    log.info(f"Service: {SERVICE_NAME}")
 
     if not SUPABASE_URL or not SHADOW_KEY:
         log.error("SUPABASE_URL or SHADOW_SUPABASE_KEY not set — aborting")
@@ -365,36 +337,32 @@ def main():
     sb = create_client(SUPABASE_URL, SHADOW_KEY)
     log.info("Supabase connected")
 
-    # ── Step A: Check if there's a new completed batch ───────────────────────
-    batch = _get_latest_completed_batch(sb)
-    if not batch:
-        log.info("No new completed batch. Exiting cleanly.")
-        return
+    # ── Step A: Get last watermark ──────────────────────────────────────────
+    last_watermark = _get_last_watermark(sb)
+    log.info(f"Last watermark: {last_watermark or 'NONE (first run)'}")
 
-    pipeline_run_id = batch["id"]
-
-    if _is_already_processed(sb, pipeline_run_id):
-        log.info(f"Batch {pipeline_run_id} already processed. Exiting.")
-        return
-
-    # ── Step B: Fetch verdict rows ───────────────────────────────────────────
-    verdicts = _fetch_verdicts(sb, pipeline_run_id)
+    # ── Step B: Fetch new verdict rows ──────────────────────────────────────
+    verdicts = _fetch_new_verdicts(sb, last_watermark)
     if not verdicts:
-        log.warning(f"No verdict rows for pipeline_run_id={pipeline_run_id}")
-        _advance_watermark(sb, pipeline_run_id, 0)
+        log.info("No new verdict rows. Exiting cleanly.")
         return
+
+    # Use the max generated_at as the cutoff for this run's watermark
+    cutoff_at = max(v["generated_at"] for v in verdicts)
+    log.info(f"Processing {len(verdicts)} rows, cutoff={cutoff_at}")
 
     # ── Step C: Load G state ─────────────────────────────────────────────────
     g_state = _load_g_state(sb)
     log.info(f"G state: races_observed={g_state.get('races_observed', 0)}")
 
     # ── Step D: Process each verdict ─────────────────────────────────────────
-    run_id       = f"shadow_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    success_ct   = 0
-    error_ct     = 0
+    run_id     = f"shadow_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    success_ct = 0
+    error_ct   = 0
 
     for verdict in verdicts:
         race_id = verdict.get("race_id", "unknown")
+        generated_at = verdict.get("generated_at", "")
 
         # G shadow
         g_result = _run_g_shadow(verdict, g_state)
@@ -402,10 +370,10 @@ def main():
         # Rank movement
         rm_result = _compute_rank_movement(verdict, g_result)
 
-        # Write shadow results
-        status = _write_shadow_result(sb, verdict, pipeline_run_id, g_result)
-        _write_rank_movement(sb, verdict, pipeline_run_id, rm_result)
-        _log_processed(sb, run_id, verdict, pipeline_run_id, status)
+        # Write shadow results (use generated_at as pipeline_run_id substitute)
+        status = _write_shadow_result(sb, verdict, generated_at, g_result)
+        _write_rank_movement(sb, verdict, generated_at, rm_result)
+        _log_processed(sb, run_id, verdict, generated_at, status)
 
         if status == "success":
             success_ct += 1
@@ -416,10 +384,10 @@ def main():
             log.info(f"  {race_id}: g_mult={g_result['g_shadow_multiplier']} flags={g_result['g_shadow_flags']}")
 
     # ── Step E: Advance watermark ─────────────────────────────────────────────
-    _advance_watermark(sb, pipeline_run_id, success_ct)
+    _advance_watermark(sb, success_ct, cutoff_at)
 
     log.info(f"=== Shadow Lab Complete ===")
-    log.info(f"Pipeline run: {pipeline_run_id}")
+    log.info(f"Cutoff:       {cutoff_at}")
     log.info(f"Processed:    {success_ct} success | {error_ct} error")
     log.info(f"Exiting cleanly.")
 
