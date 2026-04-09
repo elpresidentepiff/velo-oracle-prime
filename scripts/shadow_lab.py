@@ -70,11 +70,25 @@ def _fetch_new_verdicts(sb, since: Optional[str]) -> list[dict]:
     """
     Fetch verdict rows newer than the watermark timestamp.
     Uses generated_at as the batch completeness signal.
+    
+    Safety: limits to most recent 100 rows to prevent Railway cron timeout.
+    On first run (no watermark), only fetches rows from the last 48 hours.
     """
+    from datetime import datetime, timezone, timedelta
+    
     query = sb.table("velo_verdicts").select("*")
+    
     if since:
+        # Normal: rows newer than watermark
         query = query.gt("generated_at", since)
-    query = query.order("generated_at", desc=False)
+    else:
+        # First run: only last 48 hours to avoid processing thousands of rows
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+        query = query.gt("generated_at", cutoff)
+        log.info(f"First run: gating to last 48h (>{cutoff})")
+    
+    # Always limit to 100 most recent rows to prevent timeout
+    query = query.order("generated_at", desc=False).limit(100)
     rows = query.execute()
     log.info(f"Fetched {len(rows.data)} verdict rows (since={since})")
     return rows.data
