@@ -14,6 +14,7 @@ Per D007: all inputs are LIVE-USABLE (pre-race available).
 """
 from __future__ import annotations
 
+import re as _re
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -22,6 +23,136 @@ from typing import Optional
 import numpy as np
 
 from src.intelligence.macro_regime.bha_macro_context import MacroContext
+
+# ─── Playbook G — Shadow State Loader ──────────────────────────────────────────
+# Loads G's evolved sentient state for shadow-mode adjustment.
+# SHADOW MODE: G's state is logged and compared but NOT applied to live scoring.
+# To promote G to live: set _G_SHADOW_MODE = False (with care).
+#
+# G's state file is written by app/playbooks/playbook_g_sentient_loopback.py
+# and backed up to data/sentient_state.json (repo root).
+_G_SHADOW_MODE = True  # True = shadow only (safe). False = live impact.
+
+def _load_g_state() -> dict:
+    """Load Playbook G's sentient state. Returns empty dict if unavailable."""
+    try:
+        import json, os
+        # State file lives at repo_root/data/sentient_state.json
+        # velo_prime_ensemble.py is at src/intelligence/, so repo root is 2 levels up
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        state_path = repo_root / "data" / "sentient_state.json"
+        if state_path.exists():
+            with open(state_path) as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+# Load once at module import
+_G_STATE: dict = _load_g_state()
+
+# ─── G Shadow Multiplier ────────────────────────────────────────────────────────
+# G's doctrine_strengths and structural_drift influence scoring multipliers.
+# SHADOW LOGGED: when _G_SHADOW_MODE=True, the adjustment is computed and
+# logged to verdict_flags but NOT applied to velo_prime_prob.
+
+def _g_shadow_adjustment(
+    market_deception_score: Optional[float],
+    is_fav: bool,
+    sp_dec: Optional[float],
+    horse_id: Optional[str],
+    doctrine_strengths: dict,
+    appetite_state: dict,
+    emotion_laws: dict,
+) -> tuple[float, list[str], list[str], str]:
+    """
+    Compute G's shadow adjustment multiplier for a runner.
+
+    Returns (multiplier, flags, doctrine_fired, pain_horse_id) where:
+      - multiplier: what velo_prime_prob would be multiplied by (1.0 = no change)
+      - flags: list of strings describing what G did (always logged)
+      - doctrine_fired: list of doctrine names that fired (for capture)
+      - pain_horse_id: horse_id that triggered a pain rule (if any)
+
+    When _G_SHADOW_MODE=True: multiplier is computed but NOT applied.
+    When _G_SHADOW_MODE=False: multiplier IS applied (promoted to live).
+
+    G targets:
+    - mid_priced_won (35.1% of misses): via FAVOURITE_LIABILITY doctrine
+    - market_decoy_followed (26.9% of misses): via LAY_THE_STORY doctrine
+    - outsider_won (10.9% of misses): via SHADOW_TRACKING doctrine
+    """
+    flags = []
+    doctrine_fired = []
+    pain_horse_id = ""
+
+    multiplier = 1.0
+
+    if not _G_STATE:
+        return 1.0, ["g_state:unavailable"], [], ""
+
+    # Effective doctrine_firing_threshold
+    raw_threshold = appetite_state.get("doctrine_firing_threshold", 1.0)
+    # 1.0 means all triggers required — that's a frozen state. Default to 0.6.
+    threshold = raw_threshold if raw_threshold < 1.0 else 0.6
+    flags.append(f"g_threshold:{threshold:.2f}")
+
+    # ── Emotion law penalties ─────────────────────────────────────────────────
+    # Pain rules: suppress signals when a specific horse_id + high MPI trap occurred.
+    # Pain rules are HIGHLY SPECIFIC — they name a particular horse and MPI threshold.
+    # We only suppress THAT specific horse when MPI is elevated.
+    # We do NOT apply blanket MPI penalties to all runners.
+    if emotion_laws and market_deception_score is not None and horse_id:
+        pain_rules = emotion_laws.get("pain_rules", [])
+        for rule in pain_rules:
+            if not isinstance(rule, dict):
+                continue
+            # Extract horse_ids from rule text: "Avoid hrs_XXXXX when MPI > 70"
+            horse_ids_in_rule = _re.findall(r'(hrs_\w+)', rule.get('rule', ''))
+            if horse_id in horse_ids_in_rule:
+                # This specific horse was flagged in a pain rule
+                # Fire when current MDS > 0.6 (proxy for elevated MPI situation)
+                if market_deception_score > 0.6:
+                    penalty = 0.85
+                    multiplier *= penalty
+                    pain_horse_id = horse_id
+                    flags.append(f"g_pain_rule:{rule.get('pattern','unknown')}:0.85")
+                    doctrine_fired.append("PAIN_RULE")
+
+    # ── Doctrine strength discounts ────────────────────────────────────────────
+    # If a doctrine has low strength (< 0.5), G has lost on it repeatedly.
+    # Apply a discount proportional to how weak it is.
+    STRONG_DOCTRINES = ["LAY_THE_STORY", "SHADOW_TRACKING", "NARRATIVE_FRACTURE"]
+    for doc in STRONG_DOCTRINES:
+        strength = doctrine_strengths.get(doc, 1.0)
+        if 0 < strength < 0.5:
+            # Progressive discount: strength 0.3 → 0.9x multiplier
+            discount = 0.7 + (strength * 0.67)  # 0.3→0.9x, 0.4→0.97x
+            multiplier *= discount
+            flags.append(f"g_{doc.lower()}_weak:{strength:.2f}x")
+            doctrine_fired.append(doc)
+
+    # ── Favourite liability doctrine ───────────────────────────────────────────
+    # G's FAVOURITE_LIABILITY fires when story ≠ power.
+    # If this horse is the favourite and doctrine strength is healthy,
+    # apply a small discount (market over-pricing the story).
+    # Only applies to is_fav=True and when market_deception_score > 0.5
+    fav_strength = doctrine_strengths.get("LAY_THE_STORY", 1.0)
+    if is_fav and market_deception_score is not None and market_deception_score > 0.55:
+        if fav_strength >= 0.5:
+            # Market is priced as fav but story/power may not match
+            discount = 0.93  # small discount to favourite confidence
+            multiplier *= discount
+            flags.append(f"g_fav_liability:{discount}")
+            doctrine_fired.append("FAVOURITE_LIABILITY")
+
+    # ── Shadow vs live ───────────────────────────────────────────────────────
+    if _G_SHADOW_MODE:
+        flags.append("g_shadow:applied_not_live")
+    else:
+        flags.append("g_shadow:live_promoted")
+
+    return multiplier, flags
 
 # ─── Weights ───────────────────────────────────────────────────────────────────
 # Tunable. Defaults based on architecture brief.
@@ -105,6 +236,7 @@ class VeloPrimePrediction:
     horse: str
     race_id: str
     sqpe_v17_prob: float
+    horse_id: Optional[str] = None  # for horse-specific G emotion law matching
 
     # Specialist scores (optional — if model not available, excluded from ensemble)
     improvement_score: Optional[float] = None
@@ -129,6 +261,12 @@ class VeloPrimePrediction:
     # Observability: populated by compute() so callers can audit what actually ran
     active_components: list = field(default_factory=list)
     excluded_from_ensemble: list = field(default_factory=list)
+    # Playbook G shadow (populated by compute())
+    g_base_prob: float = 0.0  # prob before G adjustment
+    g_shadow_multiplier: float = 1.0  # G multiplier applied
+    g_shadow_horse_id: str = ""  # horse_id that triggered pain rule (if any)
+    doctrines_fired: list = field(default_factory=list)  # list of doctrine names that fired
+    g_shadow_flags: list = field(default_factory=list)  # what G did
 
     def compute(self, killed: set[str] | None = None) -> "VeloPrimePrediction":
         """Build VELO_PRIME_prob from all available signals.
@@ -189,8 +327,36 @@ class VeloPrimePrediction:
                 prob = (1 - _MACRO_THIN_MARKET_UNCERTAINTY) * prob + _MACRO_THIN_MARKET_UNCERTAINTY * uniform
                 self.verdict_flags.append("macro:thin_market_uncertainty")
 
-        # Clip to valid probability range
+        # Clip to valid probability range (base probability before G shadow)
         self.velo_prime_prob = max(0.001, min(0.999, prob))
+
+        # ── Playbook G Shadow Adjustment ──────────────────────────────────────────
+        # Shadow mode: multiplier is computed but NOT applied to velo_prime_prob.
+        # Logged for comparison. When G has evolved (after running close_sigma_loops.py
+        # on the full archive), this will show what G would have done.
+        doctrine_strengths = _G_STATE.get("doctrine_strengths", {})
+        appetite_state = _G_STATE.get("appetite_state", {})
+        emotion_laws = _G_STATE.get("emotion_laws", {})
+
+        g_mult, g_flags, g_doctrines, g_pain_horse = _g_shadow_adjustment(
+            market_deception_score=self.market_deception_score,
+            is_fav=self.is_fav,
+            sp_dec=self.sp_dec,
+            horse_id=self.horse_id,
+            doctrine_strengths=doctrine_strengths,
+            appetite_state=appetite_state,
+            emotion_laws=emotion_laws,
+        )
+        self.g_base_prob = self.velo_prime_prob
+        self.g_shadow_multiplier = g_mult
+        self.g_shadow_flags = g_flags
+        self.g_shadow_horse_id = g_pain_horse
+        self.doctrines_fired = g_doctrines
+        self.verdict_flags.extend(g_flags)
+
+        # Apply G multiplier only when promoted to live (not shadow mode)
+        if not _G_SHADOW_MODE:
+            self.velo_prime_prob = max(0.001, min(0.999, self.velo_prime_prob * g_mult))
 
         # Confidence classification (calibration insight from L005: model underconfident at top)
         if self.velo_prime_prob >= 0.50:
@@ -223,6 +389,13 @@ class VeloPrimePrediction:
             # Observability: explicit audit trail of what ran vs what was excluded
             "active_components": self.active_components,
             "excluded_from_ensemble": self.excluded_from_ensemble,
+            # Playbook G shadow observables
+            "g_base_prob": round(self.g_base_prob, 4),
+            "g_shadow_multiplier": round(self.g_shadow_multiplier, 4),
+            "g_shadow_horse_id": self.g_shadow_horse_id,
+            "g_shadow_flags": self.g_shadow_flags,
+            "g_shadow_mode": _G_SHADOW_MODE,
+            "doctrines_fired": self.doctrines_fired,
         }
 
 
@@ -295,6 +468,7 @@ class VeloPrimeEnsemble:
                 horse=r["horse"],
                 race_id=r["race_id"],
                 sqpe_v17_prob=r["sqpe_v17_prob"],
+                horse_id=r.get("horse_id"),
                 improvement_score=r.get("improvement_score"),
                 release_window_score=r.get("release_window_score"),
                 market_deception_score=r.get("market_deception_score"),

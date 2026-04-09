@@ -738,6 +738,27 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
 
         top = predictions[0]
         _hs = top.get("horse_state") or {}  # compact horse-state for top selection
+
+        # ── G Shadow instrumentation: top-3 runners with G-adjusted scores ──────
+        # For rank movement analysis: track top 3 runners with their base and
+        # G-adjusted scores. This is the key instrumentation for measuring whether
+        # G changes shortlist shape, favourite suppression, and decoy exposure.
+        top3_scores = []
+        for pred in predictions[:3]:
+            g_mult = pred.get("g_shadow_multiplier", 1.0)
+            top3_scores.append({
+                "horse_id": pred.get("horse_id", ""),
+                "velo_prime_prob": pred.get("velo_prime_prob"),  # AFTER G adjustment (live)
+                "g_base_prob": pred.get("g_base_prob"),           # BEFORE G adjustment
+                "g_shadow_multiplier": g_mult,
+                "g_adjusted_prob": round(
+                    pred.get("g_base_prob", 0.0) * g_mult, 4
+                ) if pred.get("g_base_prob") else None,
+                "g_shadow_flags": pred.get("g_shadow_flags") or [],
+                "doctrines_fired": pred.get("doctrines_fired") or [],
+                "is_top_pick": (pred == top),
+            })
+
         row = {
             "race_id": race.get("race_id"),
             "region": race.get("region", ""),  # UK/IRE filter verification — persisted at scoring time
@@ -786,8 +807,16 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "archetype_confidence":  top.get("archetype_confidence"),
             "archetype_bet_style":   top.get("archetype_bet_style"),
             "archetype_suppression": top.get("archetype_suppression"),
-            "archetype_trap_flag":   top.get("archetype_trap_flag"),
-            # Full ranked field — enriched below before upsert
+            "archetype_trap_flag": top.get("archetype_trap_flag"),
+            # ── Playbook G Shadow instrumentation ──────────────────────────────────
+            # Requires migration: 20260408_005_velo_verdicts_g_shadow_instrumentation.sql
+            # These columns are NULL if migration not applied — graceful degradation.
+            "g_shadow_multiplier": top.get("g_shadow_multiplier"),
+            "g_shadow_flags": top.get("g_shadow_flags") or [],
+            "g_shadow_horse_id": top.get("g_shadow_horse_id") or "",
+            "g_shadow_mode": top.get("g_shadow_mode") or "shadow",
+            "g_top3_scores": top3_scores,
+            # VÉLØ Oracle — Narrative and regime
             "full_analysis": predictions,
         }
 
@@ -831,6 +860,14 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                     "archetype_suppression", "archetype_trap_flag",
                 ],
                 "Apply supabase/migrations/20260405_003_velo_verdicts_archetype.sql",
+            ),
+            (
+                "g_shadow_instrumentation",
+                [
+                    "g_shadow_multiplier", "g_shadow_flags", "g_shadow_horse_id",
+                    "g_shadow_mode", "g_top3_scores",
+                ],
+                "Apply supabase/migrations/20260408_005_velo_verdicts_g_shadow_instrumentation.sql",
             ),
         ]
         for _attempt, (_grp_name, _grp_cols, _grp_hint) in enumerate(
