@@ -186,7 +186,7 @@ def _check_sqpe_model() -> PreflightCheck:
 def _check_canonical_constants() -> PreflightCheck:
     """Canonical constants module must import cleanly."""
     try:
-        from .constants import VALID_OUTCOMES, VALID_RUN_STATUSES, VALID_TIERS  # noqa: F401
+        from src.constants import VALID_OUTCOMES, VALID_RUN_STATUSES, VALID_TIERS  # noqa: F401
 
         return PreflightCheck(name="canonical_constants", severity=Severity.CRITICAL, passed=True, detail="imported OK")
     except Exception as e:
