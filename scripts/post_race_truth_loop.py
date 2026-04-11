@@ -899,7 +899,7 @@ def main():
 
     print(f"\n  Misses by archetype:")
     for arch, count in arch_miss.most_common():
-        print(f"    {arch:<20} {count}")
+        print(f"    {(arch or 'unknown'):<20} {count}")
 
     print("\nDone.")
 
