@@ -152,7 +152,7 @@ def _g_shadow_adjustment(
     else:
         flags.append("g_shadow:live_promoted")
 
-    return multiplier, flags
+    return multiplier, flags, doctrine_fired, pain_horse_id
 
 # ─── Weights ───────────────────────────────────────────────────────────────────
 # Tunable. Defaults based on architecture brief.

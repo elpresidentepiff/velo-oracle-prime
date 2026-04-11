@@ -61,13 +61,22 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
     Downstream models use these flags as explicit uncertainty signals.
     """
     # Ratings: None = genuinely absent. Do NOT coerce to 0.0 here.
-    or_raw = runner.get("official_rating")  # Optional[float]
-    rpr_raw = runner.get("rpr")  # Optional[float]
-    ts_raw = runner.get("ts")  # Optional[float]
+    # API sends '-' or other non-numeric strings for missing ratings — clean them.
+    def _clean_rating(v):
+        if v is None: return None
+        try:
+            f = float(v)
+            return f if f > 0 else None
+        except (TypeError, ValueError):
+            return None
 
-    or_missing = float(runner.get("or_missing", or_raw is None))
+    or_raw  = _clean_rating(runner.get("official_rating"))
+    rpr_raw = _clean_rating(runner.get("rpr"))
+    ts_raw  = _clean_rating(runner.get("ts"))
+
+    or_missing  = float(runner.get("or_missing",  or_raw  is None))
     rpr_missing = float(runner.get("rpr_missing", rpr_raw is None))
-    ts_missing = float(runner.get("ts_missing", ts_raw is None))
+    ts_missing  = float(runner.get("ts_missing",  ts_raw  is None))
 
     odds = _safe(runner.get("best_odds_decimal"))
     sp_dec = odds if odds > 1.0 else 10.0
@@ -269,10 +278,17 @@ def score_race_velo_prime(
     # Pre-compute field OR/RPR arrays for relative features.
     # official_rating and rpr are Optional[float] from the normalizer.
     # Only include runners with a real rating — exclude None and any stray zeros.
+    def _to_float(v):
+        try: return float(v)
+        except (TypeError, ValueError): return 0.0
     field_or = [
-        r["official_rating"] for r in runners if r.get("official_rating") is not None and r["official_rating"] > 0
+        _to_float(r["official_rating"]) for r in runners
+        if r.get("official_rating") is not None and _to_float(r["official_rating"]) > 0
     ]
-    field_rpr = [r["rpr"] for r in runners if r.get("rpr") is not None and r["rpr"] > 0]
+    field_rpr = [
+        _to_float(r["rpr"]) for r in runners
+        if r.get("rpr") is not None and _to_float(r["rpr"]) > 0
+    ]
 
     # Macro context — current year, race type
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")
@@ -736,16 +752,12 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
 
         sb = create_client(url, key)
 
-        # predictions is list[VeloPrimePrediction] (dataclass objects).
-        # results is list[dict] — same data but serialized via to_dict().
-        # Use results for all column access since .get() doesn't work on dataclasses.
+        # predictions is list[dict] — serialized runner rows.
+        results = predictions
         top = results[0]
         _hs = top.get("horse_state") or {}  # compact horse-state for top selection
 
         # ── G Shadow instrumentation: top-3 runners with G-adjusted scores ──────
-        # For rank movement analysis: track top 3 runners with their base and
-        # G-adjusted scores. This is the key instrumentation for measuring whether
-        # G changes shortlist shape, favourite suppression, and decoy exposure.
         top3_scores = []
         for pred_dict in results[:3]:
             g_mult = pred_dict.get("g_shadow_multiplier", 1.0)
