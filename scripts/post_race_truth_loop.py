@@ -865,7 +865,7 @@ def main():
     if args.dry_run:
         print("\nSTEP 5: DRY RUN — not writing to DB")
         for r in records:
-            print(f"  [DRY]  {r['race_id']}  →  core={r['core_miss_type']}  gate={r['gate_outcome']}")
+            print(f"  [DRY]  {r['race_id']}  ->  core={r['core_miss_type']}  gate={r['gate_outcome']}")
         return
 
     print("\nSTEP 5: Write to race_truth_audits")
