@@ -41,7 +41,7 @@ import sys
 import urllib.request
 import urllib.error
 from collections import Counter, defaultdict
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -598,7 +598,7 @@ def audit_race(verdict: dict, sigma: dict | None, result: dict | None) -> dict |
     return {
         "race_id":               race_id,
         "race_date":             race_date,
-        "generated_at":          datetime.utcnow().isoformat(),
+        "generated_at":          datetime.now(timezone.utc).isoformat(),
         # Prediction snapshot
         "decision_tier":          tier,
         "assigned_archetype":     archetype,
