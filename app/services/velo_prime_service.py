@@ -802,6 +802,10 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             # Requires migration: 20260412_002_confidence_level_split.sql
             "confidence_level_raw":       top.get("confidence_level_raw"),
             "confidence_level_effective": top.get("confidence_level_effective"),
+            # Shadow suspect cohort — A-tier with weak place support (place_prob < 0.75).
+            # Passive monitor. No gate change. Track 30 days then decide on conditional tighten.
+            # Requires migration: 20260412_003_a_tier_suspect_cohort.sql
+            "a_tier_weak_place_flag":     top.get("a_tier_weak_place_flag", False),
             # VELO_PRIME fields
             "velo_prime_prob": top.get("velo_prime_prob"),
             "improvement_score": top.get("improvement_score"),
@@ -906,6 +910,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 "confidence_split",
                 ["confidence_level_raw", "confidence_level_effective"],
                 "Apply supabase/migrations/20260412_002_confidence_level_split.sql",
+            ),
+            (
+                "a_tier_suspect_cohort",
+                ["a_tier_weak_place_flag"],
+                "Apply supabase/migrations/20260412_003_a_tier_suspect_cohort.sql",
             ),
         ]
         for _attempt, (_grp_name, _grp_cols, _grp_hint) in enumerate(

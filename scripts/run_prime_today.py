@@ -750,6 +750,14 @@ def main():
                 top["confidence_level_effective"] = effective_confidence(
                     float(top.get("velo_prime_prob") or 0)
                 )
+                # Shadow suspect cohort flag — A-tier with weak place support.
+                # No gate change. Passive monitor only. Track for 30 days to build
+                # enough sample to decide whether to tighten the A-gate conditionally.
+                # Cohort: A-tier AND place_prob < 0.75 (win signal overpowering place).
+                top["a_tier_weak_place_flag"] = (
+                    tier == "A"
+                    and float(top.get("place_prob") or 0) < 0.75
+                )
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
