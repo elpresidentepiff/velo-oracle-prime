@@ -150,6 +150,20 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 #   favourite_trap_risk != normal → "favourite trap risk"
 # ─────────────────────────────────────────────────────────────────────────────
 
+def effective_confidence(prob: float) -> str:
+    """
+    Recompute confidence from the final normalized velo_prime_prob.
+    Must stay in sync with the boundary used in synthesize_decision().
+    This is the canonical post-normalization label — use this for storage
+    and display, not the raw ensemble label.
+    """
+    if prob >= 0.45:
+        return "high"
+    if prob >= 0.15:
+        return "normal"
+    return "low"
+
+
 TIER_LABELS = {
     "A": "A-STRIKE",
     "B": "B-PLAYABLE",
@@ -316,8 +330,7 @@ def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> t
     # confidence_level is assigned pre-normalization in the ensemble, then the field
     # normalization step raises the top horse's prob without updating the label.
     # Recompute from the already-normalized prob so A/B gates see the real signal.
-    # Boundary set at 0.15 to match the B-PLAYABLE win prob floor.
-    eff_conf = "high" if prob >= 0.45 else "normal" if prob >= 0.15 else "low"
+    eff_conf = effective_confidence(prob)
 
     # Longshot gate: only meaningful when horse is genuinely a longshot (SP >= 10).
     # The specialist longshot model scores all runners but was trained on SP >= 10 data.
@@ -731,6 +744,12 @@ def main():
                 second    = preds[1] if len(preds) > 1 else {}
                 sec_prob  = float(second.get("velo_prime_prob") or 0)
                 tier, reasons = synthesize_decision(top, sec_prob, field_size=len(preds))
+                # Write effective confidence back onto top so persist sees it.
+                # Raw label (pre-normalization) is preserved separately.
+                top["confidence_level_raw"]       = top.get("confidence_level")
+                top["confidence_level_effective"] = effective_confidence(
+                    float(top.get("velo_prime_prob") or 0)
+                )
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)

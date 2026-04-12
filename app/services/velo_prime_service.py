@@ -797,6 +797,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "top_rank_horse_id": top.get("horse_id", ""),
             "top_rank_score": top.get("velo_prime_prob"),
             "confidence_level": top.get("confidence_level"),
+            # Confidence split — persists both raw (pre-normalisation) and effective
+            # (post-normalisation, same boundary as synthesize_decision tier gating).
+            # Requires migration: 20260412_002_confidence_level_split.sql
+            "confidence_level_raw":       top.get("confidence_level_raw"),
+            "confidence_level_effective": top.get("confidence_level_effective"),
             # VELO_PRIME fields
             "velo_prime_prob": top.get("velo_prime_prob"),
             "improvement_score": top.get("improvement_score"),
@@ -896,6 +901,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                     "g_shadow_mode", "g_top3_scores",
                 ],
                 "Apply supabase/migrations/20260408_005_velo_verdicts_g_shadow_instrumentation.sql",
+            ),
+            (
+                "confidence_split",
+                ["confidence_level_raw", "confidence_level_effective"],
+                "Apply supabase/migrations/20260412_002_confidence_level_split.sql",
             ),
         ]
         for _attempt, (_grp_name, _grp_cols, _grp_hint) in enumerate(

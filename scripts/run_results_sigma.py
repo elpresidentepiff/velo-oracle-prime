@@ -430,29 +430,31 @@ def main():
     for row in all_matched:
         miss_reason = row["miss_class"] if row["outcome"] == "MISS" else None
 
-        # Gap 1: fetch actual finishing_position from runner_race_facts.
+        # Gap 1: fetch actual finishing position from runner_results.
+        # Primary source: runner_results.position (written by close_sigma_loops.py).
+        # runner_race_facts.finishing_position is never populated — do not read it.
         # If position is NULL or query fails: write None — never manufacture 1/3/99.
         top_pos = None
         _pos_note = ""
         try:
-            rrf_rows = sb_get(
-                f"/runner_race_facts"
-                f"?select=finishing_position"
+            rr_rows = sb_get(
+                f"/runner_results"
+                f"?select=position"
                 f"&race_id=eq.{row['race_id']}"
                 f"&horse_id=eq.{row['predicted_id']}"
                 f"&limit=1"
             )
-            if rrf_rows and rrf_rows[0].get("finishing_position") is not None:
-                top_pos = int(rrf_rows[0]["finishing_position"])
+            if rr_rows and rr_rows[0].get("position") is not None:
+                top_pos = int(rr_rows[0]["position"])
             else:
                 _pos_note = "finishing_position_null"
                 print(
-                    f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: finishing_position not in DB — writing NULL (no bucket fallback)"
+                    f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: position not in runner_results — writing NULL"
                 )
         except Exception as _fp_err:
             _pos_note = f"finishing_position_error: {_fp_err}"
             print(
-                f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: finishing_position fetch failed — writing NULL: {_fp_err}"
+                f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: runner_results fetch failed — writing NULL: {_fp_err}"
             )
 
         # Full-field RPD: read rpd_tag per runner from velo_verdicts.selections
