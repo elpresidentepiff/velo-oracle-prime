@@ -256,6 +256,96 @@ ORDER BY v.confidence_level_effective, v.decision_tier;
 
 ---
 
+## 10. Operational Integrity
+
+A good model with sloppy operations still lies. These metrics gate the validity of everything above.
+If operational integrity is broken, the scorecard numbers are noise.
+
+| Metric | Target | GATE |
+|--------|--------|------|
+| Scoring runs attempted per week | 7/7 days | FAIL if < 5/7 two weeks running |
+| Scoring runs succeeded (pipeline_runs status=PASS) | ≥ 95% of attempts | FAIL if < 90% |
+| Schema verification pass at startup | 100% | FAIL on any RuntimeError at startup |
+| sigma_audits rows written same day as scoring | ≥ 90% of scored races | FAIL if < 80% |
+| position completeness on new sigma rows | pos_note=null < 5% | FAIL until close_sigma_loops runs daily |
+| Duplicate verdict posts (same race_id, same day) | 0 | FAIL if any found |
+| truth-loop completion (race_truth_audits rows / sigma_audits rows) | ≥ 80% within 24h | WATCH until truth loop is fully wired |
+
+**Query — scoring run health:**
+```sql
+SELECT
+    DATE_TRUNC('week', started_at) AS week,
+    COUNT(*)                        AS attempts,
+    COUNT(CASE WHEN status = 'PASS' THEN 1 END) AS passed,
+    ROUND(COUNT(CASE WHEN status = 'PASS' THEN 1 END) * 100.0 / COUNT(*), 1) AS pass_pct
+FROM pipeline_runs
+WHERE started_at >= '2026-04-12'
+GROUP BY week
+ORDER BY week;
+```
+
+**Query — duplicate verdicts (should always return 0 rows):**
+```sql
+SELECT race_id, DATE(generated_at) AS score_date, COUNT(*) AS dupes
+FROM velo_verdicts
+WHERE generated_at >= '2026-04-12'
+GROUP BY race_id, DATE(generated_at)
+HAVING COUNT(*) > 1
+ORDER BY score_date DESC;
+```
+
+**Query — position completeness on new sigma rows:**
+```sql
+SELECT
+    DATE_TRUNC('week', created_at) AS week,
+    COUNT(*)                        AS sigma_rows,
+    COUNT(top_pick_position)        AS with_position,
+    ROUND(COUNT(top_pick_position) * 100.0 / COUNT(*), 1) AS position_pct
+FROM sigma_audits
+WHERE created_at >= '2026-04-12'
+GROUP BY week
+ORDER BY week;
+```
+
+---
+
+## Weekly Checkpoint Log
+
+Run all 9 scorecards + operational integrity every week. Log the headline numbers here.
+Do not wait until 2026-05-12 blind — catch drift early.
+
+| Week | A fire% | A win% | Suspect cohort win% | Blocker fire% | Pos complete% | Ops pass% | Gate status |
+|------|---------|--------|---------------------|---------------|---------------|-----------|-------------|
+| W1 (Apr 12–18) | — | — | — | — | — | — | pending |
+| W2 (Apr 19–25) | — | — | — | — | — | — | pending |
+| W3 (Apr 26–May 2) | — | — | — | — | — | — | pending |
+| W4 (May 3–9) | — | — | — | — | — | — | pending |
+| Final (May 12) | — | — | — | — | — | — | **PROMOTE / EXTEND / TIGHTEN** |
+
+Fill this table each week. If any column shows two consecutive degrading weeks, investigate before continuing.
+
+---
+
+## Doctrine Freeze
+
+**In effect from 2026-04-12 until 2026-05-12.**
+
+During this window:
+- No weight changes to the ensemble
+- No A/B/C/X gate surgery
+- No blocker threshold changes
+- No new layers added to the scoring path
+- No changes to `synthesize_decision()` logic
+
+Exceptions permitted:
+- Bug fixes that prevent scoring from running at all
+- Infrastructure fixes (position join, schema, startup)
+- Adding new passive monitoring flags (no scoring impact)
+
+Any exception must be noted in the weekly checkpoint log with reason.
+
+---
+
 ## Promotion Gates — Summary
 
 All of the following must be true before promoting shadow-lab to live-control:
