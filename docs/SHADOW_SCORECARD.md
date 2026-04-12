@@ -314,6 +314,21 @@ ORDER BY week;
 Run all 9 scorecards + operational integrity every week. Log the headline numbers here.
 Do not wait until 2026-05-12 blind — catch drift early.
 
+**Start each weekly checkpoint with this summary block before running any queries.
+Fill it last, after you have seen the numbers. Do not skip it.**
+
+```
+WEEK N — YYYY-MM-DD
+────────────────────────────────────
+IMPROVED:       [what moved in the right direction]
+DEGRADED:       [what moved in the wrong direction]
+INCONCLUSIVE:   [what has insufficient sample yet]
+FROZEN:         [what will not be touched until final gate]
+OPS STATUS:     CLEAN / DEGRADED / BROKEN
+MODEL STATUS:   ON TRACK / WATCH / ACT REQUIRED
+────────────────────────────────────
+```
+
 | Week | A fire% | A win% | Suspect cohort win% | Blocker fire% | Pos complete% | Ops pass% | Gate status |
 |------|---------|--------|---------------------|---------------|---------------|-----------|-------------|
 | W1 (Apr 12–18) | — | — | — | — | — | — | pending |
