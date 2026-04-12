@@ -294,11 +294,17 @@ def score_race_velo_prime(
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")
     race_type = race.get("type", "").lower()
     code = "jump" if any(x in race_type for x in ["hurdle", "chase", "nh flat"]) else "flat"
+    macro_context_failed = False
     try:
         macro_ctx = get_macro_context_for_race(race_date, code)
     except Exception as e:
-        log.warning("Macro context unavailable: %s", e)
+        log.error(
+            "Macro context FAILED for race_id=%s date=%s code=%s: %s — "
+            "chaos_mode will be treated as unknown (not False), macro features absent",
+            race_id, race_date, code, e,
+        )
         macro_ctx = None
+        macro_context_failed = True
 
     # Score each runner
     ensemble_inputs = []
@@ -354,7 +360,8 @@ def score_race_velo_prime(
         row["release_day_prob"] = row.pop("release_window_score", None)
         row["longshot_prob"] = row.pop("longshot_score", None)
         row["macro_regime_label"] = row.pop("macro_regime", None)
-        row["macro_chaos_mode"] = macro_ctx.chaos_mode if macro_ctx else False
+        row["macro_chaos_mode"] = macro_ctx.chaos_mode if macro_ctx else None  # None = unknown (not False)
+        row["macro_context_failed"] = macro_context_failed
         row["favourite_trap_risk"] = macro_ctx.favourite_trap_risk if macro_ctx else "normal"
         row["ensemble_version"] = ENSEMBLE_VERSION
         # Add horse_id + rating missingness flags from ensemble_inputs lookup
@@ -391,9 +398,15 @@ def score_race_velo_prime(
         try:
             _state = _state_engine.tag(_merged)
             row["horse_state"] = _state.to_dict()
+            row["horse_state_failed"] = False
         except Exception as _e:
-            log.warning("Horse state tagging failed for %s: %s", row.get("horse"), _e)
+            log.error(
+                "Horse state tagging FAILED for %s: %s — "
+                "tier blocker active: A/B evaluation skipped for this runner",
+                row.get("horse"), _e,
+            )
             row["horse_state"] = {}
+            row["horse_state_failed"] = True
         try:
             # Evaluate without current_tier — signals only, no upgrade logic yet
             _gate_pre = _tie_gate.evaluate(_merged, current_tier=None)

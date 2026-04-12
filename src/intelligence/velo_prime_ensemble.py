@@ -27,11 +27,16 @@ from src.intelligence.macro_regime.bha_macro_context import MacroContext
 # ─── Playbook G — Shadow State Loader ──────────────────────────────────────────
 # Loads G's evolved sentient state for shadow-mode adjustment.
 # SHADOW MODE: G's state is logged and compared but NOT applied to live scoring.
-# To promote G to live: set _G_SHADOW_MODE = False (with care).
 #
-# G's state file is written by app/playbooks/playbook_g_sentient_loopback.py
-# and backed up to data/sentient_state.json (repo root).
-_G_SHADOW_MODE = True  # True = shadow only (safe). False = live impact.
+# Controlled by env var VELO_G_SHADOW_MODE (set in Railway / .env):
+#   "shadow" (default) → safe, G multiplier computed but never applied to prob
+#   "live"             → G multiplier IS applied — requires explicit decision + review
+#
+# To promote G to live: set VELO_G_SHADOW_MODE=live AND remove the startup
+# assertion in app/main.py. Both gates must be cleared intentionally.
+import os as _os
+_G_SHADOW_MODE: bool = _os.getenv("VELO_G_SHADOW_MODE", "shadow").lower() != "live"
+# True = shadow only (safe). False = live impact.
 
 def _load_g_state() -> dict:
     """Load Playbook G's sentient state. Returns empty dict if unavailable."""

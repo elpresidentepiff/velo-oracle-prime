@@ -271,10 +271,20 @@ def _apply_tie_v3_gate(
     return tier, reasons
 
 
-def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
+def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> tuple[str, list[str]]:
     """
     Returns (tier, reasons) where tier is A/B/C/D/X.
     Uses full available signal stack from velo_prime_v1 output.
+
+    Parameters
+    ----------
+    top : dict
+        Highest-ranked runner from score_race_velo_prime output.
+    second_prob : float
+        velo_prime_prob of the second-ranked runner (0.0 if no second runner).
+    field_size : int
+        Number of runners in the race (len(preds)).  Required to guard against
+        single-runner races where gap == prob, making every gap threshold trivial.
     """
     prob      = float(top.get("velo_prime_prob") or 0)
     place     = float(top.get("place_prob") or 0)
@@ -283,10 +293,25 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     improve   = float(top.get("improvement_score") or 0)
     mkt_dec   = top.get("market_deception_score")
     release   = float(top.get("release_day_prob") or 0)
-    chaos_m   = bool(top.get("macro_chaos_mode") or False)
+    # macro_chaos_mode may be None (failed) or bool (known). Treat None as unknown → force chaos.
+    _chaos_raw = top.get("macro_chaos_mode")
+    chaos_m   = bool(_chaos_raw) if _chaos_raw is not None else True
     trap      = (top.get("favourite_trap_risk") or "normal").lower()
     conf      = (top.get("confidence_level") or "low").lower()
     gap       = prob - second_prob
+
+    # ── Pre-condition blockers ────────────────────────────────────────────────
+    # These two checks run before any tier logic and force X-CHAOS hard.
+
+    # 1. Single-runner race: gap == prob is mathematically guaranteed —
+    #    every A/B gap threshold becomes trivially true. Model has no real signal.
+    if field_size == 1:
+        return "X", [f"single-runner race (field_size=1) — gap is meaningless, no model signal"]
+
+    # 2. Horse state tagging failed: doctrine signals (days_since_run, trainer timing,
+    #    etc.) are absent. A/B decisions require horse state to be valid.
+    if top.get("horse_state_failed"):
+        return "X", ["horse state tagging failed — required signals absent, cannot evaluate tier"]
 
     # confidence_level is assigned pre-normalization in the ensemble, then the field
     # normalization step raises the top horse's prob without updating the label.
@@ -705,7 +730,7 @@ def main():
                 top       = preds[0]
                 second    = preds[1] if len(preds) > 1 else {}
                 sec_prob  = float(second.get("velo_prime_prob") or 0)
-                tier, reasons = synthesize_decision(top, sec_prob)
+                tier, reasons = synthesize_decision(top, sec_prob, field_size=len(preds))
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)

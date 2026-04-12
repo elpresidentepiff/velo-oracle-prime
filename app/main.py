@@ -24,10 +24,131 @@ logger = logging.getLogger(__name__)
 _sentient_state: dict | None = None
 
 
+# ── Fix 1.2: Schema verification ─────────────────────────────────────────────
+
+async def _verify_schema_at_startup() -> None:
+    """
+    Fail fast if required tables or columns are absent in Supabase.
+
+    Fatal (raises RuntimeError):
+      • race_truth_audits table missing  — truth loop cannot write
+      • shadow_verdicts table missing    — shadow lab cannot write
+
+    Fatal (raises RuntimeError) if velo_verdicts is reachable but required
+    columns are absent:
+      • active_components, top_horse_readiness_state,
+        race_archetype, g_shadow_multiplier
+
+    Non-fatal (warning only):
+      • Supabase env vars missing        — misconfiguration, not schema gap
+      • Supabase unreachable             — infra issue, not schema gap
+    """
+    import json as _json
+    import urllib.error
+    import urllib.request
+
+    sb_url = os.getenv("SUPABASE_URL", "").rstrip("/")
+    sb_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
+
+    if not sb_url or not sb_key:
+        logger.warning(
+            "[startup:schema] SUPABASE_URL or SUPABASE_SERVICE_KEY not set — "
+            "skipping schema verification"
+        )
+        return
+
+    def _sb_get(path: str) -> tuple[int, bytes]:
+        """Return (status_code, body) for a Supabase REST GET. Never raises."""
+        try:
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/{path}",
+                headers={
+                    "apikey": sb_key,
+                    "Authorization": f"Bearer {sb_key}",
+                    "Accept": "application/json",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                return resp.status, resp.read()
+        except urllib.error.HTTPError as e:
+            return e.code, e.read() or b""
+        except Exception as exc:
+            return 0, str(exc).encode()
+
+    errors: list[str] = []
+
+    # ── 1. Required tables ────────────────────────────────────────────────────
+    for table in ("race_truth_audits", "shadow_verdicts"):
+        status, body = _sb_get(f"{table}?select=id&limit=0")
+        if status == 200:
+            logger.info("[startup:schema] table %s — PRESENT", table)
+        elif status == 0:
+            logger.warning(
+                "[startup:schema] Could not reach Supabase to check %s: %s — "
+                "proceeding (network issue, not schema gap)",
+                table, body.decode(errors="replace"),
+            )
+        else:
+            msg = body.decode(errors="replace")
+            errors.append(
+                f"Required table '{table}' is missing or inaccessible "
+                f"(HTTP {status}): {msg[:200]}"
+            )
+            logger.error("[startup:schema] MISSING table %s — %s", table, msg[:200])
+
+    # ── 2. Required columns in velo_verdicts ──────────────────────────────────
+    REQUIRED_COLS = "active_components,top_horse_readiness_state,race_archetype,g_shadow_multiplier"
+    status, body = _sb_get(f"velo_verdicts?select={REQUIRED_COLS}&limit=1")
+    if status == 200:
+        logger.info("[startup:schema] velo_verdicts required columns — PRESENT")
+    elif status == 0:
+        logger.warning(
+            "[startup:schema] Could not reach Supabase to check velo_verdicts columns — "
+            "proceeding (network issue, not schema gap)"
+        )
+    else:
+        msg = body.decode(errors="replace")
+        # 404 = table missing entirely; 400 = column missing (PostgREST returns details)
+        errors.append(
+            f"velo_verdicts column check failed (HTTP {status}) — "
+            f"run migration to add: {REQUIRED_COLS}. Detail: {msg[:300]}"
+        )
+        logger.error(
+            "[startup:schema] velo_verdicts column check FAILED HTTP %d — %s",
+            status, msg[:300],
+        )
+
+    if errors:
+        raise RuntimeError(
+            "[startup] Schema verification failed — fix before deploying:\n"
+            + "\n".join(f"  • {e}" for e in errors)
+        )
+
+    logger.info("[startup:schema] All required tables and columns verified OK")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load models once at startup, release on shutdown."""
     global _sentient_state
+
+    # ── Fix 1.1: G Shadow mode guard ─────────────────────────────────────────
+    # Refuse startup if G shadow is not in safe shadow mode.
+    # To promote G to live: VELO_G_SHADOW_MODE=live AND remove this assertion.
+    _g_mode = os.getenv("VELO_G_SHADOW_MODE", "shadow").lower()
+    if _g_mode == "live":
+        raise RuntimeError(
+            "[startup] BLOCKED: VELO_G_SHADOW_MODE=live — G shadow multiplier "
+            "would apply to all velo_prime_prob values. This is not approved for "
+            "live control. Set VELO_G_SHADOW_MODE=shadow to proceed."
+        )
+    logger.info("[startup] G shadow mode: %s (safe)", _g_mode)
+
+    # ── Fix 1.2: Migration / schema verification ──────────────────────────────
+    # Fail fast if required columns or tables are absent.
+    # Missing columns → truth loop writes incomplete rows → learning corrupted.
+    await _verify_schema_at_startup()
+
     from app.services.model_manager import get_model_manager
 
     mm = get_model_manager()
