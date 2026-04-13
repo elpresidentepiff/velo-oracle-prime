@@ -506,6 +506,24 @@ def generate_review(
         f"{'Patch: ' + patch_note if patch_note else ''}"
     )
 
+    # Classify miss_category from miss_reason for downstream queries
+    # (backfill_miss_evidence.py populates this manually for historical data;
+    #  new reviews should have it from the start)
+    miss_category = None
+    if miss_reason:
+        if miss_reason.startswith("signal_underweighted_"):
+            miss_category = "signal_underweighted"
+        elif miss_reason == "high_confidence_no_signal_gap":
+            miss_category = "high_confidence_miss"
+        elif miss_reason == "outsider_hedge_omitted":
+            miss_category = "outsider_miss"
+        elif miss_reason == "market_decoy_followed":
+            miss_category = "market_decoy_followed"
+        elif miss_reason == "non_runner_or_untracked":
+            miss_category = "non_runner"
+        else:
+            miss_category = miss_reason  # pass through unknown reasons
+
     return {
         "verdict_id": verdict_id,
         "race_id": race_id,
@@ -518,6 +536,8 @@ def generate_review(
         "actual_winner_sp": winner_sp,
         "verdict_accuracy_score": accuracy,
         "review_outcome": review_outcome,
+        "miss_category": miss_category,
+        "learning_ready": (miss_category is not None),
         "notes": notes[:500],
     }
 
@@ -1243,6 +1263,7 @@ def main(target_date: str) -> None:
             for r in race_rows.data
         }
         dated_race_ids = list(race_context.keys())
+        _dated_race_set = set(dated_race_ids)  # O(1) membership test
 
         if not dated_race_ids:
             log.warning("No races found in races table for %s", target_date)
@@ -1305,7 +1326,7 @@ def main(target_date: str) -> None:
                 continue
 
             # Only store results for races we have in our races table (FK constraint)
-            if race_id not in dated_race_ids:
+            if race_id not in _dated_race_set:
                 continue
 
             # Store race_results + runner_results
