@@ -300,19 +300,27 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     if target_date:
         cmd += ["--date", target_date]
 
+    # Log subprocess output instead of discarding — zombie/crash diagnostics
+    import tempfile
+    _log_dir = pathlib.Path(tempfile.gettempdir()) / "velo_trigger_logs"
+    _log_dir.mkdir(exist_ok=True)
+    _ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    _log_out = open(_log_dir / f"score_{_ts}_{os.getpid()}.log", "w")
+
     proc = subprocess.Popen(
         cmd,
         env=env,
         cwd=str(script_path.parent.parent),
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=_log_out,
+        stderr=subprocess.STDOUT,
     )
 
     logger.info(
-        "Scoring triggered — source=%s pid=%d target_date=%s",
+        "Scoring triggered — source=%s pid=%d target_date=%s log=%s",
         trigger_source,
         proc.pid,
         target_date or "today",
+        _log_out.name,
     )
 
     return JSONResponse(
@@ -370,19 +378,26 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
     if target_date:
         cmd += ["--date", target_date]
 
+    import tempfile
+    _log_dir = pathlib.Path(tempfile.gettempdir()) / "velo_trigger_logs"
+    _log_dir.mkdir(exist_ok=True)
+    _ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    _log_out = open(_log_dir / f"sigma_{_ts}_{os.getpid()}.log", "w")
+
     proc = subprocess.Popen(
         cmd,
         env=env,
         cwd=str(script_path.parent.parent),
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=_log_out,
+        stderr=subprocess.STDOUT,
     )
 
     logger.info(
-        "Sigma triggered — source=%s pid=%d target_date=%s",
+        "Sigma triggered — source=%s pid=%d target_date=%s log=%s",
         trigger_source,
         proc.pid,
         target_date or "today",
+        _log_out.name,
     )
 
     return JSONResponse(
@@ -439,19 +454,26 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     if target_date:
         cmd += ["--date", target_date]
 
+    import tempfile
+    _log_dir = pathlib.Path(tempfile.gettempdir()) / "velo_trigger_logs"
+    _log_dir.mkdir(exist_ok=True)
+    _ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    _log_out = open(_log_dir / f"sigma_daily_{_ts}_{os.getpid()}.log", "w")
+
     proc = subprocess.Popen(
         cmd,
         env=env,
         cwd=str(script_path.parent.parent),
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=_log_out,
+        stderr=subprocess.STDOUT,
     )
 
     logger.info(
-        "Sigma reconciliation triggered — source=%s pid=%d target_date=%s",
+        "Sigma reconciliation triggered — source=%s pid=%d target_date=%s log=%s",
         trigger_source,
         proc.pid,
         target_date or "today",
+        _log_out.name,
     )
 
     return JSONResponse(
