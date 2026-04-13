@@ -1230,12 +1230,7 @@ def main(target_date: str) -> None:
 
     try:
         # Step 2: Load verdicts for target_date from DB
-        rows = (
-            db.table("velo_verdicts")
-            .select("id, race_id, confidence_level, top_rank_horse_id, top_rank_score, selections, decision_tier, full_analysis, velo_prime_prob, place_prob, improvement_score, market_deception_score")
-            .execute()
-        )
-        # Filter to verdicts whose race is on target_date
+        # First get race_ids for the target date so we can filter server-side.
         race_rows = (
             db.table("races")
             .select("race_id, date, course")
@@ -1246,13 +1241,37 @@ def main(target_date: str) -> None:
             r["race_id"]: {"date": r.get("date", ""), "course": r.get("course", "")}
             for r in race_rows.data
         }
-        dated_race_ids = set(race_context.keys())
+        dated_race_ids = list(race_context.keys())
+
+        if not dated_race_ids:
+            log.warning("No races found in races table for %s", target_date)
+            release_run_lock(db, run_id, "PASS", 0, 0, 0)
+            return
+
+        # Server-side filter: only fetch verdicts for today's races
+        rows = (
+            db.table("velo_verdicts")
+            .select("id, race_id, generated_at, confidence_level, top_rank_horse_id, "
+                    "top_rank_score, selections, decision_tier, full_analysis, "
+                    "velo_prime_prob, place_prob, improvement_score, market_deception_score")
+            .in_("race_id", dated_race_ids)
+            .order("generated_at", desc=True)
+            .execute()
+        )
+
+        # Dedup: keep only the latest verdict per race_id (by generated_at)
+        _seen_races: set = set()
+        _deduped: list = []
+        for v in rows.data:
+            if v["race_id"] not in _seen_races:
+                _seen_races.add(v["race_id"])
+                _deduped.append(v)
+
         verdicts = [
             {**v, "verdict_id": v["id"],
              "race_date": race_context.get(v["race_id"], {}).get("date", ""),
              "race_course": race_context.get(v["race_id"], {}).get("course", "")}
-            for v in rows.data
-            if v["race_id"] in dated_race_ids
+            for v in _deduped
         ]
         log.info("Found %d verdicts for %s", len(verdicts), target_date)
 
