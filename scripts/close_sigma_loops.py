@@ -510,6 +510,7 @@ def generate_review(
         "verdict_id": verdict_id,
         "race_id": race_id,
         "reviewed_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "top_pick_won": top_pick_won,
         "top_pick_placed": top_pick_placed,
         "top_pick_position": top_pick_pos,
