@@ -255,6 +255,71 @@ def _check_specialist_models() -> PreflightCheck:
     )
 
 
+def _check_supabase_schema() -> PreflightCheck:
+    """Verify critical production columns exist in velo_verdicts.
+
+    Checks the columns added by migrations 002 (horse_state) and 003 (archetype).
+    These are the columns that persist_verdict silently strips when missing,
+    destroying observability data. DEGRADED severity — scoring can proceed but
+    the new stack's data capture is broken.
+    """
+    sb_url = os.getenv("SUPABASE_URL", "")
+    sb_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
+    if not sb_url or not sb_key:
+        return PreflightCheck(
+            name="supabase_schema",
+            severity=Severity.DEGRADED,
+            passed=False,
+            detail="cannot check — credentials absent",
+        )
+    probe_cols = "top_horse_readiness_state,race_archetype"
+    try:
+        req = urllib.request.Request(
+            f"{sb_url}/rest/v1/velo_verdicts?select={probe_cols}&limit=1",
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Accept": "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            if resp.status == 200:
+                return PreflightCheck(
+                    name="supabase_schema",
+                    severity=Severity.DEGRADED,
+                    passed=True,
+                    detail="horse_state + archetype columns present",
+                )
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace")[:200]
+        if "does not exist" in body:
+            return PreflightCheck(
+                name="supabase_schema",
+                severity=Severity.DEGRADED,
+                passed=False,
+                detail=f"missing columns — apply pending migrations: {body[:120]}",
+            )
+        return PreflightCheck(
+            name="supabase_schema",
+            severity=Severity.DEGRADED,
+            passed=False,
+            detail=f"HTTP {e.code}: {body[:120]}",
+        )
+    except Exception as e:
+        return PreflightCheck(
+            name="supabase_schema",
+            severity=Severity.DEGRADED,
+            passed=False,
+            detail=f"check failed: {e}",
+        )
+    return PreflightCheck(
+        name="supabase_schema",
+        severity=Severity.DEGRADED,
+        passed=False,
+        detail="unexpected response",
+    )
+
+
 # ── Main preflight function ───────────────────────────────────────────────────
 
 
@@ -274,6 +339,7 @@ def preflight() -> PreflightResult:
     result.add(_check_sqpe_model())
     result.add(_check_racing_api())
     result.add(_check_specialist_models())
+    result.add(_check_supabase_schema())
 
     return result
 
