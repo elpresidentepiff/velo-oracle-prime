@@ -105,7 +105,18 @@ def acquire_run_lock(db: Client, source_date: str) -> Optional[str]:
                 "finished_at":   now.isoformat(),
                 "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new run",
             }).eq("id", row["id"]).execute()
-            log.warning("Age gate closed stale run %s (%.1fh old)", row["id"], age_hours)
+            log.warning(
+                "STALE_LOCK: age gate closed run %s (%.1fh old). "
+                "This may indicate a zombie container or perpetually hanging process. "
+                "Investigate if this recurs.",
+                row["id"], age_hours,
+            )
+            tg(
+                f"VELO SIGMA ALERT\n"
+                f"Stale lock override: run {row['id'][:8]}... was {age_hours:.1f}h old.\n"
+                f"Auto-closed as FAIL. New run starting.\n"
+                f"If this recurs, investigate zombie processes."
+            )
         else:
             log.warning(
                 "Run already running (id=%s, age=%.1fh). Aborting.",
