@@ -423,6 +423,57 @@ def _add_secondary_signals(top: dict, reasons: list) -> None:
         reasons.append(f"favourite trap risk: {trap}")
 
 
+_SB_URL  = os.getenv("SUPABASE_URL", "")
+_SB_KEY  = os.getenv("SUPABASE_SERVICE_KEY", "")
+_SB_HDRS = {
+    "apikey": _SB_KEY,
+    "Authorization": f"Bearer {_SB_KEY}",
+    "Accept": "application/json",
+}
+
+def _attach_rpdc(top: dict, race_id: str) -> None:
+    """Look up RPDC tags for the top pick and attach as observability fields.
+    Never raises — if lookup fails, fields default to empty/zero."""
+    horse_id = top.get("horse_id") or top.get("predicted_id", "")
+    if not horse_id or not race_id or not _SB_URL:
+        _rpdc_defaults(top)
+        return
+    try:
+        url = (
+            f"{_SB_URL}/rest/v1/runner_release_candidates"
+            f"?horse_id=eq.{horse_id}&race_id=eq.{race_id}&limit=1"
+        )
+        req = urllib.request.Request(url, headers=_SB_HDRS)
+        with urllib.request.urlopen(req, timeout=5) as r:
+            rows = json.loads(r.read().decode())
+        if rows:
+            row = rows[0]
+            tags = row.get("rpdc_tags") or []
+            top["rpdc_release_score"]    = row.get("rpdc_release_score", 0)
+            top["rpdc_cash_window_flag"] = bool(row.get("rpdc_cash_window_flag", False))
+            top["rpdc_tag_count"]        = int(row.get("rpdc_tag_count", 0))
+            top["rpdc_tags"]             = tags
+            # Primary tag = first CASH_WINDOW if present, else highest-scored tag
+            if "CASH_WINDOW" in tags:
+                top["rpdc_primary_tag"] = "CASH_WINDOW"
+            elif tags:
+                top["rpdc_primary_tag"] = tags[0]
+            else:
+                top["rpdc_primary_tag"] = None
+        else:
+            _rpdc_defaults(top)
+    except Exception:
+        _rpdc_defaults(top)
+
+
+def _rpdc_defaults(top: dict) -> None:
+    top.setdefault("rpdc_release_score",    0)
+    top.setdefault("rpdc_cash_window_flag", False)
+    top.setdefault("rpdc_tag_count",        0)
+    top.setdefault("rpdc_primary_tag",      None)
+    top.setdefault("rpdc_tags",             [])
+
+
 def build_decision_card(race: dict, top: dict, second: dict,
                         tier: str, reasons: list) -> str:
     course   = race.get("course", "?").upper()
@@ -761,6 +812,8 @@ def main():
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
+                # RPDC observability — passive lookup, never blocks scoring
+                _attach_rpdc(top, race.get("race_id", ""))
                 scored.append((race, preds, tier, reasons))
                 gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
                 arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
