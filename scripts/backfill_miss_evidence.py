@@ -19,6 +19,9 @@ from supabase import create_client
 
 load_dotenv()
 
+LEGACY_SCRIPT_STATUS = "QUARANTINED_WAVE_1"
+LEGACY_SCRIPT_OWNER = "TBD"
+LEGACY_EXECUTION_ENV = "VELO_LEGACY_ALLOW_BACKFILL_MISS_EVIDENCE"
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
@@ -206,6 +209,11 @@ def backfill(target_date: str, dry_run: bool = False):
 
 
 if __name__ == "__main__":
+    if os.getenv(LEGACY_EXECUTION_ENV) != "1":
+        raise SystemExit(
+            "Legacy script is quarantined and blocked by default. "
+            f"Set {LEGACY_EXECUTION_ENV}=1 for an intentional run."
+        )
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=str(date.today()))
     parser.add_argument("--dry-run", action="store_true")

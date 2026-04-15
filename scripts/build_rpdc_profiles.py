@@ -16,6 +16,7 @@ import argparse
 import json
 import logging
 import os
+import re
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 from urllib.error import HTTPError, URLError
@@ -24,8 +25,20 @@ from urllib.request import Request, urlopen
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%H:%M:%S")
 log = logging.getLogger(__name__)
 
-SB_URL = os.getenv("SUPABASE_URL", "https://ltbsxbvfsxtnharjvqcm.supabase.co")
-SB_KEY = os.getenv("SUPABASE_SERVICE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0YnN4YnZmc3h0bmhhcmp2cWNtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzQ4ODM2OSwiZXhwIjoyMDc5MDY0MzY5fQ.MmQiC3kt6UJ0e2BQ6k32oWbSNbWmv2U0G9E6l6k2C18")
+LEGACY_SCRIPT_STATUS = "QUARANTINED_WAVE_1_CANDIDATE_REWRITE"
+LEGACY_SCRIPT_OWNER = "TBD"
+LEGACY_EXECUTION_ENV = "VELO_LEGACY_ALLOW_BUILD_RPDC_PROFILES"
+SB_URL = os.getenv("SUPABASE_URL", "")
+SB_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or ""
+
+
+def _require_legacy_override() -> None:
+    if os.getenv(LEGACY_EXECUTION_ENV) == "1":
+        return
+    raise SystemExit(
+        "Legacy script is quarantined and blocked by default. "
+        f"Set {LEGACY_EXECUTION_ENV}=1 for an intentional run."
+    )
 
 _sb_headers_read = {
     "apikey": SB_KEY,
@@ -69,11 +82,20 @@ def _sb_get_all(table: str, select: str, filters: str = "") -> list[dict]:
     return rows
 
 
-def _sb_upsert(table: str, rows: list[dict], batch_size: int = 500) -> int:
+def _sb_upsert(table: str, rows: list[dict], batch_size: int = 500,
+               on_conflict: str = "") -> int:
+    """
+    Upsert rows into a Supabase table.
+    on_conflict: comma-separated column names for the conflict target when the table
+    has a BIGSERIAL PK but the real uniqueness is on a different column set.
+    Example: on_conflict="trainer_id,owner_id"
+    """
     if not rows:
         return 0
     written = 0
     url = f"{SB_URL}/rest/v1/{table}"
+    if on_conflict:
+        url = f"{url}?on_conflict={on_conflict}"
     for i in range(0, len(rows), batch_size):
         chunk = rows[i:i + batch_size]
         payload = json.dumps(chunk).encode()
@@ -323,9 +345,11 @@ def build_horse_mark_profiles() -> int:
 
 def build_trainer_campaign_profiles() -> int:
     log.info("Building trainer_campaign_profile...")
+    # Include headgear, going, course, class so we can compute extended stats
     runs = _sb_get_all(
         "racing_horse_runs",
-        "horse_id,trainer_id,trainer,run_date,position,official_rating,race_class",
+        "horse_id,trainer_id,trainer,run_date,position,official_rating,race_class,"
+        "course,going,headgear",
         "order=trainer_id.asc,horse_id.asc,run_date.asc"
     )
     log.info("  Loaded %d run rows", len(runs))
@@ -335,24 +359,25 @@ def build_trainer_campaign_profiles() -> int:
     cutoff_14 = today - timedelta(days=14)
     cutoff_30 = today - timedelta(days=30)
 
-    # Group runs by trainer, then by horse to compute campaign run numbers
+    # Group by trainer
     by_trainer: dict[str, list[dict]] = defaultdict(list)
     for r in runs:
         tid = r.get("trainer_id")
         if tid:
             by_trainer[tid].append(r)
 
-    # Per-horse run sequences for campaign numbering
+    # Per-horse run sequences for campaign numbering + rest-gap computation
     by_horse: dict[str, list[dict]] = defaultdict(list)
     for r in runs:
         by_horse[r["horse_id"]].append(r)
     for hrs in by_horse.values():
         hrs.sort(key=lambda x: x.get("run_date") or "")
 
-    def get_campaign_run(horse_id, run_date):
+    def get_campaign_run(horse_id: str, run_date: str) -> int:
         hrs = by_horse.get(horse_id, [])
         idx = next((i for i, r in enumerate(hrs) if r.get("run_date") == run_date), None)
-        if idx is None: return 1
+        if idx is None:
+            return 1
         run_no = 1
         for i in range(idx, 0, -1):
             curr = hrs[i].get("run_date") or ""
@@ -360,10 +385,63 @@ def build_trainer_campaign_profiles() -> int:
             if curr and prev:
                 try:
                     gap = (date.fromisoformat(curr) - date.fromisoformat(prev)).days
-                    if gap >= 30: break
+                    if gap >= 30:
+                        break
                     run_no += 1
-                except: break
+                except:
+                    break
         return run_no
+
+    def get_days_since_prev(horse_id: str, run_date: str) -> int | None:
+        """Days since previous run for a given horse+date."""
+        hrs = by_horse.get(horse_id, [])
+        idx = next((i for i, r in enumerate(hrs) if r.get("run_date") == run_date), None)
+        if idx is None or idx == 0:
+            return None
+        prev_date = hrs[idx - 1].get("run_date")
+        if not prev_date:
+            return None
+        try:
+            return (date.fromisoformat(run_date) - date.fromisoformat(prev_date)).days
+        except:
+            return None
+
+    def get_prev_headgear(horse_id: str, run_date: str) -> str | None:
+        """Headgear worn by horse on most recent prior run."""
+        hrs = by_horse.get(horse_id, [])
+        idx = next((i for i, r in enumerate(hrs) if r.get("run_date") == run_date), None)
+        if idx is None or idx == 0:
+            return None
+        return hrs[idx - 1].get("headgear") or None
+
+    def win_rate(subset: list) -> float | None:
+        if not subset:
+            return None
+        wins = sum(1 for r in subset if str(r.get("position", "")).strip() == "1")
+        return _pct(wins, len(subset))
+
+    def win_rate_where(subset: list, pred) -> float | None:
+        return win_rate([r for r in subset if pred(r)])
+
+    def going_bucket(going: str) -> str:
+        g = (going or "").lower()
+        if "standard" in g or "all weather" in g or "tapeta" in g or "polytrack" in g:
+            return "aw"
+        if "firm" in g:
+            return "good_firm"
+        if "good to soft" in g or "yielding" in g:
+            return "soft_plus"
+        if "good" in g:
+            return "good_firm"
+        if "soft" in g or "heavy" in g:
+            return "soft_plus"
+        return "other"
+
+    def class_int(race_class: str) -> int | None:
+        if not race_class:
+            return None
+        m = re.search(r"\d+", str(race_class))
+        return int(m.group()) if m else None
 
     profiles = []
     for trainer_id, trainer_runs in by_trainer.items():
@@ -372,87 +450,203 @@ def build_trainer_campaign_profiles() -> int:
 
         def in_window(r, cutoff):
             d = r.get("run_date") or ""
-            try: return date.fromisoformat(d) >= cutoff
-            except: return False
+            try:
+                return date.fromisoformat(d) >= cutoff
+            except:
+                return False
 
         runs_180 = [r for r in trainer_runs if in_window(r, cutoff_180)]
         runs_14  = [r for r in trainer_runs if in_window(r, cutoff_14)]
         runs_30  = [r for r in trainer_runs if in_window(r, cutoff_30)]
 
-        def win_rate(subset):
-            if not subset: return None
-            wins = sum(1 for r in subset if str(r.get("position","")).strip() == "1")
-            return _pct(wins, len(subset))
-
-        def win_rate_where(subset, pred):
-            filtered = [r for r in subset if pred(r)]
-            return win_rate(filtered)
-
         total_180 = len(runs_180)
-        wins_180  = sum(1 for r in runs_180 if str(r.get("position","")).strip() == "1")
-        places_180 = sum(1 for r in runs_180 if str(r.get("position","")).strip() in ("1","2","3"))
+        wins_180  = sum(1 for r in runs_180 if str(r.get("position", "")).strip() == "1")
+        places_180 = sum(1 for r in runs_180 if str(r.get("position", "")).strip() in ("1", "2", "3"))
 
-        # Strike rate by campaign run number
+        # ── Campaign run number ──────────────────────────────────────────────
         by_run_no: dict[int, list] = defaultdict(list)
         for r in runs_180:
-            rn = get_campaign_run(r["horse_id"], r.get("run_date"))
+            rn = get_campaign_run(r["horse_id"], r.get("run_date", ""))
             by_run_no[rn].append(r)
 
         wr_run1 = win_rate(by_run_no.get(1, []))
         wr_run2 = win_rate(by_run_no.get(2, []))
         wr_run3 = win_rate(by_run_no.get(3, []))
 
-        # Preferred release run
-        best_rn = None
-        best_wr = -1.0
+        best_rn, best_wr = None, -1.0
         for rn in (1, 2, 3):
             wr = win_rate(by_run_no.get(rn, []))
             if wr is not None and wr > best_wr and len(by_run_no.get(rn, [])) >= 5:
                 best_wr = wr
                 best_rn = rn
 
-        # Release style
-        if best_rn == 1:
-            style = "immediate"
-        elif best_rn == 2:
-            style = "second_up"
-        elif best_rn == 3:
-            style = "third_up"
-        else:
-            style = "variable"
+        style = {1: "immediate", 2: "second_up", 3: "third_up"}.get(best_rn, "variable")
 
-        # Days bucket strike rates
-        wr_8_21   = win_rate_where(runs_180, lambda r: _safe_int(r.get("days_since")) in range(8, 22) if False else True)
-        wr_22_45  = None
-        wr_46plus = None
+        # ── Rest bucket rates (correctly computed) ───────────────────────────
+        rest_runs: dict[str, list] = {"8-21d": [], "22-45d": [], "46-90d": [], "90d+": []}
+        for r in runs_180:
+            d = get_days_since_prev(r["horse_id"], r.get("run_date", ""))
+            if d is None:
+                continue
+            if 8 <= d <= 21:
+                rest_runs["8-21d"].append(r)
+            elif 22 <= d <= 45:
+                rest_runs["22-45d"].append(r)
+            elif 46 <= d <= 90:
+                rest_runs["46-90d"].append(r)
+            elif d > 90:
+                rest_runs["90d+"].append(r)
 
-        # Stable heat
+        wr_8_21   = win_rate(rest_runs["8-21d"])
+        wr_22_45  = win_rate(rest_runs["22-45d"])
+        wr_46_90  = win_rate(rest_runs["46-90d"])
+        wr_90plus = win_rate(rest_runs["90d+"])
+
+        # ── Going rates ──────────────────────────────────────────────────────
+        going_buckets: dict[str, list] = {"good_firm": [], "soft_plus": [], "aw": []}
+        for r in runs_180:
+            gb = going_bucket(r.get("going", ""))
+            if gb in going_buckets:
+                going_buckets[gb].append(r)
+
+        wr_gf   = win_rate(going_buckets["good_firm"])
+        wr_soft = win_rate(going_buckets["soft_plus"])
+        wr_aw   = win_rate(going_buckets["aw"])
+
+        # ── Mark-ready and class-drop rates ─────────────────────────────────
+        # mark_ready: horse's OR <= its last winning OR at time of run
+        # We approximate: OR delta computed at run time from horse_mark_profile
+        # For class_drop: this run's class < previous run's class (for this horse)
+        # Both require per-horse context — compute from the horse sequences we have.
+        mark_ready_runs = []
+        class_drop_runs = []
+
+        # Build per-horse OR sequences to detect mark-ready at run time
+        or_by_horse: dict[str, list[tuple]] = defaultdict(list)  # horse_id → [(date, or, pos)]
+        for r in runs:
+            hid = r.get("horse_id", "")
+            d = r.get("run_date") or ""
+            o = _safe_int(r.get("official_rating"))
+            p = str(r.get("position", "")).strip()
+            if hid and d:
+                or_by_horse[hid].append((d, o, p))
+
+        # For each trainer run in 180d, check if horse was at/below its last winning OR
+        for r in runs_180:
+            hid = r.get("horse_id", "")
+            run_date = r.get("run_date") or ""
+            hist = sorted(or_by_horse.get(hid, []), key=lambda x: x[0])
+
+            # Find last winning OR prior to this run
+            last_win_or = None
+            current_or_val = None
+            for h_date, h_or, h_pos in hist:
+                if h_date >= run_date:
+                    # This is the current run or later
+                    if h_date == run_date:
+                        current_or_val = h_or
+                    break
+                if h_pos == "1" and h_or is not None:
+                    last_win_or = h_or
+            if current_or_val is None:
+                # Find the OR in this run directly
+                current_or_val = _safe_int(r.get("official_rating"))
+
+            if current_or_val is not None and last_win_or is not None:
+                if current_or_val <= last_win_or:
+                    mark_ready_runs.append(r)
+
+        # class_drop: this run's class < previous run's class (numerically)
+        class_by_horse: dict[str, list[tuple]] = defaultdict(list)  # horse_id → [(date, class_int)]
+        for r in runs:
+            hid = r.get("horse_id", "")
+            d = r.get("run_date") or ""
+            c = class_int(r.get("race_class"))
+            if hid and d:
+                class_by_horse[hid].append((d, c))
+
+        for r in runs_180:
+            hid = r.get("horse_id", "")
+            run_date = r.get("run_date") or ""
+            hist = sorted(class_by_horse.get(hid, []), key=lambda x: x[0])
+            this_class = class_int(r.get("race_class"))
+            if this_class is None:
+                continue
+            prev_class = None
+            for h_date, h_class in hist:
+                if h_date < run_date and h_class is not None:
+                    prev_class = h_class
+            if prev_class is not None and this_class > prev_class:
+                # Higher class number = lower class (class 6 < class 1)
+                class_drop_runs.append(r)
+
+        wr_mark_ready = win_rate(mark_ready_runs) if mark_ready_runs else None
+        wr_class_drop = win_rate(class_drop_runs) if class_drop_runs else None
+
+        # ── First-time headgear rate ─────────────────────────────────────────
+        # First time = horse has headgear this run but NOT in any prior run we have
+        headgear_first_time_runs = []
+        headgear_seen: dict[str, set] = defaultdict(set)  # horse_id → set of gear codes used
+        for hid, hrs in by_horse.items():
+            for i, r in enumerate(hrs):
+                gear = r.get("headgear") or ""
+                if gear:
+                    if gear not in headgear_seen[hid]:
+                        # First time wearing this gear
+                        if r.get("trainer_id") == trainer_id and in_window(r, cutoff_180):
+                            headgear_first_time_runs.append(r)
+                    headgear_seen[hid].add(gear)
+
+        wr_headgear = win_rate(headgear_first_time_runs) if headgear_first_time_runs else None
+
+        # ── Top courses ──────────────────────────────────────────────────────
+        course_stats: dict[str, tuple[int, int]] = defaultdict(lambda: (0, 0))  # course → (wins, runs)
+        for r in runs_180:
+            c = r.get("course", "")
+            if c:
+                w, n = course_stats[c]
+                n += 1
+                if str(r.get("position", "")).strip() == "1":
+                    w += 1
+                course_stats[c] = (w, n)
+
+        # Filter to courses with >= 5 runs, sort by win rate then runs
+        qualified = [(c, w, n) for c, (w, n) in course_stats.items() if n >= 5]
+        qualified.sort(key=lambda x: (-x[1] / x[2] if x[2] else 0, -x[2]))
+        top_courses = [c for c, w, n in qualified[:3]] or None
+
+        # ── Stable heat ──────────────────────────────────────────────────────
         heat_14 = win_rate(runs_14)
         heat_30 = win_rate(runs_30)
         warming = (heat_14 is not None and heat_30 is not None and heat_14 > heat_30)
 
         profiles.append({
-            "trainer_id": trainer_id,
-            "trainer": trainer_name,
-            "runs_180d": total_180,
-            "wins_180d": wins_180,
-            "places_180d": places_180,
-            "win_rate_180d": _pct(wins_180, total_180),
-            "place_rate_180d": _pct(places_180, total_180),
-            "win_rate_run1": wr_run1,
-            "win_rate_run2": wr_run2,
-            "win_rate_run3": wr_run3,
-            "win_rate_mark_ready": None,
-            "win_rate_class_drop": None,
-            "win_rate_days_8_21": wr_8_21,
-            "win_rate_days_22_45": wr_22_45,
-            "win_rate_days_46_plus": wr_46plus,
+            "trainer_id":               trainer_id,
+            "trainer":                  trainer_name,
+            "runs_180d":                total_180,
+            "wins_180d":                wins_180,
+            "places_180d":              places_180,
+            "win_rate_180d":            _pct(wins_180, total_180),
+            "place_rate_180d":          _pct(places_180, total_180),
+            "win_rate_run1":            wr_run1,
+            "win_rate_run2":            wr_run2,
+            "win_rate_run3":            wr_run3,
+            "win_rate_mark_ready":      wr_mark_ready,
+            "win_rate_class_drop":      wr_class_drop,
+            "win_rate_days_8_21":       wr_8_21,
+            "win_rate_days_22_45":      wr_22_45,
+            "win_rate_days_46_plus":    wr_46_90,
             "preferred_release_run_no": best_rn,
-            "release_style": style,
-            "stable_heat_14d": heat_14,
-            "stable_heat_30d": heat_30,
-            "stable_warming": warming,
-            "updated_at": datetime.now().isoformat(),
+            "release_style":            style,
+            "stable_heat_14d":          heat_14,
+            "stable_heat_30d":          heat_30,
+            "stable_warming":           warming,
+            "win_rate_first_time_headgear": wr_headgear,
+            "win_rate_going_good_firm": wr_gf,
+            "win_rate_going_soft_plus": wr_soft,
+            "win_rate_going_aw":        wr_aw,
+            "top_courses":              top_courses,
+            "updated_at":               datetime.now().isoformat(),
         })
 
     written = _sb_upsert("trainer_campaign_profile", profiles)
@@ -523,7 +717,7 @@ def build_trainer_owner_patterns() -> int:
             "updated_at": datetime.now().isoformat(),
         })
 
-    written = _sb_upsert("trainer_owner_patterns", rows)
+    written = _sb_upsert("trainer_owner_patterns", rows, on_conflict="trainer_id,owner_id")
     log.info("trainer_owner_patterns: %d upserted", written)
     return written
 
@@ -531,38 +725,46 @@ def build_trainer_owner_patterns() -> int:
 # ── D+E. Today's runner tags ───────────────────────────────────────────────────
 
 MARK_TAGS = {
-    "MARK_READY":             1.0,
-    "MARK_NEAR":              0.8,
-    "BELOW_LAST_WIN_MARK":    0.9,
-    "PLACE_MARK_READY":       0.7,
-    "HANDICAP_RELIEF_ACTIVE": 0.7,
+    "MARK_READY":              1.0,
+    "MARK_NEAR":               0.8,
+    "BELOW_LAST_WIN_MARK":     0.9,
+    "PLACE_MARK_READY":        0.7,
+    "HANDICAP_RELIEF_ACTIVE":  0.7,
+    # Evidence 2026-04-13: MARK_READY × trainer_mark_ready >= 15% → 39.0% win rate (n=328)
+    "TRAINER_MARK_AUTHORITY":  1.2,
+    # Evidence 2026-04-13: MARK_READY × trainer_mark_ready < 15% → 3.1% win rate (suppressor)
+    "TRAINER_MARK_MISMATCH":  -0.9,
 }
 CYCLE_TAGS = {
-    "CYCLE_RUN_1":            0.6,
-    "CYCLE_RUN_2":            0.7,
-    "CYCLE_RUN_3":            0.6,
-    "TRAINER_RELEASE_ZONE":   1.0,
-    "SECOND_UP_STRIKE_TRAINER": 0.8,
-    "THIRD_UP_STRIKE_TRAINER":  0.8,
+    "CYCLE_RUN_1":               0.6,
+    "CYCLE_RUN_2":               0.7,
+    "CYCLE_RUN_3":               0.6,
+    "TRAINER_RELEASE_ZONE":      1.0,
+    "SECOND_UP_STRIKE_TRAINER":  0.8,
+    "THIRD_UP_STRIKE_TRAINER":   0.8,
 }
 FRESHNESS_TAGS = {
-    "FRESH_RETURN":           0.7,
-    "DELIBERATE_GAP":         0.7,
-    "TOO_QUICK_BACK":        -0.5,
-    "LONG_RELOAD":            0.6,
+    "FRESH_RETURN":              0.7,
+    "DELIBERATE_GAP":            0.7,
+    "TOO_QUICK_BACK":           -0.5,
+    "LONG_RELOAD":               0.6,
 }
 PLACEMENT_TAGS = {
-    "RIGHT_CLASS_DROP":       0.9,
-    "SWEET_SPOT_REVERT":      0.8,
-    "COURSE_RETURN_POSITIVE": 0.7,
-    "DISTANCE_REVERT_POSITIVE": 0.7,
-    "JOCKEY_UPGRADE":         0.8,
+    "RIGHT_CLASS_DROP":          0.9,
+    "SWEET_SPOT_REVERT":         0.8,
+    "COURSE_RETURN_POSITIVE":    0.7,
+    "DISTANCE_REVERT_POSITIVE":  0.7,
+    "JOCKEY_UPGRADE":            0.8,
+    # Evidence 2026-04-13: class drop × trainer_class_drop >= 15% → 23.1% win rate (n=1902)
+    "TRAINER_CLASS_DROP_AUTHORITY": 0.9,
 }
 INTENT_TAGS = {
-    "QUIET_PREP":             0.7,
-    "STABLE_WARM":            0.8,
-    "MARKET_UNDERREACTION":   0.6,
-    "CASH_WINDOW":            1.0,
+    "QUIET_PREP":                0.7,
+    "STABLE_WARM":               0.8,
+    "MARKET_UNDERREACTION":      0.6,
+    "CASH_WINDOW":               1.0,
+    # Evidence 2026-04-13: headgear debut on trainer with headgear_rate < 10% → 5.3% (below baseline)
+    "HEADGEAR_RISK":            -0.8,
 }
 
 ALL_TAG_WEIGHTS = {**MARK_TAGS, **CYCLE_TAGS, **FRESHNESS_TAGS, **PLACEMENT_TAGS, **INTENT_TAGS}
@@ -600,7 +802,7 @@ def _load_today_runners() -> list[dict]:
     race_ids = ",".join(c["race_id"] for c in cards)
     return _sb_get_all(
         "racing_today_runners",
-        "race_id,horse_id,horse,jockey_id,jockey,trainer_id,trainer,owner_id,owner,official_rating,form",
+        "race_id,horse_id,horse,jockey_id,jockey,trainer_id,trainer,owner_id,owner,official_rating,form,headgear",
         f"race_id=in.({race_ids})"
     )
 
@@ -631,17 +833,19 @@ def tag_today_runners(
     candidates = []
     tag_rows = []
 
-    # Load last race for each horse to compute class delta
+    # Load last 5 races per horse: last_runs[hid]=most recent, last_runs_all[hid]=all 5
     all_horse_ids = list({r["horse_id"] for r in today_runners if r.get("horse_id")})
     last_runs: dict[str, dict] = {}
+    last_runs_all: dict[str, list] = {}
     for hid in all_horse_ids:
         rows = _sb_get_all(
             "racing_horse_runs",
-            "run_date,official_rating,race_class,course,distance_f,jockey_id,position",
+            "run_date,official_rating,race_class,course,distance_f,jockey_id,position,headgear",
             f"horse_id=eq.{hid}&order=run_date.desc&limit=5"
         )
         if rows:
-            last_runs[hid] = rows[0]
+            last_runs[hid] = rows[0]      # most recent run (used for class/course/jockey checks)
+            last_runs_all[hid] = rows     # all 5 runs (used for headgear-debut check)
 
     for runner in today_runners:
         horse_id = runner.get("horse_id", "")
@@ -692,6 +896,18 @@ def tag_today_runners(
             add_tag("HANDICAP_RELIEF_ACTIVE", "true",
                     "OR dropped across last 3 runs — mark relief in progress")
 
+        # Mark authority / mismatch: trainer's win_rate_mark_ready gates the mark signal
+        # Evidence 2026-04-13: strong trainer → 39.0%, weak trainer → 3.1%
+        if or_delta is not None and or_delta <= 3:  # MARK_READY or MARK_NEAR
+            wmr = trainer.get("win_rate_mark_ready")
+            if wmr is not None:
+                if wmr >= 15.0:
+                    add_tag("TRAINER_MARK_AUTHORITY", f"{wmr:.1f}%",
+                            f"{runner.get('trainer','')} strikes {wmr:.1f}% when horses reach their mark")
+                else:
+                    add_tag("TRAINER_MARK_MISMATCH", f"{wmr:.1f}%",
+                            f"{runner.get('trainer','')} mark-ready win rate only {wmr:.1f}% — mark alone insufficient")
+
         # ── Campaign-cycle tags ────────────────────────────────────────────────
         run_no = mark.get("campaign_run_no", 1)
         if run_no == 1:
@@ -739,6 +955,11 @@ def tag_today_runners(
         if class_delta is not None and class_delta > 0:
             add_tag("RIGHT_CLASS_DROP", str(class_delta),
                     f"Dropping from Class {last_class} to Class {today_class}")
+            # Class-drop authority: trainer strikes on drops at >= 15% (evidence: 23.1% win rate)
+            tcd = trainer.get("win_rate_class_drop")
+            if tcd is not None and tcd >= 15.0:
+                add_tag("TRAINER_CLASS_DROP_AUTHORITY", f"{tcd:.1f}%",
+                        f"{runner.get('trainer','')} class-drop win rate: {tcd:.1f}% (threshold 15%)")
 
         best_course = mark.get("best_course", "")
         today_course = race.get("course", "")
@@ -758,6 +979,23 @@ def tag_today_runners(
         if last_jockey and today_jockey and last_jockey != today_jockey:
             add_tag("JOCKEY_UPGRADE", runner.get("jockey", ""),
                     f"Jockey change from last run — new booking: {runner.get('jockey','')}")
+
+        # Headgear risk: debut headgear on low-headgear trainer is a suppressor
+        # Evidence 2026-04-13: debut headgear + low trainer rate → 5.3% (below baseline 10.2%)
+        today_headgear = runner.get("headgear") or ""
+        if today_headgear:
+            # Prior runs cache (last 5): check if this gear has appeared before
+            prior_gear_set = {
+                r.get("headgear") or ""
+                for r in last_runs_all.get(horse_id, [])
+                if r.get("headgear")
+            }
+            is_gear_debut = today_headgear not in prior_gear_set
+            if is_gear_debut:
+                whg = trainer.get("win_rate_first_time_headgear")
+                if whg is not None and whg < 10.0:
+                    add_tag("HEADGEAR_RISK", f"{whg:.1f}%",
+                            f"First-time {today_headgear} for this horse; {runner.get('trainer','')} headgear win rate only {whg:.1f}%")
 
         # ── Intent tags ────────────────────────────────────────────────────────
         # Quiet prep: ran 2+ times recently without win/place but not pulled up
@@ -885,4 +1123,5 @@ def main():
 
 
 if __name__ == "__main__":
+    _require_legacy_override()
     main()

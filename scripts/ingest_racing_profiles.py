@@ -39,12 +39,24 @@ log = logging.getLogger(__name__)
 
 # ── Credentials ────────────────────────────────────────────────────────────────
 
-RACING_BASE = os.getenv("RACING_API_BASE_URL", "https://api.theracingapi.com/v1")
-RACING_USER = os.getenv("RACING_API_USERNAME", "cHHxKCt4ePK3TpFrWNq3sax6")
-RACING_PASS = os.getenv("RACING_API_PASSWORD", "D2Zlg9VcD4Sjbjcb7pMzpwwy")
+LEGACY_SCRIPT_STATUS = "QUARANTINED_WAVE_1_CANDIDATE_REWRITE"
+LEGACY_SCRIPT_OWNER = "TBD"
+LEGACY_EXECUTION_ENV = "VELO_LEGACY_ALLOW_INGEST_RACING_PROFILES"
+RACING_BASE = os.getenv("RACING_API_BASE_URL", "")
+RACING_USER = os.getenv("RACING_API_USERNAME", "")
+RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
 
-SB_URL = os.getenv("SUPABASE_URL", "https://ltbsxbvfsxtnharjvqcm.supabase.co")
-SB_KEY = os.getenv("SUPABASE_SERVICE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0YnN4YnZmc3h0bmhhcmp2cWNtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzQ4ODM2OSwiZXhwIjoyMDc5MDY0MzY5fQ.MmQiC3kt6UJ0e2BQ6k32oWbSNbWmv2U0G9E6l6k2C18")
+SB_URL = os.getenv("SUPABASE_URL", "")
+SB_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or ""
+
+
+def _require_legacy_override() -> None:
+    if os.getenv(LEGACY_EXECUTION_ENV) == "1":
+        return
+    raise SystemExit(
+        "Legacy script is quarantined and blocked by default. "
+        f"Set {LEGACY_EXECUTION_ENV}=1 for an intentional run."
+    )
 
 # ── Racing API helpers ──────────────────────────────────────────────────────────
 
@@ -613,4 +625,5 @@ def main():
 
 
 if __name__ == "__main__":
+    _require_legacy_override()
     main()
