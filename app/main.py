@@ -20,9 +20,6 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.core.config import settings
-from app.core.runtime_env import utc_now, utc_now_iso
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -69,7 +66,7 @@ def _spawn_trigger_subprocess(
     log_dir = pathlib.Path(__file__).parent.parent / "logs" / "triggers"
     log_dir.mkdir(parents=True, exist_ok=True)
     safe_target = target_date or "today"
-    timestamp = utc_now().strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     log_path = log_dir / f"{service_name}_{safe_target}_{timestamp}.log"
     log_handle = log_path.open("ab")
     try:
@@ -87,8 +84,7 @@ def _spawn_trigger_subprocess(
 
 def _schema_verification_mode() -> str:
     runtime = (
-        settings.API_ENV
-        or os.getenv("API_ENV")
+        os.getenv("API_ENV")
         or os.getenv("ENV")
         or os.getenv("RAILWAY_ENVIRONMENT")
         or "local"
@@ -450,8 +446,8 @@ app = FastAPI(
 # CORS Middleware - CRITICAL for Cloudflare Worker
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+    allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, OPTIONS, etc.)
     allow_headers=["*"],  # Allow all headers
 )
@@ -468,7 +464,7 @@ except ImportError as e:
     logger.warning(f"⚠️  Feature/Monitoring routers not available: {e}")
 
 # Environment
-ENV = settings.API_ENV
+ENV = os.getenv("API_ENV", "production")
 API_KEY = os.getenv("API_KEY", "")
 
 
@@ -503,7 +499,7 @@ async def health_check():
         "app": "VÉLØ Oracle",
         "version": "v1.0",
         "environment": ENV,
-        "timestamp": utc_now_iso(),
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
     # ── 1. Supabase reachability ──────────────────────────────────────────────
@@ -557,8 +553,8 @@ async def health_check():
                     # Strip timezone info to compare as naive UTC
                     last_ts = datetime.fromisoformat(last_ts_str.rstrip("Z"))
                     if last_ts.tzinfo is None:
-                        last_ts = last_ts.replace(tzinfo=utc_now().tzinfo)
-                    age_hours = (utc_now() - last_ts).total_seconds() / 3600
+                        last_ts = last_ts.replace(tzinfo=UTC)
+                    age_hours = (datetime.now(UTC) - last_ts).total_seconds() / 3600
                     details["last_scoring_run"] = f"{age_hours:.1f}h ago"
                     if age_hours > STALE_HOURS:
                         issues.append(f"Last PASS scoring run is {age_hours:.1f}h ago (threshold: {STALE_HOURS}h)")
@@ -648,7 +644,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     trigger_source = body.get("trigger_source") or "api_manual"
     target_date = body.get("target_date") or ""
 
-    source_date = target_date or utc_now().strftime("%Y-%m-%d")
+    source_date = target_date or datetime.utcnow().strftime("%Y-%m-%d")
     script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_prime_today.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
@@ -687,7 +683,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
             {
                 "run_state": "completed",
                 "status": "FAIL",
-                "finished_at": utc_now_iso(),
+                "finished_at": datetime.utcnow().isoformat(),
                 "error_message": f"trigger spawn failed: {exc}",
             },
         )
@@ -744,7 +740,7 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
     trigger_source = body.get("trigger_source") or "api_manual"
     target_date = body.get("target_date") or ""
 
-    source_date = target_date or utc_now().strftime("%Y-%m-%d")
+    source_date = target_date or datetime.utcnow().strftime("%Y-%m-%d")
     script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
@@ -782,7 +778,7 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
             {
                 "run_state": "completed",
                 "status": "FAIL",
-                "finished_at": utc_now_iso(),
+                "finished_at": datetime.utcnow().isoformat(),
                 "error_message": f"trigger spawn failed: {exc}",
             },
         )
@@ -838,7 +834,7 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     trigger_source = body.get("trigger_source") or "api_manual"
     target_date = body.get("target_date") or ""
 
-    source_date = target_date or utc_now().strftime("%Y-%m-%d")
+    source_date = target_date or datetime.utcnow().strftime("%Y-%m-%d")
     script_path = pathlib.Path(__file__).parent.parent / "scripts" / "close_sigma_loops.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
@@ -876,7 +872,7 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
             {
                 "run_state": "completed",
                 "status": "FAIL",
-                "finished_at": utc_now_iso(),
+                "finished_at": datetime.utcnow().isoformat(),
                 "error_message": f"trigger spawn failed: {exc}",
             },
         )
@@ -915,7 +911,7 @@ async def root():
 @app.get("/api/v1/status")
 async def api_status(authorized: bool = Depends(verify_api_key)):
     """API status endpoint"""
-    return {"status": "operational", "version": "v1.0", "timestamp": utc_now_iso()}
+    return {"status": "operational", "version": "v1.0", "timestamp": datetime.utcnow().isoformat()}
 
 
 # Prediction endpoints
@@ -1055,7 +1051,7 @@ async def get_models(authorized: bool = Depends(verify_api_key)):
 
         models = get_loaded_models()
 
-        return {"models": models, "count": len(models), "timestamp": utc_now_iso()}
+        return {"models": models, "count": len(models), "timestamp": datetime.utcnow().isoformat()}
 
     except Exception as e:
         logger.error(f"Get models failed: {e}")
@@ -1202,7 +1198,7 @@ async def not_found_handler(request, exc):
     """Handle 404 errors"""
     return JSONResponse(
         status_code=404,
-        content={"error": "Not found", "path": str(request.url), "timestamp": utc_now_iso()},
+        content={"error": "Not found", "path": str(request.url), "timestamp": datetime.utcnow().isoformat()},
     )
 
 
@@ -1211,7 +1207,7 @@ async def server_error_handler(request, exc):
     """Handle 500 errors"""
     logger.error(f"Server error: {exc}")
     return JSONResponse(
-        status_code=500, content={"error": "Internal server error", "timestamp": utc_now_iso()}
+        status_code=500, content={"error": "Internal server error", "timestamp": datetime.utcnow().isoformat()}
     )
 
 
