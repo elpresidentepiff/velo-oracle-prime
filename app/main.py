@@ -237,18 +237,153 @@ async def health_check():
 
 
 # ── Scoring trigger — called by GitHub Actions scheduler ─────────────────────
+
+
+def _claim_trigger_run(trigger_source: str, target_date: str) -> str:
+    """
+    Atomically insert a pipeline_runs row and return the new run_id.
+
+    Raises HTTPException 409 if a run with status IN_PROGRESS already exists
+    for the same (trigger_source, target_date) combination, preventing
+    duplicate concurrent executions.
+
+    Uses stdlib urllib so there is no extra dependency at import time.
+    """
+    import json as _json
+    import urllib.error
+    import urllib.request
+    import uuid
+
+    sb_url = os.getenv("SUPABASE_URL", "").rstrip("/")
+    sb_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
+    if not sb_url or not sb_key:
+        raise HTTPException(status_code=503, detail="Supabase not configured — cannot claim trigger run")
+
+    effective_date = target_date or datetime.utcnow().strftime("%Y-%m-%d")
+
+    # ── 1. Duplicate guard: reject if an IN_PROGRESS run already exists ──────
+    check_url = (
+        f"{sb_url}/rest/v1/pipeline_runs"
+        f"?select=id,status"
+        f"&trigger_source=eq.{urllib.request.quote(trigger_source)}"
+        f"&target_date=eq.{effective_date}"
+        f"&status=eq.IN_PROGRESS"
+        f"&limit=1"
+    )
+    try:
+        req = urllib.request.Request(
+            check_url,
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Accept": "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            existing = _json.loads(resp.read())
+    except Exception as e:
+        logger.error("[trigger] Duplicate check failed: %s", e)
+        raise HTTPException(status_code=503, detail=f"DB check failed: {e}") from e
+
+    if existing:
+        existing_id = existing[0].get("id", "unknown")
+        logger.warning(
+            "[trigger] Duplicate rejected — run_id=%s already IN_PROGRESS for source=%s date=%s",
+            existing_id,
+            trigger_source,
+            effective_date,
+        )
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": "already_running",
+                "run_id": existing_id,
+                "trigger_source": trigger_source,
+                "target_date": effective_date,
+            },
+        )
+
+    # ── 2. Insert new pipeline_runs row ──────────────────────────────────────
+    run_id = str(uuid.uuid4())
+    row = {
+        "id": run_id,
+        "trigger_source": trigger_source,
+        "target_date": effective_date,
+        "status": "IN_PROGRESS",
+        "started_at": datetime.utcnow().isoformat() + "Z",
+    }
+    try:
+        body_bytes = _json.dumps(row).encode()
+        req = urllib.request.Request(
+            f"{sb_url}/rest/v1/pipeline_runs",
+            data=body_bytes,
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=5):
+            pass
+    except urllib.error.HTTPError as e:
+        body_text = e.read().decode(errors="replace")
+        logger.error("[trigger] pipeline_runs insert failed HTTP %d: %s", e.code, body_text)
+        raise HTTPException(status_code=503, detail=f"DB insert failed: {e.code} {body_text}") from e
+    except Exception as e:
+        logger.error("[trigger] pipeline_runs insert failed: %s", e)
+        raise HTTPException(status_code=503, detail=f"DB insert failed: {e}") from e
+
+    logger.info(
+        "[trigger] pipeline_runs row claimed — run_id=%s source=%s date=%s",
+        run_id,
+        trigger_source,
+        effective_date,
+    )
+    return run_id
+
+
+def _spawn_trigger_subprocess(script_path, run_id: str, trigger_source: str, target_date: str):
+    """
+    Spawn the scoring script as a detached subprocess, injecting PIPELINE_RUN_ID
+    into the environment so the script can update the pipeline_runs row on
+    completion.
+    """
+    import subprocess
+    import sys
+
+    env = os.environ.copy()
+    env["TRIGGER_SOURCE"] = trigger_source
+    env["PIPELINE_RUN_ID"] = run_id
+
+    cmd = [sys.executable, str(script_path)]
+    if target_date:
+        cmd += ["--date", target_date]
+
+    proc = subprocess.Popen(
+        cmd,
+        env=env,
+        cwd=str(script_path.parent.parent),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    return proc
+
+
 @app.post("/api/trigger/score-daily", status_code=202)
 async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(None)):
     """
     Trigger daily scoring run from an external scheduler (GitHub Actions).
-    Returns 202 immediately — scoring runs as a background subprocess.
+    Returns 202 immediately with a run_id — scoring runs as a background subprocess.
 
     Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
     Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
+
+    Duplicate prevention: a second call with the same trigger_source + target_date
+    while a run is IN_PROGRESS returns 409 already_running.
     """
     import pathlib
-    import subprocess
-    import sys
 
     trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
     if not trigger_secret:
@@ -271,23 +406,14 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
 
-    env = os.environ.copy()
-    env["TRIGGER_SOURCE"] = trigger_source
+    # Atomically claim a pipeline_runs row — raises 409 on duplicate
+    run_id = _claim_trigger_run(trigger_source, target_date)
 
-    cmd = [sys.executable, str(script_path)]
-    if target_date:
-        cmd += ["--date", target_date]
-
-    proc = subprocess.Popen(
-        cmd,
-        env=env,
-        cwd=str(script_path.parent.parent),
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    proc = _spawn_trigger_subprocess(script_path, run_id, trigger_source, target_date)
 
     logger.info(
-        "Scoring triggered — source=%s pid=%d target_date=%s",
+        "Scoring triggered — run_id=%s source=%s pid=%d target_date=%s",
+        run_id,
         trigger_source,
         proc.pid,
         target_date or "today",
@@ -297,6 +423,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
         status_code=202,
         content={
             "status": "triggered",
+            "run_id": run_id,
             "trigger_source": trigger_source,
             "target_date": target_date or "today",
             "pid": proc.pid,
