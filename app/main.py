@@ -219,7 +219,8 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         "run_type": run_type,
         "source_date": source_date,
         "run_state": "running",
-        "status": "TRIGGERED",
+        # Terminal truth only. In-flight rows must keep status NULL until close.
+        "status": None,
         "trigger_source": normalized_trigger_source,
         "started_at": now.isoformat().replace("+00:00", "Z"),
         "environment": os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("ENV") or os.getenv("API_ENV") or "production",

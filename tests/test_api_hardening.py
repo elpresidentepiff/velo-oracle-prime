@@ -88,3 +88,4 @@ def test_claim_trigger_run_normalizes_unknown_trigger_source(monkeypatch):
     assert result["status"] == "created"
     assert calls[1][0] == "POST"
     assert calls[1][2]["trigger_source"] == "api_manual"
+    assert calls[1][2]["status"] is None
