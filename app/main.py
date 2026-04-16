@@ -235,7 +235,9 @@ async def _verify_schema_at_startup() -> None:
 
     Fatal (raises RuntimeError):
       • race_truth_audits table missing  — truth loop cannot write
-      • shadow_verdicts table missing    — shadow lab cannot write
+
+    Non-fatal (warning only):
+      • shadow_verdicts table missing    — shadow lab not yet provisioned
 
     Fatal (raises RuntimeError) if velo_verdicts is reachable but required
     columns are absent:
@@ -286,13 +288,16 @@ async def _verify_schema_at_startup() -> None:
     errors: list[str] = []
 
     # ── 1. Required tables ────────────────────────────────────────────────────
+    # race_truth_audits — fatal: truth loop cannot write without it.
+    # shadow_verdicts   — non-fatal: table may not be provisioned yet; warn only.
     for table in ("race_truth_audits", "shadow_verdicts"):
+        fatal_table = table == "race_truth_audits"
         status, body = _sb_get(f"{table}?select=id&limit=0")
         if status == 200:
             logger.info("[startup:schema] table %s — PRESENT", table)
         elif status == 0:
             detail = body.decode(errors="replace")
-            if mode == "strict":
+            if mode == "strict" and fatal_table:
                 errors.append(f"Cannot verify required table '{table}' because Supabase was unreachable: {detail[:200]}")
             else:
                 logger.warning(
@@ -302,11 +307,19 @@ async def _verify_schema_at_startup() -> None:
                 )
         else:
             msg = body.decode(errors="replace")
-            errors.append(
-                f"Required table '{table}' is missing or inaccessible "
-                f"(HTTP {status}): {msg[:200]}"
-            )
-            logger.error("[startup:schema] MISSING table %s — %s", table, msg[:200])
+            if fatal_table:
+                errors.append(
+                    f"Required table '{table}' is missing or inaccessible "
+                    f"(HTTP {status}): {msg[:200]}"
+                )
+                logger.error("[startup:schema] MISSING table %s — %s", table, msg[:200])
+            else:
+                logger.warning(
+                    "[startup:schema] table %s is missing or inaccessible (HTTP %s) — non-fatal, skipping: %s",
+                    table,
+                    status,
+                    msg[:200],
+                )
 
     # ── 2. Required columns in velo_verdicts ──────────────────────────────────
     REQUIRED_COLS = "active_components,top_horse_readiness_state,race_archetype,g_shadow_multiplier"
