@@ -29,6 +29,7 @@ _sentient_state: dict | None = None
 
 _SOFT_SCHEMA_RUNTIME_NAMES = {"local", "dev", "development", "test", "testing"}
 _TRIGGER_AGE_GATE_HOURS = 24
+_PIPELINE_TRIGGER_SOURCES = {"manual", "github_actions_scheduled", "github_actions_manual", "api_manual"}
 _TRIGGER_SERVICE_CONFIG = {
     "score_daily": {
         "service_name": "velo-prime-scoring",
@@ -43,6 +44,20 @@ _TRIGGER_SERVICE_CONFIG = {
         "run_type": "results_reconciliation",
     },
 }
+
+
+def _normalize_pipeline_trigger_source(trigger_source: str) -> str:
+    """Map arbitrary ingress labels onto the live pipeline_runs enum surface."""
+    raw = (trigger_source or "").strip()
+    if raw in _PIPELINE_TRIGGER_SOURCES:
+        return raw
+    if raw.startswith("github_actions"):
+        return "github_actions_scheduled" if "scheduled" in raw else "github_actions_manual"
+    logger.warning(
+        "Unknown trigger_source '%s' normalized to api_manual for pipeline_runs compatibility",
+        raw or "<empty>",
+    )
+    return "api_manual"
 
 
 def _spawn_trigger_subprocess(
@@ -164,6 +179,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         raise HTTPException(status_code=503, detail="Trigger requires durable pipeline_runs access")
 
     now = datetime.now(UTC)
+    normalized_trigger_source = _normalize_pipeline_trigger_source(trigger_source)
     status, body = _pipeline_request(
         "GET",
         (
@@ -204,7 +220,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         "source_date": source_date,
         "run_state": "running",
         "status": "TRIGGERED",
-        "trigger_source": trigger_source,
+        "trigger_source": normalized_trigger_source,
         "started_at": now.isoformat().replace("+00:00", "Z"),
         "environment": os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("ENV") or os.getenv("API_ENV") or "production",
         "error_message": None,
