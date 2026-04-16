@@ -286,7 +286,7 @@ async def _verify_schema_at_startup() -> None:
     errors: list[str] = []
 
     # ── 1. Required tables ────────────────────────────────────────────────────
-    for table in ("race_truth_audits", "shadow_verdicts"):
+    for table in ("race_truth_audits",):
         status, body = _sb_get(f"{table}?select=id&limit=0")
         if status == 200:
             logger.info("[startup:schema] table %s — PRESENT", table)
@@ -309,6 +309,25 @@ async def _verify_schema_at_startup() -> None:
             logger.error("[startup:schema] MISSING table %s — %s", table, msg[:200])
 
     # ── 2. Required columns in velo_verdicts ──────────────────────────────────
+    for table in ("shadow_verdicts",):
+        status, body = _sb_get(f"{table}?select=id&limit=0")
+        if status == 200:
+            logger.info("[startup:schema] optional table %s â€” PRESENT", table)
+        elif status == 0:
+            detail = body.decode(errors="replace")
+            logger.warning(
+                "[startup:schema] Could not reach Supabase to check optional table %s: %s",
+                table,
+                detail[:200],
+            )
+        else:
+            msg = body.decode(errors="replace")
+            logger.warning(
+                "[startup:schema] optional table %s missing or inaccessible (non-fatal) â€” %s",
+                table,
+                msg[:200],
+            )
+
     REQUIRED_COLS = "active_components,top_horse_readiness_state,race_archetype,g_shadow_multiplier"
     status, body = _sb_get(f"velo_verdicts?select={REQUIRED_COLS}&limit=1")
     if status == 200:
