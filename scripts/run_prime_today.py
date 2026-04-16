@@ -25,22 +25,33 @@ import os
 import json
 import base64
 import argparse
+import logging
+import uuid
 import urllib.request
 import urllib.error
 from urllib.parse import urlencode
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from dotenv import load_dotenv
-load_dotenv(ROOT / ".env")
+from app.core.runtime_env import (
+    load_optional_env_file,
+    resolve_runtime_environment,
+    resolve_supabase_service_key,
+    resolve_supabase_url,
+    resolve_telegram_settings,
+    utc_now,
+)
 
-TOKEN   = os.getenv("TELEGRAM_BOT_TOKEN")
-CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+log = logging.getLogger("velo.run_prime")
+
 TODAY   = datetime.now().strftime("%Y_%m_%d")
 TODAY_DISPLAY = datetime.now().strftime("%d %b %Y")
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 CANONICAL_ENDPOINT = "https://velo-oracle-production.up.railway.app"
 
@@ -48,13 +59,14 @@ RACING_USER = os.getenv("RACING_API_USERNAME", "")
 RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
 RACING_BASE = "https://api.theracingapi.com/v1"
 # User-Agent required — Cloudflare blocks requests without it
-RACING_HEADERS = {
-    "Authorization": "Basic " + base64.b64encode(
-        f"{RACING_USER}:{RACING_PASS}".encode()
-    ).decode(),
-    "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json",
-}
+def _racing_headers() -> dict[str, str]:
+    racing_user = os.getenv("RACING_API_USERNAME", "")
+    racing_pass = os.getenv("RACING_API_PASSWORD", "")
+    return {
+        "Authorization": "Basic " + base64.b64encode(f"{racing_user}:{racing_pass}".encode()).decode(),
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json",
+    }
 
 
 def tg(text: str) -> bool:
@@ -78,6 +90,59 @@ def tg(text: str) -> bool:
     except Exception as e:
         print(f"  [TG FAIL]: {e}")
         return False
+
+
+@dataclass
+class RunPrimeOptions:
+    date: str | None = None
+    dry_run: bool = False
+    notify: bool = True
+    env_file: str | None = None
+
+
+@dataclass
+class RunPrimeResult:
+    status: str
+    exit_code: int
+    date_str: str
+    racecard_source: str = "unknown"
+    races_fetched: int = 0
+    races_normalized: int = 0
+    races_scored: int = 0
+    persist_ok: int = 0
+    persist_fail: int = 0
+    score_errors: int = 0
+    notifications_enabled: bool = True
+    persistence_enabled: bool = True
+
+
+@dataclass
+class PipelineRunOpenResult:
+    run_id: str | None = None
+    blocked_reason: str | None = None
+    error: str | None = None
+
+
+def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None:
+    global TOKEN, CHAT_ID, RACING_USER, RACING_PASS, RACING_HEADERS, _SB_URL, _SB_KEY, _SB_HDRS
+
+    load_optional_env_file(env_file or ROOT / ".env")
+    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") if notify else ""
+    CHAT_ID = os.getenv("TELEGRAM_CHAT_ID") if notify else ""
+    RACING_USER = os.getenv("RACING_API_USERNAME", "")
+    RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
+    RACING_HEADERS = {
+        "Authorization": "Basic " + base64.b64encode(f"{RACING_USER}:{RACING_PASS}".encode()).decode(),
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json",
+    }
+    _SB_URL = resolve_supabase_url()
+    _SB_KEY = resolve_supabase_service_key()
+    _SB_HDRS = {
+        "apikey": _SB_KEY,
+        "Authorization": f"Bearer {_SB_KEY}",
+        "Accept": "application/json",
+    }
 
 
 def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
@@ -134,7 +199,7 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 # A-STRIKE : prob >= 0.32  AND  gap >= 0.08  AND  place >= 0.52
 #             AND  conf != 'low'  AND  trap != 'high'
 #
-# B-PLAYABLE: prob >= 0.18  AND  gap >= 0.03  AND  conf != 'low'
+# B-PLAYABLE: prob >= 0.15  AND  gap >= 0.03  AND  conf != 'low'
 #             AND  (place >= 0.45  OR  gap >= 0.08  OR  improve >= 0.18)
 #
 # C-WATCH  : (prob >= 0.13 AND gap >= 0.02)
@@ -149,6 +214,20 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 #   improvement_score > 0.18      → "form improvement signal"
 #   favourite_trap_risk != normal → "favourite trap risk"
 # ─────────────────────────────────────────────────────────────────────────────
+
+def effective_confidence(prob: float) -> str:
+    """
+    Recompute confidence from the final normalized velo_prime_prob.
+    Must stay in sync with the boundary used in synthesize_decision().
+    This is the canonical post-normalization label — use this for storage
+    and display, not the raw ensemble label.
+    """
+    if prob >= 0.45:
+        return "high"
+    if prob >= 0.15:
+        return "normal"
+    return "low"
+
 
 TIER_LABELS = {
     "A": "A-STRIKE",
@@ -167,10 +246,124 @@ TIER_ACTIONS = {
 }
 
 
-def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
+def _apply_archetype(
+    top: dict,
+    preds: list[dict],
+    tier: str,
+    sec_prob: float,
+) -> None:
+    """
+    Classify race archetype and store result on top dict.
+
+    Runs after TIE v3 gate so it can see the final tier.
+    Stores archetype fields directly on top so they persist with the verdict
+    and appear in build_decision_card.
+    """
+    try:
+        from src.intelligence.race_archetypes import RaceArchetypeClassifier
+        prob       = float(top.get("velo_prime_prob") or 0)
+        separation = prob - float(sec_prob or 0)
+        archetype  = RaceArchetypeClassifier().classify(top, preds, tier, separation)
+        top.update(archetype.to_dict())
+    except Exception as e:
+        import logging
+        logging.getLogger("velo.run_prime").warning("Archetype classification failed: %s", e)
+
+
+def _apply_tie_v3_gate(
+    top: dict,
+    tier: str,
+    reasons: list[str],
+    preds: list[dict],
+) -> tuple[str, list[str]]:
+    """
+    Apply TIE v3 conviction gate after synthesize_decision().
+
+    Signal counts are pre-computed in score_race_velo_prime() where live
+    doctrine features (days_since_run, sp_rank, trainer_timing_score etc.)
+    are available. This function applies the policy decisions now that
+    current_tier is known.
+
+    Upgrade path : top pick tie_gate_signal_count >= MIN_SIGNALS_FOR_UPGRADE
+                   AND tier in (C, D) → promote to B or C
+    EW path      : any runner with signal_count >= MIN_SIGNALS_FOR_EW_FLAG
+                   AND SP > LONGSHOT_SP_THRESHOLD AND not fav → annotate
+
+    Does NOT alter velo_prime_prob or ensemble ranking.
+    """
+    try:
+        from src.intelligence.tie_v3_gate import (
+            MIN_SIGNALS_FOR_UPGRADE,
+            MIN_SIGNALS_FOR_EW_FLAG,
+            LONGSHOT_SP_THRESHOLD,
+        )
+
+        # ── Upgrade path — top pick only ──────────────────────────────────────
+        n       = top.get("tie_gate_signal_count", 0)
+        signals = top.get("tie_gate_signals", [])
+        sp_top  = float(top.get("sp_dec") or 0)
+        is_fav  = bool(top.get("is_fav"))
+
+        top["tie_gate_fires"]        = False
+        top["tie_gate_tier_upgrade"] = None
+        top["tie_gate_ew_flag"]      = False
+
+        if n >= MIN_SIGNALS_FOR_UPGRADE and tier in ("C", "D"):
+            upgraded = "B" if tier == "C" else "C"
+            top["tie_gate_fires"]        = True
+            top["tie_gate_tier_upgrade"] = upgraded
+            reasons.append(
+                f"TIE v3: {n} intent signals → upgrade {tier}→{upgraded} "
+                f"[{', '.join(signals)}]"
+            )
+            tier = upgraded
+
+        # ── EW path — top pick ────────────────────────────────────────────────
+        if (n >= MIN_SIGNALS_FOR_EW_FLAG
+                and sp_top > LONGSHOT_SP_THRESHOLD
+                and not is_fav):
+            top["tie_gate_fires"]   = True
+            top["tie_gate_ew_flag"] = True
+            if not top.get("tie_gate_tier_upgrade"):
+                reasons.append(
+                    f"TIE v3 EW: {n} signals + SP {sp_top:.1f} → each-way angle"
+                )
+
+        # ── EW scan — rest of field (observability only, no tier change) ──────
+        for runner in preds[1:]:
+            rn  = runner.get("tie_gate_signal_count", 0)
+            rsp = float(runner.get("sp_dec") or 0)
+            rfav = bool(runner.get("is_fav"))
+            runner["tie_gate_fires"]   = False
+            runner["tie_gate_ew_flag"] = (
+                rn >= MIN_SIGNALS_FOR_EW_FLAG
+                and rsp > LONGSHOT_SP_THRESHOLD
+                and not rfav
+            )
+            if runner["tie_gate_ew_flag"]:
+                runner["tie_gate_fires"] = True
+
+    except Exception as e:
+        import logging
+        logging.getLogger("velo.run_prime").warning("TIE v3 gate policy failed: %s", e)
+
+    return tier, reasons
+
+
+def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> tuple[str, list[str]]:
     """
     Returns (tier, reasons) where tier is A/B/C/D/X.
     Uses full available signal stack from velo_prime_v1 output.
+
+    Parameters
+    ----------
+    top : dict
+        Highest-ranked runner from score_race_velo_prime output.
+    second_prob : float
+        velo_prime_prob of the second-ranked runner (0.0 if no second runner).
+    field_size : int
+        Number of runners in the race (len(preds)).  Required to guard against
+        single-runner races where gap == prob, making every gap threshold trivial.
     """
     prob      = float(top.get("velo_prime_prob") or 0)
     place     = float(top.get("place_prob") or 0)
@@ -179,15 +372,30 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     improve   = float(top.get("improvement_score") or 0)
     mkt_dec   = top.get("market_deception_score")
     release   = float(top.get("release_day_prob") or 0)
-    chaos_m   = bool(top.get("macro_chaos_mode") or False)
+    # macro_chaos_mode may be None (failed) or bool (known). Treat None as unknown → force chaos.
+    _chaos_raw = top.get("macro_chaos_mode")
+    chaos_m   = bool(_chaos_raw) if _chaos_raw is not None else True
     trap      = (top.get("favourite_trap_risk") or "normal").lower()
     conf      = (top.get("confidence_level") or "low").lower()
     gap       = prob - second_prob
 
+    # ── Pre-condition blockers ────────────────────────────────────────────────
+    # These two checks run before any tier logic and force X-CHAOS hard.
+
+    # 1. Single-runner race: gap == prob is mathematically guaranteed —
+    #    every A/B gap threshold becomes trivially true. Model has no real signal.
+    if field_size == 1:
+        return "X", [f"single-runner race (field_size=1) — gap is meaningless, no model signal"]
+
+    # 2. Horse state tagging failed: doctrine signals (days_since_run, trainer timing,
+    #    etc.) are absent. A/B decisions require horse state to be valid.
+    if top.get("horse_state_failed"):
+        return "X", ["horse state tagging failed — required signals absent, cannot evaluate tier"]
+
     # confidence_level is assigned pre-normalization in the ensemble, then the field
     # normalization step raises the top horse's prob without updating the label.
     # Recompute from the already-normalized prob so A/B gates see the real signal.
-    eff_conf = "high" if prob >= 0.45 else "normal" if prob >= 0.20 else "low"
+    eff_conf = effective_confidence(prob)
 
     # Longshot gate: only meaningful when horse is genuinely a longshot (SP >= 10).
     # The specialist longshot model scores all runners but was trained on SP >= 10 data.
@@ -200,7 +408,15 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     # Trigger X only when model is genuinely blind: flat field, no place floor,
     # outsider dominance (longshot SP-gated), or macro chaos.
     # gap=0 alone does NOT trigger X if place >= 0.40.
-    if prob < 0.10 or (gap < 0.015 and place < 0.40) or longshot_trigger or chaos_m:
+    #
+    # Strong-signal escape: if the horse itself shows real edge (prob ≥ 0.18,
+    # place ≥ 0.35), race-shape signals (tight gap, outsider pressure) should not
+    # bury it in X-CHAOS. macro_chaos_mode is market-wide — it stays a hard block.
+    strong_escape = prob >= 0.18 and place >= 0.35
+    if (prob < 0.10
+            or (gap < 0.015 and place < 0.40 and not strong_escape)
+            or (longshot_trigger and not strong_escape)
+            or chaos_m):
         if prob < 0.10:
             reasons.append(f"flat field — top prob {prob:.3f} below threshold")
         if gap < 0.015 and place < 0.40:
@@ -228,7 +444,7 @@ def synthesize_decision(top: dict, second_prob: float) -> tuple[str, list[str]]:
     b_place_ok = place >= 0.45
     b_gap_ok   = gap >= 0.08
     b_improve  = improve >= 0.18
-    if (prob >= 0.18 and gap >= 0.03 and eff_conf not in ("low",)
+    if (prob >= 0.15 and gap >= 0.03 and eff_conf not in ("low",)
             and (b_place_ok or b_gap_ok or b_improve)):
         if b_gap_ok:
             reasons.append(f"field separation gap {gap:.3f}")
@@ -272,6 +488,67 @@ def _add_secondary_signals(top: dict, reasons: list) -> None:
         reasons.append(f"favourite trap risk: {trap}")
 
 
+_SB_URL  = resolve_supabase_url()
+_SB_KEY  = resolve_supabase_service_key()
+_SB_HDRS = {
+    "apikey": _SB_KEY,
+    "Authorization": f"Bearer {_SB_KEY}",
+    "Accept": "application/json",
+}
+
+def _attach_rpdc(top: dict, race_id: str) -> None:
+    """Look up RPDC tags for the top pick and attach as observability fields.
+    Never raises — failures are explicit in rpdc_lookup_status."""
+    horse_id = top.get("horse_id") or top.get("predicted_id", "")
+    if not horse_id or not race_id or not _SB_URL:
+        _rpdc_defaults(top, status="unavailable")
+        return
+    try:
+        url = (
+            f"{_SB_URL}/rest/v1/runner_release_candidates"
+            f"?horse_id=eq.{horse_id}&race_id=eq.{race_id}&order=generated_at.desc&limit=2"
+        )
+        req = urllib.request.Request(url, headers=_SB_HDRS)
+        with urllib.request.urlopen(req, timeout=5) as r:
+            rows = json.loads(r.read().decode())
+        if rows:
+            row = rows[0]
+            tags = row.get("rpdc_tags") or []
+            if len(rows) > 1:
+                top["rpdc_lookup_status"] = "ambiguous_latest"
+                top["rpdc_lookup_detail"] = f"{len(rows)} rows matched; used newest by generated_at"
+                log.warning("RPDC lookup ambiguous for race_id=%s horse_id=%s; using newest generated_at row", race_id, horse_id)
+            else:
+                top["rpdc_lookup_status"] = "attached"
+                top["rpdc_lookup_detail"] = None
+            top["rpdc_release_score"]    = row.get("rpdc_release_score", 0)
+            top["rpdc_cash_window_flag"] = bool(row.get("rpdc_cash_window_flag", False))
+            top["rpdc_tag_count"]        = int(row.get("rpdc_tag_count", 0))
+            top["rpdc_tags"]             = tags
+            # Primary tag = first CASH_WINDOW if present, else highest-scored tag
+            if "CASH_WINDOW" in tags:
+                top["rpdc_primary_tag"] = "CASH_WINDOW"
+            elif tags:
+                top["rpdc_primary_tag"] = tags[0]
+            else:
+                top["rpdc_primary_tag"] = None
+        else:
+            _rpdc_defaults(top, status="no_data")
+    except Exception as exc:
+        log.warning("RPDC lookup failed for race_id=%s horse_id=%s: %s", race_id, horse_id, exc)
+        _rpdc_defaults(top, status="lookup_failed", detail=str(exc))
+
+
+def _rpdc_defaults(top: dict, *, status: str, detail: str | None = None) -> None:
+    top.setdefault("rpdc_release_score",    0)
+    top.setdefault("rpdc_cash_window_flag", False)
+    top.setdefault("rpdc_tag_count",        0)
+    top.setdefault("rpdc_primary_tag",      None)
+    top.setdefault("rpdc_tags",             [])
+    top["rpdc_lookup_status"] = status
+    top["rpdc_lookup_detail"] = detail
+
+
 def build_decision_card(race: dict, top: dict, second: dict,
                         tier: str, reasons: list) -> str:
     course   = race.get("course", "?").upper()
@@ -297,6 +574,12 @@ def build_decision_card(race: dict, top: dict, second: dict,
     for r in reasons[:4]:
         lines.append(f"  • {r}")
     lines.append(f"ACTION: {action}")
+    arch = top.get("race_archetype")
+    if arch:
+        arch_conf  = (top.get("archetype_confidence") or "?")[0].upper()
+        arch_style = top.get("archetype_bet_style") or ""
+        trap_mark  = " ⚠ TRAP" if top.get("archetype_trap_flag") else ""
+        lines.append(f"ARCHETYPE: [{arch}:{arch_conf}]{trap_mark}  {arch_style}")
     return "\n".join(lines)
 
 
@@ -378,7 +661,7 @@ def _derive_rpd_evidence(runner: dict, race: dict) -> tuple[list, bool, bool]:
     return evidence, False, won_last_time
 
 
-def _open_pipeline_run(db, date_str: str) -> str | None:
+def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
     """Open a pipeline_runs row.
 
     Age-gate cleanup: any running row for this service + date older than 24h is
@@ -387,7 +670,11 @@ def _open_pipeline_run(db, date_str: str) -> str | None:
     """
     SERVICE = "velo-prime-scoring"
     AGE_GATE_HOURS = 24
-    now = datetime.utcnow()
+    now = utc_now()
+    existing_run_id = os.getenv("PIPELINE_RUN_ID", "").strip()
+
+    if existing_run_id:
+        return PipelineRunOpenResult(run_id=existing_run_id)
 
     try:
         # Find existing running rows scoped to this service + date
@@ -401,6 +688,8 @@ def _open_pipeline_run(db, date_str: str) -> str | None:
             for row in (existing.data or []):
                 try:
                     started = datetime.fromisoformat(row["started_at"].rstrip("Z"))
+                    if started.tzinfo is None:
+                        started = started.replace(tzinfo=now.tzinfo)
                 except Exception:
                     started = now - timedelta(hours=AGE_GATE_HOURS + 1)  # treat as stale
 
@@ -410,34 +699,40 @@ def _open_pipeline_run(db, date_str: str) -> str | None:
                     db.table("pipeline_runs").update({
                         "run_state":     "completed",
                         "status":        "FAIL",
-                        "finished_at":   now.isoformat() + "Z",
+                        "finished_at":   now.isoformat().replace("+00:00", "Z"),
                         "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new run",
                     }).eq("id", row["id"]).execute()
                     print(f"  [pipeline_runs] age-gate closed stale run {row['id']} ({age_hours:.1f}h)")
                 else:
                     # Recent running row — abort to prevent duplicate
                     print(f"  [pipeline_runs] run already running (id={row['id']}, age={age_hours:.1f}h). Aborting open.")
-                    return None
+                    return PipelineRunOpenResult(blocked_reason=f"run already running (id={row['id']}, age={age_hours:.1f}h)")
         except Exception as e:
             print(f"  [pipeline_runs] stale-run cleanup failed (non-fatal): {e}")
 
         trigger_src = os.getenv("TRIGGER_SOURCE", "manual") or "manual"
-        env_str = os.getenv("RAILWAY_ENVIRONMENT", "local")
+        env_str = resolve_runtime_environment()
         row = {
+            "id":            str(uuid.uuid4()),
             "service_name":  SERVICE,
             "run_type":      "daily_scoring",
             "source_date":   date_str,
             "run_state":     "running",
             "status":        None,  # explicit NULL overrides DB DEFAULT 'in_progress'
             "trigger_source": trigger_src,
-            "started_at":    now.isoformat() + "Z",
+            "started_at":    now.isoformat().replace("+00:00", "Z"),
             "environment":   env_str,
         }
         resp = db.table("pipeline_runs").insert(row).execute()
-        return resp.data[0]["id"] if resp.data else None
+        if resp.data:
+            return PipelineRunOpenResult(run_id=resp.data[0]["id"])
+        return PipelineRunOpenResult(error="pipeline_runs insert returned no data")
     except Exception as e:
-        print(f"  [pipeline_runs] open failed (non-fatal): {e}")
-        return None
+        detail = str(e)
+        print(f"  [pipeline_runs] open failed: {detail}")
+        if "duplicate key" in detail.lower() or "unique" in detail.lower():
+            return PipelineRunOpenResult(blocked_reason="run already running (db uniqueness guard)")
+        return PipelineRunOpenResult(error=detail)
 
 
 def _close_pipeline_run(db, run_id: str | None, status: str,
@@ -449,7 +744,7 @@ def _close_pipeline_run(db, run_id: str | None, status: str,
         patch = {
             "run_state":         "completed",
             "status":            status,
-            "finished_at":       datetime.utcnow().isoformat() + "Z",
+            "finished_at":       utc_now().isoformat().replace("+00:00", "Z"),
             "races_processed":   races,
             "runners_processed": runners,
         }
@@ -463,9 +758,15 @@ def _close_pipeline_run(db, run_id: str | None, status: str,
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--no-notify", action="store_true")
+    parser.add_argument("--env-file", default=None)
     args = parser.parse_args()
+    notify_enabled = not args.no_notify and not args.dry_run
+    _bootstrap_runtime(env_file=args.env_file, notify=notify_enabled)
     date_tag = args.date.replace("-", "_") if args.date else TODAY
     date_str = date_tag.replace("_", "-")
+    persistence_enabled = not args.dry_run
 
     print(f"\nVELO PRIME RACE-DAY EXECUTION — {date_str}")
     print("=" * 60)
@@ -486,16 +787,36 @@ def main():
     from supabase import create_client as _sb_create
     from src.rpd import RPDv2Engine, RPDTag
 
-    _sb_url = os.getenv("SUPABASE_URL", "")
-    _sb_key = (os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-               or os.getenv("SUPABASE_SERVICE_KEY")
-               or os.getenv("SUPABASE_ANON_KEY", ""))
+    _sb_url = resolve_supabase_url()
+    _sb_key = resolve_supabase_service_key()
     db = _sb_create(_sb_url, _sb_key) if _sb_url and _sb_key else None
-    run_id = _open_pipeline_run(db, date_str) if db else None
-    if not db:
+    run_open = _open_pipeline_run(db, date_str) if (db and persistence_enabled) else None
+    run_id = run_open.run_id if run_open else None
+    os.environ["_ACTIVE_PIPELINE_RUN_ID"] = run_id or ""
+    if not persistence_enabled:
+        print("  pipeline_run: SKIPPED â€” dry-run mode (no persistence side effects)")
+    elif not db:
         print("  pipeline_run: SKIPPED — no Supabase creds (monitoring blind this run) ⚠")
-    elif not run_id:
-        print("  pipeline_run: OPEN FAILED — monitoring blind for this run ⚠")
+    elif run_open and run_open.blocked_reason:
+        log.error("pipeline_run blocked: %s", run_open.blocked_reason)
+        print(f"  pipeline_run: BLOCKED — {run_open.blocked_reason}")
+        return RunPrimeResult(
+            status="BLOCKED",
+            exit_code=1,
+            date_str=date_str,
+            notifications_enabled=notify_enabled,
+            persistence_enabled=persistence_enabled,
+        )
+    elif run_open and run_open.error:
+        log.error("pipeline_run open failed: %s", run_open.error)
+        print(f"  pipeline_run: OPEN FAILED — {run_open.error} ⚠")
+        return RunPrimeResult(
+            status="FAIL",
+            exit_code=1,
+            date_str=date_str,
+            notifications_enabled=notify_enabled,
+            persistence_enabled=persistence_enabled,
+        )
     else:
         print(f"  pipeline_run: {run_id}")
 
@@ -586,10 +907,30 @@ def main():
                 top       = preds[0]
                 second    = preds[1] if len(preds) > 1 else {}
                 sec_prob  = float(second.get("velo_prime_prob") or 0)
-                tier, reasons = synthesize_decision(top, sec_prob)
+                tier, reasons = synthesize_decision(top, sec_prob, field_size=len(preds))
+                # Write effective confidence back onto top so persist sees it.
+                # Raw label (pre-normalization) is preserved separately.
+                top["confidence_level_raw"]       = top.get("confidence_level")
+                top["confidence_level_effective"] = effective_confidence(
+                    float(top.get("velo_prime_prob") or 0)
+                )
+                # Shadow suspect cohort flag — A-tier with weak place support.
+                # No gate change. Passive monitor only. Track for 30 days to build
+                # enough sample to decide whether to tighten the A-gate conditionally.
+                # Cohort: A-tier AND place_prob < 0.75 (win signal overpowering place).
+                top["a_tier_weak_place_flag"] = (
+                    tier == "A"
+                    and float(top.get("place_prob") or 0) < 0.75
+                )
+                tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
+                _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
+                # RPDC observability — passive lookup, never blocks scoring
+                _attach_rpdc(top, race.get("race_id", ""))
                 scored.append((race, preds, tier, reasons))
-                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}")
+                gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
+                arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
+                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")
@@ -604,6 +945,9 @@ def main():
     persist_ok = 0
     persist_fail = 0
     for race, preds, tier, _reasons in scored:
+        if not persistence_enabled:
+            persist_ok += 1
+            continue
         if persist_race_predictions(race, preds, decision_tier=tier):
             persist_ok += 1
         else:
@@ -721,7 +1065,7 @@ def main():
         f"Total races:     {len(normalized)}\n"
         f"Scored by PRIME: {len(scored)}\n"
         f"Persisted:       {persist_ok}\n"
-        f"Telegram:        YES\n"
+        f"Telegram:        {'YES' if notify_enabled else 'NO'}\n"
         f"Final status:    {final_status}"
     )
     print(f"  Sent: final report ({final_status})")
@@ -774,7 +1118,20 @@ def main():
         if score_errors:
             for race, err in score_errors[:5]:
                 print(f"  SCORE ERROR: {race.get('course')} {race.get('off_time')} — {err[:100]}")
-        sys.exit(1)
+        return RunPrimeResult(
+            status="FAIL",
+            exit_code=1,
+            date_str=date_str,
+            racecard_source=racecard_source,
+            races_fetched=len(raw_races),
+            races_normalized=len(normalized),
+            races_scored=len(scored),
+            persist_ok=persist_ok,
+            persist_fail=persist_fail,
+            score_errors=len(score_errors),
+            notifications_enabled=notify_enabled,
+            persistence_enabled=persistence_enabled,
+        )
     elif persist_fail > 0:
         # Partial run — some persisted, some failed → DEGRADED
         err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
@@ -790,12 +1147,54 @@ def main():
         if score_errors:
             for race, err in score_errors[:5]:
                 print(f"  SCORE ERROR: {race.get('course')} {race.get('off_time')} — {err[:100]}")
-        sys.exit(1)
+        return RunPrimeResult(
+            status="DEGRADED",
+            exit_code=1,
+            date_str=date_str,
+            racecard_source=racecard_source,
+            races_fetched=len(raw_races),
+            races_normalized=len(normalized),
+            races_scored=len(scored),
+            persist_ok=persist_ok,
+            persist_fail=persist_fail,
+            score_errors=len(score_errors),
+            notifications_enabled=notify_enabled,
+            persistence_enabled=persistence_enabled,
+        )
     else:
         _close_pipeline_run(db, run_id, "PASS", persist_ok, total_runners)
         print(f"\nPASS — {persist_ok}/{len(normalized)} races in velo_verdicts")
-        sys.exit(0)
+        return RunPrimeResult(
+            status="PASS",
+            exit_code=0,
+            date_str=date_str,
+            racecard_source=racecard_source,
+            races_fetched=len(raw_races),
+            races_normalized=len(normalized),
+            races_scored=len(scored),
+            persist_ok=persist_ok,
+            persist_fail=persist_fail,
+            score_errors=len(score_errors),
+            notifications_enabled=notify_enabled,
+            persistence_enabled=persistence_enabled,
+        )
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        raise SystemExit(main().exit_code)
+    except SystemExit:
+        raise
+    except Exception as exc:
+        _sb_url = resolve_supabase_url()
+        _sb_key = resolve_supabase_service_key()
+        active_run_id = (os.getenv("_ACTIVE_PIPELINE_RUN_ID") or "").strip()
+        if active_run_id and _sb_url and _sb_key:
+            try:
+                from supabase import create_client as _sb_create
+
+                _db = _sb_create(_sb_url, _sb_key)
+                _close_pipeline_run(_db, active_run_id, "FAIL", 0, 0, str(exc))
+            except Exception:
+                pass
+        raise
