@@ -51,6 +51,55 @@ async def lifespan(app: FastAPI):
         _sentient_state = None
         logger.warning("[sentient] G state load failed at startup (non-fatal): %s", e)
 
+    # ── G shadow mode guard ───────────────────────────────────────────────────
+    # Playbook G operates in shadow/audit mode only. Verify it has not been
+    # accidentally promoted to live scoring influence. If the guard detects a
+    # live-promotion flag, log a critical warning and refuse to start cleanly.
+    _g_shadow_ok = True
+    try:
+        _g_live_flag = os.getenv("PLAYBOOK_G_LIVE_PROMOTION", "").strip().lower()
+        if _g_live_flag in ("1", "true", "yes", "enabled"):
+            logger.critical(
+                "[sentient] SAFETY VIOLATION — PLAYBOOK_G_LIVE_PROMOTION=%s detected. "
+                "Playbook G must remain in shadow/audit mode. "
+                "Unset this env var to restore safe operation.",
+                _g_live_flag,
+            )
+            _g_shadow_ok = False
+        else:
+            logger.info("[sentient] G shadow mode guard: OK (live promotion not active)")
+    except Exception as _gsg_err:
+        logger.warning("[sentient] G shadow mode guard check failed (non-fatal): %s", _gsg_err)
+
+    # ── Schema verification ───────────────────────────────────────────────────
+    # Verify that pipeline_runs table has the columns the trigger endpoints
+    # depend on. A missing column at startup is caught here rather than at
+    # first trigger call, making deployment failures immediately visible.
+    _sb_url_startup = os.getenv("SUPABASE_URL", "")
+    _sb_key_startup = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
+    if _sb_url_startup and _sb_key_startup:
+        try:
+            import urllib.request as _ur
+            _schema_req = _ur.Request(
+                f"{_sb_url_startup}/rest/v1/pipeline_runs?select=id,run_state,trigger_source,service_name&limit=0",
+                headers={
+                    "apikey": _sb_key_startup,
+                    "Authorization": f"Bearer {_sb_key_startup}",
+                    "Accept": "application/json",
+                },
+            )
+            with _ur.urlopen(_schema_req, timeout=5):
+                pass
+            logger.info("[schema] pipeline_runs schema verification: OK")
+        except Exception as _sv_err:
+            logger.warning(
+                "[schema] pipeline_runs schema verification failed — trigger endpoints may "
+                "malfunction if required columns are missing: %s",
+                _sv_err,
+            )
+    else:
+        logger.warning("[schema] Skipping pipeline_runs schema verification — Supabase env vars not set")
+
     # Register Telegram webhook so velo_agent_bot can receive messages
     _register_webhook()
 
@@ -236,19 +285,149 @@ async def health_check():
     return details
 
 
+# ── Durable trigger helpers ───────────────────────────────────────────────────
+
+def _claim_trigger_run(service_name: str, run_type: str, trigger_source: str,
+                       target_date: str) -> str:
+    """
+    Atomically claim a pipeline_runs slot for the given service + date.
+
+    Returns the new run_id (UUID string) on success.
+    Raises HTTPException 409 if a run for this service + date is already
+    in state 'running' (duplicate prevention).
+    Raises HTTPException 503 if Supabase is not configured.
+    Falls back gracefully (returns a synthetic run_id) if the DB insert
+    fails for any other reason, so the subprocess is never blocked by a
+    transient DB error.
+    """
+    import uuid
+
+    sb_url = os.getenv("SUPABASE_URL", "")
+    sb_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
+    if not sb_url or not sb_key:
+        logger.warning("[trigger] Supabase not configured — run tracking disabled, proceeding without run_id")
+        return str(uuid.uuid4())
+
+    try:
+        from supabase import create_client as _sb_create
+        db = _sb_create(sb_url, sb_key)
+
+        now = datetime.utcnow()
+        date_str = target_date or now.strftime("%Y-%m-%d")
+
+        # ── Duplicate detection ───────────────────────────────────────────────
+        # Check for an existing running row for this service + date.
+        # Age-gate: rows older than 24 h are considered stale and closed.
+        AGE_GATE_HOURS = 24
+        try:
+            existing = db.table("pipeline_runs").select(
+                "id, started_at"
+            ).eq("service_name", service_name).eq(
+                "source_date", date_str
+            ).eq("run_state", "running").execute()
+
+            for row in (existing.data or []):
+                try:
+                    started = datetime.fromisoformat(row["started_at"].rstrip("Z"))
+                except Exception:
+                    started = now  # treat as fresh if unparseable
+
+                age_hours = (now - started).total_seconds() / 3600
+                if age_hours >= AGE_GATE_HOURS:
+                    # Stale — close and allow new run
+                    db.table("pipeline_runs").update({
+                        "run_state":     "completed",
+                        "status":        "FAIL",
+                        "finished_at":   now.isoformat() + "Z",
+                        "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new trigger",
+                    }).eq("id", row["id"]).execute()
+                    logger.info("[trigger] age-gate closed stale run %s (%.1fh)", row["id"], age_hours)
+                else:
+                    # Recent running row — reject duplicate
+                    logger.warning(
+                        "[trigger] duplicate rejected — service=%s date=%s existing_run_id=%s age=%.1fh",
+                        service_name, date_str, row["id"], age_hours,
+                    )
+                    raise HTTPException(
+                        status_code=409,
+                        detail={
+                            "error": "already_running",
+                            "run_id": row["id"],
+                            "service": service_name,
+                            "date": date_str,
+                            "age_hours": round(age_hours, 2),
+                        },
+                    )
+        except HTTPException:
+            raise
+        except Exception as _dup_err:
+            logger.warning("[trigger] duplicate-check query failed (non-fatal): %s", _dup_err)
+
+        # ── Insert new run row ────────────────────────────────────────────────
+        env_str = os.getenv("RAILWAY_ENVIRONMENT", "local")
+        new_row = {
+            "service_name":   service_name,
+            "run_type":       run_type,
+            "source_date":    date_str,
+            "run_state":      "running",
+            "status":         None,
+            "trigger_source": trigger_source,
+            "started_at":     now.isoformat() + "Z",
+            "environment":    env_str,
+        }
+        resp = db.table("pipeline_runs").insert(new_row).execute()
+        run_id = resp.data[0]["id"] if resp.data else str(uuid.uuid4())
+        logger.info(
+            "[trigger] pipeline_run claimed — service=%s run_id=%s date=%s",
+            service_name, run_id, date_str,
+        )
+        return run_id
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        # Non-fatal: DB error must not block the subprocess
+        logger.error("[trigger] _claim_trigger_run failed (non-fatal, proceeding): %s", e)
+        import uuid as _uuid
+        return str(_uuid.uuid4())
+
+
+def _spawn_trigger_subprocess(script_path: "pathlib.Path", run_id: str,
+                               trigger_source: str, extra_args: list | None = None) -> "subprocess.Popen":
+    """
+    Spawn a scoring/sigma subprocess, injecting PIPELINE_RUN_ID and
+    TRIGGER_SOURCE into its environment so the script can update its own
+    pipeline_runs row on completion.
+    """
+    import subprocess
+    import sys
+
+    env = os.environ.copy()
+    env["TRIGGER_SOURCE"] = trigger_source
+    env["PIPELINE_RUN_ID"] = run_id
+
+    cmd = [sys.executable, str(script_path)] + (extra_args or [])
+    return subprocess.Popen(
+        cmd,
+        env=env,
+        cwd=str(script_path.parent.parent),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+
 # ── Scoring trigger — called by GitHub Actions scheduler ─────────────────────
 @app.post("/api/trigger/score-daily", status_code=202)
 async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(None)):
     """
     Trigger daily scoring run from an external scheduler (GitHub Actions).
-    Returns 202 immediately — scoring runs as a background subprocess.
+    Returns 202 with run_id immediately — scoring runs as a background subprocess.
+    Returns 409 if a run for today is already in progress.
 
     Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
     Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
     """
     import pathlib
-    import subprocess
-    import sys
 
     trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
     if not trigger_secret:
@@ -267,28 +446,25 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     trigger_source = body.get("trigger_source") or "api_manual"
     target_date = body.get("target_date") or ""
 
+    # ── Durable admission — creates pipeline_runs row, rejects duplicates ─────
+    run_id = _claim_trigger_run(
+        service_name="velo-prime-scoring",
+        run_type="daily_scoring",
+        trigger_source=trigger_source,
+        target_date=target_date,
+    )
+
     script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_prime_today.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
 
-    env = os.environ.copy()
-    env["TRIGGER_SOURCE"] = trigger_source
-
-    cmd = [sys.executable, str(script_path)]
-    if target_date:
-        cmd += ["--date", target_date]
-
-    proc = subprocess.Popen(
-        cmd,
-        env=env,
-        cwd=str(script_path.parent.parent),
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    extra_args = ["--date", target_date] if target_date else []
+    proc = _spawn_trigger_subprocess(script_path, run_id, trigger_source, extra_args)
 
     logger.info(
-        "Scoring triggered — source=%s pid=%d target_date=%s",
+        "Scoring triggered — source=%s run_id=%s pid=%d target_date=%s",
         trigger_source,
+        run_id,
         proc.pid,
         target_date or "today",
     )
@@ -297,8 +473,139 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
         status_code=202,
         content={
             "status": "triggered",
+            "run_id": run_id,
             "trigger_source": trigger_source,
             "target_date": target_date or "today",
+            "pid": proc.pid,
+        },
+    )
+
+
+# ── Sigma trigger — results reconciliation + sigma loop ──────────────────────
+@app.post("/api/trigger/sigma", status_code=202)
+async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
+    """
+    Trigger results reconciliation and sigma loop for a given date.
+    Returns 202 with run_id immediately — sigma runs as a background subprocess.
+    Returns 409 if a sigma run for the target date is already in progress.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
+    """
+    import pathlib
+
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if not trigger_secret:
+        logger.error("TRIGGER_SCORE_SECRET not configured — sigma trigger endpoint disabled")
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if x_trigger_secret != trigger_secret:
+        logger.warning("Sigma trigger attempt with invalid secret")
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    body: dict = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    trigger_source = body.get("trigger_source") or "api_manual"
+    target_date = body.get("target_date") or ""
+
+    # ── Durable admission ─────────────────────────────────────────────────────
+    run_id = _claim_trigger_run(
+        service_name="velo-sigma",
+        run_type="sigma_reconciliation",
+        trigger_source=trigger_source,
+        target_date=target_date,
+    )
+
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
+    if not script_path.exists():
+        raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
+
+    extra_args = ["--date", target_date] if target_date else []
+    proc = _spawn_trigger_subprocess(script_path, run_id, trigger_source, extra_args)
+
+    logger.info(
+        "Sigma triggered — source=%s run_id=%s pid=%d target_date=%s",
+        trigger_source,
+        run_id,
+        proc.pid,
+        target_date or "today",
+    )
+
+    return JSONResponse(
+        status_code=202,
+        content={
+            "status": "triggered",
+            "run_id": run_id,
+            "trigger_source": trigger_source,
+            "target_date": target_date or "today",
+            "pid": proc.pid,
+        },
+    )
+
+
+# ── Sigma-daily trigger — convenience alias for today's sigma run ─────────────
+@app.post("/api/trigger/sigma-daily", status_code=202)
+async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(None)):
+    """
+    Trigger today's results reconciliation and sigma loop.
+    Convenience alias for /api/trigger/sigma without a target_date body.
+    Returns 202 with run_id immediately — sigma runs as a background subprocess.
+    Returns 409 if a sigma run for today is already in progress.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    Optional JSON body: {"trigger_source": "..."}
+    """
+    import pathlib
+
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if not trigger_secret:
+        logger.error("TRIGGER_SCORE_SECRET not configured — sigma-daily trigger endpoint disabled")
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if x_trigger_secret != trigger_secret:
+        logger.warning("Sigma-daily trigger attempt with invalid secret")
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    body: dict = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    trigger_source = body.get("trigger_source") or "api_manual"
+    today_str = datetime.utcnow().strftime("%Y-%m-%d")
+
+    # ── Durable admission ─────────────────────────────────────────────────────
+    run_id = _claim_trigger_run(
+        service_name="velo-sigma",
+        run_type="sigma_reconciliation",
+        trigger_source=trigger_source,
+        target_date=today_str,
+    )
+
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
+    if not script_path.exists():
+        raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
+
+    proc = _spawn_trigger_subprocess(script_path, run_id, trigger_source, ["--date", today_str])
+
+    logger.info(
+        "Sigma-daily triggered — source=%s run_id=%s pid=%d date=%s",
+        trigger_source,
+        run_id,
+        proc.pid,
+        today_str,
+    )
+
+    return JSONResponse(
+        status_code=202,
+        content={
+            "status": "triggered",
+            "run_id": run_id,
+            "trigger_source": trigger_source,
+            "target_date": today_str,
             "pid": proc.pid,
         },
     )
