@@ -79,6 +79,11 @@ def acquire_run_lock(db: Client, source_date: str) -> Optional[str]:
     SERVICE = "velo_sigma_closer"
     AGE_GATE_HOURS = 24
     now = datetime.now(timezone.utc)
+    existing_run_id = (os.getenv("PIPELINE_RUN_ID") or "").strip()
+
+    if existing_run_id:
+        log.info("Using pre-claimed pipeline run from trigger: %s", existing_run_id)
+        return existing_run_id
 
     existing = (
         db.table("pipeline_runs")

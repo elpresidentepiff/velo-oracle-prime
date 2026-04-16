@@ -21,15 +21,17 @@ import json
 import os
 import sys
 import urllib.request
+import urllib.error
+import uuid
 from datetime import date, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from dotenv import load_dotenv  # noqa: E402
+from app.core.runtime_env import load_optional_env_file, utc_now_iso  # noqa: E402
 
-load_dotenv(ROOT / ".env")
+load_optional_env_file(ROOT / ".env")
 
 from src.constants import (  # noqa: E402
     validate_outcome,
@@ -59,6 +61,64 @@ SB_HEADERS = {
     "Content-Type": "application/json",
     "Prefer": "return=minimal",
 }
+
+SIGMA_SERVICE = "velo-results-sigma"
+SIGMA_RUN_TYPE = "results_reconciliation_light"
+
+
+def _pipeline_request(method: str, path: str, data: dict | None = None) -> tuple[int, bytes]:
+    body = json.dumps(data).encode() if data is not None else None
+    req = urllib.request.Request(
+        f"{SB_URL}/rest/v1{path}",
+        data=body,
+        method=method,
+        headers={**SB_HEADERS, "Accept": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status, resp.read()
+    except urllib.error.HTTPError as exc:
+        return exc.code, exc.read() or b""
+    except Exception as exc:  # pragma: no cover
+        return 0, str(exc).encode()
+
+
+def _open_sigma_run(source_date: str) -> str | None:
+    existing_run_id = (os.getenv("PIPELINE_RUN_ID") or "").strip()
+    if existing_run_id:
+        return existing_run_id
+    if not SB_URL or not SB_KEY:
+        return None
+    run_id = str(uuid.uuid4())
+    status, _body = _pipeline_request(
+        "POST",
+        "/pipeline_runs",
+        {
+            "id": run_id,
+            "service_name": SIGMA_SERVICE,
+            "run_type": SIGMA_RUN_TYPE,
+            "source_date": source_date,
+            "run_state": "running",
+            "status": "TRIGGERED",
+            "trigger_source": os.getenv("TRIGGER_SOURCE", "manual") or "manual",
+            "started_at": utc_now_iso(),
+            "environment": os.getenv("RAILWAY_ENVIRONMENT", "production"),
+        },
+    )
+    return run_id if status in (200, 201) else None
+
+
+def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = None) -> None:
+    if not run_id or not SB_URL or not SB_KEY:
+        return
+    patch = {
+        "run_state": "completed",
+        "status": status,
+        "finished_at": utc_now_iso(),
+    }
+    if error:
+        patch["error_message"] = error[:500]
+    _pipeline_request("PATCH", f"/pipeline_runs?id=eq.{run_id}", patch)
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -132,6 +192,8 @@ def main():
     parser.add_argument("--date", default=None)
     args = parser.parse_args()
     race_date = args.date or TODAY
+    run_id = _open_sigma_run(race_date)
+    os.environ["_ACTIVE_SIGMA_RUN_ID"] = run_id or ""
 
     print(f"\nVELO RESULTS + SIGMA — {race_date}")
     print("=" * 60)
@@ -552,7 +614,7 @@ def main():
     # Schema: pattern_name (unique), description, confidence_level (numeric),
     #         first_observed, last_observed, is_active
     print("\nSTEP 7: Learned patterns")
-    now_iso = datetime.utcnow().isoformat()
+    now_iso = utc_now_iso()
     patterns_saved = 0
     for r in all_matched:
         if r["outcome"] == "WIN" and r["velo_prime_prob"] >= 0.25:
@@ -647,7 +709,7 @@ def main():
         bankroll_after = round(current_bankroll + pl, 2)
         current_bankroll = bankroll_after
 
-        placed_at = vmeta.get("generated_at") or datetime.utcnow().isoformat() + "Z"
+        placed_at = vmeta.get("generated_at") or utc_now_iso()
 
         # confidence_level stores the verdict label as a numeric proxy:
         #   high → 1.0 | normal → 0.5 | low → 0.25
@@ -672,7 +734,7 @@ def main():
             "confidence_level": conf_numeric,
             "reasoning": f"velo_prime_v1 | tier={tier} | conf={conf_label} | prob={row['velo_prime_prob']:.4f} | outcome={row['outcome']} | sp={pred_sp}",
             "placed_at": placed_at,
-            "settled_at": datetime.utcnow().isoformat() + "Z",
+            "settled_at": utc_now_iso(),
         }
         if sb_upsert("/betting_ledger", ledger_row, "race_id"):
             ledger_ok += 1
@@ -783,7 +845,15 @@ def main():
     print(f"  Miss classes: {miss_classes}")
     print(f"  Sigma note:   {sigma_note}")
     print(f"  Supabase:     sigma_audits={sigma_ok} learned_patterns={patterns_saved}")
+    _close_sigma_run(run_id, status="PASS")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        _close_sigma_run((os.getenv("_ACTIVE_SIGMA_RUN_ID") or "").strip() or None, status="FAIL", error="script exited before successful completion")
+        raise
+    except Exception as exc:
+        _close_sigma_run((os.getenv("_ACTIVE_SIGMA_RUN_ID") or "").strip() or None, status="FAIL", error=str(exc))
+        raise
