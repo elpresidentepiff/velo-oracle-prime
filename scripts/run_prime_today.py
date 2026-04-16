@@ -292,6 +292,7 @@ def _apply_tie_v3_gate(
 
     Does NOT alter velo_prime_prob or ensemble ranking.
     """
+<<<<<<< HEAD
     # ── PLOT UPGRADE LOGIC ──────────────────────────────────────────────────
     # Extract PDF intel from the 'top' horse (attached earlier in main loop)
     # This makes the PDF intelligence a PRIMARY decision factor.
@@ -311,6 +312,8 @@ def _apply_tie_v3_gate(
             tier = "B"
             reasons.append(f"PLOT_UPGRADE:INTENT({plot_score:.2f}|OR:{or_delta})")
 
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
     try:
         from src.intelligence.tie_v3_gate import (
             MIN_SIGNALS_FOR_UPGRADE,
@@ -516,6 +519,7 @@ _SB_HDRS = {
     "Accept": "application/json",
 }
 
+<<<<<<< HEAD
 def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
     """Attach RPDC tags to the top pick from an already loaded row."""
     if not row:
@@ -537,6 +541,49 @@ def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
         top["rpdc_primary_tag"] = tags[0]
     else:
         top["rpdc_primary_tag"] = None
+=======
+def _attach_rpdc(top: dict, race_id: str) -> None:
+    """Look up RPDC tags for the top pick and attach as observability fields.
+    Never raises — failures are explicit in rpdc_lookup_status."""
+    horse_id = top.get("horse_id") or top.get("predicted_id", "")
+    if not horse_id or not race_id or not _SB_URL:
+        _rpdc_defaults(top, status="unavailable")
+        return
+    try:
+        url = (
+            f"{_SB_URL}/rest/v1/runner_release_candidates"
+            f"?horse_id=eq.{horse_id}&race_id=eq.{race_id}&order=generated_at.desc&limit=2"
+        )
+        req = urllib.request.Request(url, headers=_SB_HDRS)
+        with urllib.request.urlopen(req, timeout=5) as r:
+            rows = json.loads(r.read().decode())
+        if rows:
+            row = rows[0]
+            tags = row.get("rpdc_tags") or []
+            if len(rows) > 1:
+                top["rpdc_lookup_status"] = "ambiguous_latest"
+                top["rpdc_lookup_detail"] = f"{len(rows)} rows matched; used newest by generated_at"
+                log.warning("RPDC lookup ambiguous for race_id=%s horse_id=%s; using newest generated_at row", race_id, horse_id)
+            else:
+                top["rpdc_lookup_status"] = "attached"
+                top["rpdc_lookup_detail"] = None
+            top["rpdc_release_score"]    = row.get("rpdc_release_score", 0)
+            top["rpdc_cash_window_flag"] = bool(row.get("rpdc_cash_window_flag", False))
+            top["rpdc_tag_count"]        = int(row.get("rpdc_tag_count", 0))
+            top["rpdc_tags"]             = tags
+            # Primary tag = first CASH_WINDOW if present, else highest-scored tag
+            if "CASH_WINDOW" in tags:
+                top["rpdc_primary_tag"] = "CASH_WINDOW"
+            elif tags:
+                top["rpdc_primary_tag"] = tags[0]
+            else:
+                top["rpdc_primary_tag"] = None
+        else:
+            _rpdc_defaults(top, status="no_data")
+    except Exception as exc:
+        log.warning("RPDC lookup failed for race_id=%s horse_id=%s: %s", race_id, horse_id, exc)
+        _rpdc_defaults(top, status="lookup_failed", detail=str(exc))
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
 
 
 def _rpdc_defaults(top: dict, *, status: str, detail: str | None = None) -> None:
@@ -1119,6 +1166,7 @@ def main():
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
+<<<<<<< HEAD
                 
                 # Attach RPDC data to top pick (from our pre-fetched race_rpdc)
                 _attach_rpdc_from_row(top, race_rpdc.get(top.get("horse_id")))
@@ -1167,6 +1215,14 @@ def main():
                     f"  exec={top.get('execution_allowed','?')}"
                     f"  reasons={top.get('router_reasons','?')}"
                 )
+=======
+                # RPDC observability — passive lookup, never blocks scoring
+                _attach_rpdc(top, race.get("race_id", ""))
+                scored.append((race, preds, tier, reasons))
+                gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
+                arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
+                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")
@@ -1201,6 +1257,7 @@ def main():
     persist_map = {}  # race_id -> bool (honesty gate)
 
     for race, preds, tier, _reasons in scored:
+<<<<<<< HEAD
         rid = race.get("race_id")
         if not persistence_enabled:
             persist_ok += 1
@@ -1211,6 +1268,12 @@ def main():
         persist_map[rid] = success
         
         if success:
+=======
+        if not persistence_enabled:
+            persist_ok += 1
+            continue
+        if persist_race_predictions(race, preds, decision_tier=tier):
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
             persist_ok += 1
         else:
             persist_fail += 1

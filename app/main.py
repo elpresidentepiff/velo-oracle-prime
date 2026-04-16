@@ -23,6 +23,9 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.runtime_env import utc_now, utc_now_iso, resolve_supabase_url, resolve_supabase_service_key
 
+from app.core.config import settings
+from app.core.runtime_env import utc_now, utc_now_iso
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,7 +35,10 @@ _sentient_state: dict | None = None
 
 _SOFT_SCHEMA_RUNTIME_NAMES = {"local", "dev", "development", "test", "testing"}
 _TRIGGER_AGE_GATE_HOURS = 24
+<<<<<<< HEAD
 _PIPELINE_TRIGGER_SOURCES = {"manual", "github_actions_scheduled", "github_actions_manual", "api_manual"}
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
 _TRIGGER_SERVICE_CONFIG = {
     "score_daily": {
         "service_name": "velo-prime-scoring",
@@ -49,6 +55,7 @@ _TRIGGER_SERVICE_CONFIG = {
 }
 
 
+<<<<<<< HEAD
 def _normalize_pipeline_trigger_source(trigger_source: str) -> str:
     """Map arbitrary ingress labels onto the pipeline_runs.trigger_source enum."""
     raw = (trigger_source or "").strip()
@@ -63,6 +70,8 @@ def _normalize_pipeline_trigger_source(trigger_source: str) -> str:
     return "api_manual"
 
 
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
 def _spawn_trigger_subprocess(
     *,
     script_path: pathlib.Path,
@@ -102,7 +111,12 @@ def _spawn_trigger_subprocess(
 
 def _schema_verification_mode() -> str:
     runtime = (
+<<<<<<< HEAD
         os.getenv("API_ENV")
+=======
+        settings.API_ENV
+        or os.getenv("API_ENV")
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
         or os.getenv("ENV")
         or os.getenv("RAILWAY_ENVIRONMENT")
         or "local"
@@ -176,6 +190,7 @@ def _patch_pipeline_run(run_id: str, patch: dict) -> None:
         raise RuntimeError(f"pipeline_runs patch failed HTTP {status}: {body.decode(errors='replace')[:200]}")
 
 
+<<<<<<< HEAD
 def _write_reject_event(
     *,
     service_name: str,
@@ -207,13 +222,18 @@ def _write_reject_event(
         logger.warning("trigger_reject_events write raised: %s", exc)
 
 
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
 def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, trigger_source: str) -> dict:
     sb_url, sb_key = _pipeline_run_api_config()
     if not sb_url or not sb_key:
         raise HTTPException(status_code=503, detail="Trigger requires durable pipeline_runs access")
 
     now = datetime.now(UTC)
+<<<<<<< HEAD
     normalized_trigger_source = _normalize_pipeline_trigger_source(trigger_source)
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
     status, body = _pipeline_request(
         "GET",
         (
@@ -240,6 +260,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
             )
             logger.warning("Trigger age-gate closed stale run %s for %s/%s", row["id"], service_name, source_date)
         else:
+<<<<<<< HEAD
             _write_reject_event(
                 service_name=service_name,
                 source_date=source_date,
@@ -247,6 +268,8 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
                 trigger_source=normalized_trigger_source,
                 rejection_reason=f"run_already_running (age={age_hours:.1f}h)",
             )
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
             return {
                 "status": "duplicate",
                 "run_id": row["id"],
@@ -260,8 +283,13 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         "run_type": run_type,
         "source_date": source_date,
         "run_state": "running",
+<<<<<<< HEAD
         "status": None,  # Terminal truth only — in-flight rows stay NULL until close
         "trigger_source": normalized_trigger_source,
+=======
+        "status": "TRIGGERED",
+        "trigger_source": trigger_source,
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
         "started_at": now.isoformat().replace("+00:00", "Z"),
         "environment": os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("ENV") or os.getenv("API_ENV") or "production",
         "error_message": None,
@@ -280,6 +308,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         )
         dup_rows = _parse_pipeline_rows(dup_body) if dup_status in (200, 206) else []
         if dup_rows:
+<<<<<<< HEAD
             _write_reject_event(
                 service_name=service_name,
                 source_date=source_date,
@@ -287,6 +316,8 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
                 trigger_source=normalized_trigger_source,
                 rejection_reason="run_already_running (race condition on insert)",
             )
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
             return {"status": "duplicate", "run_id": dup_rows[0]["id"], "detail": "run already running"}
     raise HTTPException(status_code=503, detail=f"Unable to claim durable trigger run: HTTP {status}")
 
@@ -299,9 +330,13 @@ async def _verify_schema_at_startup() -> None:
 
     Fatal (raises RuntimeError):
       • race_truth_audits table missing  — truth loop cannot write
+<<<<<<< HEAD
 
     Non-fatal (warning only):
       • shadow_verdicts table missing    — shadow lab optional
+=======
+      • shadow_verdicts table missing    — shadow lab cannot write
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
 
     Fatal (raises RuntimeError) if velo_verdicts is reachable but required
     columns are absent:
@@ -351,8 +386,13 @@ async def _verify_schema_at_startup() -> None:
 
     errors: list[str] = []
 
+<<<<<<< HEAD
     # ── 1. Required tables (fatal if missing) ─────────────────────────────────
     for table in ("race_truth_audits",):
+=======
+    # ── 1. Required tables ────────────────────────────────────────────────────
+    for table in ("race_truth_audits", "shadow_verdicts"):
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
         status, body = _sb_get(f"{table}?select=id&limit=0")
         if status == 200:
             logger.info("[startup:schema] table %s — PRESENT", table)
@@ -374,6 +414,7 @@ async def _verify_schema_at_startup() -> None:
             )
             logger.error("[startup:schema] MISSING table %s — %s", table, msg[:200])
 
+<<<<<<< HEAD
     # ── 1b. Optional tables (non-fatal if missing) ────────────────────────────
     for table in ("shadow_verdicts",):
         status, body = _sb_get(f"{table}?select=id&limit=0")
@@ -390,6 +431,8 @@ async def _verify_schema_at_startup() -> None:
                 table, body.decode(errors="replace")[:200],
             )
 
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
     # ── 2. Required columns in velo_verdicts ──────────────────────────────────
     REQUIRED_COLS = "active_components,top_horse_readiness_state,race_archetype,g_shadow_multiplier"
     status, body = _sb_get(f"velo_verdicts?select={REQUIRED_COLS}&limit=1")
@@ -496,11 +539,14 @@ async def lifespan(app: FastAPI):
                 _sec.get("unchecked_objects"),
                 _sec.get("error_detail"),
             )
+<<<<<<< HEAD
         elif _sec.get("status") == "skipped":
             logger.info(
                 "[startup] Security check skipped — %s",
                 _sec.get("error_detail"),
             )
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
         elif not _sec.get("verified"):
             logger.critical(
                 "[startup] SECURITY VERIFICATION INCOMPLETE - "
@@ -533,8 +579,13 @@ app = FastAPI(
 # CORS Middleware - CRITICAL for Cloudflare Worker
 app.add_middleware(
     CORSMiddleware,
+<<<<<<< HEAD
     allow_origins=["*"],
     allow_credentials=True,
+=======
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
     allow_methods=["*"],  # Allow all methods (GET, POST, OPTIONS, etc.)
     allow_headers=["*"],  # Allow all headers
 )
@@ -556,7 +607,11 @@ if _STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
 # Environment
+<<<<<<< HEAD
 ENV = os.getenv("API_ENV", "production")
+=======
+ENV = settings.API_ENV
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
 API_KEY = os.getenv("API_KEY", "")
 
 
@@ -799,6 +854,198 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
             "run_id": run_id,
             "pid": proc.pid,
             "log_path": str(log_path),
+<<<<<<< HEAD
+=======
+        },
+    )
+
+
+# ── Sigma trigger — called by GitHub Actions at 21:00 UTC ────────────────────
+# /api/trigger/sigma      → run_results_sigma.py  (lightweight stdlib reconciliation)
+# /api/trigger/sigma-daily → close_sigma_loops.py (full reconciliation + Zep + G feed)
+@app.post("/api/trigger/sigma", status_code=202)
+async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
+    """
+    Trigger sigma reconciliation via run_results_sigma.py.
+    Returns 202 immediately — sigma runs as a background subprocess.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
+    """
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if not trigger_secret:
+        logger.error("TRIGGER_SCORE_SECRET not configured — sigma trigger disabled")
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if x_trigger_secret != trigger_secret:
+        logger.warning("Sigma trigger attempt with invalid secret")
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    body: dict = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    trigger_source = body.get("trigger_source") or "api_manual"
+    target_date = body.get("target_date") or ""
+
+    source_date = target_date or utc_now().strftime("%Y-%m-%d")
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
+    if not script_path.exists():
+        raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
+
+    claim = _claim_trigger_run(
+        service_name=_TRIGGER_SERVICE_CONFIG["sigma"]["service_name"],
+        run_type=_TRIGGER_SERVICE_CONFIG["sigma"]["run_type"],
+        source_date=source_date,
+        trigger_source=trigger_source,
+    )
+    if claim["status"] == "duplicate":
+        return JSONResponse(
+            status_code=409,
+            content={
+                "status": "already_running",
+                "service": "sigma",
+                "trigger_source": trigger_source,
+                "target_date": source_date,
+                "run_id": claim["run_id"],
+                "detail": claim.get("detail"),
+            },
+        )
+    run_id = claim["run_id"]
+    try:
+        proc, log_path = _spawn_trigger_subprocess(
+            script_path=script_path,
+            trigger_source=trigger_source,
+            target_date=target_date,
+            service_name="sigma",
+            run_id=run_id,
+        )
+    except Exception as exc:
+        _patch_pipeline_run(
+            run_id,
+            {
+                "run_state": "completed",
+                "status": "FAIL",
+                "finished_at": utc_now_iso(),
+                "error_message": f"trigger spawn failed: {exc}",
+            },
+        )
+        raise
+
+    logger.info(
+        "Sigma triggered — source=%s pid=%d target_date=%s log=%s",
+        trigger_source,
+        proc.pid,
+        target_date or "today",
+        log_path,
+    )
+
+    return JSONResponse(
+        status_code=202,
+        content={
+            "status": "triggered",
+            "service": "sigma",
+            "trigger_source": trigger_source,
+            "target_date": source_date,
+            "run_id": run_id,
+            "pid": proc.pid,
+            "log_path": str(log_path),
+        },
+    )
+
+
+@app.post("/api/trigger/sigma-daily", status_code=202)
+async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(None)):
+    """
+    Trigger full sigma reconciliation via close_sigma_loops.py.
+    Writes race_results, runner_results, velo_post_race_reviews, sigma_audits,
+    learned_patterns, Playbook G doctrine feed, Zep graph memory.
+    Returns 202 immediately — sigma runs as a background subprocess.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    Optional JSON body: {"trigger_source": "...", "target_date": "YYYY-MM-DD"}
+    """
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if not trigger_secret:
+        logger.error("TRIGGER_SCORE_SECRET not configured — sigma trigger endpoint disabled")
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if x_trigger_secret != trigger_secret:
+        logger.warning("Sigma trigger attempt with invalid secret")
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    body: dict = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    trigger_source = body.get("trigger_source") or "api_manual"
+    target_date = body.get("target_date") or ""
+
+    source_date = target_date or utc_now().strftime("%Y-%m-%d")
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "close_sigma_loops.py"
+    if not script_path.exists():
+        raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
+
+    claim = _claim_trigger_run(
+        service_name=_TRIGGER_SERVICE_CONFIG["sigma_daily"]["service_name"],
+        run_type=_TRIGGER_SERVICE_CONFIG["sigma_daily"]["run_type"],
+        source_date=source_date,
+        trigger_source=trigger_source,
+    )
+    if claim["status"] == "duplicate":
+        return JSONResponse(
+            status_code=409,
+            content={
+                "status": "already_running",
+                "service": "sigma-daily",
+                "trigger_source": trigger_source,
+                "target_date": source_date,
+                "run_id": claim["run_id"],
+                "detail": claim.get("detail"),
+            },
+        )
+    run_id = claim["run_id"]
+    try:
+        proc, log_path = _spawn_trigger_subprocess(
+            script_path=script_path,
+            trigger_source=trigger_source,
+            target_date=target_date,
+            service_name="sigma_daily",
+            run_id=run_id,
+        )
+    except Exception as exc:
+        _patch_pipeline_run(
+            run_id,
+            {
+                "run_state": "completed",
+                "status": "FAIL",
+                "finished_at": utc_now_iso(),
+                "error_message": f"trigger spawn failed: {exc}",
+            },
+        )
+        raise
+
+    logger.info(
+        "Sigma reconciliation triggered — source=%s pid=%d target_date=%s log=%s",
+        trigger_source,
+        proc.pid,
+        target_date or "today",
+        log_path,
+    )
+
+    return JSONResponse(
+        status_code=202,
+        content={
+            "status": "triggered",
+            "service": "sigma-daily",
+            "trigger_source": trigger_source,
+            "target_date": source_date,
+            "run_id": run_id,
+            "pid": proc.pid,
+            "log_path": str(log_path),
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
         },
     )
 
@@ -1197,6 +1444,7 @@ async def root():
 async def api_status(authorized: bool = Depends(verify_api_key)):
     """API status endpoint"""
     return {"status": "operational", "version": "v1.0", "timestamp": utc_now_iso()}
+<<<<<<< HEAD
 
 
 @app.get("/api/v1/build-fingerprint")
@@ -1232,6 +1480,8 @@ async def build_fingerprint():
         "timestamp": utc_now_iso(),
     }
 
+=======
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
 
 
 # Prediction endpoints
@@ -1552,7 +1802,11 @@ async def server_error_handler(request, exc):
     logger.error(f"Server error: {exc}", exc_info=True)
     detail = str(exc) if os.getenv("API_ENV", "production") != "production" else "Internal server error"
     return JSONResponse(
+<<<<<<< HEAD
         status_code=500, content={"error": detail, "timestamp": utc_now_iso()}
+=======
+        status_code=500, content={"error": "Internal server error", "timestamp": utc_now_iso()}
+>>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
     )
 
 
