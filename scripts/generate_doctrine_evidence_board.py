@@ -3,6 +3,11 @@ VÉLØ Doctrine Evidence Board
 ============================
 Read-only sidecar report for the Doctrine Layer.
 
+Doctrine review clock:
+  - sigma_audits.created_at
+  - truth and RPDC rows are supporting evidence mapped onto the reviewed sigma set
+  - doctrine_event_id is preferred when present; legacy keys are fallback only
+
 Sections:
   - live results
   - shadow results
@@ -25,15 +30,40 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 import requests
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).parent.parent / ".env")
+from app.runtime.doctrine_sidecar_common import (
+    chunked,
+    contradiction_type,
+    dedupe_latest_rpdc_rows,
+    dedupe_latest_sigma_rows,
+    dedupe_latest_truth_rows,
+    doctrine_status_for_type,
+    outcome_rate_rows,
+    rpdc_coverage_metrics,
+    rpdc_for_sigma_row,
+    rpdc_selection_lookup,
+    review_race_ids,
+    sp_bucket,
+    surface_bucket,
+    top_counts,
+    truth_for_sigma_row,
+    truth_lookup,
+    is_weak_a,
+)
+
+load_dotenv(ROOT / ".env")
 
 
 class DoctrineRegistryMissing(RuntimeError):
@@ -118,7 +148,8 @@ def _fetch_sigma_audits(target_date: str) -> list[dict]:
     start_ts = f"{target_date}T00:00:00+00:00"
     end_ts = f"{target_date}T23:59:59+00:00"
     sql_rows = _management_sql(f"""
-        SELECT race_id, decision_tier, confidence_level, verdict_score, outcome, top_pick_position, miss_reason, track, created_at
+        SELECT race_id, doctrine_event_id, decision_tier, confidence_level, verdict_score, outcome, top_pick_position, miss_reason, track, created_at
+               , horse_id
         FROM sigma_audits
         WHERE created_at >= '{start_ts}' AND created_at <= '{end_ts}' AND outcome IS NOT NULL
         ORDER BY created_at ASC
@@ -127,7 +158,7 @@ def _fetch_sigma_audits(target_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "sigma_audits",
-        "race_id,decision_tier,confidence_level,verdict_score,outcome,top_pick_position,miss_reason,track,created_at",
+        "race_id,doctrine_event_id,decision_tier,confidence_level,verdict_score,outcome,top_pick_position,miss_reason,track,created_at,horse_id",
         [f"created_at=gte.{start_ts}", f"created_at=lte.{end_ts}", "outcome=not.is.null"],
     )
 
@@ -136,7 +167,8 @@ def _fetch_sigma_audits_window(start_date: str, end_date: str) -> list[dict]:
     start_ts = f"{start_date}T00:00:00+00:00"
     end_ts = f"{end_date}T23:59:59+00:00"
     sql_rows = _management_sql(f"""
-        SELECT race_id, decision_tier, confidence_level, verdict_score, outcome, top_pick_position, miss_reason, track, created_at
+        SELECT race_id, doctrine_event_id, decision_tier, confidence_level, verdict_score, outcome, top_pick_position, miss_reason, track, created_at
+               , horse_id
         FROM sigma_audits
         WHERE created_at >= '{start_ts}' AND created_at <= '{end_ts}' AND outcome IS NOT NULL
         ORDER BY created_at ASC
@@ -145,14 +177,14 @@ def _fetch_sigma_audits_window(start_date: str, end_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "sigma_audits",
-        "race_id,decision_tier,confidence_level,verdict_score,outcome,top_pick_position,miss_reason,track,created_at",
+        "race_id,doctrine_event_id,decision_tier,confidence_level,verdict_score,outcome,top_pick_position,miss_reason,track,created_at,horse_id",
         [f"created_at=gte.{start_ts}", f"created_at=lte.{end_ts}", "outcome=not.is.null"],
     )
 
 
 def _fetch_race_truth_audits(target_date: str) -> list[dict]:
     sql_rows = _management_sql(f"""
-        SELECT race_id, race_date, result_outcome, blocker_fired, blocker_type, blocker_helped, blocker_hurt, assigned_archetype
+        SELECT race_id, doctrine_event_id, race_date, generated_at, result_outcome, blocker_fired, blocker_type, blocker_helped, blocker_hurt, assigned_archetype
         FROM race_truth_audits
         WHERE race_date = '{target_date}'
     """)
@@ -160,14 +192,14 @@ def _fetch_race_truth_audits(target_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "race_truth_audits",
-        "race_id,race_date,result_outcome,blocker_fired,blocker_type,blocker_helped,blocker_hurt,assigned_archetype",
+        "race_id,doctrine_event_id,race_date,generated_at,result_outcome,blocker_fired,blocker_type,blocker_helped,blocker_hurt,assigned_archetype",
         [f"race_date=eq.{target_date}"],
     )
 
 
 def _fetch_race_truth_audits_window(start_date: str, end_date: str) -> list[dict]:
     sql_rows = _management_sql(f"""
-        SELECT race_id, race_date, result_outcome, blocker_fired, blocker_type, blocker_helped, blocker_hurt, assigned_archetype, actual_winner_sp
+        SELECT race_id, doctrine_event_id, race_date, generated_at, result_outcome, blocker_fired, blocker_type, blocker_helped, blocker_hurt, assigned_archetype, actual_winner_sp
         FROM race_truth_audits
         WHERE race_date >= '{start_date}' AND race_date <= '{end_date}'
     """)
@@ -175,14 +207,14 @@ def _fetch_race_truth_audits_window(start_date: str, end_date: str) -> list[dict
         return sql_rows
     return _rest_fetch(
         "race_truth_audits",
-        "race_id,race_date,result_outcome,blocker_fired,blocker_type,blocker_helped,blocker_hurt,assigned_archetype,actual_winner_sp",
+        "race_id,doctrine_event_id,race_date,generated_at,result_outcome,blocker_fired,blocker_type,blocker_helped,blocker_hurt,assigned_archetype,actual_winner_sp",
         [f"race_date=gte.{start_date}", f"race_date=lte.{end_date}"],
     )
 
 
 def _fetch_today_rpdc_tags(target_date: str) -> list[dict]:
     sql_rows = _management_sql(f"""
-        SELECT race_id, horse_id, tag, tag_value, tag_strength
+        SELECT race_id, doctrine_event_id, horse_id, tag, tag_value, tag_strength
         FROM today_rpdc_tags
         WHERE run_date = '{target_date}'
     """)
@@ -190,14 +222,14 @@ def _fetch_today_rpdc_tags(target_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "today_rpdc_tags",
-        "race_id,horse_id,tag,tag_value,tag_strength",
+        "race_id,doctrine_event_id,horse_id,tag,tag_value,tag_strength",
         [f"run_date=eq.{target_date}"],
     )
 
 
 def _fetch_runner_release_candidates(target_date: str) -> list[dict]:
     sql_rows = _management_sql(f"""
-        SELECT race_id, horse_id, rpdc_cash_window_flag, rpdc_release_score, rpdc_tag_count
+        SELECT race_id, doctrine_event_id, horse_id, run_date, generated_at, rpdc_cash_window_flag, rpdc_release_score, rpdc_tag_count
         FROM runner_release_candidates
         WHERE run_date = '{target_date}'
     """)
@@ -205,14 +237,14 @@ def _fetch_runner_release_candidates(target_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "runner_release_candidates",
-        "race_id,horse_id,rpdc_cash_window_flag,rpdc_release_score,rpdc_tag_count",
+        "race_id,doctrine_event_id,horse_id,run_date,generated_at,rpdc_cash_window_flag,rpdc_release_score,rpdc_tag_count",
         [f"run_date=eq.{target_date}"],
     )
 
 
 def _fetch_runner_release_candidates_window(start_date: str, end_date: str) -> list[dict]:
     sql_rows = _management_sql(f"""
-        SELECT race_id, horse_id, rpdc_cash_window_flag, rpdc_release_score, rpdc_tag_count
+        SELECT race_id, doctrine_event_id, horse_id, run_date, generated_at, rpdc_cash_window_flag, rpdc_release_score, rpdc_tag_count
         FROM runner_release_candidates
         WHERE run_date >= '{start_date}' AND run_date <= '{end_date}'
     """)
@@ -220,7 +252,7 @@ def _fetch_runner_release_candidates_window(start_date: str, end_date: str) -> l
         return sql_rows
     return _rest_fetch(
         "runner_release_candidates",
-        "race_id,horse_id,rpdc_cash_window_flag,rpdc_release_score,rpdc_tag_count",
+        "race_id,doctrine_event_id,horse_id,run_date,generated_at,rpdc_cash_window_flag,rpdc_release_score,rpdc_tag_count",
         [f"run_date=gte.{start_date}", f"run_date=lte.{end_date}"],
     )
 
@@ -239,6 +271,98 @@ def _fetch_doctrine_rows() -> list[dict]:
     )
 
 
+def _sql_in_list(values: list[str]) -> str:
+    return ",".join("'" + value.replace("'", "''") + "'" for value in values)
+
+
+def _fetch_race_truth_for_sigma_rows(sigma_rows: list[dict[str, Any]]) -> list[dict]:
+    race_ids = review_race_ids(sigma_rows)
+    if not race_ids:
+        return []
+    select_sql = (
+        "race_id, doctrine_event_id, race_date, generated_at, result_outcome, blocker_fired, blocker_type, "
+        "blocker_helped, blocker_hurt, assigned_archetype, actual_winner_sp"
+    )
+    select_rest = (
+        "race_id,doctrine_event_id,race_date,generated_at,result_outcome,blocker_fired,blocker_type,"
+        "blocker_helped,blocker_hurt,assigned_archetype,actual_winner_sp"
+    )
+    rows: list[dict] = []
+    for race_chunk in chunked(race_ids):
+        sql_rows = _management_sql(
+            f"SELECT {select_sql} FROM race_truth_audits WHERE race_id IN ({_sql_in_list(race_chunk)})"
+        )
+        if sql_rows is not None:
+            rows.extend(sql_rows)
+            continue
+        rows.extend(
+            _rest_fetch(
+                "race_truth_audits",
+                select_rest,
+                [f"race_id=in.({','.join(race_chunk)})"],
+            )
+        )
+    return dedupe_latest_truth_rows(rows)
+
+
+def _fetch_runner_release_for_sigma_rows(sigma_rows: list[dict[str, Any]]) -> list[dict]:
+    race_ids = review_race_ids(sigma_rows)
+    if not race_ids:
+        return []
+    select_sql = (
+        "race_id, doctrine_event_id, horse_id, run_date, generated_at, rpdc_cash_window_flag, "
+        "rpdc_release_score, rpdc_tag_count"
+    )
+    select_rest = (
+        "race_id,doctrine_event_id,horse_id,run_date,generated_at,rpdc_cash_window_flag,"
+        "rpdc_release_score,rpdc_tag_count"
+    )
+    rows: list[dict] = []
+    for race_chunk in chunked(race_ids):
+        sql_rows = _management_sql(
+            f"SELECT {select_sql} FROM runner_release_candidates WHERE race_id IN ({_sql_in_list(race_chunk)})"
+        )
+        if sql_rows is not None:
+            rows.extend(sql_rows)
+            continue
+        rows.extend(
+            _rest_fetch(
+                "runner_release_candidates",
+                select_rest,
+                [f"race_id=in.({','.join(race_chunk)})"],
+            )
+        )
+    return dedupe_latest_rpdc_rows(rows)
+
+
+def _fetch_rpdc_tags_for_sigma_rows(sigma_rows: list[dict[str, Any]], review_date: str) -> list[dict]:
+    # today_rpdc_tags has no generated_at. We map tags onto the sigma review set by race_id and
+    # constrain to the sigma review date as the nearest available RPDC clock.
+    race_ids = review_race_ids(sigma_rows)
+    if not race_ids:
+        return []
+    rows: list[dict] = []
+    for race_chunk in chunked(race_ids):
+        sql_rows = _management_sql(
+            f"""
+            SELECT race_id, doctrine_event_id, horse_id, run_date, tag, tag_value, tag_strength
+            FROM today_rpdc_tags
+            WHERE run_date = '{review_date}' AND race_id IN ({_sql_in_list(race_chunk)})
+            """
+        )
+        if sql_rows is not None:
+            rows.extend(sql_rows)
+            continue
+        rows.extend(
+            _rest_fetch(
+                "today_rpdc_tags",
+                "race_id,doctrine_event_id,horse_id,run_date,tag,tag_value,tag_strength",
+                [f"run_date=eq.{review_date}", f"race_id=in.({','.join(race_chunk)})"],
+            )
+        )
+    return rows
+
+
 def _md_table(headers: list[str], rows: list[list[object]]) -> list[str]:
     lines = [
         "| " + " | ".join(headers) + " |",
@@ -249,118 +373,40 @@ def _md_table(headers: list[str], rows: list[list[object]]) -> list[str]:
     return lines
 
 
-def _truth_by_race(rows: list[dict]) -> dict[str, dict]:
-    merged: dict[str, dict] = {}
-    for row in rows:
-        race_id = row.get("race_id")
-        if not race_id:
-            continue
-        current = merged.setdefault(
-            race_id,
-            {
-                "blocker_fired": False,
-                "blocker_type": None,
-                "blocker_hurt": False,
-                "blocker_helped": False,
-                "result_outcome": None,
-                "assigned_archetype": None,
-            },
-        )
-        current["blocker_fired"] = current["blocker_fired"] or bool(row.get("blocker_fired"))
-        current["blocker_hurt"] = current["blocker_hurt"] or bool(row.get("blocker_hurt"))
-        current["blocker_helped"] = current["blocker_helped"] or bool(row.get("blocker_helped"))
-        current["blocker_type"] = current["blocker_type"] or row.get("blocker_type")
-        current["result_outcome"] = current["result_outcome"] or row.get("result_outcome")
-        current["assigned_archetype"] = current["assigned_archetype"] or row.get("assigned_archetype")
-    return merged
-
-
-def _rpdc_by_race(rows: list[dict]) -> dict[str, dict]:
-    merged: dict[str, dict] = {}
-    for row in rows:
-        race_id = row.get("race_id")
-        if not race_id:
-            continue
-        current = merged.setdefault(race_id, {"has_cash_window": False, "max_rpdc_release_score": 0.0})
-        current["has_cash_window"] = current["has_cash_window"] or bool(row.get("rpdc_cash_window_flag"))
-        current["max_rpdc_release_score"] = max(current["max_rpdc_release_score"], float(row.get("rpdc_release_score") or 0))
-    return merged
-
-
-def _contradiction_type(sigma: dict, truth: dict, rpdc: dict) -> str | None:
-    verdict_score = float(sigma.get("verdict_score") or 0)
-    confidence_level = sigma.get("confidence_level") or ""
-    decision_tier = sigma.get("decision_tier")
-    top_pick_position = sigma.get("top_pick_position")
-    outcome = sigma.get("outcome")
-
-    if verdict_score >= 0.70 and truth.get("blocker_fired"):
-        return "strong_model_negative_doctrine"
-    if verdict_score < 0.40 and rpdc.get("has_cash_window"):
-        return "weak_model_strong_doctrine"
-    if truth.get("blocker_fired") and outcome == "WIN":
-        return "blocker_fired_horse_won"
-    if rpdc.get("has_cash_window") and confidence_level == "low":
-        return "rpdc_cash_window_low_model_confidence"
-    if decision_tier == "A" and (confidence_level == "low" or top_pick_position is None or int(top_pick_position) > 2):
-        return "a_tier_weak_place_support"
-    return None
-
-
-def _contradiction_count(sigma_rows: list[dict], truth_rows: list[dict], release_candidate_rows: list[dict]) -> int:
-    truth_map = _truth_by_race(truth_rows)
-    rpdc_map = _rpdc_by_race(release_candidate_rows)
+def _contradiction_count(
+    sigma_rows: list[dict],
+    truth_rows: list[dict],
+    release_candidate_rows: list[dict],
+    *,
+    lineage_stats: dict[str, int] | None = None,
+) -> int:
+    truth_map = truth_lookup(truth_rows)
+    rpdc_map = rpdc_selection_lookup(release_candidate_rows)
     return sum(
         1
-        for row in sigma_rows
-        if _contradiction_type(
+        for row in dedupe_latest_sigma_rows(sigma_rows)
+        if contradiction_type(
             row,
-            truth_map.get(row.get("race_id"), {}),
-            rpdc_map.get(row.get("race_id"), {"has_cash_window": False, "max_rpdc_release_score": 0.0}),
+            truth_for_sigma_row(row, truth_map, stats=lineage_stats),
+            rpdc_for_sigma_row(row, rpdc_map, stats=lineage_stats),
         )
     )
 
 
-def _is_weak_a(row: dict[str, Any]) -> bool:
-    top_pick_position = row.get("top_pick_position")
-    return row.get("decision_tier") == "A" and (
-        row.get("confidence_level") == "low"
-        or top_pick_position is None
-        or int(top_pick_position) > 2
-    )
-
-
-def _outcome_rate_rows(rows: list[dict[str, Any]]) -> list[object]:
-    total = len(rows)
-    if total == 0:
-        return [0, 0.0, 0.0, 0.0]
-    wins = sum(1 for row in rows if row.get("outcome") == "WIN")
-    placed = sum(1 for row in rows if row.get("outcome") == "PLACED")
-    misses = sum(1 for row in rows if row.get("outcome") == "MISS")
-    return [
-        total,
-        round(100 * wins / total, 1),
-        round(100 * placed / total, 1),
-        round(100 * misses / total, 1),
-    ]
-
-
-def _top_counts(values: list[str | None], limit: int = 3) -> str:
-    counts = Counter((value or "unknown") for value in values)
-    if not counts:
-        return "none"
-    return ", ".join(f"{key} ({count})" for key, count in counts.most_common(limit))
-
-
-def _weak_a_blocker_sections(sigma_rows: list[dict], truth_rows: list[dict]) -> dict[str, list[list[object]]]:
-    truth_map = _truth_by_race(truth_rows)
+def _weak_a_blocker_sections(
+    sigma_rows: list[dict],
+    truth_rows: list[dict],
+    *,
+    lineage_stats: dict[str, int] | None = None,
+) -> dict[str, list[list[object]]]:
+    truth_map = truth_lookup(truth_rows)
     with_blocker: list[dict[str, Any]] = []
     without_blocker: list[dict[str, Any]] = []
 
-    for row in sigma_rows:
-        if not _is_weak_a(row):
+    for row in dedupe_latest_sigma_rows(sigma_rows):
+        if not is_weak_a(row):
             continue
-        race_truth = truth_map.get(row.get("race_id"), {})
+        race_truth = truth_for_sigma_row(row, truth_map, stats=lineage_stats)
         enriched = {
             **row,
             "blocker_type": race_truth.get("blocker_type") or "none",
@@ -373,22 +419,19 @@ def _weak_a_blocker_sections(sigma_rows: list[dict], truth_rows: list[dict]) -> 
 
     blocker_type_split = Counter(row.get("blocker_type") or "none" for row in with_blocker)
     return {
-        "summary": [
-            ["weak_a_no_blocker", *_outcome_rate_rows(without_blocker)],
-            ["weak_a_with_blocker", *_outcome_rate_rows(with_blocker)],
-        ],
+        "summary": [["weak_a_no_blocker", *outcome_rate_rows(without_blocker)], ["weak_a_with_blocker", *outcome_rate_rows(with_blocker)]],
         "blocker_types": [[blocker_type, count] for blocker_type, count in blocker_type_split.most_common()] or [["none", 0]],
         "top_miss_reasons": [
-            ["weak_a_no_blocker", _top_counts([row.get("miss_reason") for row in without_blocker if row.get("outcome") == "MISS"])],
-            ["weak_a_with_blocker", _top_counts([row.get("miss_reason") for row in with_blocker if row.get("outcome") == "MISS"])],
+            ["weak_a_no_blocker", top_counts([row.get("miss_reason") for row in without_blocker if row.get("outcome") == "MISS"])],
+            ["weak_a_with_blocker", top_counts([row.get("miss_reason") for row in with_blocker if row.get("outcome") == "MISS"])],
         ],
         "top_tracks": [
-            ["weak_a_no_blocker", _top_counts([row.get("track") for row in without_blocker])],
-            ["weak_a_with_blocker", _top_counts([row.get("track") for row in with_blocker])],
+            ["weak_a_no_blocker", top_counts([row.get("track") for row in without_blocker])],
+            ["weak_a_with_blocker", top_counts([row.get("track") for row in with_blocker])],
         ],
         "top_archetypes": [
-            ["weak_a_no_blocker", _top_counts([row.get("assigned_archetype") for row in without_blocker])],
-            ["weak_a_with_blocker", _top_counts([row.get("assigned_archetype") for row in with_blocker])],
+            ["weak_a_no_blocker", top_counts([row.get("assigned_archetype") for row in without_blocker])],
+            ["weak_a_with_blocker", top_counts([row.get("assigned_archetype") for row in with_blocker])],
         ],
     }
 
@@ -399,50 +442,12 @@ def _rolling_window_bounds(target_date: str, days: int) -> tuple[str, str]:
     return start.isoformat(), end.isoformat()
 
 
-def _surface_bucket(track: str | None) -> str:
-    if not track:
-        return "unknown"
-    aw_markers = [
-        "(AW)",
-        "Dundalk",
-        "Kempton (AW)",
-        "Southwell (AW)",
-        "Wolverhampton",
-        "Newcastle (AW)",
-        "Lingfield (AW)",
-        "Chelmsford",
-    ]
-    if any(marker in track for marker in aw_markers):
-        return "AW"
-    return "non_AW_or_unknown"
-
-
-def _sp_bucket(price: Any) -> str:
-    if price is None:
-        return "unknown"
-    try:
-        value = float(price)
-    except (TypeError, ValueError):
-        return "unknown"
-    if value <= 3.0:
-        return "short_<=3.0"
-    if value <= 6.0:
-        return "mid_3.01_6.0"
-    return "outsider_>6.0"
-
-
-def _doctrine_status_for_type(contradiction_type: str, doctrine_rows: list[dict]) -> str:
-    doctrine_by_key = {row.get("doctrine_key"): row.get("status") for row in doctrine_rows}
-    key_map = {
-        "a_tier_weak_place_support": "a_tier_weak_place_watch",
-        "blocker_fired_horse_won": "longshot_block_allowed_watch_only",
-        "weak_model_strong_doctrine": "mark_ready_requires_trainer_authority",
-    }
-    mapped = doctrine_by_key.get(key_map.get(contradiction_type))
-    return mapped or "review"
-
-
-def _rolling_doctrine_summary(target_date: str, doctrine_rows: list[dict]) -> list[list[object]]:
+def _rolling_doctrine_summary(
+    target_date: str,
+    doctrine_rows: list[dict],
+    *,
+    lineage_stats: dict[str, int] | None = None,
+) -> list[list[object]]:
     tracked_types = [
         "a_tier_weak_place_support",
         "blocker_fired_horse_won",
@@ -452,42 +457,42 @@ def _rolling_doctrine_summary(target_date: str, doctrine_rows: list[dict]) -> li
 
     for label, days in (("7d", 7), ("30d", 30)):
         start_date, end_date = _rolling_window_bounds(target_date, days)
-        sigma_rows = _fetch_sigma_audits_window(start_date, end_date)
-        truth_rows = _fetch_race_truth_audits_window(start_date, end_date)
-        release_rows = _fetch_runner_release_candidates_window(start_date, end_date)
-        truth_map = _truth_by_race(truth_rows)
-        rpdc_map = _rpdc_by_race(release_rows)
+        sigma_rows = dedupe_latest_sigma_rows(_fetch_sigma_audits_window(start_date, end_date))
+        truth_rows = _fetch_race_truth_for_sigma_rows(sigma_rows)
+        release_rows = _fetch_runner_release_for_sigma_rows(sigma_rows)
+        truth_map = truth_lookup(truth_rows)
+        rpdc_map = rpdc_selection_lookup(release_rows)
 
         rows_by_type: dict[str, list[dict[str, Any]]] = defaultdict(list)
         for row in sigma_rows:
-            contradiction_type = _contradiction_type(
+            contradiction_type_name = contradiction_type(
                 row,
-                truth_map.get(row.get("race_id"), {}),
-                rpdc_map.get(row.get("race_id"), {"has_cash_window": False, "max_rpdc_release_score": 0.0}),
+                truth_for_sigma_row(row, truth_map, stats=lineage_stats),
+                rpdc_for_sigma_row(row, rpdc_map, stats=lineage_stats),
             )
-            if contradiction_type in tracked_types:
-                rows_by_type[contradiction_type].append(row)
+            if contradiction_type_name in tracked_types:
+                rows_by_type[contradiction_type_name].append(row)
 
-        for contradiction_type in tracked_types:
-            rows = rows_by_type.get(contradiction_type, [])
-            count, win_pct, place_pct, miss_pct = _outcome_rate_rows(rows)
+        for contradiction_type_name in tracked_types:
+            rows = rows_by_type.get(contradiction_type_name, [])
+            count, win_pct, place_pct, miss_pct = outcome_rate_rows(rows)
             last_seen = max((row.get("created_at") or "—") for row in rows) if rows else "—"
             summary_rows.append(
                 [
                     label,
-                    contradiction_type,
+                    contradiction_type_name,
                     count,
                     win_pct,
                     place_pct,
                     miss_pct,
                     last_seen,
-                    _doctrine_status_for_type(contradiction_type, doctrine_rows),
+                    doctrine_status_for_type(contradiction_type_name, doctrine_rows),
                 ]
             )
     return summary_rows
 
 
-def _blocker_review_section(target_date: str) -> list[list[object]]:
+def _blocker_review_section(target_date: str, *, lineage_stats: dict[str, int] | None = None) -> list[list[object]]:
     tracked_blockers = ["longshot_block_allowed", "market_decoy_signal"]
     summary_by_blocker: dict[str, dict[str, Any]] = {
         blocker: {
@@ -503,18 +508,20 @@ def _blocker_review_section(target_date: str) -> list[list[object]]:
 
     for label, days in (("7d_count", 7), ("30d_count", 30)):
         start_date, end_date = _rolling_window_bounds(target_date, days)
-        sigma_rows = _fetch_sigma_audits_window(start_date, end_date)
-        truth_rows = _fetch_race_truth_audits_window(start_date, end_date)
-        truth_map = _truth_by_race(truth_rows)
+        sigma_rows = dedupe_latest_sigma_rows(_fetch_sigma_audits_window(start_date, end_date))
+        truth_rows = _fetch_race_truth_for_sigma_rows(sigma_rows)
+        truth_map = truth_lookup(truth_rows)
 
         sigma_by_race: dict[str, list[dict[str, Any]]] = defaultdict(list)
         for row in sigma_rows:
             sigma_by_race[row.get("race_id")].append(row)
 
         for blocker in tracked_blockers:
-            matching_truth = [
-                row for row in truth_rows if row.get("blocker_fired") and row.get("blocker_type") == blocker
-            ]
+            matching_truth = []
+            for row in sigma_rows:
+                resolved_truth = truth_for_sigma_row(row, truth_map, stats=lineage_stats)
+                if resolved_truth.get("blocker_fired") and resolved_truth.get("blocker_type") == blocker:
+                    matching_truth.append(resolved_truth)
             summary_by_blocker[blocker][label] = len(matching_truth)
 
             if label != "30d_count":
@@ -537,9 +544,9 @@ def _blocker_review_section(target_date: str) -> list[list[object]]:
                 )
 
             summary_by_blocker[blocker]["winner_suppression_count"] = winner_suppression
-            summary_by_blocker[blocker]["top_tracks"] = _top_counts(track_values)
-            summary_by_blocker[blocker]["top_archetypes"] = _top_counts(archetype_values)
-            summary_by_blocker[blocker]["top_miss_reasons"] = _top_counts(miss_reason_values)
+            summary_by_blocker[blocker]["top_tracks"] = top_counts(track_values)
+            summary_by_blocker[blocker]["top_archetypes"] = top_counts(archetype_values)
+            summary_by_blocker[blocker]["top_miss_reasons"] = top_counts(miss_reason_values)
 
     return [
         [
@@ -555,17 +562,20 @@ def _blocker_review_section(target_date: str) -> list[list[object]]:
     ]
 
 
-def _longshot_regime_split(target_date: str) -> dict[str, list[list[object]]]:
+def _longshot_regime_split(target_date: str, *, lineage_stats: dict[str, int] | None = None) -> dict[str, list[list[object]]]:
     start_date, end_date = _rolling_window_bounds(target_date, 30)
-    sigma_rows = _fetch_sigma_audits_window(start_date, end_date)
-    truth_rows = _fetch_race_truth_audits_window(start_date, end_date)
+    sigma_rows = dedupe_latest_sigma_rows(_fetch_sigma_audits_window(start_date, end_date))
+    truth_rows = _fetch_race_truth_for_sigma_rows(sigma_rows)
+    truth_map = truth_lookup(truth_rows)
     sigma_by_race: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in sigma_rows:
         sigma_by_race[row.get("race_id")].append(row)
 
-    longshot_truth = [
-        row for row in truth_rows if row.get("blocker_fired") and row.get("blocker_type") == "longshot_block_allowed"
-    ]
+    longshot_truth = []
+    for row in sigma_rows:
+        resolved_truth = truth_for_sigma_row(row, truth_map, stats=lineage_stats)
+        if resolved_truth.get("blocker_fired") and resolved_truth.get("blocker_type") == "longshot_block_allowed":
+            longshot_truth.append(resolved_truth)
     regime_rows: list[dict[str, Any]] = []
     for truth_row in longshot_truth:
         race_id = truth_row.get("race_id")
@@ -575,11 +585,11 @@ def _longshot_regime_split(target_date: str) -> dict[str, list[list[object]]]:
                 {
                     "race_id": race_id,
                     "track": sigma_row.get("track") or "unknown",
-                    "surface": _surface_bucket(sigma_row.get("track")),
+                    "surface": surface_bucket(sigma_row.get("track")),
                     "decision_tier": sigma_row.get("decision_tier") or "unknown",
                     "outcome": sigma_row.get("outcome") or "unknown",
                     "miss_reason": sigma_row.get("miss_reason") or "unknown",
-                    "actual_winner_bucket": _sp_bucket(truth_row.get("actual_winner_sp")),
+                    "actual_winner_bucket": sp_bucket(truth_row.get("actual_winner_sp")),
                 }
             )
 
@@ -625,11 +635,13 @@ def _longshot_regime_split(target_date: str) -> dict[str, list[list[object]]]:
 
 def generate(target_date: str) -> Path:
     generated_at = datetime.now(timezone.utc).isoformat()
-    sigma_rows = _fetch_sigma_audits(target_date)
-    truth_rows = _fetch_race_truth_audits(target_date)
-    rpdc_tag_rows = _fetch_today_rpdc_tags(target_date)
-    release_candidate_rows = _fetch_runner_release_candidates(target_date)
+    lineage_stats: dict[str, int] = {}
+    sigma_rows = dedupe_latest_sigma_rows(_fetch_sigma_audits(target_date))
+    truth_rows = _fetch_race_truth_for_sigma_rows(sigma_rows)
+    rpdc_tag_rows = _fetch_rpdc_tags_for_sigma_rows(sigma_rows, target_date)
+    release_candidate_rows = _fetch_runner_release_for_sigma_rows(sigma_rows)
     doctrine_rows = _fetch_doctrine_rows()
+    rpdc_coverage = rpdc_coverage_metrics(sigma_rows, release_candidate_rows)
 
     wins = sum(1 for row in sigma_rows if row.get("outcome") == "WIN")
     placed = sum(1 for row in sigma_rows if row.get("outcome") == "PLACED")
@@ -647,13 +659,18 @@ def generate(target_date: str) -> Path:
     cash_window_rows = sum(1 for row in release_candidate_rows if row.get("rpdc_cash_window_flag") is True)
     high_release_score_rows = sum(1 for row in release_candidate_rows if float(row.get("rpdc_release_score") or 0) >= 3.0)
 
-    weak_a_rows = sum(1 for row in sigma_rows if _is_weak_a(row))
-    weak_a_sections = _weak_a_blocker_sections(sigma_rows, truth_rows)
-    rolling_summary_rows = _rolling_doctrine_summary(target_date, doctrine_rows)
-    blocker_review_rows = _blocker_review_section(target_date)
-    longshot_regime = _longshot_regime_split(target_date)
+    weak_a_rows = sum(1 for row in sigma_rows if is_weak_a(row))
+    weak_a_sections = _weak_a_blocker_sections(sigma_rows, truth_rows, lineage_stats=lineage_stats)
+    rolling_summary_rows = _rolling_doctrine_summary(target_date, doctrine_rows, lineage_stats=lineage_stats)
+    blocker_review_rows = _blocker_review_section(target_date, lineage_stats=lineage_stats)
+    longshot_regime = _longshot_regime_split(target_date, lineage_stats=lineage_stats)
 
-    contradiction_count = _contradiction_count(sigma_rows, truth_rows, release_candidate_rows)
+    contradiction_count = _contradiction_count(
+        sigma_rows,
+        truth_rows,
+        release_candidate_rows,
+        lineage_stats=lineage_stats,
+    )
 
     lines: list[str] = []
     lines.append(f"# VÉLØ Doctrine Evidence Board — {target_date}")
@@ -693,6 +710,25 @@ def generate(target_date: str) -> Path:
         _md_table(
             ["tagged_rows", "cash_window_rows", "high_release_score_rows"],
             [[tagged_rows, cash_window_rows, high_release_score_rows]],
+        )
+    )
+    lines.append("")
+
+    lines.append("## RPDC Coverage")
+    lines.extend(
+        _md_table(
+            [
+                "reviewed_sigma_rows",
+                "reviewed_sigma_rows_with_horse_id",
+                "reviewed_sigma_rows_in_rpdc_covered_events",
+                "reviewed_sigma_rows_with_exact_event_horse_match",
+            ],
+            [[
+                rpdc_coverage["reviewed_sigma_rows"],
+                rpdc_coverage["reviewed_sigma_rows_with_horse_id"],
+                rpdc_coverage["reviewed_sigma_rows_in_rpdc_covered_events"],
+                rpdc_coverage["reviewed_sigma_rows_with_exact_rpdc_match"],
+            ]],
         )
     )
     lines.append("")
@@ -782,6 +818,21 @@ def generate(target_date: str) -> Path:
 
     lines.append("## Doctrine Contradictions")
     lines.extend(_md_table(["contradiction_count"], [[contradiction_count]]))
+    lines.append("")
+    lines.append("## Review Clock Notes")
+    lines.append("- doctrine review clock: `sigma_audits.created_at`")
+    lines.append("- truth rows are mapped onto the sigma review set with `doctrine_event_id` first; `race_id` fallback is used only when doctrine lineage is missing.")
+    lines.append("- RPDC release rows are mapped onto the sigma review set with `(doctrine_event_id, horse_id)` first; `(race_id, horse_id)` fallback is used only when doctrine lineage is missing.")
+    lines.append("- RPDC is currently a sparse candidate surface, not full reviewed-selection coverage.")
+    lines.append("- `today_rpdc_tags` has no `generated_at`; tag counts are therefore approximated by intersecting sigma review `race_id`s with `run_date = review_date`.")
+    lines.append(f"- truth lineage matches: event_id={lineage_stats.get('truth_event_matches', 0)} fallback_race_id={lineage_stats.get('truth_fallback_matches', 0)} unmatched={lineage_stats.get('truth_unmatched', 0)}")
+    lines.append(f"- RPDC lineage matches: event_id+horse={lineage_stats.get('rpdc_event_matches', 0)} fallback_race_id+horse={lineage_stats.get('rpdc_fallback_matches', 0)} unmatched={lineage_stats.get('rpdc_unmatched', 0)}")
+    lines.append(
+        f"- RPDC coverage: reviewed_sigma_rows={rpdc_coverage['reviewed_sigma_rows']} "
+        f"with_horse_id={rpdc_coverage['reviewed_sigma_rows_with_horse_id']} "
+        f"in_rpdc_covered_events={rpdc_coverage['reviewed_sigma_rows_in_rpdc_covered_events']} "
+        f"exact_event_horse_matches={rpdc_coverage['reviewed_sigma_rows_with_exact_rpdc_match']}"
+    )
     lines.append("")
 
     out_dir = Path(__file__).parent.parent / "reports" / "daily"

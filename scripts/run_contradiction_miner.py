@@ -3,6 +3,10 @@ VÉLØ Contradiction Miner
 ========================
 Read-only sidecar contradiction report.
 
+Doctrine review clock:
+  - sigma_audits.created_at
+  - truth and RPDC rows are supporting evidence mapped onto the reviewed sigma set
+
 Flags races where:
   - strong model + negative doctrine
   - weak model + strong doctrine
@@ -23,14 +27,35 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 import requests
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).parent.parent / ".env")
+from app.runtime.doctrine_sidecar_common import (
+    chunked,
+    contradiction_type,
+    dedupe_latest_rpdc_rows,
+    dedupe_latest_sigma_rows,
+    outcome_rate_rows,
+    rpdc_coverage_metrics,
+    rpdc_for_sigma_row,
+    rpdc_selection_lookup,
+    review_race_ids,
+    top_counts,
+    truth_for_sigma_row,
+    truth_lookup,
+    is_weak_a,
+)
+
+load_dotenv(ROOT / ".env")
 
 
 class DoctrineRegistryMissing(RuntimeError):
@@ -115,7 +140,7 @@ def _fetch_sigma_audits(target_date: str) -> list[dict]:
     start_ts = f"{target_date}T00:00:00+00:00"
     end_ts = f"{target_date}T23:59:59+00:00"
     sql_rows = _management_sql(f"""
-        SELECT race_id, decision_tier, confidence_level, verdict_score, outcome, top_pick_position, miss_reason, track, created_at
+        SELECT race_id, doctrine_event_id, decision_tier, confidence_level, verdict_score, outcome, top_pick_position, miss_reason, track, created_at, horse_id
         FROM sigma_audits
         WHERE created_at >= '{start_ts}' AND created_at <= '{end_ts}' AND outcome IS NOT NULL
         ORDER BY created_at ASC
@@ -124,14 +149,14 @@ def _fetch_sigma_audits(target_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "sigma_audits",
-        "race_id,decision_tier,confidence_level,verdict_score,outcome,top_pick_position,miss_reason,track,created_at",
+        "race_id,doctrine_event_id,decision_tier,confidence_level,verdict_score,outcome,top_pick_position,miss_reason,track,created_at,horse_id",
         [f"created_at=gte.{start_ts}", f"created_at=lte.{end_ts}", "outcome=not.is.null"],
     )
 
 
 def _fetch_race_truth_audits(target_date: str) -> list[dict]:
     sql_rows = _management_sql(f"""
-        SELECT race_id, result_outcome, blocker_fired, blocker_type, blocker_hurt, blocker_helped, assigned_archetype
+        SELECT race_id, doctrine_event_id, race_date, generated_at, result_outcome, blocker_fired, blocker_type, blocker_hurt, blocker_helped, assigned_archetype
         FROM race_truth_audits
         WHERE race_date = '{target_date}'
     """)
@@ -139,14 +164,14 @@ def _fetch_race_truth_audits(target_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "race_truth_audits",
-        "race_id,result_outcome,blocker_fired,blocker_type,blocker_hurt,blocker_helped,assigned_archetype",
+        "race_id,doctrine_event_id,race_date,generated_at,result_outcome,blocker_fired,blocker_type,blocker_hurt,blocker_helped,assigned_archetype",
         [f"race_date=eq.{target_date}"],
     )
 
 
 def _fetch_runner_release_candidates(target_date: str) -> list[dict]:
     sql_rows = _management_sql(f"""
-        SELECT race_id, horse_id, rpdc_cash_window_flag, rpdc_release_score, rpdc_tag_count
+        SELECT race_id, doctrine_event_id, horse_id, run_date, generated_at, rpdc_cash_window_flag, rpdc_release_score, rpdc_tag_count
         FROM runner_release_candidates
         WHERE run_date = '{target_date}'
     """)
@@ -154,9 +179,65 @@ def _fetch_runner_release_candidates(target_date: str) -> list[dict]:
         return sql_rows
     return _rest_fetch(
         "runner_release_candidates",
-        "race_id,horse_id,rpdc_cash_window_flag,rpdc_release_score,rpdc_tag_count",
+        "race_id,doctrine_event_id,horse_id,run_date,generated_at,rpdc_cash_window_flag,rpdc_release_score,rpdc_tag_count",
         [f"run_date=eq.{target_date}"],
     )
+
+
+def _sql_in_list(values: list[str]) -> str:
+    return ",".join("'" + value.replace("'", "''") + "'" for value in values)
+
+
+def _fetch_truth_for_sigma_rows(sigma_rows: list[dict]) -> list[dict]:
+    race_ids = review_race_ids(sigma_rows)
+    if not race_ids:
+        return []
+    rows: list[dict] = []
+    for race_chunk in chunked(race_ids):
+        sql_rows = _management_sql(
+            f"""
+            SELECT race_id, doctrine_event_id, race_date, generated_at, result_outcome, blocker_fired, blocker_type, blocker_hurt, blocker_helped, assigned_archetype
+            FROM race_truth_audits
+            WHERE race_id IN ({_sql_in_list(race_chunk)})
+            """
+        )
+        if sql_rows is not None:
+            rows.extend(sql_rows)
+            continue
+        rows.extend(
+            _rest_fetch(
+                "race_truth_audits",
+                "race_id,doctrine_event_id,race_date,generated_at,result_outcome,blocker_fired,blocker_type,blocker_hurt,blocker_helped,assigned_archetype",
+                [f"race_id=in.({','.join(race_chunk)})"],
+            )
+        )
+    return rows
+
+
+def _fetch_rpdc_for_sigma_rows(sigma_rows: list[dict]) -> list[dict]:
+    race_ids = review_race_ids(sigma_rows)
+    if not race_ids:
+        return []
+    rows: list[dict] = []
+    for race_chunk in chunked(race_ids):
+        sql_rows = _management_sql(
+            f"""
+            SELECT race_id, doctrine_event_id, horse_id, run_date, generated_at, rpdc_cash_window_flag, rpdc_release_score, rpdc_tag_count
+            FROM runner_release_candidates
+            WHERE race_id IN ({_sql_in_list(race_chunk)})
+            """
+        )
+        if sql_rows is not None:
+            rows.extend(sql_rows)
+            continue
+        rows.extend(
+            _rest_fetch(
+                "runner_release_candidates",
+                "race_id,doctrine_event_id,horse_id,run_date,generated_at,rpdc_cash_window_flag,rpdc_release_score,rpdc_tag_count",
+                [f"race_id=in.({','.join(race_chunk)})"],
+            )
+        )
+    return dedupe_latest_rpdc_rows(rows)
 
 
 def _require_doctrine_registry() -> None:
@@ -166,121 +247,43 @@ def _require_doctrine_registry() -> None:
     _rest_fetch("velo_doctrine_registry", "doctrine_key", [])
 
 
-def _truth_by_race(rows: list[dict]) -> dict[str, dict]:
-    merged: dict[str, dict] = {}
-    for row in rows:
-        race_id = row.get("race_id")
-        if not race_id:
-            continue
-        current = merged.setdefault(
-            race_id,
-            {
-                "blocker_fired": False,
-                "blocker_type": None,
-                "blocker_hurt": False,
-                "blocker_helped": False,
-                "result_outcome": None,
-                "assigned_archetype": None,
-            },
-        )
-        current["blocker_fired"] = current["blocker_fired"] or bool(row.get("blocker_fired"))
-        current["blocker_hurt"] = current["blocker_hurt"] or bool(row.get("blocker_hurt"))
-        current["blocker_helped"] = current["blocker_helped"] or bool(row.get("blocker_helped"))
-        current["blocker_type"] = current["blocker_type"] or row.get("blocker_type")
-        current["result_outcome"] = current["result_outcome"] or row.get("result_outcome")
-        current["assigned_archetype"] = current["assigned_archetype"] or row.get("assigned_archetype")
-    return merged
-
-
-def _rpdc_by_race(rows: list[dict]) -> dict[str, dict]:
-    merged: dict[str, dict] = {}
-    for row in rows:
-        race_id = row.get("race_id")
-        if not race_id:
-            continue
-        current = merged.setdefault(race_id, {"has_cash_window": False, "max_rpdc_release_score": 0.0})
-        current["has_cash_window"] = current["has_cash_window"] or bool(row.get("rpdc_cash_window_flag"))
-        current["max_rpdc_release_score"] = max(current["max_rpdc_release_score"], float(row.get("rpdc_release_score") or 0))
-    return merged
-
-
-def _contradiction_type(sigma: dict, truth: dict, rpdc: dict) -> str | None:
-    verdict_score = float(sigma.get("verdict_score") or 0)
-    confidence_level = sigma.get("confidence_level") or ""
-    decision_tier = sigma.get("decision_tier")
-    top_pick_position = sigma.get("top_pick_position")
-    outcome = sigma.get("outcome")
-
-    if verdict_score >= 0.70 and truth.get("blocker_fired"):
-        return "strong_model_negative_doctrine"
-    if verdict_score < 0.40 and rpdc.get("has_cash_window"):
-        return "weak_model_strong_doctrine"
-    if truth.get("blocker_fired") and outcome == "WIN":
-        return "blocker_fired_horse_won"
-    if rpdc.get("has_cash_window") and confidence_level == "low":
-        return "rpdc_cash_window_low_model_confidence"
-    if decision_tier == "A" and (confidence_level == "low" or top_pick_position is None or int(top_pick_position) > 2):
-        return "a_tier_weak_place_support"
-    return None
-
-
-def _is_weak_a(row: dict) -> bool:
-    top_pick_position = row.get("top_pick_position")
-    return row.get("decision_tier") == "A" and (
-        row.get("confidence_level") == "low" or top_pick_position is None or int(top_pick_position) > 2
-    )
-
-
-def _outcome_rates(rows: list[dict]) -> list[object]:
-    total = len(rows)
-    if total == 0:
-        return [0, 0.0, 0.0, 0.0]
-    wins = sum(1 for row in rows if row.get("outcome") == "WIN")
-    placed = sum(1 for row in rows if row.get("outcome") == "PLACED")
-    misses = sum(1 for row in rows if row.get("outcome") == "MISS")
-    return [total, round(100 * wins / total, 1), round(100 * placed / total, 1), round(100 * misses / total, 1)]
-
-
-def _top_counts(values: list[str | None], limit: int = 3) -> str:
-    counts = Counter((value or "unknown") for value in values)
-    if not counts:
-        return "none"
-    return ", ".join(f"{key} ({count})" for key, count in counts.most_common(limit))
-
-
 def generate(target_date: str) -> Path:
     _require_doctrine_registry()
     generated_at = datetime.now(timezone.utc).isoformat()
-    sigma_rows = _fetch_sigma_audits(target_date)
-    truth_rows = _fetch_race_truth_audits(target_date)
-    rpdc_rows = _fetch_runner_release_candidates(target_date)
+    lineage_stats: dict[str, int] = {}
+    sigma_rows = dedupe_latest_sigma_rows(_fetch_sigma_audits(target_date))
+    truth_rows = _fetch_truth_for_sigma_rows(sigma_rows)
+    rpdc_rows = _fetch_rpdc_for_sigma_rows(sigma_rows)
+    rpdc_coverage = rpdc_coverage_metrics(sigma_rows, rpdc_rows)
 
-    truth_by_race = _truth_by_race(truth_rows)
-    rpdc_by_race = _rpdc_by_race(rpdc_rows)
+    truth_map = truth_lookup(truth_rows)
+    rpdc_map = rpdc_selection_lookup(rpdc_rows)
 
     flagged: list[dict] = []
     for sigma in sigma_rows:
         race_id = sigma.get("race_id")
-        contradiction_type = _contradiction_type(
+        truth_row = truth_for_sigma_row(sigma, truth_map, stats=lineage_stats)
+        rpdc_row = rpdc_for_sigma_row(sigma, rpdc_map, stats=lineage_stats)
+        contradiction_type_name = contradiction_type(
             sigma,
-            truth_by_race.get(race_id, {}),
-            rpdc_by_race.get(race_id, {"has_cash_window": False, "max_rpdc_release_score": 0.0}),
+            truth_row,
+            rpdc_row,
         )
-        if contradiction_type:
+        if contradiction_type_name:
             flagged.append(
                 {
                     "race_id": race_id,
-                    "contradiction_type": contradiction_type,
+                    "contradiction_type": contradiction_type_name,
                     "decision_tier": sigma.get("decision_tier"),
                     "confidence_level": sigma.get("confidence_level"),
                     "verdict_score": sigma.get("verdict_score"),
                     "outcome": sigma.get("outcome"),
-                    "blocker_type": truth_by_race.get(race_id, {}).get("blocker_type"),
-                    "has_cash_window": rpdc_by_race.get(race_id, {}).get("has_cash_window"),
-                    "max_rpdc_release_score": rpdc_by_race.get(race_id, {}).get("max_rpdc_release_score"),
+                    "blocker_type": truth_row.get("blocker_type"),
+                    "has_cash_window": rpdc_row.get("has_cash_window"),
+                    "max_rpdc_release_score": rpdc_row.get("max_rpdc_release_score"),
                     "miss_reason": sigma.get("miss_reason"),
                     "track": sigma.get("track"),
-                    "assigned_archetype": truth_by_race.get(race_id, {}).get("assigned_archetype"),
+                    "assigned_archetype": truth_row.get("assigned_archetype"),
                 }
             )
 
@@ -289,17 +292,17 @@ def generate(target_date: str) -> Path:
         row
         for row in flagged
         if row["contradiction_type"] == "a_tier_weak_place_support"
-        and truth_by_race.get(row.get("race_id"), {}).get("blocker_fired")
+        and truth_map.get(row.get("race_id"), {}).get("blocker_fired")
     ]
     weak_a_without_blocker = [
         {
             "miss_reason": row.get("miss_reason"),
             "track": row.get("track"),
-            "assigned_archetype": truth_by_race.get(row.get("race_id"), {}).get("assigned_archetype"),
+            "assigned_archetype": truth_for_sigma_row(row, truth_map, stats=lineage_stats).get("assigned_archetype"),
             "outcome": row.get("outcome"),
         }
         for row in sigma_rows
-        if _is_weak_a(row) and not truth_by_race.get(row.get("race_id"), {}).get("blocker_fired")
+        if is_weak_a(row) and not truth_for_sigma_row(row, truth_map, stats=lineage_stats).get("blocker_fired")
     ]
     weak_a_with_blocker_detail = [
         {
@@ -322,8 +325,8 @@ def generate(target_date: str) -> Path:
     lines.append("## Contradiction Counts")
     lines.append("| contradiction_type | count |")
     lines.append("| --- | --- |")
-    for contradiction_type, count in type_counts.most_common():
-        lines.append(f"| {contradiction_type} | {count} |")
+    for contradiction_name, count in type_counts.most_common():
+        lines.append(f"| {contradiction_name} | {count} |")
     if not type_counts:
         lines.append("| none | 0 |")
     lines.append("")
@@ -334,7 +337,7 @@ def generate(target_date: str) -> Path:
         ("weak_a_no_blocker", weak_a_without_blocker),
         ("weak_a_with_blocker", weak_a_with_blocker_detail),
     ):
-        races, win_pct, place_pct, miss_pct = _outcome_rates(rows)
+        races, win_pct, place_pct, miss_pct = outcome_rate_rows(rows)
         lines.append(f"| {label} | {races} | {win_pct} | {place_pct} | {miss_pct} |")
     lines.append("")
     lines.append("| blocker_type | count |")
@@ -352,10 +355,20 @@ def generate(target_date: str) -> Path:
     ):
         lines.append(
             f"| {label} | "
-            f"{_top_counts([row.get('miss_reason') for row in rows if row.get('outcome') == 'MISS'])} | "
-            f"{_top_counts([row.get('track') for row in rows])} | "
-            f"{_top_counts([row.get('assigned_archetype') for row in rows])} |"
+            f"{top_counts([row.get('miss_reason') for row in rows if row.get('outcome') == 'MISS'])} | "
+            f"{top_counts([row.get('track') for row in rows])} | "
+            f"{top_counts([row.get('assigned_archetype') for row in rows])} |"
         )
+    lines.append("")
+    lines.append("## RPDC Coverage")
+    lines.append("| reviewed_sigma_rows | reviewed_sigma_rows_with_horse_id | reviewed_sigma_rows_in_rpdc_covered_events | reviewed_sigma_rows_with_exact_event_horse_match |")
+    lines.append("| --- | --- | --- | --- |")
+    lines.append(
+        f"| {rpdc_coverage['reviewed_sigma_rows']} | "
+        f"{rpdc_coverage['reviewed_sigma_rows_with_horse_id']} | "
+        f"{rpdc_coverage['reviewed_sigma_rows_in_rpdc_covered_events']} | "
+        f"{rpdc_coverage['reviewed_sigma_rows_with_exact_rpdc_match']} |"
+    )
     lines.append("")
     lines.append("## Flagged Races")
     lines.append("| race_id | contradiction_type | tier | confidence | verdict_score | outcome | blocker_type | has_cash_window | max_rpdc_release_score |")
@@ -376,6 +389,20 @@ def generate(target_date: str) -> Path:
         )
     if not flagged:
         lines.append("_No contradictions detected for this date._")
+    lines.append("")
+    lines.append("## Review Clock Notes")
+    lines.append("- doctrine review clock: `sigma_audits.created_at`")
+    lines.append("- truth rows are mapped onto the reviewed sigma set with `doctrine_event_id` first; `race_id` fallback is used only when doctrine lineage is missing.")
+    lines.append("- RPDC release rows are mapped onto the reviewed sigma selections with `(doctrine_event_id, horse_id)` first; `(race_id, horse_id)` fallback is used only when doctrine lineage is missing.")
+    lines.append("- RPDC is currently a sparse candidate surface, not full reviewed-selection coverage.")
+    lines.append(f"- truth lineage matches: event_id={lineage_stats.get('truth_event_matches', 0)} fallback_race_id={lineage_stats.get('truth_fallback_matches', 0)} unmatched={lineage_stats.get('truth_unmatched', 0)}")
+    lines.append(f"- RPDC lineage matches: event_id+horse={lineage_stats.get('rpdc_event_matches', 0)} fallback_race_id+horse={lineage_stats.get('rpdc_fallback_matches', 0)} unmatched={lineage_stats.get('rpdc_unmatched', 0)}")
+    lines.append(
+        f"- RPDC coverage: reviewed_sigma_rows={rpdc_coverage['reviewed_sigma_rows']} "
+        f"with_horse_id={rpdc_coverage['reviewed_sigma_rows_with_horse_id']} "
+        f"in_rpdc_covered_events={rpdc_coverage['reviewed_sigma_rows_in_rpdc_covered_events']} "
+        f"exact_event_horse_matches={rpdc_coverage['reviewed_sigma_rows_with_exact_rpdc_match']}"
+    )
 
     out_dir = Path(__file__).parent.parent / "reports" / "daily"
     out_dir.mkdir(parents=True, exist_ok=True)
