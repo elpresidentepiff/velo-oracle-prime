@@ -1,14 +1,14 @@
-# Virtual environment — never deploy
+# Virtual environment -- never deploy
 venv/
 ENV/
 env/
 .venv/
 
-# Local data caches — not needed on Railway
+# Local data caches -- not needed on Railway
 # Macro falls back gracefully if parquets absent
 data/
 
-# Runtime outputs — generated at runtime, not deployed
+# Runtime outputs -- generated at runtime, not deployed
 logs/
 out/
 results/
@@ -45,7 +45,7 @@ Thumbs.db
 config/credentials.json
 config/api_keys.json
 
-# Force nixpacks — do not ship ANY Dockerfiles to Railway
+# Force nixpacks -- do not ship ANY Dockerfiles to Railway
 # Railway auto-detects Dockerfiles anywhere in the build context and overrides
 # railway.toml builder=NIXPACKS. Exclude all Dockerfiles at root and in subdirs.
 Dockerfile
@@ -53,8 +53,8 @@ Dockerfile.*
 **/Dockerfile
 **/Dockerfile.*
 
-# Deployment configs for other services — not needed for velo-oracle build
+# Deployment configs for other services -- not needed for velo-oracle build
 deploy/
 
-# Claude Code internals — worktrees contain Dockerfiles that confuse Railway
+# Claude Code internals -- worktrees contain Dockerfiles that confuse Railway
 .claude/
