@@ -44,3 +44,8 @@ Thumbs.db
 .env.local
 config/credentials.json
 config/api_keys.json
+
+# Force nixpacks — do not ship Dockerfiles to Railway
+# (Railway detects Dockerfile and overrides railway.toml builder=NIXPACKS)
+Dockerfile
+Dockerfile.*
