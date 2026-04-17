@@ -963,6 +963,16 @@ async def api_status(authorized: bool = Depends(verify_api_key)):
     return {"status": "operational", "version": "v1.0", "timestamp": utc_now_iso()}
 
 
+@app.get("/api/v1/build-fingerprint")
+async def build_fingerprint():
+    """Deploy probe — returns the git SHA baked in at build time."""
+    return {
+        "commit": "3b78e9d",
+        "feature": "trigger_reject_events_write",
+        "has_write_reject_event": True,
+    }
+
+
 # Prediction endpoints
 @app.post("/api/v1/predict/quick")
 async def predict_quick(race_data: dict, authorized: bool = Depends(verify_api_key)):
