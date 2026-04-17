@@ -1002,11 +1002,35 @@ async def api_status(authorized: bool = Depends(verify_api_key)):
 
 @app.get("/api/v1/build-fingerprint")
 async def build_fingerprint():
-    """Deploy probe — returns the git SHA baked in at build time."""
+    """Deploy probe — resolves commit SHA from Railway runtime env vars.
+
+    Returns the full ``RAILWAY_GIT_COMMIT_SHA`` injected by Railway at deploy
+    time.  If the env var is absent (local dev, Docker without build args) the
+    response carries an explicit ``"unknown"`` state so callers can distinguish
+    a missing value from a stale hardcoded one.
+    """
+    import os as _os
+
+    raw_sha = _os.getenv("RAILWAY_GIT_COMMIT_SHA", "").strip()
+    commit_short = raw_sha[:7] if len(raw_sha) >= 7 else None
+
+    if commit_short:
+        commit_status = "resolved"
+        commit_value = commit_short
+        commit_full = raw_sha
+    else:
+        commit_status = "unknown"
+        commit_value = "unknown"
+        commit_full = "unknown"
+
     return {
-        "commit": "3b78e9d",
-        "feature": "trigger_reject_events_write",
+        "commit": commit_value,
+        "commit_full": commit_full,
+        "commit_status": commit_status,
+        "railway_service": _os.getenv("RAILWAY_SERVICE_NAME", "unknown"),
+        "railway_environment": _os.getenv("RAILWAY_ENVIRONMENT_NAME", "unknown"),
         "has_write_reject_event": True,
+        "timestamp": utc_now_iso(),
     }
 
 
