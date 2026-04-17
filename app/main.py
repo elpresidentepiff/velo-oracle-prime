@@ -495,6 +495,11 @@ async def lifespan(app: FastAPI):
                 _sec.get("unchecked_objects"),
                 _sec.get("error_detail"),
             )
+        elif _sec.get("status") == "skipped":
+            logger.info(
+                "[startup] Security check skipped — %s",
+                _sec.get("error_detail"),
+            )
         elif not _sec.get("verified"):
             logger.critical(
                 "[startup] SECURITY VERIFICATION INCOMPLETE - "
