@@ -1,0 +1,35 @@
+======================================================================
+VELO DOCTRINE LINKAGE REPORT
+Generated: 2026-03-16 23:55 UTC
+======================================================================
+
+How macro indices connect to VELO_PRIME_prob and betting doctrine:
+
+INDEX                        -> DOCTRINE APPLICATION
+----------------------------------------------------------------------
+competitiveness_index_code   -> Low CI: thin market, increase uncertainty band
+                               High CI: competitive race, standard confidence
+favourite_compression_index  -> >1.20: HIGH fav trap — penalise favourite prob by 5pp
+                               >1.08: ELEVATED — flag, reduce fav confidence
+                               <0.85: LOW — market spreading bets, less compression
+abandonment_stress_index     -> >0.95: near-chaos season (structural disruption risk)
+                               Note: 2024 data ambiguous (PDF column misalignment)
+fixture_strain_index         -> <0.72: chaos_mode=True (season not running normally)
+                               Normal range: 0.94-0.98
+run_density_index            -> Low: fewer runs per horse, less form data reliability
+                               High: form signals more reliable (more data per horse)
+covid_year                   -> Always chaos_mode=True for 2020
+
+REGIME LABELS:
+  chaos         — COVID or structural season collapse. Flatten all probabilities 80%.
+  compressed_market — fav trap elevated/high. Apply penalty to favourites.
+  thin_market   — low field sizes. Spread uncertainty by 10%.
+  normal        — baseline regime. No macro adjustments.
+
+CURRENT YEAR (2024) ASSESSMENT:
+  2024 flat: regime=normal             fav_trap=normal     ci=0.9957
+  2024 jump: regime=normal             fav_trap=normal     ci=1.0135
+  2024 aw  : regime=normal             fav_trap=normal     ci=1.0128
+
+  Note: 2024 abandonment data ambiguous (source PDF column misalignment).
+  abandonment_stress_index for 2024 = NaN. Regime classification uses other indices.

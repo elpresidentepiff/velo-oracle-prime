@@ -1,0 +1,22 @@
+name = "velo-oracle-edge"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+# Worker configuration
+workers_dev = true
+route = ""
+zone_id = ""
+
+# Environment variables
+[vars]
+API_BASE = "https://velo-oracle-production.up.railway.app"
+
+# Production environment
+[env.production]
+name = "velo-oracle-edge"
+vars = { API_BASE = "https://velo-oracle-production.up.railway.app" }
+
+# Development environment
+[env.development]
+name = "velo-oracle-edge-dev"
+vars = { API_BASE = "http://localhost:8000" }

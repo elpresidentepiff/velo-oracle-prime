@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Four specialized agents enable modular intelligence</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 60px;
+            position: relative;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 40px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .agents-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .agent-card {
+            background: rgba(26, 31, 58, 0.7);
+            border: 2px solid;
+            padding: 30px;
+            min-height: 200px;
+        }
+        
+        .agent-card.analyst {
+            border-color: #00d9ff;
+        }
+        
+        .agent-card.risk {
+            border-color: #c4ff0e;
+        }
+        
+        .agent-card.execution {
+            border-color: #7b68ee;
+        }
+        
+        .agent-card.learning {
+            border-color: #ff6b9d;
+        }
+        
+        .agent-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+        
+        .agent-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid;
+        }
+        
+        .agent-card.analyst .agent-icon {
+            color: #00d9ff;
+            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.12);
+        }
+        
+        .agent-card.risk .agent-icon {
+            color: #c4ff0e;
+            border-color: #c4ff0e;
+            background: rgba(196, 255, 14, 0.12);
+        }
+        
+        .agent-card.execution .agent-icon {
+            color: #7b68ee;
+            border-color: #7b68ee;
+            background: rgba(123, 104, 238, 0.12);
+        }
+        
+        .agent-card.learning .agent-icon {
+            color: #ff6b9d;
+            border-color: #ff6b9d;
+            background: rgba(255, 107, 157, 0.12);
+        }
+        
+        .agent-info {
+            flex: 1;
+        }
+        
+        .agent-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #e8eef7;
+            line-height: 1.2;
+        }
+        
+        .agent-role {
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        
+        .agent-card.analyst .agent-role {
+            color: #00d9ff;
+        }
+        
+        .agent-card.risk .agent-role {
+            color: #c4ff0e;
+        }
+        
+        .agent-card.execution .agent-role {
+            color: #7b68ee;
+        }
+        
+        .agent-card.learning .agent-role {
+            color: #ff6b9d;
+        }
+        
+        .agent-description {
+            font-size: 16px;
+            color: #e8eef7;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <h1 class="page-title">Four specialized agents enable modular intelligence</h1>
+        
+        <div class="agents-grid">
+            <div class="agent-card analyst">
+                <div class="agent-header">
+                    <div class="agent-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="agent-info">
+                        <div class="agent-title">Analyst Agent</div>
+                        <div class="agent-role">Intelligence Generation</div>
+                    </div>
+                </div>
+                <div class="agent-description">
+                    Runs core intelligence modules (SQPE, TIE, NDS) to generate probability estimates and identify value opportunities for each race.
+                </div>
+            </div>
+            
+            <div class="agent-card risk">
+                <div class="agent-header">
+                    <div class="agent-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="agent-info">
+                        <div class="agent-title">Risk Agent</div>
+                        <div class="agent-role">Capital Protection</div>
+                    </div>
+                </div>
+                <div class="agent-description">
+                    Implements Portfolio Kelly Criterion for optimal bet sizing and enforces circuit breakers (max 3 losses, 20% daily limit) to protect bankroll.
+                </div>
+            </div>
+            
+            <div class="agent-card execution">
+                <div class="agent-header">
+                    <div class="agent-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="agent-info">
+                        <div class="agent-title">Execution Agent</div>
+                        <div class="agent-role">Market Interface</div>
+                    </div>
+                </div>
+                <div class="agent-description">
+                    Connects to Betfair API for live bet placement, monitors execution quality, handles errors, and logs all transactions for audit trail.
+                </div>
+            </div>
+            
+            <div class="agent-card learning">
+                <div class="agent-header">
+                    <div class="agent-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="agent-info">
+                        <div class="agent-title">Learning Agent</div>
+                        <div class="agent-role">Continuous Improvement</div>
+                    </div>
+                </div>
+                <div class="agent-description">
+                    Evaluates prediction accuracy post-race, tracks module-specific performance, and triggers model retraining when performance degrades.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

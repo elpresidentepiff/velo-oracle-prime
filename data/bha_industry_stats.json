@@ -1,0 +1,558 @@
+{
+  "_meta": {
+    "source": "BHA Racing Data Pack PDFs 2012-2024",
+    "extracted": "2026-03-16",
+    "provenance": "Extracted from PDF files covering 2012-2024. Multiple files overlap; later files used for recent years. Inconsistencies flagged with ambiguity_flag=true.",
+    "ambiguity_notes": [
+      "Horses in Training (HIT) methodology changed circa 2016/2017. Pre-2016 values are monthly averages; post-2016 are YTD counts. Do NOT compare across this boundary without adjustment.",
+      "2024 abandonments table in source PDF has misaligned columns — total shown as 1468 which appears to be fixture count, not abandonment count. 2024 abandonment values omitted.",
+      "HIT sub-totals in some files do not sum to stated totals (off by 400-500). Totals as stated in source files preserved; subtotals used from same-year file where available.",
+      "2012 fixtures breakdown: AWT column not separated from Flat in some tables."
+    ]
+  },
+  "fixtures_scheduled": {
+    "unit": "count",
+    "note": "Number of fixtures scheduled before abandonments",
+    "data": [
+      {"year": 2012, "flat_turf": 583, "flat_awt": 293, "jump": 580, "total": 1456},
+      {"year": 2013, "flat_turf": 581, "flat_awt": 307, "jump": 576, "total": 1464},
+      {"year": 2014, "flat_turf": 584, "flat_awt": 296, "jump": 584, "total": 1464},
+      {"year": 2015, "flat_turf": 575, "flat_awt": 307, "jump": 589, "total": 1471},
+      {"year": 2016, "flat_turf": 572, "flat_awt": 317, "jump": 594, "total": 1483},
+      {"year": 2017, "flat_turf": 571, "flat_awt": 326, "jump": 600, "total": 1497},
+      {"year": 2018, "flat_turf": 570, "flat_awt": 341, "jump": 597, "total": 1508},
+      {"year": 2019, "flat_turf": 562, "flat_awt": 354, "jump": 595, "total": 1511},
+      {"year": 2020, "flat_turf": 331, "flat_awt": 284, "jump": 420, "total": 1035, "note": "COVID-19 reduced season"},
+      {"year": 2021, "flat_turf": 562, "flat_awt": 335, "jump": 589, "total": 1486},
+      {"year": 2022, "flat_turf": 567, "flat_awt": 335, "jump": 586, "total": 1488},
+      {"year": 2023, "flat_turf": 567, "flat_awt": 334, "jump": 587, "total": 1488},
+      {"year": 2024, "flat_turf": null, "flat_awt": null, "jump": null, "total": 1468, "ambiguity_flag": true, "note": "2024 breakdown not available"}
+    ]
+  },
+  "fixtures_ran": {
+    "unit": "count",
+    "data": [
+      {"year": 2012, "flat_turf": 539, "flat_awt": 314, "jump": 515, "total": 1368},
+      {"year": 2013, "flat_turf": 578, "flat_awt": 315, "jump": 538, "total": 1431},
+      {"year": 2014, "flat_turf": 573, "flat_awt": 310, "jump": 546, "total": 1429},
+      {"year": 2015, "flat_turf": 564, "flat_awt": 318, "jump": 549, "total": 1440},
+      {"year": 2016, "flat_turf": 555, "flat_awt": 330, "jump": 549, "total": 1434},
+      {"year": 2017, "flat_turf": 565, "flat_awt": 328, "jump": 571, "total": 1464},
+      {"year": 2018, "flat_turf": 553, "flat_awt": 361, "jump": 557, "total": 1471},
+      {"year": 2019, "flat_turf": 538, "flat_awt": 360, "jump": 546, "total": 1444},
+      {"year": 2020, "flat_turf": 318, "flat_awt": 315, "jump": 382, "total": 1015},
+      {"year": 2021, "flat_turf": 547, "flat_awt": 351, "jump": 538, "total": 1436},
+      {"year": 2022, "flat_turf": 534, "flat_awt": 354, "jump": 558, "total": 1446},
+      {"year": 2023, "flat_turf": 545, "flat_awt": 352, "jump": 528, "total": 1425},
+      {"year": 2024, "flat_turf": 543, "flat_awt": 351, "jump": 515, "total": 1409}
+    ]
+  },
+  "abandonments": {
+    "unit": "count",
+    "ambiguity_flag": true,
+    "note": "2024 row in source PDF appears misaligned — total shown as 1468 (likely fixture count). 2024 excluded.",
+    "data": [
+      {"year": 2012, "flat_turf": 4, "flat_awt": 7, "jump": 8, "total": 19},
+      {"year": 2013, "flat_turf": 7, "flat_awt": 6, "jump": 15, "total": 28},
+      {"year": 2014, "flat_turf": 7, "flat_awt": 1, "jump": 24, "total": 32},
+      {"year": 2015, "flat_turf": 4, "flat_awt": 0, "jump": 13, "total": 17},
+      {"year": 2016, "flat_turf": 7, "flat_awt": 1, "jump": 34, "total": 42},
+      {"year": 2017, "flat_turf": 10, "flat_awt": 1, "jump": 34, "total": 45},
+      {"year": 2018, "flat_turf": 21, "flat_awt": 5, "jump": 60, "total": 86},
+      {"year": 2019, "flat_turf": 25, "flat_awt": 9, "jump": 58, "total": 92},
+      {"year": 2020, "flat_turf": 10, "flat_awt": 3, "jump": 54, "total": 67},
+      {"year": 2021, "flat_turf": 17, "flat_awt": 1, "jump": 67, "total": 85},
+      {"year": 2022, "flat_turf": 25, "flat_awt": 1, "jump": 36, "total": 62},
+      {"year": 2023, "flat_turf": 21, "flat_awt": 1, "jump": 74, "total": 96},
+      {"year": 2024, "ambiguity_flag": true, "note": "Source data misaligned — excluded"}
+    ]
+  },
+  "additional_fixtures": {
+    "unit": "count",
+    "data": [
+      {"year": 2017, "flat_turf": 15, "flat_awt": 3, "jump": 6, "total": 24},
+      {"year": 2018, "flat_turf": 1, "flat_awt": 24, "jump": 20, "total": 45},
+      {"year": 2019, "flat_turf": 7, "flat_awt": 15, "jump": 9, "total": 31},
+      {"year": 2020, "flat_turf": 5, "flat_awt": 31, "jump": 16, "total": 52},
+      {"year": 2021, "flat_turf": 4, "flat_awt": 22, "jump": 15, "total": 41},
+      {"year": 2022, "flat_turf": 5, "flat_awt": 20, "jump": 8, "total": 33},
+      {"year": 2023, "flat_turf": 1, "flat_awt": 27, "jump": 15, "total": 43},
+      {"year": 2024, "flat_turf": 3, "flat_awt": 35, "jump": 15, "total": 53}
+    ]
+  },
+  "turf_going_distribution": {
+    "unit": "race count",
+    "note": "Number of turf races run on each going",
+    "data": [
+      {"year": 2012, "firm": 19, "good_to_firm": 160, "good": 292, "good_to_soft": 208, "soft": 266, "heavy": 106},
+      {"year": 2013, "firm": 22, "good_to_firm": 294, "good": 362, "good_to_soft": 179, "soft": 175, "heavy": 78},
+      {"year": 2014, "firm": 17, "good_to_firm": 214, "good": 356, "good_to_soft": 206, "soft": 227, "heavy": 95},
+      {"year": 2015, "firm": 13, "good_to_firm": 231, "good": 390, "good_to_soft": 232, "soft": 188, "heavy": 68},
+      {"year": 2016, "firm": 6, "good_to_firm": 228, "good": 377, "good_to_soft": 216, "soft": 201, "heavy": 70},
+      {"year": 2017, "firm": 12, "good_to_firm": 189, "good": 368, "good_to_soft": 248, "soft": 235, "heavy": 83},
+      {"year": 2018, "firm": 18, "good_to_firm": 288, "good": 369, "good_to_soft": 135, "soft": 194, "heavy": 103},
+      {"year": 2019, "firm": 12, "good_to_firm": 224, "good": 373, "good_to_soft": 198, "soft": 193, "heavy": 104},
+      {"year": 2020, "firm": 7, "good_to_firm": 78, "good": 210, "good_to_soft": 109, "soft": 203, "heavy": 78}
+    ]
+  },
+  "races_run_by_type": {
+    "unit": "count",
+    "data": [
+      {"year": 2012, "flat_turf": 3734, "flat_awt": 2373, "chase": 1310, "hurdle": 1826, "nhf": 305, "hunter": 99, "total": 9647},
+      {"year": 2013, "flat_turf": 4002, "flat_awt": 2394, "chase": 1387, "hurdle": 1899, "nhf": 357, "hunter": 107, "total": 10146},
+      {"year": 2014, "flat_turf": 3979, "flat_awt": 2329, "chase": 1402, "hurdle": 1968, "nhf": 333, "hunter": 94, "total": 10105},
+      {"year": 2015, "flat_turf": 3947, "flat_awt": 2310, "chase": 1361, "hurdle": 2034, "nhf": 295, "hunter": 94, "total": 10041},
+      {"year": 2016, "flat_turf": 3901, "flat_awt": 2383, "chase": 1348, "hurdle": 2036, "nhf": 280, "hunter": 87, "total": 10035},
+      {"year": 2017, "flat_turf": 4016, "flat_awt": 2384, "chase": 1404, "hurdle": 2109, "nhf": 285, "hunter": 90, "total": 10288},
+      {"year": 2018, "flat_turf": 3922, "flat_awt": 2669, "chase": 1381, "hurdle": 2057, "nhf": 299, "hunter": 80, "total": 10408},
+      {"year": 2019, "flat_turf": 3803, "flat_awt": 2563, "chase": 1363, "hurdle": 2005, "nhf": 270, "hunter": 83, "total": 10087},
+      {"year": 2020, "flat_turf": 2611, "flat_awt": 2488, "chase": 1011, "hurdle": 1520, "nhf": 222, "hunter": 22, "total": 7874},
+      {"year": 2021, "flat_turf": 3872, "flat_awt": 2659, "chase": 1361, "hurdle": 2038, "nhf": 357, "hunter": 67, "total": 10354},
+      {"year": 2022, "flat_turf": 3741, "flat_awt": 2598, "chase": 1429, "hurdle": 2109, "nhf": 268, "hunter": 72, "total": 10217},
+      {"year": 2023, "flat_turf": 3703, "flat_awt": 2663, "chase": 1310, "hurdle": 2017, "nhf": 268, "hunter": 58, "total": 10019},
+      {"year": 2024, "flat_turf": 3666, "flat_awt": 2805, "chase": 1232, "hurdle": 1997, "nhf": 238, "hunter": 54, "total": 9992}
+    ]
+  },
+  "avg_field_size_by_code": {
+    "unit": "runners per race",
+    "data": [
+      {"year": 2012, "flat_turf": 9.59, "flat_awt": null, "jump": null, "overall": 8.92},
+      {"year": 2013, "flat_turf": 9.17, "flat_awt": 8.70, "jump": 8.88, "overall": 8.95},
+      {"year": 2014, "flat_turf": 9.07, "flat_awt": 8.69, "jump": 8.22, "overall": 8.66},
+      {"year": 2015, "flat_turf": 9.16, "flat_awt": 8.80, "jump": 8.35, "overall": 8.77},
+      {"year": 2016, "flat_turf": 9.17, "flat_awt": 9.10, "jump": 8.53, "overall": 8.93},
+      {"year": 2017, "flat_turf": 9.12, "flat_awt": 9.41, "jump": 8.22, "overall": 8.84},
+      {"year": 2018, "flat_turf": 9.12, "flat_awt": 9.33, "jump": 8.48, "overall": 8.94},
+      {"year": 2019, "flat_turf": 9.27, "flat_awt": 9.65, "jump": 8.45, "overall": 9.06},
+      {"year": 2020, "flat_turf": 9.51, "flat_awt": 9.58, "jump": 9.08, "overall": 9.38},
+      {"year": 2021, "flat_turf": 8.82, "flat_awt": 9.11, "jump": 8.60, "overall": null},
+      {"year": 2022, "flat_turf": 8.75, "flat_awt": 9.13, "jump": 7.73, "overall": null},
+      {"year": 2023, "flat_turf": 8.89, "flat_awt": 9.29, "jump": 8.20, "flat_combined": 9.06, "overall": null},
+      {"year": 2024, "flat_turf": 9.06, "flat_awt": 9.25, "jump": 8.49, "flat_combined": 9.14, "overall": null}
+    ]
+  },
+  "avg_field_size_by_race_type": {
+    "unit": "runners per race",
+    "race_types": ["flat_all","pattern_listed_flat","handicap_flat","wfa_conditions_flat","maiden_flat","novice_flat","seller_claimer_flat","auction_flat","sales_flat","chase_all","pattern_listed_chase","handicap_chase","maiden_novice_chase","wfa_conditions_chase","hurdle_all","pattern_listed_hurdle","handicap_hurdle","maiden_novice_hurdle","wfa_conditions_hurdle","seller_claimer_hurdle","nhf","hunter_chase"],
+    "data": [
+      {"year": 2012, "flat_all": 9.59, "pattern_listed_flat": 9.07, "handicap_flat": 10.18, "wfa_conditions_flat": 6.55, "maiden_flat": 9.58, "novice_flat": 4.65, "seller_claimer_flat": 7.28, "auction_flat": 8.30, "sales_flat": 15.64, "chase_all": 7.51, "pattern_listed_chase": 10.41, "handicap_chase": 7.76, "maiden_novice_chase": 5.89, "wfa_conditions_chase": 6.62, "hurdle_all": 9.76, "pattern_listed_hurdle": 10.65, "handicap_hurdle": 10.10, "maiden_novice_hurdle": 9.60, "wfa_conditions_hurdle": 8.02, "seller_claimer_hurdle": 7.83, "nhf": 10.09, "hunter_chase": 8.65},
+      {"year": 2013, "flat_all": 8.99, "pattern_listed_flat": 8.98, "handicap_flat": 9.40, "wfa_conditions_flat": 6.33, "maiden_flat": 8.90, "novice_flat": 4.69, "seller_claimer_flat": 6.81, "auction_flat": 8.20, "sales_flat": 17.40, "chase_all": 7.53, "pattern_listed_chase": 10.84, "handicap_chase": 7.72, "maiden_novice_chase": 5.79, "wfa_conditions_chase": 5.58, "hurdle_all": 9.75, "pattern_listed_hurdle": 9.87, "handicap_hurdle": 10.17, "maiden_novice_hurdle": 9.58, "wfa_conditions_hurdle": 7.25, "seller_claimer_hurdle": 7.98, "nhf": 9.62, "hunter_chase": 8.56},
+      {"year": 2014, "flat_all": 8.93, "pattern_listed_flat": 9.11, "handicap_flat": 9.21, "wfa_conditions_flat": 6.65, "maiden_flat": 8.89, "novice_flat": 4.94, "seller_claimer_flat": 7.09, "auction_flat": 8.20, "sales_flat": 15.50, "chase_all": 7.03, "pattern_listed_chase": 10.45, "handicap_chase": 7.11, "maiden_novice_chase": 4.80, "wfa_conditions_chase": 5.31, "hurdle_all": 8.86, "pattern_listed_hurdle": 10.02, "handicap_hurdle": 9.01, "maiden_novice_hurdle": 8.68, "wfa_conditions_hurdle": 6.13, "seller_claimer_hurdle": 7.45, "nhf": 9.28, "hunter_chase": 8.97},
+      {"year": 2015, "flat_all": 9.02, "pattern_listed_flat": 9.21, "handicap_flat": 9.33, "wfa_conditions_flat": 6.50, "maiden_flat": 8.81, "novice_flat": 4.93, "seller_claimer_flat": 7.17, "auction_flat": 8.24, "sales_flat": 16.10, "chase_all": 7.31, "pattern_listed_chase": 10.21, "handicap_chase": 7.41, "maiden_novice_chase": 4.92, "wfa_conditions_chase": 6.21, "hurdle_all": 8.91, "pattern_listed_hurdle": 10.01, "handicap_hurdle": 9.19, "maiden_novice_hurdle": 8.46, "wfa_conditions_hurdle": 7.11, "seller_claimer_hurdle": 7.94, "nhf": 9.16, "hunter_chase": 9.02},
+      {"year": 2016, "flat_all": 9.17, "pattern_listed_flat": 9.18, "handicap_flat": 9.49, "wfa_conditions_flat": 6.81, "maiden_flat": 9.03, "novice_flat": 7.31, "seller_claimer_flat": 7.24, "auction_flat": 8.31, "sales_flat": 19.17, "chase_all": 7.54, "pattern_listed_chase": 10.08, "handicap_chase": 7.76, "maiden_novice_chase": 4.77, "wfa_conditions_chase": 5.47, "hurdle_all": 9.08, "pattern_listed_hurdle": 9.89, "handicap_hurdle": 9.57, "maiden_novice_hurdle": 8.40, "wfa_conditions_hurdle": 5.22, "seller_claimer_hurdle": 7.84, "nhf": 9.23, "hunter_chase": 8.78},
+      {"year": 2017, "flat_all": 9.22, "pattern_listed_flat": 9.46, "handicap_flat": 9.52, "wfa_conditions_flat": 6.86, "maiden_flat": 8.70, "novice_flat": 9.03, "seller_claimer_flat": 7.35, "auction_flat": 8.38, "sales_flat": 23.00, "chase_all": 7.21, "pattern_listed_chase": 9.71, "handicap_chase": 7.46, "maiden_novice_chase": 4.55, "wfa_conditions_chase": 5.46, "hurdle_all": 8.73, "pattern_listed_hurdle": 9.79, "handicap_hurdle": 9.12, "maiden_novice_hurdle": 8.16, "wfa_conditions_hurdle": 4.43, "seller_claimer_hurdle": 7.39, "nhf": 9.38, "hunter_chase": 8.30},
+      {"year": 2018, "flat_all": 9.20, "pattern_listed_flat": 8.80, "handicap_flat": 9.42, "wfa_conditions_flat": 6.70, "maiden_flat": 9.74, "novice_flat": 8.73, "seller_claimer_flat": 8.09, "auction_flat": 8.92, "sales_flat": 23.75, "chase_all": 7.33, "pattern_listed_chase": 9.50, "handicap_chase": 7.54, "maiden_novice_chase": 4.69, "wfa_conditions_chase": 6.73, "hurdle_all": 9.16, "pattern_listed_hurdle": 10.10, "handicap_hurdle": 9.65, "maiden_novice_hurdle": 8.44, "wfa_conditions_hurdle": null, "seller_claimer_hurdle": 7.72, "nhf": 9.18, "hunter_chase": 8.21},
+      {"year": 2019, "flat_all": 9.42, "pattern_listed_flat": 8.82, "handicap_flat": 9.73, "wfa_conditions_flat": 8.36, "maiden_flat": 9.22, "novice_flat": 8.68, "seller_claimer_flat": 7.98, "auction_flat": 8.88, "sales_flat": 23.25, "chase_all": 7.24, "pattern_listed_chase": 9.36, "handicap_chase": 7.39, "maiden_novice_chase": 4.68, "wfa_conditions_chase": 7.22, "hurdle_all": 9.23, "pattern_listed_hurdle": 10.26, "handicap_hurdle": 9.50, "maiden_novice_hurdle": 8.76, "wfa_conditions_hurdle": 8.68, "seller_claimer_hurdle": 7.30, "nhf": 9.32, "hunter_chase": 6.78},
+      {"year": 2020, "flat_all": 9.55, "pattern_listed_flat": 8.76, "handicap_flat": 9.83, "wfa_conditions_flat": 8.47, "maiden_flat": 9.41, "novice_flat": 8.80, "seller_claimer_flat": 7.58, "auction_flat": 9.26, "sales_flat": 21.50, "chase_all": 7.96, "pattern_listed_chase": 8.68, "handicap_chase": 8.35, "maiden_novice_chase": 4.83, "wfa_conditions_chase": 5.40, "hurdle_all": 9.77, "pattern_listed_hurdle": 9.43, "handicap_hurdle": 10.32, "maiden_novice_hurdle": 9.31, "wfa_conditions_hurdle": 7.68, "seller_claimer_hurdle": 7.23, "nhf": 9.63, "hunter_chase": 6.64},
+      {"year": 2021, "flat_all": 8.94, "pattern_listed_flat": 8.81, "handicap_flat": 9.04, "wfa_conditions_flat": 8.08, "maiden_flat": 9.12, "novice_flat": 8.46, "seller_claimer_flat": 7.29, "auction_flat": 9.27, "sales_flat": 22.50, "chase_all": 7.50, "pattern_listed_chase": 9.20, "handicap_chase": 7.60, "maiden_novice_chase": 4.18, "wfa_conditions_chase": 6.29, "hurdle_all": 9.18, "pattern_listed_hurdle": 9.58, "handicap_hurdle": 9.57, "maiden_novice_hurdle": 8.69, "wfa_conditions_hurdle": 7.57, "seller_claimer_hurdle": 6.15, "nhf": 9.48, "hunter_chase": 8.90},
+      {"year": 2022, "flat_all": 8.90, "pattern_listed_flat": 8.45, "handicap_flat": 9.06, "wfa_conditions_flat": 8.39, "maiden_flat": 9.06, "novice_flat": 8.63, "seller_claimer_flat": 6.27, "auction_flat": 8.34, "sales_flat": 16.86, "chase_all": 6.65, "pattern_listed_chase": 8.89, "handicap_chase": 6.63, "maiden_novice_chase": 3.81, "wfa_conditions_chase": 5.78, "hurdle_all": 8.34, "pattern_listed_hurdle": 9.17, "handicap_hurdle": 8.64, "maiden_novice_hurdle": 7.98, "wfa_conditions_hurdle": 5.95, "seller_claimer_hurdle": 6.33, "nhf": 9.04, "hunter_chase": 6.28},
+      {"year": 2023, "flat_all": 9.06, "pattern_listed_flat": 8.70, "handicap_flat": 9.22, "wfa_conditions_flat": 9.09, "maiden_flat": 8.66, "novice_flat": 8.58, "seller_claimer_flat": 6.79, "auction_flat": 8.56, "sales_flat": 17.57, "chase_all": 7.11, "pattern_listed_chase": 9.03, "handicap_chase": 7.04, "maiden_novice_chase": 3.72, "wfa_conditions_chase": 7.00, "hurdle_all": 8.80, "pattern_listed_hurdle": 9.90, "handicap_hurdle": 8.86, "maiden_novice_hurdle": 8.71, "wfa_conditions_hurdle": 7.21, "seller_claimer_hurdle": 6.00, "nhf": 9.12, "hunter_chase": 7.52},
+      {"year": 2024, "flat_all": 9.14, "pattern_listed_flat": 8.66, "handicap_flat": 9.31, "wfa_conditions_flat": 8.95, "maiden_flat": 8.86, "novice_flat": 8.51, "seller_claimer_flat": 7.60, "auction_flat": 8.74, "sales_flat": 18.20, "chase_all": 7.47, "pattern_listed_chase": 8.80, "handicap_chase": 7.44, "maiden_novice_chase": 3.86, "wfa_conditions_chase": 5.83, "hurdle_all": 9.06, "pattern_listed_hurdle": 9.12, "handicap_hurdle": 9.28, "maiden_novice_hurdle": 8.89, "wfa_conditions_hurdle": 6.62, "seller_claimer_hurdle": 5.75, "nhf": 9.16, "hunter_chase": 7.41}
+    ]
+  },
+  "prize_money": {
+    "total_race_values_000s_gbp": {
+      "note": "Values in GBP thousands",
+      "data": [
+        {"year": 2012, "flat_turf": null, "flat_awt": null, "jump": 31757, "total": 97778, "ambiguity_flag": true, "note": "flat_turf/awt split not available for 2012"},
+        {"year": 2013, "flat_turf": 64344, "flat_awt": 11559, "jump": 38320, "total": 114223},
+        {"year": 2014, "flat_turf": 68361, "flat_awt": 14019, "jump": 40609, "total": 122989},
+        {"year": 2015, "flat_turf": 73640, "flat_awt": 16096, "jump": 42415, "total": 132151},
+        {"year": 2016, "flat_turf": 74462, "flat_awt": 17984, "jump": 45408, "total": 137854},
+        {"year": 2017, "flat_turf": 77160, "flat_awt": 18252, "jump": 47140, "total": 142552},
+        {"year": 2018, "flat_turf": 86453, "flat_awt": 25393, "jump": 54275, "total": 166121},
+        {"year": 2019, "flat_turf": 84631, "flat_awt": 23911, "jump": 52518, "total": 161059},
+        {"year": 2020, "flat_turf": 41194, "flat_awt": 18671, "jump": 34469, "total": 94334},
+        {"year": 2021, "flat_turf": 78528, "flat_awt": 22496, "jump": 47298, "total": 148322},
+        {"year": 2022, "flat_turf": 92780, "flat_awt": 26054, "jump": 60539, "total": 179373},
+        {"year": 2023, "flat_turf": 97987, "flat_awt": 28144, "jump": 58873, "total": 185004},
+        {"year": 2024, "flat_turf": 100856, "flat_awt": 30346, "jump": 57355, "total": 188556}
+      ]
+    },
+    "avg_race_value_gbp": {
+      "data": [
+        {"year": 2012, "flat_turf": 10811, "flat_awt": null, "jump": 8971, "overall": 10136},
+        {"year": 2013, "flat_turf": 16078, "flat_awt": 4828, "jump": 10219, "overall": 11258},
+        {"year": 2014, "flat_turf": 17180, "flat_awt": 6020, "jump": 10695, "overall": 12171},
+        {"year": 2015, "flat_turf": 18657, "flat_awt": 6968, "jump": 11209, "overall": 13161},
+        {"year": 2016, "flat_turf": 19088, "flat_awt": 7547, "jump": 12102, "overall": 13736},
+        {"year": 2017, "flat_turf": 19213, "flat_awt": 7653, "jump": 12121, "overall": 13853},
+        {"year": 2018, "flat_turf": 22043, "flat_awt": 9514, "jump": 14227, "overall": 15964},
+        {"year": 2019, "flat_turf": 22254, "flat_awt": 9329, "jump": 14121, "overall": 15970},
+        {"year": 2020, "flat_turf": 15777, "flat_awt": 7504, "jump": 12421, "overall": 11980},
+        {"year": 2021, "flat_turf": 20281, "flat_awt": 8460, "jump": 12372, "overall": 14325},
+        {"year": 2022, "flat_turf": 24801, "flat_awt": 10029, "jump": 15611, "overall": 17556},
+        {"year": 2023, "flat_turf": 26461, "flat_awt": 10568, "jump": 16116, "overall": 18465},
+        {"year": 2024, "flat_turf": 27511, "flat_awt": 10818, "jump": 16289, "overall": 18871}
+      ]
+    },
+    "median_race_value_gbp": {
+      "data": [
+        {"year": 2016, "flat_turf": 6000, "flat_awt": 6000, "jump": 6000, "overall": 6000},
+        {"year": 2017, "flat_turf": 6000, "flat_awt": 6000, "jump": 6000, "overall": 6000},
+        {"year": 2018, "flat_turf": 8450, "flat_awt": 6640, "jump": 8000, "overall": 7749},
+        {"year": 2019, "flat_turf": 8200, "flat_awt": 6569, "jump": 7850, "overall": 7521},
+        {"year": 2020, "flat_turf": 6545, "flat_awt": 6093, "jump": 7273, "overall": 6545},
+        {"year": 2021, "flat_turf": 8000, "flat_awt": 6500, "jump": 7500, "overall": 7200},
+        {"year": 2022, "flat_turf": 9000, "flat_awt": 7300, "jump": 9000, "overall": 8400},
+        {"year": 2023, "flat_turf": 9800, "flat_awt": 7650, "jump": 9000, "overall": 8500},
+        {"year": 2024, "flat_turf": 9000, "flat_awt": 8000, "jump": 8900, "overall": 8500}
+      ]
+    }
+  },
+  "runners": {
+    "total_starts": {
+      "data": [
+        {"year": 2012, "flat_turf": 58593, "flat_awt": null, "jump": 31581, "total": 90174},
+        {"year": 2013, "flat_turf": 57526, "flat_awt": null, "jump": 33310, "total": 90836},
+        {"year": 2014, "flat_turf": 56309, "flat_awt": null, "jump": 31222, "total": 87531},
+        {"year": 2015, "flat_turf": 56463, "flat_awt": null, "jump": 31612, "total": 88075},
+        {"year": 2016, "flat_turf": 57606, "flat_awt": 21692, "jump": 32010, "total": 89616},
+        {"year": 2017, "flat_turf": 59033, "flat_awt": 22427, "jump": 31960, "total": 90991},
+        {"year": 2018, "flat_turf": 35769, "flat_awt": 24897, "jump": 32338, "total": 93004},
+        {"year": 2019, "flat_turf": 35244, "flat_awt": 24730, "jump": 31423, "total": 91397},
+        {"year": 2020, "flat_turf": 24841, "flat_awt": 23843, "jump": 25188, "total": 73872},
+        {"year": 2021, "flat_turf": 34152, "flat_awt": 24234, "jump": 32901, "total": 91287},
+        {"year": 2022, "flat_turf": 32716, "flat_awt": 23726, "jump": 29977, "total": 86419},
+        {"year": 2023, "flat_turf": 32923, "flat_awt": 24749, "jump": 29947, "total": 87619},
+        {"year": 2024, "flat_turf": 33196, "flat_awt": 25958, "jump": 29885, "total": 89039}
+      ]
+    },
+    "individual_runners_unique_horses": {
+      "data": [
+        {"year": 2012, "flat": 9614, "jump": 7673, "dual": 1263, "total": 18550},
+        {"year": 2013, "flat": 9588, "jump": 7702, "dual": 1216, "total": 18506},
+        {"year": 2014, "flat": 9580, "jump": 7393, "dual": 1104, "total": 18077},
+        {"year": 2015, "flat": 9726, "jump": 7542, "dual": 1047, "total": 18315},
+        {"year": 2016, "flat": 9996, "jump": 7550, "dual": 994, "total": 18540},
+        {"year": 2017, "flat": 10376, "jump": 7593, "dual": 978, "total": 18947},
+        {"year": 2018, "flat": 10608, "jump": 7661, "dual": 957, "total": 19226},
+        {"year": 2019, "flat": 10530, "jump": 7749, "dual": 994, "total": 19273},
+        {"year": 2020, "flat": 9984, "jump": 7147, "dual": 900, "total": 18031},
+        {"year": 2021, "flat": 10167, "jump": 8260, "dual": 894, "total": 19321},
+        {"year": 2022, "flat": 9993, "jump": 7760, "dual": 808, "total": 18561},
+        {"year": 2023, "flat": 10142, "jump": 7722, "dual": 766, "total": 18630},
+        {"year": 2024, "flat": 10215, "jump": 7491, "dual": 746, "total": 18452}
+      ]
+    },
+    "avg_runs_per_horse": {
+      "data": [
+        {"year": 2012, "flat": 5.4, "jump": 3.5, "overall": 4.9},
+        {"year": 2013, "flat": 5.3, "jump": 3.7, "overall": 4.9},
+        {"year": 2014, "flat": 5.3, "jump": 3.7, "overall": 4.8},
+        {"year": 2015, "flat": 5.2, "jump": 3.7, "overall": 4.8},
+        {"year": 2016, "flat": 5.2, "jump": 3.7, "overall": 4.8},
+        {"year": 2017, "flat": 5.20, "jump": 3.73, "overall": 4.80},
+        {"year": 2018, "flat": 5.25, "jump": 3.75, "overall": 4.84},
+        {"year": 2019, "flat": 5.20, "jump": 3.60, "overall": 4.74},
+        {"year": 2020, "flat": 4.47, "jump": 3.13, "overall": 4.10},
+        {"year": 2021, "flat": 5.28, "jump": 3.59, "overall": 4.72},
+        {"year": 2022, "flat": 5.23, "jump": 3.50, "overall": 4.66},
+        {"year": 2023, "flat": 5.29, "jump": 3.53, "overall": 4.70},
+        {"year": 2024, "flat": 5.40, "jump": 3.63, "overall": 4.83}
+      ]
+    }
+  },
+  "non_runners": {
+    "total": {
+      "data": [
+        {"year": 2012, "flat_turf": 6509, "flat_awt": null, "jump": 2559, "total": 9068},
+        {"year": 2013, "flat_turf": 6044, "flat_awt": null, "jump": 2647, "total": 8691},
+        {"year": 2014, "flat_turf": 5969, "flat_awt": 1572, "jump": 2247, "total": 8216},
+        {"year": 2015, "flat_turf": 5592, "flat_awt": 1382, "jump": 2199, "total": 7791},
+        {"year": 2016, "flat_turf": 4257, "flat_awt": 1521, "jump": 2627, "total": 8405},
+        {"year": 2017, "flat_turf": 4460, "flat_awt": 1607, "jump": 2251, "total": 8318},
+        {"year": 2018, "flat_turf": 3133, "flat_awt": 1596, "jump": 2058, "total": 6787},
+        {"year": 2019, "flat_turf": 3479, "flat_awt": 1629, "jump": 2027, "total": 7135},
+        {"year": 2020, "flat_turf": 2634, "flat_awt": 1479, "jump": 1810, "total": 5923},
+        {"year": 2021, "flat_turf": 3236, "flat_awt": 1451, "jump": 3182, "total": 7869},
+        {"year": 2022, "flat_turf": 2562, "flat_awt": 1379, "jump": 2696, "total": 6637},
+        {"year": 2023, "flat_turf": 2978, "flat_awt": 1447, "jump": 2845, "total": 7270},
+        {"year": 2024, "flat_turf": 3035, "flat_awt": 1486, "jump": 2785, "total": 7306}
+      ]
+    },
+    "pct_of_declarations": {
+      "data": [
+        {"year": 2013, "flat_turf": 9.5, "flat_awt": null, "jump": 7.4, "overall": 8.7},
+        {"year": 2014, "flat_turf": 10.9, "flat_awt": 7.2, "jump": 6.7, "overall": 8.6},
+        {"year": 2015, "flat_turf": 10.4, "flat_awt": 6.4, "jump": 6.5, "overall": 8.1},
+        {"year": 2016, "flat_turf": 10.6, "flat_awt": 6.6, "jump": 7.6, "overall": 8.6},
+        {"year": 2017, "flat_turf": 10.9, "flat_awt": 6.7, "jump": 6.6, "overall": 8.4},
+        {"year": 2018, "flat_turf": 8.1, "flat_awt": 6.0, "jump": 6.0, "overall": 6.8},
+        {"year": 2019, "flat_turf": 9.0, "flat_awt": 6.2, "jump": 6.1, "overall": 7.3},
+        {"year": 2020, "flat_turf": 9.6, "flat_awt": 5.8, "jump": 6.7, "overall": 7.4},
+        {"year": 2021, "flat_turf": 8.7, "flat_awt": 5.6, "jump": 8.8, "overall": 7.9},
+        {"year": 2022, "flat_turf": 7.3, "flat_awt": 5.5, "jump": 8.3, "overall": 7.1},
+        {"year": 2023, "flat_turf": 8.3, "flat_awt": 5.5, "jump": 8.7, "overall": 7.7},
+        {"year": 2024, "flat_turf": 8.4, "flat_awt": 5.4, "jump": 8.5, "overall": 7.6}
+      ]
+    },
+    "per_race": {
+      "data": [
+        {"year": 2017, "flat_turf": 1.11, "flat_awt": 0.67, "jump": 0.58, "overall": 0.81},
+        {"year": 2018, "flat_turf": 0.80, "flat_awt": 0.60, "jump": 0.54, "overall": 0.65},
+        {"year": 2019, "flat_turf": 0.92, "flat_awt": 0.64, "jump": 0.54, "overall": 0.71},
+        {"year": 2020, "flat_turf": 1.01, "flat_awt": 0.59, "jump": 0.65, "overall": 0.75},
+        {"year": 2021, "flat_turf": 0.84, "flat_awt": 0.55, "jump": 0.83, "overall": 0.76},
+        {"year": 2022, "flat_turf": 0.68, "flat_awt": 0.53, "jump": 0.70, "overall": 0.65},
+        {"year": 2023, "flat_turf": 0.80, "flat_awt": 0.54, "jump": 0.78, "overall": 0.73},
+        {"year": 2024, "flat_turf": 0.83, "flat_awt": 0.53, "jump": 0.79, "overall": 0.73}
+      ]
+    }
+  },
+  "horses_in_training": {
+    "ambiguity_flag": true,
+    "methodology_note": "Pre-2016 values are MONTHLY AVERAGES from BHA files. From 2016 onwards values are YTD COUNTS (every individual horse registered in training, year to date). Do NOT compare pre-2016 with post-2016 values without adjustment. Sub-totals in some years do not sum to stated total due to source file inconsistency.",
+    "monthly_average_era_2012_2015": {
+      "data": [
+        {"year": 2012, "flat": 8471, "jump": 4420, "dual": 647, "total": 13716},
+        {"year": 2013, "flat": 8440, "jump": 4452, "dual": 632, "total": 13703},
+        {"year": 2014, "flat": 8525, "jump": 4309, "dual": 635, "total": 13528},
+        {"year": 2015, "flat": 8715, "jump": 4397, "dual": 616, "total": 13886}
+      ]
+    },
+    "ytd_count_era_2016_2024": {
+      "data": [
+        {"year": 2016, "flat": 12793, "jump": 8216, "dual": 1758, "total": 22767},
+        {"year": 2017, "flat": 13181, "jump": 8320, "dual": 1647, "total": 23148},
+        {"year": 2018, "flat": 13301, "jump": 8723, "dual": 1575, "total": 23599},
+        {"year": 2019, "flat": 13194, "jump": 8798, "dual": 1545, "total": 23537},
+        {"year": 2020, "flat": 13124, "jump": 8768, "dual": 1465, "total": 23357},
+        {"year": 2021, "flat": 14842, "jump": 9582, "dual": 1071, "total": 25495},
+        {"year": 2022, "flat": 15062, "jump": 8956, "dual": 737, "total": 24755, "ambiguity_flag": true, "note": "Subtotals sum to 24755 but source inconsistency noted"},
+        {"year": 2023, "flat": 14842, "jump": 8956, "dual": 725, "total": 25055, "ambiguity_flag": true, "note": "Subtotals 24523 vs stated total 25055"},
+        {"year": 2024, "flat": 14955, "jump": 8825, "dual": 675, "total": 24955, "ambiguity_flag": true, "note": "Subtotals 24455 vs stated total 24955"}
+      ]
+    }
+  },
+  "race_card_structure": {
+    "pct_fixtures_with_7plus_races": {
+      "data": [
+        {"year": 2012, "pct_lt7": 18.1, "pct_7plus": 81.9},
+        {"year": 2013, "pct_lt7": 13.4, "pct_7plus": 86.6},
+        {"year": 2014, "pct_lt7": 11.8, "pct_7plus": 88.2},
+        {"year": 2015, "pct_lt7": 21.2, "pct_7plus": 78.8},
+        {"year": 2016, "pct_lt7": 20.5, "pct_7plus": 79.5},
+        {"year": 2017, "pct_lt7": 19.3, "pct_7plus": 80.7},
+        {"year": 2018, "pct_lt7": 15.9, "pct_7plus": 84.1},
+        {"year": 2019, "pct_lt7": 19.3, "pct_7plus": 80.7},
+        {"year": 2020, "pct_lt7": 8.9, "pct_7plus": 91.1},
+        {"year": 2021, "pct_lt7": 10.9, "pct_7plus": 89.1},
+        {"year": 2022, "pct_lt7": 14.5, "pct_7plus": 85.5},
+        {"year": 2023, "pct_lt7": 20.4, "pct_7plus": 79.6},
+        {"year": 2024, "pct_lt7": 25.2, "pct_7plus": 74.8}
+      ]
+    },
+    "pct_races_lt6_runners": {
+      "data": [
+        {"year": 2012, "flat_turf": 9.8, "flat_awt": null, "jump": 16.5, "overall": 12.2},
+        {"year": 2013, "flat_turf": 13.3, "flat_awt": null, "jump": 15.9, "overall": 14.3},
+        {"year": 2014, "flat_turf": 12.3, "flat_awt": 12.7, "jump": 20.5, "overall": 15.4},
+        {"year": 2015, "flat_turf": 10.9, "flat_awt": 10.1, "jump": 16.3, "overall": 12.9},
+        {"year": 2016, "flat_turf": 10.0, "flat_awt": 8.6, "jump": 18.5, "overall": 13.2},
+        {"year": 2017, "flat_turf": 10.7, "flat_awt": 8.3, "jump": 20.5, "overall": 13.8},
+        {"year": 2018, "flat_turf": 12.3, "flat_awt": 9.4, "jump": 19.6, "overall": 14.2},
+        {"year": 2019, "flat_turf": 12.3, "flat_awt": 8.3, "jump": 20.3, "overall": 14.2},
+        {"year": 2020, "flat_turf": 9.5, "flat_awt": 6.8, "jump": 12.7, "overall": 9.8},
+        {"year": 2021, "flat_turf": 14.8, "flat_awt": 10.8, "jump": 19.1, "overall": 15.3},
+        {"year": 2022, "flat_turf": 15.6, "flat_awt": 9.1, "jump": 28.0, "overall": 18.7},
+        {"year": 2023, "flat_turf": 10.7, "flat_awt": 6.6, "jump": 21.2, "overall": 13.4},
+        {"year": 2024, "flat_turf": 10.6, "flat_awt": 6.5, "jump": 17.2, "overall": 11.8}
+      ]
+    },
+    "pct_races_8plus_runners": {
+      "data": [
+        {"year": 2012, "flat_turf": 71.9, "flat_awt": null, "jump": 61.0, "overall": 67.9},
+        {"year": 2013, "flat_turf": 64.8, "flat_awt": null, "jump": 60.3, "overall": 63.1},
+        {"year": 2014, "flat_turf": 63.9, "flat_awt": 65.0, "jump": 51.3, "overall": 59.2},
+        {"year": 2015, "flat_turf": 65.9, "flat_awt": 66.6, "jump": 54.8, "overall": 61.7},
+        {"year": 2016, "flat_turf": 67.9, "flat_awt": 70.6, "jump": 57.2, "overall": 63.9},
+        {"year": 2017, "flat_turf": 65.7, "flat_awt": 74.5, "jump": 53.0, "overall": 63.0},
+        {"year": 2018, "flat_turf": 63.6, "flat_awt": 73.5, "jump": 55.5, "overall": 63.2},
+        {"year": 2019, "flat_turf": 65.2, "flat_awt": 75.7, "jump": 55.0, "overall": 64.1},
+        {"year": 2020, "flat_turf": 72.5, "flat_awt": 75.9, "jump": 66.1, "overall": 71.3},
+        {"year": 2021, "flat_turf": 60.8, "flat_awt": 70.4, "jump": 58.0, "overall": 62.3},
+        {"year": 2022, "flat_turf": 59.0, "flat_awt": 72.4, "jump": 46.5, "overall": 57.7},
+        {"year": 2023, "flat_turf": 62.8, "flat_awt": 75.6, "jump": 52.8, "overall": 62.5},
+        {"year": 2024, "flat_turf": 66.2, "flat_awt": 76.6, "jump": 57.8, "overall": 66.1}
+      ]
+    }
+  },
+  "favourite_market": {
+    "pct_odds_on_and_evens": {
+      "data": [
+        {"year": 2012, "flat": 11.2, "jump": 16.9, "overall": 13.3},
+        {"year": 2013, "flat": 13.7, "jump": 17.8, "overall": 15.2},
+        {"year": 2014, "flat": 13.7, "jump": 18.6, "overall": 15.6},
+        {"year": 2015, "flat": 12.7, "jump": 17.8, "overall": 14.6},
+        {"year": 2016, "flat": 12.3, "jump": 18.3, "overall": 14.6},
+        {"year": 2017, "flat": 14.2, "jump": 23.7, "overall": 17.8},
+        {"year": 2018, "flat": 15.6, "jump": 23.6, "overall": 18.5},
+        {"year": 2019, "flat": 18.1, "jump": 24.4, "overall": 20.4},
+        {"year": 2020, "flat": 15.6, "jump": 21.0, "overall": 17.5},
+        {"year": 2021, "flat": 16.6, "jump": 21.8, "overall": 18.5},
+        {"year": 2022, "flat": 17.5, "jump": 24.3, "overall": 20.1},
+        {"year": 2023, "flat": 15.9, "jump": 20.7, "overall": 17.6},
+        {"year": 2024, "flat": 15.4, "jump": 22.4, "overall": 17.9}
+      ]
+    },
+    "pct_odds_against": {
+      "data": [
+        {"year": 2013, "flat": 83.3, "jump": 79.2, "overall": 81.8},
+        {"year": 2014, "flat": 83.4, "jump": 77.8, "overall": 81.3},
+        {"year": 2015, "flat": 84.8, "jump": 79.7, "overall": 82.9},
+        {"year": 2016, "flat": 85.0, "jump": 78.2, "overall": 82.4},
+        {"year": 2017, "flat": 85.8, "jump": 76.3, "overall": 82.2},
+        {"year": 2018, "flat": 84.4, "jump": 76.4, "overall": 81.5},
+        {"year": 2019, "flat": 81.9, "jump": 75.6, "overall": 79.6},
+        {"year": 2020, "flat": 84.4, "jump": 79.0, "overall": 82.5},
+        {"year": 2021, "flat": 83.4, "jump": 78.2, "overall": 81.5},
+        {"year": 2022, "flat": 82.5, "jump": 75.7, "overall": 79.9},
+        {"year": 2023, "flat": 84.1, "jump": 79.3, "overall": 82.4},
+        {"year": 2024, "flat": 84.6, "jump": 77.6, "overall": 82.1}
+      ]
+    }
+  },
+  "free_to_air_televised": {
+    "unit": "race count",
+    "data": [
+      {"year": 2012, "flat": 342, "jump": 195, "total": 537},
+      {"year": 2013, "flat": 323, "jump": 186, "total": 509},
+      {"year": 2014, "flat": 332, "jump": 205, "total": 537},
+      {"year": 2015, "flat": 340, "jump": 216, "total": 556},
+      {"year": 2016, "flat": 314, "jump": 216, "total": 530},
+      {"year": 2017, "flat": 343, "jump": 221, "total": 564},
+      {"year": 2018, "flat": 356, "jump": 218, "total": 574},
+      {"year": 2019, "flat": 337, "jump": 221, "total": 558},
+      {"year": 2020, "flat": 348, "jump": 211, "total": 559},
+      {"year": 2021, "flat": 394, "jump": 244, "total": 638},
+      {"year": 2022, "flat": 463, "jump": 264, "total": 727},
+      {"year": 2023, "flat": 463, "jump": 245, "total": 708},
+      {"year": 2024, "flat": 482, "jump": 265, "total": 747}
+    ]
+  },
+  "race_structure": {
+    "divided_races": {
+      "data": [
+        {"year": 2016, "flat_handicap": 192, "flat_wfa": 81, "jump_handicap": 42, "jump_wfa": 44},
+        {"year": 2017, "flat_handicap": 212, "flat_wfa": 105, "jump_handicap": 30, "jump_wfa": 29},
+        {"year": 2018, "flat_handicap": 233, "flat_wfa": 113, "jump_handicap": 31, "jump_wfa": 31},
+        {"year": 2019, "flat_handicap": 127, "flat_wfa": 56, "jump_handicap": 19, "jump_wfa": 21},
+        {"year": 2020, "flat_handicap": 288, "flat_wfa": 126, "jump_handicap": 71, "jump_wfa": 50},
+        {"year": 2021, "flat_handicap": 196, "flat_wfa": 117, "jump_handicap": 71, "jump_wfa": 47},
+        {"year": 2022, "flat_handicap": 193, "flat_wfa": 78, "jump_handicap": 41, "jump_wfa": 26},
+        {"year": 2023, "flat_handicap": 156, "flat_wfa": 88, "jump_handicap": 38, "jump_wfa": 43},
+        {"year": 2024, "flat_handicap": 234, "flat_wfa": 115, "jump_handicap": 69, "jump_wfa": 67}
+      ]
+    },
+    "pct_handicap_vs_wfa": {
+      "data": [
+        {"year": 2014, "flat_wfa_pct": 33.1, "flat_hcap_pct": 66.9, "jump_wfa_pct": 40.7, "jump_hcap_pct": 59.3},
+        {"year": 2015, "flat_wfa_pct": 32.8, "flat_hcap_pct": 67.2, "jump_wfa_pct": 39.6, "jump_hcap_pct": 60.4},
+        {"year": 2016, "flat_wfa_pct": 32.1, "flat_hcap_pct": 67.9, "jump_wfa_pct": 39.6, "jump_hcap_pct": 60.4},
+        {"year": 2017, "flat_wfa_pct": 31.9, "flat_hcap_pct": 68.1, "jump_wfa_pct": 39.7, "jump_hcap_pct": 60.3},
+        {"year": 2018, "flat_wfa_pct": 31.1, "flat_hcap_pct": 68.9, "jump_wfa_pct": 39.8, "jump_hcap_pct": 60.2},
+        {"year": 2019, "flat_wfa_pct": 31.5, "flat_hcap_pct": 68.5, "jump_wfa_pct": 38.6, "jump_hcap_pct": 61.4},
+        {"year": 2020, "flat_wfa_pct": 32.0, "flat_hcap_pct": 68.0, "jump_wfa_pct": 39.8, "jump_hcap_pct": 60.2},
+        {"year": 2021, "flat_wfa_pct": 30.5, "flat_hcap_pct": 69.5, "jump_wfa_pct": 37.4, "jump_hcap_pct": 62.6},
+        {"year": 2022, "flat_wfa_pct": 30.5, "flat_hcap_pct": 69.5, "jump_wfa_pct": 34.9, "jump_hcap_pct": 65.1},
+        {"year": 2023, "flat_wfa_pct": 29.8, "flat_hcap_pct": 70.2, "jump_wfa_pct": 33.5, "jump_hcap_pct": 66.5},
+        {"year": 2024, "flat_wfa_pct": 28.5, "flat_hcap_pct": 71.5, "jump_wfa_pct": 33.3, "jump_hcap_pct": 66.7}
+      ]
+    }
+  },
+  "specialty_metrics": {
+    "flat_conditions_stakes": {
+      "note": "BHA handicapping trial races. Small sample, very short fields.",
+      "data": [
+        {"year": 2016, "races": 67, "runners": 374, "avg_field_size": 5.58, "avg_fav_sp": 2.45, "pct_lt6": 56.7},
+        {"year": 2017, "races": 67, "runners": 373, "avg_field_size": 5.57, "avg_fav_sp": 2.42, "pct_lt6": 52.2},
+        {"year": 2018, "races": 63, "runners": 332, "avg_field_size": 5.27, "avg_fav_sp": 2.16, "pct_lt6": 63.5},
+        {"year": 2019, "races": 59, "runners": 316, "avg_field_size": 5.36, "avg_fav_sp": 2.32, "pct_lt6": 52.5},
+        {"year": 2020, "races": 37, "runners": 190, "avg_field_size": 5.14, "avg_fav_sp": 2.29, "pct_lt6": 64.9},
+        {"year": 2021, "races": 52, "runners": 250, "avg_field_size": 4.81, "avg_fav_sp": 2.29, "pct_lt6": 67.3},
+        {"year": 2022, "races": 42, "runners": 216, "avg_field_size": 5.14, "avg_fav_sp": 2.24, "pct_lt6": 57.1},
+        {"year": 2023, "races": 18, "runners": 100, "avg_field_size": 5.56, "avg_fav_sp": 2.37, "pct_lt6": 55.6},
+        {"year": 2024, "races": 11, "runners": 53, "avg_field_size": 4.82, "avg_fav_sp": 1.90, "pct_lt6": 72.7}
+      ]
+    },
+    "above_handicap_band_2024": {
+      "note": "Horses running 1-2lb above handicap rating band in 2024",
+      "data": [
+        {"race_type": "Flat AWT", "races": 799, "avg_field_size": 9.32, "runners": 1355, "wins": 191, "win_iv": 1.26, "prb": 56.04},
+        {"race_type": "Flat Turf", "races": 1399, "avg_field_size": 9.09, "runners": 2187, "wins": 326, "win_iv": 1.27, "prb": 54.81},
+        {"race_type": "Chase", "races": 192, "avg_field_size": 7.49, "runners": 235, "wins": 27, "win_iv": 0.78, "prb": 44.54},
+        {"race_type": "Hurdle", "races": 148, "avg_field_size": 9.05, "runners": 184, "wins": 21, "win_iv": 0.98, "prb": 49.39}
+      ]
+    },
+    "novice_stakes_penalty_carriers_2024": {
+      "data": [
+        {"age_group": "2yo", "races": 181, "avg_field_size": 8.91, "avg_fav_sp": 2.42, "penalty_carriers": 246, "wins": 75, "win_iv": 2.41},
+        {"age_group": "3yo", "races": 35, "avg_field_size": 8.23, "avg_fav_sp": 2.39, "penalty_carriers": 57, "wins": 14, "win_iv": 1.78},
+        {"age_group": "3yo_plus", "races": 160, "avg_field_size": 8.27, "avg_fav_sp": 2.19, "penalty_carriers": 226, "wins": 78, "win_iv": 2.58}
+      ]
+    },
+    "fillies_mares_races": {
+      "data": [
+        {"year": 2017, "code": "Flat", "races": 728, "runners": 6203, "avg_field_size": 8.52, "pct_lt6": 13.7, "avg_prize_fund": 20319},
+        {"year": 2017, "code": "Jump", "races": 256, "runners": 2007, "avg_field_size": 7.84, "pct_lt6": 23.8, "avg_prize_fund": 8418},
+        {"year": 2018, "code": "Flat", "races": 787, "runners": 6628, "avg_field_size": 8.42, "pct_lt6": 14.6, "avg_prize_fund": 21732},
+        {"year": 2018, "code": "Jump", "races": 349, "runners": 2975, "avg_field_size": 8.52, "pct_lt6": 19.2, "avg_prize_fund": 10582},
+        {"year": 2019, "code": "Flat", "races": 709, "runners": 6129, "avg_field_size": 8.64, "pct_lt6": 13.8, "avg_prize_fund": 22896},
+        {"year": 2019, "code": "Jump", "races": 379, "runners": 3133, "avg_field_size": 8.27, "pct_lt6": 20.3, "avg_prize_fund": 10092},
+        {"year": 2020, "code": "Flat", "races": 526, "runners": 4690, "avg_field_size": 8.92, "pct_lt6": 12.4, "avg_prize_fund": 17277},
+        {"year": 2020, "code": "Jump", "races": 264, "runners": 2394, "avg_field_size": 9.07, "pct_lt6": 10.2, "avg_prize_fund": 9331},
+        {"year": 2021, "code": "Flat", "races": 712, "runners": 6023, "avg_field_size": 8.46, "pct_lt6": 15.4, "avg_prize_fund": 21610},
+        {"year": 2021, "code": "Jump", "races": 407, "runners": 3352, "avg_field_size": 8.24, "pct_lt6": 22.9, "avg_prize_fund": 9185},
+        {"year": 2022, "code": "Flat", "races": 720, "runners": 5993, "avg_field_size": 8.32, "pct_lt6": 17.1, "avg_prize_fund": 25552},
+        {"year": 2022, "code": "Jump", "races": 434, "runners": 3274, "avg_field_size": 7.54, "pct_lt6": 28.8, "avg_prize_fund": 12437},
+        {"year": 2023, "code": "Flat", "races": 709, "runners": 6106, "avg_field_size": 8.61, "pct_lt6": 10.3, "avg_prize_fund": 27844},
+        {"year": 2023, "code": "Jump", "races": 408, "runners": 3318, "avg_field_size": 8.16, "pct_lt6": 21.6, "avg_prize_fund": 12021},
+        {"year": 2024, "code": "Flat", "races": 715, "runners": 6096, "avg_field_size": 8.53, "pct_lt6": 12.7, "avg_prize_fund": 28439},
+        {"year": 2024, "code": "Jump", "races": 397, "runners": 3345, "avg_field_size": 8.43, "pct_lt6": 17.1, "avg_prize_fund": 12123}
+      ]
+    }
+  },
+  "entries_declarations": {
+    "note": "Data available 2012-2020 only in provided source files",
+    "entries": {
+      "data": [
+        {"year": 2012, "flat_turf": 147554, "flat_awt": null, "jump": 78500, "total": 226054},
+        {"year": 2013, "flat_turf": 90985, "flat_awt": 45626, "jump": 80270, "total": 216881},
+        {"year": 2014, "flat_turf": 86674, "flat_awt": 41676, "jump": 72475, "total": 200825},
+        {"year": 2015, "flat_turf": 88003, "flat_awt": 40672, "jump": 73094, "total": 201769},
+        {"year": 2016, "flat_turf": 85780, "flat_awt": 39882, "jump": 76042, "total": 201704},
+        {"year": 2017, "flat_turf": 89017, "flat_awt": 41313, "jump": 73211, "total": 203541},
+        {"year": 2018, "flat_turf": 83987, "flat_awt": 45814, "jump": 75267, "total": 205068},
+        {"year": 2019, "flat_turf": 82733, "flat_awt": 45158, "jump": 71145, "total": 199036},
+        {"year": 2020, "flat_turf": 57193, "flat_awt": 44860, "jump": 53774, "total": 155827}
+      ]
+    },
+    "declarations": {
+      "data": [
+        {"year": 2012, "flat_turf": 65102, "flat_awt": null, "jump": 34140, "total": 99242},
+        {"year": 2013, "flat_turf": 40921, "flat_awt": 22649, "jump": 35957, "total": 99527},
+        {"year": 2014, "flat_turf": 40477, "flat_awt": 21801, "jump": 33469, "total": 95747},
+        {"year": 2015, "flat_turf": 40346, "flat_awt": 21709, "jump": 33811, "total": 95866},
+        {"year": 2016, "flat_turf": 40171, "flat_awt": 23213, "jump": 34637, "total": 98021},
+        {"year": 2017, "flat_turf": 41064, "flat_awt": 24034, "jump": 34211, "total": 99309},
+        {"year": 2018, "flat_turf": 38902, "flat_awt": 26493, "jump": 34396, "total": 99791},
+        {"year": 2019, "flat_turf": 38723, "flat_awt": 26359, "jump": 33450, "total": 98532},
+        {"year": 2020, "flat_turf": 27452, "flat_awt": 25323, "jump": 26991, "total": 79766}
+      ]
+    },
+    "eliminations": {
+      "data": [
+        {"year": 2012, "flat_turf": 8148, "flat_awt": null, "jump": 1500, "total": 9648},
+        {"year": 2013, "flat_turf": 3089, "flat_awt": 2634, "jump": 1546, "total": 7269},
+        {"year": 2014, "flat_turf": 2793, "flat_awt": 1973, "jump": 874, "total": 5640},
+        {"year": 2015, "flat_turf": 2982, "flat_awt": 1621, "jump": 920, "total": 5523},
+        {"year": 2016, "flat_turf": 2639, "flat_awt": 2188, "jump": 913, "total": 5740},
+        {"year": 2017, "flat_turf": 2595, "flat_awt": 3643, "jump": 713, "total": 6951},
+        {"year": 2018, "flat_turf": 2657, "flat_awt": 3567, "jump": 908, "total": 7132},
+        {"year": 2019, "flat_turf": 3036, "flat_awt": 5838, "jump": 897, "total": 9771},
+        {"year": 2020, "flat_turf": 2606, "flat_awt": 4722, "jump": 1691, "total": 9019}
+      ]
+    }
+  }
+}

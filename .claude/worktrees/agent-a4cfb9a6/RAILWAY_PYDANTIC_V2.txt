@@ -1,0 +1,20 @@
+RAILWAY DEPLOYMENT - PYDANTIC V2 CONFIRMED
+===========================================
+
+This file confirms that the repository is configured for Pydantic v2.
+
+requirements.txt contains:
+- pydantic>=2.7,<3.0
+- pydantic-settings>=2.0,<3.0
+
+app/core/config.py uses:
+- from pydantic_settings import BaseSettings
+- model_config = SettingsConfigDict(...)
+
+If Railway is still showing pydantic==1.10.13 errors, it means:
+1. Railway is not pulling the latest code from GitHub
+2. Railway's GitHub connection needs to be reconfigured
+3. Railway may be using a cached or pinned commit
+
+Commit hash: a218647 (latest)
+Date: November 19, 2025

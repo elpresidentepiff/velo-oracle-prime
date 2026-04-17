@@ -1,0 +1,25 @@
+{
+  "trained_at": "2025-11-19T15:46:48.262050",
+  "dataset": "storage/velo-datasets/racing_full_1_7m.csv",
+  "n_samples": 10000,
+  "n_features": 4,
+  "models": {
+    "sqpe_v14": {
+      "auc": 0.846075267651538,
+      "logloss": 0.44107032838341903
+    },
+    "tie_v9": {
+      "auc": 0.7940172411792568,
+      "logloss": 0.34204190988164407
+    },
+    "longshot_v6": {
+      "auc": 0.6780278573010963,
+      "logloss": 0.4381993958181844
+    },
+    "overlay_v5": {
+      "auc": 0.7482195337762301,
+      "logloss": 0.3984300937283601
+    }
+  },
+  "note": "Stub models - replace with real sklearn/xgboost in production"
+}

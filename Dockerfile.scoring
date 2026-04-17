@@ -1,0 +1,20 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy requirements first for caching
+COPY requirements_production.txt .
+RUN pip install --no-cache-dir -r requirements_production.txt
+
+# Copy full project
+COPY . .
+
+# Set PYTHONPATH so 'from src.constants' works
+ENV PYTHONPATH=/app
+
+# Preflight: validate env vars and canonical constants
+RUN python -c "from src.constants import validate_tier; print('canonical_constants: OK')" || \
+    python -c "import sys; sys.path.insert(0, '/app'); from src.constants import validate_tier; print('canonical_constants: OK')"
+
+# Entry point: scoring cron
+CMD ["python", "scripts/run_prime_today.py"]
