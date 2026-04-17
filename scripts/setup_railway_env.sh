@@ -37,7 +37,12 @@ echo ""
 # Supabase
 echo "📦 Supabase Configuration"
 railway variables set SUPABASE_URL="https://ltbsxbvfsxtnharjvqcm.supabase.co"
-railway variables set SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0YnN4YnZmc3h0bmhhcmp2cWNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODgzNjksImV4cCI6MjA3OTA2NDM2OX0.iS1Sixo77BhZ2UQVwqVQcGOyBocSIy9ApABvsgLGmhY"
+# SUPABASE_KEY must be set via Railway dashboard — NEVER hardcode secrets in VCS.
+if [ -z "$SUPABASE_KEY" ]; then
+  echo "❌ SUPABASE_KEY not set in environment. Set via Railway dashboard or export before running."
+  exit 1
+fi
+railway variables set SUPABASE_KEY="$SUPABASE_KEY"
 
 # FastAPI Configuration
 echo "⚙️  FastAPI Configuration"

@@ -72,8 +72,8 @@ class RacingAPIClient:
             return races
 
         except Exception as e:
-            logger.error(f"Failed to fetch race cards: {e}")
-            return []
+            logger.error("Failed to fetch race cards — returning empty (caller sees no races): %s", e)
+            raise
 
     def get_race_details(self, race_id: str) -> dict | None:
         """

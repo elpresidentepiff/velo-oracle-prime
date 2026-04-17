@@ -39,10 +39,10 @@ class VeloScraper:
         # Scrape GB (Great Britain)
         print("\nScraping GB results...")
         gb_file = f"{self.output_dir}/gb_{yesterday.replace('/', '_')}.csv"
-        cmd = f"cd {self.rpscrape_dir} && python3 rpscrape.py -d {yesterday} gb"
+        cmd = ["python3", "rpscrape.py", "-d", yesterday, "gb"]
         
         try:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=300)
+            result = subprocess.run(cmd, cwd=self.rpscrape_dir, capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
                 print(f"✅ GB results scraped")
             else:
@@ -55,10 +55,10 @@ class VeloScraper:
         # Scrape IRE (Ireland)
         print("\nScraping IRE results...")
         ire_file = f"{self.output_dir}/ire_{yesterday.replace('/', '_')}.csv"
-        cmd = f"cd {self.rpscrape_dir} && python3 rpscrape.py -d {yesterday} ire"
+        cmd = ["python3", "rpscrape.py", "-d", yesterday, "ire"]
         
         try:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=300)
+            result = subprocess.run(cmd, cwd=self.rpscrape_dir, capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
                 print(f"✅ IRE results scraped")
             else:
@@ -76,10 +76,10 @@ class VeloScraper:
         print(f"\n🔮 VÉLØ Scraper - Collecting today's racecards")
         print("="*60)
         
-        cmd = f"cd {self.rpscrape_dir} && python3 racecards.py today"
+        cmd = ["python3", "racecards.py", "today"]
         
         try:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=300)
+            result = subprocess.run(cmd, cwd=self.rpscrape_dir, capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
                 print(f"✅ Racecards scraped")
                 print(result.stdout)

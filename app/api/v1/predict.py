@@ -64,7 +64,14 @@ async def predict_full(request: PredictRequest, api_key: str = Header(None, alia
 
         uma = UMA()
         uma.load_models()
+    except ImportError as e:
+        logger.error("Full prediction: model dependency missing — %s", e)
+        raise HTTPException(status_code=503, detail=f"Model dependency unavailable: {e}") from e
+    except Exception as e:
+        logger.error("Full prediction: model load failed — %s", e)
+        raise HTTPException(status_code=503, detail=f"Model load failed: {e}") from e
 
+    try:
         # Generate prediction
         prediction = uma.predict(
             features=request.features, market_odds=request.market_odds, race_context={"race_id": request.race_id}
@@ -80,9 +87,11 @@ async def predict_full(request: PredictRequest, api_key: str = Header(None, alia
             signals=prediction.signals,
         )
 
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Prediction error: {e}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        logger.error("Full prediction: inference failed — %s", e)
+        raise HTTPException(status_code=500, detail=f"Prediction inference error: {e}") from e
 
 
 @router.post("/quick", response_model=PredictResponse)
@@ -149,7 +158,11 @@ async def predict_market(request: PredictRequest, api_key: str = Header(None, al
     try:
         from app.intelligence.market_manipulation import detect_manipulation
         from app.observatory.volatility_index import compute_volatility
+    except ImportError as e:
+        logger.error("Market prediction: module missing — %s", e)
+        raise HTTPException(status_code=503, detail=f"Market module unavailable: {e}") from e
 
+    try:
         # Market intelligence
         manip_score = detect_manipulation(request.features)
         volatility_score = compute_volatility(request.features)
@@ -176,9 +189,11 @@ async def predict_market(request: PredictRequest, api_key: str = Header(None, al
             signals={"mode": "market", "manipulation_score": manip_score, "volatility_score": volatility_score},
         )
 
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Market prediction error: {e}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        logger.error("Market prediction: inference failed — %s", e)
+        raise HTTPException(status_code=500, detail=f"Market prediction error: {e}") from e
 
 
 @router.post("/ensemble", response_model=PredictResponse)

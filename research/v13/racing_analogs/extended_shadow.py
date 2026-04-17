@@ -19,6 +19,11 @@ What it does NOT do:
 
 Extended shadow mode is ADVISORY ONLY until explicitly promoted.
 
+⚠️  CLASSIFICATION: RESEARCH ONLY — DO NOT IMPORT FROM LIVE SCORING PATH
+    This module must never be called from run_prime_today.py, app/main.py,
+    or any endpoint that writes to velo_verdicts. It is safe to run as a
+    standalone script for offline analysis only.
+
 Env vars:
   SUPABASE_URL
   SUPABASE_SERVICE_KEY

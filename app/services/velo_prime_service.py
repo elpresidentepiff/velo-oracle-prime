@@ -921,9 +921,10 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             [(None, [], None)] + _optional_col_groups  # attempt 0 = full row
         ):
             if _grp_name is not None:
-                log.warning(
-                    "velo_verdicts upsert: %s columns missing, retrying without them. %s",
-                    _grp_name, _grp_hint,
+                log.critical(
+                    "SCHEMA_DRIFT: velo_verdicts upsert stripping %s columns — "
+                    "data is being SILENTLY LOST. Fix: %s | race=%s",
+                    _grp_name, _grp_hint, race.get("race_id"),
                 )
                 for _col in _grp_cols:
                     row.pop(_col, None)

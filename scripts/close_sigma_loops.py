@@ -110,7 +110,18 @@ def acquire_run_lock(db: Client, source_date: str) -> Optional[str]:
                 "finished_at":   now.isoformat(),
                 "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new run",
             }).eq("id", row["id"]).execute()
-            log.warning("Age gate closed stale run %s (%.1fh old)", row["id"], age_hours)
+            log.warning(
+                "STALE_LOCK: age gate closed run %s (%.1fh old). "
+                "This may indicate a zombie container or perpetually hanging process. "
+                "Investigate if this recurs.",
+                row["id"], age_hours,
+            )
+            tg(
+                f"VELO SIGMA ALERT\n"
+                f"Stale lock override: run {row['id'][:8]}... was {age_hours:.1f}h old.\n"
+                f"Auto-closed as FAIL. New run starting.\n"
+                f"If this recurs, investigate zombie processes."
+            )
         else:
             log.warning(
                 "Run already running (id=%s, age=%.1fh). Aborting.",
@@ -500,10 +511,29 @@ def generate_review(
         f"{'Patch: ' + patch_note if patch_note else ''}"
     )
 
+    # Classify miss_category from miss_reason for downstream queries
+    # (backfill_miss_evidence.py populates this manually for historical data;
+    #  new reviews should have it from the start)
+    miss_category = None
+    if miss_reason:
+        if miss_reason.startswith("signal_underweighted_"):
+            miss_category = "signal_underweighted"
+        elif miss_reason == "high_confidence_no_signal_gap":
+            miss_category = "high_confidence_miss"
+        elif miss_reason == "outsider_hedge_omitted":
+            miss_category = "outsider_miss"
+        elif miss_reason == "market_decoy_followed":
+            miss_category = "market_decoy_followed"
+        elif miss_reason == "non_runner_or_untracked":
+            miss_category = "non_runner"
+        else:
+            miss_category = miss_reason  # pass through unknown reasons
+
     return {
         "verdict_id": verdict_id,
         "race_id": race_id,
         "reviewed_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "top_pick_won": top_pick_won,
         "top_pick_placed": top_pick_placed,
         "top_pick_position": top_pick_pos,
@@ -511,6 +541,8 @@ def generate_review(
         "actual_winner_sp": winner_sp,
         "verdict_accuracy_score": accuracy,
         "review_outcome": review_outcome,
+        "miss_category": miss_category,
+        "learning_ready": (miss_category is not None),
         "notes": notes[:500],
     }
 
@@ -1224,12 +1256,7 @@ def main(target_date: str) -> None:
 
     try:
         # Step 2: Load verdicts for target_date from DB
-        rows = (
-            db.table("velo_verdicts")
-            .select("id, race_id, confidence_level, top_rank_horse_id, top_rank_score, selections, decision_tier, full_analysis, velo_prime_prob, place_prob, improvement_score, market_deception_score")
-            .execute()
-        )
-        # Filter to verdicts whose race is on target_date
+        # First get race_ids for the target date so we can filter server-side.
         race_rows = (
             db.table("races")
             .select("race_id, date, course")
@@ -1240,13 +1267,38 @@ def main(target_date: str) -> None:
             r["race_id"]: {"date": r.get("date", ""), "course": r.get("course", "")}
             for r in race_rows.data
         }
-        dated_race_ids = set(race_context.keys())
+        dated_race_ids = list(race_context.keys())
+        _dated_race_set = set(dated_race_ids)  # O(1) membership test
+
+        if not dated_race_ids:
+            log.warning("No races found in races table for %s", target_date)
+            release_run_lock(db, run_id, "PASS", 0, 0, 0)
+            return
+
+        # Server-side filter: only fetch verdicts for today's races
+        rows = (
+            db.table("velo_verdicts")
+            .select("id, race_id, generated_at, confidence_level, top_rank_horse_id, "
+                    "top_rank_score, selections, decision_tier, full_analysis, "
+                    "velo_prime_prob, place_prob, improvement_score, market_deception_score")
+            .in_("race_id", dated_race_ids)
+            .order("generated_at", desc=True)
+            .execute()
+        )
+
+        # Dedup: keep only the latest verdict per race_id (by generated_at)
+        _seen_races: set = set()
+        _deduped: list = []
+        for v in rows.data:
+            if v["race_id"] not in _seen_races:
+                _seen_races.add(v["race_id"])
+                _deduped.append(v)
+
         verdicts = [
             {**v, "verdict_id": v["id"],
              "race_date": race_context.get(v["race_id"], {}).get("date", ""),
              "race_course": race_context.get(v["race_id"], {}).get("course", "")}
-            for v in rows.data
-            if v["race_id"] in dated_race_ids
+            for v in _deduped
         ]
         log.info("Found %d verdicts for %s", len(verdicts), target_date)
 
@@ -1279,7 +1331,7 @@ def main(target_date: str) -> None:
                 continue
 
             # Only store results for races we have in our races table (FK constraint)
-            if race_id not in dated_race_ids:
+            if race_id not in _dated_race_set:
                 continue
 
             # Store race_results + runner_results

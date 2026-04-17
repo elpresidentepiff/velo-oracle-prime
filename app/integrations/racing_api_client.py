@@ -35,8 +35,8 @@ class RacingAPIClient:
             response.raise_for_status()
             return response.json().get("meetings", [])
         except Exception as e:
-            logger.error(f"Error fetching meetings: {e}")
-            return []
+            logger.error("Failed to fetch meetings (silent degradation to empty) — %s", e)
+            raise
 
     def get_race_card(self, race_id: str) -> dict | None:
         """Get detailed race card with runners"""
@@ -55,8 +55,8 @@ class RacingAPIClient:
             response.raise_for_status()
             return response.json().get("form", [])
         except Exception as e:
-            logger.error(f"Error fetching form for horse {horse_id}: {e}")
-            return []
+            logger.error("Failed to fetch form for horse %s — %s", horse_id, e)
+            raise
 
     def get_odds_timeline(self, race_id: str) -> list[dict]:
         """Get odds movement timeline"""
@@ -65,8 +65,8 @@ class RacingAPIClient:
             response.raise_for_status()
             return response.json().get("timeline", [])
         except Exception as e:
-            logger.error(f"Error fetching odds timeline {race_id}: {e}")
-            return []
+            logger.error("Failed to fetch odds timeline for race %s — %s", race_id, e)
+            raise
 
     def get_trainer_stats(self, trainer_id: str, track: str | None = None) -> dict:
         """Get trainer statistics"""
