@@ -4,6 +4,12 @@ ENV/
 env/
 .venv/
 
+# Python bytecode -- can contain null bytes that crash Python import on Railway
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # Local data caches -- not needed on Railway
 # Macro falls back gracefully if parquets absent
 data/
