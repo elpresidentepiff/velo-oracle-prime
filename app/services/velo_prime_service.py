@@ -63,7 +63,8 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
     # Ratings: None = genuinely absent. Do NOT coerce to 0.0 here.
     # API sends '-' or other non-numeric strings for missing ratings — clean them.
     def _clean_rating(v):
-        if v is None: return None
+        if v is None:
+            return None
         try:
             f = float(v)
             return f if f > 0 else None
@@ -279,8 +280,10 @@ def score_race_velo_prime(
     # official_rating and rpr are Optional[float] from the normalizer.
     # Only include runners with a real rating — exclude None and any stray zeros.
     def _to_float(v):
-        try: return float(v)
-        except (TypeError, ValueError): return 0.0
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            return 0.0
     field_or = [
         _to_float(r["official_rating"]) for r in runners
         if r.get("official_rating") is not None and _to_float(r["official_rating"]) > 0
