@@ -84,3 +84,10 @@ models/**/*.pkl
 .env
 !.env.example
 .railway/
+
+# Railway env dump files (may contain secrets)
+railway_*env*.txt
+
+# Temp directories
+.tmp/
+tmp/
