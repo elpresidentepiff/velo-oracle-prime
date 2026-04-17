@@ -1,0 +1,36 @@
+name: gx-validate
+
+on:
+  pull_request:
+  push:
+    branches: ["feature/v10-launch", "main"]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r workers/ingestion_spine/requirements.txt
+          pip install -r workers/ingestion_spine/requirements-dev.txt
+      
+      - name: Run GX on fixtures
+        run: |
+          python -m pytest tests/test_gx_validation.py -v --tb=short
+      
+      - name: Upload GX artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gx-validation-results
+          path: data_quality/great_expectations/uncommitted/

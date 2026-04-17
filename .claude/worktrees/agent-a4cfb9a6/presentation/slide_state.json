@@ -1,0 +1,148 @@
+{
+  "project_info": {
+    "title": "VÉLØ Oracle v12",
+    "created": 1763050851.9269922,
+    "last_updated": 1763051246.7873187,
+    "total_slides": 17
+  },
+  "slides": {
+    "title_slide": "edited",
+    "market_intelligence": "edited",
+    "market_intelligence_cont": "edited",
+    "multi_agent_architecture": "edited",
+    "multi_agent_architecture_cont": "edited",
+    "champion_challenger": "edited",
+    "timeseries_backtest": "edited",
+    "timeseries_backtest_cont": "edited",
+    "experiment_tracking": "edited",
+    "experiment_tracking_cont": "edited",
+    "protonet_ram": "edited",
+    "protonet_ram_cont": "edited",
+    "codebase_scale": "edited",
+    "deployment_roadmap": "edited",
+    "deployment_roadmap_cont": "edited",
+    "strategic_vision": "edited",
+    "next_steps": "edited"
+  },
+  "outline": [
+    {
+      "id": "title_slide",
+      "title": "VÉLØ Oracle v12",
+      "summary": "Title slide introducing VÉLØ Oracle as an autonomous AI system for horse racing market intelligence, highlighting 17,000+ lines of strategic code with a professional, data-driven aesthetic.",
+      "image_plan": "/home/ubuntu/upload/search_images/Wh3l40z8jbUt.png - The title slide introduces an \"Autonomous AI System.\" Image 4 shows a futuristic autonomous vehicle with a radar/sensor overlay, which visually represents an autonomous system.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "market_intelligence",
+      "title": "The Challenge: 90% of bettors lose to narrative traps",
+      "summary": "Explains the fundamental problem in horse racing markets: narrative traps, public sentiment, and the inability of traditional handicapping to process sufficient data. Highlights that 90% of bettors lose money by following hype and false form signals. Shows the chaotic betting market interface as visual context.",
+      "image_plan": "/home/ubuntu/velo-oracle/presentation_assets/slide2_horse_betting_market.png - Horse racing betting market interface showing the complex market environment that VÉLØ analyzes",
+      "slide_template_key": ""
+    },
+    {
+      "id": "market_intelligence_cont",
+      "title": "The VÉLØ Solution: Systematic advantage through AI",
+      "summary": "Presents VÉLØ's solution: autonomous AI system with 17,171 lines of code, multi-agent architecture processing 500,000+ historical races, market manipulation detection, and statistical edge through rigorous backtesting. Concludes with key insight that VÉLØ identifies where markets are systematically wrong rather than predicting winners.",
+      "slide_template_key": "",
+      "image_plan": "No images needed for this continuation slide - focus on solution metrics and key insight"
+    },
+    {
+      "id": "multi_agent_architecture",
+      "title": "Four specialized agents enable modular intelligence",
+      "summary": "Introduces the multi-agent architecture concept and presents the four specialized agents: Analyst Agent (intelligence generation with SQPE/TIE/NDS), Risk Agent (capital protection with Kelly Criterion and circuit breakers), Execution Agent (Betfair API interface and transaction logging), and Learning Agent (post-race evaluation and retraining triggers). Each agent described with icon, role, and specific responsibilities.",
+      "image_plan": "No image needed for this first part - focus on agent descriptions with visual cards",
+      "slide_template_key": ""
+    },
+    {
+      "id": "multi_agent_architecture_cont",
+      "title": "Multi-agent collaboration delivers reliability and scalability",
+      "summary": "Presents the multi-agent system architecture diagram showing how agents collaborate through structured workflows. Explains the key benefits of the multi-agent approach: single responsibility per agent, improved reliability and testability, clear separation of concerns, and superior scalability compared to monolithic designs. Includes visual architecture diagram.",
+      "slide_template_key": "",
+      "image_plan": "/home/ubuntu/velo-oracle/presentation_assets/slide4_multi_agent.png - Multi-agent system architecture diagram showing agent collaboration and workflow structure"
+    },
+    {
+      "id": "champion_challenger",
+      "title": "Champion/Challenger deployment eliminates upgrade risk",
+      "summary": "Describes the zero-risk deployment framework where new models run in shadow mode, allowing parallel performance comparison before committing capital.",
+      "image_plan": "/home/ubuntu/upload/search_images/ZbpOrx48tHZv.png; /home/ubuntu/upload/search_images/6mCJSmv55gmu.jpg - This slide describes the \"Champion/Challenger deployment\" and validation process, which is a core concept in DevOps and CI/CD pipelines. Images 16 and 17 show deployment and DevOps pipelines, which are the closest visual representations of this process. I will use 16 and 17 as they are different views of the same concept.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "timeseries_backtest",
+      "title": "TimeSeriesSplit prevents lookahead bias",
+      "summary": "Explains the TimeSeriesSplit methodology for chronological cross-validation: data sorted by race date, training data always before test data, 5-fold validation with expanding training window. Includes visual timeline showing train/test splits across multiple folds to illustrate the concept.",
+      "image_plan": "No images needed for this methodology-focused slide - use HTML/CSS timeline visualization instead",
+      "slide_template_key": ""
+    },
+    {
+      "id": "timeseries_backtest_cont",
+      "title": "Portfolio Kelly Criterion optimizes capital allocation",
+      "summary": "Presents Portfolio Kelly Criterion for bet sizing across simultaneous bets, normalizing total stakes to 50% of bankroll maximum. Shows statistical metrics dashboard image and displays target performance metrics: Sharpe ratio 1.5+, max drawdown <25%, win rate 35-45%, ROI 1.15+.",
+      "slide_template_key": "",
+      "image_plan": "/home/ubuntu/upload/search_images/TAbJDfA4MYVA.png - Statistical metrics dashboard showing the type of performance metrics tracked during backtesting validation"
+    },
+    {
+      "id": "experiment_tracking",
+      "title": "MLflow-compatible tracking logs all experiments",
+      "summary": "Explains the three categories of data logged by the experiment tracking system: Parameters (kelly fraction, edge threshold, model architecture, hyperparameters), Metrics (ROI, Sharpe ratio, drawdown, win rate), and Artifacts (model weights, reports, plots). Shows the analytics dashboard as visual proof of comprehensive tracking capabilities.",
+      "image_plan": "/home/ubuntu/velo-oracle/presentation_assets/slide5_dashboard.png - Analytics dashboard showing comprehensive experiment tracking interface",
+      "slide_template_key": ""
+    },
+    {
+      "id": "experiment_tracking_cont",
+      "title": "Tracking enables data-driven decisions and compliance",
+      "summary": "Presents the four key benefits of experiment tracking: Full audit trail for regulatory compliance and reproducibility, objective comparison to identify best configurations, easy rollback to previous model versions, and A/B testing at scale with statistical confidence. Emphasizes production value and operational advantages.",
+      "slide_template_key": "",
+      "image_plan": "No images needed for this continuation slide - focus on benefits and use cases"
+    },
+    {
+      "id": "protonet_ram",
+      "title": "Prototypical Networks enable few-shot learning for rival detection",
+      "summary": "Introduces v13's Rival Analysis Module (RAM) using Prototypical Networks for few-shot learning. Explains that RAM learns betting patterns from minimal examples (5-10 per rival type) instead of requiring thousands of samples. Details how RAM maps betting behavior to a 20-dimensional embedding space where similar strategies cluster together. Shows the neural network clustering visualization as visual representation of the embedding space concept.",
+      "image_plan": "/home/ubuntu/velo-oracle/presentation_assets/slide7_neural_network.jpeg - Prototypical Network embedding space visualization showing semantic clustering",
+      "slide_template_key": ""
+    },
+    {
+      "id": "protonet_ram_cont",
+      "title": "RAM detects five rival types and enables meta-game mastery",
+      "summary": "Lists the five rival betting strategy types that RAM can detect: value hunters (sharp bettors seeking mispriced odds), momentum chasers (following late market movements), contrarians (betting against public sentiment), favorite backers (systematic low-odds strategies), and longshot hunters (high-risk, high-reward players). Concludes with strategic advantage explanation: RAM transforms VÉLØ from a prediction system into a meta-game player by understanding how other AIs and sharp bettors behave, enabling anticipation of market movements before they happen.",
+      "slide_template_key": "",
+      "image_plan": "No images needed for this continuation slide - focus on rival types and strategic advantage"
+    },
+    {
+      "id": "codebase_scale",
+      "title": "17,171 lines of production-grade code deliver enterprise reliability",
+      "summary": "Presents codebase statistics (12MB, 65 modules, 17,171 lines) and compares to industry standards, emphasizing production-readiness and scalability.",
+      "image_plan": "/home/ubuntu/upload/search_images/zQkhIKbGVQ8V.jpeg - This slide emphasizes the \"17,171 lines of production-grade code\" and enterprise-level reliability. Image 6 is a high-tech, abstract visual of data, code, and a global network, symbolizing a large, complex, and production-ready system.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "deployment_roadmap",
+      "title": "Immediate deployment to Vast.ai with zero-risk pilot",
+      "summary": "Presents the first two phases of the deployment roadmap. Phase 1 (Infrastructure Setup): Deploy VÉLØ to Vast.ai instance, transfer 633MB raceform dataset, install dependencies, connect Racing API and Betfair API credentials. Success metric: All APIs connected, data loaded, environment validated. Phase 2 (Full-Scale Validation): Run TimeSeriesSplit backtesting on complete 1.7M row dataset, execute error mapping analysis, validate Champion vs Challenger performance. Success metric: Intelligence stack ROI ≥1.15, Sharpe ≥1.5, drawdown <25%. Includes the control room/system monitoring visualization on the right side.",
+      "image_plan": "/home/ubuntu/upload/search_images/HgrfiaLy8g6N.jpg - Control room and system monitoring visualization representing deployment infrastructure and validation processes",
+      "slide_template_key": ""
+    },
+    {
+      "id": "deployment_roadmap_cont",
+      "title": "v12 pilot launch and v13 data collection complete the roadmap",
+      "summary": "Presents the final two phases of the deployment roadmap. Phase 3 (v12 Pilot Launch): Deploy Champion/Challenger framework in shadow mode, run VÉLØ-10 pilot with £100 bankroll across 10 races, track performance with circuit breakers active. Success metric: 10 races completed, positive ROI, zero circuit breaker triggers. Phase 4 (v13 Data Collection): Begin collecting market movement data for RAM module, log rival betting patterns, prepare ProtoNet training dataset for meta-game analysis. Success metric: 100+ races logged with market data, rival patterns identified. This continuation completes the 4-phase deployment plan.",
+      "slide_template_key": "",
+      "image_plan": "No images needed for this continuation slide - focus on the final two deployment phases"
+    },
+    {
+      "id": "strategic_vision",
+      "title": "VÉLØ represents convergence of AI research and production discipline",
+      "summary": "Synthesizes what makes VÉLØ unique: research-driven architecture, production engineering, domain expertise, and strategic vision from v12 to v13.",
+      "image_plan": "/home/ubuntu/upload/search_images/G5p5Eoqg9frY.jpg - This slide summarizes the system as a convergence of AI research, financial engineering, and production software, highlighting the multi-agent design. Image 13 is a diagram of a multi-agent system, specifically mentioning LangGraph and AWS, which ties into the research and production engineering themes.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "next_steps",
+      "title": "Contact & Next Steps",
+      "summary": "Final slide with project status, immediate actions, and vision statement for transforming betting into systematic advantage.",
+      "image_plan": "",
+      "slide_template_key": ""
+    }
+  ]
+}

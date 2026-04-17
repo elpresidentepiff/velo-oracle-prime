@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17,171 lines of production-grade code deliver enterprise reliability</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a1f3a;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #1a1f3a;
+            padding: 50px;
+            position: relative;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c4ff0e;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .stats-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        .stat-block {
+            background: rgba(0, 217, 255, 0.08);
+            border: 2px solid #00d9ff;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .stat-info {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #c4ff0e;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #e8eef7;
+            font-weight: 600;
+        }
+        
+        .stat-icon {
+            font-size: 36px;
+            color: #00d9ff;
+            opacity: 0.6;
+        }
+        
+        .comparison-section {
+            background: rgba(123, 104, 238, 0.1);
+            border: 2px solid #7b68ee;
+            padding: 18px;
+        }
+        
+        .comparison-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #7b68ee;
+            margin-bottom: 14px;
+        }
+        
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(232, 238, 247, 0.1);
+            font-size: 15px;
+        }
+        
+        .comparison-item:last-child {
+            border-bottom: none;
+        }
+        
+        .comparison-label {
+            color: #e8eef7;
+        }
+        
+        .comparison-value {
+            color: #c4ff0e;
+            font-weight: 700;
+        }
+        
+        .visual-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        .code-visual {
+            border: 2px solid #00d9ff;
+            overflow: hidden;
+            height: 260px;
+            background: #0a0d1a;
+        }
+        
+        .code-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .quality-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .quality-badge {
+            background: rgba(196, 255, 14, 0.1);
+            border: 1px solid #c4ff0e;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .badge-icon {
+            font-size: 24px;
+            color: #c4ff0e;
+            margin-bottom: 6px;
+        }
+        
+        .badge-text {
+            font-size: 13px;
+            color: #e8eef7;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="grid-overlay"></div>
+        
+        <h1 class="page-title">17,171 lines of production-grade code deliver enterprise reliability</h1>
+        
+        <div class="content-layout">
+            <div class="stats-column">
+                <div class="stat-block">
+                    <div class="stat-info">
+                        <div class="stat-value">17,171</div>
+                        <div class="stat-label">TOTAL LINES OF CODE</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-block">
+                    <div class="stat-info">
+                        <div class="stat-value">65</div>
+                        <div class="stat-label">PYTHON MODULES</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-block">
+                    <div class="stat-info">
+                        <div class="stat-value">12 MB</div>
+                        <div class="stat-label">CODEBASE SIZE</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                </div>
+                
+                <div class="comparison-section">
+                    <div class="comparison-title">INDUSTRY COMPARISON</div>
+                    <div class="comparison-item">
+                        <span class="comparison-label">Typical betting bot</span>
+                        <span class="comparison-value">~2,000 lines</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span class="comparison-label">Academic research project</span>
+                        <span class="comparison-value">~5,000 lines</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span class="comparison-label">VÉLØ Oracle v12</span>
+                        <span class="comparison-value">17,171 lines</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span class="comparison-label">Production-ready scale</span>
+                        <span class="comparison-value">✓ Enterprise</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visual-column">
+                <div class="code-visual">
+                    <img src="/home/ubuntu/velo-oracle/presentation_assets/slide10_ai_system.jpeg" alt="Production-Grade AI System">
+                </div>
+                
+                <div class="quality-grid">
+                    <div class="quality-badge">
+                        <div class="badge-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="badge-text">Modular Architecture</div>
+                    </div>
+                    <div class="quality-badge">
+                        <div class="badge-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="badge-text">Error Handling</div>
+                    </div>
+                    <div class="quality-badge">
+                        <div class="badge-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="badge-text">Full Documentation</div>
+                    </div>
+                    <div class="quality-badge">
+                        <div class="badge-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+                        <div class="badge-text">Scalable Design</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

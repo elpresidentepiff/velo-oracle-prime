@@ -1,0 +1,41 @@
+{
+  "enableAllProjectMcpServers": true,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grep -qE '\"git commit|\"git merge' && (cd /c/Users/puror/velo-oracle-prime && npx gitnexus analyze 2>&1 | tail -3) || true",
+            "statusMessage": "Refreshing GitNexus index...",
+            "async": true,
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BRANCH=$(git -C /c/Users/puror/velo-oracle-prime branch --show-current 2>/dev/null); DIRTY=$(git -C /c/Users/puror/velo-oracle-prime status --porcelain 2>/dev/null | wc -l | tr -d ' '); echo \"{\\\"systemMessage\\\": \\\"VELO Prime loaded. Branch: $BRANCH | Uncommitted: $DIRTY files\\\"}\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "DIRTY=$(git -C /c/Users/puror/velo-oracle-prime status --porcelain 2>/dev/null | wc -l | tr -d ' '); echo \"{\\\"systemMessage\\\": \\\"VELO session ended. Uncommitted: $DIRTY files\\\"}\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

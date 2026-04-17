@@ -1,0 +1,74 @@
+{
+  "version": "v9.0++",
+  "description": "VÉLØ Oracle analytical weights and constants",
+  
+  "sqpe_weights": {
+    "form_signal": 0.25,
+    "intent_signal": 0.20,
+    "variance_signal": 0.15,
+    "noise_reduction_threshold": 0.30
+  },
+  
+  "v9pm_layers": {
+    "layer_1_form": 0.15,
+    "layer_2_odds": 0.12,
+    "layer_3_trainer_intent": 0.13,
+    "layer_4_sectional_data": 0.11,
+    "layer_5_bias_alignment": 0.10,
+    "layer_6_jockey_stats": 0.09,
+    "layer_7_class_movement": 0.10,
+    "layer_8_pace_scenario": 0.11,
+    "layer_9_market_behavior": 0.09
+  },
+  
+  "tie_parameters": {
+    "jockey_switch_weight": 0.35,
+    "weight_manipulation_weight": 0.25,
+    "placement_strategy_weight": 0.40
+  },
+  
+  "ssm_thresholds": {
+    "pace_decay_critical": 0.75,
+    "late_burst_minimum": 0.60,
+    "stamina_stretch_threshold": 0.70
+  },
+  
+  "bop_modifiers": {
+    "draw_bias_impact": 0.40,
+    "course_bias_impact": 0.35,
+    "going_suitability_impact": 0.25
+  },
+  
+  "five_filters": {
+    "form_reality_threshold": 0.65,
+    "intent_detection_threshold": 0.60,
+    "sectional_suitability_threshold": 0.70,
+    "market_misdirection_threshold": 0.55,
+    "value_distortion_threshold": 0.60
+  },
+  
+  "odds_parameters": {
+    "min_odds": 3.0,
+    "max_odds": 20.0,
+    "prime_ew_min": 3.0,
+    "prime_ew_max": 14.0,
+    "longshot_min": 16.0,
+    "longshot_max": 25.0,
+    "chaos_longshot_min": 20.0
+  },
+  
+  "confidence_bands": {
+    "high_confidence": 80,
+    "medium_confidence": 60,
+    "low_confidence": 40,
+    "reject_threshold": 30
+  },
+  
+  "genesis_protocol": {
+    "alpha_correction_rate": 0.15,
+    "beta_learning_rate": 0.10,
+    "gamma_adaptation_rate": 0.12,
+    "recalibration_threshold": 0.25
+  }
+}
+

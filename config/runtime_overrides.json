@@ -1,0 +1,38 @@
+{
+  "_comment": "Local fallback for runtime_overrides. Used when Supabase is unavailable. Only entries with status=ACTIVE take effect. To activate offline: set status to ACTIVE on the relevant key.",
+  "tier_thresholds": {
+    "status": "INACTIVE",
+    "value_json": {
+      "A": {"min_prob": 0.32, "min_gap": 0.08, "min_place": 0.52},
+      "B": {"min_prob": 0.15, "min_gap": 0.03, "min_place": 0.45, "min_improve": 0.18},
+      "C": {"min_prob": 0.13, "min_gap": 0.02, "rescue_place": 0.55, "rescue_prob": 0.11},
+      "X": {"flat_field_prob_max": 0.10, "max_gap": 0.015, "max_place": 0.40}
+    }
+  },
+  "tier_promotion_blockers": {
+    "status": "INACTIVE",
+    "value_json": {
+      "blockers": [
+        {"when": {"favourite_trap_risk": "high"}, "max_tier": "B",
+         "note": "trap risk caps at B"},
+        {"when": {"macro_chaos_mode": true}, "max_tier": "C",
+         "note": "macro chaos caps at C"},
+        {"when": {"market_decoy_followed": true}, "max_tier": "B",
+         "note": "decoy-followed pattern blocks A"},
+        {"when": {"outsider_hedge_omitted": true}, "max_tier": "B",
+         "note": "outsider hedge miss blocks A"}
+      ]
+    }
+  },
+  "trap_escalation_rules": {
+    "status": "INACTIVE",
+    "value_json": {
+      "rules": [
+        {"when": {"favourite_trap_risk": "high"}, "action": "block_A_tier",
+         "note": "persistent trap → hard block on A"},
+        {"when": {"macro_chaos_mode": true}, "action": "cap_C_tier",
+         "note": "persistent chaos → cap at C"}
+      ]
+    }
+  }
+}

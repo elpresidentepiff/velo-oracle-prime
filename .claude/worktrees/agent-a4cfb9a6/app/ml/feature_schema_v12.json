@@ -1,0 +1,448 @@
+{
+  "version": "v12",
+  "feature_count": 61,
+  "created": "2025-12-17",
+  "description": "VELO v12 Feature Schema - Complete feature contract for training and inference",
+  "features": [
+    {
+      "name": "ran",
+      "dtype": "int64",
+      "category": "core",
+      "nullable": false,
+      "description": "Number of runners in race"
+    },
+    {
+      "name": "num",
+      "dtype": "int64",
+      "category": "core",
+      "nullable": false,
+      "description": "Runner number"
+    },
+    {
+      "name": "age",
+      "dtype": "int64",
+      "category": "core",
+      "nullable": false,
+      "description": "Horse age"
+    },
+    {
+      "name": "rpr",
+      "dtype": "float64",
+      "category": "core",
+      "nullable": true,
+      "description": "Racing Post Rating"
+    },
+    {
+      "name": "or",
+      "dtype": "float64",
+      "category": "core",
+      "nullable": true,
+      "description": "Official Rating"
+    },
+    {
+      "name": "ts",
+      "dtype": "float64",
+      "category": "core",
+      "nullable": true,
+      "description": "Topspeed"
+    },
+    {
+      "name": "wgt_num",
+      "dtype": "float64",
+      "category": "core",
+      "nullable": true,
+      "description": "Weight in pounds"
+    },
+    {
+      "name": "draw",
+      "dtype": "int64",
+      "category": "core",
+      "nullable": true,
+      "description": "Draw position"
+    },
+    {
+      "name": "form_last_3",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Win rate in last 3 races"
+    },
+    {
+      "name": "form_last_5",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Win rate in last 5 races"
+    },
+    {
+      "name": "form_last_10",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Win rate in last 10 races"
+    },
+    {
+      "name": "wins_last_3",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Number of wins in last 3 races"
+    },
+    {
+      "name": "wins_last_5",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Number of wins in last 5 races"
+    },
+    {
+      "name": "wins_last_10",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Number of wins in last 10 races"
+    },
+    {
+      "name": "places_last_3",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Number of places in last 3 races"
+    },
+    {
+      "name": "places_last_5",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Number of places in last 5 races"
+    },
+    {
+      "name": "places_last_10",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Number of places in last 10 races"
+    },
+    {
+      "name": "consistency_score",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "Consistency score (std of finish positions)"
+    },
+    {
+      "name": "improvement_trend",
+      "dtype": "float64",
+      "category": "form",
+      "nullable": true,
+      "description": "RPR improvement trend"
+    },
+    {
+      "name": "early_pace_rating",
+      "dtype": "float64",
+      "category": "pace",
+      "nullable": true,
+      "description": "Early pace rating"
+    },
+    {
+      "name": "late_pace_rating",
+      "dtype": "float64",
+      "category": "pace",
+      "nullable": true,
+      "description": "Late pace rating"
+    },
+    {
+      "name": "pace_style",
+      "dtype": "int64",
+      "category": "pace",
+      "nullable": true,
+      "description": "Pace style (0=closer, 1=front-runner)"
+    },
+    {
+      "name": "sectional_avg",
+      "dtype": "float64",
+      "category": "pace",
+      "nullable": true,
+      "description": "Average sectional rating"
+    },
+    {
+      "name": "draw_bias",
+      "dtype": "float64",
+      "category": "draw",
+      "nullable": true,
+      "description": "Draw bias (win rate by draw position)"
+    },
+    {
+      "name": "draw_advantage",
+      "dtype": "bool",
+      "category": "draw",
+      "nullable": true,
+      "description": "Low draw advantage flag"
+    },
+    {
+      "name": "draw_percentile",
+      "dtype": "float64",
+      "category": "draw",
+      "nullable": true,
+      "description": "Draw percentile within race"
+    },
+    {
+      "name": "jockey_strike_rate",
+      "dtype": "float64",
+      "category": "trainer_jockey",
+      "nullable": true,
+      "description": "Jockey strike rate"
+    },
+    {
+      "name": "jockey_roi",
+      "dtype": "float64",
+      "category": "trainer_jockey",
+      "nullable": true,
+      "description": "Jockey ROI"
+    },
+    {
+      "name": "trainer_strike_rate",
+      "dtype": "float64",
+      "category": "trainer_jockey",
+      "nullable": true,
+      "description": "Trainer strike rate"
+    },
+    {
+      "name": "trainer_roi",
+      "dtype": "float64",
+      "category": "trainer_jockey",
+      "nullable": true,
+      "description": "Trainer ROI"
+    },
+    {
+      "name": "sire_roi",
+      "dtype": "float64",
+      "category": "trainer_jockey",
+      "nullable": true,
+      "description": "Sire ROI"
+    },
+    {
+      "name": "jockey_trainer_combo_roi",
+      "dtype": "float64",
+      "category": "trainer_jockey",
+      "nullable": true,
+      "description": "Jockey-trainer combination ROI"
+    },
+    {
+      "name": "going_preference",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Going preference (win rate on going)"
+    },
+    {
+      "name": "going_win_rate",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Overall win rate on going"
+    },
+    {
+      "name": "going_mismatch",
+      "dtype": "int64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Going mismatch flag"
+    },
+    {
+      "name": "course_form",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Course form (win rate at course)"
+    },
+    {
+      "name": "course_wins",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Number of course wins"
+    },
+    {
+      "name": "distance_form",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Distance form (win rate at distance)"
+    },
+    {
+      "name": "distance_wins",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Number of distance wins"
+    },
+    {
+      "name": "course_distance_form",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Course-distance form"
+    },
+    {
+      "name": "track_type_form",
+      "dtype": "float64",
+      "category": "course_going_distance",
+      "nullable": true,
+      "description": "Track type form"
+    },
+    {
+      "name": "class_movement",
+      "dtype": "int64",
+      "category": "class",
+      "nullable": true,
+      "description": "Class movement indicator"
+    },
+    {
+      "name": "class_drop_wins",
+      "dtype": "int64",
+      "category": "class",
+      "nullable": true,
+      "description": "Wins after class drop"
+    },
+    {
+      "name": "class_stability",
+      "dtype": "int64",
+      "category": "class",
+      "nullable": true,
+      "description": "Class stability indicator"
+    },
+    {
+      "name": "days_since_last_run",
+      "dtype": "float64",
+      "category": "recency",
+      "nullable": true,
+      "description": "Days since last run"
+    },
+    {
+      "name": "optimal_layoff",
+      "dtype": "int64",
+      "category": "recency",
+      "nullable": true,
+      "description": "Optimal layoff flag (14-56 days)"
+    },
+    {
+      "name": "too_fresh",
+      "dtype": "int64",
+      "category": "recency",
+      "nullable": true,
+      "description": "Too fresh flag (<7 days)"
+    },
+    {
+      "name": "too_stale",
+      "dtype": "int64",
+      "category": "recency",
+      "nullable": true,
+      "description": "Too stale flag (>90 days)"
+    },
+    {
+      "name": "weight_carried",
+      "dtype": "float64",
+      "category": "weight_age",
+      "nullable": true,
+      "description": "Weight carried in pounds"
+    },
+    {
+      "name": "weight_vs_avg",
+      "dtype": "float64",
+      "category": "weight_age",
+      "nullable": true,
+      "description": "Weight vs race average"
+    },
+    {
+      "name": "age_value",
+      "dtype": "float64",
+      "category": "weight_age",
+      "nullable": true,
+      "description": "Age value (normalized)"
+    },
+    {
+      "name": "age_optimal",
+      "dtype": "int64",
+      "category": "weight_age",
+      "nullable": true,
+      "description": "Optimal age flag (4-7 years)"
+    },
+    {
+      "name": "is_gelding",
+      "dtype": "int64",
+      "category": "weight_age",
+      "nullable": true,
+      "description": "Gelding flag"
+    },
+    {
+      "name": "is_mare",
+      "dtype": "int64",
+      "category": "weight_age",
+      "nullable": true,
+      "description": "Mare flag"
+    },
+    {
+      "name": "odds_decimal",
+      "dtype": "float64",
+      "category": "market",
+      "nullable": true,
+      "description": "Decimal odds"
+    },
+    {
+      "name": "implied_prob",
+      "dtype": "float64",
+      "category": "market",
+      "nullable": true,
+      "description": "Implied probability from odds"
+    },
+    {
+      "name": "odds_rank",
+      "dtype": "float64",
+      "category": "market",
+      "nullable": true,
+      "description": "Odds rank within race"
+    },
+    {
+      "name": "is_favorite",
+      "dtype": "int64",
+      "category": "market",
+      "nullable": true,
+      "description": "Favorite flag"
+    },
+    {
+      "name": "odds_drift",
+      "dtype": "float64",
+      "category": "market",
+      "nullable": true,
+      "description": "Odds drift"
+    }
+  ],
+  "targets": [
+    {
+      "name": "win",
+      "dtype": "int64",
+      "nullable": false,
+      "description": "Win target (1=won, 0=lost)"
+    },
+    {
+      "name": "place",
+      "dtype": "int64",
+      "nullable": false,
+      "description": "Place target (1=placed top 3, 0=not placed)"
+    }
+  ],
+  "leakage_firewall": {
+    "blocked_fields": [
+      "pos",
+      "pos_num",
+      "sp",
+      "bfsp",
+      "in_running_low",
+      "in_running_high",
+      "result",
+      "finish_time"
+    ],
+    "timestamp_rule": "All feature data must be timestamped <= decision_timestamp"
+  }
+}
