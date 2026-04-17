@@ -162,6 +162,37 @@ def _patch_pipeline_run(run_id: str, patch: dict) -> None:
         raise RuntimeError(f"pipeline_runs patch failed HTTP {status}: {body.decode(errors='replace')[:200]}")
 
 
+def _write_reject_event(
+    *,
+    service_name: str,
+    source_date: str,
+    existing_run_id: str,
+    trigger_source: str,
+    rejection_reason: str,
+) -> None:
+    """Durably record a rejected duplicate trigger in trigger_reject_events."""
+    row = {
+        "event_type": "duplicate_trigger_rejected",
+        "service_name": service_name,
+        "source_date": source_date,
+        "existing_run_id": existing_run_id,
+        "incoming_trigger_source": trigger_source,
+        "normalized_trigger_source": trigger_source or "unknown",
+        "rejection_reason": rejection_reason,
+    }
+    try:
+        status, body = _pipeline_request("POST", "trigger_reject_events", data=row)
+        if status not in (200, 201):
+            logger.warning(
+                "trigger_reject_events write failed HTTP %s for %s/%s: %s",
+                status, service_name, source_date, body.decode(errors="replace")[:200],
+            )
+        else:
+            logger.info("trigger_reject_events: recorded duplicate reject for %s/%s run=%s", service_name, source_date, existing_run_id)
+    except Exception as exc:
+        logger.warning("trigger_reject_events write raised: %s", exc)
+
+
 def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, trigger_source: str) -> dict:
     sb_url, sb_key = _pipeline_run_api_config()
     if not sb_url or not sb_key:
@@ -194,6 +225,13 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
             )
             logger.warning("Trigger age-gate closed stale run %s for %s/%s", row["id"], service_name, source_date)
         else:
+            _write_reject_event(
+                service_name=service_name,
+                source_date=source_date,
+                existing_run_id=row["id"],
+                trigger_source=trigger_source,
+                rejection_reason=f"run_already_running (age={age_hours:.1f}h)",
+            )
             return {
                 "status": "duplicate",
                 "run_id": row["id"],
@@ -227,6 +265,13 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         )
         dup_rows = _parse_pipeline_rows(dup_body) if dup_status in (200, 206) else []
         if dup_rows:
+            _write_reject_event(
+                service_name=service_name,
+                source_date=source_date,
+                existing_run_id=dup_rows[0]["id"],
+                trigger_source=trigger_source,
+                rejection_reason="run_already_running (race condition on insert)",
+            )
             return {"status": "duplicate", "run_id": dup_rows[0]["id"], "detail": "run already running"}
     raise HTTPException(status_code=503, detail=f"Unable to claim durable trigger run: HTTP {status}")
 
