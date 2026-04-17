@@ -1,19 +1,26 @@
 """
-VÉLØ Oracle — Security Validator
-=================================
-Runs on startup to verify the Supabase database hardening is still in place.
-If any check fails, it logs a CRITICAL warning but does NOT crash the app —
-it is informational so the operator can take action.
-
-This module is the permanent guard against security regression.
-If the DB is ever reset, migrated, or cloned, this will immediately alert.
+VELO Oracle - Security Validator
+================================
+Runs on startup to verify that the Supabase database hardening is still in place.
+If verification cannot be completed, the result stays explicitly unverified.
 """
+
+from __future__ import annotations
+
 import logging
 import os
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
-# The verification query — same one used to confirm 0 findings in the live DB
+CHECKED_RLS_TABLES = ["runner_results", "runner_race_facts", "import_batches"]
+UNCHECKED_OBJECTS = {
+    "views_not_invoker": "all public views",
+    "functions_mutable_search_path": "all public SQL/plpgsql functions",
+    "matviews_exposed": "all public materialized views",
+}
+
+# The verification query documented for direct DB-side validation.
 SECURITY_CHECK_SQL = """
 SELECT
   (SELECT count(*) FROM pg_class c
@@ -45,96 +52,128 @@ SELECT
 """
 
 
-def run_security_check() -> dict:
-    """
-    Run the security validation check against the live Supabase DB.
-    Returns a dict with check results and a boolean 'passed' key.
-    Non-fatal — logs warnings but does not raise.
-    """
-    result = {
+def _base_result() -> dict[str, Any]:
+    return {
+        "status": "error",
+        "verified": False,
         "passed": False,
-        "tables_rls_disabled": -1,
-        "views_not_invoker": -1,
-        "functions_mutable_search_path": -1,
-        "matviews_exposed": -1,
+        "coverage_scope": "unknown",
+        "metrics": None,
+        "tables_rls_disabled": None,
+        "views_not_invoker": None,
+        "functions_mutable_search_path": None,
+        "matviews_exposed": None,
+        "checked_objects": [],
+        "unchecked_objects": [],
         "error": None,
+        "error_code": None,
+        "error_detail": None,
     }
 
+
+def _apply_metrics(result: dict[str, Any], metrics: dict[str, int]) -> dict[str, Any]:
+    result["metrics"] = metrics
+    result.update(metrics)
+    total_issues = sum(max(0, value) for value in metrics.values())
+    result["coverage_scope"] = "partial"
+    result["checked_objects"] = [f"RLS:{table}" for table in CHECKED_RLS_TABLES]
+    result["unchecked_objects"] = [f"{name}:{label}" for name, label in UNCHECKED_OBJECTS.items()]
+    result["verified"] = False
+    result["passed"] = total_issues == 0
+    result["status"] = "partial" if result["passed"] else "failed"
+    if result["status"] == "partial":
+        result["error_detail"] = (
+            "Partial coverage only: verified RLS on checked tables; "
+            "views/functions/materialized views remain unchecked by this validator path."
+        )
+    return result
+
+
+def _classify_security_error(exc: Exception) -> str:
+    message = str(exc).lower()
+    if any(token in message for token in ("permission", "not authorized", "forbidden", "401", "403")):
+        return "permission_denied"
+    if any(token in message for token in ("connection", "network", "timeout", "timed out", "dns", "name resolution")):
+        return "transport_error"
+    if any(token in message for token in ("relation", "schema cache", "does not exist", "column", "pg_class")):
+        return "relation_inaccessible"
+    if any(token in message for token in ("postgrest", "json object requested", "decode", "unexpected response")):
+        return "postgrest_api_mismatch"
+    return "verification_query_failed"
+
+
+def _error_result(error_code: str, error_detail: str, *, status: str = "error") -> dict[str, Any]:
+    result = _base_result()
+    result["status"] = status
+    result["error"] = error_detail
+    result["error_code"] = error_code
+    result["error_detail"] = error_detail
+    return result
+
+
+def run_security_check() -> dict[str, Any]:
+    """
+    Run the security validation check against the live Supabase DB.
+    Returns a dict with explicit verification status.
+    """
+    result = _base_result()
+
     supabase_url = os.getenv("SUPABASE_URL", "")
-    service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
+    service_key = (
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+        or os.getenv("SUPABASE_SERVICE_KEY", "")
+        or os.getenv("SUPABASE_KEY", "")
+    )
 
     if not supabase_url or not service_key:
-        result["error"] = "SUPABASE_URL or service role key not set — skipping security check"
-        logger.warning("[security_validator] %s", result["error"])
+        result = _error_result(
+            "missing_credentials",
+            "SUPABASE_URL or service role key not set - skipping security check",
+            status="skipped",
+        )
+        logger.warning("[security_validator] %s", result["error_detail"])
         return result
 
     try:
         from supabase import create_client
+
         client = create_client(supabase_url, service_key)
+        tables_to_check = list(CHECKED_RLS_TABLES)
 
-        # Use rpc to execute raw SQL via the postgres function
-        # We call the pg_stat_user_tables approach via a direct query
-        # Supabase Python client doesn't support raw SQL directly,
-        # so we use the REST API with the postgres extension
-        import urllib.request
-        import urllib.error
-        import json
+        for table in tables_to_check:
+            client.table(table).select("*", count="exact").limit(0).execute()
 
-        db_url = supabase_url.rstrip("/")
-        endpoint = f"{db_url}/rest/v1/rpc/exec_security_check"
-
-        # Try the direct approach via supabase-js compatible REST
-        # Fall back to a simpler per-table check if exec_security_check doesn't exist
-        try:
-            # Check RLS on the three key tables directly
-            tables_to_check = ["runner_results", "runner_race_facts", "import_batches"]
-            rls_failures = []
-
-            for table in tables_to_check:
-                res = client.table(table).select("*", count="exact").limit(0).execute()
-                # If we get here without error, the table is accessible — check RLS via pg_class
-            
-            # Use a simpler check: try to query pg_class via the service role
-            # This works because service_role bypasses RLS
-            check_result = (
-                client.table("pg_class")
-                .select("relname, relrowsecurity")
-                .eq("relnamespace", "2200")  # public schema OID
-                .in_("relname", tables_to_check)
-                .execute()
-            )
-
-            if check_result.data:
-                for row in check_result.data:
-                    if not row.get("relrowsecurity", False):
-                        rls_failures.append(row["relname"])
-
-            result["tables_rls_disabled"] = len(rls_failures)
-            result["views_not_invoker"] = 0   # Confirmed by direct DB check
-            result["functions_mutable_search_path"] = 0  # Confirmed by direct DB check
-            result["matviews_exposed"] = 0    # Confirmed by direct DB check
-
-        except Exception:
-            # pg_class not accessible via REST — use the known-good state
-            # The DB was confirmed clean by direct SQL verification
-            result["tables_rls_disabled"] = 0
-            result["views_not_invoker"] = 0
-            result["functions_mutable_search_path"] = 0
-            result["matviews_exposed"] = 0
-
-        # Evaluate pass/fail
-        total_issues = (
-            max(0, result["tables_rls_disabled"])
-            + max(0, result["views_not_invoker"])
-            + max(0, result["functions_mutable_search_path"])
-            + max(0, result["matviews_exposed"])
+        check_result = (
+            client.table("pg_class")
+            .select("relname, relrowsecurity")
+            .eq("relnamespace", "2200")
+            .in_("relname", tables_to_check)
+            .execute()
         )
 
-        result["passed"] = total_issues == 0
+        if check_result.data is None:
+            raise RuntimeError("pg_class query returned no data; verification state is unknown")
 
-        if result["passed"]:
+        rls_failures = [row["relname"] for row in check_result.data if not row.get("relrowsecurity", False)]
+        result = _apply_metrics(
+            result,
+            {
+                "tables_rls_disabled": len(rls_failures),
+                "views_not_invoker": 0,
+                "functions_mutable_search_path": 0,
+                "matviews_exposed": 0,
+            },
+        )
+
+        if result["status"] == "partial":
+            logger.warning(
+                "[security_validator] PARTIAL - verified RLS only for checked tables=%s; unchecked=%s",
+                result["checked_objects"],
+                result["unchecked_objects"],
+            )
+        elif result["verified"]:
             logger.info(
-                "[security_validator] ✅ PASS — DB hardening verified: "
+                "[security_validator] PASS - DB hardening verified: "
                 "RLS=%d views=%d functions=%d matviews=%d",
                 result["tables_rls_disabled"],
                 result["views_not_invoker"],
@@ -143,18 +182,25 @@ def run_security_check() -> dict:
             )
         else:
             logger.critical(
-                "[security_validator] ❌ FAIL — Security regression detected! "
+                "[security_validator] FAIL - Security regression detected! "
                 "tables_rls_disabled=%d views_not_invoker=%d "
                 "functions_mutable_search_path=%d matviews_exposed=%d "
-                "— Run scripts/migrations/002_full_security_hardening.sql immediately",
+                "- Run scripts/migrations/002_full_security_hardening.sql immediately",
                 result["tables_rls_disabled"],
                 result["views_not_invoker"],
                 result["functions_mutable_search_path"],
                 result["matviews_exposed"],
             )
 
-    except Exception as e:
-        result["error"] = str(e)
-        logger.warning("[security_validator] Could not complete security check (non-fatal): %s", e)
+    except Exception as exc:
+        error_code = _classify_security_error(exc)
+        result = _error_result(error_code, str(exc))
+        logger.warning(
+            "[security_validator] Could not verify DB hardening - "
+            "status=%s error_code=%s detail=%s",
+            result["status"],
+            error_code,
+            result["error_detail"],
+        )
 
     return result

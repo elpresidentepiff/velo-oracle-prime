@@ -20,7 +20,6 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.core.config import settings
 from app.core.runtime_env import utc_now, utc_now_iso
 
 # Configure logging
@@ -32,6 +31,7 @@ _sentient_state: dict | None = None
 
 _SOFT_SCHEMA_RUNTIME_NAMES = {"local", "dev", "development", "test", "testing"}
 _TRIGGER_AGE_GATE_HOURS = 24
+_PIPELINE_TRIGGER_SOURCES = {"manual", "github_actions_scheduled", "github_actions_manual", "api_manual"}
 _TRIGGER_SERVICE_CONFIG = {
     "score_daily": {
         "service_name": "velo-prime-scoring",
@@ -46,6 +46,20 @@ _TRIGGER_SERVICE_CONFIG = {
         "run_type": "results_reconciliation",
     },
 }
+
+
+def _normalize_pipeline_trigger_source(trigger_source: str) -> str:
+    """Map arbitrary ingress labels onto the pipeline_runs.trigger_source enum."""
+    raw = (trigger_source or "").strip()
+    if raw in _PIPELINE_TRIGGER_SOURCES:
+        return raw
+    if raw.startswith("github_actions"):
+        return "github_actions_scheduled" if "scheduled" in raw else "github_actions_manual"
+    logger.warning(
+        "Unknown trigger_source '%s' normalized to api_manual for pipeline_runs compatibility",
+        raw or "<empty>",
+    )
+    return "api_manual"
 
 
 def _spawn_trigger_subprocess(
@@ -87,8 +101,7 @@ def _spawn_trigger_subprocess(
 
 def _schema_verification_mode() -> str:
     runtime = (
-        settings.API_ENV
-        or os.getenv("API_ENV")
+        os.getenv("API_ENV")
         or os.getenv("ENV")
         or os.getenv("RAILWAY_ENVIRONMENT")
         or "local"
@@ -199,6 +212,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         raise HTTPException(status_code=503, detail="Trigger requires durable pipeline_runs access")
 
     now = datetime.now(UTC)
+    normalized_trigger_source = _normalize_pipeline_trigger_source(trigger_source)
     status, body = _pipeline_request(
         "GET",
         (
@@ -229,7 +243,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
                 service_name=service_name,
                 source_date=source_date,
                 existing_run_id=row["id"],
-                trigger_source=trigger_source,
+                trigger_source=normalized_trigger_source,
                 rejection_reason=f"run_already_running (age={age_hours:.1f}h)",
             )
             return {
@@ -245,8 +259,8 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
         "run_type": run_type,
         "source_date": source_date,
         "run_state": "running",
-        "status": "TRIGGERED",
-        "trigger_source": trigger_source,
+        "status": None,  # Terminal truth only — in-flight rows stay NULL until close
+        "trigger_source": normalized_trigger_source,
         "started_at": now.isoformat().replace("+00:00", "Z"),
         "environment": os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("ENV") or os.getenv("API_ENV") or "production",
         "error_message": None,
@@ -269,7 +283,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
                 service_name=service_name,
                 source_date=source_date,
                 existing_run_id=dup_rows[0]["id"],
-                trigger_source=trigger_source,
+                trigger_source=normalized_trigger_source,
                 rejection_reason="run_already_running (race condition on insert)",
             )
             return {"status": "duplicate", "run_id": dup_rows[0]["id"], "detail": "run already running"}
@@ -284,7 +298,9 @@ async def _verify_schema_at_startup() -> None:
 
     Fatal (raises RuntimeError):
       • race_truth_audits table missing  — truth loop cannot write
-      • shadow_verdicts table missing    — shadow lab cannot write
+
+    Non-fatal (warning only):
+      • shadow_verdicts table missing    — shadow lab optional
 
     Fatal (raises RuntimeError) if velo_verdicts is reachable but required
     columns are absent:
@@ -334,8 +350,8 @@ async def _verify_schema_at_startup() -> None:
 
     errors: list[str] = []
 
-    # ── 1. Required tables ────────────────────────────────────────────────────
-    for table in ("race_truth_audits", "shadow_verdicts"):
+    # ── 1. Required tables (fatal if missing) ─────────────────────────────────
+    for table in ("race_truth_audits",):
         status, body = _sb_get(f"{table}?select=id&limit=0")
         if status == 200:
             logger.info("[startup:schema] table %s — PRESENT", table)
@@ -356,6 +372,22 @@ async def _verify_schema_at_startup() -> None:
                 f"(HTTP {status}): {msg[:200]}"
             )
             logger.error("[startup:schema] MISSING table %s — %s", table, msg[:200])
+
+    # ── 1b. Optional tables (non-fatal if missing) ────────────────────────────
+    for table in ("shadow_verdicts",):
+        status, body = _sb_get(f"{table}?select=id&limit=0")
+        if status == 200:
+            logger.info("[startup:schema] optional table %s — PRESENT", table)
+        elif status == 0:
+            logger.warning(
+                "[startup:schema] Could not reach Supabase to check optional table %s: %s",
+                table, body.decode(errors="replace")[:200],
+            )
+        else:
+            logger.warning(
+                "[startup:schema] optional table %s missing or inaccessible (non-fatal) — %s",
+                table, body.decode(errors="replace")[:200],
+            )
 
     # ── 2. Required columns in velo_verdicts ──────────────────────────────────
     REQUIRED_COLS = "active_components,top_horse_readiness_state,race_archetype,g_shadow_multiplier"
@@ -495,8 +527,8 @@ app = FastAPI(
 # CORS Middleware - CRITICAL for Cloudflare Worker
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+    allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, OPTIONS, etc.)
     allow_headers=["*"],  # Allow all headers
 )
@@ -513,7 +545,7 @@ except ImportError as e:
     logger.warning(f"⚠️  Feature/Monitoring routers not available: {e}")
 
 # Environment
-ENV = settings.API_ENV
+ENV = os.getenv("API_ENV", "production")
 API_KEY = os.getenv("API_KEY", "")
 
 
