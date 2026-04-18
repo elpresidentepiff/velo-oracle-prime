@@ -53,3 +53,36 @@ def resolve_telegram_settings() -> TelegramSettings:
 
 def resolve_runtime_environment() -> str:
     return os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("ENV") or os.getenv("API_ENV") or "local"
+
+
+def resolve_build_fingerprint() -> dict[str, str | bool]:
+    """
+    Resolve the current build fingerprint dynamically.
+    Priority:
+      1. RAILWAY_GIT_COMMIT_SHA (injected by Railway at build time)
+      2. Local git HEAD (if in a git repo)
+      3. Fallback to hardcoded 'unknown'
+    """
+    commit = os.getenv("RAILWAY_GIT_COMMIT_SHA")
+    source = "railway_env"
+
+    if not commit:
+        try:
+            import subprocess
+            res = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, check=True
+            )
+            commit = res.stdout.strip()
+            source = "local_git"
+        except Exception:
+            commit = "unknown"
+            source = "fallback"
+
+    return {
+        "commit": commit,
+        "source": source,
+        "env": resolve_runtime_environment(),
+        "timestamp": utc_now_iso(),
+        "is_hardcoded": commit == "unknown"
+    }

@@ -1002,12 +1002,9 @@ async def api_status(authorized: bool = Depends(verify_api_key)):
 
 @app.get("/api/v1/build-fingerprint")
 async def build_fingerprint():
-    """Deploy probe — returns the git SHA baked in at build time."""
-    return {
-        "commit": "3b78e9d",
-        "feature": "trigger_reject_events_write",
-        "has_write_reject_event": True,
-    }
+    """Deploy probe — returns the git SHA resolved at runtime."""
+    from app.core.runtime_env import resolve_build_fingerprint
+    return resolve_build_fingerprint()
 
 
 # Prediction endpoints
