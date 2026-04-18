@@ -7,8 +7,51 @@ on:
   schedule:
     - cron: '*/30 * * * *'  # Every 30 minutes
 
+env:
+  VELO_ORACLE_URL: https://velo-oracle-production.up.railway.app
+  INGESTION_SPINE_URL: https://ingestion-spine-production.up.railway.app
+
 jobs:
-  smoke:
+  # ── VELO Oracle smoke — proves live app truth ───────────────────────────────
+  velo-oracle-smoke:
+    name: VELO Oracle smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: VELO /health — app alive + DB reachable
+        run: |
+          set -e
+          echo "Testing VELO Oracle /health..."
+          response=$(curl -s --fail --max-time 20 "$VELO_ORACLE_URL/health")
+          echo "$response"
+          echo "$response" | python3 -c "
+          import sys, json
+          d = json.load(sys.stdin)
+          assert 'timestamp' in d, 'missing timestamp'
+          assert d.get('status') in ('healthy', 'degraded'), f'unexpected status: {d.get(\"status\")}'
+          print('VELO /health OK — status:', d['status'])
+          "
+
+      - name: VELO /api/v1/build-fingerprint — deploy identity
+        run: |
+          set -e
+          echo "Testing VELO Oracle /api/v1/build-fingerprint..."
+          response=$(curl -s --fail --max-time 20 "$VELO_ORACLE_URL/api/v1/build-fingerprint")
+          echo "$response"
+          echo "$response" | python3 -c "
+          import sys, json
+          d = json.load(sys.stdin)
+          status = d.get('commit_status')
+          assert status in ('resolved', 'unknown'), f'unexpected commit_status: {status}'
+          assert d.get('commit') != '3b78e9d', 'FAIL: stale hardcoded commit detected'
+          assert 'timestamp' in d, 'missing timestamp'
+          assert 'has_write_reject_event' in d, 'missing has_write_reject_event field'
+          print('build-fingerprint OK — commit_status:', status, '| commit:', d.get('commit'))
+          "
+
+  # ── Ingestion Spine smoke — proves ingestion surface ───────────────────────
+  ingestion-spine-smoke:
+    name: Ingestion Spine smoke
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -16,13 +59,13 @@ jobs:
         run: |
           set -e
           echo "Testing /healthz endpoint..."
-          curl -i --fail --max-time 20 https://ingestion-spine-production.up.railway.app/healthz
+          curl -i --fail --max-time 20 "$INGESTION_SPINE_URL/healthz"
 
       - name: Curl /health (with DB check)
         run: |
           set -e
           echo "Testing /health endpoint..."
-          curl -i --fail --max-time 20 https://ingestion-spine-production.up.railway.app/health
+          curl -i --fail --max-time 20 "$INGESTION_SPINE_URL/health"
 
       - name: Test tRPC endpoint
         env:
@@ -31,16 +74,16 @@ jobs:
           set -e
           echo "Testing tRPC createBatch endpoint..."
           if [ -n "$OPS_API_KEY" ]; then
-            curl -i --fail --max-time 20 -X POST https://ingestion-spine-production.up.railway.app/trpc/ingestion.createBatch \
+            curl -i --fail --max-time 20 -X POST "$INGESTION_SPINE_URL/trpc/ingestion.createBatch" \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $OPS_API_KEY" \
               -d '{"input":{"import_date":"2026-01-07","source":"smoke_test","notes":"automated-smoke-test"}}'
           else
-            curl -i --fail --max-time 20 -X POST https://ingestion-spine-production.up.railway.app/trpc/ingestion.createBatch \
+            curl -i --fail --max-time 20 -X POST "$INGESTION_SPINE_URL/trpc/ingestion.createBatch" \
               -H "Content-Type: application/json" \
               -d '{"input":{"import_date":"2026-01-07","source":"smoke_test","notes":"automated-smoke-test"}}'
           fi
-      
+
       - name: Test debug routes endpoint (with auth)
         env:
           DEBUG_KEY: ${{ secrets.DEBUG_KEY }}
@@ -48,7 +91,7 @@ jobs:
           set -e
           echo "Testing /debug/routes endpoint..."
           if [ -n "$DEBUG_KEY" ]; then
-            curl -i --fail --max-time 20 https://ingestion-spine-production.up.railway.app/debug/routes \
+            curl -i --fail --max-time 20 "$INGESTION_SPINE_URL/debug/routes" \
               -H "X-Debug-Key: $DEBUG_KEY"
           else
             echo "DEBUG_KEY not configured, skipping debug routes test"

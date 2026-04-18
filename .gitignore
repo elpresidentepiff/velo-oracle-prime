@@ -84,7 +84,16 @@ models/**/*.pkl
 .env
 !.env.example
 .railway/
+
+# Railway env dump files (may contain secrets)
+railway_*env*.txt
 railway_hermes_env.txt
 railway_velo_oracle_env.txt
+
+# Telegram audio
 telegram_cards/*.mp3
 telegram_cards/*.wav
+
+# Temp directories
+.tmp/
+tmp/
