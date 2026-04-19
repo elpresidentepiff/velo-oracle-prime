@@ -310,7 +310,7 @@ def fetch_racecards_pro(
     if race_date:
         params["date"] = race_date
 
-    data = _get(session, "/v1/racecards/pro", params=params)
+    data = _get(session, "/racecards/pro", params=params)
     races: List[Dict] = data if isinstance(data, list) else data.get("racecards", [])
 
     enriched_races: List[Dict] = []

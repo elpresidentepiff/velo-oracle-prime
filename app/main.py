@@ -1002,11 +1002,6 @@ async def api_status(authorized: bool = Depends(verify_api_key)):
 
 @app.get("/api/v1/build-fingerprint")
 async def build_fingerprint():
-<<<<<<< HEAD
-    """Deploy probe — returns the git SHA resolved at runtime."""
-    from app.core.runtime_env import resolve_build_fingerprint
-    return resolve_build_fingerprint()
-=======
     """Deploy probe — resolves commit SHA from Railway runtime env vars.
 
     Returns the full ``RAILWAY_GIT_COMMIT_SHA`` injected by Railway at deploy
@@ -1037,7 +1032,7 @@ async def build_fingerprint():
         "has_write_reject_event": True,
         "timestamp": utc_now_iso(),
     }
->>>>>>> 39d03ff7cbaebd15d2b7fa051dfd96e7189e94a1
+
 
 
 # Prediction endpoints
@@ -1191,20 +1186,44 @@ async def get_models(authorized: bool = Depends(verify_api_key)):
 _TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 _TG_BOT_URL = os.getenv("RAILWAY_SERVICE_VELO_ORACLE_URL", "")
 
-# Per-user VoxAgent instances (maintains conversation history)
-_vox_agents: dict[int, object] = {}
+# Webhook Memory Guard Configuration
+_MAX_VOX_AGENTS = int(os.getenv("MAX_VOX_AGENTS", "50"))
+_WHITELISTED_USERS = set(
+    int(u.strip()) for u in os.getenv("WHITELISTED_TELEGRAM_USERS", "").split(",") if u.strip()
+)
+
+# Bounded agent store (LRU cache using OrderedDict)
+from collections import OrderedDict
+_vox_agents: OrderedDict[int, object] = OrderedDict()
 
 
 def _get_vox_agent(user_id: int):
-    if user_id not in _vox_agents:
-        try:
-            from workers.velo_vox.agent_loop import VoxAgent
+    """Get or create VoxAgent with LRU eviction policy."""
+    # 1. Identity Gate (Optional but recommended)
+    if _WHITELISTED_USERS and user_id not in _WHITELISTED_USERS:
+        logger.warning(f"[bot] Unauthorized user {user_id} blocked by whitelist")
+        return None
 
-            _vox_agents[user_id] = VoxAgent(user_id=user_id)
-        except Exception as e:
-            logger.error(f"[bot] VoxAgent init failed for user {user_id}: {e}")
-            return None
-    return _vox_agents[user_id]
+    # 2. LRU Retrieval/Eviction
+    if user_id in _vox_agents:
+        # Move to end (most recently used)
+        _vox_agents.move_to_end(user_id)
+        return _vox_agents[user_id]
+    
+    # 3. Size Guard
+    if len(_vox_agents) >= _MAX_VOX_AGENTS:
+        # Evict oldest (first item)
+        oldest_id, _ = _vox_agents.popitem(last=False)
+        logger.info(f"[bot] Memory Guard: evicted oldest agent instance {oldest_id}")
+
+    try:
+        from workers.velo_vox.agent_loop import VoxAgent
+        agent = VoxAgent(user_id=user_id)
+        _vox_agents[user_id] = agent
+        return agent
+    except Exception as e:
+        logger.error(f"[bot] VoxAgent init failed for user {user_id}: {e}")
+        return None
 
 
 def _tg_send(chat_id: int, text: str) -> bool:

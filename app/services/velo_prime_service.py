@@ -397,6 +397,15 @@ def score_race_velo_prime(
     for row in results:
         # Merge: live feats supply doctrine signals; row fields take priority
         _live_feats = _feats_by_horse.get(row.get("horse", ""), {})
+        
+        # ── CASH RUN & DOCTRINE PERSISTENCE ────────────────────────────────
+        # Extract features computed in v17_feature_extractor that need to
+        # survive into full_analysis for the Sigma Audit / Training Truth plane.
+        row["cash_run_flag"] = bool(_live_feats.get("cash_run_flag", 0.0) == 1.0)
+        row["setup_run_flag"] = bool(_live_feats.get("setup_run_flag", 0.0) == 1.0)
+        row["decoy_support_flag"] = bool(_live_feats.get("decoy_support_flag", 0.0) == 1.0)
+        # ───────────────────────────────────────────────────────────────────
+        
         _merged = {**_live_feats, **row}
         try:
             _state = _state_engine.tag(_merged)
@@ -794,6 +803,8 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "race_id": race.get("race_id"),
             "region": race.get("region", ""),  # UK/IRE filter verification — persisted at scoring time
             "generated_at": datetime.utcnow().isoformat(),
+            "fetch_timestamp": race.get("fetch_timestamp") or datetime.utcnow().isoformat(),
+            "predicted_field_size": len(race.get("runners") or []),
             "engine_version": "velo_prime_v1",
             "doctrine_version": "d010",
             "ensemble_version": top.get("ensemble_version", ENSEMBLE_VERSION),
@@ -876,6 +887,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         # Each group is stripped on its first error so scoring is never blocked
         # by a missing migration. Core fields (race_id, velo_prime_prob etc.) always persist.
         _optional_col_groups = [
+            (
+                "honesty_labels",
+                ["fetch_timestamp", "predicted_field_size"],
+                "Apply supabase/migrations/20260418_001_velo_verdicts_honesty_labels.sql",
+            ),
             (
                 "observability",
                 ["active_components", "excluded_from_ensemble"],

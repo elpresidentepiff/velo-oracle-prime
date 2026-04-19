@@ -829,9 +829,11 @@ def main():
     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
     print("\nSTEP 2: Normalize (canonical schema — no raw payloads to workers)")
     normalized = []
+    fetch_time = datetime.utcnow().isoformat()
     for r in races_with_runners:
         n = normalize_race(r)
         if n.get("runners"):
+            n["fetch_timestamp"] = fetch_time
             normalized.append(n)
     print(f"  Normalized: {len(normalized)} races")
 
@@ -944,15 +946,23 @@ def main():
     print("\nSTEP 4: Persist to velo_verdicts")
     persist_ok = 0
     persist_fail = 0
+    persist_map = {}  # race_id -> bool (honesty gate)
+
     for race, preds, tier, _reasons in scored:
+        rid = race.get("race_id")
         if not persistence_enabled:
             persist_ok += 1
+            persist_map[rid] = True
             continue
-        if persist_race_predictions(race, preds, decision_tier=tier):
+        
+        success = persist_race_predictions(race, preds, decision_tier=tier)
+        persist_map[rid] = success
+        
+        if success:
             persist_ok += 1
         else:
             persist_fail += 1
-            print(f"  PERSIST FAIL: {race.get('race_id')} {race.get('course')}")
+            print(f"  PERSIST FAIL: {rid} {race.get('course')}")
 
     print(f"  Verdicts: {persist_ok} OK / {persist_fail} FAIL / {len(scored)} total")
 
@@ -1000,17 +1010,27 @@ def main():
     )
     print(f"  Sent: day posture  A={a_n} B={b_n} C={c_n} D={d_n} X={x_n}  [{overall}]")
 
-    # A-STRIKE — individual full card per race
+    # A-STRIKE — individual full card per race (with Persistence Honesty Gate)
     for race, top, second, reasons in buckets["A"]:
-        card = build_decision_card(race, top, second, "A", reasons)
-        tg(card)
-        print(f"  Sent: A-STRIKE — {race.get('course')} {race.get('off_time')}")
+        rid = race.get("race_id")
+        if persist_map.get(rid):
+            card = build_decision_card(race, top, second, "A", reasons)
+            tg(card)
+            print(f"  Sent: A-STRIKE — {race.get('course')} {race.get('off_time')}")
+        else:
+            tg(f"⚠ CRITICAL: PERSISTENCE FAILURE — A-STRIKE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal exists but was not written to DB. Truth loop protected.")
+            print(f"  SUPPRESSED: A-STRIKE — {race.get('course')} — persistence failed")
 
-    # B-PLAYABLE — individual full card per race
+    # B-PLAYABLE — individual full card per race (with Persistence Honesty Gate)
     for race, top, second, reasons in buckets["B"]:
-        card = build_decision_card(race, top, second, "B", reasons)
-        tg(card)
-        print(f"  Sent: B-PLAYABLE — {race.get('course')} {race.get('off_time')}")
+        rid = race.get("race_id")
+        if persist_map.get(rid):
+            card = build_decision_card(race, top, second, "B", reasons)
+            tg(card)
+            print(f"  Sent: B-PLAYABLE — {race.get('course')} {race.get('off_time')}")
+        else:
+            tg(f"⚠ WARNING: PERSISTENCE FAILURE — B-PLAYABLE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal suppressed to protect truth loop.")
+            print(f"  SUPPRESSED: B-PLAYABLE — {race.get('course')} — persistence failed")
 
     # C-WATCH — grouped brief list
     if buckets["C"]:

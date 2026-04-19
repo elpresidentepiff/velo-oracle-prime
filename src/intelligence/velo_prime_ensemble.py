@@ -104,9 +104,6 @@ def _g_shadow_adjustment(
 
     # ── Emotion law penalties ─────────────────────────────────────────────────
     # Pain rules: suppress signals when a specific horse_id + high MPI trap occurred.
-    # Pain rules are HIGHLY SPECIFIC — they name a particular horse and MPI threshold.
-    # We only suppress THAT specific horse when MPI is elevated.
-    # We do NOT apply blanket MPI penalties to all runners.
     if emotion_laws and market_deception_score is not None and horse_id:
         pain_rules = emotion_laws.get("pain_rules", [])
         for rule in pain_rules:
@@ -116,13 +113,27 @@ def _g_shadow_adjustment(
             horse_ids_in_rule = _re.findall(r'(hrs_\w+)', rule.get('rule', ''))
             if horse_id in horse_ids_in_rule:
                 # This specific horse was flagged in a pain rule
-                # Fire when current MDS > 0.6 (proxy for elevated MPI situation)
                 if market_deception_score > 0.6:
                     penalty = 0.85
                     multiplier *= penalty
                     pain_horse_id = horse_id
                     flags.append(f"g_pain_rule:{rule.get('pattern','unknown')}:0.85")
                     doctrine_fired.append("PAIN_RULE")
+
+        # Triumph rules (Euphoria): boost signals when a specific horse_id previously delivered engine supremacy.
+        triumph_rules = emotion_laws.get("triumph_rules", [])
+        for rule in triumph_rules:
+            if not isinstance(rule, dict):
+                continue
+            # Extract horse_ids from rule text: "Trust hrs_XXXXX engine supremacy"
+            horse_ids_in_rule = _re.findall(r'(hrs_\w+)', rule.get('rule', ''))
+            if horse_id in horse_ids_in_rule:
+                # This specific horse delivered a high-confidence win before
+                # Boost probability to reflect proven historical trust
+                euphoria_boost = 1.15
+                multiplier *= euphoria_boost
+                flags.append(f"g_triumph_rule:{rule.get('pattern','unknown')}:1.15")
+                doctrine_fired.append("TRIUMPH_RULE")
 
     # ── Doctrine strength discounts ────────────────────────────────────────────
     # If a doctrine has low strength (< 0.5), G has lost on it repeatedly.

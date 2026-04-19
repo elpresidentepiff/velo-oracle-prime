@@ -403,6 +403,14 @@ def generate_review(
     top_pick_won    = (top_pick_pos == 1)
     top_pick_placed = (top_pick_pos is not None and top_pick_pos <= 3)
 
+    # ── Field Mutation Detection (Honesty Labeling) ─────────────────────────
+    # We compare the field size at scoring time vs. actual race time.
+    predicted_size = verdict.get("predicted_field_size") or 0
+    actual_size = len(runners_result)
+    divergence = actual_size - predicted_size if predicted_size else 0
+    field_mutated = abs(divergence) > 0
+    # ─────────────────────────────────────────────────────────────────────────
+
     # Accuracy score: 1.0 = win, 0.5 = placed, 0.0 = miss
     if top_pick_won:
         accuracy = 1.0
@@ -483,6 +491,14 @@ def generate_review(
         else:
             miss_reason = "market_decoy_followed"
 
+    if outcome_label == "MISS":
+        if not top_pick_result:
+            miss_reason = "horse_absent_from_result"
+        elif field_mutated and divergence > 0:
+            miss_reason = f"horse_set_divergence (+{divergence} horses added)"
+        elif field_mutated and divergence < 0:
+            miss_reason = f"horse_set_divergence ({abs(divergence)} non-runners)"
+
     # Full review outcome — selections_results removed (velo_verdicts.selections not populated)
     review_outcome = {
         "outcome": outcome_label,
@@ -494,6 +510,11 @@ def generate_review(
         "signal_attribution": signal_attribution,
         "verdict_confidence": verdict.get("confidence_level"),
         "verdict_score": float(verdict.get("top_rank_score", 0)),
+        # Field Mutation Detection (Honesty Labeling)
+        "field_mutated": field_mutated,
+        "field_divergence": divergence,
+        "predicted_size": predicted_size,
+        "actual_size": actual_size,
         # RPD-C doctrine layer — passive metadata
         "top_pick_rpd_tag": top_pick_rpd_tag,
         "winner_rpd_tag": winner_rpd_tag,
@@ -526,6 +547,8 @@ def generate_review(
             miss_category = "market_decoy_followed"
         elif miss_reason == "non_runner_or_untracked":
             miss_category = "non_runner"
+        elif "horse_set_divergence" in miss_reason:
+            miss_category = "field_mutation"
         else:
             miss_category = miss_reason  # pass through unknown reasons
 
@@ -1280,7 +1303,8 @@ def main(target_date: str) -> None:
             db.table("velo_verdicts")
             .select("id, race_id, generated_at, confidence_level, top_rank_horse_id, "
                     "top_rank_score, selections, decision_tier, full_analysis, "
-                    "velo_prime_prob, place_prob, improvement_score, market_deception_score")
+                    "velo_prime_prob, place_prob, improvement_score, market_deception_score, "
+                    "predicted_field_size, fetch_timestamp")
             .in_("race_id", dated_race_ids)
             .order("generated_at", desc=True)
             .execute()
@@ -1456,7 +1480,7 @@ def main(target_date: str) -> None:
                 f"Wins:   {wins}  ({strike_pct:.1f}% strike)\n"
                 f"Placed: {placed}  (frame: {frame_pct:.1f}%)\n"
                 f"Misses: {misses_n}\n"
-                f"\nTIER SPLIT:\n{tier_block}"
+                \nTIER SPLIT:\n{tier_block}"
                 f"{forensic_block}\n"
                 f"\nStatus: {tg_status}"
             )
