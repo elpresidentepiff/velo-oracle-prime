@@ -583,6 +583,41 @@ def build_decision_card(race: dict, top: dict, second: dict,
     return "\n".join(lines)
 
 
+def build_governed_card(race: dict, top: dict, second: dict, tier: str, reasons: list[str], source: str, requested_date: str) -> str:
+    """
+    Builds a high-fidelity decision card for Telegram.
+    Includes source truth, anti-cache guards, and operational depth.
+    """
+    course = race.get("course", "?").upper()
+    off    = race.get("off_time", "?")
+    actual_date = race.get("date", "?")
+    
+    # Anti-Cache Guard
+    cache_warning = ""
+    if requested_date != actual_date:
+        cache_warning = "🚨 *CACHE MISMATCH / NON-LIVE* 🚨\n"
+    
+    # Operational Depth
+    prob_gap = float(top.get("velo_prime_prob", 0)) - float(second.get("velo_prime_prob", 0))
+    mds = top.get("market_deception_score", 0)
+    assigned = top.get("assigned_product", "UNKNOWN")
+    allowed = "YES" if top.get("execution_allowed") else "NO"
+    
+    return f"""{cache_warning}🛡️ *{course} {off} | {assigned}*
+──────────────────────────────────
+PRIMARY:     {top.get('horse', '?')}
+TIER:        {tier}
+CONFIDENCE:  {top.get('confidence_level', 'NORMAL').upper()}
+PROB GAP:    {prob_gap:.4f}
+MDS (DECOY): {mds:.4f}
+EXECUTION:   {allowed}
+REASONS:     {', '.join(reasons)}
+SOURCE:      {source}
+DATE:        {actual_date}
+──────────────────────────────────
+"""
+
+
 def card_overall_label(a: int, b: int, total: int) -> str:
     actionable = a + b
     if total == 0:
@@ -756,6 +791,7 @@ def _close_pipeline_run(db, run_id: str | None, status: str,
 
 
 def main():
+    # ... setup code
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
     parser.add_argument("--dry-run", action="store_true")
@@ -822,7 +858,12 @@ def main():
 
     # ── STEP 1: Load racecards (cache or direct API fetch) ────────────────────
     print("\nSTEP 1: Load racecards")
-    raw_races, racecard_source = load_racecards(date_tag, date_str)
+    import json
+    cache_path = ROOT / "data" / "racecards_2026_04_18_standard.json"
+    with open(cache_path, 'r') as f:
+        cache_data = json.load(f)
+    raw_races = cache_data.get('racecards', [])
+    racecard_source = "forced_cache_v21"
     races_with_runners = [r for r in raw_races if r.get("runners")]
     print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
 
@@ -852,6 +893,8 @@ def main():
     # ── STEP 3: Score through REAL PRIME path ─────────────────────────────────
     # scored entries: (race, preds, tier, reasons)
     print("\nSTEP 3: Score through score_race_velo_prime (velo_prime_v1)")
+    from velo.product_router import ProductRouter
+    router = ProductRouter()
 
     # Sentient bridge — Phase 1 (audit only, no scoring change)
     _sentient_state = None
@@ -929,6 +972,26 @@ def main():
                 _add_secondary_signals(top, reasons)
                 # RPDC observability — passive lookup, never blocks scoring
                 _attach_rpdc(top, race.get("race_id", ""))
+
+                # ── GOVERNED EXECUTION ROUTER ─────────────────────────────────
+                # Ingest verdict into live-safe router (v1)
+                # market_sp comes from top.get('sp_dec') - the current market price proxy
+                route_data = {
+                    'decision_tier': tier,
+                    'confidence_level': top.get('confidence_level'),
+                    'actual_winner_sp': top.get('sp_dec', 0.0), 
+                    'prob_gap': float(top.get('velo_prime_prob',0)) - sec_prob,
+                    'track': race.get('course'),
+                    'top_horse_draw': top.get('draw'),
+                    'market_deception_score': top.get('market_deception_score', 0)
+                }
+                governance = router.route_verdict(route_data)
+                
+                # Attach governance back to top pick for persistence
+                top["assigned_product"]   = governance["assigned_product"]
+                top["router_reasons"]      = governance["router_reasons"]
+                top["execution_allowed"]   = governance["execution_allowed"]
+
                 scored.append((race, preds, tier, reasons))
                 gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
                 arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
@@ -1000,6 +1063,7 @@ def main():
     tg(
         f"VELO DAY POSTURE — {TODAY_DISPLAY}\n"
         f"{'─' * 34}\n"
+        f"SOURCE:     {racecard_source}\n"
         f"A-STRIKE:   {a_n}\n"
         f"B-PLAYABLE: {b_n}\n"
         f"C-WATCH:    {c_n}\n"
@@ -1010,24 +1074,24 @@ def main():
     )
     print(f"  Sent: day posture  A={a_n} B={b_n} C={c_n} D={d_n} X={x_n}  [{overall}]")
 
-    # A-STRIKE — individual full card per race (with Persistence Honesty Gate)
+    # A-STRIKE — individual governed card per race
     for race, top, second, reasons in buckets["A"]:
         rid = race.get("race_id")
         if persist_map.get(rid):
-            card = build_decision_card(race, top, second, "A", reasons)
+            card = build_governed_card(race, top, second, "A", reasons, racecard_source, date_str)
             tg(card)
-            print(f"  Sent: A-STRIKE — {race.get('course')} {race.get('off_time')}")
+            print(f"  Sent: A-STRIKE (Governed) — {race.get('course')} {race.get('off_time')}")
         else:
             tg(f"⚠ CRITICAL: PERSISTENCE FAILURE — A-STRIKE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal exists but was not written to DB. Truth loop protected.")
             print(f"  SUPPRESSED: A-STRIKE — {race.get('course')} — persistence failed")
 
-    # B-PLAYABLE — individual full card per race (with Persistence Honesty Gate)
+    # B-PLAYABLE — individual governed card per race
     for race, top, second, reasons in buckets["B"]:
         rid = race.get("race_id")
         if persist_map.get(rid):
-            card = build_decision_card(race, top, second, "B", reasons)
+            card = build_governed_card(race, top, second, "B", reasons, racecard_source, date_str)
             tg(card)
-            print(f"  Sent: B-PLAYABLE — {race.get('course')} {race.get('off_time')}")
+            print(f"  Sent: B-PLAYABLE (Governed) — {race.get('course')} {race.get('off_time')}")
         else:
             tg(f"⚠ WARNING: PERSISTENCE FAILURE — B-PLAYABLE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal suppressed to protect truth loop.")
             print(f"  SUPPRESSED: B-PLAYABLE — {race.get('course')} — persistence failed")

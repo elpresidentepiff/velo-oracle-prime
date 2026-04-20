@@ -867,6 +867,10 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "g_shadow_horse_id": top.get("g_shadow_horse_id") or "",
             "g_shadow_mode": top.get("g_shadow_mode") or "shadow",
             "g_top3_scores": top3_scores,
+            # ── Governed Execution ────────────────────────────────────────────────
+            "assigned_product": top.get("assigned_product"),
+            "router_reasons": top.get("router_reasons"),
+            "execution_allowed": top.get("execution_allowed"),
             # VÉLØ Oracle — Narrative and regime
             "full_analysis": predictions,
         }
@@ -934,6 +938,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 "a_tier_suspect_cohort",
                 ["a_tier_weak_place_flag"],
                 "Apply supabase/migrations/20260412_003_a_tier_suspect_cohort.sql",
+            ),
+            (
+                "governance",
+                ["assigned_product", "router_reasons", "execution_allowed"],
+                "Apply migration to add governance columns to velo_verdicts.",
             ),
         ]
         for _attempt, (_grp_name, _grp_cols, _grp_hint) in enumerate(
