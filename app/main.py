@@ -1006,62 +1006,125 @@ async def dashboard():
 @app.get("/api/governed-card")
 async def governed_card(date: str = Query(default=None)):
     """
-    Return today's governed card from velo_verdicts.
-    Each row includes: assigned_product, router_reasons, execution_allowed,
-    tier, confidence_level, velo_prime_prob, prob_gap, market_deception_score.
+    Return governed card for a given date.
+
+    Primary source: local velo_prime_verdicts_YYYY_MM_DD.json (has course/horse/off_time).
+    Governance overlay: velo_verdicts Supabase table (assigned_product, router_reasons,
+    execution_allowed) — merged by race_id where available.
+    Falls back gracefully when either source is missing.
     """
+    import json as _json
     import subprocess as _sp
     from datetime import datetime as _dt
 
+    # Date resolution — try today in UTC, fall back to most recent local file
     target_date = date or _dt.utcnow().strftime("%Y-%m-%d")
+    date_tag = target_date.replace("-", "_")
 
-    # Resolve Supabase connection
+    # ── Source 1: local verdict JSON ─────────────────────────────────────────
+    root = pathlib.Path(__file__).parent.parent
+    verdict_path = root / "data" / f"velo_prime_verdicts_{date_tag}.json"
+
+    # If exact date not found, find the most recent file
+    source_label = "local_json"
+    loaded_date  = target_date
+    if not verdict_path.exists():
+        candidates = sorted(root.glob("data/velo_prime_verdicts_*.json"), reverse=True)
+        verdict_path = candidates[0] if candidates else None
+        if verdict_path:
+            loaded_date = verdict_path.stem.replace("velo_prime_verdicts_", "").replace("_", "-")
+            source_label = f"local_json_fallback:{loaded_date}"
+
+    raw_verdicts = []
+    if verdict_path and verdict_path.exists():
+        try:
+            raw_verdicts = _json.loads(verdict_path.read_text())
+        except Exception as e:
+            logger.warning("Could not read verdict file %s: %s", verdict_path, e)
+
+    # ── Source 2: Supabase governance overlay ────────────────────────────────
+    gov_by_race: dict = {}
     sb_url = resolve_supabase_url()
     sb_key = resolve_supabase_service_key()
-    if not sb_url or not sb_key:
-        raise HTTPException(status_code=503, detail="Supabase not configured")
-
-    try:
-        from supabase import create_client as _sb_create
-        db = _sb_create(sb_url, sb_key)
-
-        # Pull today's verdicts
-        resp = (
-            db.table("velo_verdicts")
-            .select(
-                "race_id, course, off_time, horse, decision_tier, confidence_level, "
-                "velo_prime_prob, prob_gap, market_deception_score, "
-                "assigned_product, router_reasons, execution_allowed, "
-                "race_date, created_at"
+    if sb_url and sb_key:
+        try:
+            from supabase import create_client as _sb_create
+            db = _sb_create(sb_url, sb_key)
+            resp = (
+                db.table("velo_verdicts")
+                .select("race_id, assigned_product, router_reasons, execution_allowed")
+                .gte("generated_at", f"{loaded_date}T00:00:00")
+                .lte("generated_at", f"{loaded_date}T23:59:59")
+                .execute()
             )
-            .eq("race_date", target_date)
-            .order("off_time")
-            .execute()
-        )
-        verdicts = resp.data or []
+            for row in (resp.data or []):
+                gov_by_race[row["race_id"]] = row
+        except Exception as e:
+            logger.warning("Supabase governance overlay failed: %s", e)
 
-    except Exception as exc:
-        logger.error("governed_card query failed: %s", exc)
-        raise HTTPException(status_code=500, detail=str(exc))
+    # ── Merge & shape verdicts ────────────────────────────────────────────────
+    verdicts = []
+    for v in raw_verdicts:
+        race_id = v.get("race_id", "")
+        top     = v.get("top", {})
+        scored  = v.get("scored", 0)
 
-    # Build source truth meta
+        # prob_gap: top - second runner prob (second not stored, derive from scored count)
+        # stored in top dict directly if present, otherwise compute from verdict
+        prob_gap = 0.0
+        if "prob_gap" in top:
+            prob_gap = float(top["prob_gap"])
+
+        # Governance: prefer live Supabase values (post-migration), fall back to top dict
+        gov = gov_by_race.get(race_id, {})
+        assigned_product  = gov.get("assigned_product")  or top.get("assigned_product",  "UNKNOWN")
+        router_reasons    = gov.get("router_reasons")     or top.get("router_reasons",    [])
+        execution_allowed = gov.get("execution_allowed")
+        if execution_allowed is None:
+            execution_allowed = top.get("execution_allowed", False)
+
+        verdicts.append({
+            "race_id":               race_id,
+            "course":                v.get("course", ""),
+            "off_time":              v.get("off_time", ""),
+            "horse":                 top.get("horse", ""),
+            "tier":                  v.get("tier", "?"),
+            "decision_tier":         v.get("tier", "?"),
+            "confidence_level":      top.get("confidence_level", "low"),
+            "velo_prime_prob":       top.get("velo_prime_prob", 0),
+            "prob_gap":              prob_gap,
+            "market_deception_score": top.get("market_deception_score", 0),
+            "assigned_product":      assigned_product,
+            "router_reasons":        router_reasons if isinstance(router_reasons, list) else [router_reasons],
+            "execution_allowed":     execution_allowed,
+            "place_prob":            top.get("place_prob", 0),
+            "archetype_label":       top.get("archetype_label", ""),
+        })
+
+    # Sort by off_time
+    verdicts.sort(key=lambda x: x.get("off_time") or "")
+
+    # ── Commit SHA ───────────────────────────────────────────────────────────
     try:
         commit = _sp.check_output(
             ["git", "rev-parse", "--short", "HEAD"],
-            cwd=pathlib.Path(__file__).parent.parent,
-            stderr=_sp.DEVNULL,
+            cwd=root, stderr=_sp.DEVNULL,
         ).decode().strip()
     except Exception:
         commit = "unknown"
 
+    date_mismatch = loaded_date != target_date
+
     return {
         "meta": {
-            "requested_date": target_date,
-            "loaded_date": target_date,
-            "source": "supabase",
-            "commit_sha": commit,
-            "router_version": "ProductRouter v1 (live-safe)",
-            "record_count": len(verdicts),
+            "requested_date":  target_date,
+            "loaded_date":     loaded_date,
+            "source":          source_label,
+            "commit_sha":      commit,
+            "router_version":  "ProductRouter v1 (live-safe)",
+            "record_count":    len(verdicts),
+            "date_mismatch":   date_mismatch,
+            "gov_overlay":     len(gov_by_race) > 0,
         },
         "verdicts": verdicts,
     }

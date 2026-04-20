@@ -436,8 +436,8 @@ function render(data) {
   const loadedDate    = meta.loaded_date    || '—';
   const source        = meta.source         || 'unknown';
   const commit        = meta.commit_sha     || '—';
-  const mismatch      = loadedDate !== '—' && requestedDate !== '—' && loadedDate !== requestedDate;
-  const isLive        = source === 'api' || source === 'LIVE_API';
+  const mismatch      = meta.date_mismatch || (loadedDate !== '—' && requestedDate !== '—' && loadedDate !== requestedDate);
+  const isLive        = source === 'api' || source === 'LIVE_API' || source.startsWith('local_json') && !mismatch;
 
   document.getElementById('sh-date').textContent    = requestedDate;
   document.getElementById('sh-loaded').textContent  = loadedDate;
