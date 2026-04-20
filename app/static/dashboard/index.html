@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VÉLØ — Governed Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Design Tokens ────────────────────────────────────────────── */
+:root {
+  /* Neutrals — warm near-black ramp */
+  --bg-0:       #0d0c0b;
+  --bg-raise:   #141310;
+  --bg-surface: #1a1916;
+  --bg-card:    #201e1b;
+  --bg-hover:   #272420;
+  --border:     #2e2b26;
+  --border-dim: #232018;
+
+  /* Foregrounds */
+  --fg-primary:  #e8e4dc;
+  --fg-secondary:#9e9890;
+  --fg-muted:    #5c5850;
+  --fg-dim:      #3a3830;
+
+  /* Tier palette */
+  --tier-a:  #c9a84c;  /* gold */
+  --tier-b:  #4a9b6f;  /* green */
+  --tier-c:  #b07d2e;  /* amber */
+  --tier-d:  #9b3a3a;  /* red */
+  --tier-x:  #5a5850;  /* grey */
+
+  /* Product badges */
+  --prod-win:    #c9a84c;
+  --prod-frame:  #3a7fc1;
+  --prod-ew:     #2a9b8f;
+  --prod-vision: #7a5cb8;
+  --prod-pass:   #3a3830;
+
+  /* Semantic */
+  --ok:    #4a9b6f;
+  --warn:  #b07d2e;
+  --alert: #9b3a3a;
+  --live:  #4a9b6f;
+  --stale: #9b3a3a;
+
+  /* Type */
+  --font-ui:   'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ── Reset ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  background: var(--bg-0);
+  color: var(--fg-primary);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  line-height: 1.4;
+}
+
+/* ── Source Truth Header ─────────────────────────────────────── */
+#source-header {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-muted);
+  background: var(--bg-raise);
+}
+#source-header .source-field { display: flex; gap: 6px; }
+#source-header .source-label { color: var(--fg-dim); }
+#source-header .source-val   { color: var(--fg-secondary); }
+#source-header .live-badge {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+#source-header .live-badge.live  { background: #1a3d2a; color: var(--live); }
+#source-header .live-badge.cache { background: #2d1a1a; color: var(--stale); }
+#source-header .live-badge.mismatch {
+  background: var(--alert);
+  color: #fff;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+/* ── Wordmark ────────────────────────────────────────────────── */
+#topbar {
+  padding: 14px 20px 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-dim);
+}
+.wordmark {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--tier-a);
+}
+.wordmark span { color: var(--fg-muted); font-weight: 400; }
+.date-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg-secondary);
+  margin-left: auto;
+}
+
+/* ── Summary Tiles ───────────────────────────────────────────── */
+#summary {
+  display: flex;
+  gap: 1px;
+  background: var(--border-dim);
+  border-bottom: 1px solid var(--border);
+}
+.tile {
+  flex: 1;
+  background: var(--bg-surface);
+  padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tile-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.tile-value {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--fg-primary);
+}
+.tile.exec-tile .tile-value { color: var(--ok); }
+.tile.exec-tile.active { background: #0f1f15; }
+.tile.exec-tile.active .tile-value {
+  color: var(--ok);
+  text-shadow: 0 0 20px rgba(74,155,111,0.5);
+}
+.tile-sub { font-size: 10px; color: var(--fg-dim); font-family: var(--font-mono); }
+
+/* ── Filter Bar ──────────────────────────────────────────────── */
+#filters {
+  padding: 10px 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid var(--border-dim);
+  background: var(--bg-raise);
+  flex-wrap: wrap;
+}
+.filter-label { font-size: 11px; color: var(--fg-muted); margin-right: 4px; }
+.filter-btn {
+  padding: 3px 10px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.filter-btn:hover { border-color: var(--fg-muted); color: var(--fg-primary); }
+.filter-btn.active { background: var(--bg-card); border-color: var(--fg-secondary); color: var(--fg-primary); }
+.filter-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+/* ── Race Table ──────────────────────────────────────────────── */
+#race-table-wrap { overflow-x: auto; padding: 0 0 40px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead tr {
+  background: var(--bg-raise);
+  border-bottom: 1px solid var(--border);
+}
+thead th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+thead th:first-child { padding-left: 20px; }
+thead th:last-child  { padding-right: 20px; }
+
+tbody tr {
+  border-bottom: 1px solid var(--border-dim);
+  transition: background 0.1s;
+}
+tbody tr:hover { background: var(--bg-hover); }
+tbody tr.hidden { display: none; }
+
+td {
+  padding: 10px 12px;
+  font-size: 12px;
+  vertical-align: middle;
+}
+td:first-child { padding-left: 20px; }
+td:last-child  { padding-right: 20px; }
+
+/* Course + time */
+.td-course { white-space: nowrap; }
+.course-name { color: var(--fg-primary); font-weight: 500; }
+.off-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-muted);
+  margin-top: 1px;
+}
+
+/* Horse */
+.horse-name { font-weight: 500; color: var(--fg-primary); }
+.race-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg-dim);
+  margin-top: 1px;
+}
+
+/* Tier badge */
+.tier-badge {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.tier-A { background: rgba(201,168,76,0.15);  color: var(--tier-a); }
+.tier-B { background: rgba(74,155,111,0.15);  color: var(--tier-b); }
+.tier-C { background: rgba(176,125,46,0.12);  color: var(--tier-c); }
+.tier-D { background: rgba(155,58,58,0.15);   color: var(--tier-d); }
+.tier-X { background: rgba(90,88,80,0.15);    color: var(--tier-x); }
+
+/* Confidence */
+.conf-high   { color: var(--fg-primary); font-weight: 600; }
+.conf-normal { color: var(--fg-secondary); }
+.conf-low    { color: var(--fg-muted); }
+
+/* Mono numbers */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+.mono.alert { color: var(--alert); }
+.mono.warn  { color: var(--warn); }
+
+/* Product badge */
+.prod-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.prod-WIN_ONLY    { background: rgba(201,168,76,0.18); color: var(--prod-win);    border: 1px solid rgba(201,168,76,0.3); }
+.prod-FRAME_ONLY  { background: rgba(58,127,193,0.15); color: var(--prod-frame);  border: 1px solid rgba(58,127,193,0.25); }
+.prod-EW_CANDIDATE{ background: rgba(42,155,143,0.15); color: var(--prod-ew);     border: 1px solid rgba(42,155,143,0.25); }
+.prod-VISION_ONLY { background: rgba(122,92,184,0.12); color: var(--prod-vision); border: 1px solid rgba(122,92,184,0.2); }
+.prod-PASS        { background: rgba(58,56,48,0.5);    color: var(--fg-muted);    border: 1px solid var(--border); }
+.prod-UNKNOWN     { background: transparent;           color: var(--fg-dim);      border: 1px solid var(--border-dim); }
+
+/* Exec */
+.exec-yes { color: var(--ok);   font-family: var(--font-mono); font-size: 13px; }
+.exec-no  { color: var(--fg-dim); font-family: var(--font-mono); font-size: 13px; }
+
+/* Router reasons pills */
+.reasons { display: flex; gap: 4px; flex-wrap: wrap; }
+.reason-pill {
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  background: var(--bg-surface);
+  color: var(--fg-muted);
+  border: 1px solid var(--border-dim);
+}
+
+/* ── Loading / Error States ──────────────────────────────────── */
+#loading, #error-msg {
+  padding: 60px 20px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+#error-msg { color: var(--alert); }
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-0); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Source Truth Header -->
+<div id="source-header">
+  <div class="source-field"><span class="source-label">DATE</span><span class="source-val" id="sh-date">—</span></div>
+  <div class="source-field"><span class="source-label">SOURCE</span><span class="source-val" id="sh-source">—</span></div>
+  <div class="source-field"><span class="source-label">COMMIT</span><span class="source-val" id="sh-commit">—</span></div>
+  <div class="source-field"><span class="source-label">ROUTER</span><span class="source-val" id="sh-router">ProductRouter v1</span></div>
+  <div class="source-field"><span class="source-label">LOADED</span><span class="source-val" id="sh-loaded">—</span></div>
+  <span class="live-badge" id="sh-badge">—</span>
+</div>
+
+<!-- Top Bar -->
+<div id="topbar">
+  <span class="wordmark">VÉLØ <span>ORACLE PRIME</span></span>
+  <span class="date-label" id="tb-date">—</span>
+</div>
+
+<!-- Summary Tiles -->
+<div id="summary">
+  <div class="tile"><div class="tile-label">Scored</div><div class="tile-value" id="t-scored">—</div></div>
+  <div class="tile"><div class="tile-label">WIN_ONLY</div><div class="tile-value" id="t-win" style="color:var(--prod-win)">—</div></div>
+  <div class="tile"><div class="tile-label">FRAME_ONLY</div><div class="tile-value" id="t-frame" style="color:var(--prod-frame)">—</div></div>
+  <div class="tile"><div class="tile-label">EW_CANDIDATE</div><div class="tile-value" id="t-ew" style="color:var(--prod-ew)">—</div></div>
+  <div class="tile"><div class="tile-label">VISION_ONLY</div><div class="tile-value" id="t-vision" style="color:var(--prod-vision)">—</div></div>
+  <div class="tile"><div class="tile-label">PASS</div><div class="tile-value" id="t-pass">—</div></div>
+  <div class="tile exec-tile" id="exec-tile">
+    <div class="tile-label">Exec Authorized</div>
+    <div class="tile-value" id="t-exec">—</div>
+    <div class="tile-sub" id="t-exec-sub"></div>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div id="filters">
+  <span class="filter-label">PRODUCT</span>
+  <button class="filter-btn active" data-filter="product" data-val="ALL">ALL</button>
+  <button class="filter-btn" data-filter="product" data-val="WIN_ONLY">WIN_ONLY</button>
+  <button class="filter-btn" data-filter="product" data-val="FRAME_ONLY">FRAME_ONLY</button>
+  <button class="filter-btn" data-filter="product" data-val="EW_CANDIDATE">EW_CANDIDATE</button>
+  <button class="filter-btn" data-filter="product" data-val="VISION_ONLY">VISION_ONLY</button>
+  <button class="filter-btn" data-filter="product" data-val="PASS">PASS</button>
+  <div class="filter-sep"></div>
+  <span class="filter-label">TIER</span>
+  <button class="filter-btn active" data-filter="tier" data-val="ALL">ALL</button>
+  <button class="filter-btn" data-filter="tier" data-val="A">A</button>
+  <button class="filter-btn" data-filter="tier" data-val="B">B</button>
+  <button class="filter-btn" data-filter="tier" data-val="C">C</button>
+  <button class="filter-btn" data-filter="tier" data-val="D">D</button>
+  <button class="filter-btn" data-filter="tier" data-val="X">X</button>
+  <div class="filter-sep"></div>
+  <span class="filter-label">EXEC</span>
+  <button class="filter-btn active" data-filter="exec" data-val="ALL">ALL</button>
+  <button class="filter-btn" data-filter="exec" data-val="true">AUTHORIZED</button>
+  <button class="filter-btn" data-filter="exec" data-val="false">BLOCKED</button>
+</div>
+
+<!-- Race Table -->
+<div id="race-table-wrap">
+  <div id="loading">Loading governed card…</div>
+  <div id="error-msg" style="display:none"></div>
+  <table id="race-table" style="display:none">
+    <thead>
+      <tr>
+        <th>COURSE</th>
+        <th>HORSE</th>
+        <th>TIER</th>
+        <th>CONF</th>
+        <th>PROB</th>
+        <th>GAP</th>
+        <th>MDS</th>
+        <th>PRODUCT</th>
+        <th>EXEC</th>
+        <th>REASONS</th>
+      </tr>
+    </thead>
+    <tbody id="race-tbody"></tbody>
+  </table>
+</div>
+
+<script>
+// ── Config ───────────────────────────────────────────────────────
+// Reads from /api/governed-card which proxies velo_verdicts for today
+// Falls back to /api/governed-card?date=YYYY-MM-DD
+const API = '/api/governed-card';
+
+// ── State ────────────────────────────────────────────────────────
+let allRows = [];
+let activeFilters = { product: 'ALL', tier: 'ALL', exec: 'ALL' };
+
+// ── Fetch ────────────────────────────────────────────────────────
+async function loadCard() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const dateParam = params.get('date') ? `?date=${params.get('date')}` : '';
+    const res = await fetch(`${API}${dateParam}`);
+    if (!res.ok) throw new Error(`API ${res.status}: ${res.statusText}`);
+    const data = await res.json();
+    render(data);
+  } catch (err) {
+    document.getElementById('loading').style.display = 'none';
+    const errEl = document.getElementById('error-msg');
+    errEl.style.display = 'block';
+    errEl.textContent = `Failed to load governed card: ${err.message}`;
+  }
+}
+
+// ── Render ───────────────────────────────────────────────────────
+function render(data) {
+  document.getElementById('loading').style.display = 'none';
+
+  // Source truth header
+  const meta = data.meta || {};
+  const requestedDate = meta.requested_date || '—';
+  const loadedDate    = meta.loaded_date    || '—';
+  const source        = meta.source         || 'unknown';
+  const commit        = meta.commit_sha     || '—';
+  const mismatch      = loadedDate !== '—' && requestedDate !== '—' && loadedDate !== requestedDate;
+  const isLive        = source === 'api' || source === 'LIVE_API';
+
+  document.getElementById('sh-date').textContent    = requestedDate;
+  document.getElementById('sh-loaded').textContent  = loadedDate;
+  document.getElementById('sh-source').textContent  = isLive ? 'LIVE_API' : 'CACHE';
+  document.getElementById('sh-commit').textContent  = commit.slice(0, 7);
+  document.getElementById('tb-date').textContent    = loadedDate;
+
+  const badge = document.getElementById('sh-badge');
+  if (mismatch) {
+    badge.textContent = '⚠ DATE MISMATCH — NON-LIVE';
+    badge.className = 'live-badge mismatch';
+  } else if (isLive) {
+    badge.textContent = '✓ LIVE';
+    badge.className = 'live-badge live';
+  } else {
+    badge.textContent = 'CACHE';
+    badge.className = 'live-badge cache';
+  }
+
+  // Tiles
+  const rows = data.verdicts || [];
+  allRows = rows;
+  const counts = { WIN_ONLY:0, FRAME_ONLY:0, EW_CANDIDATE:0, VISION_ONLY:0, PASS:0 };
+  let execCount = 0;
+  rows.forEach(r => {
+    const p = r.assigned_product || 'PASS';
+    if (counts[p] !== undefined) counts[p]++;
+    if (r.execution_allowed) execCount++;
+  });
+
+  document.getElementById('t-scored').textContent = rows.length;
+  document.getElementById('t-win').textContent    = counts.WIN_ONLY;
+  document.getElementById('t-frame').textContent  = counts.FRAME_ONLY;
+  document.getElementById('t-ew').textContent     = counts.EW_CANDIDATE;
+  document.getElementById('t-vision').textContent = counts.VISION_ONLY;
+  document.getElementById('t-pass').textContent   = counts.PASS;
+  document.getElementById('t-exec').textContent   = execCount;
+
+  const execTile = document.getElementById('exec-tile');
+  if (execCount > 0) {
+    execTile.classList.add('active');
+    document.getElementById('t-exec-sub').textContent = 'EXECUTION AUTHORIZED';
+  }
+
+  // Table
+  renderTable(rows);
+  document.getElementById('race-table').style.display = 'table';
+}
+
+function renderTable(rows) {
+  const tbody = document.getElementById('race-tbody');
+  tbody.innerHTML = '';
+  rows.forEach(row => {
+    const product  = row.assigned_product  || 'UNKNOWN';
+    const tier     = row.decision_tier     || row.tier || '?';
+    const conf     = (row.confidence_level || 'low').toLowerCase();
+    const prob     = parseFloat(row.velo_prime_prob   || 0).toFixed(4);
+    const gap      = parseFloat(row.prob_gap          || 0).toFixed(4);
+    const mds      = parseFloat(row.market_deception_score || 0).toFixed(4);
+    const exec     = row.execution_allowed;
+    const reasons  = row.router_reasons || [];
+    const mdsAlert = parseFloat(mds) > 0.10 ? 'alert' : parseFloat(mds) > 0.05 ? 'warn' : '';
+
+    const tr = document.createElement('tr');
+    tr.dataset.product = product;
+    tr.dataset.tier    = tier;
+    tr.dataset.exec    = exec ? 'true' : 'false';
+
+    tr.innerHTML = `
+      <td class="td-course">
+        <div class="course-name">${row.course || '—'}</div>
+        <div class="off-time">${row.off_time || '—'}</div>
+      </td>
+      <td>
+        <div class="horse-name">${row.horse || '—'}</div>
+        <div class="race-id">${row.race_id || ''}</div>
+      </td>
+      <td><span class="tier-badge tier-${tier}">${tier}</span></td>
+      <td><span class="conf-${conf}">${conf}</span></td>
+      <td><span class="mono">${prob}</span></td>
+      <td><span class="mono">${gap}</span></td>
+      <td><span class="mono ${mdsAlert}">${mds}</span></td>
+      <td><span class="prod-badge prod-${product}">${product.replace('_',' ')}</span></td>
+      <td>${exec ? '<span class="exec-yes">✓</span>' : '<span class="exec-no">✗</span>'}</td>
+      <td><div class="reasons">${reasons.map(r => `<span class="reason-pill">${r}</span>`).join('')}</div></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  applyFilters();
+}
+
+// ── Filters ──────────────────────────────────────────────────────
+function applyFilters() {
+  document.querySelectorAll('#race-tbody tr').forEach(tr => {
+    const pMatch = activeFilters.product === 'ALL' || tr.dataset.product === activeFilters.product;
+    const tMatch = activeFilters.tier    === 'ALL' || tr.dataset.tier    === activeFilters.tier;
+    const eMatch = activeFilters.exec    === 'ALL' || tr.dataset.exec    === activeFilters.exec;
+    tr.classList.toggle('hidden', !(pMatch && tMatch && eMatch));
+  });
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const filterType = btn.dataset.filter;
+    // Deactivate siblings
+    document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilters[filterType] = btn.dataset.val;
+    applyFilters();
+  });
+});
+
+// ── Boot ─────────────────────────────────────────────────────────
+loadCard();
+</script>
+</body>
+</html>

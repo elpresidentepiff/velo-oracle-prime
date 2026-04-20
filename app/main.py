@@ -16,9 +16,10 @@ import urllib.request
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.core.runtime_env import utc_now, utc_now_iso
 
@@ -549,6 +550,11 @@ try:
 except ImportError as e:
     logger.warning(f"⚠️  Feature/Monitoring routers not available: {e}")
 
+# Static files — Governed Card Dashboard
+_STATIC_DIR = pathlib.Path(__file__).parent / "static"
+if _STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
 # Environment
 ENV = os.getenv("API_ENV", "production")
 API_KEY = os.getenv("API_KEY", "")
@@ -986,11 +992,86 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     )
 
 
+# ── Governed Card Dashboard ───────────────────────────────────────────────────
+
+@app.get("/dashboard", include_in_schema=False)
+async def dashboard():
+    """Serve the Governed Card Dashboard UI."""
+    html_path = pathlib.Path(__file__).parent / "static" / "dashboard" / "index.html"
+    if not html_path.exists():
+        raise HTTPException(status_code=404, detail="Dashboard not found")
+    return FileResponse(str(html_path), media_type="text/html")
+
+
+@app.get("/api/governed-card")
+async def governed_card(date: str = Query(default=None)):
+    """
+    Return today's governed card from velo_verdicts.
+    Each row includes: assigned_product, router_reasons, execution_allowed,
+    tier, confidence_level, velo_prime_prob, prob_gap, market_deception_score.
+    """
+    import subprocess as _sp
+    from datetime import datetime as _dt
+
+    target_date = date or _dt.utcnow().strftime("%Y-%m-%d")
+
+    # Resolve Supabase connection
+    sb_url = resolve_supabase_url()
+    sb_key = resolve_supabase_service_key()
+    if not sb_url or not sb_key:
+        raise HTTPException(status_code=503, detail="Supabase not configured")
+
+    try:
+        from supabase import create_client as _sb_create
+        db = _sb_create(sb_url, sb_key)
+
+        # Pull today's verdicts
+        resp = (
+            db.table("velo_verdicts")
+            .select(
+                "race_id, course, off_time, horse, decision_tier, confidence_level, "
+                "velo_prime_prob, prob_gap, market_deception_score, "
+                "assigned_product, router_reasons, execution_allowed, "
+                "race_date, created_at"
+            )
+            .eq("race_date", target_date)
+            .order("off_time")
+            .execute()
+        )
+        verdicts = resp.data or []
+
+    except Exception as exc:
+        logger.error("governed_card query failed: %s", exc)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+    # Build source truth meta
+    try:
+        commit = _sp.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=pathlib.Path(__file__).parent.parent,
+            stderr=_sp.DEVNULL,
+        ).decode().strip()
+    except Exception:
+        commit = "unknown"
+
+    return {
+        "meta": {
+            "requested_date": target_date,
+            "loaded_date": target_date,
+            "source": "supabase",
+            "commit_sha": commit,
+            "router_version": "ProductRouter v1 (live-safe)",
+            "record_count": len(verdicts),
+        },
+        "verdicts": verdicts,
+    }
+
+
 # Root endpoint
 @app.get("/")
 async def root():
     """Root endpoint"""
-    return {"message": "VÉLØ Oracle API", "version": "v1.0", "docs": "/docs", "health": "/health"}
+    return {"message": "VÉLØ Oracle API", "version": "v1.0", "docs": "/docs", "health": "/health", "dashboard": "/dashboard"}
 
 
 # API v1 endpoints
