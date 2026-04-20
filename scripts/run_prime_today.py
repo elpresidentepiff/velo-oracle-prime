@@ -858,13 +858,47 @@ def main():
 
     # ── STEP 1: Load racecards (cache or direct API fetch) ────────────────────
     print("\nSTEP 1: Load racecards")
-    import json
-    cache_path = ROOT / "data" / "racecards_2026_04_18_standard.json"
-    with open(cache_path, 'r') as f:
-        cache_data = json.load(f)
-    raw_races = cache_data.get('racecards', [])
-    racecard_source = "forced_cache_v21"
+    raw_races, racecard_source = load_racecards(date_tag, date_str)
     races_with_runners = [r for r in raw_races if r.get("runners")]
+
+    # ── SOURCE TRUTH HEADER ───────────────────────────────────────────────────
+    # Detect if loaded card is actually for the requested date
+    loaded_dates = set()
+    for r in raw_races:
+        d = r.get("date") or r.get("race_date") or r.get("off_dt", "")[:10]
+        if d:
+            loaded_dates.add(d)
+    loaded_date_str = ", ".join(sorted(loaded_dates)) if loaded_dates else "unknown"
+    date_mismatch = loaded_dates and date_str not in loaded_dates
+    is_live = racecard_source == "api"
+    live_label = "LIVE_API" if is_live else "CACHE"
+    import subprocess
+    try:
+        commit_sha = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"],
+                                             cwd=ROOT, stderr=subprocess.DEVNULL).decode().strip()
+    except Exception:
+        commit_sha = "unknown"
+
+    print(f"\n{'='*60}")
+    print(f"  SOURCE TRUTH HEADER")
+    print(f"  requested_date : {date_str}")
+    print(f"  loaded_date(s) : {loaded_date_str}")
+    print(f"  source         : {live_label} ({racecard_source})")
+    print(f"  commit_sha     : {commit_sha}")
+    print(f"  router_version : ProductRouter v1 (live-safe)")
+    if date_mismatch:
+        print(f"  ⚠ DATE MISMATCH — loaded card is NOT for {date_str}")
+        print(f"  ⚠ This is a cache/stale fetch. Marking output NON-LIVE.")
+    elif not is_live:
+        print(f"  ℹ Source = CACHE. Card date matches request.")
+    else:
+        print(f"  ✓ Source = LIVE API. Card date matches request.")
+    print(f"{'='*60}\n")
+
+    if date_mismatch and notify_enabled:
+        print("  TELEGRAM SUPPRESSED — date mismatch, would send stale card as live")
+        notify_enabled = False
+
     print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
 
     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
@@ -993,9 +1027,18 @@ def main():
                 top["execution_allowed"]   = governance["execution_allowed"]
 
                 scored.append((race, preds, tier, reasons))
-                gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
-                arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
-                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
+                # ── GOVERNED RACE-BY-RACE OUTPUT ─────────────────────────────
+                prob_gap_val = float(top.get("velo_prime_prob", 0)) - sec_prob
+                print(
+                    f"  SCORED  {race.get('course','?'):22s}  {race.get('off_time','?'):5s}"
+                    f"  race_id={race.get('race_id','?')}\n"
+                    f"          horse={top['horse']:<25s}  tier={tier}  conf={top.get('confidence_level','?')}\n"
+                    f"          prob={top.get('velo_prime_prob',0):.4f}  prob_gap={prob_gap_val:.4f}"
+                    f"  mds={top.get('market_deception_score',0):.4f}\n"
+                    f"          product={top.get('assigned_product','?'):15s}"
+                    f"  exec={top.get('execution_allowed','?')}"
+                    f"  reasons={top.get('router_reasons','?')}"
+                )
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")
@@ -1004,6 +1047,24 @@ def main():
             print(f"  FAIL  {cid} — {e}")
 
     print(f"\n  Scored: {len(scored)}  Errors: {len(score_errors)}")
+
+    # ── GOVERNED CARD SUMMARY ─────────────────────────────────────────────────
+    from collections import Counter
+    product_counts = Counter()
+    for race, preds, t, _ in scored:
+        top_pick = preds[0] if preds else {}
+        product_counts[top_pick.get("assigned_product", "UNKNOWN")] += 1
+    exec_total = sum(v for k, v in product_counts.items()
+                     if k in ("WIN_ONLY", "FRAME_ONLY", "EW_CANDIDATE"))
+    print(f"\n  ── GOVERNED CARD SUMMARY ──────────────────────────────")
+    print(f"  Scored:        {len(scored)}")
+    for prod in ["WIN_ONLY", "FRAME_ONLY", "EW_CANDIDATE", "VISION_ONLY", "PASS", "UNKNOWN"]:
+        n = product_counts.get(prod, 0)
+        if n:
+            exec_flag = " ← EXECUTION AUTHORIZED" if prod in ("WIN_ONLY","FRAME_ONLY","EW_CANDIDATE") else ""
+            print(f"  {prod:<20s} {n:3d}{exec_flag}")
+    print(f"  EXECUTION AUTHORIZED: {exec_total}")
+    print(f"  ──────────────────────────────────────────────────────")
 
     # ── STEP 4: Persist to Supabase ───────────────────────────────────────────
     print("\nSTEP 4: Persist to velo_verdicts")
