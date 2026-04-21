@@ -2,12 +2,16 @@
 """
 VÉLØ Unified Racecard PDF Ingestion Pipeline
 =============================================
-Parses three Racing Post PDF types and merges them into a single per-horse
+Parses up to 7 Racing Post PDF types and merges them into a single per-horse
 intelligence record:
 
   F_0015_OR  — Official Ratings (OR, best winning OR, highest entered, lowest win, RPR)
   F_0032_TS  — Top Speed ratings (latest TS, distance/course/going best, master TS)
   F_0016_XX  — Spotlight comments (free-text per horse, NLP flags, sentiment)
+  F_0011_XX  — Postdata + TS Summary (trainer/going/course/draw/ability flags, adjusted TS)
+  O_0006_XX  — Form Detailed (breeding, stats, last run, NOTE-BOOK, trainer rtf%)
+  O_0008_XX  — Form Short (subset of O_0006)
+  O_0001_XX  — Profile (lifetime C/D/G stats)
 
 Usage:
   # Process all PDFs for a venue/date in a directory
@@ -40,36 +44,65 @@ except ImportError:
     sys.exit(1)
 
 
-# ─── Filename Pattern ────────────────────────────────────────────────────────
-# e.g. PON_20260421_00_00_F_0015_OR_Pontefract.pdf
-FILENAME_RE = re.compile(
+# ─── Filename Patterns ───────────────────────────────────────────────────────
+# Full-card PDFs: PON_20260421_00_00_F_0015_OR_Pontefract.pdf
+FILENAME_F_RE = re.compile(
     r"(?P<code>[A-Z]{3})_(?P<date>\d{8})_\d+_\d+_F_(?P<ftype>\d{4})_(?P<label>[A-Z]{2})_(?P<venue>.+)\.pdf",
+    re.IGNORECASE,
+)
+# Per-race PDFs: PON_20260421_13_42_O_0006_XX_Pontefract.pdf
+FILENAME_O_RE = re.compile(
+    r"(?P<code>[A-Z]{3})_(?P<date>\d{8})_\d+_\d+_O_(?P<ftype>\d{4})_(?P<label>[A-Z]{2})_(?P<venue>.+)\.pdf",
     re.IGNORECASE,
 )
 
 
 def classify_pdf(path: Path) -> dict:
     """Classify a PDF by its filename pattern."""
-    m = FILENAME_RE.match(path.name)
-    if not m:
-        return {"type": "unknown", "path": path}
-    label = m.group("label").upper()
-    ftype = m.group("ftype")
-    if label == "OR" or ftype == "0015":
-        pdf_type = "or"
-    elif label == "TS" or ftype == "0032":
-        pdf_type = "ts"
-    elif label == "XX" or ftype == "0016":
-        pdf_type = "spotlight"
-    else:
-        pdf_type = "unknown"
-    return {
-        "type": pdf_type,
-        "code": m.group("code"),
-        "date": m.group("date"),
-        "venue": m.group("venue"),
-        "path": path,
-    }
+    # Try full-card pattern first
+    m = FILENAME_F_RE.match(path.name)
+    if m:
+        label = m.group("label").upper()
+        ftype = m.group("ftype")
+        if label == "OR" or ftype == "0015":
+            pdf_type = "or"
+        elif label == "TS" or ftype == "0032":
+            pdf_type = "ts"
+        elif ftype == "0016":
+            pdf_type = "spotlight"
+        elif ftype == "0011":
+            pdf_type = "postdata"
+        else:
+            pdf_type = "unknown"
+        return {
+            "type": pdf_type,
+            "code": m.group("code"),
+            "date": m.group("date"),
+            "venue": m.group("venue"),
+            "path": path,
+        }
+
+    # Try per-race pattern
+    m = FILENAME_O_RE.match(path.name)
+    if m:
+        ftype = m.group("ftype")
+        if ftype == "0006":
+            pdf_type = "form_detailed"
+        elif ftype == "0008":
+            pdf_type = "form_short"
+        elif ftype == "0001":
+            pdf_type = "profile"
+        else:
+            pdf_type = "unknown"
+        return {
+            "type": pdf_type,
+            "code": m.group("code"),
+            "date": m.group("date"),
+            "venue": m.group("venue"),
+            "path": path,
+        }
+
+    return {"type": "unknown", "path": path}
 
 
 # ─── OR Parser ───────────────────────────────────────────────────────────────
@@ -409,24 +442,90 @@ def _fuzzy_match(name1: str, name2: str) -> bool:
     return n1 == n2 or n1 in n2 or n2 in n1
 
 
-def merge_race_data(or_data: dict, ts_data: dict, spotlight_data: dict) -> dict:
+def _merge_source(horse: dict, source_horses: dict, name_key: str, skip_keys: set = None):
+    """Merge data from a source into the horse dict using fuzzy matching."""
+    skip = skip_keys or set()
+    src = source_horses.get(name_key)
+    if not src:
+        for k, v in source_horses.items():
+            if _fuzzy_match(name_key, k):
+                src = v
+                break
+    if src:
+        for k, v in src.items():
+            if k not in skip and v is not None:
+                horse[k] = v
+    return src is not None
+
+
+def _normalize_time(t: str) -> str:
+    """Normalize race time to dot format: '2:52' -> '2.52', 'unknown' -> 'unknown'."""
+    return t.replace(":", ".") if t and t != "unknown" else t
+
+
+def _normalize_data_keys(data: dict) -> dict:
+    """Normalize all time keys in a data dict to dot format."""
+    out = {}
+    for k, v in data.items():
+        nk = _normalize_time(k)
+        if nk in out:
+            # Merge horses from duplicate time keys
+            existing = out[nk].get("horses", [])
+            new = v.get("horses", [])
+            existing.extend(new)
+            out[nk]["horses"] = existing
+        else:
+            out[nk] = v
+    return out
+
+
+def merge_race_data(
+    or_data: dict,
+    ts_data: dict,
+    spotlight_data: dict,
+    postdata_data: dict = None,
+    form_data: dict = None,
+) -> dict:
     """
-    Merge OR, TS, and Spotlight data by race time and horse name.
+    Merge OR, TS, Spotlight, Postdata, and Form data by race time and horse name.
     Returns unified dict keyed by race_time -> list of enriched horse dicts.
     """
+    postdata_data = postdata_data or {}
+    form_data = form_data or {}
+
+    # Normalize all time keys to dot format (e.g. '2:52' -> '2.52')
+    or_data = _normalize_data_keys(or_data)
+    ts_data = _normalize_data_keys(ts_data)
+    spotlight_data = _normalize_data_keys(spotlight_data)
+    postdata_data = _normalize_data_keys(postdata_data)
+
     all_times = sorted(set(
-        list(or_data.keys()) + list(ts_data.keys()) + list(spotlight_data.keys())
+        list(or_data.keys()) + list(ts_data.keys()) +
+        list(spotlight_data.keys()) + list(postdata_data.keys())
     ))
+    # Remove 'unknown' if present (postdata sometimes has unmatched races)
+    all_times = [t for t in all_times if t != "unknown"]
 
     merged = {}
     for race_time in all_times:
         or_horses = {h["horse_name"].lower(): h for h in or_data.get(race_time, {}).get("horses", [])}
         ts_horses = {h["horse_name"].lower(): h for h in ts_data.get(race_time, {}).get("horses", [])}
         spot_horses = {h["horse_name"].lower(): h for h in spotlight_data.get(race_time, {}).get("horses", [])}
+        pd_horses = {h["horse_name"].lower(): h for h in postdata_data.get(race_time, {}).get("horses", [])}
 
-        # Start with OR as the base (it has the most horses)
+        # Form data is keyed by race_time from the form parser
+        form_horses = {}
+        if form_data:
+            for fd in form_data:
+                ft = _normalize_time(fd.get("race_time", ""))
+                if ft == race_time:
+                    form_horses = {h["horse_name"].lower(): h for h in fd.get("horses", [])}
+                    break
+
         all_horse_names = sorted(set(
-            list(or_horses.keys()) + list(ts_horses.keys()) + list(spot_horses.keys())
+            list(or_horses.keys()) + list(ts_horses.keys()) +
+            list(spot_horses.keys()) + list(pd_horses.keys()) +
+            list(form_horses.keys())
         ))
 
         race_info = (
@@ -434,44 +533,61 @@ def merge_race_data(or_data: dict, ts_data: dict, spotlight_data: dict) -> dict:
             ts_data.get(race_time, {}).get("race_info", "")
         )
 
+        # Postdata selections
+        pd_race = postdata_data.get(race_time, {})
+        postdata_pick = pd_race.get("postdata_pick", "")
+        topspeed_pick = pd_race.get("topspeed_pick", "")
+
         horses = []
         for name_key in all_horse_names:
             horse = {"horse_name": name_key.title(), "race_time": race_time}
 
-            # Merge OR data
-            or_h = or_horses.get(name_key)
-            if not or_h:
-                # Try fuzzy match
-                for k, v in or_horses.items():
-                    if _fuzzy_match(name_key, k):
-                        or_h = v
-                        break
-            if or_h:
-                horse.update({k: v for k, v in or_h.items() if k != "horse_name"})
+            # Merge OR data (base layer)
+            _merge_source(horse, or_horses, name_key, {"horse_name"})
 
-            # Merge TS data
-            ts_h = ts_horses.get(name_key)
-            if not ts_h:
-                for k, v in ts_horses.items():
-                    if _fuzzy_match(name_key, k):
-                        ts_h = v
-                        break
-            if ts_h:
-                for k, v in ts_h.items():
-                    if k not in ("horse_name", "weight", "current_or") and v is not None:
-                        horse[k] = v
+            # Merge TS data (don't overwrite weight/OR from OR source)
+            _merge_source(horse, ts_horses, name_key, {"horse_name", "weight", "current_or"})
 
             # Merge Spotlight data
-            spot_h = spot_horses.get(name_key)
-            if not spot_h:
-                for k, v in spot_horses.items():
+            _merge_source(horse, spot_horses, name_key, {"horse_name"})
+
+            # Merge Postdata flags
+            pd_matched = _merge_source(horse, pd_horses, name_key, {"horse_name"})
+
+            # Merge Form Detailed data
+            form_h = form_horses.get(name_key)
+            if not form_h:
+                for k, v in form_horses.items():
                     if _fuzzy_match(name_key, k):
-                        spot_h = v
+                        form_h = v
                         break
-            if spot_h:
-                for k, v in spot_h.items():
-                    if k != "horse_name" and v is not None:
-                        horse[k] = v
+            if form_h:
+                # Prefix form fields to avoid collisions
+                horse["form_trainer"] = form_h.get("trainer", "")
+                horse["form_jockey"] = form_h.get("jockey", "")
+                horse["form_trainer_rtf_pct"] = form_h.get("trainer_rtf_pct")
+                horse["form_trainer_14d"] = form_h.get("trainer_14d_record", "")
+                horse["form_sire"] = form_h.get("sire", "")
+                horse["form_sire_awd"] = form_h.get("sire_awd")
+                horse["form_sire_aei"] = form_h.get("sire_aei")
+                horse["form_sales_price"] = form_h.get("sales_price")
+                horse["form_breeding"] = form_h.get("breeding_commentary", "")
+                horse["form_notebook"] = form_h.get("notebook")
+                horse["form_stats"] = form_h.get("stats", {})
+                horse["form_last_runs"] = form_h.get("last_runs", [])
+                horse["form_cd_proven"] = form_h.get("cd_proven", False)
+                horse["form_cdg_proven"] = form_h.get("cdg_proven", False)
+                horse["form_trainer_hot"] = form_h.get("trainer_hot", False)
+                horse["form_first_time_out"] = form_h.get("first_time_out", False)
+                horse["form_lightly_raced"] = form_h.get("lightly_raced", False)
+                horse["form_course_wins"] = form_h.get("course_wins", 0)
+                horse["form_dist_wins"] = form_h.get("dist_wins", 0)
+
+            # Check if this horse is the postdata/topspeed pick
+            if postdata_pick and _fuzzy_match(name_key, postdata_pick.lower()):
+                horse["is_postdata_pick"] = True
+            if topspeed_pick and _fuzzy_match(name_key, topspeed_pick.lower()):
+                horse["is_topspeed_pick"] = True
 
             # ── Compute composite plot signals ────────────────────────────
             _compute_plot_signals(horse)
@@ -480,6 +596,8 @@ def merge_race_data(or_data: dict, ts_data: dict, spotlight_data: dict) -> dict:
 
         merged[race_time] = {
             "race_info": race_info,
+            "postdata_pick": postdata_pick,
+            "topspeed_pick": topspeed_pick,
             "horses": horses,
         }
 
@@ -621,9 +739,12 @@ def save_output(merged: dict, venue: str, date: str, output_dir: Path):
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 def find_pdfs_in_dir(directory: Path, venue: str, date: str) -> dict:
-    """Find OR, TS, and Spotlight PDFs in a directory by venue and date."""
+    """Find all PDF types in a directory by venue and date."""
     date_compact = date.replace("-", "")
-    found = {"or": None, "ts": None, "spotlight": None}
+    found = {
+        "or": None, "ts": None, "spotlight": None,
+        "postdata": None, "form_detailed": [], "form_short": [], "profile": [],
+    }
 
     for f in sorted(directory.glob("*.pdf")):
         if venue.upper() not in f.name.upper():
@@ -631,23 +752,32 @@ def find_pdfs_in_dir(directory: Path, venue: str, date: str) -> dict:
         if date_compact not in f.name:
             continue
         info = classify_pdf(f)
-        if info["type"] in found:
-            found[info["type"]] = f
+        ptype = info["type"]
+        if ptype in ("or", "ts", "spotlight", "postdata"):
+            found[ptype] = f
+        elif ptype in ("form_detailed", "form_short", "profile"):
+            found[ptype].append(f)
 
     return found
 
 
 def main():
-    parser = argparse.ArgumentParser(description="VÉLØ Unified Racecard PDF Ingestion")
+    parser = argparse.ArgumentParser(description="VÉLØ Unified Racecard PDF Ingestion (7 PDF types)")
     parser.add_argument("--dir", type=Path, help="Directory containing PDFs")
     parser.add_argument("--venue", type=str, help="Venue code (e.g. PON)")
     parser.add_argument("--date", type=str, help="Race date (YYYY-MM-DD)")
     parser.add_argument("--or", dest="or_pdf", type=Path, help="Official Ratings PDF path")
     parser.add_argument("--ts", type=Path, help="Top Speed PDF path")
     parser.add_argument("--spotlight", type=Path, help="Spotlight PDF path")
+    parser.add_argument("--postdata", type=Path, help="Postdata PDF path")
+    parser.add_argument("--form", type=Path, nargs="*", help="Form Detailed PDF path(s)")
     parser.add_argument("--dry-run", action="store_true", help="No Supabase write")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "data" / "racecard_merged")
     args = parser.parse_args()
+
+    # Import new parsers
+    from workers.postdata_parser import parse_postdata_pdf
+    from workers.form_detailed_parser import parse_form_detailed_pdf
 
     # Find PDFs
     if args.dir and args.venue and args.date:
@@ -655,12 +785,16 @@ def main():
         or_path = pdfs["or"]
         ts_path = pdfs["ts"]
         spot_path = pdfs["spotlight"]
+        pd_path = pdfs["postdata"]
+        form_paths = pdfs["form_detailed"]
         venue = args.venue.upper()
         date = args.date
     else:
         or_path = args.or_pdf
         ts_path = args.ts
         spot_path = args.spotlight
+        pd_path = args.postdata
+        form_paths = args.form or []
         venue = "UNKNOWN"
         date = datetime.now().strftime("%Y-%m-%d")
 
@@ -671,20 +805,38 @@ def main():
             if raw_date and len(raw_date) == 8:
                 date = f"{raw_date[:4]}-{raw_date[4:6]}-{raw_date[6:8]}"
 
-    print(f"\n  VÉLØ Racecard Ingestion: {venue} {date}")
+    print(f"\n  VÉLØ Racecard Ingestion (7-PDF): {venue} {date}")
     print(f"  OR:        {or_path or 'NOT FOUND'}")
     print(f"  TS:        {ts_path or 'NOT FOUND'}")
     print(f"  Spotlight: {spot_path or 'NOT FOUND'}")
+    print(f"  Postdata:  {pd_path or 'NOT FOUND'}")
+    print(f"  Form:      {len(form_paths)} file(s) found")
 
-    # Parse each PDF
+    # Parse each PDF type
     or_data = parse_or_pdf(or_path) if or_path else {}
     ts_data = parse_ts_pdf(ts_path) if ts_path else {}
     spotlight_data = parse_spotlight_pdf(spot_path) if spot_path else {}
+    postdata_data = parse_postdata_pdf(pd_path) if pd_path else {}
 
-    print(f"\n  Parsed: OR={len(or_data)} races, TS={len(ts_data)} races, Spotlight={len(spotlight_data)} races")
+    # Parse form detailed PDFs (one per race)
+    form_data = []
+    for fp in form_paths:
+        try:
+            fd = parse_form_detailed_pdf(fp)
+            form_data.append(fd)
+        except Exception as e:
+            print(f"  WARN: Failed to parse form PDF {fp}: {e}")
 
-    # Merge
-    merged = merge_race_data(or_data, ts_data, spotlight_data)
+    print(f"\n  Parsed: OR={len(or_data)} races, TS={len(ts_data)} races, "
+          f"Spotlight={len(spotlight_data)} races, Postdata={len(postdata_data)} races, "
+          f"Form={len(form_data)} races")
+
+    # Merge all sources
+    merged = merge_race_data(
+        or_data, ts_data, spotlight_data,
+        postdata_data=postdata_data,
+        form_data=form_data,
+    )
 
     # Print summary
     print_summary(merged, venue, date)
