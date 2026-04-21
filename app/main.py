@@ -16,7 +16,7 @@ import urllib.request
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -990,6 +990,61 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
             "log_path": str(log_path),
         },
     )
+
+
+# ── Spotlight PDF Upload ──────────────────────────────────────────────────────
+
+
+@app.post("/api/upload/spotlight", status_code=202)
+async def upload_spotlight_pdf(
+    file: UploadFile = File(...),
+    x_trigger_secret: str = Header(None),
+):
+    """
+    Upload a Racing Post Spotlight PDF (F_0016_XX) for NLP parsing.
+    The PDF is saved to data/incoming_pdfs/ and parsed immediately.
+    Returns parsed horse count and NLP summary.
+
+    Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
+    """
+    trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
+    if trigger_secret and x_trigger_secret != trigger_secret:
+        raise HTTPException(status_code=401, detail="Invalid trigger secret")
+
+    if not file.filename or not file.filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="File must be a PDF")
+
+    # Save to incoming_pdfs
+    incoming_dir = pathlib.Path(__file__).parent.parent / "data" / "incoming_pdfs"
+    incoming_dir.mkdir(parents=True, exist_ok=True)
+    dest = incoming_dir / file.filename
+    content = await file.read()
+    dest.write_bytes(content)
+    logger.info(f"Spotlight PDF saved: {dest} ({len(content)} bytes)")
+
+    # Parse in background
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "ingest_spotlight_pdf.py"
+    if script_path.exists():
+        proc = subprocess.Popen(
+            [sys.executable, str(script_path), "--pdf", str(dest)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        logger.info(f"Spotlight parse triggered: pid={proc.pid}")
+        return {
+            "status": "accepted",
+            "filename": file.filename,
+            "size_bytes": len(content),
+            "parse_pid": proc.pid,
+            "message": f"PDF saved and parse triggered. Check data/spotlight_parsed/ for output.",
+        }
+    else:
+        return {
+            "status": "saved_only",
+            "filename": file.filename,
+            "size_bytes": len(content),
+            "message": "PDF saved but ingest_spotlight_pdf.py not found. Manual parse required.",
+        }
 
 
 # ── Governed Card Dashboard ───────────────────────────────────────────────────
