@@ -51,15 +51,41 @@ FLAG_SCORE = {
     "no_data": 0.0,
 }
 
-# Column indices in the table
+# Column indices — determined dynamically per table.
+# Flat cards have 8 cols (with DRAW), NH cards have 7 cols (no DRAW).
+# The TS data column is always the last column.
 COL_TRAINER_FORM = 0
 COL_GOING = 1
 COL_DIST = 2
 COL_COURSE = 3
-COL_DRAW = 4
-COL_ABILITY = 5
-COL_RECENT_FORM = 6
-COL_TS_DATA = 7  # Last column: horse name + TS data
+# COL_DRAW / COL_ABILITY / COL_RECENT_FORM / COL_TS_DATA are set per-table
+
+
+def _detect_columns(header_row: list) -> dict:
+    """Detect column layout based on header count.
+
+    Returns dict with keys: has_draw, col_draw, col_ability, col_recent_form, col_ts_data.
+    """
+    ncols = len(header_row)
+    # Check if any header cell contains 'DRAW'
+    has_draw = any("DRAW" in (c or "").upper() for c in header_row)
+    if has_draw or ncols >= 8:
+        return {
+            "has_draw": True,
+            "col_draw": 4,
+            "col_ability": 5,
+            "col_recent_form": 6,
+            "col_ts_data": 7,
+        }
+    else:
+        # NH / no-draw layout: 7 cols
+        return {
+            "has_draw": False,
+            "col_draw": None,
+            "col_ability": 4,
+            "col_recent_form": 5,
+            "col_ts_data": 6,
+        }
 
 
 def _parse_flag(val: str) -> str:
@@ -185,7 +211,7 @@ def _parse_header(header_row: list) -> dict:
         info["distance_f"] = dist_match.group(1).strip()
 
     # Race time from last column header: "5:05 Topspeed Ratings..."
-    ts_header = (header_row[COL_TS_DATA] or header_row[-1] or "").strip()
+    ts_header = (header_row[-1] or "").strip()
     time_match = re.search(r"(\d+:\d{2})", ts_header)
     if time_match:
         info["race_time"] = time_match.group(1)
@@ -256,6 +282,9 @@ def parse_postdata_pdf(path: Path) -> dict:
                 if "TRAINER" not in first_header and "FORM" not in first_header:
                     continue
 
+                # Detect column layout (Flat vs NH)
+                cols = _detect_columns(header)
+
                 # Parse header for race info
                 race_info = _parse_header(header)
                 race_time = race_info.get("race_time", "unknown")
@@ -275,22 +304,21 @@ def parse_postdata_pdf(path: Path) -> dict:
                         continue
 
                     # Parse horse row
-                    # Determine column count (some tables have 8, some 9 cols)
-                    ts_col = len(row) - 1  # Last column is always TS data
+                    ts_col = cols["col_ts_data"] if cols["col_ts_data"] < len(row) else len(row) - 1
 
                     ts_data = _parse_ts_cell(row[ts_col] if ts_col < len(row) else "")
                     if not ts_data.get("horse_name"):
                         continue
 
-                    # Parse flags
+                    # Parse flags — use detected column layout
                     flags = {
                         "trainer_form": _parse_flag(row[COL_TRAINER_FORM] if COL_TRAINER_FORM < len(row) else ""),
                         "going_flag": _parse_flag(row[COL_GOING] if COL_GOING < len(row) else ""),
                         "distance_flag": _parse_flag(row[COL_DIST] if COL_DIST < len(row) else ""),
                         "course_flag": _parse_flag(row[COL_COURSE] if COL_COURSE < len(row) else ""),
-                        "draw_flag": _parse_flag(row[COL_DRAW] if COL_DRAW < len(row) else ""),
-                        "ability_flag": _parse_flag(row[COL_ABILITY] if COL_ABILITY < len(row) else ""),
-                        "recent_form_flag": _parse_flag(row[COL_RECENT_FORM] if COL_RECENT_FORM < len(row) else ""),
+                        "draw_flag": _parse_flag(row[cols["col_draw"]] if cols["has_draw"] and cols["col_draw"] < len(row) else ""),
+                        "ability_flag": _parse_flag(row[cols["col_ability"]] if cols["col_ability"] < len(row) else ""),
+                        "recent_form_flag": _parse_flag(row[cols["col_recent_form"]] if cols["col_recent_form"] < len(row) else ""),
                     }
 
                     # Compute composite postdata score (-1 to +1)
