@@ -144,7 +144,7 @@ def parse_or_pdf(path: Path) -> dict:
                     if not current_race:
                         continue
 
-                    # Find horse name — it's in the column that has text (usually col 9)
+                    # Find horse name — it's in the column that has alphabetic text
                     horse_name = None
                     horse_col = -1
                     for ci, cell in enumerate(row):
@@ -157,6 +157,40 @@ def parse_or_pdf(path: Path) -> dict:
 
                     if not horse_name:
                         continue
+
+                    # ── Per-run history: columns BEFORE the horse name ──────────
+                    # Each cell before the name contains a run entry like:
+                    #   "1 1/2"  = finished 1st, won by 1.5 lengths
+                    #   "2 21/4" = finished 2nd, beaten 2.25 lengths
+                    #   "07093/4" = finished 0(unplaced), OR was 70, beaten 9.75 lengths
+                    # We store them as raw strings for now (right to left = most recent first)
+                    run_history_raw = []
+                    for ci in range(horse_col - 1, -1, -1):
+                        cell_val = (row[ci] or "").strip()
+                        if cell_val and cell_val not in ("", "Horse", "Wgt"):
+                            run_history_raw.insert(0, cell_val)
+
+                    # Parse each run: extract position and OR where possible
+                    # OR PDF format: each run cell is like:
+                    #   "07093/4"  -> pos=0, OR=70, beaten 9.75 lengths
+                    #   "1 1/2"    -> pos=1, won by 1.5 lengths (no OR shown for wins)
+                    #   "2 21/4"   -> pos=2, beaten 2.25 lengths
+                    #   "48031/4"  -> pos=4, OR=80, beaten 3.25 lengths
+                    # The position is ALWAYS 1 digit. OR is always 2 digits.
+                    or_run_history = []
+                    for run_str in run_history_raw:
+                        clean = run_str.replace(" ", "")
+                        # Match: 1-digit pos + 2-digit OR + rest
+                        run_match = re.match(r"^(\d)(\d{2})", clean)
+                        if run_match:
+                            pos = int(run_match.group(1))
+                            run_or = int(run_match.group(2))
+                            or_run_history.append({"pos": pos, "or": run_or, "raw": run_str})
+                        else:
+                            # Simple result like "1 1/2" (win) or "2 nk" (place)
+                            pos_match = re.match(r"^(\d)", clean)
+                            pos = int(pos_match.group(1)) if pos_match else None
+                            or_run_history.append({"pos": pos, "or": None, "raw": run_str})
 
                     # Parse weight and OR from the column after horse name
                     wgt_or_str = (row[horse_col + 1] or "").strip() if horse_col + 1 < len(row) else ""
@@ -174,9 +208,6 @@ def parse_or_pdf(path: Path) -> dict:
                             future_or = int(wgt_match.group(3))
 
                     # Parse remaining columns for best winning, highest entered, lowest win, RPR
-                    # Columns after wgt/or: best_win_12m, best_win_ssn, best_win_life,
-                    #                       high_ent_12m, high_ent_ssn, high_ent_life,
-                    #                       low_win_ssn, low_win_life, rpr_master
                     remaining = row[horse_col + 2:] if horse_col + 2 < len(row) else []
 
                     # Clean and parse numeric values
@@ -197,6 +228,7 @@ def parse_or_pdf(path: Path) -> dict:
                         "lowest_win_ssn": vals[6] if len(vals) > 6 else None,
                         "lowest_win_life": vals[7] if len(vals) > 7 else None,
                         "rpr_master": vals[-1] if vals and vals[-1] else None,
+                        "or_run_history": or_run_history,  # last N runs: [{pos, or, raw}]
                     }
 
                     # Compute handicap plot signals
@@ -272,6 +304,38 @@ def parse_ts_pdf(path: Path) -> dict:
                     if not horse_name:
                         continue
 
+                    # ── Per-run TS history: columns BEFORE the horse name ───────
+                    # Each cell before the name is a run entry like:
+                    #   "2696g"   = pos 2, TS 69, going g(ood)
+                    #   "1595s"   = pos 1, TS 59, going s(oft)
+                    #   "0316s"   = pos 0 (unplaced), TS 31, going s
+                    ts_run_history = []
+                    for ci in range(horse_col - 1, -1, -1):
+                        cell_val = (row[ci] or "").strip()
+                        if cell_val and cell_val not in ("", "Horse", "Wgt"):
+                            ts_run_history.insert(0, cell_val)
+
+                    # Parse each TS run entry
+                    # TS PDF format: pos(1) + TS(2) + dist(1-2 digits) + going(1-3 chars)
+                    # e.g. "2616gf" = pos=2, TS=61, dist=6f, going=gf
+                    # e.g. "0277hy" = pos=0, TS=27, dist=7f, going=hy
+                    # e.g. "1595s"  = pos=1, TS=59, dist=5f, going=s
+                    # e.g. "4318sd" = pos=4, TS=31, dist=8f, going=sd
+                    ts_runs_parsed = []
+                    for run_str in ts_run_history:
+                        # pos(1) + TS(2) + dist(1-2 digits) + going(letters)
+                        m = re.match(r"^(\d)(\d{2})(\d{1,2})([a-z]{1,3})", run_str)
+                        if m:
+                            ts_runs_parsed.append({
+                                "pos": int(m.group(1)),
+                                "ts": int(m.group(2)),
+                                "dist": m.group(3),
+                                "going": m.group(4),
+                                "raw": run_str
+                            })
+                        else:
+                            ts_runs_parsed.append({"pos": None, "ts": None, "dist": None, "going": None, "raw": run_str})
+
                     # Parse Wgt OR from next column
                     wgt_or_str = (row[horse_col + 1] or "").strip() if horse_col + 1 < len(row) else ""
                     wgt = None
@@ -291,6 +355,7 @@ def parse_ts_pdf(path: Path) -> dict:
                         "horse_name": horse_name,
                         "weight": wgt,
                         "current_or": current_or,
+                        "ts_run_history": ts_runs_parsed,  # last N runs: [{pos, ts, going, raw}]
                         "ts_latest": vals[0] if len(vals) > 0 else None,
                         "ts_distance": vals[1] if len(vals) > 1 else None,
                         "ts_course": vals[2] if len(vals) > 2 else None,
