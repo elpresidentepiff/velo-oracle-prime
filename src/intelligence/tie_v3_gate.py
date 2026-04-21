@@ -47,11 +47,25 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 
-# ─── Thresholds ───────────────────────────────────────────────────────────────
+# ─── Thresholds ─────────────────────────────────────────────────────────────────────
 # How many intent signals must be present for the gate to fire.
-# Higher = fewer fires, better precision. Lower = more coverage, lower precision.
-MIN_SIGNALS_FOR_UPGRADE = 4    # to upgrade tier (C→B or D→C) — validated: 1.35-1.49x place precision
-MIN_SIGNALS_FOR_EW_FLAG = 3    # to enable EW flag on longshots
+# v3.1: Lowered from 4→3 and added specialist signal requirement.
+# The gate now requires BOTH a minimum total count AND at least 1 specialist
+# signal (gear/wind/spotlight/plot). This prevents pure-mechanical horses
+# from upgrading (they're already caught by normal scoring) while catching
+# genuine plot horses with fewer total signals.
+MIN_SIGNALS_FOR_UPGRADE = 3    # total signals needed (was 4)
+MIN_SPECIALIST_FOR_UPGRADE = 1 # at least 1 specialist signal required
+MIN_SIGNALS_FOR_EW_FLAG = 2    # to enable EW flag on longshots (was 3)
+MIN_SPECIALIST_FOR_EW = 1      # at least 1 specialist for EW too
+
+# Specialist signal names (Tier 3)
+SPECIALIST_SIGNALS = {
+    "first_time_headgear",
+    "first_run_since_wind_surgery",
+    "high_spotlight_conviction",
+    "handicap_plot_active",
+}
 
 # Individual signal thresholds
 MAX_DAYS_SINCE_RUN = 42       # within 6 weeks = "fit and ready"
@@ -133,13 +147,22 @@ class TIEv3Gate:
             result.reason = "no intent signals"
             return result
 
-        # ── Tier upgrade path ─────────────────────────────────────────────────
-        if n >= MIN_SIGNALS_FOR_UPGRADE and current_tier in ("C", "D"):
+           # Count specialist signals
+        specialist_count = sum(1 for s in signals if s in SPECIALIST_SIGNALS)
+
+        # ── Tier upgrade path ─────────────────────────────────────────────
+        # v3.1: Requires both total count AND specialist signal presence.
+        # This prevents pure-mechanical upgrades while catching plot horses.
+        if (
+            n >= MIN_SIGNALS_FOR_UPGRADE
+            and specialist_count >= MIN_SPECIALIST_FOR_UPGRADE
+            and current_tier in ("C", "D")
+        ):
             upgraded = "B" if current_tier == "C" else "C"
             result.fires = True
             result.tier_upgrade = upgraded
             result.reason = (
-                f"{n} intent signals → upgrade {current_tier}→{upgraded}"
+                f"{n} signals ({specialist_count} specialist) → upgrade {current_tier}→{upgraded}"
             )
 
         # ── EW flag path (longshots only) ─────────────────────────────────────
@@ -147,19 +170,23 @@ class TIEv3Gate:
         is_fav = features.get("is_fav", False)
         if (
             n >= MIN_SIGNALS_FOR_EW_FLAG
+            and specialist_count >= MIN_SPECIALIST_FOR_EW
             and sp > LONGSHOT_SP_THRESHOLD
             and not is_fav
         ):
             result.ew_flag = True
             result.fires = True
-            ew_reason = f"EW flag: {n} signals + SP {sp:.1f}"
+            ew_reason = f"EW flag: {n} signals ({specialist_count} spec) + SP {sp:.1f}"
             result.reason = (result.reason + " | " + ew_reason).lstrip(" | ")
 
         if result.fires and not result.reason:
             result.reason = f"{n} intent signals (no tier action)"
 
         if not result.fires:
-            result.reason = f"{n} signals (below threshold {MIN_SIGNALS_FOR_UPGRADE})"
+            if n >= MIN_SIGNALS_FOR_UPGRADE and specialist_count < MIN_SPECIALIST_FOR_UPGRADE:
+                result.reason = f"{n} signals but {specialist_count} specialist (need {MIN_SPECIALIST_FOR_UPGRADE})"
+            else:
+                result.reason = f"{n} signals (below threshold {MIN_SIGNALS_FOR_UPGRADE})"
 
         return result
 
