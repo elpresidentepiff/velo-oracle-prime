@@ -44,6 +44,7 @@ DEFAULTS = {
     "decoy_support_flag": 0.0,
     "setup_run_flag": 0.0,
     "cash_run_flag": 0.0,
+    "handicap_plot_score": 0.0, # or_delta_to_win normalized
     # TIE v1 features — computed from Racing API form history
     # Defaults represent "typical" values: 14 days rest, no class change
     "days_since_run": 14.0,
@@ -196,7 +197,15 @@ class V17FeatureExtractor:
             best_or = max(valid_ors)
             last_win_or_idx = next((i for i in range(len(wins) - 1, -1, -1) if wins[i] and ors[i] is not None), None)
             if last_win_or_idx is not None:
-                features["curr_or_minus_last_win_or"] = current_or - ors[last_win_or_idx]
+                or_delta_to_win = current_or - ors[last_win_or_idx]
+                features["curr_or_minus_last_win_or"] = or_delta_to_win
+                # handicap_plot_score: 1.0 if on winning mark, decaying as mark rises
+                # range: -10 to +10. 0.0 delta = 1.0 score.
+                if or_delta_to_win <= 0:
+                    features["handicap_plot_score"] = 1.0 # at or below last winning mark
+                else:
+                    features["handicap_plot_score"] = max(0.0, 1.0 - (or_delta_to_win / 10.0))
+
             features["curr_or_minus_best_or"] = current_or - best_or
             if best_or > 0:
                 features["mark_compression_score"] = (best_or - current_or) / best_or

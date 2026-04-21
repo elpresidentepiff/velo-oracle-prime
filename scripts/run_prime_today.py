@@ -929,6 +929,9 @@ def main():
     print("\nSTEP 3: Score through score_race_velo_prime (velo_prime_v1)")
     from velo.product_router import ProductRouter
     router = ProductRouter()
+    
+    # Initialize Spotlight Engine
+    from workers.spotlight_parser import extract_spotlight_signals
 
     # Sentient bridge — Phase 1 (audit only, no scoring change)
     _sentient_state = None
@@ -970,6 +973,19 @@ def main():
                 }
                 for pred in preds:
                     raw_runner = runner_map.get(pred.get("horse", ""), {})
+                    
+                    # Spotlight Parsing
+                    spot_text = raw_runner.get("spotlight", "")
+                    if spot_text:
+                        # Extract full 15-category signals using workers/spotlight_parser.py
+                        spot_record = extract_spotlight_signals(spot_text, horse_name=pred.get("horse"))
+                        # Normalize sentiment (-2 to +2) to 0-1 score
+                        pred["spotlight_score"] = (spot_record.get("sentiment_score", 0.0) + 2.0) / 4.0
+                    
+                    # Gear and Wind signals from Racing API raw runner
+                    pred["headgear_run"] = 1 if raw_runner.get("headgear_run") == "1" else 0
+                    pred["wind_surgery_run"] = 1 if raw_runner.get("wind_surgery_run") == "1" else 0
+
                     rpd_evidence, rpd_mkt_short, rpd_won_last = _derive_rpd_evidence(
                         raw_runner, race
                     )

@@ -21,7 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.core.runtime_env import utc_now, utc_now_iso
+from app.core.runtime_env import utc_now, utc_now_iso, resolve_supabase_url, resolve_supabase_service_key
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -1493,10 +1493,11 @@ async def not_found_handler(request, exc):
 
 @app.exception_handler(500)
 async def server_error_handler(request, exc):
-    """Handle 500 errors"""
-    logger.error(f"Server error: {exc}")
+    """Handle 500 errors — include detail in non-production environments."""
+    logger.error(f"Server error: {exc}", exc_info=True)
+    detail = str(exc) if os.getenv("API_ENV", "production") != "production" else "Internal server error"
     return JSONResponse(
-        status_code=500, content={"error": "Internal server error", "timestamp": utc_now_iso()}
+        status_code=500, content={"error": detail, "timestamp": utc_now_iso()}
     )
 
 

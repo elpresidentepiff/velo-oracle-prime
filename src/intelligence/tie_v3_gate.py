@@ -24,6 +24,12 @@ Intent signals used (all available in v17 live extractor or Racing API form):
     sp_rank             SP rank in field (1 = fav)
     is_fav              boolean
 
+  Tier 3 — Specialist Signals (added in v3.1):
+    headgear_run        1 if first-time headgear today
+    wind_surgery_run    1 if first run since wind surgery
+    spotlight_score     0.0 to 1.0 (from spotlight_parser)
+    handicap_plot_score 0.0 to 1.0 (near winning mark)
+
 Gate fires when >= MIN_SIGNALS intent signals are present (conviction threshold).
 
 Usage:
@@ -190,6 +196,23 @@ class TIEv3Gate:
         if sp is not None and sp_rank is not None:
             if not is_fav and sp_rank <= 4 and sp > 3.0:
                 signals.append("market_mid_range_support")  # not fav but top-4 market = interest
+
+        # ── Tier 3: Specialist Signals ──────────────────────────────────────
+        hg = features.get("headgear_run")
+        if hg == 1:
+            signals.append("first_time_headgear")           # tactical change
+
+        ws = features.get("wind_surgery_run")
+        if ws == 1:
+            signals.append("first_run_since_wind_surgery")   # physical fix
+
+        spot = features.get("spotlight_score", 0.0)
+        if spot >= 0.7:
+            signals.append("high_spotlight_conviction")     # expert narrative support
+
+        plot = features.get("handicap_plot_score", 0.0)
+        if plot >= 0.9:
+            signals.append("handicap_plot_active")          # near winning mark
 
         return signals
 
