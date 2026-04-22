@@ -293,6 +293,7 @@ def _apply_tie_v3_gate(
     Does NOT alter velo_prime_prob or ensemble ranking.
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
     # ── PLOT UPGRADE LOGIC ──────────────────────────────────────────────────
     # Extract PDF intel from the 'top' horse (attached earlier in main loop)
     # This makes the PDF intelligence a PRIMARY decision factor.
@@ -314,6 +315,8 @@ def _apply_tie_v3_gate(
 
 =======
 >>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
+=======
+>>>>>>> feature/v10-launch
     try:
         from src.intelligence.tie_v3_gate import (
             MIN_SIGNALS_FOR_UPGRADE,
@@ -520,6 +523,7 @@ _SB_HDRS = {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
     """Attach RPDC tags to the top pick from an already loaded row."""
     if not row:
@@ -542,6 +546,8 @@ def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
     else:
         top["rpdc_primary_tag"] = None
 =======
+=======
+>>>>>>> feature/v10-launch
 def _attach_rpdc(top: dict, race_id: str) -> None:
     """Look up RPDC tags for the top pick and attach as observability fields.
     Never raises — failures are explicit in rpdc_lookup_status."""
@@ -583,7 +589,10 @@ def _attach_rpdc(top: dict, race_id: str) -> None:
     except Exception as exc:
         log.warning("RPDC lookup failed for race_id=%s horse_id=%s: %s", race_id, horse_id, exc)
         _rpdc_defaults(top, status="lookup_failed", detail=str(exc))
+<<<<<<< HEAD
 >>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
+=======
+>>>>>>> feature/v10-launch
 
 
 def _rpdc_defaults(top: dict, *, status: str, detail: str | None = None) -> None:
@@ -1167,6 +1176,7 @@ def main():
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
 <<<<<<< HEAD
+<<<<<<< HEAD
                 
                 # Attach RPDC data to top pick (from our pre-fetched race_rpdc)
                 _attach_rpdc_from_row(top, race_rpdc.get(top.get("horse_id")))
@@ -1223,6 +1233,14 @@ def main():
                 arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
                 print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
 >>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
+=======
+                # RPDC observability — passive lookup, never blocks scoring
+                _attach_rpdc(top, race.get("race_id", ""))
+                scored.append((race, preds, tier, reasons))
+                gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
+                arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
+                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
+>>>>>>> feature/v10-launch
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")
@@ -1258,6 +1276,7 @@ def main():
 
     for race, preds, tier, _reasons in scored:
 <<<<<<< HEAD
+<<<<<<< HEAD
         rid = race.get("race_id")
         if not persistence_enabled:
             persist_ok += 1
@@ -1269,6 +1288,8 @@ def main():
         
         if success:
 =======
+=======
+>>>>>>> feature/v10-launch
         if not persistence_enabled:
             persist_ok += 1
             continue
