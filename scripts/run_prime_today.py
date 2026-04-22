@@ -22,6 +22,7 @@ Railway cron command:
 """
 import sys
 import os
+import re
 import json
 import base64
 import argparse
@@ -291,6 +292,25 @@ def _apply_tie_v3_gate(
 
     Does NOT alter velo_prime_prob or ensemble ranking.
     """
+    # ── PLOT UPGRADE LOGIC ──────────────────────────────────────────────────
+    # Extract PDF intel from the 'top' horse (attached earlier in main loop)
+    # This makes the PDF intelligence a PRIMARY decision factor.
+    pdf_intel = top.get("pdf_intel", {})
+    plot_score = float(pdf_intel.get("plot_conviction", 0.0))
+    or_delta = float(pdf_intel.get("or_delta_to_best_win", 0.0))
+    
+    if plot_score >= 0.85:
+        if tier == "B":
+            tier = "A"
+            reasons.append(f"PLOT_UPGRADE:ELITE({plot_score:.2f})")
+        elif tier == "C":
+            tier = "B"
+            reasons.append(f"PLOT_UPGRADE:STRONG({plot_score:.2f})")
+    elif plot_score >= 0.70 and or_delta < 0:
+        if tier == "C":
+            tier = "B"
+            reasons.append(f"PLOT_UPGRADE:INTENT({plot_score:.2f}|OR:{or_delta})")
+
     try:
         from src.intelligence.tie_v3_gate import (
             MIN_SIGNALS_FOR_UPGRADE,
@@ -496,47 +516,27 @@ _SB_HDRS = {
     "Accept": "application/json",
 }
 
-def _attach_rpdc(top: dict, race_id: str) -> None:
-    """Look up RPDC tags for the top pick and attach as observability fields.
-    Never raises — failures are explicit in rpdc_lookup_status."""
-    horse_id = top.get("horse_id") or top.get("predicted_id", "")
-    if not horse_id or not race_id or not _SB_URL:
-        _rpdc_defaults(top, status="unavailable")
+def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
+    """Attach RPDC tags to the top pick from an already loaded row."""
+    if not row:
+        _rpdc_defaults(top, status="no_data")
         return
-    try:
-        url = (
-            f"{_SB_URL}/rest/v1/runner_release_candidates"
-            f"?horse_id=eq.{horse_id}&race_id=eq.{race_id}&order=generated_at.desc&limit=2"
-        )
-        req = urllib.request.Request(url, headers=_SB_HDRS)
-        with urllib.request.urlopen(req, timeout=5) as r:
-            rows = json.loads(r.read().decode())
-        if rows:
-            row = rows[0]
-            tags = row.get("rpdc_tags") or []
-            if len(rows) > 1:
-                top["rpdc_lookup_status"] = "ambiguous_latest"
-                top["rpdc_lookup_detail"] = f"{len(rows)} rows matched; used newest by generated_at"
-                log.warning("RPDC lookup ambiguous for race_id=%s horse_id=%s; using newest generated_at row", race_id, horse_id)
-            else:
-                top["rpdc_lookup_status"] = "attached"
-                top["rpdc_lookup_detail"] = None
-            top["rpdc_release_score"]    = row.get("rpdc_release_score", 0)
-            top["rpdc_cash_window_flag"] = bool(row.get("rpdc_cash_window_flag", False))
-            top["rpdc_tag_count"]        = int(row.get("rpdc_tag_count", 0))
-            top["rpdc_tags"]             = tags
-            # Primary tag = first CASH_WINDOW if present, else highest-scored tag
-            if "CASH_WINDOW" in tags:
-                top["rpdc_primary_tag"] = "CASH_WINDOW"
-            elif tags:
-                top["rpdc_primary_tag"] = tags[0]
-            else:
-                top["rpdc_primary_tag"] = None
-        else:
-            _rpdc_defaults(top, status="no_data")
-    except Exception as exc:
-        log.warning("RPDC lookup failed for race_id=%s horse_id=%s: %s", race_id, horse_id, exc)
-        _rpdc_defaults(top, status="lookup_failed", detail=str(exc))
+
+    tags = row.get("rpdc_tags") or []
+    top["rpdc_lookup_status"]    = "attached"
+    top["rpdc_lookup_detail"]    = None
+    top["rpdc_release_score"]    = row.get("rpdc_release_score", 0)
+    top["rpdc_cash_window_flag"] = bool(row.get("rpdc_cash_window_flag", False))
+    top["rpdc_tag_count"]        = int(row.get("rpdc_tag_count", 0))
+    top["rpdc_tags"]             = tags
+    
+    # Primary tag = first CASH_WINDOW if present, else highest-scored tag
+    if "CASH_WINDOW" in tags:
+        top["rpdc_primary_tag"] = "CASH_WINDOW"
+    elif tags:
+        top["rpdc_primary_tag"] = tags[0]
+    else:
+        top["rpdc_primary_tag"] = None
 
 
 def _rpdc_defaults(top: dict, *, status: str, detail: str | None = None) -> None:
@@ -634,7 +634,7 @@ def card_overall_label(a: int, b: int, total: int) -> str:
 
 # ── RPD-C evidence derivation ─────────────────────────────────────────────────
 
-def _derive_rpd_evidence(runner: dict, race: dict) -> tuple[list, bool, bool]:
+def _derive_rpd_evidence(runner: dict, race: dict, runner_rpdc: dict = None) -> tuple[list, bool, bool]:
     """
     Derive RPD-C evidence codes from a normalized runner dict.
     Returns (evidence_codes, market_shortening, won_last_time).
@@ -644,6 +644,7 @@ def _derive_rpd_evidence(runner: dict, race: dict) -> tuple[list, bool, bool]:
     market_shortening is always False here (no intraday movement data available).
     """
     evidence = []
+    runner_rpdc = runner_rpdc or {}
 
     # Form string — only digit characters
     form_raw = str(runner.get("form", "") or "")
@@ -661,6 +662,16 @@ def _derive_rpd_evidence(runner: dict, race: dict) -> tuple[list, bool, bool]:
         last3 = [int(d) for d in form_digits[-3:] if d != "0"]
         if len(last3) == 3 and last3[0] < last3[1] < last3[2]:
             evidence.append("declining_positions")
+
+    # Form reversal detection (P2 fix)
+    rpdc_tags = runner_rpdc.get("rpdc_tags") or []
+    if "FORM_REVERSAL" in rpdc_tags:
+        try:
+            odds = float(runner.get("best_odds_decimal") or 0)
+            if 3.0 <= odds <= 9.0:
+                evidence.append("form_reversal")
+        except:
+            pass
 
     # consistent_form: last 4 non-zero positions within a 2-position band → H evidence
     if len(form_digits) >= 4:
@@ -790,8 +801,25 @@ def _close_pipeline_run(db, run_id: str | None, status: str,
         print(f"  [pipeline_runs] close failed (non-fatal): {e}")
 
 
+def sb_get(path: str) -> list[dict]:
+    """Helper to fetch from Supabase."""
+    if not _SB_URL or not _SB_KEY:
+        return []
+    url = f"{_SB_URL}/rest/v1{path}"
+    req = urllib.request.Request(url, headers=_SB_HDRS)
+    try:
+        with urllib.request.urlopen(req, timeout=5) as r:
+            return json.loads(r.read().decode())
+    except Exception as e:
+        log.warning("sb_get failed for %s: %s", path, e)
+        return []
+
+def _fetch_race_rpdc(race_id: str) -> dict[str, dict]:
+    """Fetch RPDC data for all runners in a race."""
+    rows = sb_get(f"/runner_release_candidates?race_id=eq.{race_id}")
+    return {r["horse_id"]: r for r in rows}
+
 def main():
-    # ... setup code
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
     parser.add_argument("--dry-run", action="store_true")
@@ -959,13 +987,76 @@ def main():
     rpd_engine = RPDv2Engine(db_path=_rpd_db)
     print(f"  RPD-C engine: ready (db={_rpd_db})")
 
+    # Pre-load all available PDF intelligence for today's tracks
+    pdf_intel_cache = {}
+    for race in normalized:
+        course_code = (race.get("course_id") or race.get("course", "")).upper()
+        if course_code in ("PONTEFRACT", "PON", "CATTERICK", "CAT", "LUDLOW", "LUD", "PERTH", "PER", "TAUNTON", "TAU", "GOWRAN PARK", "GOW"):
+             # Simple mapping for known tracks if course_id isn't reliable, though the file names use 3-letter codes like CAT
+             # Try deriving 3-letter code from course name
+             cc = course_code[:3]
+        else:
+             cc = course_code[:3]
+             
+        if cc not in pdf_intel_cache:
+            pdf_path = ROOT / "data" / "racecard_merged" / f"racecard_{cc}_{date_str}.json"
+            if pdf_path.exists():
+                with open(pdf_path, "r") as f:
+                    pdf_intel_cache[cc] = json.load(f)
+            else:
+                pdf_intel_cache[cc] = None
+
     scored = []
     score_errors = []
     for race in normalized:
         cid = f"{race.get('course')} {race.get('off_time','?')}"
+        
+        # Attach PDF Intel to normalized runners before scoring
+        course_code = (race.get("course_id") or race.get("course", "")[:3]).upper()
+        cc = course_code[:3]
+        merged_data = pdf_intel_cache.get(cc)
+        if merged_data:
+            # We need to match race_time strictly or loosely. Usually off_time is "1.52" or "13:52".
+            # The merged JSON uses "1.52".
+            race_time_api = race.get("off_time", "")
+            # Convert 13:52 to 1.52 if necessary, but API usually provides raw times or we can try loose match
+            # For simplicity, we just iterate through all races in the JSON and match time strings roughly
+            merged_horses = []
+            for r_time, r_data in merged_data.get("races", {}).items():
+                api_time_clean = race_time_api.replace(":", ".")
+                # e.g., API: 13:52, JSON: 1.52
+                if api_time_clean == r_time or api_time_clean.endswith(r_time):
+                    merged_horses = r_data.get("horses", [])
+                    break
+                
+                # Check 12-hour vs 24-hour
+                try:
+                    parts = api_time_clean.split('.')
+                    if len(parts) == 2 and int(parts[0]) > 12:
+                        hr_12 = str(int(parts[0]) - 12)
+                        time_12 = f"{hr_12}.{parts[1]}"
+                        if time_12 == r_time:
+                            merged_horses = r_data.get("horses", [])
+                            break
+                except:
+                    pass
+
+            for runner in race.get("runners", []):
+                api_name = (runner.get("horse_name") or "").lower().strip()
+                api_key = re.sub(r"[^a-z]", "", api_name)
+                for h in merged_horses:
+                    pdf_name = (h.get("horse_name") or "").lower().strip()
+                    pdf_key = re.sub(r"[^a-z]", "", pdf_name)
+                    if pdf_key == api_key or (len(pdf_key) > 4 and (pdf_key in api_key or api_key in pdf_key)):
+                        runner["pdf_intel"] = h
+                        break
+
         try:
             preds = score_race_velo_prime(race, sentient_state=_sentient_state)
             if preds:
+                # Load RPDC data for this race to inform RPD-C tags
+                race_rpdc = _fetch_race_rpdc(race.get("race_id", ""))
+
                 # RPD-C tagging — passive metadata only, no score/rank mutation
                 runner_map = {
                     r.get("horse_name", ""): r
@@ -973,12 +1064,20 @@ def main():
                 }
                 for pred in preds:
                     raw_runner = runner_map.get(pred.get("horse", ""), {})
+                    horse_id = raw_runner.get("horse_id")
+                    runner_rpdc = race_rpdc.get(horse_id, {})
                     
                     # Spotlight Parsing
                     spot_text = raw_runner.get("spotlight", "")
                     if spot_text:
                         # Extract full 15-category signals using workers/spotlight_parser.py
-                        spot_record = extract_spotlight_signals(spot_text, horse_name=pred.get("horse"))
+                        # Required args: raw_text, horse_name, race_id, race_date
+                        spot_record = extract_spotlight_signals(
+                            spot_text, 
+                            horse_name=pred.get("horse"),
+                            race_id=race.get("race_id", "unknown"),
+                            race_date=date_str
+                        )
                         # Normalize sentiment (-2 to +2) to 0-1 score
                         pred["spotlight_score"] = (spot_record.get("sentiment_score", 0.0) + 2.0) / 4.0
                     
@@ -987,7 +1086,7 @@ def main():
                     pred["wind_surgery_run"] = 1 if raw_runner.get("wind_surgery_run") == "1" else 0
 
                     rpd_evidence, rpd_mkt_short, rpd_won_last = _derive_rpd_evidence(
-                        raw_runner, race
+                        raw_runner, race, runner_rpdc=runner_rpdc
                     )
                     rpd_suggestion = rpd_engine.suggest_tag(
                         pred.get("horse", ""),
@@ -1020,12 +1119,16 @@ def main():
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
-                # RPDC observability — passive lookup, never blocks scoring
-                _attach_rpdc(top, race.get("race_id", ""))
+                
+                # Attach RPDC data to top pick (from our pre-fetched race_rpdc)
+                _attach_rpdc_from_row(top, race_rpdc.get(top.get("horse_id")))
 
                 # ── GOVERNED EXECUTION ROUTER ─────────────────────────────────
-                # Ingest verdict into live-safe router (v1)
-                # market_sp comes from top.get('sp_dec') - the current market price proxy
+                # Load PDF Intelligence Overlay from normalized runner
+                top_raw_runner = runner_map.get(top.get("horse", ""), {})
+                pdf_intel = top_raw_runner.get("pdf_intel", {})
+
+                # Ingest verdict into Plot-Aware router (v1.1)
                 route_data = {
                     'decision_tier': tier,
                     'confidence_level': top.get('confidence_level'),
@@ -1033,7 +1136,12 @@ def main():
                     'prob_gap': float(top.get('velo_prime_prob',0)) - sec_prob,
                     'track': race.get('course'),
                     'top_horse_draw': top.get('draw'),
-                    'market_deception_score': top.get('market_deception_score', 0)
+                    'market_deception_score': top.get('market_deception_score', 0),
+                    # PDF Specialist Signals
+                    'plot_conviction': pdf_intel.get('plot_conviction'),
+                    'or_compression_score': pdf_intel.get('or_compression_score'),
+                    'is_postdata_pick': pdf_intel.get('is_postdata_pick'),
+                    'is_topspeed_pick': pdf_intel.get('is_topspeed_pick')
                 }
                 governance = router.route_verdict(route_data)
                 
@@ -1041,6 +1149,10 @@ def main():
                 top["assigned_product"]   = governance["assigned_product"]
                 top["router_reasons"]      = governance["router_reasons"]
                 top["execution_allowed"]   = governance["execution_allowed"]
+                
+                # RPDC update with PDF flags
+                if pdf_intel.get("plot_conviction"):
+                    reasons.append(f"PDF_PLOT_CONVICTION:{pdf_intel['plot_conviction']:.2f}")
 
                 scored.append((race, preds, tier, reasons))
                 # ── GOVERNED RACE-BY-RACE OUTPUT ─────────────────────────────

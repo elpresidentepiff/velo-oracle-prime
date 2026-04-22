@@ -111,6 +111,9 @@ EVIDENCE_DEFINITIONS: Dict[str, Dict[str, Any]] = {
                 "Gear additions suggesting intent "
                 "(first-time visor, tongue-tie, cheekpieces)"
             ),
+            "form_reversal": (
+                "Compound signal: declining positions + class drop + SP 3-8 + rested"
+            ),
         },
         "blockers": {},
         "confidence_boost": {
@@ -150,6 +153,10 @@ EVIDENCE_DEFINITIONS: Dict[str, Dict[str, Any]] = {
             "market_shortening": (
                 "CANNOT assign E if horse is shortening in market. "
                 "Market contradicts exhaustion narrative."
+            ),
+            "form_reversal": (
+                "CANNOT assign E if form reversal setup detected. "
+                "Profile is target-intent, not exhausted."
             ),
         },
         "day1_lesson": (
@@ -414,6 +421,8 @@ class RPDv2Engine:
             blockers_triggered.append(tag_def["blockers"]["market_shortening"])
         if won_last_time and "won_last_time" in tag_def.get("blockers", {}):
             blockers_triggered.append(tag_def["blockers"]["won_last_time"])
+        if "form_reversal" in evidence_list and "form_reversal" in tag_def.get("blockers", {}):
+            blockers_triggered.append(tag_def["blockers"]["form_reversal"])
 
         if blockers_triggered:
             result = TagValidation(
@@ -517,6 +526,8 @@ class RPDv2Engine:
             if market_shortening and "market_shortening" in tag_def.get("blockers", {}):
                 blocked = True
             if won_last_time and "won_last_time" in tag_def.get("blockers", {}):
+                blocked = True
+            if "form_reversal" in evidence_list and "form_reversal" in tag_def.get("blockers", {}):
                 blocked = True
 
             if blocked:

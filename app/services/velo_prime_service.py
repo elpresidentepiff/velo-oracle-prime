@@ -140,6 +140,8 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
     rating_mkt_gap = rpr_vs_field - (1.0 / max(sp_dec, 1.01)) * 100
     or_mkt_gap = or_vs_field - (1.0 / max(sp_dec, 1.01)) * 100
 
+    pdf_intel = runner.get("pdf_intel", {})
+
     feats = {
         # v16 base
         "sp_dec": sp_dec,
@@ -161,6 +163,8 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
         "age_num": _safe(runner.get("age")),
         "sp_rank": float(sp_rank),
         "is_fav": is_fav,
+        "is_second_choice": 1.0 if sp_rank == 2 else 0.0,
+        "market_rank": float(sp_rank),
         # draw model extras
         "draw_going": going_code * draw_pct,
         "draw_dist": dist_f * draw_pct,
@@ -175,6 +179,12 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
         "or_missing": or_missing,
         "rpr_missing": rpr_missing,
         "ts_missing": ts_missing,
+        # PDF Intelligence
+        "plot_conviction": float(pdf_intel.get("plot_conviction", 0.0)),
+        "or_compression_score": float(pdf_intel.get("or_compression_score", 0.0)),
+        "postdata_score": float(pdf_intel.get("postdata_score", 0.0)),
+        "ts_master": float(pdf_intel.get("ts_master", 0.0)),
+        "or_delta_to_best_win": float(pdf_intel.get("or_delta_to_best_win", 0.0)),
     }
     # v17 doctrine features — filled with 0.0 / defaults when not pre-computed
     from app.services.v17_feature_extractor import DEFAULTS
@@ -328,6 +338,14 @@ def score_race_velo_prime(
             spec_scores = {}
 
         sp_dec = feats["sp_dec"]
+        
+        # Ensure PDF intel is explicitly stored on the runner dict for persistence
+        runner["plot_conviction"] = feats.get("plot_conviction")
+        runner["or_delta_to_best_win"] = feats.get("or_delta_to_best_win")
+        runner["postdata_score"] = feats.get("postdata_score")
+        runner["ts_master"] = feats.get("ts_master")
+        runner["intent_signals"] = runner.get("pdf_intel", {}).get("intent_signals", [])
+
         ensemble_inputs.append(
             {
                 "horse": horse_name,
@@ -827,11 +845,23 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "release_day_prob": top.get("release_day_prob"),
             "place_prob": top.get("place_prob"),
             "longshot_prob": top.get("longshot_prob"),
-            # DISPLAY-ONLY: not read by sigma, not consumed by Playbook G — see TRUTH_REGISTRY.md
-            "macro_regime_label": top.get("macro_regime_label"),
-            "macro_chaos_mode": top.get("macro_chaos_mode"),
-            "favourite_trap_risk": top.get("favourite_trap_risk"),
-            "decision_tier": decision_tier,
+            # PDF Intelligence Deep-Wiring (rpdc column mapping)
+            "rpdc_release_score": float(top.get("plot_conviction", 0.0)),
+            "rpdc_cash_window_flag": bool(top.get("plot_conviction", 0.0) >= 0.7),
+            "rpdc_primary_tag": "PDF_PLOT" if top.get("plot_conviction", 0.0) >= 0.7 else None,
+            "rpdc_tags": top.get("intent_signals", []) + ([f"PLOT:{top.get('plot_conviction')}"] if top.get("plot_conviction") else []),
+            "rpdc_tag_count": len(top.get("intent_signals", [])),
+            
+            "full_analysis": {
+                "top_horse": top.get("horse"),
+                "plot_conviction": top.get("plot_conviction"),
+                "or_delta": top.get("or_delta_to_best_win"),
+                "postdata_score": top.get("postdata_score"),
+                "ts_peak": top.get("ts_master"),
+                "signals": top.get("intent_signals", []),
+                "reasons": top.get("router_reasons", []),
+            },
+
             # Ensemble observability — queryable without reading source code.
             # active_components: what actually entered the weighted average this race.
             # excluded_from_ensemble: what was computed but excluded (_DISABLED or zero-variance).

@@ -763,6 +763,7 @@ INTENT_TAGS = {
     "STABLE_WARM":               0.8,
     "MARKET_UNDERREACTION":      0.6,
     "CASH_WINDOW":               1.0,
+    "FORM_REVERSAL":             0.9,
     # Evidence 2026-04-13: headgear debut on trainer with headgear_rate < 10% → 5.3% (below baseline)
     "HEADGEAR_RISK":            -0.8,
 }
@@ -1023,6 +1024,27 @@ def tag_today_runners(
         if cash_window:
             add_tag("CASH_WINDOW", "true",
                     "Composite: mark+cycle+placement signals align without hard negatives")
+
+        # FORM_REVERSAL logic
+        form_raw = str(runner.get("form", "") or "")
+        form_digits = [int(c) for c in form_raw if c.isdigit() and c != "0"]
+        declining = False
+        if len(form_digits) >= 3:
+            last3 = form_digits[-3:]
+            if last3[0] < last3[1] < last3[2]:
+                declining = True
+        
+        class_drop_flag = False
+        prev_run = last_runs.get(horse_id)
+        if prev_run and runner.get("race_class"):
+            curr_cls = class_int(runner.get("race_class"))
+            prev_cls = class_int(prev_run.get("race_class"))
+            if curr_cls and prev_cls and curr_cls > prev_cls:
+                class_drop_flag = True
+        
+        if declining and class_drop_flag and days_off and days_off > 7:
+            add_tag("FORM_REVERSAL", "true",
+                    "Setup: declining positions + class drop + rested — target profile")
 
         # ── Scores ────────────────────────────────────────────────────────────
         positive_tags = [t for t in tags if ALL_TAG_WEIGHTS.get(t["tag"], 0) > 0]

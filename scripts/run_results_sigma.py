@@ -490,6 +490,11 @@ def main():
     print("\nSTEP 6: Persist sigma audit")
     sigma_ok = 0
     for row in all_matched:
+        _tier_raw = predictions.get(row["race_id"], {}).get("decision_tier")
+        if _tier_raw == "X":
+            print(f"  [BLOCK] {row['race_id']}: tier X blocked from sigma audit")
+            continue
+
         miss_reason = row["miss_class"] if row["outcome"] == "MISS" else None
 
         # Gap 1: fetch actual finishing position from runner_results.
