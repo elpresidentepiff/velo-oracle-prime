@@ -13,6 +13,7 @@ import sys
 import urllib.error
 import urllib.request
 import uuid
+from collections import OrderedDict
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
@@ -1123,7 +1124,6 @@ async def governed_card(date: str = Query(default=None)):
     for v in raw_verdicts:
         race_id = v.get("race_id", "")
         top     = v.get("top", {})
-        scored  = v.get("scored", 0)
 
         # prob_gap: top - second runner prob (second not stored, derive from scored count)
         # stored in top dict directly if present, otherwise compute from verdict
@@ -1388,13 +1388,11 @@ _TG_BOT_URL = os.getenv("RAILWAY_SERVICE_VELO_ORACLE_URL", "")
 
 # Webhook Memory Guard Configuration
 _MAX_VOX_AGENTS = int(os.getenv("MAX_VOX_AGENTS", "50"))
-_WHITELISTED_USERS = set(
+_WHITELISTED_USERS = {
     int(u.strip()) for u in os.getenv("WHITELISTED_TELEGRAM_USERS", "").split(",") if u.strip()
-)
+}
 
 # Bounded agent store (LRU cache using OrderedDict)
-from collections import OrderedDict
-
 _vox_agents: OrderedDict[int, object] = OrderedDict()
 
 

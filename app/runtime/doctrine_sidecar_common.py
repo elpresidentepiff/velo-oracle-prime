@@ -211,7 +211,6 @@ def contradiction_type(sigma: dict[str, Any], truth: dict[str, Any], rpdc: dict[
     verdict_score = float(sigma.get("verdict_score") or 0)
     confidence_level = sigma.get("confidence_level") or ""
     decision_tier = sigma.get("decision_tier")
-    top_pick_position = sigma.get("top_pick_position")
     outcome = sigma.get("outcome")
 
     if verdict_score >= 0.70 and truth.get("blocker_fired"):
