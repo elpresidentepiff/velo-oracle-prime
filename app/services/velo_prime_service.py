@@ -338,7 +338,7 @@ def score_race_velo_prime(
             spec_scores = {}
 
         sp_dec = feats["sp_dec"]
-        
+
         # Ensure PDF intel is explicitly stored on the runner dict for persistence
         runner["plot_conviction"] = feats.get("plot_conviction")
         runner["or_delta_to_best_win"] = feats.get("or_delta_to_best_win")
@@ -415,7 +415,7 @@ def score_race_velo_prime(
     for row in results:
         # Merge: live feats supply doctrine signals; row fields take priority
         _live_feats = _feats_by_horse.get(row.get("horse", ""), {})
-        
+
         # ── CASH RUN & DOCTRINE PERSISTENCE ────────────────────────────────
         # Extract features computed in v17_feature_extractor that need to
         # survive into full_analysis for the Sigma Audit / Training Truth plane.
@@ -423,7 +423,7 @@ def score_race_velo_prime(
         row["setup_run_flag"] = bool(_live_feats.get("setup_run_flag", 0.0) == 1.0)
         row["decoy_support_flag"] = bool(_live_feats.get("decoy_support_flag", 0.0) == 1.0)
         # ───────────────────────────────────────────────────────────────────
-        
+
         _merged = {**_live_feats, **row}
         try:
             _state = _state_engine.tag(_merged)
@@ -851,7 +851,7 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "rpdc_primary_tag": "PDF_PLOT" if top.get("plot_conviction", 0.0) >= 0.7 else None,
             "rpdc_tags": top.get("intent_signals", []) + ([f"PLOT:{top.get('plot_conviction')}"] if top.get("plot_conviction") else []),
             "rpdc_tag_count": len(top.get("intent_signals", [])),
-            
+
             "full_analysis": {
                 "top_horse": top.get("horse"),
                 "plot_conviction": top.get("plot_conviction"),
@@ -901,21 +901,33 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "assigned_product": top.get("assigned_product"),
             "router_reasons": top.get("router_reasons"),
             "execution_allowed": top.get("execution_allowed"),
-            # VÉLØ Oracle — Narrative and regime
-            "full_analysis": predictions,
+        }
+
+        # VÉLØ Oracle — Narrative and regime
+        # Include plot intel in full_analysis for observability
+        full_analysis_data = {
+            "predictions": predictions,
+            "plot_intel": {
+                "plot_conviction": top.get("plot_conviction"),
+                "or_delta": top.get("or_delta_to_best_win"),
+                "postdata_score": top.get("postdata_score"),
+                "ts_peak": top.get("ts_master"),
+                "intent_signals": top.get("intent_signals", []),
+            },
+            "governance": {
+                "assigned_product": top.get("assigned_product"),
+                "router_reasons": top.get("router_reasons"),
+            }
         }
 
         # Passive warehouse enrichment — injects into runner blocks only.
         # Scoring outputs, rankings, and top-level row columns are unchanged.
         # FIELD_TYPE: display-only — horse_recent_*, trainer_course_*, trainer_dist_*
         # not read by sigma or Playbook G — see TRUTH_REGISTRY.md §4
-        enriched = _enrich_full_analysis_from_warehouse(predictions, race, sb)
-        # Passive track context enrichment — disabled: src/intelligence/track_context.py missing
-        # # adds track_chaos_rating, track_pace_bias, track_draw_bias, track_key_characteristics
-        # # FIELD_TYPE: track_chaos_rating + track_pace_bias are LIVE (read by sigma)
-        # # FIELD_TYPE: track_draw_bias + track_key_characteristics are display-only
-        # enriched = _enrich_full_analysis_with_track_context(enriched, race)
-        row["full_analysis"] = enriched
+        enriched = _enrich_full_analysis_from_warehouse(full_analysis_data["predictions"], race, sb)
+        full_analysis_data["predictions"] = enriched
+
+        row["full_analysis"] = full_analysis_data
 
         # Upsert with graceful degradation for optional column groups.
         # Each group is stripped on its first error so scoring is never blocked

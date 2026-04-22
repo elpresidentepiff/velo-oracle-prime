@@ -21,9 +21,9 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 log = logging.getLogger("velo.runtime_overrides")
 
@@ -31,11 +31,11 @@ ROOT = Path(__file__).parent.parent.parent
 _FALLBACK_JSON = ROOT / "config" / "runtime_overrides.json"
 
 # Module-level cache — populated by load_runtime_overrides()
-_cache: Dict[str, Any] = {}
-_loaded_at: Optional[str] = None
+_cache: dict[str, Any] = {}
+_loaded_at: str | None = None
 
 
-def load_runtime_overrides(db=None) -> Dict[str, Any]:
+def load_runtime_overrides(db=None) -> dict[str, Any]:
     """
     Load all ACTIVE runtime overrides.  Call once at scoring start.
 
@@ -56,8 +56,8 @@ def load_runtime_overrides(db=None) -> Dict[str, Any]:
     """
     global _cache, _loaded_at
 
-    result: Dict[str, Any] = {}
-    now = datetime.now(timezone.utc)
+    result: dict[str, Any] = {}
+    now = datetime.now(UTC)
 
     # ── Primary: Supabase ──────────────────────────────────────────────────────
     if db is not None:
@@ -138,7 +138,7 @@ def load_runtime_overrides(db=None) -> Dict[str, Any]:
     return result
 
 
-def get_overrides() -> Dict[str, Any]:
+def get_overrides() -> dict[str, Any]:
     """
     Return the last-loaded override cache without hitting Supabase again.
     Call load_runtime_overrides() first at process start.

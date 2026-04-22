@@ -71,24 +71,6 @@ def _base_result() -> dict[str, Any]:
     }
 
 
-def _apply_metrics(result: dict[str, Any], metrics: dict[str, int]) -> dict[str, Any]:
-    result["metrics"] = metrics
-    result.update(metrics)
-    total_issues = sum(max(0, value) for value in metrics.values())
-    result["coverage_scope"] = "partial"
-    result["checked_objects"] = [f"RLS:{table}" for table in CHECKED_RLS_TABLES]
-    result["unchecked_objects"] = [f"{name}:{label}" for name, label in UNCHECKED_OBJECTS.items()]
-    result["verified"] = False
-    result["passed"] = total_issues == 0
-    result["status"] = "partial" if result["passed"] else "failed"
-    if result["status"] == "partial":
-        result["error_detail"] = (
-            "Partial coverage only: verified RLS on checked tables; "
-            "views/functions/materialized views remain unchecked by this validator path."
-        )
-    return result
-
-
 def _classify_security_error(exc: Exception) -> str:
     message = str(exc).lower()
     if any(token in message for token in ("permission", "not authorized", "forbidden", "401", "403")):
@@ -140,7 +122,6 @@ def run_security_check() -> dict[str, Any]:
         client = create_client(supabase_url, service_key)
         tables_to_check = list(CHECKED_RLS_TABLES)
 
-<<<<<<< HEAD
         # Confirm tables are reachable via service key
         for table in tables_to_check:
             client.table(table).select("*", count="exact").limit(0).execute()
@@ -169,60 +150,6 @@ def run_security_check() -> dict[str, Any]:
             "Verify hardening in Supabase dashboard."
         )
 
-=======
-        for table in tables_to_check:
-            client.table(table).select("*", count="exact").limit(0).execute()
-
-        check_result = (
-            client.table("pg_class")
-            .select("relname, relrowsecurity")
-            .eq("relnamespace", "2200")
-            .in_("relname", tables_to_check)
-            .execute()
-        )
-
-        if check_result.data is None:
-            raise RuntimeError("pg_class query returned no data; verification state is unknown")
-
-        rls_failures = [row["relname"] for row in check_result.data if not row.get("relrowsecurity", False)]
-        result = _apply_metrics(
-            result,
-            {
-                "tables_rls_disabled": len(rls_failures),
-                "views_not_invoker": 0,
-                "functions_mutable_search_path": 0,
-                "matviews_exposed": 0,
-            },
-        )
-
-        if result["status"] == "partial":
-            logger.warning(
-                "[security_validator] PARTIAL - verified RLS only for checked tables=%s; unchecked=%s",
-                result["checked_objects"],
-                result["unchecked_objects"],
-            )
-        elif result["verified"]:
-            logger.info(
-                "[security_validator] PASS - DB hardening verified: "
-                "RLS=%d views=%d functions=%d matviews=%d",
-                result["tables_rls_disabled"],
-                result["views_not_invoker"],
-                result["functions_mutable_search_path"],
-                result["matviews_exposed"],
-            )
-        else:
-            logger.critical(
-                "[security_validator] FAIL - Security regression detected! "
-                "tables_rls_disabled=%d views_not_invoker=%d "
-                "functions_mutable_search_path=%d matviews_exposed=%d "
-                "- Run scripts/migrations/002_full_security_hardening.sql immediately",
-                result["tables_rls_disabled"],
-                result["views_not_invoker"],
-                result["functions_mutable_search_path"],
-                result["matviews_exposed"],
-            )
-
->>>>>>> feature/v10-launch
     except Exception as exc:
         error_code = _classify_security_error(exc)
         result = _error_result(error_code, str(exc))

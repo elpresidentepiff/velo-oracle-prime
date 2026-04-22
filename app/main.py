@@ -10,11 +10,11 @@ import os
 import pathlib
 import subprocess
 import sys
-import uuid
 import urllib.error
 import urllib.request
+import uuid
 from contextlib import asynccontextmanager
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,12 +22,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.core.runtime_env import (
-    utc_now, 
-    utc_now_iso, 
-    resolve_supabase_url, 
-    resolve_supabase_service_key
-)
+from app.core.runtime_env import resolve_supabase_service_key, resolve_supabase_url, utc_now, utc_now_iso
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -320,7 +315,6 @@ async def _verify_schema_at_startup() -> None:
       • Supabase env vars missing        — misconfiguration, not schema gap
       • Supabase unreachable             — infra issue, not schema gap
     """
-    import json as _json
     import urllib.error
     import urllib.request
 
@@ -713,7 +707,7 @@ async def health_check():
         details["issues"] = warning_issues
         return JSONResponse(status_code=200, content=details)
 
-    details["status"] = "ok"
+    details["status"] = "healthy"
     return details
 
 
@@ -1044,7 +1038,7 @@ async def upload_spotlight_pdf(
             "filename": file.filename,
             "size_bytes": len(content),
             "parse_pid": proc.pid,
-            "message": f"PDF saved and parse triggered. Check data/spotlight_parsed/ for output.",
+            "message": "PDF saved and parse triggered. Check data/spotlight_parsed/ for output.",
         }
     else:
         return {
@@ -1078,7 +1072,6 @@ async def governed_card(date: str = Query(default=None)):
     """
     import json as _json
     import subprocess as _sp
-    from datetime import datetime as _dt
 
     # Date resolution — try today in UTC, fall back to most recent local file
     target_date = date or utc_now().strftime("%Y-%m-%d")
@@ -1401,6 +1394,7 @@ _WHITELISTED_USERS = set(
 
 # Bounded agent store (LRU cache using OrderedDict)
 from collections import OrderedDict
+
 _vox_agents: OrderedDict[int, object] = OrderedDict()
 
 
@@ -1416,7 +1410,7 @@ def _get_vox_agent(user_id: int):
         # Move to end (most recently used)
         _vox_agents.move_to_end(user_id)
         return _vox_agents[user_id]
-    
+
     # 3. Size Guard
     if len(_vox_agents) >= _MAX_VOX_AGENTS:
         # Evict oldest (first item)
