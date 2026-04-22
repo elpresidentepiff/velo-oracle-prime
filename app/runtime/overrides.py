@@ -17,6 +17,7 @@ Fallback chain:
   2. config/runtime_overrides.json  (local override file, status='ACTIVE' entries only)
   3. {} (empty — synthesize_decision() hardcoded constants take over, zero behaviour change)
 """
+
 from __future__ import annotations
 
 import json
@@ -68,29 +69,23 @@ def load_runtime_overrides(db=None) -> dict[str, Any]:
                 .eq("status", "ACTIVE")
                 .execute()
             )
-            for row in (rows.data or []):
+            for row in rows.data or []:
                 # Respect effective_from / effective_to windows
                 ef = row.get("effective_from")
                 et = row.get("effective_to")
                 if ef:
                     try:
-                        ef_dt = datetime.fromisoformat(
-                            ef.replace("Z", "+00:00")
-                        )
+                        ef_dt = datetime.fromisoformat(ef.replace("Z", "+00:00"))
                         if now < ef_dt:
-                            log.debug("Override %s: effective_from %s not yet reached",
-                                      row["override_key"], ef)
+                            log.debug("Override %s: effective_from %s not yet reached", row["override_key"], ef)
                             continue
                     except Exception:
                         pass
                 if et:
                     try:
-                        et_dt = datetime.fromisoformat(
-                            et.replace("Z", "+00:00")
-                        )
+                        et_dt = datetime.fromisoformat(et.replace("Z", "+00:00"))
                         if now > et_dt:
-                            log.debug("Override %s: effective_to %s expired",
-                                      row["override_key"], et)
+                            log.debug("Override %s: effective_to %s expired", row["override_key"], et)
                             continue
                     except Exception:
                         pass
@@ -100,17 +95,16 @@ def load_runtime_overrides(db=None) -> dict[str, Any]:
                     try:
                         val = json.loads(val)
                     except Exception:
-                        log.warning("Override %s: could not parse value_json as JSON",
-                                    row["override_key"])
+                        log.warning("Override %s: could not parse value_json as JSON", row["override_key"])
                         continue
                 result[row["override_key"]] = val
 
             if result:
-                log.info("Runtime overrides loaded from Supabase: %s",
-                         sorted(result.keys()))
+                log.info("Runtime overrides loaded from Supabase: %s", sorted(result.keys()))
             else:
-                log.info("Runtime overrides: no ACTIVE rows in Supabase — "
-                         "hardcoded synthesize_decision() constants apply")
+                log.info(
+                    "Runtime overrides: no ACTIVE rows in Supabase — hardcoded synthesize_decision() constants apply"
+                )
 
         except Exception as e:
             log.warning("Supabase runtime_overrides load failed (will try JSON fallback): %s", e)
@@ -123,8 +117,9 @@ def load_runtime_overrides(db=None) -> dict[str, Any]:
                 if entry.get("status") == "ACTIVE" and key not in result:
                     result[key] = entry.get("value_json", entry)
             if result:
-                log.info("Runtime overrides loaded from JSON fallback (%s): %s",
-                         _FALLBACK_JSON.name, sorted(result.keys()))
+                log.info(
+                    "Runtime overrides loaded from JSON fallback (%s): %s", _FALLBACK_JSON.name, sorted(result.keys())
+                )
         except Exception as e:
             log.warning("JSON override fallback read failed: %s", e)
 

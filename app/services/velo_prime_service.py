@@ -60,6 +60,7 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
       - or_missing / rpr_missing / ts_missing flags are set to 1.0
     Downstream models use these flags as explicit uncertainty signals.
     """
+
     # Ratings: None = genuinely absent. Do NOT coerce to 0.0 here.
     # API sends '-' or other non-numeric strings for missing ratings — clean them.
     def _clean_rating(v):
@@ -71,13 +72,13 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
         except (TypeError, ValueError):
             return None
 
-    or_raw  = _clean_rating(runner.get("official_rating"))
+    or_raw = _clean_rating(runner.get("official_rating"))
     rpr_raw = _clean_rating(runner.get("rpr"))
-    ts_raw  = _clean_rating(runner.get("ts"))
+    ts_raw = _clean_rating(runner.get("ts"))
 
-    or_missing  = float(runner.get("or_missing",  or_raw  is None))
+    or_missing = float(runner.get("or_missing", or_raw is None))
     rpr_missing = float(runner.get("rpr_missing", rpr_raw is None))
-    ts_missing  = float(runner.get("ts_missing",  ts_raw  is None))
+    ts_missing = float(runner.get("ts_missing", ts_raw is None))
 
     odds = _safe(runner.get("best_odds_decimal"))
     sp_dec = odds if odds > 1.0 else 10.0
@@ -294,14 +295,13 @@ def score_race_velo_prime(
             return float(v)
         except (TypeError, ValueError):
             return 0.0
+
     field_or = [
-        _to_float(r["official_rating"]) for r in runners
+        _to_float(r["official_rating"])
+        for r in runners
         if r.get("official_rating") is not None and _to_float(r["official_rating"]) > 0
     ]
-    field_rpr = [
-        _to_float(r["rpr"]) for r in runners
-        if r.get("rpr") is not None and _to_float(r["rpr"]) > 0
-    ]
+    field_rpr = [_to_float(r["rpr"]) for r in runners if r.get("rpr") is not None and _to_float(r["rpr"]) > 0]
 
     # Macro context — current year, race type
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")
@@ -314,7 +314,10 @@ def score_race_velo_prime(
         log.error(
             "Macro context FAILED for race_id=%s date=%s code=%s: %s — "
             "chaos_mode will be treated as unknown (not False), macro features absent",
-            race_id, race_date, code, e,
+            race_id,
+            race_date,
+            code,
+            e,
         )
         macro_ctx = None
         macro_context_failed = True
@@ -410,6 +413,7 @@ def score_race_velo_prime(
     #   current_tier is known.
     from src.intelligence.horse_state_engine import HorseStateEngine as _HorseStateEngine
     from src.intelligence.tie_v3_gate import TIEv3Gate as _TIEv3Gate
+
     _state_engine = _HorseStateEngine()
     _tie_gate = _TIEv3Gate()
     for row in results:
@@ -431,9 +435,9 @@ def score_race_velo_prime(
             row["horse_state_failed"] = False
         except Exception as _e:
             log.error(
-                "Horse state tagging FAILED for %s: %s — "
-                "tier blocker active: A/B evaluation skipped for this runner",
-                row.get("horse"), _e,
+                "Horse state tagging FAILED for %s: %s — tier blocker active: A/B evaluation skipped for this runner",
+                row.get("horse"),
+                _e,
             )
             row["horse_state"] = {}
             row["horse_state_failed"] = True
@@ -441,11 +445,11 @@ def score_race_velo_prime(
             # Evaluate without current_tier — signals only, no upgrade logic yet
             _gate_pre = _tie_gate.evaluate(_merged, current_tier=None)
             row["tie_gate_signal_count"] = _gate_pre.signal_count
-            row["tie_gate_signals"]      = _gate_pre.signals_found
+            row["tie_gate_signals"] = _gate_pre.signals_found
         except Exception as _e:
             log.warning("TIE gate signal computation failed for %s: %s", row.get("horse"), _e)
             row["tie_gate_signal_count"] = 0
-            row["tie_gate_signals"]      = []
+            row["tie_gate_signals"] = []
 
     return results
 
@@ -804,18 +808,20 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         top3_scores = []
         for pred_dict in results[:3]:
             g_mult = pred_dict.get("g_shadow_multiplier", 1.0)
-            top3_scores.append({
-                "horse_id": pred_dict.get("horse_id", ""),
-                "velo_prime_prob": pred_dict.get("velo_prime_prob"),
-                "g_base_prob": pred_dict.get("g_base_prob"),
-                "g_shadow_multiplier": g_mult,
-                "g_adjusted_prob": round(
-                    pred_dict.get("g_base_prob", 0.0) * g_mult, 4
-                ) if pred_dict.get("g_base_prob") else None,
-                "g_shadow_flags": pred_dict.get("g_shadow_flags") or [],
-                "doctrines_fired": pred_dict.get("doctrines_fired") or [],
-                "is_top_pick": (pred_dict == top),
-            })
+            top3_scores.append(
+                {
+                    "horse_id": pred_dict.get("horse_id", ""),
+                    "velo_prime_prob": pred_dict.get("velo_prime_prob"),
+                    "g_base_prob": pred_dict.get("g_base_prob"),
+                    "g_shadow_multiplier": g_mult,
+                    "g_adjusted_prob": round(pred_dict.get("g_base_prob", 0.0) * g_mult, 4)
+                    if pred_dict.get("g_base_prob")
+                    else None,
+                    "g_shadow_flags": pred_dict.get("g_shadow_flags") or [],
+                    "doctrines_fired": pred_dict.get("doctrines_fired") or [],
+                    "is_top_pick": (pred_dict == top),
+                }
+            )
 
         row = {
             "race_id": race.get("race_id"),
@@ -832,12 +838,12 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             # Confidence split — persists both raw (pre-normalisation) and effective
             # (post-normalisation, same boundary as synthesize_decision tier gating).
             # Requires migration: 20260412_002_confidence_level_split.sql
-            "confidence_level_raw":       top.get("confidence_level_raw"),
+            "confidence_level_raw": top.get("confidence_level_raw"),
             "confidence_level_effective": top.get("confidence_level_effective"),
             # Shadow suspect cohort — A-tier with weak place support (place_prob < 0.75).
             # Passive monitor. No gate change. Track 30 days then decide on conditional tighten.
             # Requires migration: 20260412_003_a_tier_suspect_cohort.sql
-            "a_tier_weak_place_flag":     top.get("a_tier_weak_place_flag", False),
+            "a_tier_weak_place_flag": top.get("a_tier_weak_place_flag", False),
             # VELO_PRIME fields
             "velo_prime_prob": top.get("velo_prime_prob"),
             "improvement_score": top.get("improvement_score"),
@@ -849,9 +855,9 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "rpdc_release_score": float(top.get("plot_conviction", 0.0)),
             "rpdc_cash_window_flag": bool(top.get("plot_conviction", 0.0) >= 0.7),
             "rpdc_primary_tag": "PDF_PLOT" if top.get("plot_conviction", 0.0) >= 0.7 else None,
-            "rpdc_tags": top.get("intent_signals", []) + ([f"PLOT:{top.get('plot_conviction')}"] if top.get("plot_conviction") else []),
+            "rpdc_tags": top.get("intent_signals", [])
+            + ([f"PLOT:{top.get('plot_conviction')}"] if top.get("plot_conviction") else []),
             "rpdc_tag_count": len(top.get("intent_signals", [])),
-
             "full_analysis": {
                 "top_horse": top.get("horse"),
                 "plot_conviction": top.get("plot_conviction"),
@@ -861,7 +867,6 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 "signals": top.get("intent_signals", []),
                 "reasons": top.get("router_reasons", []),
             },
-
             # Ensemble observability — queryable without reading source code.
             # active_components: what actually entered the weighted average this race.
             # excluded_from_ensemble: what was computed but excluded (_DISABLED or zero-variance).
@@ -871,22 +876,22 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             # Horse State Brain — compact queryable state for top selection.
             # Full raw per-runner state lives in full_analysis[*].horse_state.
             # Requires migration: supabase/migrations/20260405_002_velo_verdicts_horse_state.sql
-            "top_horse_readiness_state":  _hs.get("readiness_state"),
-            "top_horse_release_state":    _hs.get("release_state"),
-            "top_horse_rest_pattern":     _hs.get("rest_pattern"),
+            "top_horse_readiness_state": _hs.get("readiness_state"),
+            "top_horse_release_state": _hs.get("release_state"),
+            "top_horse_rest_pattern": _hs.get("rest_pattern"),
             "top_horse_class_move_state": _hs.get("class_move_state"),
-            "top_horse_stable_heat":      _hs.get("stable_heat"),
-            "top_horse_jockey_signal":    _hs.get("jockey_signal"),
-            "top_horse_market_state":     _hs.get("market_state"),
-            "top_horse_race_fit_state":   _hs.get("race_fit_state"),
-            "top_horse_chaos_exposure":   _hs.get("chaos_exposure"),
-            "top_horse_signal_count":     _hs.get("live_signals"),
-            "top_horse_state_evidence":   _hs.get("state_evidence") or [],
+            "top_horse_stable_heat": _hs.get("stable_heat"),
+            "top_horse_jockey_signal": _hs.get("jockey_signal"),
+            "top_horse_market_state": _hs.get("market_state"),
+            "top_horse_race_fit_state": _hs.get("race_fit_state"),
+            "top_horse_chaos_exposure": _hs.get("chaos_exposure"),
+            "top_horse_signal_count": _hs.get("live_signals"),
+            "top_horse_state_evidence": _hs.get("state_evidence") or [],
             # Race Archetype — Layer 3 classification. Stored on top dict by _apply_archetype()
             # in run_prime_today.py. Requires migration: supabase/migrations/20260405_003_velo_verdicts_archetype.sql
-            "race_archetype":        top.get("race_archetype"),
-            "archetype_confidence":  top.get("archetype_confidence"),
-            "archetype_bet_style":   top.get("archetype_bet_style"),
+            "race_archetype": top.get("race_archetype"),
+            "archetype_confidence": top.get("archetype_confidence"),
+            "archetype_bet_style": top.get("archetype_bet_style"),
             "archetype_suppression": top.get("archetype_suppression"),
             "archetype_trap_flag": top.get("archetype_trap_flag"),
             # ── Playbook G Shadow instrumentation ──────────────────────────────────
@@ -917,7 +922,7 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "governance": {
                 "assigned_product": top.get("assigned_product"),
                 "router_reasons": top.get("router_reasons"),
-            }
+            },
         }
 
         # Passive warehouse enrichment — injects into runner blocks only.
@@ -946,11 +951,16 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             (
                 "horse_state",
                 [
-                    "top_horse_readiness_state", "top_horse_release_state",
-                    "top_horse_rest_pattern", "top_horse_class_move_state",
-                    "top_horse_stable_heat", "top_horse_jockey_signal",
-                    "top_horse_market_state", "top_horse_race_fit_state",
-                    "top_horse_chaos_exposure", "top_horse_signal_count",
+                    "top_horse_readiness_state",
+                    "top_horse_release_state",
+                    "top_horse_rest_pattern",
+                    "top_horse_class_move_state",
+                    "top_horse_stable_heat",
+                    "top_horse_jockey_signal",
+                    "top_horse_market_state",
+                    "top_horse_race_fit_state",
+                    "top_horse_chaos_exposure",
+                    "top_horse_signal_count",
                     "top_horse_state_evidence",
                 ],
                 "Apply supabase/migrations/20260405_002_velo_verdicts_horse_state.sql",
@@ -958,16 +968,22 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             (
                 "archetype",
                 [
-                    "race_archetype", "archetype_confidence", "archetype_bet_style",
-                    "archetype_suppression", "archetype_trap_flag",
+                    "race_archetype",
+                    "archetype_confidence",
+                    "archetype_bet_style",
+                    "archetype_suppression",
+                    "archetype_trap_flag",
                 ],
                 "Apply supabase/migrations/20260405_003_velo_verdicts_archetype.sql",
             ),
             (
                 "g_shadow_instrumentation",
                 [
-                    "g_shadow_multiplier", "g_shadow_flags", "g_shadow_horse_id",
-                    "g_shadow_mode", "g_top3_scores",
+                    "g_shadow_multiplier",
+                    "g_shadow_flags",
+                    "g_shadow_horse_id",
+                    "g_shadow_mode",
+                    "g_top3_scores",
                 ],
                 "Apply supabase/migrations/20260408_005_velo_verdicts_g_shadow_instrumentation.sql",
             ),
@@ -994,7 +1010,9 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 log.critical(
                     "SCHEMA_DRIFT: velo_verdicts upsert stripping %s columns — "
                     "data is being SILENTLY LOST. Fix: %s | race=%s",
-                    _grp_name, _grp_hint, race.get("race_id"),
+                    _grp_name,
+                    _grp_hint,
+                    race.get("race_id"),
                 )
                 for _col in _grp_cols:
                     row.pop(_col, None)

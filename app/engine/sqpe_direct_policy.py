@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
-WIN_THRESHOLD  = float(os.getenv("SQPE_WIN_THRESHOLD",  "0.30"))
+WIN_THRESHOLD = float(os.getenv("SQPE_WIN_THRESHOLD", "0.30"))
 TOP4_THRESHOLD = float(os.getenv("SQPE_TOP4_THRESHOLD", "0.10"))
 
 
@@ -28,7 +28,7 @@ class DirectDecision:
     top_4: list[str] = field(default_factory=list)
     win_suppressed: bool = True
     suppression_reason: str = ""
-    sqpe_scores: dict[str, float] = field(default_factory=dict)   # runner_id → prob
+    sqpe_scores: dict[str, float] = field(default_factory=dict)  # runner_id → prob
     confidence: float = 0.0
 
     def to_dict(self) -> dict:

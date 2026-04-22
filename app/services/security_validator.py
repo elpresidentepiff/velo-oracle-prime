@@ -102,9 +102,7 @@ def run_security_check() -> dict[str, Any]:
 
     supabase_url = os.getenv("SUPABASE_URL", "")
     service_key = (
-        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-        or os.getenv("SUPABASE_SERVICE_KEY", "")
-        or os.getenv("SUPABASE_KEY", "")
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "") or os.getenv("SUPABASE_KEY", "")
     )
 
     if not supabase_url or not service_key:
@@ -154,8 +152,7 @@ def run_security_check() -> dict[str, Any]:
         error_code = _classify_security_error(exc)
         result = _error_result(error_code, str(exc))
         logger.warning(
-            "[security_validator] Could not verify DB hardening - "
-            "status=%s error_code=%s detail=%s",
+            "[security_validator] Could not verify DB hardening - status=%s error_code=%s detail=%s",
             result["status"],
             error_code,
             result["error_detail"],

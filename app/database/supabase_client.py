@@ -10,6 +10,7 @@ continues to work without modification.
 
 DO NOT add new logic here. Add it to src/data/supabase_client.py instead.
 """
+
 from src.data.supabase_client import (  # noqa: F401
     SupabaseClient,
     get_supabase_client,

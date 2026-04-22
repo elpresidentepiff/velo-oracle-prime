@@ -69,10 +69,8 @@ def resolve_build_fingerprint() -> dict[str, str | bool]:
     if not commit:
         try:
             import subprocess
-            res = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"],
-                capture_output=True, text=True, check=True
-            )
+
+            res = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True)
             commit = res.stdout.strip()
             source = "local_git"
         except Exception:
@@ -84,5 +82,5 @@ def resolve_build_fingerprint() -> dict[str, str | bool]:
         "source": source,
         "env": resolve_runtime_environment(),
         "timestamp": utc_now_iso(),
-        "is_hardcoded": commit == "unknown"
+        "is_hardcoded": commit == "unknown",
     }

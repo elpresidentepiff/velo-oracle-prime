@@ -43,6 +43,7 @@ def get_supabase_client():
     Kept here for backwards-compatibility with scripts that import from this path.
     """
     from src.data.supabase_client import get_supabase_client as _canonical
+
     return _canonical()
 
 

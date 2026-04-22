@@ -44,7 +44,7 @@ DEFAULTS = {
     "decoy_support_flag": 0.0,
     "setup_run_flag": 0.0,
     "cash_run_flag": 0.0,
-    "handicap_plot_score": 0.0, # or_delta_to_win normalized
+    "handicap_plot_score": 0.0,  # or_delta_to_win normalized
     # TIE v1 features — computed from Racing API form history
     # Defaults represent "typical" values: 14 days rest, no class change
     "days_since_run": 14.0,
@@ -202,7 +202,7 @@ class V17FeatureExtractor:
                 # handicap_plot_score: 1.0 if on winning mark, decaying as mark rises
                 # range: -10 to +10. 0.0 delta = 1.0 score.
                 if or_delta_to_win <= 0:
-                    features["handicap_plot_score"] = 1.0 # at or below last winning mark
+                    features["handicap_plot_score"] = 1.0  # at or below last winning mark
                 else:
                     features["handicap_plot_score"] = max(0.0, 1.0 - (or_delta_to_win / 10.0))
 
@@ -281,6 +281,7 @@ class V17FeatureExtractor:
         if last_result and race_date_str:
             try:
                 from datetime import datetime as _dt
+
                 race_dt = _dt.strptime(str(race_date_str)[:10], "%Y-%m-%d")
                 last_dt = _dt.strptime(str(last_result.get("date", ""))[:10], "%Y-%m-%d")
                 days = (race_dt - last_dt).days

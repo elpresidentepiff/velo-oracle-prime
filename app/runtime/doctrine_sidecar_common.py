@@ -108,11 +108,7 @@ def truth_for_sigma_row(
 
 def rpdc_by_selection(rows: list[dict[str, Any]]) -> dict[tuple[str, str], dict[str, Any]]:
     deduped = dedupe_latest_rpdc_rows(rows)
-    return {
-        (row["race_id"], row["horse_id"]): row
-        for row in deduped
-        if row.get("race_id") and row.get("horse_id")
-    }
+    return {(row["race_id"], row["horse_id"]): row for row in deduped if row.get("race_id") and row.get("horse_id")}
 
 
 def rpdc_selection_lookup(rows: list[dict[str, Any]]) -> dict[str, dict[Any, dict[str, Any]]]:
@@ -123,9 +119,7 @@ def rpdc_selection_lookup(rows: list[dict[str, Any]]) -> dict[str, dict[Any, dic
         if row.get("doctrine_event_id") and row.get("horse_id")
     }
     by_race_selection = {
-        (row["race_id"], row["horse_id"]): row
-        for row in deduped
-        if row.get("race_id") and row.get("horse_id")
+        (row["race_id"], row["horse_id"]): row for row in deduped if row.get("race_id") and row.get("horse_id")
     }
     return {"by_event_selection": by_event_selection, "by_race_selection": by_race_selection}
 
@@ -169,16 +163,8 @@ def rpdc_coverage_metrics(
     rpdc_rows: list[dict[str, Any]],
 ) -> dict[str, int]:
     rpdc_lookup = rpdc_selection_lookup(rpdc_rows)
-    event_ids = {
-        row.get("doctrine_event_id")
-        for row in rpdc_rows
-        if row.get("doctrine_event_id") not in (None, "")
-    }
-    race_ids = {
-        row.get("race_id")
-        for row in rpdc_rows
-        if row.get("race_id") not in (None, "")
-    }
+    event_ids = {row.get("doctrine_event_id") for row in rpdc_rows if row.get("doctrine_event_id") not in (None, "")}
+    race_ids = {row.get("race_id") for row in rpdc_rows if row.get("race_id") not in (None, "")}
 
     reviewed_sigma_rows = len(sigma_rows)
     reviewed_with_horse_id = 0
@@ -229,9 +215,7 @@ def contradiction_type(sigma: dict[str, Any], truth: dict[str, Any], rpdc: dict[
 def is_weak_a(row: dict[str, Any]) -> bool:
     top_pick_position = row.get("top_pick_position")
     return row.get("decision_tier") == "A" and (
-        row.get("confidence_level") == "low"
-        or top_pick_position is None
-        or int(top_pick_position) > 2
+        row.get("confidence_level") == "low" or top_pick_position is None or int(top_pick_position) > 2
     )
 
 

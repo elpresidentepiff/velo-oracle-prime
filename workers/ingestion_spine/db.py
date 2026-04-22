@@ -76,11 +76,7 @@ class DatabaseClient:
 
         # UPSERT on (import_date, source) — prevents 409 on re-runs for the same day.
         # On conflict the row is refreshed (status reset, notes updated) rather than duplicated.
-        result = (
-            self.client.table("import_batches")
-            .upsert(data, on_conflict="import_date,source")
-            .execute()
-        )
+        result = self.client.table("import_batches").upsert(data, on_conflict="import_date,source").execute()
 
         if not result.data:
             raise ValueError("Failed to create/upsert batch")
@@ -208,11 +204,7 @@ class DatabaseClient:
         }
 
         # UPSERT on join_key (natural race identifier) — prevents 409 on re-ingestion.
-        result = (
-            self.client.table("races")
-            .upsert(data, on_conflict="join_key")
-            .execute()
-        )
+        result = self.client.table("races").upsert(data, on_conflict="join_key").execute()
 
         if not result.data:
             raise ValueError("Failed to insert/upsert race")
@@ -270,11 +262,7 @@ class DatabaseClient:
         }
 
         # UPSERT on (race_id, cloth_no) — prevents 409 on re-ingestion of the same runner.
-        result = (
-            self.client.table("runners")
-            .upsert(data, on_conflict="race_id,cloth_no")
-            .execute()
-        )
+        result = self.client.table("runners").upsert(data, on_conflict="race_id,cloth_no").execute()
 
         if not result.data:
             raise ValueError("Failed to insert/upsert runner")
@@ -312,11 +300,7 @@ class DatabaseClient:
         }
 
         # UPSERT on (runner_id, run_date, course) — prevents 409 on re-ingestion.
-        result = (
-            self.client.table("runner_form_lines")
-            .upsert(data, on_conflict="runner_id,run_date,course")
-            .execute()
-        )
+        result = self.client.table("runner_form_lines").upsert(data, on_conflict="runner_id,run_date,course").execute()
 
         if not result.data:
             raise ValueError("Failed to insert/upsert form line")

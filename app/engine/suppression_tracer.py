@@ -34,7 +34,7 @@ def record(
     horse_name: str,
     engine_mode: str,
     sqpe_prob: float,
-    layer_blocked: str | None,       # None = not blocked (bet fired)
+    layer_blocked: str | None,  # None = not blocked (bet fired)
     block_reason: str = "",
     prod_chassis: str = "",
     direct_chassis: str = "",
@@ -52,7 +52,7 @@ def record(
         "block_reason": block_reason,
         "prod_chassis": prod_chassis,
         "direct_chassis": direct_chassis,
-        "would_have_won": None,   # filled post-race by sigma
+        "would_have_won": None,  # filled post-race by sigma
         **(extra or {}),
     }
 
@@ -91,7 +91,7 @@ def summarise(date: str | None = None) -> dict:
 
     total = len(traces)
     blocked = [t for t in traces if t.get("layer_blocked")]
-    passed  = [t for t in traces if not t.get("layer_blocked")]
+    passed = [t for t in traces if not t.get("layer_blocked")]
 
     layer_counts: dict[str, int] = {}
     for t in blocked:
@@ -105,10 +105,6 @@ def summarise(date: str | None = None) -> dict:
         "bets_suppressed": len(blocked),
         "suppression_rate": round(len(blocked) / total, 3) if total else 0,
         "suppression_by_layer": layer_counts,
-        "avg_sqpe_prob_blocked": round(
-            sum(t["sqpe_prob"] for t in blocked) / len(blocked), 4
-        ) if blocked else 0,
-        "avg_sqpe_prob_passed": round(
-            sum(t["sqpe_prob"] for t in passed) / len(passed), 4
-        ) if passed else 0,
+        "avg_sqpe_prob_blocked": round(sum(t["sqpe_prob"] for t in blocked) / len(blocked), 4) if blocked else 0,
+        "avg_sqpe_prob_passed": round(sum(t["sqpe_prob"] for t in passed) / len(passed), 4) if passed else 0,
     }

@@ -104,11 +104,7 @@ def _spawn_trigger_subprocess(
 
 def _schema_verification_mode() -> str:
     runtime = (
-        settings.API_ENV
-        or os.getenv("API_ENV")
-        or os.getenv("ENV")
-        or os.getenv("RAILWAY_ENVIRONMENT")
-        or "local"
+        settings.API_ENV or os.getenv("API_ENV") or os.getenv("ENV") or os.getenv("RAILWAY_ENVIRONMENT") or "local"
     ).lower()
     if runtime in _SOFT_SCHEMA_RUNTIME_NAMES:
         return "soft"
@@ -118,9 +114,7 @@ def _schema_verification_mode() -> str:
 def _pipeline_run_api_config() -> tuple[str, str]:
     sb_url = os.getenv("SUPABASE_URL", "").rstrip("/")
     sb_key = (
-        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-        or os.getenv("SUPABASE_SERVICE_KEY", "")
-        or os.getenv("SUPABASE_KEY", "")
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "") or os.getenv("SUPABASE_KEY", "")
     )
     return sb_url, sb_key
 
@@ -202,10 +196,18 @@ def _write_reject_event(
         if status not in (200, 201):
             logger.warning(
                 "trigger_reject_events write failed HTTP %s for %s/%s: %s",
-                status, service_name, source_date, body.decode(errors="replace")[:200],
+                status,
+                service_name,
+                source_date,
+                body.decode(errors="replace")[:200],
             )
         else:
-            logger.info("trigger_reject_events: recorded duplicate reject for %s/%s run=%s", service_name, source_date, existing_run_id)
+            logger.info(
+                "trigger_reject_events: recorded duplicate reject for %s/%s run=%s",
+                service_name,
+                source_date,
+                existing_run_id,
+            )
     except Exception as exc:
         logger.warning("trigger_reject_events write raised: %s", exc)
 
@@ -297,6 +299,7 @@ def _claim_trigger_run(*, service_name: str, run_type: str, source_date: str, tr
 
 # ── Fix 1.2: Schema verification ─────────────────────────────────────────────
 
+
 async def _verify_schema_at_startup() -> None:
     """
     Fail fast if required tables or columns are absent in Supabase.
@@ -321,9 +324,7 @@ async def _verify_schema_at_startup() -> None:
 
     sb_url = os.getenv("SUPABASE_URL", "").rstrip("/")
     sb_key = (
-        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-        or os.getenv("SUPABASE_SERVICE_KEY", "")
-        or os.getenv("SUPABASE_KEY", "")
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "") or os.getenv("SUPABASE_KEY", "")
     )
 
     mode = _schema_verification_mode()
@@ -362,7 +363,9 @@ async def _verify_schema_at_startup() -> None:
         elif status == 0:
             detail = body.decode(errors="replace")
             if mode == "strict":
-                errors.append(f"Cannot verify required table '{table}' because Supabase was unreachable: {detail[:200]}")
+                errors.append(
+                    f"Cannot verify required table '{table}' because Supabase was unreachable: {detail[:200]}"
+                )
             else:
                 logger.warning(
                     "[startup:schema] Could not reach Supabase to check %s: %s — proceeding in soft runtime",
@@ -371,10 +374,7 @@ async def _verify_schema_at_startup() -> None:
                 )
         else:
             msg = body.decode(errors="replace")
-            errors.append(
-                f"Required table '{table}' is missing or inaccessible "
-                f"(HTTP {status}): {msg[:200]}"
-            )
+            errors.append(f"Required table '{table}' is missing or inaccessible (HTTP {status}): {msg[:200]}")
             logger.error("[startup:schema] MISSING table %s — %s", table, msg[:200])
 
     # ── 1b. Optional tables (non-fatal if missing) ────────────────────────────
@@ -385,12 +385,14 @@ async def _verify_schema_at_startup() -> None:
         elif status == 0:
             logger.warning(
                 "[startup:schema] Could not reach Supabase to check optional table %s: %s",
-                table, body.decode(errors="replace")[:200],
+                table,
+                body.decode(errors="replace")[:200],
             )
         else:
             logger.warning(
                 "[startup:schema] optional table %s missing or inaccessible (non-fatal) — %s",
-                table, body.decode(errors="replace")[:200],
+                table,
+                body.decode(errors="replace")[:200],
             )
 
     # ── 2. Required columns in velo_verdicts ──────────────────────────────────
@@ -416,13 +418,13 @@ async def _verify_schema_at_startup() -> None:
         )
         logger.error(
             "[startup:schema] velo_verdicts column check FAILED HTTP %d — %s",
-            status, msg[:300],
+            status,
+            msg[:300],
         )
 
     if errors:
         raise RuntimeError(
-            "[startup] Schema verification failed — fix before deploying:\n"
-            + "\n".join(f"  • {e}" for e in errors)
+            "[startup] Schema verification failed — fix before deploying:\n" + "\n".join(f"  • {e}" for e in errors)
         )
 
     logger.info("[startup:schema] All required tables and columns verified OK")
@@ -480,6 +482,7 @@ async def lifespan(app: FastAPI):
     # If regression is detected, run: scripts/migrations/002_full_security_hardening.sql
     try:
         from app.services.security_validator import run_security_check
+
         _sec = run_security_check()
         if _sec.get("status") == "failed":
             logger.critical(
@@ -1052,6 +1055,7 @@ async def upload_spotlight_pdf(
 
 # ── Governed Card Dashboard ───────────────────────────────────────────────────
 
+
 @app.get("/dashboard", include_in_schema=False)
 async def dashboard():
     """Serve the Governed Card Dashboard UI."""
@@ -1084,7 +1088,7 @@ async def governed_card(date: str = Query(default=None)):
 
     # If exact date not found, find the most recent file
     source_label = "local_json"
-    loaded_date  = target_date
+    loaded_date = target_date
     if not verdict_path.exists():
         candidates = sorted(root.glob("data/velo_prime_verdicts_*.json"), reverse=True)
         verdict_path = candidates[0] if candidates else None
@@ -1106,6 +1110,7 @@ async def governed_card(date: str = Query(default=None)):
     if sb_url and sb_key:
         try:
             from supabase import create_client as _sb_create
+
             db = _sb_create(sb_url, sb_key)
             resp = (
                 db.table("velo_verdicts")
@@ -1114,7 +1119,7 @@ async def governed_card(date: str = Query(default=None)):
                 .lte("generated_at", f"{loaded_date}T23:59:59")
                 .execute()
             )
-            for row in (resp.data or []):
+            for row in resp.data or []:
                 gov_by_race[row["race_id"]] = row
         except Exception as e:
             logger.warning("Supabase governance overlay failed: %s", e)
@@ -1123,7 +1128,7 @@ async def governed_card(date: str = Query(default=None)):
     verdicts = []
     for v in raw_verdicts:
         race_id = v.get("race_id", "")
-        top     = v.get("top", {})
+        top = v.get("top", {})
 
         # prob_gap: top - second runner prob (second not stored, derive from scored count)
         # stored in top dict directly if present, otherwise compute from verdict
@@ -1133,39 +1138,46 @@ async def governed_card(date: str = Query(default=None)):
 
         # Governance: prefer live Supabase values (post-migration), fall back to top dict
         gov = gov_by_race.get(race_id, {})
-        assigned_product  = gov.get("assigned_product")  or top.get("assigned_product",  "UNKNOWN")
-        router_reasons    = gov.get("router_reasons")     or top.get("router_reasons",    [])
+        assigned_product = gov.get("assigned_product") or top.get("assigned_product", "UNKNOWN")
+        router_reasons = gov.get("router_reasons") or top.get("router_reasons", [])
         execution_allowed = gov.get("execution_allowed")
         if execution_allowed is None:
             execution_allowed = top.get("execution_allowed", False)
 
-        verdicts.append({
-            "race_id":               race_id,
-            "course":                v.get("course", ""),
-            "off_time":              v.get("off_time", ""),
-            "horse":                 top.get("horse", ""),
-            "tier":                  v.get("tier", "?"),
-            "decision_tier":         v.get("tier", "?"),
-            "confidence_level":      top.get("confidence_level", "low"),
-            "velo_prime_prob":       top.get("velo_prime_prob", 0),
-            "prob_gap":              prob_gap,
-            "market_deception_score": top.get("market_deception_score", 0),
-            "assigned_product":      assigned_product,
-            "router_reasons":        router_reasons if isinstance(router_reasons, list) else [router_reasons],
-            "execution_allowed":     execution_allowed,
-            "place_prob":            top.get("place_prob", 0),
-            "archetype_label":       top.get("archetype_label", ""),
-        })
+        verdicts.append(
+            {
+                "race_id": race_id,
+                "course": v.get("course", ""),
+                "off_time": v.get("off_time", ""),
+                "horse": top.get("horse", ""),
+                "tier": v.get("tier", "?"),
+                "decision_tier": v.get("tier", "?"),
+                "confidence_level": top.get("confidence_level", "low"),
+                "velo_prime_prob": top.get("velo_prime_prob", 0),
+                "prob_gap": prob_gap,
+                "market_deception_score": top.get("market_deception_score", 0),
+                "assigned_product": assigned_product,
+                "router_reasons": router_reasons if isinstance(router_reasons, list) else [router_reasons],
+                "execution_allowed": execution_allowed,
+                "place_prob": top.get("place_prob", 0),
+                "archetype_label": top.get("archetype_label", ""),
+            }
+        )
 
     # Sort by off_time
     verdicts.sort(key=lambda x: x.get("off_time") or "")
 
     # ── Commit SHA ───────────────────────────────────────────────────────────
     try:
-        commit = _sp.check_output(
-            ["git", "rev-parse", "--short", "HEAD"],
-            cwd=root, stderr=_sp.DEVNULL,
-        ).decode().strip()
+        commit = (
+            _sp.check_output(
+                ["git", "rev-parse", "--short", "HEAD"],
+                cwd=root,
+                stderr=_sp.DEVNULL,
+            )
+            .decode()
+            .strip()
+        )
     except Exception:
         commit = "unknown"
 
@@ -1173,14 +1185,14 @@ async def governed_card(date: str = Query(default=None)):
 
     return {
         "meta": {
-            "requested_date":  target_date,
-            "loaded_date":     loaded_date,
-            "source":          source_label,
-            "commit_sha":      commit,
-            "router_version":  "ProductRouter v1 (live-safe)",
-            "record_count":    len(verdicts),
-            "date_mismatch":   date_mismatch,
-            "gov_overlay":     len(gov_by_race) > 0,
+            "requested_date": target_date,
+            "loaded_date": loaded_date,
+            "source": source_label,
+            "commit_sha": commit,
+            "router_version": "ProductRouter v1 (live-safe)",
+            "record_count": len(verdicts),
+            "date_mismatch": date_mismatch,
+            "gov_overlay": len(gov_by_race) > 0,
         },
         "verdicts": verdicts,
     }
@@ -1190,7 +1202,13 @@ async def governed_card(date: str = Query(default=None)):
 @app.get("/")
 async def root():
     """Root endpoint"""
-    return {"message": "VÉLØ Oracle API", "version": "v1.0", "docs": "/docs", "health": "/health", "dashboard": "/dashboard"}
+    return {
+        "message": "VÉLØ Oracle API",
+        "version": "v1.0",
+        "docs": "/docs",
+        "health": "/health",
+        "dashboard": "/dashboard",
+    }
 
 
 # API v1 endpoints
@@ -1232,7 +1250,6 @@ async def build_fingerprint():
         "has_write_reject_event": True,
         "timestamp": utc_now_iso(),
     }
-
 
 
 # Prediction endpoints
@@ -1388,9 +1405,7 @@ _TG_BOT_URL = os.getenv("RAILWAY_SERVICE_VELO_ORACLE_URL", "")
 
 # Webhook Memory Guard Configuration
 _MAX_VOX_AGENTS = int(os.getenv("MAX_VOX_AGENTS", "50"))
-_WHITELISTED_USERS = {
-    int(u.strip()) for u in os.getenv("WHITELISTED_TELEGRAM_USERS", "").split(",") if u.strip()
-}
+_WHITELISTED_USERS = {int(u.strip()) for u in os.getenv("WHITELISTED_TELEGRAM_USERS", "").split(",") if u.strip()}
 
 # Bounded agent store (LRU cache using OrderedDict)
 _vox_agents: OrderedDict[int, object] = OrderedDict()
@@ -1417,6 +1432,7 @@ def _get_vox_agent(user_id: int):
 
     try:
         from workers.velo_vox.agent_loop import VoxAgent
+
         agent = VoxAgent(user_id=user_id)
         _vox_agents[user_id] = agent
         return agent
@@ -1551,9 +1567,7 @@ async def server_error_handler(request, exc):
     """Handle 500 errors — include detail in non-production environments."""
     logger.error(f"Server error: {exc}", exc_info=True)
     detail = str(exc) if os.getenv("API_ENV", "production") != "production" else "Internal server error"
-    return JSONResponse(
-        status_code=500, content={"error": detail, "timestamp": utc_now_iso()}
-    )
+    return JSONResponse(status_code=500, content={"error": detail, "timestamp": utc_now_iso()})
 
 
 # Startup/shutdown are handled by the lifespan context manager above.
