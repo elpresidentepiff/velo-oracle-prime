@@ -1,3 +1,0 @@
-"""
-racingpost_pdf tests
-"""
