@@ -711,17 +711,64 @@ def _compute_plot_signals(horse: dict):
     else:
         horse["cd_proven"] = False
 
-    # 5. Overall Plot Conviction (composite)
+    # 5. TS Trend Signal — is the horse improving or declining?
+    ts_hist = horse.get("ts_run_history") or []
+    ts_vals = [r["ts"] for r in ts_hist if r.get("ts") and isinstance(r["ts"], (int, float)) and r["ts"] > 0]
+    ts_trend_signal = 0.0
+    if len(ts_vals) >= 2:
+        # Latest TS > previous TS = improving
+        if ts_vals[0] > ts_vals[1]:
+            ts_trend_signal = 0.15  # Improving
+        elif ts_vals[0] < ts_vals[1] - 10:
+            ts_trend_signal = -0.1  # Declining sharply
+        else:
+            ts_trend_signal = 0.05  # Flat/stable
+    horse["ts_trend_signal"] = ts_trend_signal
+
+    # 6. OR Trend Drops — consecutive OR drops = longer setup = more deliberate
+    or_hist = horse.get("or_run_history") or []
+    or_vals = [r["or"] for r in or_hist if r.get("or") and isinstance(r["or"], (int, float)) and r["or"] > 0]
+    or_trend_drops = 0
+    if len(or_vals) >= 2:
+        for i in range(len(or_vals) - 1):
+            if or_vals[i] <= or_vals[i + 1]:
+                or_trend_drops += 1
+            else:
+                break
+    # More consecutive drops = stronger setup signal (cap at 4)
+    or_trend_signal = min(0.15, or_trend_drops * 0.04)
+    horse["or_trend_drops"] = or_trend_drops
+    horse["or_trend_signal"] = or_trend_signal
+
+    # 7. Trainer Form Signal
+    trainer_form = horse.get("trainer_form", "") or ""
+    if trainer_form in ("strong_positive", "positive"):
+        trainer_signal = 0.10
+    elif trainer_form == "negative":
+        # Cold stable = could be deliberate plot (Zacony Rebel pattern)
+        trainer_signal = 0.0  # Neutral — don't penalise
+    else:
+        trainer_signal = 0.0
+    horse["trainer_form_signal"] = trainer_signal
+
+    # 8. Overall Plot Conviction (composite) — UPGRADED
+    # Core: OR delta to winning mark (40%) + OR compression (25%)
+    # Supporting: TS trend (15%) + OR trend drops (10%) + trainer form (10%)
     plot_score = horse.get("handicap_plot_score") or 0.0
     compression_score = horse.get("or_compression_score") or 0.0
     spotlight_sent = horse.get("spotlight_sentiment") or 0.0
     # Normalize spotlight sentiment from [-1,1] to [0,1]
     spotlight_norm = (spotlight_sent + 1.0) / 2.0
 
-    horse["plot_conviction"] = round(
-        (plot_score * 0.4) + (compression_score * 0.3) + (spotlight_norm * 0.3),
-        3,
-    )
+    # Base conviction from OR signals
+    base = (plot_score * 0.40) + (compression_score * 0.25) + (spotlight_norm * 0.10)
+    # Add TS trend, OR trend, trainer form bonuses
+    bonus = ts_trend_signal + or_trend_signal + trainer_signal
+    # Spotlight bonus (if positive comment, small boost)
+    if spotlight_sent > 0:
+        bonus += 0.05
+
+    horse["plot_conviction"] = round(min(1.0, base + bonus), 3)
 
 
 # ─── Output ──────────────────────────────────────────────────────────────────
