@@ -550,23 +550,27 @@ def merge_race_data(
     spotlight_data: dict,
     postdata_data: dict = None,
     form_data: dict = None,
+    cc_data: dict = None,
 ) -> dict:
     """
-    Merge OR, TS, Spotlight, Postdata, and Form data by race time and horse name.
+    Merge OR, TS, Spotlight, Postdata, Colour Card, and Form data by race time and horse name.
     Returns unified dict keyed by race_time -> list of enriched horse dicts.
     """
     postdata_data = postdata_data or {}
     form_data = form_data or {}
+    cc_data = cc_data or {}
 
     # Normalize all time keys to dot format (e.g. '2:52' -> '2.52')
     or_data = _normalize_data_keys(or_data)
     ts_data = _normalize_data_keys(ts_data)
     spotlight_data = _normalize_data_keys(spotlight_data)
     postdata_data = _normalize_data_keys(postdata_data)
+    cc_data = _normalize_data_keys(cc_data)
 
     all_times = sorted(set(
         list(or_data.keys()) + list(ts_data.keys()) +
-        list(spotlight_data.keys()) + list(postdata_data.keys())
+        list(spotlight_data.keys()) + list(postdata_data.keys()) +
+        list(cc_data.keys())
     ))
     # Remove 'unknown' if present (postdata sometimes has unmatched races)
     all_times = [t for t in all_times if t != "unknown"]
@@ -577,6 +581,7 @@ def merge_race_data(
         ts_horses = {h["horse_name"].lower(): h for h in ts_data.get(race_time, {}).get("horses", [])}
         spot_horses = {h["horse_name"].lower(): h for h in spotlight_data.get(race_time, {}).get("horses", [])}
         pd_horses = {h["horse_name"].lower(): h for h in postdata_data.get(race_time, {}).get("horses", [])}
+        cc_horses = {h["horse_name"].lower(): h for h in cc_data.get(race_time, {}).get("horses", [])}
 
         # Form data is keyed by race_time from the form parser
         form_horses = {}
@@ -590,18 +595,24 @@ def merge_race_data(
         all_horse_names = sorted(set(
             list(or_horses.keys()) + list(ts_horses.keys()) +
             list(spot_horses.keys()) + list(pd_horses.keys()) +
-            list(form_horses.keys())
+            list(form_horses.keys()) + list(cc_horses.keys())
         ))
 
         race_info = (
             or_data.get(race_time, {}).get("race_info", "") or
-            ts_data.get(race_time, {}).get("race_info", "")
+            ts_data.get(race_time, {}).get("race_info", "") or
+            cc_data.get(race_time, {}).get("race_info", "")
         )
 
         # Postdata selections
         pd_race = postdata_data.get(race_time, {})
         postdata_pick = pd_race.get("postdata_pick", "")
         topspeed_pick = pd_race.get("topspeed_pick", "")
+
+        # Colour Card race-level data
+        cc_race = cc_data.get(race_time, {})
+        cc_betting_forecast = cc_race.get("betting_forecast", "")
+        cc_spotlight_verdict = cc_race.get("spotlight_verdict", "")
 
         horses = []
         for name_key in all_horse_names:
@@ -618,6 +629,34 @@ def merge_race_data(
 
             # Merge Postdata flags
             pd_matched = _merge_source(horse, pd_horses, name_key, {"horse_name"})
+
+            # Merge Colour Card data (jockey, trainer, form string, RPR, C/D flags)
+            cc_h = cc_horses.get(name_key)
+            if not cc_h:
+                for k, v in cc_horses.items():
+                    if _fuzzy_match(name_key, k):
+                        cc_h = v
+                        break
+            if cc_h:
+                # Only set jockey/trainer if not already set from other sources
+                if not horse.get("jockey"):
+                    horse["jockey"] = cc_h.get("jockey", "")
+                if not horse.get("trainer"):
+                    horse["trainer"] = cc_h.get("trainer", "")
+                horse["jockey_claim"] = cc_h.get("jockey_claim")
+                horse["form_string"] = cc_h.get("form_string", "")
+                horse["stall"] = cc_h.get("stall")
+                horse["days_since_last_run"] = cc_h.get("days_since_last_run")
+                horse["age"] = cc_h.get("age")
+                horse["headgear_cc"] = cc_h.get("headgear_cc", "")
+                horse["breeding"] = cc_h.get("breeding", "")
+                horse["course_winner_cc"] = cc_h.get("course_winner_cc", False)
+                horse["dist_winner_cc"] = cc_h.get("dist_winner_cc", False)
+                horse["cd_winner_cc"] = cc_h.get("cd_winner_cc", False)
+                horse["bf_flag"] = cc_h.get("bf_flag", False)
+                # cc_rpr is a cross-check against rpr_master from OR
+                if cc_h.get("cc_rpr") and not horse.get("rpr_master"):
+                    horse["rpr_master"] = cc_h["cc_rpr"]
 
             # Merge Form Detailed data
             form_h = form_horses.get(name_key)
@@ -663,6 +702,8 @@ def merge_race_data(
             "race_info": race_info,
             "postdata_pick": postdata_pick,
             "topspeed_pick": topspeed_pick,
+            "betting_forecast": cc_betting_forecast,
+            "spotlight_verdict": cc_spotlight_verdict,
             "horses": horses,
         }
 
@@ -855,7 +896,8 @@ def find_pdfs_in_dir(directory: Path, venue: str, date: str) -> dict:
     date_compact = date.replace("-", "")
     found = {
         "or": None, "ts": None, "spotlight": None,
-        "postdata": None, "form_detailed": [], "form_short": [], "profile": [],
+        "postdata": None, "colour_card": None,
+        "form_detailed": [], "form_short": [], "profile": [],
     }
 
     for f in sorted(directory.glob("*.pdf")):
@@ -867,6 +909,10 @@ def find_pdfs_in_dir(directory: Path, venue: str, date: str) -> dict:
         ptype = info["type"]
         if ptype in ("or", "ts", "spotlight", "postdata"):
             found[ptype] = f
+        elif ptype == "unknown":
+            # F_0012 is classified as unknown — detect by filename
+            if "F_0012" in f.name.upper() or "_0012_" in f.name:
+                found["colour_card"] = f
         elif ptype in ("form_detailed", "form_short", "profile"):
             found[ptype].append(f)
 
@@ -890,6 +936,7 @@ def main():
     # Import new parsers
     from workers.postdata_parser import parse_postdata_pdf
     from workers.form_detailed_parser import parse_form_detailed_pdf
+    from workers.colour_card_parser import parse_colour_card_pdf
 
     # Find PDFs
     if args.dir and args.venue and args.date:
@@ -898,6 +945,7 @@ def main():
         ts_path = pdfs["ts"]
         spot_path = pdfs["spotlight"]
         pd_path = pdfs["postdata"]
+        cc_path = pdfs["colour_card"]
         form_paths = pdfs["form_detailed"]
         venue = args.venue.upper()
         date = args.date
@@ -906,6 +954,7 @@ def main():
         ts_path = args.ts
         spot_path = args.spotlight
         pd_path = args.postdata
+        cc_path = None
         form_paths = args.form or []
         venue = "UNKNOWN"
         date = datetime.now().strftime("%Y-%m-%d")
@@ -918,17 +967,19 @@ def main():
                 date = f"{raw_date[:4]}-{raw_date[4:6]}-{raw_date[6:8]}"
 
     print(f"\n  VÉLØ Racecard Ingestion (7-PDF): {venue} {date}")
-    print(f"  OR:        {or_path or 'NOT FOUND'}")
-    print(f"  TS:        {ts_path or 'NOT FOUND'}")
-    print(f"  Spotlight: {spot_path or 'NOT FOUND'}")
-    print(f"  Postdata:  {pd_path or 'NOT FOUND'}")
-    print(f"  Form:      {len(form_paths)} file(s) found")
+    print(f"  OR:          {or_path or 'NOT FOUND'}")
+    print(f"  TS:          {ts_path or 'NOT FOUND'}")
+    print(f"  Spotlight:   {spot_path or 'NOT FOUND'}")
+    print(f"  Postdata:    {pd_path or 'NOT FOUND'}")
+    print(f"  Colour Card: {cc_path or 'NOT FOUND'}")
+    print(f"  Form:        {len(form_paths)} file(s) found")
 
     # Parse each PDF type
     or_data = parse_or_pdf(or_path) if or_path else {}
     ts_data = parse_ts_pdf(ts_path) if ts_path else {}
     spotlight_data = parse_spotlight_pdf(spot_path) if spot_path else {}
     postdata_data = parse_postdata_pdf(pd_path) if pd_path else {}
+    cc_data = parse_colour_card_pdf(cc_path) if cc_path else {}
 
     # Parse form detailed PDFs (one per race)
     form_data = []
@@ -941,13 +992,14 @@ def main():
 
     print(f"\n  Parsed: OR={len(or_data)} races, TS={len(ts_data)} races, "
           f"Spotlight={len(spotlight_data)} races, Postdata={len(postdata_data)} races, "
-          f"Form={len(form_data)} races")
+          f"ColourCard={len(cc_data)} races, Form={len(form_data)} races")
 
     # Merge all sources
     merged = merge_race_data(
         or_data, ts_data, spotlight_data,
         postdata_data=postdata_data,
         form_data=form_data,
+        cc_data=cc_data,
     )
 
     # Print summary
