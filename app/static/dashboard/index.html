@@ -774,26 +774,755 @@ let activeFilters = { product: 'ALL', tier: 'ALL', exec: 'ALL' };
 
 const MOCK_DATA = {
   meta: {
-    requested_date: new Date().toISOString().slice(0,10),
-    loaded_date:    new Date().toISOString().slice(0,10),
-    source:         'DEMO_MODE',
-    commit_sha:     'demo-build',
+    requested_date: '2026-04-23',
+    loaded_date:    '2026-04-23',
+    source:         'EMBEDDED_CARD',
+    commit_sha:     'ba3c36f',
     date_mismatch:  false,
   },
   verdicts: [
-    { course:'Ascot',      off_time:'14:30', horse:'Seductive Star',    race_id:'R-8821', decision_tier:'A', confidence_level:'high',   velo_prime_prob:0.6814, prob_gap:0.2210, market_deception_score:0.0312, assigned_product:'WIN_ONLY',     execution_allowed:true,  router_reasons:['top_prob','tier_A','gap_clear'] },
-    { course:'Cheltenham', off_time:'15:00', horse:'Iron Curtain',      race_id:'R-8822', decision_tier:'A', confidence_level:'high',   velo_prime_prob:0.6102, prob_gap:0.1950, market_deception_score:0.1450, assigned_product:'WIN_ONLY',     execution_allowed:true,  router_reasons:['top_prob','mds_alert'] },
-    { course:'Newmarket',  off_time:'15:20', horse:'Phantom Light',     race_id:'R-8823', decision_tier:'B', confidence_level:'normal', velo_prime_prob:0.5544, prob_gap:0.1320, market_deception_score:0.0188, assigned_product:'EW_CANDIDATE', execution_allowed:true,  router_reasons:['ew_value','b_tier'] },
-    { course:'Kempton',    off_time:'16:00', horse:'Gold Meridian',     race_id:'R-8824', decision_tier:'B', confidence_level:'normal', velo_prime_prob:0.5201, prob_gap:0.1100, market_deception_score:0.0554, assigned_product:'FRAME_ONLY',   execution_allowed:true,  router_reasons:['frame_signal','warn_mds'] },
-    { course:'Sandown',    off_time:'16:30', horse:'Dark Protocol',     race_id:'R-8825', decision_tier:'C', confidence_level:'low',    velo_prime_prob:0.4890, prob_gap:0.0810, market_deception_score:0.0221, assigned_product:'VISION_ONLY',  execution_allowed:false, router_reasons:['vision_flag','low_conf'] },
-    { course:'Ascot',      off_time:'17:05', horse:'Velvet Override',   race_id:'R-8826', decision_tier:'A', confidence_level:'high',   velo_prime_prob:0.6450, prob_gap:0.1980, market_deception_score:0.0090, assigned_product:'WIN_ONLY',     execution_allowed:true,  router_reasons:['top_prob','tier_A','clean_mds'] },
-    { course:'Newbury',    off_time:'17:30', horse:'Cipher Circuit',    race_id:'R-8827', decision_tier:'B', confidence_level:'normal', velo_prime_prob:0.5330, prob_gap:0.1010, market_deception_score:0.0412, assigned_product:'EW_CANDIDATE', execution_allowed:true,  router_reasons:['ew_value'] },
-    { course:'Windsor',    off_time:'18:00', horse:'Static Frequency',  race_id:'R-8828', decision_tier:'C', confidence_level:'low',    velo_prime_prob:0.4450, prob_gap:0.0550, market_deception_score:0.0280, assigned_product:'PASS',         execution_allowed:false, router_reasons:['below_threshold'] },
-    { course:'Haydock',    off_time:'18:30', horse:'Neural Cascade',    race_id:'R-8829', decision_tier:'D', confidence_level:'low',    velo_prime_prob:0.3910, prob_gap:0.0330, market_deception_score:0.1820, assigned_product:'PASS',         execution_allowed:false, router_reasons:['low_tier','high_mds'] },
-    { course:'Kempton',    off_time:'19:00', horse:'Quantum Edge',      race_id:'R-8830', decision_tier:'A', confidence_level:'high',   velo_prime_prob:0.7201, prob_gap:0.2550, market_deception_score:0.0140, assigned_product:'WIN_ONLY',     execution_allowed:true,  router_reasons:['top_prob','tier_A','best_gap'] },
-    { course:'Cheltenham', off_time:'19:30', horse:'Signal Override',   race_id:'R-8831', decision_tier:'B', confidence_level:'normal', velo_prime_prob:0.5660, prob_gap:0.1200, market_deception_score:0.0670, assigned_product:'FRAME_ONLY',   execution_allowed:false, router_reasons:['frame_signal','exec_blocked'] },
-    { course:'Ascot',      off_time:'20:00', horse:'Zero Horizon',      race_id:'R-8832', decision_tier:'X', confidence_level:'low',    velo_prime_prob:0.3210, prob_gap:0.0110, market_deception_score:0.0050, assigned_product:'PASS',         execution_allowed:false, router_reasons:['tier_X','no_signal'] },
-  ]
+  {
+    "race_id": "rac_11911887",
+    "course": "Perth",
+    "off_time": "1:40",
+    "horse": "Celtic Alliance",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3883,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.3078,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.8147,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11913109",
+    "course": "Beverley",
+    "off_time": "1:52",
+    "horse": "Three No Trumps",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3914,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0228,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.489,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11912030",
+    "course": "Warwick",
+    "off_time": "2:00",
+    "horse": "Testing Patience",
+    "tier": "C",
+    "decision_tier": "C",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2469,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.1063,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "TIER_ROT"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.2963,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11911900",
+    "course": "Perth",
+    "off_time": "2:10",
+    "horse": "Platin Moon",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.286,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0188,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.3894,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11913135",
+    "course": "Beverley",
+    "off_time": "2:22",
+    "horse": "Lauralynn",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.5579,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.1846,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.7896,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11912017",
+    "course": "Warwick",
+    "off_time": "2:30",
+    "horse": "Benign Dictator",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3099,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0193,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.5593,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11940916",
+    "course": "Perth",
+    "off_time": "2:40",
+    "horse": "So Many Roads",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3007,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0177,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.4977,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11913096",
+    "course": "Beverley",
+    "off_time": "2:52",
+    "horse": "Until Dawn",
+    "tier": "C",
+    "decision_tier": "C",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2018,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0137,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "TIER_ROT"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.5132,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11919206",
+    "course": "Warwick",
+    "off_time": "3:00",
+    "horse": "Realta Liath",
+    "tier": "X",
+    "decision_tier": "X",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.1378,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0084,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "DX_GOING_BLOCKER"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.1646,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11911835",
+    "course": "Perth",
+    "off_time": "3:10",
+    "horse": "Westerninthepark",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "normal",
+    "velo_prime_prob": 0.1862,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0184,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.6097,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11913070",
+    "course": "Beverley",
+    "off_time": "3:22",
+    "horse": "Tropez Power",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.196,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0084,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.361,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11919219",
+    "course": "Warwick",
+    "off_time": "3:30",
+    "horse": "Country Mouse",
+    "tier": "X",
+    "decision_tier": "X",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.1473,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0116,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "DX_GOING_BLOCKER"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.3419,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11911848",
+    "course": "Perth",
+    "off_time": "3:40",
+    "horse": "Ned Tanner",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "normal",
+    "velo_prime_prob": 0.2946,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0362,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.8637,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11913122",
+    "course": "Beverley",
+    "off_time": "3:52",
+    "horse": "Freddy Robinson",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3401,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0183,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.9255,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11912069",
+    "course": "Warwick",
+    "off_time": "4:00",
+    "horse": "Lone Soldier",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2629,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0262,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.7809,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11911861",
+    "course": "Perth",
+    "off_time": "4:10",
+    "horse": "Just Dottie",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2105,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.012,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.2406,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11913083",
+    "course": "Beverley",
+    "off_time": "4:22",
+    "horse": "Copper And Five",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2864,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0738,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.989,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11912056",
+    "course": "Warwick",
+    "off_time": "4:30",
+    "horse": "Major Major",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2738,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0168,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.6175,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11911913",
+    "course": "Perth",
+    "off_time": "4:40",
+    "horse": "Gone With The Tide",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2443,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.1017,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "HIGH_DECOY_RISK"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.7749,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11940851",
+    "course": "Beverley",
+    "off_time": "4:52",
+    "horse": "Bantz",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2486,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0276,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.8723,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11937744",
+    "course": "Southwell (AW)",
+    "off_time": "4:57",
+    "horse": "Yazin",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.4939,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0691,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.9498,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11912043",
+    "course": "Warwick",
+    "off_time": "5:02",
+    "horse": "Moonshine Man",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.1724,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0038,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.0777,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11938381",
+    "course": "Dundalk (AW)",
+    "off_time": "5:10",
+    "horse": "Aughlish",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3997,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0977,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.6621,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11911874",
+    "course": "Perth",
+    "off_time": "5:15",
+    "horse": "Jirko",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2199,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0205,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.5968,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11913148",
+    "course": "Beverley",
+    "off_time": "5:25",
+    "horse": "Laser Luck",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3474,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0706,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.7782,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11937770",
+    "course": "Southwell (AW)",
+    "off_time": "5:30",
+    "horse": "Sands Of Seve",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.4846,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0414,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.9828,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11912082",
+    "course": "Warwick",
+    "off_time": "5:35",
+    "horse": "Lion Rose Sivola",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.261,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.1284,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "HIGH_DECOY_RISK"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.2924,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11938394",
+    "course": "Dundalk (AW)",
+    "off_time": "5:45",
+    "horse": "Lady Landhort",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.227,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.009,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.2429,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11937718",
+    "course": "Southwell (AW)",
+    "off_time": "6:00",
+    "horse": "Captain Brett",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3029,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0196,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.8904,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11938407",
+    "course": "Dundalk (AW)",
+    "off_time": "6:15",
+    "horse": "Iryna's Star",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2655,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0081,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.4511,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11937705",
+    "course": "Southwell (AW)",
+    "off_time": "6:30",
+    "horse": "Elsass",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2601,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0146,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.4826,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11938420",
+    "course": "Dundalk (AW)",
+    "off_time": "6:45",
+    "horse": "Mullacash Buzz",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3421,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0829,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.6712,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11937783",
+    "course": "Southwell (AW)",
+    "off_time": "7:00",
+    "horse": "Raspoutine",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3016,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0102,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.5114,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11938433",
+    "course": "Dundalk (AW)",
+    "off_time": "7:15",
+    "horse": "Mendez",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.3311,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.1236,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "HIGH_DECOY_RISK"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.4466,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11937731",
+    "course": "Southwell (AW)",
+    "off_time": "7:30",
+    "horse": "Got The Booty",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2384,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.1012,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.61,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11938446",
+    "course": "Dundalk (AW)",
+    "off_time": "7:45",
+    "horse": "Liberate",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2083,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0155,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.5835,
+    "archetype_label": "Chaos"
+  },
+  {
+    "race_id": "rac_11937757",
+    "course": "Southwell (AW)",
+    "off_time": "8:00",
+    "horse": "On Key",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2113,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0118,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.7034,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11938459",
+    "course": "Dundalk (AW)",
+    "off_time": "8:15",
+    "horse": "Tara Power",
+    "tier": "A",
+    "decision_tier": "A",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.368,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0362,
+    "assigned_product": "VISION_ONLY",
+    "router_reasons": [
+      "UNAUTHORISED_SELECTION"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.7313,
+    "archetype_label": "Structure"
+  },
+  {
+    "race_id": "rac_11937796",
+    "course": "Southwell (AW)",
+    "off_time": "8:30",
+    "horse": "Fircombe Hall",
+    "tier": "B",
+    "decision_tier": "B",
+    "confidence_level": "low",
+    "velo_prime_prob": 0.2808,
+    "prob_gap": 0.0,
+    "market_deception_score": 0.0173,
+    "assigned_product": "PASS",
+    "router_reasons": [
+      "WEAK_MARGIN"
+    ],
+    "execution_allowed": false,
+    "place_prob": 0.9727,
+    "archetype_label": "Structure"
+  }
+]
 };
 
 async function loadCard() {

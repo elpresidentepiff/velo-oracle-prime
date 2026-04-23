@@ -33,6 +33,7 @@ class Settings(BaseSettings):
 
     # CORS — accepts plain string ("*"), comma-separated string, or JSON list
     CORS_ORIGINS: list[str] | str = ["*"]
+    CORS_ALLOW_CREDENTIALS: bool = True
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
