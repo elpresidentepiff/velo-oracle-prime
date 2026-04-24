@@ -2,6 +2,8 @@
 
 import pytest
 import pandas as pd
+
+pytest.importorskip("great_expectations", reason="great_expectations not installed")
 from data_quality.gx_context import get_gx_context, create_races_suite, create_runners_suite
 
 
