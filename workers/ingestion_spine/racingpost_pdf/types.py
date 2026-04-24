@@ -30,13 +30,13 @@ class Runner(BaseModel):
     sex: str | None = None
     weight: str | None = None
 
-    # Days since last run (NOT age!)
-    days_since_run: int | None = Field(None, description="Days since last run (separate from age)")
+    # Days since last run
+    days_since_run: int | None = Field(None, description="Days since last run")
 
     # Ratings
     or_rating: int | None = Field(None, description="Official Rating")
     rpr: int | None = Field(None, description="Racing Post Rating")
-    ts: int | None = Field(None, description="Timeform Speed figure")
+    ts: int | None = Field(None, description="Topspeed Rating")
 
     # People
     jockey: str | None = None
@@ -47,6 +47,15 @@ class Runner(BaseModel):
     draw: int | None = None
     headgear: str | None = None
     form_figures: str | None = None
+    
+    # Plot Intelligence
+    comment: str | None = Field(None, description="Spotlight prose comment")
+    postdata_pick: bool = False
+    topspeed_pick: bool = False
+    best_winning_life: int | None = Field(None, description="Highest OR horse has won off")
+    or_delta_to_best_win: int | None = Field(None, description="Today OR - Best Winning Life")
+    plot_conviction: float = Field(0.0, description="Final calculated plot score 0.0-1.0")
+    star_rating: int = Field(0, description="0-3 stars based on plot conviction")
 
     # Raw data from source
     raw: dict[str, Any] = Field(default_factory=dict)
@@ -65,16 +74,17 @@ class Race(BaseModel):
     race_name: str | None = None
     race_type: str | None = None
 
-    # Distance (canonical source of truth)
+    # Distance
     distance_text: str = Field(..., description="Original distance text from PDF")
     distance_yards: int | None = Field(None, description="Canonical distance in yards")
-    distance_furlongs: float | None = Field(None, description="Distance in furlongs (derived)")
-    distance_meters: int | None = Field(None, description="Distance in meters (derived)")
+    distance_furlongs: float | None = Field(None, description="Distance in furlongs")
+    distance_meters: int | None = Field(None, description="Distance in meters")
 
     # Other race attributes
     class_band: str | None = None
     going: str | None = None
     prize: str | None = None
+    spotlight_verdict: str | None = None
 
     # Runners
     runners: list[Runner] = Field(default_factory=list)
@@ -112,7 +122,7 @@ class ParseError(BaseModel):
 
     severity: str = Field(..., description="error | warning | info")
     message: str
-    location: str | None = Field(None, description="Where in PDF (page, race, etc.)")
+    location: str | None = Field(None, description="Where in PDF")
     raw_context: str | None = Field(None, description="Raw text context")
 
 
