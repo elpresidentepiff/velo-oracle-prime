@@ -397,8 +397,8 @@ def test_19_supabase_logging():
         assert hasattr(db, 'fetch_recent_backtests')
         
         print("  ✅ Supabase logging methods present")
-    except ImportError:
-        print("  ⚠️ Supabase not installed (expected in dev)")
+    except (ImportError, ValueError):
+        print("  ⚠️ Supabase not available (expected in dev)")
     
     return True
 

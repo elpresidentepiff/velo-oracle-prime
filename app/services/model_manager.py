@@ -102,11 +102,17 @@ class ModelManager:
         if not model_path.exists():
             logger.warning("No SQPE model found at models/sqpe_v17/ or models/sqpe_v16/ — returning None")
             return None
-        model = joblib.load(model_path)
+        raw_model = joblib.load(model_path)
         version = "v17" if "v17" in str(model_path) else "v16"
         self.model_versions["sqpe"] = version
         logger.info(f"SQPE {version} loaded from {model_path}")
-        return model
+        return {
+            "name": "SQPE",
+            "version": version,
+            "loaded": True,
+            "type": "gradient_boosting",
+            "model": raw_model,
+        }
 
     def load_trainer_intent(self) -> dict[str, Any]:
         """
@@ -211,9 +217,10 @@ class ModelManager:
         Returns:
             Win probability [0, 1]
         """
-        model = self.get_model("sqpe")
-        if model is None:
+        model_entry = self.get_model("sqpe")
+        if model_entry is None:
             return 0.5
+        model = model_entry["model"] if isinstance(model_entry, dict) else model_entry
 
         # Build feature vector from raw dicts if provided, else use features dict
         if runner is not None and race is not None:

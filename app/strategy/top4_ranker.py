@@ -124,9 +124,20 @@ def calculate_runner_score(profile: any, race_ctx: dict) -> ScoreBreakdown:
     # Smaller fields = higher scores (less competition)
     field_score = max(0.0, (20 - field_size) / 20.0) * 0.10
 
-    # Phase 2A: Stability modifier — archived (v11 legacy, stability_clusters.py moved to archive/)
+    # Phase 2A: Stability modifier — inline cluster scoring
     stability_modifier = 0.0
     stability_reason = "not_available"
+    if isinstance(profile, dict) and "stability_profile" in profile:
+        sp = profile["stability_profile"]
+        cluster_id = sp.get("cluster_id", "") if isinstance(sp, dict) else ""
+        if cluster_id:
+            stability_reason = cluster_id
+            if "STABLE_HIGH" in cluster_id or "IMPROVING" in cluster_id:
+                stability_modifier = 0.10
+            elif "STABLE" in cluster_id:
+                stability_modifier = 0.05
+            elif "UNSTABLE" in cluster_id or "DECLINING" in cluster_id:
+                stability_modifier = -0.05
 
     # Phase 2A: Historical stats modifier (±0.05)
     historical_modifier = 0.0

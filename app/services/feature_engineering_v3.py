@@ -487,6 +487,11 @@ class FeatureEngineerV3:
         }
 
 
+def engineer_features_v3(df: pd.DataFrame) -> pd.DataFrame:
+    """Functional interface — creates a FeatureEngineerV3 and engineers all features."""
+    return FeatureEngineerV3().engineer_all_features(df)
+
+
 if __name__ == "__main__":
     # Test feature engineering
     print("=" * 60)

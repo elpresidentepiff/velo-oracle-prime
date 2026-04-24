@@ -32,8 +32,10 @@ class FeaturePipeline:
     Wires V12FeatureEngineer into the system with persistent storage.
     """
 
-    def __init__(self, output_dir: str = "/data/features/v12"):
+    def __init__(self, output_dir: str | None = None):
         self.engineer = V12FeatureEngineer()
+        if output_dir is None:
+            output_dir = str(Path(__file__).parent.parent.parent / "data" / "features" / "v12")
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.version = FEATURE_VERSION
@@ -154,10 +156,12 @@ class FeaturePipeline:
         # Convert to DataFrame
         df = pd.DataFrame(runners)
 
-        # Add race-level fields
-        for key in ["course", "date", "dist", "going", "class", "type"]:
+        # Add race-level fields (race_id is required by V12 groupby operations)
+        for key in ["race_id", "course", "date", "dist", "going", "class", "type"]:
             if key in race_obj:
                 df[key] = race_obj[key]
+        if "race_id" not in df.columns:
+            df["race_id"] = race_obj.get("id", "unknown")
 
         # Add market data if available
         if market_obj:
