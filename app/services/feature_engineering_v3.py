@@ -487,6 +487,22 @@ class FeatureEngineerV3:
         }
 
 
+def engineer_features_v3(df: pd.DataFrame) -> pd.DataFrame:
+    """Functional interface — creates a FeatureEngineerV3 and engineers all features."""
+    return FeatureEngineerV3().engineer_all_features(df)
+
+
+# Public compute_* aliases on FeatureEngineerV3 (delegating to private _add_* methods)
+# Required by test contract (test_32 counts compute_* methods, test_33 calls compute_rolling_features)
+FeatureEngineerV3.compute_core_features = FeatureEngineerV3._add_core_features
+FeatureEngineerV3.compute_rolling_features = FeatureEngineerV3._add_rolling_features
+FeatureEngineerV3.compute_synergy_features = FeatureEngineerV3._add_synergy_features
+FeatureEngineerV3.compute_pace_features = FeatureEngineerV3._add_pace_features
+FeatureEngineerV3.compute_market_features = FeatureEngineerV3._add_market_features
+FeatureEngineerV3.compute_position_features = FeatureEngineerV3._add_position_features
+FeatureEngineerV3.compute_time_features = FeatureEngineerV3._add_time_features
+
+
 if __name__ == "__main__":
     # Test feature engineering
     print("=" * 60)

@@ -5,7 +5,7 @@ Core configuration management for VÉLØ Oracle API
 import json
 from typing import Any
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,6 +33,7 @@ class Settings(BaseSettings):
 
     # CORS — accepts plain string ("*"), comma-separated string, or JSON list
     CORS_ORIGINS: list[str] | str = ["*"]
+    CORS_ALLOW_CREDENTIALS: bool = False
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
@@ -49,6 +50,15 @@ class Settings(BaseSettings):
             # Comma-separated or plain wildcard
             return [item.strip() for item in v.split(",") if item.strip()]
         return ["*"]
+
+    @model_validator(mode="after")
+    def reject_wildcard_cors_with_credentials(self) -> "Settings":
+        if self.API_ENV == "production" and self.CORS_ALLOW_CREDENTIALS and "*" in (self.CORS_ORIGINS or []):
+            raise ValueError(
+                "CORS_ALLOW_CREDENTIALS=True is incompatible with wildcard CORS_ORIGINS=['*']. "
+                "Specify explicit allowed origins."
+            )
+        return self
 
     # Logging
     LOG_LEVEL: str = Field(default="INFO")

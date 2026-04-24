@@ -125,7 +125,8 @@ async def trpc_create_batch(request: Request):
         return format_trpc_response(serialize_result(result))
 
     except HTTPException as e:
-        return format_trpc_error(e.detail, "BAD_REQUEST")
+        code = "INTERNAL_SERVER_ERROR" if e.status_code >= 500 else "BAD_REQUEST"
+        return format_trpc_error(e.detail, code)
     except Exception as e:
         logger.error(f"tRPC createBatch error: {e}")
         return format_trpc_error(str(e), "INTERNAL_SERVER_ERROR")

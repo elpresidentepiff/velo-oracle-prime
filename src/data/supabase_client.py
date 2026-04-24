@@ -470,6 +470,46 @@ class SupabaseClient:
             logger.error(f"❌ Supabase health check failed: {e}")
             return False
 
+    def log_backtest_summary(self, summary: dict) -> Optional[dict]:
+        """Store a backtest summary run record."""
+        try:
+            result = self.client.table("pipeline_runs").insert({
+                "run_type": "backtest",
+                "summary": summary,
+            }).execute()
+            return result.data[0] if result.data else None
+        except Exception as e:
+            logger.warning(f"log_backtest_summary failed: {e}")
+            return None
+
+    def log_prediction_summary(self, summary: dict) -> Optional[dict]:
+        """Store a prediction summary record."""
+        try:
+            result = self.client.table("pipeline_runs").insert({
+                "run_type": "prediction",
+                "summary": summary,
+            }).execute()
+            return result.data[0] if result.data else None
+        except Exception as e:
+            logger.warning(f"log_prediction_summary failed: {e}")
+            return None
+
+    def fetch_recent_backtests(self, limit: int = 10) -> list:
+        """Fetch recent backtest runs."""
+        try:
+            result = (
+                self.client.table("pipeline_runs")
+                .select("*")
+                .eq("run_type", "backtest")
+                .order("created_at", desc=True)
+                .limit(limit)
+                .execute()
+            )
+            return result.data or []
+        except Exception as e:
+            logger.warning(f"fetch_recent_backtests failed: {e}")
+            return []
+
 
 # Singleton instance
 _supabase_client: Optional[SupabaseClient] = None

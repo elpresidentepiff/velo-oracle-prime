@@ -32,14 +32,14 @@ import logging
 import argparse
 import traceback
 import requests
-from datetime import datetime, date, timedelta
+from datetime import UTC, datetime, date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from dotenv import load_dotenv
-load_dotenv(ROOT / ".env")
+from app.core.runtime_env import load_optional_env_file  # noqa: E402
+load_optional_env_file(ROOT / ".env")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -254,7 +254,7 @@ def close_pipeline_run(run_id, status, stats, error_msg=None, error_trace=None):
         return
     patch = {
         "run_state":   "completed",
-        "finished_at": datetime.utcnow().isoformat() + "Z",
+        "finished_at": datetime.now(UTC).isoformat() + "Z",
         "status":      status,
         "races_processed":   stats.get("races_ok", 0),
         "runners_processed": stats.get("runners_ok", 0),
@@ -331,7 +331,7 @@ def upsert_horse_profile(runner, race_date, run_id, stats):
         "dam_name": runner.get("dam", ""), "damsire_id": runner.get("damsire_id", ""),
         "damsire_name": runner.get("damsire", ""), "silk_url": runner.get("silk_url", ""),
         "first_seen_date": race_date,
-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
+        "last_updated_at": datetime.now(UTC).isoformat() + "Z",
     }, run_id=run_id, stats=stats)
 
 
@@ -343,7 +343,7 @@ def upsert_trainer_profile(runner, race_date, run_id, stats):
         "id": tid, "name": runner.get("trainer", ""),
         "location": runner.get("trainer_location", ""),
         "first_seen_date": race_date,
-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
+        "last_updated_at": datetime.now(UTC).isoformat() + "Z",
     }, run_id=run_id, stats=stats)
 
 
@@ -354,7 +354,7 @@ def upsert_jockey_profile(runner, race_date, run_id, stats):
     supabase_upsert("jockey_profiles", {
         "id": jid, "name": runner.get("jockey", ""),
         "first_seen_date": race_date,
-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
+        "last_updated_at": datetime.now(UTC).isoformat() + "Z",
     }, run_id=run_id, stats=stats)
 
 
@@ -365,7 +365,7 @@ def upsert_owner_profile(runner, race_date, run_id, stats):
     supabase_upsert("owner_profiles", {
         "id": oid, "name": runner.get("owner", ""),
         "first_seen_date": race_date,
-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
+        "last_updated_at": datetime.now(UTC).isoformat() + "Z",
     }, run_id=run_id, stats=stats)
 
 
@@ -377,7 +377,7 @@ def upsert_course_profile(race, run_id, stats):
         "id": cid, "name": race.get("course", ""),
         "region": race.get("region", ""), "surface": race.get("surface", ""),
         "country": race.get("region", ""),
-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
+        "last_updated_at": datetime.now(UTC).isoformat() + "Z",
     }, run_id=run_id, stats=stats)
 
 
@@ -450,7 +450,7 @@ def upsert_runner_race_fact(race, runner, race_date, run_id, stats):
         "quotes_text": runner.get("quotes"),
         "betting_forecast": race.get("betting_forecast"),
         "morning_odds_dec": morning_odds,
-        "updated_at": datetime.utcnow().isoformat() + "Z",
+        "updated_at": datetime.now(UTC).isoformat() + "Z",
     }
     supabase_upsert("runner_race_facts", row, conflict_keys=["race_id", "horse_id"], run_id=run_id, stats=stats)
 
@@ -576,7 +576,7 @@ def reconcile_results_for_date(target_date: str, known_race_ids: set, run_id, st
                         "in_running_comment":  runner.get("comment"),
                         "prize_won": safe_float(runner.get("prize")),
                         "is_winner": pos_int == 1,
-                        "updated_at": datetime.utcnow().isoformat() + "Z",
+                        "updated_at": datetime.now(UTC).isoformat() + "Z",
                     })
 
             # Batch write runner_results

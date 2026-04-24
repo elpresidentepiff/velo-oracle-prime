@@ -369,11 +369,11 @@ def main():
             no_result.append(race_id)
             continue
 
-        # Gate 2: horse name not from velo_verdicts DB → reject to prevent
-        #         fallback-name flip (local JSON may not match canonical selection)
+        # Gate 2: name display only — scoring uses horse_id (above), so fallback
+        #         names are safe. Only block if we have neither id nor name.
         pick_from_db = info.get("from_db", False)
-        if not pick_from_db:
-            print(f"  [SKIP] {race_id}: pick name not from velo_verdicts — no_result (fallback source rejected)")
+        if not pick_from_db and not predicted_horse_id:
+            print(f"  [SKIP] {race_id}: no horse_id and no fallback name — unresolvable")
             no_result.append(race_id)
             continue
 

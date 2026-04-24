@@ -20,36 +20,36 @@ Usage:
 Railway cron command:
     python scripts/run_prime_today.py
 """
-import sys
+
+import argparse
+import base64
+import json
+import logging
 import os
 import re
-import json
-import base64
-import argparse
-import logging
-import uuid
-import urllib.request
+import sys
 import urllib.error
-from urllib.parse import urlencode
+import urllib.request
+import uuid
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from urllib.parse import urlencode
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from app.core.runtime_env import (
+from app.core.runtime_env import (  # noqa: E402
     load_optional_env_file,
     resolve_runtime_environment,
     resolve_supabase_service_key,
     resolve_supabase_url,
-    resolve_telegram_settings,
     utc_now,
 )
 
 log = logging.getLogger("velo.run_prime")
 
-TODAY   = datetime.now().strftime("%Y_%m_%d")
+TODAY = datetime.now().strftime("%Y_%m_%d")
 TODAY_DISPLAY = datetime.now().strftime("%d %b %Y")
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -59,6 +59,8 @@ CANONICAL_ENDPOINT = "https://velo-oracle-production.up.railway.app"
 RACING_USER = os.getenv("RACING_API_USERNAME", "")
 RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
 RACING_BASE = "https://api.theracingapi.com/v1"
+
+
 # User-Agent required — Cloudflare blocks requests without it
 def _racing_headers() -> dict[str, str]:
     racing_user = os.getenv("RACING_API_USERNAME", "")
@@ -77,8 +79,7 @@ def tg(text: str) -> bool:
     try:
         body = json.dumps({"chat_id": CHAT_ID, "text": text[:4096]}).encode()
         req = urllib.request.Request(
-            f"https://api.telegram.org/bot{TOKEN}/sendMessage",
-            data=body, headers={"Content-Type": "application/json"}
+            f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=body, headers={"Content-Type": "application/json"}
         )
         with urllib.request.urlopen(req, timeout=10) as resp:
             if resp.status != 200:
@@ -163,9 +164,7 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 
     # Cache absent — fetch directly from Racing API
     if not RACING_USER or not RACING_PASS:
-        raise RuntimeError(
-            "No cached racecards and RACING_API_USERNAME/PASSWORD not set — cannot fetch"
-        )
+        raise RuntimeError("No cached racecards and RACING_API_USERNAME/PASSWORD not set — cannot fetch")
     qs = urlencode({"day": "today"}) if date_tag == TODAY else urlencode({"date": date_str})
     url = f"{RACING_BASE}/racecards/standard?{qs}"
     req = urllib.request.Request(url, headers=RACING_HEADERS)
@@ -216,6 +215,7 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 #   favourite_trap_risk != normal → "favourite trap risk"
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def effective_confidence(prob: float) -> str:
     """
     Recompute confidence from the final normalized velo_prime_prob.
@@ -262,12 +262,14 @@ def _apply_archetype(
     """
     try:
         from src.intelligence.race_archetypes import RaceArchetypeClassifier
-        prob       = float(top.get("velo_prime_prob") or 0)
+
+        prob = float(top.get("velo_prime_prob") or 0)
         separation = prob - float(sec_prob or 0)
-        archetype  = RaceArchetypeClassifier().classify(top, preds, tier, separation)
+        archetype = RaceArchetypeClassifier().classify(top, preds, tier, separation)
         top.update(archetype.to_dict())
     except Exception as e:
         import logging
+
         logging.getLogger("velo.run_prime").warning("Archetype classification failed: %s", e)
 
 
@@ -292,15 +294,11 @@ def _apply_tie_v3_gate(
 
     Does NOT alter velo_prime_prob or ensemble ranking.
     """
-<<<<<<< HEAD
-<<<<<<< HEAD
     # ── PLOT UPGRADE LOGIC ──────────────────────────────────────────────────
-    # Extract PDF intel from the 'top' horse (attached earlier in main loop)
-    # This makes the PDF intelligence a PRIMARY decision factor.
     pdf_intel = top.get("pdf_intel", {})
     plot_score = float(pdf_intel.get("plot_conviction", 0.0))
     or_delta = float(pdf_intel.get("or_delta_to_best_win", 0.0))
-    
+
     if plot_score >= 0.85:
         if tier == "B":
             tier = "A"
@@ -312,65 +310,50 @@ def _apply_tie_v3_gate(
         if tier == "C":
             tier = "B"
             reasons.append(f"PLOT_UPGRADE:INTENT({plot_score:.2f}|OR:{or_delta})")
-
-=======
->>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
-=======
->>>>>>> feature/v10-launch
     try:
         from src.intelligence.tie_v3_gate import (
-            MIN_SIGNALS_FOR_UPGRADE,
-            MIN_SIGNALS_FOR_EW_FLAG,
             LONGSHOT_SP_THRESHOLD,
+            MIN_SIGNALS_FOR_EW_FLAG,
+            MIN_SIGNALS_FOR_UPGRADE,
         )
 
         # ── Upgrade path — top pick only ──────────────────────────────────────
-        n       = top.get("tie_gate_signal_count", 0)
+        n = top.get("tie_gate_signal_count", 0)
         signals = top.get("tie_gate_signals", [])
-        sp_top  = float(top.get("sp_dec") or 0)
-        is_fav  = bool(top.get("is_fav"))
+        sp_top = float(top.get("sp_dec") or 0)
+        is_fav = bool(top.get("is_fav"))
 
-        top["tie_gate_fires"]        = False
+        top["tie_gate_fires"] = False
         top["tie_gate_tier_upgrade"] = None
-        top["tie_gate_ew_flag"]      = False
+        top["tie_gate_ew_flag"] = False
 
         if n >= MIN_SIGNALS_FOR_UPGRADE and tier in ("C", "D"):
             upgraded = "B" if tier == "C" else "C"
-            top["tie_gate_fires"]        = True
+            top["tie_gate_fires"] = True
             top["tie_gate_tier_upgrade"] = upgraded
-            reasons.append(
-                f"TIE v3: {n} intent signals → upgrade {tier}→{upgraded} "
-                f"[{', '.join(signals)}]"
-            )
+            reasons.append(f"TIE v3: {n} intent signals → upgrade {tier}→{upgraded} [{', '.join(signals)}]")
             tier = upgraded
 
         # ── EW path — top pick ────────────────────────────────────────────────
-        if (n >= MIN_SIGNALS_FOR_EW_FLAG
-                and sp_top > LONGSHOT_SP_THRESHOLD
-                and not is_fav):
-            top["tie_gate_fires"]   = True
+        if n >= MIN_SIGNALS_FOR_EW_FLAG and sp_top > LONGSHOT_SP_THRESHOLD and not is_fav:
+            top["tie_gate_fires"] = True
             top["tie_gate_ew_flag"] = True
             if not top.get("tie_gate_tier_upgrade"):
-                reasons.append(
-                    f"TIE v3 EW: {n} signals + SP {sp_top:.1f} → each-way angle"
-                )
+                reasons.append(f"TIE v3 EW: {n} signals + SP {sp_top:.1f} → each-way angle")
 
         # ── EW scan — rest of field (observability only, no tier change) ──────
         for runner in preds[1:]:
-            rn  = runner.get("tie_gate_signal_count", 0)
+            rn = runner.get("tie_gate_signal_count", 0)
             rsp = float(runner.get("sp_dec") or 0)
             rfav = bool(runner.get("is_fav"))
-            runner["tie_gate_fires"]   = False
-            runner["tie_gate_ew_flag"] = (
-                rn >= MIN_SIGNALS_FOR_EW_FLAG
-                and rsp > LONGSHOT_SP_THRESHOLD
-                and not rfav
-            )
+            runner["tie_gate_fires"] = False
+            runner["tie_gate_ew_flag"] = rn >= MIN_SIGNALS_FOR_EW_FLAG and rsp > LONGSHOT_SP_THRESHOLD and not rfav
             if runner["tie_gate_ew_flag"]:
                 runner["tie_gate_fires"] = True
 
     except Exception as e:
         import logging
+
         logging.getLogger("velo.run_prime").warning("TIE v3 gate policy failed: %s", e)
 
     return tier, reasons
@@ -391,19 +374,16 @@ def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> t
         Number of runners in the race (len(preds)).  Required to guard against
         single-runner races where gap == prob, making every gap threshold trivial.
     """
-    prob      = float(top.get("velo_prime_prob") or 0)
-    place     = float(top.get("place_prob") or 0)
-    longshot  = float(top.get("longshot_prob") or 0)
-    sp_dec    = float(top.get("sp_dec") or 0)
-    improve   = float(top.get("improvement_score") or 0)
-    mkt_dec   = top.get("market_deception_score")
-    release   = float(top.get("release_day_prob") or 0)
+    prob = float(top.get("velo_prime_prob") or 0)
+    place = float(top.get("place_prob") or 0)
+    longshot = float(top.get("longshot_prob") or 0)
+    sp_dec = float(top.get("sp_dec") or 0)
+    improve = float(top.get("improvement_score") or 0)
     # macro_chaos_mode may be None (failed) or bool (known). Treat None as unknown → force chaos.
     _chaos_raw = top.get("macro_chaos_mode")
-    chaos_m   = bool(_chaos_raw) if _chaos_raw is not None else True
-    trap      = (top.get("favourite_trap_risk") or "normal").lower()
-    conf      = (top.get("confidence_level") or "low").lower()
-    gap       = prob - second_prob
+    chaos_m = bool(_chaos_raw) if _chaos_raw is not None else True
+    trap = (top.get("favourite_trap_risk") or "normal").lower()
+    gap = prob - second_prob
 
     # ── Pre-condition blockers ────────────────────────────────────────────────
     # These two checks run before any tier logic and force X-CHAOS hard.
@@ -411,7 +391,7 @@ def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> t
     # 1. Single-runner race: gap == prob is mathematically guaranteed —
     #    every A/B gap threshold becomes trivially true. Model has no real signal.
     if field_size == 1:
-        return "X", [f"single-runner race (field_size=1) — gap is meaningless, no model signal"]
+        return "X", ["single-runner race (field_size=1) — gap is meaningless, no model signal"]
 
     # 2. Horse state tagging failed: doctrine signals (days_since_run, trainer timing,
     #    etc.) are absent. A/B decisions require horse state to be valid.
@@ -439,10 +419,12 @@ def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> t
     # place ≥ 0.35), race-shape signals (tight gap, outsider pressure) should not
     # bury it in X-CHAOS. macro_chaos_mode is market-wide — it stays a hard block.
     strong_escape = prob >= 0.18 and place >= 0.35
-    if (prob < 0.10
-            or (gap < 0.015 and place < 0.40 and not strong_escape)
-            or (longshot_trigger and not strong_escape)
-            or chaos_m):
+    if (
+        prob < 0.10
+        or (gap < 0.015 and place < 0.40 and not strong_escape)
+        or (longshot_trigger and not strong_escape)
+        or chaos_m
+    ):
         if prob < 0.10:
             reasons.append(f"flat field — top prob {prob:.3f} below threshold")
         if gap < 0.015 and place < 0.40:
@@ -458,8 +440,7 @@ def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> t
     reasons.append(f"win {prob:.3f} | gap {gap:.3f} | place {place:.3f}")
 
     # ── A-STRIKE ──────────────────────────────────────────────────────────────
-    if (prob >= 0.32 and gap >= 0.08 and place >= 0.52
-            and eff_conf not in ("low",) and trap != "high"):
+    if prob >= 0.32 and gap >= 0.08 and place >= 0.52 and eff_conf not in ("low",) and trap != "high":
         reasons.append(f"strong separation gap {gap:.3f}")
         reasons.append(f"place floor solid {place:.3f}")
         if improve > 0.20:
@@ -468,10 +449,9 @@ def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> t
 
     # ── B-PLAYABLE ────────────────────────────────────────────────────────────
     b_place_ok = place >= 0.45
-    b_gap_ok   = gap >= 0.08
-    b_improve  = improve >= 0.18
-    if (prob >= 0.15 and gap >= 0.03 and eff_conf not in ("low",)
-            and (b_place_ok or b_gap_ok or b_improve)):
+    b_gap_ok = gap >= 0.08
+    b_improve = improve >= 0.18
+    if prob >= 0.15 and gap >= 0.03 and eff_conf not in ("low",) and (b_place_ok or b_gap_ok or b_improve):
         if b_gap_ok:
             reasons.append(f"field separation gap {gap:.3f}")
         if b_place_ok:
@@ -487,7 +467,7 @@ def synthesize_decision(top: dict, second_prob: float, field_size: int = 0) -> t
         if place >= 0.55:
             reasons.append(f"place floor {place:.3f} — each-way angle possible")
         if prob >= 0.13 and gap >= 0.02:
-            reasons.append(f"some win signal but not enough separation")
+            reasons.append("some win signal but not enough separation")
         return "C", reasons
 
     # ── D-NO BET ──────────────────────────────────────────────────────────────
@@ -501,7 +481,7 @@ def _add_secondary_signals(top: dict, reasons: list) -> None:
     """Append market/intent signals to an existing reason list (in-place)."""
     mkt_dec = top.get("market_deception_score")
     release = float(top.get("release_day_prob") or 0)
-    trap    = (top.get("favourite_trap_risk") or "normal").lower()
+    trap = (top.get("favourite_trap_risk") or "normal").lower()
     if mkt_dec is not None:
         m = float(mkt_dec)
         if m > 0.55:
@@ -514,16 +494,15 @@ def _add_secondary_signals(top: dict, reasons: list) -> None:
         reasons.append(f"favourite trap risk: {trap}")
 
 
-_SB_URL  = resolve_supabase_url()
-_SB_KEY  = resolve_supabase_service_key()
+_SB_URL = resolve_supabase_url()
+_SB_KEY = resolve_supabase_service_key()
 _SB_HDRS = {
     "apikey": _SB_KEY,
     "Authorization": f"Bearer {_SB_KEY}",
     "Accept": "application/json",
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
     """Attach RPDC tags to the top pick from an already loaded row."""
     if not row:
@@ -531,23 +510,21 @@ def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
         return
 
     tags = row.get("rpdc_tags") or []
-    top["rpdc_lookup_status"]    = "attached"
-    top["rpdc_lookup_detail"]    = None
-    top["rpdc_release_score"]    = row.get("rpdc_release_score", 0)
+    top["rpdc_lookup_status"] = "attached"
+    top["rpdc_lookup_detail"] = None
+    top["rpdc_release_score"] = row.get("rpdc_release_score", 0)
     top["rpdc_cash_window_flag"] = bool(row.get("rpdc_cash_window_flag", False))
-    top["rpdc_tag_count"]        = int(row.get("rpdc_tag_count", 0))
-    top["rpdc_tags"]             = tags
-    
-    # Primary tag = first CASH_WINDOW if present, else highest-scored tag
+    top["rpdc_tag_count"] = int(row.get("rpdc_tag_count", 0))
+    top["rpdc_tags"] = tags
+
     if "CASH_WINDOW" in tags:
         top["rpdc_primary_tag"] = "CASH_WINDOW"
     elif tags:
         top["rpdc_primary_tag"] = tags[0]
     else:
         top["rpdc_primary_tag"] = None
-=======
-=======
->>>>>>> feature/v10-launch
+
+
 def _attach_rpdc(top: dict, race_id: str) -> None:
     """Look up RPDC tags for the top pick and attach as observability fields.
     Never raises — failures are explicit in rpdc_lookup_status."""
@@ -569,14 +546,16 @@ def _attach_rpdc(top: dict, race_id: str) -> None:
             if len(rows) > 1:
                 top["rpdc_lookup_status"] = "ambiguous_latest"
                 top["rpdc_lookup_detail"] = f"{len(rows)} rows matched; used newest by generated_at"
-                log.warning("RPDC lookup ambiguous for race_id=%s horse_id=%s; using newest generated_at row", race_id, horse_id)
+                log.warning(
+                    "RPDC lookup ambiguous for race_id=%s horse_id=%s; using newest generated_at row", race_id, horse_id
+                )
             else:
                 top["rpdc_lookup_status"] = "attached"
                 top["rpdc_lookup_detail"] = None
-            top["rpdc_release_score"]    = row.get("rpdc_release_score", 0)
+            top["rpdc_release_score"] = row.get("rpdc_release_score", 0)
             top["rpdc_cash_window_flag"] = bool(row.get("rpdc_cash_window_flag", False))
-            top["rpdc_tag_count"]        = int(row.get("rpdc_tag_count", 0))
-            top["rpdc_tags"]             = tags
+            top["rpdc_tag_count"] = int(row.get("rpdc_tag_count", 0))
+            top["rpdc_tags"] = tags
             # Primary tag = first CASH_WINDOW if present, else highest-scored tag
             if "CASH_WINDOW" in tags:
                 top["rpdc_primary_tag"] = "CASH_WINDOW"
@@ -589,34 +568,29 @@ def _attach_rpdc(top: dict, race_id: str) -> None:
     except Exception as exc:
         log.warning("RPDC lookup failed for race_id=%s horse_id=%s: %s", race_id, horse_id, exc)
         _rpdc_defaults(top, status="lookup_failed", detail=str(exc))
-<<<<<<< HEAD
->>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
-=======
->>>>>>> feature/v10-launch
 
 
 def _rpdc_defaults(top: dict, *, status: str, detail: str | None = None) -> None:
-    top.setdefault("rpdc_release_score",    0)
+    top.setdefault("rpdc_release_score", 0)
     top.setdefault("rpdc_cash_window_flag", False)
-    top.setdefault("rpdc_tag_count",        0)
-    top.setdefault("rpdc_primary_tag",      None)
-    top.setdefault("rpdc_tags",             [])
+    top.setdefault("rpdc_tag_count", 0)
+    top.setdefault("rpdc_primary_tag", None)
+    top.setdefault("rpdc_tags", [])
     top["rpdc_lookup_status"] = status
     top["rpdc_lookup_detail"] = detail
 
 
-def build_decision_card(race: dict, top: dict, second: dict,
-                        tier: str, reasons: list) -> str:
-    course   = race.get("course", "?").upper()
-    off      = race.get("off_time", "?")
-    primary  = top.get("horse", "?")
-    contain  = second.get("horse", "?") if second else "—"
-    conf     = top.get("confidence_level") or "low"
-    action   = TIER_ACTIONS[tier]
-    label    = TIER_LABELS[tier]
-    prob     = float(top.get("velo_prime_prob") or 0)
-    gap      = prob - float(second.get("velo_prime_prob") or 0)
-    place    = float(top.get("place_prob") or 0)
+def build_decision_card(race: dict, top: dict, second: dict, tier: str, reasons: list) -> str:
+    course = race.get("course", "?").upper()
+    off = race.get("off_time", "?")
+    primary = top.get("horse", "?")
+    contain = second.get("horse", "?") if second else "—"
+    conf = top.get("confidence_level") or "low"
+    action = TIER_ACTIONS[tier]
+    label = TIER_LABELS[tier]
+    prob = float(top.get("velo_prime_prob") or 0)
+    gap = prob - float(second.get("velo_prime_prob") or 0)
+    place = float(top.get("place_prob") or 0)
 
     lines = [
         f"{course} {off} | {label}",
@@ -632,42 +606,44 @@ def build_decision_card(race: dict, top: dict, second: dict,
     lines.append(f"ACTION: {action}")
     arch = top.get("race_archetype")
     if arch:
-        arch_conf  = (top.get("archetype_confidence") or "?")[0].upper()
+        arch_conf = (top.get("archetype_confidence") or "?")[0].upper()
         arch_style = top.get("archetype_bet_style") or ""
-        trap_mark  = " ⚠ TRAP" if top.get("archetype_trap_flag") else ""
+        trap_mark = " ⚠ TRAP" if top.get("archetype_trap_flag") else ""
         lines.append(f"ARCHETYPE: [{arch}:{arch_conf}]{trap_mark}  {arch_style}")
     return "\n".join(lines)
 
 
-def build_governed_card(race: dict, top: dict, second: dict, tier: str, reasons: list[str], source: str, requested_date: str) -> str:
+def build_governed_card(
+    race: dict, top: dict, second: dict, tier: str, reasons: list[str], source: str, requested_date: str
+) -> str:
     """
     Builds a high-fidelity decision card for Telegram.
     Includes source truth, anti-cache guards, and operational depth.
     """
     course = race.get("course", "?").upper()
-    off    = race.get("off_time", "?")
+    off = race.get("off_time", "?")
     actual_date = race.get("date", "?")
-    
+
     # Anti-Cache Guard
     cache_warning = ""
     if requested_date != actual_date:
         cache_warning = "🚨 *CACHE MISMATCH / NON-LIVE* 🚨\n"
-    
+
     # Operational Depth
     prob_gap = float(top.get("velo_prime_prob", 0)) - float(second.get("velo_prime_prob", 0))
     mds = top.get("market_deception_score", 0)
     assigned = top.get("assigned_product", "UNKNOWN")
     allowed = "YES" if top.get("execution_allowed") else "NO"
-    
+
     return f"""{cache_warning}🛡️ *{course} {off} | {assigned}*
 ──────────────────────────────────
-PRIMARY:     {top.get('horse', '?')}
+PRIMARY:     {top.get("horse", "?")}
 TIER:        {tier}
-CONFIDENCE:  {top.get('confidence_level', 'NORMAL').upper()}
+CONFIDENCE:  {top.get("confidence_level", "NORMAL").upper()}
 PROB GAP:    {prob_gap:.4f}
 MDS (DECOY): {mds:.4f}
 EXECUTION:   {allowed}
-REASONS:     {', '.join(reasons)}
+REASONS:     {", ".join(reasons)}
 SOURCE:      {source}
 DATE:        {actual_date}
 ──────────────────────────────────
@@ -689,6 +665,7 @@ def card_overall_label(a: int, b: int, total: int) -> str:
 
 
 # ── RPD-C evidence derivation ─────────────────────────────────────────────────
+
 
 def _derive_rpd_evidence(runner: dict, race: dict, runner_rpdc: dict = None) -> tuple[list, bool, bool]:
     """
@@ -726,7 +703,7 @@ def _derive_rpd_evidence(runner: dict, race: dict, runner_rpdc: dict = None) -> 
             odds = float(runner.get("best_odds_decimal") or 0)
             if 3.0 <= odds <= 9.0:
                 evidence.append("form_reversal")
-        except:
+        except Exception:
             pass
 
     # consistent_form: last 4 non-zero positions within a 2-position band → H evidence
@@ -741,7 +718,7 @@ def _derive_rpd_evidence(runner: dict, race: dict, runner_rpdc: dict = None) -> 
         try:
             days = int(days)
             if days >= 60:
-                evidence.append("long_absence")      # P evidence
+                evidence.append("long_absence")  # P evidence
             elif days < 10:
                 evidence.append("quick_turnaround")  # E evidence
         except (ValueError, TypeError):
@@ -781,13 +758,16 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
     try:
         # Find existing running rows scoped to this service + date
         try:
-            existing = db.table("pipeline_runs").select(
-                "id, started_at"
-            ).eq("service_name", SERVICE).eq(
-                "source_date", date_str
-            ).eq("run_state", "running").execute()
+            existing = (
+                db.table("pipeline_runs")
+                .select("id, started_at")
+                .eq("service_name", SERVICE)
+                .eq("source_date", date_str)
+                .eq("run_state", "running")
+                .execute()
+            )
 
-            for row in (existing.data or []):
+            for row in existing.data or []:
                 try:
                     started = datetime.fromisoformat(row["started_at"].rstrip("Z"))
                     if started.tzinfo is None:
@@ -798,32 +778,38 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
                 age_hours = (now - started).total_seconds() / 3600
                 if age_hours >= AGE_GATE_HOURS:
                     # Stale — close as FAIL and allow new run
-                    db.table("pipeline_runs").update({
-                        "run_state":     "completed",
-                        "status":        "FAIL",
-                        "finished_at":   now.isoformat().replace("+00:00", "Z"),
-                        "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new run",
-                    }).eq("id", row["id"]).execute()
+                    db.table("pipeline_runs").update(
+                        {
+                            "run_state": "completed",
+                            "status": "FAIL",
+                            "finished_at": now.isoformat().replace("+00:00", "Z"),
+                            "error_message": f"Closed by age gate ({age_hours:.1f}h stale): superseded by new run",
+                        }
+                    ).eq("id", row["id"]).execute()
                     print(f"  [pipeline_runs] age-gate closed stale run {row['id']} ({age_hours:.1f}h)")
                 else:
                     # Recent running row — abort to prevent duplicate
-                    print(f"  [pipeline_runs] run already running (id={row['id']}, age={age_hours:.1f}h). Aborting open.")
-                    return PipelineRunOpenResult(blocked_reason=f"run already running (id={row['id']}, age={age_hours:.1f}h)")
+                    print(
+                        f"  [pipeline_runs] run already running (id={row['id']}, age={age_hours:.1f}h). Aborting open."
+                    )
+                    return PipelineRunOpenResult(
+                        blocked_reason=f"run already running (id={row['id']}, age={age_hours:.1f}h)"
+                    )
         except Exception as e:
             print(f"  [pipeline_runs] stale-run cleanup failed (non-fatal): {e}")
 
         trigger_src = os.getenv("TRIGGER_SOURCE", "manual") or "manual"
         env_str = resolve_runtime_environment()
         row = {
-            "id":            str(uuid.uuid4()),
-            "service_name":  SERVICE,
-            "run_type":      "daily_scoring",
-            "source_date":   date_str,
-            "run_state":     "running",
-            "status":        None,  # explicit NULL overrides DB DEFAULT 'in_progress'
+            "id": str(uuid.uuid4()),
+            "service_name": SERVICE,
+            "run_type": "daily_scoring",
+            "source_date": date_str,
+            "run_state": "running",
+            "status": None,  # explicit NULL overrides DB DEFAULT 'in_progress'
             "trigger_source": trigger_src,
-            "started_at":    now.isoformat().replace("+00:00", "Z"),
-            "environment":   env_str,
+            "started_at": now.isoformat().replace("+00:00", "Z"),
+            "environment": env_str,
         }
         resp = db.table("pipeline_runs").insert(row).execute()
         if resp.data:
@@ -837,17 +823,16 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
         return PipelineRunOpenResult(error=detail)
 
 
-def _close_pipeline_run(db, run_id: str | None, status: str,
-                        races: int, runners: int, error: str | None = None):
+def _close_pipeline_run(db, run_id: str | None, status: str, races: int, runners: int, error: str | None = None):
     """Close a pipeline_runs row with final stats."""
     if not run_id:
         return
     try:
         patch = {
-            "run_state":         "completed",
-            "status":            status,
-            "finished_at":       utc_now().isoformat().replace("+00:00", "Z"),
-            "races_processed":   races,
+            "run_state": "completed",
+            "status": status,
+            "finished_at": utc_now().isoformat().replace("+00:00", "Z"),
+            "races_processed": races,
             "runners_processed": runners,
         }
         if error:
@@ -870,10 +855,12 @@ def sb_get(path: str) -> list[dict]:
         log.warning("sb_get failed for %s: %s", path, e)
         return []
 
+
 def _fetch_race_rpdc(race_id: str) -> dict[str, dict]:
     """Fetch RPDC data for all runners in a race."""
     rows = sb_get(f"/runner_release_candidates?race_id=eq.{race_id}")
     return {r["horse_id"]: r for r in rows}
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -895,17 +882,16 @@ def main():
     print("\nPREFLIGHT")
     print("-" * 40)
     from src.preflight import preflight_or_die
-    pf_result = preflight_or_die(tg_fn=tg)   # exits with sys.exit(1) on FAIL
+
+    pf_result = preflight_or_die(tg_fn=tg)  # exits with sys.exit(1) on FAIL
     print(f"  Status: {pf_result.status}")
     print("-" * 40)
     # ─────────────────────────────────────────────────────────────────────────
 
-    from workers.racing_api_normalizer import normalize_race
-    from app.services.velo_prime_service import (
-        score_race_velo_prime, persist_race_predictions
-    )
+    from app.services.velo_prime_service import persist_race_predictions, score_race_velo_prime
+    from src.rpd import RPDv2Engine
     from supabase import create_client as _sb_create
-    from src.rpd import RPDv2Engine, RPDTag
+    from workers.racing_api_normalizer import normalize_race
 
     _sb_url = resolve_supabase_url()
     _sb_key = resolve_supabase_service_key()
@@ -957,27 +943,31 @@ def main():
     is_live = racecard_source == "api"
     live_label = "LIVE_API" if is_live else "CACHE"
     import subprocess
+
     try:
-        commit_sha = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"],
-                                             cwd=ROOT, stderr=subprocess.DEVNULL).decode().strip()
+        commit_sha = (
+            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, stderr=subprocess.DEVNULL)
+            .decode()
+            .strip()
+        )
     except Exception:
         commit_sha = "unknown"
 
-    print(f"\n{'='*60}")
-    print(f"  SOURCE TRUTH HEADER")
+    print(f"\n{'=' * 60}")
+    print("  SOURCE TRUTH HEADER")
     print(f"  requested_date : {date_str}")
     print(f"  loaded_date(s) : {loaded_date_str}")
     print(f"  source         : {live_label} ({racecard_source})")
     print(f"  commit_sha     : {commit_sha}")
-    print(f"  router_version : ProductRouter v1 (live-safe)")
+    print("  router_version : ProductRouter v1 (live-safe)")
     if date_mismatch:
         print(f"  ⚠ DATE MISMATCH — loaded card is NOT for {date_str}")
-        print(f"  ⚠ This is a cache/stale fetch. Marking output NON-LIVE.")
+        print("  ⚠ This is a cache/stale fetch. Marking output NON-LIVE.")
     elif not is_live:
-        print(f"  ℹ Source = CACHE. Card date matches request.")
+        print("  ℹ Source = CACHE. Card date matches request.")
     else:
-        print(f"  ✓ Source = LIVE API. Card date matches request.")
-    print(f"{'='*60}\n")
+        print("  ✓ Source = LIVE API. Card date matches request.")
+    print(f"{'=' * 60}\n")
 
     if date_mismatch and notify_enabled:
         print("  TELEGRAM SUPPRESSED — date mismatch, would send stale card as live")
@@ -988,7 +978,7 @@ def main():
     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
     print("\nSTEP 2: Normalize (canonical schema — no raw payloads to workers)")
     normalized = []
-    fetch_time = datetime.utcnow().isoformat()
+    fetch_time = datetime.now(UTC).isoformat()
     for r in races_with_runners:
         n = normalize_race(r)
         if n.get("runners"):
@@ -1011,9 +1001,10 @@ def main():
     # ── STEP 3: Score through REAL PRIME path ─────────────────────────────────
     # scored entries: (race, preds, tier, reasons)
     print("\nSTEP 3: Score through score_race_velo_prime (velo_prime_v1)")
-    from velo.product_router import ProductRouter
+    from src.velo.product_router import ProductRouter
+
     router = ProductRouter()
-    
+
     # Initialize Spotlight Engine
     from workers.spotlight_parser import extract_spotlight_signals
 
@@ -1021,6 +1012,7 @@ def main():
     _sentient_state = None
     try:
         from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine
+
         _g = SentientLoopbackEngine()
         _raw_state = _g.get_evolutionary_state()
         _source = "disk"
@@ -1047,17 +1039,30 @@ def main():
     pdf_intel_cache = {}
     for race in normalized:
         course_code = (race.get("course_id") or race.get("course", "")).upper()
-        if course_code in ("PONTEFRACT", "PON", "CATTERICK", "CAT", "LUDLOW", "LUD", "PERTH", "PER", "TAUNTON", "TAU", "GOWRAN PARK", "GOW"):
-             # Simple mapping for known tracks if course_id isn't reliable, though the file names use 3-letter codes like CAT
-             # Try deriving 3-letter code from course name
-             cc = course_code[:3]
+        if course_code in (
+            "PONTEFRACT",
+            "PON",
+            "CATTERICK",
+            "CAT",
+            "LUDLOW",
+            "LUD",
+            "PERTH",
+            "PER",
+            "TAUNTON",
+            "TAU",
+            "GOWRAN PARK",
+            "GOW",
+        ):
+            # Simple mapping for known tracks if course_id isn't reliable, though the file names use 3-letter codes like CAT
+            # Try deriving 3-letter code from course name
+            cc = course_code[:3]
         else:
-             cc = course_code[:3]
-             
+            cc = course_code[:3]
+
         if cc not in pdf_intel_cache:
             pdf_path = ROOT / "data" / "racecard_merged" / f"racecard_{cc}_{date_str}.json"
             if pdf_path.exists():
-                with open(pdf_path, "r") as f:
+                with open(pdf_path) as f:
                     pdf_intel_cache[cc] = json.load(f)
             else:
                 pdf_intel_cache[cc] = None
@@ -1065,8 +1070,8 @@ def main():
     scored = []
     score_errors = []
     for race in normalized:
-        cid = f"{race.get('course')} {race.get('off_time','?')}"
-        
+        cid = f"{race.get('course')} {race.get('off_time', '?')}"
+
         # Attach PDF Intel to normalized runners before scoring
         course_code = (race.get("course_id") or race.get("course", "")[:3]).upper()
         cc = course_code[:3]
@@ -1084,17 +1089,17 @@ def main():
                 if api_time_clean == r_time or api_time_clean.endswith(r_time):
                     merged_horses = r_data.get("horses", [])
                     break
-                
+
                 # Check 12-hour vs 24-hour
                 try:
-                    parts = api_time_clean.split('.')
+                    parts = api_time_clean.split(".")
                     if len(parts) == 2 and int(parts[0]) > 12:
                         hr_12 = str(int(parts[0]) - 12)
                         time_12 = f"{hr_12}.{parts[1]}"
                         if time_12 == r_time:
                             merged_horses = r_data.get("horses", [])
                             break
-                except:
+                except Exception:
                     pass
 
             for runner in race.get("runners", []):
@@ -1114,29 +1119,26 @@ def main():
                 race_rpdc = _fetch_race_rpdc(race.get("race_id", ""))
 
                 # RPD-C tagging — passive metadata only, no score/rank mutation
-                runner_map = {
-                    r.get("horse_name", ""): r
-                    for r in race.get("runners", [])
-                }
+                runner_map = {r.get("horse_name", ""): r for r in race.get("runners", [])}
                 for pred in preds:
                     raw_runner = runner_map.get(pred.get("horse", ""), {})
                     horse_id = raw_runner.get("horse_id")
                     runner_rpdc = race_rpdc.get(horse_id, {})
-                    
+
                     # Spotlight Parsing
                     spot_text = raw_runner.get("spotlight", "")
                     if spot_text:
                         # Extract full 15-category signals using workers/spotlight_parser.py
                         # Required args: raw_text, horse_name, race_id, race_date
                         spot_record = extract_spotlight_signals(
-                            spot_text, 
+                            spot_text,
                             horse_name=pred.get("horse"),
                             race_id=race.get("race_id", "unknown"),
-                            race_date=date_str
+                            race_date=date_str,
                         )
                         # Normalize sentiment (-2 to +2) to 0-1 score
                         pred["spotlight_score"] = (spot_record.get("sentiment_score", 0.0) + 2.0) / 4.0
-                    
+
                     # Gear and Wind signals from Racing API raw runner
                     pred["headgear_run"] = 1 if raw_runner.get("headgear_run") == "1" else 0
                     pred["wind_surgery_run"] = 1 if raw_runner.get("wind_surgery_run") == "1" else 0
@@ -1150,97 +1152,84 @@ def main():
                         market_shortening=rpd_mkt_short,
                         won_last_time=rpd_won_last,
                     )
-                    pred["rpd_tag"]            = rpd_suggestion.suggested_tag.value
-                    pred["rpd_confidence"]     = rpd_suggestion.confidence
+                    pred["rpd_tag"] = rpd_suggestion.suggested_tag.value
+                    pred["rpd_confidence"] = rpd_suggestion.confidence
                     pred["rpd_evidence_codes"] = rpd_evidence
 
-                top       = preds[0]
-                second    = preds[1] if len(preds) > 1 else {}
-                sec_prob  = float(second.get("velo_prime_prob") or 0)
+                top = preds[0]
+                second = preds[1] if len(preds) > 1 else {}
+                sec_prob = float(second.get("velo_prime_prob") or 0)
                 tier, reasons = synthesize_decision(top, sec_prob, field_size=len(preds))
                 # Write effective confidence back onto top so persist sees it.
                 # Raw label (pre-normalization) is preserved separately.
-                top["confidence_level_raw"]       = top.get("confidence_level")
-                top["confidence_level_effective"] = effective_confidence(
-                    float(top.get("velo_prime_prob") or 0)
-                )
+                top["confidence_level_raw"] = top.get("confidence_level")
+                top["confidence_level_effective"] = effective_confidence(float(top.get("velo_prime_prob") or 0))
                 # Shadow suspect cohort flag — A-tier with weak place support.
                 # No gate change. Passive monitor only. Track for 30 days to build
                 # enough sample to decide whether to tighten the A-gate conditionally.
                 # Cohort: A-tier AND place_prob < 0.75 (win signal overpowering place).
-                top["a_tier_weak_place_flag"] = (
-                    tier == "A"
-                    and float(top.get("place_prob") or 0) < 0.75
-                )
+                top["a_tier_weak_place_flag"] = tier == "A" and float(top.get("place_prob") or 0) < 0.75
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
-<<<<<<< HEAD
-<<<<<<< HEAD
-                
-                # Attach RPDC data to top pick (from our pre-fetched race_rpdc)
+                # Attach RPDC data to top pick (from pre-fetched race_rpdc)
                 _attach_rpdc_from_row(top, race_rpdc.get(top.get("horse_id")))
 
-                # ── GOVERNED EXECUTION ROUTER ─────────────────────────────────
-                # Load PDF Intelligence Overlay from normalized runner
+                # ── GOVERNED EXECUTION ROUTER ────────────────────────────────
                 top_raw_runner = runner_map.get(top.get("horse", ""), {})
                 pdf_intel = top_raw_runner.get("pdf_intel", {})
 
-                # Ingest verdict into Plot-Aware router (v1.1)
+                # ── v2 context fields for D/X intelligence layer ─────────────
+                race_name = race.get("race_name") or ""
+                is_handicap = "handicap" in race_name.lower() or "hcap" in race_name.lower()
+                # Favourite SP = minimum sp_dec across all scored runners
+                sp_vals = [float(p.get("sp_dec") or 0) for p in preds if p.get("sp_dec")]
+                fav_sp = min((v for v in sp_vals if v > 0), default=0.0)
+
                 route_data = {
-                    'decision_tier': tier,
-                    'confidence_level': top.get('confidence_level'),
-                    'actual_winner_sp': top.get('sp_dec', 0.0), 
-                    'prob_gap': float(top.get('velo_prime_prob',0)) - sec_prob,
-                    'track': race.get('course'),
-                    'top_horse_draw': top.get('draw'),
-                    'market_deception_score': top.get('market_deception_score', 0),
-                    # PDF Specialist Signals
-                    'plot_conviction': pdf_intel.get('plot_conviction'),
-                    'or_compression_score': pdf_intel.get('or_compression_score'),
-                    'is_postdata_pick': pdf_intel.get('is_postdata_pick'),
-                    'is_topspeed_pick': pdf_intel.get('is_topspeed_pick')
+                    "decision_tier": tier,
+                    "confidence_level": top.get("confidence_level"),
+                    "actual_winner_sp": top.get("sp_dec", 0.0),
+                    "prob_gap": float(top.get("velo_prime_prob", 0)) - sec_prob,
+                    "track": race.get("course"),
+                    "top_horse_draw": top.get("draw"),
+                    "market_deception_score": top.get("market_deception_score", 0),
+                    "plot_conviction": pdf_intel.get("plot_conviction"),
+                    "or_compression_score": pdf_intel.get("or_compression_score"),
+                    "is_postdata_pick": pdf_intel.get("is_postdata_pick"),
+                    "is_topspeed_pick": pdf_intel.get("is_topspeed_pick"),
+                    # v2: D/X intelligence layer inputs
+                    "field_size": race.get("scored") or len(preds),
+                    "race_type": race.get("type", "?"),
+                    "going": race.get("going", "?"),
+                    "is_handicap": is_handicap,
+                    "fav_sp": fav_sp,
+                    "velo_prime_prob": float(top.get("velo_prime_prob", 0)),
+                    "archetype": top.get("race_archetype", "?"),
                 }
                 governance = router.route_verdict(route_data)
-                
-                # Attach governance back to top pick for persistence
-                top["assigned_product"]   = governance["assigned_product"]
-                top["router_reasons"]      = governance["router_reasons"]
-                top["execution_allowed"]   = governance["execution_allowed"]
-                
-                # RPDC update with PDF flags
+
+                top["assigned_product"] = governance["assigned_product"]
+                top["router_reasons"] = governance["router_reasons"]
+                top["execution_allowed"] = governance["execution_allowed"]
+
                 if pdf_intel.get("plot_conviction"):
                     reasons.append(f"PDF_PLOT_CONVICTION:{pdf_intel['plot_conviction']:.2f}")
 
                 scored.append((race, preds, tier, reasons))
-                # ── GOVERNED RACE-BY-RACE OUTPUT ─────────────────────────────
                 prob_gap_val = float(top.get("velo_prime_prob", 0)) - sec_prob
+                gate_note = f" [TIE^{top.get('tie_gate_tier_upgrade', '')}]" if top.get("tie_gate_tier_upgrade") else ""
+                arch_note = f" [{top.get('race_archetype', '?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
                 print(
-                    f"  SCORED  {race.get('course','?'):22s}  {race.get('off_time','?'):5s}"
-                    f"  race_id={race.get('race_id','?')}\n"
-                    f"          horse={top['horse']:<25s}  tier={tier}  conf={top.get('confidence_level','?')}\n"
-                    f"          prob={top.get('velo_prime_prob',0):.4f}  prob_gap={prob_gap_val:.4f}"
-                    f"  mds={top.get('market_deception_score',0):.4f}\n"
-                    f"          product={top.get('assigned_product','?'):15s}"
-                    f"  exec={top.get('execution_allowed','?')}"
-                    f"  reasons={top.get('router_reasons','?')}"
+                    f"  SCORED  {race.get('course', '?'):22s}  {race.get('off_time', '?'):5s}"
+                    f"  race_id={race.get('race_id', '?')}\n"
+                    f"          horse={top['horse']:<25s}  tier={tier}  conf={top.get('confidence_level', '?')}{gate_note}{arch_note}\n"
+                    f"          prob={top.get('velo_prime_prob', 0):.4f}  gap={prob_gap_val:.4f}"
+                    f"  mds={top.get('market_deception_score', 0):.4f}\n"
+                    f"          product={top.get('assigned_product', '?'):15s}"
+                    f"  exec={top.get('execution_allowed', '?')}"
+                    f"  reasons={top.get('router_reasons', '?')}"
                 )
-=======
-                # RPDC observability — passive lookup, never blocks scoring
-                _attach_rpdc(top, race.get("race_id", ""))
-                scored.append((race, preds, tier, reasons))
-                gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
-                arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
-                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
->>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
-=======
-                # RPDC observability — passive lookup, never blocks scoring
-                _attach_rpdc(top, race.get("race_id", ""))
-                scored.append((race, preds, tier, reasons))
-                gate_note  = f" [TIE^{top.get('tie_gate_tier_upgrade','')}]" if top.get("tie_gate_tier_upgrade") else ""
-                arch_note  = f" [{top.get('race_archetype','?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
-                print(f"  PASS  {cid:<30} top={top['horse']:<20} velo_prime_prob={top['velo_prime_prob']:.4f}  tier={tier}{gate_note}{arch_note}")
->>>>>>> feature/v10-launch
             else:
                 score_errors.append((race, "no predictions returned"))
                 print(f"  SKIP  {cid} — no predictions returned")
@@ -1252,21 +1241,21 @@ def main():
 
     # ── GOVERNED CARD SUMMARY ─────────────────────────────────────────────────
     from collections import Counter
+
     product_counts = Counter()
-    for race, preds, t, _ in scored:
+    for _race, preds, _t, _ in scored:
         top_pick = preds[0] if preds else {}
         product_counts[top_pick.get("assigned_product", "UNKNOWN")] += 1
-    exec_total = sum(v for k, v in product_counts.items()
-                     if k in ("WIN_ONLY", "FRAME_ONLY", "EW_CANDIDATE"))
-    print(f"\n  ── GOVERNED CARD SUMMARY ──────────────────────────────")
+    exec_total = sum(v for k, v in product_counts.items() if k in ("WIN_ONLY", "FRAME_ONLY", "EW_CANDIDATE"))
+    print("\n  ── GOVERNED CARD SUMMARY ──────────────────────────────")
     print(f"  Scored:        {len(scored)}")
     for prod in ["WIN_ONLY", "FRAME_ONLY", "EW_CANDIDATE", "VISION_ONLY", "PASS", "UNKNOWN"]:
         n = product_counts.get(prod, 0)
         if n:
-            exec_flag = " ← EXECUTION AUTHORIZED" if prod in ("WIN_ONLY","FRAME_ONLY","EW_CANDIDATE") else ""
+            exec_flag = " ← EXECUTION AUTHORIZED" if prod in ("WIN_ONLY", "FRAME_ONLY", "EW_CANDIDATE") else ""
             print(f"  {prod:<20s} {n:3d}{exec_flag}")
     print(f"  EXECUTION AUTHORIZED: {exec_total}")
-    print(f"  ──────────────────────────────────────────────────────")
+    print("  ──────────────────────────────────────────────────────")
 
     # ── STEP 4: Persist to Supabase ───────────────────────────────────────────
     print("\nSTEP 4: Persist to velo_verdicts")
@@ -1275,26 +1264,16 @@ def main():
     persist_map = {}  # race_id -> bool (honesty gate)
 
     for race, preds, tier, _reasons in scored:
-<<<<<<< HEAD
-<<<<<<< HEAD
         rid = race.get("race_id")
         if not persistence_enabled:
             persist_ok += 1
             persist_map[rid] = True
             continue
-        
+
         success = persist_race_predictions(race, preds, decision_tier=tier)
         persist_map[rid] = success
-        
+
         if success:
-=======
-=======
->>>>>>> feature/v10-launch
-        if not persistence_enabled:
-            persist_ok += 1
-            continue
-        if persist_race_predictions(race, preds, decision_tier=tier):
->>>>>>> 92c7a1e (fix: ship durable trigger admission hardening)
             persist_ok += 1
         else:
             persist_fail += 1
@@ -1306,13 +1285,11 @@ def main():
     print("\nSTEP 5: Send to Telegram")
 
     # A. Pre-flight report — reflects actual preflight result
-    pf_lines = [f"  {c.name}: {'OK' if c.passed else c.detail}"
-                for c in pf_result.checks]
+    pf_lines = [f"  {c.name}: {'OK' if c.passed else c.detail}" for c in pf_result.checks]
     tg(
         f"VELO PRE-FLIGHT REPORT — {TODAY_DISPLAY}\n"
         f"repo:       elpresidentepiff/velo-oracle-prime\n"
-        f"racecards:  {racecard_source}\n"
-        + "\n".join(pf_lines) + "\n"
+        f"racecards:  {racecard_source}\n" + "\n".join(pf_lines) + "\n"
         f"STATUS:     {pf_result.status}"
     )
     print("  Sent: pre-flight report")
@@ -1321,7 +1298,7 @@ def main():
     buckets: dict = {"A": [], "B": [], "C": [], "D": [], "X": []}
 
     for race, preds, tier, reasons in scored:
-        top    = preds[0]
+        top = preds[0]
         second = preds[1] if len(preds) > 1 else {}
         buckets[tier].append((race, top, second, reasons))
 
@@ -1355,7 +1332,9 @@ def main():
             tg(card)
             print(f"  Sent: A-STRIKE (Governed) — {race.get('course')} {race.get('off_time')}")
         else:
-            tg(f"⚠ CRITICAL: PERSISTENCE FAILURE — A-STRIKE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal exists but was not written to DB. Truth loop protected.")
+            tg(
+                f"⚠ CRITICAL: PERSISTENCE FAILURE — A-STRIKE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal exists but was not written to DB. Truth loop protected."
+            )
             print(f"  SUPPRESSED: A-STRIKE — {race.get('course')} — persistence failed")
 
     # B-PLAYABLE — individual governed card per race
@@ -1366,25 +1345,23 @@ def main():
             tg(card)
             print(f"  Sent: B-PLAYABLE (Governed) — {race.get('course')} {race.get('off_time')}")
         else:
-            tg(f"⚠ WARNING: PERSISTENCE FAILURE — B-PLAYABLE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal suppressed to protect truth loop.")
+            tg(
+                f"⚠ WARNING: PERSISTENCE FAILURE — B-PLAYABLE SUPPRESSED\nCourse: {race.get('course')} {race.get('off_time')}\nSignal suppressed to protect truth loop."
+            )
             print(f"  SUPPRESSED: B-PLAYABLE — {race.get('course')} — persistence failed")
 
     # C-WATCH — grouped brief list
     if buckets["C"]:
         lines = [f"C-WATCH LIST — {TODAY_DISPLAY}", "─" * 34]
         for race, top, second, reasons in buckets["C"]:
-            course  = race.get("course", "?").upper()
-            off     = race.get("off_time", "?")
+            course = race.get("course", "?").upper()
+            off = race.get("off_time", "?")
             primary = top.get("horse", "?")
-            prob    = float(top.get("velo_prime_prob") or 0)
-            place   = float(top.get("place_prob") or 0)
-            gap     = prob - float(second.get("velo_prime_prob") or 0)
-            r0      = reasons[1] if len(reasons) > 1 else reasons[0] if reasons else ""
-            lines.append(
-                f"{course} {off}  {primary}\n"
-                f"  prob {prob:.3f} | gap {gap:.3f} | place {place:.3f}\n"
-                f"  {r0}"
-            )
+            prob = float(top.get("velo_prime_prob") or 0)
+            place = float(top.get("place_prob") or 0)
+            gap = prob - float(second.get("velo_prime_prob") or 0)
+            r0 = reasons[1] if len(reasons) > 1 else reasons[0] if reasons else ""
+            lines.append(f"{course} {off}  {primary}\n  prob {prob:.3f} | gap {gap:.3f} | place {place:.3f}\n  {r0}")
         tg("\n".join(lines))
         print(f"  Sent: C-WATCH list ({c_n} races)")
 
@@ -1393,11 +1370,11 @@ def main():
     if pass_races:
         lines = [f"D/X PASS LIST — {TODAY_DISPLAY}", "─" * 34]
         for tier_tag, bucket in (("D", buckets["D"]), ("X", buckets["X"])):
-            for race, top, second, reasons in bucket:
-                course  = race.get("course", "?").upper()
-                off     = race.get("off_time", "?")
+            for race, top, _second, reasons in bucket:
+                course = race.get("course", "?").upper()
+                off = race.get("off_time", "?")
                 primary = top.get("horse", "?")
-                r0      = reasons[0] if reasons else tier_tag
+                r0 = reasons[0] if reasons else tier_tag
                 lines.append(f"{tier_tag} {course} {off}  {primary}  — {r0}")
         tg("\n".join(lines))
         print(f"  Sent: D/X pass list ({d_n + x_n} races)")
@@ -1433,15 +1410,17 @@ def main():
         out_path = ROOT / "data" / f"velo_prime_verdicts_{date_tag}.json"
         results_out = []
         for race, preds, tier, _reasons in scored:
-            results_out.append({
-                "race_id":    race.get("race_id"),
-                "course":     race.get("course"),
-                "off_time":   race.get("off_time"),
-                "race_name":  race.get("race_name"),
-                "scored":     len(preds),
-                "tier":       tier,
-                "top":        preds[0] if preds else {},
-            })
+            results_out.append(
+                {
+                    "race_id": race.get("race_id"),
+                    "course": race.get("course"),
+                    "off_time": race.get("off_time"),
+                    "race_name": race.get("race_name"),
+                    "scored": len(preds),
+                    "tier": tier,
+                    "top": preds[0] if preds else {},
+                }
+            )
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json.dumps(results_out, indent=2, default=str))
         print(f"\nLocal backup: {out_path.name} (NOT system of record)")

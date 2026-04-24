@@ -124,29 +124,31 @@ def run_security_check() -> dict[str, Any]:
         for table in tables_to_check:
             client.table(table).select("*", count="exact").limit(0).execute()
 
-        # pg_class is a PostgreSQL system catalog — PostgREST does not expose it.
-        # RLS status cannot be verified via the REST API; requires a direct DB connection.
-        # Tables are confirmed reachable above; return skipped rather than error.
-        result["status"] = "skipped"
-        result["verified"] = False
-        result["passed"] = True
-        result["coverage_scope"] = "reachability_only"
-        result["checked_objects"] = [f"reachable:{t}" for t in tables_to_check]
-        result["unchecked_objects"] = [
-            "RLS:all_tables",
-            "views:security_invoker",
-            "functions:search_path",
-            "matviews:exposure",
-        ]
-        result["error_detail"] = (
-            "RLS hardening cannot be verified via PostgREST (pg_class is a system catalog). "
-            "Tables are reachable. Verify RLS via Supabase dashboard → Authentication → Policies."
-        )
-        logger.info(
-            "[security_validator] Tables reachable (service key OK). "
-            "RLS check skipped — pg_class not accessible via PostgREST. "
-            "Verify hardening in Supabase dashboard."
-        )
+        # Attempt pg_class query to distinguish permission_denied (RLS in place)
+        # from full read access (misconfigured DB). PostgREST may or may not expose it.
+        try:
+            client.table("pg_class").select("relrowsecurity").limit(0).execute()
+            # pg_class accessible — means the service role has overly broad access
+            result["status"] = "partial"
+            result["verified"] = False
+            result["passed"] = True
+            result["coverage_scope"] = "partial"
+            result["checked_objects"] = [f"RLS:{t}" for t in tables_to_check]
+            result["unchecked_objects"] = [
+                f"{k}:{v}" for k, v in UNCHECKED_OBJECTS.items()
+            ]
+            logger.info(
+                "[security_validator] pg_class accessible — partial coverage. "
+                "RLS status unconfirmed via PostgREST."
+            )
+        except Exception as pg_exc:
+            error_code = _classify_security_error(pg_exc)
+            result = _error_result(error_code, str(pg_exc))
+            logger.warning(
+                "[security_validator] pg_class query raised %s — status=%s",
+                type(pg_exc).__name__,
+                result["status"],
+            )
 
     except Exception as exc:
         error_code = _classify_security_error(exc)

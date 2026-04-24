@@ -62,6 +62,8 @@ class LearningGateResult:
     gate_reasons: list[str] = field(default_factory=list)
     ablation_flips: int = 0
     integrity_flags: list[str] = field(default_factory=list)
+    rejection_reason: str = ""
+    quarantine_reason: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -161,10 +163,10 @@ class ActivityDependentLearningGate:
         if all_passed:
             status = LearningStatus.COMMITTED
             reasons = ["All gate conditions passed"]
-        elif manipulation_check.score > self.MANIPULATION_THRESHOLD:
+        elif not manipulation_check.passed:
             status = LearningStatus.REJECTED
             reasons = ["High manipulation detected"]
-        elif ablation_check.score < 0.5:
+        elif not ablation_check.passed:
             status = LearningStatus.QUARANTINED
             reasons = ["Ablation robustness failed - decision too fragile"]
         else:
@@ -183,6 +185,8 @@ class ActivityDependentLearningGate:
             gate_reasons=reasons,
             ablation_flips=ablation_results.get("flip_count", 0),
             integrity_flags=integrity_flags,
+            rejection_reason=reasons[0] if status == LearningStatus.REJECTED and reasons else "",
+            quarantine_reason=reasons[0] if status == LearningStatus.QUARANTINED and reasons else "",
         )
 
         logger.info(f"ADLG: Status={status.value}, Score={gate_score:.2f}, Flips={result.ablation_flips}")
@@ -257,7 +261,7 @@ class ActivityDependentLearningGate:
 
 
 def evaluate_learning_gate(
-    engine_outputs: dict, ablation_results: dict, race_outcome: dict, integrity_check: dict, race_ctx: dict = None
+    engine_outputs: dict, ablation_results: dict, race_outcome: dict, integrity_check: dict | None = None, race_ctx: dict = None
 ) -> LearningGateResult:
     """
     Convenience function to evaluate learning gate.
@@ -271,6 +275,8 @@ def evaluate_learning_gate(
     Returns:
         LearningGateResult
     """
+    if integrity_check is None:
+        integrity_check = {"flags": []}
     gate = ActivityDependentLearningGate()
     return gate.evaluate(engine_outputs, ablation_results, race_outcome, integrity_check, race_ctx)
 

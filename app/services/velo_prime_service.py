@@ -25,11 +25,7 @@ import logging
 import math
 import os
 import re
-from datetime import datetime, timedelta
-
-from dotenv import load_dotenv
-
-load_dotenv()
+from datetime import UTC, datetime, timedelta
 
 # from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
 
@@ -565,11 +561,11 @@ def _enrich_full_analysis_from_warehouse(
             # Last resort: raw distance string (old behaviour — may miss on yard-suffixed strings)
             race_dist = (race.get("distance") or race.get("dist") or "").strip()
 
-        race_date_str = race.get("date") or datetime.utcnow().strftime("%Y-%m-%d")
+        race_date_str = race.get("date") or datetime.now(UTC).strftime("%Y-%m-%d")
         try:
             race_date = datetime.strptime(race_date_str[:10], "%Y-%m-%d").date()
         except Exception:
-            race_date = datetime.utcnow().date()
+            race_date = datetime.now(UTC).date()
         cutoff_90d = (race_date - timedelta(days=90)).isoformat()
 
         # Build horse_id -> normalized runner lookup for trainer_id resolution
@@ -802,6 +798,14 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         # predictions is list[dict] — serialized runner rows.
         results = predictions
         top = results[0]
+
+        if not top.get("horse_id"):
+            log.error(
+                "persist_race_predictions: top prediction missing horse_id for race %s — rejecting",
+                race.get("race_id"),
+            )
+            return False
+
         _hs = top.get("horse_state") or {}  # compact horse-state for top selection
 
         # ── G Shadow instrumentation: top-3 runners with G-adjusted scores ──────
@@ -826,8 +830,8 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
         row = {
             "race_id": race.get("race_id"),
             "region": race.get("region", ""),  # UK/IRE filter verification — persisted at scoring time
-            "generated_at": datetime.utcnow().isoformat(),
-            "fetch_timestamp": race.get("fetch_timestamp") or datetime.utcnow().isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
+            "fetch_timestamp": race.get("fetch_timestamp") or datetime.now(UTC).isoformat(),
             "predicted_field_size": len(race.get("runners") or []),
             "engine_version": "velo_prime_v1",
             "doctrine_version": "d010",
@@ -1003,26 +1007,50 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 "Apply migration to add governance columns to velo_verdicts.",
             ),
         ]
-        for _attempt, (_grp_name, _grp_cols, _grp_hint) in enumerate(
-            [(None, [], None)] + _optional_col_groups  # attempt 0 = full row
-        ):
-            if _grp_name is not None:
-                log.critical(
-                    "SCHEMA_DRIFT: velo_verdicts upsert stripping %s columns — "
-                    "data is being SILENTLY LOST. Fix: %s | race=%s",
-                    _grp_name,
-                    _grp_hint,
-                    race.get("race_id"),
-                )
-                for _col in _grp_cols:
-                    row.pop(_col, None)
-            try:
-                sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
-                break  # success
-            except Exception as _upsert_err:
-                if _attempt < len(_optional_col_groups):
-                    continue  # strip next group and retry
-                raise  # all groups stripped, propagate
+        def _is_schema_error(exc: Exception) -> bool:
+            msg = str(exc).lower()
+            return "schema cache" in msg or "could not find the" in msg or "column" in msg
+
+        def _error_names_group(exc: Exception, cols: list[str]) -> bool:
+            msg = str(exc)
+            return any(col in msg for col in cols)
+
+        _schema_drift = False
+        _stripped: set[str] = set()
+        try:
+            sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
+        except Exception as _upsert_err:
+            if not _is_schema_error(_upsert_err):
+                raise
+            # Schema error — find and strip the offending column group, retry once per group
+            for _grp_name, _grp_cols, _grp_hint in _optional_col_groups:
+                if _grp_name in _stripped:
+                    continue
+                if _error_names_group(_upsert_err, _grp_cols):
+                    _schema_drift = True
+                    log.critical(
+                        "SCHEMA_DRIFT: velo_verdicts upsert stripping %s columns — "
+                        "data is being SILENTLY LOST. Fix: %s | race=%s",
+                        _grp_name,
+                        _grp_hint,
+                        race.get("race_id"),
+                    )
+                    for _col in _grp_cols:
+                        row.pop(_col, None)
+                    _stripped.add(_grp_name)
+                    try:
+                        sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
+                        break
+                    except Exception as _retry_err:
+                        _upsert_err = _retry_err
+                        if not _is_schema_error(_retry_err):
+                            raise
+                        continue
+            else:
+                raise _upsert_err
+
+        if _schema_drift:
+            return False
         log.info(
             "Persisted verdict for race %s — top: %s (%.4f)",
             race.get("race_id"),
@@ -1056,7 +1084,7 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
         sb = create_client(url, key)
 
         race_id = race.get("race_id")
-        computed_at = datetime.utcnow().isoformat()
+        computed_at = datetime.now(UTC).isoformat()
         rows = []
 
         for pred in predictions:

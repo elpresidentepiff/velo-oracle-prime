@@ -239,6 +239,8 @@ class V12FeatureEngineer:
         # Track type form
         if "type" in df.columns:
             df["track_type_form"] = df.groupby(["horse", "type"])["win"].transform("mean")
+        else:
+            df["track_type_form"] = 0.0
 
         logger.info("  ✓ Course/going/distance features built")
         return df
