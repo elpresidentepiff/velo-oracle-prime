@@ -32,7 +32,7 @@ import urllib.error
 import urllib.request
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -978,7 +978,7 @@ def main():
     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
     print("\nSTEP 2: Normalize (canonical schema — no raw payloads to workers)")
     normalized = []
-    fetch_time = datetime.utcnow().isoformat()
+    fetch_time = datetime.now(UTC).isoformat()
     for r in races_with_runners:
         n = normalize_race(r)
         if n.get("runners"):

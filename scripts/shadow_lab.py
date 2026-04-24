@@ -29,8 +29,8 @@ from typing import Optional
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from dotenv import load_dotenv
-load_dotenv(ROOT / ".env")
+from app.core.runtime_env import load_optional_env_file  # noqa: E402
+load_optional_env_file(ROOT / ".env")
 
 # ── Supabase ─────────────────────────────────────────────────────────────────
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")

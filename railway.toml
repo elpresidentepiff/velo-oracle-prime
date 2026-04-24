@@ -3,6 +3,10 @@ builder = "NIXPACKS"
 # deploy: 2026-04-17T19:35Z
 buildCommand = "pip install -r requirements_production.txt"
 
+[deploy]
+startCommand = "gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+restartPolicyType = "ON_FAILURE"
+
 [start]
 cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 
