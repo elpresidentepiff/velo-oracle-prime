@@ -9,46 +9,42 @@ from typing import Any
 class PostdataGridParser:
     """
     Parses the 0011 Postdata summary grid.
-    
-    The grid typically has columns for:
-    - Trainer Form
-    - Going
-    - Distance
-    - Course
-    - Ability
-    - Recent Form (often combined or near Draw)
     """
+    
+    # Standard layout: Trainer | Going | Dist | Course | Draw | Ability
+    COLS = ["trainer", "going", "distance", "course", "draw", "ability"]
     
     def map_flags(self, flags_text: str) -> dict[str, Any]:
         """
         Map a raw string of ✓, ✘, ? into specific columns.
-        This is a positional parser based on standard RP layout.
+        Example: '✓ ✓ ✘ ✓ ? ✓'
         """
         if not flags_text:
             return {}
             
-        # Clean and split into individual characters/tokens
+        # Standard tokens in Postdata grid
         tokens = flags_text.strip().split()
-        
-        # Standard layout: Trainer | Going | Dist | Course | Draw | Ability
-        # Note: Layout can vary slightly between Flat/Jumps, but usually 5-6 columns.
-        cols = ["trainer", "going", "distance", "course", "draw", "ability"]
         
         result = {}
         for i, token in enumerate(tokens):
-            if i < len(cols):
-                col_name = cols[i]
+            if i < len(self.COLS):
+                col_name = self.COLS[i]
                 if "✓" in token:
-                    result[f"{col_name}_flag"] = "positive"
+                    val = "positive"
                 elif "✘" in token:
-                    result[f"{col_name}_flag"] = "negative"
+                    val = "negative"
                 elif "?" in token:
-                    result[f"{col_name}_flag"] = "unknown"
+                    val = "unknown"
                 else:
-                    result[f"{col_name}_flag"] = "neutral"
+                    val = "neutral"
+                result[f"{col_name}_flag"] = val
                     
         return result
 
-    def is_cold_stable_plot(self, flags: dict[str, str]) -> bool:
-        """Logic: Trainer is cold (✘) but horse is otherwise ready."""
-        return flags.get("trainer_flag") == "negative"
+    def get_trainer_signal(self, flags: dict[str, Any]) -> str:
+        """Isolate the specific trainer form signal."""
+        return flags.get("trainer_flag", "neutral")
+
+    def is_cold_stable_plot(self, flags: dict[str, Any], release_window: bool) -> bool:
+        """Logic: Trainer is cold (✘) but horse is in OR release window."""
+        return flags.get("trainer_flag") == "negative" and release_window
