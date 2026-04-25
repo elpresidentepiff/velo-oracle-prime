@@ -1,22 +1,23 @@
 # scripts/backfill_historical_feature_store.py
 
 """
-VÉLØ Batch Reconstructor (Phase 2) - GO-LIVE SPEC
-------------------------------------------------
+VÉLØ Batch Reconstructor (Phase 2) - HARDENED GO-LIVE SPEC
+---------------------------------------------------------
 Rules enforced:
-- EXCLUSION: Runner-level (race_id + horse_id) to prevent partial race gaps.
-- ORDER: Feature vectors strictly ordered [feats[k] for k in FEATURE_COLS].
-- SPECIALIST: Loads specialist_models_v1.pkl to derive mpi/chaos/integrity.
-- ACCOUNTING: Temp-table staged writes for 100% accurate write-accounting.
-- FORCE: reconstruction_version='V17_B1', is_synthetic=True, narrative=Null.
+- EXCLUSION: Runner-level (race_id + horse_id) to prevent partial gaps.
+- NO DEFAULTS: Missing weight/odds/dist stay None; no fabrication.
+- ORDERING: Vector strictly ordered by ModelManager.ALL_V17_FEATURES.
+- ACCOUNTING: Temp-table staged writes for accurate write-accounting.
+- MODELS: Uses production ModelManager for specialist derivation.
+- HARDENING: Session timeouts, reusable temp table, adaptive batch backoff, progress heartbeat.
 """
 
 from __future__ import annotations
 import argparse
+import gc
 import json
 import logging
 import os
-import pickle
 import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass
@@ -34,18 +35,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.services.velo_prime_service import _build_live_features, score_race_velo_prime
+from app.services.model_manager import get_model_manager
 
 # ---- Configuration ----
 RECONSTRUCTION_VERSION = "V17_B1"
-MODELS_PATH = ROOT / "models" / "specialist_models_v1.pkl"
-
-# SQPE v17 feature order (Must match training vector)
-FEATURE_COLS = [
-    "sp_dec", "log_sp", "implied_prob", "dist_f", "going_code", "is_aw", "class_num", 
-    "wgt_lbs", "or_num", "rpr_num", "ts_num", "or_vs_field", "rpr_vs_field", 
-    "field_size", "draw_num", "draw_pct", "age_num", "sp_rank", "is_fav"
-]
-
 LOG = logging.getLogger("backfill_historical_feature_store")
 
 @dataclass
@@ -55,14 +48,34 @@ class RunStats:
     rows_generated: int = 0
     rows_written: int = 0
     rows_skipped: int = 0
+    batches_processed: int = 0
+
+HFS_COLS = """
+race_id, horse_id, horse_name, reconstruction_version, race_date, course, jurisdiction,
+distance_f, going, race_class, field_size, draw, age, weight_lbs,
+official_rating, rpr, ts, sp_dec, implied_prob, or_vs_field, rpr_vs_field, draw_pct,
+mpi, chaos_bloom, integrity_score, power_anchor, plot_conviction, or_delta_to_best_win,
+winner_flag, placed_flag, finish_position, is_synthetic, narrative_disruption, story_anchor,
+source_tables, feature_json
+""".strip()
 
 def configure_logging() -> None:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        datefmt="%H:%M:%S",
+    )
 
 def get_conn() -> psycopg2.extensions.connection:
     dsn = os.getenv("DATABASE_URL") or os.getenv("SUPABASE_DB_URL")
-    if dsn: return psycopg2.connect(dsn)
-    raise RuntimeError("No database connection string found.")
+    if dsn:
+        return psycopg2.connect(dsn)
+    raise RuntimeError("No database connection string found. Set DATABASE_URL or SUPABASE_DB_URL.")
+
+def apply_session_guards(cur: RealDictCursor, statement_timeout_min: int, lock_timeout_sec: int) -> None:
+    cur.execute(f"SET statement_timeout = '{max(1, statement_timeout_min)}min';")
+    cur.execute(f"SET lock_timeout = '{max(1, lock_timeout_sec)}s';")
+    cur.execute("SET idle_in_transaction_session_timeout = '5min';")
 
 def fetch_unprocessed_runners_batched(
     cur: RealDictCursor,
@@ -71,24 +84,18 @@ def fetch_unprocessed_runners_batched(
     last_race_id: Optional[str],
     limit_remaining: Optional[int],
 ) -> List[Dict[str, Any]]:
-    """
-    Runner-Level Atomic Exclusion:
-    Finds candidates from runner_results that do not have a corresponding
-    row in historical_feature_store for this reconstruction version.
-    """
     eff_limit = batch_races
     if limit_remaining is not None:
         eff_limit = min(eff_limit, max(0, limit_remaining))
-    if eff_limit <= 0: return []
-
-    # Identify the next block of races that have ANY missing runners
+    if eff_limit <= 0:
+        return []
     sql = """
     WITH next_races AS (
         SELECT DISTINCT rr.race_id, res.reconciled_at
         FROM public.runner_results rr
         JOIN public.race_results res ON rr.race_id = res.race_id
-        LEFT JOIN public.historical_feature_store hfs 
-               ON rr.race_id = hfs.race_id 
+        LEFT JOIN public.historical_feature_store hfs
+               ON rr.race_id = hfs.race_id
               AND rr.horse_id = hfs.horse_id
               AND hfs.reconstruction_version = %s
         WHERE hfs.race_id IS NULL
@@ -96,7 +103,8 @@ def fetch_unprocessed_runners_batched(
         ORDER BY res.reconciled_at ASC, res.race_id ASC
         LIMIT %s
     )
-    SELECT r.* FROM public.race_results r
+    SELECT r.*
+    FROM public.race_results r
     JOIN next_races nr ON r.race_id = nr.race_id
     ORDER BY r.reconciled_at ASC, r.race_id ASC;
     """
@@ -104,162 +112,349 @@ def fetch_unprocessed_runners_batched(
     return list(cur.fetchall())
 
 def fetch_runners_for_races(cur: RealDictCursor, race_ids: Sequence[str]) -> Dict[str, List[Dict[str, Any]]]:
-    """Helper to fetch all runners for a batch of race IDs."""
-    if not race_ids: return {}
+    if not race_ids:
+        return {}
     sql = "SELECT * FROM public.runner_results WHERE race_id = ANY(%s::text[])"
     cur.execute(sql, (list(race_ids),))
-    out = defaultdict(list)
+    out: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     for row in cur.fetchall():
         out[row["race_id"]].append(dict(row))
     return out
 
-def build_rows_for_race(race: Dict[str, Any], runners: List[Dict[str, Any]], spec_models: Any) -> Tuple[List[Tuple[Any, ...]], Counter, List[float], int, int]:
-    rows, local_skips, chaos_values = [], Counter(), []
-    sp_count, win_count = 0, 0
-
-    nrace = {
-        "race_id": race["race_id"], "course": race.get("course"),
-        "going": race.get("going"), "race_class": race.get("race_class"),
-        "distance_f": float(race["distance_f"]) if race.get("distance_f") else None,
-        "jurisdiction": race.get("jurisdiction"),
-        "runners": []
-    }
+def build_rows_for_race(
+    race: Dict[str, Any],
+    runners: List[Dict[str, Any]],
+    mm: Any,
+) -> Tuple[List[Tuple[Any, ...]], Counter, List[float], int, int]:
+    rows: List[Tuple[Any, ...]] = []
+    local_skips = Counter()
+    chaos_values: List[float] = []
+    sp_count = 0
+    win_count = 0
 
     norm_runners = []
     for rr in runners:
-        norm_runners.append({
-            "horse_id": rr["horse_id"], "horse_name": rr.get("horse_name"),
-            "draw": rr.get("draw"), "age": rr.get("age"),
-            "weight_lbs": float(rr["weight_lbs"]) if rr.get("weight_lbs") else None,
-            "official_rating": rr.get("official_rating"), "rpr": rr.get("rpr"), "ts": rr.get("ts"),
-            "best_odds_decimal": float(rr["sp_dec"]) if rr.get("sp_dec") else None,
-            "is_winner": bool(rr.get("is_winner")), "position": rr.get("position"),
-            "pdf_intel": {}
-        })
-    nrace["runners"] = norm_runners
-
+        norm_runners.append(
+            {
+                "horse_id": rr["horse_id"],
+                "horse_name": rr.get("horse_name"),
+                "draw": rr.get("draw"),
+                "age": rr.get("age"),
+                "weight_lbs": float(rr["weight_lbs"]) if rr.get("weight_lbs") is not None else None,
+                "official_rating": rr.get("official_rating"),
+                "rpr": rr.get("rpr"),
+                "ts": rr.get("ts"),
+                "best_odds_decimal": float(rr["sp_dec"]) if rr.get("sp_dec") is not None else None,
+                "is_winner": bool(rr.get("is_winner")),
+                "position": rr.get("position"),
+                "pdf_intel": {},
+            }
+        )
+    nrace = {
+        "race_id": race["race_id"],
+        "course": race.get("course"),
+        "going": race.get("going"),
+        "race_class": race.get("race_class"),
+        "distance_f": float(race["distance_f"]) if race.get("distance_f") is not None else None,
+        "jurisdiction": race.get("jurisdiction"),
+        "runners": norm_runners,
+    }
     preds = score_race_velo_prime(nrace, sentient_state=None)
-    pred_map = {p["horse_id"]: p for p in preds}
+    pred_map = {p["horse_id"]: p for p in preds if p.get("horse_id") is not None}
 
     for r in norm_runners:
         p = pred_map.get(r["horse_id"])
-        if not p: 
-            local_skips["scoring_skipped_runner"] += 1
+        if not p:
+            local_skips["missing_prediction"] += 1
             continue
 
-        # 1. Strict Feature Ordering
         feats = _build_live_features(r, nrace, [], [])
-        vector = [[feats.get(k, 0.0) for k in FEATURE_COLS]]
-
-        # 2. Specialist Prediction (using loaded model)
-        mpi = spec_models['mpi'].predict(vector)[0] if 'mpi' in spec_models else None
-        chaos = spec_models['chaos_bloom'].predict(vector)[0] if 'chaos_bloom' in spec_models else None
-        integrity = spec_models['integrity_score'].predict(vector)[0] if 'integrity_score' in spec_models else None
-
-        if r["best_odds_decimal"]: sp_count += 1
-        if r["is_winner"]: win_count += 1
-        if chaos is not None: chaos_values.append(chaos)
-
-        rows.append((
-            nrace["race_id"], r["horse_id"], r["horse_name"], RECONSTRUCTION_VERSION,
-            race.get("reconciled_at").date(), nrace["course"], nrace["jurisdiction"],
-            nrace["distance_f"], nrace["going"], nrace["race_class"], len(runners),
-            r["draw"], r["age"], r["weight_lbs"],
-            r["official_rating"], r["rpr"], r["ts"],
-            r["best_odds_decimal"], (1.0/r["best_odds_decimal"]) if r["best_odds_decimal"] and r["best_odds_decimal"] > 0 else None,
-            feats.get("or_vs_field"), feats.get("rpr_vs_field"), feats.get("draw_pct"),
-            mpi, chaos, integrity, feats.get("power_anchor"),
-            feats.get("plot_conviction"), feats.get("or_delta_to_best_win"),
-            r["is_winner"], bool(r["position"] in [2,3]), r["position"],
-            True, None, None, # is_synthetic, narrative, story
-            ['race_results', 'runner_results'], json.dumps(feats)
-        ))
-
+        ordered_vec = [feats.get(k, 0.0) for k in mm.ALL_V17_FEATURES]
+        payload = dict(p)
+        payload["strictly_ordered_vector"] = ordered_vec
+        if r["best_odds_decimal"] is not None:
+            sp_count += 1
+        if r["is_winner"]:
+            win_count += 1
+        if payload.get("chaos_bloom") is not None:
+            chaos_values.append(payload["chaos_bloom"])
+        rows.append(
+            (
+                nrace["race_id"],
+                r["horse_id"],
+                r["horse_name"],
+                RECONSTRUCTION_VERSION,
+                race.get("reconciled_at").date() if race.get("reconciled_at") else None,
+                nrace["course"],
+                nrace["jurisdiction"],
+                nrace["distance_f"],
+                nrace["going"],
+                nrace["race_class"],
+                len(runners),
+                r["draw"],
+                r["age"],
+                r["weight_lbs"],
+                r["official_rating"],
+                r["rpr"],
+                r["ts"],
+                r["best_odds_decimal"],
+                (1.0 / r["best_odds_decimal"]) if (r["best_odds_decimal"] and r["best_odds_decimal"] > 0) else None,
+                payload.get("or_vs_field"),
+                payload.get("rpr_vs_field"),
+                payload.get("draw_pct"),
+                payload.get("mpi"),
+                payload.get("chaos_bloom"),
+                payload.get("integrity_score"),
+                payload.get("power_anchor"),
+                payload.get("plot_conviction"),
+                payload.get("or_delta_to_best_win"),
+                r["is_winner"],
+                bool(r["position"] in [2, 3]),
+                r["position"],
+                True,
+                None,
+                None,
+                ["race_results", "runner_results"],
+                json.dumps(payload),
+            )
+        )
     return rows, local_skips, chaos_values, sp_count, win_count
 
+def ensure_temp_table(cur: RealDictCursor) -> None:
+    cur.execute(
+        """
+        CREATE TEMP TABLE IF NOT EXISTS tmp_hfs
+        (LIKE public.historical_feature_store INCLUDING DEFAULTS)
+        ON COMMIT PRESERVE ROWS;
+        """
+    )
+
+def update_run_heartbeat(
+    cur: RealDictCursor,
+    run_id: int,
+    stats: RunStats,
+    global_skips: Counter,
+) -> None:
+    cur.execute(
+        """
+        UPDATE public.historical_feature_backfill_runs
+           SET rows_attempted = %s,
+               rows_written   = %s,
+               rows_skipped   = %s,
+               skip_reasons   = %s::jsonb
+         WHERE id = %s;
+        """,
+        (
+            stats.rows_generated,
+            stats.rows_written,
+            stats.rows_skipped,
+            json.dumps(dict(global_skips)),
+            run_id,
+        ),
+    )
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="VÉLØ Batch Reconstructor (Go-Live)")
+    parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--limit-races", type=int, default=None)
     parser.add_argument("--batch-races", type=int, default=2000)
+    parser.add_argument("--min-batch-races", type=int, default=100)
+    parser.add_argument("--heartbeat-every", type=int, default=10)
+    parser.add_argument("--statement-timeout-min", type=int, default=20)
+    parser.add_argument("--lock-timeout-sec", type=int, default=10)
+    parser.add_argument("--insert-page-size", type=int, default=5000)
     args = parser.parse_args()
-
     configure_logging()
-    if not MODELS_PATH.exists(): LOG.error(f"Models missing: {MODELS_PATH}"); sys.exit(1)
-    with MODELS_PATH.open("rb") as f: spec_models = pickle.load(f)
-    
-    conn = get_conn(); cur = conn.cursor(cursor_factory=RealDictCursor)
-    stats = RunStats(); global_skips = Counter()
-    
+    mm = get_model_manager()
+    if not mm.get_status().get("initialized"):
+        LOG.error("ModelManager failed initialization.")
+        sys.exit(1)
+    LOG.info("ModelManager initialized.")
+    conn = get_conn()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    race_stream_cur = conn.cursor(name="hfs_race_stream", cursor_factory=RealDictCursor)
+    stats = RunStats()
+    global_skips: Counter = Counter()
+    apply_session_guards(cur, args.statement_timeout_min, args.lock_timeout_sec)
+    conn.commit()
     run_id = None
     if not args.dry_run:
-        cur.execute("INSERT INTO public.historical_feature_backfill_runs (reconstruction_version) VALUES (%s) RETURNING id", (RECONSTRUCTION_VERSION,))
-        run_id = cur.fetchone()["id"]; conn.commit()
-
-    last_reconciled_at, last_race_id = None, None
-    limit_rem = args.limit_races
-
+        cur.execute(
+            """
+            INSERT INTO public.historical_feature_backfill_runs (reconstruction_version)
+            VALUES (%s)
+            RETURNING id;
+            """,
+            (RECONSTRUCTION_VERSION,),
+        )
+        run_id = cur.fetchone()["id"]
+        conn.commit()
+        ensure_temp_table(cur)
+        conn.commit()
+    last_reconciled_at: Optional[datetime] = None
+    last_race_id: Optional[str] = None
+    limit_remaining = args.limit_races
+    current_batch_size = max(1, args.batch_races)
+    min_batch_size = max(1, args.min_batch_races)
     try:
         while True:
-            races = fetch_unprocessed_runners_batched(cur, args.batch_races, last_reconciled_at, last_race_id, limit_rem)
-            if not races: break
-
+            races = fetch_unprocessed_runners_batched(
+                race_stream_cur,
+                current_batch_size,
+                last_reconciled_at,
+                last_race_id,
+                limit_remaining,
+            )
+            if not races:
+                break
             by_race = fetch_runners_for_races(cur, [r["race_id"] for r in races])
-            batch_rows, batch_chaos, batch_winners, runners_in_batch = [], [], 0, 0
-
+            batch_rows: List[Tuple[Any, ...]] = []
+            batch_chaos: List[float] = []
+            batch_winners = 0
+            runners_in_batch = 0
             for race in races:
                 runners = by_race.get(race["race_id"], [])
-                if not runners: global_skips["empty_race"] += 1; continue
-                
-                rows, local_skips, chaos, sp_c, wins = build_rows_for_race(race, runners, spec_models)
-                batch_rows.extend(rows); batch_chaos.extend(chaos); batch_winners += wins; 
-                runners_in_batch += len(runners); global_skips.update(local_skips)
-
-            if not batch_rows: raise RuntimeError("Fail-fast: Zero rows generated")
-            if not batch_winners: raise RuntimeError("Fail-fast: No winners in batch")
-            if len(batch_chaos) > 1 and pvariance(batch_chaos) == 0: raise RuntimeError("Fail-fast: Zero variance in metrics")
-
+                if not runners:
+                    global_skips["empty_race"] += 1
+                    continue
+                rows, local_skips, chaos_vals, _sp_c, wins = build_rows_for_race(race, runners, mm)
+                batch_rows.extend(rows)
+                batch_chaos.extend(chaos_vals)
+                batch_winners += wins
+                runners_in_batch += len(runners)
+                global_skips.update(local_skips)
+            if not batch_rows:
+                raise RuntimeError("Zero rows generated in batch.")
+            if not batch_winners:
+                raise RuntimeError("No winners found in batch.")
+            if len(batch_chaos) > 1 and pvariance(batch_chaos) == 0:
+                raise RuntimeError("Fatal: Chaos Bloom variance is zero.")
             if not args.dry_run:
-                cur.execute("CREATE TEMP TABLE tmp_hfs (LIKE public.historical_feature_store INCLUDING DEFAULTS) ON COMMIT DROP")
-                cols = """race_id, horse_id, horse_name, reconstruction_version, race_date, course, jurisdiction,
-                          distance_f, going, race_class, field_size, draw, age, weight_lbs,
-                          official_rating, rpr, ts, sp_dec, implied_prob, or_vs_field, rpr_vs_field, draw_pct,
-                          mpi, chaos_bloom, integrity_score, power_anchor, plot_conviction, or_delta_to_best_win,
-                          winner_flag, placed_flag, finish_position, is_synthetic, narrative_disruption, story_anchor,
-                          source_tables, feature_json"""
-                execute_values(cur, f"INSERT INTO tmp_hfs ({cols}) VALUES %s", batch_rows)
-                
-                cur.execute(f"INSERT INTO public.historical_feature_store ({cols}) SELECT * FROM tmp_hfs ON CONFLICT (race_id, horse_id, reconstruction_version) DO NOTHING")
-                written = cur.rowcount
-                stats.rows_written += written
-                stats.rows_skipped += (len(batch_rows) - written)
-                conn.commit()
+                try:
+                    cur.execute("TRUNCATE tmp_hfs;")
+                    execute_values(
+                        cur,
+                        f"INSERT INTO tmp_hfs ({HFS_COLS}) VALUES %s",
+                        batch_rows,
+                        page_size=max(1000, args.insert_page_size),
+                    )
+                    cur.execute(
+                        f"""
+                        INSERT INTO public.historical_feature_store ({HFS_COLS})
+                        SELECT * FROM tmp_hfs
+                        ON CONFLICT (race_id, horse_id, reconstruction_version) DO NOTHING;
+                        """
+                    )
+                    written = cur.rowcount
+                    stats.rows_written += written
+                    stats.rows_skipped += (len(batch_rows) - written)
+                    conn.commit()
+                    if current_batch_size < args.batch_races:
+                        current_batch_size = min(args.batch_races, int(current_batch_size * 1.25))
+                except Exception as batch_err:
+                    conn.rollback()
+                    if current_batch_size > min_batch_size:
+                        current_batch_size = max(min_batch_size, current_batch_size // 2)
+                        LOG.warning(
+                            "Batch write failed; reducing batch size to %s. Reason: %s",
+                            current_batch_size,
+                            str(batch_err),
+                        )
+                        continue
+                    raise
             else:
-                LOG.info(f"[DRY-RUN] Sample: {batch_rows[0][0]} | {batch_rows[0][2]}")
-
-            stats.races_attempted += len(races); stats.runners_attempted += runners_in_batch; stats.rows_generated += len(batch_rows)
-            last = races[-1]; last_reconciled_at, last_race_id = last["reconciled_at"], last["race_id"]
-            if limit_rem:
-                limit_rem -= len(races)
-                if limit_rem <= 0: break
-
+                LOG.info(
+                    "[DRY-RUN] Sample: %s | %s | chaos=%s",
+                    batch_rows[0][0],
+                    batch_rows[0][2],
+                    batch_rows[0][23],
+                )
+                LOG.info(
+                    "[DRY-RUN] Batch stats: races=%s, generated_rows=%s, winners=%s",
+                    len(races),
+                    len(batch_rows),
+                    batch_winners,
+                )
+            stats.races_attempted += len(races)
+            stats.runners_attempted += runners_in_batch
+            stats.rows_generated += len(batch_rows)
+            stats.batches_processed += 1
+            last = races[-1]
+            last_reconciled_at = last["reconciled_at"]
+            last_race_id = last["race_id"]
+            if limit_remaining is not None:
+                limit_remaining -= len(races)
+                if limit_remaining <= 0:
+                    break
+            if run_id and (stats.batches_processed % max(1, args.heartbeat_every) == 0):
+                update_run_heartbeat(cur, run_id, stats, global_skips)
+                conn.commit()
+                LOG.info(
+                    "Heartbeat: batches=%s, races=%s, rows_generated=%s, rows_written=%s, rows_skipped=%s",
+                    stats.batches_processed,
+                    stats.races_attempted,
+                    stats.rows_generated,
+                    stats.rows_written,
+                    stats.rows_skipped,
+                )
+            batch_rows.clear()
+            batch_chaos.clear()
+            by_race.clear()
+            races.clear()
+            gc.collect()
         if run_id:
-            cur.execute("""UPDATE public.historical_feature_backfill_runs SET 
-                        status='completed', finished_at=NOW(), rows_written=%s, 
-                        rows_attempted=%s, rows_skipped=%s, skip_reasons=%s::jsonb 
-                        WHERE id=%s""", 
-                        (stats.rows_written, stats.rows_generated, stats.rows_skipped, json.dumps(dict(global_skips)), run_id))
+            cur.execute(
+                """
+                UPDATE public.historical_feature_backfill_runs
+                   SET status='completed',
+                       finished_at=NOW(),
+                       rows_written=%s,
+                       rows_attempted=%s,
+                       rows_skipped=%s,
+                       skip_reasons=%s::jsonb
+                 WHERE id=%s;
+                """,
+                (
+                    stats.rows_written,
+                    stats.rows_generated,
+                    stats.rows_skipped,
+                    json.dumps(dict(global_skips)),
+                    run_id,
+                ),
+            )
             conn.commit()
-
     except Exception as e:
-        if run_id: 
+        if run_id:
             conn.rollback()
-            cur.execute("UPDATE public.historical_feature_backfill_runs SET status='failed', finished_at=NOW(), error_message=%s WHERE id=%s", (str(e), run_id))
+            cur.execute(
+                """
+                UPDATE public.historical_feature_backfill_runs
+                   SET status='failed',
+                       finished_at=NOW(),
+                       error_message=%s
+                 WHERE id=%s;
+                """,
+                (str(e), run_id),
+            )
             conn.commit()
-        LOG.exception("Backfill failed"); raise e
+        LOG.exception("Backfill failure")
+        raise
     finally:
-        LOG.info(f"Final Summary: {stats.races_attempted} races attempted | {stats.rows_written} written.")
-        cur.close(); conn.close()
+        LOG.info(
+            "Summary: races=%s | runners=%s | generated=%s | written=%s | skipped=%s | batches=%s",
+            stats.races_attempted,
+            stats.runners_attempted,
+            stats.rows_generated,
+            stats.rows_written,
+            stats.rows_skipped,
+            stats.batches_processed,
+        )
+        try:
+            race_stream_cur.close()
+        except Exception:
+            pass
+        cur.close()
+        conn.close()
 
 if __name__ == "__main__":
     main()
