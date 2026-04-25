@@ -596,6 +596,35 @@ def merge_race_data(
                     form_horses = {h["horse_name"].lower(): h for h in fd.get("horses", [])}
                     break
 
+        def _sanitise_name(n: str) -> str:
+            """Strip trailing digit sequences from horse names (parser leak defence)."""
+            import re as _re
+            # Strip trailing digit sequences e.g. 'cosmic connection 123123'
+            n = _re.sub(r'(\s+\d+)+$', '', n).strip()
+            return n
+
+        def _make_horse_dict(source_dict: dict) -> dict:
+            """Re-key a horse dict with sanitised names, merging duplicates."""
+            clean = {}
+            for raw_name, data in source_dict.items():
+                clean_name = _sanitise_name(raw_name)
+                if clean_name not in clean:
+                    clean[clean_name] = data
+                else:
+                    # Merge — prefer non-None values from the clean-named entry
+                    for k, v in data.items():
+                        if k not in clean[clean_name] or clean[clean_name][k] is None:
+                            clean[clean_name][k] = v
+            return clean
+
+        or_horses = _make_horse_dict(or_horses)
+        ts_horses = _make_horse_dict(ts_horses)
+        spot_horses = _make_horse_dict(spot_horses)
+        pd_horses = _make_horse_dict(pd_horses)
+        cc_horses = _make_horse_dict(cc_horses)
+        rc_horses = _make_horse_dict(rc_horses)
+        form_horses = _make_horse_dict(form_horses)
+
         all_horse_names = sorted(set(
             list(or_horses.keys()) + list(ts_horses.keys()) +
             list(spot_horses.keys()) + list(pd_horses.keys()) +
@@ -988,6 +1017,7 @@ def main():
     from workers.form_detailed_parser import parse_form_detailed_pdf
     from workers.colour_card_parser import parse_colour_card_pdf
     from workers.raceform_card_parser import parse_raceform_card_pdf
+    from workers.spotlight_parser_v2 import parse_spotlight_pdf_v2
 
     # Find PDFs
     if args.dir and args.venue and args.date:
@@ -1031,7 +1061,15 @@ def main():
     # Parse each PDF type
     or_data = parse_or_pdf(or_path) if or_path else {}
     ts_data = parse_ts_pdf(ts_path) if ts_path else {}
-    spotlight_data = parse_spotlight_pdf(spot_path) if spot_path else {}
+    # Use v2 spotlight parser (reads exact F_0016 format with full comments)
+    if spot_path:
+        try:
+            spotlight_data = parse_spotlight_pdf_v2(spot_path)
+        except Exception as e:
+            print(f"  WARN: spotlight_parser_v2 failed ({e}), falling back to v1")
+            spotlight_data = parse_spotlight_pdf(spot_path)
+    else:
+        spotlight_data = {}
     postdata_data = parse_postdata_pdf(pd_path) if pd_path else {}
     cc_data = parse_colour_card_pdf(cc_path) if cc_path else {}
     rc_data = parse_raceform_card_pdf(rc_path) if rc_path else {}

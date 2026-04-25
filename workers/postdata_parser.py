@@ -126,8 +126,9 @@ def _parse_ts_cell(cell: str) -> dict:
 
     # Try to parse: HorseName TS_LATEST TS_BEST-Date Venue Dist+Going ADJUSTED
     # Pattern: name digits digits-Mon DD Venue Dist.Going digits
+    # Name group: letters, spaces, apostrophes, hyphens ONLY — no digits
     m = re.match(
-        r"^(.+?)\s+(\d+)\s*(\d+)-(\w{3})\s+(\d{2})\s+(\w+)\s+([\d.]+)([\w]*)\s+(\d+)$",
+        r"^([A-Za-z][A-Za-z'\-\.\s]+?)\s+(\d+)\s*(\d+)-(\w{3})\s+(\d{2})\s+(\w+)\s+([\d.]+)([\w]*)\s+(\d+)$",
         cell,
     )
     if m:
@@ -145,7 +146,7 @@ def _parse_ts_cell(cell: str) -> dict:
 
     # Simpler pattern: name digits-Mon DD Venue Dist+Going digits (no latest separate)
     m2 = re.match(
-        r"^(.+?)\s+-?(\d+)-(\w{3})\s+(\d{2})\s+(\w+)\s+([\d.]+)([\w]*)\s+(\d+)$",
+        r"^([A-Za-z][A-Za-z'\-\.\s]+?)\s+-?(\d+)-(\w{3})\s+(\d{2})\s+(\w+)\s+([\d.]+)([\w]*)\s+(\d+)$",
         cell,
     )
     if m2:
@@ -162,7 +163,7 @@ def _parse_ts_cell(cell: str) -> dict:
         }
 
     # Minimal pattern: name digits- digits or name -- digits
-    m3 = re.match(r"^(.+?)\s+(\d+)-\s*(\d+)$", cell)
+    m3 = re.match(r"^([A-Za-z][A-Za-z'\-\.\s]+?)\s+(\d+)-\s*(\d+)$", cell)
     if m3:
         return {
             "horse_name": m3.group(1).strip(),
@@ -173,7 +174,7 @@ def _parse_ts_cell(cell: str) -> dict:
         }
 
     # Just name and -- 0
-    m4 = re.match(r"^(.+?)\s+--\s*(\d+)$", cell)
+    m4 = re.match(r"^([A-Za-z][A-Za-z'\-\.\s]+?)\s+--\s*(\d+)$", cell)
     if m4:
         return {
             "horse_name": m4.group(1).strip(),
