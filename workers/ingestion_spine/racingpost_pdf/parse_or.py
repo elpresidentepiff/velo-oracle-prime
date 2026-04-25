@@ -17,8 +17,7 @@ _SECTION_RE = re.compile(r"^(?P<off>\d{1,2}\.\d{2})\b")
 _HORSE_LINE_RE = re.compile(
     r"^(?P<prefix>.*?)"
     r"(?P<name>[A-Za-z][A-Za-z'&\-\.\s]+?)"
-    r"\s+(?P<weight>\d{1,2}-\d{1,2}[A-Za-z0-9]*)"
-    r"\s+(?P<numbers>(?:-?\d+\s*)+)$"
+    r"(?:\s+(?P<weight>\d{1,2}-\d{1,2}[A-Za-z0-9]*)|\s+(?P<numbers_no_weight>(?:-?\d+\s*)+))$"
 )
 _LEAKED_PREFIX_TOKENS = {
     "S", "SD", "G", "GF", "GS", "Y", "YS", "GY", "HY", "SH", "SS",
@@ -88,7 +87,20 @@ def _parse_horse_line(line: str, *, prefix: str) -> tuple[str, dict[str, Any]] |
     horse_name = _clean_rating_horse_name(match.group("name"))
     history_tokens = _extract_history_tokens(match.group("prefix"))
     
-    numbers = [int(piece) for piece in match.group("numbers").split()]
+    # In F_0015, the rating numbers might be in 'weight' (misidentified) 
+    # or 'numbers_no_weight'
+    raw_nums = match.group("numbers_no_weight") or match.group("weight")
+    if not raw_nums:
+        return None
+
+    numbers = []
+    for piece in raw_nums.split():
+        try:
+            numbers.append(int(piece))
+        except ValueError:
+            # Skip pieces like '9-10' which are weights, not ratings
+            continue
+            
     if not numbers:
         return None
 

@@ -96,33 +96,42 @@ def parse_distance(distance_str: str) -> tuple[int | None, float | None, int | N
 
 def normalize_horse_name(name: str) -> str:
     """
-    Normalize horse name: uppercase, strip whitespace, remove special chars.
+    Normalize horse name: uppercase, strip whitespace, remove special chars,
+    and ABSOLUTELY ensure no digits leak into the name buffer.
 
     Args:
         name: Raw horse name from PDF
 
     Returns:
-        Normalized horse name
+        Normalized horse name (Alpha only)
 
     Examples:
-        >>> normalize_horse_name("  Brave Empire ")
+        >>> normalize_horse_name("  Brave Empire 123 ")
         "BRAVE EMPIRE"
         >>> normalize_horse_name("Sea The Stars (IRE)")
         "SEA THE STARS"
     """
-    # Strip whitespace
-    name = name.strip()
+    if not name:
+        return ""
 
-    # Remove country codes like (IRE), (FR), (USA)
-    name = re.sub(r"\s*\([A-Z]{2,3}\)\s*$", "", name)
+    # 1. Strip country codes like (IRE), (FR), (USA)
+    name = re.sub(r"\s*\([A-Z]{2,3}\)\s*$", "", name.strip())
 
-    # Uppercase
+    # 2. Hard Sanitization: Remove any leading/trailing digits or numeric sequences
+    #    This kills the "Cosmic Connection 123123" failure mode.
+    name = re.sub(r"^\d+\s+", "", name)  # Leading numbers
+    name = re.sub(r"\s+\d+.*$", "", name)  # Trailing numbers and anything after them
+
+    # 3. Uppercase
     name = name.upper()
 
-    # Remove extra whitespace
+    # 4. Remove any characters that aren't letters, apostrophes, hyphens, or spaces
+    name = re.sub(r"[^A-Z'\-\s]", "", name)
+
+    # 5. Collapse whitespace
     name = " ".join(name.split())
 
-    return name
+    return name.strip()
 
 
 def parse_weight(weight_str: str) -> str | None:

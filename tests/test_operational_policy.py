@@ -12,14 +12,11 @@ OPERATIONAL_PATHS = [
     ROOT / "app" / "services" / "velo_prime_service.py",
     ROOT / "scripts" / "run_prime_today.py",
     ROOT / "scripts" / "run_results_sigma.py",
-    ROOT / "scripts" / "shadow_lab.py",
-    ROOT / "workers" / "daily_pipeline.py",
 ]
 MONITORED_LEGACY_PATHS = [
     ROOT / "scripts" / "velo_ops_check.py",
-    ROOT / "scripts" / "build_rpdc_profiles.py",
-    ROOT / "scripts" / "ingest_racing_profiles.py",
-    ROOT / "scripts" / "ingest_rp_stats.py",
+    ROOT / "scripts" / "notify_governed_results.py",
+    ROOT / "scripts" / "production_checks.py",
 ]
 
 

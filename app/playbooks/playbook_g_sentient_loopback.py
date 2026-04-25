@@ -373,9 +373,13 @@ class SentientLoopbackEngine:
 
         if predicted_winner and actual_winner and not correct:
             logger.debug("[G] Prediction mismatch: predicted='%s' actual='%s'", predicted_winner, actual_winner)
+            
+        sp = float(actual_result.get("sp") or 0.0)
+        profit = (sp - 1.0) if correct else -1.0
 
         return {
             "prediction_correct": 1.0 if correct else 0.0,
+            "profit": profit,
             "confidence_error": abs(prediction.get("confidence", 0.5) - (1.0 if correct else 0.0)),
             "directive_effectiveness": 1.0 if correct else 0.0,
         }
@@ -498,27 +502,35 @@ class SentientLoopbackEngine:
                 ree[emotion] = ree[emotion][-50:]
 
     def _update_appetite_multiplier(self, error_vector: dict[str, float]):
-        """Pillar 5: Risk-aware momentum"""
+        """Pillar 5: Risk-aware momentum (ROI-driven)"""
         appetite = self.state["appetite_state"]
 
-        # Track recent performance
-        appetite["recent_performance"].append(error_vector["prediction_correct"])
-        if len(appetite["recent_performance"]) > 10:
-            appetite["recent_performance"] = appetite["recent_performance"][-10:]
+        # Track recent performance based on profit/loss, not just win/loss
+        profit = error_vector.get("profit", -1.0)
+        
+        # Ensure list exists
+        if "recent_profit" not in appetite:
+            appetite["recent_profit"] = []
+            
+        appetite["recent_profit"].append(profit)
+        if len(appetite["recent_profit"]) > 10:
+            appetite["recent_profit"] = appetite["recent_profit"][-10:]
 
-        # Calculate recent success rate
-        if len(appetite["recent_performance"]) >= 5:
-            recent_success = sum(appetite["recent_performance"][-5:]) / 5.0
+        # Calculate recent ROI
+        if len(appetite["recent_profit"]) >= 5:
+            recent_profit_total = sum(appetite["recent_profit"][-5:])
 
-            if recent_success > 0.6:
-                # Winning streak — loosen criteria
+            # If we are profitable over the last 5 bets, get more aggressive.
+            # We don't need a high strike rate, we just need a positive ROI.
+            if recent_profit_total > 0.0:
+                # Winning streak (Profitable) — loosen criteria
                 appetite["aggression_level"] = min(1.0, appetite["aggression_level"] + 0.05)
                 appetite["pattern_recognition_sensitivity"] += 0.02
                 appetite["doctrine_firing_threshold"] -= 0.02
                 appetite["directive_firing_threshold"] -= 0.02
                 appetite["narrative_skepticism"] += 0.02
             else:
-                # Losing streak — tighten criteria
+                # Losing streak (Negative ROI) — tighten criteria
                 appetite["aggression_level"] = max(0.3, appetite["aggression_level"] - 0.05)
                 appetite["chaos_tolerance"] -= 0.02
                 appetite["manipulation_sensitivity"] += 0.02

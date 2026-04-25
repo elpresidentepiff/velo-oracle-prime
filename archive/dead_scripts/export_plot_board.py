@@ -20,13 +20,12 @@ def main():
     parser.add_argument("--date", default=date.today().isoformat())
     args = parser.parse_args()
 
-    load_optional_env_file(ROOT / ".env")
+    load_optional_env_file(".env")
     url = resolve_supabase_url()
     key = resolve_supabase_service_key()
     if not url or not key:
         print("Error: Supabase credentials not found.")
         return
-        
     sb = create_client(url, key)
     
     target_date = args.date
@@ -64,7 +63,7 @@ def main():
             })
 
     if not rows:
-        print("No plot candidates identified for this date.")
+        print("No plot candidates identified for today.")
         return
 
     rows.sort(key=lambda x: (-x["star_rating"], -x["plot_score"]))

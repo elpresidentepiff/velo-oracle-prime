@@ -1,116 +1,69 @@
 """
-Racing Post PDF Parser - Merge Logic & Conviction Engine
-Merge runners across XX/OR/TS/PM/Spotlight/Postdata and calculate conviction.
+Racing Post PDF Parser - Merge Logic
+Merge runners across XX/OR/TS/PM sources.
 """
 
-from .normalize import normalize_horse_name
-from .types import Race, Runner
+from .types import Race
 
 
-def merge_and_score(
+def merge_ratings(
     races: list[Race],
     or_ratings: dict[str, dict[str, dict]],
     ts_ratings: dict[str, dict[str, dict]],
-    pm_prices: dict[str, dict[str, float]],
-    spotlight_data: dict[str, dict[str, dict]],
-    postdata_data: dict[str, dict[str, dict]],
+    pm_prices: dict[str, dict[str, dict]],
+    spotlight_comments: dict[str, dict[str, dict]] | None = None,
+    postdata_signals: dict[str, dict[str, dict]] | None = None,
 ) -> list[Race]:
     """
-    Merge all RP sources and calculate final plot conviction score.
+    Merge OR/TS/PM data into races.
+
+    Match by (race_id, runner_name) - fuzzy matching on names.
+
+    Args:
+        races: List of races from XX parser
+        or_ratings: OR ratings map {race_id: {runner_name: rating}}
+        ts_ratings: TS ratings map {race_id: {runner_name: rating}}
+        pm_prices: PM prices map {race_id: {runner_name: price}}
+
+    Returns:
+        Updated races with merged data
     """
     for race in races:
         race_or = or_ratings.get(race.race_id, {})
         race_ts = ts_ratings.get(race.race_id, {})
         race_pm = pm_prices.get(race.race_id, {})
-        race_spot = spotlight_data.get(race.race_id, {})
-        race_post = postdata_data.get(race.race_id, {})
+        race_spotlight = (spotlight_comments or {}).get(race.race_id, {})
+        race_postdata = (postdata_signals or {}).get(race.race_id, {})
 
         for runner in race.runners:
-            name_key = normalize_horse_name(runner.name)
+            # Try exact match first
+            runner_name = runner.name.upper()
 
-            # 1. Merge OR
-            if name_key in race_or:
-                or_payload = race_or[name_key]
-                runner.or_rating = or_payload.get("or_or_current")
-                runner.best_winning_life = or_payload.get("best_winning_life")
-                runner.or_delta_to_best_win = or_payload.get("or_delta_to_best_win")
-                runner.raw["or_history"] = or_payload.get("or_history_tokens", [])
+            # Merge OR rating
+            if runner_name in race_or:
+                payload = race_or[runner_name]
+                if payload.get("or_current") is not None:
+                    runner.or_rating = payload["or_current"]
+                runner.raw.update({k: v for k, v in payload.items() if v is not None})
 
-            # 2. Merge TS
-            if name_key in race_ts:
-                ts_payload = race_ts[name_key]
-                runner.ts = ts_payload.get("ts_or_current")
-                runner.raw["ts_history"] = ts_payload.get("ts_history_tokens", [])
-                runner.raw["ts_master"] = ts_payload.get("ts_master")
+            # Merge TS rating
+            if runner_name in race_ts:
+                payload = race_ts[runner_name]
+                if runner.ts is None and payload.get("ts_latest") is not None:
+                    runner.ts = payload["ts_latest"]
+                runner.raw.update({k: v for k, v in payload.items() if v is not None})
 
-            # 3. Merge PM
-            if name_key in race_pm:
-                runner.raw["pm_price"] = race_pm[name_key]
+            # Merge PM / Racing Post ratings (store in raw for now)
+            if runner_name in race_pm:
+                payload = race_pm[runner_name]
+                runner.raw.update({k: v for k, v in payload.items() if v is not None})
 
-            # 4. Merge Spotlight
-            if name_key in race_spot:
-                spot_payload = race_spot[name_key]
-                runner.comment = spot_payload.get("comment")
-                race.spotlight_verdict = spot_payload.get("spotlight_race_verdict")
+            if runner_name in race_spotlight:
+                payload = race_spotlight[runner_name]
+                runner.raw.update({k: v for k, v in payload.items() if v is not None})
 
-            # 5. Merge Postdata
-            if name_key in race_post:
-                post_payload = race_post[name_key]
-                runner.postdata_pick = post_payload.get("postdata_pick", False)
-                runner.topspeed_pick = post_payload.get("topspeed_pick", False)
-                runner.raw["postdata_rating"] = post_payload.get("postdata_latest_rating")
-                runner.raw["postdata_pos_flags"] = post_payload.get("postdata_positive_count", 0)
-                runner.raw["postdata_neg_flags"] = post_payload.get("postdata_negative_count", 0)
-
-            # 6. CALCULATE CONVICTION
-            runner.plot_conviction = _calculate_conviction(runner)
-            runner.star_rating = _calculate_stars(runner.plot_conviction)
+            if runner_name in race_postdata:
+                payload = race_postdata[runner_name]
+                runner.raw.update({k: v for k, v in payload.items() if v is not None})
 
     return races
-
-
-def _calculate_conviction(runner: Runner) -> float:
-    """
-    Weighted conviction scoring (0.0 to 1.0).
-    """
-    score = 0.0
-
-    # A. OR Compression (40%)
-    if runner.or_delta_to_best_win is not None:
-        delta = runner.or_delta_to_best_win
-        if delta <= 0:
-            # Horse is at or below its winning mark
-            score += 0.40
-            # Bonus for major compression
-            if delta <= -10:
-                score += 0.10
-        elif delta <= 5:
-            # Within striking distance
-            score += 0.20
-
-    # B. Confirmation Signals (40%)
-    if runner.postdata_pick:
-        score += 0.20
-    if runner.topspeed_pick:
-        score += 0.20
-    
-    # C. Intent / Physical (20%)
-    # Cash run flag in raw (if extracted earlier by XX parser)
-    if runner.raw.get("cash_run_flag"):
-        score += 0.10
-    
-    # Positive spotlight sentiment (basic check for now)
-    if runner.comment and any(word in runner.comment.lower() for word in ["well treated", "major player", "big chance"]):
-        score += 0.10
-
-    return min(1.0, score)
-
-
-def _calculate_stars(score: float) -> int:
-    if score >= 0.85:
-        return 3
-    if score >= 0.70:
-        return 2
-    if score >= 0.50:
-        return 1
-    return 0

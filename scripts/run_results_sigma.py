@@ -314,9 +314,17 @@ def main():
         print(f"  Using cached results: {len(results_list)} races")
     else:
         print("  Fetching from API...")
-        d = racing_get(f"/results?start_date={race_date}&end_date={race_date}&limit=50")
-        results_list = d.get("results", [])
-        cached.write_text(json.dumps(d, indent=2))
+        results_list = []
+        skip = 0
+        page_size = 50
+        while True:
+            d = racing_get(f"/results?start_date={race_date}&end_date={race_date}&limit={page_size}&skip={skip}")
+            page = d.get("results", [])
+            results_list.extend(page)
+            if len(page) < page_size:
+                break
+            skip += page_size
+        cached.write_text(json.dumps({"results": results_list}, indent=2))
         print(f"  Fetched and cached: {len(results_list)} races")
 
     # Build result lookup: race_id -> {winner_horse, winner_id, top3_ids}
@@ -350,7 +358,11 @@ def main():
     frames = []  # top pick placed top 3
     misses = []  # top pick outside top 3
     no_result = []  # race result not found
+    non_runners = []  # predicted horse did not participate (F/PU/BD/UR/WD/NR)
     all_matched = []
+
+    # Positions that mean "did not finish / was not a runner" — exclude from stats
+    DNF_POSITIONS = {"NR", "WD", "PU", "F", "BD", "UR", "SU", "RO", "REF", "DSQ", ""}
 
     for race_id, pred in predictions.items():
         result = results_by_id.get(race_id)
@@ -375,6 +387,18 @@ def main():
         if not pick_from_db and not predicted_horse_id:
             print(f"  [SKIP] {race_id}: no horse_id and no fallback name — unresolvable")
             no_result.append(race_id)
+            continue
+
+        # ── Non-runner gate: predicted horse did not start/finish ─────────────
+        full_runners = result.get("full_runners", [])
+        for runner in full_runners:
+            if runner.get("horse_id") == predicted_horse_id:
+                pos = str(runner.get("position", "")).strip().upper()
+                if pos in DNF_POSITIONS:
+                    non_runners.append(race_id)
+                    print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded from stats")
+                break
+        if race_id in non_runners:
             continue
 
         is_hit = predicted_horse_id == result["winner_id"]
@@ -431,11 +455,12 @@ def main():
     total_hits = len(hits)
     total_frames = len(frames)
     total_misses = len(misses)
+    total_nr = len(non_runners)
     strike_rate = total_hits / total_matched if total_matched else 0
     frame_rate = (total_hits + total_frames) / total_matched if total_matched else 0
     no_result_ct = len(no_result)
 
-    print(f"\n  Matched: {total_matched}  No result: {no_result_ct}")
+    print(f"\n  Matched: {total_matched}  No result: {no_result_ct}  Non-runners excluded: {total_nr}")
     print(f"  HITS:    {total_hits} ({strike_rate:.1%})")
     print(f"  FRAMES:  {total_frames}")
     print(f"  MISSES:  {total_misses}")
@@ -778,7 +803,8 @@ def main():
         f"Hits (1st):       {total_hits}  ({strike_rate:.1%})\n"
         f"Frames (top 3):   {total_hits + total_frames}  ({frame_rate:.1%})\n"
         f"Misses:           {total_misses}\n"
-        f"\n"
+        + (f"Non-runners:      {total_nr} (excluded)\n" if total_nr else "")
+        + f"\n"
         f"High-conf (>=0.30): {len(high_conf)} picks, {len(high_hits)} hits ({high_strike:.1%})\n"
         f"Avg prob (hits):    {avg_hit_prob:.4f}\n"
         f"Avg prob (misses):  {avg_miss_prob:.4f}\n"

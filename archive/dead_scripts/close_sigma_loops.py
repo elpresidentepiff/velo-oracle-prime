@@ -433,6 +433,9 @@ def generate_review(
             raw_fa = json.loads(raw_fa)
         except Exception:
             raw_fa = []
+    # Normalise: full_analysis may be stored as a single dict rather than a list
+    if isinstance(raw_fa, dict):
+        raw_fa = [raw_fa]
 
     # Track context — from top runner block (passive enrichment, injected at persist time)
     _top_runner = raw_fa[0] if raw_fa and isinstance(raw_fa[0], dict) else {}
@@ -1480,7 +1483,7 @@ def main(target_date: str) -> None:
                 f"Wins:   {wins}  ({strike_pct:.1f}% strike)\n"
                 f"Placed: {placed}  (frame: {frame_pct:.1f}%)\n"
                 f"Misses: {misses_n}\n"
-                \nTIER SPLIT:\n{tier_block}"
+                f"\nTIER SPLIT:\n{tier_block}"
                 f"{forensic_block}\n"
                 f"\nStatus: {tg_status}"
             )

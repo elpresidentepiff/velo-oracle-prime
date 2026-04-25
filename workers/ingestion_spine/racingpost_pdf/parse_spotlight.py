@@ -35,9 +35,8 @@ def parse_spotlight_card(
 
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            for page in pdf.pages:
-                text = page.extract_text() or ""
-                lines = [line.strip() for line in text.splitlines() if line and line.strip()]
+            for page_num, page in enumerate(pdf.pages, start=1):
+                lines = [line.strip() for line in (page.extract_text() or "").splitlines() if line and line.strip()]
                 off_time = _extract_off_time(lines)
                 if not off_time:
                     continue
@@ -76,7 +75,7 @@ def _parse_spotlight_page(lines: list[str], race: Race) -> dict[str, dict[str, A
             "spotlight_file_source": "0016_XX",
         }
 
-    # Every runner can still inherit the race verdict
+    # Every runner can still inherit the race verdict, even if their prose block failed to parse.
     if verdict:
         for runner in race.runners:
             runner_name = normalize_horse_name(runner.name)

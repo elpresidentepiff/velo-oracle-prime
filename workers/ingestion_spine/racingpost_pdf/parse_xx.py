@@ -172,16 +172,23 @@ def _parse_runners_from_block(race_block: str) -> list[Runner]:
             runner_number = int(runner_num_match.group(1))
 
             # Extract horse name (after form figures, before days)
-            # Pattern: number, form (optional), name (uppercase words), days
-            name_match = re.search(r"([A-Z][A-Z\s\']+?)(?:\s+\d+\s+D|\s+$)", line)
+            # Pattern: number, form (optional), name (uppercase alpha), days
+            # RESTRICTED: [A-Z'\-\.\s]+? stops at first digit.
+            name_match = re.search(r"([A-Z][A-Z'\-\.\s]+?)(?:\s+\d+\s+D|\s+$)", line)
             if name_match:
                 raw_name = name_match.group(1).strip()
             else:
-                # Fallback: take text after form figures
+                # Fallback: take text after form figures using alpha restriction
                 parts = line.split()
                 if len(parts) >= 3:
-                    # Skip number and form, take rest
-                    raw_name = " ".join(parts[2:5])  # Take a few words
+                    # Take up to 4 words but only if they are uppercase letters
+                    name_parts = []
+                    for p in parts[2:6]:
+                        if re.match(r"^[A-Z'\-\.]+$", p):
+                            name_parts.append(p)
+                        else:
+                            break
+                    raw_name = " ".join(name_parts)
                 else:
                     i += 1
                     continue

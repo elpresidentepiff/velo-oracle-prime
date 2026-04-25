@@ -165,8 +165,15 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
     # Cache absent — fetch directly from Racing API
     if not RACING_USER or not RACING_PASS:
         raise RuntimeError("No cached racecards and RACING_API_USERNAME/PASSWORD not set — cannot fetch")
-    qs = urlencode({"day": "today"}) if date_tag == TODAY else urlencode({"date": date_str})
-    url = f"{RACING_BASE}/racecards/standard?{qs}"
+    from datetime import date as _date
+    _today = str(_date.today())
+    if date_str == _today:
+        qs = urlencode({"day": "today"})
+    elif date_str > _today:
+        qs = ""  # free/standard returns next available race day when no date given
+    else:
+        qs = urlencode({"date": date_str})
+    url = f"{RACING_BASE}/racecards/standard" + (f"?{qs}" if qs else "")
     req = urllib.request.Request(url, headers=RACING_HEADERS)
     with urllib.request.urlopen(req, timeout=30) as r:
         raw = json.loads(r.read())
