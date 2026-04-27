@@ -1,0 +1,3003 @@
+{
+  "project": "VELO",
+  "audit": "etsclv_project_audit_v1",
+  "generated_on": "2026-04-26",
+  "scope": "project_wide",
+  "mode": "architecture_audit_only",
+  "checkpoint": {
+    "branch": "checkpoint/oasis-clean-spine-audit-v2-passed",
+    "oasis_etsclv_checkpoint_commit": "beba855",
+    "clean_spine_savepoint_commit": "0f44411fdb52a2e2e056020408baca51b891c893"
+  },
+  "current_accepted_spine": {
+    "race_results": 3201,
+    "runner_results": 31751,
+    "historical_feature_store": 31692,
+    "clean_historical_races_integrated_approx": 1913,
+    "accepted_oasis_historical_events": 1671,
+    "accepted_oasis_historical_hfs_rows": 18331
+  },
+  "hard_warnings": [
+    "OASIS_BLOCK_025 is rejected and rolled back.",
+    "Reason: 2025 macro-year mismatch.",
+    "Do not retry Block 025 until 2025 macro context support exists.",
+    "app/services/velo_prime_service.py has unrelated unstaged work and is not checkpointed.",
+    "Recovery must start from data/velo_current_state.json, not chat memory."
+  ],
+  "inventory_summary": {
+    "execution_loops_mapped": 14,
+    "total_tools_classified": 196,
+    "active_tools_count": 60,
+    "legacy_dead_tools_count": 121,
+    "unknown_or_quarantine_tools_count": 15,
+    "state_stores_identified": 23,
+    "lifecycle_operations_audited": 16,
+    "verification_checks_mapped": 24
+  },
+  "execution_loop_audit": [
+    {
+      "loop_name": "historical_discovery_loop",
+      "purpose": "Scan archive raceform rows, validate clean event identity, and freeze candidates and rejections by window.",
+      "entrypoint": "scripts/mine_clean_course_zones.py::run_targeted_discovery",
+      "inputs": [
+        "raceform table",
+        "window start id",
+        "max rows",
+        "target course list",
+        "existing bridged events from races"
+      ],
+      "outputs": [
+        "clean_race_candidates_oasis_window_*.jsonl",
+        "clean_race_rejections_oasis_window_*.jsonl",
+        "clean_race_index_cursor_window_*.json"
+      ],
+      "database_reads": [
+        "raceform",
+        "races"
+      ],
+      "database_writes": [],
+      "manual_approvals_required": [
+        "bridge approval after audit"
+      ],
+      "failure_stops": [
+        "accounting invariant mismatch",
+        "duplicate event_key",
+        "winner parity failure",
+        "partial interrupted window run"
+      ],
+      "rollback_method": "artifact deletion or regeneration only; no database rollback needed",
+      "current_maturity": "semi_automated",
+      "risk_rating": "medium",
+      "resume_points": [
+        "cursor file",
+        "frozen candidate/rejection files"
+      ],
+      "known_weak_spots": [
+        "non_target_count is not persisted as a first-class metric",
+        "candidate_collision_count is not codified in script output",
+        "window state freeze is external to script"
+      ]
+    },
+    {
+      "loop_name": "historical_bridge_loop",
+      "purpose": "Bridge approved historical clean events into races, race_results, and runner_results under manifest scope.",
+      "entrypoint": "scripts/bridge_oasis_block.py::main",
+      "inputs": [
+        "candidate jsonl",
+        "max races",
+        "exclude manifests",
+        "discovery window",
+        "governance tag flags"
+      ],
+      "outputs": [
+        "bridge_manifest_oasis_block_*.json",
+        "race rows",
+        "race_results rows",
+        "runner_results rows"
+      ],
+      "database_reads": [
+        "raceform",
+        "races",
+        "race_results",
+        "runner_results"
+      ],
+      "database_writes": [
+        "races",
+        "race_results",
+        "runner_results"
+      ],
+      "manual_approvals_required": [
+        "pre-bridge approval",
+        "post-bridge acceptance"
+      ],
+      "failure_stops": [
+        "duplicate event_key",
+        "runner_count mismatch",
+        "winner parity failure",
+        "existing event collision"
+      ],
+      "rollback_method": "manifest-scoped manual rollback; no dedicated reusable rollback tool exists",
+      "current_maturity": "semi_automated",
+      "risk_rating": "medium",
+      "resume_points": [
+        "bridge manifest",
+        "current accepted spine counts"
+      ],
+      "known_weak_spots": [
+        "no dry-run mode",
+        "rollback is procedural rather than scripted",
+        "state update after accept/reject is manual"
+      ]
+    },
+    {
+      "loop_name": "historical_hfs_reconstruction_loop",
+      "purpose": "Reconstruct manifest-scoped historical feature store rows for accepted bridged events.",
+      "entrypoint": "scripts/backfill_historical_feature_store.py::main",
+      "inputs": [
+        "manifest file",
+        "worker count",
+        "replace existing flag",
+        "macro context layer",
+        "velo prime scorer"
+      ],
+      "outputs": [
+        "historical_feature_store rows",
+        "historical_feature_backfill_runs rows",
+        "stdout audit"
+      ],
+      "database_reads": [
+        "races",
+        "runner_results",
+        "historical_feature_store"
+      ],
+      "database_writes": [
+        "historical_feature_store",
+        "historical_feature_backfill_runs"
+      ],
+      "manual_approvals_required": [
+        "none during run",
+        "post-run acceptance via audit"
+      ],
+      "failure_stops": [
+        "macro-year mismatch",
+        "vector dimension mismatch",
+        "null MPI or chaos_bloom",
+        "duplicate HFS rows"
+      ],
+      "rollback_method": "manifest-scoped manual delete/upsert reversal only",
+      "current_maturity": "semi_automated",
+      "risk_rating": "medium",
+      "resume_points": [
+        "manifest file",
+        "historical_feature_backfill_runs"
+      ],
+      "known_weak_spots": [
+        "macro year clamp hard-codes 2012-2024",
+        "no dedicated rollback command",
+        "integrity RPC is narrower than full audit surface"
+      ]
+    },
+    {
+      "loop_name": "global_clean_spine_audit_loop",
+      "purpose": "Prove accepted historical spine parity, doctrine completeness, provenance completeness, and macro correctness before training.",
+      "entrypoint": "artifact-driven audit process; no dedicated reusable script",
+      "inputs": [
+        "accepted races",
+        "runner_results",
+        "historical_feature_store",
+        "current state file",
+        "latest manifest and rollback state"
+      ],
+      "outputs": [
+        "global_clean_spine_audit_v1/v2/v3 json and markdown"
+      ],
+      "database_reads": [
+        "races",
+        "race_results",
+        "runner_results",
+        "historical_feature_store"
+      ],
+      "database_writes": [],
+      "manual_approvals_required": [
+        "user acceptance of audit pass/fail"
+      ],
+      "failure_stops": [
+        "parity failure",
+        "duplicate counts non-zero",
+        "macro mismatch",
+        "provenance incompleteness"
+      ],
+      "rollback_method": "none; audit informs manual remediation or manifest-scoped rollback",
+      "current_maturity": "manual",
+      "risk_rating": "high",
+      "resume_points": [
+        "latest audit artifacts",
+        "state file"
+      ],
+      "known_weak_spots": [
+        "no dedicated script",
+        "audit regeneration is operator-dependent",
+        "chat transcript can leak into process memory if state file is ignored"
+      ]
+    },
+    {
+      "loop_name": "live_race_ingestion_loop",
+      "purpose": "Fetch or load racecards, normalize them, and persist race-day prediction inputs.",
+      "entrypoint": "scripts/run_prime_today.py::main",
+      "inputs": [
+        "Racing API credentials",
+        "cache racecards json",
+        "date flag",
+        "telegram settings",
+        "Supabase credentials"
+      ],
+      "outputs": [
+        "velo_verdicts rows",
+        "pipeline_runs rows",
+        "telegram messages",
+        "local data/velo_prime_verdicts_*.json"
+      ],
+      "database_reads": [
+        "pipeline_runs",
+        "races",
+        "racecards related payloads"
+      ],
+      "database_writes": [
+        "velo_verdicts",
+        "pipeline_runs",
+        "trigger_reject_events"
+      ],
+      "manual_approvals_required": [
+        "none for scheduled operation",
+        "operator approval for ad hoc reruns"
+      ],
+      "failure_stops": [
+        "preflight failure",
+        "missing API or Supabase credentials",
+        "model load failure",
+        "telegram/persistence mismatch"
+      ],
+      "rollback_method": "no first-class rollback; relies on pipeline_runs and manual verdict cleanup",
+      "current_maturity": "automated",
+      "risk_rating": "high",
+      "resume_points": [
+        "pipeline_runs",
+        "daily verdict backup file"
+      ],
+      "known_weak_spots": [
+        "writes are not manifest-scoped",
+        "rollback proof is weak",
+        "depends on multiple external services"
+      ]
+    },
+    {
+      "loop_name": "live_results_reconciliation_loop",
+      "purpose": "Load same-day predictions, fetch results, reconcile outcomes, and persist sigma learning artifacts.",
+      "entrypoint": "scripts/run_results_sigma.py::main",
+      "inputs": [
+        "velo_verdicts rows",
+        "Racing API results",
+        "Supabase credentials",
+        "date flag"
+      ],
+      "outputs": [
+        "race_results rows",
+        "runner_results rows",
+        "sigma_audits rows",
+        "learned_patterns rows",
+        "telegram sigma report"
+      ],
+      "database_reads": [
+        "velo_verdicts",
+        "pipeline_runs"
+      ],
+      "database_writes": [
+        "race_results",
+        "runner_results",
+        "sigma_audits",
+        "learned_patterns",
+        "pipeline_runs"
+      ],
+      "manual_approvals_required": [
+        "none for scheduled operation"
+      ],
+      "failure_stops": [
+        "preflight failure",
+        "no predictions found",
+        "no results fetched",
+        "Supabase write failure"
+      ],
+      "rollback_method": "no dedicated rollback; manual cleanup by date or run id",
+      "current_maturity": "automated",
+      "risk_rating": "high",
+      "resume_points": [
+        "pipeline_runs",
+        "date-based rerun"
+      ],
+      "known_weak_spots": [
+        "mixes reconciliation and learning side effects in one loop",
+        "writes are not isolated by manifest",
+        "no structured post-run artifact freeze"
+      ]
+    },
+    {
+      "loop_name": "racecard_to_result_loop",
+      "purpose": "Carry a race from card ingestion through verdict generation into result reconciliation and learning telemetry.",
+      "entrypoint": "scripts/run_prime_today.py plus scripts/run_results_sigma.py",
+      "inputs": [
+        "racecards",
+        "normalized race objects",
+        "results payloads"
+      ],
+      "outputs": [
+        "velo_verdicts",
+        "race_results",
+        "runner_results",
+        "sigma audits"
+      ],
+      "database_reads": [
+        "velo_verdicts",
+        "pipeline_runs"
+      ],
+      "database_writes": [
+        "velo_verdicts",
+        "race_results",
+        "runner_results",
+        "sigma_audits",
+        "learned_patterns"
+      ],
+      "manual_approvals_required": [
+        "none in live path"
+      ],
+      "failure_stops": [
+        "missing verdicts before sigma",
+        "results fetch failure",
+        "pipeline duplication gate"
+      ],
+      "rollback_method": "manual per-date cleanup",
+      "current_maturity": "semi_automated",
+      "risk_rating": "high",
+      "resume_points": [
+        "pipeline_runs by date",
+        "velo_verdicts by date"
+      ],
+      "known_weak_spots": [
+        "end-to-end verification is split across two scripts",
+        "no unified artifact freeze across score and sigma"
+      ]
+    },
+    {
+      "loop_name": "velo_scoring_loop",
+      "purpose": "Convert normalized runner and race inputs into VELO prime probabilities and decision support signals.",
+      "entrypoint": "app/services/velo_prime_service.py::score_race_velo_prime",
+      "inputs": [
+        "normalized race",
+        "model manager",
+        "macro context",
+        "optional sentient state"
+      ],
+      "outputs": [
+        "sorted runner prediction dicts"
+      ],
+      "database_reads": [],
+      "database_writes": [],
+      "manual_approvals_required": [],
+      "failure_stops": [
+        "model unavailable",
+        "feature contract mismatch"
+      ],
+      "rollback_method": "not applicable; pure compute path",
+      "current_maturity": "automated",
+      "risk_rating": "medium",
+      "resume_points": [
+        "re-run from normalized race input"
+      ],
+      "known_weak_spots": [
+        "service file has unrelated unstaged work in current tree",
+        "depends on macro layer and model manager consistency"
+      ]
+    },
+    {
+      "loop_name": "model_loading_scoring_loop",
+      "purpose": "Load champion scoring assets and expose the 37-feature prediction surface used by live and historical scoring.",
+      "entrypoint": "app/services/model_manager.py::ModelManager.initialize",
+      "inputs": [
+        "models/sqpe_v17 or v16",
+        "specialist model directories",
+        "feature list constants"
+      ],
+      "outputs": [
+        "in-memory model cache",
+        "model version metadata"
+      ],
+      "database_reads": [],
+      "database_writes": [],
+      "manual_approvals_required": [],
+      "failure_stops": [
+        "missing model file",
+        "pickle/joblib load failure"
+      ],
+      "rollback_method": "revert code/model artifact outside runtime; no in-run rollback needed",
+      "current_maturity": "automated",
+      "risk_rating": "medium",
+      "resume_points": [
+        "model file path fallback chain"
+      ],
+      "known_weak_spots": [
+        "mixed live model and stub specialist models",
+        "multiple API/service stacks can load different models"
+      ]
+    },
+    {
+      "loop_name": "macro_context_loop",
+      "purpose": "Provide regime context to scoring and historical reconstruction from BHA macro features.",
+      "entrypoint": "src/intelligence/macro_regime/bha_macro_context.py::get_macro_context",
+      "inputs": [
+        "race_date year",
+        "race code",
+        "data/bha_macro_features.parquet"
+      ],
+      "outputs": [
+        "MacroContext object",
+        "macro feature dict"
+      ],
+      "database_reads": [],
+      "database_writes": [],
+      "manual_approvals_required": [
+        "yes for data pack refresh"
+      ],
+      "failure_stops": [
+        "structural mismatch between available years and requested year"
+      ],
+      "rollback_method": "revert data pack or code change",
+      "current_maturity": "semi_automated",
+      "risk_rating": "high",
+      "resume_points": [
+        "parquet file",
+        "year clamp warning"
+      ],
+      "known_weak_spots": [
+        "current support ends at 2024",
+        "out-of-range years clamp silently unless audited",
+        "Block 025 proved this can block valid bridge rows"
+      ]
+    },
+    {
+      "loop_name": "training_prep_loop",
+      "purpose": "Prepare datasets, train SQPE and specialist models, and persist training artifacts.",
+      "entrypoint": "scripts/train_sqpe_v17.py, scripts/train_specialist_models.py, src/training/pipeline.py",
+      "inputs": [
+        "raceform feature parquet or csv",
+        "training config",
+        "model output directories"
+      ],
+      "outputs": [
+        "trained model pickle files",
+        "metadata.json",
+        "metrics"
+      ],
+      "database_reads": [
+        "optional training data tables depending on path"
+      ],
+      "database_writes": [],
+      "manual_approvals_required": [
+        "training gate approval"
+      ],
+      "failure_stops": [
+        "training gate not passed",
+        "data leakage or schema mismatch",
+        "missing training source files"
+      ],
+      "rollback_method": "artifact replacement or git revert; no first-class run manifest",
+      "current_maturity": "manual",
+      "risk_rating": "high",
+      "resume_points": [
+        "model artifact directories",
+        "training configs"
+      ],
+      "known_weak_spots": [
+        "training is not integrated with current governance gate",
+        "multiple training stacks coexist",
+        "no required global clean spine audit hook before training entry"
+      ]
+    },
+    {
+      "loop_name": "playbook_execution_loop",
+      "purpose": "Run Playbook E/F/G orchestration over structural and spotlight signals.",
+      "entrypoint": "app/playbooks/playbook_orchestrator.py::analyze_race",
+      "inputs": [
+        "oracle data",
+        "spotlight records",
+        "sentient state"
+      ],
+      "outputs": [
+        "doctrine output",
+        "execution output",
+        "sentient state snapshot"
+      ],
+      "database_reads": [],
+      "database_writes": [],
+      "manual_approvals_required": [
+        "Playbook activation approval"
+      ],
+      "failure_stops": [
+        "missing spotlight module",
+        "playbook integration errors"
+      ],
+      "rollback_method": "feature flag or code revert",
+      "current_maturity": "semi_automated",
+      "risk_rating": "high",
+      "resume_points": [
+        "sentient state",
+        "playbook orchestrator entrypoint"
+      ],
+      "known_weak_spots": [
+        "Playbook E is paused operationally but code remains active in repo",
+        "Playbook G dry-run gate has not been formalized project-wide"
+      ]
+    },
+    {
+      "loop_name": "rollback_recovery_loop",
+      "purpose": "Recover from failed blocks or interrupted runs without corrupting accepted state.",
+      "entrypoint": "docs/VELO_RECOVERY_PROTOCOL.md plus manifest-scoped manual queries",
+      "inputs": [
+        "velo_current_state.json",
+        "latest manifest",
+        "db counts",
+        "git status"
+      ],
+      "outputs": [
+        "restored accepted spine",
+        "rollback proof"
+      ],
+      "database_reads": [
+        "races",
+        "race_results",
+        "runner_results",
+        "historical_feature_store"
+      ],
+      "database_writes": [
+        "manual rollback deletes only when needed"
+      ],
+      "manual_approvals_required": [
+        "yes"
+      ],
+      "failure_stops": [
+        "partial rows outside manifest scope",
+        "counts not reconciled"
+      ],
+      "rollback_method": "manifest-scoped manual rollback",
+      "current_maturity": "manual",
+      "risk_rating": "high",
+      "resume_points": [
+        "manifest",
+        "state file",
+        "audit artifacts"
+      ],
+      "known_weak_spots": [
+        "no dedicated rollback tool",
+        "proof of completeness is operator-driven"
+      ]
+    },
+    {
+      "loop_name": "agent_handoff_loop",
+      "purpose": "Transfer durable state to future agents without depending on chat memory.",
+      "entrypoint": "data/velo_current_state.json and docs/VELO_AGENT_HANDOFF.md",
+      "inputs": [
+        "state file",
+        "handoff docs",
+        "artifact index",
+        "checkpoint branch"
+      ],
+      "outputs": [
+        "resume protocol",
+        "startup checklist"
+      ],
+      "database_reads": [],
+      "database_writes": [],
+      "manual_approvals_required": [
+        "yes for major phase checkpoints"
+      ],
+      "failure_stops": [
+        "state file stale",
+        "checkpoint branch omitted",
+        "chat memory used as source of truth"
+      ],
+      "rollback_method": "re-read canonical state and reconcile with database",
+      "current_maturity": "semi_automated",
+      "risk_rating": "medium",
+      "resume_points": [
+        "velo_current_state.json",
+        "agent handoff docs",
+        "artifact index"
+      ],
+      "known_weak_spots": [
+        "state updates are not yet script-enforced after every mission",
+        "future agents can still be tempted to resume from chat instead of files"
+      ]
+    }
+  ],
+  "tool_registry": {
+    "active_oasis_tools": [
+      {
+        "tool_name": "mine_clean_course_zones.py",
+        "path": "scripts/mine_clean_course_zones.py",
+        "status": "active",
+        "purpose": "Historical archive discovery and candidate freezing by event key.",
+        "owner_domain": "ingestion",
+        "inputs": "raceform table, window cursor, max rows, target course configuration",
+        "outputs": "candidate jsonl, rejection jsonl, cursor json",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Interrupted runs can leave stale local artifacts; non_target_count and candidate_collision_count are not first-class outputs.",
+        "required_preconditions": "Supabase credentials, target course config, clean output filenames",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "bridge_oasis_block.py",
+        "path": "scripts/bridge_oasis_block.py",
+        "status": "active",
+        "purpose": "Manifest-scoped historical bridge into races, race_results, runner_results, and downstream HFS invocation.",
+        "owner_domain": "bridge",
+        "inputs": "candidate file, block size, governance flags, discovery window, exclude manifests",
+        "outputs": "bridge manifest, database inserts, HFS subprocess call",
+        "database_writes": true,
+        "dry_run_support": false,
+        "manifest_support": true,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "No dry-run; no reusable rollback tool; state update remains manual after accept/reject.",
+        "required_preconditions": "Approved candidate set, no existing event collisions, manifest target path",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "backfill_historical_feature_store.py",
+        "path": "scripts/backfill_historical_feature_store.py",
+        "status": "active",
+        "purpose": "Reconstruct historical feature store rows under manifest or batch scope.",
+        "owner_domain": "HFS",
+        "inputs": "manifest file or race batch, worker count, replace existing flag",
+        "outputs": "historical_feature_store rows, historical_feature_backfill_runs rows",
+        "database_writes": true,
+        "dry_run_support": true,
+        "manifest_support": true,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Macro year clamp only supports 2012-2024; write path is not self-rollbacking.",
+        "required_preconditions": "Accepted bridged races, model manager available, macro context available",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "normalize_historical_provenance.py",
+        "path": "scripts/normalize_historical_provenance.py",
+        "status": "active",
+        "purpose": "Metadata-only provenance normalization across accepted historical rows.",
+        "owner_domain": "recovery",
+        "inputs": "historical accepted row scope, apply flag",
+        "outputs": "updated races.raw and HFS feature_json provenance fields",
+        "database_writes": true,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Global metadata update with no dedicated rollback; relies on conservative exclusion rules.",
+        "required_preconditions": "Accepted historical row scope defined, no 2025 rows included",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "audit_hfs_signal_path.py",
+        "path": "scripts/audit_hfs_signal_path.py",
+        "status": "active",
+        "purpose": "Manifest-scoped forensic audit of HFS signal path.",
+        "owner_domain": "audit",
+        "inputs": "manifest file, sample size",
+        "outputs": "stdout audit report",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": true,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Report is not emitted to durable structured artifact automatically.",
+        "required_preconditions": "Manifest exists and rows are already written",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "audit_historical_macro_year.py",
+        "path": "scripts/audit_historical_macro_year.py",
+        "status": "active",
+        "purpose": "Manifest-scoped macro-year audit and trace.",
+        "owner_domain": "audit",
+        "inputs": "manifest files, sample size",
+        "outputs": "stdout macro-year trace",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": true,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "No durable artifact output unless wrapped externally.",
+        "required_preconditions": "Manifest exists, HFS rows exist",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "integrity_hooks.py",
+        "path": "scripts/integrity_hooks.py",
+        "status": "active",
+        "purpose": "Thin RPC wrapper for HFS integrity metrics.",
+        "owner_domain": "audit",
+        "inputs": "race ids or manifest race scope",
+        "outputs": "duplicate and winner/vector integrity metrics",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Coverage is narrower than the full audit gate.",
+        "required_preconditions": "RPC hfs_integrity_metrics exists",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "backfill_horse_identity_registry.py",
+        "path": "scripts/backfill_horse_identity_registry.py",
+        "status": "active",
+        "purpose": "Populate or refresh horse identity registry across archive rows.",
+        "owner_domain": "ingestion",
+        "inputs": "raceform table, resume cursor, limit rows",
+        "outputs": "racing_horses rows, local identity cursor json",
+        "database_writes": true,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Global mutation path outside OASIS manifest contract.",
+        "required_preconditions": "Supabase credentials and stable horse identity rules",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "discover_clean_archive_zones.py",
+        "path": "scripts/discover_clean_archive_zones.py",
+        "status": "active",
+        "purpose": "Exploratory density scan of historical archive zones.",
+        "owner_domain": "audit",
+        "inputs": "offset, max scan",
+        "outputs": "stdout density report",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Legacy exploratory path can be mistaken for current discovery contract.",
+        "required_preconditions": "Supabase credentials",
+        "recommended_action": "quarantine"
+      }
+    ],
+    "active_live_ops_tools": [
+      {
+        "tool_name": "run_prime_today.py",
+        "path": "scripts/run_prime_today.py",
+        "status": "active",
+        "purpose": "Primary live race-day ingestion, scoring, persistence, and notification run.",
+        "owner_domain": "scoring",
+        "inputs": "racecards cache or Racing API, runtime env, model manager, telegram settings",
+        "outputs": "velo_verdicts rows, pipeline_runs rows, telegram messages, local verdict backup",
+        "database_writes": true,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Multiple external dependencies and no first-class rollback.",
+        "required_preconditions": "Racing API credentials, Supabase credentials, model artifacts",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "run_results_sigma.py",
+        "path": "scripts/run_results_sigma.py",
+        "status": "active",
+        "purpose": "Live results reconciliation and sigma learning loop.",
+        "owner_domain": "audit",
+        "inputs": "velo_verdicts, Racing API results, Supabase credentials",
+        "outputs": "race_results, runner_results, sigma_audits, learned_patterns, telegram report",
+        "database_writes": true,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Combines reconciliation and learning side effects in one write path.",
+        "required_preconditions": "Predictions exist for date, Supabase and Racing API credentials",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "ingest_racecard_pdfs.py",
+        "path": "scripts/ingest_racecard_pdfs.py",
+        "status": "active",
+        "purpose": "Operational PDF racecard ingestion helper.",
+        "owner_domain": "ingestion",
+        "inputs": "racecard PDF files",
+        "outputs": "structured local artifacts or database-ready payloads",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Parser behavior is file dependent and may drift without audit freeze.",
+        "required_preconditions": "PDF source files present",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "preflight_10am_check.py",
+        "path": "scripts/preflight_10am_check.py",
+        "status": "active",
+        "purpose": "Operational preflight check for morning race-day readiness.",
+        "owner_domain": "audit",
+        "inputs": "runtime environment and service availability",
+        "outputs": "stdout readiness result",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Readiness logic is separate from historical preflight discipline.",
+        "required_preconditions": "Configured env",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "production_checks.py",
+        "path": "scripts/production_checks.py",
+        "status": "active",
+        "purpose": "General production validation and sanity checking.",
+        "owner_domain": "audit",
+        "inputs": "runtime environment, service availability",
+        "outputs": "stdout operational check report",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Not formally integrated into every live execution loop.",
+        "required_preconditions": "Configured env",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "notify_governed_results.py",
+        "path": "scripts/notify_governed_results.py",
+        "status": "active",
+        "purpose": "Send governed result notifications.",
+        "owner_domain": "docs",
+        "inputs": "result payloads, telegram settings",
+        "outputs": "messages",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Notification side effects are not checkpointed.",
+        "required_preconditions": "Messaging credentials",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "generate_daily_report.py",
+        "path": "scripts/generate_daily_report.py",
+        "status": "active",
+        "purpose": "Generate daily operational report artifacts.",
+        "owner_domain": "docs",
+        "inputs": "daily results and verdict sources",
+        "outputs": "report artifact",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Report lineage is not always tied to a pipeline run id.",
+        "required_preconditions": "Input artifacts available",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "generate_verdict_report.py",
+        "path": "scripts/generate_verdict_report.py",
+        "status": "active",
+        "purpose": "Generate decision report from verdict outputs.",
+        "owner_domain": "docs",
+        "inputs": "verdict data",
+        "outputs": "report artifact",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Artifact schema not governed the same way as OASIS manifests.",
+        "required_preconditions": "Verdict data present",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "run_live_analysis.py",
+        "path": "scripts/run_live_analysis.py",
+        "status": "active",
+        "purpose": "Ad hoc live analysis driver.",
+        "owner_domain": "scoring",
+        "inputs": "live race inputs",
+        "outputs": "analysis output",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Ad hoc path can bypass governed run discipline if not controlled.",
+        "required_preconditions": "Configured env and race input",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "run_todays_races.py",
+        "path": "scripts/run_todays_races.py",
+        "status": "active",
+        "purpose": "Operational wrapper for same-day race processing.",
+        "owner_domain": "scoring",
+        "inputs": "today date, live race sources",
+        "outputs": "live predictions or analysis",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Overlap with run_prime_today can confuse run ownership.",
+        "required_preconditions": "Configured env",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "velo_morning_cockpit.py",
+        "path": "scripts/velo_morning_cockpit.py",
+        "status": "active",
+        "purpose": "Morning operator cockpit and review script.",
+        "owner_domain": "docs",
+        "inputs": "daily operational state",
+        "outputs": "operator console/report",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Useful but not canonically linked to state file updates.",
+        "required_preconditions": "Configured env",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "velo_ops_check.py",
+        "path": "scripts/velo_ops_check.py",
+        "status": "active",
+        "purpose": "Operational health and readiness check.",
+        "owner_domain": "audit",
+        "inputs": "runtime env, service checks",
+        "outputs": "ops status report",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Not enforced as mandatory gate before all live operations.",
+        "required_preconditions": "Configured env",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "train_specialist_models.py",
+        "path": "scripts/train_specialist_models.py",
+        "status": "active",
+        "purpose": "Train specialist model family from historical feature data.",
+        "owner_domain": "training",
+        "inputs": "raceform_v17_features.parquet",
+        "outputs": "models/specialist/*",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Not yet wired to current governance gate or audit handoff.",
+        "required_preconditions": "Training gate approval, feature parquet available",
+        "recommended_action": "quarantine"
+      }
+    ],
+    "active_app_services": [
+      {
+        "tool_name": "app/main.py",
+        "path": "app/main.py",
+        "status": "active",
+        "purpose": "Primary FastAPI application, trigger endpoints, schema verification, and service wiring.",
+        "owner_domain": "api",
+        "inputs": "HTTP requests, env config, trigger source, date",
+        "outputs": "API responses, trigger subprocesses, pipeline_runs updates",
+        "database_writes": true,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Subprocess trigger model makes rollback and idempotence harder.",
+        "required_preconditions": "Configured env and reachable Supabase",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "app/api/router.py",
+        "path": "app/api/router.py",
+        "status": "active",
+        "purpose": "Aggregate API router for application endpoints.",
+        "owner_domain": "api",
+        "inputs": "FastAPI route registration",
+        "outputs": "mounted routes",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Depends on consistency across multiple API surfaces.",
+        "required_preconditions": "FastAPI app import",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "app/api/v1/predict.py",
+        "path": "app/api/v1/predict.py",
+        "status": "active",
+        "purpose": "Prediction API endpoints for full, quick, market, and ensemble paths.",
+        "owner_domain": "api",
+        "inputs": "HTTP prediction requests",
+        "outputs": "prediction responses",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Contains hardcoded API key examples and multiple prediction modes with uneven governance.",
+        "required_preconditions": "API key policy and model availability",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "app/api/v1/intel.py",
+        "path": "app/api/v1/intel.py",
+        "status": "active",
+        "purpose": "Expose intelligence-layer API endpoints.",
+        "owner_domain": "api",
+        "inputs": "HTTP requests",
+        "outputs": "intelligence responses",
+        "database_writes": "unknown",
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Not governed by OASIS-style artifact discipline.",
+        "required_preconditions": "API app running",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "app/api/v1/models.py",
+        "path": "app/api/v1/models.py",
+        "status": "active",
+        "purpose": "Model-facing API endpoints.",
+        "owner_domain": "api",
+        "inputs": "HTTP requests",
+        "outputs": "model metadata or predictions",
+        "database_writes": "unknown",
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Can drift from canonical scoring path if not audited.",
+        "required_preconditions": "API app and model registry available",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "app/api/v1/system.py",
+        "path": "app/api/v1/system.py",
+        "status": "active",
+        "purpose": "System-level API endpoints and operational status surfaces.",
+        "owner_domain": "api",
+        "inputs": "HTTP requests",
+        "outputs": "system status responses",
+        "database_writes": "unknown",
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "System state can diverge from canonical saved state if endpoints become ad hoc truth.",
+        "required_preconditions": "API app running",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "feature_engineering.py",
+        "path": "app/services/feature_engineering.py",
+        "status": "active",
+        "purpose": "Feature engineering service layer.",
+        "owner_domain": "scoring",
+        "inputs": "race and runner inputs",
+        "outputs": "feature vectors",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Multiple feature stacks exist in app and src.",
+        "required_preconditions": "Canonical feature contract selected",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "model_manager.py",
+        "path": "app/services/model_manager.py",
+        "status": "active",
+        "purpose": "Load and cache live models for VELO prime scoring.",
+        "owner_domain": "scoring",
+        "inputs": "model artifact files",
+        "outputs": "loaded model cache",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Mixed champion and stub models; multiple service stacks can load different versions.",
+        "required_preconditions": "Models present on disk",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "model_registry.py",
+        "path": "app/services/model_registry.py",
+        "status": "active",
+        "purpose": "Track application model registry state.",
+        "owner_domain": "training",
+        "inputs": "model metadata",
+        "outputs": "registry objects",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": false,
+        "known_risks": "Competes conceptually with src/training/model_registry.py.",
+        "required_preconditions": "Registry conventions defined",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "predictor.py",
+        "path": "app/services/predictor.py",
+        "status": "active",
+        "purpose": "Service-level prediction orchestration helper.",
+        "owner_domain": "scoring",
+        "inputs": "features or normalized race inputs",
+        "outputs": "predictions",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Can diverge from velo_prime_service if both are used.",
+        "required_preconditions": "Model manager consistent",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "security_validator.py",
+        "path": "app/services/security_validator.py",
+        "status": "active",
+        "purpose": "Service-side validation and security checks.",
+        "owner_domain": "api",
+        "inputs": "request and config data",
+        "outputs": "validation result",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Coverage is not linked to audit gates.",
+        "required_preconditions": "Request schema and policy defined",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "validation.py",
+        "path": "app/services/validation.py",
+        "status": "active",
+        "purpose": "Business-rule validation helpers for service layer.",
+        "owner_domain": "api",
+        "inputs": "service inputs",
+        "outputs": "validation result",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Not uniformly enforced across all entrypoints.",
+        "required_preconditions": "Caller must adopt it explicitly",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "v17_feature_extractor.py",
+        "path": "app/services/v17_feature_extractor.py",
+        "status": "active",
+        "purpose": "Provide default and extraction helpers for the 37-feature contract.",
+        "owner_domain": "scoring",
+        "inputs": "runner and race context",
+        "outputs": "v17 feature values",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Feature defaults can hide upstream data contract regressions if not audited.",
+        "required_preconditions": "37-feature contract remains canonical",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "velo_prime_service.py",
+        "path": "app/services/velo_prime_service.py",
+        "status": "active",
+        "purpose": "Canonical live scoring service.",
+        "owner_domain": "scoring",
+        "inputs": "normalized race, model manager, macro context, optional sentient state",
+        "outputs": "runner predictions and score signals",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Current worktree contains unrelated unstaged edits; future agents must not assume checkpoint coverage.",
+        "required_preconditions": "Normalized race contract and model manager available",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "playbook_orchestrator.py",
+        "path": "app/playbooks/playbook_orchestrator.py",
+        "status": "active",
+        "purpose": "Coordinate Playbook E, F, and G execution.",
+        "owner_domain": "training",
+        "inputs": "oracle data, spotlight records, sentient state",
+        "outputs": "playbook output bundle",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Operational status is paused but code path remains callable.",
+        "required_preconditions": "Explicit approval before activation",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "playbook_e_attack_doctrine.py",
+        "path": "app/playbooks/playbook_e_attack_doctrine.py",
+        "status": "active",
+        "purpose": "Attack doctrine evaluation.",
+        "owner_domain": "training",
+        "inputs": "oracle data and sentient state",
+        "outputs": "doctrine output",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Playbook E is operationally paused and must stay paused until explicit approval.",
+        "required_preconditions": "Approval gate if activated",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "playbook_f_execution_sequencer.py",
+        "path": "app/playbooks/playbook_f_execution_sequencer.py",
+        "status": "active",
+        "purpose": "Execution sequencing and directive generation.",
+        "owner_domain": "scoring",
+        "inputs": "oracle data and doctrine output",
+        "outputs": "execution directives",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Depends on Playbook state discipline not yet wired to global gate.",
+        "required_preconditions": "Playbook orchestration approvals",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "playbook_g_sentient_loopback.py",
+        "path": "app/playbooks/playbook_g_sentient_loopback.py",
+        "status": "active",
+        "purpose": "Sentient state evolution and loopback layer.",
+        "owner_domain": "training",
+        "inputs": "race outcomes and sentient state history",
+        "outputs": "updated sentient state",
+        "database_writes": "unknown",
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": false,
+        "known_risks": "Future training/dry-run path but current governance not fully codified.",
+        "required_preconditions": "Dry-run gate and durable state strategy",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "app/pipeline/orchestrator.py",
+        "path": "app/pipeline/orchestrator.py",
+        "status": "active",
+        "purpose": "Legacy-but-still-present app pipeline orchestrator from ingestion to critique.",
+        "owner_domain": "scoring",
+        "inputs": "race context, market context, runners",
+        "outputs": "pipeline context and post-race critique",
+        "database_writes": true,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Versioned v12 path coexists beside current live/OASIS pipelines and can confuse ownership.",
+        "required_preconditions": "Clear operator choice of pipeline stack",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "app/pipeline/predictor.py",
+        "path": "app/pipeline/predictor.py",
+        "status": "active",
+        "purpose": "Automated prediction pipeline using scraper and pickled model.",
+        "owner_domain": "scoring",
+        "inputs": "scraped races, model pickle",
+        "outputs": "predictions and high-value bet list",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Competes with VELO prime canonical scoring path.",
+        "required_preconditions": "Model file and scraper availability",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "app/pipeline/ingestion.py",
+        "path": "app/pipeline/ingestion.py",
+        "status": "active",
+        "purpose": "Short-term ingestion from local incoming race files.",
+        "owner_domain": "ingestion",
+        "inputs": "data/incoming_races/*.json",
+        "outputs": "in-memory race data",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Local-only ingestion path can bypass canonical live race ingestion.",
+        "required_preconditions": "Incoming local files present",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "app/pipeline/value_betting.py",
+        "path": "app/pipeline/value_betting.py",
+        "status": "active",
+        "purpose": "Value betting policy layer.",
+        "owner_domain": "scoring",
+        "inputs": "predictions and odds",
+        "outputs": "bet selection guidance",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Not yet tied to current training and control-plane gates.",
+        "required_preconditions": "Explicit policy approval",
+        "recommended_action": "harden"
+      }
+    ],
+    "active_src_tools": [
+      {
+        "tool_name": "src/service/api.py",
+        "path": "src/service/api.py",
+        "status": "active",
+        "purpose": "Alternate production prediction API stack.",
+        "owner_domain": "api",
+        "inputs": "HTTP prediction requests",
+        "outputs": "race prediction responses",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Parallel API stack to app/main increases control-plane ambiguity.",
+        "required_preconditions": "Champion model registry available",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/service/api_v2.py",
+        "path": "src/service/api_v2.py",
+        "status": "active",
+        "purpose": "Second service API surface.",
+        "owner_domain": "api",
+        "inputs": "HTTP requests",
+        "outputs": "API responses",
+        "database_writes": "unknown",
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Versioned API coexistence can hide which stack is authoritative.",
+        "required_preconditions": "Service routing policy",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/service/cache_client.py",
+        "path": "src/service/cache_client.py",
+        "status": "active",
+        "purpose": "Cache service helper.",
+        "owner_domain": "api",
+        "inputs": "cache keys and prediction context",
+        "outputs": "cache reads/writes",
+        "database_writes": false,
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": false,
+        "known_risks": "Cache invalidation rules are not audited by ETCSLV hooks.",
+        "required_preconditions": "Cache backend configured",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/pipelines/ingest_racecards.py",
+        "path": "src/pipelines/ingest_racecards.py",
+        "status": "active",
+        "purpose": "Generic racecard ingestion pipeline class.",
+        "owner_domain": "ingestion",
+        "inputs": "Racing API key, date, db path",
+        "outputs": "racecards stored or exported",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Current implementation is placeholder and not integrated with canonical live path.",
+        "required_preconditions": "Actual API integration implementation",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "src/pipelines/ingest_results.py",
+        "path": "src/pipelines/ingest_results.py",
+        "status": "active",
+        "purpose": "Generic results ingestion pipeline class.",
+        "owner_domain": "ingestion",
+        "inputs": "Racing API key, date, db path",
+        "outputs": "parsed result frame and storage stats",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Current implementation is placeholder and not canonical.",
+        "required_preconditions": "Actual API integration implementation",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "src/pipelines/postrace_update.py",
+        "path": "src/pipelines/postrace_update.py",
+        "status": "active",
+        "purpose": "Join predictions to results and compute outcomes.",
+        "owner_domain": "audit",
+        "inputs": "predictions, results, date",
+        "outputs": "matched outcome stats",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Placeholder database logic; another post-race path alongside sigma loop.",
+        "required_preconditions": "Prediction and result sources available",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "src/training/pipeline.py",
+        "path": "src/training/pipeline.py",
+        "status": "active",
+        "purpose": "Production-grade training pipeline scaffold.",
+        "owner_domain": "training",
+        "inputs": "training config and csv path",
+        "outputs": "trained artifacts and metrics",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Training path exists outside current governance gate.",
+        "required_preconditions": "Training gate approval and curated dataset",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "src/training/feature_store.py",
+        "path": "src/training/feature_store.py",
+        "status": "active",
+        "purpose": "Training feature store support module.",
+        "owner_domain": "training",
+        "inputs": "training dataset",
+        "outputs": "feature materialization",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": false,
+        "known_risks": "Can diverge from historical_feature_store doctrine if not harmonized.",
+        "required_preconditions": "Training strategy chosen",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/training/model_registry.py",
+        "path": "src/training/model_registry.py",
+        "status": "active",
+        "purpose": "Training-side model registry.",
+        "owner_domain": "training",
+        "inputs": "model artifact metadata",
+        "outputs": "registry objects",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": false,
+        "known_risks": "Registry duplicated conceptually with app/services/model_registry.py.",
+        "required_preconditions": "Model ownership clarified",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/training/labels.py",
+        "path": "src/training/labels.py",
+        "status": "active",
+        "purpose": "Training label generation helpers.",
+        "owner_domain": "training",
+        "inputs": "historical data",
+        "outputs": "training labels",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Not bound to approved historical training gate yet.",
+        "required_preconditions": "Training scope selected",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "src/training/metrics.py",
+        "path": "src/training/metrics.py",
+        "status": "active",
+        "purpose": "Training metrics utilities.",
+        "owner_domain": "training",
+        "inputs": "predictions and labels",
+        "outputs": "metrics",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Metric discipline is separate from current governance audit path.",
+        "required_preconditions": "Training path active",
+        "recommended_action": "keep"
+      },
+      {
+        "tool_name": "src/training/train_benter.py",
+        "path": "src/training/train_benter.py",
+        "status": "active",
+        "purpose": "Benter-style training entrypoint.",
+        "owner_domain": "training",
+        "inputs": "training datasets",
+        "outputs": "trained benter artifacts",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Training path is not yet governed by approved checkpoint gates.",
+        "required_preconditions": "Training gate approval",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "src/learning/auto_retrain.py",
+        "path": "src/learning/auto_retrain.py",
+        "status": "active",
+        "purpose": "Automatic retraining logic based on recent performance.",
+        "owner_domain": "training",
+        "inputs": "ROI archive, evaluator, recent performance window",
+        "outputs": "retrain recommendation and updated archive",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Auto-retrain exists in repo while training is explicitly paused.",
+        "required_preconditions": "Training gate approval and durable ROI archive governance",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "src/learning/genesis_protocol.py",
+        "path": "src/learning/genesis_protocol.py",
+        "status": "active",
+        "purpose": "Learning framework/protocol module.",
+        "owner_domain": "training",
+        "inputs": "learning data",
+        "outputs": "protocol state",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": false,
+        "known_risks": "Learning control plane is not yet aligned to approved training gate.",
+        "required_preconditions": "Training strategy selected",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "src/learning/post_race_evaluator.py",
+        "path": "src/learning/post_race_evaluator.py",
+        "status": "active",
+        "purpose": "Post-race evaluation helper for learning paths.",
+        "owner_domain": "audit",
+        "inputs": "race outcomes and predictions",
+        "outputs": "evaluation metrics",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Parallel evaluation path to sigma loop.",
+        "required_preconditions": "Outcome data available",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/data/supabase_client.py",
+        "path": "src/data/supabase_client.py",
+        "status": "active",
+        "purpose": "Canonical Supabase client for data access layer.",
+        "owner_domain": "api",
+        "inputs": "Supabase env vars",
+        "outputs": "database client object",
+        "database_writes": true,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Write-capable client is broadly reusable and can be called outside governed flows.",
+        "required_preconditions": "Service role key and URL configured",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/data/data_pipeline.py",
+        "path": "src/data/data_pipeline.py",
+        "status": "active",
+        "purpose": "Data movement helper module.",
+        "owner_domain": "ingestion",
+        "inputs": "data sources",
+        "outputs": "transformed data",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Pipeline ownership unclear relative to scripts and app pipeline modules.",
+        "required_preconditions": "Source contracts defined",
+        "recommended_action": "harden"
+      },
+      {
+        "tool_name": "src/intelligence/macro_regime/bha_macro_context.py",
+        "path": "src/intelligence/macro_regime/bha_macro_context.py",
+        "status": "active",
+        "purpose": "Macro context provider for scoring and HFS reconstruction.",
+        "owner_domain": "scoring",
+        "inputs": "year, race code, bha_macro_features parquet",
+        "outputs": "MacroContext",
+        "database_writes": false,
+        "dry_run_support": true,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Current support range stops at 2024 and clamps unsupported years.",
+        "required_preconditions": "Parquet data pack present and up to date",
+        "recommended_action": "harden"
+      }
+    ],
+    "legacy_or_unknown_tools": [
+      {
+        "tool_name": "reconcile_historical_archive.py",
+        "path": "scripts/reconcile_historical_archive.py",
+        "status": "legacy",
+        "purpose": "Older historical archive reconciliation path using bare race ids.",
+        "owner_domain": "bridge",
+        "inputs": "archive rows and selection logic",
+        "outputs": "database writes",
+        "database_writes": true,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Not event-key safe and repo snapshot appears incomplete.",
+        "required_preconditions": "Do not use for OASIS accepted spine work",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "build_multiples.py",
+        "path": "scripts/build_multiples.py",
+        "status": "unknown",
+        "purpose": "Utility script with unclear current ownership.",
+        "owner_domain": "docs",
+        "inputs": "unknown",
+        "outputs": "unknown",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": "unknown",
+        "known_risks": "Can confuse future agents because no runbook ownership is defined.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "build_multiples_0423.py",
+        "path": "scripts/build_multiples_0423.py",
+        "status": "unknown",
+        "purpose": "Date-stamped utility script with unclear ownership.",
+        "owner_domain": "docs",
+        "inputs": "unknown",
+        "outputs": "unknown",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": "unknown",
+        "known_risks": "Date-stamped artifact script can be mistaken for current entrypoint.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "build_rp_runner_signals.py",
+        "path": "scripts/build_rp_runner_signals.py",
+        "status": "unknown",
+        "purpose": "Runner signal builder with unclear operating role.",
+        "owner_domain": "scoring",
+        "inputs": "unknown",
+        "outputs": "unknown",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": "unknown",
+        "known_risks": "No project-wide ownership.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "check_results.py",
+        "path": "scripts/check_results.py",
+        "status": "unknown",
+        "purpose": "Ad hoc result checking helper.",
+        "owner_domain": "audit",
+        "inputs": "unknown",
+        "outputs": "stdout",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": "unknown",
+        "known_risks": "Overlaps with governed sigma and audit paths.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "check_results_0422.py",
+        "path": "scripts/check_results_0422.py",
+        "status": "unknown",
+        "purpose": "Date-stamped result checker.",
+        "owner_domain": "audit",
+        "inputs": "unknown",
+        "outputs": "stdout",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": "unknown",
+        "known_risks": "Date-stamped operational ambiguity.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "convert_to_parquet_v2.py",
+        "path": "scripts/convert_to_parquet_v2.py",
+        "status": "unknown",
+        "purpose": "Data conversion utility.",
+        "owner_domain": "ingestion",
+        "inputs": "csv or raw data",
+        "outputs": "parquet data",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Unclear relationship to canonical raceform parquet lineage.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "explore_racing_api.py",
+        "path": "scripts/explore_racing_api.py",
+        "status": "unknown",
+        "purpose": "Exploratory Racing API helper.",
+        "owner_domain": "ingestion",
+        "inputs": "API credentials",
+        "outputs": "exploration output",
+        "database_writes": false,
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Exploratory path outside governed ingestion.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "export_plot_board.py",
+        "path": "scripts/export_plot_board.py",
+        "status": "unknown",
+        "purpose": "Plot/export helper.",
+        "owner_domain": "docs",
+        "inputs": "unknown",
+        "outputs": "board artifact",
+        "database_writes": false,
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "No canonical artifact mapping.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "fetch_results_0422.py",
+        "path": "scripts/fetch_results_0422.py",
+        "status": "unknown",
+        "purpose": "Date-stamped result fetch helper.",
+        "owner_domain": "ingestion",
+        "inputs": "unknown",
+        "outputs": "result payloads",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Operational ambiguity.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "fetch_results_0423.py",
+        "path": "scripts/fetch_results_0423.py",
+        "status": "unknown",
+        "purpose": "Date-stamped result fetch helper.",
+        "owner_domain": "ingestion",
+        "inputs": "unknown",
+        "outputs": "result payloads",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": true,
+        "known_risks": "Operational ambiguity.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "generate_one_line_report.py",
+        "path": "scripts/generate_one_line_report.py",
+        "status": "unknown",
+        "purpose": "Small reporting helper.",
+        "owner_domain": "docs",
+        "inputs": "unknown",
+        "outputs": "report line",
+        "database_writes": false,
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": false,
+        "known_risks": "Not integrated into canonical report chain.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "generate_verdict_0424.py",
+        "path": "scripts/generate_verdict_0424.py",
+        "status": "unknown",
+        "purpose": "Date-stamped verdict helper.",
+        "owner_domain": "docs",
+        "inputs": "unknown",
+        "outputs": "verdict artifact",
+        "database_writes": "unknown",
+        "dry_run_support": "unknown",
+        "manifest_support": false,
+        "rollback_support": false,
+        "depends_on_env_secrets": "unknown",
+        "known_risks": "Date-stamped operational ambiguity.",
+        "required_preconditions": "Classify before use",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "test_claude.py",
+        "path": "scripts/test_claude.py",
+        "status": "unknown",
+        "purpose": "Ad hoc test helper.",
+        "owner_domain": "docs",
+        "inputs": "unknown",
+        "outputs": "test output",
+        "database_writes": "unknown",
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": "unknown",
+        "known_risks": "Test helper in active scripts directory can mislead future agents.",
+        "required_preconditions": "Do not use in governed production flow",
+        "recommended_action": "quarantine"
+      },
+      {
+        "tool_name": "test_supabase.py",
+        "path": "scripts/test_supabase.py",
+        "status": "unknown",
+        "purpose": "Ad hoc Supabase connectivity test.",
+        "owner_domain": "audit",
+        "inputs": "Supabase credentials",
+        "outputs": "test result",
+        "database_writes": "unknown",
+        "dry_run_support": false,
+        "manifest_support": false,
+        "rollback_support": true,
+        "depends_on_env_secrets": true,
+        "known_risks": "Credentialed test helper inside active scripts tree.",
+        "required_preconditions": "Do not use as a canonical health check",
+        "recommended_action": "quarantine"
+      }
+    ],
+    "dead_script_inventory": {
+      "status": "dead",
+      "path_glob": "archive/dead_scripts/*.py",
+      "count": 121,
+      "classification_rule": "Archived scripts are not part of the accepted OASIS or live production control plane. They are preserved for archaeology only.",
+      "sample_high_risk_dead_scripts": [
+        "continuous_training.py",
+        "close_sigma_loops.py",
+        "cache_bha_macro_features.py",
+        "load_raceform_to_supabase.py",
+        "build_horse_identity_2024.py",
+        "build_horse_identity_2025.py",
+        "proof_governance_e2e.py",
+        "run_daily_pipeline.py",
+        "train_sqpe_v18.py"
+      ]
+    }
+  },
+  "context_manager_audit": [
+    {
+      "context_item": "current_phase",
+      "current_source_of_truth": "data/velo_current_state.json",
+      "backup_source": "docs/VELO_AGENT_HANDOFF.md",
+      "staleness_risk": "medium",
+      "loss_risk": "medium",
+      "resume_method": "read state file, then confirm counts against database",
+      "recommended_canonical_location": "data/velo_current_state.json"
+    },
+    {
+      "context_item": "accepted spine counts",
+      "current_source_of_truth": "data/velo_current_state.json plus latest accepted audit",
+      "backup_source": "database counts",
+      "staleness_risk": "medium",
+      "loss_risk": "low",
+      "resume_method": "compare state file with database counts",
+      "recommended_canonical_location": "data/velo_current_state.json"
+    },
+    {
+      "context_item": "training gate status",
+      "current_source_of_truth": "data/velo_current_state.json",
+      "backup_source": "global_clean_spine_audit_v2 artifacts",
+      "staleness_risk": "low",
+      "loss_risk": "medium",
+      "resume_method": "read state file then confirm audit result",
+      "recommended_canonical_location": "data/velo_current_state.json"
+    },
+    {
+      "context_item": "Playbook E status",
+      "current_source_of_truth": "data/velo_current_state.json",
+      "backup_source": "agent handoff docs",
+      "staleness_risk": "medium",
+      "loss_risk": "medium",
+      "resume_method": "read state file before touching playbooks",
+      "recommended_canonical_location": "data/velo_current_state.json"
+    },
+    {
+      "context_item": "latest accepted block and latest failed block",
+      "current_source_of_truth": "data/velo_current_state.json",
+      "backup_source": "artifact index and manifests",
+      "staleness_risk": "low",
+      "loss_risk": "low",
+      "resume_method": "state file then confirm manifest presence",
+      "recommended_canonical_location": "data/velo_current_state.json"
+    },
+    {
+      "context_item": "window cursor state",
+      "current_source_of_truth": "data/clean_race_index_cursor_window_*.json",
+      "backup_source": "window discovery logs",
+      "staleness_risk": "medium",
+      "loss_risk": "medium",
+      "resume_method": "read latest frozen cursor for approved window",
+      "recommended_canonical_location": "data/velo_artifact_index.json plus latest cursor file"
+    },
+    {
+      "context_item": "candidate and rejection files",
+      "current_source_of_truth": "frozen jsonl artifacts under data/",
+      "backup_source": "artifact index",
+      "staleness_risk": "low",
+      "loss_risk": "medium",
+      "resume_method": "read artifact index then exact jsonl files",
+      "recommended_canonical_location": "data/velo_artifact_index.json"
+    },
+    {
+      "context_item": "bridge manifest state",
+      "current_source_of_truth": "data/bridge_manifest_oasis_block_*.json",
+      "backup_source": "artifact index and state file",
+      "staleness_risk": "low",
+      "loss_risk": "medium",
+      "resume_method": "inspect manifest then reconcile db counts",
+      "recommended_canonical_location": "data/velo_artifact_index.json"
+    },
+    {
+      "context_item": "quarantine and rejected block state",
+      "current_source_of_truth": "audit reports plus state file",
+      "backup_source": "run logs and manifests",
+      "staleness_risk": "medium",
+      "loss_risk": "high",
+      "resume_method": "read state file and recovery protocol; confirm no residual rows by manifest scope",
+      "recommended_canonical_location": "data/velo_current_state.json"
+    },
+    {
+      "context_item": "macro support state",
+      "current_source_of_truth": "code and data pack in src/intelligence/macro_regime/bha_macro_context.py and data/bha_macro_features.parquet",
+      "backup_source": "blocked Block 025 audit summary",
+      "staleness_risk": "high",
+      "loss_risk": "high",
+      "resume_method": "inspect data pack range and macro module before retrying 2025 work",
+      "recommended_canonical_location": "data/velo_current_state.json plus explicit future macro support artifact"
+    },
+    {
+      "context_item": "model version state",
+      "current_source_of_truth": "model artifact directories plus app/services/model_manager.py fallback chain",
+      "backup_source": "live scoring output payloads",
+      "staleness_risk": "high",
+      "loss_risk": "medium",
+      "resume_method": "inspect on-disk model artifacts and model manager behavior",
+      "recommended_canonical_location": "dedicated model registry artifact not yet present"
+    },
+    {
+      "context_item": "live ingestion and reconciliation state",
+      "current_source_of_truth": "pipeline_runs and trigger_reject_events tables",
+      "backup_source": "logs/triggers and daily local backup files",
+      "staleness_risk": "medium",
+      "loss_risk": "medium",
+      "resume_method": "query pipeline_runs by service/date before rerun",
+      "recommended_canonical_location": "pipeline_runs"
+    },
+    {
+      "context_item": "agent handoff state",
+      "current_source_of_truth": "state file and handoff docs",
+      "backup_source": "checkpoint branch history",
+      "staleness_risk": "medium",
+      "loss_risk": "high",
+      "resume_method": "follow docs/VELO_AGENT_PROCESS_LIST.md",
+      "recommended_canonical_location": "data/velo_current_state.json and docs"
+    }
+  ],
+  "context_failures": [
+    "Global clean spine audit has no dedicated script, so agents still rely on prior artifact knowledge.",
+    "Macro support state is implicit in code/data pack rather than in a canonical state file.",
+    "Model version truth is split across model manager fallback logic, artifact directories, and API surfaces.",
+    "Live loop ownership is spread across app/main.py, scripts/run_prime_today.py, and scripts/run_results_sigma.py."
+  ],
+  "state_store_audit": [
+    {
+      "state_object": "races table",
+      "storage_location": "Supabase:races",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "scripts/bridge_oasis_block.py",
+        "normalize_historical_provenance.py"
+      ],
+      "read_by": [
+        "historical audit paths",
+        "HFS reconstruction",
+        "discovery collision checks"
+      ],
+      "failure_mode": "event identity or provenance fields can drift if not normalized",
+      "recovery_method": "manifest-scoped rollback or metadata normalization",
+      "recommended_improvement": "script rollback and provenance verification hooks"
+    },
+    {
+      "state_object": "race_results table",
+      "storage_location": "Supabase:race_results",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "scripts/bridge_oasis_block.py",
+        "scripts/run_results_sigma.py"
+      ],
+      "read_by": [
+        "HFS reconstruction",
+        "global audits"
+      ],
+      "failure_mode": "mixed historical and live writes without unified manifest",
+      "recovery_method": "manifest-scoped rollback for OASIS; date/run cleanup for live",
+      "recommended_improvement": "reusable scoped rollback tool"
+    },
+    {
+      "state_object": "runner_results table",
+      "storage_location": "Supabase:runner_results",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "scripts/bridge_oasis_block.py",
+        "scripts/run_results_sigma.py"
+      ],
+      "read_by": [
+        "HFS reconstruction",
+        "global audits"
+      ],
+      "failure_mode": "partial block writes or live duplicate inserts",
+      "recovery_method": "manifest or date scoped cleanup",
+      "recommended_improvement": "reusable rollback tool and run-id linkage"
+    },
+    {
+      "state_object": "historical_feature_store table",
+      "storage_location": "Supabase:historical_feature_store",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "scripts/backfill_historical_feature_store.py",
+        "scripts/normalize_historical_provenance.py"
+      ],
+      "read_by": [
+        "global audits",
+        "future training prep"
+      ],
+      "failure_mode": "macro-year mismatch or provenance incompleteness",
+      "recovery_method": "manifest-scoped rollback and normalization pass",
+      "recommended_improvement": "formal audit script and 2025 macro support"
+    },
+    {
+      "state_object": "raceform table",
+      "storage_location": "Supabase:raceform",
+      "canonical": true,
+      "mutable": false,
+      "append_only": true,
+      "written_by": [
+        "historical load paths only"
+      ],
+      "read_by": [
+        "discovery",
+        "bridge",
+        "identity registry backfill"
+      ],
+      "failure_mode": "upstream archive quality and horse ambiguity constraints",
+      "recovery_method": "read-only archive; add resolver or new sources",
+      "recommended_improvement": "document immutability and source provenance"
+    },
+    {
+      "state_object": "racing_horses table",
+      "storage_location": "Supabase:racing_horses",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "scripts/backfill_horse_identity_registry.py"
+      ],
+      "read_by": [
+        "identity-aware discovery and reconciliation"
+      ],
+      "failure_mode": "registry can drift without manifest or versioning",
+      "recovery_method": "rerun registry backfill from source",
+      "recommended_improvement": "versioned registry audit artifact"
+    },
+    {
+      "state_object": "velo_verdicts table",
+      "storage_location": "Supabase:velo_verdicts",
+      "canonical": true,
+      "mutable": true,
+      "append_only": true,
+      "written_by": [
+        "scripts/run_prime_today.py"
+      ],
+      "read_by": [
+        "scripts/run_results_sigma.py"
+      ],
+      "failure_mode": "orphan verdicts or repeated live scoring",
+      "recovery_method": "pipeline_runs-based cleanup",
+      "recommended_improvement": "link every verdict row to pipeline run id and rollback recipe"
+    },
+    {
+      "state_object": "pipeline_runs table",
+      "storage_location": "Supabase:pipeline_runs",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "app/main.py",
+        "scripts/run_prime_today.py",
+        "scripts/run_results_sigma.py"
+      ],
+      "read_by": [
+        "trigger dedupe",
+        "ops review"
+      ],
+      "failure_mode": "stuck running states or split ownership across API and scripts",
+      "recovery_method": "manual patch by run id",
+      "recommended_improvement": "unified trigger lifecycle and post-run reconciliation"
+    },
+    {
+      "state_object": "trigger_reject_events table",
+      "storage_location": "Supabase:trigger_reject_events",
+      "canonical": true,
+      "mutable": true,
+      "append_only": true,
+      "written_by": [
+        "app/main.py"
+      ],
+      "read_by": [
+        "ops and duplicate trigger investigation"
+      ],
+      "failure_mode": "not linked back into canonical state docs",
+      "recovery_method": "query by service and source date",
+      "recommended_improvement": "surface in ops state dashboards"
+    },
+    {
+      "state_object": "sigma_audits table",
+      "storage_location": "Supabase:sigma_audits",
+      "canonical": true,
+      "mutable": true,
+      "append_only": true,
+      "written_by": [
+        "scripts/run_results_sigma.py"
+      ],
+      "read_by": [
+        "future learning and ops review"
+      ],
+      "failure_mode": "learning signals can be mixed with partially reconciled dates",
+      "recovery_method": "delete or patch by date manually",
+      "recommended_improvement": "run-id linked rollback and audit artifact"
+    },
+    {
+      "state_object": "learned_patterns table",
+      "storage_location": "Supabase:learned_patterns",
+      "canonical": true,
+      "mutable": true,
+      "append_only": true,
+      "written_by": [
+        "scripts/run_results_sigma.py"
+      ],
+      "read_by": [
+        "future learning layers"
+      ],
+      "failure_mode": "learning side effects can outlive source run quality",
+      "recovery_method": "manual date or run-id cleanup",
+      "recommended_improvement": "defer writes until final sigma acceptance or mark provisional"
+    },
+    {
+      "state_object": "historical_feature_backfill_runs table",
+      "storage_location": "Supabase:historical_feature_backfill_runs",
+      "canonical": true,
+      "mutable": true,
+      "append_only": true,
+      "written_by": [
+        "scripts/backfill_historical_feature_store.py"
+      ],
+      "read_by": [
+        "HFS operators"
+      ],
+      "failure_mode": "run registry exists but rollback linkage is incomplete",
+      "recovery_method": "query by run record and manifest",
+      "recommended_improvement": "connect directly to rollback proof"
+    },
+    {
+      "state_object": "candidate files",
+      "storage_location": "data/clean_race_candidates_oasis_window_*.jsonl",
+      "canonical": true,
+      "mutable": false,
+      "append_only": true,
+      "written_by": [
+        "scripts/mine_clean_course_zones.py"
+      ],
+      "read_by": [
+        "bridge scripts"
+      ],
+      "failure_mode": "wrong window reuse or accidental overwrite",
+      "recovery_method": "refreeze from discovery window",
+      "recommended_improvement": "state file should reference current approved candidate set explicitly"
+    },
+    {
+      "state_object": "rejection files",
+      "storage_location": "data/clean_race_rejections_oasis_window_*.jsonl",
+      "canonical": true,
+      "mutable": false,
+      "append_only": true,
+      "written_by": [
+        "scripts/mine_clean_course_zones.py"
+      ],
+      "read_by": [
+        "audit and future ambiguity resolver work"
+      ],
+      "failure_mode": "loss of rejection reason detail",
+      "recovery_method": "rerun discovery window only if archive slice still known",
+      "recommended_improvement": "tie rejections to future resolver backlog"
+    },
+    {
+      "state_object": "cursor files",
+      "storage_location": "data/clean_race_index_cursor_window_*.json",
+      "canonical": true,
+      "mutable": false,
+      "append_only": true,
+      "written_by": [
+        "scripts/mine_clean_course_zones.py"
+      ],
+      "read_by": [
+        "operators and future agents"
+      ],
+      "failure_mode": "stale cursor mistaken for current phase cursor",
+      "recovery_method": "use artifact index and state file together",
+      "recommended_improvement": "single canonical current-cursor pointer"
+    },
+    {
+      "state_object": "bridge manifests",
+      "storage_location": "data/bridge_manifest_oasis_block_*.json",
+      "canonical": true,
+      "mutable": false,
+      "append_only": true,
+      "written_by": [
+        "scripts/bridge_oasis_block.py"
+      ],
+      "read_by": [
+        "HFS reconstruction",
+        "rollbacks",
+        "audits"
+      ],
+      "failure_mode": "manifest exists but rollback remains manual",
+      "recovery_method": "use manifest scope for rollback and audit",
+      "recommended_improvement": "dedicated manifest rollback tool"
+    },
+    {
+      "state_object": "audit reports",
+      "storage_location": "data/*audit*.json and data/*audit*.md",
+      "canonical": true,
+      "mutable": false,
+      "append_only": true,
+      "written_by": [
+        "audit missions"
+      ],
+      "read_by": [
+        "agents",
+        "operators"
+      ],
+      "failure_mode": "ad hoc audit generation can miss canonical fields",
+      "recovery_method": "regenerate from dedicated script once built",
+      "recommended_improvement": "script all major audits"
+    },
+    {
+      "state_object": "run logs",
+      "storage_location": "data/*run.log, data/*err.log, logs/triggers/*",
+      "canonical": false,
+      "mutable": false,
+      "append_only": true,
+      "written_by": [
+        "scripts and app/main.py"
+      ],
+      "read_by": [
+        "operators"
+      ],
+      "failure_mode": "logs are noisy and not a reliable state source",
+      "recovery_method": "use only alongside manifests and state files",
+      "recommended_improvement": "structured log index"
+    },
+    {
+      "state_object": "canonical state file",
+      "storage_location": "data/velo_current_state.json",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "manual checkpoint/update process"
+      ],
+      "read_by": [
+        "future agents",
+        "recovery protocol"
+      ],
+      "failure_mode": "manual update can lag behind accepted state",
+      "recovery_method": "reconcile with db and audits",
+      "recommended_improvement": "automate update after accepted missions"
+    },
+    {
+      "state_object": "artifact index",
+      "storage_location": "data/velo_artifact_index.json",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "manual checkpoint/update process"
+      ],
+      "read_by": [
+        "future agents",
+        "recovery protocol"
+      ],
+      "failure_mode": "new artifacts can be created without index refresh",
+      "recovery_method": "rescan data directory manually",
+      "recommended_improvement": "automatic index refresh"
+    },
+    {
+      "state_object": "agent docs",
+      "storage_location": "docs/VELO_*.md",
+      "canonical": true,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "manual checkpoint/update process"
+      ],
+      "read_by": [
+        "future agents"
+      ],
+      "failure_mode": "docs can drift from state file",
+      "recovery_method": "state file wins",
+      "recommended_improvement": "make docs reference state file revision"
+    },
+    {
+      "state_object": "git checkpoint branch",
+      "storage_location": "git branch checkpoint/oasis-clean-spine-audit-v2-passed",
+      "canonical": true,
+      "mutable": true,
+      "append_only": true,
+      "written_by": [
+        "manual checkpoint process"
+      ],
+      "read_by": [
+        "future agents"
+      ],
+      "failure_mode": "use of uncommitted working tree instead of checkpointed branch content",
+      "recovery_method": "checkout checkpoint branch and inspect committed files only",
+      "recommended_improvement": "checkpoint after every major audit or accepted control-plane change"
+    },
+    {
+      "state_object": "env and secret config",
+      "storage_location": ".env and runtime environment",
+      "canonical": false,
+      "mutable": true,
+      "append_only": false,
+      "written_by": [
+        "operators and deployment"
+      ],
+      "read_by": [
+        "scripts",
+        "app",
+        "src services"
+      ],
+      "failure_mode": "missing or wrong secret produces opaque runtime failures",
+      "recovery_method": "preflight validation and secret scan",
+      "recommended_improvement": "centralized runtime env validation"
+    }
+  ],
+  "lifecycle_hook_audit": [
+    {
+      "operation": "discovery window",
+      "hooks_present": [
+        "apply/run",
+        "artifact freeze",
+        "post-run audit",
+        "approval gate"
+      ],
+      "hooks_missing": [
+        "dry-run",
+        "automatic state update",
+        "git checkpoint"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "medium",
+      "recommended_fix": "Add dry-run metadata mode and automatic current-state refresh."
+    },
+    {
+      "operation": "bridge block",
+      "hooks_present": [
+        "pre-run validation",
+        "approval gate",
+        "apply/run",
+        "manifest freeze",
+        "post-run audit"
+      ],
+      "hooks_missing": [
+        "dry-run",
+        "dedicated rollback tool",
+        "automatic state update"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Implement manifest-scoped dry-run and rollback utility."
+    },
+    {
+      "operation": "HFS reconstruction",
+      "hooks_present": [
+        "apply/run",
+        "manifest support",
+        "post-run audit"
+      ],
+      "hooks_missing": [
+        "rollback tool",
+        "automatic artifact freeze",
+        "automatic state update"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Add manifest-scoped rollback and structured audit output."
+    },
+    {
+      "operation": "global clean spine audit",
+      "hooks_present": [
+        "approval gate",
+        "artifact freeze"
+      ],
+      "hooks_missing": [
+        "dedicated script",
+        "pre-run validation",
+        "automatic regeneration",
+        "git checkpoint hook"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Create reusable global audit script with one canonical JSON/MD output contract."
+    },
+    {
+      "operation": "provenance normalization",
+      "hooks_present": [
+        "dry-run",
+        "apply/run",
+        "post-run audit"
+      ],
+      "hooks_missing": [
+        "rollback tool",
+        "automatic state update"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "medium",
+      "recommended_fix": "Add reversible update plan or manifest-like scope proof."
+    },
+    {
+      "operation": "identity registry backfill",
+      "hooks_present": [
+        "dry-run",
+        "apply/run"
+      ],
+      "hooks_missing": [
+        "approval gate",
+        "post-run audit",
+        "rollback",
+        "artifact freeze"
+      ],
+      "mandatory_before_training": false,
+      "risk_rating": "high",
+      "recommended_fix": "Treat registry backfills as governed operations with audit artifacts."
+    },
+    {
+      "operation": "archive reconciliation",
+      "hooks_present": [],
+      "hooks_missing": [
+        "approval gate",
+        "manifest",
+        "rollback",
+        "artifact freeze",
+        "state update"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Keep quarantined; do not use until reworked or retired."
+    },
+    {
+      "operation": "live race ingestion",
+      "hooks_present": [
+        "pre-run validation",
+        "apply/run",
+        "duplicate trigger check",
+        "pipeline run tracking"
+      ],
+      "hooks_missing": [
+        "structured post-run audit",
+        "rollback",
+        "artifact freeze",
+        "git checkpoint"
+      ],
+      "mandatory_before_training": false,
+      "risk_rating": "high",
+      "recommended_fix": "Add post-run artifact and rollback recipe keyed by pipeline run id."
+    },
+    {
+      "operation": "live result reconciliation",
+      "hooks_present": [
+        "preflight gate",
+        "apply/run",
+        "pipeline run tracking"
+      ],
+      "hooks_missing": [
+        "dry-run",
+        "rollback",
+        "artifact freeze",
+        "state update"
+      ],
+      "mandatory_before_training": false,
+      "risk_rating": "high",
+      "recommended_fix": "Split read-only reconciliation preview from write path and add rollback recipe."
+    },
+    {
+      "operation": "scoring run",
+      "hooks_present": [
+        "preflight",
+        "apply/run"
+      ],
+      "hooks_missing": [
+        "formal approval gate",
+        "structured post-run audit",
+        "rollback"
+      ],
+      "mandatory_before_training": false,
+      "risk_rating": "medium",
+      "recommended_fix": "Standardize score-run verification and artifact logging."
+    },
+    {
+      "operation": "macro context update",
+      "hooks_present": [],
+      "hooks_missing": [
+        "pre-run validation",
+        "dry-run",
+        "approval gate",
+        "post-run audit",
+        "rollback",
+        "artifact freeze"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Treat macro data pack updates as governed releases."
+    },
+    {
+      "operation": "training run",
+      "hooks_present": [
+        "apply/run"
+      ],
+      "hooks_missing": [
+        "global approval gate wiring",
+        "pre-run data integrity validation",
+        "artifact freeze",
+        "rollback plan",
+        "checkpoint requirement"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Define a training gate controller and mandatory preflight sequence."
+    },
+    {
+      "operation": "Playbook activation",
+      "hooks_present": [],
+      "hooks_missing": [
+        "explicit activation gate",
+        "dry-run mode",
+        "rollback",
+        "state update"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Codify Playbook states in canonical state file and enforce activation checks."
+    },
+    {
+      "operation": "deployment/release",
+      "hooks_present": [
+        "git checkpoint optionally"
+      ],
+      "hooks_missing": [
+        "release checklist",
+        "secret scan hook",
+        "post-deploy verification",
+        "rollback recipe"
+      ],
+      "mandatory_before_training": false,
+      "risk_rating": "high",
+      "recommended_fix": "Formalize release lifecycle around live API and scoring services."
+    },
+    {
+      "operation": "rollback/recovery",
+      "hooks_present": [
+        "manual recovery protocol doc"
+      ],
+      "hooks_missing": [
+        "dedicated tool",
+        "automated proof of completeness",
+        "state update automation"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "high",
+      "recommended_fix": "Implement manifest-scoped rollback utility and recovery verifier."
+    },
+    {
+      "operation": "agent handoff",
+      "hooks_present": [
+        "state file",
+        "handoff docs",
+        "artifact index",
+        "checkpoint branch"
+      ],
+      "hooks_missing": [
+        "automatic refresh after every accepted mission"
+      ],
+      "mandatory_before_training": true,
+      "risk_rating": "medium",
+      "recommended_fix": "Make state and artifact index updates mandatory end-of-mission hooks."
+    }
+  ],
+  "verification_interface_audit": [
+    {
+      "check_name": "accounting invariant",
+      "where_implemented": "mine_clean_course_zones.py and discovery audits",
+      "severity": "blocking",
+      "current_coverage": "historical discovery only",
+      "known_blind_spots": "not standardized project-wide for live ingestion",
+      "recommended_standard_pass_fail_rule": "clean + rejected + skipped_existing must equal candidate universe"
+    },
+    {
+      "check_name": "winner parity",
+      "where_implemented": "bridge and HFS audit paths, global audit",
+      "severity": "blocking",
+      "current_coverage": "strong on OASIS historical path",
+      "known_blind_spots": "live reconciliation path relies on sigma loop rather than unified verifier",
+      "recommended_standard_pass_fail_rule": "exactly one winner per accepted event"
+    },
+    {
+      "check_name": "duplicate race_id",
+      "where_implemented": "bridge audits and global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "not formalized for all live tables",
+      "recommended_standard_pass_fail_rule": "duplicate count must equal zero in accepted scopes"
+    },
+    {
+      "check_name": "duplicate event_key",
+      "where_implemented": "discovery, bridge, global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "event_key is not universal across all legacy/live code paths",
+      "recommended_standard_pass_fail_rule": "duplicate event_key count must equal zero"
+    },
+    {
+      "check_name": "duplicate race_id + horse_id",
+      "where_implemented": "bridge audits and global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "live duplication control is procedural",
+      "recommended_standard_pass_fail_rule": "duplicate pair count must equal zero"
+    },
+    {
+      "check_name": "runner_count mismatch",
+      "where_implemented": "bridge audit",
+      "severity": "blocking",
+      "current_coverage": "historical bridge path",
+      "known_blind_spots": "no project-wide reusable checker",
+      "recommended_standard_pass_fail_rule": "manifest expected runner count must equal inserted runner count"
+    },
+    {
+      "check_name": "missing HFS rows",
+      "where_implemented": "global audits and HFS audits",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "training feature store paths outside OASIS not checked the same way",
+      "recommended_standard_pass_fail_rule": "accepted runner rows must equal accepted HFS rows"
+    },
+    {
+      "check_name": "orphan HFS rows",
+      "where_implemented": "global audits",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "not generalized for future training stores",
+      "recommended_standard_pass_fail_rule": "orphan count must equal zero"
+    },
+    {
+      "check_name": "vector nulls",
+      "where_implemented": "HFS audits and global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "live scoring outputs are not audited with same persistence rule",
+      "recommended_standard_pass_fail_rule": "vector null count must equal zero"
+    },
+    {
+      "check_name": "vector dimension",
+      "where_implemented": "HFS audits, model manager feature contract",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "training and API alt stacks can use different feature builders",
+      "recommended_standard_pass_fail_rule": "all accepted rows must have dimension 37"
+    },
+    {
+      "check_name": "MPI nulls",
+      "where_implemented": "HFS audits and global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "live prediction persistence does not store MPI under identical audit contract",
+      "recommended_standard_pass_fail_rule": "null count must equal zero and variance must be positive"
+    },
+    {
+      "check_name": "MPI variance",
+      "where_implemented": "HFS audits and global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "no unified project-wide metric registry",
+      "recommended_standard_pass_fail_rule": "variance must be greater than zero"
+    },
+    {
+      "check_name": "chaos_bloom nulls",
+      "where_implemented": "HFS audits and global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "live prediction persistence uses separate data surfaces",
+      "recommended_standard_pass_fail_rule": "null count must equal zero and variance must be positive"
+    },
+    {
+      "check_name": "chaos_bloom variance",
+      "where_implemented": "HFS audits and global audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "no unified project-wide metric registry",
+      "recommended_standard_pass_fail_rule": "variance must be greater than zero"
+    },
+    {
+      "check_name": "macro-year mismatch",
+      "where_implemented": "HFS audit, global audit, Block 025 rejection path",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "macro support itself is not versioned in canonical state",
+      "recommended_standard_pass_fail_rule": "macro_year_used must equal race_date year for accepted rows"
+    },
+    {
+      "check_name": "doctrine tag completeness",
+      "where_implemented": "global clean spine audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "live outputs and older parallel stores may not carry the same contract",
+      "recommended_standard_pass_fail_rule": "signal_contract_version, mpi_source, chaos_bloom_source must be complete"
+    },
+    {
+      "check_name": "provenance tag completeness",
+      "where_implemented": "global clean spine audit after normalization",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "not yet enforced project-wide on live paths",
+      "recommended_standard_pass_fail_rule": "event_identity_contract, data_owner_confirmed, training_eligible must be complete"
+    },
+    {
+      "check_name": "training_eligible distribution",
+      "where_implemented": "global clean spine audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "no single validator across all project stores",
+      "recommended_standard_pass_fail_rule": "all accepted scoped rows must equal pending_global_training_gate until training unlock"
+    },
+    {
+      "check_name": "data_owner_confirmed completeness",
+      "where_implemented": "global clean spine audit",
+      "severity": "blocking",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "not yet universal outside OASIS scope",
+      "recommended_standard_pass_fail_rule": "all accepted scoped rows must equal true"
+    },
+    {
+      "check_name": "source table completeness",
+      "where_implemented": "provenance normalization and audit v2",
+      "severity": "warning",
+      "current_coverage": "historical accepted spine",
+      "known_blind_spots": "live outputs use different provenance model",
+      "recommended_standard_pass_fail_rule": "historical accepted rows should resolve to historical_raceform/raceform lineage"
+    },
+    {
+      "check_name": "SP and implied probability mapping",
+      "where_implemented": "velo_prime_service feature builder and training scripts",
+      "severity": "warning",
+      "current_coverage": "model code",
+      "known_blind_spots": "not audited by a dedicated regression test suite here",
+      "recommended_standard_pass_fail_rule": "decimal SP and implied probability mapping must be consistent across scoring and training"
+    },
+    {
+      "check_name": "leakage and outcome-field exclusion",
+      "where_implemented": "app/pipeline/orchestrator.py placeholders and training pipeline design docs",
+      "severity": "blocking",
+      "current_coverage": "partial",
+      "known_blind_spots": "no reusable project-wide leakage verifier script exists",
+      "recommended_standard_pass_fail_rule": "training prep must prove no outcome fields or post-race fields enter features"
+    },
+    {
+      "check_name": "rollback completeness",
+      "where_implemented": "manual recovery protocol and Block 025 rollback proof",
+      "severity": "blocking",
+      "current_coverage": "procedural only",
+      "known_blind_spots": "no reusable rollback verifier",
+      "recommended_standard_pass_fail_rule": "failed manifest scope must leave zero residual rows in all affected tables"
+    },
+    {
+      "check_name": "secret scan and checkpoint status",
+      "where_implemented": "manual checkpoint process",
+      "severity": "warning",
+      "current_coverage": "major checkpoints only",
+      "known_blind_spots": "not enforced before every architecture or runtime change",
+      "recommended_standard_pass_fail_rule": "no commit for major phase gates without staged diff secret scan and checkpoint branch"
+    }
+  ],
+  "project_risk_report": {
+    "must_fix_before_any_training": [
+      "Build a dedicated reusable global_clean_spine_audit script; current audit is artifact-driven and operator-dependent.",
+      "Implement a dedicated manifest-scoped rollback tool or an equally reproducible rollback verifier.",
+      "Automate canonical state updates so data/velo_current_state.json and data/velo_artifact_index.json cannot lag accepted state.",
+      "Define one authoritative training control plane; current project contains multiple training stacks, auto-retrain logic, and playbook-related learning code.",
+      "Add a project-wide leakage and outcome-field exclusion verifier before any training run.",
+      "Eliminate chat-memory dependence by making the state file and startup checklist mandatory in every agent entrypoint."
+    ],
+    "must_fix_before_retrying_block_025": [
+      "Add 2025 macro context support to the macro layer and its backing data pack.",
+      "Add a Block 025 preflight that proves macro_year_used will equal 2025 before any bridge retry.",
+      "Keep OASIS_BLOCK_025 manifest-scoped rollback proof available until retry passes.",
+      "Do not use 2025 rows until macro support is extended and audited."
+    ],
+    "must_fix_before_playbook_g_dry_run": [
+      "Codify Playbook E, F, and G lifecycle states in canonical state so paused versus active is machine-readable.",
+      "Define a playbook activation gate, dry-run surface, and rollback path.",
+      "Unify model and sentient state ownership across app and src stacks."
+    ],
+    "must_fix_before_live_deployment": [
+      "Remove hardcoded API key examples and formalize API auth handling.",
+      "Unify live ingestion and scoring ownership so run_prime_today, app/main trigger endpoints, and alternative API stacks cannot drift silently.",
+      "Add structured post-run audits and rollback recipes for live scoring and sigma loops.",
+      "Formalize release/deployment lifecycle hooks including secret scan, checkpoint, and post-deploy verification."
+    ],
+    "can_wait_until_after_first_dry_run_training": [
+      "Prune or archive legacy and dead scripts more aggressively.",
+      "Consolidate duplicate service and training registry modules.",
+      "Automate artifact index refresh and docs regeneration.",
+      "Harden exploratory utilities into either governed tools or explicit quarantine."
+    ]
+  },
+  "gaps_found": [
+    "No dedicated reusable global clean spine audit script.",
+    "No dedicated manifest-scoped rollback tool.",
+    "Canonical state updates are not fully automated.",
+    "2025 macro context is unsupported.",
+    "Legacy and dead scripts remain adjacent to active tooling.",
+    "Unrelated unstaged work exists in app/services/velo_prime_service.py.",
+    "Chat memory can still be incorrectly treated as context if startup docs are skipped.",
+    "Multiple API, pipeline, and training stacks coexist without one documented authority.",
+    "Discovery does not codify non_target_count and candidate_collision_count as first-class outputs.",
+    "Live loops lack the same artifact freeze discipline as OASIS."
+  ],
+  "operational_risks": [
+    "A future agent may accidentally use a legacy or exploratory script instead of the governed path.",
+    "A live rerun can write overlapping rows without manifest-like isolation.",
+    "Training can be invoked from code paths that are not wired to the current governance gate.",
+    "Macro support can lag archive years and silently clamp unless blocked by audit.",
+    "Checkpoint branch can be bypassed by dirty working tree usage."
+  ],
+  "recommended_fixes": [
+    "Script the global clean spine audit as a reusable mission.",
+    "Implement manifest-scoped rollback and residual-row verification.",
+    "Automate state file and artifact index refresh at the end of accepted missions.",
+    "Create a single training gate controller with mandatory preflight checks.",
+    "Treat macro data pack changes as governed releases with audit artifacts.",
+    "Quarantine or clearly label alternative API, pipeline, and training stacks."
+  ],
+  "must_fix_before_training": [
+    "global_clean_spine_audit reusable script",
+    "manifest-scoped rollback tool or verifier",
+    "canonical state update automation",
+    "training control plane unification",
+    "leakage and post-race field exclusion verification"
+  ],
+  "must_fix_before_2025_block_025_retry": [
+    "2025 macro data pack and code support",
+    "Block 025 retry preflight proving macro_year_used equals race year",
+    "keep rollback proof ready until retry passes"
+  ],
+  "proposed_canonical_agent_startup_checklist": [
+    "Read data/velo_current_state.json.",
+    "Read docs/VELO_AGENT_HANDOFF.md.",
+    "Read docs/VELO_OASIS_RUNBOOK.md and docs/VELO_AGENT_PROCESS_LIST.md.",
+    "Read the latest global clean spine audit artifact.",
+    "Confirm latest failed block is still fully rolled back.",
+    "Confirm database counts against the state file before touching code or data.",
+    "Check git status and ignore unrelated unstaged work unless specifically asked.",
+    "Only then continue the next approved mission."
+  ],
+  "next_recommended_mission": "Review project-wide ETCSLV must-fix gaps, then build 2025 macro context support before retrying OASIS_BLOCK_025."
+}
