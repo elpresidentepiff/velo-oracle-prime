@@ -209,6 +209,10 @@ def _parse_horse_row(line: str) -> dict | None:
             idx += 1
 
         horse_name = " ".join(name_tokens).strip()
+        # Strip trailing digit sequences leaked from PDF (e.g. "Cosmic Connection 123123", "Wilstar 106106")
+        # These are OR/TS/RPR numbers that got concatenated onto the name
+        horse_name = re.sub(r'\s+\d+$', '', horse_name).strip()  # single trailing number
+        horse_name = re.sub(r'\s+\d{2,3}\d{2,3}$', '', horse_name).strip()  # double concatenated e.g. 123123
 
         # ── Trainer name + win% ───────────────────────────────────────────────
         # Trainer tokens run until we hit "NN%" token

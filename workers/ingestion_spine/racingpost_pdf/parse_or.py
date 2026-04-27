@@ -147,6 +147,10 @@ def _clean_rating_horse_name(name: str) -> str:
     while len(tokens) > 1 and tokens[0] in _LEAKED_PREFIX_TOKENS:
         tokens = tokens[1:]
 
+    # Strip trailing pure-digit tokens (leaked OR/TS/RPR numbers e.g. "COSMIC CONNECTION 123 123")
+    while len(tokens) > 1 and re.match(r'^\d+$', tokens[-1]):
+        tokens = tokens[:-1]
+
     return " ".join(tokens)
 
 
