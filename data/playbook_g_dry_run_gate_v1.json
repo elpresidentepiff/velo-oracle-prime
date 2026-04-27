@@ -1,0 +1,517 @@
+{
+  "gate_version": "v1",
+  "generated_at": "2026-04-27T11:46:24.519622+00:00",
+  "no_training_executed": true,
+  "scope_filters": {
+    "training_eligible": "pending_global_training_gate",
+    "data_owner_confirmed": true,
+    "source": "historical_raceform",
+    "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1",
+    "event_identity_contract": "race_id_course_race_date",
+    "macro_year_used_equals_race_year": true,
+    "vector_length": 37
+  },
+  "A_eligible_race_count": 1697,
+  "B_eligible_runner_count": 18575,
+  "C_year_breakdown": {
+    "race_counts": {
+      "2017": 294,
+      "2018": 280,
+      "2019": 292,
+      "2020": 194,
+      "2021": 321,
+      "2022": 202,
+      "2023": 47,
+      "2024": 41,
+      "2025": 26
+    },
+    "runner_counts": {
+      "2017": 3241,
+      "2018": 3094,
+      "2019": 3196,
+      "2020": 2226,
+      "2021": 3593,
+      "2022": 2211,
+      "2023": 397,
+      "2024": 373,
+      "2025": 244
+    }
+  },
+  "D_jurisdiction_breakdown": {
+    "race_counts": {
+      "FR": 649,
+      "JPN": 19,
+      "HK": 1029
+    },
+    "runner_counts": {
+      "FR": 6118,
+      "JPN": 267,
+      "HK": 12190
+    }
+  },
+  "E_course_breakdown": {
+    "race_counts_top_50": {
+      "Sha Tin (HK)": 586,
+      "Chantilly (FR)": 525,
+      "Happy Valley (HK)": 443,
+      "Compiegne (FR)": 124,
+      "Kokura (JPN)": 11,
+      "Sapporo (JPN)": 8
+    },
+    "runner_counts_top_50": {
+      "Sha Tin (HK)": 7098,
+      "Chantilly (FR)": 5208,
+      "Happy Valley (HK)": 5092,
+      "Compiegne (FR)": 910,
+      "Kokura (JPN)": 161,
+      "Sapporo (JPN)": 106
+    }
+  },
+  "F_runners_per_race": {
+    "average": 10.945786682380671,
+    "min": 3,
+    "max": 18
+  },
+  "G_winner_label_distribution": {
+    "positive_winners": 1697,
+    "negative_non_winners": 16878,
+    "positive_rate": 0.09135935397039031,
+    "per_race_one_hot_ok": true
+  },
+  "H_sp_implied_probability_distribution": {
+    "sp_dec": {
+      "min": 1.05,
+      "p10": 3.8999999999999995,
+      "p25": 6.8,
+      "median": 13.0,
+      "p75": 31.0,
+      "p90": 70.0,
+      "max": 501.0,
+      "mean": 29.15053057528937
+    },
+    "implied_prob": {
+      "min": 0.001996007984031936,
+      "p10": 0.014285714285714287,
+      "p25": 0.03225806451612903,
+      "median": 0.07692307692307693,
+      "p75": 0.14705882352941177,
+      "p90": 0.25641025641025644,
+      "max": 0.9523809523809523,
+      "mean": 0.11083196188177195
+    }
+  },
+  "I_MPI_distribution": {
+    "min": 0.1277,
+    "p10": 6.20812,
+    "p25": 18.0,
+    "median": 39.6364,
+    "p75": 64.56684999999999,
+    "p90": 91.51846000000002,
+    "max": 100.0,
+    "mean": 43.382899526244955
+  },
+  "J_chaos_bloom_distribution": {
+    "min": 37.3413,
+    "p10": 57.372,
+    "p25": 60.9033,
+    "median": 64.134,
+    "p75": 68.8281,
+    "p90": 75.2605,
+    "max": 97.3157,
+    "mean": 65.39465772274562
+  },
+  "K_feature_vector_dimension_check": {
+    "feature_count": 37,
+    "feature_names": [
+      "sp_dec",
+      "log_sp",
+      "implied_prob",
+      "dist_f",
+      "going_code",
+      "is_aw",
+      "class_num",
+      "wgt_lbs",
+      "or_num",
+      "rpr_num",
+      "ts_num",
+      "or_vs_field",
+      "rpr_vs_field",
+      "field_size",
+      "draw_num",
+      "draw_pct",
+      "age_num",
+      "sp_rank",
+      "is_fav",
+      "runs_since_win",
+      "runs_since_place",
+      "runs_since_mkt_support",
+      "curr_or_minus_last_win_or",
+      "curr_or_minus_best_or",
+      "mark_compression_score",
+      "release_window_score",
+      "course_fit_score",
+      "going_fit_score",
+      "distance_fit_score",
+      "quiet_run_score",
+      "trainer_timing_score",
+      "jockey_switch_intent",
+      "odds_resilience_score",
+      "odds_contraction_score",
+      "decoy_support_flag",
+      "setup_run_flag",
+      "cash_run_flag"
+    ],
+    "vector_length_distribution": {
+      "37": 18575
+    },
+    "vector_nan_count": 0,
+    "vector_inf_count": 0,
+    "rows_with_nan": 0,
+    "rows_with_inf": 0,
+    "macro_context_version_distribution": {
+      "2025_PROXY_V1": 244,
+      "None": 18331
+    }
+  },
+  "L_leakage_exclusion_check": {
+    "training_matrix_source": "feature_json.strictly_ordered_vector only",
+    "forbidden_outcome_feature_intersection": [],
+    "forbidden_model_meta_feature_intersection": [],
+    "model_output_or_meta_keys_present_outside_vector": [
+      "comment_intel_score",
+      "g_base_prob",
+      "g_shadow_flags",
+      "g_shadow_horse_id",
+      "g_shadow_mode",
+      "g_shadow_multiplier",
+      "improvement_score",
+      "longshot_prob",
+      "market_deception_score",
+      "narrative_disruption",
+      "place_prob",
+      "release_day_prob",
+      "sentient_aggression_level",
+      "sentient_modifier_applied",
+      "sentient_modifier_mode",
+      "sentient_races_observed",
+      "sentient_state_loaded",
+      "sentient_state_source",
+      "sqpe_v17_prob",
+      "story_anchor",
+      "tie_gate_signal_count",
+      "tie_gate_signals",
+      "velo_prime_prob",
+      "verdict_flags"
+    ],
+    "status": "pass",
+    "note": "The first offline dry-run must train only on the 37-vector and must exclude existing model outputs, shadow state, verdict metadata, and narrative fields."
+  },
+  "M_outcome_field_exclusion_check": {
+    "label_columns_reserved_for_targets_or_eval_only": [
+      "winner_flag",
+      "placed_flag",
+      "finish_position"
+    ],
+    "top_level_outcome_fields_excluded_from_training_matrix": true,
+    "per_race_winner_parity_ok": true,
+    "bad_race_sample": [],
+    "status": "pass"
+  },
+  "N_proposed_train_validation_test_split": {
+    "strategy": "grouped chronological split by race_id with no cross-race leakage",
+    "rationale": "Train on the dense 2017-2020 spine, tune on 2021-2022, and hold out 2023-2025 so the final test remains genuinely out of time and includes the explicit 2025 proxy-macro slice.",
+    "splits": {
+      "train": {
+        "years": [
+          2017,
+          2018,
+          2019,
+          2020
+        ],
+        "race_count": 1060,
+        "runner_count": 11757,
+        "jurisdiction_breakdown": {
+          "JPN": 12,
+          "HK": 624,
+          "FR": 424
+        }
+      },
+      "validation": {
+        "years": [
+          2021,
+          2022
+        ],
+        "race_count": 523,
+        "runner_count": 5804,
+        "jurisdiction_breakdown": {
+          "HK": 376,
+          "FR": 141,
+          "JPN": 6
+        }
+      },
+      "test": {
+        "years": [
+          2023,
+          2024,
+          2025
+        ],
+        "race_count": 114,
+        "runner_count": 1014,
+        "jurisdiction_breakdown": {
+          "FR": 84,
+          "HK": 29,
+          "JPN": 1
+        }
+      }
+    },
+    "secondary_recommendation": "Run an anchored rolling-origin backtest by year in addition to the primary holdout because the late years are sparse and FR-heavy."
+  },
+  "O_proposed_baseline_models": {
+    "mandatory": [
+      {
+        "name": "market_implied_probability_baseline",
+        "inputs": [
+          "implied_prob"
+        ],
+        "prediction_rule": "Normalize implied_prob within each race to produce a proper winner distribution.",
+        "reference_metrics": {
+          "train": {
+            "race_count": 1060,
+            "runner_log_loss": 0.2542234509629406,
+            "winner_multiclass_log_loss": 1.9343146123306938,
+            "brier_score": 0.07214747503483435,
+            "top_1_winner_hit_rate": 0.32075471698113206,
+            "top_3_containment": 0.629245283018868
+          },
+          "validation": {
+            "race_count": 523,
+            "runner_log_loss": 0.2606984111144274,
+            "winner_multiclass_log_loss": 1.9994964101201091,
+            "brier_score": 0.07327656358237467,
+            "top_1_winner_hit_rate": 0.3078393881453155,
+            "top_3_containment": 0.5965583173996176
+          },
+          "test": {
+            "race_count": 114,
+            "runner_log_loss": 0.29062925016540897,
+            "winner_multiclass_log_loss": 1.7252294438828097,
+            "brier_score": 0.0854828821497236,
+            "top_1_winner_hit_rate": 0.35964912280701755,
+            "top_3_containment": 0.6929824561403509
+          },
+          "all": {
+            "race_count": 1697,
+            "runner_log_loss": 0.2582340108073837,
+            "winner_multiclass_log_loss": 1.9403572587896258,
+            "brier_score": 0.07322824664960806,
+            "top_1_winner_hit_rate": 0.319387153800825,
+            "top_3_containment": 0.6234531526222746
+          }
+        }
+      },
+      {
+        "name": "sp_rank_baseline",
+        "inputs": [
+          "sp_rank"
+        ],
+        "prediction_rule": "Convert SP rank to reciprocal-rank weights within each race.",
+        "reference_metrics": {
+          "train": {
+            "race_count": 1060,
+            "runner_log_loss": 0.2628659709470686,
+            "winner_multiclass_log_loss": 2.0142191700650707,
+            "brier_score": 0.07408739772466791,
+            "top_1_winner_hit_rate": 0.32075471698113206,
+            "top_3_containment": 0.629245283018868
+          },
+          "validation": {
+            "race_count": 523,
+            "runner_log_loss": 0.2687565416090211,
+            "winner_multiclass_log_loss": 2.073111770357407,
+            "brier_score": 0.0752302698057249,
+            "top_1_winner_hit_rate": 0.3078393881453155,
+            "top_3_containment": 0.5965583173996176
+          },
+          "test": {
+            "race_count": 114,
+            "runner_log_loss": 0.303205161560562,
+            "winner_multiclass_log_loss": 1.8151901673523594,
+            "brier_score": 0.0886396455365513,
+            "top_1_winner_hit_rate": 0.35964912280701755,
+            "top_3_containment": 0.6929824561403509
+          },
+          "all": {
+            "race_count": 1697,
+            "runner_log_loss": 0.2669086525838991,
+            "winner_multiclass_log_loss": 2.0189990897136463,
+            "brier_score": 0.07523890291119305,
+            "top_1_winner_hit_rate": 0.319387153800825,
+            "top_3_containment": 0.6234531526222746
+          }
+        }
+      },
+      {
+        "name": "simple_logistic_baseline",
+        "inputs": [
+          "sp_dec",
+          "log_sp",
+          "implied_prob",
+          "sp_rank",
+          "is_fav"
+        ],
+        "prediction_rule": "L2-regularized logistic regression on market-only controls, grouped by race and calibrated on validation.",
+        "purpose": "Direct beyond-market control: if the candidate cannot beat a learned market-only model, it has not proven non-market signal."
+      },
+      {
+        "name": "playbook_g_candidate_model",
+        "inputs": [
+          "sp_dec",
+          "log_sp",
+          "implied_prob",
+          "dist_f",
+          "going_code",
+          "is_aw",
+          "class_num",
+          "wgt_lbs",
+          "or_num",
+          "rpr_num",
+          "ts_num",
+          "or_vs_field",
+          "rpr_vs_field",
+          "field_size",
+          "draw_num",
+          "draw_pct",
+          "age_num",
+          "sp_rank",
+          "is_fav",
+          "runs_since_win",
+          "runs_since_place",
+          "runs_since_mkt_support",
+          "curr_or_minus_last_win_or",
+          "curr_or_minus_best_or",
+          "mark_compression_score",
+          "release_window_score",
+          "course_fit_score",
+          "going_fit_score",
+          "distance_fit_score",
+          "quiet_run_score",
+          "trainer_timing_score",
+          "jockey_switch_intent",
+          "odds_resilience_score",
+          "odds_contraction_score",
+          "decoy_support_flag",
+          "setup_run_flag",
+          "cash_run_flag"
+        ],
+        "prediction_rule": "Calibrated GradientBoostingClassifier plus isotonic calibration on the 37-feature vector only, normalized within race at inference.",
+        "purpose": "Match the established SQPE stack while keeping the first dry-run offline and governance-safe."
+      }
+    ],
+    "recommended_additional_control": {
+      "name": "full37_logistic_ablation",
+      "inputs": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "class_num",
+        "wgt_lbs",
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "sp_rank",
+        "is_fav",
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "prediction_rule": "Simple logistic regression on the same 37 features to separate feature signal from model-family nonlinearity."
+    }
+  },
+  "P_proposed_target_metrics": {
+    "primary": [
+      "winner_multiclass_log_loss",
+      "runner_level_brier_score",
+      "top_1_winner_hit_rate",
+      "top_3_containment",
+      "calibration_curve",
+      "market_rank_lift"
+    ],
+    "secondary": [
+      "jurisdiction_split_performance",
+      "year_split_performance",
+      "overfit_warning",
+      "roi_simulation_non_deployment_research_only"
+    ],
+    "definitions": {
+      "calibration_curve": "Reliability curve on validation and test using grouped, race-normalized win probabilities; report at least 10 bins or quantile bins if sparse.",
+      "market_rank_lift": "Improvement in top-1 and top-3 winner capture versus the normalized market-implied baseline on the same split.",
+      "roi_simulation_non_deployment_research_only": "Optional paper study on thresholded overlays only; no staking logic, promotion, or deployment decisions may depend on it alone."
+    }
+  },
+  "Q_pass_fail_criteria": {
+    "question": "Does VELO learn signal beyond market odds?",
+    "go_if": [
+      "The candidate beats the normalized market baseline on out-of-time test winner_multiclass_log_loss and runner_level_brier_score.",
+      "The candidate beats the market-only logistic control on out-of-time test log loss or Brier score.",
+      "Top-1 hit rate is at least the market favorite baseline minus 1 percentage point, and top-3 containment is non-negative versus market or offset by materially better log loss and Brier.",
+      "Calibration on validation and test is stable: no obvious probability collapse, and expected calibration error is not worse than the market baseline.",
+      "HK and FR each show non-negative log-loss lift versus market; JPN is informational only because the sample is too small for gating."
+    ],
+    "stop_if": [
+      "The candidate only improves on training or validation but fails to beat market on the out-of-time test.",
+      "Validation-to-test degradation exceeds 10 percent relative on both log loss and Brier score.",
+      "Any training matrix includes forbidden outcome fields, prior model outputs, Playbook shadow state, or verdict metadata.",
+      "The model wins only on ROI simulation while losing on probability scoring metrics."
+    ],
+    "market_reference_test_split": {
+      "race_count": 114,
+      "runner_log_loss": 0.29062925016540897,
+      "winner_multiclass_log_loss": 1.7252294438828097,
+      "brier_score": 0.0854828821497236,
+      "top_1_winner_hit_rate": 0.35964912280701755,
+      "top_3_containment": 0.6929824561403509
+    }
+  },
+  "R_risks": [
+    "The eligible training cohort is 1,697 race events and 18,575 runners, not the full ~1,939 clean historical races. The excluded remainder is outside the strict pending_global_training_gate OASIS scope and should stay excluded from the first dry-run.",
+    "The 2025 slice is clean but small (26 races / 244 runners) and uses explicit proxy macro context 2025_PROXY_V1. It should be included in the out-of-time test, but any 2025-specific conclusions must be treated as low-sample sensitivity checks.",
+    "The late test period is FR-heavy and JPN-light. Jurisdiction gating should focus on HK and FR; JPN should be monitored but not used as a blocker.",
+    "historical_feature_store rows contain prior model outputs and sentient metadata outside the 37-vector. Those keys are safe only if they remain excluded from the first training matrix.",
+    "No training should touch training_eligible, historical_feature_store, or live verdict systems during the dry-run."
+  ],
+  "S_final_go_no_go_recommendation": {
+    "recommendation": "GO_OFFLINE_DRY_RUN_ONLY",
+    "reason": "The accepted OASIS cohort is large enough, fully audited, macro-year-correct, provenance-complete, and leakage-safe when restricted to the 37-vector. The next step should be a strictly offline Playbook G dry-run whose only purpose is to measure whether the candidate beats market probability on out-of-time data.",
+    "not_approved": [
+      "live deployment",
+      "Playbook E activation",
+      "production model promotion",
+      "mutation of historical_feature_store",
+      "training_eligible state changes"
+    ]
+  }
+}
