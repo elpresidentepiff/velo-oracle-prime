@@ -1,6 +1,6 @@
 {
   "project": "VELO",
-  "phase": "global_clean_spine_audit_v2_passed_pre_2025_macro",
+  "phase": "global_clean_spine_audit_v2_recheck_passed_pre_2025_macro",
   "training_status": "paused",
   "playbook_e_status": "paused",
   "current_accepted_spine": {
@@ -11,12 +11,20 @@
     "accepted_oasis_historical_events": 1671,
     "accepted_oasis_historical_hfs_rows": 18331
   },
-  "latest_passed_audit": "global_clean_spine_audit_v2",
+  "latest_passed_audit": "global_clean_spine_audit_v2_recheck",
   "latest_passed_block": "OASIS_BLOCK_024",
   "latest_failed_block": "OASIS_BLOCK_025",
   "failed_block_reason": "2025 macro-year mismatch; rolled back",
+  "blocked_block_summary": {
+    "bridge_block": "OASIS_BLOCK_025",
+    "status": "rolled_back",
+    "race_events": 26,
+    "runner_rows": 244,
+    "reason": "macro_year_mismatch",
+    "archive_exhausted": true
+  },
   "archive_exhausted": true,
-  "next_required_mission": "ETCSLV audit, then 2025 macro context support",
+  "next_required_mission": "build 2025 macro context support, then retry OASIS_BLOCK_025",
   "do_not_do": [
     "do not train",
     "do not run Playbook E",
@@ -32,5 +40,5 @@
     "Run Global Clean Spine Audit V3",
     "Decide Playbook G dry-run training gate"
   ],
-  "updated_at": "2026-04-26"
+  "updated_at": "2026-04-27"
 }
