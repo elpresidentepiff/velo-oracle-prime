@@ -1,0 +1,4258 @@
+{
+  "run_version": "v1",
+  "generated_at": "2026-04-27T11:59:55.219595+00:00",
+  "offline_research_only": true,
+  "scope_filters": {
+    "training_eligible": "pending_global_training_gate",
+    "data_owner_confirmed": true,
+    "source": "historical_raceform",
+    "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1",
+    "event_identity_contract": "race_id_course_race_date",
+    "macro_year_mismatch": 0,
+    "vector_length": 37
+  },
+  "A_eligible_race_count": 1697,
+  "B_eligible_runner_count": 18575,
+  "C_train_validation_test_counts": {
+    "train": {
+      "race_count": 1060,
+      "runner_count": 11757
+    },
+    "validation": {
+      "race_count": 523,
+      "runner_count": 5804
+    },
+    "test": {
+      "race_count": 114,
+      "runner_count": 1014
+    }
+  },
+  "D_year_breakdown": {
+    "2017": 3241,
+    "2018": 3094,
+    "2019": 3196,
+    "2020": 2226,
+    "2021": 3593,
+    "2022": 2211,
+    "2023": 397,
+    "2024": 373,
+    "2025": 244
+  },
+  "E_jurisdiction_breakdown": {
+    "FR": 6118,
+    "JPN": 267,
+    "HK": 12190
+  },
+  "F_feature_vector_checks": {
+    "feature_count": 37,
+    "feature_names": [
+      "sp_dec",
+      "log_sp",
+      "implied_prob",
+      "dist_f",
+      "going_code",
+      "is_aw",
+      "class_num",
+      "wgt_lbs",
+      "or_num",
+      "rpr_num",
+      "ts_num",
+      "or_vs_field",
+      "rpr_vs_field",
+      "field_size",
+      "draw_num",
+      "draw_pct",
+      "age_num",
+      "sp_rank",
+      "is_fav",
+      "runs_since_win",
+      "runs_since_place",
+      "runs_since_mkt_support",
+      "curr_or_minus_last_win_or",
+      "curr_or_minus_best_or",
+      "mark_compression_score",
+      "release_window_score",
+      "course_fit_score",
+      "going_fit_score",
+      "distance_fit_score",
+      "quiet_run_score",
+      "trainer_timing_score",
+      "jockey_switch_intent",
+      "odds_resilience_score",
+      "odds_contraction_score",
+      "decoy_support_flag",
+      "setup_run_flag",
+      "cash_run_flag"
+    ],
+    "vector_nan_count": 0,
+    "vector_inf_count": 0,
+    "rows_with_nan": 0,
+    "rows_with_inf": 0,
+    "macro_context_version_distribution": {
+      "2025_PROXY_V1": 244,
+      "None": 18331
+    }
+  },
+  "G_leakage_audit": {
+    "status": "pass",
+    "training_matrix_source": "feature_json.strictly_ordered_vector only",
+    "forbidden_outcome_feature_intersection": [],
+    "forbidden_model_meta_feature_intersection": [],
+    "model_output_or_meta_keys_present_outside_vector": [
+      "comment_intel_score",
+      "g_base_prob",
+      "g_shadow_flags",
+      "g_shadow_horse_id",
+      "g_shadow_mode",
+      "g_shadow_multiplier",
+      "improvement_score",
+      "longshot_prob",
+      "market_deception_score",
+      "narrative_disruption",
+      "place_prob",
+      "release_day_prob",
+      "sentient_aggression_level",
+      "sentient_modifier_applied",
+      "sentient_modifier_mode",
+      "sentient_races_observed",
+      "sentient_state_loaded",
+      "sentient_state_source",
+      "sqpe_v17_prob",
+      "story_anchor",
+      "tie_gate_signal_count",
+      "tie_gate_signals",
+      "velo_prime_prob",
+      "verdict_flags"
+    ],
+    "vector_nan_count": 0,
+    "vector_inf_count": 0,
+    "rows_with_nan": 0,
+    "rows_with_inf": 0,
+    "macro_context_version_distribution": {
+      "2025_PROXY_V1": 244,
+      "None": 18331
+    }
+  },
+  "H_outcome_field_exclusion_audit": {
+    "status": "pass",
+    "forbidden_outcome_fields": [
+      "winner_flag",
+      "placed_flag",
+      "finish_position",
+      "position",
+      "pos",
+      "result",
+      "outcome"
+    ],
+    "label_columns_reserved_for_eval_only": [
+      "winner_flag",
+      "finish_position"
+    ]
+  },
+  "I_market_baseline_metrics": {
+    "train": {
+      "race_count": 1060,
+      "runner_count": 11757,
+      "winner_multiclass_log_loss": 1.9343146123306942,
+      "runner_log_loss": 0.25422345096294174,
+      "brier_score": 0.07214747503483435,
+      "top_1_winner_hit_rate": 0.32075471698113206,
+      "top_3_containment": 0.629245283018868,
+      "mean_winner_rank": 3.371698113207547,
+      "calibration": {
+        "ece": 0.008321179448804318,
+        "bins": [
+          {
+            "count": 1176,
+            "pred_mean": 0.006670657014900457,
+            "label_mean": 0.00510204081632653,
+            "abs_gap": 0.0015686161985739265
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.015993630198178288,
+            "label_mean": 0.012755102040816327,
+            "abs_gap": 0.003238528157361961
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.02623028386359093,
+            "label_mean": 0.02723404255319149,
+            "abs_gap": 0.0010037586896005576
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.03891177951221543,
+            "label_mean": 0.03231292517006803,
+            "abs_gap": 0.006598854342147402
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.0539280113824771,
+            "label_mean": 0.05102040816326531,
+            "abs_gap": 0.002907603219211796
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.07191808165400587,
+            "label_mean": 0.08,
+            "abs_gap": 0.00808191834599413
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.09136495152140357,
+            "label_mean": 0.070578231292517,
+            "abs_gap": 0.02078672022888657
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.12075904888744607,
+            "label_mean": 0.13191489361702127,
+            "abs_gap": 0.011155844729575204
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.1723112878791552,
+            "label_mean": 0.16581632653061223,
+            "abs_gap": 0.006494961348542966
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.3034589580648626,
+            "label_mean": 0.32482993197278914,
+            "abs_gap": 0.021370973907926527
+          }
+        ]
+      }
+    },
+    "validation": {
+      "race_count": 523,
+      "runner_count": 5804,
+      "winner_multiclass_log_loss": 1.9994964101201087,
+      "runner_log_loss": 0.26069841111442726,
+      "brier_score": 0.07327656358237467,
+      "top_1_winner_hit_rate": 0.3078393881453155,
+      "top_3_containment": 0.5965583173996176,
+      "mean_winner_rank": 3.6195028680688335,
+      "calibration": {
+        "ece": 0.00783570266283865,
+        "bins": [
+          {
+            "count": 581,
+            "pred_mean": 0.007759630600572231,
+            "label_mean": 0.008605851979345954,
+            "abs_gap": 0.0008462213787737236
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.016754320966715936,
+            "label_mean": 0.015517241379310345,
+            "abs_gap": 0.0012370795874055915
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.026745083736084342,
+            "label_mean": 0.029310344827586206,
+            "abs_gap": 0.0025652610915018643
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.039839448574167304,
+            "label_mean": 0.055077452667814115,
+            "abs_gap": 0.015238004093646812
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.05532777171204086,
+            "label_mean": 0.05,
+            "abs_gap": 0.005327771712040859
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.07350444351298176,
+            "label_mean": 0.07413793103448275,
+            "abs_gap": 0.0006334875215009972
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.09168564323380095,
+            "label_mean": 0.0981067125645439,
+            "abs_gap": 0.006421069330742948
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.11892514656849892,
+            "label_mean": 0.1,
+            "abs_gap": 0.01892514656849892
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.16716381097267147,
+            "label_mean": 0.15344827586206897,
+            "abs_gap": 0.0137155351106025
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.30325583708885007,
+            "label_mean": 0.31669535283993117,
+            "abs_gap": 0.0134395157510811
+          }
+        ]
+      }
+    },
+    "test": {
+      "race_count": 114,
+      "runner_count": 1014,
+      "winner_multiclass_log_loss": 1.7252294438828102,
+      "runner_log_loss": 0.2906292501654094,
+      "brier_score": 0.08548288214972359,
+      "top_1_winner_hit_rate": 0.35964912280701755,
+      "top_3_containment": 0.6929824561403509,
+      "mean_winner_rank": 2.8684210526315788,
+      "calibration": {
+        "ece": 0.021442128850706548,
+        "bins": [
+          {
+            "count": 102,
+            "pred_mean": 0.010974254186894976,
+            "label_mean": 0.0,
+            "abs_gap": 0.010974254186894976
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.020671063551640993,
+            "label_mean": 0.0297029702970297,
+            "abs_gap": 0.009031906745388708
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.0322969776769674,
+            "label_mean": 0.019801980198019802,
+            "abs_gap": 0.012494997478947601
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.04776037701068558,
+            "label_mean": 0.0392156862745098,
+            "abs_gap": 0.008544690736175774
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.06663377345480886,
+            "label_mean": 0.0594059405940594,
+            "abs_gap": 0.007227832860749461
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.08857480233271961,
+            "label_mean": 0.10891089108910891,
+            "abs_gap": 0.0203360887563893
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.1140563034379382,
+            "label_mean": 0.11764705882352941,
+            "abs_gap": 0.0035907553855912128
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.15329399700893614,
+            "label_mean": 0.0891089108910891,
+            "abs_gap": 0.06418508611784704
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.21248777492773924,
+            "label_mean": 0.2871287128712871,
+            "abs_gap": 0.07464093794354787
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.3765247782641476,
+            "label_mean": 0.37254901960784315,
+            "abs_gap": 0.003975758656304451
+          }
+        ]
+      }
+    },
+    "all": {
+      "race_count": 1697,
+      "runner_count": 18575,
+      "winner_multiclass_log_loss": 1.940357258789626,
+      "runner_log_loss": 0.25823401080738445,
+      "brier_score": 0.07322824664960806,
+      "top_1_winner_hit_rate": 0.319387153800825,
+      "top_3_containment": 0.6234531526222746,
+      "mean_winner_rank": 3.4142604596346495,
+      "calibration": {
+        "ece": 0.0043684999536608374,
+        "bins": [
+          {
+            "count": 1858,
+            "pred_mean": 0.007178064646722849,
+            "label_mean": 0.005382131324004306,
+            "abs_gap": 0.0017959333227185433
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.01647645131001159,
+            "label_mean": 0.015616585891222402,
+            "abs_gap": 0.0008598654187891869
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.026715453349891536,
+            "label_mean": 0.02798708288482239,
+            "abs_gap": 0.001271629534930853
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.0396139904849606,
+            "label_mean": 0.03769520732364028,
+            "abs_gap": 0.0019187831613203185
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.05492069110161024,
+            "label_mean": 0.05382131324004306,
+            "abs_gap": 0.0010993778615671843
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.0732415400758945,
+            "label_mean": 0.07431340872374798,
+            "abs_gap": 0.001071868647853469
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.09248454257831136,
+            "label_mean": 0.0840064620355412,
+            "abs_gap": 0.008478080542770161
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.12182123507287826,
+            "label_mean": 0.12217438105489774,
+            "abs_gap": 0.0003531459820194788
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.17301519071515062,
+            "label_mean": 0.16532040926225094,
+            "abs_gap": 0.007694781452899674
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.3080930299622888,
+            "label_mean": 0.32723358449946177,
+            "abs_gap": 0.01914055453717295
+          }
+        ]
+      }
+    }
+  },
+  "J_sp_rank_baseline_metrics": {
+    "train": {
+      "race_count": 1060,
+      "runner_count": 11757,
+      "winner_multiclass_log_loss": 2.0166552838452074,
+      "runner_log_loss": 0.2631024856741469,
+      "brier_score": 0.07412035192957765,
+      "top_1_winner_hit_rate": 0.32075471698113206,
+      "top_3_containment": 0.629245283018868,
+      "mean_winner_rank": 3.371698113207547,
+      "calibration": {
+        "ece": 0.010077920977959195,
+        "bins": [
+          {
+            "count": 1272,
+            "pred_mean": 0.02386586109369037,
+            "label_mean": 0.009433962264150943,
+            "abs_gap": 0.014431898829539427
+          },
+          {
+            "count": 1245,
+            "pred_mean": 0.029990709814242004,
+            "label_mean": 0.024096385542168676,
+            "abs_gap": 0.0058943242720733285
+          },
+          {
+            "count": 1011,
+            "pred_mean": 0.035288654645305936,
+            "label_mean": 0.026706231454005934,
+            "abs_gap": 0.008582423191300002
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.04161330867008539,
+            "label_mean": 0.04085106382978723,
+            "abs_gap": 0.0007622448402981596
+          },
+          {
+            "count": 1197,
+            "pred_mean": 0.04997913081148741,
+            "label_mean": 0.050960735171261484,
+            "abs_gap": 0.0009816043597740756
+          },
+          {
+            "count": 1157,
+            "pred_mean": 0.06110488982238006,
+            "label_mean": 0.06482281763180639,
+            "abs_gap": 0.0037179278094263274
+          },
+          {
+            "count": 1192,
+            "pred_mean": 0.07706823388448593,
+            "label_mean": 0.08976510067114093,
+            "abs_gap": 0.012696866786655006
+          },
+          {
+            "count": 1202,
+            "pred_mean": 0.10445079145815424,
+            "label_mean": 0.12312811980033278,
+            "abs_gap": 0.018677328342178542
+          },
+          {
+            "count": 1139,
+            "pred_mean": 0.1596298316964127,
+            "label_mean": 0.17383669885864794,
+            "abs_gap": 0.014206867162235237
+          },
+          {
+            "count": 1167,
+            "pred_mean": 0.3238858456771834,
+            "label_mean": 0.3033419023136247,
+            "abs_gap": 0.020543943363558748
+          }
+        ]
+      }
+    },
+    "validation": {
+      "race_count": 523,
+      "runner_count": 5804,
+      "winner_multiclass_log_loss": 2.0783100388570297,
+      "runner_log_loss": 0.2692625288384313,
+      "brier_score": 0.0753036740866453,
+      "top_1_winner_hit_rate": 0.3078393881453155,
+      "top_3_containment": 0.5965583173996176,
+      "mean_winner_rank": 3.6195028680688335,
+      "calibration": {
+        "ece": 0.010342292592925864,
+        "bins": [
+          {
+            "count": 598,
+            "pred_mean": 0.024325294659682875,
+            "label_mean": 0.011705685618729096,
+            "abs_gap": 0.012619609040953779
+          },
+          {
+            "count": 653,
+            "pred_mean": 0.0300214911615183,
+            "label_mean": 0.027565084226646247,
+            "abs_gap": 0.0024564069348720526
+          },
+          {
+            "count": 492,
+            "pred_mean": 0.03524379834615884,
+            "label_mean": 0.03048780487804878,
+            "abs_gap": 0.004755993468110058
+          },
+          {
+            "count": 579,
+            "pred_mean": 0.04138225294769198,
+            "label_mean": 0.05699481865284974,
+            "abs_gap": 0.01561256570515776
+          },
+          {
+            "count": 599,
+            "pred_mean": 0.05009665910895674,
+            "label_mean": 0.05509181969949917,
+            "abs_gap": 0.004995160590542426
+          },
+          {
+            "count": 561,
+            "pred_mean": 0.06110071943796555,
+            "label_mean": 0.0784313725490196,
+            "abs_gap": 0.017330653111054056
+          },
+          {
+            "count": 596,
+            "pred_mean": 0.07687726298245082,
+            "label_mean": 0.07718120805369127,
+            "abs_gap": 0.0003039450712404579
+          },
+          {
+            "count": 565,
+            "pred_mean": 0.10355007332348626,
+            "label_mean": 0.10619469026548672,
+            "abs_gap": 0.002644616942000466
+          },
+          {
+            "count": 585,
+            "pred_mean": 0.15797658096126715,
+            "label_mean": 0.16923076923076924,
+            "abs_gap": 0.011254188269502086
+          },
+          {
+            "count": 576,
+            "pred_mean": 0.3238243478878453,
+            "label_mean": 0.2916666666666667,
+            "abs_gap": 0.032157681221178624
+          }
+        ]
+      }
+    },
+    "test": {
+      "race_count": 114,
+      "runner_count": 1014,
+      "winner_multiclass_log_loss": 1.8045408532181324,
+      "runner_log_loss": 0.30177357902260704,
+      "brier_score": 0.08826184260629043,
+      "top_1_winner_hit_rate": 0.35964912280701755,
+      "top_3_containment": 0.6929824561403509,
+      "mean_winner_rank": 2.8684210526315788,
+      "calibration": {
+        "ece": 0.01983084384681107,
+        "bins": [
+          {
+            "count": 102,
+            "pred_mean": 0.027332784367304127,
+            "label_mean": 0.0196078431372549,
+            "abs_gap": 0.007724941230049225
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.03701070935243149,
+            "label_mean": 0.0196078431372549,
+            "abs_gap": 0.017402866215176588
+          },
+          {
+            "count": 104,
+            "pred_mean": 0.04608996158560463,
+            "label_mean": 0.028846153846153848,
+            "abs_gap": 0.017243807739450785
+          },
+          {
+            "count": 98,
+            "pred_mean": 0.05577911584551363,
+            "label_mean": 0.04081632653061224,
+            "abs_gap": 0.014962789314901387
+          },
+          {
+            "count": 108,
+            "pred_mean": 0.06711055703156031,
+            "label_mean": 0.09259259259259259,
+            "abs_gap": 0.025482035561032276
+          },
+          {
+            "count": 97,
+            "pred_mean": 0.08161981328948616,
+            "label_mean": 0.09278350515463918,
+            "abs_gap": 0.011163691865153022
+          },
+          {
+            "count": 99,
+            "pred_mean": 0.10165615460315788,
+            "label_mean": 0.09090909090909091,
+            "abs_gap": 0.010747063694066972
+          },
+          {
+            "count": 103,
+            "pred_mean": 0.13754886220819734,
+            "label_mean": 0.10679611650485436,
+            "abs_gap": 0.03075274570334298
+          },
+          {
+            "count": 99,
+            "pred_mean": 0.2045061836301759,
+            "label_mean": 0.25252525252525254,
+            "abs_gap": 0.04801906889507665
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.36798615629206566,
+            "label_mean": 0.38235294117647056,
+            "abs_gap": 0.014366784884404904
+          }
+        ]
+      }
+    },
+    "all": {
+      "race_count": 1697,
+      "runner_count": 18575,
+      "winner_multiclass_log_loss": 2.0214074298556306,
+      "runner_log_loss": 0.26713830689518836,
+      "brier_score": 0.07526207324025369,
+      "top_1_winner_hit_rate": 0.319387153800825,
+      "top_3_containment": 0.6234531526222746,
+      "mean_winner_rank": 3.4142604596346495,
+      "calibration": {
+        "ece": 0.009135009091322793,
+        "bins": [
+          {
+            "count": 1918,
+            "pred_mean": 0.024017283474570925,
+            "label_mean": 0.009906152241918665,
+            "abs_gap": 0.01411113123265226
+          },
+          {
+            "count": 1951,
+            "pred_mean": 0.030003515798250075,
+            "label_mean": 0.025627883136852898,
+            "abs_gap": 0.0043756326613971774
+          },
+          {
+            "count": 1768,
+            "pred_mean": 0.03562219226366571,
+            "label_mean": 0.02828054298642534,
+            "abs_gap": 0.007341649277240372
+          },
+          {
+            "count": 2082,
+            "pred_mean": 0.04281464694622008,
+            "label_mean": 0.04514889529298751,
+            "abs_gap": 0.0023342483467674313
+          },
+          {
+            "count": 1592,
+            "pred_mean": 0.051567485687798655,
+            "label_mean": 0.05402010050251256,
+            "abs_gap": 0.0024526148147139062
+          },
+          {
+            "count": 1838,
+            "pred_mean": 0.06208686830195233,
+            "label_mean": 0.06964091403699674,
+            "abs_gap": 0.00755404573504441
+          },
+          {
+            "count": 1910,
+            "pred_mean": 0.07848453646465105,
+            "label_mean": 0.08691099476439791,
+            "abs_gap": 0.008426458299746864
+          },
+          {
+            "count": 1810,
+            "pred_mean": 0.1057241455048836,
+            "label_mean": 0.11933701657458563,
+            "abs_gap": 0.013612871069702034
+          },
+          {
+            "count": 1912,
+            "pred_mean": 0.16189395342940516,
+            "label_mean": 0.17311715481171547,
+            "abs_gap": 0.01122320138231031
+          },
+          {
+            "count": 1794,
+            "pred_mean": 0.3306908316537829,
+            "label_mean": 0.310479375696767,
+            "abs_gap": 0.0202114559570159
+          }
+        ]
+      }
+    }
+  },
+  "K_market_only_logistic_metrics": {
+    "train": {
+      "race_count": 1060,
+      "runner_count": 11757,
+      "winner_multiclass_log_loss": 1.9164300089009738,
+      "runner_log_loss": 0.25223306807339063,
+      "brier_score": 0.07170837091312948,
+      "top_1_winner_hit_rate": 0.3283018867924528,
+      "top_3_containment": 0.6339622641509434,
+      "mean_winner_rank": 3.331132075471698,
+      "calibration": {
+        "ece": 0.0044095659661472966,
+        "bins": [
+          {
+            "count": 1176,
+            "pred_mean": 0.002159400728034691,
+            "label_mean": 0.00510204081632653,
+            "abs_gap": 0.0029426400882918394
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.01351224405744517,
+            "label_mean": 0.01020408163265306,
+            "abs_gap": 0.0033081624247921094
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.02187136504879817,
+            "label_mean": 0.025510204081632654,
+            "abs_gap": 0.003638839032834483
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.03524920469653071,
+            "label_mean": 0.030638297872340424,
+            "abs_gap": 0.004610906824190283
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.051503821176244725,
+            "label_mean": 0.055272108843537414,
+            "abs_gap": 0.0037682876672926885
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.06766597416441297,
+            "label_mean": 0.07148936170212766,
+            "abs_gap": 0.0038233875377146898
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.08281969880257949,
+            "label_mean": 0.07653061224489796,
+            "abs_gap": 0.006289086557681525
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.12992899030016727,
+            "label_mean": 0.13361702127659575,
+            "abs_gap": 0.0036880309764284747
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.17535497721954443,
+            "label_mean": 0.16751700680272108,
+            "abs_gap": 0.007837970416823353
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.3214928647664133,
+            "label_mean": 0.32568027210884354,
+            "abs_gap": 0.004187407342430227
+          }
+        ]
+      }
+    },
+    "validation": {
+      "race_count": 523,
+      "runner_count": 5804,
+      "winner_multiclass_log_loss": 1.9994164386623838,
+      "runner_log_loss": 0.26064832292685813,
+      "brier_score": 0.07329443590356312,
+      "top_1_winner_hit_rate": 0.31166347992351817,
+      "top_3_containment": 0.6022944550669216,
+      "mean_winner_rank": 3.6022944550669216,
+      "calibration": {
+        "ece": 0.009313247744689496,
+        "bins": [
+          {
+            "count": 582,
+            "pred_mean": 0.00347850401764408,
+            "label_mean": 0.00859106529209622,
+            "abs_gap": 0.0051125612744521405
+          },
+          {
+            "count": 579,
+            "pred_mean": 0.013901909862336002,
+            "label_mean": 0.010362694300518135,
+            "abs_gap": 0.0035392155618178666
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.022469860281575722,
+            "label_mean": 0.034482758620689655,
+            "abs_gap": 0.012012898339113932
+          },
+          {
+            "count": 582,
+            "pred_mean": 0.03605389228583356,
+            "label_mean": 0.048109965635738834,
+            "abs_gap": 0.012056073349905272
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.053226138568147806,
+            "label_mean": 0.0603448275862069,
+            "abs_gap": 0.007118689018059093
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.06786545152547706,
+            "label_mean": 0.07228915662650602,
+            "abs_gap": 0.004423705101028963
+          },
+          {
+            "count": 579,
+            "pred_mean": 0.08399238985690033,
+            "label_mean": 0.08981001727115717,
+            "abs_gap": 0.005817627414256843
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.12777496749285966,
+            "label_mean": 0.09827586206896552,
+            "abs_gap": 0.02949910542389414
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.1709964597533974,
+            "label_mean": 0.16379310344827586,
+            "abs_gap": 0.007203356305121533
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.32132600919443594,
+            "label_mean": 0.31497418244406195,
+            "abs_gap": 0.00635182675037399
+          }
+        ]
+      }
+    },
+    "test": {
+      "race_count": 114,
+      "runner_count": 1014,
+      "winner_multiclass_log_loss": 1.7175719446971869,
+      "runner_log_loss": 0.28972743298212894,
+      "brier_score": 0.08557287318780502,
+      "top_1_winner_hit_rate": 0.3157894736842105,
+      "top_3_containment": 0.6929824561403509,
+      "mean_winner_rank": 2.9035087719298245,
+      "calibration": {
+        "ece": 0.016426204892451505,
+        "bins": [
+          {
+            "count": 103,
+            "pred_mean": 0.007254023507600462,
+            "label_mean": 0.0,
+            "abs_gap": 0.007254023507600462
+          },
+          {
+            "count": 100,
+            "pred_mean": 0.015922988920739903,
+            "label_mean": 0.03,
+            "abs_gap": 0.014077011079260095
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.02816854780339118,
+            "label_mean": 0.0297029702970297,
+            "abs_gap": 0.001534422493638523
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.04073145463502463,
+            "label_mean": 0.029411764705882353,
+            "abs_gap": 0.011319689929142278
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.06111111063281868,
+            "label_mean": 0.058823529411764705,
+            "abs_gap": 0.0022875812210539775
+          },
+          {
+            "count": 100,
+            "pred_mean": 0.07578580632643668,
+            "label_mean": 0.08,
+            "abs_gap": 0.004214193673563321
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.11737081895745644,
+            "label_mean": 0.11764705882352941,
+            "abs_gap": 0.0002762398660729748
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.15815422466333748,
+            "label_mean": 0.13861386138613863,
+            "abs_gap": 0.019540363277198852
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.21469492804956797,
+            "label_mean": 0.27722772277227725,
+            "abs_gap": 0.06253279472270928
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.40411179520463686,
+            "label_mean": 0.3627450980392157,
+            "abs_gap": 0.041366697165421185
+          }
+        ]
+      }
+    },
+    "all": {
+      "race_count": 1697,
+      "runner_count": 18575,
+      "winner_multiclass_log_loss": 1.9286469113441005,
+      "runner_log_loss": 0.256909322457616,
+      "brier_score": 0.0729608137939369,
+      "top_1_winner_hit_rate": 0.3223335297583972,
+      "top_3_containment": 0.6281673541543901,
+      "mean_winner_rank": 3.3859752504419562,
+      "calibration": {
+        "ece": 0.003715157839718789,
+        "bins": [
+          {
+            "count": 1858,
+            "pred_mean": 0.002817768450625561,
+            "label_mean": 0.005920344456404736,
+            "abs_gap": 0.003102576005779175
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.013767542664115194,
+            "label_mean": 0.011308562197092083,
+            "abs_gap": 0.0024589804670231107
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.022380944704267228,
+            "label_mean": 0.02744886975242196,
+            "abs_gap": 0.005067925048154731
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.03574665459488595,
+            "label_mean": 0.0366182014001077,
+            "abs_gap": 0.0008715468052217512
+          },
+          {
+            "count": 1860,
+            "pred_mean": 0.052595375501189305,
+            "label_mean": 0.056451612903225805,
+            "abs_gap": 0.0038562374020365
+          },
+          {
+            "count": 1855,
+            "pred_mean": 0.06790871597378012,
+            "label_mean": 0.07223719676549865,
+            "abs_gap": 0.004328480791718534
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.08481241700352371,
+            "label_mean": 0.08616047388260635,
+            "abs_gap": 0.0013480568790826403
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.13075946802715369,
+            "label_mean": 0.12055974165769645,
+            "abs_gap": 0.010199726369457235
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.17598702353072193,
+            "label_mean": 0.17339795368874528,
+            "abs_gap": 0.0025890698419766545
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.3267918231529194,
+            "label_mean": 0.3234660925726588,
+            "abs_gap": 0.0033257305802605885
+          }
+        ]
+      }
+    }
+  },
+  "L_playbook_g_candidate_metrics": {
+    "train": {
+      "race_count": 1060,
+      "runner_count": 11757,
+      "winner_multiclass_log_loss": 0.9831576307924303,
+      "runner_log_loss": 0.14673079649413834,
+      "brier_score": 0.042952576226645146,
+      "top_1_winner_hit_rate": 0.7537735849056604,
+      "top_3_containment": 0.9660377358490566,
+      "mean_winner_rank": 1.3933962264150943,
+      "calibration": {
+        "ece": 0.048552679058338474,
+        "bins": [
+          {
+            "count": 2352,
+            "pred_mean": 0.00017825414464496265,
+            "label_mean": 0.0,
+            "abs_gap": 0.00017825414464496265
+          },
+          {
+            "count": 1178,
+            "pred_mean": 0.0016998236503571703,
+            "label_mean": 0.0,
+            "abs_gap": 0.0016998236503571703
+          },
+          {
+            "count": 1173,
+            "pred_mean": 0.007343736342339107,
+            "label_mean": 0.0,
+            "abs_gap": 0.007343736342339107
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.019618569846968404,
+            "label_mean": 0.0008503401360544217,
+            "abs_gap": 0.01876822971091398
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.03916473922326201,
+            "label_mean": 0.0,
+            "abs_gap": 0.03916473922326201
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.06807379241585826,
+            "label_mean": 0.006802721088435374,
+            "abs_gap": 0.061271071327422884
+          },
+          {
+            "count": 1175,
+            "pred_mean": 0.11693399466923932,
+            "label_mean": 0.04170212765957447,
+            "abs_gap": 0.07523186700966485
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.19884255506954085,
+            "label_mean": 0.1598639455782313,
+            "abs_gap": 0.038978609491309546
+          },
+          {
+            "count": 1176,
+            "pred_mean": 0.44947540489418136,
+            "label_mean": 0.6921768707482994,
+            "abs_gap": 0.242701465854118
+          }
+        ]
+      }
+    },
+    "validation": {
+      "race_count": 523,
+      "runner_count": 5804,
+      "winner_multiclass_log_loss": 1.4218038608433916,
+      "runner_log_loss": 0.19657401014279913,
+      "brier_score": 0.05592331359134014,
+      "top_1_winner_hit_rate": 0.5717017208413002,
+      "top_3_containment": 0.8565965583173997,
+      "mean_winner_rank": 1.9694072657743786,
+      "calibration": {
+        "ece": 0.025892042818879357,
+        "bins": [
+          {
+            "count": 1165,
+            "pred_mean": 0.0002733010562569789,
+            "label_mean": 0.0017167381974248926,
+            "abs_gap": 0.0014434371411679138
+          },
+          {
+            "count": 576,
+            "pred_mean": 0.002867212981726253,
+            "label_mean": 0.0,
+            "abs_gap": 0.002867212981726253
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.009705952879671393,
+            "label_mean": 0.0017211703958691911,
+            "abs_gap": 0.007984782483802202
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.024297726494653598,
+            "label_mean": 0.006896551724137931,
+            "abs_gap": 0.017401174770515667
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.0451177909070621,
+            "label_mean": 0.020689655172413793,
+            "abs_gap": 0.024428135734648304
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.08028792435670341,
+            "label_mean": 0.04130808950086059,
+            "abs_gap": 0.038979834855842825
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.12833303574140684,
+            "label_mean": 0.10344827586206896,
+            "abs_gap": 0.024884759879337873
+          },
+          {
+            "count": 580,
+            "pred_mean": 0.20259756911304957,
+            "label_mean": 0.1896551724137931,
+            "abs_gap": 0.012942396699256481
+          },
+          {
+            "count": 581,
+            "pred_mean": 0.4071306299639806,
+            "label_mean": 0.5335628227194492,
+            "abs_gap": 0.12643219275546863
+          }
+        ]
+      }
+    },
+    "test": {
+      "race_count": 114,
+      "runner_count": 1014,
+      "winner_multiclass_log_loss": 1.6074943723023534,
+      "runner_log_loss": 0.2661020928316016,
+      "brier_score": 0.07221206903179238,
+      "top_1_winner_hit_rate": 0.4824561403508772,
+      "top_3_containment": 0.8333333333333334,
+      "mean_winner_rank": 2.1403508771929824,
+      "calibration": {
+        "ece": 0.011753034616460614,
+        "bins": [
+          {
+            "count": 203,
+            "pred_mean": 0.00045269919728698036,
+            "label_mean": 0.0049261083743842365,
+            "abs_gap": 0.004473409177097256
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.00504488032978189,
+            "label_mean": 0.0,
+            "abs_gap": 0.00504488032978189
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.015787221939195108,
+            "label_mean": 0.0196078431372549,
+            "abs_gap": 0.003820621198059794
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.03096842904833677,
+            "label_mean": 0.009900990099009901,
+            "abs_gap": 0.021067438949326868
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.05526726084689336,
+            "label_mean": 0.0594059405940594,
+            "abs_gap": 0.004138679747166044
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.09628866964074063,
+            "label_mean": 0.06862745098039216,
+            "abs_gap": 0.02766121866034847
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.1561564469214873,
+            "label_mean": 0.16831683168316833,
+            "abs_gap": 0.01216038476168102
+          },
+          {
+            "count": 101,
+            "pred_mean": 0.2492534938640858,
+            "label_mean": 0.27722772277227725,
+            "abs_gap": 0.027974228908191456
+          },
+          {
+            "count": 102,
+            "pred_mean": 0.5030452893110607,
+            "label_mean": 0.5098039215686274,
+            "abs_gap": 0.006758632257566677
+          }
+        ]
+      }
+    },
+    "all": {
+      "race_count": 1697,
+      "runner_count": 18575,
+      "winner_multiclass_log_loss": 1.1602857196838743,
+      "runner_log_loss": 0.16882137557909202,
+      "brier_score": 0.04860271272027148,
+      "top_1_winner_hit_rate": 0.6794342958161461,
+      "top_3_containment": 0.9233942251031232,
+      "mean_winner_rank": 1.6210960518562167,
+      "calibration": {
+        "ece": 0.038847822438374174,
+        "bins": [
+          {
+            "count": 3715,
+            "pred_mean": 0.00021760992757107565,
+            "label_mean": 0.0008075370121130552,
+            "abs_gap": 0.0005899270845419796
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.002093540941706654,
+            "label_mean": 0.0,
+            "abs_gap": 0.002093540941706654
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.008447500469761062,
+            "label_mean": 0.0010770059235325794,
+            "abs_gap": 0.007370494546228483
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.021644776307358924,
+            "label_mean": 0.0032292787944025836,
+            "abs_gap": 0.01841549751295634
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.04178844541512675,
+            "label_mean": 0.006462035541195477,
+            "abs_gap": 0.03532640987393128
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.07297346534342374,
+            "label_mean": 0.02207862143241788,
+            "abs_gap": 0.050894843911005856
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.1228572664977224,
+            "label_mean": 0.06673842841765339,
+            "abs_gap": 0.05611883808006901
+          },
+          {
+            "count": 1857,
+            "pred_mean": 0.2030827569433999,
+            "label_mean": 0.17932148626817448,
+            "abs_gap": 0.023761270675225404
+          },
+          {
+            "count": 1858,
+            "pred_mean": 0.43966223262791887,
+            "label_mean": 0.6329386437029063,
+            "abs_gap": 0.19327641107498744
+          }
+        ]
+      }
+    }
+  },
+  "M_candidate_vs_market_lift": {
+    "train": {
+      "winner_multiclass_log_loss_delta": -0.9511569815382639,
+      "brier_score_delta": -0.0291948988081892,
+      "top_1_hit_rate_delta": 0.4330188679245283,
+      "top_3_containment_delta": 0.33679245283018866,
+      "ece_delta": 0.040231499609534156
+    },
+    "validation": {
+      "winner_multiclass_log_loss_delta": -0.5776925492767171,
+      "brier_score_delta": -0.017353249991034526,
+      "top_1_hit_rate_delta": 0.26386233269598475,
+      "top_3_containment_delta": 0.26003824091778205,
+      "ece_delta": 0.018056340156040705
+    },
+    "test": {
+      "winner_multiclass_log_loss_delta": -0.11773507158045682,
+      "brier_score_delta": -0.013270813117931213,
+      "top_1_hit_rate_delta": 0.12280701754385964,
+      "top_3_containment_delta": 0.14035087719298245,
+      "ece_delta": -0.009689094234245934
+    },
+    "all": {
+      "winner_multiclass_log_loss_delta": -0.7800715391057518,
+      "brier_score_delta": -0.024625533929336578,
+      "top_1_hit_rate_delta": 0.3600471420153211,
+      "top_3_containment_delta": 0.29994107248084856,
+      "ece_delta": 0.03447932248471334
+    }
+  },
+  "N_candidate_vs_market_only_logistic_lift": {
+    "train": {
+      "winner_multiclass_log_loss_delta": -0.9332723781085435,
+      "brier_score_delta": -0.028755794686484336,
+      "top_1_hit_rate_delta": 0.42547169811320756,
+      "top_3_containment_delta": 0.33207547169811324,
+      "ece_delta": 0.044143113092191176
+    },
+    "validation": {
+      "winner_multiclass_log_loss_delta": -0.5776125778189922,
+      "brier_score_delta": -0.01737112231222298,
+      "top_1_hit_rate_delta": 0.26003824091778205,
+      "top_3_containment_delta": 0.2543021032504781,
+      "ece_delta": 0.016578795074189863
+    },
+    "test": {
+      "winner_multiclass_log_loss_delta": -0.11007757239483351,
+      "brier_score_delta": -0.013360804156012637,
+      "top_1_hit_rate_delta": 0.16666666666666669,
+      "top_3_containment_delta": 0.14035087719298245,
+      "ece_delta": -0.004673170275990891
+    },
+    "all": {
+      "winner_multiclass_log_loss_delta": -0.7683611916602262,
+      "brier_score_delta": -0.02435810107366542,
+      "top_1_hit_rate_delta": 0.35710076605774893,
+      "top_3_containment_delta": 0.2952268709487331,
+      "ece_delta": 0.03513266459865538
+    }
+  },
+  "O_calibration_report": {
+    "market_test": {
+      "ece": 0.021442128850706548,
+      "bins": [
+        {
+          "count": 102,
+          "pred_mean": 0.010974254186894976,
+          "label_mean": 0.0,
+          "abs_gap": 0.010974254186894976
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.020671063551640993,
+          "label_mean": 0.0297029702970297,
+          "abs_gap": 0.009031906745388708
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.0322969776769674,
+          "label_mean": 0.019801980198019802,
+          "abs_gap": 0.012494997478947601
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.04776037701068558,
+          "label_mean": 0.0392156862745098,
+          "abs_gap": 0.008544690736175774
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.06663377345480886,
+          "label_mean": 0.0594059405940594,
+          "abs_gap": 0.007227832860749461
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.08857480233271961,
+          "label_mean": 0.10891089108910891,
+          "abs_gap": 0.0203360887563893
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.1140563034379382,
+          "label_mean": 0.11764705882352941,
+          "abs_gap": 0.0035907553855912128
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.15329399700893614,
+          "label_mean": 0.0891089108910891,
+          "abs_gap": 0.06418508611784704
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.21248777492773924,
+          "label_mean": 0.2871287128712871,
+          "abs_gap": 0.07464093794354787
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.3765247782641476,
+          "label_mean": 0.37254901960784315,
+          "abs_gap": 0.003975758656304451
+        }
+      ]
+    },
+    "market_only_logistic_test": {
+      "ece": 0.016426204892451505,
+      "bins": [
+        {
+          "count": 103,
+          "pred_mean": 0.007254023507600462,
+          "label_mean": 0.0,
+          "abs_gap": 0.007254023507600462
+        },
+        {
+          "count": 100,
+          "pred_mean": 0.015922988920739903,
+          "label_mean": 0.03,
+          "abs_gap": 0.014077011079260095
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.02816854780339118,
+          "label_mean": 0.0297029702970297,
+          "abs_gap": 0.001534422493638523
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.04073145463502463,
+          "label_mean": 0.029411764705882353,
+          "abs_gap": 0.011319689929142278
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.06111111063281868,
+          "label_mean": 0.058823529411764705,
+          "abs_gap": 0.0022875812210539775
+        },
+        {
+          "count": 100,
+          "pred_mean": 0.07578580632643668,
+          "label_mean": 0.08,
+          "abs_gap": 0.004214193673563321
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.11737081895745644,
+          "label_mean": 0.11764705882352941,
+          "abs_gap": 0.0002762398660729748
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.15815422466333748,
+          "label_mean": 0.13861386138613863,
+          "abs_gap": 0.019540363277198852
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.21469492804956797,
+          "label_mean": 0.27722772277227725,
+          "abs_gap": 0.06253279472270928
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.40411179520463686,
+          "label_mean": 0.3627450980392157,
+          "abs_gap": 0.041366697165421185
+        }
+      ]
+    },
+    "candidate_test": {
+      "ece": 0.011753034616460614,
+      "bins": [
+        {
+          "count": 203,
+          "pred_mean": 0.00045269919728698036,
+          "label_mean": 0.0049261083743842365,
+          "abs_gap": 0.004473409177097256
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.00504488032978189,
+          "label_mean": 0.0,
+          "abs_gap": 0.00504488032978189
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.015787221939195108,
+          "label_mean": 0.0196078431372549,
+          "abs_gap": 0.003820621198059794
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.03096842904833677,
+          "label_mean": 0.009900990099009901,
+          "abs_gap": 0.021067438949326868
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.05526726084689336,
+          "label_mean": 0.0594059405940594,
+          "abs_gap": 0.004138679747166044
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.09628866964074063,
+          "label_mean": 0.06862745098039216,
+          "abs_gap": 0.02766121866034847
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.1561564469214873,
+          "label_mean": 0.16831683168316833,
+          "abs_gap": 0.01216038476168102
+        },
+        {
+          "count": 101,
+          "pred_mean": 0.2492534938640858,
+          "label_mean": 0.27722772277227725,
+          "abs_gap": 0.027974228908191456
+        },
+        {
+          "count": 102,
+          "pred_mean": 0.5030452893110607,
+          "label_mean": 0.5098039215686274,
+          "abs_gap": 0.006758632257566677
+        }
+      ]
+    },
+    "candidate_validation": {
+      "ece": 0.025892042818879357,
+      "bins": [
+        {
+          "count": 1165,
+          "pred_mean": 0.0002733010562569789,
+          "label_mean": 0.0017167381974248926,
+          "abs_gap": 0.0014434371411679138
+        },
+        {
+          "count": 576,
+          "pred_mean": 0.002867212981726253,
+          "label_mean": 0.0,
+          "abs_gap": 0.002867212981726253
+        },
+        {
+          "count": 581,
+          "pred_mean": 0.009705952879671393,
+          "label_mean": 0.0017211703958691911,
+          "abs_gap": 0.007984782483802202
+        },
+        {
+          "count": 580,
+          "pred_mean": 0.024297726494653598,
+          "label_mean": 0.006896551724137931,
+          "abs_gap": 0.017401174770515667
+        },
+        {
+          "count": 580,
+          "pred_mean": 0.0451177909070621,
+          "label_mean": 0.020689655172413793,
+          "abs_gap": 0.024428135734648304
+        },
+        {
+          "count": 581,
+          "pred_mean": 0.08028792435670341,
+          "label_mean": 0.04130808950086059,
+          "abs_gap": 0.038979834855842825
+        },
+        {
+          "count": 580,
+          "pred_mean": 0.12833303574140684,
+          "label_mean": 0.10344827586206896,
+          "abs_gap": 0.024884759879337873
+        },
+        {
+          "count": 580,
+          "pred_mean": 0.20259756911304957,
+          "label_mean": 0.1896551724137931,
+          "abs_gap": 0.012942396699256481
+        },
+        {
+          "count": 581,
+          "pred_mean": 0.4071306299639806,
+          "label_mean": 0.5335628227194492,
+          "abs_gap": 0.12643219275546863
+        }
+      ]
+    }
+  },
+  "P_jurisdiction_split_performance": {
+    "FR": {
+      "market": {
+        "race_count": 84,
+        "runner_count": 683,
+        "winner_multiclass_log_loss": 1.6292902317692783,
+        "runner_log_loss": 0.30517782530458404,
+        "brier_score": 0.09162854773051476,
+        "top_1_winner_hit_rate": 0.36904761904761907,
+        "top_3_containment": 0.7380952380952381,
+        "mean_winner_rank": 2.6666666666666665,
+        "calibration": {
+          "ece": 0.0422099864443429,
+          "bins": [
+            {
+              "count": 69,
+              "pred_mean": 0.013628545621691718,
+              "label_mean": 0.0,
+              "abs_gap": 0.013628545621691718
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.025080073098255593,
+              "label_mean": 0.029411764705882353,
+              "abs_gap": 0.00433169160762676
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.038977662048365676,
+              "label_mean": 0.014705882352941176,
+              "abs_gap": 0.0242717796954245
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.055894842968905234,
+              "label_mean": 0.029411764705882353,
+              "abs_gap": 0.02648307826302288
+            },
+            {
+              "count": 69,
+              "pred_mean": 0.07756091582541735,
+              "label_mean": 0.028985507246376812,
+              "abs_gap": 0.04857540857904054
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.09835925696830874,
+              "label_mean": 0.16176470588235295,
+              "abs_gap": 0.0634054489140442
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.12612210120512726,
+              "label_mean": 0.1323529411764706,
+              "abs_gap": 0.006230839971343327
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.1696587709922787,
+              "label_mean": 0.10294117647058823,
+              "abs_gap": 0.06671759452169046
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.22963400445267457,
+              "label_mean": 0.36764705882352944,
+              "abs_gap": 0.13801305437085487
+            },
+            {
+              "count": 69,
+              "pred_mean": 0.3932537791629449,
+              "label_mean": 0.36231884057971014,
+              "abs_gap": 0.03093493858323476
+            }
+          ]
+        }
+      },
+      "market_only_logistic": {
+        "race_count": 84,
+        "runner_count": 683,
+        "winner_multiclass_log_loss": 1.6186526737501967,
+        "runner_log_loss": 0.30383225363628147,
+        "brier_score": 0.09161736432371546,
+        "top_1_winner_hit_rate": 0.30952380952380953,
+        "top_3_containment": 0.7380952380952381,
+        "mean_winner_rank": 2.6904761904761907,
+        "calibration": {
+          "ece": 0.029603440625417192,
+          "bins": [
+            {
+              "count": 70,
+              "pred_mean": 0.010313638667667865,
+              "label_mean": 0.014285714285714285,
+              "abs_gap": 0.00397207561804642
+            },
+            {
+              "count": 67,
+              "pred_mean": 0.019141099308617928,
+              "label_mean": 0.014925373134328358,
+              "abs_gap": 0.00421572617428957
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.03340084972430574,
+              "label_mean": 0.014705882352941176,
+              "abs_gap": 0.01869496737136456
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.050393938100476085,
+              "label_mean": 0.029411764705882353,
+              "abs_gap": 0.020982173394593732
+            },
+            {
+              "count": 69,
+              "pred_mean": 0.06729789165868182,
+              "label_mean": 0.028985507246376812,
+              "abs_gap": 0.038312384412305
+            },
+            {
+              "count": 69,
+              "pred_mean": 0.09138342820208299,
+              "label_mean": 0.15942028985507245,
+              "abs_gap": 0.06803686165298946
+            },
+            {
+              "count": 67,
+              "pred_mean": 0.13199346450272148,
+              "label_mean": 0.11940298507462686,
+              "abs_gap": 0.012590479428094617
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.17038550504717206,
+              "label_mean": 0.16176470588235295,
+              "abs_gap": 0.008620799164819115
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.2332796143196993,
+              "label_mean": 0.3088235294117647,
+              "abs_gap": 0.07554391509206543
+            },
+            {
+              "count": 69,
+              "pred_mean": 0.4210977501228742,
+              "label_mean": 0.37681159420289856,
+              "abs_gap": 0.044286155919975645
+            }
+          ]
+        }
+      },
+      "candidate": {
+        "race_count": 84,
+        "runner_count": 683,
+        "winner_multiclass_log_loss": 1.3254946485490913,
+        "runner_log_loss": 0.25854202449517716,
+        "brier_score": 0.0800087216648045,
+        "top_1_winner_hit_rate": 0.4642857142857143,
+        "top_3_containment": 0.8333333333333334,
+        "mean_winner_rank": 2.107142857142857,
+        "calibration": {
+          "ece": 0.019395816566096437,
+          "bins": [
+            {
+              "count": 70,
+              "pred_mean": 6.843992719375331e-05,
+              "label_mean": 0.0,
+              "abs_gap": 6.843992719375331e-05
+            },
+            {
+              "count": 67,
+              "pred_mean": 0.0017172283930329637,
+              "label_mean": 0.0,
+              "abs_gap": 0.0017172283930329637
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.009837628245269148,
+              "label_mean": 0.014705882352941176,
+              "abs_gap": 0.004868254107672028
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.024606279151413963,
+              "label_mean": 0.0,
+              "abs_gap": 0.024606279151413963
+            },
+            {
+              "count": 69,
+              "pred_mean": 0.044479247206967894,
+              "label_mean": 0.057971014492753624,
+              "abs_gap": 0.01349176728578573
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.0709657394311131,
+              "label_mean": 0.058823529411764705,
+              "abs_gap": 0.012142210019348398
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.11771954406578405,
+              "label_mean": 0.058823529411764705,
+              "abs_gap": 0.05889601465401935
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.17383016051045136,
+              "label_mean": 0.22058823529411764,
+              "abs_gap": 0.04675807478366628
+            },
+            {
+              "count": 68,
+              "pred_mean": 0.2655249562421339,
+              "label_mean": 0.29411764705882354,
+              "abs_gap": 0.028592690816689637
+            },
+            {
+              "count": 69,
+              "pred_mean": 0.5182920858774374,
+              "label_mean": 0.5217391304347826,
+              "abs_gap": 0.0034470445573452357
+            }
+          ]
+        }
+      }
+    },
+    "HK": {
+      "market": {
+        "race_count": 29,
+        "runner_count": 319,
+        "winner_multiclass_log_loss": 2.0043041687607603,
+        "runner_log_loss": 0.26231182252078644,
+        "brier_score": 0.07303520989968713,
+        "top_1_winner_hit_rate": 0.3448275862068966,
+        "top_3_containment": 0.5517241379310345,
+        "mean_winner_rank": 3.4482758620689653,
+        "calibration": {
+          "ece": 0.030610113604093624,
+          "bins": [
+            {
+              "count": 32,
+              "pred_mean": 0.008030914564486902,
+              "label_mean": 0.0,
+              "abs_gap": 0.008030914564486902
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.015118286920691152,
+              "label_mean": 0.0625,
+              "abs_gap": 0.04738171307930885
+            },
+            {
+              "count": 33,
+              "pred_mean": 0.023865273638368666,
+              "label_mean": 0.0,
+              "abs_gap": 0.023865273638368666
+            },
+            {
+              "count": 31,
+              "pred_mean": 0.03489119426763431,
+              "label_mean": 0.0,
+              "abs_gap": 0.03489119426763431
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.04839098365496025,
+              "label_mean": 0.09375,
+              "abs_gap": 0.04535901634503975
+            },
+            {
+              "count": 31,
+              "pred_mean": 0.06727065231374912,
+              "label_mean": 0.12903225806451613,
+              "abs_gap": 0.061761605750767
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.08933659190692679,
+              "label_mean": 0.0625,
+              "abs_gap": 0.02683659190692679
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.12014504406481091,
+              "label_mean": 0.09375,
+              "abs_gap": 0.026395044064810913
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.170693270292541,
+              "label_mean": 0.15625,
+              "abs_gap": 0.014443270292541
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.3309545562803001,
+              "label_mean": 0.3125,
+              "abs_gap": 0.018454556280300127
+            }
+          ]
+        }
+      },
+      "market_only_logistic": {
+        "race_count": 29,
+        "runner_count": 319,
+        "winner_multiclass_log_loss": 2.0067706572944206,
+        "runner_log_loss": 0.26251450467528226,
+        "brier_score": 0.07338982266394002,
+        "top_1_winner_hit_rate": 0.3448275862068966,
+        "top_3_containment": 0.5517241379310345,
+        "mean_winner_rank": 3.5172413793103448,
+        "calibration": {
+          "ece": 0.024231982835107444,
+          "bins": [
+            {
+              "count": 32,
+              "pred_mean": 0.003232775668213929,
+              "label_mean": 0.0,
+              "abs_gap": 0.003232775668213929
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.012457428196306656,
+              "label_mean": 0.0625,
+              "abs_gap": 0.05004257180369334
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.018414207250973355,
+              "label_mean": 0.0,
+              "abs_gap": 0.018414207250973355
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.031308424718910356,
+              "label_mean": 0.03125,
+              "abs_gap": 5.842471891035622e-05
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.04200951138164176,
+              "label_mean": 0.0625,
+              "abs_gap": 0.02049048861835824
+            },
+            {
+              "count": 31,
+              "pred_mean": 0.0622962832052965,
+              "label_mean": 0.06451612903225806,
+              "abs_gap": 0.00221984582696156
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.0769022466231819,
+              "label_mean": 0.125,
+              "abs_gap": 0.0480977533768181
+            },
+            {
+              "count": 33,
+              "pred_mean": 0.1279547946815062,
+              "label_mean": 0.09090909090909091,
+              "abs_gap": 0.037045703772415284
+            },
+            {
+              "count": 31,
+              "pred_mean": 0.1754784981383036,
+              "label_mean": 0.12903225806451613,
+              "abs_gap": 0.046446240073787476
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.3596277047188562,
+              "label_mean": 0.34375,
+              "abs_gap": 0.01587770471885619
+            }
+          ]
+        }
+      },
+      "candidate": {
+        "race_count": 29,
+        "runner_count": 319,
+        "winner_multiclass_log_loss": 2.4130579638771974,
+        "runner_log_loss": 0.283347892835068,
+        "brier_score": 0.055572205164328425,
+        "top_1_winner_hit_rate": 0.5517241379310345,
+        "top_3_containment": 0.8620689655172413,
+        "mean_winner_rank": 2.1379310344827585,
+        "calibration": {
+          "ece": 0.01556049637543216,
+          "bins": [
+            {
+              "count": 64,
+              "pred_mean": 0.00012237161104389238,
+              "label_mean": 0.015625,
+              "abs_gap": 0.015502628388956108
+            },
+            {
+              "count": 35,
+              "pred_mean": 0.001461508381605944,
+              "label_mean": 0.0,
+              "abs_gap": 0.001461508381605944
+            },
+            {
+              "count": 29,
+              "pred_mean": 0.0063851099685069915,
+              "label_mean": 0.0,
+              "abs_gap": 0.0063851099685069915
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.013337578670881754,
+              "label_mean": 0.03125,
+              "abs_gap": 0.017912421329118244
+            },
+            {
+              "count": 31,
+              "pred_mean": 0.023998215165823143,
+              "label_mean": 0.03225806451612903,
+              "abs_gap": 0.008259849350305888
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.04698073406337574,
+              "label_mean": 0.0,
+              "abs_gap": 0.04698073406337574
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.10131858435657794,
+              "label_mean": 0.09375,
+              "abs_gap": 0.007568584356577937
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.2096088206844004,
+              "label_mean": 0.21875,
+              "abs_gap": 0.009141179315599601
+            },
+            {
+              "count": 32,
+              "pred_mean": 0.4728762373594442,
+              "label_mean": 0.5,
+              "abs_gap": 0.027123762640555826
+            }
+          ]
+        }
+      }
+    },
+    "JPN": {
+      "market": {
+        "race_count": 1,
+        "runner_count": 12,
+        "winner_multiclass_log_loss": 1.6909562399589053,
+        "runner_log_loss": 0.21534446671361787,
+        "brier_score": 0.06659270348982929,
+        "top_1_winner_hit_rate": 0.0,
+        "top_3_containment": 1.0,
+        "mean_winner_rank": 3.0,
+        "calibration": {
+          "ece": 0.1359428061023471,
+          "bins": [
+            {
+              "count": 2,
+              "pred_mean": 0.007244344998861835,
+              "label_mean": 0.0,
+              "abs_gap": 0.007244344998861835
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.00921715816929587,
+              "label_mean": 0.0,
+              "abs_gap": 0.00921715816929587
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.015243761587681632,
+              "label_mean": 0.0,
+              "abs_gap": 0.015243761587681632
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.01933355128193768,
+              "label_mean": 0.0,
+              "abs_gap": 0.01933355128193768
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.03344622795609472,
+              "label_mean": 0.0,
+              "abs_gap": 0.03344622795609472
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.03387502575040363,
+              "label_mean": 0.0,
+              "abs_gap": 0.03387502575040363
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.1132393717942064,
+              "label_mean": 0.0,
+              "abs_gap": 0.1132393717942064
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.12385556289991326,
+              "label_mean": 0.0,
+              "abs_gap": 0.12385556289991326
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.1843431633859174,
+              "label_mean": 1.0,
+              "abs_gap": 0.8156568366140826
+            },
+            {
+              "count": 2,
+              "pred_mean": 0.2264787435884128,
+              "label_mean": 0.0,
+              "abs_gap": 0.2264787435884128
+            }
+          ]
+        }
+      },
+      "market_only_logistic": {
+        "race_count": 1,
+        "runner_count": 12,
+        "winner_multiclass_log_loss": 1.6400280389245658,
+        "runner_log_loss": 0.21033840157362818,
+        "brier_score": 0.06540667912831329,
+        "top_1_winner_hit_rate": 0.0,
+        "top_3_containment": 1.0,
+        "mean_winner_rank": 3.0,
+        "calibration": {
+          "ece": 0.13433756610410502,
+          "bins": [
+            {
+              "count": 2,
+              "pred_mean": 0.0017157858622776421,
+              "label_mean": 0.0,
+              "abs_gap": 0.0017157858622776421
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.005940823776107567,
+              "label_mean": 0.0,
+              "abs_gap": 0.005940823776107567
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.01096329821473674,
+              "label_mean": 0.0,
+              "abs_gap": 0.01096329821473674
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.015354489304953237,
+              "label_mean": 0.0,
+              "abs_gap": 0.015354489304953237
+            },
+            {
+              "count": 2,
+              "pred_mean": 0.03190674825981314,
+              "label_mean": 0.0,
+              "abs_gap": 0.03190674825981314
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.1281740350659911,
+              "label_mean": 0.0,
+              "abs_gap": 0.1281740350659911
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.13597777987788198,
+              "label_mean": 0.0,
+              "abs_gap": 0.13597777987788198
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.19397460337536987,
+              "label_mean": 1.0,
+              "abs_gap": 0.8060253966246301
+            },
+            {
+              "count": 2,
+              "pred_mean": 0.22118495107038894,
+              "label_mean": 0.0,
+              "abs_gap": 0.22118495107038894
+            }
+          ]
+        }
+      },
+      "candidate": {
+        "race_count": 1,
+        "runner_count": 12,
+        "winner_multiclass_log_loss": 1.9341270119058844,
+        "runner_log_loss": 0.2379451322209408,
+        "brier_score": 0.07079563781293739,
+        "top_1_winner_hit_rate": 0.0,
+        "top_3_containment": 0.0,
+        "mean_winner_rank": 5.0,
+        "calibration": {
+          "ece": 0.1425749325766325,
+          "bins": [
+            {
+              "count": 3,
+              "pred_mean": 0.0002529548709935306,
+              "label_mean": 0.0,
+              "abs_gap": 0.0002529548709935306
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.03240344423341076,
+              "label_mean": 0.0,
+              "abs_gap": 0.03240344423341076
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.032645498511896714,
+              "label_mean": 0.0,
+              "abs_gap": 0.032645498511896714
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.06554382388810742,
+              "label_mean": 0.0,
+              "abs_gap": 0.06554382388810742
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.07867690408698241,
+              "label_mean": 0.0,
+              "abs_gap": 0.07867690408698241
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.14455040454020496,
+              "label_mean": 1.0,
+              "abs_gap": 0.855449595459795
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.14456795719058949,
+              "label_mean": 0.0,
+              "abs_gap": 0.14456795719058949
+            },
+            {
+              "count": 1,
+              "pred_mean": 0.14642933506087022,
+              "label_mean": 0.0,
+              "abs_gap": 0.14642933506087022
+            },
+            {
+              "count": 2,
+              "pred_mean": 0.17721188393747875,
+              "label_mean": 0.0,
+              "abs_gap": 0.17721188393747875
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Q_year_split_performance": {
+    "holdout_test_years": {
+      "2023": {
+        "market": {
+          "race_count": 47,
+          "runner_count": 397,
+          "winner_multiclass_log_loss": 1.6516495873982144,
+          "runner_log_loss": 0.2977095848425932,
+          "brier_score": 0.08979321950652532,
+          "top_1_winner_hit_rate": 0.3404255319148936,
+          "top_3_containment": 0.7659574468085106,
+          "mean_winner_rank": 2.617021276595745,
+          "calibration": {
+            "ece": 0.033966154310156385,
+            "bins": [
+              {
+                "count": 40,
+                "pred_mean": 0.013047032018816362,
+                "label_mean": 0.025,
+                "abs_gap": 0.01195296798118364
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.023129776541491266,
+                "label_mean": 0.0,
+                "abs_gap": 0.023129776541491266
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.035533229957910875,
+                "label_mean": 0.0,
+                "abs_gap": 0.035533229957910875
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.049926152996628274,
+                "label_mean": 0.025,
+                "abs_gap": 0.024926152996628273
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.0696034833300619,
+                "label_mean": 0.1,
+                "abs_gap": 0.030396516669938103
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.09234031069931789,
+                "label_mean": 0.07692307692307693,
+                "abs_gap": 0.015417233776240963
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.12311654149105292,
+                "label_mean": 0.1,
+                "abs_gap": 0.02311654149105291
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.16029820909461023,
+                "label_mean": 0.15384615384615385,
+                "abs_gap": 0.006452055248456379
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.22379244388697073,
+                "label_mean": 0.35,
+                "abs_gap": 0.12620755611302925
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.3914171137269356,
+                "label_mean": 0.35,
+                "abs_gap": 0.04141711372693563
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 47,
+          "runner_count": 397,
+          "winner_multiclass_log_loss": 1.6416056435878907,
+          "runner_log_loss": 0.2968565665398054,
+          "brier_score": 0.09019248135759744,
+          "top_1_winner_hit_rate": 0.3191489361702128,
+          "top_3_containment": 0.7446808510638298,
+          "mean_winner_rank": 2.6382978723404253,
+          "calibration": {
+            "ece": 0.038160251620274005,
+            "bins": [
+              {
+                "count": 40,
+                "pred_mean": 0.009384138331720311,
+                "label_mean": 0.0,
+                "abs_gap": 0.009384138331720311
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.01762784878615967,
+                "label_mean": 0.025,
+                "abs_gap": 0.007372151213840331
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.03070276469209296,
+                "label_mean": 0.0,
+                "abs_gap": 0.03070276469209296
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.041865826682428685,
+                "label_mean": 0.025,
+                "abs_gap": 0.016865826682428683
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.06228996380289977,
+                "label_mean": 0.1,
+                "abs_gap": 0.037710036197100234
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.08055155641993722,
+                "label_mean": 0.05128205128205128,
+                "abs_gap": 0.02926950513788594
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.12658881936683475,
+                "label_mean": 0.15,
+                "abs_gap": 0.023411180633165246
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.16265191633244222,
+                "label_mean": 0.1282051282051282,
+                "abs_gap": 0.034446788127314026
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.22912311937849608,
+                "label_mean": 0.35,
+                "abs_gap": 0.1208768806215039
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.4210617021431002,
+                "label_mean": 0.35,
+                "abs_gap": 0.0710617021431002
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 47,
+          "runner_count": 397,
+          "winner_multiclass_log_loss": 1.2504698702145935,
+          "runner_log_loss": 0.24125375247974631,
+          "brier_score": 0.07678609881403167,
+          "top_1_winner_hit_rate": 0.46808510638297873,
+          "top_3_containment": 0.9148936170212766,
+          "mean_winner_rank": 1.872340425531915,
+          "calibration": {
+            "ece": 0.0330894098904537,
+            "bins": [
+              {
+                "count": 40,
+                "pred_mean": 0.0003820841986335138,
+                "label_mean": 0.0,
+                "abs_gap": 0.0003820841986335138
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.0023032962159712797,
+                "label_mean": 0.0,
+                "abs_gap": 0.0023032962159712797
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.00986619644442931,
+                "label_mean": 0.0,
+                "abs_gap": 0.00986619644442931
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.021123990314776415,
+                "label_mean": 0.0,
+                "abs_gap": 0.021123990314776415
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.04068925878635749,
+                "label_mean": 0.025,
+                "abs_gap": 0.01568925878635749
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.06640087998992093,
+                "label_mean": 0.0,
+                "abs_gap": 0.06640087998992093
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.11166371284379983,
+                "label_mean": 0.1,
+                "abs_gap": 0.011663712843799828
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.16957991025101432,
+                "label_mean": 0.23076923076923078,
+                "abs_gap": 0.06118932051821646
+              },
+              {
+                "count": 41,
+                "pred_mean": 0.2638569667550093,
+                "label_mean": 0.36585365853658536,
+                "abs_gap": 0.10199669178157605
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.5012137996906117,
+                "label_mean": 0.46153846153846156,
+                "abs_gap": 0.039675338152150186
+              }
+            ]
+          }
+        }
+      },
+      "2024": {
+        "market": {
+          "race_count": 41,
+          "runner_count": 373,
+          "winner_multiclass_log_loss": 1.868712734226556,
+          "runner_log_loss": 0.30357767920881573,
+          "brier_score": 0.08888128317217149,
+          "top_1_winner_hit_rate": 0.3170731707317073,
+          "top_3_containment": 0.5853658536585366,
+          "mean_winner_rank": 3.2439024390243905,
+          "calibration": {
+            "ece": 0.025801380761725865,
+            "bins": [
+              {
+                "count": 38,
+                "pred_mean": 0.012037217815472723,
+                "label_mean": 0.0,
+                "abs_gap": 0.012037217815472723
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.023723957519012687,
+                "label_mean": 0.02631578947368421,
+                "abs_gap": 0.0025918319546715217
+              },
+              {
+                "count": 36,
+                "pred_mean": 0.034816444251160344,
+                "label_mean": 0.027777777777777776,
+                "abs_gap": 0.007038666473382568
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.0514401084518513,
+                "label_mean": 0.07894736842105263,
+                "abs_gap": 0.02750725996920133
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.0716154732559554,
+                "label_mean": 0.02702702702702703,
+                "abs_gap": 0.044588446228928366
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.09378571655334475,
+                "label_mean": 0.16216216216216217,
+                "abs_gap": 0.06837644560881742
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.11683977812264137,
+                "label_mean": 0.13513513513513514,
+                "abs_gap": 0.018295357012493768
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.14976791783687446,
+                "label_mean": 0.10810810810810811,
+                "abs_gap": 0.041659809728766345
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.20374769400091375,
+                "label_mean": 0.21621621621621623,
+                "abs_gap": 0.01246852221530248
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.3397359413578272,
+                "label_mean": 0.3157894736842105,
+                "abs_gap": 0.02394646767361669
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 41,
+          "runner_count": 373,
+          "winner_multiclass_log_loss": 1.8660076809692403,
+          "runner_log_loss": 0.3036394748479038,
+          "brier_score": 0.0892676620098908,
+          "top_1_winner_hit_rate": 0.2682926829268293,
+          "top_3_containment": 0.6097560975609756,
+          "mean_winner_rank": 3.2439024390243905,
+          "calibration": {
+            "ece": 0.03149872070280676,
+            "bins": [
+              {
+                "count": 38,
+                "pred_mean": 0.008294500645740952,
+                "label_mean": 0.02631578947368421,
+                "abs_gap": 0.01802128882794326
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.018496936204500988,
+                "label_mean": 0.0,
+                "abs_gap": 0.018496936204500988
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.031797388653728706,
+                "label_mean": 0.05263157894736842,
+                "abs_gap": 0.020834190293639712
+              },
+              {
+                "count": 36,
+                "pred_mean": 0.046094373442049384,
+                "label_mean": 0.027777777777777776,
+                "abs_gap": 0.018316595664271608
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.06477444351177941,
+                "label_mean": 0.02564102564102564,
+                "abs_gap": 0.03913341787075377
+              },
+              {
+                "count": 36,
+                "pred_mean": 0.08655873239852202,
+                "label_mean": 0.19444444444444445,
+                "abs_gap": 0.10788571204592243
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.12366775768023115,
+                "label_mean": 0.10810810810810811,
+                "abs_gap": 0.015559649572123038
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.15750639233934402,
+                "label_mean": 0.13513513513513514,
+                "abs_gap": 0.022371257204208878
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.2023211467351324,
+                "label_mean": 0.21621621621621623,
+                "abs_gap": 0.013895069481083822
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.35792317052393335,
+                "label_mean": 0.3157894736842105,
+                "abs_gap": 0.042133696839722845
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 41,
+          "runner_count": 373,
+          "winner_multiclass_log_loss": 1.4976031836793597,
+          "runner_log_loss": 0.25332293542195755,
+          "brier_score": 0.07623546498222243,
+          "top_1_winner_hit_rate": 0.4634146341463415,
+          "top_3_containment": 0.7317073170731707,
+          "mean_winner_rank": 2.4146341463414633,
+          "calibration": {
+            "ece": 0.021518403504940962,
+            "bins": [
+              {
+                "count": 75,
+                "pred_mean": 0.0005468588698735896,
+                "label_mean": 0.0,
+                "abs_gap": 0.0005468588698735896
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.00796385675066144,
+                "label_mean": 0.02702702702702703,
+                "abs_gap": 0.019063170276365587
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.019565733879190587,
+                "label_mean": 0.0,
+                "abs_gap": 0.019565733879190587
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.03644727527037306,
+                "label_mean": 0.02631578947368421,
+                "abs_gap": 0.01013148579668885
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.06271619951546906,
+                "label_mean": 0.13513513513513514,
+                "abs_gap": 0.07241893561966609
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.10930967560527038,
+                "label_mean": 0.08108108108108109,
+                "abs_gap": 0.0282285945241893
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.15857497339141705,
+                "label_mean": 0.16216216216216217,
+                "abs_gap": 0.0035871887707451255
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.23834543857383073,
+                "label_mean": 0.1891891891891892,
+                "abs_gap": 0.049156249384641526
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.4606416223420855,
+                "label_mean": 0.47368421052631576,
+                "abs_gap": 0.013042588184230264
+              }
+            ]
+          }
+        }
+      },
+      "2025": {
+        "market": {
+          "race_count": 26,
+          "runner_count": 244,
+          "winner_multiclass_log_loss": 1.6319770727552105,
+          "runner_log_loss": 0.2593150825423254,
+          "brier_score": 0.07327465464143124,
+          "top_1_winner_hit_rate": 0.46153846153846156,
+          "top_3_containment": 0.7307692307692307,
+          "mean_winner_rank": 2.730769230769231,
+          "calibration": {
+            "ece": 0.033753214767263326,
+            "bins": [
+              {
+                "count": 25,
+                "pred_mean": 0.008641290408611776,
+                "label_mean": 0.0,
+                "abs_gap": 0.008641290408611776
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.014286802056492595,
+                "label_mean": 0.0,
+                "abs_gap": 0.014286802056492595
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.023429041775107868,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.059904291558225464
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.03824125252012377,
+                "label_mean": 0.0,
+                "abs_gap": 0.03824125252012377
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.05656783936480111,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.02676549396853222
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.07744547614939945,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.035778809482732786
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.09462816060591814,
+                "label_mean": 0.08,
+                "abs_gap": 0.014628160605918136
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.1407729140124323,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.057439580679098975
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.20535085931749605,
+                "label_mean": 0.20833333333333334,
+                "abs_gap": 0.0029824740158372887
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.4013504810966461,
+                "label_mean": 0.48,
+                "abs_gap": 0.07864951890335387
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 26,
+          "runner_count": 244,
+          "winner_multiclass_log_loss": 1.6208239048888275,
+          "runner_log_loss": 0.25686080331683575,
+          "brier_score": 0.07240836222860182,
+          "top_1_winner_hit_rate": 0.38461538461538464,
+          "top_3_containment": 0.7307692307692307,
+          "mean_winner_rank": 2.8461538461538463,
+          "calibration": {
+            "ece": 0.03141556848052641,
+            "bins": [
+              {
+                "count": 25,
+                "pred_mean": 0.0042114429609733635,
+                "label_mean": 0.0,
+                "abs_gap": 0.0042114429609733635
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.011640120064033498,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.030026546602633167
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.017542330484635032,
+                "label_mean": 0.0,
+                "abs_gap": 0.017542330484635032
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.03239751117789891,
+                "label_mean": 0.08,
+                "abs_gap": 0.047602488822101094
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.05166883031352718,
+                "label_mean": 0.0,
+                "abs_gap": 0.05166883031352718
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.06662137169092647,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.024954705024259803
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.08476786672256889,
+                "label_mean": 0.12,
+                "abs_gap": 0.035232133277431105
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.14447635420257335,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.06114302086924002
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.20906251543642687,
+                "label_mean": 0.25,
+                "abs_gap": 0.04093748456357313
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.4376521178341214,
+                "label_mean": 0.44,
+                "abs_gap": 0.002347882165878612
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 26,
+          "runner_count": 244,
+          "winner_multiclass_log_loss": 2.4261747696741756,
+          "runner_log_loss": 0.32606691591964954,
+          "brier_score": 0.058619378404499774,
+          "top_1_winner_hit_rate": 0.5384615384615384,
+          "top_3_containment": 0.8461538461538461,
+          "mean_winner_rank": 2.1923076923076925,
+          "calibration": {
+            "ece": 0.022420860543144964,
+            "bins": [
+              {
+                "count": 74,
+                "pred_mean": 0.000336076332451416,
+                "label_mean": 0.013513513513513514,
+                "abs_gap": 0.013177437181062098
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.002914415753716728,
+                "label_mean": 0.0,
+                "abs_gap": 0.002914415753716728
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.014161429563763088,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.027505237102903576
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.02840551345749008,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.013261153209176584
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.05467598749618946,
+                "label_mean": 0.0,
+                "abs_gap": 0.05467598749618946
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.11063034828716271,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.027297014953829385
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.23825744719270137,
+                "label_mean": 0.2916666666666667,
+                "abs_gap": 0.05340921947396532
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.5657348384751137,
+                "label_mean": 0.56,
+                "abs_gap": 0.0057348384751136905
+              }
+            ]
+          }
+        }
+      }
+    },
+    "anchored_rolling_origin": {
+      "2021": {
+        "market": {
+          "race_count": 321,
+          "runner_count": 3593,
+          "winner_multiclass_log_loss": 1.9900820092983742,
+          "runner_log_loss": 0.2571144645425371,
+          "brier_score": 0.07206941798695249,
+          "top_1_winner_hit_rate": 0.32398753894080995,
+          "top_3_containment": 0.5794392523364486,
+          "mean_winner_rank": 3.632398753894081,
+          "calibration": {
+            "ece": 0.008396275426972428,
+            "bins": [
+              {
+                "count": 360,
+                "pred_mean": 0.006773052260449914,
+                "label_mean": 0.002777777777777778,
+                "abs_gap": 0.003995274482672137
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.014711639054343608,
+                "label_mean": 0.016713091922005572,
+                "abs_gap": 0.002001452867661964
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.02454666679316093,
+                "label_mean": 0.025069637883008356,
+                "abs_gap": 0.0005229710898474252
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.03795590118390287,
+                "label_mean": 0.05555555555555555,
+                "abs_gap": 0.01759965437165268
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.05406781725587536,
+                "label_mean": 0.05277777777777778,
+                "abs_gap": 0.0012900394780975821
+              },
+              {
+                "count": 358,
+                "pred_mean": 0.07238577662978367,
+                "label_mean": 0.08379888268156424,
+                "abs_gap": 0.011413106051780572
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.08996575781065246,
+                "label_mean": 0.0947075208913649,
+                "abs_gap": 0.004741763080712447
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.11776715745525591,
+                "label_mean": 0.10863509749303621,
+                "abs_gap": 0.009132059962219705
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.1668601288363287,
+                "label_mean": 0.1392757660167131,
+                "abs_gap": 0.0275843628196156
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.3081844996736058,
+                "label_mean": 0.3138888888888889,
+                "abs_gap": 0.005704389215283101
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 321,
+          "runner_count": 3593,
+          "winner_multiclass_log_loss": 1.9887419698183832,
+          "runner_log_loss": 0.2567656340900623,
+          "brier_score": 0.0719376431128205,
+          "top_1_winner_hit_rate": 0.3333333333333333,
+          "top_3_containment": 0.5919003115264797,
+          "mean_winner_rank": 3.5825545171339566,
+          "calibration": {
+            "ece": 0.014321804338629462,
+            "bins": [
+              {
+                "count": 360,
+                "pred_mean": 0.0016946425949426478,
+                "label_mean": 0.002777777777777778,
+                "abs_gap": 0.0010831351828351301
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.01248059550588925,
+                "label_mean": 0.011111111111111112,
+                "abs_gap": 0.001369484394778138
+              },
+              {
+                "count": 358,
+                "pred_mean": 0.01997757725137354,
+                "label_mean": 0.030726256983240222,
+                "abs_gap": 0.010748679731866682
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.034124469840228225,
+                "label_mean": 0.06128133704735376,
+                "abs_gap": 0.027156867207125533
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.05141214454291709,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.009745477876250429
+              },
+              {
+                "count": 361,
+                "pred_mean": 0.06758015009286886,
+                "label_mean": 0.0886426592797784,
+                "abs_gap": 0.021062509186909537
+              },
+              {
+                "count": 357,
+                "pred_mean": 0.08084514190283895,
+                "label_mean": 0.09243697478991597,
+                "abs_gap": 0.01159183288707702
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.12617403645651973,
+                "label_mean": 0.09749303621169916,
+                "abs_gap": 0.028681000244820565
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.17135140344238234,
+                "label_mean": 0.15041782729805014,
+                "abs_gap": 0.020933576144332194
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.327544728202977,
+                "label_mean": 0.31666666666666665,
+                "abs_gap": 0.010878061536310324
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 321,
+          "runner_count": 3593,
+          "winner_multiclass_log_loss": 1.4688325999567822,
+          "runner_log_loss": 0.19782466540657315,
+          "brier_score": 0.05418331104070511,
+          "top_1_winner_hit_rate": 0.5856697819314641,
+          "top_3_containment": 0.8598130841121495,
+          "mean_winner_rank": 1.9376947040498442,
+          "calibration": {
+            "ece": 0.028294276853042578,
+            "bins": [
+              {
+                "count": 720,
+                "pred_mean": 0.00020895405443261127,
+                "label_mean": 0.002777777777777778,
+                "abs_gap": 0.0025688237233451668
+              },
+              {
+                "count": 358,
+                "pred_mean": 0.0021747707861257577,
+                "label_mean": 0.0,
+                "abs_gap": 0.0021747707861257577
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.0080494068647809,
+                "label_mean": 0.0,
+                "abs_gap": 0.0080494068647809
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.02236296164321661,
+                "label_mean": 0.005555555555555556,
+                "abs_gap": 0.016807406087661052
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.043304505772489295,
+                "label_mean": 0.022284122562674095,
+                "abs_gap": 0.0210203832098152
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.07888350613963988,
+                "label_mean": 0.033426183844011144,
+                "abs_gap": 0.04545732229562873
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.12746632864657328,
+                "label_mean": 0.10027855153203342,
+                "abs_gap": 0.02718777711453986
+              },
+              {
+                "count": 359,
+                "pred_mean": 0.20191027551105703,
+                "label_mean": 0.181058495821727,
+                "abs_gap": 0.020851779689330024
+              },
+              {
+                "count": 360,
+                "pred_mean": 0.4083857908731042,
+                "label_mean": 0.5444444444444444,
+                "abs_gap": 0.13605865357134017
+              }
+            ]
+          }
+        }
+      },
+      "2022": {
+        "market": {
+          "race_count": 202,
+          "runner_count": 2211,
+          "winner_multiclass_log_loss": 2.0144569183566254,
+          "runner_log_loss": 0.2665225269139754,
+          "brier_score": 0.07523824342152068,
+          "top_1_winner_hit_rate": 0.28217821782178215,
+          "top_3_containment": 0.6237623762376238,
+          "mean_winner_rank": 3.599009900990099,
+          "calibration": {
+            "ece": 0.012339812568612262,
+            "bins": [
+              {
+                "count": 222,
+                "pred_mean": 0.010367745016088,
+                "label_mean": 0.013513513513513514,
+                "abs_gap": 0.003145768497425514
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.02002391778079498,
+                "label_mean": 0.027149321266968326,
+                "abs_gap": 0.007125403486173347
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.03008111409074805,
+                "label_mean": 0.01809954751131222,
+                "abs_gap": 0.011981566579435832
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.042637023644104585,
+                "label_mean": 0.058823529411764705,
+                "abs_gap": 0.01618650576766012
+              },
+              {
+                "count": 224,
+                "pred_mean": 0.05764828570413545,
+                "label_mean": 0.05803571428571429,
+                "abs_gap": 0.00038742858157883586
+              },
+              {
+                "count": 218,
+                "pred_mean": 0.07532863893510047,
+                "label_mean": 0.05504587155963303,
+                "abs_gap": 0.020282767375467442
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.09473678134147832,
+                "label_mean": 0.08144796380090498,
+                "abs_gap": 0.013288817540573344
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.12052155934944313,
+                "label_mean": 0.10407239819004525,
+                "abs_gap": 0.016449161159397874
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.167674154372567,
+                "label_mean": 0.19457013574660634,
+                "abs_gap": 0.02689598137403934
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.29520102100842155,
+                "label_mean": 0.3031674208144796,
+                "abs_gap": 0.007966399806058067
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 202,
+          "runner_count": 2211,
+          "winner_multiclass_log_loss": 2.013246754148367,
+          "runner_log_loss": 0.26656179975642086,
+          "brier_score": 0.07536435077743937,
+          "top_1_winner_hit_rate": 0.27722772277227725,
+          "top_3_containment": 0.6386138613861386,
+          "mean_winner_rank": 3.5792079207920793,
+          "calibration": {
+            "ece": 0.013889163691641077,
+            "bins": [
+              {
+                "count": 222,
+                "pred_mean": 0.007145788767022678,
+                "label_mean": 0.013513513513513514,
+                "abs_gap": 0.006367724746490836
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.017939562375056978,
+                "label_mean": 0.02262443438914027,
+                "abs_gap": 0.004684872014083293
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.029687770736094778,
+                "label_mean": 0.02262443438914027,
+                "abs_gap": 0.007063336346954507
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.0415829261031778,
+                "label_mean": 0.04072398190045249,
+                "abs_gap": 0.0008589442027253091
+              },
+              {
+                "count": 222,
+                "pred_mean": 0.05741392334222339,
+                "label_mean": 0.0945945945945946,
+                "abs_gap": 0.03718067125237121
+              },
+              {
+                "count": 220,
+                "pred_mean": 0.07194796770763302,
+                "label_mean": 0.031818181818181815,
+                "abs_gap": 0.04012978588945121
+              },
+              {
+                "count": 223,
+                "pred_mean": 0.09150711868534485,
+                "label_mean": 0.08968609865470852,
+                "abs_gap": 0.0018210200306363333
+              },
+              {
+                "count": 219,
+                "pred_mean": 0.12497263058045112,
+                "label_mean": 0.1050228310502283,
+                "abs_gap": 0.019949799530222814
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.1628899506224063,
+                "label_mean": 0.17194570135746606,
+                "abs_gap": 0.009055750735059764
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.30927579673393113,
+                "label_mean": 0.3212669683257919,
+                "abs_gap": 0.01199117159186075
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 202,
+          "runner_count": 2211,
+          "winner_multiclass_log_loss": 1.2696370020828969,
+          "runner_log_loss": 0.1850119031344047,
+          "brier_score": 0.0559821749357367,
+          "top_1_winner_hit_rate": 0.5643564356435643,
+          "top_3_containment": 0.8910891089108911,
+          "mean_winner_rank": 1.886138613861386,
+          "calibration": {
+            "ece": 0.02404399015595109,
+            "bins": [
+              {
+                "count": 222,
+                "pred_mean": 0.00034502009583167324,
+                "label_mean": 0.0,
+                "abs_gap": 0.00034502009583167324
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.001410514567174778,
+                "label_mean": 0.0,
+                "abs_gap": 0.001410514567174778
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.003861174780841546,
+                "label_mean": 0.0,
+                "abs_gap": 0.003861174780841546
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.011344158900036587,
+                "label_mean": 0.004524886877828055,
+                "abs_gap": 0.006819272022208532
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.02462727841709049,
+                "label_mean": 0.0,
+                "abs_gap": 0.02462727841709049
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.043006568905128016,
+                "label_mean": 0.01809954751131222,
+                "abs_gap": 0.024907021393815797
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.07293632531511511,
+                "label_mean": 0.04524886877828054,
+                "abs_gap": 0.02768745653683457
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.12111278751338857,
+                "label_mean": 0.09049773755656108,
+                "abs_gap": 0.030615049956827484
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.20647417954519348,
+                "label_mean": 0.2171945701357466,
+                "abs_gap": 0.01072039059055313
+              },
+              {
+                "count": 221,
+                "pred_mean": 0.4289075801045625,
+                "label_mean": 0.5384615384615384,
+                "abs_gap": 0.10955395835697596
+              }
+            ]
+          }
+        }
+      },
+      "2023": {
+        "market": {
+          "race_count": 47,
+          "runner_count": 397,
+          "winner_multiclass_log_loss": 1.6516495873982144,
+          "runner_log_loss": 0.2977095848425932,
+          "brier_score": 0.08979321950652532,
+          "top_1_winner_hit_rate": 0.3404255319148936,
+          "top_3_containment": 0.7659574468085106,
+          "mean_winner_rank": 2.617021276595745,
+          "calibration": {
+            "ece": 0.033966154310156385,
+            "bins": [
+              {
+                "count": 40,
+                "pred_mean": 0.013047032018816362,
+                "label_mean": 0.025,
+                "abs_gap": 0.01195296798118364
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.023129776541491266,
+                "label_mean": 0.0,
+                "abs_gap": 0.023129776541491266
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.035533229957910875,
+                "label_mean": 0.0,
+                "abs_gap": 0.035533229957910875
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.049926152996628274,
+                "label_mean": 0.025,
+                "abs_gap": 0.024926152996628273
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.0696034833300619,
+                "label_mean": 0.1,
+                "abs_gap": 0.030396516669938103
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.09234031069931789,
+                "label_mean": 0.07692307692307693,
+                "abs_gap": 0.015417233776240963
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.12311654149105292,
+                "label_mean": 0.1,
+                "abs_gap": 0.02311654149105291
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.16029820909461023,
+                "label_mean": 0.15384615384615385,
+                "abs_gap": 0.006452055248456379
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.22379244388697073,
+                "label_mean": 0.35,
+                "abs_gap": 0.12620755611302925
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.3914171137269356,
+                "label_mean": 0.35,
+                "abs_gap": 0.04141711372693563
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 47,
+          "runner_count": 397,
+          "winner_multiclass_log_loss": 1.649646751276804,
+          "runner_log_loss": 0.29774445276759626,
+          "brier_score": 0.09012626489074356,
+          "top_1_winner_hit_rate": 0.3404255319148936,
+          "top_3_containment": 0.7446808510638298,
+          "mean_winner_rank": 2.617021276595745,
+          "calibration": {
+            "ece": 0.03347600129361214,
+            "bins": [
+              {
+                "count": 40,
+                "pred_mean": 0.009486740339387942,
+                "label_mean": 0.0,
+                "abs_gap": 0.009486740339387942
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.020261832547441818,
+                "label_mean": 0.025,
+                "abs_gap": 0.004738167452558183
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.03244625769840565,
+                "label_mean": 0.0,
+                "abs_gap": 0.03244625769840565
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.04381504322959358,
+                "label_mean": 0.025,
+                "abs_gap": 0.018815043229593577
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.06488207664807835,
+                "label_mean": 0.1,
+                "abs_gap": 0.035117923351921654
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.08372746952704732,
+                "label_mean": 0.05128205128205128,
+                "abs_gap": 0.03244541824499604
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.12346809158225965,
+                "label_mean": 0.15,
+                "abs_gap": 0.02653190841774035
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.16014127688937976,
+                "label_mean": 0.15384615384615385,
+                "abs_gap": 0.006295123043225909
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.22526334280266996,
+                "label_mean": 0.325,
+                "abs_gap": 0.09973665719733005
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.4184157438386068,
+                "label_mean": 0.35,
+                "abs_gap": 0.06841574383860682
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 47,
+          "runner_count": 397,
+          "winner_multiclass_log_loss": 1.210908944961872,
+          "runner_log_loss": 0.2349657177306343,
+          "brier_score": 0.07470691709328357,
+          "top_1_winner_hit_rate": 0.44680851063829785,
+          "top_3_containment": 0.9361702127659575,
+          "mean_winner_rank": 1.851063829787234,
+          "calibration": {
+            "ece": 0.03357495915441789,
+            "bins": [
+              {
+                "count": 40,
+                "pred_mean": 0.0007847690269182893,
+                "label_mean": 0.0,
+                "abs_gap": 0.0007847690269182893
+              },
+              {
+                "count": 41,
+                "pred_mean": 0.0033778645338203355,
+                "label_mean": 0.0,
+                "abs_gap": 0.0033778645338203355
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.008507464316981994,
+                "label_mean": 0.0,
+                "abs_gap": 0.008507464316981994
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.019970463112926537,
+                "label_mean": 0.0,
+                "abs_gap": 0.019970463112926537
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.042887237050432056,
+                "label_mean": 0.0,
+                "abs_gap": 0.042887237050432056
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.07121365533670058,
+                "label_mean": 0.0,
+                "abs_gap": 0.07121365533670058
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.1072731502572827,
+                "label_mean": 0.1,
+                "abs_gap": 0.007273150257282701
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.15988263335497468,
+                "label_mean": 0.1794871794871795,
+                "abs_gap": 0.019604546132204803
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.2524986976751009,
+                "label_mean": 0.4,
+                "abs_gap": 0.1475013023248991
+              },
+              {
+                "count": 40,
+                "pred_mean": 0.5147223991546573,
+                "label_mean": 0.5,
+                "abs_gap": 0.01472239915465734
+              }
+            ]
+          }
+        }
+      },
+      "2024": {
+        "market": {
+          "race_count": 41,
+          "runner_count": 373,
+          "winner_multiclass_log_loss": 1.868712734226556,
+          "runner_log_loss": 0.30357767920881573,
+          "brier_score": 0.08888128317217149,
+          "top_1_winner_hit_rate": 0.3170731707317073,
+          "top_3_containment": 0.5853658536585366,
+          "mean_winner_rank": 3.2439024390243905,
+          "calibration": {
+            "ece": 0.025801380761725865,
+            "bins": [
+              {
+                "count": 38,
+                "pred_mean": 0.012037217815472723,
+                "label_mean": 0.0,
+                "abs_gap": 0.012037217815472723
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.023723957519012687,
+                "label_mean": 0.02631578947368421,
+                "abs_gap": 0.0025918319546715217
+              },
+              {
+                "count": 36,
+                "pred_mean": 0.034816444251160344,
+                "label_mean": 0.027777777777777776,
+                "abs_gap": 0.007038666473382568
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.0514401084518513,
+                "label_mean": 0.07894736842105263,
+                "abs_gap": 0.02750725996920133
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.0716154732559554,
+                "label_mean": 0.02702702702702703,
+                "abs_gap": 0.044588446228928366
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.09378571655334475,
+                "label_mean": 0.16216216216216217,
+                "abs_gap": 0.06837644560881742
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.11683977812264137,
+                "label_mean": 0.13513513513513514,
+                "abs_gap": 0.018295357012493768
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.14976791783687446,
+                "label_mean": 0.10810810810810811,
+                "abs_gap": 0.041659809728766345
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.20374769400091375,
+                "label_mean": 0.21621621621621623,
+                "abs_gap": 0.01246852221530248
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.3397359413578272,
+                "label_mean": 0.3157894736842105,
+                "abs_gap": 0.02394646767361669
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 41,
+          "runner_count": 373,
+          "winner_multiclass_log_loss": 1.8635367298815433,
+          "runner_log_loss": 0.3030124118350833,
+          "brier_score": 0.08889322923850972,
+          "top_1_winner_hit_rate": 0.2682926829268293,
+          "top_3_containment": 0.6097560975609756,
+          "mean_winner_rank": 3.1707317073170733,
+          "calibration": {
+            "ece": 0.03259663416712001,
+            "bins": [
+              {
+                "count": 38,
+                "pred_mean": 0.008663843887923456,
+                "label_mean": 0.0,
+                "abs_gap": 0.008663843887923456
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.020691439296982868,
+                "label_mean": 0.02702702702702703,
+                "abs_gap": 0.006335587730044161
+              },
+              {
+                "count": 39,
+                "pred_mean": 0.03230130402219464,
+                "label_mean": 0.05128205128205128,
+                "abs_gap": 0.018980747259856642
+              },
+              {
+                "count": 35,
+                "pred_mean": 0.049632284444683816,
+                "label_mean": 0.02857142857142857,
+                "abs_gap": 0.021060855873255246
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.06732436906094823,
+                "label_mean": 0.02631578947368421,
+                "abs_gap": 0.04100857958726402
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.08972577976481205,
+                "label_mean": 0.1891891891891892,
+                "abs_gap": 0.09946340942437715
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.11820984998523558,
+                "label_mean": 0.10810810810810811,
+                "abs_gap": 0.010101741877127465
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.15094438402752494,
+                "label_mean": 0.13513513513513514,
+                "abs_gap": 0.0158092488923898
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.2047443179913545,
+                "label_mean": 0.24324324324324326,
+                "abs_gap": 0.03849892525188875
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.355154830686176,
+                "label_mean": 0.2894736842105263,
+                "abs_gap": 0.06568114647564965
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 41,
+          "runner_count": 373,
+          "winner_multiclass_log_loss": 1.4153960064489428,
+          "runner_log_loss": 0.24413157305537167,
+          "brier_score": 0.07581665456309782,
+          "top_1_winner_hit_rate": 0.3902439024390244,
+          "top_3_containment": 0.8048780487804879,
+          "mean_winner_rank": 2.3902439024390243,
+          "calibration": {
+            "ece": 0.019139421706209216,
+            "bins": [
+              {
+                "count": 38,
+                "pred_mean": 0.0004331860997874843,
+                "label_mean": 0.0,
+                "abs_gap": 0.0004331860997874843
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.002347958358346916,
+                "label_mean": 0.0,
+                "abs_gap": 0.002347958358346916
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.006434484995621698,
+                "label_mean": 0.0,
+                "abs_gap": 0.006434484995621698
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.01758948322046984,
+                "label_mean": 0.0,
+                "abs_gap": 0.01758948322046984
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.036622605144094364,
+                "label_mean": 0.0,
+                "abs_gap": 0.036622605144094364
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.06452335210719505,
+                "label_mean": 0.08108108108108109,
+                "abs_gap": 0.016557728973886035
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.10290048116697498,
+                "label_mean": 0.16216216216216217,
+                "abs_gap": 0.059261680995187194
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.1501857004636534,
+                "label_mean": 0.13513513513513514,
+                "abs_gap": 0.015050565328518256
+              },
+              {
+                "count": 37,
+                "pred_mean": 0.23320945623057054,
+                "label_mean": 0.21621621621621623,
+                "abs_gap": 0.016993240014354316
+              },
+              {
+                "count": 38,
+                "pred_mean": 0.47988989528020237,
+                "label_mean": 0.5,
+                "abs_gap": 0.020110104719797628
+              }
+            ]
+          }
+        }
+      },
+      "2025": {
+        "market": {
+          "race_count": 26,
+          "runner_count": 244,
+          "winner_multiclass_log_loss": 1.6319770727552105,
+          "runner_log_loss": 0.2593150825423254,
+          "brier_score": 0.07327465464143124,
+          "top_1_winner_hit_rate": 0.46153846153846156,
+          "top_3_containment": 0.7307692307692307,
+          "mean_winner_rank": 2.730769230769231,
+          "calibration": {
+            "ece": 0.033753214767263326,
+            "bins": [
+              {
+                "count": 25,
+                "pred_mean": 0.008641290408611776,
+                "label_mean": 0.0,
+                "abs_gap": 0.008641290408611776
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.014286802056492595,
+                "label_mean": 0.0,
+                "abs_gap": 0.014286802056492595
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.023429041775107868,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.059904291558225464
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.03824125252012377,
+                "label_mean": 0.0,
+                "abs_gap": 0.03824125252012377
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.05656783936480111,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.02676549396853222
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.07744547614939945,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.035778809482732786
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.09462816060591814,
+                "label_mean": 0.08,
+                "abs_gap": 0.014628160605918136
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.1407729140124323,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.057439580679098975
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.20535085931749605,
+                "label_mean": 0.20833333333333334,
+                "abs_gap": 0.0029824740158372887
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.4013504810966461,
+                "label_mean": 0.48,
+                "abs_gap": 0.07864951890335387
+              }
+            ]
+          }
+        },
+        "market_only_logistic": {
+          "race_count": 26,
+          "runner_count": 244,
+          "winner_multiclass_log_loss": 1.6329729169964,
+          "runner_log_loss": 0.2581730861551816,
+          "brier_score": 0.07252733085231321,
+          "top_1_winner_hit_rate": 0.34615384615384615,
+          "top_3_containment": 0.7692307692307693,
+          "mean_winner_rank": 2.8846153846153846,
+          "calibration": {
+            "ece": 0.02505934240613157,
+            "bins": [
+              {
+                "count": 25,
+                "pred_mean": 0.004713529347854637,
+                "label_mean": 0.0,
+                "abs_gap": 0.004713529347854637
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.011524261544993747,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.03014240512167292
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.019628917225583475,
+                "label_mean": 0.0,
+                "abs_gap": 0.019628917225583475
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.03359179567269969,
+                "label_mean": 0.08,
+                "abs_gap": 0.04640820432730031
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.05306050894104162,
+                "label_mean": 0.04,
+                "abs_gap": 0.013060508941041618
+              },
+              {
+                "count": 23,
+                "pred_mean": 0.06795284456364045,
+                "label_mean": 0.043478260869565216,
+                "abs_gap": 0.024474583694075236
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.08589324022995216,
+                "label_mean": 0.08,
+                "abs_gap": 0.0058932402299521625
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.14298118217496283,
+                "label_mean": 0.08333333333333333,
+                "abs_gap": 0.059647848841629506
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.21053485203876895,
+                "label_mean": 0.24,
+                "abs_gap": 0.029465147961231036
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.44012548985772426,
+                "label_mean": 0.4583333333333333,
+                "abs_gap": 0.018207843475609053
+              }
+            ]
+          }
+        },
+        "candidate": {
+          "race_count": 26,
+          "runner_count": 244,
+          "winner_multiclass_log_loss": 2.3321730062486408,
+          "runner_log_loss": 0.3126388032732037,
+          "brier_score": 0.053272360659965566,
+          "top_1_winner_hit_rate": 0.6538461538461539,
+          "top_3_containment": 0.8461538461538461,
+          "mean_winner_rank": 2.0,
+          "calibration": {
+            "ece": 0.03769189274651795,
+            "bins": [
+              {
+                "count": 51,
+                "pred_mean": 0.00012544650890338504,
+                "label_mean": 0.0196078431372549,
+                "abs_gap": 0.019482396628351516
+              },
+              {
+                "count": 22,
+                "pred_mean": 0.001393127071092985,
+                "label_mean": 0.0,
+                "abs_gap": 0.001393127071092985
+              },
+              {
+                "count": 27,
+                "pred_mean": 0.005360061675034709,
+                "label_mean": 0.0,
+                "abs_gap": 0.005360061675034709
+              },
+              {
+                "count": 22,
+                "pred_mean": 0.013484392241647563,
+                "label_mean": 0.045454545454545456,
+                "abs_gap": 0.031970153212897895
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.02793565000846689,
+                "label_mean": 0.041666666666666664,
+                "abs_gap": 0.013731016658199775
+              },
+              {
+                "count": 26,
+                "pred_mean": 0.050944197013905276,
+                "label_mean": 0.0,
+                "abs_gap": 0.050944197013905276
+              },
+              {
+                "count": 23,
+                "pred_mean": 0.10842139617170243,
+                "label_mean": 0.043478260869565216,
+                "abs_gap": 0.06494313530213722
+              },
+              {
+                "count": 24,
+                "pred_mean": 0.25436663416560473,
+                "label_mean": 0.20833333333333334,
+                "abs_gap": 0.04603330083227139
+              },
+              {
+                "count": 25,
+                "pred_mean": 0.5571231633380515,
+                "label_mean": 0.68,
+                "abs_gap": 0.1228768366619486
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "R_overfit_warning": {
+    "status": "high",
+    "relative_log_loss_increase_validation_vs_train": 0.4461606321434031,
+    "relative_log_loss_increase_test_vs_train": 0.6350321880802616,
+    "relative_brier_increase_validation_vs_train": 0.30197810013194837,
+    "relative_brier_increase_test_vs_train": 0.6812046069310375
+  },
+  "S_feature_importance_summary": {
+    "top_15": [
+      {
+        "feature": "rpr_vs_field",
+        "importance": 0.14033780650583252
+      },
+      {
+        "feature": "implied_prob",
+        "importance": 0.13498586572350868
+      },
+      {
+        "feature": "rpr_num",
+        "importance": 0.12946067061839817
+      },
+      {
+        "feature": "log_sp",
+        "importance": 0.1275549203581428
+      },
+      {
+        "feature": "sp_dec",
+        "importance": 0.07842334796588968
+      },
+      {
+        "feature": "or_vs_field",
+        "importance": 0.07347751956659188
+      },
+      {
+        "feature": "or_num",
+        "importance": 0.06670220661431416
+      },
+      {
+        "feature": "sp_rank",
+        "importance": 0.04056405175092539
+      },
+      {
+        "feature": "is_fav",
+        "importance": 0.03471337377477099
+      },
+      {
+        "feature": "wgt_lbs",
+        "importance": 0.03352715732959973
+      },
+      {
+        "feature": "draw_pct",
+        "importance": 0.027626938906332395
+      },
+      {
+        "feature": "field_size",
+        "importance": 0.02551824418788128
+      },
+      {
+        "feature": "ts_num",
+        "importance": 0.022607188966750954
+      },
+      {
+        "feature": "class_num",
+        "importance": 0.01937659429353723
+      },
+      {
+        "feature": "draw_num",
+        "importance": 0.017390704709749873
+      }
+    ],
+    "full_importance_map": {
+      "rpr_vs_field": 0.14033780650583252,
+      "implied_prob": 0.13498586572350868,
+      "rpr_num": 0.12946067061839817,
+      "log_sp": 0.1275549203581428,
+      "sp_dec": 0.07842334796588968,
+      "or_vs_field": 0.07347751956659188,
+      "or_num": 0.06670220661431416,
+      "sp_rank": 0.04056405175092539,
+      "is_fav": 0.03471337377477099,
+      "wgt_lbs": 0.03352715732959973,
+      "draw_pct": 0.027626938906332395,
+      "field_size": 0.02551824418788128,
+      "ts_num": 0.022607188966750954,
+      "class_num": 0.01937659429353723,
+      "draw_num": 0.017390704709749873,
+      "age_num": 0.015504907681735937,
+      "going_code": 0.00805075540950102,
+      "is_aw": 0.004177745636537276,
+      "dist_f": 0.0,
+      "runs_since_win": 0.0,
+      "runs_since_place": 0.0,
+      "runs_since_mkt_support": 0.0,
+      "curr_or_minus_last_win_or": 0.0,
+      "curr_or_minus_best_or": 0.0,
+      "mark_compression_score": 0.0,
+      "release_window_score": 0.0,
+      "course_fit_score": 0.0,
+      "going_fit_score": 0.0,
+      "distance_fit_score": 0.0,
+      "quiet_run_score": 0.0,
+      "trainer_timing_score": 0.0,
+      "jockey_switch_intent": 0.0,
+      "odds_resilience_score": 0.0,
+      "odds_contraction_score": 0.0,
+      "decoy_support_flag": 0.0,
+      "setup_run_flag": 0.0,
+      "cash_run_flag": 0.0
+    }
+  },
+  "T_roi_simulation_non_deployment_research_only": {
+    "status": "non_deployment_research_only",
+    "thresholds": {
+      "0.03": {
+        "bets": 99,
+        "wins": 51,
+        "turnover_units": 99.0,
+        "profit_units": 92.85555599999999,
+        "roi": 0.937934909090909,
+        "hit_rate": 0.5151515151515151
+      },
+      "0.05": {
+        "bets": 90,
+        "wins": 49,
+        "turnover_units": 90.0,
+        "profit_units": 98.75555599999998,
+        "roi": 1.0972839555555554,
+        "hit_rate": 0.5444444444444444
+      },
+      "0.08": {
+        "bets": 73,
+        "wins": 44,
+        "turnover_units": 73.0,
+        "profit_units": 97.35555599999999,
+        "roi": 1.3336377534246575,
+        "hit_rate": 0.6027397260273972
+      }
+    }
+  },
+  "U_final_pass_fail_verdict": {
+    "status": "FAIL",
+    "rule_checks": {
+      "beats_market_log_loss": true,
+      "beats_market_brier": true,
+      "beats_market_only_logistic_log_loss": true,
+      "beats_market_only_logistic_brier": true,
+      "hk_non_negative_vs_market_log_loss": false,
+      "fr_non_negative_vs_market_log_loss": true,
+      "no_leakage_fields_used": true,
+      "no_outcome_fields_used": true,
+      "no_prior_model_outputs_used": true,
+      "calibration_not_materially_worse_than_market": true
+    },
+    "reason": "Candidate does not clear the strict beyond-market gate on the out-of-time test."
+  }
+}
