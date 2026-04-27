@@ -1,0 +1,714 @@
+{
+  "framework": "ETCSLV",
+  "generated_at": "2026-04-26",
+  "checkpoint": {
+    "branch": "checkpoint/oasis-clean-spine-audit-v2-passed",
+    "commit": "0f44411fdb52a2e2e056020408baca51b891c893",
+    "checkpoint_exists": true,
+    "working_tree_clean": false
+  },
+  "current_accepted_spine": {
+    "race_results": 3201,
+    "runner_results": 31751,
+    "historical_feature_store": 31692,
+    "clean_historical_races_integrated_approx": 1913,
+    "accepted_oasis_historical_events": 1671,
+    "accepted_oasis_historical_hfs_rows": 18331
+  },
+  "special_warnings": [
+    "OASIS_BLOCK_025 is rejected and rolled back.",
+    "Reason: 2025 macro-year mismatch. Do not retry until 2025 macro support exists.",
+    "app/services/velo_prime_service.py has unrelated unstaged work and is not part of the checkpoint.",
+    "Recovery must start from data/velo_current_state.json, not chat memory."
+  ],
+  "A_execution_loop_map": {
+    "workflow": [
+      "discover",
+      "validate",
+      "freeze artifacts",
+      "approve",
+      "bridge",
+      "manifest",
+      "HFS reconstruction",
+      "audit",
+      "accept/reject",
+      "rollback",
+      "state update",
+      "next mission"
+    ],
+    "manual_steps": [
+      "Choose window bounds and mission scope.",
+      "Approve each discovery window before any bridge.",
+      "Approve each bridge block before writes.",
+      "Interpret pass/fail audits and decide accept or reject.",
+      "Trigger rollback by manifest scope when a gate fails.",
+      "Update roadmap and next approved mission.",
+      "Create savepoints and handoff artifacts."
+    ],
+    "automated_steps": [
+      "mine_clean_course_zones.py scans raceform and writes candidate, rejection, and cursor artifacts.",
+      "bridge_oasis_block.py selects validated candidates, writes races/race_results/runner_results, persists a manifest, then invokes manifest-scoped HFS reconstruction.",
+      "backfill_historical_feature_store.py rebuilds HFS rows from manifest or race batches and runs integrity RPC heartbeats.",
+      "normalize_historical_provenance.py dry-runs and applies metadata-only provenance remediation.",
+      "Audit scripts replay manifest scopes or macro logic without bridging new rows."
+    ],
+    "approval_gates": [
+      "Discovery window approval before bridge.",
+      "Bridge audit approval after race_results/runner_results writes.",
+      "HFS audit approval after manifest-scoped reconstruction.",
+      "Global audit approval before any training discussion.",
+      "Checkpoint/savepoint approval before major control-plane or macro work."
+    ],
+    "failure_stops": [
+      "Candidate uniqueness failure.",
+      "Runner parity or winner parity failure.",
+      "Duplicate race_id, event_key, or race_id+horse_id.",
+      "Missing vectors or vector length drift.",
+      "MPI or chaos_bloom nulls.",
+      "Macro-year mismatch.",
+      "Doctrine or provenance incompleteness.",
+      "Rollback incompleteness after a rejected block."
+    ],
+    "rollback_paths": [
+      "Current rollback path is operational and manifest-scoped, but not packaged as a dedicated script.",
+      "Recovery protocol requires checking manifest scope across races, race_results, runner_results, and historical_feature_store until residual rows are zero.",
+      "Rejected Block 025 proves the rollback pattern works when manually executed against manifest scope."
+    ],
+    "resume_points": [
+      "data/velo_current_state.json",
+      "window candidate/rejection/cursor files",
+      "bridge manifest JSON",
+      "global audit JSON/MD",
+      "git checkpoint branch and commit"
+    ],
+    "known_weak_spots": [
+      "No dedicated scripted global clean spine audit entrypoint exists; current audit is artifact-driven and agent-operated.",
+      "No native rollback CLI exists.",
+      "bridge_oasis_block.py has no dry-run mode and is not transactionally coupled to rollback.",
+      "Discovery codifies accounting and duplicate clean event checks, but not non_target_count or candidate_collision_count as first-class outputs.",
+      "Final-window sizing still depends on operator-supplied max-races.",
+      "The working tree currently contains unrelated unstaged changes outside the checkpoint."
+    ]
+  },
+  "B_tool_registry": [
+    {
+      "tool_name": "mine_clean_course_zones.py",
+      "purpose": "Discovery-only clean race index mining for approved oasis courses using event-key validation.",
+      "inputs": [
+        "--batch-size",
+        "--max-rows",
+        "--start-id",
+        "--reset-window"
+      ],
+      "outputs": [
+        "candidate JSONL",
+        "rejection JSONL",
+        "cursor JSON",
+        "stdout discovery audit"
+      ],
+      "database_writes": false,
+      "dry_run_support": false,
+      "manifest_support": false,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Supabase credentials available",
+        "racing_horses registry populated",
+        "approved start-id/window plan"
+      ],
+      "known_risks": [
+        "Writes local artifacts even though it is read-only to the database.",
+        "Cursor is updated at end of run, so interrupted runs can leave partial local state.",
+        "non_target_count and candidate_collision_count are not codified as emitted metrics."
+      ],
+      "status": "active"
+    },
+    {
+      "tool_name": "bridge_oasis_block.py",
+      "purpose": "Controlled bridge of approved clean candidates plus manifest-scoped HFS invocation and block audit.",
+      "inputs": [
+        "--max-races",
+        "--candidate-file",
+        "--manifest-file",
+        "--exclude-manifest",
+        "--exclude-race-ids",
+        "--block-name",
+        "--signal-contract-version",
+        "--data-owner-confirmed",
+        "--training-eligible",
+        "--archive-exhausted",
+        "--hfs-workers",
+        "--discovery-window"
+      ],
+      "outputs": [
+        "races upserts",
+        "race_results upserts",
+        "runner_results upserts",
+        "bridge manifest JSON",
+        "stdout bridge audit",
+        "subprocess call into backfill_historical_feature_store.py"
+      ],
+      "database_writes": true,
+      "dry_run_support": false,
+      "manifest_support": true,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Approved candidate file",
+        "horse identity registry available",
+        "previous manifests and excluded IDs known",
+        "human approval for the block"
+      ],
+      "known_risks": [
+        "No built-in rollback mode.",
+        "No dry-run selection mode for preflight without writes.",
+        "HFS runs in a separate subprocess, so bridge and reconstruction are not one atomic transaction.",
+        "Final-window block size must be adjusted explicitly or the script hard-fails when it cannot fill max-races."
+      ],
+      "status": "active"
+    },
+    {
+      "tool_name": "backfill_historical_feature_store.py",
+      "purpose": "Manifest-scoped or batch-scoped HFS reconstruction for historical and live rows.",
+      "inputs": [
+        "--limit-races",
+        "--batch-races",
+        "--workers",
+        "--heartbeat-every",
+        "--manifest-file",
+        "--dry-run",
+        "--replace-existing"
+      ],
+      "outputs": [
+        "historical_feature_store upserts",
+        "historical_feature_backfill_runs inserts/updates",
+        "stdout runtime log"
+      ],
+      "database_writes": true,
+      "dry_run_support": true,
+      "manifest_support": true,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Supabase credentials available",
+        "races/race_results/runner_results already bridged",
+        "velo_prime scoring stack available",
+        "RPC hfs_integrity_metrics installed"
+      ],
+      "known_risks": [
+        "No native rollback.",
+        "Depends on live scoring code paths outside the OASIS script set.",
+        "Macro year is clamped to 2012-2024 today, which blocks honest 2025 scoring.",
+        "Integrity RPC heartbeats are not a substitute for the full post-run block audit."
+      ],
+      "status": "active"
+    },
+    {
+      "tool_name": "normalize_historical_provenance.py",
+      "purpose": "Metadata-only remediation for accepted historical OASIS races and HFS rows.",
+      "inputs": [
+        "--dry-run",
+        "--apply"
+      ],
+      "outputs": [
+        "stdout dry-run summary",
+        "stdout apply summary",
+        "races upserts",
+        "historical_feature_store upserts"
+      ],
+      "database_writes": true,
+      "dry_run_support": true,
+      "manifest_support": false,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Accepted historical scope already identified",
+        "No 2025 rows in scope",
+        "macro_year_used must match race year in HFS scope"
+      ],
+      "known_risks": [
+        "No native rollback snapshot beyond git/artifact savepoints.",
+        "Applies broad scoped upserts rather than manifest-scoped block deltas.",
+        "Must not be used against rows with macro-year mismatch."
+      ],
+      "status": "active"
+    },
+    {
+      "tool_name": "audit_hfs_signal_path.py",
+      "purpose": "Manifest-scoped forensic signal-path trace for historical HFS reconstruction.",
+      "inputs": [
+        "--manifest-file",
+        "--sample-races",
+        "--sample-runners"
+      ],
+      "outputs": [
+        "stdout trace report"
+      ],
+      "database_writes": false,
+      "dry_run_support": true,
+      "manifest_support": true,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Manifest exists",
+        "Referenced race IDs are already present",
+        "Scoring stack imports cleanly"
+      ],
+      "known_risks": [
+        "No structured JSON output.",
+        "Audit is manifest-scoped but mainly console-driven.",
+        "Useful for forensic tracing, not for canonical acceptance evidence by itself."
+      ],
+      "status": "active"
+    },
+    {
+      "tool_name": "audit_historical_macro_year.py",
+      "purpose": "Manifest-scoped dry-run audit of macro year selection versus race date.",
+      "inputs": [
+        "--manifest-files",
+        "--sample-size"
+      ],
+      "outputs": [
+        "stdout macro-date audit"
+      ],
+      "database_writes": false,
+      "dry_run_support": true,
+      "manifest_support": true,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Manifest files exist",
+        "Referenced rows are bridged or replayable",
+        "Macro regime module importable"
+      ],
+      "known_risks": [
+        "No structured artifact output.",
+        "Uses monkey-patching for macro trace capture.",
+        "Relies on the scoring path to remain import-compatible."
+      ],
+      "status": "active"
+    },
+    {
+      "tool_name": "backfill_horse_identity_registry.py",
+      "purpose": "Populate racing_horses from raceform with deterministic IDs and a keyset cursor.",
+      "inputs": [
+        "--limit-rows",
+        "--resume-from",
+        "--dry-run"
+      ],
+      "outputs": [
+        "racing_horses upserts",
+        "identity_scan_cursor.json",
+        "stdout summary"
+      ],
+      "database_writes": true,
+      "dry_run_support": true,
+      "manifest_support": false,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Supabase credentials available",
+        "raceform source accessible",
+        "Operator understands this mutates the global horse registry"
+      ],
+      "known_risks": [
+        "Writes production identity registry directly.",
+        "Cursor can advance on partial apply operations.",
+        "No provenance or manifest scoping for OASIS windows."
+      ],
+      "status": "active_but_global"
+    },
+    {
+      "tool_name": "reconcile_historical_archive.py",
+      "purpose": "Legacy archive discovery/bridge hybrid from pre-OASIS phases.",
+      "inputs": [
+        "implicit args used in code: limit_races, offset, max_scan, dry_run"
+      ],
+      "outputs": [
+        "races upserts",
+        "race_results upserts",
+        "runner_results upserts",
+        "stdout summary"
+      ],
+      "database_writes": true,
+      "dry_run_support": true,
+      "manifest_support": false,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Legacy phase only",
+        "Do not use for current OASIS doctrine"
+      ],
+      "known_risks": [
+        "Uses bare race_id logic rather than the event identity contract.",
+        "No manifests, provenance tags, or HFS coupling.",
+        "Current repo snapshot appears incomplete: no CLI footer is present."
+      ],
+      "status": "legacy_do_not_use"
+    },
+    {
+      "tool_name": "integrity_hooks.py",
+      "purpose": "Read-only RPC wrapper for lightweight HFS integrity heartbeats.",
+      "inputs": [
+        "reconstruction_version",
+        "min_race_id",
+        "max_race_id",
+        "fail_fast"
+      ],
+      "outputs": [
+        "IntegrityResult object",
+        "log lines"
+      ],
+      "database_writes": false,
+      "dry_run_support": true,
+      "manifest_support": false,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Supabase RPC hfs_integrity_metrics exists"
+      ],
+      "known_risks": [
+        "Covers only duplicate_count, missing_winner_count, missing_vector_count, and checked_race_count.",
+        "Not a full substitute for block or global audit."
+      ],
+      "status": "active_helper"
+    },
+    {
+      "tool_name": "discover_clean_archive_zones.py",
+      "purpose": "Legacy read-only density scan of archive quality by course and year-month.",
+      "inputs": [
+        "--max-scan",
+        "--offset"
+      ],
+      "outputs": [
+        "stdout top-zone report"
+      ],
+      "database_writes": false,
+      "dry_run_support": true,
+      "manifest_support": false,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Supabase credentials available",
+        "Identity registry available"
+      ],
+      "known_risks": [
+        "Legacy tool; not event-key contract aware.",
+        "No frozen artifacts or cursors.",
+        "Useful for exploration, not for canonical OASIS workflow."
+      ],
+      "status": "legacy_read_only"
+    },
+    {
+      "tool_name": "global_clean_spine_audit",
+      "purpose": "Whole-spine acceptance audit for historical OASIS rows.",
+      "inputs": [
+        "accepted historical rows in Supabase",
+        "expected doctrine/provenance contract",
+        "checkpoint state"
+      ],
+      "outputs": [
+        "global_clean_spine_audit_v1/v2 JSON",
+        "global_clean_spine_audit_v1/v2 Markdown"
+      ],
+      "database_writes": false,
+      "dry_run_support": true,
+      "manifest_support": false,
+      "rollback_support": false,
+      "required_preconditions": [
+        "Accepted historical scope exists",
+        "Doctrine expectations known",
+        "Agent follows saved audit procedure"
+      ],
+      "known_risks": [
+        "No dedicated script exists in the repo.",
+        "Repeatability depends on agent procedure plus saved artifacts.",
+        "Should become a canonical scripted audit before training."
+      ],
+      "status": "artifact_driven_gap"
+    }
+  ],
+  "C_context_manager_audit": {
+    "where_context_lives": [
+      "data/velo_current_state.json",
+      "data/velo_artifact_index.json",
+      "window candidate/rejection/cursor files",
+      "bridge manifests",
+      "global audit artifacts",
+      "docs handoff/runbook/recovery docs",
+      "git checkpoint branch and commit",
+      "Supabase accepted tables"
+    ],
+    "what_is_canonical": [
+      "Canonical mission phase: data/velo_current_state.json",
+      "Canonical block scope: bridge manifest JSON",
+      "Canonical accepted row reality: Supabase tables",
+      "Canonical proof of acceptance: latest passed audit artifacts",
+      "Canonical recovery sequence: VELO_RECOVERY_PROTOCOL.md"
+    ],
+    "what_is_duplicated": [
+      "Accepted counts appear in state JSON, handoff docs, audit docs, and chat.",
+      "Window lineage appears in candidate/rejection/cursor files and artifact index.",
+      "Block status appears in manifests, logs, artifact index, and state JSON."
+    ],
+    "what_can_go_stale": [
+      "data/velo_current_state.json if not updated after accept/reject.",
+      "data/velo_artifact_index.json if new artifacts are created without refresh.",
+      "Docs and handoff files when roadmap changes.",
+      "Chat memory and copied counts outside saved artifacts.",
+      "Cursor files after interrupted discovery runs."
+    ],
+    "what_can_be_safely_resumed": [
+      "Any discovery window with frozen candidate/rejection/cursor files.",
+      "Any accepted bridge via manifest and DB count verification.",
+      "Global audit review from saved JSON/MD artifacts.",
+      "Checkpoint branch restore using branch plus canonical state file."
+    ],
+    "what_needs_stronger_state_handling": [
+      "Auto-generated state transitions after each accepted/rejected run.",
+      "Canonical quarantined-ID registry across windows.",
+      "Dedicated failed-block registry with rollback proof.",
+      "Scripted recording of next approved mission.",
+      "Explicit dirty-worktree marker in canonical state."
+    ]
+  },
+  "D_state_store_audit": {
+    "state_objects": [
+      {
+        "object": "Accepted historical data",
+        "source_of_truth": "Supabase tables races, race_results, runner_results, historical_feature_store",
+        "duplicate_state_risks": [
+          "Counts copied into docs and state JSON can drift"
+        ],
+        "stale_state_risks": [
+          "Docs may say accepted while DB still contains partial failed rows if rollback is incomplete"
+        ],
+        "recovery_path": "Recount DB rows and verify against latest accepted audit and manifest scope"
+      },
+      {
+        "object": "Current mission phase and roadmap",
+        "source_of_truth": "data/velo_current_state.json",
+        "duplicate_state_risks": [
+          "Handoff docs and chat repeat the same roadmap"
+        ],
+        "stale_state_risks": [
+          "Manual updates can be forgotten after a pass or rejection"
+        ],
+        "recovery_path": "Update from saved audit plus latest accepted or rejected block state"
+      },
+      {
+        "object": "Window discovery outputs",
+        "source_of_truth": "candidate/rejection/cursor files per window",
+        "duplicate_state_risks": [
+          "Artifact index repeats file status"
+        ],
+        "stale_state_risks": [
+          "Cursor may lag if an interrupted discovery run does not finish cleanly"
+        ],
+        "recovery_path": "Trust frozen files first, rerun window if cursor ambiguity remains"
+      },
+      {
+        "object": "Bridge block scope",
+        "source_of_truth": "data/bridge_manifest_oasis_block_XXX.json",
+        "duplicate_state_risks": [
+          "Logs and chat repeat counts"
+        ],
+        "stale_state_risks": [
+          "Manifest can exist for a rejected block even after rollback"
+        ],
+        "recovery_path": "Use manifest plus DB scoped-row verification"
+      },
+      {
+        "object": "Audit evidence",
+        "source_of_truth": "saved JSON/MD audit artifacts",
+        "duplicate_state_risks": [
+          "Chat summaries can drift from artifacts"
+        ],
+        "stale_state_risks": [
+          "v1 artifacts can be mistaken for current truth after v2 or v3"
+        ],
+        "recovery_path": "Prefer latest passed audit named in canonical state"
+      },
+      {
+        "object": "Checkpoint code/doc state",
+        "source_of_truth": "git branch and commit",
+        "duplicate_state_risks": [
+          "Local working tree may contain unrelated unstaged files"
+        ],
+        "stale_state_risks": [
+          "Future agents can confuse unstaged local files with checkpoint contents"
+        ],
+        "recovery_path": "Switch to checkpoint branch and use committed artifacts only"
+      }
+    ],
+    "duplicate_state_risks": [
+      "The same counts and block outcomes are stored in state JSON, docs, chat, and audit reports.",
+      "Artifact index is an index, not a source of truth, but can look authoritative if primary artifacts are not checked."
+    ],
+    "stale_state_risks": [
+      "Dirty working tree can mislead future agents about what is checkpointed.",
+      "Legacy scripts and legacy artifacts remain adjacent to active OASIS files."
+    ],
+    "recommended_canonical_state_model": [
+      "Supabase tables are canonical for accepted data rows.",
+      "Per-window discovery artifacts are canonical for discovery outputs.",
+      "Per-block manifests are canonical for write scope and rollback scope.",
+      "data/velo_current_state.json is canonical for phase and roadmap.",
+      "Latest passed global audit is canonical for training gate truth.",
+      "Git checkpoint commit is canonical for code/documentation state."
+    ]
+  },
+  "E_lifecycle_hook_audit": {
+    "existing_hooks": [
+      "Pre-run window selection and reset-window handling for discovery.",
+      "Dry-run support in backfill_historical_feature_store.py, normalize_historical_provenance.py, audit_hfs_signal_path.py, audit_historical_macro_year.py, and legacy identity/archive tools.",
+      "Human approval gate between discovery and bridge.",
+      "Manifest write before HFS trust.",
+      "Post-run block audit inside bridge_oasis_block.py.",
+      "Manual manifest-scoped rollback protocol.",
+      "Artifact freeze via saved JSON/JSONL/log files.",
+      "Savepoint + handoff checkpoint via git branch and commit."
+    ],
+    "missing_hooks": [
+      "Dedicated bridge dry-run hook.",
+      "Dedicated manifest-scoped rollback CLI.",
+      "Automated canonical state update after every accept/reject.",
+      "Automated artifact-index refresh after every new artifact.",
+      "Dedicated scripted global clean spine audit hook.",
+      "Dirty-worktree preflight hook before running any approved mission."
+    ],
+    "mandatory_before_training": [
+      "Dedicated global clean spine audit script or equivalent reproducible entrypoint.",
+      "Dedicated rollback completeness check/tool.",
+      "Canonical state update hook that cannot be skipped.",
+      "2025 macro support, Block 025 retry, and post-retry Global Audit V3 under the current roadmap."
+    ],
+    "can_wait": [
+      "Automated progress dashboards.",
+      "Per-batch discovery checkpointing.",
+      "Conversion of every stdout-only audit into structured JSON output.",
+      "Legacy script retirement or relocation once the control plane is stable."
+    ],
+    "recommended_additions": [
+      "scripts/global_clean_spine_audit.py",
+      "scripts/rollback_oasis_block.py",
+      "scripts/update_velo_state.py",
+      "scripts/preflight_checkpoint_guard.py"
+    ]
+  },
+  "F_verification_interface_audit": {
+    "current_checks": [
+      "Discovery accounting invariant",
+      "Duplicate clean event keys",
+      "Sampled winner parity in discovery",
+      "Bridge uniqueness and winner parity",
+      "Duplicate race_id, event_key, and race_id+horse_id checks",
+      "HFS row parity against inserted runners",
+      "Missing/orphan HFS rows in global audit",
+      "Vector existence and dimension checks",
+      "MPI and chaos null and variance checks",
+      "Macro-year mismatch checks",
+      "Doctrine completeness checks",
+      "Provenance completeness checks",
+      "training_eligible distribution checks",
+      "Manifest-scoped rollback completeness checks by operator procedure",
+      "Secret scan before savepoint commit",
+      "Git checkpoint branch/commit existence"
+    ],
+    "missing_checks": [
+      "Codified non_target_count output in discovery",
+      "Codified candidate_collision_count output in discovery",
+      "Dedicated rollback completeness script",
+      "Automated dirty-worktree guard before operational runs",
+      "Dedicated scripted global clean spine audit entrypoint",
+      "Automated verification that canonical state JSON matches latest accepted audit"
+    ],
+    "blocking_checks": [
+      "Parity mismatch",
+      "Winner parity failure",
+      "Any duplicate race_id/event_key/race_id+horse_id",
+      "Missing or orphan HFS rows",
+      "Missing vectors or vector length drift",
+      "MPI or chaos nulls",
+      "MPI or chaos variance collapse",
+      "Macro-year mismatch",
+      "Doctrine incompleteness",
+      "Provenance incompleteness",
+      "training_eligible distribution drift",
+      "Rollback incompleteness for rejected blocks"
+    ],
+    "warning_only_checks": [
+      "Yield collapse by window",
+      "Archive exhaustion",
+      "Unrelated unstaged work in the repo",
+      "Legacy tool presence beside active control-plane tools"
+    ],
+    "recommended_pass_fail_schema": {
+      "hard_block": [
+        "data integrity",
+        "signal integrity",
+        "macro-year honesty",
+        "doctrine completeness",
+        "provenance completeness",
+        "rollback completeness"
+      ],
+      "approval_required": [
+        "discovery acceptance",
+        "bridge approval",
+        "post-bridge audit acceptance",
+        "global audit acceptance",
+        "savepoint acceptance before major control-plane changes"
+      ],
+      "warning": [
+        "yield decline",
+        "archive exhausted",
+        "dirty working tree unrelated to checkpoint",
+        "legacy scripts not yet isolated"
+      ],
+      "evidence_only": [
+        "sample event rows",
+        "sample rejected rows",
+        "run logs",
+        "artifact index"
+      ]
+    }
+  },
+  "G_gaps_found": [
+    "No dedicated global clean spine audit script exists.",
+    "No dedicated manifest-scoped rollback tool exists.",
+    "Canonical state and artifact index are still updated manually.",
+    "Discovery does not emit non_target_count or candidate_collision_count as codified metrics.",
+    "Legacy archive tools coexist with active OASIS tools and can mislead future agents.",
+    "Bridge has no dry-run mode.",
+    "Checkpoint branch currently has unrelated unstaged work outside the savepoint."
+  ],
+  "H_operational_risks": [
+    "A future agent may confuse dirty local files with checkpointed state.",
+    "A future agent may use reconcile_historical_archive.py or discover_clean_archive_zones.py even though they do not meet current doctrine.",
+    "A failed bridge still requires manual rollback knowledge unless a dedicated rollback tool is added.",
+    "The global audit process is currently repeatable only through artifacts and operator procedure, not a single script.",
+    "2025 rows remain blocked until macro support is extended honestly."
+  ],
+  "I_recommended_fixes": [
+    "Create scripts/global_clean_spine_audit.py to reproduce v2 and future audits deterministically.",
+    "Create scripts/rollback_oasis_block.py for manifest-scoped rollback and rollback-proof reporting.",
+    "Create scripts/update_velo_state.py to refresh data/velo_current_state.json and data/velo_artifact_index.json after every accepted or rejected mission.",
+    "Add codified non_target_count and candidate_collision_count outputs to mine_clean_course_zones.py.",
+    "Add a --dry-run mode to bridge_oasis_block.py for selection and manifest preflight without writes.",
+    "Add a dirty-worktree preflight guard for operational missions.",
+    "Isolate or clearly mark legacy scripts as do-not-use for current OASIS doctrine."
+  ],
+  "J_must_fix_before_training": [
+    "Keep training paused until a dedicated or fully reproducible global audit path is in place.",
+    "Keep training paused until rollback completeness is tool-supported or equivalently provable every time.",
+    "Keep training paused until 2025 macro support exists, OASIS_BLOCK_025 is retried, and Global Audit V3 passes under the current roadmap.",
+    "Keep training paused until canonical state updates are routine rather than optional."
+  ],
+  "K_can_wait_until_after_first_dry_run_training": [
+    "Ambiguity resolver for rejected historical races.",
+    "Per-batch discovery cursor checkpoints.",
+    "Migration of stdout-only audits to structured JSON outputs.",
+    "Legacy tool retirement or archive relocation.",
+    "More automated dashboards and operator UX polish."
+  ],
+  "L_proposed_canonical_agent_startup_checklist": [
+    "Check git branch and git status; do not assume dirty files are checkpointed.",
+    "Read data/velo_current_state.json.",
+    "Read docs/VELO_AGENT_HANDOFF.md, docs/VELO_OASIS_RUNBOOK.md, docs/VELO_AGENT_PROCESS_LIST.md, and docs/VELO_RECOVERY_PROTOCOL.md.",
+    "Read the latest passed global audit artifact.",
+    "Confirm latest failed block is fully rolled back.",
+    "Confirm accepted DB counts match canonical state.",
+    "Confirm next mission is approved in the canonical state.",
+    "Only then continue the next mission."
+  ]
+}
