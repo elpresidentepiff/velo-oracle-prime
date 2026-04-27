@@ -1,0 +1,1204 @@
+{
+  "version": "v1",
+  "generated_at": "2026-04-27T12:09:43.464724+00:00",
+  "inputs": {
+    "dry_run_report": "C:\\Users\\puror\\velo-oracle-prime\\data\\playbook_g_offline_dry_run_v1.json",
+    "eligible_race_count": 1697,
+    "eligible_runner_count": 18575
+  },
+  "A_HK_failure_drivers": {
+    "sample_size": {
+      "races": 29,
+      "runners": 319,
+      "year_breakdown": {
+        "2025": 75,
+        "2023": 148,
+        "2024": 96
+      }
+    },
+    "metric_story": {
+      "market_log_loss": 2.0043041687607603,
+      "candidate_log_loss": 2.4130579638771974,
+      "market_brier": 0.07303520989968713,
+      "candidate_brier": 0.055572205164328425,
+      "market_top1": 0.3448275862068966,
+      "candidate_top1": 0.5517241379310345,
+      "market_top3": 0.5517241379310345,
+      "candidate_top3": 0.8620689655172413
+    },
+    "interpretation": [
+      "HK is the gating failure because candidate log loss is worse than market despite better top-1 and top-3 rates.",
+      "That pattern means the candidate found more winners overall but made a small number of very overconfident mistakes, which multiclass log loss punishes heavily.",
+      "HK doctrine features are effectively constant, so the model had no meaningful non-market doctrine structure to lean on when market/rating relationships shifted."
+    ],
+    "winner_gap_ranking": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.24527346163632976,
+        "loser_mean": 0.09783690253632474,
+        "gap": 0.14743655910000503,
+        "std_gap": 1.1861150827688212
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.3448275862068966,
+        "loser_mean": 0.06896551724137931,
+        "gap": 0.27586206896551724,
+        "std_gap": 0.945089903146169
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.8024815580431377,
+        "loser_mean": 2.8315832421240974,
+        "gap": -1.0291016840809597,
+        "std_gap": -0.9417924277113293
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 3.3793103448275863,
+        "loser_mean": 6.4655172413793105,
+        "gap": -3.086206896551724,
+        "std_gap": -0.882412927182108
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 60.793103448275865,
+        "loser_mean": 43.39655172413793,
+        "gap": 17.396551724137936,
+        "std_gap": 0.6815295721551425
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 60.793103448275865,
+        "loser_mean": 43.39655172413793,
+        "gap": 17.396551724137936,
+        "std_gap": 0.6815295721551425
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 9.681226068965518,
+        "loser_mean": 29.489310344827587,
+        "gap": -19.80808427586207,
+        "std_gap": -0.600476364245075
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.4769081493219424,
+        "loser_mean": 0.5567426826047516,
+        "gap": -0.07983453328280915,
+        "std_gap": -0.2757652980548681
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 11.0,
+        "loser_mean": 11.537931034482758,
+        "gap": -0.5379310344827584,
+        "std_gap": -0.26249212777708764
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 43.13793103448276,
+        "loser_mean": 41.610344827586204,
+        "gap": 1.527586206896558,
+        "std_gap": 0.05971961803020142
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 43.13793103448276,
+        "loser_mean": 41.610344827586204,
+        "gap": 1.527586206896558,
+        "std_gap": 0.05971961803020142
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 0.0,
+        "loser_mean": 0.0,
+        "gap": 0.0,
+        "std_gap": 0.0
+      }
+    ],
+    "candidate_vs_market_lift": {
+      "log_loss_delta_vs_market": 0.40875379511643706,
+      "brier_delta_vs_market": -0.01746300473535871,
+      "top1_delta_vs_market": 0.2068965517241379,
+      "top3_delta_vs_market": 0.31034482758620685
+    }
+  },
+  "B_FR_success_drivers": {
+    "sample_size": {
+      "races": 84,
+      "runners": 683,
+      "year_breakdown": {
+        "2025": 169,
+        "2023": 249,
+        "2024": 265
+      }
+    },
+    "metric_story": {
+      "market_log_loss": 1.6292902317692783,
+      "candidate_log_loss": 1.3254946485490913,
+      "market_brier": 0.09162854773051476,
+      "candidate_brier": 0.0800087216648045,
+      "market_top1": 0.36904761904761907,
+      "candidate_top1": 0.4642857142857143,
+      "market_top3": 0.7380952380952381,
+      "candidate_top3": 0.8333333333333334
+    },
+    "interpretation": [
+      "FR drives the global success: candidate beats market on log loss, Brier, top-1, and top-3.",
+      "FR winners separate strongly on market/rating features, especially implied probability and RPR-based signals.",
+      "The candidate is effectively a sharper market/rating model here, not a doctrine-driven model."
+    ],
+    "winner_gap_ranking": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.29028904547015955,
+        "loser_mean": 0.126979214499179,
+        "gap": 0.16330983097098054,
+        "std_gap": 1.1879816176685623
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.4508201015689608,
+        "loser_mean": 2.4815432950628926,
+        "gap": -1.0307231934939318,
+        "std_gap": -1.0376691367339184
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 2.619047619047619,
+        "loser_mean": 5.191986644407345,
+        "gap": -2.572939025359726,
+        "std_gap": -0.8749386902911176
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.36904761904761907,
+        "loser_mean": 0.08848080133555926,
+        "gap": 0.2805668177120598,
+        "std_gap": 0.854287311040852
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 88.28571428571429,
+        "loser_mean": 66.20868113522538,
+        "gap": 22.077033150488916,
+        "std_gap": 0.7050522046863666
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 88.28571428571429,
+        "loser_mean": 66.20868113522538,
+        "gap": 22.077033150488916,
+        "std_gap": 0.7050522046863666
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 5.751190476190477,
+        "loser_mean": 18.98464106844741,
+        "gap": -13.233450592256933,
+        "std_gap": -0.6814807215412731
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 31.416666666666668,
+        "loser_mean": 19.357262103505843,
+        "gap": 12.059404563160825,
+        "std_gap": 0.5070457008298779
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 8.130952380952381,
+        "loser_mean": 8.898163606010018,
+        "gap": -0.7672112250576362,
+        "std_gap": -0.29123891904121557
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.45111280137540644,
+        "loser_mean": 0.47003079111249585,
+        "gap": -0.018917989737089413,
+        "std_gap": -0.05392233953723305
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 0.0,
+        "loser_mean": 0.0,
+        "gap": 0.0,
+        "std_gap": 0.0
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 0.0,
+        "loser_mean": 0.0,
+        "gap": 0.0,
+        "std_gap": 0.0
+      }
+    ],
+    "candidate_vs_market_lift": {
+      "log_loss_delta_vs_market": -0.30379558322018707,
+      "brier_delta_vs_market": -0.01161982606571027,
+      "top1_delta_vs_market": 0.09523809523809523,
+      "top3_delta_vs_market": 0.09523809523809523
+    }
+  },
+  "C_2025_instability_drivers": {
+    "sample_size": {
+      "races": 26,
+      "runners": 244,
+      "jurisdiction_breakdown": {
+        "FR": 169,
+        "HK": 75
+      }
+    },
+    "metric_story": {
+      "market_log_loss": 1.6319770727552105,
+      "candidate_log_loss": 2.4261747696741756,
+      "market_brier": 0.07327465464143124,
+      "candidate_brier": 0.058619378404499774,
+      "market_top1": 0.46153846153846156,
+      "candidate_top1": 0.5384615384615384
+    },
+    "interpretation": [
+      "2025 is tiny and unstable: only 26 races and 244 runners.",
+      "Candidate beats market on Brier and top-1 in 2025 but loses badly on log loss, which points to overconfident misses rather than uniformly poor ranking.",
+      "The explicit 2025 proxy macro is clean, but the sample is too small to stabilize a nonlinear model with no real doctrine variation."
+    ],
+    "winner_gap_ranking": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.33639433077076525,
+        "loser_mean": 0.10403336987960289,
+        "gap": 0.23236096089116237,
+        "std_gap": 1.5868422380695273
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.46153846153846156,
+        "loser_mean": 0.06880733944954129,
+        "gap": 0.39273112208892025,
+        "std_gap": 1.2519108280582343
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.4425049277513131,
+        "loser_mean": 2.7926075243313804,
+        "gap": -1.3501025965800673,
+        "std_gap": -1.1686628953532179
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 2.730769230769231,
+        "loser_mean": 5.926605504587156,
+        "gap": -3.1958362738179256,
+        "std_gap": -0.9385300370618632
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 7.321153846153846,
+        "loser_mean": 28.892660550458718,
+        "gap": -21.571506704304873,
+        "std_gap": -0.684392637370237
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 72.03846153846153,
+        "loser_mean": 50.26146788990825,
+        "gap": 21.77699364855328,
+        "std_gap": 0.6825756988182051
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 72.03846153846153,
+        "loser_mean": 50.26146788990825,
+        "gap": 21.77699364855328,
+        "std_gap": 0.6825756988182051
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 22.846153846153847,
+        "loser_mean": 13.68348623853211,
+        "gap": 9.162667607621737,
+        "std_gap": 0.40052561526175845
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 9.384615384615385,
+        "loser_mean": 10.321100917431192,
+        "gap": -0.9364855328158068,
+        "std_gap": -0.3138782037245074
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 4.461538461538462,
+        "loser_mean": 6.477064220183486,
+        "gap": -2.0155257586450244,
+        "std_gap": -0.10976117766296811
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 4.461538461538462,
+        "loser_mean": 6.477064220183486,
+        "gap": -2.0155257586450244,
+        "std_gap": -0.10976117766296811
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.510158833122634,
+        "loser_mean": 0.4952388110779908,
+        "gap": 0.01492002204464321,
+        "std_gap": 0.04551070418625152
+      }
+    ]
+  },
+  "D_train_validation_test_drift": {
+    "counts": {
+      "train_races": 1060,
+      "validation_races": 523,
+      "test_races": 114
+    },
+    "train_to_validation_top_drift": [
+      {
+        "feature": "or_num",
+        "train_mean": 37.343284851577785,
+        "compare_mean": 42.86664369400413,
+        "mean_shift": 5.523358842426347,
+        "std_shift": 0.174715408231758
+      },
+      {
+        "feature": "or_vs_field",
+        "train_mean": 37.343284851577785,
+        "compare_mean": 42.86664369400413,
+        "mean_shift": 5.523358842426347,
+        "std_shift": 0.174715408231758
+      },
+      {
+        "feature": "rpr_num",
+        "train_mean": 61.62515947945904,
+        "compare_mean": 59.62284631288767,
+        "mean_shift": -2.0023131665713763,
+        "std_shift": -0.08011347649120784
+      },
+      {
+        "feature": "rpr_vs_field",
+        "train_mean": 61.62515947945904,
+        "compare_mean": 59.62284631288767,
+        "mean_shift": -2.0023131665713763,
+        "std_shift": -0.08011347649120784
+      },
+      {
+        "feature": "sp_dec",
+        "train_mean": 30.757099117461937,
+        "compare_mean": 27.341580902136457,
+        "mean_shift": -3.4155182153254806,
+        "std_shift": -0.07458680483758431
+      },
+      {
+        "feature": "ts_num",
+        "train_mean": 5.087097048566811,
+        "compare_mean": 4.205375603032391,
+        "mean_shift": -0.8817214455344198,
+        "std_shift": -0.055323969453620614
+      },
+      {
+        "feature": "log_sp",
+        "train_mean": 2.729483671011491,
+        "compare_mean": 2.6960003191355524,
+        "mean_shift": -0.03348335187593854,
+        "std_shift": -0.030447668960038206
+      },
+      {
+        "feature": "field_size",
+        "train_mean": 11.77298630603045,
+        "compare_mean": 11.725706409372846,
+        "mean_shift": -0.04727989665760468,
+        "std_shift": -0.019059010538462196
+      },
+      {
+        "feature": "draw_pct",
+        "train_mean": 0.5332285388632296,
+        "compare_mean": 0.5294877825077585,
+        "mean_shift": -0.0037407563554711087,
+        "std_shift": -0.012232011617660805
+      },
+      {
+        "feature": "sp_rank",
+        "train_mean": 6.340903291656034,
+        "compare_mean": 6.313404548587181,
+        "mean_shift": -0.027498743068853138,
+        "std_shift": -0.0074958225120425
+      },
+      {
+        "feature": "implied_prob",
+        "train_mean": 0.10922337068409017,
+        "compare_mean": 0.10981607706331956,
+        "mean_shift": 0.0005927063792293824,
+        "std_shift": 0.005361703846421069
+      },
+      {
+        "feature": "is_fav",
+        "train_mean": 0.0920302798332908,
+        "compare_mean": 0.0923501033769814,
+        "mean_shift": 0.0003198235436905894,
+        "std_shift": 0.001105822423633972
+      }
+    ],
+    "train_to_test_top_drift": [
+      {
+        "feature": "field_size",
+        "train_mean": 11.77298630603045,
+        "compare_mean": 9.68639053254438,
+        "mean_shift": -2.0865957734860707,
+        "std_shift": -0.7967814028400892
+      },
+      {
+        "feature": "or_num",
+        "train_mean": 37.343284851577785,
+        "compare_mean": 13.134122287968442,
+        "mean_shift": -24.209162563609343,
+        "std_shift": -0.7330254307274
+      },
+      {
+        "feature": "or_vs_field",
+        "train_mean": 37.343284851577785,
+        "compare_mean": 13.134122287968442,
+        "mean_shift": -24.209162563609343,
+        "std_shift": -0.7330254307274
+      },
+      {
+        "feature": "ts_num",
+        "train_mean": 5.087097048566811,
+        "compare_mean": 14.037475345167653,
+        "mean_shift": 8.950378296600842,
+        "std_shift": 0.517169322303384
+      },
+      {
+        "feature": "sp_rank",
+        "train_mean": 6.340903291656034,
+        "compare_mean": 5.3057199211045365,
+        "mean_shift": -1.035183370551498,
+        "std_shift": -0.2827427871057735
+      },
+      {
+        "feature": "implied_prob",
+        "train_mean": 0.10922337068409017,
+        "compare_mean": 0.13529784176090656,
+        "mean_shift": 0.02607447107681639,
+        "std_shift": 0.23079307616073771
+      },
+      {
+        "feature": "log_sp",
+        "train_mean": 2.729483671011491,
+        "compare_mean": 2.4826357143512756,
+        "mean_shift": -0.2468479566602153,
+        "std_shift": -0.22201207972235446
+      },
+      {
+        "feature": "sp_dec",
+        "train_mean": 30.757099117461937,
+        "compare_mean": 20.8770764852071,
+        "mean_shift": -9.880022632254839,
+        "std_shift": -0.2067770106473935
+      },
+      {
+        "feature": "draw_pct",
+        "train_mean": 0.5332285388632296,
+        "compare_mean": 0.49430733084579237,
+        "mean_shift": -0.03892120801743726,
+        "std_shift": -0.1259991522707218
+      },
+      {
+        "feature": "is_fav",
+        "train_mean": 0.0920302798332908,
+        "compare_mean": 0.11439842209072978,
+        "mean_shift": 0.02236814225743898,
+        "std_shift": 0.0767190886910787
+      },
+      {
+        "feature": "rpr_num",
+        "train_mean": 61.62515947945904,
+        "compare_mean": 61.505917159763314,
+        "mean_shift": -0.11924231969572929,
+        "std_shift": -0.004576317456938045
+      },
+      {
+        "feature": "rpr_vs_field",
+        "train_mean": 61.62515947945904,
+        "compare_mean": 61.505917159763314,
+        "mean_shift": -0.11924231969572929,
+        "std_shift": -0.004576317456938045
+      }
+    ],
+    "interpretation": [
+      "The model was trained on a much larger 2017-2020 block and tested on a sparse 2023-2025 block.",
+      "Train-to-test drift matters more because the test slice is smaller, FR-heavy, and structurally different from the early HK-heavy body.",
+      "The overfit signal is consistent with a complex model fitting stable market/rating patterns in train while reacting too sharply out of time."
+    ]
+  },
+  "E_feature_importance_by_jurisdiction": {
+    "method": "Diagnostic winner-separation ranking on the approved test slice; no retraining performed.",
+    "HK_test_top_features": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.24527346163632976,
+        "loser_mean": 0.09783690253632474,
+        "gap": 0.14743655910000503,
+        "std_gap": 1.1861150827688212
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.3448275862068966,
+        "loser_mean": 0.06896551724137931,
+        "gap": 0.27586206896551724,
+        "std_gap": 0.945089903146169
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.8024815580431377,
+        "loser_mean": 2.8315832421240974,
+        "gap": -1.0291016840809597,
+        "std_gap": -0.9417924277113293
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 3.3793103448275863,
+        "loser_mean": 6.4655172413793105,
+        "gap": -3.086206896551724,
+        "std_gap": -0.882412927182108
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 60.793103448275865,
+        "loser_mean": 43.39655172413793,
+        "gap": 17.396551724137936,
+        "std_gap": 0.6815295721551425
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 60.793103448275865,
+        "loser_mean": 43.39655172413793,
+        "gap": 17.396551724137936,
+        "std_gap": 0.6815295721551425
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 9.681226068965518,
+        "loser_mean": 29.489310344827587,
+        "gap": -19.80808427586207,
+        "std_gap": -0.600476364245075
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.4769081493219424,
+        "loser_mean": 0.5567426826047516,
+        "gap": -0.07983453328280915,
+        "std_gap": -0.2757652980548681
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 11.0,
+        "loser_mean": 11.537931034482758,
+        "gap": -0.5379310344827584,
+        "std_gap": -0.26249212777708764
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 43.13793103448276,
+        "loser_mean": 41.610344827586204,
+        "gap": 1.527586206896558,
+        "std_gap": 0.05971961803020142
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 43.13793103448276,
+        "loser_mean": 41.610344827586204,
+        "gap": 1.527586206896558,
+        "std_gap": 0.05971961803020142
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 0.0,
+        "loser_mean": 0.0,
+        "gap": 0.0,
+        "std_gap": 0.0
+      }
+    ],
+    "FR_test_top_features": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.29028904547015955,
+        "loser_mean": 0.126979214499179,
+        "gap": 0.16330983097098054,
+        "std_gap": 1.1879816176685623
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.4508201015689608,
+        "loser_mean": 2.4815432950628926,
+        "gap": -1.0307231934939318,
+        "std_gap": -1.0376691367339184
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 2.619047619047619,
+        "loser_mean": 5.191986644407345,
+        "gap": -2.572939025359726,
+        "std_gap": -0.8749386902911176
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.36904761904761907,
+        "loser_mean": 0.08848080133555926,
+        "gap": 0.2805668177120598,
+        "std_gap": 0.854287311040852
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 88.28571428571429,
+        "loser_mean": 66.20868113522538,
+        "gap": 22.077033150488916,
+        "std_gap": 0.7050522046863666
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 88.28571428571429,
+        "loser_mean": 66.20868113522538,
+        "gap": 22.077033150488916,
+        "std_gap": 0.7050522046863666
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 5.751190476190477,
+        "loser_mean": 18.98464106844741,
+        "gap": -13.233450592256933,
+        "std_gap": -0.6814807215412731
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 31.416666666666668,
+        "loser_mean": 19.357262103505843,
+        "gap": 12.059404563160825,
+        "std_gap": 0.5070457008298779
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 8.130952380952381,
+        "loser_mean": 8.898163606010018,
+        "gap": -0.7672112250576362,
+        "std_gap": -0.29123891904121557
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.45111280137540644,
+        "loser_mean": 0.47003079111249585,
+        "gap": -0.018917989737089413,
+        "std_gap": -0.05392233953723305
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 0.0,
+        "loser_mean": 0.0,
+        "gap": 0.0,
+        "std_gap": 0.0
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 0.0,
+        "loser_mean": 0.0,
+        "gap": 0.0,
+        "std_gap": 0.0
+      }
+    ]
+  },
+  "F_feature_importance_by_year": {
+    "method": "Diagnostic winner-separation ranking on each holdout test year; no retraining performed.",
+    "2023_top_features": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.28460973720920557,
+        "loser_mean": 0.1236988312741355,
+        "gap": 0.16091090593507007,
+        "std_gap": 1.1577240932167496
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.4645968056404675,
+        "loser_mean": 2.533979375752572,
+        "gap": -1.0693825701121047,
+        "std_gap": -1.0564848395650657
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 2.5531914893617023,
+        "loser_mean": 5.402857142857143,
+        "gap": -2.8496656534954408,
+        "std_gap": -0.9486551151154148
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 87.53191489361703,
+        "loser_mean": 64.23428571428572,
+        "gap": 23.29762917933131,
+        "std_gap": 0.803754225365097
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 87.53191489361703,
+        "loser_mean": 64.23428571428572,
+        "gap": 23.29762917933131,
+        "std_gap": 0.803754225365097
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.3404255319148936,
+        "loser_mean": 0.08857142857142856,
+        "gap": 0.25185410334346503,
+        "std_gap": 0.7795726363822838
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 5.870330978723404,
+        "loser_mean": 20.181714285714285,
+        "gap": -14.311383306990882,
+        "std_gap": -0.6851359167252534
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 23.4468085106383,
+        "loser_mean": 12.508571428571429,
+        "gap": 10.93823708206687,
+        "std_gap": 0.53899590649495
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 8.446808510638299,
+        "loser_mean": 9.302857142857142,
+        "gap": -0.8560486322188439,
+        "std_gap": -0.33698795359845507
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.46247605822073906,
+        "loser_mean": 0.5077924852924853,
+        "gap": -0.04531642707174627,
+        "std_gap": -0.13745784998451857
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 16.170212765957448,
+        "loser_mean": 19.6,
+        "gap": -3.4297872340425535,
+        "std_gap": -0.12107196525354631
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 16.170212765957448,
+        "loser_mean": 19.6,
+        "gap": -3.4297872340425535,
+        "std_gap": -0.12107196525354631
+      }
+    ],
+    "2024_top_features": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.23431361213681196,
+        "loser_mean": 0.11894089644390529,
+        "gap": 0.11537271569290666,
+        "std_gap": 0.9658704504511921
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.6892266036855392,
+        "loser_mean": 2.548529890954244,
+        "gap": -0.8593032872687048,
+        "std_gap": -0.8646119091370328
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 3.1707317073170733,
+        "loser_mean": 5.650602409638554,
+        "gap": -2.479870702321481,
+        "std_gap": -0.7675421336413727
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.3170731707317073,
+        "loser_mean": 0.08734939759036145,
+        "gap": 0.22972377314134587,
+        "std_gap": 0.7267350902907846
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 80.1951219512195,
+        "loser_mean": 59.19578313253012,
+        "gap": 20.999338818689388,
+        "std_gap": 0.6453771521998294
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 80.1951219512195,
+        "loser_mean": 59.19578313253012,
+        "gap": 20.999338818689388,
+        "std_gap": 0.6453771521998294
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 7.363414634146341,
+        "loser_mean": 21.201807228915662,
+        "gap": -13.83839259476932,
+        "std_gap": -0.5600224900501541
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 23.0,
+        "loser_mean": 12.75301204819277,
+        "gap": 10.24698795180723,
+        "std_gap": 0.45181083672931743
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 9.097560975609756,
+        "loser_mean": 9.94578313253012,
+        "gap": -0.8482221569203645,
+        "std_gap": -0.30931864950416793
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.4119505832920467,
+        "loser_mean": 0.4929148328244714,
+        "gap": -0.0809642495324247,
+        "std_gap": -0.23616536897416882
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 9.146341463414634,
+        "loser_mean": 11.430722891566266,
+        "gap": -2.2843814281516313,
+        "std_gap": -0.10980961689379233
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 9.146341463414634,
+        "loser_mean": 11.430722891566266,
+        "gap": -2.2843814281516313,
+        "std_gap": -0.10980961689379233
+      }
+    ],
+    "2025_top_features": [
+      {
+        "feature": "implied_prob",
+        "winner_mean": 0.33639433077076525,
+        "loser_mean": 0.10403336987960289,
+        "gap": 0.23236096089116237,
+        "std_gap": 1.5868422380695273
+      },
+      {
+        "feature": "is_fav",
+        "winner_mean": 0.46153846153846156,
+        "loser_mean": 0.06880733944954129,
+        "gap": 0.39273112208892025,
+        "std_gap": 1.2519108280582343
+      },
+      {
+        "feature": "log_sp",
+        "winner_mean": 1.4425049277513131,
+        "loser_mean": 2.7926075243313804,
+        "gap": -1.3501025965800673,
+        "std_gap": -1.1686628953532179
+      },
+      {
+        "feature": "sp_rank",
+        "winner_mean": 2.730769230769231,
+        "loser_mean": 5.926605504587156,
+        "gap": -3.1958362738179256,
+        "std_gap": -0.9385300370618632
+      },
+      {
+        "feature": "sp_dec",
+        "winner_mean": 7.321153846153846,
+        "loser_mean": 28.892660550458718,
+        "gap": -21.571506704304873,
+        "std_gap": -0.684392637370237
+      },
+      {
+        "feature": "rpr_num",
+        "winner_mean": 72.03846153846153,
+        "loser_mean": 50.26146788990825,
+        "gap": 21.77699364855328,
+        "std_gap": 0.6825756988182051
+      },
+      {
+        "feature": "rpr_vs_field",
+        "winner_mean": 72.03846153846153,
+        "loser_mean": 50.26146788990825,
+        "gap": 21.77699364855328,
+        "std_gap": 0.6825756988182051
+      },
+      {
+        "feature": "ts_num",
+        "winner_mean": 22.846153846153847,
+        "loser_mean": 13.68348623853211,
+        "gap": 9.162667607621737,
+        "std_gap": 0.40052561526175845
+      },
+      {
+        "feature": "field_size",
+        "winner_mean": 9.384615384615385,
+        "loser_mean": 10.321100917431192,
+        "gap": -0.9364855328158068,
+        "std_gap": -0.3138782037245074
+      },
+      {
+        "feature": "or_num",
+        "winner_mean": 4.461538461538462,
+        "loser_mean": 6.477064220183486,
+        "gap": -2.0155257586450244,
+        "std_gap": -0.10976117766296811
+      },
+      {
+        "feature": "or_vs_field",
+        "winner_mean": 4.461538461538462,
+        "loser_mean": 6.477064220183486,
+        "gap": -2.0155257586450244,
+        "std_gap": -0.10976117766296811
+      },
+      {
+        "feature": "draw_pct",
+        "winner_mean": 0.510158833122634,
+        "loser_mean": 0.4952388110779908,
+        "gap": 0.01492002204464321,
+        "std_gap": 0.04551070418625152
+      }
+    ]
+  },
+  "G_is_model_mostly_learning_SP_RPR_OR": {
+    "global_feature_importance_share": {
+      "market_share": 0.41624155957323755,
+      "rating_share": 0.5837584404267624,
+      "doctrine_share": 0.0,
+      "combined_market_rating_share": 1.0
+    },
+    "interpretation": [
+      "Combined market + rating share is 1.0000, which is effectively the entire learned signal.",
+      "Doctrine feature share is only 0.0000.",
+      "So yes: this first dry-run is overwhelmingly learning market and rating structure rather than distinctive doctrine signal."
+    ]
+  },
+  "H_doctrine_features_dead_missing_or_drowned": {
+    "distribution": {
+      "runs_since_win": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 5.0,
+        "std": 0.0
+      },
+      "runs_since_place": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 2.0,
+        "std": 0.0
+      },
+      "runs_since_mkt_support": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 3.0,
+        "std": 0.0
+      },
+      "curr_or_minus_last_win_or": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "curr_or_minus_best_or": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "mark_compression_score": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "release_window_score": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "course_fit_score": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 0.33,
+        "std": 0.0
+      },
+      "going_fit_score": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 0.33,
+        "std": 0.0
+      },
+      "distance_fit_score": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 0.33,
+        "std": 0.0
+      },
+      "quiet_run_score": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "trainer_timing_score": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 0.12,
+        "std": 0.0
+      },
+      "jockey_switch_intent": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "odds_resilience_score": {
+        "nonzero_rate": 1.0,
+        "mean_abs": 3.0,
+        "std": 0.0
+      },
+      "odds_contraction_score": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "decoy_support_flag": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "setup_run_flag": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      },
+      "cash_run_flag": {
+        "nonzero_rate": 0.0,
+        "mean_abs": 0.0,
+        "std": 0.0
+      }
+    },
+    "constant_features": [
+      "runs_since_win",
+      "runs_since_place",
+      "runs_since_mkt_support",
+      "curr_or_minus_last_win_or",
+      "curr_or_minus_best_or",
+      "mark_compression_score",
+      "release_window_score",
+      "course_fit_score",
+      "going_fit_score",
+      "distance_fit_score",
+      "quiet_run_score",
+      "trainer_timing_score",
+      "jockey_switch_intent",
+      "odds_resilience_score",
+      "odds_contraction_score",
+      "decoy_support_flag",
+      "setup_run_flag",
+      "cash_run_flag"
+    ],
+    "zero_features": [
+      "curr_or_minus_last_win_or",
+      "curr_or_minus_best_or",
+      "mark_compression_score",
+      "release_window_score",
+      "quiet_run_score",
+      "jockey_switch_intent",
+      "odds_contraction_score",
+      "decoy_support_flag",
+      "setup_run_flag",
+      "cash_run_flag"
+    ],
+    "root_cause_evidence": [
+      "Historical backfill calls _build_live_features(r_norm, nrace, [], []) in scripts/backfill_historical_feature_store.py.",
+      "app/services/velo_prime_service.py then seeds v17 doctrine fields from DEFAULTS when not pre-computed.",
+      "As a result, many doctrine features are constant defaults or always zero across the whole cohort."
+    ],
+    "verdict": "dead_or_defaulted"
+  },
+  "I_calibration_by_jurisdiction": {
+    "HK_market_ece": 0.030610113604093624,
+    "HK_candidate_ece": 0.01556049637543216,
+    "FR_market_ece": 0.0422099864443429,
+    "FR_candidate_ece": 0.019395816566096437,
+    "interpretation": [
+      "Candidate calibration ECE is better than market in both HK and FR.",
+      "That means HK failure is not simply poor average calibration; it is more likely a few high-confidence misses that hurt log loss disproportionately."
+    ]
+  },
+  "J_market_rank_lift_by_jurisdiction": {
+    "HK": {
+      "log_loss_delta_vs_market": 0.40875379511643706,
+      "brier_delta_vs_market": -0.01746300473535871,
+      "top1_delta_vs_market": 0.2068965517241379,
+      "top3_delta_vs_market": 0.31034482758620685
+    },
+    "FR": {
+      "log_loss_delta_vs_market": -0.30379558322018707,
+      "brier_delta_vs_market": -0.01161982606571027,
+      "top1_delta_vs_market": 0.09523809523809523,
+      "top3_delta_vs_market": 0.09523809523809523
+    },
+    "interpretation": [
+      "HK shows better hit-rate lift but worse log loss, which is the signature of brittle confidence.",
+      "FR shows improvement on both ranking and probability metrics."
+    ]
+  },
+  "K_sample_size_warnings": {
+    "overall_test": {
+      "races": 114,
+      "runners": 1014
+    },
+    "HK_test": {
+      "races": 29,
+      "runners": 319
+    },
+    "FR_test": {
+      "races": 84,
+      "runners": 683
+    },
+    "JPN_test": {
+      "races": 1,
+      "runners": 12
+    },
+    "year_2025": {
+      "races": 26,
+      "runners": 244
+    },
+    "warning": "JPN and 2025 are too small for hard gating beyond directional diagnostics."
+  },
+  "L_overfit_root_cause": {
+    "reported_overfit": {
+      "status": "high",
+      "relative_log_loss_increase_validation_vs_train": 0.4461606321434031,
+      "relative_log_loss_increase_test_vs_train": 0.6350321880802616,
+      "relative_brier_increase_validation_vs_train": 0.30197810013194837,
+      "relative_brier_increase_test_vs_train": 0.6812046069310375
+    },
+    "root_causes": [
+      "Nonlinear GBM + isotonic on a relatively small out-of-time test slice.",
+      "Doctrine layer is effectively defaulted, so the model is fitting mostly market and rating structure with little extra robust signal.",
+      "Temporal drift between 2017-2020 train and 2023-2025 test, plus a strong FR/HK composition shift.",
+      "Small 2025 proxy-macro slice amplifies log-loss sensitivity to a few overconfident misses."
+    ]
+  },
+  "M_recommended_V2_experiment_design": {
+    "mandatory_ablation_plan": [
+      "1. Market-only baseline",
+      "2. Ratings-only baseline",
+      "3. Doctrine-only feature set",
+      "4. Market + ratings",
+      "5. Market + ratings + doctrine",
+      "6. Jurisdiction-specific calibration",
+      "7. HK-only diagnostic model",
+      "8. FR-only diagnostic model"
+    ],
+    "must_change_before_v2": [
+      "Rebuild the historical doctrine feature layer with real horse-history context instead of DEFAULTS-only backfill.",
+      "Keep the same offline-only guardrails and the same grouped chronological split.",
+      "Treat 2025 as sensitivity analysis, not the main source of lift claims."
+    ],
+    "recommendation_option": "D",
+    "recommendation_text": "Build stronger doctrine features first, then run the V2 ablation dry-run."
+  }
+}
