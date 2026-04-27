@@ -1,6 +1,7 @@
 """
-BHA Macro Context — Phase B
-Provides structural racing context from the BHA Data Pack (2012-2024).
+BHA Macro Context - Phase B
+Provides structural racing context from the BHA Data Pack (2012-2024),
+with explicit 2025 proxy support when the parquet has not yet been extended.
 
 Usage at inference time:
     from src.intelligence.macro_regime.bha_macro_context import get_macro_context
@@ -15,7 +16,7 @@ from __future__ import annotations
 
 import logging
 import warnings
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 from typing import Optional
@@ -25,69 +26,68 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 _DATA_PATH = Path(__file__).parent.parent.parent.parent / "data" / "bha_macro_features.parquet"
+BASE_CONTEXT_VERSION = "BHA_MACRO_2012_2024_V1"
+PROXY_CONTEXT_VERSION_2025 = "2025_PROXY_V1"
+PROXY_SOURCE_2025 = "2024_baseline_extended"
+_VALID_CODES = {"flat", "jump", "aw"}
 
-# ─── Data class ────────────────────────────────────────────────────────────────
 
 @dataclass
 class MacroContext:
     """Structural macro context for a given year + race_code."""
 
     year: int
-    race_code: str  # 'flat', 'jump', 'aw'
+    race_code: str  # "flat", "jump", "aw"
 
     # Raw structural metrics
     avg_field_size: Optional[float] = None
     fixtures_scheduled: Optional[int] = None
     fixtures_ran: Optional[int] = None
     fixtures_abandoned: Optional[int] = None
-    fav_compress_pct: Optional[float] = None  # % SP favs at even money or shorter
+    fav_compress_pct: Optional[float] = None
     total_starts: Optional[int] = None
     individual_runners: Optional[int] = None
     avg_runs_per_horse: Optional[float] = None
 
-    # Derived macro indices (normalised vs long-run mean, excl COVID)
-    competitiveness_index: Optional[float] = None        # overall (flat+jump avg)
-    competitiveness_index_code: Optional[float] = None  # code-specific
-    fixture_strain_index: Optional[float] = None        # ran/scheduled
-    abandonment_stress_index: Optional[float] = None    # abandoned/scheduled, [0,1]
-    favourite_compression_index: Optional[float] = None # fav_compress / long-run mean
-    run_density_index: Optional[float] = None           # avg_runs / long-run mean
+    # Derived macro indices
+    competitiveness_index: Optional[float] = None
+    competitiveness_index_code: Optional[float] = None
+    fixture_strain_index: Optional[float] = None
+    abandonment_stress_index: Optional[float] = None
+    favourite_compression_index: Optional[float] = None
+    run_density_index: Optional[float] = None
 
     # Categorical regime
-    field_size_regime: str = "unknown"  # tight / below_normal / normal / above_normal / deep
+    field_size_regime: str = "unknown"
 
-    # Flags
+    # Flags / provenance
     covid_year: bool = False
     ambiguity_flag: bool = False
-    macro_available: bool = True  # False when served from fallback (no real parquet)
+    macro_available: bool = True
+    macro_context_version: str = BASE_CONTEXT_VERSION
+    macro_year_source: str = "race_date"
+    macro_year_fallback: bool = False
+    macro_proxy_source: Optional[str] = None
+    macro_proxy_approved: Optional[bool] = None
 
-    # Derived classifications (set by classify())
+    # Derived classifications
     chaos_mode: bool = False
     low_field_warning: bool = False
-    favourite_trap_risk: str = "normal"  # low / normal / elevated / high
+    favourite_trap_risk: str = "normal"
     regime_label: str = "normal"
 
     def classify(self) -> "MacroContext":
-        """Compute derived classification flags from raw indices."""
-
-        # Chaos mode: COVID truncated season (fixture_strain_index < 0.72 indicates
-        # structural season collapse, not just weather abandonments).
-        # Standard weather abandon years (2018-2019, 2023) are NOT chaos — they are
-        # normal variation. Only use this flag for regime-level season disruption.
         structural_collapse = (
-            self.fixture_strain_index is not None and
-            self.fixture_strain_index < 0.72
+            self.fixture_strain_index is not None
+            and self.fixture_strain_index < 0.72
         )
         self.chaos_mode = bool(self.covid_year or structural_collapse)
 
-        # Low-field warning: competitiveness below -1 SD proxy (<0.94)
         self.low_field_warning = bool(
-            self.competitiveness_index_code is not None and
-            self.competitiveness_index_code < 0.94
+            self.competitiveness_index_code is not None
+            and self.competitiveness_index_code < 0.94
         )
 
-        # Favourite trap risk:
-        # High compression (lots of short-priced favs) = higher risk of punters over-betting top
         if self.favourite_compression_index is None:
             self.favourite_trap_risk = "unknown"
         elif self.favourite_compression_index > 1.20:
@@ -99,7 +99,6 @@ class MacroContext:
         else:
             self.favourite_trap_risk = "normal"
 
-        # Regime label
         if self.chaos_mode:
             self.regime_label = "chaos"
         elif self.low_field_warning:
@@ -112,7 +111,6 @@ class MacroContext:
         return self
 
     def to_feature_dict(self) -> dict:
-        """Return a flat dict of macro features for appending to a race-level row."""
         return {
             "macro_competitiveness_index": self.competitiveness_index,
             "macro_competitiveness_index_code": self.competitiveness_index_code,
@@ -127,143 +125,185 @@ class MacroContext:
             "macro_field_size_regime": self.field_size_regime,
             "macro_favourite_trap_risk": self.favourite_trap_risk,
             "macro_regime_label": self.regime_label,
+            "macro_context_version": self.macro_context_version,
+            "macro_year_used": self.year,
+            "macro_year_source": self.macro_year_source,
+            "macro_year_fallback": self.macro_year_fallback,
+            "macro_proxy_source": self.macro_proxy_source,
+            "macro_proxy_approved": self.macro_proxy_approved,
         }
 
-
-# ─── Loader (cached) ───────────────────────────────────────────────────────────
 
 @lru_cache(maxsize=1)
 def _load_macro_df() -> pd.DataFrame:
     if not _DATA_PATH.exists():
-        # Parquet absent — return a single-row DataFrame of neutral/normal values.
-        # get_macro_context() will find this row and return a MacroContext classified
-        # as regime_label="normal", preventing macro_ctx=None downstream.
         logger.warning(
             "BHA macro features parquet not found at %s. "
-            "Using fallback neutral regime — regime corrections are DISABLED. "
-            "Run: python scripts/cache_bha_macro_features.py to restore.",
+            "Using fallback neutral regime - regime corrections are DISABLED.",
             _DATA_PATH,
         )
-        return pd.DataFrame({
-            "year": [2024],
-            "race_code": ["flat"],
-            "avg_field_size": [10.0],
-            "fixtures_scheduled": [1000],
-            "fixtures_ran": [950],
-            "fixtures_abandoned": [50],
-            "fav_compress_pct": [0.35],
-            "total_starts": [10000],
-            "individual_runners": [5000],
-            "avg_runs_per_horse": [2.0],
-            "competitiveness_index": [1.0],
-            "competitiveness_index_code": [1.0],
-            "fixture_strain_index": [0.95],
-            "abandonment_stress_index": [0.05],
-            "favourite_compression_index": [1.0],
-            "run_density_index": [1.0],
-            "field_size_regime": ["normal"],
-            "covid_year": [False],
-            "ambiguity_flag": [False],
-            "macro_available": [False],
-        })
+        return pd.DataFrame(
+            {
+                "year": [2024, 2024, 2024],
+                "race_code": ["flat", "jump", "aw"],
+                "avg_field_size": [10.0, 10.0, 10.0],
+                "fixtures_scheduled": [1000, 1000, 1000],
+                "fixtures_ran": [950, 950, 950],
+                "fixtures_abandoned": [50, 50, 50],
+                "fav_compress_pct": [0.35, 0.35, 0.35],
+                "total_starts": [10000, 10000, 10000],
+                "individual_runners": [5000, 5000, 5000],
+                "avg_runs_per_horse": [2.0, 2.0, 2.0],
+                "competitiveness_index": [1.0, 1.0, 1.0],
+                "competitiveness_index_code": [1.0, 1.0, 1.0],
+                "fixture_strain_index": [0.95, 0.95, 0.95],
+                "abandonment_stress_index": [0.05, 0.05, 0.05],
+                "favourite_compression_index": [1.0, 1.0, 1.0],
+                "run_density_index": [1.0, 1.0, 1.0],
+                "field_size_regime": ["normal", "normal", "normal"],
+                "covid_year": [False, False, False],
+                "ambiguity_flag": [False, False, False],
+                "macro_available": [False, False, False],
+            }
+        )
     return pd.read_parquet(_DATA_PATH)
 
 
-# ─── Public API ────────────────────────────────────────────────────────────────
+def _value(row_obj, column: str):
+    value = row_obj.get(column)
+    if value is None:
+        return None
+    try:
+        import math
 
-_VALID_CODES = {"flat", "jump", "aw"}
+        return None if math.isnan(float(value)) else float(value)
+    except (TypeError, ValueError):
+        return value
+
+
+def _context_from_row(
+    row_obj,
+    *,
+    effective_year: int,
+    race_code: str,
+    macro_context_version: str,
+    macro_year_fallback: bool,
+    macro_proxy_source: Optional[str] = None,
+    macro_proxy_approved: Optional[bool] = None,
+) -> MacroContext:
+    return MacroContext(
+        year=int(effective_year),
+        race_code=race_code,
+        avg_field_size=_value(row_obj, "avg_field_size"),
+        fixtures_scheduled=_value(row_obj, "fixtures_scheduled"),
+        fixtures_ran=_value(row_obj, "fixtures_ran"),
+        fixtures_abandoned=_value(row_obj, "fixtures_abandoned"),
+        fav_compress_pct=_value(row_obj, "fav_compress_pct"),
+        total_starts=_value(row_obj, "total_starts"),
+        individual_runners=_value(row_obj, "individual_runners"),
+        avg_runs_per_horse=_value(row_obj, "avg_runs_per_horse"),
+        competitiveness_index=_value(row_obj, "competitiveness_index"),
+        competitiveness_index_code=_value(row_obj, "competitiveness_index_code"),
+        fixture_strain_index=_value(row_obj, "fixture_strain_index"),
+        abandonment_stress_index=_value(row_obj, "abandonment_stress_index"),
+        favourite_compression_index=_value(row_obj, "favourite_compression_index"),
+        run_density_index=_value(row_obj, "run_density_index"),
+        field_size_regime=str(row_obj.get("field_size_regime", "unknown")),
+        covid_year=bool(row_obj.get("covid_year", 0)),
+        ambiguity_flag=bool(row_obj.get("ambiguity_flag", 0)),
+        macro_available=bool(row_obj.get("macro_available", True)),
+        macro_context_version=macro_context_version,
+        macro_year_source="race_date",
+        macro_year_fallback=macro_year_fallback,
+        macro_proxy_source=macro_proxy_source,
+        macro_proxy_approved=macro_proxy_approved,
+    ).classify()
+
 
 def get_macro_context(year: int, race_code: str) -> MacroContext:
     """
     Look up structural macro context for a given year and race_code.
 
-    Args:
-        year:      Calendar year (2012-2024). Outside range → nearest boundary + warning.
-        race_code: 'flat', 'jump', or 'aw'. Unrecognised → defaults to 'flat' + warning.
-
-    Returns:
-        MacroContext with all indices populated and classify() already called.
+    2025 is handled as an explicit proxy regime sourced from the 2024 baseline.
+    Other out-of-range years retain the original clamped-boundary behavior.
     """
-    code = race_code.lower().strip()
+    code = str(race_code or "").lower().strip()
     if code not in _VALID_CODES:
-        warnings.warn(f"Unknown race_code '{race_code}' — defaulting to 'flat'", stacklevel=2)
+        warnings.warn(f"Unknown race_code '{race_code}' - defaulting to 'flat'", stacklevel=2)
         code = "flat"
 
     df = _load_macro_df()
+    min_year = int(df["year"].min())
+    max_year = int(df["year"].max())
 
-    # Clamp year to available range
-    min_yr, max_yr = int(df["year"].min()), int(df["year"].max())
-    clamped = max(min_yr, min(max_yr, year))
-    if clamped != year:
+    if year == max_year + 1:
+        proxy_row = df[(df["year"] == max_year) & (df["race_code"] == code)]
+        if proxy_row.empty:
+            warnings.warn(
+                f"No proxy macro data found for year={year}, code={code}; returning empty proxy context",
+                stacklevel=2,
+            )
+            return MacroContext(
+                year=year,
+                race_code=code,
+                macro_context_version=PROXY_CONTEXT_VERSION_2025,
+                macro_year_source="race_date",
+                macro_year_fallback=False,
+                macro_proxy_source=PROXY_SOURCE_2025,
+                macro_proxy_approved=True,
+            ).classify()
         warnings.warn(
-            f"Year {year} outside BHA data range ({min_yr}-{max_yr}) — using {clamped}",
+            f"Year {year} outside BHA data range ({min_year}-{max_year}) - "
+            f"using explicit {PROXY_CONTEXT_VERSION_2025} from {PROXY_SOURCE_2025}",
+            stacklevel=2,
+        )
+        return _context_from_row(
+            proxy_row.iloc[0],
+            effective_year=year,
+            race_code=code,
+            macro_context_version=PROXY_CONTEXT_VERSION_2025,
+            macro_year_fallback=False,
+            macro_proxy_source=PROXY_SOURCE_2025,
+            macro_proxy_approved=True,
+        )
+
+    clamped_year = max(min_year, min(max_year, year))
+    if clamped_year != year:
+        warnings.warn(
+            f"Year {year} outside BHA data range ({min_year}-{max_year}) - using {clamped_year}",
             stacklevel=2,
         )
 
-    row = df[(df["year"] == clamped) & (df["race_code"] == code)]
-
+    row = df[(df["year"] == clamped_year) & (df["race_code"] == code)]
     if row.empty:
-        warnings.warn(f"No macro data found for year={clamped}, code={code}", stacklevel=2)
+        warnings.warn(f"No macro data found for year={clamped_year}, code={code}", stacklevel=2)
         return MacroContext(year=year, race_code=code).classify()
 
-    r = row.iloc[0]
-
-    def _v(col):
-        val = r.get(col)
-        if val is None:
-            return None
-        try:
-            import math
-            return None if math.isnan(float(val)) else float(val)
-        except (TypeError, ValueError):
-            return val
-
-    ctx = MacroContext(
-        year=int(clamped),
+    return _context_from_row(
+        row.iloc[0],
+        effective_year=clamped_year,
         race_code=code,
-        avg_field_size=_v("avg_field_size"),
-        fixtures_scheduled=_v("fixtures_scheduled"),
-        fixtures_ran=_v("fixtures_ran"),
-        fixtures_abandoned=_v("fixtures_abandoned"),
-        fav_compress_pct=_v("fav_compress_pct"),
-        total_starts=_v("total_starts"),
-        individual_runners=_v("individual_runners"),
-        avg_runs_per_horse=_v("avg_runs_per_horse"),
-        competitiveness_index=_v("competitiveness_index"),
-        competitiveness_index_code=_v("competitiveness_index_code"),
-        fixture_strain_index=_v("fixture_strain_index"),
-        abandonment_stress_index=_v("abandonment_stress_index"),
-        favourite_compression_index=_v("favourite_compression_index"),
-        run_density_index=_v("run_density_index"),
-        field_size_regime=str(r.get("field_size_regime", "unknown")),
-        covid_year=bool(r.get("covid_year", 0)),
-        ambiguity_flag=bool(r.get("ambiguity_flag", 0)),
-        macro_available=bool(r.get("macro_available", True)),
+        macro_context_version=BASE_CONTEXT_VERSION,
+        macro_year_fallback=False,
     )
-
-    return ctx.classify()
 
 
 def get_macro_context_for_race(date_str: str, race_code: str) -> MacroContext:
-    """
-    Convenience wrapper: accepts a date string (YYYY-MM-DD or YYYY) and race_code.
-    Extracts the year automatically.
-    """
+    """Convenience wrapper: accepts a date string and extracts the year automatically."""
     try:
         year = int(str(date_str)[:4])
     except (ValueError, TypeError):
-        warnings.warn(f"Cannot parse year from '{date_str}' — using 2024", stacklevel=2)
+        warnings.warn(f"Cannot parse year from '{date_str}' - using 2024", stacklevel=2)
         year = 2024
     return get_macro_context(year=year, race_code=race_code)
 
 
-# ─── Quick self-test ────────────────────────────────────────────────────────────
-
 if __name__ == "__main__":
-    for yr, code in [(2019, "flat"), (2020, "jump"), (2022, "aw"), (2024, "flat")]:
-        ctx = get_macro_context(yr, code)
-        d = ctx.to_feature_dict()
-        print(f"\n{yr} {code}:")
-        print(f"  field_size={ctx.avg_field_size}  ci_code={ctx.competitiveness_index_code}")
-        print(f"  fav_trap={ctx.favourite_trap_risk}  regime={ctx.regime_label}  chaos={ctx.chaos_mode}")
-        print(f"  feature_dict keys: {list(d.keys())}")
+    for year_value, code_value in [(2019, "flat"), (2020, "jump"), (2022, "aw"), (2024, "flat"), (2025, "flat")]:
+        ctx = get_macro_context(year_value, code_value)
+        feature_dict = ctx.to_feature_dict()
+        print(f"\n{year_value} {code_value}:")
+        print(f"  field_size={ctx.avg_field_size} ci_code={ctx.competitiveness_index_code}")
+        print(f"  fav_trap={ctx.favourite_trap_risk} regime={ctx.regime_label} chaos={ctx.chaos_mode}")
+        print(f"  macro_context_version={ctx.macro_context_version} proxy_source={ctx.macro_proxy_source}")
+        print(f"  feature_dict keys: {list(feature_dict.keys())}")

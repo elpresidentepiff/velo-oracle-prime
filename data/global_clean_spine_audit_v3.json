@@ -1,0 +1,213 @@
+{
+  "audit_version": "v3",
+  "generated_at": "2026-04-27T11:21:51.673682+00:00",
+  "scope": {
+    "source": "historical_raceform",
+    "is_historical_backfill": true,
+    "reconstruction_version": "V17_B1",
+    "accepted_year_range": "2017-2025"
+  },
+  "summary": {
+    "A_accepted_clean_race_event_count": 1697,
+    "B_accepted_historical_runner_count": 18575,
+    "C_accepted_hfs_row_count": 18575,
+    "D_race_results_runner_results_hfs_parity": {
+      "accepted_race_events": 1697,
+      "accepted_race_results_rows": 1697,
+      "accepted_runner_rows": 18575,
+      "accepted_hfs_rows": 18575,
+      "runner_hfs_match": true,
+      "missing_hfs_rows": 0,
+      "orphan_hfs_rows": 0,
+      "race_results_match": true
+    },
+    "E_winner_parity": {
+      "ok": true,
+      "bad_race_count": 0,
+      "bad_races_sample": {}
+    },
+    "F_duplicate_race_id_count": 0,
+    "G_duplicate_event_key_count": 0,
+    "H_duplicate_race_id_horse_id_count": 0,
+    "I_missing_hfs_rows": 0,
+    "J_orphan_hfs_rows": 0,
+    "K_vector_dimension_distribution": {
+      "37": 18575
+    },
+    "L_MPI_stats": {
+      "null_count": 0,
+      "min": 0.1277,
+      "max": 100.0,
+      "variance": 894.6195363333167
+    },
+    "M_chaos_bloom_stats": {
+      "null_count": 0,
+      "min": 37.3413,
+      "max": 97.3157,
+      "variance": 60.28016533286081
+    },
+    "N_macro_year_mismatch_count": 0,
+    "O_doctrine_tag_completeness": {
+      "signal_contract_version_complete_hfs": "18575/18575",
+      "mpi_source_complete_hfs": "18575/18575",
+      "chaos_bloom_source_complete_hfs": "18575/18575",
+      "signal_contract_version_complete_races": "1697/1697"
+    },
+    "P_provenance_tag_completeness": {
+      "event_identity_contract_complete_hfs": "18575/18575",
+      "data_owner_confirmed_true_hfs": "18575/18575",
+      "training_eligible_pending_hfs": "18575/18575",
+      "source_historical_raceform_hfs": "18575/18575",
+      "bridge_version_complete_hfs": "18575/18575",
+      "discovery_version_complete_hfs": "18575/18575",
+      "source_table_complete_hfs": "244/18575",
+      "event_identity_contract_complete_races": "1697/1697",
+      "data_owner_confirmed_true_races": "1697/1697",
+      "training_eligible_pending_races": "1697/1697",
+      "source_historical_raceform_races": "1697/1697",
+      "bridge_version_complete_races": "1697/1697",
+      "discovery_version_complete_races": "1697/1697",
+      "source_table_complete_races": "1697/1697"
+    },
+    "Q_training_eligible_distribution": {
+      "pending_global_training_gate": 18575
+    },
+    "R_race_date_min_max": {
+      "min": "2017-01-01",
+      "max": "2025-07-05"
+    },
+    "S_jurisdiction_breakdown": {
+      "HK": 1029,
+      "FR": 649,
+      "JPN": 19
+    },
+    "T_year_breakdown": {
+      "2021": 321,
+      "2025": 26,
+      "2017": 294,
+      "2018": 280,
+      "2019": 292,
+      "2020": 194,
+      "2022": 202,
+      "2023": 47,
+      "2024": 41
+    },
+    "U_blocked_block_025_summary": {
+      "bridge_block": "OASIS_BLOCK_025",
+      "status": "accepted",
+      "race_events": 26,
+      "runner_rows": 244,
+      "race_year": 2025,
+      "archive_exhausted": true,
+      "remaining_rows": {
+        "races": 26,
+        "race_results": 26,
+        "runner_results": 244,
+        "historical_feature_store": 244
+      },
+      "macro_year_mismatch_count": 0,
+      "macro_year_used_distribution": {
+        "2025": 244
+      },
+      "macro_context_version_distribution": {
+        "2025_PROXY_V1": 244
+      }
+    },
+    "macro_year_used_distribution": {
+      "2025": 244,
+      "2017": 3241,
+      "2019": 3196,
+      "2018": 3094,
+      "2020": 2226,
+      "2021": 3593,
+      "2022": 2211,
+      "2023": 397,
+      "2024": 373
+    },
+    "macro_context_version_distribution": {
+      "2025_PROXY_V1": 244,
+      "None": 18331
+    },
+    "course_breakdown_top_50": {
+      "Sha Tin (HK)": 586,
+      "Chantilly (FR)": 525,
+      "Happy Valley (HK)": 443,
+      "Compiegne (FR)": 124,
+      "Kokura (JPN)": 11,
+      "Sapporo (JPN)": 8
+    },
+    "story_anchor_narrative_null_classification": {
+      "expected_historical_nulls": 18575
+    }
+  },
+  "decision_gate": {
+    "parity_holds": true,
+    "winner_parity_100": true,
+    "duplicates_zero": true,
+    "missing_vectors_zero": true,
+    "vector_length_37_only": true,
+    "MPI_nulls_zero": true,
+    "chaos_bloom_nulls_zero": true,
+    "MPI_variance_gt_zero": true,
+    "chaos_bloom_variance_gt_zero": true,
+    "macro_year_mismatch_zero": true,
+    "doctrine_tags_complete": true,
+    "provenance_tags_complete": true,
+    "training_eligible_pending_only": true,
+    "pass": true
+  },
+  "samples": {
+    "clean_event_keys_sample": [
+      "778308|Happy Valley (HK)|2021-02-17",
+      "778730|Chantilly (FR)|2021-02-19",
+      "778888|Chantilly (FR)|2021-02-19",
+      "778992|Chantilly (FR)|2021-02-22",
+      "779003|Chantilly (FR)|2021-02-22",
+      "778945|Happy Valley (HK)|2021-02-24",
+      "778950|Happy Valley (HK)|2021-02-24",
+      "778951|Happy Valley (HK)|2021-02-24",
+      "779092|Sha Tin (HK)|2021-02-28",
+      "779095|Sha Tin (HK)|2021-02-28",
+      "779096|Sha Tin (HK)|2021-02-28",
+      "779314|Chantilly (FR)|2021-03-02",
+      "779316|Chantilly (FR)|2021-03-02",
+      "779227|Happy Valley (HK)|2021-03-03",
+      "779229|Happy Valley (HK)|2021-03-03",
+      "779230|Happy Valley (HK)|2021-03-03",
+      "779231|Happy Valley (HK)|2021-03-03",
+      "779232|Happy Valley (HK)|2021-03-03",
+      "779773|Sha Tin (HK)|2021-03-07",
+      "779774|Sha Tin (HK)|2021-03-07",
+      "779775|Sha Tin (HK)|2021-03-07",
+      "779776|Sha Tin (HK)|2021-03-07",
+      "779777|Sha Tin (HK)|2021-03-07",
+      "779778|Sha Tin (HK)|2021-03-07",
+      "779882|Chantilly (FR)|2021-03-09",
+      "780005|Chantilly (FR)|2021-03-09",
+      "779942|Chantilly (FR)|2021-03-10",
+      "780061|Chantilly (FR)|2021-03-10",
+      "779929|Happy Valley (HK)|2021-03-10",
+      "779930|Happy Valley (HK)|2021-03-10",
+      "779933|Happy Valley (HK)|2021-03-10",
+      "779935|Happy Valley (HK)|2021-03-10",
+      "780068|Sha Tin (HK)|2021-03-13",
+      "780076|Sha Tin (HK)|2021-03-13",
+      "780243|Chantilly (FR)|2021-03-15",
+      "780301|Chantilly (FR)|2021-03-16",
+      "780302|Chantilly (FR)|2021-03-16",
+      "780743|Compiegne (FR)|2021-03-17",
+      "780763|Compiegne (FR)|2021-03-17",
+      "780211|Happy Valley (HK)|2021-03-17",
+      "780212|Happy Valley (HK)|2021-03-17",
+      "780266|Chantilly (FR)|2021-03-18",
+      "780267|Chantilly (FR)|2021-03-18",
+      "780831|Chantilly (FR)|2021-03-18",
+      "780770|Sha Tin (HK)|2021-03-21",
+      "780916|Happy Valley (HK)|2021-03-24",
+      "780918|Happy Valley (HK)|2021-03-24",
+      "781060|Sha Tin (HK)|2021-03-28",
+      "781061|Sha Tin (HK)|2021-03-28",
+      "781062|Sha Tin (HK)|2021-03-28"
+    ]
+  }
+}

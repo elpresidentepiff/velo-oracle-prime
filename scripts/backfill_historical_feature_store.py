@@ -37,6 +37,7 @@ if str(ROOT) not in sys.path:
 from app.services.velo_prime_service import _build_live_features, score_race_velo_prime
 from app.services.model_manager import get_model_manager
 from scripts.integrity_hooks import log_integrity, run_integrity_checks_via_rpc
+from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
 
 # ---- Configuration ----
 RECONSTRUCTION_VERSION = "V17_B1"
@@ -175,8 +176,7 @@ def is_historical_race(race: dict[str, Any]) -> bool:
 SIGNAL_CONTRACT_VERSION = "HISTORICAL_SIGNAL_PROXY_V1"
 MPI_SOURCE_MARKET = "archive_proxy_market_rank_v1"
 CHAOS_SOURCE_MARKET = "archive_proxy_market_entropy_going_v1"
-MACRO_YEAR_MIN = 2012
-MACRO_YEAR_MAX = 2024
+BASE_MACRO_CONTEXT_VERSION = "BHA_MACRO_2012_2024_V1"
 
 
 def _runner_implied_probs(norm_runners: Sequence[dict[str, Any]]) -> list[float]:
@@ -293,12 +293,47 @@ def resolve_race_date_str(race: dict[str, Any]) -> Optional[str]:
     return None
 
 
-def macro_year_from_race_date(race_date: Optional[str]) -> int:
+def macro_year_from_race_date(race_date: Optional[str]) -> Optional[int]:
     try:
-        year = int(str(race_date)[:4])
+        return int(str(race_date)[:4])
     except (TypeError, ValueError):
-        return MACRO_YEAR_MAX
-    return max(MACRO_YEAR_MIN, min(MACRO_YEAR_MAX, year))
+        return None
+
+
+def infer_macro_race_code(race_type: Any) -> str:
+    text = str(race_type or "").lower()
+    return "jump" if any(token in text for token in ("hurdle", "chase", "nh flat")) else "flat"
+
+
+def derive_macro_context_metadata(race_date: Optional[str], race_type: Any) -> dict[str, Any]:
+    race_year = macro_year_from_race_date(race_date)
+    race_code = infer_macro_race_code(race_type)
+    metadata = {
+        "macro_year_used": race_year,
+        "macro_year_source": "race_date",
+        "macro_year_fallback": False,
+        "macro_context_version": BASE_MACRO_CONTEXT_VERSION,
+        "macro_proxy_source": None,
+        "macro_proxy_approved": None,
+    }
+    if not race_date:
+        return metadata
+    try:
+        ctx = get_macro_context_for_race(race_date, race_code)
+    except Exception:
+        return metadata
+
+    metadata.update(
+        {
+            "macro_year_used": ctx.year,
+            "macro_year_source": ctx.macro_year_source,
+            "macro_year_fallback": bool(ctx.macro_year_fallback),
+            "macro_context_version": ctx.macro_context_version,
+            "macro_proxy_source": ctx.macro_proxy_source,
+            "macro_proxy_approved": ctx.macro_proxy_approved,
+        }
+    )
+    return metadata
 
 
 def load_horse_name_lookup(sb: Client, horse_ids: Sequence[str]) -> dict[str, str]:
@@ -448,7 +483,7 @@ def reconstruct_race_payload(
     historical = is_historical_race(race)
     archive_mpi_map = compute_archive_mpi_proxies(norm_runners) if historical else {}
     archive_chaos = compute_archive_chaos_proxy(race, norm_runners) if historical else None
-    archive_macro_year = macro_year_from_race_date(race_date) if historical else None
+    archive_macro_meta = derive_macro_context_metadata(race_date, nrace.get("type")) if historical else {}
 
     rows: list[dict[str, Any]] = []
     traces: list[dict[str, Any]] = []
@@ -485,12 +520,23 @@ def reconstruct_race_payload(
             pred["data_owner_confirmed"] = raw_meta.get("data_owner_confirmed")
             pred["training_eligible"] = raw_meta.get("training_eligible")
             pred["archive_exhausted"] = raw_meta.get("archive_exhausted")
+            pred["source"] = raw_meta.get("source") or HISTORICAL_SOURCE
+            pred["bridge_version"] = raw_meta.get("bridge_version")
+            pred["discovery_version"] = raw_meta.get("discovery_version")
+            pred["source_table"] = raw_meta.get("source_table")
+            pred["source_race_id"] = raw_meta.get("source_race_id") or rid
             pred.setdefault("expected_historical_null", True)
             pred.setdefault("story_anchor", None)
             pred.setdefault("narrative_disruption", None)
             pred["signal_contract_version"] = SIGNAL_CONTRACT_VERSION
-            pred["macro_year_used"] = archive_macro_year
-            pred["macro_year_source"] = "race_date"
+            pred["macro_year_used"] = archive_macro_meta.get("macro_year_used")
+            pred["macro_year_source"] = archive_macro_meta.get("macro_year_source") or "race_date"
+            pred["macro_year_fallback"] = bool(archive_macro_meta.get("macro_year_fallback", False))
+            pred["macro_context_version"] = archive_macro_meta.get("macro_context_version")
+            if archive_macro_meta.get("macro_proxy_source") is not None:
+                pred["macro_proxy_source"] = archive_macro_meta.get("macro_proxy_source")
+            if archive_macro_meta.get("macro_proxy_approved") is not None:
+                pred["macro_proxy_approved"] = archive_macro_meta.get("macro_proxy_approved")
 
             if mpi_value is None and hid in archive_mpi_map:
                 mpi_value = archive_mpi_map[hid]

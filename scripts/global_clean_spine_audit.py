@@ -29,7 +29,7 @@ CHAOS_SOURCE = "archive_proxy_market_entropy_going_v1"
 EVENT_IDENTITY_CONTRACT = "race_id_course_race_date"
 TRAINING_ELIGIBLE = "pending_global_training_gate"
 MIN_ACCEPTED_YEAR = 2017
-MAX_ACCEPTED_YEAR = 2024
+MAX_ACCEPTED_YEAR = 2025
 
 
 def load_json_file(path: Path) -> dict[str, Any]:
@@ -169,22 +169,80 @@ def load_rows_by_race_ids(sb: Client, table: str, columns: str, race_ids: Sequen
     return rows
 
 
-def load_blocked_block_025_summary() -> dict[str, Any]:
+def load_blocked_block_025_summary(sb: Client) -> dict[str, Any]:
     manifest_path = DATA_DIR / "bridge_manifest_oasis_block_025.json"
     state = load_json_file(STATE_PATH) if STATE_PATH.exists() else {}
     manifest = load_json_file(manifest_path) if manifest_path.exists() else {}
     event_years = sorted({parse_date_str(event.get("race_date")).year for event in (manifest.get("race_events") or []) if parse_date_str(event.get("race_date"))})
     race_year = event_years[0] if len(event_years) == 1 else event_years
+    race_ids = [str(race_id) for race_id in (manifest.get("race_ids") or [])]
+    runner_count = int(manifest.get("runner_count", 0) or 0)
+    archive_exhausted = bool(manifest.get("archive_exhausted", state.get("archive_exhausted", False)))
+    if not race_ids:
+        return {
+            "bridge_block": manifest.get("bridge_block", "OASIS_BLOCK_025"),
+            "status": "missing_manifest_scope",
+            "race_events": len(manifest.get("race_events") or []),
+            "runner_rows": runner_count,
+            "race_year": race_year,
+            "archive_exhausted": archive_exhausted,
+        }
+
+    race_rows = load_rows_by_race_ids(sb, "races", "race_id,date", race_ids)
+    race_result_rows = load_rows_by_race_ids(sb, "race_results", "race_id", race_ids)
+    runner_rows = load_rows_by_race_ids(sb, "runner_results", "race_id,horse_id,is_winner", race_ids)
+    hfs_rows = [
+        row
+        for row in load_rows_by_race_ids(
+            sb,
+            "historical_feature_store",
+            "race_id,horse_id,race_date,feature_json,reconstruction_version",
+            race_ids,
+        )
+        if row.get("reconstruction_version") == RECONSTRUCTION_VERSION
+    ]
+
+    if not race_rows and not race_result_rows and not runner_rows and not hfs_rows:
+        return {
+            "bridge_block": manifest.get("bridge_block", "OASIS_BLOCK_025"),
+            "status": "rolled_back",
+            "race_events": len(manifest.get("race_events") or []),
+            "runner_rows": runner_count,
+            "reason": "macro_year_mismatch",
+            "race_year": race_year,
+            "macro_layer_support": "2012-2024",
+            "scorer_fallback": "2025 -> 2024",
+            "archive_exhausted": archive_exhausted,
+        }
+
+    macro_mismatch_count = 0
+    macro_year_used_distribution: Counter[str] = Counter()
+    macro_context_version_distribution: Counter[str] = Counter()
+    for row in hfs_rows:
+        feature_json = row.get("feature_json") if isinstance(row.get("feature_json"), dict) else {}
+        macro_year = feature_json.get("macro_year_used")
+        macro_year_used_distribution[str(macro_year)] += 1
+        macro_context_version_distribution[str(feature_json.get("macro_context_version"))] += 1
+        race_date = parse_date_str(row.get("race_date"))
+        if race_date is None or macro_year != race_date.year:
+            macro_mismatch_count += 1
+
     return {
-        "bridge_block": manifest.get("bridge_block", state.get("latest_failed_block", "OASIS_BLOCK_025")),
-        "status": "rolled_back",
+        "bridge_block": manifest.get("bridge_block", "OASIS_BLOCK_025"),
+        "status": "accepted" if len(race_result_rows) == len(race_ids) and len(runner_rows) == runner_count and len(hfs_rows) == runner_count and macro_mismatch_count == 0 else "partially_present",
         "race_events": len(manifest.get("race_events") or []),
-        "runner_rows": manifest.get("runner_count", 0),
-        "reason": "macro_year_mismatch",
+        "runner_rows": runner_count,
         "race_year": race_year,
-        "macro_layer_support": "2012-2024",
-        "scorer_fallback": "2025 -> 2024",
-        "archive_exhausted": bool(manifest.get("archive_exhausted", state.get("archive_exhausted", False))),
+        "archive_exhausted": archive_exhausted,
+        "remaining_rows": {
+            "races": len(race_rows),
+            "race_results": len(race_result_rows),
+            "runner_results": len(runner_rows),
+            "historical_feature_store": len(hfs_rows),
+        },
+        "macro_year_mismatch_count": macro_mismatch_count,
+        "macro_year_used_distribution": dict(macro_year_used_distribution),
+        "macro_context_version_distribution": dict(macro_context_version_distribution),
     }
 
 
@@ -226,6 +284,8 @@ def build_audit_report(version: str) -> dict[str, Any]:
     mpi_null_count = 0
     chaos_null_count = 0
     macro_mismatch_count = 0
+    macro_year_used_distribution: Counter[str] = Counter()
+    macro_context_version_distribution: Counter[str] = Counter()
     expected_historical_nulls = 0
 
     signal_contract_hfs = 0
@@ -263,6 +323,8 @@ def build_audit_report(version: str) -> dict[str, Any]:
 
         race_date = parse_date_str(row.get("race_date"))
         macro_year_used = feature_json.get("macro_year_used")
+        macro_year_used_distribution[str(macro_year_used)] += 1
+        macro_context_version_distribution[str(feature_json.get("macro_context_version"))] += 1
         if race_date is None or macro_year_used != race_date.year:
             macro_mismatch_count += 1
 
@@ -380,7 +442,9 @@ def build_audit_report(version: str) -> dict[str, Any]:
         },
         "S_jurisdiction_breakdown": dict(jurisdiction_breakdown),
         "T_year_breakdown": dict(year_breakdown),
-        "U_blocked_block_025_summary": load_blocked_block_025_summary(),
+        "U_blocked_block_025_summary": load_blocked_block_025_summary(sb),
+        "macro_year_used_distribution": dict(macro_year_used_distribution),
+        "macro_context_version_distribution": dict(macro_context_version_distribution),
         "course_breakdown_top_50": dict(course_breakdown.most_common(50)),
         "story_anchor_narrative_null_classification": {
             "expected_historical_nulls": expected_historical_nulls

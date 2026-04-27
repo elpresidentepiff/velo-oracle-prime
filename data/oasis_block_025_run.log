@@ -1,0 +1,108 @@
+
+PRE-BRIDGE VERIFICATION
+A. candidate file line count: 26
+B. previous manifest race IDs excluded: 0
+C. quarantined IDs excluded: 0
+D. selected bridge race count: 26
+E. duplicate selected event keys: 0
+F. duplicate selected race IDs: 0
+G. already-existing selected race IDs/events skipped: 0
+H. expected runner rows: 244
+I. expected jurisdiction breakdown: {'FR': 19, 'HK': 7}
+J. sampled 20 selected race IDs:
+   - race_id=885957 course=Chantilly (FR) jurisdiction=FR runner_count=17 winner_count=1 race_date=2025-01-11
+   - race_id=886528 course=Chantilly (FR) jurisdiction=FR runner_count=10 winner_count=1 race_date=2025-01-16
+   - race_id=887955 course=Chantilly (FR) jurisdiction=FR runner_count=10 winner_count=1 race_date=2025-02-07
+   - race_id=889773 course=Chantilly (FR) jurisdiction=FR runner_count=12 winner_count=1 race_date=2025-02-28
+   - race_id=889955 course=Chantilly (FR) jurisdiction=FR runner_count=7 winner_count=1 race_date=2025-03-04
+   - race_id=890732 course=Compiegne (FR) jurisdiction=FR runner_count=6 winner_count=1 race_date=2025-03-12
+   - race_id=891225 course=Compiegne (FR) jurisdiction=FR runner_count=6 winner_count=1 race_date=2025-03-24
+   - race_id=891896 course=Compiegne (FR) jurisdiction=FR runner_count=12 winner_count=1 race_date=2025-03-28
+   - race_id=891914 course=Sha Tin (HK) jurisdiction=HK runner_count=14 winner_count=1 race_date=2025-03-30
+   - race_id=893107 course=Sha Tin (HK) jurisdiction=HK runner_count=6 winner_count=1 race_date=2025-04-13
+   - race_id=893473 course=Sha Tin (HK) jurisdiction=HK runner_count=12 winner_count=1 race_date=2025-04-20
+   - race_id=894506 course=Chantilly (FR) jurisdiction=FR runner_count=7 winner_count=1 race_date=2025-05-02
+   - race_id=894757 course=Chantilly (FR) jurisdiction=FR runner_count=9 winner_count=1 race_date=2025-05-02
+   - race_id=894661 course=Sha Tin (HK) jurisdiction=HK runner_count=7 winner_count=1 race_date=2025-05-04
+   - race_id=895786 course=Compiegne (FR) jurisdiction=FR runner_count=6 winner_count=1 race_date=2025-05-14
+   - race_id=895791 course=Chantilly (FR) jurisdiction=FR runner_count=7 winner_count=1 race_date=2025-05-16
+   - race_id=895896 course=Chantilly (FR) jurisdiction=FR runner_count=9 winner_count=1 race_date=2025-05-16
+   - race_id=896556 course=Sha Tin (HK) jurisdiction=HK runner_count=11 winner_count=1 race_date=2025-05-25
+   - race_id=896738 course=Compiegne (FR) jurisdiction=FR runner_count=9 winner_count=1 race_date=2025-05-26
+   - race_id=897030 course=Chantilly (FR) jurisdiction=FR runner_count=9 winner_count=1 race_date=2025-06-01
+
+POST-BRIDGE AUDIT
+A. race_results rows before/after: 3201 -> 3227
+B. runner_results rows before/after: 31751 -> 31995
+C. races attempted: 26
+D. races bridged: 26
+E. runners inserted: 244
+F. races skipped existing: 0
+G. ambiguous runners blocked: 0
+H. unmatched runners blocked: 0
+I. malformed runners blocked: 0
+J. winner parity: 100%
+K. duplicate race_id count: 0
+L. duplicate (race_id + horse_id) count: 0
+M. duplicate event_key count: 0
+N. jurisdiction breakdown: {'FR': 19, 'HK': 7}
+O. sample 20 bridged runner rows:
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_3d042a160d5f', 'position': 1, 'is_winner': True, 'sp': '29/1', 'sp_dec': 30.0, 'position_text': '1'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_a61a9817e321', 'position': 2, 'is_winner': False, 'sp': '41/5', 'sp_dec': 9.2, 'position_text': '2'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_aacf28528a75', 'position': 3, 'is_winner': False, 'sp': '2/1F', 'sp_dec': 3.0, 'position_text': '3'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_42ab09bb979d', 'position': 4, 'is_winner': False, 'sp': '39/10', 'sp_dec': 4.9, 'position_text': '4'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_26a90e70cee8', 'position': 6, 'is_winner': False, 'sp': '53/1', 'sp_dec': 54.0, 'position_text': '6'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_d681ed96a56d', 'position': 17, 'is_winner': False, 'sp': '57/1', 'sp_dec': 58.0, 'position_text': '17'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_3b8d3f65f885', 'position': 16, 'is_winner': False, 'sp': '86/1', 'sp_dec': 87.0, 'position_text': '16'}
+   - {'race_id': '885957', 'horse_id': 'hrs_49012887', 'position': 15, 'is_winner': False, 'sp': '17/1', 'sp_dec': 18.0, 'position_text': '15'}
+   - {'race_id': '885957', 'horse_id': 'hrs_49012880', 'position': 14, 'is_winner': False, 'sp': '60/1', 'sp_dec': 61.0, 'position_text': '14'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_bf5649efa15e', 'position': 13, 'is_winner': False, 'sp': '10/1', 'sp_dec': 11.0, 'position_text': '13'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_2f06755d93bd', 'position': 12, 'is_winner': False, 'sp': '25/1', 'sp_dec': 26.0, 'position_text': '12'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_fbb43317de86', 'position': 11, 'is_winner': False, 'sp': '79/1', 'sp_dec': 80.0, 'position_text': '11'}
+   - {'race_id': '885957', 'horse_id': 'hrs_44815407', 'position': 10, 'is_winner': False, 'sp': '104/1', 'sp_dec': 105.0, 'position_text': '10'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_12589fc70276', 'position': 9, 'is_winner': False, 'sp': '83/10', 'sp_dec': 9.3, 'position_text': '9'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_f79619d983d6', 'position': 8, 'is_winner': False, 'sp': '54/1', 'sp_dec': 55.0, 'position_text': '8'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_92971acf3110', 'position': 7, 'is_winner': False, 'sp': '12/1', 'sp_dec': 13.0, 'position_text': '7'}
+   - {'race_id': '885957', 'horse_id': 'hrs_rf_4a6bd2ffe1f5', 'position': 5, 'is_winner': False, 'sp': '20/1', 'sp_dec': 21.0, 'position_text': '5'}
+   - {'race_id': '886528', 'horse_id': 'hrs_rf_4bddb40b7994', 'position': 10, 'is_winner': False, 'sp': '10/1', 'sp_dec': 11.0, 'position_text': '10'}
+   - {'race_id': '886528', 'horse_id': 'hrs_rf_381c07a99cf5', 'position': 9, 'is_winner': False, 'sp': '24/1', 'sp_dec': 25.0, 'position_text': '9'}
+   - {'race_id': '886528', 'horse_id': 'hrs_rf_d9b53a5f2650', 'position': 8, 'is_winner': False, 'sp': '9/1', 'sp_dec': 10.0, 'position_text': '8'}
+
+HFS AUDIT
+A. HFS rows before/after: 31692 -> 31936
+B. new HFS rows written: 244
+C. distinct races reconstructed: 26
+D. runner rows reconstructed: 244
+E. avg/min/max runners per race: 9.38 / 6 / 17
+F. winner parity: 100%
+G. duplicate HFS rows: 0
+H. missing vectors: 0
+I. vector dimension consistency: [37]
+J. mpi null count: 0
+K. mpi min/max/variance: 0.4343 / 100.0 / 946.1919012169878
+L. chaos_bloom null count: 0
+M. chaos_bloom min/max/variance: 44.5782 / 81.3795 / 90.86654496512026
+N. macro-year mismatch count: 244
+O. source tags present: mpi_source=244/244 chaos_bloom_source=244/244 signal_contract_version=244/244
+P. narrative/story nulls classified as expected historical nulls: 244/244
+Q. sample 20 post-HFS runners:
+   - {"race_id": "885957", "horse_id": "hrs_rf_3d042a160d5f", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": true, "mpi": 30.25, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_a61a9817e321", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 65.5435, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_aacf28528a75", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 100.0, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_42ab09bb979d", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 80.7398, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_26a90e70cee8", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 24.7222, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_d681ed96a56d", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 17.069, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_3b8d3f65f885", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 5.1293, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_49012887", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 44.1667, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_49012880", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 13.2172, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_bf5649efa15e", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 55.9091, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_2f06755d93bd", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 34.6154, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_fbb43317de86", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 9.0, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_44815407", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 1.1429, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_12589fc70276", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 61.6532, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_f79619d983d6", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 20.9318, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_92971acf3110", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 50.4808, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "885957", "horse_id": "hrs_rf_4a6bd2ffe1f5", "race_date": "2025-01-11", "macro_year_used": 2024, "winner_flag": false, "mpi": 39.4643, "chaos_bloom": 69.9442, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "886528", "horse_id": "hrs_rf_4bddb40b7994", "race_date": "2025-01-16", "macro_year_used": 2024, "winner_flag": false, "mpi": 37.9394, "chaos_bloom": 66.336, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "886528", "horse_id": "hrs_rf_381c07a99cf5", "race_date": "2025-01-16", "macro_year_used": 2024, "winner_flag": false, "mpi": 18.2933, "chaos_bloom": 66.336, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}
+   - {"race_id": "886528", "horse_id": "hrs_rf_d9b53a5f2650", "race_date": "2025-01-16", "macro_year_used": 2024, "winner_flag": false, "mpi": 45.7333, "chaos_bloom": 66.336, "mpi_source": "archive_proxy_market_rank_v1", "chaos_bloom_source": "archive_proxy_market_entropy_going_v1", "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1", "vector_length": 37}

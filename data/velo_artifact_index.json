@@ -1,10 +1,10 @@
 {
   "project": "VELO",
-  "generated_at": "2026-04-27T04:27:52.400753+00:00",
+  "generated_at": "2026-04-27T11:29:31.325320+00:00",
   "archive_exhausted": true,
-  "latest_passed_audit": "global_clean_spine_audit_v2_recheck",
-  "latest_passed_block": "OASIS_BLOCK_024",
-  "latest_failed_block": "OASIS_BLOCK_025",
+  "latest_passed_audit": "global_clean_spine_audit_v3",
+  "latest_passed_block": "OASIS_BLOCK_025",
+  "latest_failed_block": null,
   "entries": [
     {
       "path": "C:/Users/puror/velo-oracle-prime/data/bridge_manifest_oasis_block_001.json",
@@ -178,8 +178,8 @@
       "path": "C:/Users/puror/velo-oracle-prime/data/bridge_manifest_oasis_block_025.json",
       "type": "manifest",
       "window_or_block": "OASIS_BLOCK_025",
-      "status": "rolled_back",
-      "notes": "Rolled back bridge manifest."
+      "status": "accepted",
+      "notes": "Accepted bridge manifest."
     },
     {
       "path": "C:/Users/puror/velo-oracle-prime/data/clean_race_candidates_oasis_window_001.jsonl",
@@ -518,6 +518,20 @@
       "notes": "Markdown companion to audit artifact."
     },
     {
+      "path": "C:/Users/puror/velo-oracle-prime/data/global_clean_spine_audit_v3.json",
+      "type": "audit",
+      "window_or_block": "global_clean_spine_audit_v3",
+      "status": "accepted",
+      "notes": "Reusable global clean spine audit artifact."
+    },
+    {
+      "path": "C:/Users/puror/velo-oracle-prime/data/global_clean_spine_audit_v3.md",
+      "type": "audit",
+      "window_or_block": "global_clean_spine_audit_v3",
+      "status": "accepted",
+      "notes": "Markdown companion to audit artifact."
+    },
+    {
       "path": "C:/Users/puror/velo-oracle-prime/data/etsclv_framework_audit_v1.json",
       "type": "audit",
       "window_or_block": "etsclv_framework_audit_v1",
@@ -654,7 +668,7 @@
       "path": "C:/Users/puror/velo-oracle-prime/data/oasis_block_025_run.log",
       "type": "log",
       "window_or_block": "OASIS_BLOCK_025",
-      "status": "rolled_back",
+      "status": "accepted",
       "notes": "Bridge run log."
     },
     {

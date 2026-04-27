@@ -45,11 +45,18 @@ def load_latest_passed_global_audit() -> tuple[str, dict[str, Any]]:
     return latest_name, latest_payload
 
 
-def build_manifest_status_map(existing_index: dict[str, Any], latest_failed_block: str | None) -> dict[str, str]:
+def build_manifest_status_map(
+    existing_index: dict[str, Any],
+    latest_failed_block: str | None,
+    latest_passed_block: str | None,
+) -> dict[str, str]:
     status_map: dict[str, str] = {}
     for entry in existing_index.get("entries", []):
         if entry.get("type") == "manifest":
             status_map[Path(entry["path"]).name] = str(entry.get("status", "accepted"))
+    if latest_passed_block:
+        status_map[f"bridge_manifest_{latest_passed_block.lower()}.json"] = "accepted"
+        status_map[f"bridge_manifest_{latest_passed_block}.json"] = "accepted"
     if latest_failed_block:
         status_map[f"bridge_manifest_{latest_failed_block.lower()}.json"] = "rolled_back"
         status_map[f"bridge_manifest_{latest_failed_block}.json"] = "rolled_back"
@@ -69,7 +76,8 @@ def make_entry(path: Path, artifact_type: str, window_or_block: str, status: str
 def refresh_artifact_index(state: dict[str, Any], latest_audit_name: str) -> dict[str, Any]:
     existing_index = load_json_file(ARTIFACT_INDEX_PATH) if ARTIFACT_INDEX_PATH.exists() else {"entries": []}
     latest_failed_block = state.get("latest_failed_block")
-    manifest_status_map = build_manifest_status_map(existing_index, latest_failed_block)
+    latest_passed_block = state.get("latest_passed_block")
+    manifest_status_map = build_manifest_status_map(existing_index, latest_failed_block, latest_passed_block)
 
     entries: list[dict[str, Any]] = []
 
@@ -120,7 +128,10 @@ def refresh_artifact_index(state: dict[str, Any], latest_audit_name: str) -> dic
     for path in sorted(DATA_DIR.glob("oasis_block_*_run.log")):
         block = re.search(r"oasis_block_(\d+)_run", path.stem, re.IGNORECASE)
         block_name = f"OASIS_BLOCK_{int(block.group(1)):03d}" if block else path.stem
-        status = "rolled_back" if block_name == latest_failed_block else "accepted"
+        if block_name == latest_failed_block:
+            status = "rolled_back"
+        else:
+            status = "accepted"
         notes = "Bridge run log."
         entries.append(make_entry(path, "log", block_name, status, notes))
 
@@ -161,16 +172,25 @@ def main() -> None:
     prior_oasis = int(prior_counts.get("accepted_oasis_historical_events", 0) or 0)
     legacy_offset = max(prior_approx - prior_oasis, 0)
 
-    latest_failed_block = current_state.get("latest_failed_block", "OASIS_BLOCK_025")
     blocked_summary = summary.get("U_blocked_block_025_summary", {})
+    blocked_status = str(blocked_summary.get("status") or "").lower()
+    block_025_resolved = blocked_summary.get("bridge_block") == "OASIS_BLOCK_025" and blocked_status == "accepted"
 
-    block_status = "rolled_back" if blocked_summary else current_state.get("failed_block_reason")
-    if block_status != "rolled_back" and latest_failed_block == "OASIS_BLOCK_025":
-        block_status = "rolled_back"
+    latest_passed_block = "OASIS_BLOCK_025" if block_025_resolved else current_state.get("latest_passed_block", "OASIS_BLOCK_024")
+    latest_failed_block = None if block_025_resolved else current_state.get("latest_failed_block", "OASIS_BLOCK_025")
+    blocked_summary = summary.get("U_blocked_block_025_summary", {})
+    block_status = blocked_summary.get("status") or ("rolled_back" if latest_failed_block else None)
+    failed_block_reason = None if block_025_resolved else current_state.get("failed_block_reason", "2025 macro-year mismatch; rolled back")
+    next_required_mission = (
+        "decide Playbook G offline dry-run training gate"
+        if block_025_resolved
+        else "build 2025 macro context support, then retry OASIS_BLOCK_025"
+    )
+    phase_suffix = "accepted_ready_for_training_gate_decision" if block_025_resolved else "passed_pre_2025_macro"
 
     state = {
         "project": "VELO",
-        "phase": f"{latest_audit_name}_passed_pre_2025_macro",
+        "phase": f"{latest_audit_name}_{phase_suffix}",
         "training_status": current_state.get("training_status", "paused"),
         "playbook_e_status": current_state.get("playbook_e_status", "paused"),
         "current_accepted_spine": {
@@ -182,19 +202,19 @@ def main() -> None:
             "accepted_oasis_historical_hfs_rows": int(summary["C_accepted_hfs_row_count"]),
         },
         "latest_passed_audit": latest_audit_name,
-        "latest_passed_block": current_state.get("latest_passed_block", "OASIS_BLOCK_024"),
+        "latest_passed_block": latest_passed_block,
         "latest_failed_block": latest_failed_block,
-        "failed_block_reason": current_state.get("failed_block_reason", "2025 macro-year mismatch; rolled back"),
+        "failed_block_reason": failed_block_reason,
         "blocked_block_summary": {
-            "bridge_block": blocked_summary.get("bridge_block", latest_failed_block),
+            "bridge_block": blocked_summary.get("bridge_block", latest_failed_block or "OASIS_BLOCK_025"),
             "status": block_status,
             "race_events": int(blocked_summary.get("race_events", 0) or 0),
             "runner_rows": int(blocked_summary.get("runner_rows", 0) or 0),
-            "reason": blocked_summary.get("reason", "macro_year_mismatch"),
+            "reason": blocked_summary.get("reason", "macro_year_mismatch" if not block_025_resolved else "accepted_after_2025_proxy_fix"),
             "archive_exhausted": bool(blocked_summary.get("archive_exhausted", current_state.get("archive_exhausted", True))),
         },
         "archive_exhausted": bool(blocked_summary.get("archive_exhausted", current_state.get("archive_exhausted", True))),
-        "next_required_mission": "build 2025 macro context support, then retry OASIS_BLOCK_025",
+        "next_required_mission": next_required_mission,
         "do_not_do": current_state.get(
             "do_not_do",
             [
