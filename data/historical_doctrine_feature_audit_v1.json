@@ -1,0 +1,1924 @@
+{
+  "scope": {
+    "cohort_filter": {
+      "training_eligible": "pending_global_training_gate",
+      "data_owner_confirmed": true,
+      "source": "historical_raceform",
+      "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1",
+      "event_identity_contract": "race_id_course_race_date",
+      "macro_year_mismatch": 0,
+      "vector_length": 37
+    },
+    "eligible_race_count": 1697,
+    "eligible_runner_count": 18575
+  },
+  "A_full_37_vector_schema": [
+    {
+      "index": 0,
+      "feature": "sp_dec",
+      "group": "market"
+    },
+    {
+      "index": 1,
+      "feature": "log_sp",
+      "group": "market"
+    },
+    {
+      "index": 2,
+      "feature": "implied_prob",
+      "group": "market"
+    },
+    {
+      "index": 3,
+      "feature": "dist_f",
+      "group": "structure"
+    },
+    {
+      "index": 4,
+      "feature": "going_code",
+      "group": "structure"
+    },
+    {
+      "index": 5,
+      "feature": "is_aw",
+      "group": "structure"
+    },
+    {
+      "index": 6,
+      "feature": "class_num",
+      "group": "structure"
+    },
+    {
+      "index": 7,
+      "feature": "wgt_lbs",
+      "group": "structure"
+    },
+    {
+      "index": 8,
+      "feature": "or_num",
+      "group": "rating"
+    },
+    {
+      "index": 9,
+      "feature": "rpr_num",
+      "group": "rating"
+    },
+    {
+      "index": 10,
+      "feature": "ts_num",
+      "group": "rating"
+    },
+    {
+      "index": 11,
+      "feature": "or_vs_field",
+      "group": "rating"
+    },
+    {
+      "index": 12,
+      "feature": "rpr_vs_field",
+      "group": "rating"
+    },
+    {
+      "index": 13,
+      "feature": "field_size",
+      "group": "structure"
+    },
+    {
+      "index": 14,
+      "feature": "draw_num",
+      "group": "structure"
+    },
+    {
+      "index": 15,
+      "feature": "draw_pct",
+      "group": "structure"
+    },
+    {
+      "index": 16,
+      "feature": "age_num",
+      "group": "structure"
+    },
+    {
+      "index": 17,
+      "feature": "sp_rank",
+      "group": "market"
+    },
+    {
+      "index": 18,
+      "feature": "is_fav",
+      "group": "market"
+    },
+    {
+      "index": 19,
+      "feature": "runs_since_win",
+      "group": "doctrine"
+    },
+    {
+      "index": 20,
+      "feature": "runs_since_place",
+      "group": "doctrine"
+    },
+    {
+      "index": 21,
+      "feature": "runs_since_mkt_support",
+      "group": "doctrine"
+    },
+    {
+      "index": 22,
+      "feature": "curr_or_minus_last_win_or",
+      "group": "doctrine"
+    },
+    {
+      "index": 23,
+      "feature": "curr_or_minus_best_or",
+      "group": "doctrine"
+    },
+    {
+      "index": 24,
+      "feature": "mark_compression_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 25,
+      "feature": "release_window_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 26,
+      "feature": "course_fit_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 27,
+      "feature": "going_fit_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 28,
+      "feature": "distance_fit_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 29,
+      "feature": "quiet_run_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 30,
+      "feature": "trainer_timing_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 31,
+      "feature": "jockey_switch_intent",
+      "group": "doctrine"
+    },
+    {
+      "index": 32,
+      "feature": "odds_resilience_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 33,
+      "feature": "odds_contraction_score",
+      "group": "doctrine"
+    },
+    {
+      "index": 34,
+      "feature": "decoy_support_flag",
+      "group": "doctrine"
+    },
+    {
+      "index": 35,
+      "feature": "setup_run_flag",
+      "group": "doctrine"
+    },
+    {
+      "index": 36,
+      "feature": "cash_run_flag",
+      "group": "doctrine"
+    }
+  ],
+  "B_features_active_non_constant": [
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "sp_rank",
+    "is_fav"
+  ],
+  "C_features_constant_defaulted": [
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "constant_nondefault_features": [
+    "dist_f"
+  ],
+  "D_market_feature_list": [
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "sp_rank",
+    "is_fav"
+  ],
+  "E_rating_feature_list": [
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field"
+  ],
+  "F_doctrine_feature_list": [
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "G_live_only_feature_list": [
+    "plot_conviction",
+    "or_compression_score",
+    "postdata_score",
+    "ts_master",
+    "or_delta_to_best_win",
+    "intent_signals",
+    "trainer_recent_form",
+    "comment_intel_score",
+    "horse_state",
+    "tie_gate_signals"
+  ],
+  "H_historical_feasible_feature_list": [
+    "cash_run_flag",
+    "chaos_bloom",
+    "class_regime_pressure",
+    "course_fit_score",
+    "course_jurisdiction_regime",
+    "curr_or_minus_best_or",
+    "curr_or_minus_last_win_or",
+    "decoy_support_flag",
+    "distance_fit_score",
+    "draw_position_pressure",
+    "field_entropy",
+    "field_size_chaos",
+    "going_fit_score",
+    "going_regime_pressure",
+    "jockey_switch_intent",
+    "mark_compression_score",
+    "market_pressure_rank",
+    "mpi",
+    "odds_contraction_score",
+    "odds_resilience_score",
+    "or_rpr_vs_field_pressure",
+    "prior_only_horse_history",
+    "quiet_run_score",
+    "release_window_score",
+    "runs_since_mkt_support",
+    "runs_since_place",
+    "runs_since_win",
+    "setup_run_flag",
+    "trainer_timing_score",
+    "weight_vs_field_pressure"
+  ],
+  "I_historical_infeasible_feature_list": [
+    "comment_intel_score",
+    "horse_state",
+    "intent_signals",
+    "or_compression_score",
+    "or_delta_to_best_win",
+    "plot_conviction",
+    "postdata_score",
+    "tie_gate_signals",
+    "trainer_recent_form",
+    "ts_master"
+  ],
+  "J_dead_feature_default_paths": {
+    "runs_since_win": {
+      "default_value": 5.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "horse_id",
+        "prior race_date",
+        "prior finishing positions"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.horse",
+        "raceform.date",
+        "raceform.pos",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "runs_since_place": {
+      "default_value": 2.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "horse_id",
+        "prior race_date",
+        "prior finishing positions"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.horse",
+        "raceform.date",
+        "raceform.pos",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "runs_since_mkt_support": {
+      "default_value": 3.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "horse_id",
+        "prior race_date",
+        "prior SP history"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.sp",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "curr_or_minus_last_win_or": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current OR",
+        "horse_id",
+        "prior winning OR"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.or_rating",
+        "raceform.pos",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "curr_or_minus_best_or": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current OR",
+        "horse_id",
+        "prior OR history"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.or_rating",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "mark_compression_score": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current OR",
+        "horse_id",
+        "prior OR history"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.or_rating",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "release_window_score": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "runs_since_win",
+        "mark_compression_score"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "Derived from prior-only history once OR + win history exist."
+      ],
+      "leakage_risk": "medium"
+    },
+    "course_fit_score": {
+      "default_value": 0.33,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current course",
+        "horse_id",
+        "prior course matches",
+        "prior win/place outcomes"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.course",
+        "raceform.date",
+        "raceform.pos",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "going_fit_score": {
+      "default_value": 0.33,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current going",
+        "horse_id",
+        "prior going matches",
+        "prior win/place outcomes"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.going",
+        "raceform.date",
+        "raceform.pos",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "distance_fit_score": {
+      "default_value": 0.33,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current distance",
+        "horse_id",
+        "prior distance matches",
+        "prior win/place outcomes"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.dist",
+        "raceform.date",
+        "raceform.pos",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "quiet_run_score": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "horse_id",
+        "last prior race beaten margin"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.ovr_btn",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "trainer_timing_score": {
+      "default_value": 0.12,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current trainer",
+        "trainer prior wins",
+        "trainer prior starts",
+        "current race_date"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.trainer",
+        "raceform.pos",
+        "raceform.date"
+      ],
+      "leakage_risk": "medium"
+    },
+    "jockey_switch_intent": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current jockey",
+        "horse_id",
+        "last prior jockey"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.jockey",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "odds_resilience_score": {
+      "default_value": 3.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "horse_id",
+        "last 2-3 prior SP values"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.sp",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "odds_contraction_score": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current SP",
+        "horse_id",
+        "last prior SP"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.sp",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "decoy_support_flag": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "current is_fav",
+        "trainer_timing_score"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "Derived from current price + prior-only trainer timing."
+      ],
+      "leakage_risk": "medium"
+    },
+    "setup_run_flag": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "horse_id",
+        "last prior beaten margin"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "raceform.ovr_btn",
+        "raceform.date",
+        "racing_horses.id"
+      ],
+      "leakage_risk": "medium"
+    },
+    "cash_run_flag": {
+      "default_value": 0.0,
+      "current_default_path": [
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\backfill_historical_feature_store.py",
+          "line": 509,
+          "reason": "Historical reconstruction calls live feature builder without prior-history arrays or precomputed doctrine values."
+        },
+        {
+          "file": "C:\\Users\\puror\\velo-oracle-prime\\app\\services\\velo_prime_service.py",
+          "line": 189,
+          "reason": "Live feature builder fills missing doctrine keys from V17 DEFAULTS."
+        }
+      ],
+      "required_context": [
+        "trainer_timing_score",
+        "runs_since_win",
+        "mark_compression_score"
+      ],
+      "raceform_contains_required_source_data": true,
+      "source_data_proof": [
+        "All inputs become available once prior-only horse + trainer history is built."
+      ],
+      "leakage_risk": "medium"
+    }
+  },
+  "K_dead_feature_required_context": {
+    "runs_since_win": [
+      "horse_id",
+      "prior race_date",
+      "prior finishing positions"
+    ],
+    "runs_since_place": [
+      "horse_id",
+      "prior race_date",
+      "prior finishing positions"
+    ],
+    "runs_since_mkt_support": [
+      "horse_id",
+      "prior race_date",
+      "prior SP history"
+    ],
+    "curr_or_minus_last_win_or": [
+      "current OR",
+      "horse_id",
+      "prior winning OR"
+    ],
+    "curr_or_minus_best_or": [
+      "current OR",
+      "horse_id",
+      "prior OR history"
+    ],
+    "mark_compression_score": [
+      "current OR",
+      "horse_id",
+      "prior OR history"
+    ],
+    "release_window_score": [
+      "runs_since_win",
+      "mark_compression_score"
+    ],
+    "course_fit_score": [
+      "current course",
+      "horse_id",
+      "prior course matches",
+      "prior win/place outcomes"
+    ],
+    "going_fit_score": [
+      "current going",
+      "horse_id",
+      "prior going matches",
+      "prior win/place outcomes"
+    ],
+    "distance_fit_score": [
+      "current distance",
+      "horse_id",
+      "prior distance matches",
+      "prior win/place outcomes"
+    ],
+    "quiet_run_score": [
+      "horse_id",
+      "last prior race beaten margin"
+    ],
+    "trainer_timing_score": [
+      "current trainer",
+      "trainer prior wins",
+      "trainer prior starts",
+      "current race_date"
+    ],
+    "jockey_switch_intent": [
+      "current jockey",
+      "horse_id",
+      "last prior jockey"
+    ],
+    "odds_resilience_score": [
+      "horse_id",
+      "last 2-3 prior SP values"
+    ],
+    "odds_contraction_score": [
+      "current SP",
+      "horse_id",
+      "last prior SP"
+    ],
+    "decoy_support_flag": [
+      "current is_fav",
+      "trainer_timing_score"
+    ],
+    "setup_run_flag": [
+      "horse_id",
+      "last prior beaten margin"
+    ],
+    "cash_run_flag": [
+      "trainer_timing_score",
+      "runs_since_win",
+      "mark_compression_score"
+    ]
+  },
+  "L_raceform_source_sufficiency": {
+    "raceform_columns": [
+      "age",
+      "age_band",
+      "btn",
+      "class_raw",
+      "comment",
+      "course",
+      "dam",
+      "damsire",
+      "date",
+      "dist",
+      "draw",
+      "going",
+      "hg",
+      "horse",
+      "id",
+      "jockey",
+      "num",
+      "off",
+      "or_rating",
+      "ovr_btn",
+      "owner",
+      "pattern",
+      "pos",
+      "prize",
+      "race_id",
+      "race_name",
+      "ran",
+      "rating_band",
+      "rpr",
+      "sex",
+      "sex_rest",
+      "sire",
+      "sp",
+      "time",
+      "trainer",
+      "ts",
+      "type",
+      "wgt"
+    ],
+    "runner_results_columns": [
+      "bsp",
+      "btn",
+      "horse_id",
+      "id",
+      "in_running_comment",
+      "is_winner",
+      "ovr_btn",
+      "position",
+      "position_text",
+      "prize",
+      "race_id",
+      "sp",
+      "sp_dec",
+      "time"
+    ],
+    "races_columns": [
+      "batch_id",
+      "class",
+      "course",
+      "created_at",
+      "date",
+      "distance_f",
+      "going",
+      "join_key",
+      "prize_money",
+      "race_id",
+      "race_name",
+      "race_type",
+      "raw",
+      "runners_count",
+      "time"
+    ],
+    "per_feature": {
+      "runs_since_win": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.horse",
+          "raceform.date",
+          "raceform.pos",
+          "racing_horses.id"
+        ]
+      },
+      "runs_since_place": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.horse",
+          "raceform.date",
+          "raceform.pos",
+          "racing_horses.id"
+        ]
+      },
+      "runs_since_mkt_support": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.sp",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "curr_or_minus_last_win_or": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.or_rating",
+          "raceform.pos",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "curr_or_minus_best_or": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.or_rating",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "mark_compression_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.or_rating",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "release_window_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "Derived from prior-only history once OR + win history exist."
+        ]
+      },
+      "course_fit_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.course",
+          "raceform.date",
+          "raceform.pos",
+          "racing_horses.id"
+        ]
+      },
+      "going_fit_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.going",
+          "raceform.date",
+          "raceform.pos",
+          "racing_horses.id"
+        ]
+      },
+      "distance_fit_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.dist",
+          "raceform.date",
+          "raceform.pos",
+          "racing_horses.id"
+        ]
+      },
+      "quiet_run_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.ovr_btn",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "trainer_timing_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.trainer",
+          "raceform.pos",
+          "raceform.date"
+        ]
+      },
+      "jockey_switch_intent": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.jockey",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "odds_resilience_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.sp",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "odds_contraction_score": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.sp",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "decoy_support_flag": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "Derived from current price + prior-only trainer timing."
+        ]
+      },
+      "setup_run_flag": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "raceform.ovr_btn",
+          "raceform.date",
+          "racing_horses.id"
+        ]
+      },
+      "cash_run_flag": {
+        "raceform_contains_enough_source_data": true,
+        "proof": [
+          "All inputs become available once prior-only horse + trainer history is built."
+        ]
+      }
+    },
+    "prior_history_coverage_within_current_accepted_cohort": {
+      "rows_with_prior_1_run": 10928,
+      "rows_with_prior_3_runs": 5744,
+      "coverage_prior_1_run": 0.5883176312247644,
+      "coverage_prior_3_runs": 0.3092328398384926
+    }
+  },
+  "M_leakage_risk_per_proposed_feature_group": {
+    "market_pressure_rank": {
+      "status": "activate_now",
+      "inputs": [
+        "sp_dec",
+        "implied_prob",
+        "sp_rank",
+        "field_size",
+        "within-race rank/normalization"
+      ],
+      "leakage_risk": "low",
+      "notes": "Pre-race market only; already available in accepted historical rows."
+    },
+    "field_entropy": {
+      "status": "activate_now",
+      "inputs": [
+        "field implied probability distribution",
+        "field_size",
+        "going",
+        "jurisdiction"
+      ],
+      "leakage_risk": "low",
+      "notes": "Can be built from same-race prices; current mpi/chaos proxies prove this path is already safe."
+    },
+    "draw_position_pressure": {
+      "status": "activate_now",
+      "inputs": [
+        "draw",
+        "field_size",
+        "course",
+        "jurisdiction"
+      ],
+      "leakage_risk": "low",
+      "notes": "Current rows already carry draw and field size for most accepted runners."
+    },
+    "weight_vs_field_pressure": {
+      "status": "activate_now",
+      "inputs": [
+        "weight_lbs",
+        "field weight distribution",
+        "race class",
+        "distance"
+      ],
+      "leakage_risk": "low",
+      "notes": "No future info required; same-race relative calculation only."
+    },
+    "or_rpr_vs_field_pressure": {
+      "status": "activate_now",
+      "inputs": [
+        "official_rating",
+        "rpr",
+        "ts",
+        "field rating distribution"
+      ],
+      "leakage_risk": "low",
+      "notes": "These are already active and can anchor doctrine proxies safely."
+    },
+    "class_regime_pressure": {
+      "status": "activate_now",
+      "inputs": [
+        "current class",
+        "field class context",
+        "jurisdiction",
+        "race type"
+      ],
+      "leakage_risk": "low",
+      "notes": "Current row metadata exists in race/raceform without future dependence."
+    },
+    "going_regime_pressure": {
+      "status": "activate_now",
+      "inputs": [
+        "going",
+        "jurisdiction",
+        "course",
+        "field distribution"
+      ],
+      "leakage_risk": "low",
+      "notes": "Same-race regime proxy only."
+    },
+    "course_jurisdiction_regime": {
+      "status": "activate_now",
+      "inputs": [
+        "course",
+        "jurisdiction",
+        "distance",
+        "race type"
+      ],
+      "leakage_risk": "low",
+      "notes": "Pure race-level metadata."
+    },
+    "field_size_chaos": {
+      "status": "activate_now",
+      "inputs": [
+        "field_size",
+        "market entropy",
+        "going uncertainty"
+      ],
+      "leakage_risk": "low",
+      "notes": "Same-race structure only."
+    },
+    "horse_prior_history": {
+      "status": "requires_prior_history_engine",
+      "inputs": [
+        "horse_id",
+        "prior race_date",
+        "prior positions",
+        "prior SP",
+        "prior OR/RPR/TS",
+        "prior course/going/distance",
+        "prior jockey",
+        "prior trainer",
+        "prior beaten margin"
+      ],
+      "leakage_risk": "medium",
+      "notes": "Safe only if every aggregate uses rows strictly earlier than current race_date and same-day rows are excluded conservatively."
+    }
+  },
+  "N_outcome_field_exclusion_proof": {
+    "forbidden_fields": [
+      "winner_flag",
+      "is_winner",
+      "placed_flag",
+      "finish_position",
+      "position",
+      "pos",
+      "comment",
+      "result_comment",
+      "future_race_result",
+      "post_race_ranking",
+      "sqpe_v17_prob",
+      "velo_prime_prob",
+      "g_base_prob",
+      "place_prob",
+      "g_shadow_flags",
+      "g_shadow_horse_id",
+      "g_shadow_mode",
+      "g_shadow_multiplier",
+      "verdict_flags"
+    ],
+    "contract_intersection_with_forbidden": [],
+    "current_race_label_usage_required": false,
+    "rule": "Prior-race outcomes are allowed only when source race_date < current race_date; current-race outcomes are forbidden."
+  },
+  "O_proposed_historical_doctrine_features_v1_contract": {
+    "name": "HISTORICAL_DOCTRINE_FEATURES_V1",
+    "objective": "Activate leakage-free doctrine features for historical HFS without changing 37-vector order.",
+    "vector_order_preserved": true,
+    "allowed_current_race_inputs": [
+      "sp_dec",
+      "implied_prob",
+      "field_size",
+      "draw",
+      "weight_lbs",
+      "age",
+      "official_rating",
+      "rpr",
+      "ts",
+      "course",
+      "going",
+      "distance",
+      "race class",
+      "jurisdiction",
+      "race_date"
+    ],
+    "allowed_history_inputs": [
+      "same horse prior-only results with race_date < current race_date",
+      "same trainer prior-only results with race_date < current race_date",
+      "same horse prior SP history",
+      "same horse prior course/going/distance history",
+      "same horse prior beaten-margin history",
+      "same horse prior jockey history"
+    ],
+    "forbidden_inputs": [
+      "winner_flag",
+      "is_winner",
+      "placed_flag",
+      "finish_position",
+      "position",
+      "pos",
+      "comment",
+      "result_comment",
+      "future_race_result",
+      "post_race_ranking",
+      "sqpe_v17_prob",
+      "velo_prime_prob",
+      "g_base_prob",
+      "place_prob",
+      "g_shadow_flags",
+      "g_shadow_horse_id",
+      "g_shadow_mode",
+      "g_shadow_multiplier",
+      "verdict_flags"
+    ],
+    "activation_phases": [
+      {
+        "phase": "A",
+        "status": "recommended_first",
+        "feature_groups": [
+          "market_pressure_rank",
+          "field_entropy",
+          "draw_position_pressure",
+          "weight_vs_field_pressure",
+          "or_rpr_vs_field_pressure",
+          "class_regime_pressure",
+          "going_regime_pressure",
+          "course_jurisdiction_regime",
+          "field_size_chaos"
+        ],
+        "notes": "Pure race-level and runner-relative proxies; no prior horse history required."
+      },
+      {
+        "phase": "B",
+        "status": "required_for_true_doctrine",
+        "feature_groups": [
+          "horse_prior_history"
+        ],
+        "notes": "Needed to wake up the 18 current doctrine dimensions without leakage."
+      }
+    ]
+  },
+  "P_recommended_implementation_plan": [
+    "Expand historical context rehydration to carry current-row jockey, trainer, SP, beaten margin, class_raw, and distance metadata from raceform.",
+    "Build a prior-only history engine keyed by horse_id and race_date, excluding current-day/current-race rows conservatively.",
+    "Compute the 18 doctrine features from prior-only history instead of DEFAULTS, preserving the existing 37-vector order.",
+    "Add manifest-scoped HFS reconstruction smoke test on a small accepted block and rerun this audit to prove doctrine dimensions are no longer constant.",
+    "Only after doctrine activation passes should Playbook G V2 ablation dry-run proceed."
+  ],
+  "feature_stats": [
+    {
+      "index": 0,
+      "feature": "sp_dec",
+      "group": "market",
+      "default_value": null,
+      "count": 18575,
+      "min": 1.05,
+      "max": 501.0,
+      "mean": 29.15053057528937,
+      "std": 44.96279749087643,
+      "nonzero_rate": 1.0,
+      "unique_count": 536,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 1,
+      "feature": "log_sp",
+      "group": "market",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.04879016416943204,
+      "max": 6.2166061010848646,
+      "mean": 2.705546055811415,
+      "std": 1.0981618270032298,
+      "nonzero_rate": 1.0,
+      "unique_count": 536,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 2,
+      "feature": "implied_prob",
+      "group": "market",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.001996007984031936,
+      "max": 0.9523809523809523,
+      "mean": 0.11083196188177195,
+      "std": 0.11211871542776368,
+      "nonzero_rate": 1.0,
+      "unique_count": 536,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 3,
+      "feature": "dist_f",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 16.0,
+      "max": 16.0,
+      "mean": 16.0,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_nondefault"
+    },
+    {
+      "index": 4,
+      "feature": "going_code",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": -1.0,
+      "max": 2.0,
+      "mean": 1.0265518169582772,
+      "std": 0.6314061576155995,
+      "nonzero_rate": 0.9422880215343203,
+      "unique_count": 6,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 5,
+      "feature": "is_aw",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.24005383580080752,
+      "std": 0.4271158996316181,
+      "nonzero_rate": 0.24005383580080752,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 6,
+      "feature": "class_num",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 1.0,
+      "max": 5.0,
+      "mean": 3.7693674293405115,
+      "std": 0.7489057092596926,
+      "nonzero_rate": 1.0,
+      "unique_count": 5,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 7,
+      "feature": "wgt_lbs",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 104.0,
+      "max": 170.0,
+      "mean": 124.75741588156124,
+      "std": 7.550896539114052,
+      "nonzero_rate": 1.0,
+      "unique_count": 57,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 8,
+      "feature": "or_num",
+      "group": "rating",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 133.0,
+      "mean": 37.747563930013456,
+      "std": 31.805471419791058,
+      "nonzero_rate": 0.6467294751009421,
+      "unique_count": 123,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 9,
+      "feature": "rpr_num",
+      "group": "rating",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 155.0,
+      "mean": 60.99300134589502,
+      "std": 25.394196187503542,
+      "nonzero_rate": 0.965814266487214,
+      "unique_count": 148,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 10,
+      "feature": "ts_num",
+      "group": "rating",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 123.0,
+      "mean": 5.300188425302826,
+      "std": 16.448587300756447,
+      "nonzero_rate": 0.12069986541049799,
+      "unique_count": 111,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 11,
+      "feature": "or_vs_field",
+      "group": "rating",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 133.0,
+      "mean": 37.747563930013456,
+      "std": 31.805471419791058,
+      "nonzero_rate": 0.6467294751009421,
+      "unique_count": 123,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 12,
+      "feature": "rpr_vs_field",
+      "group": "rating",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 155.0,
+      "mean": 60.99300134589502,
+      "std": 25.394196187503542,
+      "nonzero_rate": 0.965814266487214,
+      "unique_count": 148,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 13,
+      "feature": "field_size",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 3.0,
+      "max": 18.0,
+      "mean": 11.644306864064603,
+      "std": 2.540577137416652,
+      "nonzero_rate": 1.0,
+      "unique_count": 16,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 14,
+      "feature": "draw_num",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 18.0,
+      "mean": 6.223956931359354,
+      "std": 3.8533154287663822,
+      "nonzero_rate": 0.9596769851951548,
+      "unique_count": 19,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 15,
+      "feature": "draw_pct",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 1.8,
+      "mean": 0.5299350015917984,
+      "std": 0.30755539721959013,
+      "nonzero_rate": 0.9596769851951548,
+      "unique_count": 127,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 16,
+      "feature": "age_num",
+      "group": "structure",
+      "default_value": null,
+      "count": 18575,
+      "min": 2.0,
+      "max": 13.0,
+      "mean": 4.640699865410498,
+      "std": 1.5594462022456885,
+      "nonzero_rate": 1.0,
+      "unique_count": 12,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 17,
+      "feature": "sp_rank",
+      "group": "market",
+      "default_value": null,
+      "count": 18575,
+      "min": 1.0,
+      "max": 18.0,
+      "mean": 6.275800807537012,
+      "std": 3.6517152256889207,
+      "nonzero_rate": 1.0,
+      "unique_count": 18,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 18,
+      "feature": "is_fav",
+      "group": "market",
+      "default_value": null,
+      "count": 18575,
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.09335127860026918,
+      "std": 0.2909240749473376,
+      "nonzero_rate": 0.09335127860026918,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 19,
+      "feature": "runs_since_win",
+      "group": "doctrine",
+      "default_value": 5.0,
+      "count": 18575,
+      "min": 5.0,
+      "max": 5.0,
+      "mean": 5.0,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 20,
+      "feature": "runs_since_place",
+      "group": "doctrine",
+      "default_value": 2.0,
+      "count": 18575,
+      "min": 2.0,
+      "max": 2.0,
+      "mean": 2.0,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 21,
+      "feature": "runs_since_mkt_support",
+      "group": "doctrine",
+      "default_value": 3.0,
+      "count": 18575,
+      "min": 3.0,
+      "max": 3.0,
+      "mean": 3.0,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 22,
+      "feature": "curr_or_minus_last_win_or",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 23,
+      "feature": "curr_or_minus_best_or",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 24,
+      "feature": "mark_compression_score",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 25,
+      "feature": "release_window_score",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 26,
+      "feature": "course_fit_score",
+      "group": "doctrine",
+      "default_value": 0.33,
+      "count": 18575,
+      "min": 0.33,
+      "max": 0.33,
+      "mean": 0.33,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 27,
+      "feature": "going_fit_score",
+      "group": "doctrine",
+      "default_value": 0.33,
+      "count": 18575,
+      "min": 0.33,
+      "max": 0.33,
+      "mean": 0.33,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 28,
+      "feature": "distance_fit_score",
+      "group": "doctrine",
+      "default_value": 0.33,
+      "count": 18575,
+      "min": 0.33,
+      "max": 0.33,
+      "mean": 0.33,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 29,
+      "feature": "quiet_run_score",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 30,
+      "feature": "trainer_timing_score",
+      "group": "doctrine",
+      "default_value": 0.12,
+      "count": 18575,
+      "min": 0.12,
+      "max": 0.12,
+      "mean": 0.12,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 31,
+      "feature": "jockey_switch_intent",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 32,
+      "feature": "odds_resilience_score",
+      "group": "doctrine",
+      "default_value": 3.0,
+      "count": 18575,
+      "min": 3.0,
+      "max": 3.0,
+      "mean": 3.0,
+      "std": 0.0,
+      "nonzero_rate": 1.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 33,
+      "feature": "odds_contraction_score",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 34,
+      "feature": "decoy_support_flag",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 35,
+      "feature": "setup_run_flag",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    },
+    {
+      "index": 36,
+      "feature": "cash_run_flag",
+      "group": "doctrine",
+      "default_value": 0.0,
+      "count": 18575,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "nonzero_rate": 0.0,
+      "unique_count": 1,
+      "status": "constant_defaulted"
+    }
+  ],
+  "supporting_findings": {
+    "current_historical_reconstruction_call": "_build_live_features(r_norm, nrace, [], [])",
+    "default_fill_mechanism": "for k, v in DEFAULTS.items(): feats.setdefault(k, v)",
+    "dead_doctrine_feature_count": 18,
+    "active_feature_count": 18,
+    "constant_nondefault_feature_count": 1,
+    "dist_f_issue": {
+      "feature": "dist_f",
+      "status": "constant_nondefault",
+      "current_value": 16.0,
+      "cause": "Historical HFS passes numeric distance_f into ModelManager._parse_dist(), which expects string labels like '1m2f' and falls back to 16.0 when regex parsing fails.",
+      "evidence": [
+        "historical_feature_store.distance_f varies by race",
+        "feature_json.strictly_ordered_vector[3] is constant at 16.0 in the scoped cohort"
+      ],
+      "not_part_of_doctrine_contract": true,
+      "recommendation": "Fix this separately before Playbook G V2 so doctrine activation is not confounded by a dead distance dimension."
+    },
+    "recommendation": {
+      "option": "D",
+      "text": "Build prior-only horse history engine before Playbook G V2.",
+      "why": [
+        "All 18 doctrine dimensions in the current 37-vector are constant/defaulted in the scoped training cohort.",
+        "Raceform already contains the raw pre-race and prior-history fields needed to compute them leakage-free.",
+        "The missing piece is not data availability but a historical feature engine that rehydrates prior-only horse and trainer history before current race_date."
+      ]
+    }
+  },
+  "final_recommendation": {
+    "option": "D",
+    "text": "Build prior-only horse history engine before Playbook G V2.",
+    "why": [
+      "All 18 doctrine dimensions in the current 37-vector are constant/defaulted in the scoped training cohort.",
+      "Raceform already contains the raw pre-race and prior-history fields needed to compute them leakage-free.",
+      "The missing piece is not data availability but a historical feature engine that rehydrates prior-only horse and trainer history before current race_date."
+    ]
+  }
+}
