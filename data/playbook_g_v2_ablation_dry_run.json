@@ -1,0 +1,1842 @@
+{
+  "A_eligible_race_count": 1697,
+  "B_eligible_runner_count": 18575,
+  "C_train_validation_test_counts": {
+    "train": {
+      "races": 1060,
+      "runners": 11757
+    },
+    "validation": {
+      "races": 523,
+      "runners": 5804
+    },
+    "test": {
+      "races": 114,
+      "runners": 1014
+    }
+  },
+  "D_year_breakdown": {
+    "2017": 294,
+    "2018": 280,
+    "2019": 292,
+    "2020": 194,
+    "2021": 321,
+    "2022": 202,
+    "2023": 47,
+    "2024": 41,
+    "2025": 26
+  },
+  "E_jurisdiction_breakdown": {
+    "HK": 1029,
+    "FR": 649,
+    "JPN": 19
+  },
+  "F_feature_vector_checks": {
+    "vector_length_distribution": {
+      "37": 18575
+    },
+    "nan_count": 0,
+    "inf_count": 0,
+    "context_structural_feature_list": [
+      "dist_f",
+      "going_code",
+      "is_aw",
+      "class_num",
+      "wgt_lbs",
+      "field_size",
+      "draw_num",
+      "draw_pct",
+      "age_num"
+    ]
+  },
+  "G_leakage_audit": {
+    "status": "pass",
+    "source": "historical_doctrine_contract + prior_only_raceform_history + previously accepted full reapply leakage gate",
+    "same_day_or_future_history_leakage": 0
+  },
+  "H_outcome_field_exclusion_audit": {
+    "status": "pass",
+    "forbidden_feature_intersection": [],
+    "training_matrix_source": "strictly_ordered_vector only"
+  },
+  "I_doctrine_feature_variance_confirmation": {
+    "runs_since_win": 4.969427151575313,
+    "runs_since_place": 1.689350717780487,
+    "runs_since_mkt_support": 4.7677551637626365,
+    "curr_or_minus_last_win_or": 20.370914744162203,
+    "curr_or_minus_best_or": 84.3498927493755,
+    "mark_compression_score": 0.021424464068091762,
+    "release_window_score": 0.10473952881843043,
+    "course_fit_score": 0.14777243792763609,
+    "going_fit_score": 0.12472150704851936,
+    "distance_fit_score": 0.13199329141000457,
+    "quiet_run_score": 0.005445874970337778,
+    "trainer_timing_score": 0.002371494257004123,
+    "jockey_switch_intent": 0.24642579481169247,
+    "odds_resilience_score": 289.62542825566595,
+    "odds_contraction_score": 6.331832255566426,
+    "decoy_support_flag": 0.016410572249927084,
+    "setup_run_flag": 0.01978085278661858,
+    "cash_run_flag": 0.005833667663558852
+  },
+  "J_dist_f_variance_confirmation": {
+    "variance": 9.870987087015825,
+    "min": 4.0,
+    "max": 27.0
+  },
+  "K_best_model_by_log_loss": "ratings_plus_doctrine",
+  "L_best_model_by_brier": "ratings_only",
+  "M_best_model_by_top1": "ratings_plus_doctrine",
+  "N_best_model_by_top3": "market_plus_ratings",
+  "O_doctrine_improves_market_plus_ratings": {
+    "pass": false,
+    "market_plus_ratings_test": {
+      "log_loss": 1.4816467492541938,
+      "brier": 0.0766130183864493,
+      "top1": 0.42105263157894735,
+      "top3": 0.7894736842105263,
+      "ece": 0.020558192369501044,
+      "market_rank_lift": 0.47368421052631576,
+      "n_races": 114,
+      "n_runners": 1014
+    },
+    "market_plus_ratings_plus_doctrine_test": {
+      "log_loss": 1.5070779508442058,
+      "brier": 0.0773362892349502,
+      "top1": 0.40350877192982454,
+      "top3": 0.7456140350877193,
+      "ece": 0.021632245112657548,
+      "market_rank_lift": 0.35964912280701755,
+      "n_races": 114,
+      "n_runners": 1014
+    },
+    "log_loss_delta": 0.025431201590011998,
+    "brier_delta": 0.0007232708485009065
+  },
+  "P_hk_failure_fixed_or_reduced": {
+    "pass": true,
+    "v1_hk_market_log_loss": 2.004304,
+    "v1_hk_candidate_log_loss": 2.413058,
+    "v1_hk_gap": 0.40875400000000006,
+    "v2_hk_market_log_loss": 2.0043041687607603,
+    "v2_hk_mrd_log_loss": 1.7555038268052852,
+    "v2_hk_gap": -0.24880034195547518
+  },
+  "Q_fr_remains_positive": {
+    "pass": true,
+    "market_log_loss": 1.6292902317692781,
+    "mrd_log_loss": 1.4166241349835713
+  },
+  "R_2025_remains_unstable": {
+    "status": true,
+    "market": {
+      "log_loss": 1.6319770727552103,
+      "brier": 0.07327465464143125,
+      "top1": 0.46153846153846156,
+      "top3": 0.7307692307692307,
+      "ece": 0.027429739047059663,
+      "market_rank_lift": 0.0,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "mrd": {
+      "log_loss": 1.5780139330761904,
+      "brier": 0.06514423291156499,
+      "top1": 0.5,
+      "top3": 0.7692307692307693,
+      "ece": 0.02895714165363716,
+      "market_rank_lift": 0.34615384615384615,
+      "n_races": 26,
+      "n_runners": 244
+    }
+  },
+  "S_final_pass_fail_verdict": "FAIL",
+  "uniform_test_baseline": {
+    "uniform_log_loss": 2.141590820728227,
+    "uniform_top1": 0.1226956315385108,
+    "uniform_top3": 0.3680868946155324
+  },
+  "ablation_results": {
+    "market_only": {
+      "name": "market_only",
+      "feature_names": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav"
+      ],
+      "feature_count": 5,
+      "calibration_mode": "direct_market_probability",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 1.934314612330693,
+        "brier": 0.07214747503483435,
+        "top1": 0.32264150943396225,
+        "top3": 0.629245283018868,
+        "ece": 0.004121862490935532,
+        "market_rank_lift": 0.0,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.9994964101201087,
+        "brier": 0.07327656358237467,
+        "top1": 0.30975143403441685,
+        "top3": 0.5965583173996176,
+        "ece": 0.009148341049725388,
+        "market_rank_lift": 0.0,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.72522944388281,
+        "brier": 0.0854828821497236,
+        "top1": 0.35964912280701755,
+        "top3": 0.6929824561403509,
+        "ece": 0.01758033316522976,
+        "market_rank_lift": 0.0,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.6292902317692781,
+          "brier": 0.09162854773051476,
+          "top1": 0.36904761904761907,
+          "top3": 0.7380952380952381,
+          "ece": 0.026968478843623234,
+          "market_rank_lift": 0.0,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 2.0043041687607603,
+          "brier": 0.07303520989968713,
+          "top1": 0.3448275862068966,
+          "top3": 0.5517241379310345,
+          "ece": 0.029204215122047496,
+          "market_rank_lift": 0.0,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 1.6909562399589053,
+          "brier": 0.06659270348982929,
+          "top1": 0.0,
+          "top3": 1.0,
+          "ece": 0.1359428061023471,
+          "market_rank_lift": 0.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.6516495873982144,
+          "brier": 0.0897932195065253,
+          "top1": 0.3404255319148936,
+          "top3": 0.7659574468085106,
+          "ece": 0.02520323790537292,
+          "market_rank_lift": 0.0,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.868712734226556,
+          "brier": 0.08888128317217149,
+          "top1": 0.3170731707317073,
+          "top3": 0.5853658536585366,
+          "ece": 0.02547056625726348,
+          "market_rank_lift": 0.0,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.6319770727552103,
+          "brier": 0.07327465464143125,
+          "top1": 0.46153846153846156,
+          "top3": 0.7307692307692307,
+          "ece": 0.027429739047059663,
+          "market_rank_lift": 0.0,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "low",
+        "test_vs_train_log_loss_gap_pct": -10.809263762731556,
+        "validation_vs_train_log_loss_gap_pct": 3.369761949472997,
+        "test_vs_train_brier_gap_pct": 18.483539595045617,
+        "validation_vs_train_brier_gap_pct": 1.5649730596880498
+      },
+      "feature_importance_by_group": {
+        "market": 1.0,
+        "ratings": 0.0,
+        "doctrine": 0.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "implied_prob",
+          "importance": 1.0
+        }
+      ]
+    },
+    "ratings_only": {
+      "name": "ratings_only",
+      "feature_names": [
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field"
+      ],
+      "feature_count": 5,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 1.2498910468583977,
+        "brier": 0.05193151385690933,
+        "top1": 0.6169811320754717,
+        "top3": 0.8820754716981132,
+        "ece": 0.03754968828313358,
+        "market_rank_lift": 1.4462264150943396,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.323839788633417,
+        "brier": 0.05598527416693722,
+        "top1": 0.5850860420650096,
+        "top3": 0.8680688336520076,
+        "ece": 0.038594208357768084,
+        "market_rank_lift": 1.6692160611854685,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.5012372538137526,
+        "brier": 0.07455078044477137,
+        "top1": 0.4649122807017544,
+        "top3": 0.7807017543859649,
+        "ece": 0.03931808635790498,
+        "market_rank_lift": 0.39473684210526316,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.5313020448589818,
+          "brier": 0.08306184594963974,
+          "top1": 0.4523809523809524,
+          "top3": 0.7619047619047619,
+          "ece": 0.04509701023333604,
+          "market_rank_lift": 0.21428571428571427,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.3843229492591465,
+          "brier": 0.05623418334878247,
+          "top1": 0.5172413793103449,
+          "top3": 0.8620689655172413,
+          "ece": 0.04638470746886245,
+          "market_rank_lift": 1.103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.3663096380980844,
+          "brier": 0.07704550826105219,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.05251014098741864,
+          "market_rank_lift": -5.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.37435447222096,
+          "brier": 0.07846252493857447,
+          "top1": 0.46808510638297873,
+          "top3": 0.7659574468085106,
+          "ece": 0.04414910778685767,
+          "market_rank_lift": 0.2765957446808511,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.7210290670622674,
+          "brier": 0.07518432364171575,
+          "top1": 0.4878048780487805,
+          "top3": 0.7804878048780488,
+          "ece": 0.047824849455000956,
+          "market_rank_lift": 0.7073170731707317,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.3840074996472969,
+          "brier": 0.06721768955747595,
+          "top1": 0.4230769230769231,
+          "top3": 0.8076923076923077,
+          "ece": 0.03228763421731105,
+          "market_rank_lift": 0.11538461538461539,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 20.109449346574156,
+        "validation_vs_train_log_loss_gap_pct": 5.916415031605318,
+        "test_vs_train_brier_gap_pct": 43.55595457930718,
+        "validation_vs_train_brier_gap_pct": 7.805973692963228
+      },
+      "feature_importance_by_group": {
+        "market": 0.0,
+        "ratings": 1.0,
+        "doctrine": 0.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.3101151904221767
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.28368018512516024
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.18093461597173813
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.1310395661492824
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.0942304423316425
+        }
+      ]
+    },
+    "doctrine_only": {
+      "name": "doctrine_only",
+      "feature_names": [
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "feature_count": 18,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 2.1073542815131137,
+        "brier": 0.07523774405919288,
+        "top1": 0.2962264150943396,
+        "top3": 0.5254716981132076,
+        "ece": 0.019865741165944098,
+        "market_rank_lift": -0.7830188679245284,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 2.2212854806051663,
+        "brier": 0.07841675191826201,
+        "top1": 0.1931166347992352,
+        "top3": 0.4588910133843212,
+        "ece": 0.003894025394464064,
+        "market_rank_lift": -1.005736137667304,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 2.1072326953005813,
+        "brier": 0.09788593536631458,
+        "top1": 0.13157894736842105,
+        "top3": 0.39473684210526316,
+        "ece": 0.004983945063118417,
+        "market_rank_lift": -1.9035087719298245,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 2.037132721904253,
+          "brier": 0.10600980080410664,
+          "top1": 0.10714285714285714,
+          "top3": 0.38095238095238093,
+          "ece": 0.00260138627254051,
+          "market_rank_lift": -1.9761904761904763,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 2.297257654293829,
+          "brier": 0.08130087098925239,
+          "top1": 0.1724137931034483,
+          "top3": 0.41379310344827586,
+          "ece": 0.014507776306754837,
+          "market_rank_lift": -1.8275862068965518,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.4849066497880004,
+          "brier": 0.07638888888888888,
+          "top1": 1.0,
+          "top3": 1.0,
+          "ece": 2.7755575615628914e-17,
+          "market_rank_lift": 2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 2.044897633853319,
+          "brier": 0.10168831536122837,
+          "top1": 0.1276595744680851,
+          "top3": 0.3829787234042553,
+          "ece": 0.012480174797285418,
+          "market_rank_lift": -2.0851063829787235,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 2.1479792572666345,
+          "brier": 0.09670519570856066,
+          "top1": 0.14634146341463414,
+          "top3": 0.43902439024390244,
+          "ece": 0.004596639373148357,
+          "market_rank_lift": -1.6341463414634145,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 2.1556611125087803,
+          "brier": 0.09350425927763202,
+          "top1": 0.11538461538461539,
+          "top3": 0.34615384615384615,
+          "ece": 0.012311135135221783,
+          "market_rank_lift": -2.0,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": -0.005769614231406364,
+        "validation_vs_train_log_loss_gap_pct": 5.406361905614097,
+        "test_vs_train_brier_gap_pct": 30.102166924759683,
+        "validation_vs_train_brier_gap_pct": 4.225283331951136
+      },
+      "feature_importance_by_group": {
+        "market": 0.0,
+        "ratings": 0.0,
+        "doctrine": 1.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.2672912456243525
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.144929450486553
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.0898387840385087
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.0744350065753108
+        },
+        {
+          "feature": "runs_since_mkt_support",
+          "importance": 0.06861773967266378
+        },
+        {
+          "feature": "curr_or_minus_best_or",
+          "importance": 0.05847249595469405
+        },
+        {
+          "feature": "runs_since_place",
+          "importance": 0.05455852512113099
+        },
+        {
+          "feature": "decoy_support_flag",
+          "importance": 0.052570378965708646
+        },
+        {
+          "feature": "curr_or_minus_last_win_or",
+          "importance": 0.05043097469656753
+        },
+        {
+          "feature": "going_fit_score",
+          "importance": 0.03850406849465475
+        }
+      ]
+    },
+    "market_plus_ratings": {
+      "name": "market_plus_ratings",
+      "feature_names": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav",
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field"
+      ],
+      "feature_count": 10,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 1.350209884158564,
+        "brier": 0.056689858091502225,
+        "top1": 0.5339622641509434,
+        "top3": 0.8556603773584905,
+        "ece": 0.022708962392029505,
+        "market_rank_lift": 1.308490566037736,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.5045871591209012,
+        "brier": 0.061354054302518016,
+        "top1": 0.4646271510516252,
+        "top3": 0.7839388145315488,
+        "ece": 0.01464823261964269,
+        "market_rank_lift": 1.1969407265774379,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.4816467492541938,
+        "brier": 0.0766130183864493,
+        "top1": 0.42105263157894735,
+        "top3": 0.7894736842105263,
+        "ece": 0.020558192369501044,
+        "market_rank_lift": 0.47368421052631576,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.4071985016178554,
+          "brier": 0.08365304835661198,
+          "top1": 0.4166666666666667,
+          "top3": 0.8095238095238095,
+          "ece": 0.02828889947639384,
+          "market_rank_lift": 0.35714285714285715,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.6844239723440373,
+          "brier": 0.06178573052988644,
+          "top1": 0.4482758620689655,
+          "top3": 0.7586206896551724,
+          "ece": 0.0100408865484807,
+          "market_rank_lift": 0.8620689655172413,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 1.85476008110119,
+          "brier": 0.07007671477165187,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.05864683230410975,
+          "market_rank_lift": -1.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.3269716475294713,
+          "brier": 0.07823584259589002,
+          "top1": 0.3829787234042553,
+          "top3": 0.8723404255319149,
+          "ece": 0.029692250301796667,
+          "market_rank_lift": 0.40425531914893614,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.6407571642944296,
+          "brier": 0.08341746712027608,
+          "top1": 0.4146341463414634,
+          "top3": 0.7073170731707317,
+          "ece": 0.022829636384021273,
+          "market_rank_lift": 0.6097560975609756,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.5103468555777448,
+          "brier": 0.06357072089109941,
+          "top1": 0.5,
+          "top3": 0.7692307692307693,
+          "ece": 0.033020704609661514,
+          "market_rank_lift": 0.38461538461538464,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 9.734550653029764,
+        "validation_vs_train_log_loss_gap_pct": 11.43357612572534,
+        "test_vs_train_brier_gap_pct": 35.14413506343481,
+        "validation_vs_train_brier_gap_pct": 8.227567272240096
+      },
+      "feature_importance_by_group": {
+        "market": 0.5620044087967234,
+        "ratings": 0.43799559120327647,
+        "doctrine": 0.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "sp_dec",
+          "importance": 0.21519743301202304
+        },
+        {
+          "feature": "log_sp",
+          "importance": 0.18862871550703356
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.13015290759895862
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.1219827959894132
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11568739879296037
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.07440690284740097
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.07384536278664447
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.05207313078685757
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.026989326680555197
+        },
+        {
+          "feature": "is_fav",
+          "importance": 0.0010360259981531737
+        }
+      ]
+    },
+    "market_plus_doctrine": {
+      "name": "market_plus_doctrine",
+      "feature_names": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav",
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "feature_count": 23,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 1.7327519344891977,
+        "brier": 0.06720410400253156,
+        "top1": 0.39716981132075474,
+        "top3": 0.7396226415094339,
+        "ece": 0.01823648624032922,
+        "market_rank_lift": 0.5801886792452831,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.9192249007987099,
+        "brier": 0.07160930103783544,
+        "top1": 0.30401529636711283,
+        "top3": 0.6462715105162524,
+        "ece": 0.0049491822379328495,
+        "market_rank_lift": 0.2332695984703633,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.6511189824305588,
+        "brier": 0.08335682656228786,
+        "top1": 0.3333333333333333,
+        "top3": 0.7017543859649122,
+        "ece": 0.01901168241920133,
+        "market_rank_lift": 0.07894736842105263,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.5727179705410765,
+          "brier": 0.08943347423120598,
+          "top1": 0.3333333333333333,
+          "top3": 0.7261904761904762,
+          "ece": 0.03252118315561272,
+          "market_rank_lift": 0.05952380952380952,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.8804364571967218,
+          "brier": 0.0711025358263396,
+          "top1": 0.3448275862068966,
+          "top3": 0.6206896551724138,
+          "ece": 0.02084272787715192,
+          "market_rank_lift": 0.13793103448275862,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 1.586597212928387,
+          "brier": 0.06325419213699125,
+          "top1": 0.0,
+          "top3": 1.0,
+          "ece": 0.05978653453634901,
+          "market_rank_lift": 0.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.5588438352789404,
+          "brier": 0.0872311372513136,
+          "top1": 0.3617021276595745,
+          "top3": 0.7872340425531915,
+          "ece": 0.03604188378273389,
+          "market_rank_lift": 0.14893617021276595,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.8311732791246813,
+          "brier": 0.08809285288778705,
+          "top1": 0.2682926829268293,
+          "top3": 0.5853658536585366,
+          "ece": 0.01009826466693987,
+          "market_rank_lift": 0.024390243902439025,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.5339922805716004,
+          "brier": 0.0698132234354256,
+          "top1": 0.38461538461538464,
+          "top3": 0.7307692307692307,
+          "ece": 0.043059033649435606,
+          "market_rank_lift": 0.038461538461538464,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": -4.711173621208724,
+        "validation_vs_train_log_loss_gap_pct": 10.761665452388197,
+        "test_vs_train_brier_gap_pct": 24.035321651112014,
+        "validation_vs_train_brier_gap_pct": 6.554952410552102
+      },
+      "feature_importance_by_group": {
+        "market": 0.7568467842673307,
+        "ratings": 0.0,
+        "doctrine": 0.24315321573266932,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "log_sp",
+          "importance": 0.29071718349923187
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.24837269017399766
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.19504100131079086
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.05548782300875143
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.04126007763447407
+        },
+        {
+          "feature": "curr_or_minus_best_or",
+          "importance": 0.027245158519529928
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.025152030626713645
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.021987650303421317
+        },
+        {
+          "feature": "curr_or_minus_last_win_or",
+          "importance": 0.01845041864273116
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.017841421626909413
+        }
+      ]
+    },
+    "ratings_plus_doctrine": {
+      "name": "ratings_plus_doctrine",
+      "feature_names": [
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "feature_count": 23,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 1.3222853699496162,
+        "brier": 0.055023411581632965,
+        "top1": 0.5952830188679246,
+        "top3": 0.8849056603773585,
+        "ece": 0.038747679836727014,
+        "market_rank_lift": 1.471698113207547,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.4708123910059545,
+        "brier": 0.06086366086372837,
+        "top1": 0.4894837476099426,
+        "top3": 0.8413001912045889,
+        "ece": 0.026734173143410592,
+        "market_rank_lift": 1.401529636711281,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.4810279901381456,
+        "brier": 0.0775194773484021,
+        "top1": 0.5087719298245614,
+        "top3": 0.7807017543859649,
+        "ece": 0.03592791310827811,
+        "market_rank_lift": 0.5,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.453319748108519,
+          "brier": 0.0839973658632172,
+          "top1": 0.5238095238095238,
+          "top3": 0.7738095238095238,
+          "ece": 0.048136188035638676,
+          "market_rank_lift": 0.34523809523809523,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.5331840693953223,
+          "brier": 0.06372650046202616,
+          "top1": 0.4827586206896552,
+          "top3": 0.8275862068965517,
+          "ece": 0.0304109358060895,
+          "market_rank_lift": 1.103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.295994022168665,
+          "brier": 0.0754829582763374,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.003360282043734653,
+          "market_rank_lift": -4.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.4428558649720042,
+          "brier": 0.08174745850435866,
+          "top1": 0.574468085106383,
+          "top3": 0.8297872340425532,
+          "ece": 0.047779568735253436,
+          "market_rank_lift": 0.5957446808510638,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.5431685137009774,
+          "brier": 0.07704678813038539,
+          "top1": 0.43902439024390244,
+          "top3": 0.7317073170731707,
+          "ece": 0.04491118589507905,
+          "market_rank_lift": 0.5121951219512195,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.4520406215509365,
+          "brier": 0.07136293865744099,
+          "top1": 0.5,
+          "top3": 0.7692307692307693,
+          "ece": 0.04191207585471843,
+          "market_rank_lift": 0.3076923076923077,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 12.005171031619144,
+        "validation_vs_train_log_loss_gap_pct": 11.232599590964067,
+        "test_vs_train_brier_gap_pct": 40.88453463739499,
+        "validation_vs_train_brier_gap_pct": 10.614116998962855
+      },
+      "feature_importance_by_group": {
+        "market": 0.0,
+        "ratings": 0.7174082403589785,
+        "doctrine": 0.28259175964102157,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.22627987721306708
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.22538843367512446
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.11945821777321493
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.10397459644998581
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.0932702993074363
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.06849503371336485
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.03999847071132378
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.028456148453576302
+        },
+        {
+          "feature": "decoy_support_flag",
+          "importance": 0.025111728062173
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.012673691958653114
+        }
+      ]
+    },
+    "market_plus_ratings_plus_doctrine": {
+      "name": "market_plus_ratings_plus_doctrine",
+      "feature_names": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav",
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "feature_count": 28,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 1.387977154773795,
+        "brier": 0.05761581540096568,
+        "top1": 0.5103773584905661,
+        "top3": 0.8452830188679246,
+        "ece": 0.027522415091328883,
+        "market_rank_lift": 1.2339622641509433,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.5871678900750845,
+        "brier": 0.06385633005852472,
+        "top1": 0.42065009560229444,
+        "top3": 0.7495219885277247,
+        "ece": 0.013936794062565476,
+        "market_rank_lift": 1.0516252390057361,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.5070779508442058,
+        "brier": 0.0773362892349502,
+        "top1": 0.40350877192982454,
+        "top3": 0.7456140350877193,
+        "ece": 0.021632245112657548,
+        "market_rank_lift": 0.35964912280701755,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.4166241349835713,
+          "brier": 0.08452475667528721,
+          "top1": 0.39285714285714285,
+          "top3": 0.7738095238095238,
+          "ece": 0.022768304304845086,
+          "market_rank_lift": 0.27380952380952384,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.7555038268052852,
+          "brier": 0.062168192527946045,
+          "top1": 0.4482758620689655,
+          "top3": 0.6896551724137931,
+          "ece": 0.03744684772626674,
+          "market_rank_lift": 0.6551724137931034,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 1.90084808026621,
+          "brier": 0.07141125488362991,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.08641555343379473,
+          "market_rank_lift": -1.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.3631452128359194,
+          "brier": 0.07984183210074249,
+          "top1": 0.3617021276595745,
+          "top3": 0.7872340425531915,
+          "ece": 0.04131590944084412,
+          "market_rank_lift": 0.19148936170212766,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.6270902227553736,
+          "brier": 0.0826450324660131,
+          "top1": 0.3902439024390244,
+          "top3": 0.6829268292682927,
+          "ece": 0.02509135521408867,
+          "market_rank_lift": 0.5609756097560976,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.5780139330761904,
+          "brier": 0.06514423291156499,
+          "top1": 0.5,
+          "top3": 0.7692307692307693,
+          "ece": 0.02895714165363716,
+          "market_rank_lift": 0.34615384615384615,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 8.58089023012928,
+        "validation_vs_train_log_loss_gap_pct": 14.351153735938302,
+        "test_vs_train_brier_gap_pct": 34.22753578465193,
+        "validation_vs_train_brier_gap_pct": 10.831252867167516
+      },
+      "feature_importance_by_group": {
+        "market": 0.5249262390844354,
+        "ratings": 0.36947755665252074,
+        "doctrine": 0.105596204263044,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "log_sp",
+          "importance": 0.21544792709131935
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.1590903633396197
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.12267882162176781
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11533067644030451
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.10162663628491714
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.057948311926849044
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.04993983013888308
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.0446321018615669
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.025798629649814178
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.023677475204536665
+        }
+      ]
+    },
+    "hk_only_diagnostic": {
+      "name": "hk_only_diagnostic",
+      "feature_names": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav",
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "feature_count": 28,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": "HK",
+      "train_metrics": {
+        "log_loss": 0.7962603463271112,
+        "brier": 0.03254922192922107,
+        "top1": 0.7532051282051282,
+        "top3": 0.9519230769230769,
+        "ece": 0.025995221344215367,
+        "market_rank_lift": 1.9262820512820513,
+        "n_races": 624,
+        "n_runners": 7388
+      },
+      "validation_metrics": {
+        "log_loss": 1.0735150279498742,
+        "brier": 0.04430318749754915,
+        "top1": 0.5957446808510638,
+        "top3": 0.8962765957446809,
+        "ece": 0.016492846259091316,
+        "market_rank_lift": 2.00531914893617,
+        "n_races": 376,
+        "n_runners": 4483
+      },
+      "test_metrics": {
+        "log_loss": 1.0710639577291383,
+        "brier": 0.05002467063828714,
+        "top1": 0.5172413793103449,
+        "top3": 0.9310344827586207,
+        "ece": 0.04582979504086014,
+        "market_rank_lift": 1.7241379310344827,
+        "n_races": 29,
+        "n_runners": 319
+      },
+      "test_metrics_by_jurisdiction": {
+        "HK": {
+          "log_loss": 1.0710639577291383,
+          "brier": 0.05002467063828714,
+          "top1": 0.5172413793103449,
+          "top3": 0.9310344827586207,
+          "ece": 0.04582979504086014,
+          "market_rank_lift": 1.7241379310344827,
+          "n_races": 29,
+          "n_runners": 319
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.0697369978750868,
+          "brier": 0.05602992844449259,
+          "top1": 0.42857142857142855,
+          "top3": 1.0,
+          "ece": 0.0721861408130223,
+          "market_rank_lift": 1.4285714285714286,
+          "n_races": 14,
+          "n_runners": 148
+        },
+        "2024": {
+          "log_loss": 1.1338423125618207,
+          "brier": 0.0455459078815818,
+          "top1": 0.625,
+          "top3": 0.875,
+          "ece": 0.03652767720351647,
+          "market_rank_lift": 1.875,
+          "n_races": 8,
+          "n_runners": 96
+        },
+        "2025": {
+          "log_loss": 1.0019711861998892,
+          "brier": 0.04390711156262457,
+          "top1": 0.5714285714285714,
+          "top3": 0.8571428571428571,
+          "ece": 0.0481785159015321,
+          "market_rank_lift": 2.142857142857143,
+          "n_races": 7,
+          "n_runners": 75
+        }
+      },
+      "overfit_warning": {
+        "level": "high",
+        "test_vs_train_log_loss_gap_pct": 34.511779051864934,
+        "validation_vs_train_log_loss_gap_pct": 34.81960176739282,
+        "test_vs_train_brier_gap_pct": 53.68929784886034,
+        "validation_vs_train_brier_gap_pct": 36.11135649843584
+      },
+      "feature_importance_by_group": {
+        "market": 0.3972376424959394,
+        "ratings": 0.5198515183084942,
+        "doctrine": 0.0829108391955665,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "implied_prob",
+          "importance": 0.3299325640355528
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.1583724478068306
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.1293633826687596
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.1284460764620359
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.10366961137086796
+        },
+        {
+          "feature": "log_sp",
+          "importance": 0.03742796554046885
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.02486631714131435
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.02084795036063841
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.011869450437058872
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.009805553517883543
+        }
+      ]
+    },
+    "fr_only_diagnostic": {
+      "name": "fr_only_diagnostic",
+      "feature_names": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav",
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "feature_count": 28,
+      "calibration_mode": "global_isotonic",
+      "jurisdiction_only": "FR",
+      "train_metrics": {
+        "log_loss": 1.3940624185906139,
+        "brier": 0.06482388023721039,
+        "top1": 0.5849056603773585,
+        "top3": 0.8702830188679245,
+        "ece": 0.04414647747995147,
+        "market_rank_lift": 1.4103773584905661,
+        "n_races": 424,
+        "n_runners": 4197
+      },
+      "validation_metrics": {
+        "log_loss": 1.471007418198631,
+        "brier": 0.07747931043650186,
+        "top1": 0.46808510638297873,
+        "top3": 0.7801418439716312,
+        "ece": 0.01840304668717962,
+        "market_rank_lift": 0.7730496453900709,
+        "n_races": 141,
+        "n_runners": 1238
+      },
+      "test_metrics": {
+        "log_loss": 1.4212382699670008,
+        "brier": 0.08501861683910333,
+        "top1": 0.4523809523809524,
+        "top3": 0.8095238095238095,
+        "ece": 0.0350288376959753,
+        "market_rank_lift": 0.40476190476190477,
+        "n_races": 84,
+        "n_runners": 683
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.4212382699670008,
+          "brier": 0.08501861683910333,
+          "top1": 0.4523809523809524,
+          "top3": 0.8095238095238095,
+          "ece": 0.0350288376959753,
+          "market_rank_lift": 0.40476190476190477,
+          "n_races": 84,
+          "n_runners": 683
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.3868627410527758,
+          "brier": 0.09185842476872595,
+          "top1": 0.42424242424242425,
+          "top3": 0.8484848484848485,
+          "ece": 0.05203031812286698,
+          "market_rank_lift": 0.21212121212121213,
+          "n_races": 33,
+          "n_runners": 249
+        },
+        "2024": {
+          "log_loss": 1.607069766267382,
+          "brier": 0.09174844634326897,
+          "top1": 0.375,
+          "top3": 0.71875,
+          "ece": 0.027556245049312315,
+          "market_rank_lift": 0.4375,
+          "n_races": 32,
+          "n_runners": 265
+        },
+        "2025": {
+          "log_loss": 1.1679637737858017,
+          "brier": 0.06438833877354165,
+          "top1": 0.631578947368421,
+          "top3": 0.8947368421052632,
+          "ece": 0.04588930732915213,
+          "market_rank_lift": 0.6842105263157895,
+          "n_races": 19,
+          "n_runners": 169
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 1.949399898740651,
+        "validation_vs_train_log_loss_gap_pct": 5.519480231438126,
+        "test_vs_train_brier_gap_pct": 31.153236319693033,
+        "validation_vs_train_brier_gap_pct": 19.522790294227036
+      },
+      "feature_importance_by_group": {
+        "market": 0.4306951324895735,
+        "ratings": 0.4120703878358961,
+        "doctrine": 0.15723447967453036,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "implied_prob",
+          "importance": 0.23478722711476735
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.20186706032551768
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11126853327640585
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.09893479423397253
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.06674515266115721
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.06351071554281343
+        },
+        {
+          "feature": "log_sp",
+          "importance": 0.06174769989418529
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.043618593403736396
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.0350647297855386
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.017483439942096158
+        }
+      ]
+    },
+    "jurisdiction_specific_calibration": {
+      "name": "jurisdiction_specific_calibration",
+      "feature_names": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav",
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "feature_count": 28,
+      "calibration_mode": "jurisdiction_specific_isotonic",
+      "jurisdiction_only": null,
+      "train_metrics": {
+        "log_loss": 1.4068004920480088,
+        "brier": 0.05809360127816169,
+        "top1": 0.5094339622641509,
+        "top3": 0.8377358490566038,
+        "ece": 0.02618617114499748,
+        "market_rank_lift": 1.2254716981132074,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.5665797246788897,
+        "brier": 0.0635386123370101,
+        "top1": 0.4225621414913958,
+        "top3": 0.7476099426386233,
+        "ece": 0.011150555164764488,
+        "market_rank_lift": 1.05736137667304,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.5148005529372397,
+        "brier": 0.07854221942719225,
+        "top1": 0.38596491228070173,
+        "top3": 0.7719298245614035,
+        "ece": 0.029361388887044013,
+        "market_rank_lift": 0.37719298245614036,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.4437476950871337,
+          "brier": 0.08598122029648715,
+          "top1": 0.36904761904761907,
+          "top3": 0.8095238095238095,
+          "ece": 0.03260685582421924,
+          "market_rank_lift": 0.2976190476190476,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.7072968471468921,
+          "brier": 0.06288307830115568,
+          "top1": 0.4482758620689655,
+          "top3": 0.6896551724137931,
+          "ece": 0.03905019549630517,
+          "market_rank_lift": 0.6551724137931034,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 1.90084808026621,
+          "brier": 0.07141125488362991,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.08641555343379473,
+          "market_rank_lift": -1.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.3841448789294255,
+          "brier": 0.08079562363553766,
+          "top1": 0.3404255319148936,
+          "top3": 0.8297872340425532,
+          "ece": 0.05402853442676793,
+          "market_rank_lift": 0.2127659574468085,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.6093457444165635,
+          "brier": 0.08273758914243674,
+          "top1": 0.3902439024390244,
+          "top3": 0.7073170731707317,
+          "ece": 0.03336072500063745,
+          "market_rank_lift": 0.5609756097560976,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.6018953155416626,
+          "brier": 0.06846240641694916,
+          "top1": 0.46153846153846156,
+          "top3": 0.7692307692307693,
+          "ece": 0.04438312894105098,
+          "market_rank_lift": 0.38461538461538464,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 7.676999084070922,
+        "validation_vs_train_log_loss_gap_pct": 11.357632694475077,
+        "test_vs_train_brier_gap_pct": 35.199432810369636,
+        "validation_vs_train_brier_gap_pct": 9.372824096025308
+      },
+      "feature_importance_by_group": {
+        "market": 0.5249262390844354,
+        "ratings": 0.36947755665252074,
+        "doctrine": 0.105596204263044,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "log_sp",
+          "importance": 0.21544792709131935
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.1590903633396197
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.12267882162176781
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11533067644030451
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.10162663628491714
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.057948311926849044
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.04993983013888308
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.0446321018615669
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.025798629649814178
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.023677475204536665
+        }
+      ]
+    }
+  },
+  "pass_gate_checks": {
+    "mrd_beats_mr_log_loss": false,
+    "mrd_beats_mr_brier": false,
+    "doctrine_only_non_zero_signal": true,
+    "hk_failure_fixed_or_reduced": true,
+    "fr_positive": true,
+    "calibration_not_materially_worse": true,
+    "overfit_improved_or_explained": true,
+    "no_leakage_fields_used": true,
+    "no_outcome_fields_used": true
+  }
+}
