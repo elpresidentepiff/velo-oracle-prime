@@ -1,0 +1,276 @@
+{
+  "A_confirm_v3_suite_verdict": {
+    "suite_verdict": "FAIL",
+    "reason": "The suite failed because market-assisted variants recrowded the signal even though the non-market core passed its direct quality gates."
+  },
+  "B_confirm_market_assisted_arms_failed_isolation_gate": {
+    "market_calibration": {
+      "test_metrics": {
+        "log_loss": 1.314587589429992,
+        "brier": 0.06714726916909404,
+        "top1": 0.5789473684210527,
+        "top3": 0.8947368421052632,
+        "ece": 0.040067749532938554,
+        "market_rank_lift": 1.0350877192982457,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "recrowding": {
+        "probability_correlation": 0.5533008926876234,
+        "top1_overlap_with_market": 0.5350877192982456
+      },
+      "failed": true
+    },
+    "residual_over_market": {
+      "test_metrics": {
+        "log_loss": 1.407549168787816,
+        "brier": 0.07419783127580136,
+        "top1": 0.49122807017543857,
+        "top3": 0.868421052631579,
+        "ece": 0.035781728872182395,
+        "market_rank_lift": 0.8157894736842105,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "recrowding": {
+        "probability_correlation": 0.7989411103935219,
+        "top1_overlap_with_market": 0.7105263157894737
+      },
+      "failed": true
+    }
+  },
+  "C_confirm_core_arm_feature_mask_excludes_market": {
+    "market_features": [
+      "sp_dec",
+      "log_sp",
+      "implied_prob",
+      "sp_rank",
+      "is_fav"
+    ],
+    "core_feature_mask": [
+      "or_num",
+      "rpr_num",
+      "ts_num",
+      "or_vs_field",
+      "rpr_vs_field",
+      "runs_since_win",
+      "runs_since_place",
+      "runs_since_mkt_support",
+      "curr_or_minus_last_win_or",
+      "curr_or_minus_best_or",
+      "mark_compression_score",
+      "release_window_score",
+      "course_fit_score",
+      "going_fit_score",
+      "distance_fit_score",
+      "quiet_run_score",
+      "trainer_timing_score",
+      "jockey_switch_intent",
+      "odds_resilience_score",
+      "odds_contraction_score",
+      "decoy_support_flag",
+      "setup_run_flag",
+      "cash_run_flag",
+      "dist_f",
+      "going_code",
+      "is_aw",
+      "class_num",
+      "wgt_lbs",
+      "field_size",
+      "draw_num",
+      "draw_pct",
+      "age_num"
+    ],
+    "excludes_market": true
+  },
+  "D_confirm_leakage_audit": {
+    "status": "pass",
+    "same_day_or_future_history_leakage": 0,
+    "authority_model": {
+      "accepted_historical_training_authority": [
+        "race_results distinct accepted events",
+        "races.runners_count",
+        "accepted historical_feature_store rows"
+      ],
+      "known_caveat": "direct runner_results join has legacy horse-id drift and is not the authority for Playbook G V2 training cohort."
+    }
+  },
+  "E_confirm_outcome_field_exclusion": {
+    "status": "pass",
+    "forbidden_feature_intersection": []
+  },
+  "F_compare_core_vs_market_baseline": {
+    "core_log_loss": 1.4345182854454899,
+    "market_log_loss": 1.72522944388281,
+    "core_brier": 0.07333010257274018,
+    "market_brier": 0.0854828821497236,
+    "core_top1": 0.5526315789473685,
+    "market_top1": 0.35964912280701755,
+    "core_top3": 0.868421052631579,
+    "market_top3": 0.6929824561403509,
+    "core_beats_market": true
+  },
+  "G_compare_core_vs_v2_best": {
+    "core_log_loss": 1.4345182854454899,
+    "v2_best_log_loss": 1.4810279901381456,
+    "core_brier": 0.07333010257274018,
+    "v2_best_brier": 0.0775194773484021,
+    "core_beats_v2_best": true
+  },
+  "H_compare_core_vs_market_plus_ratings": {
+    "core_log_loss": 1.4345182854454899,
+    "market_plus_ratings_log_loss": 1.4816467492541938,
+    "core_brier": 0.07333010257274018,
+    "market_plus_ratings_brier": 0.0766130183864493,
+    "core_beats_market_plus_ratings": true
+  },
+  "I_hk_performance": {
+    "market": {
+      "log_loss": 2.0043041687607603,
+      "brier": 0.07303520989968713,
+      "top1": 0.3448275862068966,
+      "top3": 0.5517241379310345,
+      "ece": 0.029204215122047496,
+      "market_rank_lift": 0.0,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core": {
+      "log_loss": 1.2184885601798774,
+      "brier": 0.051501770266544566,
+      "top1": 0.5862068965517241,
+      "top3": 0.7586206896551724,
+      "ece": 0.0225892604530151,
+      "market_rank_lift": 1.1724137931034482,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "pass": true
+  },
+  "J_fr_performance": {
+    "market": {
+      "log_loss": 1.6292902317692781,
+      "brier": 0.09162854773051476,
+      "top1": 0.36904761904761907,
+      "top3": 0.7380952380952381,
+      "ece": 0.026968478843623234,
+      "market_rank_lift": 0.0,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core": {
+      "log_loss": 1.4254624588668463,
+      "brier": 0.08223997725246082,
+      "top1": 0.4523809523809524,
+      "top3": 0.8095238095238095,
+      "ece": 0.051920481782044614,
+      "market_rank_lift": 0.40476190476190477,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "pass": true
+  },
+  "K_2025_sensitivity": {
+    "model": "ratings_plus_doctrine_core",
+    "status": "sensitivity_only",
+    "core_metrics": {
+      "log_loss": 1.6656665286848082,
+      "brier": 0.0728388636515278,
+      "top1": 0.46153846153846156,
+      "top3": 0.8846153846153846,
+      "ece": 0.039968211463195874,
+      "market_rank_lift": 0.5384615384615384,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "market_metrics": {
+      "log_loss": 1.6319770727552103,
+      "brier": 0.07327465464143125,
+      "top1": 0.46153846153846156,
+      "top3": 0.7307692307692307,
+      "ece": 0.027429739047059663,
+      "market_rank_lift": 0.0,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "n_races": 26,
+    "n_runners": 244,
+    "unstable": true
+  },
+  "L_calibration_weakness": {
+    "core_ece": 0.04202993749446802,
+    "market_ece": 0.01758033316522976,
+    "market_plus_ratings_ece": 0.020558192369501044,
+    "comment": "Core probability quality is strong, but calibration is looser than the market baseline and needs repair without recrowding the model toward raw market behavior."
+  },
+  "M_overfit_status": {
+    "core": {
+      "level": "medium",
+      "test_vs_train_log_loss_gap_pct": 9.73178023429616,
+      "validation_vs_train_log_loss_gap_pct": 12.395881946602769,
+      "test_vs_train_brier_gap_pct": 35.1938739845175,
+      "validation_vs_train_brier_gap_pct": 11.749123734094873
+    },
+    "market_calibration": {
+      "level": "medium",
+      "test_vs_train_log_loss_gap_pct": 12.869984340768243,
+      "validation_vs_train_log_loss_gap_pct": 19.09763816842898,
+      "test_vs_train_brier_gap_pct": 34.17510273184956,
+      "validation_vs_train_brier_gap_pct": 16.511438356535603
+    },
+    "residual_over_market": {
+      "level": "medium",
+      "test_vs_train_log_loss_gap_pct": 1.6772265901734646,
+      "validation_vs_train_log_loss_gap_pct": 10.812946306999809,
+      "test_vs_train_brier_gap_pct": 27.14166570825654,
+      "validation_vs_train_brier_gap_pct": 8.418043035960254
+    },
+    "pass": true
+  },
+  "N_market_correlation_and_top1_overlap": {
+    "core": {
+      "probability_correlation": 0.48226505394654967,
+      "top1_overlap_with_market": 0.37719298245614036
+    },
+    "market_calibration": {
+      "probability_correlation": 0.5533008926876234,
+      "top1_overlap_with_market": 0.5350877192982456
+    },
+    "residual_over_market": {
+      "probability_correlation": 0.7989411103935219,
+      "top1_overlap_with_market": 0.7105263157894737
+    },
+    "thresholds": {
+      "probability_correlation_max": 0.58,
+      "top1_overlap_with_market_max": 0.45
+    }
+  },
+  "O_whether_core_qualifies_as_offline_research_candidate": {
+    "classification": "CANDIDATE_PASS_OFFLINE_RESEARCH_ONLY",
+    "reason": "The non-market ratings+doctrine+structure core beat market, beat V2 best, beat market+ratings, stayed positive in HK and FR, preserved leakage/outcome protections, and avoided recrowding in its own feature mask."
+  },
+  "P_what_blocks_production_promotion": {
+    "blockers": [
+      "V3 full suite failed because market-assisted arms violated the market-isolation gate.",
+      "Market calibration arm exceeded top-1 market overlap ceiling.",
+      "Residual-over-market arm exceeded both market correlation and top-1 overlap ceilings.",
+      "Core calibration quality is still weaker than the market baseline and needs repair without recrowding.",
+      "2025 remains sensitivity-only because the sample is only 26 races.",
+      "No production promotion path has been approved for an offline-only research candidate."
+    ]
+  },
+  "Q_recommended_next_experiment": {
+    "summary": "Run a core-only stability audit: bootstrap confidence intervals, year-by-year degradation review, HK/FR split reliability, and calibration repair that does not reintroduce raw market crowding.",
+    "follow_on_scope": [
+      "bootstrap confidence intervals for core test metrics",
+      "2023 vs 2024 vs 2025 split reliability",
+      "HK/FR stability and race-count sensitivity",
+      "core-only calibration repair without market features as learner inputs"
+    ]
+  },
+  "final_recommendation": {
+    "code": "B",
+    "label": "accept V3 core as offline research candidate only",
+    "reason": "The suite failed for governance reasons, not because the core was weak. The ratings+doctrine+structure core is now strong enough to be treated as an offline research candidate, while market-assisted variants remain rejected."
+  }
+}
