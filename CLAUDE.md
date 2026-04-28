@@ -433,4 +433,246 @@ To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.
 | Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
+---
+
+# VÉLØ EVIDENCE LAYER — Master Intelligence Context
+## (Read this before any analysis, audit, or product work)
+
+Last updated: 2026-04-28 | Unified Audit commit: 0cfbbed | Evidence baseline: 06ba74b
+
+---
+
+## What VÉLØ Is
+
+VÉLØ Oracle Prime is an auditable racing intelligence operating system. It predicts horse racing outcomes, audits its own predictions daily via sigma runs, accumulates evidence through a router shadow ledger, and learns patterns from closed results. It is not a tips service. It is a decision-support and analytics engine.
+
+---
+
+## Daily Operating Scripts — Run In This Order
+
+```bash
+# 1. Score today's races (runs automatically via Railway cron, or manually):
+source venv/bin/activate && PYTHONPATH=. python scripts/run_prime_today.py
+
+# 2. After results close — sigma audit:
+source venv/bin/activate && PYTHONPATH=. python scripts/run_results_sigma.py --date YYYY-MM-DD
+
+# 3. After sigma — append new races to innovation protocol:
+source venv/bin/activate && PYTHONPATH=. python scripts/build_innovation_protocol.py --date YYYY-MM-DD
+
+# 4. Run router shadow audit (evidence accumulation):
+PYTHONUTF8=1 source venv/bin/activate && PYTHONPATH=. python scripts/router_shadow_audit.py --prev-csv data/router_shadow_audit_latest.csv
+
+# 5. Periodic (weekly or after 20+ new results) — unified evidence audit:
+source venv/bin/activate && PYTHONPATH=. python scripts/run_velo_unified_evidence_audit.py
+```
+
+---
+
+## Sigma Process — LOCKED FORMAT
+
+ALWAYS use `scripts/run_results_sigma.py --date YYYY-MM-DD`. NEVER use `close_sigma_loops.py`.
+The Telegram format is locked — never change it. See memory file `feedback_sigma_process.md`.
+
+---
+
+## Proven Evidence (as of 2026-04-28 Unified Audit V1)
+
+**Audit scope:** 49 race days | 1391 sigma rows | 1604 verdicts in DB | 142 X-tier excluded
+
+### Global Performance
+| Metric | Value | Baseline |
+|---|---|---|
+| Strike rate (non-X) | **20.6%** | 20% |
+| Frame rate (non-X) | **48.4%** | 70% |
+| Days above baseline | 18/49 | — |
+| Days at baseline | 9/49 | — |
+| Days below baseline | 22/49 | — |
+
+**Note:** Frame rate of 48.4% is below the 70% target. Frame detection is better in high-VP bands but the system has significant low-VP volume dragging the overall metric.
+
+---
+
+### VP Band Truth (PROVEN — monotonic, consistent across 49 days)
+
+| VP Band | n | SR | Frame | Signal Rank |
+|---|---|---|---|---|
+| VP < 0.20 | 385 | 14.5% | 33.5% | SUPPRESS |
+| VP 0.20–0.30 | 460 | 18.0% | 47.8% | NOISY |
+| VP 0.30–0.40 | 245 | 27.3% | 62.9% | PROMISING |
+| VP ≥ 0.40 | 100 | 44.0% | 85.0% | PROVEN |
+| **VP ≥ 0.30 combined** | **345** | **32.2%** | **69.3%** | **PROMISING** |
+| **VP ≥ 0.30 + Tier A** | **162** | **40.1%** | **77.2%** | **PROVEN** |
+
+**VP ≥ 0.30 is the primary live signal gate. Any action on VÉLØ output should require VP ≥ 0.30 as a hard floor.**
+
+---
+
+### Tier Truth
+
+| Tier | n | SR | Frame | Avg VP | Signal Rank |
+|---|---|---|---|---|---|
+| **Tier A** | **162** | **40.1%** | **77.2%** | 0.425 | **PROVEN** |
+| Tier B | 402 | 21.1% | 50.0% | 0.277 | NOISY |
+| Tier C | 455 | 15.8% | 42.2% | 0.212 | SUPPRESS |
+| Tier D | 112 | 13.4% | 33.9% | 0.164 | SUPPRESS |
+| Tier X | 142 | 12.7% | 34.5% | 0.145 | SUPPRESS |
+| B VP≥0.30 | 130 | 30.0% | 62.3% | — | WATCHLIST |
+| **B VP<0.30** | **272** | **16.9%** | **44.1%** | — | **SUPPRESS** |
+
+**B-tier suppression test:** Removing 272 B-tier VP<0.30 rows (-21.8% coverage) improves SR from 20.6% → 21.6% and Frame from 48.4% → 49.6%. Modest gain, confirmed drag direction.
+
+---
+
+### Sidecar Signal Truth (CRITICAL FINDINGS)
+
+| Signal | n | SR | Lift | Verdict |
+|---|---|---|---|---|
+| **Market deception score > 0.5** | **31** | **54.8%** | **+34.2%** | **KEEP — exceptional** |
+| **Improvement score > 0.40** | **62** | **43.5%** | **+22.9%** | **KEEP — proven** |
+| **Place prob > 0.80** | **392** | **31.6%** | **+11.0%** | **KEEP — solid** |
+| RPDC release score > 0.5 | 54 | 24.1% | +3.5% | KEEP — watchlist |
+| Archetype=Structure | 270 | 21.1% | +0.5% | WATCHLIST — minimal lift |
+| Archetype=Compression | 40 | 20.0% | -0.6% | SUPPRESS — no lift |
+| G Shadow multiplier > 1.0 | 0 | — | — | BROKEN_OR_UNWIRED |
+| RPDC cash window flag | 1 | — | — | INSUFFICIENT_SAMPLE |
+| Macro chaos mode | 0 | — | — | BROKEN_OR_UNWIRED |
+
+**Market deception score > 0.5 (SR=54.8%, Frame=96.8%)** is the highest-lift signal in the system. When VÉLØ fires with high MDS, it is identifying something real. This is the highest-priority signal to wire into candidate lane tracking.
+
+---
+
+### Router Shadow Lanes (evidence accumulation only — no staking)
+
+| Lane | n | SR | ROI | Status | Next gate |
+|---|---|---|---|---|---|
+| V1_BASE | 27 | 37.0% | +11.5% | WATCHLIST | +23 → SHADOW_CANDIDATE |
+| V2_CLASS4_ONLY | 17 | 41.2% | +30.2% | LANE_ACTIVE | +3 → WATCHLIST |
+| V6_GOLD_SEAM | 5 | 60.0% | +115.0% | LOW_SAMPLE | +15 → SHADOW_CANDIDATE |
+
+**Protected baseline commit:** 06ba74b
+**No router rule changes. No staking. Evidence accumulation only.**
+
+Daily router evidence workflow after each closed results batch:
+```bash
+python scripts/build_innovation_protocol.py --date YYYY-MM-DD
+python scripts/router_shadow_audit.py --prev-csv data/router_shadow_audit_latest.csv
+```
+
+---
+
+### Miss Class Truth (49-day total)
+
+| Miss Class | Count | % of misses |
+|---|---|---|
+| mid_priced_won | 279 | 46% |
+| outsider_won | 92 | 15% |
+| market_decoy_followed | 87 | 14% |
+| short_fav_won | 81 | 13% |
+| non_runner/untracked | 26 | 4% |
+
+**SP 3.0–8.5 zone misses: 352 = 58% of all misses.** Mid-priced winners are the primary unsolved problem.
+
+---
+
+### Modification Impact Timeline
+
+| Date | Modification | SR delta | Frame delta | n_post |
+|---|---|---|---|---|
+| 2026-03-16 | VeloPrimeEnsemble (SQPE v17 + 7 specialists) | +23.3% | +55.2% | 116 |
+| 2026-03-28 | Playbook G v2 — shadow tracking | +3.4% | +3.4% | 312 |
+| 2026-04-10 | Race archetype classification | **+3.9%** | **+6.7%** | 193 |
+| 2026-04-16 | RPDC evidence layer | -0.9% | +1.1% | 342 |
+| 2026-04-27 | Execution Router v1 SP gate | -1.0% | +14.3%* | 26 |
+| 2026-04-28 | Router Evidence Engine hardened | +3.2% | +6.8% | 158 |
+
+*Router SP gate frame uplift at n=26 is too small to be meaningful yet.
+
+**Race archetype layer (Apr 10) shows the strongest post-ensemble modification impact.**
+**VeloPrimeEnsemble (Mar 16) is the foundational change — all evidence is post-ensemble.**
+
+---
+
+### Final Signal Rankings
+
+| Signal | n | SR | Frame | Rank |
+|---|---|---|---|---|
+| VP≥0.30 + Tier A | 162 | 40.1% | 77.2% | **PROVEN_SIGNAL** |
+| Tier A (all VP) | 162 | 40.1% | 77.2% | **PROVEN_SIGNAL** |
+| Improvement score>0.40 | 62 | 43.5% | 82.3% | **PROVEN_SIGNAL** |
+| VP≥0.30 | 345 | 32.2% | 69.3% | PROMISING_SIGNAL |
+| Place prob>0.80 | 392 | 31.6% | 66.8% | PROMISING_SIGNAL |
+| Market deception score>0.5 | 31 | 54.8% | 96.8% | PROMISING_SIGNAL |
+| Tier B VP≥0.30 | 130 | 30.0% | 62.3% | WATCHLIST_SIGNAL |
+| V1_BASE router | 27 | 37.0% | 85.2% | WATCHLIST_SIGNAL |
+| V2_CLASS4_ONLY router | 17 | 41.2% | 82.4% | WATCHLIST_SIGNAL |
+| Tier B (all VP) | 402 | 21.1% | 50.0% | NOISY_SIGNAL |
+| Archetype=Structure | 270 | 21.1% | 53.7% | NOISY_SIGNAL |
+| Tier B VP<0.30 | 272 | 16.9% | 44.1% | **SUPPRESS_SIGNAL** |
+| V6_GOLD_SEAM router | 5 | 60.0% | 100.0% | INSUFFICIENT_SAMPLE |
+
+---
+
+## Hard Operating Rules (PERMANENT — never override)
+
+```
+NO live staking
+NO candidate_route() changes without evidence gate passed
+NO router rule changes
+NO SQPE/model training
+NO Playbook E
+NO model changes from single-day analysis
+NO baseline overwrite
+NO force push
+```
+
+Promotion gates (router lanes):
+- V2 → WATCHLIST: n≥20, ROI positive
+- V2 → SHADOW_CANDIDATE: n≥30, ROI positive, Frame>75%
+- Any lane → LIVE_DISCUSSION: n≥100, multi-week evidence
+- Freeze: ROI<0 at n≥20 OR Frame<70% at n≥20
+
+---
+
+## Evidence Artifacts (gitignored data files, local only)
+
+| File | Purpose |
+|---|---|
+| `data/velo_unified_evidence_audit_v1.json` | Master truth JSON — full audit output |
+| `data/velo_unified_evidence_audit_v1.md` | Human-readable audit report |
+| `data/velo_unified_evidence_audit_v1_metrics.csv` | Signal rankings table |
+| `data/velo_innovation_protocol_1k_deduped.csv` | Router lane dataset (713 rows, deduped) |
+| `data/router_shadow_audit_latest.csv` | Latest router lane metrics |
+| `data/router_shadow_audit_ledger.csv` | Append-only evidence ledger |
+| `data/router_shadow_audit_runs/` | Timestamped immutable snapshots |
+
+---
+
+## Next Operating Protocol
+
+1. **Daily:** Run sigma → build_innovation_protocol → router_shadow_audit after each closed-results batch
+2. **Weekly:** Re-run unified evidence audit to track signal rankings over time
+3. **V2 watch:** +3 qualifying results → WATCHLIST gate
+4. **MDS>0.5 study:** Build dedicated candidate lane for market_deception_score>0.5 + VP≥0.30
+5. **Improvement score lane:** Wire improvement_score>0.40 as shadow candidate (SR=43.5% at n=62)
+6. **B-tier suppression:** Track — confirmed drag but coverage cost is meaningful (-21.8%)
+7. **Mid-priced winner miss study:** SP 3–8.5 zone is 58% of all misses — primary research target
+8. **Audit dossier:** Build VELO_AUDIT_DOSSIER.md from unified audit output for whitepaper/funding pack
+
+---
+
+## Company Roadmap (from co-founder session 2026-04-28)
+
+**Stage 1:** Router audit accumulation (active)
+**Stage 2:** Audit dossier (VELO_AUDIT_DOSSIER.md)
+**Stage 3:** High-confidence lane study (VP≥0.30+TierA+MDS>0.5)
+**Stage 4:** Mid-priced winner miss study
+**Stage 5:** Website/app MVP spec
+**Stage 6:** Whitepaper v1 — "VÉLØ: An Auditable Intelligence OS for Racing Prediction"
+**Stage 7:** Business plan v1
+**Stage 8:** Funding pack v1
+**Stage 9:** Shadow-only controlled release plan
+
+Product positioning: **Auditable racing intelligence and decision support. Not a tips service.**
+
 <!-- gitnexus:end -->
