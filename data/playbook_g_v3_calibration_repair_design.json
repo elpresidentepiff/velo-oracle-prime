@@ -1,0 +1,420 @@
+{
+  "A_proposed_calibration_arms": {
+    "objective": "Repair probability calibration for the ratings + doctrine + structure core without letting market information recrowd or dominate the model.",
+    "arms": [
+      {
+        "code": "CR-1",
+        "name": "core_uncalibrated_baseline",
+        "purpose": "Reference point for pure ratings + doctrine + structure behavior.",
+        "allowed_inputs": [
+          "core feature mask only"
+        ],
+        "market_usage": "benchmark only"
+      },
+      {
+        "code": "CR-2",
+        "name": "core_isotonic_no_market",
+        "purpose": "Repair calibration using validation-only isotonic on core scores without any market inputs.",
+        "allowed_inputs": [
+          "core raw score",
+          "validation labels",
+          "race-normalization"
+        ],
+        "market_usage": "diagnostic only"
+      },
+      {
+        "code": "CR-3",
+        "name": "core_platt_no_market",
+        "purpose": "Test logistic/Platt calibration on core scores only.",
+        "allowed_inputs": [
+          "core raw score",
+          "validation labels"
+        ],
+        "market_usage": "diagnostic only"
+      },
+      {
+        "code": "CR-4",
+        "name": "core_temperature_scaling_no_market",
+        "purpose": "Apply one-parameter confidence scaling to reduce overconfidence without changing ranking.",
+        "allowed_inputs": [
+          "core raw score",
+          "validation labels"
+        ],
+        "market_usage": "diagnostic only"
+      },
+      {
+        "code": "CR-5",
+        "name": "core_jurisdiction_aware_calibration_no_market",
+        "purpose": "Allow HK/FR-specific calibration on core scores only if validation support is adequate.",
+        "allowed_inputs": [
+          "core raw score",
+          "jurisdiction tag",
+          "validation labels"
+        ],
+        "market_usage": "diagnostic only"
+      },
+      {
+        "code": "CR-6",
+        "name": "core_market_aware_calibration_guardrailed",
+        "purpose": "Optional market-aware calibration-side metadata experiment with strict recrowding gates and no raw market feature learning in the core.",
+        "allowed_inputs": [
+          "core raw score",
+          "validation labels",
+          "bounded market metadata for post-core calibrator only"
+        ],
+        "market_usage": "calibration-side metadata only under isolation limits"
+      },
+      {
+        "code": "CR-7",
+        "name": "core_residual_confidence_dampening",
+        "purpose": "Shrink extreme core probabilities toward race-level neutrality without using raw market features.",
+        "allowed_inputs": [
+          "core probability",
+          "validation-set shrink parameter"
+        ],
+        "market_usage": "benchmark only"
+      },
+      {
+        "code": "CR-8",
+        "name": "core_conservative_probability_shrinkage",
+        "purpose": "Apply conservative post-hoc shrinkage to improve calibration while preserving the core ranking signal.",
+        "allowed_inputs": [
+          "core probability",
+          "race-normalized shrinkage rule"
+        ],
+        "market_usage": "benchmark only"
+      }
+    ]
+  },
+  "B_exact_allowed_inputs_per_arm": {
+    "core_uncalibrated_baseline": {
+      "allowed_inputs": [
+        "core feature mask only"
+      ],
+      "market_usage": "benchmark only"
+    },
+    "core_isotonic_no_market": {
+      "allowed_inputs": [
+        "core raw score",
+        "validation labels",
+        "race-normalization"
+      ],
+      "market_usage": "diagnostic only"
+    },
+    "core_platt_no_market": {
+      "allowed_inputs": [
+        "core raw score",
+        "validation labels"
+      ],
+      "market_usage": "diagnostic only"
+    },
+    "core_temperature_scaling_no_market": {
+      "allowed_inputs": [
+        "core raw score",
+        "validation labels"
+      ],
+      "market_usage": "diagnostic only"
+    },
+    "core_jurisdiction_aware_calibration_no_market": {
+      "allowed_inputs": [
+        "core raw score",
+        "jurisdiction tag",
+        "validation labels"
+      ],
+      "market_usage": "diagnostic only"
+    },
+    "core_market_aware_calibration_guardrailed": {
+      "allowed_inputs": [
+        "core raw score",
+        "validation labels",
+        "bounded market metadata for post-core calibrator only"
+      ],
+      "market_usage": "calibration-side metadata only under isolation limits"
+    },
+    "core_residual_confidence_dampening": {
+      "allowed_inputs": [
+        "core probability",
+        "validation-set shrink parameter"
+      ],
+      "market_usage": "benchmark only"
+    },
+    "core_conservative_probability_shrinkage": {
+      "allowed_inputs": [
+        "core probability",
+        "race-normalized shrinkage rule"
+      ],
+      "market_usage": "benchmark only"
+    }
+  },
+  "C_exact_forbidden_inputs": {
+    "market_raw_core_features": [
+      "sp_dec",
+      "log_sp",
+      "implied_prob",
+      "sp_rank",
+      "is_fav"
+    ],
+    "outcome_fields": [
+      "winner_flag",
+      "placed_flag",
+      "finish_position",
+      "position",
+      "result comments",
+      "future race results",
+      "post-race ranking"
+    ],
+    "prior_model_outputs": [
+      "sqpe_v17_prob",
+      "velo_prime_prob",
+      "g_base_prob",
+      "place_prob",
+      "g_shadow_*",
+      "sentient_*",
+      "verdict_flags",
+      "any prior model output"
+    ]
+  },
+  "D_pass_fail_criteria": {
+    "thresholds": {
+      "core_log_loss_max": 1.434518,
+      "core_brier_max": 0.07333,
+      "market_probability_correlation_max": 0.58,
+      "top1_market_overlap_max": 0.45,
+      "ece_target_max": 0.04203,
+      "material_log_loss_degradation_tolerance": 0.01,
+      "material_brier_degradation_tolerance": 0.0025
+    },
+    "rules": [
+      "Calibration arm must not degrade core log loss by more than 0.01.",
+      "Calibration arm must not degrade core Brier by more than 0.0025.",
+      "Calibration ECE must improve relative to the current core.",
+      "HK must remain non-negative vs market on log loss.",
+      "FR must remain positive vs market on log loss.",
+      "Market probability correlation must stay at or below 0.58.",
+      "Top-1 market overlap must stay at or below 0.45.",
+      "No leakage, no outcome fields, no prior model outputs, no production writes."
+    ]
+  },
+  "E_leakage_protections": {
+    "current_status": {
+      "core_review_leakage": {
+        "status": "pass",
+        "same_day_or_future_history_leakage": 0,
+        "authority_model": {
+          "accepted_historical_training_authority": [
+            "race_results distinct accepted events",
+            "races.runners_count",
+            "accepted historical_feature_store rows"
+          ],
+          "known_caveat": "direct runner_results join has legacy horse-id drift and is not the authority for Playbook G V2 training cohort."
+        }
+      },
+      "core_review_outcome_exclusion": {
+        "status": "pass",
+        "forbidden_feature_intersection": []
+      }
+    },
+    "repair_requirements": [
+      "Calibrators train on validation years only.",
+      "No same-day or future history.",
+      "No label leakage through market-derived outcome surrogates.",
+      "No use of prior model outputs."
+    ]
+  },
+  "F_market_recrowding_protections": {
+    "observed_v3_failures": {
+      "market_calibration": {
+        "test_metrics": {
+          "log_loss": 1.314587589429992,
+          "brier": 0.06714726916909404,
+          "top1": 0.5789473684210527,
+          "top3": 0.8947368421052632,
+          "ece": 0.040067749532938554,
+          "market_rank_lift": 1.0350877192982457,
+          "n_races": 114,
+          "n_runners": 1014
+        },
+        "recrowding": {
+          "probability_correlation": 0.5533008926876234,
+          "top1_overlap_with_market": 0.5350877192982456
+        },
+        "failed": true
+      },
+      "residual_over_market": {
+        "test_metrics": {
+          "log_loss": 1.407549168787816,
+          "brier": 0.07419783127580136,
+          "top1": 0.49122807017543857,
+          "top3": 0.868421052631579,
+          "ece": 0.035781728872182395,
+          "market_rank_lift": 0.8157894736842105,
+          "n_races": 114,
+          "n_runners": 1014
+        },
+        "recrowding": {
+          "probability_correlation": 0.7989411103935219,
+          "top1_overlap_with_market": 0.7105263157894737
+        },
+        "failed": true
+      }
+    },
+    "guardrails": [
+      "Market cannot appear in the core feature mask.",
+      "Any market-aware arm must report market correlation and top-1 overlap explicitly.",
+      "Any arm that crosses either isolation threshold is rejected regardless of headline log loss.",
+      "Residual-learning over market must be treated as an optional diagnostic, not a default path."
+    ]
+  },
+  "G_hk_fr_evaluation_plan": {
+    "hk_baseline": {
+      "market": {
+        "log_loss": 2.0043041687607603,
+        "brier": 0.07303520989968713,
+        "top1": 0.3448275862068966,
+        "top3": 0.5517241379310345,
+        "ece": 0.029204215122047496,
+        "market_rank_lift": 0.0,
+        "n_races": 29,
+        "n_runners": 319
+      },
+      "core": {
+        "log_loss": 1.2184885601798774,
+        "brier": 0.051501770266544566,
+        "top1": 0.5862068965517241,
+        "top3": 0.7586206896551724,
+        "ece": 0.0225892604530151,
+        "market_rank_lift": 1.1724137931034482,
+        "n_races": 29,
+        "n_runners": 319
+      },
+      "pass": true
+    },
+    "fr_baseline": {
+      "market": {
+        "log_loss": 1.6292902317692781,
+        "brier": 0.09162854773051476,
+        "top1": 0.36904761904761907,
+        "top3": 0.7380952380952381,
+        "ece": 0.026968478843623234,
+        "market_rank_lift": 0.0,
+        "n_races": 84,
+        "n_runners": 683
+      },
+      "core": {
+        "log_loss": 1.4254624588668463,
+        "brier": 0.08223997725246082,
+        "top1": 0.4523809523809524,
+        "top3": 0.8095238095238095,
+        "ece": 0.051920481782044614,
+        "market_rank_lift": 0.40476190476190477,
+        "n_races": 84,
+        "n_runners": 683
+      },
+      "pass": true
+    },
+    "requirements": [
+      "Evaluate HK and FR separately for every calibration arm.",
+      "HK must stay improved or at least non-negative vs market.",
+      "FR must stay positive vs market.",
+      "JPN remains informational only until sample size improves."
+    ]
+  },
+  "H_2025_sensitivity_handling": {
+    "status": {
+      "model": "ratings_plus_doctrine_core",
+      "status": "sensitivity_only",
+      "core_metrics": {
+        "log_loss": 1.6656665286848082,
+        "brier": 0.0728388636515278,
+        "top1": 0.46153846153846156,
+        "top3": 0.8846153846153846,
+        "ece": 0.039968211463195874,
+        "market_rank_lift": 0.5384615384615384,
+        "n_races": 26,
+        "n_runners": 244
+      },
+      "market_metrics": {
+        "log_loss": 1.6319770727552103,
+        "brier": 0.07327465464143125,
+        "top1": 0.46153846153846156,
+        "top3": 0.7307692307692307,
+        "ece": 0.027429739047059663,
+        "market_rank_lift": 0.0,
+        "n_races": 26,
+        "n_runners": 244
+      },
+      "n_races": 26,
+      "n_runners": 244,
+      "unstable": true
+    },
+    "policy": [
+      "2025 remains sensitivity-only.",
+      "Primary go/no-go should be based on full out-of-time test and separately reviewed 2023-2024.",
+      "2025 may veto a calibration arm only if it also harms 2023-2024 or materially breaks calibration."
+    ]
+  },
+  "I_recommended_execution_plan": {
+    "sequence": [
+      "Run core uncalibrated baseline as immutable reference.",
+      "Test non-market calibrators first: isotonic, Platt, temperature, conservative shrinkage.",
+      "Run jurisdiction-aware non-market calibration only if validation support is adequate.",
+      "Only after non-market arms are evaluated, optionally test strict market-aware calibration metadata arm.",
+      "Reject any arm that trips the recrowding gates even if headline metrics improve."
+    ],
+    "best_starting_point": "temperature scaling or conservative shrinkage on the core, because both can improve calibration with lower risk of reintroducing market dependence.",
+    "next_approved_mission": "Review this calibration-repair design, then approve or reject offline calibration-repair execution."
+  },
+  "J_whether_calibration_repair_execution_is_recommended": {
+    "status": "GO_DESIGN_APPROVED_PENDING_REVIEW",
+    "reason": "The core has enough signal and stability to justify calibration repair research, but only under strict market-isolation gates and without any production writes.",
+    "supporting_context": {
+      "core_candidate_review": {
+        "code": "B",
+        "label": "accept V3 core as offline research candidate only",
+        "reason": "The suite failed for governance reasons, not because the core was weak. The ratings+doctrine+structure core is now strong enough to be treated as an offline research candidate, while market-assisted variants remain rejected."
+      },
+      "stability_recommendation": {
+        "code": "B",
+        "label": "accept core as offline research candidate only",
+        "reason": "The core is promising, but uncertainty remains wide enough that calibration work should wait until stability is clearer."
+      },
+      "current_core_metrics": {
+        "log_loss": 1.4345182854454899,
+        "brier": 0.07333010257274018,
+        "top1": 0.5526315789473685,
+        "top3": 0.868421052631579,
+        "ece": 0.04202993749446802,
+        "market_rank_lift": 0.9122807017543859,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "market_baseline": {
+        "log_loss": 1.72522944388281,
+        "brier": 0.0854828821497236,
+        "top1": 0.35964912280701755,
+        "top3": 0.6929824561403509,
+        "ece": 0.01758033316522976,
+        "market_rank_lift": 0.0,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "market_plus_ratings_baseline": {
+        "log_loss": 1.4816467492541938,
+        "brier": 0.0766130183864493,
+        "top1": 0.42105263157894735,
+        "top3": 0.7894736842105263,
+        "ece": 0.020558192369501044,
+        "market_rank_lift": 0.47368421052631576,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "core_overfit": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 9.73178023429616,
+        "validation_vs_train_log_loss_gap_pct": 12.395881946602769,
+        "test_vs_train_brier_gap_pct": 35.1938739845175,
+        "validation_vs_train_brier_gap_pct": 11.749123734094873
+      }
+    }
+  }
+}
