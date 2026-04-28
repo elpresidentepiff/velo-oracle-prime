@@ -1,0 +1,556 @@
+{
+  "A_bootstrap_confidence_intervals_for_core_vs_market_log_loss": {
+    "mean_diff": -0.2907111584373202,
+    "ci_lower": -0.4822236357981451,
+    "ci_upper": -0.08514785944009197,
+    "n_boot": 5000
+  },
+  "B_bootstrap_confidence_intervals_for_core_vs_market_brier": {
+    "mean_diff": -0.011616412298540954,
+    "ci_lower": -0.019925597034822783,
+    "ci_upper": -0.003433430491566104,
+    "n_boot": 5000
+  },
+  "C_bootstrap_confidence_intervals_for_core_vs_market_plus_ratings": {
+    "log_loss_diff": {
+      "mean_diff": -0.04712846380870414,
+      "ci_lower": -0.19701382147141466,
+      "ci_upper": 0.0924187970789857,
+      "n_boot": 5000
+    },
+    "brier_diff": {
+      "mean_diff": -0.002736357375795741,
+      "ci_lower": -0.010924760547238852,
+      "ci_upper": 0.0054058851882819794,
+      "n_boot": 5000
+    }
+  },
+  "D_year_by_year_degradation_review": {
+    "table": [
+      {
+        "year": 2023,
+        "races": 47,
+        "core_log_loss": 1.3596874768102236,
+        "market_log_loss": 1.6516495873982142,
+        "core_brier": 0.08133154345458476,
+        "market_brier": 0.09778499828176783,
+        "core_top1": 0.5957446808510638,
+        "core_top3": 0.8723404255319149,
+        "log_loss_delta_vs_market": -0.2919621105879906,
+        "brier_delta_vs_market": -0.016453454827183075
+      },
+      {
+        "year": 2024,
+        "races": 41,
+        "core_log_loss": 1.373718131339032,
+        "market_log_loss": 1.868712734226556,
+        "core_brier": 0.07667854020977077,
+        "market_brier": 0.09417418873463607,
+        "core_top1": 0.5853658536585366,
+        "core_top3": 0.9024390243902439,
+        "log_loss_delta_vs_market": -0.49499460288752395,
+        "brier_delta_vs_market": -0.017495648524865286
+      },
+      {
+        "year": 2025,
+        "races": 26,
+        "core_log_loss": 1.665666528684808,
+        "market_log_loss": 1.6319770727552103,
+        "core_brier": 0.07991225053319914,
+        "market_brier": 0.07351367498076021,
+        "core_top1": 0.46153846153846156,
+        "core_top3": 0.8461538461538461,
+        "log_loss_delta_vs_market": 0.03368945592959779,
+        "brier_delta_vs_market": 0.006398575552438945
+      }
+    ],
+    "comment": "2023 and 2024 are strong; 2025 weakens on log loss but remains sensitivity-only because of small sample size."
+  },
+  "E_jurisdiction_reliability_review": {
+    "table": [
+      {
+        "jurisdiction": "FR",
+        "races": 84,
+        "core_log_loss": 1.3409506872575694,
+        "market_log_loss": 1.6292902317692783,
+        "core_brier": 0.08392797568068773,
+        "market_brier": 0.09739756423121142,
+        "core_top1": 0.5714285714285714,
+        "core_top3": 0.8928571428571429
+      },
+      {
+        "jurisdiction": "HK",
+        "races": 29,
+        "core_log_loss": 1.6787063251282717,
+        "market_log_loss": 2.0043041687607603,
+        "core_brier": 0.06620992347089145,
+        "market_brier": 0.07311738303280492,
+        "core_top1": 0.5172413793103449,
+        "core_top3": 0.8275862068965517
+      },
+      {
+        "jurisdiction": "JPN",
+        "races": 1,
+        "core_log_loss": 2.212743382430129,
+        "market_log_loss": 1.6909562399589053,
+        "core_brier": 0.07408346699564201,
+        "market_brier": 0.06659270348982929,
+        "core_top1": 1.0,
+        "core_top3": 1.0
+      }
+    ],
+    "hk_fr_reliability": "HK and FR both remain positive vs market; JPN is informational only with one race."
+  },
+  "F_2025_sensitivity_isolation": {
+    "core": {
+      "log_loss": 1.6656665286848082,
+      "brier": 0.0728388636515278,
+      "top1": 0.46153846153846156,
+      "top3": 0.8846153846153846,
+      "ece": 0.039968211463195874,
+      "market_rank_lift": 0.5384615384615384,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "market": {
+      "log_loss": 1.6319770727552103,
+      "brier": 0.07327465464143125,
+      "top1": 0.46153846153846156,
+      "top3": 0.7307692307692307,
+      "ece": 0.027429739047059663,
+      "market_rank_lift": 0.0,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "unstable": true,
+    "n_races": 26
+  },
+  "G_calibration_weakness_analysis": {
+    "core_ece": 0.04202993749446802,
+    "market_ece": 0.01758033316522976,
+    "market_plus_ratings_ece": 0.020558192369501044,
+    "issue": "core probability ranking is strong, but calibration remains weaker than market and needs repair without adding raw market crowding."
+  },
+  "H_top1_top3_stability": {
+    "core_test": {
+      "top1": 0.5526315789473685,
+      "top3": 0.868421052631579
+    },
+    "market_test": {
+      "top1": 0.35964912280701755,
+      "top3": 0.6929824561403509
+    },
+    "top1_ci": {
+      "mean": 0.5614035087719298,
+      "ci_lower": 0.47368421052631576,
+      "ci_upper": 0.6578947368421053,
+      "n_boot": 5000
+    },
+    "top3_ci": {
+      "mean": 0.8771929824561403,
+      "ci_lower": 0.8157894736842105,
+      "ci_upper": 0.9298245614035088,
+      "n_boot": 5000
+    }
+  },
+  "I_race_level_worst_misses": [
+    {
+      "event_key": "893473|Sha Tin (HK)|2025-04-20",
+      "race_id": "893473",
+      "race_date": "2025-04-20",
+      "year": 2025,
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 12,
+      "winner_prob": 8.182188585569373e-05,
+      "winner_loss": 9.410965796893471,
+      "winner_rank": 10,
+      "top1_hit": 0.0,
+      "top3_hit": 0.0,
+      "top1_horse_id": "hrs_42073108",
+      "top1_prob": 0.49959089057072165,
+      "top1_won": false,
+      "brier": 0.12491821158824934
+    },
+    {
+      "event_key": "844711|Sha Tin (HK)|2023-07-03",
+      "race_id": "844711",
+      "race_date": "2023-07-03",
+      "year": 2023,
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 12,
+      "winner_prob": 0.02743411423239346,
+      "winner_loss": 3.5959679950360175,
+      "winner_rank": 4,
+      "top1_hit": 0.0,
+      "top3_hit": 0.0,
+      "top1_horse_id": "hrs_rf_47ab5f037422",
+      "top1_prob": 0.5285639342107806,
+      "top1_won": false,
+      "brier": 0.10696422860054085
+    },
+    {
+      "event_key": "840063|Happy Valley (HK)|2023-05-03",
+      "race_id": "840063",
+      "race_date": "2023-05-03",
+      "year": 2023,
+      "jurisdiction": "HK",
+      "course": "Happy Valley (HK)",
+      "field_size": 12,
+      "winner_prob": 0.04931867675938622,
+      "winner_loss": 3.0094524307420594,
+      "winner_rank": 4,
+      "top1_hit": 0.0,
+      "top3_hit": 0.0,
+      "top1_horse_id": "hrs_rf_5fcba939c06f",
+      "top1_prob": 0.41198530989911514,
+      "top1_won": false,
+      "brier": 0.09514792303986785
+    },
+    {
+      "event_key": "840483|Sha Tin (HK)|2023-05-10",
+      "race_id": "840483",
+      "race_date": "2023-05-10",
+      "year": 2023,
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 13,
+      "winner_prob": 0.061758672093944346,
+      "winner_loss": 2.7845208745663217,
+      "winner_rank": 4,
+      "top1_hit": 0.0,
+      "top3_hit": 0.0,
+      "top1_horse_id": "hrs_rf_60c88469a92c",
+      "top1_prob": 0.5159032507241613,
+      "top1_won": false,
+      "brier": 0.09239757468766864
+    },
+    {
+      "event_key": "891896|Compiegne (FR)|2025-03-28",
+      "race_id": "891896",
+      "race_date": "2025-03-28",
+      "year": 2025,
+      "jurisdiction": "FR",
+      "course": "Compiegne (FR)",
+      "field_size": 12,
+      "winner_prob": 0.08333333333333333,
+      "winner_loss": 2.4849066497880004,
+      "winner_rank": 1,
+      "top1_hit": 1.0,
+      "top3_hit": 1.0,
+      "top1_horse_id": "hrs_43002673",
+      "top1_prob": 0.08333333333333333,
+      "top1_won": true,
+      "brier": 0.07638888888888887
+    },
+    {
+      "event_key": "896556|Sha Tin (HK)|2025-05-25",
+      "race_id": "896556",
+      "race_date": "2025-05-25",
+      "year": 2025,
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 11,
+      "winner_prob": 0.08364103064846219,
+      "winner_loss": 2.481221082062639,
+      "winner_rank": 4,
+      "top1_hit": 0.0,
+      "top3_hit": 0.0,
+      "top1_horse_id": "hrs_51865331",
+      "top1_prob": 0.5025863700027065,
+      "top1_won": false,
+      "brier": 0.10358854584546337
+    },
+    {
+      "event_key": "862504|Chantilly (FR)|2024-02-29",
+      "race_id": "862504",
+      "race_date": "2024-02-29",
+      "year": 2024,
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 9,
+      "winner_prob": 0.10016460539193879,
+      "winner_loss": 2.300940392336586,
+      "winner_rank": 6,
+      "top1_hit": 0.0,
+      "top3_hit": 0.0,
+      "top1_horse_id": "hrs_rf_535da0fdc35d",
+      "top1_prob": 0.14409644986208736,
+      "top1_won": false,
+      "brier": 0.10226712174577172
+    },
+    {
+      "event_key": "850439|Happy Valley (HK)|2023-09-27",
+      "race_id": "850439",
+      "race_date": "2023-09-27",
+      "year": 2023,
+      "jurisdiction": "HK",
+      "course": "Happy Valley (HK)",
+      "field_size": 8,
+      "winner_prob": 0.10129047317729933,
+      "winner_loss": 2.289762917783835,
+      "winner_rank": 3,
+      "top1_hit": 0.0,
+      "top3_hit": 1.0,
+      "top1_horse_id": "hrs_rf_8f714b182ad4",
+      "top1_prob": 0.5824658706093012,
+      "top1_won": false,
+      "brier": 0.14637687668070196
+    },
+    {
+      "event_key": "840181|Chantilly (FR)|2023-05-04",
+      "race_id": "840181",
+      "race_date": "2023-05-04",
+      "year": 2023,
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 9,
+      "winner_prob": 0.10535387608785304,
+      "winner_loss": 2.2504303469279585,
+      "winner_rank": 7,
+      "top1_hit": 0.0,
+      "top3_hit": 0.0,
+      "top1_horse_id": "hrs_rf_7598013712a9",
+      "top1_prob": 0.15304493110704578,
+      "top1_won": false,
+      "brier": 0.1002648595373716
+    },
+    {
+      "event_key": "876118|Sapporo (JPN)|2024-08-31",
+      "race_id": "876118",
+      "race_date": "2024-08-31",
+      "year": 2024,
+      "jurisdiction": "JPN",
+      "course": "Sapporo (JPN)",
+      "field_size": 12,
+      "winner_prob": 0.10940011011817091,
+      "winner_loss": 2.212743382430129,
+      "winner_rank": 1,
+      "top1_hit": 1.0,
+      "top3_hit": 1.0,
+      "top1_horse_id": "hrs_44873479",
+      "top1_prob": 0.10940011011817091,
+      "top1_won": true,
+      "brier": 0.07408346699564201
+    }
+  ],
+  "J_race_level_strongest_wins": [
+    {
+      "event_key": "865075|Chantilly (FR)|2024-04-04",
+      "race_date": "2024-04-04",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 10,
+      "winner_loss_core": 0.5266125493330064,
+      "winner_loss_market": 3.97313039424794,
+      "log_loss_diff": -3.4465178449149336,
+      "winner_rank_core": 1,
+      "winner_rank_market": 8,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "845610|Chantilly (FR)|2023-07-16",
+      "race_date": "2023-07-16",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 7,
+      "winner_loss_core": 0.6319020512271414,
+      "winner_loss_market": 2.929856670905949,
+      "log_loss_diff": -2.2979546196788077,
+      "winner_rank_core": 1,
+      "winner_rank_market": 6,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "891914|Sha Tin (HK)|2025-03-30",
+      "race_date": "2025-03-30",
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 14,
+      "winner_loss_core": 0.8622030686608096,
+      "winner_loss_market": 3.072051699207491,
+      "log_loss_diff": -2.2098486305466816,
+      "winner_rank_core": 1,
+      "winner_rank_market": 5,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "885957|Chantilly (FR)|2025-01-11",
+      "race_date": "2025-01-11",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 17,
+      "winner_loss_core": 1.3891662035562613,
+      "winner_loss_market": 3.5837625452093964,
+      "log_loss_diff": -2.194596341653135,
+      "winner_rank_core": 2,
+      "winner_rank_market": 10,
+      "top1_hit_core": 0.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "858556|Sha Tin (HK)|2024-01-07",
+      "race_date": "2024-01-07",
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 10,
+      "winner_loss_core": 1.136183278541893,
+      "winner_loss_market": 3.146822790271084,
+      "log_loss_diff": -2.010639511729191,
+      "winner_rank_core": 1,
+      "winner_rank_market": 7,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "878538|Sha Tin (HK)|2024-10-06",
+      "race_date": "2024-10-06",
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 14,
+      "winner_loss_core": 1.061948637137713,
+      "winner_loss_market": 2.9590393255201146,
+      "log_loss_diff": -1.8970906883824017,
+      "winner_rank_core": 1,
+      "winner_rank_market": 5,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "843897|Chantilly (FR)|2023-06-18",
+      "race_date": "2023-06-18",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 7,
+      "winner_loss_core": 0.8132019740105898,
+      "winner_loss_market": 2.666537300604044,
+      "log_loss_diff": -1.853335326593454,
+      "winner_rank_core": 1,
+      "winner_rank_market": 6,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "894757|Chantilly (FR)|2025-05-02",
+      "race_date": "2025-05-02",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 9,
+      "winner_loss_core": 0.5634671363357201,
+      "winner_loss_market": 2.410917132877638,
+      "log_loss_diff": -1.847449996541918,
+      "winner_rank_core": 1,
+      "winner_rank_market": 4,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "872701|Chantilly (FR)|2024-07-14",
+      "race_date": "2024-07-14",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "field_size": 8,
+      "winner_loss_core": 1.6270898363138109,
+      "winner_loss_market": 3.378001209708588,
+      "log_loss_diff": -1.7509113733947772,
+      "winner_rank_core": 3,
+      "winner_rank_market": 7,
+      "top1_hit_core": 0.0,
+      "top1_hit_market": 0.0
+    },
+    {
+      "event_key": "861449|Sha Tin (HK)|2024-02-18",
+      "race_date": "2024-02-18",
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "field_size": 11,
+      "winner_loss_core": 0.3407569165744668,
+      "winner_loss_market": 2.0593915370487754,
+      "log_loss_diff": -1.7186346204743086,
+      "winner_rank_core": 1,
+      "winner_rank_market": 4,
+      "top1_hit_core": 1.0,
+      "top1_hit_market": 0.0
+    }
+  ],
+  "K_overfit_review": {
+    "core": {
+      "level": "medium",
+      "test_vs_train_log_loss_gap_pct": 9.73178023429616,
+      "validation_vs_train_log_loss_gap_pct": 12.395881946602769,
+      "test_vs_train_brier_gap_pct": 35.1938739845175,
+      "validation_vs_train_brier_gap_pct": 11.749123734094873
+    },
+    "comment": "generalization gap is material but not disqualifying"
+  },
+  "L_sample_size_warnings": {
+    "test_races": 114,
+    "hk_test_races": 29,
+    "fr_test_races": 84,
+    "jpn_test_races": 1,
+    "year_2025_races": 26,
+    "warning": "JPN is too small for inference and 2025 remains a sensitivity slice only."
+  },
+  "M_whether_core_result_survives_uncertainty": {
+    "status": false,
+    "reason": "Uncertainty is still too wide to lock the core result in beyond all doubt."
+  },
+  "N_whether_calibration_repair_should_be_attempted_without_market_recrowding": {
+    "recommendation": "yes",
+    "reason": "The core appears stable enough to justify calibration repair, but any repair must preserve the market-isolation gate and avoid raw market feature injection."
+  },
+  "O_final_recommendation": {
+    "code": "B",
+    "label": "accept core as offline research candidate only",
+    "reason": "The core is promising, but uncertainty remains wide enough that calibration work should wait until stability is clearer."
+  },
+  "supporting_context": {
+    "eligible_cohort": {
+      "eligible_race_count": 1697,
+      "eligible_runner_count": 18575,
+      "year_breakdown_races": {
+        "2017": 294,
+        "2018": 280,
+        "2019": 292,
+        "2020": 194,
+        "2021": 321,
+        "2022": 202,
+        "2023": 47,
+        "2024": 41,
+        "2025": 26
+      },
+      "jurisdiction_breakdown_races": {
+        "HK": 1029,
+        "FR": 649,
+        "JPN": 19
+      },
+      "course_breakdown_races": {
+        "Sha Tin (HK)": 586,
+        "Chantilly (FR)": 525,
+        "Happy Valley (HK)": 443,
+        "Compiegne (FR)": 124,
+        "Kokura (JPN)": 11,
+        "Sapporo (JPN)": 8
+      },
+      "feature_vector_length_ok": true
+    },
+    "authority_model": {
+      "accepted_historical_training_authority": [
+        "race_results distinct accepted events",
+        "races.runners_count",
+        "accepted historical_feature_store rows"
+      ],
+      "known_caveat": "direct runner_results join has legacy horse-id drift and is not the authority for Playbook G V2 training cohort."
+    },
+    "core_candidate_review": {
+      "code": "B",
+      "label": "accept V3 core as offline research candidate only",
+      "reason": "The suite failed for governance reasons, not because the core was weak. The ratings+doctrine+structure core is now strong enough to be treated as an offline research candidate, while market-assisted variants remain rejected."
+    },
+    "v3_suite_verdict": "FAIL"
+  }
+}
