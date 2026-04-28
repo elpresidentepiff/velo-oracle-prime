@@ -774,6 +774,34 @@ def merge_race_data(
 
             horses.append(horse)
 
+        # ── Dedup: remove ghost entries caused by parser artefacts ──────────
+        # If two horses in the same race have identical OR+BWL, keep the one
+        # whose name starts with a capital letter (no leading non-alpha prefix)
+        seen = {}
+        deduped = []
+        for h in horses:
+            key = (h.get("current_or"), h.get("best_winning_life"))
+            name = h.get("horse_name", "")
+            # Skip entries that are clearly not horse names (e.g. 'G1', 'G2')
+            if re.match(r'^G\d+$', name):
+                continue
+            # Strip leading non-alpha prefix artefacts like 'Xj ', 'Pc '
+            clean_name = re.sub(r'^[^A-Z][a-z]?\s+', '', name)
+            if clean_name != name:
+                h["horse_name"] = clean_name
+                name = clean_name
+            if key[0] is not None and key in seen:
+                # Keep the entry with the longer/cleaner name
+                existing = seen[key]
+                if len(name) > len(existing.get("horse_name", "")):
+                    deduped = [x for x in deduped if x is not existing]
+                    seen[key] = h
+                    deduped.append(h)
+            else:
+                seen[key] = h
+                deduped.append(h)
+        horses = deduped
+
         merged[race_time] = {
             "race_info": race_info,
             "postdata_pick": postdata_pick,
