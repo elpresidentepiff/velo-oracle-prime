@@ -1219,6 +1219,25 @@ def main():
                 top["assigned_product"] = governance["assigned_product"]
                 top["router_reasons"] = governance["router_reasons"]
                 top["execution_allowed"] = governance["execution_allowed"]
+                top["legacy_execution_allowed"] = governance.get("legacy_execution_allowed", governance["execution_allowed"])
+
+                # ── Candidate Execution Router v1 (shadow) ─────────────────
+                from app.services.model_manager import ModelManager as _MM
+                _class_num = _MM._parse_class(race.get("race_class") or race.get("class"))
+                candidate_data = {
+                    "velo_prime_prob":    float(top.get("velo_prime_prob", 0)),
+                    "field_size":         race.get("scored") or len(preds),
+                    "archetype":          top.get("race_archetype", ""),
+                    "going":              race.get("going", ""),
+                    "macro_chaos_mode":   top.get("macro_chaos_mode", False),
+                    "class_num":          _class_num,
+                    "sp_decimal":         float(top.get("sp_dec") or 0),
+                    "archetype_suppression": top.get("archetype_suppression", False),
+                }
+                candidate = router.candidate_route(candidate_data)
+                top["candidate_execution_allowed"] = candidate["candidate_execution_allowed"]
+                top["candidate_execution_reason"]  = candidate["candidate_execution_reason"]
+                top["candidate_execution_lane"]    = candidate["candidate_execution_lane"]
 
                 if pdf_intel.get("plot_conviction"):
                     reasons.append(f"PDF_PLOT_CONVICTION:{pdf_intel['plot_conviction']:.2f}")
@@ -1300,6 +1319,42 @@ def main():
         f"STATUS:     {pf_result.status}"
     )
     print("  Sent: pre-flight report")
+
+    # A1. CASH RUNS — scan merged PDF data for postdata PLOT candidates
+    # Criteria: postdata_score >= 0.70 AND trainer_form == 'strong_positive'
+    #           AND or_compression_score > 0
+    # Sent as a dedicated message BEFORE day posture so it's always the first
+    # actionable signal the user sees — never buried in prediction output.
+    cash_runs = []
+    for cc, merged_data in pdf_intel_cache.items():
+        if not merged_data:
+            continue
+        for r_time, r_data in merged_data.get("races", {}).items():
+            for h in r_data.get("horses", []):
+                ps = float(h.get("postdata_score") or 0)
+                tf = str(h.get("trainer_form") or "")
+                ors = float(h.get("or_compression_score") or 0)
+                if ps >= 0.70 and tf == "strong_positive" and ors > 0:
+                    cash_runs.append({
+                        "venue": cc,
+                        "time": r_time,
+                        "name": h.get("horse_name", "?"),
+                        "postdata_score": ps,
+                        "or_compression_score": ors,
+                        "trainer_form": tf,
+                    })
+
+    if cash_runs:
+        lines = [f"CASH RUNS — {TODAY_DISPLAY}", "=" * 34]
+        for cr in cash_runs:
+            lines.append(
+                f"{cr['venue'].upper()} {cr['time']}  {cr['name'].upper()}\n"
+                f"  postdata={cr['postdata_score']:.2f}  OR_compress={cr['or_compression_score']:.2f}"
+            )
+        tg("\n".join(lines))
+        print(f"  Sent: CASH RUNS ({len(cash_runs)} horses)")
+    else:
+        print("  Cash runs: none detected from PDF data (check PDFs ingested for today)")
 
     # B. Decision Synthesis Layer — bucket already computed in STEP 3
     buckets: dict = {"A": [], "B": [], "C": [], "D": [], "X": []}
