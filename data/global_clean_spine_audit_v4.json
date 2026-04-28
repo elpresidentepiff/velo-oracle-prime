@@ -1,0 +1,79 @@
+{
+  "authority_model": {
+    "accepted_historical_training_authority": [
+      "race_results distinct accepted events",
+      "races.runners_count",
+      "accepted historical_feature_store rows"
+    ],
+    "known_caveat": "direct runner_results join has legacy horse-id drift and is not the authority for Playbook G V2 training cohort."
+  },
+  "A_accepted_clean_race_event_count": 1697,
+  "B_accepted_historical_runner_count": 18575,
+  "C_accepted_hfs_row_count": 18575,
+  "D_race_runner_hfs_parity": {
+    "distinct_race_results": 1697,
+    "distinct_hfs_race_ids": 1697,
+    "runner_rows_expected_from_races_table": 18575,
+    "runner_results_rows_observed": 16863,
+    "hfs_rows_for_scope": 18575,
+    "pass": true
+  },
+  "E_winner_parity": true,
+  "F_duplicate_race_id_count": 0,
+  "G_duplicate_event_key_count": 0,
+  "H_duplicate_race_id_horse_id_count": 0,
+  "I_missing_hfs_rows": 0,
+  "J_orphan_hfs_rows": 0,
+  "K_vector_dimension_distribution": {
+    "37": 18575
+  },
+  "L_mpi": {
+    "null_count": 0,
+    "min": 0.1277,
+    "max": 100.0,
+    "variance": 894.6195363333167
+  },
+  "M_chaos_bloom": {
+    "null_count": 0,
+    "min": 37.3413,
+    "max": 97.3157,
+    "variance": 60.28016533286081
+  },
+  "N_macro_year_mismatch_count": 0,
+  "O_doctrine_tag_completeness": {
+    "signal_contract_version": true,
+    "historical_doctrine_contract_counts": {
+      "HISTORICAL_DOCTRINE_FEATURES_V1": 18575
+    }
+  },
+  "P_provenance_tag_completeness": true,
+  "Q_training_eligible_distribution": {
+    "pending_global_training_gate": 18575
+  },
+  "R_race_date_min_max": {
+    "min": "2017-01-01",
+    "max": "2025-07-05"
+  },
+  "S_jurisdiction_breakdown": {
+    "HK": 12190,
+    "FR": 6118,
+    "JPN": 267
+  },
+  "T_year_breakdown": {
+    "2017": 3241,
+    "2018": 3094,
+    "2019": 3196,
+    "2020": 2226,
+    "2021": 3593,
+    "2022": 2211,
+    "2023": 397,
+    "2024": 373,
+    "2025": 244
+  },
+  "U_block_025_summary": {
+    "status": "accepted",
+    "archive_exhausted": true
+  },
+  "historical_doctrine_contract_complete": true,
+  "vector_null_count": 0
+}

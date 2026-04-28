@@ -1,0 +1,728 @@
+{
+  "scope": {
+    "eligible_race_count": 1697,
+    "eligible_runner_count": 18575
+  },
+  "A_full_37_vector_schema": [
+    {
+      "index": 0,
+      "feature": "sp_dec"
+    },
+    {
+      "index": 1,
+      "feature": "log_sp"
+    },
+    {
+      "index": 2,
+      "feature": "implied_prob"
+    },
+    {
+      "index": 3,
+      "feature": "dist_f"
+    },
+    {
+      "index": 4,
+      "feature": "going_code"
+    },
+    {
+      "index": 5,
+      "feature": "is_aw"
+    },
+    {
+      "index": 6,
+      "feature": "class_num"
+    },
+    {
+      "index": 7,
+      "feature": "wgt_lbs"
+    },
+    {
+      "index": 8,
+      "feature": "or_num"
+    },
+    {
+      "index": 9,
+      "feature": "rpr_num"
+    },
+    {
+      "index": 10,
+      "feature": "ts_num"
+    },
+    {
+      "index": 11,
+      "feature": "or_vs_field"
+    },
+    {
+      "index": 12,
+      "feature": "rpr_vs_field"
+    },
+    {
+      "index": 13,
+      "feature": "field_size"
+    },
+    {
+      "index": 14,
+      "feature": "draw_num"
+    },
+    {
+      "index": 15,
+      "feature": "draw_pct"
+    },
+    {
+      "index": 16,
+      "feature": "age_num"
+    },
+    {
+      "index": 17,
+      "feature": "sp_rank"
+    },
+    {
+      "index": 18,
+      "feature": "is_fav"
+    },
+    {
+      "index": 19,
+      "feature": "runs_since_win"
+    },
+    {
+      "index": 20,
+      "feature": "runs_since_place"
+    },
+    {
+      "index": 21,
+      "feature": "runs_since_mkt_support"
+    },
+    {
+      "index": 22,
+      "feature": "curr_or_minus_last_win_or"
+    },
+    {
+      "index": 23,
+      "feature": "curr_or_minus_best_or"
+    },
+    {
+      "index": 24,
+      "feature": "mark_compression_score"
+    },
+    {
+      "index": 25,
+      "feature": "release_window_score"
+    },
+    {
+      "index": 26,
+      "feature": "course_fit_score"
+    },
+    {
+      "index": 27,
+      "feature": "going_fit_score"
+    },
+    {
+      "index": 28,
+      "feature": "distance_fit_score"
+    },
+    {
+      "index": 29,
+      "feature": "quiet_run_score"
+    },
+    {
+      "index": 30,
+      "feature": "trainer_timing_score"
+    },
+    {
+      "index": 31,
+      "feature": "jockey_switch_intent"
+    },
+    {
+      "index": 32,
+      "feature": "odds_resilience_score"
+    },
+    {
+      "index": 33,
+      "feature": "odds_contraction_score"
+    },
+    {
+      "index": 34,
+      "feature": "decoy_support_flag"
+    },
+    {
+      "index": 35,
+      "feature": "setup_run_flag"
+    },
+    {
+      "index": 36,
+      "feature": "cash_run_flag"
+    }
+  ],
+  "B_features_active_non_constant": [
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "sp_rank",
+    "is_fav",
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "C_features_constant_defaulted": [],
+  "D_market_feature_list": [
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "sp_rank",
+    "is_fav"
+  ],
+  "E_rating_feature_list": [
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field"
+  ],
+  "F_doctrine_feature_list": [
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "G_live_only_feature_list": [
+    "plot_conviction",
+    "or_compression_score",
+    "postdata_score",
+    "ts_master",
+    "or_delta_to_best_win",
+    "intent_signals",
+    "trainer_recent_form",
+    "comment_intel_score",
+    "horse_state",
+    "tie_gate_signals"
+  ],
+  "H_historical_feasible_feature_list": [
+    "cash_run_flag",
+    "course_fit_score",
+    "curr_or_minus_best_or",
+    "curr_or_minus_last_win_or",
+    "decoy_support_flag",
+    "distance_fit_score",
+    "going_fit_score",
+    "jockey_switch_intent",
+    "mark_compression_score",
+    "odds_contraction_score",
+    "odds_resilience_score",
+    "quiet_run_score",
+    "release_window_score",
+    "runs_since_mkt_support",
+    "runs_since_place",
+    "runs_since_win",
+    "setup_run_flag",
+    "trainer_timing_score"
+  ],
+  "I_historical_infeasible_feature_list": [
+    "plot_conviction",
+    "or_compression_score",
+    "postdata_score",
+    "ts_master",
+    "or_delta_to_best_win",
+    "intent_signals",
+    "trainer_recent_form",
+    "comment_intel_score",
+    "horse_state",
+    "tie_gate_signals"
+  ],
+  "J_dead_feature_default_paths": {
+    "runs_since_win": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "runs_since_place": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "runs_since_mkt_support": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "curr_or_minus_last_win_or": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "curr_or_minus_best_or": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "mark_compression_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "release_window_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "course_fit_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "going_fit_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "distance_fit_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "quiet_run_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "trainer_timing_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "jockey_switch_intent": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "odds_resilience_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "odds_contraction_score": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "decoy_support_flag": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "setup_run_flag": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    },
+    "cash_run_flag": {
+      "current_default_path": "historical reconstructor lacked prior-only context before activation patch"
+    }
+  },
+  "K_dead_feature_required_context": {
+    "horse_prior_history": "prior race_date, SP, OR/RPR/TS, course, going, distance, jockey, trainer, finish"
+  },
+  "L_raceform_source_sufficiency": {
+    "raceform_contains_enough_source_data": true
+  },
+  "M_leakage_risk_per_proposed_feature_group": {
+    "prior_only_horse_history": {
+      "risk": "medium",
+      "rule": "prior_race_date_lt_current_race_date"
+    },
+    "race_level_proxies": {
+      "risk": "low"
+    }
+  },
+  "N_outcome_field_exclusion_proof": {
+    "status": "pass",
+    "forbidden_current_race_fields_excluded": true
+  },
+  "O_proposed_historical_doctrine_features_v1_contract": {
+    "historical_doctrine_contract": "HISTORICAL_DOCTRINE_FEATURES_V1",
+    "doctrine_source": "prior_only_raceform_history",
+    "doctrine_cutoff_rule": "prior_race_date_lt_current_race_date"
+  },
+  "P_recommended_implementation_plan": [
+    "Use prior-only horse history for doctrine features.",
+    "Keep vector order fixed at 37.",
+    "Preserve current-race outcome exclusion.",
+    "Reapply manifest-scoped before broader rollout."
+  ],
+  "feature_stats": [
+    {
+      "index": 0,
+      "feature": "sp_dec",
+      "min": 1.05,
+      "max": 501.0,
+      "variance": 2021.6531582055643,
+      "unique_count": 536,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 1,
+      "feature": "log_sp",
+      "min": 0.04879016416943204,
+      "max": 6.2166061010848646,
+      "variance": 1.2059593982870715,
+      "unique_count": 536,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 2,
+      "feature": "implied_prob",
+      "min": 0.001996007984031936,
+      "max": 0.9523809523809523,
+      "variance": 0.012570606349171853,
+      "unique_count": 536,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 3,
+      "feature": "dist_f",
+      "min": 4.0,
+      "max": 27.0,
+      "variance": 9.870987087015827,
+      "unique_count": 18,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 4,
+      "feature": "going_code",
+      "min": -1.0,
+      "max": 2.0,
+      "variance": 0.39867373587489524,
+      "unique_count": 6,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 5,
+      "feature": "is_aw",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.18242799171812646,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 6,
+      "feature": "class_num",
+      "min": 1.0,
+      "max": 5.0,
+      "variance": 0.5608597613617632,
+      "unique_count": 5,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 7,
+      "feature": "wgt_lbs",
+      "min": 104.0,
+      "max": 170.0,
+      "variance": 57.01603854440457,
+      "unique_count": 57,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 8,
+      "feature": "or_num",
+      "min": 0.0,
+      "max": 133.0,
+      "variance": 1011.5880122351458,
+      "unique_count": 123,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 9,
+      "feature": "rpr_num",
+      "min": 0.0,
+      "max": 155.0,
+      "variance": 644.8652000094195,
+      "unique_count": 148,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 10,
+      "feature": "ts_num",
+      "min": 0.0,
+      "max": 123.0,
+      "variance": 270.55602419060625,
+      "unique_count": 111,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 11,
+      "feature": "or_vs_field",
+      "min": 0.0,
+      "max": 133.0,
+      "variance": 1011.5880122351458,
+      "unique_count": 123,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 12,
+      "feature": "rpr_vs_field",
+      "min": 0.0,
+      "max": 155.0,
+      "variance": 644.8652000094195,
+      "unique_count": 148,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 13,
+      "feature": "field_size",
+      "min": 3.0,
+      "max": 18.0,
+      "variance": 6.454532191164191,
+      "unique_count": 16,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 14,
+      "feature": "draw_num",
+      "min": 0.0,
+      "max": 18.0,
+      "variance": 14.848039793569049,
+      "unique_count": 19,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 15,
+      "feature": "draw_pct",
+      "min": 0.0,
+      "max": 1.8,
+      "variance": 0.09459032235889989,
+      "unique_count": 127,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 16,
+      "feature": "age_num",
+      "min": 2.0,
+      "max": 13.0,
+      "variance": 2.431872457698501,
+      "unique_count": 12,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 17,
+      "feature": "sp_rank",
+      "min": 1.0,
+      "max": 18.0,
+      "variance": 13.335024089528284,
+      "unique_count": 18,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 18,
+      "feature": "is_fav",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.0846368173839641,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 19,
+      "feature": "runs_since_win",
+      "min": 0.0,
+      "max": 24.0,
+      "variance": 4.969427151575313,
+      "unique_count": 25,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 20,
+      "feature": "runs_since_place",
+      "min": 0.0,
+      "max": 13.0,
+      "variance": 1.689350717780487,
+      "unique_count": 14,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 21,
+      "feature": "runs_since_mkt_support",
+      "min": 0.0,
+      "max": 24.0,
+      "variance": 4.7677551637626365,
+      "unique_count": 25,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 22,
+      "feature": "curr_or_minus_last_win_or",
+      "min": -46.0,
+      "max": 59.0,
+      "variance": 20.370914744162203,
+      "unique_count": 90,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 23,
+      "feature": "curr_or_minus_best_or",
+      "min": -65.0,
+      "max": 59.0,
+      "variance": 84.3498927493755,
+      "unique_count": 104,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 24,
+      "feature": "mark_compression_score",
+      "min": -1.875,
+      "max": 0.813953488372093,
+      "variance": 0.021424464068091762,
+      "unique_count": 1980,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 25,
+      "feature": "release_window_score",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.10473952881843043,
+      "unique_count": 384,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 26,
+      "feature": "course_fit_score",
+      "min": 0.0,
+      "max": 2.0,
+      "variance": 0.14777243792763606,
+      "unique_count": 74,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 27,
+      "feature": "going_fit_score",
+      "min": 0.0,
+      "max": 2.0,
+      "variance": 0.12472150704851934,
+      "unique_count": 93,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 28,
+      "feature": "distance_fit_score",
+      "min": 0.0,
+      "max": 2.0,
+      "variance": 0.13199329141000457,
+      "unique_count": 96,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 29,
+      "feature": "quiet_run_score",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.005445874970337778,
+      "unique_count": 73,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 30,
+      "feature": "trainer_timing_score",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.002371494257004123,
+      "unique_count": 3470,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 31,
+      "feature": "jockey_switch_intent",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.24642579481169247,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 32,
+      "feature": "odds_resilience_score",
+      "min": 0.0,
+      "max": 229.0,
+      "variance": 289.62542825566595,
+      "unique_count": 4862,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 33,
+      "feature": "odds_contraction_score",
+      "min": -86.77777777777777,
+      "max": 0.9894039735099338,
+      "variance": 6.331832255566427,
+      "unique_count": 5289,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 34,
+      "feature": "decoy_support_flag",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.016410572249927088,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 35,
+      "feature": "setup_run_flag",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.019780852786618577,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    },
+    {
+      "index": 36,
+      "feature": "cash_run_flag",
+      "min": 0.0,
+      "max": 1.0,
+      "variance": 0.005833667663558852,
+      "unique_count": 2,
+      "status": "active_nonconstant"
+    }
+  ],
+  "supporting_findings": {
+    "active_feature_count": 37,
+    "dead_doctrine_feature_count": 0,
+    "constant_nondefault_feature_count": 0,
+    "dist_f_issue": {
+      "index": 3,
+      "feature": "dist_f",
+      "min": 4.0,
+      "max": 27.0,
+      "variance": 9.870987087015827,
+      "unique_count": 18,
+      "status": "active_nonconstant"
+    },
+    "historical_doctrine_contract_counts": {
+      "HISTORICAL_DOCTRINE_FEATURES_V1": 18575
+    },
+    "doctrine_source_counts": {
+      "prior_only_raceform_history": 18575
+    },
+    "doctrine_cutoff_rule_counts": {
+      "prior_race_date_lt_current_race_date": 18575
+    },
+    "distance_parser_version_counts": {
+      "HISTORICAL_DISTANCE_FIX_V1": 18575
+    },
+    "historical_doctrine_contract_complete": true,
+    "doctrine_source_complete": true,
+    "distance_parser_version_complete": true
+  },
+  "final_recommendation": {
+    "option": "D",
+    "text": "Build prior-only horse history engine before Playbook G V2."
+  }
+}

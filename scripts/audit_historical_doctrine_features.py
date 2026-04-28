@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import os
@@ -21,8 +22,6 @@ except ModuleNotFoundError:
     from historical_doctrine_support import DOCTRINE_FEATURE_NAMES, DOCTRINE_SOURCE, HISTORICAL_DOCTRINE_CONTRACT
 
 DATA_DIR = ROOT / "data"
-JSON_OUT = DATA_DIR / "historical_doctrine_feature_audit_v1.json"
-MD_OUT = DATA_DIR / "historical_doctrine_feature_audit_v1.md"
 FEATURE_VECTOR_NAMES = [
     "sp_dec",
     "log_sp",
@@ -214,6 +213,23 @@ def build_report() -> dict[str, Any]:
             active.append(feature)
         feature_stats.append(stats)
 
+    contract_counts = Counter(
+        (row["_feature_json"].get("historical_doctrine_contract") or "missing")
+        for row in rows
+    )
+    doctrine_source_counts = Counter(
+        (row["_feature_json"].get("doctrine_source") or "missing")
+        for row in rows
+    )
+    distance_parser_counts = Counter(
+        (row["_feature_json"].get("distance_parser_version") or "missing")
+        for row in rows
+    )
+    cutoff_rule_counts = Counter(
+        (row["_feature_json"].get("doctrine_cutoff_rule") or "missing")
+        for row in rows
+    )
+
     report = {
         "scope": {
             "eligible_race_count": len({str(row["race_id"]) for row in rows}),
@@ -265,6 +281,13 @@ def build_report() -> dict[str, Any]:
             "dead_doctrine_feature_count": len(defaulted),
             "constant_nondefault_feature_count": len(constant_nondefault),
             "dist_f_issue": next((row for row in feature_stats if row["feature"] == "dist_f"), None),
+            "historical_doctrine_contract_counts": dict(contract_counts),
+            "doctrine_source_counts": dict(doctrine_source_counts),
+            "doctrine_cutoff_rule_counts": dict(cutoff_rule_counts),
+            "distance_parser_version_counts": dict(distance_parser_counts),
+            "historical_doctrine_contract_complete": contract_counts == Counter({HISTORICAL_DOCTRINE_CONTRACT: len(rows)}),
+            "doctrine_source_complete": doctrine_source_counts == Counter({DOCTRINE_SOURCE: len(rows)}),
+            "distance_parser_version_complete": distance_parser_counts == Counter({"HISTORICAL_DISTANCE_FIX_V1": len(rows)}),
         },
         "final_recommendation": {
             "option": "D",
@@ -274,15 +297,18 @@ def build_report() -> dict[str, Any]:
     return report
 
 
-def write_markdown(report: dict[str, Any]) -> str:
+def write_markdown(report: dict[str, Any], *, version: str) -> str:
     return "\n".join(
         [
-            "# Historical Doctrine Feature Activation Audit V1",
+            f"# Historical Doctrine Feature Activation Audit {version.upper()}",
             "",
             f"- Eligible races: `{report['scope']['eligible_race_count']}`",
             f"- Eligible runners: `{report['scope']['eligible_runner_count']}`",
             f"- Active / non-constant features: `{len(report['B_features_active_non_constant'])}`",
             f"- Constant / defaulted doctrine features: `{len(report['C_features_constant_defaulted'])}`",
+            f"- Doctrine contract counts: `{json.dumps(report['supporting_findings']['historical_doctrine_contract_counts'])}`",
+            f"- Doctrine source counts: `{json.dumps(report['supporting_findings']['doctrine_source_counts'])}`",
+            f"- Distance parser counts: `{json.dumps(report['supporting_findings']['distance_parser_version_counts'])}`",
             f"- Recommendation: `{report['final_recommendation']['option']}` {report['final_recommendation']['text']}",
             "",
             "## Active features",
@@ -295,11 +321,17 @@ def write_markdown(report: dict[str, Any]) -> str:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output-version", default="v1")
+    args = parser.parse_args()
+
+    json_out = DATA_DIR / f"historical_doctrine_feature_audit_{args.output_version}.json"
+    md_out = DATA_DIR / f"historical_doctrine_feature_audit_{args.output_version}.md"
     report = build_report()
-    JSON_OUT.write_text(json.dumps(report, indent=2), encoding="utf-8")
-    MD_OUT.write_text(write_markdown(report), encoding="utf-8")
-    print(f"Wrote {JSON_OUT}")
-    print(f"Wrote {MD_OUT}")
+    json_out.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    md_out.write_text(write_markdown(report, version=args.output_version), encoding="utf-8")
+    print(f"Wrote {json_out}")
+    print(f"Wrote {md_out}")
 
 
 if __name__ == "__main__":
