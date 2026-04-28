@@ -1,0 +1,1712 @@
+{
+  "A_design_checkpoint_commit_hash": "651a1b8482a9f637aa6c63b7f3cfb39575e009ad",
+  "B_eligible_cohort_counts": {
+    "races": 1697,
+    "runners": 18575
+  },
+  "C_feature_mask_verification": {
+    "core_feature_mask": [
+      "or_num",
+      "rpr_num",
+      "ts_num",
+      "or_vs_field",
+      "rpr_vs_field",
+      "runs_since_win",
+      "runs_since_place",
+      "runs_since_mkt_support",
+      "curr_or_minus_last_win_or",
+      "curr_or_minus_best_or",
+      "mark_compression_score",
+      "release_window_score",
+      "course_fit_score",
+      "going_fit_score",
+      "distance_fit_score",
+      "quiet_run_score",
+      "trainer_timing_score",
+      "jockey_switch_intent",
+      "odds_resilience_score",
+      "odds_contraction_score",
+      "decoy_support_flag",
+      "setup_run_flag",
+      "cash_run_flag",
+      "dist_f",
+      "going_code",
+      "is_aw",
+      "class_num",
+      "wgt_lbs",
+      "field_size",
+      "draw_num",
+      "draw_pct",
+      "age_num"
+    ],
+    "market_features": [
+      "sp_dec",
+      "log_sp",
+      "implied_prob",
+      "sp_rank",
+      "is_fav"
+    ],
+    "market_excluded_from_core": true
+  },
+  "D_leakage_audit": {
+    "status": "pass",
+    "same_day_or_future_history_leakage": 0,
+    "source": "accepted V3 cohort / historical doctrine contract"
+  },
+  "E_outcome_field_exclusion_audit": {
+    "status": "pass",
+    "forbidden_feature_intersection": []
+  },
+  "F_metrics_for_every_calibration_arm": {
+    "core_uncalibrated_baseline": {
+      "name": "core_uncalibrated_baseline",
+      "train_metrics": {
+        "log_loss": 1.5219050111943422,
+        "brier": 0.06036423496124645,
+        "top1": 0.6141509433962264,
+        "top3": 0.909433962264151,
+        "ece": 0.06396444811170658,
+        "market_rank_lift": 1.5981132075471698,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.6740187301009082,
+        "brier": 0.06591003117978221,
+        "top1": 0.47609942638623326,
+        "top3": 0.8279158699808795,
+        "ece": 0.04596062288941429,
+        "market_rank_lift": 1.3460803059273423,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.561108727544964,
+        "brier": 0.0795820044707107,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06362647648050913,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.5346338017288186,
+          "brier": 0.08700149629548874,
+          "top1": 0.5714285714285714,
+          "top3": 0.8809523809523809,
+          "ece": 0.06670610884715072,
+          "market_rank_lift": 0.5952380952380952,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.6145399396827245,
+          "brier": 0.0639120149590788,
+          "top1": 0.4827586206896552,
+          "top3": 0.8620689655172413,
+          "ece": 0.05942625331859661,
+          "market_rank_lift": 1.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.235497344106136,
+          "brier": 0.0738498159613068,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.009581082565269915,
+          "market_rank_lift": -2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.4973243207418883,
+          "brier": 0.08167090697058499,
+          "top1": 0.6595744680851063,
+          "top3": 0.8936170212765957,
+          "ece": 0.06927247387861069,
+          "market_rank_lift": 0.7872340425531915,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.6155060839617383,
+          "brier": 0.07985555477159041,
+          "top1": 0.5121951219512195,
+          "top3": 0.8780487804878049,
+          "ece": 0.06052185756651921,
+          "market_rank_lift": 1.048780487804878,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.5906308624163803,
+          "brier": 0.07576508416465237,
+          "top1": 0.38461538461538464,
+          "top3": 0.8076923076923077,
+          "ece": 0.062056567991259,
+          "market_rank_lift": 0.23076923076923078,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5438616857561821,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "ece_improvement_vs_v3_core": -0.021596538986041115,
+      "log_loss_delta_vs_v3_core": 0.12659072754496403,
+      "brier_delta_vs_v3_core": 0.006252004470710698,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 2.575963418364461,
+        "validation_vs_train_log_loss_gap_pct": 9.994954861682993,
+        "test_vs_train_brier_gap_pct": 31.836350650019778,
+        "validation_vs_train_brier_gap_pct": 9.187221907303442
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": false,
+        "log_loss_within_limit": false,
+        "brier_within_limit": false,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": false,
+      "extras": {}
+    },
+    "core_isotonic_without_market": {
+      "name": "core_isotonic_without_market",
+      "train_metrics": {
+        "log_loss": 1.307295190493171,
+        "brier": 0.05424069923548311,
+        "top1": 0.5915094339622642,
+        "top3": 0.8933962264150943,
+        "ece": 0.04084991787521716,
+        "market_rank_lift": 1.5150943396226415,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.4693459590003204,
+        "brier": 0.06061350610289827,
+        "top1": 0.4894837476099426,
+        "top3": 0.8489483747609943,
+        "ece": 0.026465331783429028,
+        "market_rank_lift": 1.4760994263862333,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.4345182854454899,
+        "brier": 0.07333010257274018,
+        "top1": 0.5526315789473685,
+        "top3": 0.868421052631579,
+        "ece": 0.04202993749446802,
+        "market_rank_lift": 0.9122807017543859,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.3409506872575694,
+          "brier": 0.07883015555423736,
+          "top1": 0.5714285714285714,
+          "top3": 0.8928571428571429,
+          "ece": 0.059920715482603935,
+          "market_rank_lift": 0.7857142857142857,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.6787063251282717,
+          "brier": 0.06152578733939412,
+          "top1": 0.4827586206896552,
+          "top3": 0.7931034482758621,
+          "ece": 0.024736638036754598,
+          "market_rank_lift": 1.2413793103448276,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.212743382430129,
+          "brier": 0.07408346699564201,
+          "top1": 1.0,
+          "top3": 1.0,
+          "ece": 0.0025665014894102906,
+          "market_rank_lift": 2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.3596874768102238,
+          "brier": 0.07632852230713495,
+          "top1": 0.6170212765957447,
+          "top3": 0.851063829787234,
+          "ece": 0.05627596053511825,
+          "market_rank_lift": 0.7872340425531915,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.3737181313390319,
+          "brier": 0.07046010166716674,
+          "top1": 0.5365853658536586,
+          "top3": 0.8780487804878049,
+          "ece": 0.058883776336562,
+          "market_rank_lift": 1.2926829268292683,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.6656665286848082,
+          "brier": 0.0728388636515278,
+          "top1": 0.46153846153846156,
+          "top3": 0.8846153846153846,
+          "ece": 0.039968211463195874,
+          "market_rank_lift": 0.5384615384615384,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.48226505394654967,
+        "top1_overlap_with_market": 0.37719298245614036
+      },
+      "ece_improvement_vs_v3_core": 0.0,
+      "log_loss_delta_vs_v3_core": 2.8544548991149554e-07,
+      "brier_delta_vs_v3_core": 1.0257274017655416e-07,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 9.73178023429616,
+        "validation_vs_train_log_loss_gap_pct": 12.395881946602769,
+        "test_vs_train_brier_gap_pct": 35.1938739845175,
+        "validation_vs_train_brier_gap_pct": 11.749123734094873
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": false,
+        "log_loss_within_limit": true,
+        "brier_within_limit": true,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": false,
+      "extras": {}
+    },
+    "core_platt_without_market": {
+      "name": "core_platt_without_market",
+      "train_metrics": {
+        "log_loss": 1.9174707032904148,
+        "brier": 0.07047572877586301,
+        "top1": 0.6141509433962264,
+        "top3": 0.909433962264151,
+        "ece": 0.05602789169296269,
+        "market_rank_lift": 1.5981132075471698,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.9967484136292988,
+        "brier": 0.07321211933343898,
+        "top1": 0.47609942638623326,
+        "top3": 0.8279158699808795,
+        "ece": 0.04267673784341467,
+        "market_rank_lift": 1.3460803059273423,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.8507693432110253,
+        "brier": 0.08932580772167752,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06247067555510347,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.7878089230416554,
+          "brier": 0.09669626593101847,
+          "top1": 0.5714285714285714,
+          "top3": 0.8809523809523809,
+          "ece": 0.07557376401764124,
+          "market_rank_lift": 0.5952380952380952,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 2.015977206175588,
+          "brier": 0.07409484371235843,
+          "top1": 0.4827586206896552,
+          "top3": 0.8620689655172413,
+          "ece": 0.03676609463581808,
+          "market_rank_lift": 1.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.3484166114657716,
+          "brier": 0.07471368788775333,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.02549941396129511,
+          "market_rank_lift": -2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.769326344936212,
+          "brier": 0.09142236370784405,
+          "top1": 0.6595744680851063,
+          "top3": 0.8936170212765957,
+          "ece": 0.058557937903442873,
+          "market_rank_lift": 0.7872340425531915,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.9012493603137748,
+          "brier": 0.0892319618583741,
+          "top1": 0.5121951219512195,
+          "top3": 0.8780487804878049,
+          "ece": 0.06994510261403505,
+          "market_rank_lift": 1.048780487804878,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.9183901208150047,
+          "brier": 0.08605806911718589,
+          "top1": 0.38461538461538464,
+          "top3": 0.8076923076923077,
+          "ece": 0.057410821271200924,
+          "market_rank_lift": 0.23076923076923078,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5126087988141256,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "ece_improvement_vs_v3_core": -0.020440738060635455,
+      "log_loss_delta_vs_v3_core": 0.4162513432110253,
+      "brier_delta_vs_v3_core": 0.01599580772167751,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": -3.478611692211452,
+        "validation_vs_train_log_loss_gap_pct": 4.134493956170593,
+        "test_vs_train_brier_gap_pct": 26.746908862431518,
+        "validation_vs_train_brier_gap_pct": 3.882741768132151
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": false,
+        "fr_positive_vs_market": false,
+        "ece_improves_vs_v3_core": false,
+        "log_loss_within_limit": false,
+        "brier_within_limit": false,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": false,
+      "extras": {
+        "platt_coefficients": [
+          [
+            4.022700738282967
+          ]
+        ],
+        "platt_intercept": [
+          -2.723291498429141
+        ]
+      }
+    },
+    "core_temperature_scaling_without_market": {
+      "name": "core_temperature_scaling_without_market",
+      "train_metrics": {
+        "log_loss": 1.1276653316078766,
+        "brier": 0.0475099478149483,
+        "top1": 0.6141509433962264,
+        "top3": 0.909433962264151,
+        "ece": 0.02602333597724468,
+        "market_rank_lift": 1.5981132075471698,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.4454293393221807,
+        "brier": 0.06018451762151322,
+        "top1": 0.47609942638623326,
+        "top3": 0.8279158699808795,
+        "ece": 0.009876891706557535,
+        "market_rank_lift": 1.3460803059273423,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.2714213238929168,
+        "brier": 0.06763591024530992,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.034483677526519985,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.2217949340344372,
+          "brier": 0.07132125771059158,
+          "top1": 0.5714285714285714,
+          "top3": 0.8809523809523809,
+          "ece": 0.054795619580029646,
+          "market_rank_lift": 0.5952380952380952,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.3845358845270022,
+          "brier": 0.05953221541503427,
+          "top1": 0.4827586206896552,
+          "top3": 0.8620689655172413,
+          "ece": 0.03922938726456337,
+          "market_rank_lift": 1.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.1597158136167516,
+          "brier": 0.07330143791785503,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.0014486337784186875,
+          "market_rank_lift": -2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.2110045716884095,
+          "brier": 0.06878619407322192,
+          "top1": 0.6595744680851063,
+          "top3": 0.8936170212765957,
+          "ece": 0.04609918262649707,
+          "market_rank_lift": 0.7872340425531915,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.3001117318978945,
+          "brier": 0.0666290730229888,
+          "top1": 0.5121951219512195,
+          "top3": 0.8780487804878049,
+          "ece": 0.042111279378943066,
+          "market_rank_lift": 1.048780487804878,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.3353936556393697,
+          "brier": 0.06730348239385374,
+          "top1": 0.38461538461538464,
+          "top3": 0.8076923076923077,
+          "ece": 0.03870132115696836,
+          "market_rank_lift": 0.23076923076923078,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.48415155169753493,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "ece_improvement_vs_v3_core": 0.007546259967948034,
+      "log_loss_delta_vs_v3_core": -0.16309667610708312,
+      "brier_delta_vs_v3_core": -0.005694089754690088,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 12.748107816710688,
+        "validation_vs_train_log_loss_gap_pct": 28.17892851784506,
+        "test_vs_train_brier_gap_pct": 42.361575535196195,
+        "validation_vs_train_brier_gap_pct": 26.677717803295625
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": true,
+        "log_loss_within_limit": true,
+        "brier_within_limit": true,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": true,
+      "extras": {
+        "temperature": 0.5
+      }
+    },
+    "core_jurisdiction_aware_calibration_without_market": {
+      "name": "core_jurisdiction_aware_calibration_without_market",
+      "train_metrics": {
+        "log_loss": 1.2989861556421807,
+        "brier": 0.05410475798822522,
+        "top1": 0.5924528301886792,
+        "top3": 0.8933962264150943,
+        "ece": 0.03644531726209786,
+        "market_rank_lift": 1.5169811320754718,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.4513262187467069,
+        "brier": 0.06038034476189291,
+        "top1": 0.49904397705544934,
+        "top3": 0.8451242829827916,
+        "ece": 0.02316319722489589,
+        "market_rank_lift": 1.4875717017208414,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.4290278760742272,
+        "brier": 0.07537301946152607,
+        "top1": 0.5263157894736842,
+        "top3": 0.868421052631579,
+        "ece": 0.047304713485893136,
+        "market_rank_lift": 0.8771929824561403,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.426747173860137,
+          "brier": 0.0822617337905753,
+          "top1": 0.5357142857142857,
+          "top3": 0.8809523809523809,
+          "ece": 0.06521234059202123,
+          "market_rank_lift": 0.7142857142857143,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.408609375371734,
+          "brier": 0.06067233840462947,
+          "top1": 0.4827586206896552,
+          "top3": 0.8275862068965517,
+          "ece": 0.016832204136094663,
+          "market_rank_lift": 1.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.212743382430129,
+          "brier": 0.07408346699564201,
+          "top1": 1.0,
+          "top3": 1.0,
+          "ece": 0.0025665014894102906,
+          "market_rank_lift": 2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.4005996298783305,
+          "brier": 0.07828278085396602,
+          "top1": 0.5957446808510638,
+          "top3": 0.851063829787234,
+          "ece": 0.05584862703469577,
+          "market_rank_lift": 0.723404255319149,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.4263482019932399,
+          "brier": 0.07247348664729694,
+          "top1": 0.5121951219512195,
+          "top3": 0.9024390243902439,
+          "ece": 0.05293222313512735,
+          "market_rank_lift": 1.3414634146341464,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.484643037940675,
+          "brier": 0.0750711771127917,
+          "top1": 0.4230769230769231,
+          "top3": 0.8461538461538461,
+          "ece": 0.0463977922812942,
+          "market_rank_lift": 0.4230769230769231,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.4781004654986479,
+        "top1_overlap_with_market": 0.34210526315789475
+      },
+      "ece_improvement_vs_v3_core": -0.005274775991425118,
+      "log_loss_delta_vs_v3_core": -0.00549012392577275,
+      "brier_delta_vs_v3_core": 0.0020430194615260605,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 10.011016658430645,
+        "validation_vs_train_log_loss_gap_pct": 11.727612526340877,
+        "test_vs_train_brier_gap_pct": 39.3094106029075,
+        "validation_vs_train_brier_gap_pct": 11.598955446826771
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": false,
+        "log_loss_within_limit": true,
+        "brier_within_limit": true,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": false,
+      "extras": {}
+    },
+    "core_market_aware_calibration_with_strict_isolation_guardrails": {
+      "name": "core_market_aware_calibration_with_strict_isolation_guardrails",
+      "train_metrics": {
+        "log_loss": 1.7379158475786716,
+        "brier": 0.06637537900530288,
+        "top1": 0.41509433962264153,
+        "top3": 0.7349056603773585,
+        "ece": 0.02361184445847244,
+        "market_rank_lift": 0.5358490566037736,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.8412626374929073,
+        "brier": 0.06939502087324248,
+        "top1": 0.3575525812619503,
+        "top3": 0.6864244741873805,
+        "ece": 0.014072835818673126,
+        "market_rank_lift": 0.4684512428298279,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.6079292593188261,
+        "brier": 0.08097594815229447,
+        "top1": 0.41228070175438597,
+        "top3": 0.7192982456140351,
+        "ece": 0.024501205827729612,
+        "market_rank_lift": 0.24561403508771928,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.522573135858588,
+          "brier": 0.0866583609430459,
+          "top1": 0.42857142857142855,
+          "top3": 0.7619047619047619,
+          "ece": 0.03099441235963806,
+          "market_rank_lift": 0.2261904761904762,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.851601734565126,
+          "brier": 0.06936824847766115,
+          "top1": 0.3793103448275862,
+          "top3": 0.5862068965517241,
+          "ece": 0.026807753098859254,
+          "market_rank_lift": 0.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 1.7113418478361655,
+          "brier": 0.06612330316269543,
+          "top1": 0.0,
+          "top3": 1.0,
+          "ece": 0.1365627898331141,
+          "market_rank_lift": 0.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.5306983501618576,
+          "brier": 0.0838785998724802,
+          "top1": 0.40425531914893614,
+          "top3": 0.7872340425531915,
+          "ece": 0.04109310928338463,
+          "market_rank_lift": 0.23404255319148937,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.7393897867061234,
+          "brier": 0.08471234728061618,
+          "top1": 0.34146341463414637,
+          "top3": 0.6097560975609756,
+          "ece": 0.019045289765597113,
+          "market_rank_lift": 0.2682926829268293,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.5402358403764551,
+          "brier": 0.07054140057943492,
+          "top1": 0.5384615384615384,
+          "top3": 0.7692307692307693,
+          "ece": 0.03363374238414399,
+          "market_rank_lift": 0.23076923076923078,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.9835196223162503,
+        "top1_overlap_with_market": 0.9298245614035088
+      },
+      "ece_improvement_vs_v3_core": 0.017528731666738406,
+      "log_loss_delta_vs_v3_core": 0.17341125931882617,
+      "brier_delta_vs_v3_core": 0.007645948152294468,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": -7.479452382055642,
+        "validation_vs_train_log_loss_gap_pct": 5.946593447445818,
+        "test_vs_train_brier_gap_pct": 21.996965389568803,
+        "validation_vs_train_brier_gap_pct": 4.549340302370783
+      },
+      "gate_checks": {
+        "market_probability_correlation": false,
+        "top1_market_overlap": false,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": true,
+        "log_loss_within_limit": false,
+        "brier_within_limit": false,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": false,
+      "extras": {
+        "market_aware_coefficients": [
+          [
+            2.640074162907263,
+            0.8465924392262459
+          ]
+        ],
+        "market_aware_intercept": [
+          -0.6873658897132694
+        ]
+      }
+    },
+    "core_residual_confidence_dampening": {
+      "name": "core_residual_confidence_dampening",
+      "train_metrics": {
+        "log_loss": 1.5219050111943422,
+        "brier": 0.06036423496124645,
+        "top1": 0.6141509433962264,
+        "top3": 0.909433962264151,
+        "ece": 0.06396444811170658,
+        "market_rank_lift": 1.5981132075471698,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.6740187301009082,
+        "brier": 0.06591003117978221,
+        "top1": 0.47609942638623326,
+        "top3": 0.8279158699808795,
+        "ece": 0.04596062288941429,
+        "market_rank_lift": 1.3460803059273423,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.561108727544964,
+        "brier": 0.0795820044707107,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06362647648050913,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.5346338017288186,
+          "brier": 0.08700149629548874,
+          "top1": 0.5714285714285714,
+          "top3": 0.8809523809523809,
+          "ece": 0.06670610884715072,
+          "market_rank_lift": 0.5952380952380952,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.6145399396827245,
+          "brier": 0.0639120149590788,
+          "top1": 0.4827586206896552,
+          "top3": 0.8620689655172413,
+          "ece": 0.05942625331859661,
+          "market_rank_lift": 1.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.235497344106136,
+          "brier": 0.0738498159613068,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.009581082565269915,
+          "market_rank_lift": -2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.4973243207418883,
+          "brier": 0.08167090697058499,
+          "top1": 0.6595744680851063,
+          "top3": 0.8936170212765957,
+          "ece": 0.06927247387861069,
+          "market_rank_lift": 0.7872340425531915,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.6155060839617383,
+          "brier": 0.07985555477159041,
+          "top1": 0.5121951219512195,
+          "top3": 0.8780487804878049,
+          "ece": 0.060521857566519205,
+          "market_rank_lift": 1.048780487804878,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.59063086241638,
+          "brier": 0.07576508416465237,
+          "top1": 0.38461538461538464,
+          "top3": 0.8076923076923077,
+          "ece": 0.062056567991259,
+          "market_rank_lift": 0.23076923076923078,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5438616857561821,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "ece_improvement_vs_v3_core": -0.021596538986041115,
+      "log_loss_delta_vs_v3_core": 0.12659072754496403,
+      "brier_delta_vs_v3_core": 0.006252004470710698,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 2.575963418364461,
+        "validation_vs_train_log_loss_gap_pct": 9.994954861682993,
+        "test_vs_train_brier_gap_pct": 31.836350650019778,
+        "validation_vs_train_brier_gap_pct": 9.187221907303442
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": false,
+        "log_loss_within_limit": false,
+        "brier_within_limit": false,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": false,
+      "extras": {
+        "dampening_alpha": 1.0
+      }
+    },
+    "core_conservative_probability_shrinkage": {
+      "name": "core_conservative_probability_shrinkage",
+      "train_metrics": {
+        "log_loss": 1.5219050111943422,
+        "brier": 0.06036423496124645,
+        "top1": 0.6141509433962264,
+        "top3": 0.909433962264151,
+        "ece": 0.06396444811170658,
+        "market_rank_lift": 1.5981132075471698,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.6740187301009082,
+        "brier": 0.06591003117978221,
+        "top1": 0.47609942638623326,
+        "top3": 0.8279158699808795,
+        "ece": 0.0459606228894143,
+        "market_rank_lift": 1.3460803059273423,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.561108727544964,
+        "brier": 0.0795820044707107,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06362647648050915,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.5346338017288186,
+          "brier": 0.08700149629548874,
+          "top1": 0.5714285714285714,
+          "top3": 0.8809523809523809,
+          "ece": 0.06670610884715072,
+          "market_rank_lift": 0.5952380952380952,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.6145399396827245,
+          "brier": 0.0639120149590788,
+          "top1": 0.4827586206896552,
+          "top3": 0.8620689655172413,
+          "ece": 0.05942625331859662,
+          "market_rank_lift": 1.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.235497344106136,
+          "brier": 0.0738498159613068,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.009581082565269915,
+          "market_rank_lift": -2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.4973243207418883,
+          "brier": 0.08167090697058499,
+          "top1": 0.6595744680851063,
+          "top3": 0.8936170212765957,
+          "ece": 0.06927247387861069,
+          "market_rank_lift": 0.7872340425531915,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.6155060839617383,
+          "brier": 0.07985555477159041,
+          "top1": 0.5121951219512195,
+          "top3": 0.8780487804878049,
+          "ece": 0.06052185756651922,
+          "market_rank_lift": 1.048780487804878,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.5906308624163796,
+          "brier": 0.07576508416465237,
+          "top1": 0.38461538461538464,
+          "top3": 0.8076923076923077,
+          "ece": 0.062056567991259,
+          "market_rank_lift": 0.23076923076923078,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5438616857561821,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "ece_improvement_vs_v3_core": -0.02159653898604113,
+      "log_loss_delta_vs_v3_core": 0.12659072754496403,
+      "brier_delta_vs_v3_core": 0.006252004470710698,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 2.575963418364461,
+        "validation_vs_train_log_loss_gap_pct": 9.994954861682993,
+        "test_vs_train_brier_gap_pct": 31.836350650019778,
+        "validation_vs_train_brier_gap_pct": 9.187221907303442
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": false,
+        "log_loss_within_limit": false,
+        "brier_within_limit": false,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": false,
+      "extras": {
+        "shrink_lambda": 1.0
+      }
+    }
+  },
+  "G_ece_improvement_by_arm": {
+    "core_uncalibrated_baseline": -0.021596538986041115,
+    "core_isotonic_without_market": 0.0,
+    "core_platt_without_market": -0.020440738060635455,
+    "core_temperature_scaling_without_market": 0.007546259967948034,
+    "core_jurisdiction_aware_calibration_without_market": -0.005274775991425118,
+    "core_market_aware_calibration_with_strict_isolation_guardrails": 0.017528731666738406,
+    "core_residual_confidence_dampening": -0.021596538986041115,
+    "core_conservative_probability_shrinkage": -0.02159653898604113
+  },
+  "H_log_loss_brier_impact_by_arm": {
+    "core_uncalibrated_baseline": {
+      "log_loss_delta_vs_v3_core": 0.12659072754496403,
+      "brier_delta_vs_v3_core": 0.006252004470710698
+    },
+    "core_isotonic_without_market": {
+      "log_loss_delta_vs_v3_core": 2.8544548991149554e-07,
+      "brier_delta_vs_v3_core": 1.0257274017655416e-07
+    },
+    "core_platt_without_market": {
+      "log_loss_delta_vs_v3_core": 0.4162513432110253,
+      "brier_delta_vs_v3_core": 0.01599580772167751
+    },
+    "core_temperature_scaling_without_market": {
+      "log_loss_delta_vs_v3_core": -0.16309667610708312,
+      "brier_delta_vs_v3_core": -0.005694089754690088
+    },
+    "core_jurisdiction_aware_calibration_without_market": {
+      "log_loss_delta_vs_v3_core": -0.00549012392577275,
+      "brier_delta_vs_v3_core": 0.0020430194615260605
+    },
+    "core_market_aware_calibration_with_strict_isolation_guardrails": {
+      "log_loss_delta_vs_v3_core": 0.17341125931882617,
+      "brier_delta_vs_v3_core": 0.007645948152294468
+    },
+    "core_residual_confidence_dampening": {
+      "log_loss_delta_vs_v3_core": 0.12659072754496403,
+      "brier_delta_vs_v3_core": 0.006252004470710698
+    },
+    "core_conservative_probability_shrinkage": {
+      "log_loss_delta_vs_v3_core": 0.12659072754496403,
+      "brier_delta_vs_v3_core": 0.006252004470710698
+    }
+  },
+  "I_market_correlation_by_arm": {
+    "core_uncalibrated_baseline": 0.5438616857561821,
+    "core_isotonic_without_market": 0.48226505394654967,
+    "core_platt_without_market": 0.5126087988141256,
+    "core_temperature_scaling_without_market": 0.48415155169753493,
+    "core_jurisdiction_aware_calibration_without_market": 0.4781004654986479,
+    "core_market_aware_calibration_with_strict_isolation_guardrails": 0.9835196223162503,
+    "core_residual_confidence_dampening": 0.5438616857561821,
+    "core_conservative_probability_shrinkage": 0.5438616857561821
+  },
+  "J_top1_market_overlap_by_arm": {
+    "core_uncalibrated_baseline": 0.3684210526315789,
+    "core_isotonic_without_market": 0.37719298245614036,
+    "core_platt_without_market": 0.3684210526315789,
+    "core_temperature_scaling_without_market": 0.3684210526315789,
+    "core_jurisdiction_aware_calibration_without_market": 0.34210526315789475,
+    "core_market_aware_calibration_with_strict_isolation_guardrails": 0.9298245614035088,
+    "core_residual_confidence_dampening": 0.3684210526315789,
+    "core_conservative_probability_shrinkage": 0.3684210526315789
+  },
+  "K_hk_result_by_arm": {
+    "core_uncalibrated_baseline": {
+      "log_loss": 1.6145399396827245,
+      "brier": 0.0639120149590788,
+      "top1": 0.4827586206896552,
+      "top3": 0.8620689655172413,
+      "ece": 0.05942625331859661,
+      "market_rank_lift": 1.3103448275862069,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core_isotonic_without_market": {
+      "log_loss": 1.6787063251282717,
+      "brier": 0.06152578733939412,
+      "top1": 0.4827586206896552,
+      "top3": 0.7931034482758621,
+      "ece": 0.024736638036754598,
+      "market_rank_lift": 1.2413793103448276,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core_platt_without_market": {
+      "log_loss": 2.015977206175588,
+      "brier": 0.07409484371235843,
+      "top1": 0.4827586206896552,
+      "top3": 0.8620689655172413,
+      "ece": 0.03676609463581808,
+      "market_rank_lift": 1.3103448275862069,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core_temperature_scaling_without_market": {
+      "log_loss": 1.3845358845270022,
+      "brier": 0.05953221541503427,
+      "top1": 0.4827586206896552,
+      "top3": 0.8620689655172413,
+      "ece": 0.03922938726456337,
+      "market_rank_lift": 1.3103448275862069,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core_jurisdiction_aware_calibration_without_market": {
+      "log_loss": 1.408609375371734,
+      "brier": 0.06067233840462947,
+      "top1": 0.4827586206896552,
+      "top3": 0.8275862068965517,
+      "ece": 0.016832204136094663,
+      "market_rank_lift": 1.3103448275862069,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core_market_aware_calibration_with_strict_isolation_guardrails": {
+      "log_loss": 1.851601734565126,
+      "brier": 0.06936824847766115,
+      "top1": 0.3793103448275862,
+      "top3": 0.5862068965517241,
+      "ece": 0.026807753098859254,
+      "market_rank_lift": 0.3103448275862069,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core_residual_confidence_dampening": {
+      "log_loss": 1.6145399396827245,
+      "brier": 0.0639120149590788,
+      "top1": 0.4827586206896552,
+      "top3": 0.8620689655172413,
+      "ece": 0.05942625331859661,
+      "market_rank_lift": 1.3103448275862069,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "core_conservative_probability_shrinkage": {
+      "log_loss": 1.6145399396827245,
+      "brier": 0.0639120149590788,
+      "top1": 0.4827586206896552,
+      "top3": 0.8620689655172413,
+      "ece": 0.05942625331859662,
+      "market_rank_lift": 1.3103448275862069,
+      "n_races": 29,
+      "n_runners": 319
+    }
+  },
+  "L_fr_result_by_arm": {
+    "core_uncalibrated_baseline": {
+      "log_loss": 1.5346338017288186,
+      "brier": 0.08700149629548874,
+      "top1": 0.5714285714285714,
+      "top3": 0.8809523809523809,
+      "ece": 0.06670610884715072,
+      "market_rank_lift": 0.5952380952380952,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core_isotonic_without_market": {
+      "log_loss": 1.3409506872575694,
+      "brier": 0.07883015555423736,
+      "top1": 0.5714285714285714,
+      "top3": 0.8928571428571429,
+      "ece": 0.059920715482603935,
+      "market_rank_lift": 0.7857142857142857,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core_platt_without_market": {
+      "log_loss": 1.7878089230416554,
+      "brier": 0.09669626593101847,
+      "top1": 0.5714285714285714,
+      "top3": 0.8809523809523809,
+      "ece": 0.07557376401764124,
+      "market_rank_lift": 0.5952380952380952,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core_temperature_scaling_without_market": {
+      "log_loss": 1.2217949340344372,
+      "brier": 0.07132125771059158,
+      "top1": 0.5714285714285714,
+      "top3": 0.8809523809523809,
+      "ece": 0.054795619580029646,
+      "market_rank_lift": 0.5952380952380952,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core_jurisdiction_aware_calibration_without_market": {
+      "log_loss": 1.426747173860137,
+      "brier": 0.0822617337905753,
+      "top1": 0.5357142857142857,
+      "top3": 0.8809523809523809,
+      "ece": 0.06521234059202123,
+      "market_rank_lift": 0.7142857142857143,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core_market_aware_calibration_with_strict_isolation_guardrails": {
+      "log_loss": 1.522573135858588,
+      "brier": 0.0866583609430459,
+      "top1": 0.42857142857142855,
+      "top3": 0.7619047619047619,
+      "ece": 0.03099441235963806,
+      "market_rank_lift": 0.2261904761904762,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core_residual_confidence_dampening": {
+      "log_loss": 1.5346338017288186,
+      "brier": 0.08700149629548874,
+      "top1": 0.5714285714285714,
+      "top3": 0.8809523809523809,
+      "ece": 0.06670610884715072,
+      "market_rank_lift": 0.5952380952380952,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "core_conservative_probability_shrinkage": {
+      "log_loss": 1.5346338017288186,
+      "brier": 0.08700149629548874,
+      "top1": 0.5714285714285714,
+      "top3": 0.8809523809523809,
+      "ece": 0.06670610884715072,
+      "market_rank_lift": 0.5952380952380952,
+      "n_races": 84,
+      "n_runners": 683
+    }
+  },
+  "M_2025_sensitivity_by_arm": {
+    "core_uncalibrated_baseline": {
+      "log_loss": 1.5906308624163803,
+      "brier": 0.07576508416465237,
+      "top1": 0.38461538461538464,
+      "top3": 0.8076923076923077,
+      "ece": 0.062056567991259,
+      "market_rank_lift": 0.23076923076923078,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "core_isotonic_without_market": {
+      "log_loss": 1.6656665286848082,
+      "brier": 0.0728388636515278,
+      "top1": 0.46153846153846156,
+      "top3": 0.8846153846153846,
+      "ece": 0.039968211463195874,
+      "market_rank_lift": 0.5384615384615384,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "core_platt_without_market": {
+      "log_loss": 1.9183901208150047,
+      "brier": 0.08605806911718589,
+      "top1": 0.38461538461538464,
+      "top3": 0.8076923076923077,
+      "ece": 0.057410821271200924,
+      "market_rank_lift": 0.23076923076923078,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "core_temperature_scaling_without_market": {
+      "log_loss": 1.3353936556393697,
+      "brier": 0.06730348239385374,
+      "top1": 0.38461538461538464,
+      "top3": 0.8076923076923077,
+      "ece": 0.03870132115696836,
+      "market_rank_lift": 0.23076923076923078,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "core_jurisdiction_aware_calibration_without_market": {
+      "log_loss": 1.484643037940675,
+      "brier": 0.0750711771127917,
+      "top1": 0.4230769230769231,
+      "top3": 0.8461538461538461,
+      "ece": 0.0463977922812942,
+      "market_rank_lift": 0.4230769230769231,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "core_market_aware_calibration_with_strict_isolation_guardrails": {
+      "log_loss": 1.5402358403764551,
+      "brier": 0.07054140057943492,
+      "top1": 0.5384615384615384,
+      "top3": 0.7692307692307693,
+      "ece": 0.03363374238414399,
+      "market_rank_lift": 0.23076923076923078,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "core_residual_confidence_dampening": {
+      "log_loss": 1.59063086241638,
+      "brier": 0.07576508416465237,
+      "top1": 0.38461538461538464,
+      "top3": 0.8076923076923077,
+      "ece": 0.062056567991259,
+      "market_rank_lift": 0.23076923076923078,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "core_conservative_probability_shrinkage": {
+      "log_loss": 1.5906308624163796,
+      "brier": 0.07576508416465237,
+      "top1": 0.38461538461538464,
+      "top3": 0.8076923076923077,
+      "ece": 0.062056567991259,
+      "market_rank_lift": 0.23076923076923078,
+      "n_races": 26,
+      "n_runners": 244
+    }
+  },
+  "N_best_acceptable_calibration_arm": {
+    "name": "core_temperature_scaling_without_market",
+    "result": {
+      "name": "core_temperature_scaling_without_market",
+      "train_metrics": {
+        "log_loss": 1.1276653316078766,
+        "brier": 0.0475099478149483,
+        "top1": 0.6141509433962264,
+        "top3": 0.909433962264151,
+        "ece": 0.02602333597724468,
+        "market_rank_lift": 1.5981132075471698,
+        "n_races": 1060,
+        "n_runners": 11757
+      },
+      "validation_metrics": {
+        "log_loss": 1.4454293393221807,
+        "brier": 0.06018451762151322,
+        "top1": 0.47609942638623326,
+        "top3": 0.8279158699808795,
+        "ece": 0.009876891706557535,
+        "market_rank_lift": 1.3460803059273423,
+        "n_races": 523,
+        "n_runners": 5804
+      },
+      "test_metrics": {
+        "log_loss": 1.2714213238929168,
+        "brier": 0.06763591024530992,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.034483677526519985,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      },
+      "test_metrics_by_jurisdiction": {
+        "FR": {
+          "log_loss": 1.2217949340344372,
+          "brier": 0.07132125771059158,
+          "top1": 0.5714285714285714,
+          "top3": 0.8809523809523809,
+          "ece": 0.054795619580029646,
+          "market_rank_lift": 0.5952380952380952,
+          "n_races": 84,
+          "n_runners": 683
+        },
+        "HK": {
+          "log_loss": 1.3845358845270022,
+          "brier": 0.05953221541503427,
+          "top1": 0.4827586206896552,
+          "top3": 0.8620689655172413,
+          "ece": 0.03922938726456337,
+          "market_rank_lift": 1.3103448275862069,
+          "n_races": 29,
+          "n_runners": 319
+        },
+        "JPN": {
+          "log_loss": 2.1597158136167516,
+          "brier": 0.07330143791785503,
+          "top1": 0.0,
+          "top3": 0.0,
+          "ece": 0.0014486337784186875,
+          "market_rank_lift": -2.0,
+          "n_races": 1,
+          "n_runners": 12
+        }
+      },
+      "test_metrics_by_year": {
+        "2023": {
+          "log_loss": 1.2110045716884095,
+          "brier": 0.06878619407322192,
+          "top1": 0.6595744680851063,
+          "top3": 0.8936170212765957,
+          "ece": 0.04609918262649707,
+          "market_rank_lift": 0.7872340425531915,
+          "n_races": 47,
+          "n_runners": 397
+        },
+        "2024": {
+          "log_loss": 1.3001117318978945,
+          "brier": 0.0666290730229888,
+          "top1": 0.5121951219512195,
+          "top3": 0.8780487804878049,
+          "ece": 0.042111279378943066,
+          "market_rank_lift": 1.048780487804878,
+          "n_races": 41,
+          "n_runners": 373
+        },
+        "2025": {
+          "log_loss": 1.3353936556393697,
+          "brier": 0.06730348239385374,
+          "top1": 0.38461538461538464,
+          "top3": 0.8076923076923077,
+          "ece": 0.03870132115696836,
+          "market_rank_lift": 0.23076923076923078,
+          "n_races": 26,
+          "n_runners": 244
+        }
+      },
+      "market_recrowding_checks": {
+        "probability_correlation": 0.48415155169753493,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "ece_improvement_vs_v3_core": 0.007546259967948034,
+      "log_loss_delta_vs_v3_core": -0.16309667610708312,
+      "brier_delta_vs_v3_core": -0.005694089754690088,
+      "overfit_warning": {
+        "level": "medium",
+        "test_vs_train_log_loss_gap_pct": 12.748107816710688,
+        "validation_vs_train_log_loss_gap_pct": 28.17892851784506,
+        "test_vs_train_brier_gap_pct": 42.361575535196195,
+        "validation_vs_train_brier_gap_pct": 26.677717803295625
+      },
+      "gate_checks": {
+        "market_probability_correlation": true,
+        "top1_market_overlap": true,
+        "hk_non_negative_vs_market": true,
+        "fr_positive_vs_market": true,
+        "ece_improves_vs_v3_core": true,
+        "log_loss_within_limit": true,
+        "brier_within_limit": true,
+        "overfit_medium_or_better": true,
+        "no_leakage": true,
+        "no_outcome_fields": true,
+        "no_prior_model_outputs": true
+      },
+      "acceptable": true,
+      "extras": {
+        "temperature": 0.5
+      }
+    }
+  },
+  "O_rejected_arms_and_reasons": {
+    "core_uncalibrated_baseline": {
+      "reasons": [
+        "ece_improves_vs_v3_core",
+        "log_loss_within_limit",
+        "brier_within_limit"
+      ],
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5438616857561821,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "test_metrics": {
+        "log_loss": 1.561108727544964,
+        "brier": 0.0795820044707107,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06362647648050913,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    },
+    "core_isotonic_without_market": {
+      "reasons": [
+        "ece_improves_vs_v3_core"
+      ],
+      "market_recrowding_checks": {
+        "probability_correlation": 0.48226505394654967,
+        "top1_overlap_with_market": 0.37719298245614036
+      },
+      "test_metrics": {
+        "log_loss": 1.4345182854454899,
+        "brier": 0.07333010257274018,
+        "top1": 0.5526315789473685,
+        "top3": 0.868421052631579,
+        "ece": 0.04202993749446802,
+        "market_rank_lift": 0.9122807017543859,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    },
+    "core_platt_without_market": {
+      "reasons": [
+        "hk_non_negative_vs_market",
+        "fr_positive_vs_market",
+        "ece_improves_vs_v3_core",
+        "log_loss_within_limit",
+        "brier_within_limit"
+      ],
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5126087988141256,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "test_metrics": {
+        "log_loss": 1.8507693432110253,
+        "brier": 0.08932580772167752,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06247067555510347,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    },
+    "core_jurisdiction_aware_calibration_without_market": {
+      "reasons": [
+        "ece_improves_vs_v3_core"
+      ],
+      "market_recrowding_checks": {
+        "probability_correlation": 0.4781004654986479,
+        "top1_overlap_with_market": 0.34210526315789475
+      },
+      "test_metrics": {
+        "log_loss": 1.4290278760742272,
+        "brier": 0.07537301946152607,
+        "top1": 0.5263157894736842,
+        "top3": 0.868421052631579,
+        "ece": 0.047304713485893136,
+        "market_rank_lift": 0.8771929824561403,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    },
+    "core_market_aware_calibration_with_strict_isolation_guardrails": {
+      "reasons": [
+        "market_probability_correlation",
+        "top1_market_overlap",
+        "log_loss_within_limit",
+        "brier_within_limit"
+      ],
+      "market_recrowding_checks": {
+        "probability_correlation": 0.9835196223162503,
+        "top1_overlap_with_market": 0.9298245614035088
+      },
+      "test_metrics": {
+        "log_loss": 1.6079292593188261,
+        "brier": 0.08097594815229447,
+        "top1": 0.41228070175438597,
+        "top3": 0.7192982456140351,
+        "ece": 0.024501205827729612,
+        "market_rank_lift": 0.24561403508771928,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    },
+    "core_residual_confidence_dampening": {
+      "reasons": [
+        "ece_improves_vs_v3_core",
+        "log_loss_within_limit",
+        "brier_within_limit"
+      ],
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5438616857561821,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "test_metrics": {
+        "log_loss": 1.561108727544964,
+        "brier": 0.0795820044707107,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06362647648050913,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    },
+    "core_conservative_probability_shrinkage": {
+      "reasons": [
+        "ece_improves_vs_v3_core",
+        "log_loss_within_limit",
+        "brier_within_limit"
+      ],
+      "market_recrowding_checks": {
+        "probability_correlation": 0.5438616857561821,
+        "top1_overlap_with_market": 0.3684210526315789
+      },
+      "test_metrics": {
+        "log_loss": 1.561108727544964,
+        "brier": 0.0795820044707107,
+        "top1": 0.543859649122807,
+        "top3": 0.868421052631579,
+        "ece": 0.06362647648050915,
+        "market_rank_lift": 0.7543859649122807,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    }
+  },
+  "P_final_pass_fail_verdict": "PASS",
+  "Q_recommendation": {
+    "code": "GO_CALIBRATION_REPAIR_CANDIDATE",
+    "label": "A calibration repair candidate exists for offline research review",
+    "reason": "core_temperature_scaling_without_market cleared the hard gates and is the best acceptable arm.",
+    "supporting_context": {
+      "core_candidate_review": {
+        "code": "B",
+        "label": "accept V3 core as offline research candidate only",
+        "reason": "The suite failed for governance reasons, not because the core was weak. The ratings+doctrine+structure core is now strong enough to be treated as an offline research candidate, while market-assisted variants remain rejected."
+      },
+      "stability_recommendation": {
+        "code": "B",
+        "label": "accept core as offline research candidate only",
+        "reason": "The core is promising, but uncertainty remains wide enough that calibration work should wait until stability is clearer."
+      },
+      "current_v3_core_metrics": {
+        "log_loss": 1.4345182854454899,
+        "brier": 0.07333010257274018,
+        "top1": 0.5526315789473685,
+        "top3": 0.868421052631579,
+        "ece": 0.04202993749446802,
+        "market_rank_lift": 0.9122807017543859,
+        "n_races": 114,
+        "n_runners": 1014
+      }
+    }
+  }
+}
