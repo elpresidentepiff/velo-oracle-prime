@@ -1,0 +1,1309 @@
+{
+  "summary": {
+    "eligible_race_count": 1697,
+    "eligible_runner_count": 18575,
+    "market_plus_ratings_log_loss": 1.4816467492541938,
+    "market_plus_ratings_plus_doctrine_log_loss": 1.5070779508442058,
+    "ratings_plus_doctrine_log_loss": 1.4810279901381456,
+    "core_finding": "doctrine is alive, but raw market input degrades the full stack relative to ratings + doctrine"
+  },
+  "A_market_feature_interference_analysis": {
+    "mrd_test_log_loss": 1.5070779508442058,
+    "mr_test_log_loss": 1.4816467492541938,
+    "rpd_test_log_loss": 1.4810279901381456,
+    "mrd_minus_mr_log_loss": 0.025431201590011998,
+    "mrd_minus_rpd_log_loss": 0.02604996070606025,
+    "prob_correlation_with_market": {
+      "rpd": 0.4800339953240322,
+      "mrd": 0.9204861771794212
+    },
+    "avg_prob_delta_mrd_minus_rpd": {
+      "market_favorites": 0.17751598479279107,
+      "winners": 0.02883381697478976,
+      "all_runners": 1.1222668641427864e-18
+    },
+    "top1_overlap_with_market": {
+      "rpd": 0.2982456140350877,
+      "mrd": 0.8245614035087719
+    },
+    "conclusion": "market raw input is too loud in the full stack"
+  },
+  "B_ratings_plus_doctrine_vs_full_stack": {
+    "ratings_plus_doctrine_test_metrics": {
+      "log_loss": 1.4810279901381456,
+      "brier": 0.0775194773484021,
+      "top1": 0.5087719298245614,
+      "top3": 0.7807017543859649,
+      "ece": 0.03592791310827811,
+      "market_rank_lift": 0.5,
+      "n_races": 114,
+      "n_runners": 1014
+    },
+    "market_plus_ratings_plus_doctrine_test_metrics": {
+      "log_loss": 1.5070779508442058,
+      "brier": 0.0773362892349502,
+      "top1": 0.40350877192982454,
+      "top3": 0.7456140350877193,
+      "ece": 0.021632245112657548,
+      "market_rank_lift": 0.35964912280701755,
+      "n_races": 114,
+      "n_runners": 1014
+    },
+    "winner_log_loss_gap_summary": {
+      "mean_mrd_minus_rpd": 0.026049960706060252,
+      "median_mrd_minus_rpd": -0.03643549051906523,
+      "races_where_mrd_is_worse": 53,
+      "races_where_rpd_is_worse": 61
+    },
+    "conclusion": "ratings + doctrine is the cleaner core model on this cohort"
+  },
+  "C_hk_improvement_drivers": {
+    "market_metrics": {
+      "log_loss": 2.0043041687607603,
+      "brier": 0.07303520989968713,
+      "top1": 0.3448275862068966,
+      "top3": 0.5517241379310345,
+      "ece": 0.029204215122047496,
+      "market_rank_lift": 0.0,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "mrd_metrics": {
+      "log_loss": 1.7555038268052852,
+      "brier": 0.062168192527946045,
+      "top1": 0.4482758620689655,
+      "top3": 0.6896551724137931,
+      "ece": 0.03744684772626674,
+      "market_rank_lift": 0.6551724137931034,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "hk_only_diagnostic_metrics": {
+      "log_loss": 1.0710639577291383,
+      "brier": 0.05002467063828714,
+      "top1": 0.5172413793103449,
+      "top3": 0.9310344827586207,
+      "ece": 0.04582979504086014,
+      "market_rank_lift": 1.7241379310344827,
+      "n_races": 29,
+      "n_runners": 319
+    },
+    "hk_only_top_features": [
+      {
+        "feature": "implied_prob",
+        "importance": 0.3299325640355528
+      },
+      {
+        "feature": "or_vs_field",
+        "importance": 0.1583724478068306
+      },
+      {
+        "feature": "rpr_num",
+        "importance": 0.1293633826687596
+      },
+      {
+        "feature": "rpr_vs_field",
+        "importance": 0.1284460764620359
+      },
+      {
+        "feature": "or_num",
+        "importance": 0.10366961137086796
+      },
+      {
+        "feature": "log_sp",
+        "importance": 0.03742796554046885
+      },
+      {
+        "feature": "sp_dec",
+        "importance": 0.02486631714131435
+      },
+      {
+        "feature": "odds_contraction_score",
+        "importance": 0.02084795036063841
+      },
+      {
+        "feature": "trainer_timing_score",
+        "importance": 0.011869450437058872
+      },
+      {
+        "feature": "mark_compression_score",
+        "importance": 0.009805553517883543
+      }
+    ],
+    "sample_races": [
+      {
+        "event_key": "893473|Sha Tin (HK)|2025-04-20",
+        "race_id": "893473",
+        "race_date": "2025-04-20",
+        "year": 2025,
+        "jurisdiction": "HK",
+        "course": "Sha Tin (HK)",
+        "mrd_winner_prob": 4.145657408525354e-05,
+        "mrd_winner_loss": 10.090864086178518,
+        "mrd_winner_rank": 11,
+        "mrd_market_winner_rank": 6,
+        "mrd_top1_horse_id": "hrs_41410257",
+        "mrd_top1_prob": 0.25278398832471677,
+        "mrd_top1_won": false,
+        "mrd_top1_market_rank": 1,
+        "mrd_market_top1_horse_id": "hrs_41410257",
+        "mrd_market_top1_won": false,
+        "mrd_n_runners": 12,
+        "rpd_winner_prob": 0.08333333333333331,
+        "rpd_winner_loss": 2.4849066497880004,
+        "rpd_winner_rank": 10,
+        "rpd_market_winner_rank": 6,
+        "rpd_top1_horse_id": "hrs_35306656",
+        "rpd_top1_prob": 0.08333333333333331,
+        "rpd_top1_won": false,
+        "rpd_top1_market_rank": 5,
+        "rpd_market_top1_horse_id": "hrs_41410257",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 12,
+        "loss_gap_mrd_minus_rpd": 7.6059574363905185
+      },
+      {
+        "event_key": "840063|Happy Valley (HK)|2023-05-03",
+        "race_id": "840063",
+        "race_date": "2023-05-03",
+        "year": 2023,
+        "jurisdiction": "HK",
+        "course": "Happy Valley (HK)",
+        "mrd_winner_prob": 0.020191934469462165,
+        "mrd_winner_loss": 3.9024720379999276,
+        "mrd_winner_rank": 8,
+        "mrd_market_winner_rank": 10,
+        "mrd_top1_horse_id": "hrs_rf_5fcba939c06f",
+        "mrd_top1_prob": 0.4788825629980289,
+        "mrd_top1_won": false,
+        "mrd_top1_market_rank": 1,
+        "mrd_market_top1_horse_id": "hrs_rf_5fcba939c06f",
+        "mrd_market_top1_won": false,
+        "mrd_n_runners": 12,
+        "rpd_winner_prob": 0.0832353785861971,
+        "rpd_winner_loss": 2.486082798145028,
+        "rpd_winner_rank": 4,
+        "rpd_market_winner_rank": 10,
+        "rpd_top1_horse_id": "hrs_rf_5fcba939c06f",
+        "rpd_top1_prob": 0.385954523325283,
+        "rpd_top1_won": false,
+        "rpd_top1_market_rank": 1,
+        "rpd_market_top1_horse_id": "hrs_rf_5fcba939c06f",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 12,
+        "loss_gap_mrd_minus_rpd": 1.4163892398548996
+      },
+      {
+        "event_key": "858556|Sha Tin (HK)|2024-01-07",
+        "race_id": "858556",
+        "race_date": "2024-01-07",
+        "year": 2024,
+        "jurisdiction": "HK",
+        "course": "Sha Tin (HK)",
+        "mrd_winner_prob": 0.10342507969625267,
+        "mrd_winner_loss": 2.2689077960644712,
+        "mrd_winner_rank": 5,
+        "mrd_market_winner_rank": 7,
+        "mrd_top1_horse_id": "hrs_rf_edcbabc19083",
+        "mrd_top1_prob": 0.22753517533175588,
+        "mrd_top1_won": false,
+        "mrd_top1_market_rank": 1,
+        "mrd_market_top1_horse_id": "hrs_rf_edcbabc19083",
+        "mrd_market_top1_won": false,
+        "mrd_n_runners": 10,
+        "rpd_winner_prob": 0.3595032041243407,
+        "rpd_winner_loss": 1.0230321891365792,
+        "rpd_winner_rank": 1,
+        "rpd_market_winner_rank": 7,
+        "rpd_top1_horse_id": "hrs_rf_6047b8cf2905",
+        "rpd_top1_prob": 0.3595032041243407,
+        "rpd_top1_won": true,
+        "rpd_top1_market_rank": 7,
+        "rpd_market_top1_horse_id": "hrs_rf_edcbabc19083",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 10,
+        "loss_gap_mrd_minus_rpd": 1.245875606927892
+      },
+      {
+        "event_key": "891914|Sha Tin (HK)|2025-03-30",
+        "race_id": "891914",
+        "race_date": "2025-03-30",
+        "year": 2025,
+        "jurisdiction": "HK",
+        "course": "Sha Tin (HK)",
+        "mrd_winner_prob": 0.14140061534003703,
+        "mrd_winner_loss": 1.9561581737608378,
+        "mrd_winner_rank": 4,
+        "mrd_market_winner_rank": 5,
+        "mrd_top1_horse_id": "hrs_51372804",
+        "mrd_top1_prob": 0.2677339519962996,
+        "mrd_top1_won": false,
+        "mrd_top1_market_rank": 1,
+        "mrd_market_top1_horse_id": "hrs_51372804",
+        "mrd_market_top1_won": false,
+        "mrd_n_runners": 14,
+        "rpd_winner_prob": 0.4745058029886499,
+        "rpd_winner_loss": 0.7454814313153667,
+        "rpd_winner_rank": 1,
+        "rpd_market_winner_rank": 5,
+        "rpd_top1_horse_id": "hrs_49821352",
+        "rpd_top1_prob": 0.4745058029886499,
+        "rpd_top1_won": true,
+        "rpd_top1_market_rank": 5,
+        "rpd_market_top1_horse_id": "hrs_51372804",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 14,
+        "loss_gap_mrd_minus_rpd": 1.2106767424454712
+      },
+      {
+        "event_key": "896556|Sha Tin (HK)|2025-05-25",
+        "race_id": "896556",
+        "race_date": "2025-05-25",
+        "year": 2025,
+        "jurisdiction": "HK",
+        "course": "Sha Tin (HK)",
+        "mrd_winner_prob": 0.01871767868248993,
+        "mrd_winner_loss": 3.9782868176253183,
+        "mrd_winner_rank": 6,
+        "mrd_market_winner_rank": 8,
+        "mrd_top1_horse_id": "hrs_51865331",
+        "mrd_top1_prob": 0.6942593235049813,
+        "mrd_top1_won": false,
+        "mrd_top1_market_rank": 1,
+        "mrd_market_top1_horse_id": "hrs_51865331",
+        "mrd_market_top1_won": false,
+        "mrd_n_runners": 11,
+        "rpd_winner_prob": 0.04969094971393066,
+        "rpd_winner_loss": 3.0019324607727187,
+        "rpd_winner_rank": 4,
+        "rpd_market_winner_rank": 8,
+        "rpd_top1_horse_id": "hrs_51865331",
+        "rpd_top1_prob": 0.6329040445475617,
+        "rpd_top1_won": false,
+        "rpd_top1_market_rank": 1,
+        "rpd_market_top1_horse_id": "hrs_51865331",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 11,
+        "loss_gap_mrd_minus_rpd": 0.9763543568525996
+      }
+    ],
+    "conclusion": "HK improved because doctrine + ratings helped ranking without requiring raw market dominance"
+  },
+  "D_fr_improvement_drivers": {
+    "market_metrics": {
+      "log_loss": 1.6292902317692781,
+      "brier": 0.09162854773051476,
+      "top1": 0.36904761904761907,
+      "top3": 0.7380952380952381,
+      "ece": 0.026968478843623234,
+      "market_rank_lift": 0.0,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "mrd_metrics": {
+      "log_loss": 1.4166241349835713,
+      "brier": 0.08452475667528721,
+      "top1": 0.39285714285714285,
+      "top3": 0.7738095238095238,
+      "ece": 0.022768304304845086,
+      "market_rank_lift": 0.27380952380952384,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "fr_only_diagnostic_metrics": {
+      "log_loss": 1.4212382699670008,
+      "brier": 0.08501861683910333,
+      "top1": 0.4523809523809524,
+      "top3": 0.8095238095238095,
+      "ece": 0.0350288376959753,
+      "market_rank_lift": 0.40476190476190477,
+      "n_races": 84,
+      "n_runners": 683
+    },
+    "fr_only_top_features": [
+      {
+        "feature": "implied_prob",
+        "importance": 0.23478722711476735
+      },
+      {
+        "feature": "rpr_num",
+        "importance": 0.20186706032551768
+      },
+      {
+        "feature": "rpr_vs_field",
+        "importance": 0.11126853327640585
+      },
+      {
+        "feature": "ts_num",
+        "importance": 0.09893479423397253
+      },
+      {
+        "feature": "sp_rank",
+        "importance": 0.06674515266115721
+      },
+      {
+        "feature": "sp_dec",
+        "importance": 0.06351071554281343
+      },
+      {
+        "feature": "log_sp",
+        "importance": 0.06174769989418529
+      },
+      {
+        "feature": "odds_contraction_score",
+        "importance": 0.043618593403736396
+      },
+      {
+        "feature": "trainer_timing_score",
+        "importance": 0.0350647297855386
+      },
+      {
+        "feature": "odds_resilience_score",
+        "importance": 0.017483439942096158
+      }
+    ],
+    "sample_races": [
+      {
+        "event_key": "876124|Chantilly (FR)|2024-09-03",
+        "race_id": "876124",
+        "race_date": "2024-09-03",
+        "year": 2024,
+        "jurisdiction": "FR",
+        "course": "Chantilly (FR)",
+        "ratings_only_winner_prob": 1.1722084813339132e-05,
+        "ratings_only_winner_loss": 11.35403590453789,
+        "ratings_only_winner_rank": 7,
+        "ratings_only_market_winner_rank": 4,
+        "ratings_only_top1_horse_id": "hrs_43062957",
+        "ratings_only_top1_prob": 0.16666471298586444,
+        "ratings_only_top1_won": false,
+        "ratings_only_top1_market_rank": 7,
+        "ratings_only_market_top1_horse_id": "hrs_rf_c93a1c2b1fe2",
+        "ratings_only_market_top1_won": false,
+        "ratings_only_n_runners": 7,
+        "rpd_winner_prob": 0.1278324070115434,
+        "rpd_winner_loss": 2.0570351931934927,
+        "rpd_winner_rank": 7,
+        "rpd_market_winner_rank": 4,
+        "rpd_top1_horse_id": "hrs_43062957",
+        "rpd_top1_prob": 0.1453612654980761,
+        "rpd_top1_won": false,
+        "rpd_top1_market_rank": 7,
+        "rpd_market_top1_horse_id": "hrs_rf_c93a1c2b1fe2",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 7,
+        "loss_gap_ratings_minus_rpd": 9.297000711344397
+      },
+      {
+        "event_key": "832860|Chantilly (FR)|2023-02-06",
+        "race_id": "832860",
+        "race_date": "2023-02-06",
+        "year": 2023,
+        "jurisdiction": "FR",
+        "course": "Chantilly (FR)",
+        "ratings_only_winner_prob": 0.09798625235263476,
+        "ratings_only_winner_loss": 2.3229280922679933,
+        "ratings_only_winner_rank": 5,
+        "ratings_only_market_winner_rank": 3,
+        "ratings_only_top1_horse_id": "hrs_rf_1a1b9f45e68e",
+        "ratings_only_top1_prob": 0.13735623416156456,
+        "ratings_only_top1_won": false,
+        "ratings_only_top1_market_rank": 7,
+        "ratings_only_market_top1_horse_id": "hrs_rf_de11e592118a",
+        "ratings_only_market_top1_won": false,
+        "ratings_only_n_runners": 11,
+        "rpd_winner_prob": 0.2783650428401068,
+        "rpd_winner_loss": 1.2788219229168662,
+        "rpd_winner_rank": 1,
+        "rpd_market_winner_rank": 3,
+        "rpd_top1_horse_id": "hrs_rf_61d08eff8a64",
+        "rpd_top1_prob": 0.2783650428401068,
+        "rpd_top1_won": true,
+        "rpd_top1_market_rank": 3,
+        "rpd_market_top1_horse_id": "hrs_rf_de11e592118a",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 11,
+        "loss_gap_ratings_minus_rpd": 1.044106169351127
+      },
+      {
+        "event_key": "849913|Chantilly (FR)|2023-09-13",
+        "race_id": "849913",
+        "race_date": "2023-09-13",
+        "year": 2023,
+        "jurisdiction": "FR",
+        "course": "Chantilly (FR)",
+        "ratings_only_winner_prob": 0.19824627164947686,
+        "ratings_only_winner_loss": 1.6182452249518295,
+        "ratings_only_winner_rank": 4,
+        "ratings_only_market_winner_rank": 2,
+        "ratings_only_top1_horse_id": "hrs_37193317",
+        "ratings_only_top1_prob": 0.25247042609018755,
+        "ratings_only_top1_won": false,
+        "ratings_only_top1_market_rank": 6,
+        "ratings_only_market_top1_horse_id": "hrs_rf_45535f5d352c",
+        "ratings_only_market_top1_won": false,
+        "ratings_only_n_runners": 6,
+        "rpd_winner_prob": 0.43414903664769583,
+        "rpd_winner_loss": 0.8343674014168003,
+        "rpd_winner_rank": 1,
+        "rpd_market_winner_rank": 2,
+        "rpd_top1_horse_id": "hrs_rf_5d64d39388f8",
+        "rpd_top1_prob": 0.43414903664769583,
+        "rpd_top1_won": true,
+        "rpd_top1_market_rank": 2,
+        "rpd_market_top1_horse_id": "hrs_rf_45535f5d352c",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 6,
+        "loss_gap_ratings_minus_rpd": 0.7838778235350292
+      },
+      {
+        "event_key": "841150|Compiegne (FR)|2023-05-10",
+        "race_id": "841150",
+        "race_date": "2023-05-10",
+        "year": 2023,
+        "jurisdiction": "FR",
+        "course": "Compiegne (FR)",
+        "ratings_only_winner_prob": 0.20687020930719835,
+        "ratings_only_winner_loss": 1.575663690546387,
+        "ratings_only_winner_rank": 3,
+        "ratings_only_market_winner_rank": 3,
+        "ratings_only_top1_horse_id": "hrs_20296815",
+        "ratings_only_top1_prob": 0.20687020930719835,
+        "ratings_only_top1_won": false,
+        "ratings_only_top1_market_rank": 5,
+        "ratings_only_market_top1_horse_id": "hrs_rf_89df493154e8",
+        "ratings_only_market_top1_won": false,
+        "ratings_only_n_runners": 7,
+        "rpd_winner_prob": 0.3096711138904495,
+        "rpd_winner_loss": 1.1722444676140753,
+        "rpd_winner_rank": 1,
+        "rpd_market_winner_rank": 3,
+        "rpd_top1_horse_id": "hrs_rf_79f4147d3b42",
+        "rpd_top1_prob": 0.3096711138904495,
+        "rpd_top1_won": true,
+        "rpd_top1_market_rank": 3,
+        "rpd_market_top1_horse_id": "hrs_rf_89df493154e8",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 7,
+        "loss_gap_ratings_minus_rpd": 0.4034192229323117
+      },
+      {
+        "event_key": "851326|Chantilly (FR)|2023-10-04",
+        "race_id": "851326",
+        "race_date": "2023-10-04",
+        "year": 2023,
+        "jurisdiction": "FR",
+        "course": "Chantilly (FR)",
+        "ratings_only_winner_prob": 0.2068431566136794,
+        "ratings_only_winner_loss": 1.5757944704330715,
+        "ratings_only_winner_rank": 4,
+        "ratings_only_market_winner_rank": 2,
+        "ratings_only_top1_horse_id": "hrs_35910952",
+        "ratings_only_top1_prob": 0.293156247301951,
+        "ratings_only_top1_won": false,
+        "ratings_only_top1_market_rank": 4,
+        "ratings_only_market_top1_horse_id": "hrs_rf_32c028f7ee52",
+        "ratings_only_market_top1_won": false,
+        "ratings_only_n_runners": 5,
+        "rpd_winner_prob": 0.2991613334333873,
+        "rpd_winner_loss": 1.2067722744103229,
+        "rpd_winner_rank": 1,
+        "rpd_market_winner_rank": 2,
+        "rpd_top1_horse_id": "hrs_rf_7a07f1b447a3",
+        "rpd_top1_prob": 0.2991613334333873,
+        "rpd_top1_won": true,
+        "rpd_top1_market_rank": 2,
+        "rpd_market_top1_horse_id": "hrs_rf_32c028f7ee52",
+        "rpd_market_top1_won": false,
+        "rpd_n_runners": 5,
+        "loss_gap_ratings_minus_rpd": 0.36902219602274866
+      }
+    ],
+    "conclusion": "FR remains the strongest regime for doctrine-enhanced models"
+  },
+  "E_2025_instability_analysis": {
+    "market_metrics": {
+      "log_loss": 1.6319770727552103,
+      "brier": 0.07327465464143125,
+      "top1": 0.46153846153846156,
+      "top3": 0.7307692307692307,
+      "ece": 0.027429739047059663,
+      "market_rank_lift": 0.0,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "mrd_metrics": {
+      "log_loss": 1.5780139330761904,
+      "brier": 0.06514423291156499,
+      "top1": 0.5,
+      "top3": 0.7692307692307693,
+      "ece": 0.02895714165363716,
+      "market_rank_lift": 0.34615384615384615,
+      "n_races": 26,
+      "n_runners": 244
+    },
+    "race_level_stability": {
+      "n_races": 26,
+      "mean_winner_loss": 1.5780139330761904,
+      "std_winner_loss": 1.9068396018628981,
+      "p90_winner_loss": 2.601164287932317
+    },
+    "conclusion": "2025 is still too small to anchor governance decisions on its own"
+  },
+  "F_feature_importance_by_ablation": {
+    "market_only": {
+      "feature_importance_by_group": {
+        "market": 1.0,
+        "ratings": 0.0,
+        "doctrine": 0.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "implied_prob",
+          "importance": 1.0
+        }
+      ]
+    },
+    "ratings_only": {
+      "feature_importance_by_group": {
+        "market": 0.0,
+        "ratings": 1.0,
+        "doctrine": 0.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.3101151904221767
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.28368018512516024
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.18093461597173813
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.1310395661492824
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.0942304423316425
+        }
+      ]
+    },
+    "doctrine_only": {
+      "feature_importance_by_group": {
+        "market": 0.0,
+        "ratings": 0.0,
+        "doctrine": 1.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.2672912456243525
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.144929450486553
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.0898387840385087
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.0744350065753108
+        },
+        {
+          "feature": "runs_since_mkt_support",
+          "importance": 0.06861773967266378
+        },
+        {
+          "feature": "curr_or_minus_best_or",
+          "importance": 0.05847249595469405
+        },
+        {
+          "feature": "runs_since_place",
+          "importance": 0.05455852512113099
+        },
+        {
+          "feature": "decoy_support_flag",
+          "importance": 0.052570378965708646
+        },
+        {
+          "feature": "curr_or_minus_last_win_or",
+          "importance": 0.05043097469656753
+        },
+        {
+          "feature": "going_fit_score",
+          "importance": 0.03850406849465475
+        }
+      ]
+    },
+    "market_plus_ratings": {
+      "feature_importance_by_group": {
+        "market": 0.5620044087967234,
+        "ratings": 0.43799559120327647,
+        "doctrine": 0.0,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "sp_dec",
+          "importance": 0.21519743301202304
+        },
+        {
+          "feature": "log_sp",
+          "importance": 0.18862871550703356
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.13015290759895862
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.1219827959894132
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11568739879296037
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.07440690284740097
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.07384536278664447
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.05207313078685757
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.026989326680555197
+        },
+        {
+          "feature": "is_fav",
+          "importance": 0.0010360259981531737
+        }
+      ]
+    },
+    "market_plus_doctrine": {
+      "feature_importance_by_group": {
+        "market": 0.7568467842673307,
+        "ratings": 0.0,
+        "doctrine": 0.24315321573266932,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "log_sp",
+          "importance": 0.29071718349923187
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.24837269017399766
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.19504100131079086
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.05548782300875143
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.04126007763447407
+        },
+        {
+          "feature": "curr_or_minus_best_or",
+          "importance": 0.027245158519529928
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.025152030626713645
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.021987650303421317
+        },
+        {
+          "feature": "curr_or_minus_last_win_or",
+          "importance": 0.01845041864273116
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.017841421626909413
+        }
+      ]
+    },
+    "ratings_plus_doctrine": {
+      "feature_importance_by_group": {
+        "market": 0.0,
+        "ratings": 0.7174082403589785,
+        "doctrine": 0.28259175964102157,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.22627987721306708
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.22538843367512446
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.11945821777321493
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.10397459644998581
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.0932702993074363
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.06849503371336485
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.03999847071132378
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.028456148453576302
+        },
+        {
+          "feature": "decoy_support_flag",
+          "importance": 0.025111728062173
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.012673691958653114
+        }
+      ]
+    },
+    "market_plus_ratings_plus_doctrine": {
+      "feature_importance_by_group": {
+        "market": 0.5249262390844354,
+        "ratings": 0.36947755665252074,
+        "doctrine": 0.105596204263044,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "log_sp",
+          "importance": 0.21544792709131935
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.1590903633396197
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.12267882162176781
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11533067644030451
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.10162663628491714
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.057948311926849044
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.04993983013888308
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.0446321018615669
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.025798629649814178
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.023677475204536665
+        }
+      ]
+    },
+    "hk_only_diagnostic": {
+      "feature_importance_by_group": {
+        "market": 0.3972376424959394,
+        "ratings": 0.5198515183084942,
+        "doctrine": 0.0829108391955665,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "implied_prob",
+          "importance": 0.3299325640355528
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.1583724478068306
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.1293633826687596
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.1284460764620359
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.10366961137086796
+        },
+        {
+          "feature": "log_sp",
+          "importance": 0.03742796554046885
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.02486631714131435
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.02084795036063841
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.011869450437058872
+        },
+        {
+          "feature": "mark_compression_score",
+          "importance": 0.009805553517883543
+        }
+      ]
+    },
+    "fr_only_diagnostic": {
+      "feature_importance_by_group": {
+        "market": 0.4306951324895735,
+        "ratings": 0.4120703878358961,
+        "doctrine": 0.15723447967453036,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "implied_prob",
+          "importance": 0.23478722711476735
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.20186706032551768
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11126853327640585
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.09893479423397253
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.06674515266115721
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.06351071554281343
+        },
+        {
+          "feature": "log_sp",
+          "importance": 0.06174769989418529
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.043618593403736396
+        },
+        {
+          "feature": "trainer_timing_score",
+          "importance": 0.0350647297855386
+        },
+        {
+          "feature": "odds_resilience_score",
+          "importance": 0.017483439942096158
+        }
+      ]
+    },
+    "jurisdiction_specific_calibration": {
+      "feature_importance_by_group": {
+        "market": 0.5249262390844354,
+        "ratings": 0.36947755665252074,
+        "doctrine": 0.105596204263044,
+        "context_other": 0.0
+      },
+      "top_features": [
+        {
+          "feature": "log_sp",
+          "importance": 0.21544792709131935
+        },
+        {
+          "feature": "sp_dec",
+          "importance": 0.1590903633396197
+        },
+        {
+          "feature": "implied_prob",
+          "importance": 0.12267882162176781
+        },
+        {
+          "feature": "rpr_vs_field",
+          "importance": 0.11533067644030451
+        },
+        {
+          "feature": "rpr_num",
+          "importance": 0.10162663628491714
+        },
+        {
+          "feature": "or_num",
+          "importance": 0.057948311926849044
+        },
+        {
+          "feature": "or_vs_field",
+          "importance": 0.04993983013888308
+        },
+        {
+          "feature": "ts_num",
+          "importance": 0.0446321018615669
+        },
+        {
+          "feature": "sp_rank",
+          "importance": 0.025798629649814178
+        },
+        {
+          "feature": "odds_contraction_score",
+          "importance": 0.023677475204536665
+        }
+      ]
+    }
+  },
+  "G_calibration_by_ablation": {
+    "market_only": {
+      "test_ece": 0.01758033316522976,
+      "hk_test_ece": 0.029204215122047496,
+      "fr_test_ece": 0.026968478843623234
+    },
+    "ratings_only": {
+      "test_ece": 0.03931808635790498,
+      "hk_test_ece": 0.04638470746886245,
+      "fr_test_ece": 0.04509701023333604
+    },
+    "doctrine_only": {
+      "test_ece": 0.004983945063118417,
+      "hk_test_ece": 0.014507776306754837,
+      "fr_test_ece": 0.00260138627254051
+    },
+    "market_plus_ratings": {
+      "test_ece": 0.020558192369501044,
+      "hk_test_ece": 0.0100408865484807,
+      "fr_test_ece": 0.02828889947639384
+    },
+    "market_plus_doctrine": {
+      "test_ece": 0.01901168241920133,
+      "hk_test_ece": 0.02084272787715192,
+      "fr_test_ece": 0.03252118315561272
+    },
+    "ratings_plus_doctrine": {
+      "test_ece": 0.03592791310827811,
+      "hk_test_ece": 0.0304109358060895,
+      "fr_test_ece": 0.048136188035638676
+    },
+    "market_plus_ratings_plus_doctrine": {
+      "test_ece": 0.021632245112657548,
+      "hk_test_ece": 0.03744684772626674,
+      "fr_test_ece": 0.022768304304845086
+    },
+    "hk_only_diagnostic": {
+      "test_ece": 0.04582979504086014,
+      "hk_test_ece": 0.04582979504086014,
+      "fr_test_ece": null
+    },
+    "fr_only_diagnostic": {
+      "test_ece": 0.0350288376959753,
+      "hk_test_ece": null,
+      "fr_test_ece": 0.0350288376959753
+    },
+    "jurisdiction_specific_calibration": {
+      "test_ece": 0.029361388887044013,
+      "hk_test_ece": 0.03905019549630517,
+      "fr_test_ece": 0.03260685582421924
+    }
+  },
+  "H_overconfidence_log_loss_miss_analysis": {
+    "market_plus_ratings": {
+      "level": "medium",
+      "test_vs_train_log_loss_gap_pct": 9.734550653029764,
+      "validation_vs_train_log_loss_gap_pct": 11.43357612572534,
+      "test_vs_train_brier_gap_pct": 35.14413506343481,
+      "validation_vs_train_brier_gap_pct": 8.227567272240096,
+      "count": 66,
+      "avg_top1_prob_when_wrong": 0.3840522696046387,
+      "p90_top1_prob_when_wrong": 0.5298480079985264
+    },
+    "ratings_plus_doctrine": {
+      "level": "medium",
+      "test_vs_train_log_loss_gap_pct": 12.005171031619144,
+      "validation_vs_train_log_loss_gap_pct": 11.232599590964067,
+      "test_vs_train_brier_gap_pct": 40.88453463739499,
+      "validation_vs_train_brier_gap_pct": 10.614116998962855,
+      "count": 56,
+      "avg_top1_prob_when_wrong": 0.2605549236342461,
+      "p90_top1_prob_when_wrong": 0.4884343580293625
+    },
+    "market_plus_ratings_plus_doctrine": {
+      "level": "medium",
+      "test_vs_train_log_loss_gap_pct": 8.58089023012928,
+      "validation_vs_train_log_loss_gap_pct": 14.351153735938302,
+      "test_vs_train_brier_gap_pct": 34.22753578465193,
+      "validation_vs_train_brier_gap_pct": 10.831252867167516,
+      "count": 68,
+      "avg_top1_prob_when_wrong": 0.36817423352618245,
+      "p90_top1_prob_when_wrong": 0.5223030298370641
+    }
+  },
+  "I_race_level_examples_where_market_hurt_full_model": [
+    {
+      "event_key": "893473|Sha Tin (HK)|2025-04-20",
+      "race_date": "2025-04-20",
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "gap": 7.6059574363905185,
+      "market_winner_prob": 0.0762828852793691,
+      "market_winner_rank": 6,
+      "mrd_winner_prob": 4.145657408525354e-05,
+      "mrd_winner_rank": 11,
+      "rpd_winner_prob": 0.08333333333333331,
+      "rpd_winner_rank": 10,
+      "ratings_only_winner_prob": null,
+      "ratings_only_winner_rank": null,
+      "mrd_top1_market_rank": 1,
+      "rpd_top1_market_rank": 5
+    },
+    {
+      "event_key": "865075|Chantilly (FR)|2024-04-04",
+      "race_date": "2024-04-04",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "gap": 1.7870549617091853,
+      "market_winner_prob": 0.018814444226068337,
+      "market_winner_rank": 8,
+      "mrd_winner_prob": 0.1030777807275051,
+      "mrd_winner_rank": 4,
+      "rpd_winner_prob": 0.6155639365514493,
+      "rpd_winner_rank": 1,
+      "ratings_only_winner_prob": null,
+      "ratings_only_winner_rank": null,
+      "mrd_top1_market_rank": 1,
+      "rpd_top1_market_rank": 8
+    },
+    {
+      "event_key": "877006|Compiegne (FR)|2024-09-11",
+      "race_date": "2024-09-11",
+      "jurisdiction": "FR",
+      "course": "Compiegne (FR)",
+      "gap": 1.5261896057751945,
+      "market_winner_prob": 0.07920560637700597,
+      "market_winner_rank": 6,
+      "mrd_winner_prob": 0.024151369724739358,
+      "mrd_winner_rank": 5,
+      "rpd_winner_prob": 0.11111111111111112,
+      "rpd_winner_rank": 7,
+      "ratings_only_winner_prob": null,
+      "ratings_only_winner_rank": null,
+      "mrd_top1_market_rank": 1,
+      "rpd_top1_market_rank": 1
+    },
+    {
+      "event_key": "872701|Chantilly (FR)|2024-07-14",
+      "race_date": "2024-07-14",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "gap": 1.4770886706245836,
+      "market_winner_prob": 0.034115576514466464,
+      "market_winner_rank": 7,
+      "mrd_winner_prob": 0.03151448059920903,
+      "mrd_winner_rank": 8,
+      "rpd_winner_prob": 0.1380389390504706,
+      "rpd_winner_rank": 4,
+      "ratings_only_winner_prob": null,
+      "ratings_only_winner_rank": null,
+      "mrd_top1_market_rank": 1,
+      "rpd_top1_market_rank": 8
+    },
+    {
+      "event_key": "840063|Happy Valley (HK)|2023-05-03",
+      "race_date": "2023-05-03",
+      "jurisdiction": "HK",
+      "course": "Happy Valley (HK)",
+      "gap": 1.4163892398548996,
+      "market_winner_prob": 0.01733031569847404,
+      "market_winner_rank": 10,
+      "mrd_winner_prob": 0.020191934469462165,
+      "mrd_winner_rank": 8,
+      "rpd_winner_prob": 0.0832353785861971,
+      "rpd_winner_rank": 4,
+      "ratings_only_winner_prob": null,
+      "ratings_only_winner_rank": null,
+      "mrd_top1_market_rank": 1,
+      "rpd_top1_market_rank": 1
+    }
+  ],
+  "J_race_level_examples_where_doctrine_helped": [
+    {
+      "event_key": "876124|Chantilly (FR)|2024-09-03",
+      "race_date": "2024-09-03",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "gap": 9.297000711344397,
+      "market_winner_prob": 0.1282131858462699,
+      "market_winner_rank": 4,
+      "mrd_winner_prob": null,
+      "mrd_winner_rank": null,
+      "rpd_winner_prob": 0.1278324070115434,
+      "rpd_winner_rank": 7,
+      "ratings_only_winner_prob": 1.1722084813339132e-05,
+      "ratings_only_winner_rank": 7,
+      "mrd_top1_market_rank": null,
+      "rpd_top1_market_rank": 7
+    },
+    {
+      "event_key": "845453|Happy Valley (HK)|2023-07-12",
+      "race_date": "2023-07-12",
+      "jurisdiction": "HK",
+      "course": "Happy Valley (HK)",
+      "gap": 1.2657965641142523,
+      "market_winner_prob": 0.2648414313743238,
+      "market_winner_rank": 1,
+      "mrd_winner_prob": null,
+      "mrd_winner_rank": null,
+      "rpd_winner_prob": 0.6851081086588021,
+      "rpd_winner_rank": 1,
+      "ratings_only_winner_prob": 0.19321046453179258,
+      "ratings_only_winner_rank": 3,
+      "mrd_top1_market_rank": null,
+      "rpd_top1_market_rank": 1
+    },
+    {
+      "event_key": "832860|Chantilly (FR)|2023-02-06",
+      "race_date": "2023-02-06",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "gap": 1.044106169351127,
+      "market_winner_prob": 0.1106656959305627,
+      "market_winner_rank": 3,
+      "mrd_winner_prob": null,
+      "mrd_winner_rank": null,
+      "rpd_winner_prob": 0.2783650428401068,
+      "rpd_winner_rank": 1,
+      "ratings_only_winner_prob": 0.09798625235263476,
+      "ratings_only_winner_rank": 5,
+      "mrd_top1_market_rank": null,
+      "rpd_top1_market_rank": 3
+    },
+    {
+      "event_key": "849913|Chantilly (FR)|2023-09-13",
+      "race_date": "2023-09-13",
+      "jurisdiction": "FR",
+      "course": "Chantilly (FR)",
+      "gap": 0.7838778235350292,
+      "market_winner_prob": 0.3198536233466229,
+      "market_winner_rank": 2,
+      "mrd_winner_prob": null,
+      "mrd_winner_rank": null,
+      "rpd_winner_prob": 0.43414903664769583,
+      "rpd_winner_rank": 1,
+      "ratings_only_winner_prob": 0.19824627164947686,
+      "ratings_only_winner_rank": 4,
+      "mrd_top1_market_rank": null,
+      "rpd_top1_market_rank": 2
+    },
+    {
+      "event_key": "845378|Sha Tin (HK)|2023-07-09",
+      "race_date": "2023-07-09",
+      "jurisdiction": "HK",
+      "course": "Sha Tin (HK)",
+      "gap": 0.5679865244951172,
+      "market_winner_prob": 0.31103278320076216,
+      "market_winner_rank": 2,
+      "mrd_winner_prob": null,
+      "mrd_winner_rank": null,
+      "rpd_winner_prob": 0.2881094596440635,
+      "rpd_winner_rank": 2,
+      "ratings_only_winner_prob": 0.16326162111757236,
+      "ratings_only_winner_rank": 3,
+      "mrd_top1_market_rank": null,
+      "rpd_top1_market_rank": 1
+    }
+  ],
+  "K_market_as_calibration_or_input": {
+    "recommendation": "test market as benchmark/calibration/residual, not as default raw feature in the core V3 model",
+    "evidence": {
+      "mrd_worse_than_mr_on_log_loss": true,
+      "mrd_worse_than_mr_on_brier": true,
+      "rpd_best_log_loss": true
+    }
+  },
+  "L_should_v3_test_residual_learning_over_market": {
+    "recommendation": "yes",
+    "reason": "the market signal is useful, but raw concatenation appears to crowd the doctrine layer"
+  },
+  "M_jurisdiction_specific_calibration_mandatory": {
+    "recommendation": "no",
+    "reason": "jurisdiction-specific calibration underperformed the plain full-stack model on the overall test",
+    "jurisdiction_specific_test_metrics": {
+      "log_loss": 1.5148005529372397,
+      "brier": 0.07854221942719225,
+      "top1": 0.38596491228070173,
+      "top3": 0.7719298245614035,
+      "ece": 0.029361388887044013,
+      "market_rank_lift": 0.37719298245614036,
+      "n_races": 114,
+      "n_runners": 1014
+    }
+  },
+  "N_should_hk_fr_use_separate_calibrators": {
+    "recommendation": "diagnostic yes, mandatory no",
+    "reason": "HK and FR differ enough to justify targeted experiments, but V2 did not prove separate calibrators should be mandatory"
+  },
+  "O_recommended_playbook_g_v3_experiment_design": {
+    "core_model": "ratings_plus_doctrine",
+    "required_arms": [
+      "ratings + doctrine core",
+      "ratings + doctrine with market residual target",
+      "ratings + doctrine with market calibration only",
+      "ratings + doctrine with HK/FR-specific calibrator diagnostics",
+      "market + ratings as standing benchmark"
+    ],
+    "keep_offline_only": true,
+    "governance": [
+      "no training_eligible change",
+      "no deployment",
+      "no Playbook E",
+      "same hard out-of-time gate"
+    ]
+  },
+  "final_recommendation": {
+    "code": "C",
+    "label": "run V3 ratings+doctrine-first experiment",
+    "reason": "V2 showed doctrine contributes real signal and fixes the HK failure, but the best overall log loss came from ratings + doctrine, not the raw full stack. The next clean experiment is to treat ratings + doctrine as the core and demote market to residual/calibration roles instead of feeding it blindly into the stack."
+  }
+}
