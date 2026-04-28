@@ -157,6 +157,7 @@
     "sp_dec",
     "log_sp",
     "implied_prob",
+    "dist_f",
     "going_code",
     "is_aw",
     "class_num",
@@ -171,9 +172,7 @@
     "draw_pct",
     "age_num",
     "sp_rank",
-    "is_fav"
-  ],
-  "C_features_constant_defaulted": [
+    "is_fav",
     "runs_since_win",
     "runs_since_place",
     "runs_since_mkt_support",
@@ -189,8 +188,10 @@
     "jockey_switch_intent",
     "odds_resilience_score",
     "odds_contraction_score",
+    "setup_run_flag"
+  ],
+  "C_features_constant_defaulted": [
     "decoy_support_flag",
-    "setup_run_flag",
     "cash_run_flag"
   ],
   "D_market_feature_list": [
@@ -388,11 +389,11 @@
     {
       "index": 3,
       "feature": "dist_f",
-      "min": 16.0,
-      "max": 16.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_nondefault"
+      "min": 5.0,
+      "max": 19.0,
+      "variance": 0.8955305170374369,
+      "unique_count": 7,
+      "status": "active_nonconstant"
     },
     {
       "index": 4,
@@ -532,137 +533,137 @@
     {
       "index": 19,
       "feature": "runs_since_win",
-      "min": 5.0,
-      "max": 5.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": 0.0,
+      "max": 14.0,
+      "variance": 0.0979568523808575,
+      "unique_count": 11,
+      "status": "active_nonconstant"
     },
     {
       "index": 20,
       "feature": "runs_since_place",
-      "min": 2.0,
-      "max": 2.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": 0.0,
+      "max": 14.0,
+      "variance": 0.02763124577709587,
+      "unique_count": 9,
+      "status": "active_nonconstant"
     },
     {
       "index": 21,
       "feature": "runs_since_mkt_support",
-      "min": 3.0,
-      "max": 3.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": 0.0,
+      "max": 24.0,
+      "variance": 0.08671646466165142,
+      "unique_count": 14,
+      "status": "active_nonconstant"
     },
     {
       "index": 22,
       "feature": "curr_or_minus_last_win_or",
       "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "max": 12.0,
+      "variance": 0.02529239252312748,
+      "unique_count": 8,
+      "status": "active_nonconstant"
     },
     {
       "index": 23,
       "feature": "curr_or_minus_best_or",
-      "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": -29.0,
+      "max": 2.0,
+      "variance": 0.05645995627199758,
+      "unique_count": 10,
+      "status": "active_nonconstant"
     },
     {
       "index": 24,
       "feature": "mark_compression_score",
-      "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": -0.028985507246376812,
+      "max": 0.3972602739726027,
+      "variance": 1.1506678559312217e-05,
+      "unique_count": 15,
+      "status": "active_nonconstant"
     },
     {
       "index": 25,
       "feature": "release_window_score",
       "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "max": 0.6923076923076923,
+      "variance": 6.087614555994647e-05,
+      "unique_count": 5,
+      "status": "active_nonconstant"
     },
     {
       "index": 26,
       "feature": "course_fit_score",
-      "min": 0.33,
-      "max": 0.33,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": 0.0,
+      "max": 2.0,
+      "variance": 0.0023543294063207492,
+      "unique_count": 18,
+      "status": "active_nonconstant"
     },
     {
       "index": 27,
       "feature": "going_fit_score",
-      "min": 0.33,
-      "max": 0.33,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": 0.0,
+      "max": 2.0,
+      "variance": 0.0020068604208124496,
+      "unique_count": 22,
+      "status": "active_nonconstant"
     },
     {
       "index": 28,
       "feature": "distance_fit_score",
-      "min": 0.33,
-      "max": 0.33,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": 0.0,
+      "max": 2.0,
+      "variance": 0.0026963014746488045,
+      "unique_count": 28,
+      "status": "active_nonconstant"
     },
     {
       "index": 29,
       "feature": "quiet_run_score",
       "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "max": 1.0,
+      "variance": 0.0006305176035098334,
+      "unique_count": 19,
+      "status": "active_nonconstant"
     },
     {
       "index": 30,
       "feature": "trainer_timing_score",
-      "min": 0.12,
+      "min": 0.0425,
       "max": 0.12,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "variance": 4.619435581194033e-07,
+      "unique_count": 4,
+      "status": "active_nonconstant"
     },
     {
       "index": 31,
       "feature": "jockey_switch_intent",
       "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "max": 1.0,
+      "variance": 0.003861152904905181,
+      "unique_count": 2,
+      "status": "active_nonconstant"
     },
     {
       "index": 32,
       "feature": "odds_resilience_score",
-      "min": 3.0,
-      "max": 3.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": 0.0,
+      "max": 44.5,
+      "variance": 0.8582619118566209,
+      "unique_count": 85,
+      "status": "active_nonconstant"
     },
     {
       "index": 33,
       "feature": "odds_contraction_score",
-      "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "min": -9.000000000000002,
+      "max": 0.9192307692307692,
+      "variance": 0.014414502328737044,
+      "unique_count": 143,
+      "status": "active_nonconstant"
     },
     {
       "index": 34,
@@ -677,10 +678,10 @@
       "index": 35,
       "feature": "setup_run_flag",
       "min": 0.0,
-      "max": 0.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_defaulted"
+      "max": 1.0,
+      "variance": 0.0010755566987713046,
+      "unique_count": 2,
+      "status": "active_nonconstant"
     },
     {
       "index": 36,
@@ -693,17 +694,17 @@
     }
   ],
   "supporting_findings": {
-    "active_feature_count": 18,
-    "dead_doctrine_feature_count": 18,
-    "constant_nondefault_feature_count": 1,
+    "active_feature_count": 35,
+    "dead_doctrine_feature_count": 2,
+    "constant_nondefault_feature_count": 0,
     "dist_f_issue": {
       "index": 3,
       "feature": "dist_f",
-      "min": 16.0,
-      "max": 16.0,
-      "variance": 0.0,
-      "unique_count": 1,
-      "status": "constant_nondefault"
+      "min": 5.0,
+      "max": 19.0,
+      "variance": 0.8955305170374369,
+      "unique_count": 7,
+      "status": "active_nonconstant"
     }
   },
   "final_recommendation": {
