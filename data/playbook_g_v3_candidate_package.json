@@ -1,0 +1,270 @@
+{
+  "project": "VELO",
+  "package_id": "playbook_g_v3_offline_candidate_package",
+  "candidate_id": "playbook_g_v3_ratings_doctrine_structure_temperature_scaling",
+  "status": "offline_research_candidate_only",
+  "not_for_deployment": true,
+  "playbook_e_status": "blocked",
+  "production_promotion_status": "blocked",
+  "checkpoint_commit_hashes": {
+    "v3_design": "300835dea3b526a01683cf0619215e5c4924bf4a",
+    "v3_results": "5438dc5f73f80e08055fbe1df772a26f07a5dc84",
+    "v3_core_review": "c93ba4763446e17c179ddd79d6e81eaa4a8b0abc",
+    "v3_core_stability": "990564bce0a66276ee117a3b2ee0ee190144677c",
+    "v3_calibration_design": "651a1b8482a9f637aa6c63b7f3cfb39575e009ad",
+    "v3_calibration_results": "511e8c4b514190dc67b1c6400b248dda3b5b9360"
+  },
+  "authority_model": {
+    "accepted_historical_training_authority": [
+      "race_results distinct accepted events",
+      "races.runners_count",
+      "accepted historical_feature_store rows"
+    ],
+    "known_caveat": "direct runner_results join has legacy horse-id drift and is not the authority for the Playbook G V3 training cohort."
+  },
+  "candidate": {
+    "model_shape": "ratings + doctrine + structure core with temperature scaling and no raw market features in the core learner",
+    "core_learner": "offline multiclass learner over ratings, doctrine, and structure/context features",
+    "calibration_method": "temperature_scaling_without_market",
+    "temperature_parameter": 0.5,
+    "market_features_excluded_from_core": true,
+    "market_role": [
+      "benchmark",
+      "post-model diagnostic"
+    ],
+    "forbidden_market_inputs_in_core": [
+      "sp_dec",
+      "log_sp",
+      "implied_prob",
+      "sp_rank",
+      "is_fav"
+    ],
+    "feature_mask": {
+      "ratings": [
+        "or_num",
+        "rpr_num",
+        "ts_num",
+        "or_vs_field",
+        "rpr_vs_field"
+      ],
+      "doctrine": [
+        "runs_since_win",
+        "runs_since_place",
+        "runs_since_mkt_support",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "structure_context": [
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "class_num",
+        "wgt_lbs",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num"
+      ]
+    },
+    "forbidden_inputs": [
+      "winner_flag",
+      "placed_flag",
+      "finish_position",
+      "position",
+      "result comments",
+      "future race results",
+      "post-race ranking",
+      "sqpe_v17_prob",
+      "velo_prime_prob",
+      "g_base_prob",
+      "place_prob",
+      "g_shadow_*",
+      "sentient_*",
+      "verdict_flags",
+      "any prior model output",
+      "any outcome-derived field"
+    ]
+  },
+  "training_cohort": {
+    "filters": {
+      "training_eligible": "pending_global_training_gate",
+      "data_owner_confirmed": true,
+      "source": "historical_raceform",
+      "event_identity_contract": "race_id_course_race_date",
+      "signal_contract_version": "HISTORICAL_SIGNAL_PROXY_V1",
+      "historical_doctrine_contract": "HISTORICAL_DOCTRINE_FEATURES_V1",
+      "doctrine_source": "prior_only_raceform_history",
+      "macro_year_mismatch": 0,
+      "vector_length": 37
+    },
+    "eligible_races": 1697,
+    "eligible_runners": 18575,
+    "jurisdiction_breakdown_races": {
+      "HK": 1029,
+      "FR": 649,
+      "JPN": 19
+    },
+    "year_breakdown_races": {
+      "2017": 294,
+      "2018": 280,
+      "2019": 292,
+      "2020": 194,
+      "2021": 321,
+      "2022": 202,
+      "2023": 47,
+      "2024": 41,
+      "2025": 26
+    }
+  },
+  "split_definition": {
+    "train_years": [
+      2017,
+      2018,
+      2019,
+      2020
+    ],
+    "validation_years": [
+      2021,
+      2022
+    ],
+    "test_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "counts": {
+      "train": {
+        "races": 1060,
+        "runners": 11757
+      },
+      "validation": {
+        "races": 523,
+        "runners": 5804
+      },
+      "test": {
+        "races": 114,
+        "runners": 1014
+      }
+    },
+    "rule": "strict out-of-time split"
+  },
+  "final_metrics": {
+    "candidate_test": {
+      "log_loss": 1.2714213238929168,
+      "brier": 0.06763591024530992,
+      "ece": 0.034483677526519985,
+      "top1": 0.543859649122807,
+      "top3": 0.868421052631579
+    },
+    "comparison_baselines": {
+      "market_only_test": {
+        "log_loss": 1.72522944388281,
+        "brier": 0.0854828821497236,
+        "top1": 0.35964912280701755,
+        "top3": 0.6929824561403509
+      },
+      "market_plus_ratings_test": {
+        "log_loss": 1.4816467492541938,
+        "brier": 0.07661276138098258,
+        "top1": 0.42105263157894735,
+        "top3": 0.7894736842105263
+      },
+      "v3_core_uncalibrated_test": {
+        "log_loss": 1.4345182854454899,
+        "brier": 0.07333010257274018,
+        "ece": 0.04202993749446802,
+        "top1": 0.5526315789473685,
+        "top3": 0.868421052631579
+      }
+    }
+  },
+  "market_isolation_proof": {
+    "market_features_excluded_from_core": true,
+    "probability_correlation_to_market": 0.48415155169753493,
+    "top1_overlap_with_market": 0.3684210526315789,
+    "isolation_gates": {
+      "market_probability_correlation_max": 0.58,
+      "top1_market_overlap_max": 0.45
+    },
+    "status": "pass"
+  },
+  "calibration_proof": {
+    "method": "temperature_scaling_without_market",
+    "ece_improvement_vs_v3_core": 0.007546259967948034,
+    "log_loss_delta_vs_v3_core": -0.16309667610708312,
+    "brier_delta_vs_v3_core": -0.005694089754690088,
+    "status": "pass"
+  },
+  "jurisdiction_and_year_caveats": {
+    "HK": {
+      "status": "positive_vs_market",
+      "log_loss": 1.3845358845270022,
+      "market_log_loss": 2.0043041687607603,
+      "n_races": 29
+    },
+    "FR": {
+      "status": "positive_vs_market",
+      "log_loss": 1.2217949340344372,
+      "market_log_loss": 1.6292902317692783,
+      "n_races": 84
+    },
+    "JPN": {
+      "status": "informational_only",
+      "n_races": 1
+    },
+    "year_2025": {
+      "status": "sensitivity_only",
+      "log_loss": 1.3353936556393697,
+      "top1": 0.38461538461538464,
+      "top3": 0.8076923076923077,
+      "n_races": 26
+    }
+  },
+  "governance_and_safety": {
+    "leakage_audit": "pass",
+    "outcome_field_exclusion": "pass",
+    "prior_model_output_exclusion": "pass",
+    "training_eligible_unchanged": true,
+    "hfs_mutation": false,
+    "db_writes": false,
+    "playbook_e": "blocked",
+    "deployment": "blocked"
+  },
+  "known_blockers": [
+    "This package is offline research only and not approved for production promotion.",
+    "The broader V3 suite failed because market-assisted variants re-crowded the signal.",
+    "The calibrated candidate has not yet been through a calibrated-candidate-specific bootstrap stability audit.",
+    "2025 remains sensitivity-only because the slice is only 26 races.",
+    "Calibration is improved but still needs governance review before any shadow or production path is considered."
+  ],
+  "production_promotion_requirements": [
+    "Checkpoint and preserve the candidate package artifacts.",
+    "Run a calibrated-candidate stability audit with uncertainty intervals against market and market+ratings.",
+    "Prove calibration repair remains stable without market recrowding across HK and FR.",
+    "Keep 2025 isolated until the sample is materially larger.",
+    "Define and approve a shadow-only governance gate before any deployment discussion.",
+    "Do not change training_eligible or activate Playbook E as part of this package."
+  ],
+  "supporting_artifacts": [
+    "data/playbook_g_v3_offline_dry_run.json",
+    "data/playbook_g_v3_offline_metrics.csv",
+    "data/playbook_g_v3_core_candidate_review.json",
+    "data/playbook_g_v3_core_stability_audit.json",
+    "data/playbook_g_v3_calibration_repair_results.json",
+    "data/global_clean_spine_audit_v4.json",
+    "data/historical_doctrine_feature_audit_v2.json"
+  ]
+}

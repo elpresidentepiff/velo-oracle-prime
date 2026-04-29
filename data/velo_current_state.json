@@ -55,6 +55,24 @@
   "special_day_reports": ["2026-04-28"],
   "special_day_2026_04_28_notes": "Elite day — MDS_HIGH fired 2x (SR=50% day, Frame=100% day). 6 elite races invisible to operator.",
 
+  "parked_return_work": {
+    "name": "playbook_g_v3_offline_candidate_package",
+    "status": "parked_pending_user_return",
+    "summary": "Ratings + doctrine + structure core plus temperature scaling passed calibration repair as an offline research candidate, but remains blocked for deployment.",
+    "artifacts": [
+      "data/playbook_g_v3_candidate_package.json",
+      "data/playbook_g_v3_candidate_package.md",
+      "docs/VELO_PLAYBOOK_G_V3_CANDIDATE_CARD.md"
+    ],
+    "resume_point": "Checkpoint candidate package, then review the next governance gate around calibrated-candidate stability and shadow-only promotion rules.",
+    "hard_rules": [
+      "do not promote to production",
+      "do not activate Playbook E",
+      "do not change training_eligible",
+      "keep market features excluded from the core learner"
+    ]
+  },
+
   "next_required_missions": [
     "candidate_lane_shadow_ledger_dry_run",
     "telegram_signal_attribution_production_approval",
