@@ -3,58 +3,91 @@
   "agent": "claude-sonnet-4-6",
   "system_version": "velo_prime_v1",
   "ensemble_version": "SQPE_v17_7specialists",
-
   "latest_unified_evidence_audit": "velo_unified_evidence_audit_v1",
   "evidence_vault_status": "initialized",
-
   "latest_candidate_lane_design": "velo_candidate_lane_design_v1",
   "candidate_lanes_status": "designed_not_active",
-
   "candidate_lane_shadow_ledger_status": "designed_not_active",
   "telegram_signal_attribution_status": "designed_not_active",
   "operator_visibility_gap": true,
-  "operator_visibility_gap_note": "6 elite signal races on 2026-04-28 not surfaced in Telegram output",
-
+  "operator_visibility_gap_note": "Repo audit confirms the operator still cannot see VP30/MDS/IMPROVE lane badges in live Telegram output.",
   "highest_priority_signal": "MARKET_DECEPTION_HIGH",
-  "highest_priority_signal_note": "SR=54.8%, Frame=96.8%, n=31 — highest-lift signal in system. Polarity flip confirmed.",
-
+  "highest_priority_signal_note": "SR=54.8%, Frame=96.8%, n=31 \u2014 highest-lift signal in system. Polarity flip confirmed.",
   "operating_days": 49,
   "sigma_audit_rows": 1391,
   "verdicts_in_db": 1604,
-
   "global_strike_rate": 0.206,
   "global_frame_rate": 0.484,
-
   "strongest_live_signals": [
     "VP>=0.30 + Tier A (SR=40.1%, Frame=77.2%, n=162, PROVEN)",
     "Market deception score >0.5 (SR=54.8%, Frame=96.8%, n=31, PROVEN)",
     "Improvement score >0.40 (SR=43.5%, Frame=82.3%, n=62, PROVEN)"
   ],
-
   "primary_live_weakness": "mid-priced winners SP 3.0-8.5 (58% of all misses)",
   "suppress_candidate": "Tier B VP<0.30 (SR=16.9%, n=272, confirmed drag)",
-
   "router_lanes": {
-    "V1_BASE": {"n": 27, "sr": 0.370, "roi": 0.115, "status": "WATCHLIST"},
-    "V2_CLASS4_ONLY": {"n": 17, "sr": 0.412, "roi": 0.302, "status": "LANE_ACTIVE"},
-    "V6_GOLD_SEAM": {"n": 5, "sr": 0.600, "roi": 1.150, "status": "LOW_SAMPLE"}
+    "V1_BASE": {
+      "n": 27,
+      "sr": 0.37,
+      "roi": 0.115,
+      "status": "WATCHLIST"
+    },
+    "V2_CLASS4_ONLY": {
+      "n": 17,
+      "sr": 0.412,
+      "roi": 0.302,
+      "status": "LANE_ACTIVE"
+    },
+    "V6_GOLD_SEAM": {
+      "n": 5,
+      "sr": 0.6,
+      "roi": 1.15,
+      "status": "LOW_SAMPLE"
+    }
   },
-
   "candidate_lanes": {
-    "VP30_TIER_A": {"status": "SHADOW_CANDIDATE", "sr": 0.401, "frame": 0.772, "n": 162},
-    "MARKET_DECEPTION_HIGH": {"status": "SHADOW_CANDIDATE", "sr": 0.548, "frame": 0.968, "n": 31},
-    "IMPROVEMENT_SCORE_HIGH": {"status": "SHADOW_CANDIDATE", "sr": 0.435, "frame": 0.823, "n": 62},
-    "PLACE_PROB_HIGH": {"status": "WATCHLIST", "sr": 0.316, "frame": 0.668, "n": 392},
-    "B_TIER_LOW_VP_SUPPRESS": {"status": "SUPPRESS_CANDIDATE", "sr": 0.169, "frame": 0.441, "n": 272},
-    "MID_PRICE_WINNER_FORENSICS": {"status": "FORENSICS_ONLY", "miss_count": 352, "pct_of_misses": 0.58}
+    "VP30_TIER_A": {
+      "status": "SHADOW_CANDIDATE",
+      "sr": 0.401,
+      "frame": 0.772,
+      "n": 162
+    },
+    "MARKET_DECEPTION_HIGH": {
+      "status": "SHADOW_CANDIDATE",
+      "sr": 0.548,
+      "frame": 0.968,
+      "n": 31
+    },
+    "IMPROVEMENT_SCORE_HIGH": {
+      "status": "SHADOW_CANDIDATE",
+      "sr": 0.435,
+      "frame": 0.823,
+      "n": 62
+    },
+    "PLACE_PROB_HIGH": {
+      "status": "WATCHLIST",
+      "sr": 0.316,
+      "frame": 0.668,
+      "n": 392
+    },
+    "B_TIER_LOW_VP_SUPPRESS": {
+      "status": "SUPPRESS_CANDIDATE",
+      "sr": 0.169,
+      "frame": 0.441,
+      "n": 272
+    },
+    "MID_PRICE_WINNER_FORENSICS": {
+      "status": "FORENSICS_ONLY",
+      "miss_count": 352,
+      "pct_of_misses": 0.58
+    }
   },
-
   "router_baseline_commit": "06ba74b",
   "router_mode": "shadow_annotation_only",
-
-  "special_day_reports": ["2026-04-28"],
-  "special_day_2026_04_28_notes": "Elite day — MDS_HIGH fired 2x (SR=50% day, Frame=100% day). 6 elite races invisible to operator.",
-
+  "special_day_reports": [
+    "2026-04-28"
+  ],
+  "special_day_2026_04_28_notes": "Elite day \u2014 MDS_HIGH fired 2x (SR=50% day, Frame=100% day). 6 elite races invisible to operator.",
   "parked_return_work": {
     "name": "playbook_g_v3_offline_candidate_package",
     "status": "parked_pending_user_return",
@@ -72,27 +105,24 @@
       "keep market features excluded from the core learner"
     ]
   },
-
   "next_required_missions": [
+    "review_operator_visibility_report_then_approve_display_patch",
     "candidate_lane_shadow_ledger_dry_run",
     "telegram_signal_attribution_production_approval",
     "v2_router_watchlist_gate_monitoring",
     "mid_price_winner_forensics_study",
     "b_tier_suppression_protocol"
   ],
-
   "live_staking": false,
   "playbook_e_status": "paused",
   "training_status": "paused",
   "router_modifications_pending": false,
-
   "company_documents": {
     "master_plan": "docs/company/VELO_COMPANY_MASTER_PLAN_V1.md",
     "website_spec": "docs/company/VELO_WEBSITE_APP_MVP_SPEC_V1.md",
     "whitepaper_outline": "docs/company/VELO_WHITEPAPER_OUTLINE_V1.md",
     "funding_pack_outline": "docs/company/VELO_FUNDING_PACK_OUTLINE_V1.md"
   },
-
   "evidence_vault": {
     "index": "docs/evidence/VELO_EVIDENCE_VAULT_INDEX.md",
     "signal_rankings": "docs/evidence/VELO_SIGNAL_RANKINGS_V1.md",
@@ -103,5 +133,11 @@
     "candidate_lanes_v1": "docs/evidence/VELO_CANDIDATE_LANES_V1.md",
     "shadow_ledger_protocol": "docs/evidence/VELO_CANDIDATE_LANE_SHADOW_LEDGER_PROTOCOL.md",
     "telegram_attribution_panel": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md"
-  }
+  },
+  "vp30_lineage_audited": true,
+  "telegram_visibility_audited": true,
+  "signal_discovery_report_status": "created",
+  "telegram_signal_attribution_preview_status": "created_not_live",
+  "google_doc_export_status": "created_local_only",
+  "next_required_mission": "review_operator_visibility_report_then_approve_display_patch"
 }

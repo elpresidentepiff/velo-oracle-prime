@@ -1,0 +1,315 @@
+{
+  "generated_at": "2026-04-29 01:25 UTC",
+  "repo_state": {
+    "branch": "main",
+    "head": "c1e61d27b255530edc616ac6deba24dfb8a3646a"
+  },
+  "telegram_live_script": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+  "formatter": {
+    "live_sender_script": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+    "a_b_formatter": "build_governed_card",
+    "c_watch_formatter": "inline grouped list in STEP 5",
+    "d_x_formatter": "inline pass list in STEP 5"
+  },
+  "visibility_answers": {
+    "A_does_current_telegram_output_show_vp": {
+      "answer": "NO",
+      "value": false,
+      "note": "The live governed A/B card does not print a dedicated VP line. Only the C-WATCH grouped list prints 'prob', so VP is not consistently surfaced to the operator.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 623
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 650
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 1426
+        }
+      ]
+    },
+    "B_does_current_telegram_output_show_tier": {
+      "answer": "YES",
+      "value": true,
+      "note": "Tier is explicitly rendered in the governed card and also implied by the A/B/C/D/X bucketed Telegram flow.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 648
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 1311
+        }
+      ]
+    },
+    "C_does_current_telegram_output_show_vp30_tier_a_badge": {
+      "answer": "NO",
+      "value": false,
+      "note": "The live Telegram sender never computes or renders the VP30_TIER_A badge.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 623
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 1393
+        }
+      ]
+    },
+    "D_does_current_telegram_output_show_mds_high_badge": {
+      "answer": "NO",
+      "value": false,
+      "note": "The live card prints a numeric MDS value but does not promote it to the MDS_HIGH lane badge.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 651
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 623
+        }
+      ]
+    },
+    "E_does_current_telegram_output_show_improve_high_badge": {
+      "answer": "NO",
+      "value": false,
+      "note": "Improvement score is present in the verdict payload but is not rendered in the current Telegram message.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 623
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 1393
+        }
+      ]
+    },
+    "F_does_current_telegram_output_show_place_prob_high_badge": {
+      "answer": "NO",
+      "value": false,
+      "note": "Place probability appears only in the C-WATCH grouped list and is never surfaced as the PLACE_PROB_HIGH badge.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 623
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 1426
+        }
+      ]
+    },
+    "G_does_current_telegram_output_show_b_low_vp_suppress_warning": {
+      "answer": "NO",
+      "value": false,
+      "note": "No suppress-zone warning exists in the live day-of Telegram formatter.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 623
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 1311
+        }
+      ]
+    },
+    "H_does_current_telegram_output_show_mid_price_forensics_warning": {
+      "answer": "NO",
+      "value": false,
+      "note": "The live formatter does not mention mid-price miss forensics or danger-zone warnings.",
+      "proof": [
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 623
+        },
+        {
+          "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+          "line": 1311
+        }
+      ]
+    }
+  },
+  "I_which_script_sends_telegram_reports": {
+    "answer": "scripts/run_prime_today.py",
+    "note": "This is the live day-of Telegram sender. scripts/run_results_sigma.py is post-result sigma reporting, not tomorrow's day card pipeline.",
+    "proof": [
+      {
+        "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+        "line": 1311
+      }
+    ]
+  },
+  "J_which_template_or_formatter_builds_the_message": {
+    "answer": "build_governed_card() for A/B governed cards, plus inline formatters for C-WATCH and D/X summaries.",
+    "proof": [
+      {
+        "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+        "line": 623
+      },
+      {
+        "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+        "line": 1426
+      }
+    ]
+  },
+  "K_what_exact_fields_are_available_to_that_formatter": {
+    "race_argument": [
+      "course",
+      "off_time",
+      "date",
+      "race_id"
+    ],
+    "top_argument_keys_sample": [
+      "a_tier_weak_place_flag",
+      "active_components",
+      "archetype_bet_style",
+      "archetype_confidence",
+      "archetype_label",
+      "archetype_rationale",
+      "archetype_suppression",
+      "archetype_trap_flag",
+      "assigned_product",
+      "candidate_execution_allowed",
+      "candidate_execution_lane",
+      "candidate_execution_reason",
+      "cash_run_flag",
+      "comment_intel_score",
+      "confidence_level",
+      "confidence_level_effective",
+      "confidence_level_raw",
+      "decoy_support_flag",
+      "doctrines_fired",
+      "ensemble_version",
+      "excluded_from_ensemble",
+      "execution_allowed",
+      "favourite_trap_risk",
+      "g_base_prob",
+      "g_shadow_flags",
+      "g_shadow_horse_id",
+      "g_shadow_mode",
+      "g_shadow_multiplier",
+      "headgear_run",
+      "horse",
+      "horse_id",
+      "horse_state",
+      "horse_state_failed",
+      "improvement_score",
+      "legacy_execution_allowed",
+      "longshot_prob",
+      "macro_available",
+      "macro_chaos_mode",
+      "macro_context_failed",
+      "macro_favourite_trap",
+      "macro_regime_label",
+      "market_deception_score",
+      "or_missing",
+      "place_prob",
+      "race_archetype",
+      "race_id",
+      "regime_override",
+      "release_day_prob",
+      "router_reasons",
+      "rpd_confidence",
+      "rpd_evidence_codes",
+      "rpd_tag",
+      "rpdc_cash_window_flag",
+      "rpdc_lookup_detail",
+      "rpdc_lookup_status",
+      "rpdc_primary_tag",
+      "rpdc_release_score",
+      "rpdc_tag_count",
+      "rpdc_tags",
+      "rpr_missing",
+      "sentient_aggression_level",
+      "sentient_modifier_applied",
+      "sentient_modifier_mode",
+      "sentient_races_observed",
+      "sentient_state_loaded",
+      "sentient_state_source",
+      "setup_run_flag",
+      "spotlight_score",
+      "sqpe_v17_prob",
+      "tie_gate_ew_flag",
+      "tie_gate_fires",
+      "tie_gate_signal_count",
+      "tie_gate_signals",
+      "tie_gate_tier_upgrade",
+      "ts_missing",
+      "velo_prime_prob",
+      "verdict_flags",
+      "wind_surgery_run"
+    ],
+    "top_keys_read_by_build_governed_card": [
+      "horse",
+      "velo_prime_prob (indirectly via prob gap)",
+      "market_deception_score",
+      "assigned_product",
+      "execution_allowed",
+      "confidence_level"
+    ],
+    "top_keys_present_but_not_rendered_in_governed_card": [
+      "velo_prime_prob",
+      "improvement_score",
+      "place_prob",
+      "g_shadow_multiplier",
+      "horse_state",
+      "candidate_execution_allowed",
+      "race_archetype",
+      "cash_run_flag",
+      "setup_run_flag",
+      "doctrines_fired"
+    ]
+  },
+  "L_what_exact_fields_are_missing_from_the_live_operator_message": [
+    "explicit VP line on governed A/B cards",
+    "VP30_TIER_A badge",
+    "MDS_HIGH badge",
+    "IMPROVE_HIGH badge",
+    "PLACE_PROB_HIGH badge",
+    "B_LOW_VP suppress warning",
+    "MID_PRICE_FORENSICS warning",
+    "lane evidence lines (n / SR / frame / status)",
+    "shadow-only operator note for signal stack"
+  ],
+  "M_would_tomorrows_telegram_show_the_new_signals_without_code_changes": {
+    "answer": "NO",
+    "note": "The current live sender does not evaluate or render the candidate-lane badges."
+  },
+  "N_if_no_what_display_only_patch_is_required": {
+    "required": true,
+    "summary": "Add a display-only signal stack renderer to scripts/run_prime_today.py. The patch should evaluate lane conditions from existing top-pick fields and append a shadow-only evidence panel to the governed card without changing routing, ranking, execution flags, or staking.",
+    "missing_code_path": [
+      {
+        "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+        "line": 623,
+        "gap": "No signal-stack render call inside build_governed_card()."
+      },
+      {
+        "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+        "line": 1311,
+        "gap": "Step 5 sends A/B cards directly with no candidate-lane evaluation pass."
+      },
+      {
+        "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+        "line": 1426,
+        "gap": "C-WATCH list prints prob/gap/place only; no lane badges or suppress warnings."
+      }
+    ]
+  },
+  "badge_tokens_found_in_live_sender_source": {
+    "VP30_TIER_A": false,
+    "MARKET_DECEPTION_HIGH": false,
+    "IMPROVEMENT_SCORE_HIGH": false,
+    "PLACE_PROB_HIGH": false,
+    "B_TIER_LOW_VP_SUPPRESS": false,
+    "MID_PRICE_WINNER_FORENSICS": false
+  }
+}

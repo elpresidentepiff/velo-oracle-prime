@@ -188,4 +188,44 @@ Fix: Add suppress warnings to VÉLØ SIGNAL STACK panel.
 > **Telegram Signal Attribution Panel required.** See `docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md`
 
 ---
+
+## Operator Visibility Gap
+
+**A. Which elite signals fired or would have fired**
+
+- `MARKET_DECEPTION_HIGH` fired 2 times
+- `VP30_TIER_A` fired 6 times
+- `IMPROVEMENT_SCORE_HIGH` fired 1 time
+- `PLACE_PROB_HIGH` fired 8 times
+- `B_TIER_LOW_VP_SUPPRESS` fired 3 times
+
+**B. Whether the operator saw them**
+
+- No candidate-lane badge was surfaced in the standard Telegram day-of output.
+- The operator saw Tier, reasons, execution state, and numeric MDS context, but not the badge stack.
+- Result: 6 elite-signal races and 3 suppress-zone races were materially under-explained at the operator layer.
+
+**C. What Telegram should show in future**
+
+- explicit VP line
+- `VP30_TIER_A`, `MDS_HIGH`, `IMPROVE_HIGH`, `PLACE_HIGH` badges
+- `B_LOW_VP` suppress warning
+- `MID_PRICE_FORENSICS` risk warning
+- per-badge evidence line: `n / SR / frame / status`
+- operator footer: `SHADOW EVIDENCE ONLY - NO STAKING AUTOMATION`
+
+**D. Why 2026-04-28 matters**
+
+- It was the first proven elite-day attribution test after the candidate-lane work.
+- `MDS_HIGH` fired twice and produced a 50% day SR with 100% day frame.
+- The day proves the signal layer can identify meaningful compression that the operator still could not fully see.
+
+**E. What remains shadow-only**
+
+- candidate lanes
+- signal attribution panel
+- shadow ledger promotion logic
+- all staking and execution promotion decisions
+
+---
 *VÉLØ Special Day Report — 2026-04-28 | 2026-04-29 00:44 UTC*

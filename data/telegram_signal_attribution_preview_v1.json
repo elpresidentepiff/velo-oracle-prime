@@ -1,0 +1,130 @@
+{
+  "generated_at": "2026-04-29 01:26 UTC",
+  "status": "preview_only_not_live",
+  "examples": [
+    {
+      "example_id": "elite_stack",
+      "source": "repo_actual",
+      "pick": "Runman",
+      "course": "Epsom",
+      "off_time": "2:05",
+      "vp": 0.616,
+      "tier": "A",
+      "badge_evidence": [
+        {
+          "lane_id": "VP30_TIER_A",
+          "display_name": "VP \u2265 0.30 + Tier A",
+          "status": "SHADOW_CANDIDATE",
+          "n": 162,
+          "strike_rate": 40.1,
+          "frame_rate": 77.2
+        },
+        {
+          "lane_id": "MARKET_DECEPTION_HIGH",
+          "display_name": "Market Deception Score > 0.50",
+          "status": "SHADOW_CANDIDATE",
+          "n": 31,
+          "strike_rate": 54.8,
+          "frame_rate": 96.8
+        },
+        {
+          "lane_id": "IMPROVEMENT_SCORE_HIGH",
+          "display_name": "Improvement Score > 0.40",
+          "status": "SHADOW_CANDIDATE",
+          "n": 62,
+          "strike_rate": 43.5,
+          "frame_rate": 82.3
+        }
+      ],
+      "sidecars": {
+        "market_deception_score": 0.576,
+        "improvement_score": 0.483,
+        "place_prob": 0.983
+      },
+      "risk_flags": [
+        "short-fav override warning (review if winner SP is compressed)"
+      ]
+    },
+    {
+      "example_id": "normal_strong",
+      "source": "repo_actual",
+      "pick": "Karma Police",
+      "course": "Bangor-on-Dee",
+      "off_time": "1:37",
+      "vp": 0.393,
+      "tier": "A",
+      "badge_evidence": [
+        {
+          "lane_id": "VP30_TIER_A",
+          "display_name": "VP \u2265 0.30 + Tier A",
+          "status": "SHADOW_CANDIDATE",
+          "n": 162,
+          "strike_rate": 40.1,
+          "frame_rate": 77.2
+        }
+      ],
+      "sidecars": {
+        "market_deception_score": 0.103,
+        "improvement_score": 0.086,
+        "place_prob": 0.761
+      },
+      "risk_flags": []
+    },
+    {
+      "example_id": "warning_b_tier_low_vp",
+      "source": "repo_actual",
+      "pick": "Dangerman",
+      "course": "Epsom",
+      "off_time": "3:15",
+      "vp": 0.257,
+      "tier": "B",
+      "badge_evidence": [
+        {
+          "lane_id": "B_TIER_LOW_VP_SUPPRESS",
+          "display_name": "Tier B VP < 0.30 \u2014 Suppress Candidate",
+          "status": "SUPPRESS_CANDIDATE",
+          "n": 272,
+          "strike_rate": 16.9,
+          "frame_rate": 44.1
+        }
+      ],
+      "sidecars": {
+        "market_deception_score": 0.015,
+        "improvement_score": 0.028,
+        "place_prob": 0.727
+      },
+      "risk_flags": [
+        "B-tier VP<0.30",
+        "VP 0.20-0.30 drag",
+        "SP 3.0-8.5 danger zone"
+      ]
+    },
+    {
+      "example_id": "forensic_mid_price_risk",
+      "source": "repo_actual",
+      "pick": "New Zealand",
+      "course": "Epsom",
+      "off_time": "2:40",
+      "vp": 0.591,
+      "tier": "A",
+      "badge_evidence": [
+        {
+          "lane_id": "MID_PRICE_WINNER_FORENSICS",
+          "display_name": "Mid-Priced Winner Forensics Lane (SP 3.0\u20138.5)",
+          "status": "FORENSICS_ONLY",
+          "n": null,
+          "strike_rate": "FORENSIC_ONLY",
+          "frame_rate": "FORENSIC_ONLY"
+        }
+      ],
+      "sidecars": {
+        "market_deception_score": 0.353,
+        "improvement_score": 0.188,
+        "place_prob": 0.999
+      },
+      "risk_flags": [
+        "SP 3.0-8.5 danger zone"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,903 @@
+# VELO VP30 Lineage Audit V1
+
+Generated: 2026-04-29 01:26 UTC
+
+## Core Verdict
+
+`VP` in the audit layer is the same field as `velo_prime_prob`.
+`VP30` is the explicit threshold `velo_prime_prob >= 0.30`.
+`VP30_TIER_A` is `velo_prime_prob >= 0.30 AND decision_tier == 'A'`.
+
+## Answers
+
+### what does vp stand for in the live pipeline
+
+VP is the shorthand used by the audits for velo_prime_prob, the live VELO_PRIME field-level win probability output.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\build_innovation_protocol.py:220`
+- `C:\Users\puror\velo-oracle-prime\scripts\run_velo_unified_evidence_audit.py:85`
+
+### is vp the same as velo prime prob or another field
+
+VP is the same field as velo_prime_prob. It is not sqpe_v17_prob and not a separate verdict-only alias.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\build_innovation_protocol.py:220`
+- `C:\Users\puror\velo-oracle-prime\scripts\generate_special_day_report.py:121`
+
+### exact source field names
+
+- `velo_prime_prob (live verdict field)`
+- `vp_json (special-day loader alias for top.velo_prime_prob)`
+- `vp (local audit alias derived from velo_prime_prob)`
+
+### where vp is calculated
+
+score_race_velo_prime() builds runner inputs, VeloPrimeEnsemble.compute() builds the weighted probability, and VeloPrimeEnsemble.predict_race() race-normalizes it.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\app\services\velo_prime_service.py:253`
+- `C:\Users\puror\velo-oracle-prime\src\intelligence\velo_prime_ensemble.py:319`
+- `C:\Users\puror\velo-oracle-prime\src\intelligence\velo_prime_ensemble.py:509`
+
+### where vp is written
+
+VP is written into the top-pick verdict payload and persisted from run_prime_today into velo_verdicts and local daily verdict JSON files.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\run_prime_today.py:1228`
+- `C:\Users\puror\velo-oracle-prime\scripts\run_prime_today.py:1299`
+
+### where vp is read by sigma audits
+
+run_results_sigma.py loads velo_prime_prob directly from velo_verdicts, uses it for calibration summaries, high-confidence cuts, learned patterns, and Telegram sigma reports.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\run_results_sigma.py:211`
+- `C:\Users\puror\velo-oracle-prime\scripts\run_results_sigma.py:493`
+
+### where vp is read by telegram reporting
+
+run_prime_today.py reads velo_prime_prob to build prob_gap in A/B governed cards and prints prob directly in the C-WATCH grouped Telegram list.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\run_prime_today.py:640`
+- `C:\Users\puror\velo-oracle-prime\scripts\run_prime_today.py:1426`
+
+### where vp is read by evidence audits
+
+The unified evidence audit, special day report generator, and innovation protocol builder all consume velo_prime_prob-derived VP values.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\run_velo_unified_evidence_audit.py:124`
+- `C:\Users\puror\velo-oracle-prime\scripts\generate_special_day_report.py:121`
+- `C:\Users\puror\velo-oracle-prime\scripts\build_innovation_protocol.py:220`
+
+### is vp raw or calibrated
+
+RAW_NORMALIZED_ENSEMBLE_NOT_POSTHOC_CALIBRATED
+
+Note: The live ensemble computes a weighted average, applies macro adjustments, clips, and then renormalizes across the race. No isotonic, Platt, or temperature scaling appears in the live scorer path.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\src\intelligence\velo_prime_ensemble.py:319`
+- `C:\Users\puror\velo-oracle-prime\src\intelligence\velo_prime_ensemble.py:509`
+
+### is vp pre race only
+
+YES
+
+Note: The live scoring path builds VP from racecard, market, rating, macro, and specialist pre-race fields only.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\src\intelligence\velo_prime_ensemble.py:13`
+- `C:\Users\puror\velo-oracle-prime\app\services\velo_prime_service.py:80`
+
+### does vp ever touch outcome fields
+
+NO_REPO_PROOF_OF_OUTCOME_FIELD_USE_IN_SCORING_PATH
+
+Note: No winner_flag, finish_position, placed_flag, or results ingestion appears in the live score_race_velo_prime -> VeloPrimeEnsemble path.
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\app\services\velo_prime_service.py:48`
+- `C:\Users\puror\velo-oracle-prime\app\services\velo_prime_service.py:253`
+
+### exact definition of vp30
+
+velo_prime_prob >= 0.30
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\build_innovation_protocol.py:281`
+- `C:\Users\puror\velo-oracle-prime\scripts\generate_special_day_report.py:230`
+
+### exact definition of vp30 tier a
+
+velo_prime_prob >= 0.30 AND decision_tier == 'A'
+
+Proof:
+- `C:\Users\puror\velo-oracle-prime\scripts\build_innovation_protocol.py:281`
+- `C:\Users\puror\velo-oracle-prime\scripts\generate_special_day_report.py:365`
+- `C:\Users\puror\velo-oracle-prime\data\velo_candidate_lane_design_v1.json:24`
+
+### examples from the 49 day audit
+
+```json
+{
+  "vp_bands": [
+    {
+      "label": "VP<0.20",
+      "n": 385,
+      "wins": 56,
+      "placed": 129,
+      "misses": 256,
+      "strike_rate": 14.5,
+      "frame_rate": 33.5,
+      "avg_vp": 0.158,
+      "avg_winner_sp": 5.12,
+      "avg_miss_sp": 9.28,
+      "miss_sp_dist": [
+        1.44,
+        1.57,
+        1.83,
+        1.83,
+        2.0,
+        2.1,
+        2.1,
+        2.2,
+        2.25,
+        2.25,
+        2.25,
+        2.38,
+        2.38,
+        2.5,
+        2.5,
+        2.62,
+        2.62,
+        2.62,
+        2.62,
+        2.62,
+        2.62,
+        2.75,
+        2.75,
+        2.75,
+        2.88,
+        2.88,
+        2.88,
+        2.88,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.2,
+        4.2,
+        4.2,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        9.0,
+        9.0,
+        9.0,
+        9.0,
+        9.0,
+        9.0,
+        9.5,
+        9.5,
+        9.5,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        13.0,
+        13.0,
+        13.0,
+        13.0,
+        13.0,
+        13.0,
+        13.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        17.0,
+        17.0,
+        17.0,
+        17.0,
+        17.0,
+        17.0,
+        17.0,
+        17.0,
+        19.0,
+        19.0,
+        19.0,
+        19.0,
+        21.0,
+        23.0,
+        23.0,
+        23.0,
+        26.0,
+        26.0,
+        26.0,
+        26.0,
+        34.0,
+        34.0,
+        34.0,
+        41.0,
+        41.0,
+        51.0,
+        51.0,
+        81.0,
+        81.0,
+        81.0
+      ]
+    },
+    {
+      "label": "VP 0.20-0.30",
+      "n": 460,
+      "wins": 83,
+      "placed": 220,
+      "misses": 240,
+      "strike_rate": 18.0,
+      "frame_rate": 47.8,
+      "avg_vp": 0.243,
+      "avg_winner_sp": 3.86,
+      "avg_miss_sp": 7.82,
+      "miss_sp_dist": [
+        1.44,
+        1.5,
+        1.57,
+        1.73,
+        1.8,
+        1.83,
+        1.83,
+        1.83,
+        1.83,
+        1.91,
+        1.91,
+        1.91,
+        2.0,
+        2.0,
+        2.0,
+        2.1,
+        2.2,
+        2.2,
+        2.2,
+        2.25,
+        2.25,
+        2.25,
+        2.38,
+        2.38,
+        2.38,
+        2.38,
+        2.38,
+        2.38,
+        2.38,
+        2.38,
+        2.5,
+        2.62,
+        2.62,
+        2.62,
+        2.62,
+        2.75,
+        2.75,
+        2.75,
+        2.75,
+        2.75,
+        2.88,
+        2.88,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.2,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.5,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        3.75,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        5.5,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        6.5,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        8.5,
+        9.0,
+        9.0,
+        9.0,
+        9.0,
+        9.0,
+        9.5,
+        9.5,
+        9.5,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        11.0,
+        12.0,
+        12.0,
+        13.0,
+        13.0,
+        13.0,
+        13.0,
+        13.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        17.0,
+        17.0,
+        17.0,
+        17.0,
+        17.0,
+        19.0,
+        19.0,
+        21.0,
+        23.0,
+        23.0,
+        23.0,
+        26.0,
+        26.0,
+        29.0,
+        34.0,
+        41.0,
+        41.0,
+        51.0,
+        51.0,
+        81.0
+      ]
+    },
+    {
+      "label": "VP 0.30-0.40",
+      "n": 245,
+      "wins": 67,
+      "placed": 154,
+      "misses": 91,
+      "strike_rate": 27.3,
+      "frame_rate": 62.9,
+      "avg_vp": 0.341,
+      "avg_winner_sp": 3.12,
+      "avg_miss_sp": 5.78,
+      "miss_sp_dist": [
+        1.29,
+        1.36,
+        1.8,
+        2.0,
+        2.0,
+        2.1,
+        2.1,
+        2.1,
+        2.25,
+        2.38,
+        2.4,
+        2.5,
+        2.5,
+        2.5,
+        2.62,
+        2.75,
+        2.75,
+        2.75,
+        2.75,
+        2.75,
+        2.88,
+        2.88,
+        2.88,
+        2.88,
+        3.0,
+        3.0,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.25,
+        3.5,
+        3.5,
+        3.75,
+        3.75,
+        3.75,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.2,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.33,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.5,
+        5.5,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.5,
+        6.5,
+        6.5,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.5,
+        7.5,
+        7.5,
+        7.5,
+        8.0,
+        8.0,
+        8.0,
+        8.5,
+        9.0,
+        10.0,
+        11.0,
+        12.0,
+        12.0,
+        13.0,
+        13.0,
+        13.0,
+        15.0,
+        21.0,
+        23.0,
+        34.0
+      ]
+    },
+    {
+      "label": "VP>=0.40",
+      "n": 100,
+      "wins": 44,
+      "placed": 85,
+      "misses": 15,
+      "strike_rate": 44.0,
+      "frame_rate": 85.0,
+      "avg_vp": 0.487,
+      "avg_winner_sp": 1.76,
+      "avg_miss_sp": 9.57,
+      "miss_sp_dist": [
+        1.44,
+        1.57,
+        1.67,
+        1.91,
+        2.2,
+        3.25,
+        3.5,
+        3.75,
+        4.33,
+        4.5,
+        5.5,
+        6.0,
+        12.0,
+        41.0,
+        51.0
+      ]
+    }
+  ],
+  "vp30_tier_a": {
+    "label": "VP>=0.30 + Tier A",
+    "n": 162,
+    "wins": 65,
+    "placed": 125,
+    "misses": 37,
+    "strike_rate": 40.1,
+    "frame_rate": 77.2,
+    "avg_vp": 0.425,
+    "avg_winner_sp": 2.26,
+    "avg_miss_sp": 7.12,
+    "miss_sp_dist": [
+      1.57,
+      1.67,
+      1.8,
+      1.91,
+      2.0,
+      2.25,
+      2.4,
+      2.5,
+      2.75,
+      2.88,
+      2.88,
+      3.0,
+      3.25,
+      3.25,
+      3.25,
+      3.5,
+      3.75,
+      4.0,
+      4.0,
+      4.2,
+      4.33,
+      4.33,
+      4.5,
+      5.0,
+      5.5,
+      5.5,
+      6.0,
+      6.5,
+      6.5,
+      7.0,
+      7.5,
+      8.0,
+      9.0,
+      12.0,
+      23.0,
+      41.0,
+      51.0
+    ]
+  },
+  "examples": [
+    {
+      "race_id": "rac_11938940",
+      "track": "Epsom",
+      "off_time": "2:05",
+      "vp": 0.616,
+      "tier": "A",
+      "lanes_fired": [
+        "MARKET_DECEPTION_HIGH",
+        "VP30_TIER_A",
+        "IMPROVEMENT_SCORE_HIGH",
+        "PLACE_PROB_HIGH"
+      ]
+    },
+    {
+      "race_id": "rac_11938901",
+      "track": "Epsom",
+      "off_time": "2:40",
+      "vp": 0.591,
+      "tier": "A",
+      "lanes_fired": [
+        "VP30_TIER_A",
+        "PLACE_PROB_HIGH",
+        "MID_PRICE_WINNER_FORENSICS"
+      ]
+    },
+    {
+      "race_id": "rac_11938914",
+      "track": "Epsom",
+      "off_time": "3:15",
+      "vp": 0.257,
+      "tier": "B",
+      "lanes_fired": [
+        "B_TIER_LOW_VP_SUPPRESS",
+        "MID_PRICE_WINNER_FORENSICS"
+      ]
+    },
+    {
+      "race_id": "rac_11938927",
+      "track": "Epsom",
+      "off_time": "3:50",
+      "vp": 0.306,
+      "tier": "B",
+      "lanes_fired": [
+        "MID_PRICE_WINNER_FORENSICS"
+      ]
+    },
+    {
+      "race_id": "rac_11938953",
+      "track": "Epsom",
+      "off_time": "4:58",
+      "vp": 0.222,
+      "tier": "C",
+      "lanes_fired": [
+        "MID_PRICE_WINNER_FORENSICS"
+      ]
+    }
+  ]
+}
+```
+
+### audit safe public definition
+
+VP is the live VELO_PRIME race-normalized win probability field (velo_prime_prob). VP30 means VP >= 0.30. VP30_TIER_A means VP >= 0.30 and decision_tier A. These are evidence cohorts, not deployment approvals.
+

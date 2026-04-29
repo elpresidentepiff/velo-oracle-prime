@@ -1,7 +1,6 @@
 {
   "last_updated": "2026-04-29",
-  "description": "Master index of all VELO artifacts — scripts, evidence, company docs, data files",
-
+  "description": "Master index of all VELO artifacts \u2014 scripts, evidence, company docs, data files",
   "evidence_vault": {
     "unified_audit_v1": {
       "json": "data/evidence_vault/velo_unified_evidence_audit_v1.json",
@@ -29,21 +28,48 @@
       "md": "data/telegram_signal_attribution_design_v1.md",
       "evidence_doc": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md",
       "date": "2026-04-29",
-      "scope": "VELO SIGNAL STACK panel design — badge logic, sidecar thresholds, 4 example panels"
+      "scope": "VELO SIGNAL STACK panel design \u2014 badge logic, sidecar thresholds, 4 example panels"
     },
     "special_days": {
       "2026-04-28": {
         "json": "data/evidence_vault/special_days/velo_special_day_2026-04-28.json",
         "md": "docs/evidence/special_days/VELO_SPECIAL_DAY_2026-04-28.md",
-        "notes": "Elite day — MDS_HIGH fired 2x. Signal attribution added. 6 invisible elite signals confirmed."
+        "notes": "Elite day ? MDS_HIGH fired 2x. Signal attribution added. 6 invisible elite signals confirmed. Operator visibility gap section added."
       }
     },
     "router_ledger": "data/router_shadow_audit_ledger.csv",
     "router_latest": "data/router_shadow_audit_latest.csv",
     "router_snapshots_dir": "data/router_shadow_audit_runs/",
-    "innovation_protocol": "data/velo_innovation_protocol_1k_deduped.csv"
+    "innovation_protocol": "data/velo_innovation_protocol_1k_deduped.csv",
+    "vp30_lineage_audit_v1": {
+      "json": "data/vp30_lineage_audit_v1.json",
+      "md": "data/vp30_lineage_audit_v1.md",
+      "glossary_doc": "docs/evidence/VELO_SIGNAL_GLOSSARY_V1.md",
+      "date": "2026-04-29",
+      "scope": "Repo-proof lineage of VP, VP30, and VP30_TIER_A from scorer to audits"
+    },
+    "telegram_visibility_audit_v1": {
+      "json": "data/telegram_signal_visibility_audit_v1.json",
+      "md": "data/telegram_signal_visibility_audit_v1.md",
+      "evidence_doc": "docs/evidence/VELO_TELEGRAM_SIGNAL_VISIBILITY_AUDIT_V1.md",
+      "date": "2026-04-29",
+      "scope": "Live Telegram wiring audit for VP, tier, and candidate-lane visibility"
+    },
+    "signal_discovery_report_v1": {
+      "json": "data/evidence_vault/velo_49_day_signal_discovery_report_v1.json",
+      "md": "docs/evidence/VELO_49_DAY_SIGNAL_DISCOVERY_REPORT_V1.md",
+      "google_doc_export": "docs/evidence/VELO_GOOGLE_DOC_EXPORT_49_DAY_SIGNAL_DISCOVERY.md",
+      "date": "2026-04-29",
+      "scope": "49-day signal compression report with VP monotonicity and operator visibility verdict"
+    },
+    "telegram_attribution_preview_v1": {
+      "json": "data/telegram_signal_attribution_preview_v1.json",
+      "md": "data/telegram_signal_attribution_preview_v1.md",
+      "evidence_doc": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PREVIEW_V1.md",
+      "date": "2026-04-29",
+      "scope": "Display-only preview of V?L? SIGNAL STACK cards; not live"
+    }
   },
-
   "evidence_documents": {
     "vault_index": "docs/evidence/VELO_EVIDENCE_VAULT_INDEX.md",
     "signal_rankings_v1": "docs/evidence/VELO_SIGNAL_RANKINGS_V1.md",
@@ -53,16 +79,19 @@
     "special_day_index": "docs/evidence/VELO_SPECIAL_DAY_REPORTS_INDEX.md",
     "candidate_lanes_v1": "docs/evidence/VELO_CANDIDATE_LANES_V1.md",
     "shadow_ledger_protocol": "docs/evidence/VELO_CANDIDATE_LANE_SHADOW_LEDGER_PROTOCOL.md",
-    "telegram_attribution_panel": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md"
+    "telegram_attribution_panel": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md",
+    "signal_glossary_v1": "docs/evidence/VELO_SIGNAL_GLOSSARY_V1.md",
+    "telegram_visibility_audit_v1": "docs/evidence/VELO_TELEGRAM_SIGNAL_VISIBILITY_AUDIT_V1.md",
+    "signal_discovery_report_v1": "docs/evidence/VELO_49_DAY_SIGNAL_DISCOVERY_REPORT_V1.md",
+    "google_doc_export_49_day_signal_discovery": "docs/evidence/VELO_GOOGLE_DOC_EXPORT_49_DAY_SIGNAL_DISCOVERY.md",
+    "telegram_attribution_preview_v1": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PREVIEW_V1.md"
   },
-
   "company_documents": {
     "master_plan_v1": "docs/company/VELO_COMPANY_MASTER_PLAN_V1.md",
     "website_spec_v1": "docs/company/VELO_WEBSITE_APP_MVP_SPEC_V1.md",
     "whitepaper_outline_v1": "docs/company/VELO_WHITEPAPER_OUTLINE_V1.md",
     "funding_pack_outline_v1": "docs/company/VELO_FUNDING_PACK_OUTLINE_V1.md"
   },
-
   "scripts": {
     "daily_prediction": "scripts/run_prime_today.py",
     "sigma_results": "scripts/run_results_sigma.py",
@@ -72,14 +101,15 @@
     "special_day_report": "scripts/generate_special_day_report.py",
     "candidate_lane_design": "scripts/design_velo_candidate_lanes.py",
     "shadow_ledger_design": "scripts/design_candidate_lane_shadow_ledger.py",
-    "telegram_attribution_design": "scripts/design_telegram_signal_attribution_panel.py"
+    "telegram_attribution_design": "scripts/design_telegram_signal_attribution_panel.py",
+    "audit_vp30_lineage": "scripts/audit_vp30_lineage.py",
+    "audit_telegram_signal_visibility": "scripts/audit_telegram_signal_visibility.py",
+    "render_telegram_signal_attribution_preview": "scripts/render_telegram_signal_attribution_preview.py"
   },
-
   "agent_context": {
     "claude_md": "CLAUDE.md",
     "memory_dir": "/home/purorpurorestrepo1981/.claude/projects/-mnt-c-Users-puror/memory/"
   },
-
   "key_numbers": {
     "operating_days": 49,
     "sigma_audit_rows": 1391,
@@ -103,6 +133,8 @@
     "candidate_lanes_forensics": 1,
     "operator_visibility_gap_2026_04_28": "6 elite signal races not surfaced in Telegram",
     "mds_high_2026_04_28_day_sr": "50.0%",
-    "mds_high_2026_04_28_day_frame": "100.0%"
+    "mds_high_2026_04_28_day_frame": "100.0%",
+    "telegram_badges_live": "NO ? current live sender omits VP30/MDS/IMPROVE badge stack",
+    "vp30_definition": "velo_prime_prob >= 0.30"
   }
 }
