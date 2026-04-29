@@ -620,6 +620,141 @@ def build_decision_card(race: dict, top: dict, second: dict, tier: str, reasons:
     return "\n".join(lines)
 
 
+SIGNAL_STACK_EVIDENCE = {
+    "VP30_TIER_A": {"icon": "✅", "n": 162, "sr": 40.1, "frame": 77.2, "status": "SHADOW_CANDIDATE"},
+    "MDS_HIGH": {"icon": "🔥", "n": 31, "sr": 54.8, "frame": 96.8, "status": "SHADOW_CANDIDATE"},
+    "IMPROVE_HIGH": {"icon": "📈", "n": 62, "sr": 43.5, "frame": 82.3, "status": "SHADOW_CANDIDATE"},
+    "PLACE_PROB_HIGH": {"icon": "🟡", "n": 392, "sr": 31.6, "frame": 66.8, "status": "WATCHLIST"},
+    "B_LOW_VP_SUPPRESS": {"icon": "⚠️", "n": 272, "sr": 16.9, "frame": 44.1, "status": "SUPPRESS_CANDIDATE"},
+}
+SIGNAL_STACK_OPERATOR_NOTE = "SHADOW EVIDENCE ONLY — NO STAKING AUTOMATION"
+VP_DRAG_NOTE = "⚠️ VP_020_030_DRAG — 18.0% SR | 47.8% frame"
+MID_PRICE_NOTE = "🔬 MID_PRICE_ZONE_WATCH — SP 3.0–8.5 research zone | FORENSICS_ONLY"
+SHORT_FAV_NOTE = "⚠️ SHORT_FAV_OVERRIDE_WATCH — SP<3.0 compressed market zone"
+
+
+def _signal_stack_float(value, default=0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _norm_horse_name(name: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", str(name or "").lower())
+
+
+def _resolve_signal_stack_runner(race: dict, top: dict) -> dict:
+    runners = race.get("runners", []) or []
+    top_horse_id = str(top.get("horse_id") or "")
+    top_name = _norm_horse_name(top.get("horse") or "")
+
+    for runner in runners:
+        if top_horse_id and str(runner.get("horse_id") or "") == top_horse_id:
+            return runner
+    for runner in runners:
+        runner_name = runner.get("horse_name") or runner.get("horse") or runner.get("name") or ""
+        if top_name and _norm_horse_name(runner_name) == top_name:
+            return runner
+    return {}
+
+
+def _resolve_signal_stack_odds(race: dict, top: dict) -> float | None:
+    runner = _resolve_signal_stack_runner(race, top)
+    for key in ("best_odds_decimal", "sp_dec", "odds_decimal"):
+        val = _signal_stack_float(runner.get(key), 0.0)
+        if val > 1.0:
+            return val
+    return None
+
+
+def _signal_stack_badges_and_risks(race: dict, top: dict, tier: str) -> tuple[list[str], list[str]]:
+    vp = _signal_stack_float(top.get("velo_prime_prob"), 0.0)
+    mds = _signal_stack_float(top.get("market_deception_score"), 0.0)
+    improve = _signal_stack_float(top.get("improvement_score"), 0.0)
+    place_prob = _signal_stack_float(top.get("place_prob"), 0.0)
+    odds = _resolve_signal_stack_odds(race, top)
+
+    badges: list[str] = []
+    risks: list[str] = []
+
+    if vp >= 0.30 and tier == "A":
+        badges.append("VP30_TIER_A")
+    if mds > 0.50:
+        badges.append("MDS_HIGH")
+    if improve > 0.40:
+        badges.append("IMPROVE_HIGH")
+    if place_prob > 0.80:
+        badges.append("PLACE_PROB_HIGH")
+    if tier == "B" and vp < 0.30:
+        badges.append("B_LOW_VP_SUPPRESS")
+
+    if 0.20 <= vp < 0.30:
+        risks.append(VP_DRAG_NOTE)
+    if odds is not None and 3.0 <= odds <= 8.5:
+        risks.append(MID_PRICE_NOTE)
+    if odds is not None and odds < 3.0:
+        risks.append(SHORT_FAV_NOTE)
+
+    return badges, risks
+
+
+def _render_signal_badge_line(badge_id: str) -> str:
+    meta = SIGNAL_STACK_EVIDENCE[badge_id]
+    return (
+        f"{meta['icon']} {badge_id} — n={meta['n']} | SR={meta['sr']}% | "
+        f"Frame={meta['frame']}% | {meta['status']}"
+    )
+
+
+def render_signal_attribution_panel(race: dict, top: dict, tier: str, compact: bool = False) -> str:
+    vp = _signal_stack_float(top.get("velo_prime_prob"), 0.0)
+    mds = _signal_stack_float(top.get("market_deception_score"), 0.0)
+    improve = _signal_stack_float(top.get("improvement_score"), 0.0)
+    place_prob = _signal_stack_float(top.get("place_prob"), 0.0)
+    badges, risks = _signal_stack_badges_and_risks(race, top, tier)
+
+    if compact:
+        badge_text = " | ".join(badges) if badges else "none"
+        risk_text = " | ".join(risks) if risks else "none"
+        return (
+            f"  SIGNAL STACK: VP {vp:.3f} | Tier {tier}\n"
+            f"  badges {badge_text}\n"
+            f"  sidecar MDS {mds:.3f} | IMP {improve:.3f} | PLACE {place_prob:.3f}\n"
+            f"  risk {risk_text}\n"
+            f"  {SIGNAL_STACK_OPERATOR_NOTE}"
+        )
+
+    lines = [
+        "VÉLØ SIGNAL STACK",
+        f"PICK:        {top.get('horse', '?')}",
+        f"VP:          {vp:.3f}",
+        f"TIER:        {tier}",
+        "LANES:",
+    ]
+    if badges:
+        for badge_id in badges:
+            lines.append(_render_signal_badge_line(badge_id))
+    else:
+        lines.append("— no candidate-lane badge triggered")
+
+    lines.extend(
+        [
+            "SIDECAR:",
+            f"MDS:         {mds:.3f}",
+            f"IMPROVE:     {improve:.3f}",
+            f"PLACE:       {place_prob:.3f}",
+            "RISK FLAGS:",
+        ]
+    )
+    if risks:
+        lines.extend(risks)
+    else:
+        lines.append("— none")
+    lines.append(f"STATUS:      {SIGNAL_STACK_OPERATOR_NOTE}")
+    return "\n".join(lines)
+
+
 def build_governed_card(
     race: dict, top: dict, second: dict, tier: str, reasons: list[str], source: str, requested_date: str
 ) -> str:
@@ -641,6 +776,7 @@ def build_governed_card(
     mds = top.get("market_deception_score", 0)
     assigned = top.get("assigned_product", "UNKNOWN")
     allowed = "YES" if top.get("execution_allowed") else "NO"
+    signal_panel = render_signal_attribution_panel(race, top, tier)
 
     return f"""{cache_warning}🛡️ *{course} {off} | {assigned}*
 ──────────────────────────────────
@@ -650,6 +786,7 @@ CONFIDENCE:  {top.get("confidence_level", "NORMAL").upper()}
 PROB GAP:    {prob_gap:.4f}
 MDS (DECOY): {mds:.4f}
 EXECUTION:   {allowed}
+{signal_panel}
 REASONS:     {", ".join(reasons)}
 SOURCE:      {source}
 DATE:        {actual_date}
@@ -1423,7 +1560,13 @@ def main():
             place = float(top.get("place_prob") or 0)
             gap = prob - float(second.get("velo_prime_prob") or 0)
             r0 = reasons[1] if len(reasons) > 1 else reasons[0] if reasons else ""
-            lines.append(f"{course} {off}  {primary}\n  prob {prob:.3f} | gap {gap:.3f} | place {place:.3f}\n  {r0}")
+            panel = render_signal_attribution_panel(race, top, "C", compact=True)
+            lines.append(
+                f"{course} {off}  {primary}\n"
+                f"  prob {prob:.3f} | gap {gap:.3f} | place {place:.3f}\n"
+                f"{panel}\n"
+                f"  {r0}"
+            )
         tg("\n".join(lines))
         print(f"  Sent: C-WATCH list ({c_n} races)")
 

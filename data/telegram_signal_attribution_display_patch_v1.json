@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-04-29 02:01 UTC",
+  "A_file_changed": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+  "B_exact_function_added": {
+    "name": "render_signal_attribution_panel",
+    "line": 710
+  },
+  "C_exact_send_paths_touched": [
+    {
+      "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+      "surface": "A/B governed card path via build_governed_card()",
+      "line": 779
+    },
+    {
+      "path": "C:\\Users\\puror\\velo-oracle-prime\\scripts\\run_prime_today.py",
+      "surface": "C-WATCH grouped path",
+      "line": 1563
+    }
+  ],
+  "D_pick_selection_unchanged": true,
+  "E_model_scoring_unchanged": true,
+  "F_router_unchanged": true,
+  "G_staking_unchanged": true,
+  "H_candidate_route_unchanged": true,
+  "I_vp30_tier_a_renders_when_true": true,
+  "J_mds_high_renders_when_true": true,
+  "K_improve_high_renders_when_true": true,
+  "L_b_low_vp_suppress_renders_when_true": true,
+  "M_preview_examples": {
+    "a_card": "rac_11938940",
+    "b_card": "rac_11938914",
+    "c_watch": "rac_11916255"
+  },
+  "N_safe_for_tomorrows_telegram_run": true,
+  "safety_notes": [
+    "display-only patch in scripts/run_prime_today.py",
+    "no changes to score_race_velo_prime()",
+    "no changes to router scripts",
+    "no staking logic changed",
+    "no execution gating logic changed",
+    "no candidate route logic changed",
+    "syntax check passed via py_compile"
+  ],
+  "badge_conditions": {
+    "VP30_TIER_A": "velo_prime_prob >= 0.30 and decision_tier == A",
+    "MDS_HIGH": "market_deception_score > 0.50",
+    "IMPROVE_HIGH": "improvement_score > 0.40",
+    "PLACE_PROB_HIGH": "place_prob > 0.80",
+    "B_LOW_VP_SUPPRESS": "decision_tier == B and velo_prime_prob < 0.30",
+    "VP_020_030_DRAG": "0.20 <= velo_prime_prob < 0.30",
+    "MID_PRICE_ZONE_WATCH": "pre-race odds in 3.0-8.5 zone"
+  }
+}
