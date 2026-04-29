@@ -2,7 +2,7 @@
 
 **75.0% VP≥0.30 frame | 17.2% overall SR | 58.6% overall frame**
 
-*Generated: 2026-04-29 00:02 UTC*
+*Generated: 2026-04-29 00:44 UTC*
 
 ---
 
@@ -120,4 +120,72 @@ SR at baseline — normal day for winner conversion. Frame rate 58.6% below 70% 
 - `SHORT_FAV_OVERRIDE_NEEDED`
 
 ---
-*VÉLØ Special Day Report — 2026-04-28 | 2026-04-29 00:02 UTC*
+
+## Signal Attribution Analysis
+
+Candidate lane conditions evaluated against today's races.
+Shadow evidence only — no execution decisions.
+
+### Lane Firing Summary
+
+| Lane | Fired | Wins | Frames | Day SR | Day Frame |
+|---|---|---|---|---|---|
+| 🔥 MDS_HIGH | 2 | 1 | 2 | 50% | 100% |
+| ✅ VP30_TIER_A | 6 | 2 | 4 | 33% | 67% |
+| 📈 IMPROVE_HIGH | 1 | 1 | 1 | 100% | 100% |
+| 🟡 PLACE_HIGH | 8 | 3 | 6 | 38% | 75% |
+| ⚠️ B_LOW_VP | 3 | 0 | 0 | 0% | 0% |
+| 🔬 MID_PRICE_FORENSICS | 10 | 0 | 0 | 0% | 0% |
+
+**Strongest signal today:** MARKET_DECEPTION_HIGH — fired 2x, day SR 50.0%, Elite signal. Historical SR=54.8% at n=31.
+
+### Race-Level Attribution (signal races only)
+
+| Time | Course | Outcome | VP | Tier | Lanes Fired |
+|---|---|---|---|---|---|
+| 2:05 | Epsom | WIN | 0.616 | A | MARKET_DECEPTION_HIGH VP30_TIER_A IMPROVEMENT_SCORE_HIGH PLACE_PROB_HIGH |
+| 2:20 | Southwell (AW) | MISS | 0.241 | C | MID_PRICE_WINNER_FORENSICS |
+| 2:30 | Punchestown (IRE) | MISS | 0.494 | A | VP30_TIER_A MID_PRICE_WINNER_FORENSICS |
+| 2:40 | Epsom | MISS | 0.591 | A | VP30_TIER_A PLACE_PROB_HIGH MID_PRICE_WINNER_FORENSICS |
+| 2:47 | Yarmouth | PLACED | 0.491 | A | MARKET_DECEPTION_HIGH VP30_TIER_A PLACE_PROB_HIGH |
+| 3:15 | Epsom | MISS | 0.257 | B | B_TIER_LOW_VP_SUPPRESS MID_PRICE_WINNER_FORENSICS |
+| 3:30 | Southwell (AW) | MISS | 0.251 | B | B_TIER_LOW_VP_SUPPRESS |
+| 3:50 | Epsom | MISS | 0.306 | B | MID_PRICE_WINNER_FORENSICS |
+| 3:57 | Yarmouth | WIN | 0.356 | C | PLACE_PROB_HIGH |
+| 4:35 | Southwell (AW) | MISS | 0.25 | C | MID_PRICE_WINNER_FORENSICS |
+| 4:43 | Lingfield (AW) | PLACED | 0.369 | A | VP30_TIER_A PLACE_PROB_HIGH |
+| 4:58 | Epsom | MISS | 0.222 | C | MID_PRICE_WINNER_FORENSICS |
+| 5:25 | Punchestown (IRE) | MISS | 0.2 | C | MID_PRICE_WINNER_FORENSICS |
+| 5:35 | Yarmouth | PLACED | 0.32 | C | PLACE_PROB_HIGH |
+| 5:42 | Southwell (AW) | MISS | 0.213 | C | MID_PRICE_WINNER_FORENSICS |
+*... +3 more races in JSON*
+
+---
+
+## Elite Day Flag
+
+**Elite day:** ✅ YES
+**Reason:** MDS_HIGH fired
+**Dashboard watch recommended:** ✅ YES
+**Note:** Elite signal fired today — add to daily dashboard accumulation tracker.
+
+---
+
+## Operator Visibility Gaps
+
+**ELITE_SIGNAL_NOT_SURFACED** (6 races)
+
+*6 races fired elite candidate lane signals (MDS_HIGH / VP30_TIER_A / IMPROVE_HIGH) that were not visible in the standard Telegram output.*
+
+Fix: Add VÉLØ SIGNAL STACK panel to Telegram output (see design doc).
+
+**SUPPRESS_WARNING_NOT_SURFACED** (3 races)
+
+*3 races were in the Tier B VP<0.30 suppress zone but no warning appeared in Telegram output.*
+
+Fix: Add suppress warnings to VÉLØ SIGNAL STACK panel.
+
+> **Telegram Signal Attribution Panel required.** See `docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md`
+
+---
+*VÉLØ Special Day Report — 2026-04-28 | 2026-04-29 00:44 UTC*

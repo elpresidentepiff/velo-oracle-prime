@@ -17,10 +17,25 @@
       "date": "2026-04-29",
       "scope": "6 candidate lanes: 3 SHADOW_CANDIDATE, 1 WATCHLIST, 1 SUPPRESS_CANDIDATE, 1 FORENSICS_ONLY"
     },
+    "shadow_ledger_design_v1": {
+      "json": "data/candidate_lane_shadow_ledger_design_v1.json",
+      "md": "data/candidate_lane_shadow_ledger_design_v1.md",
+      "protocol_doc": "docs/evidence/VELO_CANDIDATE_LANE_SHADOW_LEDGER_PROTOCOL.md",
+      "date": "2026-04-29",
+      "scope": "Per-lane append ledger schema, promotion gates, freeze rules for all 6 lanes"
+    },
+    "telegram_attribution_design_v1": {
+      "json": "data/telegram_signal_attribution_design_v1.json",
+      "md": "data/telegram_signal_attribution_design_v1.md",
+      "evidence_doc": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md",
+      "date": "2026-04-29",
+      "scope": "VELO SIGNAL STACK panel design — badge logic, sidecar thresholds, 4 example panels"
+    },
     "special_days": {
       "2026-04-28": {
         "json": "data/evidence_vault/special_days/velo_special_day_2026-04-28.json",
-        "md": "docs/evidence/special_days/VELO_SPECIAL_DAY_2026-04-28.md"
+        "md": "docs/evidence/special_days/VELO_SPECIAL_DAY_2026-04-28.md",
+        "notes": "Elite day — MDS_HIGH fired 2x. Signal attribution added. 6 invisible elite signals confirmed."
       }
     },
     "router_ledger": "data/router_shadow_audit_ledger.csv",
@@ -36,7 +51,9 @@
     "company_brief_v1": "docs/evidence/VELO_COMPANY_EVIDENCE_BRIEF_V1.md",
     "archive_protocol": "docs/evidence/VELO_EVIDENCE_ARCHIVE_PROTOCOL.md",
     "special_day_index": "docs/evidence/VELO_SPECIAL_DAY_REPORTS_INDEX.md",
-    "candidate_lanes_v1": "docs/evidence/VELO_CANDIDATE_LANES_V1.md"
+    "candidate_lanes_v1": "docs/evidence/VELO_CANDIDATE_LANES_V1.md",
+    "shadow_ledger_protocol": "docs/evidence/VELO_CANDIDATE_LANE_SHADOW_LEDGER_PROTOCOL.md",
+    "telegram_attribution_panel": "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md"
   },
 
   "company_documents": {
@@ -53,7 +70,9 @@
     "router_shadow_audit": "scripts/router_shadow_audit.py",
     "unified_evidence_audit": "scripts/run_velo_unified_evidence_audit.py",
     "special_day_report": "scripts/generate_special_day_report.py",
-    "candidate_lane_design": "scripts/design_velo_candidate_lanes.py"
+    "candidate_lane_design": "scripts/design_velo_candidate_lanes.py",
+    "shadow_ledger_design": "scripts/design_candidate_lane_shadow_ledger.py",
+    "telegram_attribution_design": "scripts/design_telegram_signal_attribution_panel.py"
   },
 
   "agent_context": {
@@ -81,6 +100,9 @@
     "candidate_lanes_shadow": 3,
     "candidate_lanes_watchlist": 1,
     "candidate_lanes_suppress": 1,
-    "candidate_lanes_forensics": 1
+    "candidate_lanes_forensics": 1,
+    "operator_visibility_gap_2026_04_28": "6 elite signal races not surfaced in Telegram",
+    "mds_high_2026_04_28_day_sr": "50.0%",
+    "mds_high_2026_04_28_day_frame": "100.0%"
   }
 }

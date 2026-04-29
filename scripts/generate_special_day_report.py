@@ -34,6 +34,40 @@ STRIKE_BASELINE = 0.20
 FRAME_BASELINE = 0.70
 RUN_TS = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
+# Candidate lane thresholds (mirrors design_velo_candidate_lanes.py)
+LANE_CONDITIONS = [
+    {
+        "lane_id": "MARKET_DECEPTION_HIGH",
+        "badge": "🔥 MDS_HIGH",
+        "tier": "elite",
+        "evidence": "n=31 | SR 54.8% | Frame 96.8%",
+    },
+    {
+        "lane_id": "VP30_TIER_A",
+        "badge": "✅ VP30_TIER_A",
+        "tier": "proven",
+        "evidence": "n=162 | SR 40.1% | Frame 77.2%",
+    },
+    {
+        "lane_id": "IMPROVEMENT_SCORE_HIGH",
+        "badge": "📈 IMPROVE_HIGH",
+        "tier": "proven",
+        "evidence": "n=62 | SR 43.5% | Frame 82.3%",
+    },
+    {
+        "lane_id": "PLACE_PROB_HIGH",
+        "badge": "🟡 PLACE_HIGH",
+        "tier": "watchlist",
+        "evidence": "n=392 | SR 31.6% | Frame 66.8%",
+    },
+    {
+        "lane_id": "B_TIER_LOW_VP_SUPPRESS",
+        "badge": "⚠️ B_LOW_VP",
+        "tier": "suppress",
+        "evidence": "n=272 | SR 16.9% | Frame 44.1%",
+    },
+]
+
 
 def get_sb():
     return create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
@@ -288,6 +322,185 @@ def generate_report(date: str) -> dict:
     if len(short_fav_misses) >= 2:
         research_tags.append("SHORT_FAV_OVERRIDE_NEEDED")
 
+    # ── Signal attribution analysis ───────────────────────────────────────────
+    # Evaluate candidate lane conditions against each race using verdict JSON data.
+    # This shows which lanes would have fired and surfaces operator visibility gaps.
+
+    race_attributions = []
+    lane_day_counts = {lc["lane_id"]: {"fired": 0, "wins": 0, "frames": 0} for lc in LANE_CONDITIONS}
+    lane_day_counts["MID_PRICE_WINNER_FORENSICS"] = {"fired": 0, "wins": 0, "frames": 0}
+
+    if not vj.empty:
+        vj_lookup = vj.set_index(["course_norm", "off_time"]) if "course_norm" in vj.columns else pd.DataFrame()
+
+        for idx, row in merged.iterrows():
+            if row["decision_tier"] == "X":
+                continue
+            key = (row.get("track_norm"), row.get("off_time"))
+            vj_row = None
+            if not vj_lookup.empty and key in vj_lookup.index:
+                v = vj_lookup.loc[key]
+                vj_row = v.iloc[0] if isinstance(v, pd.DataFrame) else v
+
+            vp = row.get("vp") or (float(vj_row.get("vp_json", 0) or 0) if vj_row is not None else 0)
+            tier = row.get("decision_tier", "")
+            mds = float(vj_row.get("mds_json", 0) or 0) if vj_row is not None else 0
+            improve = float(vj_row.get("improvement_score_json", 0) or 0) if vj_row is not None else 0
+            place_p = float(vj_row.get("place_prob_json", 0) or 0) if vj_row is not None else 0
+            outcome = row.get("outcome", "")
+            winner_sp = row.get("actual_winner_sp")
+            won = outcome == "WIN"
+            framed = outcome in ("WIN", "PLACED")
+
+            fired_lanes = []
+
+            if mds > 0.50:
+                fired_lanes.append("MARKET_DECEPTION_HIGH")
+                lane_day_counts["MARKET_DECEPTION_HIGH"]["fired"] += 1
+                if won:
+                    lane_day_counts["MARKET_DECEPTION_HIGH"]["wins"] += 1
+                if framed:
+                    lane_day_counts["MARKET_DECEPTION_HIGH"]["frames"] += 1
+
+            if vp >= 0.30 and tier == "A":
+                fired_lanes.append("VP30_TIER_A")
+                lane_day_counts["VP30_TIER_A"]["fired"] += 1
+                if won:
+                    lane_day_counts["VP30_TIER_A"]["wins"] += 1
+                if framed:
+                    lane_day_counts["VP30_TIER_A"]["frames"] += 1
+
+            if improve > 0.40:
+                fired_lanes.append("IMPROVEMENT_SCORE_HIGH")
+                lane_day_counts["IMPROVEMENT_SCORE_HIGH"]["fired"] += 1
+                if won:
+                    lane_day_counts["IMPROVEMENT_SCORE_HIGH"]["wins"] += 1
+                if framed:
+                    lane_day_counts["IMPROVEMENT_SCORE_HIGH"]["frames"] += 1
+
+            if place_p > 0.80:
+                fired_lanes.append("PLACE_PROB_HIGH")
+                lane_day_counts["PLACE_PROB_HIGH"]["fired"] += 1
+                if won:
+                    lane_day_counts["PLACE_PROB_HIGH"]["wins"] += 1
+                if framed:
+                    lane_day_counts["PLACE_PROB_HIGH"]["frames"] += 1
+
+            if tier == "B" and vp < 0.30:
+                fired_lanes.append("B_TIER_LOW_VP_SUPPRESS")
+                lane_day_counts["B_TIER_LOW_VP_SUPPRESS"]["fired"] += 1
+                if won:
+                    lane_day_counts["B_TIER_LOW_VP_SUPPRESS"]["wins"] += 1
+                if framed:
+                    lane_day_counts["B_TIER_LOW_VP_SUPPRESS"]["frames"] += 1
+
+            if outcome == "MISS" and winner_sp is not None and 3.0 <= float(winner_sp) <= 8.5:
+                fired_lanes.append("MID_PRICE_WINNER_FORENSICS")
+                lane_day_counts["MID_PRICE_WINNER_FORENSICS"]["fired"] += 1
+
+            if fired_lanes:
+                race_attributions.append({
+                    "race_id": row.get("race_id"),
+                    "track": row.get("track"),
+                    "off_time": row.get("off_time"),
+                    "outcome": outcome,
+                    "vp": round(float(vp), 3) if vp else None,
+                    "tier": tier,
+                    "mds": round(mds, 3) if mds else None,
+                    "improve": round(improve, 3) if improve else None,
+                    "place_prob": round(place_p, 3) if place_p else None,
+                    "winner_sp": float(winner_sp) if winner_sp is not None else None,
+                    "lanes_fired": fired_lanes,
+                    "elite_lanes": [l for l in fired_lanes if l in ("MARKET_DECEPTION_HIGH", "VP30_TIER_A", "IMPROVEMENT_SCORE_HIGH")],
+                    "suppress_warning": "B_TIER_LOW_VP_SUPPRESS" in fired_lanes,
+                })
+
+    # Strongest signal of the day
+    strongest_signal = None
+    if lane_day_counts["MARKET_DECEPTION_HIGH"]["fired"] > 0:
+        c = lane_day_counts["MARKET_DECEPTION_HIGH"]
+        sr_d = pct(c["wins"], c["fired"])
+        strongest_signal = {
+            "lane_id": "MARKET_DECEPTION_HIGH",
+            "fired": c["fired"],
+            "wins": c["wins"],
+            "frames": c["frames"],
+            "day_sr": sr_d,
+            "day_frame": pct(c["frames"], c["fired"]),
+            "note": "Elite signal. Historical SR=54.8% at n=31.",
+        }
+    elif lane_day_counts["IMPROVEMENT_SCORE_HIGH"]["fired"] > 0:
+        c = lane_day_counts["IMPROVEMENT_SCORE_HIGH"]
+        strongest_signal = {
+            "lane_id": "IMPROVEMENT_SCORE_HIGH",
+            "fired": c["fired"],
+            "wins": c["wins"],
+            "frames": c["frames"],
+            "day_sr": pct(c["wins"], c["fired"]),
+            "day_frame": pct(c["frames"], c["fired"]),
+            "note": "Proven signal. Historical SR=43.5% at n=62.",
+        }
+    elif lane_day_counts["VP30_TIER_A"]["fired"] > 0:
+        c = lane_day_counts["VP30_TIER_A"]
+        strongest_signal = {
+            "lane_id": "VP30_TIER_A",
+            "fired": c["fired"],
+            "wins": c["wins"],
+            "frames": c["frames"],
+            "day_sr": pct(c["wins"], c["fired"]),
+            "day_frame": pct(c["frames"], c["fired"]),
+            "note": "Proven primary gate. Historical SR=40.1% at n=162.",
+        }
+
+    # Operator visibility gaps
+    visibility_gaps = []
+    elite_races_invisible = [
+        r for r in race_attributions if r["elite_lanes"]
+    ]
+    if elite_races_invisible:
+        visibility_gaps.append({
+            "gap": "ELITE_SIGNAL_NOT_SURFACED",
+            "count": len(elite_races_invisible),
+            "description": (
+                f"{len(elite_races_invisible)} races fired elite candidate lane signals "
+                "(MDS_HIGH / VP30_TIER_A / IMPROVE_HIGH) that were not visible in the "
+                "standard Telegram output."
+            ),
+            "fix": "Add VÉLØ SIGNAL STACK panel to Telegram output (see design doc).",
+        })
+    suppress_invisible = [r for r in race_attributions if r["suppress_warning"]]
+    if suppress_invisible:
+        visibility_gaps.append({
+            "gap": "SUPPRESS_WARNING_NOT_SURFACED",
+            "count": len(suppress_invisible),
+            "description": (
+                f"{len(suppress_invisible)} races were in the Tier B VP<0.30 suppress zone "
+                "but no warning appeared in Telegram output."
+            ),
+            "fix": "Add suppress warnings to VÉLØ SIGNAL STACK panel.",
+        })
+
+    # Elite day flag
+    elite_signals_today = (
+        lane_day_counts["MARKET_DECEPTION_HIGH"]["fired"] > 0 or
+        lane_day_counts["VP30_TIER_A"]["fired"] >= 2 or
+        lane_day_counts["IMPROVEMENT_SCORE_HIGH"]["fired"] >= 2
+    )
+    elite_day_flag = {
+        "is_elite_day": elite_signals_today,
+        "reason": (
+            "MDS_HIGH fired" if lane_day_counts["MARKET_DECEPTION_HIGH"]["fired"] > 0
+            else f"VP30_TIER_A fired {lane_day_counts['VP30_TIER_A']['fired']}x" if elite_signals_today
+            else "No elite signal threshold met today"
+        ),
+        "dashboard_watch_recommended": elite_signals_today,
+        "dashboard_watch_reason": (
+            "Elite signal fired today — add to daily dashboard accumulation tracker."
+            if elite_signals_today
+            else "Standard day — no dashboard promotion recommended."
+        ),
+    }
+
     result = {
         "date": date,
         "generated_at": RUN_TS,
@@ -322,6 +535,15 @@ def generate_report(date: str) -> dict:
         "S_router_contribution": router_contribution,
         "T_audit_conclusion": audit_conclusion,
         "U_research_tags": research_tags,
+        "V_signal_attribution": {
+            "race_attributions": race_attributions,
+            "lane_day_counts": lane_day_counts,
+            "strongest_signal": strongest_signal,
+            "total_attribution_races": len(race_attributions),
+        },
+        "W_elite_day_flag": elite_day_flag,
+        "X_operator_visibility_gaps": visibility_gaps,
+        "Y_telegram_panel_needed": len(visibility_gaps) > 0,
     }
     return result
 
@@ -455,6 +677,107 @@ def write_markdown(result: dict, date: str) -> str:
     ]
     for tag in result["U_research_tags"]:
         lines.append(f"- `{tag}`")
+    # Signal Attribution
+    attr = result.get("V_signal_attribution", {})
+    elite_flag = result.get("W_elite_day_flag", {})
+    vis_gaps = result.get("X_operator_visibility_gaps", [])
+    lane_counts = attr.get("lane_day_counts", {})
+    strongest = attr.get("strongest_signal")
+
+    lines += [
+        "",
+        "---",
+        "",
+        "## Signal Attribution Analysis",
+        "",
+        "Candidate lane conditions evaluated against today's races.",
+        "Shadow evidence only — no execution decisions.",
+        "",
+        "### Lane Firing Summary",
+        "",
+        "| Lane | Fired | Wins | Frames | Day SR | Day Frame |",
+        "|---|---|---|---|---|---|",
+    ]
+    lane_display = [
+        ("MARKET_DECEPTION_HIGH", "🔥 MDS_HIGH"),
+        ("VP30_TIER_A", "✅ VP30_TIER_A"),
+        ("IMPROVEMENT_SCORE_HIGH", "📈 IMPROVE_HIGH"),
+        ("PLACE_PROB_HIGH", "🟡 PLACE_HIGH"),
+        ("B_TIER_LOW_VP_SUPPRESS", "⚠️ B_LOW_VP"),
+        ("MID_PRICE_WINNER_FORENSICS", "🔬 MID_PRICE_FORENSICS"),
+    ]
+    for lid, display in lane_display:
+        c = lane_counts.get(lid, {})
+        n_ = c.get("fired", 0)
+        w_ = c.get("wins", 0)
+        f_ = c.get("frames", 0)
+        sr_ = f"{pct(w_, n_):.0f}%" if n_ > 0 else "—"
+        fr_ = f"{pct(f_, n_):.0f}%" if n_ > 0 else "—"
+        lines.append(f"| {display} | {n_} | {w_} | {f_} | {sr_} | {fr_} |")
+
+    if strongest:
+        lines += [
+            "",
+            f"**Strongest signal today:** {strongest['lane_id']} — fired {strongest['fired']}x, "
+            f"day SR {strongest['day_sr']}%, {strongest['note']}",
+        ]
+    else:
+        lines += ["", "No elite signals fired today."]
+
+    # Race-level attributions (top 10 only for readability)
+    race_attrs = attr.get("race_attributions", [])
+    if race_attrs:
+        lines += [
+            "",
+            "### Race-Level Attribution (signal races only)",
+            "",
+            "| Time | Course | Outcome | VP | Tier | Lanes Fired |",
+            "|---|---|---|---|---|---|",
+        ]
+        for r in sorted(race_attrs, key=lambda x: x.get("off_time", ""))[:15]:
+            badges = " ".join(r.get("lanes_fired", []))
+            lines.append(
+                f"| {r.get('off_time','?')} | {r.get('track','?')} | {r.get('outcome','?')} "
+                f"| {r.get('vp','?')} | {r.get('tier','?')} | {badges} |"
+            )
+        if len(race_attrs) > 15:
+            lines.append(f"*... +{len(race_attrs)-15} more races in JSON*")
+
+    # Elite day flag
+    lines += [
+        "",
+        "---",
+        "",
+        "## Elite Day Flag",
+        "",
+        f"**Elite day:** {'✅ YES' if elite_flag.get('is_elite_day') else '❌ No'}",
+        f"**Reason:** {elite_flag.get('reason', '—')}",
+        f"**Dashboard watch recommended:** {'✅ YES' if elite_flag.get('dashboard_watch_recommended') else 'No'}",
+        f"**Note:** {elite_flag.get('dashboard_watch_reason', '—')}",
+    ]
+
+    # Operator visibility gaps
+    lines += [
+        "",
+        "---",
+        "",
+        "## Operator Visibility Gaps",
+        "",
+    ]
+    if vis_gaps:
+        for g in vis_gaps:
+            lines += [
+                f"**{g['gap']}** ({g['count']} races)",
+                "",
+                f"*{g['description']}*",
+                "",
+                f"Fix: {g['fix']}",
+                "",
+            ]
+        lines.append("> **Telegram Signal Attribution Panel required.** See `docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_V1.md`")
+    else:
+        lines.append("No operator visibility gaps identified today.")
+
     lines += [
         "",
         "---",

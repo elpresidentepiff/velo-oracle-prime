@@ -1,0 +1,250 @@
+{
+  "design_version": 1,
+  "created": "2026-04-29 00:43 UTC",
+  "status": "DESIGN_ONLY_NOT_YET_IN_PRODUCTION",
+  "baseline_commits": {
+    "candidate_lane_design": "3a007eb",
+    "shadow_ledger_design": "pending",
+    "evidence_vault": "63f37e9"
+  },
+  "panel_fields": [
+    {
+      "field": "pick",
+      "label": "Pick",
+      "source": "velo_verdicts.top.horse",
+      "required": true,
+      "note": "The V\u00c9L\u00d8 top pick for this race"
+    },
+    {
+      "field": "velo_prime_prob",
+      "label": "VP",
+      "source": "velo_verdicts.velo_prime_prob",
+      "required": true,
+      "format": "0.XX",
+      "note": "Velo Prime probability \u2014 primary confidence signal"
+    },
+    {
+      "field": "decision_tier",
+      "label": "Tier",
+      "source": "velo_verdicts.decision_tier",
+      "required": true,
+      "note": "A/B/C/D/X \u2014 A is highest confidence"
+    },
+    {
+      "field": "lane_badges",
+      "label": "Candidate Lanes",
+      "source": "computed from candidate lane conditions",
+      "required": false,
+      "note": "One badge per lane that qualifies. Empty section if no lanes fire."
+    },
+    {
+      "field": "sidecar_values",
+      "label": "Sidecar",
+      "source": "velo_verdicts.market_deception_score, improvement_score, place_prob",
+      "required": false,
+      "note": "Show values only if above threshold. Suppressed if all below threshold."
+    },
+    {
+      "field": "suppress_warnings",
+      "label": "Suppress Warnings",
+      "source": "decision_tier + velo_prime_prob",
+      "required": false,
+      "note": "Shown only if suppression signal active"
+    },
+    {
+      "field": "forensics_warnings",
+      "label": "Risk Flags",
+      "source": "computed from SP zone and tier",
+      "required": false,
+      "note": "Mid-price danger zone, short-fav override risk"
+    },
+    {
+      "field": "router_status",
+      "label": "Router",
+      "source": "router_shadow_audit_latest.csv",
+      "required": true,
+      "note": "Always shown \u2014 confirms shadow-only status"
+    },
+    {
+      "field": "operator_note",
+      "label": "Status",
+      "source": "hardcoded constant",
+      "required": true,
+      "note": "SHADOW EVIDENCE ONLY \u2014 NO STAKING AUTOMATION. Always shown."
+    }
+  ],
+  "badge_logic": [
+    {
+      "lane_id": "MARKET_DECEPTION_HIGH",
+      "badge": "\ud83d\udd25 MDS_HIGH",
+      "badge_label": "elite shadow signal",
+      "emoji": "\ud83d\udd25",
+      "condition": "market_deception_score > 0.50",
+      "evidence_line": "n=31 | SR 54.8% | Frame 96.8%",
+      "priority": 1,
+      "status": "SHADOW_CANDIDATE",
+      "show_if": "market_deception_score > 0.50",
+      "tone": "elite \u2014 highest-lift signal in the system",
+      "polarity_note": "Polarity confirmed: MDS > 0.5 predicts winners, not decoys."
+    },
+    {
+      "lane_id": "VP30_TIER_A",
+      "badge": "\u2705 VP30_TIER_A",
+      "badge_label": "proven shadow signal",
+      "emoji": "\u2705",
+      "condition": "velo_prime_prob >= 0.30 AND decision_tier == 'A'",
+      "evidence_line": "n=162 | SR 40.1% | Frame 77.2%",
+      "priority": 2,
+      "status": "SHADOW_CANDIDATE",
+      "show_if": "velo_prime_prob >= 0.30 AND decision_tier == 'A'",
+      "tone": "proven \u2014 most robust signal in the system by sample size"
+    },
+    {
+      "lane_id": "IMPROVEMENT_SCORE_HIGH",
+      "badge": "\ud83d\udcc8 IMPROVE_HIGH",
+      "badge_label": "proven shadow signal",
+      "emoji": "\ud83d\udcc8",
+      "condition": "improvement_score > 0.40",
+      "evidence_line": "n=62 | SR 43.5% | Frame 82.3%",
+      "priority": 3,
+      "status": "SHADOW_CANDIDATE",
+      "show_if": "improvement_score > 0.40",
+      "tone": "proven \u2014 progressive form improvement signal"
+    },
+    {
+      "lane_id": "PLACE_PROB_HIGH",
+      "badge": "\ud83d\udfe1 PLACE_HIGH",
+      "badge_label": "watchlist signal",
+      "emoji": "\ud83d\udfe1",
+      "condition": "place_prob > 0.80",
+      "evidence_line": "n=392 | SR 31.6% | Frame 66.8%",
+      "priority": 4,
+      "status": "WATCHLIST",
+      "show_if": "place_prob > 0.80",
+      "tone": "watchlist \u2014 requires VP or Tier A overlay to matter",
+      "caveat": "Shown only when VP >= 0.30 or Tier A also present, else suppressed from panel."
+    },
+    {
+      "lane_id": "B_TIER_LOW_VP_SUPPRESS",
+      "badge": "\u26a0\ufe0f B_LOW_VP",
+      "badge_label": "suppress candidate \u2014 drag signal",
+      "emoji": "\u26a0\ufe0f",
+      "condition": "decision_tier == 'B' AND velo_prime_prob < 0.30",
+      "evidence_line": "n=272 | SR 16.9% | Frame 44.1% \u2014 below baseline",
+      "priority": 5,
+      "status": "SUPPRESS_CANDIDATE",
+      "show_if": "decision_tier == 'B' AND velo_prime_prob < 0.30",
+      "tone": "suppress warning \u2014 this pick is in the confirmed drag zone",
+      "warning": "This pick is in the Tier B VP<0.30 suppress zone. Historical SR=16.9%."
+    },
+    {
+      "lane_id": "MID_PRICE_WINNER_FORENSICS",
+      "badge": "\ud83d\udd2c MID_PRICE_RISK",
+      "badge_label": "forensics \u2014 known miss zone",
+      "emoji": "\ud83d\udd2c",
+      "condition": "opponent_sp_range_3_to_8.5_possible",
+      "evidence_line": "352 misses = 58% of all misses in SP 3.0\u20138.5 zone",
+      "priority": 6,
+      "status": "FORENSICS_ONLY",
+      "show_if": "race_archetype contains mid-price contenders OR VP 0.25-0.35 range",
+      "tone": "risk flag \u2014 mid-price winner zone. V\u00c9L\u00d8 historically misses here.",
+      "note": "Cannot be computed cleanly pre-race without SP info. Show as risk flag when VP is marginal."
+    }
+  ],
+  "sidecar_thresholds": {
+    "market_deception_score": {
+      "show_threshold": 0.4,
+      "elite_threshold": 0.5,
+      "format": "MDS={value:.2f}",
+      "elite_label": "\u26a1 ELITE",
+      "note": "Show if > 0.40. Mark ELITE if > 0.50."
+    },
+    "improvement_score": {
+      "show_threshold": 0.3,
+      "strong_threshold": 0.4,
+      "format": "Improve={value:.2f}",
+      "strong_label": "\u2191 STRONG",
+      "note": "Show if > 0.30. Mark STRONG if > 0.40."
+    },
+    "place_prob": {
+      "show_threshold": 0.7,
+      "high_threshold": 0.8,
+      "format": "PlaceProb={value:.2f}",
+      "high_label": "\ud83d\udccd HIGH",
+      "note": "Show if > 0.70. Mark HIGH if > 0.80."
+    },
+    "rpdc_release_score": {
+      "show_threshold": 0.5,
+      "format": "RPDC={value:.2f}",
+      "note": "Show if > 0.50. Watchlist signal only."
+    }
+  },
+  "example_panels": [
+    {
+      "scenario": "Elite multi-signal race \u2014 MDS + VP30_TIER_A + IMPROVE",
+      "panel": "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83c\udfc7 V\u00c9L\u00d8 SIGNAL STACK\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nPick: Example Horse\nVP: 0.42 | Tier: A\n\nCandidate Lanes:\n\ud83d\udd25 MDS_HIGH \u2014 elite shadow signal\n   n=31 | SR 54.8% | Frame 96.8%\n\u2705 VP30_TIER_A \u2014 proven shadow signal\n   n=162 | SR 40.1% | Frame 77.2%\n\ud83d\udcc8 IMPROVE_HIGH \u2014 proven shadow signal\n   n=62 | SR 43.5% | Frame 82.3%\n\nSidecar: MDS=0.63 \u26a1 ELITE | Improve=0.47 \u2191 STRONG | PlaceProb=0.84 \ud83d\udccd HIGH\n\nRouter: SHADOW ONLY \u2014 unchanged\nStatus: SHADOW EVIDENCE ONLY \u2014 NO STAKING AUTOMATION\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501",
+      "signal_count": 3,
+      "tier": "A",
+      "vp": 0.42,
+      "mds": 0.63,
+      "improvement": 0.47,
+      "place_prob": 0.84
+    },
+    {
+      "scenario": "Single proven signal \u2014 VP30_TIER_A only",
+      "panel": "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83c\udfc7 V\u00c9L\u00d8 SIGNAL STACK\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nPick: Example Horse\nVP: 0.33 | Tier: A\n\nCandidate Lanes:\n\u2705 VP30_TIER_A \u2014 proven shadow signal\n   n=162 | SR 40.1% | Frame 77.2%\n\nSidecar: MDS=0.31 | Improve=0.28 | PlaceProb=0.76\n\nRouter: SHADOW ONLY \u2014 unchanged\nStatus: SHADOW EVIDENCE ONLY \u2014 NO STAKING AUTOMATION\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501",
+      "signal_count": 1,
+      "tier": "A",
+      "vp": 0.33,
+      "mds": 0.31,
+      "improvement": 0.28,
+      "place_prob": 0.76
+    },
+    {
+      "scenario": "Suppress warning \u2014 Tier B VP<0.30 drag zone",
+      "panel": "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83c\udfc7 V\u00c9L\u00d8 SIGNAL STACK\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nPick: Example Horse\nVP: 0.24 | Tier: B\n\nCandidate Lanes:\n\u26a0\ufe0f B_LOW_VP \u2014 suppress candidate\n   n=272 | SR 16.9% | Frame 44.1% \u2014 DRAG ZONE\n\nSidecar: MDS=0.18 | Improve=0.15 | PlaceProb=0.61\n\n\u26a0\ufe0f RISK: Tier B + VP<0.30 \u2014 confirmed drag zone\n   Suppress candidate. Historical SR well below baseline.\n\nRouter: SHADOW ONLY \u2014 unchanged\nStatus: SHADOW EVIDENCE ONLY \u2014 NO STAKING AUTOMATION\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501",
+      "signal_count": 0,
+      "tier": "B",
+      "vp": 0.24,
+      "suppress_warning": true
+    },
+    {
+      "scenario": "MDS elite signal \u2014 maximum interest",
+      "panel": "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83c\udfc7 V\u00c9L\u00d8 SIGNAL STACK\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nPick: Example Horse\nVP: 0.38 | Tier: A\n\nCandidate Lanes:\n\ud83d\udd25 MDS_HIGH \u2014 ELITE SHADOW SIGNAL\n   n=31 | SR 54.8% | Frame 96.8%\n   \u26a1 Highest-lift signal in system. n=31 \u2014 discipline required.\n\u2705 VP30_TIER_A \u2014 proven shadow signal\n   n=162 | SR 40.1% | Frame 77.2%\n\nSidecar: MDS=0.71 \u26a1 ELITE | Improve=0.22 | PlaceProb=0.81 \ud83d\udccd HIGH\n\nRouter: SHADOW ONLY \u2014 unchanged\nStatus: SHADOW EVIDENCE ONLY \u2014 NO STAKING AUTOMATION\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501",
+      "signal_count": 2,
+      "tier": "A",
+      "vp": 0.38,
+      "mds": 0.71,
+      "place_prob": 0.81,
+      "notes": "MDS > 0.70 should include the n=31 caution note explicitly."
+    }
+  ],
+  "visibility_gap": {
+    "current_state": "Current Telegram output shows: horse name, VP score, tier, and a narrative summary. It does NOT surface candidate lane badges, sidecar signal values, or suppress warnings. The operator cannot distinguish a VP=0.38/Tier A/MDS=0.71 pick from a VP=0.38/Tier A/MDS=0.10 pick.",
+    "gap_severity": "HIGH",
+    "example": "On 2026-04-28, MARKET_DECEPTION_HIGH would have fired on a subset of picks. The operator received the standard Telegram output with no indication of MDS elevation. A 54.8% SR signal was invisible at the operator layer.",
+    "fix_required": "Add the V\u00c9L\u00d8 SIGNAL STACK panel near the top of each race report. This does not change predictions. It surfaces what the engine already knows.",
+    "production_integration_path": {
+      "file_to_modify": "scripts/run_prime_today.py (Telegram output section)",
+      "function_to_update": "format_telegram_message() or equivalent",
+      "requires_operator_approval": true,
+      "status": "DESIGN_ONLY \u2014 production integration NOT yet approved",
+      "next_step": "Operator reviews this design doc, approves panel format, then integration is built"
+    }
+  },
+  "governance": {
+    "panel_name": "V\u00c9L\u00d8 SIGNAL STACK",
+    "panel_position": "top of each race prediction block in Telegram",
+    "display_logic": "Always show VP, Tier, Router status, and operator note. Show lane badges, sidecar values, and warnings only when relevant.",
+    "production_status": "DESIGN_ONLY \u2014 not yet in production Telegram output",
+    "approval_required_for_production": true,
+    "hard_rules": [
+      "The panel is informational only. It does not change the prediction or decision.",
+      "The SHADOW EVIDENCE ONLY note must always appear \u2014 never remove it.",
+      "No badge implies staking approval. Badges are shadow evidence signals only.",
+      "MDS_HIGH badge must always include the n=31 caution note when n is still below 75.",
+      "B_LOW_VP warning must always include the SR=16.9% figure.",
+      "Panel content must be derived from velo_verdicts and candidate lane design \u2014 no recalculation."
+    ]
+  }
+}

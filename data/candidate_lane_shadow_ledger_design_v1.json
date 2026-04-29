@@ -1,0 +1,506 @@
+{
+  "design_version": 1,
+  "created": "2026-04-29 00:43 UTC",
+  "status": "DESIGN_ONLY_NOT_YET_ACTIVE",
+  "baseline_commits": {
+    "candidate_lane_design": "3a007eb",
+    "evidence_vault": "63f37e9",
+    "router_baseline": "06ba74b"
+  },
+  "row_schema": {
+    "description": "One row per qualifying race per lane. Append-only. Primary key: lane_id + race_id.",
+    "fields": [
+      {
+        "name": "row_id",
+        "type": "uuid",
+        "note": "auto-generated"
+      },
+      {
+        "name": "lane_id",
+        "type": "text",
+        "note": "VP30_TIER_A | MARKET_DECEPTION_HIGH | etc"
+      },
+      {
+        "name": "date",
+        "type": "date",
+        "note": "race date YYYY-MM-DD"
+      },
+      {
+        "name": "race_id",
+        "type": "text",
+        "note": "from sigma_audits.race_id"
+      },
+      {
+        "name": "race_time",
+        "type": "text",
+        "note": "off_time HH:MM"
+      },
+      {
+        "name": "course",
+        "type": "text",
+        "note": "track/course name"
+      },
+      {
+        "name": "horse",
+        "type": "text",
+        "note": "predicted pick name"
+      },
+      {
+        "name": "velo_prime_prob",
+        "type": "float",
+        "note": "VP score 0-1"
+      },
+      {
+        "name": "decision_tier",
+        "type": "text",
+        "note": "A/B/C/D/X"
+      },
+      {
+        "name": "lane_condition",
+        "type": "text",
+        "note": "human-readable condition that qualified this row"
+      },
+      {
+        "name": "signal_value",
+        "type": "float",
+        "note": "the key signal value that triggered the lane (MDS, improve_score, VP, etc)"
+      },
+      {
+        "name": "market_deception_score",
+        "type": "float",
+        "note": "null if not relevant"
+      },
+      {
+        "name": "improvement_score",
+        "type": "float",
+        "note": "null if not relevant"
+      },
+      {
+        "name": "place_prob",
+        "type": "float",
+        "note": "null if not relevant"
+      },
+      {
+        "name": "sp_decimal",
+        "type": "float",
+        "note": "starting price decimal at race time"
+      },
+      {
+        "name": "result_position",
+        "type": "int",
+        "note": "1=winner, 2=placed, null=unranked"
+      },
+      {
+        "name": "won",
+        "type": "boolean",
+        "note": "true if outcome=WIN"
+      },
+      {
+        "name": "framed",
+        "type": "boolean",
+        "note": "true if outcome=WIN or PLACED"
+      },
+      {
+        "name": "missed_winner",
+        "type": "boolean",
+        "note": "true if outcome=MISS"
+      },
+      {
+        "name": "missed_winner_sp",
+        "type": "float",
+        "note": "SP of actual winner if missed"
+      },
+      {
+        "name": "miss_class",
+        "type": "text",
+        "note": "mid_priced_won | outsider_won | short_fav_won | market_decoy_followed | null"
+      },
+      {
+        "name": "router_source",
+        "type": "text",
+        "note": "V1_BASE | V2_CLASS4_ONLY | V6_GOLD_SEAM | NONE"
+      },
+      {
+        "name": "sidecar_sources",
+        "type": "text[]",
+        "note": "list of sidecars that also fired: MDS_HIGH | IMPROVE_HIGH | PLACE_HIGH"
+      },
+      {
+        "name": "race_archetype",
+        "type": "text",
+        "note": "Structure | Compression | Null"
+      },
+      {
+        "name": "audit_status",
+        "type": "text",
+        "note": "COMPLETE | PENDING | UNRESOLVABLE"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamptz",
+        "note": "UTC timestamp of row creation"
+      },
+      {
+        "name": "sigma_audit_id",
+        "type": "uuid",
+        "note": "FK to sigma_audits.id"
+      },
+      {
+        "name": "verdict_id",
+        "type": "uuid",
+        "note": "FK to velo_verdicts.id if available"
+      }
+    ],
+    "primary_key": [
+      "lane_id",
+      "race_id"
+    ],
+    "append_only": true,
+    "dedup_rule": "If race_id already exists for a lane_id, skip \u2014 do not overwrite."
+  },
+  "running_stats_schema": {
+    "description": "Per-lane running stats, recomputed after every append batch.",
+    "fields": [
+      {
+        "name": "lane_id",
+        "type": "text"
+      },
+      {
+        "name": "n",
+        "type": "int",
+        "note": "total qualifying rows appended"
+      },
+      {
+        "name": "wins",
+        "type": "int"
+      },
+      {
+        "name": "frames",
+        "type": "int",
+        "note": "wins + placed"
+      },
+      {
+        "name": "misses",
+        "type": "int"
+      },
+      {
+        "name": "strike_rate",
+        "type": "float",
+        "note": "wins / n"
+      },
+      {
+        "name": "frame_rate",
+        "type": "float",
+        "note": "frames / n"
+      },
+      {
+        "name": "roi_research",
+        "type": "float",
+        "note": "level-stake ROI at SP \u2014 research only, not operational"
+      },
+      {
+        "name": "avg_velo_prime_prob",
+        "type": "float"
+      },
+      {
+        "name": "avg_sp",
+        "type": "float"
+      },
+      {
+        "name": "avg_signal_value",
+        "type": "float",
+        "note": "avg of the lane trigger value"
+      },
+      {
+        "name": "first_date",
+        "type": "date"
+      },
+      {
+        "name": "last_date",
+        "type": "date"
+      },
+      {
+        "name": "operating_days_covered",
+        "type": "int"
+      },
+      {
+        "name": "day_contributions",
+        "type": "dict",
+        "note": "date \u2192 qualifying rows that day"
+      },
+      {
+        "name": "consecutive_weak_days",
+        "type": "int",
+        "note": "days with SR=0 in a row"
+      },
+      {
+        "name": "promotion_progress",
+        "type": "dict",
+        "note": "n_pct, sr_ok, frame_ok, ready_for_review"
+      },
+      {
+        "name": "freeze_status",
+        "type": "text",
+        "note": "ACTIVE | FROZEN | FROZEN_PENDING_REVIEW"
+      },
+      {
+        "name": "freeze_reason",
+        "type": "text",
+        "note": "null if ACTIVE"
+      },
+      {
+        "name": "last_computed_at",
+        "type": "timestamptz"
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "lane_id": "VP30_TIER_A",
+      "display_name": "VP\u22650.30 + Tier A",
+      "status": "SHADOW_CANDIDATE",
+      "lane_classification": "PROVEN_SIGNAL_SHADOW_TRACK",
+      "description": "Races where velo_prime_prob >= 0.30 AND decision_tier == 'A'. The primary live signal gate.",
+      "condition": "velo_prime_prob >= 0.30 AND decision_tier == 'A'",
+      "trigger_field": "velo_prime_prob",
+      "trigger_threshold": 0.3,
+      "secondary_condition": "decision_tier == 'A'",
+      "baseline_evidence": {
+        "n": 162,
+        "sr": 0.401,
+        "frame": 0.772,
+        "source": "velo_unified_evidence_audit_v1 (49 days)"
+      },
+      "promotion_gates": {
+        "minimum_n": 250,
+        "sr_floor": 0.35,
+        "frame_floor": 0.7,
+        "multi_week_required": true,
+        "human_review_required": true,
+        "next_stage": "WATCHLIST",
+        "notes": "n=250 gives statistical stability. SR floor is set below current 40.1% to allow for natural variance."
+      },
+      "freeze_rules": {
+        "auto_freeze_if": "SR < 0.20 at n >= 50 OR frame_rate < 0.55 at n >= 50",
+        "review_freeze_if": "consecutive_weak_days >= 10",
+        "unfreeze_condition": "operator review + SR recovery above floor"
+      },
+      "ledger_file": "data/shadow_ledgers/vp30_tier_a_shadow_ledger.csv",
+      "priority": 2
+    },
+    {
+      "lane_id": "MARKET_DECEPTION_HIGH",
+      "display_name": "Market Deception Score > 0.50",
+      "status": "SHADOW_CANDIDATE",
+      "lane_classification": "ELITE_SIGNAL_SHADOW_TRACK",
+      "description": "Races where market_deception_score > 0.50. POLARITY FLIP CONFIRMED: previously used as a decoy blocker. 49-day audit shows SR=54.8%, Frame=96.8% \u2014 this signal identifies live contenders the market shape is disguising. Highest upside signal in the system.",
+      "condition": "market_deception_score > 0.50",
+      "trigger_field": "market_deception_score",
+      "trigger_threshold": 0.5,
+      "secondary_condition": null,
+      "baseline_evidence": {
+        "n": 31,
+        "sr": 0.548,
+        "frame": 0.968,
+        "lift": "+34.2%",
+        "source": "velo_unified_evidence_audit_v1 (49 days)",
+        "warning": "n=31 \u2014 elite signal but small sample. Treat with discipline."
+      },
+      "promotion_gates": {
+        "minimum_n": 75,
+        "sr_floor": 0.4,
+        "frame_floor": 0.8,
+        "multi_week_required": true,
+        "human_review_required": true,
+        "next_stage": "WATCHLIST",
+        "notes": "Lower n gate (75 vs 250) because the signal is extreme. If SR holds above 40% at n=75 this warrants urgent human review. Extra caution: if SR drops below 30% at n=50, freeze immediately \u2014 extreme signals that regress can indicate overfitting."
+      },
+      "freeze_rules": {
+        "auto_freeze_if": "SR < 0.25 at n >= 40 OR frame_rate < 0.65 at n >= 40",
+        "review_freeze_if": "consecutive_weak_days >= 7",
+        "polarity_watch": "If SR falls below global baseline (20.6%), the polarity flip hypothesis fails \u2014 escalate immediately.",
+        "unfreeze_condition": "operator review \u2014 do not auto-unfreeze this lane"
+      },
+      "ledger_file": "data/shadow_ledgers/market_deception_high_shadow_ledger.csv",
+      "priority": 1
+    },
+    {
+      "lane_id": "IMPROVEMENT_SCORE_HIGH",
+      "display_name": "Improvement Score > 0.40",
+      "status": "SHADOW_CANDIDATE",
+      "lane_classification": "PROVEN_SIGNAL_SHADOW_TRACK",
+      "description": "Races where improvement_score > 0.40. Captures horses showing progressive form improvement.",
+      "condition": "improvement_score > 0.40",
+      "trigger_field": "improvement_score",
+      "trigger_threshold": 0.4,
+      "secondary_condition": null,
+      "baseline_evidence": {
+        "n": 62,
+        "sr": 0.435,
+        "frame": 0.823,
+        "lift": "+22.9%",
+        "source": "velo_unified_evidence_audit_v1 (49 days)"
+      },
+      "promotion_gates": {
+        "minimum_n": 100,
+        "sr_floor": 0.35,
+        "frame_floor": 0.75,
+        "multi_week_required": true,
+        "human_review_required": true,
+        "next_stage": "WATCHLIST",
+        "notes": "n=62 at baseline. Need 100 to confirm. SR floor set below current 43.5% to allow variance."
+      },
+      "freeze_rules": {
+        "auto_freeze_if": "SR < 0.22 at n >= 60 OR frame_rate < 0.60 at n >= 60",
+        "review_freeze_if": "consecutive_weak_days >= 10",
+        "unfreeze_condition": "operator review + SR recovery above floor"
+      },
+      "ledger_file": "data/shadow_ledgers/improvement_score_high_shadow_ledger.csv",
+      "priority": 3
+    },
+    {
+      "lane_id": "PLACE_PROB_HIGH",
+      "display_name": "Place Probability > 0.80",
+      "status": "WATCHLIST",
+      "lane_classification": "PROMISING_SIGNAL_WATCHLIST",
+      "description": "Races where place_prob > 0.80. Large sample signal (n=392). SR=31.6% is meaningful but requires VP or Tier A overlay before candidate promotion. Currently WATCHLIST \u2014 not yet a shadow candidate.",
+      "condition": "place_prob > 0.80",
+      "trigger_field": "place_prob",
+      "trigger_threshold": 0.8,
+      "secondary_condition": null,
+      "baseline_evidence": {
+        "n": 392,
+        "sr": 0.316,
+        "frame": 0.668,
+        "lift": "+11.0%",
+        "source": "velo_unified_evidence_audit_v1 (49 days)"
+      },
+      "promotion_gates": {
+        "minimum_n": 500,
+        "sr_floor": 0.28,
+        "frame_floor": 0.65,
+        "overlay_required": "VP >= 0.30 OR decision_tier == 'A' required before SHADOW_CANDIDATE promotion",
+        "human_review_required": true,
+        "next_stage": "SHADOW_CANDIDATE (with VP/Tier overlay requirement)",
+        "notes": "Place probability alone is not enough \u2014 it is measuring a different dimension than VP. Only valid as a shadow candidate when combined with VP\u22650.30 or Tier A. Track volume at n=392 is the highest in the system \u2014 watch for sample dilution."
+      },
+      "freeze_rules": {
+        "auto_freeze_if": "SR < 0.18 at n >= 200 OR frame_rate < 0.50 at n >= 200",
+        "review_freeze_if": "consecutive_weak_days >= 14",
+        "unfreeze_condition": "operator review"
+      },
+      "ledger_file": "data/shadow_ledgers/place_prob_high_shadow_ledger.csv",
+      "priority": 4
+    },
+    {
+      "lane_id": "B_TIER_LOW_VP_SUPPRESS",
+      "display_name": "Tier B + VP < 0.30 (SUPPRESS CANDIDATE)",
+      "status": "SUPPRESS_CANDIDATE",
+      "lane_classification": "SUPPRESS_CANDIDATE",
+      "description": "Races where decision_tier == 'B' AND velo_prime_prob < 0.30. SR=16.9%, Frame=44.1% \u2014 confirmed drag on global metrics. Suppression test: removing these 272 races improves global SR from 20.6% \u2192 21.6% at a coverage cost of -21.8%. Tracking to confirm drag persists before suppression protocol.",
+      "condition": "decision_tier == 'B' AND velo_prime_prob < 0.30",
+      "trigger_field": "decision_tier",
+      "trigger_threshold": null,
+      "secondary_condition": "velo_prime_prob < 0.30",
+      "baseline_evidence": {
+        "n": 272,
+        "sr": 0.169,
+        "frame": 0.441,
+        "suppression_gain": "+1.0% global SR, +1.2% global frame at -21.8% coverage",
+        "source": "velo_unified_evidence_audit_v1 (49 days)"
+      },
+      "suppression_review_gates": {
+        "minimum_n": 350,
+        "sr_ceiling": 0.18,
+        "frame_ceiling": 0.5,
+        "notes": "If SR remains below 18% and frame below 50% at n=350, suppression protocol is warranted. Present evidence to operator for decision. Do NOT auto-suppress \u2014 this is a coverage reduction and requires explicit approval."
+      },
+      "recovery_gates": {
+        "recovery_if": "SR climbs above 22% at n >= 300",
+        "notes": "If SR recovers, re-classify as WATCHLIST and hold suppression."
+      },
+      "freeze_rules": {
+        "not_applicable": true,
+        "notes": "Suppress candidates do not freeze \u2014 they accumulate evidence towards a suppression decision."
+      },
+      "ledger_file": "data/shadow_ledgers/b_tier_low_vp_suppress_ledger.csv",
+      "priority": 5
+    },
+    {
+      "lane_id": "MID_PRICE_WINNER_FORENSICS",
+      "display_name": "Mid-Price Winner Forensics (SP 3.0\u20138.5 Miss Zone)",
+      "status": "FORENSICS_ONLY",
+      "lane_classification": "FORENSICS_ONLY",
+      "description": "Races where V\u00c9L\u00d8 missed and the actual winner had SP between 3.0 and 8.5. 352 misses = 58% of all misses across 49 days. This is the primary unsolved problem. No scoring function. No execution target. Research only.",
+      "condition": "outcome == 'MISS' AND actual_winner_sp >= 3.0 AND actual_winner_sp <= 8.5",
+      "trigger_field": "actual_winner_sp",
+      "trigger_threshold": null,
+      "secondary_condition": "outcome == 'MISS'",
+      "baseline_evidence": {
+        "miss_count": 352,
+        "pct_of_all_misses": 0.58,
+        "sp_zone": "3.0 to 8.5",
+        "source": "velo_unified_evidence_audit_v1 (49 days)"
+      },
+      "research_questions": [
+        "1. SP clustering \u2014 where within 3.0\u20138.5 do misses concentrate? (3.0\u20134.5 vs 5.0\u20138.5?)",
+        "2. VP distribution \u2014 what VP score did V\u00c9L\u00d8 assign to these races when it missed?",
+        "3. Tier distribution \u2014 are mid-price winner misses concentrated in Tier B/C?",
+        "4. Race type distribution \u2014 flat vs jump? Class 3/4/5 split?",
+        "5. Course/distance pattern \u2014 do certain tracks produce more mid-price winner misses?",
+        "6. Time of meeting \u2014 do mid-price winner misses cluster in later races?"
+      ],
+      "forensics_goal": "Determine whether V\u00c9L\u00d8 is systematically underweighting mid-price contenders, or whether this is irreducible noise at 3.0\u20138.5 SP. If systematic, identify which feature or model component is responsible.",
+      "promotion_path": "NONE \u2014 forensics only. Cannot be promoted to a shadow candidate.",
+      "ledger_file": "data/shadow_ledgers/mid_price_winner_forensics_ledger.csv",
+      "ledger_note": "Forensics ledger captures MISS rows in SP 3.0\u20138.5 zone. Each row has the full miss context for pattern analysis.",
+      "priority": 6
+    }
+  ],
+  "governance": {
+    "principles": [
+      "All ledgers are append-only. No row is ever deleted or modified after writing.",
+      "A race qualifies for a lane when it meets the lane condition at the time of prediction.",
+      "Lane qualification is determined from sigma_audit rows (post-result), not from racecard.",
+      "Signal values (MDS, improve_score, VP) come from velo_verdicts or verdict JSON \u2014 not recalculated.",
+      "Ledger rows are written by the shadow ledger append script after each sigma batch.",
+      "No staking or betting decision is ever derived from ledger state.",
+      "No lane can be promoted without explicit operator approval."
+    ],
+    "lifecycle": {
+      "stages": [
+        "DESIGN (current) \u2014 lane defined, schema specified, no live rows",
+        "SHADOW_CANDIDATE \u2014 live rows accumulating, no execution",
+        "WATCHLIST \u2014 n gate passed, SR/Frame reviewed, watching for stability",
+        "PAPER_EXECUTION \u2014 operator tracks as if executing, still no staking",
+        "LIVE_DISCUSSION \u2014 sustained evidence, operator review for live activation",
+        "LIVE_ACTIVATION \u2014 explicit operator approval, full audit trail required"
+      ],
+      "freeze_stages": [
+        "FROZEN",
+        "FROZEN_PENDING_REVIEW"
+      ],
+      "current_stage_all_lanes": "DESIGN"
+    },
+    "append_script": {
+      "name": "scripts/run_candidate_lane_shadow_append.py",
+      "status": "NOT_YET_BUILT",
+      "purpose": "Reads today's sigma results, evaluates each lane condition, appends qualifying rows to ledger CSVs.",
+      "trigger": "After scripts/run_results_sigma.py completes",
+      "next_mission": "candidate_lane_shadow_ledger_dry_run"
+    },
+    "storage": {
+      "primary": "data/shadow_ledgers/ \u2014 CSV files, one per lane",
+      "index": "data/shadow_ledgers/shadow_ledger_index.json \u2014 running stats per lane",
+      "immutable_snapshots": "data/shadow_ledgers/snapshots/ \u2014 timestamped on each batch",
+      "supabase_path": "FUTURE \u2014 table candidate_lane_shadow_rows if/when DB schema approved"
+    },
+    "hard_rules": [
+      "NO staking or betting based on ledger state.",
+      "NO router rule changes from ledger observations.",
+      "NO model training based on ledger patterns.",
+      "NO promotion without operator approval.",
+      "NO auto-unfreeze of MARKET_DECEPTION_HIGH \u2014 operator-only."
+    ]
+  }
+}
