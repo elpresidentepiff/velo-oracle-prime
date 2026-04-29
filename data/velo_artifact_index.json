@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-28",
+  "last_updated": "2026-04-29",
   "description": "Master index of all VELO artifacts — scripts, evidence, company docs, data files",
 
   "evidence_vault": {
@@ -9,6 +9,13 @@
       "csv": "data/evidence_vault/velo_unified_evidence_audit_v1_metrics.csv",
       "date": "2026-04-28",
       "scope": "49 race days, 1391 sigma rows, 1604 verdicts"
+    },
+    "candidate_lanes_v1": {
+      "json": "data/velo_candidate_lane_design_v1.json",
+      "md": "data/velo_candidate_lane_design_v1.md",
+      "evidence_doc": "docs/evidence/VELO_CANDIDATE_LANES_V1.md",
+      "date": "2026-04-29",
+      "scope": "6 candidate lanes: 3 SHADOW_CANDIDATE, 1 WATCHLIST, 1 SUPPRESS_CANDIDATE, 1 FORENSICS_ONLY"
     },
     "special_days": {
       "2026-04-28": {
@@ -28,7 +35,8 @@
     "truth_board_v1": "docs/evidence/VELO_OPERATING_TRUTH_BOARD_V1.md",
     "company_brief_v1": "docs/evidence/VELO_COMPANY_EVIDENCE_BRIEF_V1.md",
     "archive_protocol": "docs/evidence/VELO_EVIDENCE_ARCHIVE_PROTOCOL.md",
-    "special_day_index": "docs/evidence/VELO_SPECIAL_DAY_REPORTS_INDEX.md"
+    "special_day_index": "docs/evidence/VELO_SPECIAL_DAY_REPORTS_INDEX.md",
+    "candidate_lanes_v1": "docs/evidence/VELO_CANDIDATE_LANES_V1.md"
   },
 
   "company_documents": {
@@ -44,7 +52,8 @@
     "build_innovation_protocol": "scripts/build_innovation_protocol.py",
     "router_shadow_audit": "scripts/router_shadow_audit.py",
     "unified_evidence_audit": "scripts/run_velo_unified_evidence_audit.py",
-    "special_day_report": "scripts/generate_special_day_report.py"
+    "special_day_report": "scripts/generate_special_day_report.py",
+    "candidate_lane_design": "scripts/design_velo_candidate_lanes.py"
   },
 
   "agent_context": {
@@ -67,6 +76,11 @@
     "improvement_gt_04_sr": "43.5%",
     "improvement_gt_04_n": 62,
     "primary_miss_class": "mid_priced_won (58% of all misses in SP 3.0-8.5 zone)",
-    "suppress_candidate": "Tier B VP<0.30 (SR=16.9%, n=272)"
+    "suppress_candidate": "Tier B VP<0.30 (SR=16.9%, n=272)",
+    "candidate_lanes_designed": 6,
+    "candidate_lanes_shadow": 3,
+    "candidate_lanes_watchlist": 1,
+    "candidate_lanes_suppress": 1,
+    "candidate_lanes_forensics": 1
   }
 }

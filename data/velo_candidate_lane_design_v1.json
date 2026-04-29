@@ -1,0 +1,530 @@
+{
+  "run_ts": "2026-04-29 00:17 UTC",
+  "evidence_source": "data/evidence_vault/velo_unified_evidence_audit_v1.json",
+  "global_baseline": {
+    "sr": 20.6,
+    "frame": 48.4,
+    "baseline_sr": 20.0,
+    "baseline_frame": 70.0
+  },
+  "lanes": [
+    {
+      "lane_id": "VP30_TIER_A",
+      "display_name": "VP \u2265 0.30 + Tier A",
+      "status": "SHADOW_CANDIDATE",
+      "priority": 1,
+      "condition": {
+        "velo_prime_prob": {
+          "gte": 0.3
+        },
+        "decision_tier": {
+          "eq": "A"
+        }
+      },
+      "condition_plain": "velo_prime_prob >= 0.30 AND decision_tier == 'A'",
+      "signal_sources": [
+        "velo_prime_prob",
+        "decision_tier"
+      ],
+      "source_table": "velo_verdicts + sigma_audits",
+      "evidence": {
+        "n": 162,
+        "wins": 65,
+        "placed": 125,
+        "misses": 37,
+        "strike_rate": 40.1,
+        "frame_rate": 77.2,
+        "avg_vp": 0.425,
+        "avg_winner_sp": 2.26,
+        "avg_miss_sp": 7.12,
+        "sr_lift_vs_global": 19.5,
+        "fr_lift_vs_global": 28.8,
+        "evidence_days": 49,
+        "roi_research": "not_yet_calculated",
+        "note": "Most miss SPs in 3.25-9.0 range \u2014 mid-price zone still the weakness"
+      },
+      "confidence_level": "HIGH",
+      "confidence_note": "n=162 across 49 days. Monotonic VP relationship confirms the signal is structural.",
+      "risks": [
+        "Tier A self-selection: these are the system's highest-confidence races \u2014 selection bias possible",
+        "Average winner SP=2.26 means wins come from short-priced horses \u2014 market may price this in",
+        "37 misses include 15+ races where short favourites won \u2014 short-fav override needed",
+        "Miss SP avg=7.12: mid-price winner problem persists even in this lane"
+      ],
+      "promotion_gates": {
+        "shadow_candidate_entry": "n=162 (already passed \u2014 evidence exists)",
+        "first_review": "n=200 qualifying results",
+        "paper_execution_gate": "n=300, SR\u226535%, Frame\u226570%, no freeze triggered",
+        "live_discussion_gate": "n=500, multi-month track record, SR\u226530%, Frame\u226570%",
+        "live_activation": "NEVER without explicit operator decision + legal review"
+      },
+      "shadow_ledger_fields": [
+        "date",
+        "race_id",
+        "track",
+        "off_time",
+        "horse",
+        "velo_prime_prob",
+        "decision_tier",
+        "outcome",
+        "actual_winner_sp",
+        "miss_reason",
+        "shadow_stake_\u00a31",
+        "cumulative_pl",
+        "cumulative_roi",
+        "consecutive_losses"
+      ],
+      "pass_thresholds": {
+        "min_sr_at_n20": 30.0,
+        "min_sr_at_n50": 28.0,
+        "min_sr_at_n100": 25.0,
+        "min_frame_at_n20": 65.0,
+        "min_frame_at_n50": 62.0,
+        "target_roi": "positive at n=50"
+      },
+      "freeze_conditions": [
+        "SR drops below 20.0% at n\u226530 (global baseline \u2014 no lift = no point)",
+        "Frame drops below 55.0% at n\u226530",
+        "6+ consecutive losses at any sample size",
+        "ROI turns negative and stays negative for 20+ races at n\u226550"
+      ],
+      "lane_classification": "SHADOW_CANDIDATE",
+      "can_affect_live_routing": false,
+      "human_approval_required_for": [
+        "paper_execution",
+        "live_discussion",
+        "any_staking"
+      ]
+    },
+    {
+      "lane_id": "MARKET_DECEPTION_HIGH",
+      "display_name": "Market Deception Score > 0.50",
+      "status": "SHADOW_CANDIDATE",
+      "priority": 2,
+      "condition": {
+        "market_deception_score": {
+          "gt": 0.5
+        }
+      },
+      "condition_plain": "market_deception_score > 0.50",
+      "signal_sources": [
+        "market_deception_score"
+      ],
+      "source_table": "velo_verdicts",
+      "evidence": {
+        "n": 31,
+        "wins": 17,
+        "placed": 30,
+        "misses": 1,
+        "strike_rate": 54.8,
+        "frame_rate": 96.8,
+        "sr_lift_vs_global": 34.2,
+        "fr_lift_vs_global": 48.4,
+        "evidence_days": 49,
+        "roi_research": "not_yet_calculated",
+        "note": "Frame=96.8% means almost every pick finishes in the top 3. SR=54.8% means over half win outright. This is the highest-lift sidecar in the system. n=31 is promising but not yet sufficient for full confidence. CAUTION: In A/B routing, high MDS was historically treated as DECOY risk. The evidence here directly contradicts that assumption. Polarity flip confirmed: high MDS in velo_verdicts = model-backed signal, not decoy."
+      },
+      "confidence_level": "PROMISING_HIGH_UPSIDE",
+      "confidence_note": "n=31 clears the INSUFFICIENT threshold but remains small. SR=54.8% is extraordinary. Must track for regression \u2014 if SR drops to 30-35% range it may still be valuable but the current numbers could be a small-sample peak.",
+      "risks": [
+        "n=31: small sample \u2014 single regression patch could drop SR significantly",
+        "Polarity confusion: MDS was previously used as a decoy blocker. If any code path still treats MDS>0.5 as a negative signal, this lane will self-contradict",
+        "MDS>0.5 fires on ~2% of predictions \u2014 very low volume, slow ledger accumulation",
+        "Frame=96.8% at n=31 is likely to regress toward 80-85% at n=100 \u2014 still excellent but not 97%",
+        "No SP filter applied: winning at any price. If most wins are short-priced (SP<2), ROI may be limited despite high SR"
+      ],
+      "promotion_gates": {
+        "shadow_candidate_entry": "IMMEDIATE \u2014 evidence sufficient to start shadow tracking",
+        "first_review": "n=50 qualifying results",
+        "paper_execution_gate": "n=80, SR\u226540%, Frame\u226580%, positive ROI, no freeze",
+        "live_discussion_gate": "n=100, multi-month track record, SR\u226535%",
+        "live_activation": "NEVER without explicit operator decision + legal review"
+      },
+      "shadow_ledger_fields": [
+        "date",
+        "race_id",
+        "track",
+        "off_time",
+        "horse",
+        "market_deception_score",
+        "velo_prime_prob",
+        "decision_tier",
+        "outcome",
+        "actual_winner_sp",
+        "miss_reason",
+        "shadow_stake_\u00a31",
+        "cumulative_pl",
+        "cumulative_roi",
+        "consecutive_losses"
+      ],
+      "pass_thresholds": {
+        "min_sr_at_n20": 35.0,
+        "min_sr_at_n50": 30.0,
+        "min_sr_at_n100": 25.0,
+        "min_frame_at_n20": 75.0,
+        "min_frame_at_n50": 70.0,
+        "target_roi": "positive at n=30"
+      },
+      "freeze_conditions": [
+        "SR drops below 25.0% at n\u226520 (still above global but serious regression from 54.8%)",
+        "Frame drops below 65.0% at n\u226520 (regression from 96.8%)",
+        "5+ consecutive losses at any sample size",
+        "ROI negative for 15+ consecutive races at n\u226530"
+      ],
+      "lane_classification": "SHADOW_CANDIDATE",
+      "can_affect_live_routing": false,
+      "human_approval_required_for": [
+        "any_threshold_change",
+        "paper_execution",
+        "any_staking"
+      ]
+    },
+    {
+      "lane_id": "IMPROVEMENT_SCORE_HIGH",
+      "display_name": "Improvement Score > 0.40",
+      "status": "SHADOW_CANDIDATE",
+      "priority": 3,
+      "condition": {
+        "improvement_score": {
+          "gt": 0.4
+        }
+      },
+      "condition_plain": "improvement_score > 0.40",
+      "signal_sources": [
+        "improvement_score"
+      ],
+      "source_table": "velo_verdicts",
+      "evidence": {
+        "n": 62,
+        "wins": 27,
+        "placed": 51,
+        "misses": 11,
+        "strike_rate": 43.5,
+        "frame_rate": 82.3,
+        "sr_lift_vs_global": 22.9,
+        "fr_lift_vs_global": 33.9,
+        "evidence_days": 49,
+        "roi_research": "not_yet_calculated",
+        "note": "The improvement specialist model identifies horses about to step forward in performance. SR=43.5% at n=62 is the second-highest SR in the system. Frame=82.3% means picks are competitive in 5 of 6 races. This is a consistently strong signal with a meaningful sample."
+      },
+      "confidence_level": "HIGH",
+      "confidence_note": "n=62 is a meaningful sample. SR=43.5% at this size is convincing. The improvement model is one of 7 specialist models \u2014 it fires selectively.",
+      "risks": [
+        "Improvement score fires on horses showing forward form \u2014 these may already be short-priced, limiting ROI",
+        "The improvement model was trained on historical data \u2014 may not generalise to unusual going/class combinations",
+        "n=62: at the lower end of confidence \u2014 need 100+ for full PROVEN status",
+        "Interaction with MDS: a horse showing improvement in a deceptive market may fire both signals \u2014 avoid double-counting"
+      ],
+      "promotion_gates": {
+        "shadow_candidate_entry": "IMMEDIATE \u2014 evidence sufficient",
+        "first_review": "n=80 qualifying results",
+        "paper_execution_gate": "n=120, SR\u226535%, Frame\u226575%, positive ROI",
+        "live_discussion_gate": "n=150, SR\u226530%, Frame\u226572%",
+        "live_activation": "NEVER without explicit operator decision + legal review"
+      },
+      "shadow_ledger_fields": [
+        "date",
+        "race_id",
+        "track",
+        "off_time",
+        "horse",
+        "improvement_score",
+        "velo_prime_prob",
+        "decision_tier",
+        "outcome",
+        "actual_winner_sp",
+        "miss_reason",
+        "shadow_stake_\u00a31",
+        "cumulative_pl",
+        "cumulative_roi",
+        "consecutive_losses"
+      ],
+      "pass_thresholds": {
+        "min_sr_at_n30": 32.0,
+        "min_sr_at_n60": 30.0,
+        "min_sr_at_n100": 25.0,
+        "min_frame_at_n30": 70.0,
+        "min_frame_at_n60": 65.0,
+        "target_roi": "positive at n=50"
+      },
+      "freeze_conditions": [
+        "SR drops below 22.0% at n\u226530",
+        "Frame drops below 60.0% at n\u226530",
+        "6+ consecutive losses",
+        "ROI negative for 20+ consecutive races at n\u226550"
+      ],
+      "lane_classification": "SHADOW_CANDIDATE",
+      "can_affect_live_routing": false,
+      "human_approval_required_for": [
+        "paper_execution",
+        "any_staking"
+      ]
+    },
+    {
+      "lane_id": "PLACE_PROB_HIGH",
+      "display_name": "Place Probability > 0.80",
+      "status": "WATCHLIST",
+      "priority": 4,
+      "condition": {
+        "place_prob": {
+          "gt": 0.8
+        }
+      },
+      "condition_plain": "place_prob > 0.80",
+      "signal_sources": [
+        "place_prob"
+      ],
+      "source_table": "velo_verdicts",
+      "evidence": {
+        "n": 392,
+        "wins": 124,
+        "placed": 262,
+        "misses": 130,
+        "strike_rate": 31.6,
+        "frame_rate": 66.8,
+        "sr_lift_vs_global": 11.0,
+        "fr_lift_vs_global": 18.4,
+        "evidence_days": 49,
+        "roi_research": "not_yet_calculated",
+        "note": "SR=31.6% at n=392 is the largest sample of any sidecar signal. Frame=66.8% is slightly below the 70% target but with 392 races it is statistically significant. This signal fires frequently \u2014 392 from 1391 total = 28% of all predictions. Lift of +11% SR over global baseline is consistent and meaningful at this scale."
+      },
+      "confidence_level": "WATCHLIST_GOOD",
+      "confidence_note": "Large sample (n=392) but frame rate misses the 70% target. The signal provides meaningful lift without exceptional performance. WATCHLIST not SHADOW_CANDIDATE because it does not differentiate winners sharply enough on its own.",
+      "risks": [
+        "Frame=66.8% is just below the 70% target \u2014 may be a ceiling effect for the place_prob specialist",
+        "High coverage (28% of all predictions) means it is not selective \u2014 needs combination with VP or tier filter",
+        "The place_prob model is optimised for placement, not wins \u2014 SR=31.6% may be the ceiling for this signal alone",
+        "Combining with VP\u22650.30 may create a stronger combined lane \u2014 test separately"
+      ],
+      "promotion_gates": {
+        "watchlist_entry": "IMMEDIATE \u2014 already at n=392",
+        "shadow_candidate_gate": "n=500, combined with VP\u22650.30 filter, SR\u226528%, Frame\u226568%",
+        "paper_execution_gate": "n=700, SR\u226525%, Frame\u226568%, positive ROI over 6+ months",
+        "live_discussion_gate": "n=1000",
+        "live_activation": "NEVER without explicit operator decision + legal review"
+      },
+      "shadow_ledger_fields": [
+        "date",
+        "race_id",
+        "track",
+        "off_time",
+        "horse",
+        "place_prob",
+        "velo_prime_prob",
+        "decision_tier",
+        "outcome",
+        "actual_winner_sp",
+        "miss_reason",
+        "shadow_stake_\u00a31",
+        "cumulative_pl",
+        "cumulative_roi"
+      ],
+      "pass_thresholds": {
+        "min_sr_maintained": 25.0,
+        "min_frame_maintained": 60.0,
+        "positive_roi_at": "n=200"
+      },
+      "freeze_conditions": [
+        "SR drops below 20.0% (global baseline) at n\u2265100",
+        "Frame drops below 55.0% at n\u2265100",
+        "10+ consecutive losses"
+      ],
+      "lane_classification": "WATCHLIST",
+      "can_affect_live_routing": false,
+      "human_approval_required_for": [
+        "shadow_candidate_promotion",
+        "any_staking"
+      ]
+    },
+    {
+      "lane_id": "B_TIER_LOW_VP_SUPPRESS",
+      "display_name": "Tier B VP < 0.30 \u2014 Suppress Candidate",
+      "status": "SUPPRESS_CANDIDATE",
+      "priority": 5,
+      "condition": {
+        "decision_tier": {
+          "eq": "B"
+        },
+        "velo_prime_prob": {
+          "lt": 0.3
+        }
+      },
+      "condition_plain": "decision_tier == 'B' AND velo_prime_prob < 0.30",
+      "signal_sources": [
+        "decision_tier",
+        "velo_prime_prob"
+      ],
+      "source_table": "sigma_audits + velo_verdicts",
+      "evidence": {
+        "n": 272,
+        "wins": 46,
+        "placed": 120,
+        "misses": 152,
+        "strike_rate": 16.9,
+        "frame_rate": 44.1,
+        "avg_vp": 0.245,
+        "avg_winner_sp": 4.93,
+        "avg_miss_sp": 8.27,
+        "sr_lift_vs_global": -3.7,
+        "suppression_test": {
+          "original_n": 1249,
+          "suppressed_n": 977,
+          "rows_removed": 272,
+          "coverage_lost_pct": 21.8,
+          "original_sr": 20.6,
+          "suppressed_sr": 21.6,
+          "sr_gain": 1.0,
+          "original_frame": 48.4,
+          "suppressed_frame": 49.6,
+          "frame_gain": 1.2
+        },
+        "note": "SR=16.9% is below global baseline. These predictions have negative lift (-3.7%). Suppressing them gains only +1.0% SR and +1.2% frame but loses 21.8% coverage. The gain is modest. The direction is confirmed: these are drag. Suppression is an operator decision, not automatic."
+      },
+      "confidence_level": "CONFIRMED_DRAG",
+      "confidence_note": "n=272 is conclusive. SR=16.9% across 49 days is consistently below baseline. This is not a signal \u2014 it is a noise band.",
+      "risks": [
+        "Coverage loss: removing 272 races loses 21.8% of daily prediction volume",
+        "Some Tier B VP<0.30 races may be E/W candidates \u2014 suppressing them removes potential placed returns",
+        "The gain (+1% SR) is statistically real but operationally modest",
+        "If the VP calibration improves, some currently VP<0.30 B-tier races may become VP\u22650.30 \u2014 suppression rule should be reviewed after any model update"
+      ],
+      "suppression_protocol": {
+        "what_to_suppress": "All Tier B predictions where velo_prime_prob < 0.30",
+        "where": "Any future candidate lane design \u2014 do not include these in lane pass criteria",
+        "not_where": "Do not change the production sigma output \u2014 all predictions still reported to Telegram",
+        "activation_requires": "Explicit operator decision \u2014 do not auto-suppress",
+        "review_trigger": "After any model update that changes VP calibration"
+      },
+      "lane_classification": "SUPPRESS_CANDIDATE",
+      "can_affect_live_routing": false,
+      "human_approval_required_for": [
+        "any_suppression_activation"
+      ]
+    },
+    {
+      "lane_id": "MID_PRICE_WINNER_FORENSICS",
+      "display_name": "Mid-Priced Winner Forensics Lane (SP 3.0\u20138.5)",
+      "status": "FORENSICS_ONLY",
+      "priority": 6,
+      "condition": {
+        "actual_winner_sp": {
+          "gte": 3.0,
+          "lte": 8.5
+        },
+        "outcome": {
+          "eq": "MISS"
+        }
+      },
+      "condition_plain": "outcome == 'MISS' AND actual_winner_sp between 3.0 and 8.5",
+      "signal_sources": [
+        "actual_winner_sp",
+        "miss_reason",
+        "outcome"
+      ],
+      "source_table": "sigma_audits",
+      "evidence": {
+        "total_misses": 607,
+        "sp_3_8_5_misses": 352,
+        "sp_3_8_5_pct_of_misses": 58.0,
+        "miss_class_breakdown": {
+          "mid_priced_won": 279,
+          "outsider_won": 92,
+          "market_decoy_followed": 87,
+          "short_fav_won": 81
+        },
+        "high_vp_misses": {
+          "n": 15,
+          "winner_sps": [
+            1.44,
+            1.57,
+            1.67,
+            1.91,
+            2.2,
+            3.25,
+            3.5,
+            3.75,
+            4.33,
+            4.5
+          ],
+          "note": "15 races where VP>=0.40 but a short-price horse won instead"
+        },
+        "note": "This is not a promotion lane. It is a research diagnostic. V\u00c9L\u00d8 is missing 279 mid-priced winners across 49 days. These are races where the model competed but ranked the wrong horse first. The winner was visible to the market (SP 3\u20138.5 = legitimate contender). Research question: what distinguishes the SP 3\u20138.5 winner from V\u00c9L\u00d8's pick?"
+      },
+      "confidence_level": "FORENSICS",
+      "confidence_note": "This is a diagnostic lane only. There is no promotion path.",
+      "research_questions": [
+        "What features do SP 3\u20138.5 winners carry that V\u00c9L\u00d8's picks do not?",
+        "Is there a specific tier/archetype combination where mid-price misses cluster?",
+        "Are mid-price misses correlated with specific courses or going conditions?",
+        "Does the place_prob or improvement signal fire on the actual winner in these cases?",
+        "Is the V\u00c9L\u00d8 pick framing in these races (finishing 2nd/3rd) or missing entirely?",
+        "What is the VP score of the actual SP 3\u20138.5 winner in races where V\u00c9L\u00d8 missed?"
+      ],
+      "research_methodology": {
+        "step_1": "Pull all MISS rows where actual_winner_sp between 3.0 and 8.5",
+        "step_2": "For each miss, fetch the V\u00c9L\u00d8 pick's VP, tier, improvement_score, place_prob, MDS",
+        "step_3": "Attempt to find the actual winner in the velo_verdicts table to get its score",
+        "step_4": "Compare feature distributions: V\u00c9L\u00d8 pick vs actual winner",
+        "step_5": "Cluster by course/going/class/archetype to find miss patterns",
+        "step_6": "If a distinguishing feature is found, design a new sidecar signal"
+      },
+      "promotion_path": "NONE \u2014 this is a research tool that may eventually produce a new sidecar signal candidate",
+      "lane_classification": "FORENSICS_ONLY",
+      "can_affect_live_routing": false,
+      "human_approval_required_for": [
+        "any_signal_derived_from_this_research"
+      ]
+    }
+  ],
+  "governance": {
+    "principles": [
+      "No lane affects live routing without explicit operator approval",
+      "Shadow ledger is append-only \u2014 never overwrite historical records",
+      "Freeze conditions are automatic \u2014 once triggered, human review required to unfreeze",
+      "Promotion gates require human sign-off at every step",
+      "Evidence numbers must come from closed-result sigma_audits \u2014 no simulation",
+      "ROI figures are research-only \u2014 no staking until n\u2265100 and explicit approval"
+    ],
+    "shadow_lane_lifecycle": [
+      "DESIGN \u2192 shadow annotation active (ledger tracking begins)",
+      "WATCHLIST \u2192 n\u226520, SR positive, no freeze triggered",
+      "SHADOW_CANDIDATE \u2192 n\u226530, SR\u2265baseline, Frame\u226570%, positive ROI",
+      "PAPER_EXECUTION \u2192 n\u226560, operator approves paper P&L tracking",
+      "LIVE_DISCUSSION \u2192 n\u2265100, multi-month evidence, operator reviews",
+      "LIVE_ACTIVATION \u2192 explicit operator decision, legal review, disclaimers"
+    ],
+    "freeze_rules": {
+      "auto_freeze": [
+        "SR drops below global baseline (20.6%) at n\u226520",
+        "Frame drops below 50% at n\u226520",
+        "7+ consecutive losses",
+        "ROI below -20% at n\u226530"
+      ],
+      "unfreeze_requires": "Human review of last 20 races + operator approval"
+    },
+    "supabase_schema_note": "Shadow ledger tables are not yet created in Supabase. Current tracking is via router_shadow_audit_ledger.csv. When Supabase tables are created, all historical CSV data will be migrated."
+  },
+  "summary": {
+    "total_lanes": 6,
+    "shadow_candidates": [
+      "VP30_TIER_A",
+      "MARKET_DECEPTION_HIGH",
+      "IMPROVEMENT_SCORE_HIGH"
+    ],
+    "watchlist": [
+      "PLACE_PROB_HIGH"
+    ],
+    "suppress_candidates": [
+      "B_TIER_LOW_VP_SUPPRESS"
+    ],
+    "forensics_only": [
+      "MID_PRICE_WINNER_FORENSICS"
+    ],
+    "highest_priority": "VP30_TIER_A",
+    "highest_upside": "MARKET_DECEPTION_HIGH (SR=54.8%, n=31)",
+    "most_proven": "VP30_TIER_A (SR=40.1%, n=162, 49-day evidence)",
+    "largest_sample": "PLACE_PROB_HIGH (n=392)",
+    "confirmed_suppress": "B_TIER_LOW_VP_SUPPRESS (SR=16.9%, confirmed drag)",
+    "no_deployment": "All lanes are design-only. No routing changes. No staking."
+  }
+}
