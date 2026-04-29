@@ -1,0 +1,39 @@
+{
+  "manifest_version": 1,
+  "created": "2026-04-28",
+  "status": "SCHEMA_PROPOSED_NOT_YET_WRITTEN",
+  "note": "Supabase archive requires explicit operator approval before any writes. See docs/evidence/VELO_EVIDENCE_ARCHIVE_PROTOCOL.md",
+
+  "proposed_table": "velo_evidence_artifacts",
+  "proposed_schema": {
+    "id": "uuid (pk)",
+    "artifact_type": "text — unified_audit | special_day | signal_rankings | truth_board",
+    "artifact_name": "text — e.g. velo_unified_evidence_audit_v1",
+    "artifact_date": "date",
+    "source_path": "text — git repo path",
+    "git_commit": "text — SHA",
+    "json_payload": "jsonb",
+    "markdown_payload": "text",
+    "created_at": "timestamptz",
+    "created_by_agent": "text",
+    "checksum": "text — SHA256",
+    "status": "text — active | superseded | archived"
+  },
+
+  "artifacts_pending_upload": [
+    {
+      "artifact_type": "unified_audit",
+      "artifact_name": "velo_unified_evidence_audit_v1",
+      "artifact_date": "2026-04-28",
+      "source_path": "data/evidence_vault/velo_unified_evidence_audit_v1.json",
+      "upload_status": "PENDING_APPROVAL"
+    },
+    {
+      "artifact_type": "special_day",
+      "artifact_name": "velo_special_day_2026-04-28",
+      "artifact_date": "2026-04-28",
+      "source_path": "data/evidence_vault/special_days/velo_special_day_2026-04-28.json",
+      "upload_status": "PENDING_APPROVAL"
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+{
+  "date": "2026-04-28",
+  "generated_at": "2026-04-29 00:02 UTC",
+  "A_date": "2026-04-28",
+  "B_total_verdicts": 29,
+  "C_matched_outcomes": 29,
+  "D_excluded_x_tier": 0,
+  "E_strike_rate": 17.2,
+  "F_frame_rate": 58.6,
+  "G_baseline_comparison": "SR AT baseline (20%) | Frame BELOW target (70%)",
+  "H_vp_band_performance": [
+    {
+      "label": "VP<0.20",
+      "n": 2,
+      "wins": 0,
+      "placed": 2,
+      "strike_rate": 0.0,
+      "frame_rate": 100.0,
+      "avg_vp": 0.178
+    },
+    {
+      "label": "VP 0.20-0.30",
+      "n": 15,
+      "wins": 1,
+      "placed": 6,
+      "strike_rate": 6.7,
+      "frame_rate": 40.0,
+      "avg_vp": 0.24
+    },
+    {
+      "label": "VP 0.30-0.40",
+      "n": 7,
+      "wins": 2,
+      "placed": 6,
+      "strike_rate": 28.6,
+      "frame_rate": 85.7,
+      "avg_vp": 0.333
+    },
+    {
+      "label": "VP>=0.40",
+      "n": 5,
+      "wins": 2,
+      "placed": 3,
+      "strike_rate": 40.0,
+      "frame_rate": 60.0,
+      "avg_vp": 0.534
+    }
+  ],
+  "I_tier_performance": {
+    "A": {
+      "label": "Tier A",
+      "n": 6,
+      "wins": 2,
+      "placed": 4,
+      "strike_rate": 33.3,
+      "frame_rate": 66.7,
+      "avg_vp": 0.506
+    },
+    "B": {
+      "label": "Tier B",
+      "n": 6,
+      "wins": 1,
+      "placed": 2,
+      "strike_rate": 16.7,
+      "frame_rate": 33.3,
+      "avg_vp": 0.298
+    },
+    "C": {
+      "label": "Tier C",
+      "n": 14,
+      "wins": 2,
+      "placed": 8,
+      "strike_rate": 14.3,
+      "frame_rate": 57.1,
+      "avg_vp": 0.255
+    },
+    "D": {
+      "label": "Tier D",
+      "n": 3,
+      "wins": 0,
+      "placed": 3,
+      "strike_rate": 0.0,
+      "frame_rate": 100.0,
+      "avg_vp": 0.186
+    }
+  },
+  "J_vp30_performance": {
+    "label": "VP>=0.30",
+    "n": 12,
+    "wins": 4,
+    "placed": 9,
+    "strike_rate": 33.3,
+    "frame_rate": 75.0,
+    "avg_vp": 0.417
+  },
+  "K_vp30_tier_a_performance": {
+    "label": "VP>=0.30 + Tier A",
+    "n": 6,
+    "wins": 2,
+    "placed": 4,
+    "strike_rate": 33.3,
+    "frame_rate": 66.7,
+    "avg_vp": 0.506
+  },
+  "L_sidecar_highlights": [
+    "MDS>0.5: 2 races fired",
+    "Improvement>0.40: 1 races fired",
+    "Place prob>0.80: 8 races fired"
+  ],
+  "M_miss_class_breakdown": {
+    "mid_priced_won": 10,
+    "short_fav_won": 2
+  },
+  "N_mid_price_misses": {
+    "count": 10,
+    "pct_of_misses": 83.3,
+    "winner_sps": [
+      3.25,
+      3.5,
+      3.5,
+      4.0,
+      5.0,
+      6.5,
+      7.0,
+      7.0,
+      7.0,
+      8.5
+    ]
+  },
+  "O_short_fav_misses": {
+    "count": 2,
+    "winner_sps": [
+      1.5,
+      1.83
+    ]
+  },
+  "P_course_notes": {
+    "Epsom": {
+      "n": 6,
+      "wins": 1,
+      "frame": 2,
+      "sr": 16.7,
+      "fr": 33.3
+    },
+    "Lingfield (AW)": {
+      "n": 7,
+      "wins": 1,
+      "frame": 5,
+      "sr": 14.3,
+      "fr": 71.4
+    },
+    "Punchestown (IRE)": {
+      "n": 3,
+      "wins": 1,
+      "frame": 1,
+      "sr": 33.3,
+      "fr": 33.3
+    },
+    "Southwell (AW)": {
+      "n": 7,
+      "wins": 0,
+      "frame": 3,
+      "sr": 0.0,
+      "fr": 42.9
+    },
+    "Yarmouth": {
+      "n": 6,
+      "wins": 2,
+      "frame": 6,
+      "sr": 33.3,
+      "fr": 100.0
+    }
+  },
+  "Q_learned_patterns": {
+    "count": 9,
+    "patterns": [
+      "PRIME hit: Balgowan @ prob=0.2567 won Lingfield (AW) 2:15",
+      "PRIME hit: Travel Agent @ prob=0.3009 won Lingfield (AW) 2:45",
+      "PRIME hit: Port Road @ prob=0.2589 won Lingfield (AW) 3:45",
+      "PRIME hit: Force Noir @ prob=0.6742 won Naas (IRE) 6:45",
+      "PRIME hit: Runman @ prob=0.6162 won Epsom 2:05",
+      "PRIME hit: Wild Thoughts @ prob=0.4754 won Lingfield (AW) 7:50",
+      "PRIME hit: Sword Of Wessex @ prob=0.3564 won Yarmouth 3:57",
+      "PRIME hit: Moonhall Lass @ prob=0.3751 won Yarmouth 5:03",
+      "PRIME hit: Il Etait Temps @ prob=0.2980 won Punchestown (IRE) 6:05"
+    ]
+  },
+  "R_router_evidence": {
+    "V1_BASE": {
+      "n": 27,
+      "roi": 11.52,
+      "status": "WATCHLIST"
+    },
+    "V2_CLASS4_ONLY": {
+      "n": 17,
+      "roi": 30.18,
+      "status": "LANE_ACTIVE"
+    },
+    "V6_GOLD_SEAM": {
+      "n": 5,
+      "roi": 115.0,
+      "status": "LOW_SAMPLE"
+    }
+  },
+  "S_router_contribution": "NEUTRAL \u2014 no qualifying results added to innovation protocol from this date",
+  "T_audit_conclusion": "SR at baseline \u2014 normal day for winner conversion. Frame rate 58.6% below 70% target \u2014 partial contender detection. Primary miss class: mid-priced winners (83.3% of misses in SP 3\u20138.5 zone).",
+  "U_research_tags": [
+    "MID_PRICE_WINNER_MISS_CLASS",
+    "VP30_FRAME_STRENGTH",
+    "VP30_SR_STRONG",
+    "SHORT_FAV_OVERRIDE_NEEDED"
+  ]
+}

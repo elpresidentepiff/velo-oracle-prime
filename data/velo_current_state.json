@@ -1,34 +1,65 @@
 {
-  "project": "VELO",
-  "phase": "historical_doctrine_full_reapply_v1_post_audit",
-  "training_status": "paused",
+  "last_updated": "2026-04-28",
+  "agent": "claude-sonnet-4-6",
+  "system_version": "velo_prime_v1",
+  "ensemble_version": "SQPE_v17_7specialists",
+
+  "latest_unified_evidence_audit": "velo_unified_evidence_audit_v1",
+  "evidence_vault_status": "initialized",
+
+  "operating_days": 49,
+  "sigma_audit_rows": 1391,
+  "verdicts_in_db": 1604,
+
+  "global_strike_rate": 0.206,
+  "global_frame_rate": 0.484,
+
+  "strongest_live_signals": [
+    "VP>=0.30 + Tier A (SR=40.1%, Frame=77.2%, n=162, PROVEN)",
+    "Market deception score >0.5 (SR=54.8%, Frame=96.8%, n=31, PROVEN)",
+    "Improvement score >0.40 (SR=43.5%, Frame=82.3%, n=62, PROVEN)"
+  ],
+
+  "primary_live_weakness": "mid-priced winners SP 3.0-8.5 (58% of all misses)",
+  "suppress_candidate": "Tier B VP<0.30 (SR=16.9%, n=272, confirmed drag)",
+
+  "router_lanes": {
+    "V1_BASE": {"n": 27, "sr": 0.370, "roi": 0.115, "status": "WATCHLIST"},
+    "V2_CLASS4_ONLY": {"n": 17, "sr": 0.412, "roi": 0.302, "status": "LANE_ACTIVE"},
+    "V6_GOLD_SEAM": {"n": 5, "sr": 0.600, "roi": 1.150, "status": "LOW_SAMPLE"}
+  },
+
+  "router_baseline_commit": "06ba74b",
+  "router_mode": "shadow_annotation_only",
+
+  "special_day_reports": ["2026-04-28"],
+
+  "next_required_missions": [
+    "mds_candidate_lane_design",
+    "improvement_score_candidate_lane_design",
+    "v2_router_watchlist_gate_monitoring",
+    "mid_price_winner_forensics_study",
+    "b_tier_suppression_protocol"
+  ],
+
+  "live_staking": false,
   "playbook_e_status": "paused",
-  "current_accepted_spine": {
-    "race_results": 3227,
-    "runner_results": 31995,
-    "historical_feature_store": 31936,
-    "clean_historical_races_integrated_approx": 1939,
-    "accepted_oasis_historical_events": 1697,
-    "accepted_oasis_historical_hfs_rows": 18575
+  "training_status": "paused",
+  "router_modifications_pending": false,
+
+  "company_documents": {
+    "master_plan": "docs/company/VELO_COMPANY_MASTER_PLAN_V1.md",
+    "website_spec": "docs/company/VELO_WEBSITE_APP_MVP_SPEC_V1.md",
+    "whitepaper_outline": "docs/company/VELO_WHITEPAPER_OUTLINE_V1.md",
+    "funding_pack_outline": "docs/company/VELO_FUNDING_PACK_OUTLINE_V1.md"
   },
-  "latest_passed_audit": "global_clean_spine_audit_v4.json",
-  "latest_passed_block": "OASIS_BLOCK_025",
-  "latest_failed_block": null,
-  "failed_block_reason": null,
-  "archive_exhausted": true,
-  "next_required_mission": "Playbook G V2 ablation dry-run",
-  "accepted_training_authority_model": {
-    "authority": [
-      "race_results distinct accepted events",
-      "races.runners_count",
-      "accepted historical_feature_store rows"
-    ],
-    "known_caveat": "direct runner_results join has legacy horse-id drift and is not the authority for Playbook G V2 training cohort."
-  },
-  "do_not_do": [
-    "do not train live",
-    "do not run Playbook E",
-    "do not change training_eligible without approval",
-    "do not mutate race_results or runner_results in doctrine reapply work"
-  ]
+
+  "evidence_vault": {
+    "index": "docs/evidence/VELO_EVIDENCE_VAULT_INDEX.md",
+    "signal_rankings": "docs/evidence/VELO_SIGNAL_RANKINGS_V1.md",
+    "truth_board": "docs/evidence/VELO_OPERATING_TRUTH_BOARD_V1.md",
+    "company_brief": "docs/evidence/VELO_COMPANY_EVIDENCE_BRIEF_V1.md",
+    "archive_protocol": "docs/evidence/VELO_EVIDENCE_ARCHIVE_PROTOCOL.md",
+    "special_day_reports_index": "docs/evidence/VELO_SPECIAL_DAY_REPORTS_INDEX.md"
+  }
 }

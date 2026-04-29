@@ -1,9 +1,72 @@
 {
-  "state": "C:\\Users\\puror\\velo-oracle-prime\\data\\velo_current_state.json",
-  "latest_global_audit_json": "global_clean_spine_audit_v4.json",
-  "latest_global_audit_md": "global_clean_spine_audit_v4.md",
-  "latest_doctrine_audit_json": "historical_doctrine_feature_audit_v2.json",
-  "latest_doctrine_audit_md": "historical_doctrine_feature_audit_v2.md",
-  "latest_doctrine_reapply_json": "historical_doctrine_full_reapply_v1.json",
-  "latest_doctrine_reapply_md": "historical_doctrine_full_reapply_v1.md"
+  "last_updated": "2026-04-28",
+  "description": "Master index of all VELO artifacts — scripts, evidence, company docs, data files",
+
+  "evidence_vault": {
+    "unified_audit_v1": {
+      "json": "data/evidence_vault/velo_unified_evidence_audit_v1.json",
+      "md": "data/evidence_vault/velo_unified_evidence_audit_v1.md",
+      "csv": "data/evidence_vault/velo_unified_evidence_audit_v1_metrics.csv",
+      "date": "2026-04-28",
+      "scope": "49 race days, 1391 sigma rows, 1604 verdicts"
+    },
+    "special_days": {
+      "2026-04-28": {
+        "json": "data/evidence_vault/special_days/velo_special_day_2026-04-28.json",
+        "md": "docs/evidence/special_days/VELO_SPECIAL_DAY_2026-04-28.md"
+      }
+    },
+    "router_ledger": "data/router_shadow_audit_ledger.csv",
+    "router_latest": "data/router_shadow_audit_latest.csv",
+    "router_snapshots_dir": "data/router_shadow_audit_runs/",
+    "innovation_protocol": "data/velo_innovation_protocol_1k_deduped.csv"
+  },
+
+  "evidence_documents": {
+    "vault_index": "docs/evidence/VELO_EVIDENCE_VAULT_INDEX.md",
+    "signal_rankings_v1": "docs/evidence/VELO_SIGNAL_RANKINGS_V1.md",
+    "truth_board_v1": "docs/evidence/VELO_OPERATING_TRUTH_BOARD_V1.md",
+    "company_brief_v1": "docs/evidence/VELO_COMPANY_EVIDENCE_BRIEF_V1.md",
+    "archive_protocol": "docs/evidence/VELO_EVIDENCE_ARCHIVE_PROTOCOL.md",
+    "special_day_index": "docs/evidence/VELO_SPECIAL_DAY_REPORTS_INDEX.md"
+  },
+
+  "company_documents": {
+    "master_plan_v1": "docs/company/VELO_COMPANY_MASTER_PLAN_V1.md",
+    "website_spec_v1": "docs/company/VELO_WEBSITE_APP_MVP_SPEC_V1.md",
+    "whitepaper_outline_v1": "docs/company/VELO_WHITEPAPER_OUTLINE_V1.md",
+    "funding_pack_outline_v1": "docs/company/VELO_FUNDING_PACK_OUTLINE_V1.md"
+  },
+
+  "scripts": {
+    "daily_prediction": "scripts/run_prime_today.py",
+    "sigma_results": "scripts/run_results_sigma.py",
+    "build_innovation_protocol": "scripts/build_innovation_protocol.py",
+    "router_shadow_audit": "scripts/router_shadow_audit.py",
+    "unified_evidence_audit": "scripts/run_velo_unified_evidence_audit.py",
+    "special_day_report": "scripts/generate_special_day_report.py"
+  },
+
+  "agent_context": {
+    "claude_md": "CLAUDE.md",
+    "memory_dir": "/home/purorpurorestrepo1981/.claude/projects/-mnt-c-Users-puror/memory/"
+  },
+
+  "key_numbers": {
+    "operating_days": 49,
+    "sigma_audit_rows": 1391,
+    "verdicts_in_db": 1604,
+    "global_sr": "20.6%",
+    "global_frame": "48.4%",
+    "tier_a_sr": "40.1%",
+    "tier_a_frame": "77.2%",
+    "tier_a_n": 162,
+    "mds_gt_05_sr": "54.8%",
+    "mds_gt_05_frame": "96.8%",
+    "mds_gt_05_n": 31,
+    "improvement_gt_04_sr": "43.5%",
+    "improvement_gt_04_n": 62,
+    "primary_miss_class": "mid_priced_won (58% of all misses in SP 3.0-8.5 zone)",
+    "suppress_candidate": "Tier B VP<0.30 (SR=16.9%, n=272)"
+  }
 }
