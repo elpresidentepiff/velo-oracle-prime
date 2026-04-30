@@ -49,6 +49,15 @@ from app.core.runtime_env import (  # noqa: E402
 
 log = logging.getLogger("velo.run_prime")
 
+from src.velo.racing_api_shadow_enrichment import (  # noqa: E402
+    append_to_forward_ledger,
+    compute_shadow_enrichment,
+    load_enrichment_caches,
+)
+
+_ENRICHMENT_CACHES = None  # loaded once in _bootstrap_runtime
+_SHADOW_LEDGER_PATH = ROOT / "data" / "racing_api_shadow_forward_ledger.csv"
+
 TODAY = datetime.now().strftime("%Y_%m_%d")
 TODAY_DISPLAY = datetime.now().strftime("%d %b %Y")
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -126,7 +135,7 @@ class PipelineRunOpenResult:
 
 
 def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None:
-    global TOKEN, CHAT_ID, RACING_USER, RACING_PASS, RACING_HEADERS, _SB_URL, _SB_KEY, _SB_HDRS
+    global TOKEN, CHAT_ID, RACING_USER, RACING_PASS, RACING_HEADERS, _SB_URL, _SB_KEY, _SB_HDRS, _ENRICHMENT_CACHES
 
     load_optional_env_file(env_file or ROOT / ".env")
     TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") if notify else ""
@@ -145,6 +154,7 @@ def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None
         "Authorization": f"Bearer {_SB_KEY}",
         "Accept": "application/json",
     }
+    _ENRICHMENT_CACHES = load_enrichment_caches(_SB_URL, _SB_KEY)
 
 
 def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
@@ -174,9 +184,25 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
     else:
         qs = urlencode({"date": date_str})
     url = f"{RACING_BASE}/racecards/standard" + (f"?{qs}" if qs else "")
-    req = urllib.request.Request(url, headers=RACING_HEADERS)
-    with urllib.request.urlopen(req, timeout=30) as r:
-        raw = json.loads(r.read())
+    import requests as _req
+    from requests.adapters import HTTPAdapter
+    try:
+        from urllib3.util.ssl_ import create_urllib3_context
+        class _TLSAdapter(HTTPAdapter):
+            def init_poolmanager(self, *args, **kwargs):
+                ctx = create_urllib3_context()
+                ctx.set_ciphers("DEFAULT@SECLEVEL=1")
+                kwargs["ssl_context"] = ctx
+                super().init_poolmanager(*args, **kwargs)
+        _sess = _req.Session()
+        _sess.mount("https://", _TLSAdapter())
+    except Exception:
+        _sess = _req.Session()
+    _sess.auth = (RACING_USER, RACING_PASS)
+    _sess.headers.update({"Accept": "application/json", "User-Agent": "VeloPrime/1.0"})
+    _r = _sess.get(url, timeout=30, verify=False)
+    _r.raise_for_status()
+    raw = _r.json()
 
     # Best-effort cache write — skipped silently on Railway ephemeral storage
     try:
@@ -1375,6 +1401,50 @@ def main():
                 top["candidate_execution_allowed"] = candidate["candidate_execution_allowed"]
                 top["candidate_execution_reason"]  = candidate["candidate_execution_reason"]
                 top["candidate_execution_lane"]    = candidate["candidate_execution_lane"]
+
+                # ── Phase 5: Racing API Shadow Enrichment (forward-test only) ──
+                # GOVERNANCE: shadow fields only — never alters velo_prime_prob,
+                # tier, assigned_product, candidate_execution_allowed, or router.
+                _shadow = compute_shadow_enrichment(
+                    trainer_id=top_raw_runner.get("trainer_id"),
+                    jockey_id=top_raw_runner.get("jockey_id"),
+                    course_name=race.get("course"),
+                    dist_f_raw=race.get("distance_f"),
+                    caches=_ENRICHMENT_CACHES,
+                )
+                top.update(_shadow)
+                try:
+                    append_to_forward_ledger(str(_SHADOW_LEDGER_PATH), {
+                        "date": date_str,
+                        "race_id": race.get("race_id"),
+                        "course": race.get("course"),
+                        "off_time": race.get("off_time"),
+                        "horse": top.get("horse"),
+                        "horse_id": top.get("horse_id"),
+                        "trainer_id": top_raw_runner.get("trainer_id"),
+                        "jockey_id": top_raw_runner.get("jockey_id"),
+                        "velo_prime_prob": top.get("velo_prime_prob"),
+                        "tier": tier,
+                        "candidate_execution_allowed": top.get("candidate_execution_allowed"),
+                        "router_shadow_lane": top.get("candidate_execution_lane"),
+                        "racing_api_connection_shadow_score": top.get("racing_api_connection_shadow_score"),
+                        "racing_api_course_shadow_score": top.get("racing_api_course_shadow_score"),
+                        "racing_api_distance_shadow_score": top.get("racing_api_distance_shadow_score"),
+                        "racing_api_enrichment_shadow_score": top.get("racing_api_enrichment_shadow_score"),
+                        "racing_api_connection_coverage": top.get("racing_api_connection_coverage"),
+                        "racing_api_course_coverage": top.get("racing_api_course_coverage"),
+                        "racing_api_distance_coverage": top.get("racing_api_distance_coverage"),
+                        "racing_api_enrichment_coverage": top.get("racing_api_enrichment_coverage"),
+                        "result_position": None,
+                        "won": None,
+                        "placed": None,
+                        "sp_decimal": top.get("sp_dec"),
+                        "profit_loss": None,
+                        "shadow_version": top.get("racing_api_shadow_version"),
+                        "leakage_status": top.get("racing_api_shadow_leakage_status"),
+                    })
+                except Exception as _ledger_exc:
+                    log.warning("shadow ledger append failed: %s", _ledger_exc)
 
                 if pdf_intel.get("plot_conviction"):
                     reasons.append(f"PDF_PLOT_CONVICTION:{pdf_intel['plot_conviction']:.2f}")
