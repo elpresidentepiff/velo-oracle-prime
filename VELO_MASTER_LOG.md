@@ -217,6 +217,50 @@ Intelligence stack (separate, read-only, no production contact):
 
 ---
 
+## 2026-04-29 — Phase 5: Racing API Shadow Enrichment (commit bfe983a)
+
+- Ingested 374,639 rows across 6 Racing API tables into local staging (trainer/jockey course+distance+combo tables)
+- Built shadow forward ledger: `data/racing_api_shadow_forward_ledger.csv`
+- Classified leakage status: `RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK`
+- Production weight changes blocked until prospective validation clears the leakage status
+- Audit tooling: `scripts/racing_api_shadow_forward_audit.py`
+- Router audit at Phase 5 close: V1_BASE n=27 WATCHLIST (+23→SHADOW_CANDIDATE), V2_CLASS4_ONLY n=17 (+3→WATCHLIST), V6_GOLD_SEAM n=5 LOW_SAMPLE — all lanes healthy, no freeze triggered
+
+---
+
+## 2026-04-29 — Phase 6: VeloExecutionBridge — Simulation Connector (commit c1353ff)
+
+- Built `src/velo/execution_bridge.py` — VeloExecutionBridge: connects VÉLØ verdicts to execution family in SIM/PAPER mode only
+- Built `scripts/run_execution_bridge_shadow.py` — CLI runner for daily paper ledger close
+- Hard safety gates wired and unit-tested (AST + mutation):
+  - `VELO_EXECUTION_MODE=LIVE` raises RuntimeError
+  - `BETFAIR_MODE=LIVE` raises RuntimeError
+  - `suggested_stake=None`, `max_liability=None` on every directive, always
+  - `simulation_only=True` always — no place_order, no Telegram
+- Paper ledger: `data/velo_execution_bridge_paper_ledger.csv` (append-only, idempotent dedup key)
+- Directive types: BLOCKED / CHAOS_CONTAINMENT_MODE / POWER_ANCHOR_MODE / FAVOURITE_LIABILITY_MODE / MULTI_THREAT_ZONE_MODE / WATCH_ONLY
+- POWER_ANCHOR_MODE trigger: Tier A + VP≥0.40 + candidate_execution_allowed=True + no suppression
+- Gate confirmed non-decorative: POWER_ANCHOR only fires when candidate_execution_allowed flows from shadow ledger
+- Classification: LIVE_SHADOW_TELEMETRY_ONLY + LIVE_OPERATOR_VISIBILITY_ONLY + PAPER_EXECUTION_LEDGER_ACTIVE + betting NOT LIVE
+
+---
+
+## 2026-04-29 — Phase 6A: First Paper Execution Outcome Audit (commit 3f65b1c)
+
+- Added `--audit-results` flag to `run_execution_bridge_shadow.py`
+- Added `_paper_pnl()` and `run_audit_results()` — backfills result_position/won/placed/sp/paper_profit_loss into paper ledger
+- First closed audit results (2026-04-29, SIM mode):
+  - POWER_ANCHOR_MODE: n=2, W=2, SR=100%, P&L=+1.16 (Hickory Lad SP=1.36, Infraad SP=1.80)
+  - WATCH_ONLY: n=6, W=1, SR=17% (no paper bet — gate working as designed)
+  - BLOCKED: n=29, SR=8%
+  - Gate delta: +83.3pp — gate confirmed non-decorative
+  - Paper ROI: +57.3% on 3 active bets
+- Hickory Lad is evidence row 1, not a trophy. Machine measures until n≥20 before any review.
+- Promotion thresholds set: n≥20 first review / n≥60 candidate discussion / n≥100 live discussion
+- No automatic promotion at any threshold — operator decision required at every gate
+
+---
+
 ## WHITEPAPER TOPICS — To Elaborate Later
 
 *Source material only. One line per concept. Do not expand here — expand in the whitepaper.*

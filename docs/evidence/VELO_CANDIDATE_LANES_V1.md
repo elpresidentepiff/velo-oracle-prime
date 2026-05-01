@@ -1,8 +1,8 @@
 # VÉLØ Candidate Lanes V1
 
 **Evidence basis:** Unified Evidence Audit V1 (49 days, 1391 sigma rows)
-**Design date:** 2026-04-28
-**Status:** Design only — no lanes are active**
+**Design date:** 2026-04-28 | **Last updated:** 2026-04-30
+**Status:** PAPER_EXECUTION_LEDGER_ACTIVE — execution bridge live (SIM/PAPER only), annotation wiring pending
 
 ---
 
@@ -79,4 +79,20 @@
 
 ---
 
-*VÉLØ Oracle Prime — Candidate Lanes V1 | Design only | No deployment*
+## Execution Bridge Integration (Phase 6 — 2026-04-29)
+
+The VeloExecutionBridge maps VP30_TIER_A (and sub-signals) to ExecutionDirectives for paper tracking. Relationship to candidate lanes:
+
+| Bridge Directive | Candidate Lane Overlap | Paper Ledger State |
+|---|---|---|
+| POWER_ANCHOR_MODE | VP30_TIER_A + candidate_execution_allowed | n=3, 2/2 closed wins |
+| FAVOURITE_LIABILITY_MODE | MDS_HIGH + VP≥0.30 | n=0 (no lays tracked yet) |
+| MULTI_THREAT_ZONE_MODE | IMPROVE_HIGH + VP≥0.30 | n=0 |
+| WATCH_ONLY | VP≥0.30 gate not met | n=6, 1 win (no bet — gate working) |
+| BLOCKED | Sub-threshold | n=29 |
+
+The bridge does not replace candidate-lane annotation wiring — annotation in velo_verdicts/sigma_audits is still the pending step. The paper ledger is the evidence accumulation path; annotation wiring is the signal classification path.
+
+---
+
+*VÉLØ Oracle Prime — Candidate Lanes V1 | Paper execution active (SIM/PAPER only) | No live deployment*

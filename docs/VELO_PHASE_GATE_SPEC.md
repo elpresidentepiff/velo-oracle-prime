@@ -198,3 +198,33 @@ When structural changes are merged that affect scoring, learning, governance, or
 | Date | Phase | Action | Operator |
 |---|---|---|---|
 | 2026-03-22 | Phase 1 | Spec created. Audit-only bridge live. Tier 1 gates defined. | — |
+| 2026-04-29 | Phase 5 | Racing API shadow enrichment live. 374,639 rows ingested. Leakage risk flagged. No weight changes. Commit: bfe983a | Operator |
+| 2026-04-29 | Phase 6 | VeloExecutionBridge built. SIM/PAPER only. Hard gates verified. Paper ledger active. Commit: c1353ff | Operator |
+| 2026-04-29 | Phase 6A | --audit-results flag added. First paper close: POWER_ANCHOR 2/2 wins, P&L=+1.16. Gate delta +83.3pp confirmed non-decorative. Commit: 3f65b1c | Operator |
+
+---
+
+## Phase 6 — Execution Bridge Gate Spec
+
+**Current state:** `PAPER_EXECUTION_LEDGER_ACTIVE`
+**Betting:** NOT LIVE — simulation_only=True enforced permanently
+
+### Execution Bridge Tier 1 Gates (continuous)
+
+| Gate | Check | Pass Condition |
+|---|---|---|
+| LIVE mode blocked | `VELO_EXECUTION_MODE != LIVE` in code | RuntimeError raised if LIVE attempted |
+| Paper ledger append-only | No UPDATE/DELETE on paper ledger rows | Each close only appends via dedup key |
+| No staking | `suggested_stake=None` on all directives | Hard-coded, never None-overridable |
+| Dedup integrity | `(date, race_id, horse_id, directive_type, source)` key | No duplicate rows on rerun |
+
+### Execution Bridge Promotion Gates
+
+| Gate | Threshold | Status |
+|---|---|---|
+| First review | POWER_ANCHOR n≥20 | BLOCKED — n=3 |
+| Paper candidate discussion | POWER_ANCHOR n≥60 | BLOCKED |
+| Live discussion | POWER_ANCHOR n≥100 | BLOCKED |
+| Live activation | n≥100 + multi-month evidence + legal review + explicit operator sign-off | BLOCKED |
+
+**No automatic promotion at any threshold.**

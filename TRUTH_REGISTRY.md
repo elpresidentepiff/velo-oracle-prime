@@ -1,7 +1,7 @@
 # VÉLØ Oracle Prime — Truth Registry
 
 > **Control document.** Defines what is live operational truth, what is learning truth, what is display-only, and what is dead.
-> Last updated: 2026-03-22. Update when tables or field roles change.
+> Last updated: 2026-04-30. Update when tables or field roles change.
 
 ---
 
@@ -168,6 +168,31 @@ FROM learned_patterns WHERE pattern_name = 'SENTIENT_STATE_BACKUP';
 
 ---
 
+## 8. Execution Bridge — Paper Execution Truth
+
+Fields and files that govern the paper execution layer. Not in scoring or sigma path.
+
+| Source | Field / File | Role | Status |
+|---|---|---|---|
+| `data/velo_execution_bridge_paper_ledger.csv` | Full paper ledger | Append-only directive record with outcomes | ACTIVE — paper only |
+| `src/velo/execution_bridge.py` | `VeloExecutionBridge._map_verdict()` | Directive mapping logic | PAPER_ONLY |
+| `data/racing_api_shadow_forward_ledger.csv` | `candidate_execution_allowed` | Gate injection into directives | SHADOW — leakage risk flagged |
+| `ExecutionDirective.simulation_only` | Hard field = True always | Prevents any live execution | PERMANENT GATE |
+| `ExecutionDirective.suggested_stake` | Hard field = None always | No staking permitted | PERMANENT GATE |
+
+**Hard rules (never touch):** VELO_EXECUTION_MODE=LIVE → RuntimeError. BETFAIR_MODE=LIVE → RuntimeError.
+
+---
+
+## 9. Racing API Shadow Enrichment — Leakage-Flagged Truth
+
+| Source | Status | Notes |
+|---|---|---|
+| `data/racing_api_shadow_forward_ledger.csv` | RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK | 374,639 rows, 6 tables. Production weight changes blocked. |
+| `racing_api_*_shadow_score` fields | SHADOW — not in production scoring | Injected into directives only via `enrich_from_shadow_ledger()` |
+
+---
+
 ## Change Log
 
 | Date | Change |
@@ -175,3 +200,7 @@ FROM learned_patterns WHERE pattern_name = 'SENTIENT_STATE_BACKUP';
 | 2026-03-22 | Initial registry filed. Truth audit complete. |
 | 2026-03-22 | Phase 1 sentient bridge wired (audit-only). |
 | 2026-03-22 | partial pipeline_run status added to Service B. |
+| 2026-04-29 | Phase 5: Racing API shadow enrichment (bfe983a). 374,639 rows. Leakage risk classified. No weight changes. |
+| 2026-04-29 | Phase 6: VeloExecutionBridge (c1353ff). Paper ledger live. Hard gates verified. Classification: PAPER_EXECUTION_LEDGER_ACTIVE. |
+| 2026-04-29 | Phase 6A: --audit-results (3f65b1c). First paper close: POWER_ANCHOR 2/2 wins, P&L=+1.16. Gate delta +83.3pp. |
+| 2026-04-30 | Section 8 (Execution Bridge) and Section 9 (Racing API enrichment) added to registry. |

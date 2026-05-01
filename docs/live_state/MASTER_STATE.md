@@ -1,7 +1,7 @@
 # MASTER STATE — VÉLØ + Analog Sidecar
-**Last Updated:** 2026-04-09
-**Classification:** OPERATIONAL — TWO-LANE ARCHITECTURE
-**Version:** 2.0
+**Last Updated:** 2026-04-30
+**Classification:** OPERATIONAL — TWO-LANE ARCHITECTURE + PAPER EXECUTION LAYER
+**Version:** 3.0
 
 ---
 
@@ -20,6 +20,13 @@ Shadow Lane (velo-shadow-lab)
 ├── Writes ONLY to shadow tables
 ├── Branch: shadow-lab
 └── Triggered: 09:30 UTC Mon-Sat (30 min after production)
+
+Paper Execution Lane (local operator only)
+├── Reads velo_verdicts + racing_api_shadow_forward_ledger.csv
+├── Maps verdicts to ExecutionDirectives (SIM/PAPER mode only)
+├── Writes ONLY to data/velo_execution_bridge_paper_ledger.csv
+├── LIVE mode raises RuntimeError — hard gate, always
+└── Triggered: manual daily close via run_execution_bridge_shadow.py
 ```
 
 ---
@@ -33,6 +40,9 @@ Shadow Lane (velo-shadow-lab)
 | SQPE Phase 3.5 | LIVE | `src/intelligence/sqpe.py` | Production |
 | Playbook G (Sentient Loopback) | SHADOW | `app/playbooks/playbook_g_sentient_loopback.py` | Shadow Lab |
 | velo-shadow-lab | LIVE | `scripts/shadow_lab.py` | Shadow Lab |
+| Racing API Shadow Enrichment | SHADOW | `data/racing_api_shadow_forward_ledger.csv` | Shadow Lab |
+| VeloExecutionBridge | PAPER_ONLY | `src/velo/execution_bridge.py` | Paper Execution |
+| Execution Bridge Paper Ledger | ACTIVE | `data/velo_execution_bridge_paper_ledger.csv` | Paper Execution |
 
 ---
 
@@ -113,6 +123,11 @@ Shadow Lane (velo-shadow-lab)
 | velo_verdicts persist | Confirmed working |
 | Shadow lab | Working — 96 rows processed first run |
 | Shadow watermark | `2026-04-09T06:25:51` |
+| Phase 5 commit | `bfe983a` — Racing API shadow enrichment (374,639 rows, leakage risk flagged) |
+| Phase 6 commit | `c1353ff` — VeloExecutionBridge built, paper ledger live |
+| Phase 6A commit | `3f65b1c` — --audit-results flag, first paper close |
+| Paper ledger state | POWER_ANCHOR n=3, 2/2 closed wins (Hickory Lad SP=1.36, Infraad SP=1.80), P&L=+1.16 |
+| Next paper review gate | n≥20 (currently n=3) |
 
 ---
 
@@ -134,7 +149,22 @@ These now live exclusively in `scripts/shadow_lab.py` on `shadow-lab`.
 3. **No intuition-only promotion to production**
 4. **Shadow lab failure is isolated from production**
 5. **Credentials never pasted in chat — rotate immediately if exposed**
+6. **VeloExecutionBridge VELO_EXECUTION_MODE=LIVE is permanently blocked — RuntimeError enforced in code**
+7. **Paper ledger is append-only — never overwrite historical directive records**
+8. **POWER_ANCHOR paper ledger: no review before n≥20, no live discussion before n≥100, no automatic promotion**
+9. **Racing API enrichment weight changes blocked until RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK is resolved**
 
 ---
 
-*Updated: 2026-04-09 — Phase 2 complete. Shadow lab operational.*
+## Paper Execution Layer — Promotion Gates
+
+| Gate | Threshold | Current State |
+|------|-----------|---------------|
+| First review allowed | POWER_ANCHOR n≥20 | n=3 — INSUFFICIENT_SAMPLE |
+| Paper candidate discussion | POWER_ANCHOR n≥60 | blocked |
+| Live discussion | POWER_ANCHOR n≥100 | blocked |
+| Auto-promotion | Never | hard rule |
+
+---
+
+*Updated: 2026-04-30 — Phase 3 complete (paper execution layer live). Shadow lab operational.*

@@ -438,7 +438,7 @@ To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.
 # VÉLØ EVIDENCE LAYER — Master Intelligence Context
 ## (Read this before any analysis, audit, or product work)
 
-Last updated: 2026-04-28 | Unified Audit commit: 0cfbbed | Evidence baseline: 06ba74b
+Last updated: 2026-04-30 | Unified Audit commit: 0cfbbed | Evidence baseline: 06ba74b | Phase 6 commit: 3f65b1c
 
 ---
 
@@ -465,6 +465,9 @@ PYTHONUTF8=1 source venv/bin/activate && PYTHONPATH=. python scripts/router_shad
 
 # 5. Periodic (weekly or after 20+ new results) — unified evidence audit:
 source venv/bin/activate && PYTHONPATH=. python scripts/run_velo_unified_evidence_audit.py
+
+# 6. After each closed race day — execution bridge paper ledger close:
+source venv/bin/activate && PYTHONPATH=. python scripts/run_execution_bridge_shadow.py --date YYYY-MM-DD --mode SIM --audit-results
 ```
 
 ---
@@ -651,13 +654,15 @@ Promotion gates (router lanes):
 ## Next Operating Protocol
 
 1. **Daily:** Run sigma → build_innovation_protocol → router_shadow_audit after each closed-results batch
-2. **Weekly:** Re-run unified evidence audit to track signal rankings over time
-3. **V2 watch:** +3 qualifying results → WATCHLIST gate
-4. **MDS>0.5 study:** Build dedicated candidate lane for market_deception_score>0.5 + VP≥0.30
-5. **Improvement score lane:** Wire improvement_score>0.40 as shadow candidate (SR=43.5% at n=62)
-6. **B-tier suppression:** Track — confirmed drag but coverage cost is meaningful (-21.8%)
-7. **Mid-priced winner miss study:** SP 3–8.5 zone is 58% of all misses — primary research target
-8. **Audit dossier:** Build VELO_AUDIT_DOSSIER.md from unified audit output for whitepaper/funding pack
+2. **Daily:** Run execution bridge close (`run_execution_bridge_shadow.py --date YYYY-MM-DD --mode SIM --audit-results`) after each race day
+3. **Weekly:** Re-run unified evidence audit to track signal rankings over time
+4. **V2 watch:** +3 qualifying results → WATCHLIST gate (currently n=17, need n=20)
+5. **POWER_ANCHOR watch:** Paper ledger n=3 — no review until n≥20 (current: 2/2 closed wins)
+6. **MDS>0.5 study:** Build dedicated candidate lane for market_deception_score>0.5 + VP≥0.30
+7. **Improvement score lane:** Wire improvement_score>0.40 as shadow candidate (SR=43.5% at n=62)
+8. **B-tier suppression:** Track — confirmed drag but coverage cost is meaningful (-21.8%)
+9. **Mid-priced winner miss study:** SP 3–8.5 zone is 58% of all misses — primary research target
+10. **Audit dossier:** Build VELO_AUDIT_DOSSIER.md from unified audit output for whitepaper/funding pack
 
 ---
 
@@ -674,5 +679,57 @@ Promotion gates (router lanes):
 **Stage 9:** Shadow-only controlled release plan
 
 Product positioning: **Auditable racing intelligence and decision support. Not a tips service.**
+
+---
+
+## Phase 5 — Racing API Shadow Enrichment (commit bfe983a, 2026-04-29)
+
+- Racing API enrichment: 374,639 rows across 6 tables ingested into local staging
+- Shadow forward ledger: `data/racing_api_shadow_forward_ledger.csv`
+- Leakage status: `RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK` — no production weight changes until prospective validation clears
+- Audit script: `scripts/racing_api_shadow_forward_audit.py`
+- Router lanes at Phase 5 close: V1_BASE n=27 WATCHLIST, V2_CLASS4_ONLY n=17 (+3→WATCHLIST), V6_GOLD_SEAM n=5 LOW_SAMPLE — all healthy, no freeze
+
+---
+
+## Phase 6 — VeloExecutionBridge (commits c1353ff + 3f65b1c, 2026-04-29)
+
+**Classification:** `LIVE_SHADOW_TELEMETRY_ONLY` | `LIVE_OPERATOR_VISIBILITY_ONLY` | `PAPER_EXECUTION_LEDGER_ACTIVE`
+**Betting status:** NOT LIVE — simulation_only=True enforced by hard runtime gates
+
+### Files
+- `src/velo/execution_bridge.py` — VeloExecutionBridge, ExecutionDirective, directive mapping
+- `scripts/run_execution_bridge_shadow.py` — CLI runner + `--audit-results` flag
+- `data/velo_execution_bridge_paper_ledger.csv` — append-only paper ledger (gitignored)
+
+### Hard Safety Gates (permanent — never touch)
+- `VELO_EXECUTION_MODE=LIVE` → RuntimeError
+- `BETFAIR_MODE=LIVE` → RuntimeError
+- `suggested_stake=None` and `max_liability=None` on every directive, always
+- `simulation_only=True` always — no place_order, no Telegram, no staking
+
+### Directive Priority Order
+`BLOCKED → CHAOS_CONTAINMENT_MODE → POWER_ANCHOR_MODE → FAVOURITE_LIABILITY_MODE → MULTI_THREAT_ZONE_MODE → WATCH_ONLY → BLOCKED`
+
+### POWER_ANCHOR_MODE Trigger Conditions
+Tier A + VP≥0.40 + `candidate_execution_allowed=True` (injected from shadow ledger) + no suppression
+
+### Paper Ledger State — as of 2026-04-29 (Phase 6A first close)
+
+| Directive | n | W | SR | Paper P&L |
+|---|---|---|---|---|
+| POWER_ANCHOR_MODE | 3 | 2 | 66.7% | +1.16 (2 bets closed) |
+| WATCH_ONLY | 6 | 1 | 17% | — |
+| BLOCKED | 29 | — | 8% | — |
+
+**Gate delta:** POWER_ANCHOR vs WATCH_ONLY = +83.3pp — gate confirmed non-decorative
+**Validation row 1:** Hickory Lad SP=1.36 WON (VP=0.661, POWER_ANCHOR_MODE, 2026-04-29)
+**Validation row 2:** Infraad SP=1.80 WON (POWER_ANCHOR_MODE, 2026-04-29)
+
+### Promotion Thresholds (POWER_ANCHOR paper ledger)
+- n≥20 → first review (earliest possible)
+- n≥60 → paper execution candidate discussion
+- n≥100 → live discussion
+- No automatic promotion at any threshold — operator decision required at every gate
 
 <!-- gitnexus:end -->
