@@ -168,7 +168,31 @@ FROM learned_patterns WHERE pattern_name = 'SENTIENT_STATE_BACKUP';
 
 ---
 
-## 8. Execution Bridge — Paper Execution Truth
+## 8. Permanent Agent Inventory (Phase 6A audit — 2026-04-30)
+
+Complete classification of every agent and execution file. Read before touching any of these.
+
+| File | Classes | Label | Risk | Decision |
+|---|---|---|---|---|
+| `app/agents/betfair_execution_agent.py` | `BetfairExecutionAgent`, `BankrollManager` | `EXECUTION_BETTING_NOT_ACTIVE` | **HIGH** | ARCHIVE — contains `place_order()`. Never import in live path. |
+| `app/agents/betting_agents.py` | `BettingAgent` ABC, 5 strategy agents | `LEGACY_AGENT` | MEDIUM | DOCUMENT ONLY — old era, inserts to `betting_ledger` table, not wired |
+| `app/agents/betfair_trading_agents.py` | `BetfairTradingAgent`, `EarlyBackerAgent`, `LayOffAgent`, `TradingOrchestrator` | `EXECUTION_BETTING_NOT_ACTIVE` | **HIGH** | ARCHIVE — contains `place_bet()` (back + lay). All sub-engines are placeholder stubs. |
+| `app/agents/odds_movement_predictor.py` | `OddsMovementPredictor`, `IntentEngine`, `NarrativeAnalyzer`, `BehavioralIntelligence`, `MarketManipulationRadar` | `STALE_PLACEHOLDER` | LOW | DOCUMENT ONLY — all sub-engines hardcoded/placeholder, no real intelligence |
+| `app/integrations/betfair_client.py` | `BetfairClient`, `BetfairMode` | `EXECUTION_BETTING_NOT_ACTIVE` | MEDIUM | KEEP ISOLATED — safe default SIM mode, LIVE path untested |
+| `src/velo/execution_bridge.py` | `VeloExecutionBridge`, `ExecutionDirective` | `PAPER_EXECUTION` | LOW | ACTIVE PAPER — hard RuntimeError on LIVE, simulation_only=True always |
+
+### Existing Permanent-Agent Framework Assessment
+
+**NO ETCSLV-style permanent-agent framework exists.** What exists:
+- `BetfairExecutionAgent`: monolithic agent with hardcoded order logic, not wired to VÉLØ scoring
+- `BettingAgent` ABC: 5-agent base class, old era, not connected to VeloPrime
+- `VeloExecutionBridge`: directive-generation only (paper), closest to permanent-agent pattern but intentionally not autonomous
+
+**Decision (2026-04-30):** Build permanent agents from scratch using VeloExecutionBridge as safety template. Do NOT refactor `BetfairExecutionAgent` or `betting_agents.py` — they are different eras and contain unsafe order logic.
+
+---
+
+## 9. Execution Bridge — Paper Execution Truth
 
 Fields and files that govern the paper execution layer. Not in scoring or sigma path.
 

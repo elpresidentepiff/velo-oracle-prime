@@ -156,6 +156,63 @@ These now live exclusively in `scripts/shadow_lab.py` on `shadow-lab`.
 
 ---
 
+## VÉLØ ETCSLV Operating Framework (Phase 6A state)
+
+Six-pillar classification of current operating system maturity.
+
+### 1. Execution Loop
+**Current files:** `run_prime_today.py` (Railway cron) | `run_results_sigma.py` | `run_execution_bridge_shadow.py`
+**Status:** FUNCTIONAL — single-threaded, cron-driven
+**Gaps:** No autonomous agent loop; no per-horse state mutation post-close; VeloExecutionBridge runs manually not integrated with cron
+**Risk:** MEDIUM — dependent on Railway cron precision and Supabase availability
+**Next action:** Add execution bridge to Railway cron post-sigma
+
+### 2. Tool Registry
+**Current files:** `app/integrations/betfair_client.py` (SIM/DELAYED/LIVE) | `app/integrations/racing_api_client.py` | `src/velo/product_router.py` | `app/core/runtime_env.py`
+**Status:** COMPLETE — all major services connected
+**Gaps:** No unified tool interface; BetfairClient LIVE path untested (no live credentials); no tool lifecycle hooks
+**Risk:** LOW — all read-only tools safe; BetfairClient safe-defaults to SIM
+
+### 3. Context Manager
+**Current files:** `workers/racing_api_normalizer.py` | `src/intelligence/macro_regime/bha_macro_context.py` | `src/velo/racing_api_shadow_enrichment.py`
+**Status:** COMPLETE — race context loaded per-race
+**Gaps:** Context recomputed per race, no caching; PDF intelligence loaded ad-hoc, not lifecycle-managed
+**Risk:** LOW — read-only, recomputation is inefficient but safe
+
+### 4. State Store
+**Current Supabase tables (live):** `velo_verdicts` | `pipeline_runs` | `sigma_audits` | `learned_patterns`
+**Current CSV ledgers:** `data/velo_execution_bridge_paper_ledger.csv` | `data/racing_api_shadow_forward_ledger.csv` | `data/router_shadow_audit_ledger.csv`
+**Status:** RELIABLE — multi-table, cloud-persistent
+**Gaps:** No atomic transaction boundaries; horse state computed live, not persisted between runs
+**Risk:** MEDIUM — partial writes possible on Supabase failure; no rollback
+
+### 5. Lifecycle Hooks
+**Current files:** `run_prime_today.py` main() (preflight + post-scoring Telegram + persist) | `run_execution_bridge_shadow.py` (paper ledger append + result backfill)
+**Status:** FRAGMENTED — hooks scattered in script main() functions
+**Gaps:** No unified hook interface; no hook ordering guarantees; Telegram sends before persistence could lose messages; G-state mutation not hooked to close
+**Risk:** MEDIUM — if bridge script fails, G-state isn't updated
+
+### 6. Verification Interface
+**Current files:** `scripts/router_shadow_audit.py` | `scripts/racing_api_shadow_forward_audit.py` | `scripts/run_velo_unified_evidence_audit.py` | `scripts/build_innovation_protocol.py`
+**Status:** COMPREHENSIVE — multi-layer evidence chain
+**Gaps:** Manual execution only; audit results not fed back to decision gates automatically; no audit-driven freeze triggers
+**Risk:** LOW — read-only; manual execution acceptable at current sample size
+
+### ETCSLV Maturity Summary
+
+| Pillar | Status | Risk |
+|---|---|---|
+| Execution Loop | FUNCTIONAL | MEDIUM |
+| Tool Registry | COMPLETE | LOW |
+| Context Manager | COMPLETE | LOW |
+| State Store | RELIABLE | MEDIUM |
+| Lifecycle Hooks | FRAGMENTED | MEDIUM |
+| Verification Interface | COMPREHENSIVE | LOW |
+
+**Overall maturity: 65%.** Not production-safe for autonomous betting. Safe for paper evidence accumulation.
+
+---
+
 ## Paper Execution Layer — Promotion Gates
 
 | Gate | Threshold | Current State |

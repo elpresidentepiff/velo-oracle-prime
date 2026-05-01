@@ -682,6 +682,74 @@ Product positioning: **Auditable racing intelligence and decision support. Not a
 
 ---
 
+## Canonical Runtime Map — Phase 6A (as of 2026-04-30)
+
+Every file with execution-path relevance classified. Labels are permanent until explicitly changed.
+
+| Label | Meaning |
+|---|---|
+| `LIVE_RUNTIME` | Executed by Railway cron / daily scoring pipeline |
+| `LIVE_SUPPORT` | Imported by LIVE_RUNTIME (utility, not directly scheduled) |
+| `SHADOW_TELEMETRY` | Evidence accumulation only — no scoring side effects |
+| `PAPER_EXECUTION` | Execution bridge — SIM/PAPER only, hard LIVE guard |
+| `AUDIT_EVIDENCE` | Audit/reporting scripts — read-only |
+| `EXECUTION_BETTING_NOT_ACTIVE` | Contains betting/order logic, NOT wired to live pipeline |
+| `LEGACY_AGENT` | Old agent framework, superseded, not imported live |
+| `STALE_PLACEHOLDER` | Exists, all sub-engines are placeholder stubs, no real intelligence |
+
+### Script Classification
+
+| File | Label | Risk | Notes |
+|---|---|---|---|
+| `scripts/run_prime_today.py` | `LIVE_RUNTIME` | LOW | Daily scoring orchestrator — Railway cron |
+| `scripts/run_results_sigma.py` | `LIVE_RUNTIME` | LOW | Post-race sigma audit |
+| `scripts/build_innovation_protocol.py` | `AUDIT_EVIDENCE` | LOW | Verdict-result dedup, readonly |
+| `scripts/router_shadow_audit.py` | `AUDIT_EVIDENCE` | LOW | Router lane evidence, readonly |
+| `scripts/racing_api_shadow_forward_audit.py` | `AUDIT_EVIDENCE` | LOW | Racing API enrichment audit, readonly |
+| `scripts/run_execution_bridge_shadow.py` | `PAPER_EXECUTION` | LOW | Paper ledger CLI — SIM/PAPER only |
+| `scripts/run_velo_unified_evidence_audit.py` | `AUDIT_EVIDENCE` | LOW | Master truth audit, readonly |
+
+### Source Classification
+
+| File | Label | Risk | Notes |
+|---|---|---|---|
+| `src/velo/execution_bridge.py` | `PAPER_EXECUTION` | LOW | Hard RuntimeError on LIVE — simulation_only=True always |
+| `src/velo/racing_api_shadow_enrichment.py` | `SHADOW_TELEMETRY` | LOW | Evidence enrichment, readonly |
+| `src/velo/product_router.py` | `LIVE_SUPPORT` | LOW | Verdict routing logic, readonly |
+| `src/intelligence/velo_prime_ensemble.py` | `LIVE_SUPPORT` | LOW | VeloPrime scoring ensemble |
+| `src/intelligence/sqpe.py` | `LIVE_SUPPORT` | LOW | SQPE base probability model |
+
+### Agent / Integration Classification
+
+| File | Label | Risk | Notes |
+|---|---|---|---|
+| `app/agents/betfair_execution_agent.py` | `EXECUTION_BETTING_NOT_ACTIVE` | **HIGH** | Contains `place_order()` — NEVER import in live path |
+| `app/agents/betting_agents.py` | `LEGACY_AGENT` | MEDIUM | 5-agent betting framework, old era, not imported live |
+| `app/agents/betfair_trading_agents.py` | `EXECUTION_BETTING_NOT_ACTIVE` | **HIGH** | Contains `place_bet()` (back + lay) — sub-engines are placeholder stubs, not wired |
+| `app/agents/odds_movement_predictor.py` | `STALE_PLACEHOLDER` | LOW | All sub-engines return hardcoded values — no real intelligence |
+| `app/integrations/betfair_client.py` | `EXECUTION_BETTING_NOT_ACTIVE` | MEDIUM | SIM/DELAYED/LIVE abstraction — safe default SIM, LIVE path untested |
+| `app/integrations/racing_api_client.py` | `LIVE_SUPPORT` | LOW | Racing API data fetch — read-only |
+
+### Import Safety Rules (permanent)
+
+```
+NEVER import into live scoring path:
+  app/agents/betfair_execution_agent.py    — place_order() present
+  app/agents/betfair_trading_agents.py     — place_bet() (back + lay) present
+  app/agents/betting_agents.py             — legacy framework
+
+SAFE to import (readonly / paper-only):
+  src/velo/execution_bridge.py             — hard LIVE guard at module level
+  src/velo/product_router.py               — routing logic only
+  src/velo/racing_api_shadow_enrichment.py — readonly context enrichment
+
+ALWAYS verify before touching execution code:
+  grep -r "place_order\|place_bet" src/ scripts/ | grep -v "app/agents"
+  → must return empty
+```
+
+---
+
 ## Phase 5 — Racing API Shadow Enrichment (commit bfe983a, 2026-04-29)
 
 - Racing API enrichment: 374,639 rows across 6 tables ingested into local staging
