@@ -118,7 +118,21 @@ def _parse_ts_cell(cell: str) -> dict:
         return {}
 
     # Strip leading headgear codes like "b1", "t1", "v1", "h1", "p1", "e1"
+    # Also strip leading flag codes like "XJ", "XJB", "XJB1" (going/ability codes from postdata table)
     headgear_code = None
+    # First strip any leading flag codes (e.g. XJ, XJB, Xjb1 — going/ability codes from postdata table)
+    # These are 2-5 char tokens (may be mixed case) that appear before a capitalised horse name
+    flag_match = re.match(r"^([A-Za-z]{1,4}\d{0,2})\s+(?=[A-Z][a-z])", cell)
+    if flag_match:
+        token = flag_match.group(1)
+        # Only strip if it looks like a code, not a real word (no vowels, or starts with X/Z, or all-caps)
+        is_code = (
+            token.upper() == token  # all-caps
+            or not any(v in token.lower() for v in 'aeiou')  # no vowels
+            or token[0].upper() in ('X', 'Z')  # starts with X or Z
+        )
+        if is_code:
+            cell = cell[flag_match.end():]
     hg_match = re.match(r"^([btvhpec]\d?)\s+", cell, re.IGNORECASE)
     if hg_match:
         headgear_code = hg_match.group(1)
