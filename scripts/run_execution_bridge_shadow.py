@@ -17,6 +17,7 @@ GOVERNANCE:
 Usage:
     python scripts/run_execution_bridge_shadow.py --date 2026-04-30
     python scripts/run_execution_bridge_shadow.py --date 2026-04-30 --mode PAPER
+    python scripts/run_execution_bridge_shadow.py --date 2026-04-30 --audit-results
     python scripts/run_execution_bridge_shadow.py --date 2026-04-30 --ledger data/racing_api_shadow_forward_ledger.csv
 """
 from __future__ import annotations
@@ -90,14 +91,14 @@ def load_verdicts(date_str: str) -> list[dict]:
 def load_sigma_outcomes(date_str: str) -> dict[str, dict]:
     """
     Load sigma_audits for date_str, keyed by race_id.
-    Used to inject off_time, track, outcome into verdicts for display.
+    Fetches outcome, actual_winner fields, and SP for paper P&L.
     """
     url, hdrs = _sb_headers()
     resp = requests.get(
         f"{url}/rest/v1/sigma_audits",
         headers=hdrs,
         params={
-            "select": "race_id,track,off_time,outcome,actual_winner_name",
+            "select": "race_id,track,off_time,outcome,actual_winner_name,actual_winner_sp,top_pick_position",
             "date": f"eq.{date_str}",
             "limit": "500",
         },
@@ -183,6 +184,223 @@ def print_summary(
     print("=" * 70)
 
 
+# ── Paper P&L calculator ──────────────────────────────────────────────────────
+
+# Paper stake per active directive (£1 unit, simulation only)
+_PAPER_STAKE = 1.0
+
+_BETTING_DIRECTIVES = {"POWER_ANCHOR_MODE", "FAVOURITE_LIABILITY_MODE", "MULTI_THREAT_ZONE_MODE"}
+
+
+def _paper_pnl(directive_type: str, outcome: str, sp: float | None) -> float | None:
+    """
+    Simulate paper P&L for a directive given a result outcome.
+
+    POWER_ANCHOR_MODE     → WIN bet, 1pt stake
+    MULTI_THREAT_ZONE_MODE→ EACH_WAY, 0.5pt win + 0.5pt place (1/4 odds)
+    FAVOURITE_LIABILITY_MODE → not simulated as a back bet (LAY is complex, skip)
+    WATCH_ONLY / BLOCKED  → no paper bet, P&L = 0
+    """
+    if directive_type not in _BETTING_DIRECTIVES:
+        return 0.0
+    if not outcome or sp is None:
+        return None  # result not yet available
+
+    if directive_type == "POWER_ANCHOR_MODE":
+        if outcome == "WIN":
+            return round((sp - 1) * _PAPER_STAKE, 2)
+        return round(-_PAPER_STAKE, 2)
+
+    if directive_type == "MULTI_THREAT_ZONE_MODE":
+        half = _PAPER_STAKE / 2
+        if outcome == "WIN":
+            win_profit = (sp - 1) * half
+            place_profit = ((sp / 4) - 1) * half
+            return round(win_profit + place_profit, 2)
+        if outcome == "PLACED":
+            win_loss = -half
+            place_profit = ((sp / 4) - 1) * half
+            return round(win_loss + place_profit, 2)
+        return round(-_PAPER_STAKE, 2)
+
+    if directive_type == "FAVOURITE_LIABILITY_MODE":
+        # LAY simulation skipped — complex liability calculation needs live odds
+        return None
+
+    return 0.0
+
+
+# ── Audit results ─────────────────────────────────────────────────────────────
+
+def run_audit_results(date_str: str, paper_path: Path, sigma_map: dict) -> None:
+    """
+    Match paper ledger rows for date_str against sigma outcomes.
+    Updates result_position / won / placed / sp_decimal / paper_profit_loss in-place.
+    Prints outcome audit table and comparative summary.
+    """
+    if not paper_path.exists():
+        print(f"  Paper ledger not found: {paper_path}")
+        return
+
+    import csv as _csv
+
+    rows = []
+    with paper_path.open(encoding="utf-8") as f:
+        rows = list(_csv.DictReader(f))
+
+    date_rows = [r for r in rows if r.get("date") == date_str]
+    if not date_rows:
+        print(f"  No paper ledger rows for {date_str}.")
+        return
+
+    updated = 0
+    for r in rows:
+        if r.get("date") != date_str:
+            continue
+        rid = r.get("race_id", "")
+        sig = sigma_map.get(rid, {})
+        if not sig:
+            continue
+        outcome = sig.get("outcome") or ""
+        sp_raw = sig.get("actual_winner_sp")
+        sp = float(sp_raw) if sp_raw is not None else None
+        pos = sig.get("top_pick_position")
+
+        r["result_position"] = str(pos) if pos else ""
+        r["won"] = "1" if outcome == "WIN" else ("0" if outcome in ("PLACED", "MISS") else "")
+        r["placed"] = "1" if outcome in ("WIN", "PLACED") else ("0" if outcome == "MISS" else "")
+        r["sp_decimal"] = str(sp) if sp else ""
+
+        pnl = _paper_pnl(r.get("directive_type", ""), outcome, sp)
+        r["paper_profit_loss"] = str(pnl) if pnl is not None else ""
+        updated += 1
+
+    # Write back
+    from src.velo.execution_bridge import _PAPER_LEDGER_HEADER
+    with paper_path.open("w", newline="", encoding="utf-8") as f:
+        writer = _csv.DictWriter(f, fieldnames=_PAPER_LEDGER_HEADER, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"  Updated {updated} rows with outcomes.")
+    print()
+
+    # ── Print outcome audit table ─────────────────────────────────────────────
+    from collections import defaultdict
+
+    dtype_buckets: dict[str, list[dict]] = defaultdict(list)
+    for r in rows:
+        if r.get("date") == date_str:
+            dtype_buckets[r.get("directive_type", "UNKNOWN")].append(r)
+
+    DTYPE_ORDER = [
+        "POWER_ANCHOR_MODE", "FAVOURITE_LIABILITY_MODE",
+        "MULTI_THREAT_ZONE_MODE", "WATCH_ONLY",
+        "CHAOS_CONTAINMENT_MODE", "BLOCKED",
+    ]
+
+    print("=" * 80)
+    print(f"EXECUTION BRIDGE PAPER OUTCOME AUDIT — {date_str}")
+    print("=" * 80)
+
+    total_pnl = 0.0
+    total_bets = 0
+    total_wins = 0
+    total_placed = 0
+
+    for dtype in DTYPE_ORDER:
+        bucket = dtype_buckets.get(dtype, [])
+        if not bucket:
+            continue
+        wins = sum(1 for r in bucket if r.get("won") == "1")
+        placed = sum(1 for r in bucket if r.get("placed") == "1")
+        with_result = sum(1 for r in bucket if r.get("won") != "")
+        pnls = [float(r["paper_profit_loss"]) for r in bucket
+                if r.get("paper_profit_loss") not in ("", "None")]
+        bucket_pnl = sum(pnls) if pnls else 0.0
+        total_pnl += bucket_pnl
+
+        is_betting = dtype in _BETTING_DIRECTIVES
+        if is_betting:
+            total_bets += with_result
+            total_wins += wins
+            total_placed += placed
+
+        sr_str = f"SR={wins/with_result*100:.0f}%" if with_result else "SR=n/a"
+        fr_str = f"Frame={placed/with_result*100:.0f}%" if with_result else "Frame=n/a"
+        pnl_str = f"P&L={bucket_pnl:+.2f}" if is_betting and pnls else ""
+
+        print(f"\n  {dtype}")
+        print(f"    n={len(bucket)}  results={with_result}  W={wins}  F={placed}  "
+              f"{sr_str}  {fr_str}  {pnl_str}")
+        for r in bucket:
+            if r.get("won") != "" or dtype in _BETTING_DIRECTIVES:
+                outcome_tag = (
+                    "WIN   " if r.get("won") == "1" else
+                    "PLACE " if r.get("placed") == "1" else
+                    "MISS  " if r.get("won") == "0" else
+                    "pending"
+                )
+                sp_tag = f"SP={r['sp_decimal']}" if r.get("sp_decimal") else ""
+                pnl_tag = f"p&l={r['paper_profit_loss']}" if r.get("paper_profit_loss") else ""
+                print(f"      {r.get('off_time','?'):5s}  {r.get('course','?'):<16s}  "
+                      f"{r.get('horse','?'):<28s}  {outcome_tag}  {sp_tag}  {pnl_tag}")
+
+    print()
+    print("── COMPARATIVE SUMMARY ─────────────────────────────────────────────")
+    pa_rows = dtype_buckets.get("POWER_ANCHOR_MODE", [])
+    wo_rows = dtype_buckets.get("WATCH_ONLY", [])
+
+    def _sr(bucket):
+        with_r = [r for r in bucket if r.get("won") != ""]
+        if not with_r:
+            return None, 0
+        return sum(1 for r in with_r if r.get("won") == "1") / len(with_r), len(with_r)
+
+    pa_sr, pa_n = _sr(pa_rows)
+    wo_sr, wo_n = _sr(wo_rows)
+
+    print(f"  POWER_ANCHOR_MODE  n={pa_n}  SR={pa_sr*100:.0f}%  P&L={sum(float(r['paper_profit_loss']) for r in pa_rows if r.get('paper_profit_loss') not in ('','None')):+.2f}" if pa_sr is not None else f"  POWER_ANCHOR_MODE  n=0")
+    print(f"  WATCH_ONLY         n={wo_n}  SR={wo_sr*100:.0f}%  (no paper bet — observe only)" if wo_sr is not None else f"  WATCH_ONLY         n=0")
+
+    if pa_sr is not None and wo_sr is not None:
+        delta = pa_sr - wo_sr
+        verdict = "POWER_ANCHOR beat WATCH_ONLY" if delta > 0 else "No edge over WATCH_ONLY"
+        print(f"  Delta: {delta*100:+.1f}pp  → {verdict}")
+        gate_value = "GATE ADDED VALUE" if delta > 0 else "GATE NEUTRAL"
+        print(f"  Bridge gate assessment: {gate_value}")
+    else:
+        print("  Insufficient results for comparative assessment.")
+
+    print()
+    print("── PAPER P&L TOTAL ─────────────────────────────────────────────────")
+    print(f"  Active bets (POWER_ANCHOR + MULTI_THREAT): {total_bets}")
+    print(f"  Wins: {total_wins}  Placed: {total_placed}")
+    if total_bets:
+        print(f"  Total paper P&L: {total_pnl:+.2f} pts")
+        print(f"  Paper ROI:       {total_pnl/total_bets*100:+.1f}%")
+    print()
+    print("── FREEZE CHECK ────────────────────────────────────────────────────")
+    print("  Freeze condition: ROI < 0 at n≥20 OR Frame < 70% at n≥20")
+    if total_bets >= 20:
+        roi = total_pnl / total_bets * 100
+        frame_rate = total_placed / total_bets * 100 if total_bets else 0
+        if roi < 0 or frame_rate < 70:
+            print(f"  STATUS: REVIEW (ROI={roi:.1f}%, Frame={frame_rate:.1f}%)")
+        else:
+            print(f"  STATUS: NO_FREEZE (ROI={roi:.1f}%, Frame={frame_rate:.1f}%)")
+    else:
+        print(f"  STATUS: INSUFFICIENT_SAMPLE (n={total_bets}, need 20)")
+    print()
+    print("── GOVERNANCE ──────────────────────────────────────────────────────")
+    print("  Live execution:   NOT OCCURRED")
+    print("  Staking:          NONE")
+    print("  Telegram:         NOT SENT")
+    print("  Model changes:    NONE")
+    print("  Router promotion: NONE")
+    print("=" * 80)
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -199,6 +417,10 @@ def main() -> None:
     parser.add_argument(
         "--paper-ledger", default=str(DEFAULT_PAPER_LEDGER),
         help="Output paper ledger path"
+    )
+    parser.add_argument(
+        "--audit-results", action="store_true",
+        help="Match paper ledger against sigma outcomes, update P&L, print audit table"
     )
     args = parser.parse_args()
 
@@ -259,6 +481,13 @@ def main() -> None:
     # 6. Print summary
     print_summary(date_str, verdicts, directives, added, skipped, paper_path)
     print(f"Paper ledger rows: {rows_before} → {rows_after}")
+
+    # 7. Optional: audit results
+    if args.audit_results:
+        print("\nRunning outcome audit ...")
+        # Reload sigma with SP for P&L
+        sigma_with_sp = load_sigma_outcomes(date_str)
+        run_audit_results(date_str, paper_path, sigma_with_sp)
 
 
 if __name__ == "__main__":
