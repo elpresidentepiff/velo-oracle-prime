@@ -21,6 +21,52 @@ Fields and tables that directly determine what VÉLØ picks.
 
 ---
 
+## LIVE SIGNAL TRUTH TABLE — 2026-04-30
+
+The system must not talk as if all sidecars are equal.
+Live production probability is still SQPE-dominant.
+The most important unresolved signal decision is whether `improvement_score` should remain evidence-only or be tested for live weighting later.
+
+| Signal | Live weighted in ensemble? | Current weight | Stored/logged? | Shadow only? | Operator visible? | Evidence strength | Current operating role |
+|---|---:|---:|---:|---:|---:|---|---|
+| `sqpe_v17 / VP` | YES | 0.45 | YES | NO | YES | Core engine | Dominant production probability anchor |
+| `market_deception_score / MDS` | YES | 0.10 | YES | NO | YES | Strong | Best live sidecar |
+| `place_prob` | YES | 0.08 | YES | NO | YES | Positive/supportive | Stability/frame support |
+| `longshot_score` | YES, gated | 0.07 | YES | NO | YES | Situational | Only contributes in genuine longshot/SP>=10 context |
+| `improvement_score` | NO | declared 0.12 but disabled | YES | evidence/observability | YES | Strong: n=62, SR 43.5%, frame 82.3% | Biggest truth gap; proven signal but not live-weighted |
+| `release_day_prob / release_window_score` | NO | declared 0.10 but disabled | YES | observability | YES | Unproven/secondary | Keep calm; not production driver |
+| `comment_intel_score` | NO | declared 0.08 but disabled | YES | observability | YES | Unproven/secondary | Keep calm; not production driver |
+| `Playbook G shadow` | NO | none live | YES | YES | maybe/operator only | under evaluation | Shadow modifier only, no live probability change |
+| `Racing API enrichment shadow` | NO | none live | YES | YES | YES | strong retrospective, leakage risk | Forward-test only; no scoring impact |
+| `router_shadow_lane` | NO | none live | YES | YES | YES | evidence routing | Audit/visibility only |
+| `candidate_execution_allowed` | NO scoring impact | none | YES | governance gate | YES | execution gate | Controls paper bridge escalation, not probability |
+| `POWER_ANCHOR_MODE` | NO scoring impact | none | YES | paper execution | YES | early n=3 | Paper directive only, no live betting |
+
+### Blunt Operating Hierarchy
+
+1. Core engine: `VP / SQPE`
+2. Best live sidecar: `MDS`
+3. Best support sidecar: `place_prob`
+4. Situational live sidecar: `longshot_score`
+5. Strong evidence but not live-weighted: `improvement_score`
+6. Audit/shadow only: `Playbook G`, `Racing API enrichment`, `router shadow lanes`, `paper execution bridge`
+
+### Forbidden Interpretation
+
+Do not treat `improvement_score`, `Racing API enrichment`, `Playbook G`, or `POWER_ANCHOR_MODE` as live probability drivers.
+They are evidence, shadow, or paper layers unless explicitly promoted through gates.
+
+### PHASE FUTURE — Improvement Score Live-Weight Review
+
+Condition before review:
+- closed-result evidence confirms `improvement_score` remains positive after dedupe
+- matched-subset test completed
+- no leakage issue
+- shadow/paper evidence supports lift
+- no change before formal gate approval
+
+---
+
 ## 2. Learning Truth
 
 Fields that actually change what VÉLØ does tomorrow.

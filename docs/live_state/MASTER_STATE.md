@@ -156,6 +156,37 @@ These now live exclusively in `scripts/shadow_lab.py` on `shadow-lab`.
 
 ---
 
+## Live Signal Truth Snapshot — 2026-04-30
+
+Production probability is still SQPE-dominant.
+The system must not talk as if all sidecars are equal.
+
+| Signal | Live role |
+|---|---|
+| `sqpe_v17 / VP` | dominant production anchor (`0.45`) |
+| `market_deception_score / MDS` | best live sidecar (`0.10`) |
+| `place_prob` | support/stability sidecar (`0.08`) |
+| `longshot_score` | gated live sidecar (`0.07`, longshot-only context) |
+| `improvement_score` | stored and operator-visible, but not live-weighted |
+| `release_day_prob / release_window_score` | stored only, disabled |
+| `comment_intel_score` | stored only, disabled |
+| `Playbook G shadow` | shadow-only, no live probability change |
+| `Racing API enrichment shadow` | shadow-only, leakage-flagged, no live probability change |
+| `router_shadow_lane` | audit/visibility only |
+| `candidate_execution_allowed` | governance gate, not probability |
+| `POWER_ANCHOR_MODE` | paper directive only, not probability |
+
+### Hard interpretation rule
+
+Do not treat `improvement_score`, `Racing API enrichment`, `Playbook G`, `router shadow`, or `POWER_ANCHOR_MODE` as live probability drivers unless formally promoted through gates.
+
+### Promotion-board focus
+
+The current governance question is not “add more sidecars.”
+It is whether `improvement_score` survives enough closed-result, deduped, leakage-safe evidence to become a formal live-weight review candidate later.
+
+---
+
 ## VÉLØ ETCSLV Operating Framework (Phase 6A state)
 
 Six-pillar classification of current operating system maturity.

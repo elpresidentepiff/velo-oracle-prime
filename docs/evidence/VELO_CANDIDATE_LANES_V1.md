@@ -28,6 +28,30 @@
 - Evidence numbers must come from closed-result sigma_audits — no simulation
 - ROI figures are research-only — no staking until n≥100 and explicit approval
 
+## Signal Promotion Board — Evidence to Live Governance
+
+Candidate lanes are not equal to live weights.
+They are evidence lanes that must earn promotion through a formal board.
+
+### Lane-to-signal truth
+
+- `VP30_TIER_A`: evidence lane built on the live `VP / SQPE` core
+- `MARKET_DECEPTION_HIGH`: maps to a signal that is already live-weighted via `market_deception_score`
+- `IMPROVEMENT_SCORE_HIGH`: strong evidence lane, but the underlying `improvement_score` is still disabled in the live ensemble
+- `PLACE_PROB_HIGH`: maps to a signal that is already live-weighted via `place_prob`
+- `B_TIER_LOW_VP_SUPPRESS`: suppress lane, not a promotion lane
+- `MID_PRICE_WINNER_FORENSICS`: forensics lane, not a probability driver
+
+### Promotion doctrine
+
+1. No lane graduates because the narrative is exciting.
+2. No shadow lane becomes live-weighted without closed-result evidence, dedupe confirmation, and formal review.
+3. `IMPROVEMENT_SCORE_HIGH` is the biggest current truth-gap lane:
+   - evidence is strong
+   - live weight is still zero
+   - board decision is still pending
+4. Router lanes and paper directives remain governance signals, not probability drivers.
+
 ## Lane Lifecycle
 
 1. DESIGN → shadow annotation active (ledger tracking begins)

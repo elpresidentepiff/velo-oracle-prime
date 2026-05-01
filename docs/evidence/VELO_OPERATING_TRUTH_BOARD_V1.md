@@ -21,6 +21,48 @@ VELO does not just predict. It executes, records, audits, learns, verifies, and 
 
 ---
 
+## LIVE SIGNAL TRUTH TABLE — 2026-04-30
+
+This is governance, not cosmetics.
+The operator layer must not talk as if every sidecar has equal power.
+Live production probability is still SQPE-dominant.
+
+| Signal | Live weighted in ensemble? | Current weight | Stored/logged? | Shadow only? | Operator visible? | Evidence strength | Current operating role |
+|---|---:|---:|---:|---:|---:|---|---|
+| `sqpe_v17 / VP` | YES | 0.45 | YES | NO | YES | Core engine | Dominant production probability anchor |
+| `market_deception_score / MDS` | YES | 0.10 | YES | NO | YES | Strong | Best live sidecar |
+| `place_prob` | YES | 0.08 | YES | NO | YES | Positive/supportive | Stability/frame support |
+| `longshot_score` | YES, gated | 0.07 | YES | NO | YES | Situational | Only contributes in genuine longshot/SP>=10 context |
+| `improvement_score` | NO | declared 0.12 but disabled | YES | evidence/observability | YES | Strong: n=62, SR 43.5%, frame 82.3% | Biggest truth gap; proven signal but not live-weighted |
+| `release_day_prob / release_window_score` | NO | declared 0.10 but disabled | YES | observability | YES | Unproven/secondary | Keep calm; not production driver |
+| `comment_intel_score` | NO | declared 0.08 but disabled | YES | observability | YES | Unproven/secondary | Keep calm; not production driver |
+| `Playbook G shadow` | NO | none live | YES | YES | maybe/operator only | under evaluation | Shadow modifier only, no live probability change |
+| `Racing API enrichment shadow` | NO | none live | YES | YES | YES | strong retrospective, leakage risk | Forward-test only; no scoring impact |
+| `router_shadow_lane` | NO | none live | YES | YES | YES | evidence routing | Audit/visibility only |
+| `candidate_execution_allowed` | NO scoring impact | none | YES | governance gate | YES | execution gate | Controls paper bridge escalation, not probability |
+| `POWER_ANCHOR_MODE` | NO scoring impact | none | YES | paper execution | YES | early n=3 | Paper directive only, no live betting |
+
+### Blunt Operating Hierarchy
+
+1. Core engine: `VP / SQPE`
+2. Best live sidecar: `MDS`
+3. Best support sidecar: `place_prob`
+4. Situational live sidecar: `longshot_score`
+5. Strong evidence but not live-weighted: `improvement_score`
+6. Audit/shadow only: `Playbook G`, `Racing API enrichment`, `router shadow lanes`, `paper execution bridge`
+
+### Critical Note
+
+The system must not talk as if all sidecars are equal.
+The most important unresolved signal decision is whether `improvement_score` should remain evidence-only or be tested for live weighting later.
+
+### Forbidden Interpretation
+
+Do not treat `improvement_score`, `Racing API enrichment`, `Playbook G`, or `POWER_ANCHOR_MODE` as live probability drivers.
+They are evidence, shadow, or paper layers unless explicitly promoted through gates.
+
+---
+
 ## A. What Is Working
 
 **1. Contender detection is real.**  
@@ -170,6 +212,74 @@ VELO finds contenders reliably. It becomes strongest when VP30_TIER_A, MDS_HIGH,
 | Gate delta | +83.3pp (POWER_ANCHOR vs WATCH_ONLY) — gate non-decorative confirmed |
 | Racing API enrichment | 374,639 rows, leakage risk flagged, no weight changes |
 | Next gate | POWER_ANCHOR n≥20 before first review |
+
+---
+
+## Signal Promotion Board — Evidence to Live Governance
+
+Every signal must know its status.
+Every promotion needs evidence.
+Every live change needs a gate.
+Nothing graduates because it feels right.
+
+### Current signal classes
+
+- `LIVE_WEIGHTED`: `sqpe_v17`, `market_deception_score`, `place_prob`, gated `longshot_score`
+- `STORED_ONLY`: `improvement_score`, `release_day_prob`, `comment_intel_score`
+- `SHADOW_ONLY`: `Playbook G`, Racing API enrichment scores, router shadow lanes
+- `PAPER_ONLY`: `POWER_ANCHOR_MODE`, `WATCH_ONLY`
+- `SUPPRESS`: `B_LOW_VP_SUPPRESS / VP_020_030_DRAG`
+
+### Immediate board focus
+
+1. `improvement_score / IMPROVE_HIGH`
+   - known evidence: `n=62`, `SR 43.5%`, `frame 82.3%`
+   - current live truth: disabled in ensemble
+   - board question: stay stored-only, promote to shadow score, or become a formal live-weight review candidate later
+2. Racing API enrichment shadow scores
+   - retrospective strength exists
+   - leakage risk is active
+   - forward-test evidence required before any promotion discussion
+3. `router_v2_class4_shadow_pass`
+   - strong early evidence
+   - still below mature gate
+4. `POWER_ANCHOR_MODE`
+   - paper-only
+   - no review before `n>=20`
+   - no live discussion before `n>=100`
+
+### Promotion gates
+
+- `STORED_ONLY -> SHADOW_SCORE`
+  - `n >= 30`
+  - positive SR/frame lift
+  - no duplicate contamination
+  - no leakage issue or leakage explicitly labelled
+  - no negative ROI collapse
+- `SHADOW_SCORE -> CANDIDATE_FOR_WEIGHT_REVIEW`
+  - `n >= 60`
+  - ROI positive or calibration improvement positive
+  - frame rate `> 70%`
+  - matched-subset lift positive
+  - acceptable drawdown
+  - signal remains positive after dedupe
+- `CANDIDATE_FOR_WEIGHT_REVIEW -> LIVE_WEIGHT_PROPOSAL`
+  - `n >= 100`
+  - forward-test sample positive
+  - ablation improves baseline
+  - no leakage dependency
+  - no router conflict
+  - no worse drawdown
+  - explicit Presidente approval
+
+### PHASE FUTURE — Improvement Score Live-Weight Review
+
+Condition before review:
+- closed-result evidence confirms `improvement_score` remains positive after dedupe
+- matched-subset test completed
+- no leakage issue
+- shadow/paper evidence supports lift
+- no change before formal gate approval
 
 ---
 
