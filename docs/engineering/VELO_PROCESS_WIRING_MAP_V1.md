@@ -522,3 +522,111 @@ NO live execution
 | 2026-05-01 | Section 2: Validation status added. Verdict: CASHRUN_NEEDS_MORE_DATA (n=6 READY matched). |
 | 2026-05-02 | Section 3: HFS Signal Contract Repair (MPI/chaos_bloom). Root cause confirmed. Patch applied. Backfill dry-run complete. |
 | 2026-05-02 | Section 3: HFS Batch 1 Repair mission. Script patched (null-signal targeting). DB password blocker identified. Backup CSV written. Audit confirms 35.3% null rate. |
+| 2026-05-01 | Section 4: Daily Learning Loop — Signal Tracker added. velo_signal_tracker.py built. |
+
+---
+
+## Section 4 — Daily Learning Loop: Signal Tracker
+
+### Purpose
+
+Closes the daily learning loop by matching closed results against sidecar signal classes
+and tracking whether each proven signal is performing at or below its audit baseline SR.
+
+**Loop:** scoring → verdict → result → sigma → signal_tracker → doctrine update → next scoring
+
+### Status
+
+```
+OPERATOR_VISIBILITY_ONLY
+NO staking. NO betting instruction. NO scoring change. NO model change.
+NO router change. NO SQPE change. NO live execution.
+Read-only from velo_post_race_reviews + sidecar stack local files.
+```
+
+### File
+
+| File | Role |
+|---|---|
+| `scripts/velo_signal_tracker.py` | Daily tracker — reads sigma reviews, computes per-stack stats, appends ledger |
+
+### Entry Point
+
+```bash
+python scripts/velo_signal_tracker.py --date YYYY-MM-DD
+```
+
+### Inputs
+
+| Source | Fields used |
+|---|---|
+| `velo_post_race_reviews` (Supabase) | `race_id`, `horse`, `outcome`, `velo_prime_prob`, `market_deception_score`, `improvement_score`, `place_prob`, `decision_tier`, `sigma_hit`, `sigma_frame` |
+| `data/sidecar_stack_operator_card_YYYY_MM_DD.json` | Stack counts for context (not required) |
+
+### Signal Classes Tracked
+
+| Stack Label | Condition | Baseline SR | Alert threshold |
+|---|---|---:|---|
+| `MDS_HIGH` | MDS > 0.50 | 54.8% | SR < 30% at n ≥ 10 |
+| `IMP_HIGH` | IMP > 0.40 | 43.5% | SR < 25% at n ≥ 10 |
+| `VP30_TIER_A` | VP ≥ 0.30 + Tier A | 40.1% | SR < 20% at n ≥ 10 |
+| `ELITE_STACK` | Tier A + VP30 + MDS_HIGH | 40.1% | SR < 15% at n ≥ 8 |
+| `STRONG_STACK` | VP30 + MDS_HIGH | 54.8% | SR < 20% at n ≥ 8 |
+| `VP30_IMPROVE` | VP30 + IMP_HIGH | 43.5% | SR < 20% at n ≥ 8 |
+| `VP30_BASE` | VP30 only | 32.2% | SR < 15% at n ≥ 15 |
+
+### Outputs
+
+| File | Format |
+|---|---|
+| `data/velo_signal_tracker_{date}.md` | Markdown report per day |
+| `data/velo_signal_tracker_ledger.csv` | Append-only rolling ledger |
+
+### Ledger Format
+
+```csv
+date,stack_label,n_fired,n_won,n_placed,sr,frame_rate,alert_flag
+2026-05-02,MDS_HIGH,2,1,2,0.5000,1.0000,
+2026-05-02,VP30_TIER_A,8,3,6,0.3750,0.7500,
+```
+
+`alert_flag` = `ALERT` if diverging from baseline at threshold; blank if OK.
+
+### How Tracker Feeds Operator Decisions
+
+1. **Daily** — run after sigma close. Append one day of signal class outcomes to the ledger.
+2. **Rolling window** — when any class reaches n≥10 (n≥8 for stack-specific), alert threshold fires.
+3. **DIVERGENCE ALERT** — operator reviews the signal class:
+   - Is sample size too small for verdict? (likely at n<20)
+   - Is there a systematic miss pattern? (race type, SP band, going?)
+   - Does this warrant a doctrine note?
+4. **No automatic model change** — tracker informs, operator decides.
+5. **Promotion gates unchanged** — tracker output feeds the operator review process, not any code gate.
+
+### Harness Integration
+
+Wired as final step of `velo_daily_harness.py --mode close`:
+
+```
+[STEP 6/6] velo_signal_tracker --date YYYY-MM-DD
+```
+
+### Safety Contract
+
+```
+NO change to velo_prime_prob
+NO change to SQPE or ensemble
+NO change to decision_tier
+NO change to router or router shadow lanes
+NO staking
+NO Betfair integration
+NO live execution
+READ-ONLY from velo_post_race_reviews (Supabase) + local sidecar JSON
+```
+
+### Known Limitations
+
+- `velo_post_race_reviews` win detection uses `sigma_hit` and `outcome` field.
+  If outcome field is not populated, classification falls back to keyword matching.
+- Signal tracker is daily-granular — no intra-day tracking.
+- n=0 on any day (no results yet) produces all-zero stats — expected until sigma runs.

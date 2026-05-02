@@ -1098,12 +1098,38 @@ td:last-child  { padding-right: 20px; }
 
 <div id="ssc-wrap">
   <div id="ssc-header" onclick="toggleSSC()">
-    <span class="ssc-title">▸ Today's Sidecar Stacks</span>
+    <span class="ssc-title">▸ D · Today's Sidecar Stacks</span>
     <span class="ssc-date" id="ssc-date-label">—</span>
     <span class="ssc-disclaimer">OPERATOR VISIBILITY ONLY — These are sidecar stack signals. They do not change live scoring, do not trigger staking, and are not betting instructions.</span>
-    <span class="ssc-toggle" id="ssc-toggle-btn">[ EXPAND ]</span>
+    <span class="ssc-toggle" id="ssc-toggle-btn">[ COLLAPSE ]</span>
   </div>
-  <div id="ssc-body">
+  <div id="ssc-body" class="open">
+    <!-- Summary row above tabs -->
+    <div id="ssc-summary-row" style="
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+      padding:6px 0 10px; margin-bottom:4px;
+      border-bottom:1px solid var(--border-dim);
+      font-family:var(--font-hud); font-size:0.55rem; letter-spacing:0.1em;
+    ">
+      <span style="color:var(--fg-muted);">TODAY:</span>
+      <span id="ssc-sum-vp30"   style="color:var(--cyan);">— VP30</span>
+      <span style="color:var(--fg-dim);">|</span>
+      <span id="ssc-sum-elite"  style="color:#ff6622;">— ELITE</span>
+      <span style="color:var(--fg-dim);">|</span>
+      <span id="ssc-sum-strong" style="color:var(--cyan);">— STRONG</span>
+      <span style="color:var(--fg-dim);">|</span>
+      <span id="ssc-sum-splus"  style="color:var(--cyan);">— STRONG+</span>
+      <span style="color:var(--fg-dim);">|</span>
+      <span id="ssc-sum-improve" style="color:var(--green);">— IMPROVE</span>
+      <span style="color:var(--fg-dim);">|</span>
+      <span id="ssc-sum-base"   style="color:var(--fg-secondary);">— BASE</span>
+      <span style="color:var(--fg-dim);">|</span>
+      <span id="ssc-sum-suppress" style="
+        color:var(--red); padding:2px 8px; border-radius:2px;
+        background:var(--red-glow); border:1px solid rgba(255,34,85,0.3);
+      ">— SUPPRESS ⚠</span>
+    </div>
+
     <div class="ssc-tabs" id="ssc-tabs">
       <button class="ssc-tab active" data-stack="ELITE_STACK" onclick="selectSSCTab('ELITE_STACK', this)">
         ELITE STACK <span class="ssc-tab-count" id="ssc-cnt-ELITE_STACK">0</span>
@@ -1116,6 +1142,12 @@ td:last-child  { padding-right: 20px; }
       </button>
       <button class="ssc-tab" data-stack="VP30_IMPROVE" onclick="selectSSCTab('VP30_IMPROVE', this)">
         VP30 + IMP <span class="ssc-tab-count" id="ssc-cnt-VP30_IMPROVE">0</span>
+      </button>
+      <button class="ssc-tab" data-stack="VP30_BASE" onclick="selectSSCTab('VP30_BASE', this)">
+        VP30 BASE <span class="ssc-tab-count" id="ssc-cnt-VP30_BASE">0</span>
+      </button>
+      <button class="ssc-tab" data-stack="SUPPRESS" onclick="selectSSCTab('SUPPRESS', this)" style="border-color:rgba(255,34,85,0.2);color:var(--red);">
+        SUPPRESS <span class="ssc-tab-count" id="ssc-cnt-SUPPRESS">0</span>
       </button>
     </div>
 
@@ -1131,8 +1163,451 @@ td:last-child  { padding-right: 20px; }
     <div class="ssc-panel" id="ssc-panel-VP30_IMPROVE">
       <div class="ssc-empty">Loading...</div>
     </div>
+    <div class="ssc-panel" id="ssc-panel-VP30_BASE">
+      <div class="ssc-empty">Loading...</div>
+    </div>
+    <div class="ssc-panel" id="ssc-panel-SUPPRESS">
+      <div class="ssc-empty">Loading...</div>
+    </div>
 
     <div class="ssc-meta-strip" id="ssc-meta">—</div>
+  </div>
+</div>
+
+<!-- ── Panel A — Today's Intelligence Brief ─────────────────────── -->
+<style>
+#tib-wrap {
+  position: relative; z-index: 1;
+  margin: 0 0 2px;
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  background: linear-gradient(180deg, rgba(0,212,255,0.025) 0%, transparent 100%);
+}
+#tib-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 20px;
+  cursor: pointer; user-select: none;
+}
+#tib-header:hover { background: var(--bg-hover); }
+.tib-title {
+  font-family: var(--font-hud); font-size: 0.65rem;
+  letter-spacing: 0.18em; color: var(--cyan); text-transform: uppercase;
+}
+.tib-tag {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  color: var(--fg-muted); letter-spacing: 0.08em;
+  padding: 2px 8px; border: 1px solid var(--border-dim);
+  background: rgba(0,212,255,0.04); border-radius: 2px;
+}
+.tib-toggle {
+  margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem;
+  color: var(--fg-muted); letter-spacing: 0.1em; transition: color 0.2s;
+}
+#tib-header:hover .tib-toggle { color: var(--cyan); }
+#tib-body { display: block; padding: 0 20px 16px; }
+
+.tib-row { display: flex; gap: 1px; margin-bottom: 1px; flex-wrap: wrap; }
+
+.tib-cell {
+  flex: 1; min-width: 120px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  padding: 10px 12px;
+  position: relative;
+}
+.tib-cell::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 2px; height: 100%;
+}
+.tib-cell.c-cyan::before   { background: var(--cyan); }
+.tib-cell.c-gold::before   { background: var(--gold); }
+.tib-cell.c-green::before  { background: var(--green); }
+.tib-cell.c-red::before    { background: var(--red); }
+.tib-cell.c-amber::before  { background: var(--amber); }
+.tib-cell.c-purple::before { background: var(--purple); }
+.tib-cell.c-orange::before { background: #ff6622; }
+
+.tib-label {
+  font-family: var(--font-hud); font-size: 0.5rem;
+  letter-spacing: 0.14em; color: var(--fg-muted);
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.tib-value {
+  font-family: var(--font-hud); font-size: 1.4rem;
+  font-weight: 700; line-height: 1; color: var(--fg-primary);
+}
+.tib-sub {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  color: var(--fg-secondary); margin-top: 3px;
+}
+.tib-alert {
+  font-family: var(--font-hud); font-size: 0.5rem;
+  letter-spacing: 0.1em; padding: 2px 6px; border-radius: 2px;
+  display: inline-block; margin-top: 5px;
+}
+.tib-alert.ok     { background: rgba(0,255,136,0.12); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+.tib-alert.warn   { background: var(--amber-glow);   color: var(--amber);  border: 1px solid rgba(255,140,0,0.3); }
+.tib-alert.fire   { background: rgba(255,68,0,0.18); color: #ff6622;       border: 1px solid rgba(255,68,0,0.35); }
+.tib-alert.suppress { background: var(--red-glow);   color: var(--red);    border: 1px solid rgba(255,34,85,0.3); }
+
+/* Top-3 selections */
+.tib-top3 { margin-top: 10px; }
+.tib-top3-title {
+  font-family: var(--font-hud); font-size: 0.55rem;
+  letter-spacing: 0.16em; color: var(--cyan-dim);
+  margin-bottom: 6px; text-transform: uppercase;
+}
+.tib-sel {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; margin-bottom: 2px;
+  background: var(--bg-surface); border: 1px solid var(--border-dim);
+  border-radius: 2px;
+}
+.tib-sel-n { font-family: var(--font-hud); font-size: 0.6rem; color: var(--fg-muted); width: 14px; }
+.tib-sel-horse { font-family: var(--font-mono); font-size: 0.65rem; color: var(--fg-primary); flex: 1; }
+.tib-sel-course { font-family: var(--font-hud); font-size: 0.55rem; color: var(--fg-secondary); }
+.tib-sel-vp { font-family: var(--font-mono); font-size: 0.62rem; color: var(--cyan); font-weight: 600; }
+.tib-sel-tier { font-family: var(--font-hud); font-size: 0.55rem; padding: 1px 5px; border-radius: 2px; }
+.tib-sel-tier.t-A { background: rgba(255,184,0,0.15); color: var(--gold); border: 1px solid rgba(255,184,0,0.3); }
+.tib-sel-tier.t-B { background: rgba(0,255,136,0.10); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+.tib-sel-badges { display: flex; gap: 3px; }
+.tib-b { font-family: var(--font-mono); font-size: 0.48rem; padding: 1px 4px; border-radius: 2px; }
+.tib-b-mds   { background: rgba(255,68,0,0.18); color: #ff6622; border: 1px solid rgba(255,68,0,0.35); }
+.tib-b-imp   { background: var(--green-glow);   color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+.tib-b-place { background: rgba(0,102,255,0.12); color: #5599ff; border: 1px solid rgba(0,102,255,0.3); }
+</style>
+
+<div id="tib-wrap">
+  <div id="tib-header" onclick="toggleTIB()">
+    <span class="tib-title">▸ A · Today's Intelligence Brief</span>
+    <span class="tib-tag" id="tib-date-tag">—</span>
+    <span class="tib-tag">OPERATOR VISIBILITY ONLY</span>
+    <span class="tib-toggle" id="tib-toggle-btn">[ COLLAPSE ]</span>
+  </div>
+  <div id="tib-body">
+    <div class="tib-row">
+      <div class="tib-cell c-cyan">
+        <div class="tib-label">Total Scored</div>
+        <div class="tib-value" id="tib-total">—</div>
+        <div class="tib-sub" id="tib-date-sub">run_prime_today status</div>
+      </div>
+      <div class="tib-cell c-gold">
+        <div class="tib-label">VP30 Selections</div>
+        <div class="tib-value" id="tib-vp30">—</div>
+        <div class="tib-sub" id="tib-vp40-sub">VP≥0.40: <span id="tib-vp40">—</span></div>
+      </div>
+      <div class="tib-cell c-orange">
+        <div class="tib-label">MDS &gt; 0.50 Alerts</div>
+        <div class="tib-value" id="tib-mds">—</div>
+        <div class="tib-sub">SR baseline: 54.8% (n=31)</div>
+        <span class="tib-alert fire" id="tib-mds-badge">HIGHEST LIFT SIGNAL</span>
+      </div>
+      <div class="tib-cell c-green">
+        <div class="tib-label">IMP &gt; 0.40 Alerts</div>
+        <div class="tib-value" id="tib-imp">—</div>
+        <div class="tib-sub">SR baseline: 43.5% (n=62)</div>
+        <span class="tib-alert ok" id="tib-imp-badge">PROVEN</span>
+      </div>
+      <div class="tib-cell c-cyan">
+        <div class="tib-label">PLACE_HIGH Alerts</div>
+        <div class="tib-value" id="tib-pp">—</div>
+        <div class="tib-sub">pp &gt; 0.80</div>
+      </div>
+      <div class="tib-cell c-gold">
+        <div class="tib-label">Tier Distribution</div>
+        <div class="tib-value" id="tib-tier-a" style="color:var(--gold);font-size:1rem">—</div>
+        <div class="tib-sub" id="tib-tier-dist">A/B/C/D/X</div>
+      </div>
+      <div class="tib-cell c-red">
+        <div class="tib-label">SUPPRESS Count</div>
+        <div class="tib-value" id="tib-suppress" style="color:var(--red)">—</div>
+        <div class="tib-sub">Tier B + VP&lt;0.30</div>
+        <span class="tib-alert suppress" id="tib-suppress-badge">DRAG — DO NOT RESCUE</span>
+      </div>
+      <div class="tib-cell c-purple">
+        <div class="tib-label">Elite Stack</div>
+        <div class="tib-value" id="tib-elite" style="color:#ff6622">—</div>
+        <div class="tib-sub">Tier A + VP30 + MDS</div>
+      </div>
+    </div>
+    <div class="tib-top3">
+      <div class="tib-top3-title">TOP 3 SELECTIONS — ranked by VP (from sidecar stacks)</div>
+      <div id="tib-top3-rows">
+        <div class="tib-sel"><span class="tib-sel-n">—</span><span class="tib-sel-horse">Loading sidecar data...</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Panel B — Signal Heatmap ─────────────────────────────────── -->
+<style>
+#shm-wrap {
+  position: relative; z-index: 1;
+  margin: 0 0 2px;
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  background: linear-gradient(180deg, rgba(0,102,255,0.02) 0%, transparent 100%);
+}
+#shm-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 20px; cursor: pointer; user-select: none;
+}
+#shm-header:hover { background: var(--bg-hover); }
+.shm-title {
+  font-family: var(--font-hud); font-size: 0.65rem;
+  letter-spacing: 0.18em; color: #5599ff; text-transform: uppercase;
+}
+.shm-toggle {
+  margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem;
+  color: var(--fg-muted); letter-spacing: 0.1em;
+}
+#shm-body { display: none; padding: 0 20px 16px; }
+#shm-body.open { display: block; }
+
+.shm-table { width: 100%; border-collapse: collapse; }
+.shm-table thead tr { border-bottom: 1px solid var(--border-dim); }
+.shm-table thead th {
+  padding: 6px 8px; text-align: left;
+  font-size: 7.5px; font-weight: 600;
+  font-family: var(--font-hud); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--fg-muted); white-space: nowrap;
+}
+.shm-table tbody tr { border-bottom: 1px solid var(--border-dim); transition: background 0.1s; }
+.shm-table tbody tr:hover { background: rgba(0,102,255,0.04); }
+.shm-table td { padding: 7px 8px; font-size: 10px; vertical-align: middle; }
+.shm-horse { font-family: var(--font-mono); font-size: 0.62rem; color: var(--fg-primary); font-weight: 500; }
+.shm-course { font-family: var(--font-hud); font-size: 0.55rem; color: var(--fg-secondary); }
+.shm-time  { font-family: var(--font-mono); font-size: 0.55rem; color: var(--cyan-dim); }
+
+/* Heat cell — shows a single signal value with colour coding */
+.hc {
+  display: inline-block; min-width: 52px; text-align: center;
+  font-family: var(--font-mono); font-size: 0.58rem; font-weight: 600;
+  padding: 3px 6px; border-radius: 2px; letter-spacing: 0.04em;
+}
+.hc-strong { background: rgba(0,255,136,0.18); color: var(--green); border: 1px solid rgba(0,255,136,0.35); }
+.hc-fire   { background: rgba(255,68,0,0.22);  color: #ff6622;       border: 1px solid rgba(255,68,0,0.4); }
+.hc-watch  { background: rgba(255,184,0,0.15); color: var(--gold);   border: 1px solid rgba(255,184,0,0.3); }
+.hc-none   { background: rgba(10,30,50,0.5);   color: var(--fg-dim); border: 1px solid var(--border-dim); }
+.hc-suppress { background: var(--red-glow);    color: var(--red);    border: 1px solid rgba(255,34,85,0.3); }
+.hc-cyan   { background: rgba(0,212,255,0.12); color: var(--cyan);   border: 1px solid rgba(0,212,255,0.3); }
+
+.shm-stack-pill {
+  font-family: var(--font-hud); font-size: 0.48rem; padding: 1px 5px;
+  border-radius: 2px; white-space: nowrap; letter-spacing: 0.06em;
+}
+.shm-stack-ELITE   { background: rgba(255,68,0,0.18); color: #ff6622; border: 1px solid rgba(255,68,0,0.35); }
+.shm-stack-STRONG  { background: rgba(0,212,255,0.10); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+.shm-stack-IMPROVE { background: var(--green-glow); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+.shm-stack-BASE    { background: rgba(10,30,50,0.6); color: var(--fg-secondary); border: 1px solid var(--border-dim); }
+.shm-meta { font-family: var(--font-mono); font-size: 0.55rem; color: var(--fg-muted); padding: 6px 0 0; border-top: 1px solid var(--border-dim); margin-top: 8px; }
+</style>
+
+<div id="shm-wrap">
+  <div id="shm-header" onclick="toggleSHM()">
+    <span class="shm-title">▸ B · Signal Heatmap — VP30+ Runners</span>
+    <span class="tib-tag">OPERATOR VISIBILITY ONLY</span>
+    <span class="shm-toggle" id="shm-toggle-btn">[ EXPAND ]</span>
+  </div>
+  <div id="shm-body">
+    <table class="shm-table">
+      <thead><tr>
+        <th>TIME</th><th>COURSE</th><th>HORSE</th><th>TIER</th>
+        <th>VP</th><th>MDS</th><th>IMP</th><th>PLACE_P</th>
+        <th>CASHRUN</th><th>PLACE_SIGNAL</th><th>STACK</th>
+      </tr></thead>
+      <tbody id="shm-tbody">
+        <tr><td colspan="11" style="font-family:var(--font-mono);font-size:0.62rem;color:var(--fg-muted);padding:16px 8px;">Loading heatmap data...</td></tr>
+      </tbody>
+    </table>
+    <div class="shm-meta" id="shm-meta">— VP30+ runners, sorted by VP desc · data from window.__SSC_INLINE · OPERATOR VISIBILITY ONLY</div>
+  </div>
+</div>
+
+<!-- ── Panel C — Learning Loop Status ───────────────────────────── -->
+<style>
+#lls-wrap {
+  position: relative; z-index: 1;
+  margin: 0 0 2px;
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  background: linear-gradient(180deg, rgba(153,85,255,0.015) 0%, transparent 100%);
+}
+#lls-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 20px; cursor: pointer; user-select: none;
+}
+#lls-header:hover { background: var(--bg-hover); }
+.lls-title {
+  font-family: var(--font-hud); font-size: 0.65rem;
+  letter-spacing: 0.18em; color: var(--purple); text-transform: uppercase;
+}
+.lls-toggle {
+  margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem;
+  color: var(--fg-muted); letter-spacing: 0.1em;
+}
+#lls-body { display: none; padding: 0 20px 16px; }
+#lls-body.open { display: block; }
+
+.lls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px; margin-bottom: 12px;
+}
+.lls-card {
+  background: var(--bg-card); border: 1px solid var(--border-dim);
+  padding: 10px 12px; position: relative; overflow: hidden;
+}
+.lls-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 3px; height: 100%;
+}
+.lls-card.blocked::before  { background: var(--red); box-shadow: 0 0 8px var(--red-glow); }
+.lls-card.active::before   { background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+.lls-card.watch::before    { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); }
+.lls-card.info::before     { background: var(--cyan); }
+.lls-card.applied::before  { background: var(--purple); box-shadow: 0 0 8px var(--purple-glow); }
+
+.lls-card-title {
+  font-family: var(--font-hud); font-size: 0.5rem;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.lls-card.blocked  .lls-card-title  { color: var(--red); }
+.lls-card.active   .lls-card-title  { color: var(--green); }
+.lls-card.watch    .lls-card-title  { color: var(--amber); }
+.lls-card.info     .lls-card-title  { color: var(--cyan); }
+.lls-card.applied  .lls-card-title  { color: var(--purple); }
+
+.lls-card-val {
+  font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700;
+  color: var(--fg-primary); line-height: 1;
+}
+.lls-card-note {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  color: var(--fg-muted); margin-top: 4px; line-height: 1.4;
+}
+.lls-status-badge {
+  display: inline-block; margin-top: 5px;
+  font-family: var(--font-hud); font-size: 0.48rem;
+  letter-spacing: 0.1em; padding: 2px 6px; border-radius: 2px;
+}
+.lls-badge-blocked  { background: var(--red-glow);    color: var(--red);    border: 1px solid rgba(255,34,85,0.3); }
+.lls-badge-active   { background: var(--green-glow);  color: var(--green);  border: 1px solid rgba(0,255,136,0.3); }
+.lls-badge-applied  { background: var(--purple-glow); color: var(--purple); border: 1px solid rgba(153,85,255,0.3); }
+.lls-badge-watch    { background: var(--amber-glow);  color: var(--amber);  border: 1px solid rgba(255,140,0,0.3); }
+
+.lls-spine {
+  border-top: 1px solid var(--border-dim); padding-top: 10px;
+  font-family: var(--font-mono); font-size: 0.55rem;
+  color: var(--fg-muted); line-height: 1.8;
+}
+.lls-spine .loop-step {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 2px;
+}
+.lls-spine .loop-arrow { color: var(--cyan-dim); font-size: 0.65rem; }
+.lls-spine .loop-label { color: var(--fg-secondary); }
+.lls-spine .loop-status { margin-left: auto; }
+.lls-spine .loop-status.ok     { color: var(--green); }
+.lls-spine .loop-status.blocked { color: var(--red); }
+.lls-spine .loop-status.watch  { color: var(--amber); }
+</style>
+
+<div id="lls-wrap">
+  <div id="lls-header" onclick="toggleLLS()">
+    <span class="lls-title">▸ C · Learning Loop Status — System Intelligence Spine</span>
+    <span class="tib-tag">OPERATOR VISIBILITY ONLY · NOT DECORATIVE</span>
+    <span class="lls-toggle" id="lls-toggle-btn">[ EXPAND ]</span>
+  </div>
+  <div id="lls-body">
+    <div class="lls-grid">
+      <div class="lls-card blocked">
+        <div class="lls-card-title">HFS Training Status</div>
+        <div class="lls-card-val">BLOCKED</div>
+        <div class="lls-card-note">31,936 rows total. 11,259 still signal-dark (35.3% null mpi/chaos_bloom).</div>
+        <span class="lls-status-badge lls-badge-blocked">HFS_TRAINING_BLOCKED</span>
+      </div>
+      <div class="lls-card applied">
+        <div class="lls-card-title">Signal Contract</div>
+        <div class="lls-card-val">APPLIED</div>
+        <div class="lls-card-note">hfs_signal_contract_v1 — mpi + chaos_bloom backfill in progress.</div>
+        <span class="lls-status-badge lls-badge-applied">hfs_signal_contract_v1</span>
+      </div>
+      <div class="lls-card blocked">
+        <div class="lls-card-title">Playbook G</div>
+        <div class="lls-card-val">BLOCKED</div>
+        <div class="lls-card-note">Cannot train until HFS reaches TRAINING_READY. No training until backfill complete.</div>
+        <span class="lls-status-badge lls-badge-blocked">PLAYBOOK_G_BLOCKED</span>
+      </div>
+      <div class="lls-card active">
+        <div class="lls-card-title">Evidence Corpus</div>
+        <div class="lls-card-val">794</div>
+        <div class="lls-card-note">Unified evidence corpus rows. 49-day audit complete. Signal rankings locked.</div>
+        <span class="lls-status-badge lls-badge-active">CORPUS_ACTIVE</span>
+      </div>
+      <div class="lls-card active">
+        <div class="lls-card-title">Sigma Runs Closed</div>
+        <div class="lls-card-val" id="lls-sigma-count">1391</div>
+        <div class="lls-card-note">Sigma rows in audit baseline (49 race days). Daily runs appending.</div>
+        <span class="lls-status-badge lls-badge-active">SIGMA_ACTIVE</span>
+      </div>
+      <div class="lls-card watch">
+        <div class="lls-card-title">Router Lanes</div>
+        <div class="lls-card-val">3</div>
+        <div class="lls-card-note">V1_BASE n=27 WATCHLIST · V2_CLASS4 n=17 (+3→gate) · V6_GOLD n=5 LOW_SAMPLE</div>
+        <span class="lls-status-badge lls-badge-watch">EVIDENCE_ACCUMULATION</span>
+      </div>
+      <div class="lls-card active">
+        <div class="lls-card-title">Paper Ledger</div>
+        <div class="lls-card-val">ACTIVE</div>
+        <div class="lls-card-note">POWER_ANCHOR n=3, 2/2 closed wins. SR=66.7%. Gate confirmed non-decorative.</div>
+        <span class="lls-status-badge lls-badge-active">PAPER_EXECUTION_ONLY</span>
+      </div>
+      <div class="lls-card info">
+        <div class="lls-card-title">Last Audit</div>
+        <div class="lls-card-val">2026-04-28</div>
+        <div class="lls-card-note">Unified Audit V1 — commit 0cfbded. Baseline locked. Protected commit: 06ba74b.</div>
+        <span class="lls-status-badge" style="background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);">AUDIT_LOCKED</span>
+      </div>
+    </div>
+    <div class="lls-spine">
+      <div style="font-family:var(--font-hud);font-size:0.5rem;letter-spacing:0.14em;color:var(--fg-muted);margin-bottom:8px;">DAILY LEARNING LOOP</div>
+      <div class="loop-step">
+        <span class="loop-arrow">→</span>
+        <span class="loop-label">1. SCORING — run_prime_today.py [LIVE_RUNTIME · Railway cron]</span>
+        <span class="loop-status ok">● OK</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">→</span>
+        <span class="loop-label">2. SIGMA — run_results_sigma.py --date [LIVE_RUNTIME · post-race]</span>
+        <span class="loop-status ok">● OK</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">→</span>
+        <span class="loop-label">3. INNOVATION PROTOCOL — build_innovation_protocol.py [AUDIT_EVIDENCE]</span>
+        <span class="loop-status ok">● OK</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">→</span>
+        <span class="loop-label">4. ROUTER SHADOW — router_shadow_audit.py [AUDIT_EVIDENCE]</span>
+        <span class="loop-status ok">● OK</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">→</span>
+        <span class="loop-label">5. EXECUTION BRIDGE — run_execution_bridge_shadow.py [PAPER_EXECUTION]</span>
+        <span class="loop-status ok">● OK</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">→</span>
+        <span class="loop-label">6. HFS BACKFILL — mpi/chaos_bloom [IN_PROGRESS · 64.7% complete]</span>
+        <span class="loop-status blocked">● PARTIAL</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">→</span>
+        <span class="loop-label">7. PLAYBOOK G TRAINING [BLOCKED — awaiting HFS_TRAINING_READY]</span>
+        <span class="loop-status blocked">● BLOCKED</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1209,7 +1684,7 @@ window.__SSC_INLINE = {"date":"2026-05-02","generated_at":"2026-05-02T14:35:51.8
 
   // ── Load sidecar_stack_latest.json ───────────────────────────────
   async function loadSSC() {
-    const STACKS = ['ELITE_STACK', 'STRONG_STACK_PLUS', 'STRONG_STACK', 'VP30_IMPROVE'];
+    const STACKS = ['ELITE_STACK', 'STRONG_STACK_PLUS', 'STRONG_STACK', 'VP30_IMPROVE', 'VP30_BASE', 'SUPPRESS'];
     let data = null;
 
     try {
@@ -1248,6 +1723,17 @@ window.__SSC_INLINE = {"date":"2026-05-02","generated_at":"2026-05-02T14:35:51.8
       if (panel) panel.innerHTML = buildSSCTable(rows, s);
     });
 
+    // Summary row above tabs
+    const c = data.counts || {};
+    const setSum = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+    setSum('ssc-sum-vp30',    `${c.vp30_count || 0} VP30`);
+    setSum('ssc-sum-elite',   `${c.elite_stack_count || 0} ELITE`);
+    setSum('ssc-sum-strong',  `${c.strong_stack_count || 0} STRONG`);
+    setSum('ssc-sum-splus',   `${c.strong_stack_plus_count || 0} STRONG+`);
+    setSum('ssc-sum-improve', `${c.vp30_improve_count || 0} IMPROVE`);
+    setSum('ssc-sum-base',    `${c.vp30_base_count || 0} BASE`);
+    setSum('ssc-sum-suppress',`${c.suppress_count || 0} SUPPRESS ⚠`);
+
     // Meta strip
     const meta = document.getElementById('ssc-meta');
     if (meta) {
@@ -1258,9 +1744,225 @@ window.__SSC_INLINE = {"date":"2026-05-02","generated_at":"2026-05-02T14:35:51.8
       const dateMatch = requestedDate === (data.date || '');
       meta.textContent = `Generated: ${gen} · Status: ${data.status || 'UNKNOWN'} · Requested: ${requestedDate} · Loaded: ${data.date || '—'} · Date match: ${dateMatch ? 'YES' : 'NO'} · Metadata: ${coverage}% · VP30≥${t.vp30} · MDS>${t.mds_high} · IMP>${t.improve_high} · source: ${data.threshold_source || '?'} · ${data.disclaimer || ''}`;
     }
+
+    // ── Load all four new panels from the same data ──────────────
+    loadTIB(data);
+    loadSHM(data);
   }
 
   loadSSC();
+
+  // ── Panel A — Today's Intelligence Brief ──────────────────────
+  window.toggleTIB = function() {
+    const body = document.getElementById('tib-body');
+    const btn  = document.getElementById('tib-toggle-btn');
+    if (!body) return;
+    const open = body.style.display === 'none';
+    body.style.display = open ? 'block' : 'none';
+    btn.textContent = open ? '[ COLLAPSE ]' : '[ EXPAND ]';
+  };
+
+  function loadTIB(data) {
+    if (!data) return;
+    const c = data.counts || {};
+    const stacks = data.stacks || {};
+
+    // Helper
+    const setEl = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+    setEl('tib-total', c.total_races || '—');
+    setEl('tib-date-sub', `${data.date || '—'} · run_prime_today`);
+    setEl('tib-date-tag', data.date || '—');
+    setEl('tib-vp30', c.vp30_count || 0);
+    setEl('tib-suppress', c.suppress_count || 0);
+    setEl('tib-elite', c.elite_stack_count || 0);
+
+    // Gather all VP30+ runners from stacks
+    const allVP30 = [];
+    ['ELITE_STACK','STRONG_STACK_PLUS','STRONG_STACK','VP30_IMPROVE','VP30_BASE'].forEach(s => {
+      (stacks[s] || []).forEach(r => {
+        if (!allVP30.find(x => x.race_id === r.race_id)) allVP30.push(r);
+      });
+    });
+    allVP30.sort((a, b) => (b.velo_prime_prob || 0) - (a.velo_prime_prob || 0));
+
+    // VP >= 0.40 count
+    const vp40 = allVP30.filter(r => (r.velo_prime_prob || 0) >= 0.40).length;
+    setEl('tib-vp40', vp40);
+
+    // MDS > 0.50 count
+    const mdsHigh = allVP30.filter(r => (r.market_deception_score || 0) > 0.50).length;
+    // Also check suppressed for MDS — scan stacks for all with MDS flag
+    const allMds = Object.values(stacks).flat().filter(r => (r.market_deception_score || 0) > 0.50).length;
+    setEl('tib-mds', allMds);
+    const mdsBadge = document.getElementById('tib-mds-badge');
+    if (mdsBadge && allMds > 0) { mdsBadge.className = 'tib-alert fire'; mdsBadge.textContent = `${allMds}x HIGHEST LIFT SIGNAL`; }
+
+    // IMP > 0.40 count
+    const allImp = Object.values(stacks).flat().filter(r => (r.improvement_score || 0) > 0.40).length;
+    setEl('tib-imp', allImp);
+
+    // PLACE_HIGH > 0.80
+    const allPP = Object.values(stacks).flat().filter(r => (r.place_prob || 0) > 0.80).length;
+    setEl('tib-pp', allPP);
+
+    // Tier distribution from all verdicts (approx from stacks)
+    const allRunners = Object.values(stacks).flat();
+    const tierCounts = {};
+    allRunners.forEach(r => { tierCounts[r.tier] = (tierCounts[r.tier] || 0) + 1; });
+    const tierA = tierCounts['A'] || 0;
+    setEl('tib-tier-a', `A:${tierA}`);
+    const tierB = tierCounts['B'] || 0;
+    const tierC = tierCounts['C'] || 0;
+    const tierD = tierCounts['D'] || 0;
+    const tierX = tierCounts['X'] || 0;
+    setEl('tib-tier-dist', `A:${tierA} B:${tierB} C:${tierC} D:${tierD} X:${tierX}`);
+
+    // Top 3 runners
+    const top3 = allVP30.slice(0, 3);
+    const container = document.getElementById('tib-top3-rows');
+    if (container) {
+      if (top3.length === 0) {
+        container.innerHTML = '<div class="tib-sel"><span class="tib-sel-horse">No VP30+ runners today.</span></div>';
+      } else {
+        container.innerHTML = top3.map((r, i) => {
+          const vp = (r.velo_prime_prob || 0).toFixed(3);
+          const mds = r.market_deception_score || 0;
+          const imp = r.improvement_score || 0;
+          const badges = [];
+          if (mds > 0.50) badges.push('<span class="tib-b tib-b-mds">🔥MDS</span>');
+          if (imp > 0.40) badges.push('<span class="tib-b tib-b-imp">📈IMP</span>');
+          if ((r.place_prob || 0) > 0.80) badges.push('<span class="tib-b tib-b-place">PP</span>');
+          const tierCls = ['A','B'].includes(r.tier) ? `t-${r.tier}` : '';
+          return `<div class="tib-sel">
+            <span class="tib-sel-n">#${i+1}</span>
+            <span class="tib-sel-horse">${r.horse || '—'}</span>
+            <span class="tib-sel-course">${r.course || '—'} ${r.off_time || ''}</span>
+            <span class="tib-sel-vp">VP ${vp}</span>
+            <span class="tib-sel-tier ${tierCls}">${r.tier || '?'}</span>
+            <div class="tib-sel-badges">${badges.join('')}</div>
+          </div>`;
+        }).join('');
+      }
+    }
+  }
+
+  // ── Panel B — Signal Heatmap ──────────────────────────────────
+  window.toggleSHM = function() {
+    const body = document.getElementById('shm-body');
+    const btn  = document.getElementById('shm-toggle-btn');
+    if (!body) return;
+    const open = body.classList.toggle('open');
+    btn.textContent = open ? '[ COLLAPSE ]' : '[ EXPAND ]';
+  };
+
+  function loadSHM(data) {
+    if (!data) return;
+    const stacks = data.stacks || {};
+
+    // Gather all VP30+ runners (deduplicated by race_id)
+    const seen = new Set();
+    const rows = [];
+    ['ELITE_STACK','STRONG_STACK_PLUS','STRONG_STACK','VP30_IMPROVE','VP30_BASE'].forEach(sName => {
+      (stacks[sName] || []).forEach(r => {
+        if (!seen.has(r.race_id)) {
+          seen.add(r.race_id);
+          rows.push({ ...r, _primary_stack: sName });
+        }
+      });
+    });
+    rows.sort((a, b) => (b.velo_prime_prob || 0) - (a.velo_prime_prob || 0));
+
+    const tbody = document.getElementById('shm-tbody');
+    if (!tbody) return;
+    if (rows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="11" style="font-family:var(--font-mono);font-size:0.62rem;color:var(--fg-muted);padding:16px 8px;">No VP30+ runners today.</td></tr>';
+      return;
+    }
+
+    // Heat cell helper
+    const hc = (val, type) => {
+      if (type === 'vp') {
+        const cls = val >= 0.40 ? 'hc-strong' : val >= 0.30 ? 'hc-cyan' : 'hc-none';
+        return `<span class="hc ${cls}">${val.toFixed(3)}</span>`;
+      }
+      if (type === 'mds') {
+        const cls = val > 0.50 ? 'hc-fire' : val > 0.30 ? 'hc-watch' : 'hc-none';
+        return `<span class="hc ${cls}">${val.toFixed(3)}</span>`;
+      }
+      if (type === 'imp') {
+        const cls = val > 0.40 ? 'hc-strong' : val > 0.20 ? 'hc-watch' : 'hc-none';
+        return `<span class="hc ${cls}">${val.toFixed(3)}</span>`;
+      }
+      if (type === 'pp') {
+        const cls = val > 0.80 ? 'hc-strong' : val > 0.60 ? 'hc-watch' : 'hc-none';
+        return `<span class="hc ${cls}">${val.toFixed(3)}</span>`;
+      }
+      if (type === 'bool') {
+        return `<span class="hc ${val ? 'hc-strong' : 'hc-none'}">${val ? '✓' : '—'}</span>`;
+      }
+      return `<span class="hc hc-none">${val || '—'}</span>`;
+    };
+
+    const stackPill = (s) => {
+      const map = {
+        'ELITE_STACK': ['ELITE','shm-stack-ELITE'],
+        'STRONG_STACK_PLUS': ['STRONG+','shm-stack-STRONG'],
+        'STRONG_STACK': ['STRONG','shm-stack-STRONG'],
+        'VP30_IMPROVE': ['IMPROVE','shm-stack-IMPROVE'],
+        'VP30_BASE': ['BASE','shm-stack-BASE'],
+      };
+      const [label, cls] = map[s] || [s, 'shm-stack-BASE'];
+      return `<span class="shm-stack-pill ${cls}">${label}</span>`;
+    };
+
+    tbody.innerHTML = rows.map(r => {
+      const vp   = r.velo_prime_prob || 0;
+      const mds  = r.market_deception_score || 0;
+      const imp  = r.improvement_score || 0;
+      const pp   = r.place_prob || 0;
+      // CASHRUN: not in sidecar data — show N/A
+      const cashrun = '<span class="hc hc-none">N/A</span>';
+      // Place signal label from badge data
+      const hasMds = (r.stack_badges || []).includes('MDS_HIGH');
+      const hasImp = (r.stack_badges || []).includes('IMP_HIGH');
+      const hasTierA = (r.stack_badges || []).includes('TIER_A');
+      let psLabel = 'BASE';
+      if (hasTierA && vp >= 0.30 && hasMds) psLabel = 'ELITE_PLACE';
+      else if (vp >= 0.30 && hasMds && hasImp) psLabel = 'STRONG_PLUS';
+      else if (vp >= 0.30 && hasMds) psLabel = 'STRONG';
+      else if (vp >= 0.30 && hasImp) psLabel = 'IMPROVE';
+      const psCls = psLabel.includes('ELITE') ? 'hc-fire' : psLabel.includes('STRONG') ? 'hc-strong' : psLabel.includes('IMPROVE') ? 'hc-watch' : 'hc-none';
+      const tierCls = `tier-${r.tier || 'X'}`;
+
+      return `<tr>
+        <td class="shm-time">${r.off_time || '—'}</td>
+        <td class="shm-course">${r.course || '—'}</td>
+        <td class="shm-horse">${r.horse || '—'}</td>
+        <td><span class="tier-badge ${tierCls}" style="width:20px;height:20px;font-size:9px;">${r.tier || '?'}</span></td>
+        <td>${hc(vp,'vp')}</td>
+        <td>${hc(mds,'mds')}</td>
+        <td>${hc(imp,'imp')}</td>
+        <td>${hc(pp,'pp')}</td>
+        <td>${cashrun}</td>
+        <td><span class="hc ${psCls}" style="min-width:80px;">${psLabel}</span></td>
+        <td>${stackPill(r._primary_stack)}</td>
+      </tr>`;
+    }).join('');
+
+    const meta = document.getElementById('shm-meta');
+    if (meta) meta.textContent = `${rows.length} VP30+ runners sorted by VP desc · source: window.__SSC_INLINE (${data.date || '—'}) · OPERATOR VISIBILITY ONLY · No staking.`;
+  }
+
+  // ── Panel C — Learning Loop Status toggle ────────────────────
+  window.toggleLLS = function() {
+    const body = document.getElementById('lls-body');
+    const btn  = document.getElementById('lls-toggle-btn');
+    if (!body) return;
+    const open = body.classList.toggle('open');
+    btn.textContent = open ? '[ COLLAPSE ]' : '[ EXPAND ]';
+  };
+
 })();
 </script>
 
