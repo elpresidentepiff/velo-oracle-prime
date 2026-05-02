@@ -884,3 +884,17 @@ Following the live_sidecar_ablation_audit (2026-05-02), the following components
 - **POWER_ANCHOR**: Paper only.
 
 **Reasoning:** Audit flagged harmful ROI profile for Release and Comment intel components. Fields remain logged for forensic observability but no longer influence the final Velo Prime probability.
+
+## Section 11: Sidecar Safety Patch v1 — Calibration Research Only
+
+A structured impact audit was conducted on 2026-05-02 comparing the current live ensemble against two safety patch designs (A and B) using the 2026-05-01 race corpus.
+
+- **Design A (Renormalized)**: Removed harmful weights from the denominator.
+  - **Verdict**: REJECTED.
+  - **Reason**: Caused aggressive inflation of raw probabilities (+0.04 Avg VP), creating false confidence and expanding the VP30 list by +3 runners without evidence of selection improvement.
+- **Design B (Fixed Denominator)**: Set harmful weights to 0 but kept the original denominator (dampening mode).
+  - **Verdict**: CALIBRATION_RESEARCH_CANDIDATE.
+  - **Reason**: Produced identical top selections and normalized rankings as Design A but with dampened raw probabilities. Held for future calibration research only.
+- **Production Status**: UNCHANGED. `LIVE_BASELINE_CURRENT` remains active. No live weight change approved. Sidecar ROI risk remains open.
+
+**Next Required Step**: Larger multi-day ablation audit required to prove ROI lift before any live weight migration.
