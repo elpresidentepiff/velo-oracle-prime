@@ -184,15 +184,18 @@ _WEIGHTS = {
     # They are computed and persisted in velo_verdicts for auditing only.
     # See excluded_from_ensemble field on every verdict row for confirmation.
     "improvement_score":     0.12,  # DISABLED — ablation 2026-04-04: hurts top-1 (-0.6 ppts)
-    "release_window_score":  0.10,  # DISABLED — RPD features not wired in live pipeline
-    "comment_intel_score":   0.08,  # DISABLED — RPD features not wired in live pipeline
+    "release_window_score":  0.00,  # DISABLED_FROM_LIVE_WEIGHT — live_sidecar_ablation_audit: harmful ROI
+    "comment_intel_score":   0.00,  # DISABLED_FROM_LIVE_WEIGHT — live_sidecar_ablation_audit: harmful ROI
 }
 
 # ─── Disabled components ────────────────────────────────────────────────────────
 # Components listed here are excluded from the ensemble regardless of weight.
 # Condition for disabling: required input features are not available in the live
-# scoring pipeline, causing the specialist model to return a constant output that
-# adds zero ranking signal while distorting probability scaling.
+# scoring pipeline, or the component demonstrated harmful ROI in live audit.
+#
+# Disabled from live VP weighting after live_sidecar_ablation_audit: 
+# release_day_prob/comment_intel_score showed harmful ROI profile. 
+# Fields remain logged for audit/operator visibility.
 #
 # release_window_score — requires RPD timing features (setup_run_flag,
 #   cash_run_flag, trainer_timing_score, runs_since_win/place …)
@@ -207,8 +210,8 @@ _WEIGHTS = {
 # Re-enable only when the required feature pipeline is fully wired and
 # the field-level zero-variance kill switch (in predict_race) does NOT fire.
 _DISABLED_COMPONENTS: set[str] = {
-    "release_window_score",
-    "comment_intel_score",
+    "release_window_score", # STORED_ONLY
+    "comment_intel_score",  # STORED_ONLY
     # Ablation backtest (2026-04-04, 647 races): improvement_score hurts top-1
     # (-0.6 ppts vs SQPE+Place) and avgWinP (-0.003). No compensating case.
     # Re-enable only if a retrained model demonstrates lift over SQPE+Place+MktDeception.
@@ -416,26 +419,28 @@ class VeloPrimePrediction:
         """
         Compute mpi and chaos_bloom for the HFS signal contract.
         Called at the end of compute() so velo_prime_prob is already finalised.
-        Formula version: hfs_signal_contract_v1
+        Formula version: hfs_signal_contract_v1.1 (hardened against nulls)
 
         MPI  = market pressure index (model vs market disagreement), bounded [0,1]
         chaos_bloom = race entropy index (macro context), bounded [0,1]
         """
         # ── MPI ───────────────────────────────────────────────────────────────
-        vp = getattr(self, 'velo_prime_prob', None)
+        vp = getattr(self, 'velo_prime_prob', self.sqpe_v17_prob)
         mds = getattr(self, 'market_deception_score', None)
+        
         if vp is not None and mds is not None:
             # MPI = blend of model confidence and market deception signal
-            # Higher vp + higher mds = market underpricing a confident pick = high MPI
             raw = (vp * 0.6) + (mds * 0.4)
             self.mpi = round(min(1.0, max(0.0, raw)), 4)
             self.mpi_source = "derived_from_vp_mds"
         elif vp is not None:
+            # Neutral fallback: use vp directly if mds missing
             self.mpi = round(min(1.0, max(0.0, vp)), 4)
             self.mpi_source = "derived_from_vp_only"
-            self.mpi_block_reason = "mds_missing"
+            self.mpi_block_reason = "mds_missing_fallback_applied"
         else:
-            self.mpi = None
+            self.mpi = 0.5  # Absolute fallback
+            self.mpi_source = "neutral_fallback"
             self.mpi_block_reason = "velo_prime_prob_missing"
 
         # ── Chaos bloom ───────────────────────────────────────────────────────
@@ -445,19 +450,21 @@ class VeloPrimePrediction:
             chaos_mode = getattr(self.macro_context, 'chaos_mode', None)
             trap_risk = getattr(self.macro_context, 'favourite_trap_risk', None)
 
-        if chaos_mode is not None or trap_risk is not None:
-            base = 0.3
-            if chaos_mode:
-                base += 0.4
-            if trap_risk in ("high", "HIGH", True, 1):
-                base += 0.3
-            elif trap_risk in ("medium", "MEDIUM"):
-                base += 0.15
-            self.chaos_bloom = round(min(1.0, max(0.0, base)), 4)
-            self.chaos_bloom_source = "derived_from_macro_field_trap"
-        else:
-            self.chaos_bloom = None
+        # Hardened logic: always return at least 0.3
+        base = 0.3
+        if chaos_mode:
+            base += 0.4
+        if trap_risk in ("high", "HIGH", True, 1):
+            base += 0.3
+        elif trap_risk in ("medium", "MEDIUM"):
+            base += 0.15
+        
+        self.chaos_bloom = round(min(1.0, max(0.0, base)), 4)
+        if not self.macro_context:
+            self.chaos_bloom_source = "neutral_fallback"
             self.chaos_bloom_block_reason = "macro_context_missing"
+        else:
+            self.chaos_bloom_source = "derived_from_macro_field_trap"
 
     def to_dict(self) -> dict:
         return {

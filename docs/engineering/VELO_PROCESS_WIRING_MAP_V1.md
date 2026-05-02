@@ -867,3 +867,20 @@ Defined in `src/velo/weight_policy_registry.py`. Controls scoring logic across e
 - **Expert Promotion:** **BLOCKED**. No Expert/Sentient promotion until sandbox proof.
 - **Safety Requirement:** Idempotency audit + event ledger verified. No double-feeding permitted.
 - **Current Classification:** **SENTIENT_FEED_READY_FOR_SANDBOX**.
+
+## Section 9: Live Sidecar Reduction — Release/Comment Disabled
+
+Following the live_sidecar_ablation_audit (2026-05-02), the following components have been removed from the weighted Meta-Ensemble to protect ROI and prevent over-bet bias.
+
+- **release_day_prob / release_window_score**: STORED_ONLY, not live weighted (Weight 0.00).
+- **comment_intel_score**: STORED_ONLY, not live weighted (Weight 0.00).
+- **VP/SQPE**: Live core anchor (Weight 0.45).
+- **MDS**: Live sidecar retained (Weight 0.10).
+- **Place Prob**: Live sidecar retained (Weight 0.08).
+- **Improvement Score**: Live sidecar retained (Weight 0.12).
+- **Longshot Score**: Live sidecar retained, gated SP >= 10.0 (Weight 0.07).
+- **Racing API enrichment**: Shadow only (Weight 0.00).
+- **CASHRUN**: Not live weighted.
+- **POWER_ANCHOR**: Paper only.
+
+**Reasoning:** Audit flagged harmful ROI profile for Release and Comment intel components. Fields remain logged for forensic observability but no longer influence the final Velo Prime probability.
