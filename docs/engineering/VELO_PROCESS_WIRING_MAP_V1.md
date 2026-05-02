@@ -846,3 +846,24 @@ NO Telegram
 NO live execution
 Contamination repair only
 ```
+
+## Section 7: VÉLØ Lane Control Policy
+
+Defined in `src/velo/weight_policy_registry.py`. Controls scoring logic across environments.
+
+| Lane | Status | Description |
+| :--- | :--- | :--- |
+| **LIVE_BASELINE_CURRENT** | LIVE_CURRENT | Current runtime weights. Value anchor: SQPE. |
+| **SHADOW_SAFE_V2** | SHADOW_ONLY | Candidate policy. SQPE 0.80, reduced Improvement risk. |
+| **SHADOW_FULL_STACK_V1** | SHADOW_RESEARCH | Testing Racing API + CASHRUN lift. Not for live use. |
+| **PAPER_EXECUTION_POLICY** | PAPER_ONLY | No VP weights. Reads bridge directives only. |
+
+**Promotion Rule:** No lane promoted to LIVE without 30 days of shadow evidence showing ROI lift > 5%.
+
+## Section 8: Playbook G / Sentient Feed Status
+
+- **Loop Status:** Restored (Patched `run_results_sigma.py`).
+- **Feed Control:** Gated **OFF** by default via `VELO_G_FEED_ENABLED`.
+- **Expert Promotion:** **BLOCKED**. No Expert/Sentient promotion until sandbox proof.
+- **Safety Requirement:** Idempotency audit + event ledger verified. No double-feeding permitted.
+- **Current Classification:** **SENTIENT_FEED_READY_FOR_SANDBOX**.
