@@ -733,6 +733,70 @@ def _render_signal_badge_line(badge_id: str) -> str:
     )
 
 
+def _build_place_signal_tg(scored: list, date_display: str) -> str:
+    """Build a compact Telegram message for place signal operator visibility."""
+    from collections import defaultdict
+    from src.velo.place_signal_classifier import classify_from_verdict, PlaceSignal
+
+    LABEL_ORDER = [
+        "ELITE_PLACE_STACK",
+        "STRONG_PLACE_STACK_PLUS",
+        "STRONG_PLACE_STACK",
+        "IMPROVE_PLACE_WATCH",
+        "PLACE_SUPPORT_WATCH",
+        "BASE_PLACE_TRUST",
+    ]
+    LABEL_SHORT = {
+        "ELITE_PLACE_STACK":        "ELITE",
+        "STRONG_PLACE_STACK_PLUS":  "STRONG+",
+        "STRONG_PLACE_STACK":       "STRONG",
+        "IMPROVE_PLACE_WATCH":      "IMPROVE_WATCH",
+        "PLACE_SUPPORT_WATCH":      "PLACE_SUPPORT",
+        "BASE_PLACE_TRUST":         "BASE_TRUST",
+    }
+
+    by_label: dict[str, list] = defaultdict(list)
+    for race, preds, tier, _ in scored:
+        if not preds:
+            continue
+        top = preds[0]
+        sig = classify_from_verdict(top)
+        if sig.place_stack_label not in LABEL_ORDER:
+            continue
+        course = (race.get("course") or "?").upper()
+        off = race.get("off_time") or "?"
+        vp = float(top.get("velo_prime_prob") or 0)
+        mds = float(top.get("market_deception_score") or 0)
+        badges = " ".join(f"[{b}]" for b in sig.badges)
+        mpo = f" min{sig.min_place_odds:.2f}" if sig.min_place_odds else ""
+        by_label[sig.place_stack_label].append(
+            f"• {top.get('horse','?')} — {course} {off} | VP={vp:.3f} | MDS={mds:.3f}{mpo} | {badges}"
+        )
+
+    active_labels = [lbl for lbl in LABEL_ORDER if by_label.get(lbl)]
+    if not active_labels:
+        return ""
+
+    lines = [
+        f"PLACE SIGNALS — {date_display}",
+        "LIVE OPERATOR VISIBILITY ONLY",
+        "─" * 34,
+    ]
+    for lbl in active_labels:
+        short = LABEL_SHORT[lbl]
+        rows = by_label[lbl]
+        lines.append(f"{short} ({len(rows)})")
+        lines.extend(rows)
+        lines.append("")
+
+    lines += [
+        "─" * 34,
+        "STATUS: LIVE_OPERATOR_VISIBILITY_ONLY",
+        "NO STAKING. NO BETFAIR. NO EXECUTION.",
+    ]
+    return "\n".join(lines)
+
+
 def render_signal_attribution_panel(race: dict, top: dict, tier: str, compact: bool = False) -> str:
     vp = _signal_stack_float(top.get("velo_prime_prob"), 0.0)
     mds = _signal_stack_float(top.get("market_deception_score"), 0.0)
@@ -1639,6 +1703,20 @@ def main():
             )
         tg("\n".join(lines))
         print(f"  Sent: C-WATCH list ({c_n} races)")
+
+    # PLACE SIGNALS — gated by VELO_ENABLE_PLACE_SIGNAL_TELEGRAM=1
+    if os.getenv("VELO_ENABLE_PLACE_SIGNAL_TELEGRAM", "0") == "1":
+        try:
+            place_msg = _build_place_signal_tg(scored, TODAY_DISPLAY)
+            if place_msg:
+                tg(place_msg)
+                print("  Sent: PLACE SIGNALS — LIVE OPERATOR VISIBILITY")
+            else:
+                print("  Place signals: no active stacks (ELITE through BASE_TRUST) — nothing sent")
+        except Exception as _ps_err:
+            print(f"  Place signals: skipped — {_ps_err}")
+    else:
+        print("  Place signals: DISABLED (set VELO_ENABLE_PLACE_SIGNAL_TELEGRAM=1 to enable)")
 
     # D / X — summary pass list
     pass_races = buckets["D"] + buckets["X"]
