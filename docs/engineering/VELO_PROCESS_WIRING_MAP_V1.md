@@ -363,6 +363,56 @@ After `--apply` backfill + re-run of `backfill_historical_feature_store.py`:
 - Remaining 11,259 repaired via full `backfill_historical_feature_store.py` re-run
 - Re-run audit to confirm `HFS_TRAINING_READY` classification before any training
 
+### HFS Signal Integrity Repair — Batch 1 Reconstruction
+
+Controlled apply via `backfill_historical_feature_store.py` (patched with null-signal targeting):
+
+**Pre-conditions confirmed (2026-05-02):**
+- Previous null rate: 35.3% (11,259 rows, after `backfill_hfs_mpi_chaos_bloom.py` partial repair)
+- All 11,259 rows are 2026 live-era (2026-03-15 to 2026-04-26), scoring_status=`missing_prediction`
+- Root cause: `score_race_velo_prime()` returned no prediction for these runners (missing age/weight/OR fields in `runner_results`)
+- 1,379 unique race_ids: all present in `races` DB table — 100% reconstructable when DB password is set
+- Backup CSV written: `data/hfs_recon_backup_batch1_20260502.csv` (11,259 rows)
+
+**Script patched — new CLI flags added to `scripts/backfill_historical_feature_store.py`:**
+- `--year 2026` — filter to races from this calendar year
+- `--only-null-signals` — target HFS rows where mpi IS NULL or chaos_bloom IS NULL (UPDATE, not INSERT)
+- `--dry-run` — compute but do not write to DB
+- `--limit-races N` — stop after N races
+- `--batch-size N` — alias for --batch-races
+- `--audit-before-after` — print null counts before and after run
+- `load_dotenv()` added to script startup via `runtime_env.load_optional_env_file`
+
+**Dry-run status: BLOCKED — DB direct connection unavailable**
+- `SUPABASE_DB_URL` in `.env` contains placeholder password (`your_db_password`)
+- `db.ltbsxbvfsxtnharjvqcm.supabase.co:5432` unreachable via IPv6 from WSL2
+- Supabase pooler (`aws-0-eu-west-2.pooler.supabase.com:5432`) IS reachable
+- To unblock: update `SUPABASE_DB_URL` in `.env` with real DB password:
+  `postgresql://postgres.ltbsxbvfsxtnharjvqcm:[REAL_PASSWORD]@aws-0-eu-west-2.pooler.supabase.com:5432/postgres`
+- Get password from: Supabase Dashboard → Settings → Database → Connection string
+
+**Batch 1 controlled apply — PENDING (not yet run)**
+- Batch 1 target: 100 races, 2026+, null-signal only
+- Rows updated: [pending — requires DB password]
+- Rows remaining dark: [pending]
+- Command when ready:
+  ```bash
+  source venv/bin/activate && PYTHONPATH=. python scripts/backfill_historical_feature_store.py \
+    --year 2026 --only-null-signals --dry-run --limit-races 25 --audit-before-after
+  ```
+  Then (after dry-run passes):
+  ```bash
+  source venv/bin/activate && PYTHONPATH=. python scripts/backfill_historical_feature_store.py \
+    --year 2026 --only-null-signals --limit-races 100 --audit-before-after
+  ```
+
+**Current audit state (2026-05-02 post-session):**
+- Total HFS rows: 31,936
+- NULL mpi rows: 11,259 (35.3%)
+- NULL chaos_bloom rows: 11,259 (35.3%)
+- Classification: `HFS_TRAINING_BLOCKED`
+- Blocked reasons: mpi null% = 35.3% | chaos_bloom null% = 35.3%
+
 ### Playbook G Status
 
 BLOCKED — no training until `HFS_TRAINING_READY` classification confirmed.
@@ -381,6 +431,88 @@ NO live execution
 
 ---
 
+## Dashboard Data Contract — Governed Card + Sidecar Stack
+
+### Main governed card lane
+
+- Endpoint: `app/main.py`
+- Function: `governed_card`
+- Request shape: `/api/governed-card?date=YYYY-MM-DD`
+- Exact-date sources:
+  - local `data/velo_prime_verdicts_YYYY_MM_DD.json`
+  - same-day Supabase `velo_verdicts` rows
+- Governance overlay:
+  - same-day Supabase `velo_verdicts` fields merged by `race_id`
+- Metadata hydrator:
+  - `src/velo/race_metadata_resolver.py`
+- Contract:
+  - requested `date` must be served exactly
+  - cross-date fallback is forbidden by default
+  - if exact-date data is missing, response must fail loud
+  - fallback is allowed only with `allow_fallback=true`
+
+### Governed card response truth fields
+
+- `requested_date`
+- `loaded_date`
+- `source`
+- `status`
+- `allow_fallback`
+- `date_match`
+- `stale_data_blocked`
+- `governed_card_loaded_date`
+- `governed_card_status`
+- `sidecar_loaded_date`
+- `sidecar_status`
+- `sidecar_date_match`
+- `metadata_coverage`
+
+### Governed card status rules
+
+- `PASS_EXACT_DATE`
+  - exact requested date served
+  - no stale substitution
+- `FAIL_DATE_MISMATCH`
+  - requested date data missing
+  - stale fallback refused
+  - `stale_data_blocked = true`
+- `FALLBACK_USED`
+  - only possible when `allow_fallback=true`
+  - response must expose requested date, loaded date, and mismatch
+
+### Sidecar lane
+
+- Primary file: `app/static/dashboard/sidecar_stack_latest.json`
+- Generator: `scripts/sidecar_stack_operator_card.py`
+- Metadata resolver: `src/velo/race_metadata_resolver.py`
+- Metadata audit artifact:
+  - `data/sidecar_stack_metadata_audit_YYYY_MM_DD.json`
+
+### Sidecar contract
+
+- `sidecar_stack_latest.json` must carry:
+  - `date`
+  - `status`
+  - `metadata_audit.metadata_coverage`
+  - `metadata_audit.unresolved_rows`
+- sidecar rows must carry:
+  - `metadata_source`
+  - `metadata_complete`
+  - `missing_metadata`
+  - `missing_fields`
+- no sidecar row may silently show blank metadata without status
+- sidecar display is valid only when metadata status is visible
+
+### Current hard truth
+
+- `governed-card` is the main dashboard lane
+- `sidecar_stack_latest.json` is the sidecar lane
+- both lanes must match the requested date to be considered release-grade
+- current May 2 sidecar lane is same-date but metadata-incomplete
+- current May 2 governed card lane is same-date after the exact-date patch, but course/off_time remain unresolved for same-day Supabase verdict rows
+
+---
+
 ## Change Log
 
 | Date | Change |
@@ -389,3 +521,4 @@ NO live execution
 | 2026-05-01 | Section 2: CASHRUN Detector wired. Proof run complete. |
 | 2026-05-01 | Section 2: Validation status added. Verdict: CASHRUN_NEEDS_MORE_DATA (n=6 READY matched). |
 | 2026-05-02 | Section 3: HFS Signal Contract Repair (MPI/chaos_bloom). Root cause confirmed. Patch applied. Backfill dry-run complete. |
+| 2026-05-02 | Section 3: HFS Batch 1 Repair mission. Script patched (null-signal targeting). DB password blocker identified. Backup CSV written. Audit confirms 35.3% null rate. |

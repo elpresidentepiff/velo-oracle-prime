@@ -241,6 +241,19 @@ _MODE_FORCED_EXCLUDE: dict[str, set[str]] = {
     ABLATION_FULL_MINUS_DEAD:              set(),
 }
 
+# ─── Production Policies ────────────────────────────────────────────────────────
+# Controlled by VELO_ENSEMBLE_POLICY env var.
+POLICY_CURRENT = "current"
+POLICY_NO_RELEASE_COMMENT = "no_release_comment"
+
+_ACTIVE_POLICY = _os.getenv("VELO_ENSEMBLE_POLICY", POLICY_CURRENT).lower()
+
+def _get_policy_exclude() -> set[str]:
+    """Return components to exclude based on the active production policy."""
+    if _ACTIVE_POLICY == POLICY_NO_RELEASE_COMMENT:
+        return {"release_window_score", "comment_intel_score"}
+    return set()
+
 # Macro modifiers — these adjust confidence/weight, don't replace probabilities
 _MACRO_CHAOS_CONFIDENCE_DAMPER    = 0.80  # reduce model confidence in chaos regime
 _MACRO_COMPRESSION_FAV_PENALTY    = 0.05  # subtract from favourite's prob when trap=high
@@ -300,9 +313,12 @@ class VeloPrimePrediction:
             killed: additional components to exclude this race (from field-level
                     zero-variance kill switch in predict_race).
         """
-        excluded = _DISABLED_COMPONENTS | (killed or set())
+        policy_exclude = _get_policy_exclude()
+        excluded = _DISABLED_COMPONENTS | policy_exclude | (killed or set())
         scores = {"sqpe_v17": self.sqpe_v17_prob}
-        # Track for observability (populated after scores dict is built below)
+        
+        # Log active policy
+        self.verdict_flags.append(f"policy:{_ACTIVE_POLICY}")
 
         if "improvement_score" not in excluded and self.improvement_score is not None:
             scores["improvement_score"] = self.improvement_score
