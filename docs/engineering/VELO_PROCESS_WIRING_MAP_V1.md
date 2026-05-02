@@ -160,8 +160,148 @@ All syntax checks passed. No runtime errors. No scoring pipeline impact.
 
 ---
 
+## Section 2 — CASHRUN Detector: Racing Post Intent Layer
+
+### Company line
+
+```
+Racing API  = structure
+Racing Post = intent
+VP          = probability
+MDS         = market deception
+CASHRUN     = handicap plot detection
+```
+
+### Status
+
+```
+OPERATOR_INTELLIGENCE_ONLY
+NO staking. NO betting instruction. NO scoring change. NO model change.
+NO router change. NO Playbook E. NO live execution.
+Read-only from per-venue merged JSON + Racing API racecard.
+```
+
+### File
+
+| File | Role |
+|---|---|
+| `scripts/cashrun_detector.py` | Detector — reads merged PDFs + Racing API, scores each horse, outputs MD + CSV |
+
+### Inputs
+
+| Source | Fields |
+|---|---|
+| `data/racecard_merged/racecard_{VENUE}_{DATE}.json` | `or_run_history`, `ts_run_history`, `spotlight_comment`, `postdata_score`, `intent_signals`, `trainer_form`, `going_flag`, `distance_flag`, `course_flag`, `plot_conviction`, `or_compression_score`, `or_trend_drops` |
+| `data/racecards_{DATE}_standard.json` (Racing API) | `ofr`, `ts`, `rpr`, `lbs`, `draw`, `headgear`, `wind_surgery`, `trainer_14_days`, `form`, `jockey`, `trainer`, `last_run`, `spotlight` (fallback) |
+
+### Scoring model
+
+| Signal | Max | Description |
+|---|---|---|
+| Mark compression | 30 | Current OR vs last winning OR; OR drop trend; career-low OR |
+| TS/RPR hidden form | 20 | TS/RPR holding while OR falls; improving TS; RPR ahead of OR |
+| Setup run pattern | 20 | Intent signals + course/dist/going flags + setup phrases in spotlight |
+| Trainer/jockey intent | 15 | Trainer form + 14-day % + headgear + wind surgery + intent signals |
+| Spotlight/postdata intent | 15 | Positive/negative phrase score + postdata pick + plot conviction |
+
+### Classification thresholds
+
+| Class | Score range | Meaning |
+|---|---|---|
+| `CASHRUN_READY` | 75–100 | Full convergence — all signals aligned |
+| `CASHRUN_WATCH` | 55–74 | Partial convergence — monitor for market confirmation |
+| `WEAK_SIGNAL` | 35–54 | Some signal but insufficient evidence |
+| `SUPPRESS` | 0–34 | No convergence or active negative signals |
+
+### Outputs
+
+| File | Format |
+|---|---|
+| `data/cashrun_report_YYYY_MM_DD.md` | Full operator report: per-horse detail, field coverage, system integrity |
+| `data/cashrun_report_YYYY_MM_DD.csv` | Machine-readable: all scored horses with signal breakdowns |
+
+### Field coverage proof (2026-05-01 run)
+
+| Check | Coverage | Notes |
+|---|---|---|
+| Files parsed | 6 venues | NMK WAR NCS GOO ASC PUN |
+| Horses scanned | 379 | — |
+| Last-6 OR | 89% | — |
+| Last-6 TS | 88% | — |
+| Current RPR | 85% | — |
+| Spotlight | 100% | Racing API fallback used for venues without spotlight_comment |
+| Postdata | 67% | Only venues with full PDF parse |
+| Trainer 14-day | 94% | From Racing API |
+| Headgear | 34% | Only flags actual headgear use — missing = no headgear |
+| Last-6 RPR | NOT_IN_SOURCE | PDF parser extracts current RPR only; per-run RPR not available |
+
+### 2026-05-01 proof run result
+
+```
+CASHRUN_READY:  1  (Police Academy — WAR 6.50 — score 79.0)
+CASHRUN_WATCH:  30
+WEAK_SIGNAL:    94
+SUPPRESS:       254
+```
+
+### Safety contract
+
+```
+NO change to velo_prime_prob
+NO change to SQPE or ensemble
+NO change to decision_tier
+NO change to router
+NO staking
+NO Betfair
+NO live execution
+READ-ONLY from per-venue JSON + Racing API racecard
+```
+
+### CASHRUN Result Validation Status
+
+Audit run: 2026-05-01. Script: `scripts/cashrun_results_audit.py`.
+Outputs: `data/cashrun_results_audit_latest.md/.csv` (gitignored — not committed).
+
+| Metric | Value |
+|---|---|
+| Dates audited | 7 (2026-04-22 → 2026-05-01) |
+| Total horses scored | 2,933 |
+| Result-matched | 2,328 (79%) |
+| CASHRUN_READY matched | 6 |
+| CASHRUN_READY SR | 0% |
+| CASHRUN_READY Frame | 33% |
+| CASHRUN_WATCH matched | 149 |
+| CASHRUN_WATCH SR | 13% |
+| CASHRUN_WATCH Frame | 35% |
+| SUPPRESS SR | 10% |
+| Classification | **CASHRUN_NEEDS_MORE_DATA** |
+
+**Police Academy (WAR 6.50, 2026-05-01):**
+Score=79 (CASHRUN_READY) | SP=2.75 | Pos=2 | **PLACED** | P&L=-1.00
+
+**Signal observations:**
+- READY sample n=6 — too small for win/ROI verdict
+- Score band correlation not fully monotonic (35–54 band frame > 55–74) — calibration work needed
+- WATCH SR 13% vs SUPPRESS 10% — modest separation only
+- High average SP in READY class (20.6) — detector firing on longer-priced horses
+- CASHRUN_NEEDS_MORE_DATA: need ≥10 READY closed results before signal verdict
+
+**What this means:**
+CASHRUN detector reads the right fields, classifies consistently, and produced its first READY call correctly (Police Academy placed). But the sample is too thin to confirm whether the scoring model separates intent from noise. Accumulate more days. No live weight impact. No staking.
+
+### Commit history
+
+| Commit | Description |
+|---|---|
+| (pre-existing) | `cashrun_detector.py` built during CASHRUN session |
+| (pending approval) | SETUP_PHRASES expanded; spotlight fallback; NOT_IN_SOURCE label; `cashrun_results_audit.py` added |
+
+---
+
 ## Change Log
 
 | Date | Change |
 |---|---|
 | 2026-05-01 | Document created. Section 1: Place Signal Classifier wired. |
+| 2026-05-01 | Section 2: CASHRUN Detector wired. Proof run complete. |
+| 2026-05-01 | Section 2: Validation status added. Verdict: CASHRUN_NEEDS_MORE_DATA (n=6 READY matched). |
