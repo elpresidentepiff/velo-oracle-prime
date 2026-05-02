@@ -284,6 +284,15 @@ class VeloPrimePrediction:
     doctrines_fired: list = field(default_factory=list)  # list of doctrine names that fired
     g_shadow_flags: list = field(default_factory=list)  # what G did
 
+    # HFS Signal Contract v1 — populated by _compute_hfs_signals() after compute()
+    mpi: Optional[float] = None
+    chaos_bloom: Optional[float] = None
+    mpi_source: Optional[str] = None
+    chaos_bloom_source: Optional[str] = None
+    mpi_block_reason: Optional[str] = None
+    chaos_bloom_block_reason: Optional[str] = None
+    signal_contract_version: str = "hfs_signal_contract_v1"
+
     def compute(self, killed: set[str] | None = None) -> "VeloPrimePrediction":
         """Build VELO_PRIME_prob from all available signals.
 
@@ -382,7 +391,57 @@ class VeloPrimePrediction:
         else:
             self.confidence_level = "low"
 
+        # Compute HFS signal contract fields after velo_prime_prob is finalised
+        self._compute_hfs_signals()
+
         return self
+
+    def _compute_hfs_signals(self) -> None:
+        """
+        Compute mpi and chaos_bloom for the HFS signal contract.
+        Called at the end of compute() so velo_prime_prob is already finalised.
+        Formula version: hfs_signal_contract_v1
+
+        MPI  = market pressure index (model vs market disagreement), bounded [0,1]
+        chaos_bloom = race entropy index (macro context), bounded [0,1]
+        """
+        # ── MPI ───────────────────────────────────────────────────────────────
+        vp = getattr(self, 'velo_prime_prob', None)
+        mds = getattr(self, 'market_deception_score', None)
+        if vp is not None and mds is not None:
+            # MPI = blend of model confidence and market deception signal
+            # Higher vp + higher mds = market underpricing a confident pick = high MPI
+            raw = (vp * 0.6) + (mds * 0.4)
+            self.mpi = round(min(1.0, max(0.0, raw)), 4)
+            self.mpi_source = "derived_from_vp_mds"
+        elif vp is not None:
+            self.mpi = round(min(1.0, max(0.0, vp)), 4)
+            self.mpi_source = "derived_from_vp_only"
+            self.mpi_block_reason = "mds_missing"
+        else:
+            self.mpi = None
+            self.mpi_block_reason = "velo_prime_prob_missing"
+
+        # ── Chaos bloom ───────────────────────────────────────────────────────
+        chaos_mode = None
+        trap_risk = None
+        if self.macro_context:
+            chaos_mode = getattr(self.macro_context, 'chaos_mode', None)
+            trap_risk = getattr(self.macro_context, 'favourite_trap_risk', None)
+
+        if chaos_mode is not None or trap_risk is not None:
+            base = 0.3
+            if chaos_mode:
+                base += 0.4
+            if trap_risk in ("high", "HIGH", True, 1):
+                base += 0.3
+            elif trap_risk in ("medium", "MEDIUM"):
+                base += 0.15
+            self.chaos_bloom = round(min(1.0, max(0.0, base)), 4)
+            self.chaos_bloom_source = "derived_from_macro_field_trap"
+        else:
+            self.chaos_bloom = None
+            self.chaos_bloom_block_reason = "macro_context_missing"
 
     def to_dict(self) -> dict:
         return {
@@ -412,6 +471,14 @@ class VeloPrimePrediction:
             "g_shadow_flags": self.g_shadow_flags,
             "g_shadow_mode": _G_SHADOW_MODE,
             "doctrines_fired": self.doctrines_fired,
+            # HFS Signal Contract v1
+            "mpi": self.mpi,
+            "chaos_bloom": self.chaos_bloom,
+            "mpi_source": self.mpi_source,
+            "chaos_bloom_source": self.chaos_bloom_source,
+            "mpi_block_reason": self.mpi_block_reason,
+            "chaos_bloom_block_reason": self.chaos_bloom_block_reason,
+            "signal_contract_version": self.signal_contract_version,
         }
 
 

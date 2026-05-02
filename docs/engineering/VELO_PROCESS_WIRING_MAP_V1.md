@@ -298,6 +298,89 @@ CASHRUN detector reads the right fields, classifies consistently, and produced i
 
 ---
 
+## Section 3 — HFS Signal Contract Repair: MPI / Chaos Bloom
+
+### Root Cause
+
+`VeloPrimePrediction.to_dict()` never emitted `mpi` or `chaos_bloom`.
+`backfill_historical_feature_store.py` used `payload.get("mpi")` → None → NULL.
+13,361 HFS rows (2026+ live era) were signal-dark.
+
+### Fix Applied
+
+Patch: `src/intelligence/velo_prime_ensemble.py`
+- `mpi`, `chaos_bloom`, `mpi_source`, `chaos_bloom_source`, `mpi_block_reason`,
+  `chaos_bloom_block_reason`, `signal_contract_version`
+  added to `VeloPrimePrediction` dataclass and `to_dict()`
+- `_compute_hfs_signals()` method added, called at end of `compute()`
+
+Formula version: `hfs_signal_contract_v1`
+- `mpi = velo_prime_prob * 0.6 + market_deception_score * 0.4`, bounded [0,1], null-safe
+- `chaos_bloom = macro entropy from chaos_mode + favourite_trap_risk`, bounded [0,1], null-safe
+
+Provenance fields:
+- `mpi_source`: `"derived_from_vp_mds"` | `"derived_from_vp_only"`
+- `chaos_bloom_source`: `"derived_from_macro_field_trap"`
+- `signal_contract_version`: `"hfs_signal_contract_v1"`
+
+### Backfill
+
+Script: `scripts/backfill_hfs_mpi_chaos_bloom.py`
+Status: DRY-RUN complete (2026-05-02)
+
+```
+HFS rows scanned:                    13361
+HFS total rows:                      31936
+Rows with mpi NULL:                  13361  (41.8%)
+Rows with chaos_bloom NULL:          13361  (41.8%)
+Signal index coverage:               1539 (race_id, horse_id) pairs from velo_verdicts
+MPI eligible for repair:             2102
+MPI blocked (missing inputs):        11259
+chaos_bloom eligible for repair:     2102
+chaos_bloom blocked:                 11259
+Rows with at least one update:       2102
+MPI distribution (proposed):         n=2102  min=0.0008  max=0.4646  mean=0.0510  std=0.0540
+chaos_bloom distribution (proposed): n=2102  min=0.3000  max=0.3000  mean=0.3000  std=0.0000
+```
+
+Note: 11,259 blocked rows have no signal source in velo_verdicts — these are pre-scored
+historical runs where no verdict was stored. They remain NULL until the full backfill
+(backfill_historical_feature_store.py) is re-run with the patched pipeline.
+
+### HFS Integrity Audit
+
+Script: `scripts/audit_hfs_signal_integrity.py`
+Output: `data/hfs_signal_integrity_audit_latest.md`
+Classification: `HFS_TRAINING_BLOCKED`
+
+```
+Blocked reason: mpi null% = 41.8% (> 10% threshold)
+Blocked reason: chaos_bloom null% = 41.8% (> 10% threshold)
+```
+
+After `--apply` backfill + re-run of `backfill_historical_feature_store.py`:
+- 2102 rows repaired immediately via `backfill_hfs_mpi_chaos_bloom.py --apply`
+- Remaining 11,259 repaired via full `backfill_historical_feature_store.py` re-run
+- Re-run audit to confirm `HFS_TRAINING_READY` classification before any training
+
+### Playbook G Status
+
+BLOCKED — no training until `HFS_TRAINING_READY` classification confirmed.
+
+### Safety
+
+```
+NO scoring change
+NO SQPE change
+NO VP change
+NO router change
+NO staking
+NO Telegram change
+NO live execution
+```
+
+---
+
 ## Change Log
 
 | Date | Change |
@@ -305,3 +388,4 @@ CASHRUN detector reads the right fields, classifies consistently, and produced i
 | 2026-05-01 | Document created. Section 1: Place Signal Classifier wired. |
 | 2026-05-01 | Section 2: CASHRUN Detector wired. Proof run complete. |
 | 2026-05-01 | Section 2: Validation status added. Verdict: CASHRUN_NEEDS_MORE_DATA (n=6 READY matched). |
+| 2026-05-02 | Section 3: HFS Signal Contract Repair (MPI/chaos_bloom). Root cause confirmed. Patch applied. Backfill dry-run complete. |
