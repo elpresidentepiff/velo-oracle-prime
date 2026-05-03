@@ -898,3 +898,25 @@ A structured impact audit was conducted on 2026-05-02 comparing the current live
 - **Production Status**: UNCHANGED. `LIVE_BASELINE_CURRENT` remains active. No live weight change approved. Sidecar ROI risk remains open.
 
 **Next Required Step**: Larger multi-day ablation audit required to prove ROI lift before any live weight migration.
+
+## Section 12: Race-Day Identity Rule
+
+This section defines the mandatory protocol for identifying and querying race-day data to prevent date-resolution incidents.
+
+- **Truth Source:** Every operator card and race-day audit must identify the target races by a **race_id manifest** derived from local standard/merged racecards for that date.
+- **Join Key:** `race_id` is the canonical join key between racecards, verdicts, results, and audits.
+- **Retrieval:** Verdicts must be fetched from Supabase using the manifest list (`IN (race_id_list)`), not by `generated_at` timestamp.
+- **Provenance:** `generated_at` is for provenance/audit tracking only and must never be used as the primary day selector.
+- **Metadata:** All race metadata (Course, Time) must be resolved by `RaceMetadataResolver` using the `race_id`.
+- **IDs:** Runner-specific IDs (trainer, jockey) must be extracted from `full_analysis.predictions` blocks.
+- **Fail Fast:** If no race-day manifest (local JSON) exists, the process must fail clearly with `FAIL_NO_RACE_ID_MANIFEST` rather than attempting a `generated_at` search.
+
+
+## Section 13: Worktree / Nexus Rule
+
+This section defines the mandatory protocol for multi-repo environment stability.
+
+- **Canonical Target:** Repo A (`/mnt/c/Users/puror/velo-oracle-prime`) is the only authorized environment for scoring, development, and commits.
+- **Reference Only:** Repo B (`velo_feature_v10_launch_fix`) is quarantined and serves as a read-only source for historical migration.
+- **Migration Protocol:** No code merge. Deliberate file migration only. Migrated files must be listed in `VELO_NEXUS_WORKTREE_REGISTRY.md`.
+- **Zero-Tolerance:** No agent may execute scripts from sibling worktrees.
