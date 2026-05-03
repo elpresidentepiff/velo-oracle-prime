@@ -1,3 +1,75 @@
+CANONICAL RUNTIME LOCK — READ FIRST
+
+1. Only /mnt/c/Users/puror/velo-oracle-prime on branch main is canonical.
+2. /mnt/c/Users/puror/velo_feature_v10_launch_fix or OneDrive feature_v10_launch_fix is stale reference only.
+3. Any work done outside canonical repo is invalid unless labelled FORENSIC_COMPARISON_ONLY.
+4. All future commands must first confirm:
+   - repo root
+   - branch
+   - HEAD
+   - remote
+   - dirty state
+5. No scoring, audit, card, report, or deployment command may run from a non-canonical worktree.
+6. If canonical check fails, STOP.
+
+### Commands
+
+pwd
+git rev-parse --show-toplevel
+git branch --show-current
+git rev-parse --short HEAD
+git remote -v
+git status --short
+
+### Labels
+
+CANONICAL:
+- /mnt/c/Users/puror/velo-oracle-prime
+- branch: main
+
+STALE_REFERENCE:
+- /mnt/c/Users/puror/velo_feature_v10_launch_fix
+- C:\Users\puror\OneDrive\Documents\New project\velo_feature_v10_launch_fix
+
+---
+
+PRE-RUN LAW
+
+Before any of these commands:
+- run_prime_today
+- vp30_operator_card
+- racing_api_enrichment_operator_card
+- cashrun_detector
+- router_shadow_audit
+- signal_promotion_board
+- build_unified_evidence_corpus
+- run_execution_bridge_shadow
+- close_sigma_loops
+- deployment
+
+Run:
+
+python scripts/assert_canonical_worktree.py
+
+If it fails, do not proceed.
+
+---
+
+DEPLOYMENT SOURCE STATUS
+
+Current:
+DEPLOYMENT_SOURCE_UNKNOWN
+
+Known:
+- Railway start command appears to be uvicorn app.main:app --host 0.0.0.0 --port \${PORT:-8080}
+- deployed branch/commit must still be verified
+
+Next required check:
+- Railway dashboard/CLI or health endpoint must expose deployed commit
+- Until then, “canonical repo” and “deployed runtime” are separate facts
+
+---
+
 # VÉLØ Process Wiring Map V1
 
 > **One Truth document.** Defines how data flows through VÉLØ from scoring through operator output.
