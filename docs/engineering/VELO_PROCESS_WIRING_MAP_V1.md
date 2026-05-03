@@ -1111,19 +1111,20 @@ The VÉLØ LLM Council is the final reasoning layer that synthesizes evidence fo
 SHADOW_OPERATOR_ONLY
 DEV_LOCKED
 NOT_PROVEN
-FORWARD_AUDIT_REQUIRED
+FORWARD_TEST_REQUIRED
 ```
 
 ### Governance Policy
 
-The CASHRUN detector identifies trainer intent and handicap plots using Racing Post data.
+The CASHRUN detector identifies possible handicap/cash-run intent from Racing Post and merged racecard data.
 
 1. **Read-Only:** Detector provides intelligence only; it does not change live scoring.
-2. **Inputs:** Spotlight, Postdata, OR/TS/RPR history from RP-derived merged files.
+2. **Inputs:** Spotlight, Postdata, current OR, last-six OR, last-six TS, last-six RPR, trainer, jockey, class, trip, going.
 3. **Rules Locked:** Scoring logic and thresholds are locked (CASHRUN_V1_DEV_LOCK).
 4. **No Control:** Cannot alter VP, weights, router, staking, or execution.
-5. **Promotion:** Requires 30+ days of forward result audit proof before promotion discussion.
-6. **Data Warning:** 2026-05-01 run is flagged as TUNED_ON_SAME_DAY_DATA; forward validation is mandatory.
+5. **Evidence Status:** Forward-test required.
+6. **Data Warning:** 2026-05-01 run is flagged as TUNED_ON_SAME_DAY_DATA; performance is DEV_ONLY_NOT_EVIDENCE.
+7. **Audit Rule:** Performance must be reported using identity-grade matches only. Global fallback matches are diagnostic only, not proof.
 
 ### Thresholds
 
