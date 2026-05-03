@@ -920,3 +920,47 @@ This section defines the mandatory protocol for multi-repo environment stability
 - **Reference Only:** Repo B (`velo_feature_v10_launch_fix`) is quarantined and serves as a read-only source for historical migration.
 - **Migration Protocol:** No code merge. Deliberate file migration only. Migrated files must be listed in `VELO_NEXUS_WORKTREE_REGISTRY.md`.
 - **Zero-Tolerance:** No agent may execute scripts from sibling worktrees.
+
+## Section 14: Security and Credential Spine
+
+This section defines the release-gate security contract for the live VELØ control plane.
+
+### Secrets
+
+- Secrets must live in environment variables only.
+- Secrets must not live in tracked repo files.
+- Secrets must not live in docs.
+- Secrets must not live in generated artifacts under `data/`.
+- Placeholder templates are allowed only when they contain no real values.
+
+### Current source files
+
+- API ingress hardening lives in `app/main.py`.
+- Runtime config contract lives in `app/core/config.py`.
+- Racing API env-only clients live in:
+  - `app/integrations/racing_api_client.py`
+  - `app/api/racing_api_client.py`
+  - `workers/racing_api_fetcher.py`
+- Rotation and incident procedure lives in:
+  - `docs/security/VELO_SECRET_ROTATION_RUNBOOK.md`
+- Environment ownership contract lives in:
+  - `docs/security/VELO_ENV_CONTRACT.md`
+
+### Security controls now enforced
+
+- Trigger endpoints use constant-time secret comparison.
+- `target_date` validation is enforced before subprocess, log, or Supabase use.
+- Live Betfair remains blocked unless explicitly approved and separately guarded.
+- Security work is a release gate, not optional cleanup.
+
+### Current audit truth
+
+- Current HEAD is env-only for Racing API secrets.
+- Historical exposure is confirmed by commit `53ec195` replacing hardcoded credentials with env references.
+- Immediate credential rotation is therefore required.
+- History rewrite is recommended later, but rotation is the first required action.
+
+### Operational law
+
+- No dashboard, scoring, sigma, or operator workflow is release-grade if secret hygiene is not controlled.
+- No engineer or agent may paste credentials into chat logs, markdown reports, or screenshots.
