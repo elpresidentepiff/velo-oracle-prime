@@ -1100,3 +1100,34 @@ The VÉLØ LLM Council is the final reasoning layer that synthesizes evidence fo
 - Signal Promotion Board
 - Router Shadow Audit
 - One Truth (Wiring Map)
+
+---
+
+## Section 12 — CASHRUN Detector
+
+### Status
+
+```
+SHADOW_OPERATOR_ONLY
+DEV_LOCKED
+NOT_PROVEN
+FORWARD_AUDIT_REQUIRED
+```
+
+### Governance Policy
+
+The CASHRUN detector identifies trainer intent and handicap plots using Racing Post data.
+
+1. **Read-Only:** Detector provides intelligence only; it does not change live scoring.
+2. **Inputs:** Spotlight, Postdata, OR/TS/RPR history from RP-derived merged files.
+3. **Rules Locked:** Scoring logic and thresholds are locked (CASHRUN_V1_DEV_LOCK).
+4. **No Control:** Cannot alter VP, weights, router, staking, or execution.
+5. **Promotion:** Requires 30+ days of forward result audit proof before promotion discussion.
+6. **Data Warning:** 2026-05-01 run is flagged as TUNED_ON_SAME_DAY_DATA; forward validation is mandatory.
+
+### Thresholds
+
+- **CASHRUN_READY:** 75–100
+- **CASHRUN_WATCH:** 55–74
+- **WEAK_SIGNAL:** 35–54
+- **SUPPRESS:** 0–34
