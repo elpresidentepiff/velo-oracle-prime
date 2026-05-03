@@ -1068,8 +1068,35 @@ Following the `live_sidecar_ablation_audit`, the following components have been 
 | Improvement Score | 0.12 | Potential sidecar |
 | Longshot Score | 0.07 | Gated SP >= 10.0 |
 
-### Safety Contract
+---
 
-- Removed fields remain logged in `data/` for forensics.
-- Removal is controlled via `src/intelligence/velo_prime_ensemble.py`.
-- No live weight changes without 30-day shadow proof.
+## Section 11 — LLM Council Status
+
+### Status
+
+```
+SHADOW_OPERATOR_GOVERNANCE
+NO_LIVE_CONTROL
+EVIDENCE_GATED
+```
+
+### Governance Policy
+
+The VÉLØ LLM Council is the final reasoning layer that synthesizes evidence for operator visibility.
+
+1. **Read-Only:** Council reads evidence; it does not create truth.
+2. **No Promotion:** Council cannot promote signals or lanes.
+3. **No Control:** Council cannot alter VP, weights, router, staking, or execution.
+4. **Evidence Gated:** Council is invalid if the Evidence Packet is incomplete (VP30 or Racing API missing).
+5. **Hierarchy:** Council is below One Truth, Signal Board, Router Audit, and Daily Close SOP.
+6. **Output:** SHADOW / OPERATOR ONLY.
+
+### Required Evidence Spine
+
+- VP30 Card
+- Racing API Enrichment
+- CASHRUN Detector
+- Sidecar Ablation Audit
+- Signal Promotion Board
+- Router Shadow Audit
+- One Truth (Wiring Map)
