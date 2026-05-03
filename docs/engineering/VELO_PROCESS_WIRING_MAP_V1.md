@@ -1036,3 +1036,40 @@ This section defines the release-gate security contract for the live VELØ contr
 
 - No dashboard, scoring, sigma, or operator workflow is release-grade if secret hygiene is not controlled.
 - No engineer or agent may paste credentials into chat logs, markdown reports, or screenshots.
+
+---
+
+## Section 10 — Live Sidecar Risk Register
+
+### Status
+
+```
+SIDE_CAR_RISK_CONTROL_ACTIVE
+HARMFUL_COMPONENTS_REMOVED (2026-05-02)
+```
+
+### Risk Mitigation Audit (2026-05-02)
+
+Following the `live_sidecar_ablation_audit`, the following components have been removed from the live weighted Meta-Ensemble to protect ROI and prevent over-bet bias.
+
+| Component | Status | Weight | Reason |
+|---|---|---|---|
+| `release_day_prob` | REMOVED | 0.00 | Harmful ROI profile; over-bet bias |
+| `release_window_score`| REMOVED | 0.00 | Harmful ROI profile |
+| `comment_intel_score` | REMOVED | 0.00 | Signal-to-noise ratio too low |
+
+### Live Weights (Baseline)
+
+| Component | Weight | Role |
+|---|---|---|
+| VP / SQPE | 0.45 | Core probability anchor |
+| MDS | 0.10 | Market deception sidecar |
+| Place Prob | 0.08 | Place support sidecar |
+| Improvement Score | 0.12 | Potential sidecar |
+| Longshot Score | 0.07 | Gated SP >= 10.0 |
+
+### Safety Contract
+
+- Removed fields remain logged in `data/` for forensics.
+- Removal is controlled via `src/intelligence/velo_prime_ensemble.py`.
+- No live weight changes without 30-day shadow proof.
