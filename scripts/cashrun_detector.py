@@ -33,33 +33,83 @@ class CashrunDetector:
             "WATCH": 55,
             "WEAK": 35
         }
+        self.identity_map = {} # (course, time, horse) -> (race_id, horse_id)
+
+    def _normalize_name(self, name: str) -> str:
+        return name.upper().split("(")[0].strip()
+
+    def _normalize_time(self, time_str: str) -> str:
+        return time_str.replace(".", ":").strip()
+
+    def _load_identity_enrichment(self):
+        """Loads race_id and horse_id from standard racecard JSON."""
+        api_card_path = self.repo_root / f"data/racecards_{self.date_str.replace('-', '_')}_standard.json"
+        if api_card_path.exists():
+            try:
+                with open(api_card_path, 'r') as f:
+                    full_data = json.load(f)
+                    cards = full_data.get("racecards", [])
+                    for race in cards:
+                        r_id = race.get("race_id")
+                        course = race.get("course", "").upper().split("(")[0].strip()
+                        off_time = self._normalize_time(race.get("off_time", ""))
+                        for runner in race.get("runners", []):
+                            h_id = runner.get("horse_id")
+                            h_name = self._normalize_name(runner.get("horse", ""))
+                            # Map by course-time-horse
+                            key = (course, off_time, h_name)
+                            self.identity_map[key] = (r_id, h_id)
+            except Exception as e:
+                print(f"Warning: Failed to load identity enrichment: {e}")
 
     def run_daily_detection(self):
         """Main entry point for daily CASHRUN detection."""
+        self._load_identity_enrichment()
+        
         merged_dir = self.repo_root / "data/racecard_merged"
         merged_files = list(merged_dir.glob(f"racecard_*_{self.date_str}.json"))
         
-        api_card_path = self.repo_root / f"data/racecards_{self.date_str.replace('-', '_')}_standard.json"
-        api_data = {}
-        if api_card_path.exists():
-            with open(api_card_path, 'r') as f:
-                api_data = json.load(f)
-
         for file_path in merged_files:
             with open(file_path, 'r') as f:
                 card = json.load(f)
-                self._process_venue_card(card, api_data)
+                self._process_venue_card(card)
 
         self._save_reports()
         return self.scored_horses
 
-    def _process_venue_card(self, card: Dict, api_data: Dict):
+    def _process_venue_card(self, card: Dict):
         venue = card.get("venue")
+        course_name = card.get("course_name") or venue # Usually merged cards have venue code only
         self.field_coverage["venues"].add(venue)
         
         for race_time, race_data in card.get("races", {}).items():
+            race_name = race_data.get("race_name", "")
+            norm_time = self._normalize_time(race_time)
+            
             for horse in race_data.get("horses", []):
                 self.field_coverage["horses_scanned"] += 1
+                
+                h_name = self._normalize_name(horse.get("horse_name", ""))
+                
+                # Attempt identity join
+                race_id, horse_id = "", ""
+                # Try exact course if known, else iterate identity_map for venue matches
+                match_found = False
+                for (c, t, h), (rid, hid) in self.identity_map.items():
+                    if t == norm_time and h == h_name:
+                        if venue in c or c.startswith(venue):
+                            race_id, horse_id = rid, hid
+                            match_found = True
+                            break
+                
+                # Inject identity into horse for output
+                horse["_race_id"] = race_id
+                horse["_horse_id"] = horse_id
+                horse["_course"] = course_name
+                horse["_off_time"] = race_time
+                horse["_venue"] = venue
+                horse["_race_name"] = race_name
+                
                 scored = self._score_horse(horse, venue, race_time)
                 self.scored_horses.append(scored)
 
@@ -92,12 +142,16 @@ class CashrunDetector:
         if not horse.get("spotlight_comment"): missing_fields.append("SPOTLIGHT")
 
         return {
-            "date_run": datetime.now().strftime("%Y-%m-%d"),
+            "date": self.date_str,
+            "race_id": horse.get("_race_id", ""),
+            "horse_id": horse.get("_horse_id", ""),
+            "course": horse.get("_course", ""),
+            "off_time": horse.get("_off_time", ""),
+            "race_name": horse.get("_race_name", ""),
+            "venue": horse.get("_venue", ""),
+            "horse": name,
             "cashrun_version": CASHRUN_VERSION,
             "scoring_rules_hash": SCORING_RULES_HASH,
-            "horse": name,
-            "venue": venue,
-            "time": race_time,
             "total_score": total_score,
             "label": label,
             "or_score": or_score,
@@ -112,7 +166,8 @@ class CashrunDetector:
             "missing_fields": "|".join(missing_fields),
             "evidence_phrases": "|".join(evidence_phrases),
             "mode": self.mode,
-            "tuned_on_same_day": self.tuned_on_same_day
+            "tuned_on_same_day": self.tuned_on_same_day,
+            "date_run": datetime.now().strftime("%Y-%m-%d")
         }
 
     def _calculate_or_compression(self, horse: Dict) -> (float, Optional[int]):
@@ -182,7 +237,7 @@ class CashrunDetector:
                 subset = [h for h in sorted_horses if h["label"] == label]
                 f.write(f"### {label} ({len(subset)} horses)\n")
                 for h in subset:
-                    f.write(f"- **{h['horse']}** | {h['venue']} {h['time']} | score={h['total_score']} | OR {h['current_or']} (win OR was {h['last_win_or']}) | {h['evidence_phrases']}\n")
+                    f.write(f"- **{h['horse']}** | {h['venue']} {h['off_time']} | score={h['total_score']} | OR {h['current_or']} (win OR was {h['last_win_or']}) | {h['evidence_phrases']}\n")
                 f.write("\n")
         if self.scored_horses:
             keys = self.scored_horses[0].keys()

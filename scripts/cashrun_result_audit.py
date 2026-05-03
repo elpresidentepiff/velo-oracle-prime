@@ -69,7 +69,7 @@ class CashrunResultAudit:
                         "off_time": off_time
                     }
                     
-                    # 1. race_id + horse_id (if cashrun had these, we could use them, but it doesn't currently)
+                    # 1. race_id + horse_id
                     if race_id and horse_id:
                         self.idx_race_horse_id[f"{race_id}_{horse_id}"] = res_obj
                     
@@ -78,8 +78,6 @@ class CashrunResultAudit:
                         self.idx_race_horse_name[f"{race_id}_{horse_clean}"] = res_obj
                         
                     # 3. course + off_time + normalized horse name
-                    # Note: We need a mapping from venue code (e.g. WAR) to full course name, or we do loose matching.
-                    # For safety, we will just use a loose partial match on course name later if needed.
                     self.idx_course_time_name[f"{course}_{off_time}_{horse_clean}"] = res_obj
                     
                     # 4. global name fallback
@@ -88,19 +86,32 @@ class CashrunResultAudit:
                     
         return True
 
-    def _find_match(self, horse_name: str, venue: str, race_time: str) -> (Optional[Dict], str, str):
+    def _find_match(self, row: Dict) -> (Optional[Dict], str, str):
+        horse_name = row.get("horse", "")
         horse_clean = self._normalize_name(horse_name)
-        norm_time = self._normalize_time(race_time)
+        venue = row.get("venue", "").upper()
+        race_time = self._normalize_time(row.get("off_time", ""))
+        race_id = row.get("race_id", "")
+        horse_id = row.get("horse_id", "")
         
-        # We don't have race_id/horse_id in the CASHRUN output yet.
-        # Strategy 3: course + off_time + normalized horse name
-        # We need to find a course in our index that matches the venue code (e.g., WAR -> WARWICK)
+        # 1. race_id + horse_id
+        if race_id and horse_id:
+            key = f"{race_id}_{horse_id}"
+            if key in self.idx_race_horse_id:
+                return self.idx_race_horse_id[key], "MATCH_RACE_HORSE_ID", key
+        
+        # 2. race_id + normalized horse name
+        if race_id:
+            key = f"{race_id}_{horse_clean}"
+            if key in self.idx_race_horse_name:
+                return self.idx_race_horse_name[key], "MATCH_RACE_HORSE_NAME", key
+        
+        # 3. course + off_time + normalized horse name
+        # Try to find matching course in results based on venue code
         for key, res in self.idx_course_time_name.items():
             k_course, k_time, k_horse = key.split("_", 2)
-            # Venue is 3 letters. If it's a prefix or in the course name:
-            if venue in k_course or k_course.startswith(venue):
-                if k_time == norm_time and k_horse == horse_clean:
-                    return res, "MATCH_COURSE_TIME_NAME", key
+            if (venue in k_course or k_course.startswith(venue)) and k_time == race_time and k_horse == horse_clean:
+                return res, "MATCH_COURSE_TIME_NAME", key
                     
         # Strategy 4: fallback global horse name ONLY if unique
         if self.global_name_counts.get(horse_clean, 0) == 1:
@@ -121,11 +132,7 @@ class CashrunResultAudit:
         with open(csv_path, 'r') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                venue = row.get("venue", "").upper()
-                race_time = row.get("time", "")
-                horse_name = row.get("horse", "")
-                
-                result, match_status, match_key = self._find_match(horse_name, venue, race_time)
+                result, match_status, match_key = self._find_match(row)
                 
                 row["result_match_status"] = match_status
                 row["result_match_key"] = match_key
@@ -162,7 +169,7 @@ class CashrunResultAudit:
         total_rows = len(self.audit_data)
         match_stats = {
             "MATCH_RACE_HORSE_ID": 0,
-            "MATCH_RACE_NAME": 0,
+            "MATCH_RACE_HORSE_NAME": 0,
             "MATCH_COURSE_TIME_NAME": 0,
             "MATCH_GLOBAL_UNIQUE": 0,
             "AMBIGUOUS": 0,
@@ -199,6 +206,8 @@ class CashrunResultAudit:
             f.write(f"# CASHRUN Result Audit — {self.date_str}\n\n")
             f.write("## Match Statistics\n")
             f.write(f"- Total rows: {total_rows}\n")
+            f.write(f"- Matched by race_id + horse_id: {match_stats['MATCH_RACE_HORSE_ID']}\n")
+            f.write(f"- Matched by race_id + horse_name: {match_stats['MATCH_RACE_HORSE_NAME']}\n")
             f.write(f"- Matched by course/time/horse: {match_stats['MATCH_COURSE_TIME_NAME']}\n")
             f.write(f"- Matched by unique global fallback: {match_stats['MATCH_GLOBAL_UNIQUE']}\n")
             f.write(f"- Ambiguous rows: {match_stats['AMBIGUOUS']}\n")
