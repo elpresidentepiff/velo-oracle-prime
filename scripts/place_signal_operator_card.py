@@ -32,6 +32,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 from src.velo.place_signal_classifier import classify_from_verdict, PlaceSignal
+from src.velo.race_metadata_resolver import RaceMetadataResolver
 
 load_dotenv(ROOT / ".env")
 DATA = ROOT / "data"
@@ -88,14 +89,47 @@ def load_verdicts(date_str: str) -> list[dict]:
         .execute()
         .data
     )
+    
+    if not rows:
+        # Fallback to local file
+        date_under = date_str.replace("-", "_")
+        local_path1 = DATA / f"velo_prime_verdicts_{date_under}.json"
+        local_path2 = DATA / f"velo_prime_verdicts_{date_str}.json"
+        local_path = local_path1 if local_path1.exists() else (local_path2 if local_path2.exists() else None)
+        
+        if local_path:
+            import json
+            try:
+                with open(local_path, "r") as f:
+                    local_data = json.load(f)
+                    if isinstance(local_data, dict) and "verdicts" in local_data:
+                        rows = local_data["verdicts"]
+                    elif isinstance(local_data, list):
+                        rows = local_data
+            except Exception as e:
+                print(f"Failed to read local verdicts: {e}")
+
     return rows
 
 
 def _extract_top(verdict: dict) -> dict:
+    # Try 'top' key first (local dry-run verdicts)
+    if "top" in verdict and isinstance(verdict["top"], dict):
+        return verdict["top"]
+    
+    # Try 'full_analysis' (Supabase verdicts)
     fa = verdict.get("full_analysis") or []
     if isinstance(fa, dict):
-        fa = list(fa.values())
-    return fa[0] if (fa and isinstance(fa[0], dict)) else {}
+        # Could be { "predictions": [...] }
+        if "predictions" in fa:
+            fa = fa["predictions"]
+        else:
+            fa = list(fa.values())
+            
+    if isinstance(fa, list) and fa and isinstance(fa[0], dict):
+        return fa[0]
+        
+    return {}
 
 
 def build_card(date_str: str) -> tuple[str, dict]:
@@ -108,33 +142,58 @@ def build_card(date_str: str) -> tuple[str, dict]:
     classified: list[tuple[dict, PlaceSignal]] = []
     missing_meta: list[str] = []
 
+    resolver = RaceMetadataResolver(date=date_str, sb_client=_sb())
+    
     for v in verdicts:
+        fa = v.get("full_analysis")
+        rid = v.get("race_id", "?")
+        meta = resolver.resolve(rid, fa)
+        
         top = _extract_top(v)
-        horse = top.get("horse") or "?"
-        race_id = v.get("race_id", "?")
-        course = top.get("course") or top.get("venue") or "?"
-        off_time = top.get("off_time") or "?"
-        race_name = top.get("race_name") or ""
+        raw_horse = top.get("horse") or top.get("horse_name") or "?"
+        horse = meta.get_horse_name(raw_name=raw_horse)
+        
+        course = meta.course or "?"
+        off_time = meta.off_time or "?"
+        race_name = meta.race_name or ""
+
+        # Signal Value Extraction with Integrity
+        def _get_val(keys):
+            for k in keys:
+                # Try root first, then top
+                val = v.get(k)
+                if val is None:
+                    val = top.get(k)
+                if val is not None:
+                    try: return float(val)
+                    except: pass
+            return None
+
+        vp = _get_val(["velo_prime_prob", "vp"])
+        mds = _get_val(["market_deception_score", "mds"])
+        imp = _get_val(["improvement_score", "imp"])
+        pp = _get_val(["place_prob", "place_p"])
 
         sig = classify_from_verdict(v)
 
         # Merge display fields
         row = {
-            "race_id": race_id,
+            "race_id": rid,
             "horse": horse,
             "course": course,
             "off_time": off_time,
             "race_name": race_name,
-            "vp": float(v.get("velo_prime_prob") or 0),
-            "tier": v.get("decision_tier") or "?",
-            "mds": float(v.get("market_deception_score") or 0),
-            "imp": float(v.get("improvement_score") or 0),
-            "place_p": float(v.get("place_prob") or 0),
+            "vp": vp if vp is not None else "MISSING",
+            "tier": v.get("decision_tier") or v.get("tier") or "?",
+            "mds": mds if mds is not None else "MISSING",
+            "imp": imp if imp is not None else "MISSING",
+            "place_p": pp if pp is not None else "MISSING",
             "signal": sig,
+            "metadata_source": meta.source_used
         }
 
-        if course == "?" or off_time == "?":
-            missing_meta.append(f"{race_id} / {horse}")
+        if course == "?" or off_time == "?" or horse == "?" or vp is None:
+            missing_meta.append(f"{rid} / {horse}")
 
         classified.append((row, sig))
 
@@ -192,9 +251,10 @@ def build_card(date_str: str) -> tuple[str, dict]:
 
         if lbl == "SUPPRESS":
             for row, sig in rows:
+                vp_str = f"{row['vp']:.3f}" if isinstance(row['vp'], float) else str(row['vp'])
                 lines.append(
                     f"- **{row['horse']}** | {row['course']} {row['off_time']} "
-                    f"| VP={row['vp']:.3f} | Tier {row['tier']} "
+                    f"| VP={vp_str} | Tier {row['tier']} "
                     f"| {sig.suppress_reason or 'suppressed'}"
                 )
             lines.append("")
@@ -208,10 +268,16 @@ def build_card(date_str: str) -> tuple[str, dict]:
         for row, sig in rows:
             badges = " ".join(f"[{b}]" for b in sig.badges)
             mpo = f"min odds {sig.min_place_odds:.2f}" if sig.min_place_odds else ""
+            
+            vp_s = f"{row['vp']:.3f}" if isinstance(row['vp'], float) else str(row['vp'])
+            mds_s = f"{row['mds']:.3f}" if isinstance(row['mds'], float) else str(row['mds'])
+            imp_s = f"{row['imp']:.3f}" if isinstance(row['imp'], float) else str(row['imp'])
+            pp_s = f"{row['place_p']:.3f}" if isinstance(row['place_p'], float) else str(row['place_p'])
+
             lines.append(
                 f"| **{row['horse']}** | {row['course']} {row['off_time']} "
-                f"| VP={row['vp']:.3f} | MDS={row['mds']:.3f} "
-                f"| IMP={row['imp']:.3f} | PLACE={row['place_p']:.3f} "
+                f"| VP={vp_s} | MDS={mds_s} "
+                f"| IMP={imp_s} | PLACE={pp_s} "
                 f"| Tier {row['tier']} | {badges} | {mpo} |"
             )
         lines.append("")

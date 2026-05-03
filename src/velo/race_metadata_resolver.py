@@ -2,14 +2,14 @@
 Race Metadata Resolver
 ======================
 
-Resolves course, off_time, race_name for a race_id using a priority chain:
+Resolves course, off_time, race_name, and horse names for a race_id/horse_id 
+using a priority chain:
 
-  1. Supabase public.races (primary — 3,641+ rows, best coverage)
-  2. Supabase race_results (has race_id, fallback)
-  3. local data/racecards_YYYY_MM_DD_standard.json
-  4. local data/racecard_merged/racecard_*_YYYY-MM-DD.json
-  5. local data/results_YYYY_MM_DD.json
-  6. verdict full_analysis[0] fallback
+  1. Supabase public.races (primary)
+  2. local data/racecards_YYYY_MM_DD_standard.json
+  3. local data/racecard_merged/racecard_*_YYYY-MM-DD.json
+  4. local data/results_YYYY_MM_DD.json
+  5. verdict full_analysis fallback
 
 Returns a RaceMetadata dataclass per race_id.
 Read-only. No scoring, model, router, or staking changes.
@@ -20,13 +20,87 @@ from __future__ import annotations
 import json
 import os
 import re
+import urllib.parse
+import urllib.request
+import urllib.error
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any, Dict, List
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 DATA = ROOT / "data"
 
+# --- UTILITIES ---
+
+def chunked(values: list[str], size: int = 100) -> list[list[str]]:
+    return [values[index : index + size] for index in range(0, len(values), size)]
+
+def load_env_candidates() -> None:
+    env_path = ROOT / ".env"
+    if env_path.exists():
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+def resolve_supabase_url() -> str:
+    return (os.getenv("SUPABASE_URL") or "").strip().rstrip("/")
+
+def resolve_supabase_headers() -> dict[str, str]:
+    key = (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY") or "").strip()
+    return {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+
+def get_json(url: str, *, headers: dict[str, str], timeout: int = 20) -> tuple[int, Any]:
+    request = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            body = response.read()
+            payload = json.loads(body.decode("utf-8")) if body else {}
+            return response.status, payload
+    except Exception as exc:
+        return 0, {"error": str(exc)}
+
+def rest_fetch(table: str, select: str, filters: dict[str, str] | None = None) -> list[dict[str, Any]]:
+    load_env_candidates()
+    base_url = resolve_supabase_url()
+    headers = resolve_supabase_headers()
+    rows: list[dict[str, Any]] = []
+    offset = 0
+    limit = 1000
+    filters = filters or {}
+    while True:
+        params = {"select": select, "limit": str(limit), "offset": str(offset), **filters}
+        query = urllib.parse.urlencode(params, safe="(),.*:-")
+        status, payload = get_json(f"{base_url}/rest/v1/{table}?{query}", headers=headers)
+        if status < 200 or status >= 400: break
+        rows.extend(payload)
+        if len(payload) < limit: break
+        offset += limit
+    return rows
+
+def normalize_text(value: Any) -> str | None:
+    if value is None: return None
+    return str(value).strip() or None
+
+def normalize_rid(rid: Any) -> str:
+    if not rid: return ""
+    s = str(rid).strip().lower()
+    if s.startswith("rac_"):
+        return s[4:]
+    return s
+
+def normalize_name(name: Any) -> str:
+    if not name: return ""
+    return str(name).strip().upper().split("(")[0].strip()
+
+# --- CLASSES ---
 
 @dataclass
 class RaceMetadata:
@@ -38,6 +112,7 @@ class RaceMetadata:
     source_used: str = ""
     metadata_complete: bool = False
     missing_fields: list[str] = field(default_factory=list)
+    runners: List[Dict[str, Any]] = field(default_factory=list)
 
     def _evaluate(self) -> None:
         missing = []
@@ -48,282 +123,200 @@ class RaceMetadata:
         self.missing_fields = missing
         self.metadata_complete = len(missing) == 0
 
-    @staticmethod
-    def _fmt_time(raw: str) -> str:
-        """Convert HH:MM:SS or HH:MM to H:MM (no leading zero)."""
-        if not raw:
-            return ""
-        parts = raw.strip().split(":")
-        if len(parts) >= 2:
-            try:
-                h = int(parts[0])
-                m = parts[1].zfill(2)
-                return f"{h}:{m}"
-            except ValueError:
-                pass
-        return raw.strip()
+    def get_horse_name(self, horse_id: str = "", raw_name: str = "") -> str:
+        """Resolve horse name from runner list if missing."""
+        if raw_name and raw_name != "?":
+            return raw_name
+            
+        h_clean = normalize_name(raw_name)
+        h_id_clean = str(horse_id).strip().lower()
+        
+        for r in self.runners:
+            r_id = str(r.get("horse_id", "")).strip().lower()
+            r_name = normalize_name(r.get("horse") or r.get("horse_name"))
+            
+            if h_id_clean and r_id == h_id_clean:
+                return r.get("horse") or r.get("horse_name") or ""
+            if h_clean and r_name == h_clean:
+                return r.get("horse") or r.get("horse_name") or ""
+                
+        # If still nothing and we have exactly one runner in the list (common for single-verdict lookups)
+        if len(self.runners) == 1 and not raw_name:
+            return self.runners[0].get("horse") or self.runners[0].get("horse_name") or ""
+            
+        return raw_name or "?"
 
 
 class RaceMetadataResolver:
     """
-    Resolve race metadata by race_id.
-
-    Usage:
-        resolver = RaceMetadataResolver(date="2026-05-01")
-        meta = resolver.resolve("rac_11912368")
+    Priority-based metadata resolver with local file support.
     """
 
+    @staticmethod
+    def _fmt_time(raw: str) -> str:
+        if not raw:
+            return ""
+        match = re.search(r"(\d{1,2}:\d{2})", str(raw))
+        if match:
+            return match.group(1)
+        # Handle 4.30 format
+        match = re.search(r"(\d{1,2}\.\d{2})", str(raw))
+        return match.group(1).replace(".", ":") if match else str(raw)
+
     def __init__(self, date: str = "", sb_client=None):
-        self._date = date  # YYYY-MM-DD
-        self._sb = sb_client
-        self._cache: dict[str, RaceMetadata] = {}
-        self._local_index: dict[str, dict] | None = None
+        self.date = date
+        self.date_token = date.replace("-", "_") if date else ""
+        self.sb = sb_client
+        self._race_idx = {}   # norm_rid -> {metadata}
+        self._runner_idx = {} # norm_rid -> [{runner}]
+        self._prime_local_index()
 
-    # ── public ────────────────────────────────────────────────────────────────
+    def _prime_local_index(self) -> None:
+        """Builds a comprehensive lookup for the requested date."""
+        if not self.date:
+            return
 
-    def resolve(self, race_id: str, verdict_full_analysis: list | None = None) -> RaceMetadata:
-        if race_id in self._cache:
-            return self._cache[race_id]
+        # 1. Standard Racecards
+        std_files = [
+            DATA / f"racecards_{self.date_token}_standard.json",
+            DATA / f"racecards_{self.date}_standard.json"
+        ]
+        for fpath in std_files:
+            if fpath.exists():
+                try:
+                    with open(fpath) as f:
+                        data = json.load(f)
+                        # Standard card usually has 'racecards' key
+                        r_list = data.get("racecards", data.get("races", []))
+                        for r in r_list:
+                            rid = normalize_rid(r.get("race_id"))
+                            if not rid: continue
+                            
+                            self._race_idx[rid] = {
+                                "course": r.get("course") or r.get("venue"),
+                                "off_time": self._fmt_time(r.get("off_time") or r.get("off") or r.get("time")),
+                                "race_name": r.get("race_name") or r.get("name"),
+                                "source": fpath.name
+                            }
+                            self._runner_idx[rid] = r.get("runners", [])
+                except Exception as e:
+                    print(f"Warning: Failed to index {fpath}: {e}")
 
-        meta = RaceMetadata(race_id=race_id, date=self._date)
+        # 2. Merged Racecards
+        merged_files = list(DATA.glob(f"racecard_merged/*_{self.date}.json"))
+        merged_files += list(DATA.glob(f"racecard_merged/*_{self.date_token}.json"))
+        for fpath in merged_files:
+            try:
+                with open(fpath) as f:
+                    data = json.load(f)
+                    venue = data.get("venue")
+                    for time, race in data.get("races", {}).items():
+                        rid = normalize_rid(race.get("race_id"))
+                        if rid:
+                            # Update indices if not already present from standard
+                            if rid not in self._race_idx:
+                                self._race_idx[rid] = {
+                                    "course": venue or race.get("course"),
+                                    "off_time": self._fmt_time(time),
+                                    "race_name": race.get("race_name"),
+                                    "source": fpath.name
+                                }
+                            if rid not in self._runner_idx:
+                                self._runner_idx[rid] = race.get("horses", [])
+            except Exception:
+                pass
 
-        for attempt in (
-            self._from_supabase_races,
-            self._from_supabase_race_results,
-            self._from_local_standard,
-            self._from_local_merged,
-            self._from_local_results,
-        ):
-            attempt(meta)
-            meta._evaluate()
-            if meta.metadata_complete:
-                break
+        # 3. Local Verdicts (Source of Truth for what was scored)
+        vp_files = [
+            DATA / f"velo_prime_verdicts_{self.date_token}.json",
+            DATA / f"velo_prime_verdicts_{self.date}.json"
+        ]
+        for fpath in vp_files:
+            if fpath.exists():
+                try:
+                    with open(fpath) as f:
+                        v_data = json.load(f)
+                        v_list = v_data.get("verdicts", v_data) if isinstance(v_data, dict) else v_data
+                        for v in v_list:
+                            rid = normalize_rid(v.get("race_id"))
+                            if rid and rid not in self._race_idx:
+                                self._race_idx[rid] = {
+                                    "course": v.get("course"),
+                                    "off_time": self._fmt_time(v.get("off_time")),
+                                    "race_name": v.get("race_name"),
+                                    "source": fpath.name
+                                }
+                            # We might extract the 'top' horse from full_analysis as a runner
+                            fa = v.get("full_analysis")
+                            if rid and rid not in self._runner_idx and fa:
+                                top = {}
+                                if isinstance(fa, dict): top = (fa.get("predictions") or [{}])[0]
+                                elif isinstance(fa, list) and fa: top = fa[0]
+                                if top: self._runner_idx[rid] = [top]
+                except Exception:
+                    pass
 
+    def resolve(self, race_id: str, verdict_full_analysis: Any | None = None) -> RaceMetadata:
+        rid_norm = normalize_rid(race_id)
+        meta = RaceMetadata(race_id=race_id, date=self.date)
+
+        # Priority 1: Supabase
+        if self.sb and rid_norm:
+            self._from_supabase(meta)
+
+        # Priority 2: Local Index
+        if rid_norm in self._race_idx:
+            hit = self._race_idx[rid_norm]
+            meta.course = meta.course or hit["course"]
+            meta.off_time = meta.off_time or hit["off_time"]
+            meta.race_name = meta.race_name or hit["race_name"]
+            meta.source_used = meta.source_used or hit["source"]
+
+        # Priority 3: Verdict Fallback (last resort)
         if not meta.metadata_complete and verdict_full_analysis:
             self._from_verdict_fallback(meta, verdict_full_analysis)
-            meta._evaluate()
 
-        if not meta.source_used:
-            meta.source_used = "unresolved"
+        # Attach runners for horse name resolution
+        if rid_norm in self._runner_idx:
+            meta.runners = self._runner_idx[rid_norm]
 
-        self._cache[race_id] = meta
+        meta._evaluate()
         return meta
 
-    def resolve_batch(
-        self,
-        race_ids: list[str],
-        verdict_map: dict[str, list] | None = None,
-    ) -> dict[str, RaceMetadata]:
-        self._prime_supabase_batch(race_ids)
-        self._prime_local_index()
-        verdict_map = verdict_map or {}
-        return {
-            rid: self.resolve(rid, verdict_map.get(rid))
-            for rid in race_ids
-        }
-
-    # ── source 1: Supabase races ───────────────────────────────────────────────
-
-    def _prime_supabase_batch(self, race_ids: list[str]) -> None:
-        if not self._sb or not race_ids:
-            return
+    def _from_supabase(self, meta: RaceMetadata) -> None:
         try:
-            rows = (
-                self._sb.table("races")
-                .select("race_id,course,date,time,race_name")
-                .in_("race_id", race_ids)
-                .execute()
-                .data
-            )
-            for row in rows:
-                rid = row.get("race_id", "")
-                if not rid:
-                    continue
-                meta = RaceMetadata(
-                    race_id=rid,
-                    date=row.get("date", self._date),
-                    course=row.get("course", ""),
-                    off_time=RaceMetadata._fmt_time(row.get("time", "")),
-                    race_name=row.get("race_name", ""),
-                    source_used="supabase_races",
-                )
-                meta._evaluate()
-                self._cache[rid] = meta
-        except Exception:
-            pass
-
-    def _from_supabase_races(self, meta: RaceMetadata) -> None:
-        if meta.race_id in self._cache and self._cache[meta.race_id].source_used == "supabase_races":
-            found = self._cache[meta.race_id]
-            meta.course = found.course
-            meta.off_time = found.off_time
-            meta.race_name = found.race_name
-            meta.date = found.date or meta.date
-            meta.source_used = "supabase_races"
-            return
-        if not self._sb:
-            return
-        try:
-            rows = (
-                self._sb.table("races")
-                .select("race_id,course,date,time,race_name")
-                .eq("race_id", meta.race_id)
-                .limit(1)
-                .execute()
-                .data
-            )
-            if rows:
-                row = rows[0]
-                meta.course = row.get("course", "")
-                meta.off_time = RaceMetadata._fmt_time(row.get("time", ""))
-                meta.race_name = row.get("race_name", "")
-                meta.date = row.get("date", meta.date)
+            # Try both with and without rac_ prefix
+            rids = [meta.race_id]
+            if meta.race_id.startswith("rac_"): rids.append(meta.race_id[4:])
+            else: rids.append(f"rac_{meta.race_id}")
+            
+            r = self.sb.table("races").select("course,time,race_name").in_("race_id", rids).execute()
+            if r.data:
+                row = r.data[0]
+                meta.course = row.get("course") or meta.course
+                meta.off_time = self._fmt_time(row.get("time")) or meta.off_time
+                meta.race_name = row.get("race_name") or meta.race_name
                 meta.source_used = "supabase_races"
         except Exception:
             pass
 
-    # ── source 2: Supabase race_results ───────────────────────────────────────
+    def _from_verdict_fallback(self, meta: RaceMetadata, full_analysis: Any) -> None:
+        top = {}
+        if isinstance(full_analysis, dict):
+            top = (full_analysis.get("predictions") or [{}])[0]
+        elif isinstance(full_analysis, list) and full_analysis:
+            top = full_analysis[0]
+            
+        if not isinstance(top, dict): return
+        
+        meta.course = meta.course or top.get("course") or top.get("venue")
+        meta.off_time = meta.off_time or self._fmt_time(top.get("off_time") or top.get("time"))
+        meta.race_name = meta.race_name or top.get("race_name")
+        if not meta.source_used: meta.source_used = "verdict_fallback"
 
-    def _from_supabase_race_results(self, meta: RaceMetadata) -> None:
-        if not self._sb:
-            return
-        try:
-            rows = (
-                self._sb.table("race_results")
-                .select("race_id")
-                .eq("race_id", meta.race_id)
-                .limit(1)
-                .execute()
-                .data
-            )
-            if rows:
-                meta.source_used = "supabase_race_results"
-        except Exception:
-            pass
-
-    # ── local index ────────────────────────────────────────────────────────────
-
-    def _prime_local_index(self) -> None:
-        if self._local_index is not None:
-            return
-        self._local_index = {}
-        date_tag = self._date.replace("-", "_") if self._date else ""
-
-        def _ingest(races: list, source: str) -> None:
-            for race in races:
-                rid = race.get("race_id")
-                if not rid or rid in self._local_index:
-                    continue
-                course = race.get("course") or race.get("venue") or ""
-                off_time = RaceMetadata._fmt_time(
-                    race.get("off_time") or race.get("race_time") or race.get("time") or ""
-                )
-                self._local_index[rid] = {
-                    "course": course,
-                    "off_time": off_time,
-                    "race_name": race.get("race_name") or race.get("name") or "",
-                    "date": race.get("date") or self._date,
-                    "source": source,
-                }
-
-        # standard racecard files
-        patterns = []
-        if date_tag:
-            patterns.append(DATA / f"racecards_{date_tag}_standard.json")
-        patterns.extend(sorted(DATA.glob("racecards_*_standard.json")))
-        for p in patterns:
-            if not p.exists():
-                continue
-            try:
-                raw = json.loads(p.read_text(encoding="utf-8"))
-                races = raw if isinstance(raw, list) else raw.get("racecards", raw.get("races", []))
-                _ingest(races, f"local_standard:{p.name}")
-            except Exception:
-                pass
-
-        # merged racecard files
-        date_suffix = self._date if self._date else ""
-        merged_candidates = sorted(DATA.glob(f"racecard_merged/racecard_*_{date_suffix}.json")) if date_suffix else []
-        merged_candidates += sorted(DATA.glob("racecard_merged/racecard_*.json"))
-        for p in merged_candidates:
-            if not p.exists():
-                continue
-            try:
-                raw = json.loads(p.read_text(encoding="utf-8"))
-                races = raw if isinstance(raw, list) else raw.get("races", raw.get("racecards", [raw]))
-                _ingest(races, f"local_merged:{p.name}")
-            except Exception:
-                pass
-
-        # results files
-        results_candidates = []
-        if date_tag:
-            results_candidates.append(DATA / f"results_{date_tag}.json")
-        results_candidates.extend(sorted(DATA.glob("results_*.json")))
-        for p in results_candidates:
-            if not p.exists():
-                continue
-            try:
-                raw = json.loads(p.read_text(encoding="utf-8"))
-                races = raw.get("results", []) if isinstance(raw, dict) else raw
-                for race in races:
-                    rid = race.get("race_id")
-                    if not rid or rid in self._local_index:
-                        continue
-                    course = race.get("course") or race.get("venue") or ""
-                    off_time = RaceMetadata._fmt_time(
-                        race.get("off_time") or race.get("race_time") or ""
-                    )
-                    self._local_index[rid] = {
-                        "course": course,
-                        "off_time": off_time,
-                        "race_name": race.get("race_name") or "",
-                        "date": race.get("date") or self._date,
-                        "source": f"local_results:{p.name}",
-                    }
-            except Exception:
-                pass
-
-    # ── source 3–5: local files ────────────────────────────────────────────────
-
-    def _from_local_standard(self, meta: RaceMetadata) -> None:
-        self._prime_local_index()
-        entry = (self._local_index or {}).get(meta.race_id)
-        if entry and "local_standard" in entry.get("source", ""):
-            meta.course = entry["course"]
-            meta.off_time = entry["off_time"]
-            meta.race_name = entry.get("race_name", "")
-            meta.date = entry.get("date", meta.date)
-            meta.source_used = entry["source"]
-
-    def _from_local_merged(self, meta: RaceMetadata) -> None:
-        self._prime_local_index()
-        entry = (self._local_index or {}).get(meta.race_id)
-        if entry and "local_merged" in entry.get("source", ""):
-            meta.course = entry["course"]
-            meta.off_time = entry["off_time"]
-            meta.race_name = entry.get("race_name", "")
-            meta.date = entry.get("date", meta.date)
-            meta.source_used = entry["source"]
-
-    def _from_local_results(self, meta: RaceMetadata) -> None:
-        self._prime_local_index()
-        entry = (self._local_index or {}).get(meta.race_id)
-        if entry and "local_results" in entry.get("source", ""):
-            meta.course = entry["course"]
-            meta.off_time = entry["off_time"]
-            meta.race_name = entry.get("race_name", "")
-            meta.date = entry.get("date", meta.date)
-            meta.source_used = entry["source"]
-
-    # ── source 6: verdict full_analysis fallback ──────────────────────────────
-
-    def _from_verdict_fallback(self, meta: RaceMetadata, full_analysis: list) -> None:
-        top = full_analysis[0] if full_analysis else {}
-        course = top.get("course", "")
-        off_time = RaceMetadata._fmt_time(top.get("off_time") or top.get("race_time") or "")
-        if course or off_time:
-            meta.course = course or meta.course
-            meta.off_time = off_time or meta.off_time
-            meta.race_name = top.get("race_name", meta.race_name)
-            meta.source_used = "verdict_fallback"
+    def resolve_batch(self, race_ids: list[str], verdict_map: dict[str, list] | None = None) -> dict[str, RaceMetadata]:
+        results = {}
+        for rid in race_ids:
+            fa = verdict_map.get(rid) if verdict_map else None
+            results[rid] = self.resolve(rid, fa)
+        return results

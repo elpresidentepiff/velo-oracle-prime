@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import json
 from datetime import date
 from pathlib import Path
 
@@ -49,7 +50,7 @@ def _sb():
 
 
 def load_verdicts(sb, date_str: str) -> list[dict]:
-    return (
+    rows = (
         sb.table("velo_verdicts")
         .select(
             "race_id,velo_prime_prob,market_deception_score,decision_tier,"
@@ -61,6 +62,27 @@ def load_verdicts(sb, date_str: str) -> list[dict]:
         .execute()
         .data
     )
+    
+    if not rows:
+        # Fallback to local file
+        date_under = date_str.replace("-", "_")
+        DATA = ROOT / "data"
+        local_path1 = DATA / f"velo_prime_verdicts_{date_under}.json"
+        local_path2 = DATA / f"velo_prime_verdicts_{date_str}.json"
+        local_path = local_path1 if local_path1.exists() else (local_path2 if local_path2.exists() else None)
+        
+        if local_path:
+            try:
+                with open(local_path, "r") as f:
+                    local_data = json.load(f)
+                    if isinstance(local_data, dict) and "verdicts" in local_data:
+                        rows = local_data["verdicts"]
+                    elif isinstance(local_data, list):
+                        rows = local_data
+            except Exception as e:
+                print(f"Failed to read local verdicts: {e}")
+                
+    return rows
 
 
 def build_card(date_str: str) -> None:
@@ -74,22 +96,39 @@ def build_card(date_str: str) -> None:
     verdict_map: dict[str, list] = {}
     
     for v in verdicts:
-        vp = float(v.get("velo_prime_prob") or 0)
-        mds = float(v.get("market_deception_score") or 0)
+        # Signal Value Extraction with Integrity
+        def _get_val(keys):
+            for k in keys:
+                val = v.get(k)
+                if val is None and "top" in v and isinstance(v["top"], dict):
+                    val = v["top"].get(k)
+                if val is not None:
+                    try: return float(val)
+                    except: pass
+            return None
+
+        vp = _get_val(["velo_prime_prob", "vp"])
+        mds = _get_val(["market_deception_score", "mds"])
+        
+        # Extract top horse info
+        top = v.get("top") or {}
         fa = v.get("full_analysis") or []
-        top = fa[0] if fa else {}
+        if not top and fa:
+            if isinstance(fa, dict): top = (fa.get("predictions") or [{}])[0]
+            elif isinstance(fa, list): top = fa[0]
+            
         verdict_map[v["race_id"]] = fa
         
-        is_vp30 = vp >= VP_THRESHOLD
-        is_mds_high = mds > MDS_THRESHOLD
+        is_vp30 = vp is not None and vp >= VP_THRESHOLD
+        is_mds_high = mds is not None and mds > MDS_THRESHOLD
         
         row = {
             "race_id": v["race_id"],
-            "horse": top.get("horse", "?"),
+            "raw_horse": top.get("horse") or top.get("horse_name") or "?",
             "horse_id": top.get("horse_id", ""),
-            "vp": vp,
-            "mds": mds,
-            "tier": v.get("decision_tier", "?"),
+            "vp": vp if vp is not None else "MISSING",
+            "mds": mds if mds is not None else "MISSING",
+            "tier": v.get("decision_tier") or v.get("tier") or "?",
             "exec_allowed": v.get("execution_allowed"),
             "product": v.get("assigned_product"),
         }
@@ -115,7 +154,9 @@ def build_card(date_str: str) -> None:
             r["off_time"] = m.off_time if m else ""
             r["race_name"] = m.race_name if m else ""
             r["metadata_complete"] = m.metadata_complete if m else False
-        rows.sort(key=lambda x: (x["off_time"] or "99:99", -x["vp"]))
+            r["horse"] = m.get_horse_name(horse_id=r["horse_id"], raw_name=r["raw_horse"]) if m else r["raw_horse"]
+            
+        rows.sort(key=lambda x: (x["off_time"] or "99:99", -x["vp"] if isinstance(x["vp"], float) else 0))
 
     hydrate(vp30)
     hydrate(mds_high)
@@ -130,7 +171,9 @@ def build_card(date_str: str) -> None:
     print("-" * 40)
     if confluence:
         for r in confluence:
-            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | VP={r['vp']:.3f} MDS={r['mds']:.3f} | {r['tier']}")
+            vp_s = f"{r['vp']:.3f}" if isinstance(r['vp'], float) else str(r['vp'])
+            mds_s = f"{r['mds']:.3f}" if isinstance(r['mds'], float) else str(r['mds'])
+            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | VP={vp_s} MDS={mds_s} | {r['tier']}")
     else:
         print("  (None)")
     print()
@@ -139,7 +182,8 @@ def build_card(date_str: str) -> None:
     print("-" * 40)
     if vp30:
         for r in vp30:
-            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | VP={r['vp']:.3f} | {r['tier']}")
+            vp_s = f"{r['vp']:.3f}" if isinstance(r['vp'], float) else str(r['vp'])
+            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | VP={vp_s} | {r['tier']}")
     else:
         print("  (None)")
     print()
@@ -148,13 +192,14 @@ def build_card(date_str: str) -> None:
     print("-" * 40)
     if mds_high:
         for r in mds_high:
-            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | MDS={r['mds']:.3f} | {r['tier']}")
+            mds_s = f"{r['mds']:.3f}" if isinstance(r['mds'], float) else str(r['mds'])
+            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | MDS={mds_s} | {r['tier']}")
     else:
         print("  (None)")
     print()
 
     print("---")
-    print(f"A. Source: Supabase velo_verdicts")
+    print(f"A. Source: Supabase velo_verdicts / local JSON")
     print(f"B. VP Threshold: {VP_THRESHOLD:.2f}")
     print(f"C. MDS Threshold: > {MDS_THRESHOLD:.2f}")
 

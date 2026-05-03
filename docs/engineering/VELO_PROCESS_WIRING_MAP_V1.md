@@ -1132,3 +1132,26 @@ The CASHRUN detector identifies possible handicap/cash-run intent from Racing Po
 - **CASHRUN_WATCH:** 55–74
 - **WEAK_SIGNAL:** 35–54
 - **SUPPRESS:** 0–34
+
+---
+
+## Section 13 — Race Day Bootstrap — Mandatory Order
+
+### Process Order
+
+1. **Environment preflight:** Validate dependencies (`loguru`, `.env`, keys).
+2. **Racecard fetch:** Retrieve daily Racing API standard cards.
+3. **RP/PDF ingestion:** Parse locally supplied Racing Post PDFs.
+4. **Merged racecard creation:** Combine Racing API and Racing Post intel.
+5. **Scoring:** Run VÉLØ Prime (dry-run) to generate predictions and verdicts.
+6. **VP30 card:** Hydrate the candidate gate and metadata.
+7. **Racing API enrichment card:** Append operator metadata (shadow).
+8. **CASHRUN card:** Score handicap plots and trainer intent.
+9. **Result close later:** Process results.
+
+### Hard Rules
+
+- No operator card may run before verdicts exist.
+- No CASHRUN may run before Racing Post fields exist.
+- No VP30 card may pass without metadata and candidate gate.
+- No script should be run manually out of order if the bootstrap command (`scripts/velo_day_bootstrap.py`) exists.

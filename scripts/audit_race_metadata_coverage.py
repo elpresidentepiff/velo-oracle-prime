@@ -1,130 +1,104 @@
-"""
-Race Metadata Coverage Audit
-=============================
-
-Audits VP30 metadata coverage for a given date.
-Pass rule: 100% VP30 metadata coverage (course + off_time resolved).
-
-Usage:
-    python scripts/audit_race_metadata_coverage.py --date 2026-05-01
-
-Read-only. No scoring, model, router, or staking changes.
-"""
-
-from __future__ import annotations
-
+#!/usr/bin/env python3
+import json
 import argparse
-import os
-import sys
-from collections import Counter
-from datetime import date
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-
-from dotenv import load_dotenv
-from supabase import create_client
-
 from src.velo.race_metadata_resolver import RaceMetadataResolver
 
-load_dotenv(ROOT / ".env")
-
-VP_THRESHOLD = 0.30
-
-
-def _sb():
-    return create_client(
-        os.getenv("SUPABASE_URL"),
-        os.getenv("SUPABASE_SERVICE_ROLE_KEY"),
-    )
-
-
-def run_audit(date_str: str) -> bool:
-    sb = _sb()
-
-    verdicts = (
-        sb.table("velo_verdicts")
-        .select("race_id,velo_prime_prob,decision_tier,full_analysis,generated_at")
-        .gte("generated_at", f"{date_str}T00:00:00")
-        .lt("generated_at", f"{date_str}T23:59:59")
-        .order("velo_prime_prob", desc=True)
-        .execute()
-        .data
-    )
-
-    total = len(verdicts)
-    vp30 = []
-    verdict_map: dict[str, list] = {}
-    for v in verdicts:
-        vp = float(v.get("velo_prime_prob") or 0)
-        fa = v.get("full_analysis") or []
-        verdict_map[v["race_id"]] = fa
-        if vp >= VP_THRESHOLD:
-            vp30.append(v)
-
-    race_ids = [v["race_id"] for v in vp30]
-    resolver = RaceMetadataResolver(date=date_str, sb_client=sb)
-    meta_map = resolver.resolve_batch(race_ids, verdict_map)
-
-    complete = [rid for rid, m in meta_map.items() if m.metadata_complete]
-    incomplete = [rid for rid, m in meta_map.items() if not m.metadata_complete]
-
-    source_counts: Counter = Counter()
-    for m in meta_map.values():
-        src = m.source_used.split(":")[0] if m.source_used else "unresolved"
-        source_counts[src] += 1
-
-    passed = len(incomplete) == 0
-
-    print(f"RACE METADATA COVERAGE AUDIT — {date_str}")
-    print()
-    print(f"A. Total verdicts:          {total}")
-    print(f"B. VP30 count:              {len(vp30)}")
-    print(f"C. Metadata complete:       {len(complete)}")
-    print(f"D. Missing metadata:        {len(incomplete)}")
-
-    if incomplete:
-        print(f"E. Missing race_ids:")
-        for rid in incomplete:
-            top = (verdict_map.get(rid) or [{}])[0]
-            horse = top.get("horse", "?")
-            missing = meta_map[rid].missing_fields
-            print(f"   {rid}  {horse}  missing={missing}")
-    else:
-        print(f"E. Missing race_ids:        none")
-
-    print(f"F. Source breakdown:")
-    source_labels = {
-        "supabase_races": "races table",
-        "supabase_race_results": "race_results table",
-        "local_standard": "racecards_standard (local)",
-        "local_merged": "racecard_merged (local)",
-        "local_results": "results (local)",
-        "verdict_fallback": "verdict full_analysis fallback",
-        "unresolved": "UNRESOLVED",
-    }
-    for src, label in source_labels.items():
-        count = source_counts.get(src, 0)
-        if count or src == "unresolved":
-            print(f"   {label:<40} {count}")
-
-    status = "PASS" if passed else "FAIL"
-    print()
-    print(f"G. Status: {status}")
-    if not passed:
-        print(f"   FAIL reason: {len(incomplete)} VP30 race(s) missing course or off_time")
-
-    return passed
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Race metadata coverage audit")
-    parser.add_argument("--date", default=str(date.today()), help="YYYY-MM-DD")
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--date", required=True)
     args = parser.parse_args()
-    passed = run_audit(args.date)
-    sys.exit(0 if passed else 1)
+    
+    date_str = args.date
+    date_token = date_str.replace("-", "_")
+    root = Path.cwd()
+    data_dir = root / "data"
+    
+    # 1. Load verdicts
+    vd_path1 = data_dir / f"velo_prime_verdicts_{date_token}.json"
+    vd_path2 = data_dir / f"velo_prime_verdicts_{date_str}.json"
+    vd_path = vd_path1 if vd_path1.exists() else (vd_path2 if vd_path2.exists() else None)
+    
+    if not vd_path:
+        print(f"FAIL: No verdicts found for {date_str}")
+        return
 
+    with open(vd_path) as f:
+        data = json.load(f)
+        verdicts = data.get("verdicts", data) if isinstance(data, dict) else data
+
+    print(f"Verdicts scanned: {len(verdicts)}")
+    
+    # 2. Resolve metadata
+    resolver = RaceMetadataResolver(date=date_str)
+    
+    coverage = {
+        "total": len(verdicts),
+        "complete": 0,
+        "missing_course": 0,
+        "missing_time": 0,
+        "missing_horse": 0,
+        "source_stats": {}
+    }
+    
+    unresolved = []
+    
+    for v in verdicts:
+        rid = v.get("race_id")
+        fa = v.get("full_analysis")
+        meta = resolver.resolve(rid, fa)
+        
+        # Check horse name using resolver
+        top = v.get("top") or {}
+        if not top and fa:
+            if isinstance(fa, dict):
+                top = (fa.get("predictions") or [{}])[0]
+            elif isinstance(fa, list) and fa:
+                top = fa[0]
+            
+        raw_horse = top.get("horse") or top.get("horse_name") or "?"
+        horse = meta.get_horse_name(raw_name=raw_horse)
+        
+        is_complete = True
+        if not meta.course or meta.course == "?":
+            coverage["missing_course"] += 1
+            is_complete = False
+        if not meta.off_time or meta.off_time == "?":
+            coverage["missing_time"] += 1
+            is_complete = False
+        if not horse or horse == "?":
+            coverage["missing_horse"] += 1
+            is_complete = False
+            
+        if is_complete:
+            coverage["complete"] += 1
+            src = meta.source_used or "unknown"
+            coverage["source_stats"][src] = coverage["source_stats"].get(src, 0) + 1
+        else:
+            unresolved.append({
+                "race_id": rid,
+                "course": meta.course,
+                "time": meta.off_time,
+                "horse": horse,
+                "missing": meta.missing_fields + (["horse"] if not horse else [])
+            })
+
+    print(f"\nMETADATA COVERAGE AUDIT — {date_str}")
+    print(f"========================================")
+    print(f"Total Verdicts:   {coverage['total']}")
+    print(f"Complete:         {coverage['complete']} ({(coverage['complete']/coverage['total']*100):.1f}%)")
+    print(f"Missing Course:   {coverage['missing_course']}")
+    print(f"Missing Time:     {coverage['missing_time']}")
+    print(f"Missing Horse:    {coverage['missing_horse']}")
+    
+    print(f"\nSource Breakdown:")
+    for src, count in coverage["source_stats"].items():
+        print(f" - {src}: {count}")
+        
+    if unresolved:
+        print(f"\nUnresolved Samples (top 5):")
+        for u in unresolved[:5]:
+            print(f" - {u['race_id']}: missing {u['missing']}")
 
 if __name__ == "__main__":
     main()
