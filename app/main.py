@@ -4,10 +4,12 @@ Production-ready with CORS, health checks, and API routing
 """
 
 import asyncio
+import hmac
 import json
 import logging
 import os
 import pathlib
+import re
 import subprocess
 import sys
 import urllib.error
@@ -34,6 +36,8 @@ _sentient_state: dict | None = None
 
 _SOFT_SCHEMA_RUNTIME_NAMES = {"local", "dev", "development", "test", "testing"}
 _TRIGGER_AGE_GATE_HOURS = 24
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+_MAX_TARGET_DATE_LEN = 10
 _PIPELINE_TRIGGER_SOURCES = {"manual", "github_actions_scheduled", "github_actions_manual", "api_manual"}
 _TRIGGER_SERVICE_CONFIG = {
     "score_daily": {
@@ -49,6 +53,23 @@ _TRIGGER_SERVICE_CONFIG = {
         "run_type": "results_reconciliation",
     },
 }
+
+
+def _secrets_match(provided: str | None, expected: str | None) -> bool:
+    if not provided or not expected:
+        return False
+    return hmac.compare_digest(provided, expected)
+
+
+def _validate_target_date_or_empty(target_date: str | None) -> str:
+    raw = (target_date or "").strip()
+    if not raw:
+        return ""
+    if len(raw) > _MAX_TARGET_DATE_LEN:
+        raise HTTPException(status_code=400, detail="target_date too long; expected YYYY-MM-DD")
+    if not _DATE_RE.fullmatch(raw):
+        raise HTTPException(status_code=400, detail="Invalid target_date; expected YYYY-MM-DD")
+    return raw
 
 
 def _normalize_pipeline_trigger_source(trigger_source: str) -> str:
@@ -73,6 +94,7 @@ def _spawn_trigger_subprocess(
     service_name: str,
     run_id: str | None = None,
 ) -> tuple[subprocess.Popen, pathlib.Path]:
+    target_date = _validate_target_date_or_empty(target_date)
     env = os.environ.copy()
     env["TRIGGER_SOURCE"] = trigger_source
     if run_id:
@@ -574,7 +596,7 @@ async def verify_api_key(x_api_key: str = Header(None)):
         logger.warning("API_KEY not configured — rejecting request")
         raise HTTPException(status_code=503, detail="API key not configured on this server")
 
-    if x_api_key != API_KEY:
+    if not _secrets_match(x_api_key, API_KEY):
         raise HTTPException(status_code=403, detail="Invalid API key")
 
     return True
@@ -729,7 +751,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     if not trigger_secret:
         logger.error("TRIGGER_SCORE_SECRET not configured — trigger endpoint disabled")
         raise HTTPException(status_code=503, detail="Trigger not configured on this server")
-    if x_trigger_secret != trigger_secret:
+    if not _secrets_match(x_trigger_secret, trigger_secret):
         logger.warning("Trigger attempt with invalid secret")
         raise HTTPException(status_code=401, detail="Invalid trigger secret")
 
@@ -740,7 +762,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
         pass
 
     trigger_source = body.get("trigger_source") or "api_manual"
-    target_date = body.get("target_date") or ""
+    target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
     script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_prime_today.py"
@@ -825,7 +847,7 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
     if not trigger_secret:
         logger.error("TRIGGER_SCORE_SECRET not configured — sigma trigger disabled")
         raise HTTPException(status_code=503, detail="Trigger not configured on this server")
-    if x_trigger_secret != trigger_secret:
+    if not _secrets_match(x_trigger_secret, trigger_secret):
         logger.warning("Sigma trigger attempt with invalid secret")
         raise HTTPException(status_code=401, detail="Invalid trigger secret")
 
@@ -836,7 +858,7 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
         pass
 
     trigger_source = body.get("trigger_source") or "api_manual"
-    target_date = body.get("target_date") or ""
+    target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
     script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
@@ -919,7 +941,7 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     if not trigger_secret:
         logger.error("TRIGGER_SCORE_SECRET not configured — sigma trigger endpoint disabled")
         raise HTTPException(status_code=503, detail="Trigger not configured on this server")
-    if x_trigger_secret != trigger_secret:
+    if not _secrets_match(x_trigger_secret, trigger_secret):
         logger.warning("Sigma trigger attempt with invalid secret")
         raise HTTPException(status_code=401, detail="Invalid trigger secret")
 
@@ -930,7 +952,7 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
         pass
 
     trigger_source = body.get("trigger_source") or "api_manual"
-    target_date = body.get("target_date") or ""
+    target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
     script_path = pathlib.Path(__file__).parent.parent / "scripts" / "close_sigma_loops.py"
@@ -1014,7 +1036,7 @@ async def upload_spotlight_pdf(
     Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
     """
     trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
-    if trigger_secret and x_trigger_secret != trigger_secret:
+    if trigger_secret and not _secrets_match(x_trigger_secret, trigger_secret):
         raise HTTPException(status_code=401, detail="Invalid trigger secret")
 
     if not file.filename or not file.filename.endswith(".pdf"):
@@ -1066,7 +1088,7 @@ async def dashboard():
 
 
 @app.get("/api/governed-card")
-async def governed_card(date: str = Query(default=None)):
+async def governed_card(date: str = Query(default=None), allow_fallback: bool = Query(default=False)):
     """
     Return governed card for a given date.
 
@@ -1086,15 +1108,9 @@ async def governed_card(date: str = Query(default=None)):
     root = pathlib.Path(__file__).parent.parent
     verdict_path = root / "data" / f"velo_prime_verdicts_{date_tag}.json"
 
-    # If exact date not found, find the most recent file
-    source_label = "local_json"
+    # Never cross-date fallback to a different local verdict file.
+    source_label = "local_json_exact"
     loaded_date = target_date
-    if not verdict_path.exists():
-        candidates = sorted(root.glob("data/velo_prime_verdicts_*.json"), reverse=True)
-        verdict_path = candidates[0] if candidates else None
-        if verdict_path:
-            loaded_date = verdict_path.stem.replace("velo_prime_verdicts_", "").replace("_", "-")
-            source_label = f"local_json_fallback:{loaded_date}"
 
     raw_verdicts = []
     if verdict_path and verdict_path.exists():
@@ -1105,8 +1121,10 @@ async def governed_card(date: str = Query(default=None)):
 
     # ── Source 2: Supabase governance overlay ────────────────────────────────
     gov_by_race: dict = {}
+    sb_verdict_rows: list[dict] = []
     sb_url = resolve_supabase_url()
     sb_key = resolve_supabase_service_key()
+    db = None
     if sb_url and sb_key:
         try:
             from supabase import create_client as _sb_create
@@ -1114,52 +1132,238 @@ async def governed_card(date: str = Query(default=None)):
             db = _sb_create(sb_url, sb_key)
             resp = (
                 db.table("velo_verdicts")
-                .select("race_id, assigned_product, router_reasons, execution_allowed")
-                .gte("generated_at", f"{loaded_date}T00:00:00")
-                .lte("generated_at", f"{loaded_date}T23:59:59")
+                .select(
+                    "race_id, generated_at, decision_tier, velo_prime_prob, "
+                    "market_deception_score, improvement_score, place_prob, "
+                    "execution_allowed, assigned_product, router_reasons, full_analysis"
+                )
+                .gte("generated_at", f"{target_date}T00:00:00")
+                .lt("generated_at", f"{target_date}T23:59:59")
                 .execute()
             )
-            for row in resp.data or []:
+            sb_verdict_rows = resp.data or []
+            for row in sb_verdict_rows:
                 gov_by_race[row["race_id"]] = row
         except Exception as e:
             logger.warning("Supabase governance overlay failed: %s", e)
 
+    if not raw_verdicts and sb_verdict_rows:
+        raw_verdicts = sb_verdict_rows
+        source_label = "supabase_verdicts_exact"
+
+    fallback_date = None
+    fallback_path = None
+    if not raw_verdicts:
+        candidates = sorted(root.glob("data/velo_prime_verdicts_*.json"), reverse=True)
+        fallback_path = candidates[0] if candidates else None
+        if fallback_path:
+            fallback_date = fallback_path.stem.replace("velo_prime_verdicts_", "").replace("_", "-")
+
+    if not raw_verdicts and allow_fallback and fallback_path:
+        try:
+            raw_verdicts = _json.loads(fallback_path.read_text())
+            loaded_date = fallback_date or target_date
+            source_label = "local_json_fallback"
+        except Exception as e:
+            logger.warning("Could not read fallback verdict file %s: %s", fallback_path, e)
+
+    sidecar_loaded_date = None
+    sidecar_status = "MISSING"
+    sidecar_date_match = False
+    sidecar_metadata_coverage = 0.0
+    sidecar_path = root / "app" / "static" / "dashboard" / "sidecar_stack_latest.json"
+    if sidecar_path.exists():
+        try:
+            sidecar_payload = _json.loads(sidecar_path.read_text())
+            sidecar_loaded_date = sidecar_payload.get("date")
+            sidecar_status = sidecar_payload.get("status", "UNKNOWN")
+            sidecar_date_match = sidecar_loaded_date == target_date
+            seen = set()
+            rows = []
+            for stack_rows in (sidecar_payload.get("stacks") or {}).values():
+                for row in stack_rows or []:
+                    key = (row.get("race_id"), row.get("horse_id") or row.get("horse"))
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    rows.append(row)
+            if rows:
+                complete = sum(1 for row in rows if row.get("metadata_complete"))
+                sidecar_metadata_coverage = round(complete / len(rows), 4)
+        except Exception as e:
+            logger.warning("Could not read sidecar stack file %s: %s", sidecar_path, e)
+
+    if not raw_verdicts:
+        return {
+            "meta": {
+                "status": "FAIL_DATE_MISMATCH",
+                "requested_date": target_date,
+                "loaded_date": fallback_date,
+                "source": None,
+                "message": "Requested date data not available. Refusing stale fallback.",
+                "allow_fallback": allow_fallback,
+                "date_match": False,
+                "stale_data_blocked": True,
+                "governed_card_loaded_date": None,
+                "governed_card_status": "FAIL_DATE_MISMATCH",
+                "sidecar_loaded_date": sidecar_loaded_date,
+                "sidecar_status": sidecar_status,
+                "sidecar_date_match": sidecar_date_match,
+                "metadata_coverage": sidecar_metadata_coverage,
+                "record_count": 0,
+                "gov_overlay": len(gov_by_race) > 0,
+                "exact_date_file_present": verdict_path.exists(),
+            },
+            "verdicts": [],
+        }
+
     # ── Merge & shape verdicts ────────────────────────────────────────────────
+    verdict_map = {}
+    for row in raw_verdicts:
+        rid = row.get("race_id", "")
+        if not rid:
+            continue
+        fa = row.get("full_analysis") or []
+        verdict_map[rid] = fa if isinstance(fa, list) else []
+
+    meta_map = {}
+    if raw_verdicts and db:
+        try:
+            from src.velo.race_metadata_resolver import RaceMetadataResolver
+
+            resolver = RaceMetadataResolver(date=target_date, sb_client=db)
+            race_ids = [row.get("race_id", "") for row in raw_verdicts if row.get("race_id")]
+            meta_map = resolver.resolve_batch(race_ids, verdict_map)
+        except Exception as e:
+            logger.warning("Race metadata resolver failed: %s", e)
+
+    router = None
+    try:
+        from src.velo.product_router import ProductRouter
+
+        router = ProductRouter()
+    except Exception as e:
+        logger.warning("Product router display fallback unavailable: %s", e)
+
+    def _safe_float(value, default: float = 0.0) -> float:
+        try:
+            return float(value)
+        except Exception:
+            return default
+
+    def _derive_prob_gap(row_prob: float, analysis: list) -> float:
+        if isinstance(analysis, list):
+            probs = sorted(
+                [
+                    _safe_float(item.get("velo_prime_prob"))
+                    for item in analysis
+                    if isinstance(item, dict) and item.get("velo_prime_prob") is not None
+                ],
+                reverse=True,
+            )
+            if len(probs) >= 2:
+                return max(probs[0] - probs[1], 0.0)
+            if len(probs) == 1:
+                return probs[0]
+        return row_prob
+
+    def _derive_fav_sp(analysis: list) -> float:
+        if not isinstance(analysis, list):
+            return 0.0
+        sp_vals = sorted(
+            [
+                _safe_float(
+                    item.get("sp_dec") or item.get("sp_decimal") or item.get("market_odds"),
+                    0.0,
+                )
+                for item in analysis
+                if isinstance(item, dict)
+            ]
+        )
+        return next((val for val in sp_vals if val > 0), 0.0)
+
     verdicts = []
     for v in raw_verdicts:
         race_id = v.get("race_id", "")
+        full_analysis = v.get("full_analysis") or []
         top = v.get("top", {})
+        if not top and isinstance(full_analysis, list) and full_analysis and isinstance(full_analysis[0], dict):
+            top = full_analysis[0]
 
-        # prob_gap: top - second runner prob (second not stored, derive from scored count)
-        # stored in top dict directly if present, otherwise compute from verdict
-        prob_gap = 0.0
-        if "prob_gap" in top:
-            prob_gap = float(top["prob_gap"])
+        top_prob = _safe_float(v.get("velo_prime_prob", top.get("velo_prime_prob", 0)))
+        prob_gap = _safe_float(top.get("prob_gap")) if top.get("prob_gap") is not None else _derive_prob_gap(top_prob, full_analysis)
 
         # Governance: prefer live Supabase values (post-migration), fall back to top dict
         gov = gov_by_race.get(race_id, {})
-        assigned_product = gov.get("assigned_product") or top.get("assigned_product", "UNKNOWN")
-        router_reasons = gov.get("router_reasons") or top.get("router_reasons", [])
+        assigned_product = gov.get("assigned_product") or top.get("assigned_product")
+        router_reasons = gov.get("router_reasons") or top.get("router_reasons") or []
         execution_allowed = gov.get("execution_allowed")
         if execution_allowed is None:
-            execution_allowed = top.get("execution_allowed", False)
+            execution_allowed = top.get("execution_allowed")
+        assigned_product_source = "supabase_governance" if gov.get("assigned_product") else "verdict_top" if top.get("assigned_product") else "unresolved"
+        meta = meta_map.get(race_id)
+        course = v.get("course", "") or top.get("course", "") or (meta.course if meta else "")
+        off_time = (
+            v.get("off_time", "")
+            or top.get("off_time", "")
+            or top.get("race_time", "")
+            or (meta.off_time if meta else "")
+        )
+        tier = v.get("decision_tier") or v.get("tier", "?")
+
+        if router and (not assigned_product or execution_allowed is None or not router_reasons):
+            route_data = {
+                "decision_tier": tier,
+                "confidence_level": top.get("confidence_level", "low"),
+                # Same-day persisted verdict rows do not always carry SP yet.
+                # Keep the router honest by leaving missing price fields at 0.0
+                # rather than fabricating a market price.
+                "actual_winner_sp": _safe_float(top.get("sp_dec") or top.get("sp_decimal"), 0.0),
+                "prob_gap": prob_gap,
+                "track": course,
+                "top_horse_draw": top.get("draw"),
+                "market_deception_score": _safe_float(
+                    v.get("market_deception_score", top.get("market_deception_score", 0))
+                ),
+                "field_size": len(full_analysis) if isinstance(full_analysis, list) else 0,
+                "race_type": top.get("race_type") or top.get("type") or "?",
+                "going": top.get("going") or "?",
+                "is_handicap": bool(top.get("is_handicap") or False),
+                "fav_sp": _derive_fav_sp(full_analysis),
+                "velo_prime_prob": top_prob,
+                "archetype": top.get("race_archetype") or top.get("archetype") or "?",
+            }
+            routed = router.route_verdict(route_data)
+            if not assigned_product:
+                assigned_product = routed.get("assigned_product")
+            if not router_reasons:
+                router_reasons = routed.get("router_reasons") or []
+            if execution_allowed is None:
+                execution_allowed = routed.get("execution_allowed", False)
+            suffix = "product_router_display_fallback"
+            assigned_product_source = suffix if assigned_product_source == "unresolved" else f"{assigned_product_source}+{suffix}"
+
+        if execution_allowed is None:
+            execution_allowed = False
+        assigned_product = assigned_product or "UNKNOWN"
 
         verdicts.append(
             {
                 "race_id": race_id,
-                "course": v.get("course", ""),
-                "off_time": v.get("off_time", ""),
+                "course": course,
+                "off_time": off_time,
                 "horse": top.get("horse", ""),
-                "tier": v.get("tier", "?"),
-                "decision_tier": v.get("tier", "?"),
+                "tier": tier,
+                "decision_tier": tier,
                 "confidence_level": top.get("confidence_level", "low"),
-                "velo_prime_prob": top.get("velo_prime_prob", 0),
+                "velo_prime_prob": v.get("velo_prime_prob", top.get("velo_prime_prob", 0)),
                 "prob_gap": prob_gap,
-                "market_deception_score": top.get("market_deception_score", 0),
+                "market_deception_score": v.get("market_deception_score", top.get("market_deception_score", 0)),
                 "assigned_product": assigned_product,
+                "assigned_product_source": assigned_product_source,
                 "router_reasons": router_reasons if isinstance(router_reasons, list) else [router_reasons],
                 "execution_allowed": execution_allowed,
-                "place_prob": top.get("place_prob", 0),
+                "place_prob": v.get("place_prob", top.get("place_prob", 0)),
                 "archetype_label": top.get("archetype_label", ""),
             }
         )
@@ -1182,17 +1386,30 @@ async def governed_card(date: str = Query(default=None)):
         commit = "unknown"
 
     date_mismatch = loaded_date != target_date
+    governed_card_status = "FALLBACK_USED" if date_mismatch else "PASS_EXACT_DATE"
 
     return {
         "meta": {
+            "status": governed_card_status,
             "requested_date": target_date,
             "loaded_date": loaded_date,
             "source": source_label,
+            "message": None if not date_mismatch else "Fallback data used for requested date.",
+            "allow_fallback": allow_fallback,
+            "date_match": not date_mismatch,
+            "stale_data_blocked": False,
+            "governed_card_loaded_date": loaded_date,
+            "governed_card_status": governed_card_status,
+            "sidecar_loaded_date": sidecar_loaded_date,
+            "sidecar_status": sidecar_status,
+            "sidecar_date_match": sidecar_date_match,
+            "metadata_coverage": sidecar_metadata_coverage,
             "commit_sha": commit,
             "router_version": "ProductRouter v1 (live-safe)",
             "record_count": len(verdicts),
             "date_mismatch": date_mismatch,
             "gov_overlay": len(gov_by_race) > 0,
+            "exact_date_file_present": verdict_path.exists(),
         },
         "verdicts": verdicts,
     }
