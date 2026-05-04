@@ -1125,6 +1125,17 @@ The CASHRUN detector identifies possible handicap/cash-run intent from Racing Po
 5. **Evidence Status:** Forward-test required.
 6. **Data Warning:** 2026-05-01 run is flagged as TUNED_ON_SAME_DAY_DATA; performance is DEV_ONLY_NOT_EVIDENCE.
 7. **Audit Rule:** Performance must be reported using identity-grade matches only. Global fallback matches are diagnostic only, not proof.
+8. **RPR History:** Currently missing until RPR-specific PDF source is added.
+
+### Process Pipeline
+
+Racing Post PDFs
+→ PDF ingestion / merged JSON
+→ `cashrun_detector.py`
+→ `cashrun_report_YYYY_MM_DD.md/csv`
+→ Operator Card
+→ Future evidence audit (identity-grade join only)
+→ **NO LIVE SCORE IMPACT**
 
 ### Thresholds
 
