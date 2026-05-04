@@ -1,15 +1,22 @@
-"""
-VP30 Operator Card
-==================
 
-Print VP30 suggestions for a given date with fully resolved race metadata.
+"""
+VÉLØ Prime Operator Card
+========================
+
+Print VP30, MDS_HIGH, and Confluence suggestions for a given date 
+with fully resolved race metadata.
 
 Usage:
     python scripts/vp30_operator_card.py --date 2026-05-01
     python scripts/vp30_operator_card.py          # defaults to today
 
-Output: VP30 only. No sidecars. No staking. No betting language.
+Definitions:
+    1. VP30: velo_prime_prob >= 0.30
+    2. MDS_HIGH: market_deception_score > 0.50
+    3. CONFLUENCE: Both VP30 and MDS_HIGH are true.
+
 Read-only. No scoring, model, router, or execution changes.
+No betting or staking language.
 """
 
 from __future__ import annotations
@@ -17,6 +24,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import json
 from datetime import date
 from pathlib import Path
 
@@ -31,6 +39,7 @@ from src.velo.race_metadata_resolver import RaceMetadataResolver
 load_dotenv(ROOT / ".env")
 
 VP_THRESHOLD = 0.30
+MDS_THRESHOLD = 0.50
 
 
 def _sb():
@@ -41,13 +50,11 @@ def _sb():
 
 
 def load_verdicts(sb, date_str: str) -> list[dict]:
-    next_day = date_str[:8] + str(int(date_str[8:10]) + 1).zfill(2)
-    # handle month rollover simply — use generated_at prefix match
-    return (
+    rows = (
         sb.table("velo_verdicts")
         .select(
-            "race_id,velo_prime_prob,decision_tier,assigned_product,"
-            "execution_allowed,full_analysis,generated_at"
+            "race_id,velo_prime_prob,market_deception_score,decision_tier,"
+            "assigned_product,execution_allowed,full_analysis,generated_at"
         )
         .gte("generated_at", f"{date_str}T00:00:00")
         .lt("generated_at", f"{date_str}T23:59:59")
@@ -55,6 +62,27 @@ def load_verdicts(sb, date_str: str) -> list[dict]:
         .execute()
         .data
     )
+    
+    if not rows:
+        # Fallback to local file
+        date_under = date_str.replace("-", "_")
+        DATA = ROOT / "data"
+        local_path1 = DATA / f"velo_prime_verdicts_{date_under}.json"
+        local_path2 = DATA / f"velo_prime_verdicts_{date_str}.json"
+        local_path = local_path1 if local_path1.exists() else (local_path2 if local_path2.exists() else None)
+        
+        if local_path:
+            try:
+                with open(local_path, "r") as f:
+                    local_data = json.load(f)
+                    if isinstance(local_data, dict) and "verdicts" in local_data:
+                        rows = local_data["verdicts"]
+                    elif isinstance(local_data, list):
+                        rows = local_data
+            except Exception as e:
+                print(f"Failed to read local verdicts: {e}")
+                
+    return rows
 
 
 def build_card(date_str: str) -> None:
@@ -62,75 +90,122 @@ def build_card(date_str: str) -> None:
     verdicts = load_verdicts(sb, date_str)
 
     vp30 = []
+    mds_high = []
+    confluence = []
+    
     verdict_map: dict[str, list] = {}
+    
     for v in verdicts:
-        vp = float(v.get("velo_prime_prob") or 0)
+        # Signal Value Extraction with Integrity
+        def _get_val(keys):
+            for k in keys:
+                val = v.get(k)
+                if val is None and "top" in v and isinstance(v["top"], dict):
+                    val = v["top"].get(k)
+                if val is not None:
+                    try: return float(val)
+                    except: pass
+            return None
+
+        vp = _get_val(["velo_prime_prob", "vp"])
+        mds = _get_val(["market_deception_score", "mds"])
+        
+        # Extract top horse info
+        top = v.get("top") or {}
         fa = v.get("full_analysis") or []
-        top = fa[0] if fa else {}
+        if not top and fa:
+            if isinstance(fa, dict): top = (fa.get("predictions") or [{}])[0]
+            elif isinstance(fa, list): top = fa[0]
+            
         verdict_map[v["race_id"]] = fa
-        if vp >= VP_THRESHOLD:
-            vp30.append({
-                "race_id": v["race_id"],
-                "horse": top.get("horse", "?"),
-                "horse_id": top.get("horse_id", ""),
-                "vp": vp,
-                "tier": v.get("decision_tier", "?"),
-                "exec_allowed": v.get("execution_allowed"),
-                "product": v.get("assigned_product"),
-            })
+        
+        is_vp30 = vp is not None and vp >= VP_THRESHOLD
+        is_mds_high = mds is not None and mds > MDS_THRESHOLD
+        
+        row = {
+            "race_id": v["race_id"],
+            "raw_horse": top.get("horse") or top.get("horse_name") or "?",
+            "horse_id": top.get("horse_id", ""),
+            "vp": vp if vp is not None else "MISSING",
+            "mds": mds if mds is not None else "MISSING",
+            "tier": v.get("decision_tier") or v.get("tier") or "?",
+            "exec_allowed": v.get("execution_allowed"),
+            "product": v.get("assigned_product"),
+        }
+        
+        if is_vp30:
+            vp30.append(row)
+        if is_mds_high:
+            mds_high.append(row)
+        if is_vp30 and is_mds_high:
+            confluence.append(row)
 
-    race_ids = [r["race_id"] for r in vp30]
+    # Resolve metadata for all unique races in our lists
+    all_rows = vp30 + mds_high
+    unique_race_ids = list(set(r["race_id"] for r in all_rows))
+    
     resolver = RaceMetadataResolver(date=date_str, sb_client=sb)
-    meta_map = resolver.resolve_batch(race_ids, verdict_map)
+    meta_map = resolver.resolve_batch(unique_race_ids, verdict_map)
 
-    # Attach metadata and sort by off_time asc, then vp desc
-    for row in vp30:
-        m = meta_map.get(row["race_id"])
-        row["course"] = m.course if m else ""
-        row["off_time"] = m.off_time if m else ""
-        row["race_name"] = m.race_name if m else ""
-        row["metadata_source"] = m.source_used if m else "unresolved"
-        row["metadata_complete"] = m.metadata_complete if m else False
+    def hydrate(rows):
+        for r in rows:
+            m = meta_map.get(r["race_id"])
+            r["course"] = m.course if m else ""
+            r["off_time"] = m.off_time if m else ""
+            r["race_name"] = m.race_name if m else ""
+            r["metadata_complete"] = m.metadata_complete if m else False
+            r["horse"] = m.get_horse_name(horse_id=r["horse_id"], raw_name=r["raw_horse"]) if m else r["raw_horse"]
+            
+        rows.sort(key=lambda x: (x["off_time"] or "99:99", -x["vp"] if isinstance(x["vp"], float) else 0))
 
-    vp30.sort(key=lambda r: (r["off_time"] or "99:99", -r["vp"]))
+    hydrate(vp30)
+    hydrate(mds_high)
+    hydrate(confluence)
 
-    complete = sum(1 for r in vp30 if r["metadata_complete"])
-    missing_rows = [r for r in vp30 if not r["metadata_complete"]]
-
-    print(f"VP30 SUGGESTIONS — {date_str}")
+    print(f"VÉLØ PRIME OPERATOR CARD — {date_str}")
+    print("=" * 40)
+    print(f"Total races scanned: {len(verdicts)}")
     print()
-    print(f"Count: {len(vp30)}")
-    print(f"Metadata coverage: {complete}/{len(vp30)}")
+
+    print(f"1. VP30 + MDS CONFLUENCE — LIVE CONFIDENCE STACK ({len(confluence)})")
+    print("-" * 40)
+    if confluence:
+        for r in confluence:
+            vp_s = f"{r['vp']:.3f}" if isinstance(r['vp'], float) else str(r['vp'])
+            mds_s = f"{r['mds']:.3f}" if isinstance(r['mds'], float) else str(r['mds'])
+            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | VP={vp_s} MDS={mds_s} | {r['tier']}")
+    else:
+        print("  (None)")
     print()
 
-    for i, r in enumerate(vp30, 1):
-        time_str = r["off_time"] or "?:??"
-        course_str = r["course"] or "?"
-        print(f"{i}. {time_str} {course_str} — {r['horse']}")
-        print(f"   race_id:                    {r['race_id']}")
-        print(f"   horse_id:                   {r['horse_id']}")
-        print(f"   VP:                         {r['vp']:.4f}")
-        print(f"   tier:                       {r['tier']}")
-        print(f"   candidate_execution_allowed:{r['exec_allowed']}")
-        print(f"   product:                    {r['product']}")
-        print(f"   metadata_source:            {r['metadata_source']}")
-        print()
+    print(f"2. VP30 — LIVE SIGNAL ({len(vp30)})")
+    print("-" * 40)
+    if vp30:
+        for r in vp30:
+            vp_s = f"{r['vp']:.3f}" if isinstance(r['vp'], float) else str(r['vp'])
+            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | VP={vp_s} | {r['tier']}")
+    else:
+        print("  (None)")
+    print()
 
-    if missing_rows:
-        print("── MISSING_METADATA ──────────────────────────────")
-        for r in missing_rows:
-            print(f"  {r['race_id']}  {r['horse']}  missing: {meta_map[r['race_id']].missing_fields}")
-        print()
+    print(f"3. MDS_HIGH — LIVE SIDECAR ({len(mds_high)})")
+    print("-" * 40)
+    if mds_high:
+        for r in mds_high:
+            mds_s = f"{r['mds']:.3f}" if isinstance(r['mds'], float) else str(r['mds'])
+            print(f"  {r['off_time'] or '?:??'} {r['course'] or '?':<12} | {r['horse']:<20} | MDS={mds_s} | {r['tier']}")
+    else:
+        print("  (None)")
+    print()
 
     print("---")
-    print(f"A. Source: Supabase velo_verdicts ({date_str})")
-    print(f"B. Total races scanned: {len(verdicts)}")
-    print(f"C. VP30 count: {len(vp30)}")
-    print(f"D. Metadata complete: {complete}/{len(vp30)}")
+    print(f"A. Source: Supabase velo_verdicts / local JSON")
+    print(f"B. VP Threshold: {VP_THRESHOLD:.2f}")
+    print(f"C. MDS Threshold: > {MDS_THRESHOLD:.2f}")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="VP30 operator card")
+    parser = argparse.ArgumentParser(description="VÉLØ Prime operator card")
     parser.add_argument("--date", default=str(date.today()), help="YYYY-MM-DD")
     args = parser.parse_args()
     build_card(args.date)
