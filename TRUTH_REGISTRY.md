@@ -263,6 +263,29 @@ Fields and files that govern the paper execution layer. Not in scoring or sigma 
 
 ---
 
+## 10. Place Signal Classifier — Operator Visibility Layer
+
+Added 2026-05-01. Commit `58ed2a1`.
+
+Place Signal Classifier added as operator-visibility layer. Classifies each VP30+ verdict into a place-market stack (ELITE → STRONG_PLUS → STRONG → IMPROVE_WATCH → PLACE_SUPPORT → BASE_TRUST → SUPPRESS → BELOW_VP30) based on place economics audit evidence (n=28–380, frame=70–100%, E/W 1/4 ROI +52%–+170%).
+
+**Safety:** No live scoring impact. No VP change. No SQPE change. No router change. No staking. Read-only from `velo_verdicts`.
+
+**Telegram:** `VELO_ENABLE_PLACE_SIGNAL_TELEGRAM` gate (default OFF, set to ON 2026-05-01).
+
+**Full wiring documentation:** `docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md` Section 1.
+
+| Field | Status |
+|---|---|
+| `place_stack_label` | display/operator only |
+| `place_stack_status` | display/operator only |
+| `min_place_odds` | operator reference only — verify actual odds before any action |
+| All `evidence_*` fields | audit reference — from 2026-05-01 place economics audit |
+
+**Not in:** scoring pipeline, sigma learning, Playbook G, ensemble weights, router.
+
+---
+
 ## Change Log
 
 | Date | Change |
@@ -274,3 +297,4 @@ Fields and files that govern the paper execution layer. Not in scoring or sigma 
 | 2026-04-29 | Phase 6: VeloExecutionBridge (c1353ff). Paper ledger live. Hard gates verified. Classification: PAPER_EXECUTION_LEDGER_ACTIVE. |
 | 2026-04-29 | Phase 6A: --audit-results (3f65b1c). First paper close: POWER_ANCHOR 2/2 wins, P&L=+1.16. Gate delta +83.3pp. |
 | 2026-04-30 | Section 8 (Execution Bridge) and Section 9 (Racing API enrichment) added to registry. |
+| 2026-05-01 | Section 10: Place Signal Classifier added (58ed2a1). OPERATOR_VISIBILITY_ONLY. Telegram gate ON. No scoring impact. |
