@@ -1247,3 +1247,68 @@ V3_SQPE_MDS_ONLY is the candidate blend for shadow comparison
 MDS stays live — confirmed value-positive
 place_prob moves to frame-annotation only if V3 shadow confirms
 ```
+
+---
+
+## SHADOW_SAFE_BLEND V3 — SQPE 70 / MDS 30
+
+**Status:** SHADOW_ONLY  
+**Version:** v1_sqpe70_mds30  
+**Created:** 2026-05-07  
+**Source:** `src/velo/shadow_safe_blend.py`  
+**Ledger:** `data/safe_blend_v3_shadow_ledger.csv`  
+**Audit:** `scripts/safe_blend_v3_forward_audit.py`  
+
+### Formula
+
+```
+safe_blend_v3_score = 0.70 * sqpe_v17_prob + 0.30 * market_deception_score
+```
+
+### What it does
+
+- Scores every race's runners using V3 formula after live scoring completes
+- Logs top V3 pick per race to the forward shadow ledger
+- Records whether V3 changed the top selection vs the live pick
+- Result columns (sp, won, placed, P&L) filled by sigma close
+
+### What it does NOT do
+
+- Does NOT modify live velo_prime_prob
+- Does NOT affect candidate_execution_allowed
+- Does NOT affect router decisions
+- Does NOT trigger staking
+- Does NOT send Telegram betting alerts
+- Does NOT affect live execution in any way
+- Zero production scoring side effect — SHADOW_ONLY at all times
+
+### Evidence basis (historical simulation, 2026-05-07)
+
+| Metric | V0 Current | V3 SQPE+MDS | Delta |
+|---|---|---|---|
+| n | 321 | 321 | — |
+| SR | 26.48% | 27.10% | +0.62pp |
+| ROI | -24.38% | -7.79% | **+16.59pp** |
+
+### Forward gate
+
+| Condition | Gate |
+|---|---|
+| n < 30 | OBSERVE_ONLY |
+| n ≥ 30, V3 ROI > live ROI, V3 SR ≥ 24% | SHADOW_SAFE_BLEND_CONFIRMED |
+| n ≥ 60, still better | LIVE_WEIGHT_REVIEW_CANDIDATE |
+| n ≥ 100 | Formal co-founder discussion only |
+| Automatic promotion | NEVER |
+
+### Hard rules
+
+```
+NO production weight change until gate SHADOW_SAFE_BLEND_CONFIRMED
+NO SQPE change
+NO model retraining
+NO router promotion
+NO staking
+NO Telegram betting alert
+Automatic promotion: NEVER
+Gate advancement: operator decision only at each threshold
+```
