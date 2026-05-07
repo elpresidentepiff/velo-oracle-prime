@@ -1,0 +1,58 @@
+{
+  "worktree_status": "RECOVERING",
+  "backup_patches_saved_externally": true,
+  "files": {
+    "app/main.py": {
+      "classification": "DASHBOARD_OR_METADATA_HOLD_PATCH_AND_REVERT",
+      "summary": "Dashboard Panel C support. Reverted to maintain clean experiment environment.",
+      "required_for_shadow_heartbeat": false,
+      "recommended_action": "REVERT",
+      "status": "REVERTED"
+    },
+    "app/static/dashboard/index.html": {
+      "classification": "DASHBOARD_OR_METADATA_HOLD_PATCH_AND_REVERT",
+      "summary": "Panel C UI components. Reverted.",
+      "required_for_shadow_heartbeat": false,
+      "recommended_action": "REVERT",
+      "status": "REVERTED"
+    },
+    "app/services/velo_prime_service.py": {
+      "classification": "DASHBOARD_OR_METADATA_HOLD_PATCH_AND_REVERT",
+      "summary": "Supabase 'races' metadata upsert. Reverted due to Supabase write safety policy.",
+      "required_for_shadow_heartbeat": false,
+      "recommended_action": "REVERT",
+      "status": "REVERTED"
+    },
+    "scripts/backfill_historical_feature_store.py": {
+      "classification": "HFS_REPAIR_CANDIDATE_PATCH_AND_REVERT",
+      "summary": "HFS repair refactor. Saved as external patch; reverted from worktree.",
+      "required_for_shadow_heartbeat": false,
+      "recommended_action": "HOLD",
+      "status": "REVERTED"
+    },
+    "scripts/ingest_racecard_pdfs.py": {
+      "classification": "UNRELATED_REVERT",
+      "summary": "PDF parsing bounds check. Reverted.",
+      "required_for_shadow_heartbeat": false,
+      "recommended_action": "REVERT",
+      "status": "REVERTED"
+    },
+    "app/playbooks/playbook_g_sentient_loopback.py": {
+      "classification": "HEARTBEAT_CRITICAL_KEEP_AND_COMMIT",
+      "summary": "Added disable_cloud_backup flag to protect live state during shadow learning.",
+      "required_for_shadow_heartbeat": true,
+      "recommended_action": "KEEP",
+      "status": "DIRTY_STAGING"
+    },
+    "scripts/run_results_sigma.py": {
+      "classification": "HEARTBEAT_CRITICAL_KEEP_AND_COMMIT",
+      "summary": "Enhanced non-runner detection for EOD outcome correctness.",
+      "required_for_shadow_heartbeat": true,
+      "recommended_action": "KEEP",
+      "status": "DIRTY_STAGING"
+    }
+  },
+  "experiments_blocked": false,
+  "hfs_dry_run_blocked": false,
+  "recommended_next_action": "Commit heartbeat safety files and proceed to shadow model experiments."
+}

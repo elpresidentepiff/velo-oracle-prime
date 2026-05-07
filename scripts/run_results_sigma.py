@@ -391,14 +391,21 @@ def main():
 
         # ── Non-runner gate: predicted horse did not start/finish ─────────────
         full_runners = result.get("full_runners", [])
+        horse_found_in_results = False
         for runner in full_runners:
             if runner.get("horse_id") == predicted_horse_id:
+                horse_found_in_results = True
                 pos = str(runner.get("position", "")).strip().upper()
                 if pos in DNF_POSITIONS:
                     non_runners.append(race_id)
                     print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded from stats")
                 break
         if race_id in non_runners:
+            continue
+        # Horse absent from results entirely = withdrew before start
+        if not horse_found_in_results:
+            non_runners.append(race_id)
+            print(f"  [NR] {race_id}: {info.get('horse','?')} — not in result set (pre-race withdrawal) — excluded from stats")
             continue
 
         is_hit = predicted_horse_id == result["winner_id"]
