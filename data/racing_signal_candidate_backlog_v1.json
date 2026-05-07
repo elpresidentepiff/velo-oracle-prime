@@ -1,0 +1,262 @@
+[
+  {
+    "signal_name": "trainer_course_score",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "MEDIUM",
+    "confidence_level": "MEDIUM",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "trainer_distance_score",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "MEDIUM",
+    "confidence_level": "MEDIUM",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "jockey_course_score",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "MEDIUM",
+    "confidence_level": "MEDIUM",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "trainer_jockey_combo_score",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "MEDIUM",
+    "confidence_level": "MEDIUM",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "horse_distance_preference",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "LOW",
+    "confidence_level": "HIGH",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "horse_going_preference",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "LOW",
+    "confidence_level": "HIGH",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "course_volatility_score",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": false,
+    "leakage_risk": "LOW",
+    "confidence_level": "MEDIUM",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "distance_switch_signal",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "LOW",
+    "confidence_level": "MEDIUM",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "class_drop_signal",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": true,
+    "leakage_risk": "LOW",
+    "confidence_level": "MEDIUM",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "field_size_chaos_proxy",
+    "safe_for_shadow_analysis_now": true,
+    "safe_for_training_now": false,
+    "hfs_required": false,
+    "leakage_risk": "LOW",
+    "confidence_level": "HIGH",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "market_rank_rescue_signal",
+    "safe_for_shadow_analysis_now": false,
+    "safe_for_training_now": false,
+    "hfs_required": false,
+    "leakage_risk": "HIGH",
+    "blocked_reason": "Missing pre-race rank",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "favourite_sanity_signal",
+    "safe_for_shadow_analysis_now": false,
+    "safe_for_training_now": false,
+    "hfs_required": false,
+    "leakage_risk": "HIGH",
+    "blocked_reason": "Missing market data",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  },
+  {
+    "signal_name": "top3_containment_signal",
+    "safe_for_shadow_analysis_now": false,
+    "safe_for_training_now": false,
+    "hfs_required": false,
+    "leakage_risk": "HIGH",
+    "blocked_reason": "Missing ranking data",
+    "source_fields": [
+      "course",
+      "dist",
+      "trainer"
+    ],
+    "source_coverage": 0.95,
+    "required_join_keys": [
+      "horse_id"
+    ],
+    "expected_value": "ROI_ALPHA",
+    "test_required": "Backtest_Verification",
+    "proposed_future_file": "app/services/signals.py"
+  }
+]
