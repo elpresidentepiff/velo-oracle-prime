@@ -1,0 +1,5 @@
+{
+  "root_cause": "Test state contamination. The nightly runner test was colliding with existing idempotency audit files in the repository root.",
+  "repair_strategy": "Implemented strict fixture isolation. The test now uses a temporary directory for all data, state, and audit artifacts, and monkeypatches the runner's ROOT constant during execution.",
+  "verdict": "PASS_CERTIFIED"
+}
