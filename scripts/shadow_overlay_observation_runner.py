@@ -41,6 +41,52 @@ class ShadowObservationRunner:
         if not probs: return 0.0
         return sum((p - o)**2 for p, o in zip(probs, outcomes)) / len(probs)
 
+    def _update_summary(self, daily_obs):
+        summary = self._load_json(self.summary_path)
+        if not summary:
+            summary = {
+                "dates_observed": [],
+                "total_races_observed": 0,
+                "baseline_avg_brier": 0.0,
+                "cap_35_avg_brier": 0.0,
+                "cap_30_avg_brier": 0.0,
+                "volatility_cap_avg_brier": 0.0,
+                "high_confidence_losses_baseline": 0,
+                "high_confidence_losses_cap_35": 0,
+                "high_confidence_losses_cap_30": 0,
+                "high_confidence_losses_volatility": 0,
+                "strike_rate_changed": False,
+                "selection_repair_status": "NOT_SOLVED",
+                "easy_winner_rescue_status": "BLOCKED_BY_MARKET_AND_RANKING_DATA",
+                "recommendation": "Maintain shadow observation for cap_35 primary."
+            }
+        
+        if self.date_str in summary["dates_observed"]:
+             return # Skip duplicate update
+             
+        summary["dates_observed"].append(self.date_str)
+        races = daily_obs["baseline"]["races_evaluated"]
+        prev_total = summary["total_races_observed"]
+        new_total = prev_total + races
+        summary["total_races_observed"] = new_total
+
+        def update_avg(current_avg, new_val):
+            return ((current_avg * prev_total) + (new_val * races)) / new_total if new_total > 0 else 0.0
+
+        summary["baseline_avg_brier"] = update_avg(summary["baseline_avg_brier"], daily_obs["baseline"]["brier_score"])
+        summary["cap_35_avg_brier"] = update_avg(summary["cap_35_avg_brier"], daily_obs["overlays"]["calibration_cap_35"]["brier_score"])
+        summary["cap_30_avg_brier"] = update_avg(summary["cap_30_avg_brier"], daily_obs["overlays"]["calibration_cap_30"]["brier_score"])
+        summary["volatility_cap_avg_brier"] = update_avg(summary["volatility_cap_avg_brier"], daily_obs["overlays"]["volatility_confidence_cap"]["brier_score"])
+
+        summary["high_confidence_losses_baseline"] += daily_obs["baseline"]["high_confidence_losses"]
+        summary["high_confidence_losses_cap_35"] += daily_obs["overlays"]["calibration_cap_35"]["high_confidence_losses"]
+        summary["high_confidence_losses_cap_30"] += daily_obs["overlays"]["calibration_cap_30"]["high_confidence_losses"]
+        
+        if daily_obs["baseline"]["strike_rate"] != daily_obs["overlays"]["calibration_cap_35"]["strike_rate"]:
+             summary["strike_rate_changed"] = True
+
+        self.summary_path.write_text(json.dumps(summary, indent=2))
+
     def run(self):
         logger.info(f"Running Shadow Overlay Observation for {self.date_str}")
         
@@ -79,9 +125,6 @@ class ShadowObservationRunner:
         total = len(baseline_data["probs"])
         if total == 0: return "FAIL"
 
-        baseline_brier = self._calculate_brier(baseline_data["probs"], baseline_data["outcomes"])
-        
-        # Apply Overlays
         def get_overlay_metrics(cap):
             adj_probs = [min(p, cap) for p in baseline_data["probs"]]
             adj_hcl = 0
@@ -98,13 +141,13 @@ class ShadowObservationRunner:
             "baseline": {
                 "races_evaluated": total,
                 "strike_rate": baseline_data["wins"] / total,
-                "brier_score": baseline_brier,
+                "brier_score": self._calculate_brier(baseline_data["probs"], baseline_data["outcomes"]),
                 "high_confidence_losses": baseline_data["hcl"]
             },
             "overlays": {
                 "calibration_cap_35": get_overlay_metrics(0.35),
                 "calibration_cap_30": get_overlay_metrics(0.30),
-                "volatility_confidence_cap": get_overlay_metrics(0.40) # Proxy
+                "volatility_confidence_cap": get_overlay_metrics(0.40)
             },
             "selection_repair_status": "NOT_SOLVED",
             "easy_winner_rescue_status": "BLOCKED_BY_MARKET_AND_RANKING_DATA",
@@ -117,6 +160,7 @@ class ShadowObservationRunner:
         }
         
         self.output_path.write_text(json.dumps(observation, indent=2))
+        self._update_summary(observation)
         return "PASS"
 
 if __name__ == "__main__":
