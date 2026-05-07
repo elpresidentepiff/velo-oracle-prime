@@ -1,0 +1,27 @@
+[
+  {
+    "overlay": "calibration_cap_35",
+    "recommendation": "KEEP_FOR_LONGER_SHADOW_REPLAY",
+    "rationale": "Improves probability honesty/Brier score but does not improve winner selection."
+  },
+  {
+    "overlay": "volatility_confidence_cap",
+    "recommendation": "KEEP_FOR_LONGER_SHADOW_REPLAY",
+    "rationale": "Risk mitigation for high-chaos environments based on field size proxy."
+  },
+  {
+    "overlay": "chalk_sanity_filter",
+    "recommendation": "NEEDS_MARKET_DATA",
+    "rationale": "Requires live Betfair integration to verify favorite performance."
+  },
+  {
+    "overlay": "top_3_rescue",
+    "recommendation": "NOT_SOLVED",
+    "rationale": "Missing model ranking data in Genesis baseline prevents rescue validation."
+  },
+  {
+    "overlay": "production_scoring",
+    "recommendation": "BLOCKED",
+    "rationale": "No production changes authorized until shadow stability is proven."
+  }
+]

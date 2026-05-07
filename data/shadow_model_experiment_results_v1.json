@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-05-07T01:35:39.297425+00:00",
+  "total_races_evaluated": 1046,
+  "experiments": [
+    {
+      "overlay_name": "baseline",
+      "races_evaluated": 1046,
+      "wins": 201,
+      "strike_rate": 0.1921606118546845,
+      "brier_score": 0.33596405353728465,
+      "high_confidence_losses": 132
+    },
+    {
+      "races_evaluated": 1046,
+      "wins": 201,
+      "strike_rate": 0.1921606118546845,
+      "brier_score": 0.15438815030592745,
+      "high_confidence_losses": 0,
+      "easy_winner_rescues": 0,
+      "overlay_name": "calibration_cap_40",
+      "delta_brier": -0.1815759032313572,
+      "selection_quality_improved": false,
+      "recommendation": "KEEP_FOR_LONGER_SHADOW_REPLAY",
+      "rationale": "Improves probability honesty/Brier score but does not improve winner selection."
+    },
+    {
+      "races_evaluated": 1046,
+      "wins": 201,
+      "strike_rate": 0.1921606118546845,
+      "brier_score": 0.15418747911089936,
+      "high_confidence_losses": 0,
+      "easy_winner_rescues": 0,
+      "overlay_name": "calibration_cap_35",
+      "delta_brier": -0.18177657442638528,
+      "selection_quality_improved": false,
+      "recommendation": "KEEP_FOR_LONGER_SHADOW_REPLAY",
+      "rationale": "Improves probability honesty/Brier score but does not improve winner selection."
+    },
+    {
+      "races_evaluated": 1046,
+      "wins": 201,
+      "strike_rate": 0.1921606118546845,
+      "brier_score": 0.1537562199426395,
+      "high_confidence_losses": 0,
+      "easy_winner_rescues": 0,
+      "overlay_name": "calibration_cap_30",
+      "delta_brier": -0.18220783359464515,
+      "selection_quality_improved": false,
+      "recommendation": "KEEP_FOR_LONGER_SHADOW_REPLAY",
+      "rationale": "Improves probability honesty/Brier score but does not improve winner selection."
+    },
+    {
+      "races_evaluated": 1046,
+      "wins": 201,
+      "strike_rate": 0.1921606118546845,
+      "brier_score": 0.1542678986233272,
+      "high_confidence_losses": 48,
+      "easy_winner_rescues": 0,
+      "overlay_name": "chalk_sanity_filter",
+      "favourite_overfit_risk": "LOW",
+      "recommendation": "NEEDS_MARKET_DATA",
+      "status": "UNAVAILABLE_MISSING_MARKET_DATA"
+    },
+    {
+      "races_evaluated": 1046,
+      "wins": 201,
+      "strike_rate": 0.1921606118546845,
+      "brier_score": 0.1542678986233272,
+      "high_confidence_losses": 48,
+      "easy_winner_rescues": 0,
+      "overlay_name": "volatility_confidence_cap",
+      "recommendation": "KEEP_FOR_LONGER_SHADOW_REPLAY",
+      "rationale": "Risk mitigation for high-chaos environments."
+    },
+    {
+      "overlay_name": "top_3_rescue",
+      "status": "UNAVAILABLE_MISSING_RANKING_DATA",
+      "recommendation": "NOT_SOLVED"
+    }
+  ],
+  "safety": {
+    "production_scoring_changed": false,
+    "model_weights_changed": false,
+    "supabase_writes_attempted": false,
+    "live_sentient_state_touched": false,
+    "hfs_features_used": false,
+    "hfs_training_safe": false,
+    "forbidden_files_modified": false
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "baseline": {
+    "strike_rate": 0.1921,
+    "brier_score": 0.3360,
+    "high_confidence_losses": 132
+  },
+  "candidate_overlays": [
+    {
+      "overlay": "calibration_cap_35",
+      "role": "PRIMARY_LONGER_SHADOW_REPLAY",
+      "reason": "Strong Brier improvement with less aggressive probability suppression than cap_30.",
+      "selection_quality_improved": false,
+      "production_allowed": false
+    },
+    {
+      "overlay": "calibration_cap_30",
+      "role": "SECONDARY_STRESS_TEST",
+      "reason": "Best Brier score but higher risk of underconfidence.",
+      "selection_quality_improved": false,
+      "production_allowed": false
+    },
+    {
+      "overlay": "volatility_confidence_cap",
+      "role": "RISK_CONTROL_SHADOW_REPLAY",
+      "reason": "Suppresses large-field overconfidence using field-size proxy.",
+      "selection_quality_improved": false,
+      "production_allowed": false
+    },
+    {
+      "overlay": "chalk_sanity_filter",
+      "role": "BLOCKED",
+      "reason": "Needs market/favourite/ranking data.",
+      "selection_quality_improved": null,
+      "production_allowed": false
+    }
+  ],
+  "selection_repair_status": "NOT_SOLVED",
+  "easy_winner_rescue_status": "BLOCKED_BY_MARKET_AND_RANKING_DATA",
+  "next_required_data": [
+    "actual winner model rank",
+    "market rank",
+    "pre-race odds timestamp",
+    "favourite identity",
+    "field ranking snapshot"
+  ],
+  "verdict": "PASS"
+}
