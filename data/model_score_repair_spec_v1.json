@@ -1,0 +1,120 @@
+{
+  "repair_version": "1.1",
+  "target_races": 1046,
+  "repair_items": [
+    {
+      "id": "CALIBRATION_DRIFT",
+      "priority": 1,
+      "issue": "Probability overstatement in Strike category (>45%)",
+      "evidence": "132 calibration errors identified",
+      "affected_races": 132,
+      "expected_impact": "Reduce ROI bleed on high-confidence selections",
+      "safe_to_implement_now": true,
+      "blocked_by_hfs": false,
+      "proposed_files_later": [
+        "app/services/scoring/recalibration_overlay.py"
+      ],
+      "required_tests": [
+        "Strike Rate vs implied prob on >45% range"
+      ],
+      "rollback_plan": "Disable recalibration overlay flag",
+      "promotion_gate": "7-day shadow replay pass"
+    },
+    {
+      "id": "CHALK_BLINDNESS",
+      "priority": 2,
+      "issue": "Favorite/Market-obvious winners overlooked",
+      "evidence": "59 high-confidence selection failures where favorite won",
+      "affected_races": 59,
+      "expected_impact": "Improve strike rate by capturing market-supported winners",
+      "safe_to_implement_now": false,
+      "blocked_by_hfs": false,
+      "proposed_files_later": [
+        "app/services/scoring/chalk_sanity_gate.py"
+      ],
+      "required_tests": [
+        "Market rank vs Model rank consistency"
+      ],
+      "rollback_plan": "Revert to static selection rank",
+      "promotion_gate": "Live market truth integration"
+    },
+    {
+      "id": "VOLATILITY_DAMPENER",
+      "priority": 3,
+      "issue": "Confidence remains high in Chaos field environments",
+      "evidence": "High loss density in large fields (>14 runners)",
+      "affected_races": 105,
+      "expected_impact": "ROI protection in high-uncertainty fields",
+      "safe_to_implement_now": false,
+      "blocked_by_hfs": true,
+      "proposed_files_later": [
+        "app/services/scoring/chaos_cap_modifier.py"
+      ],
+      "required_tests": [
+        "Variance check on prob in fields > 16"
+      ],
+      "rollback_plan": "Remove chaos multiplier",
+      "promotion_gate": "HFS_TRAINING_SAFE=TRUE"
+    },
+    {
+      "id": "TOP3_CONTAINMENT",
+      "priority": 4,
+      "issue": "Winners frequently ranked 4-5 by model",
+      "evidence": "Selection leakage analysis of missed winners",
+      "affected_races": 52,
+      "expected_impact": "Rescue winners by containing selections in Top 3",
+      "safe_to_implement_now": true,
+      "blocked_by_hfs": false,
+      "proposed_files_later": [
+        "app/services/study/rescue_audit_engine.py"
+      ],
+      "required_tests": [
+        "Rank containment metric"
+      ],
+      "rollback_plan": "Disable rescue audit layer",
+      "promotion_gate": "Verified 20% rescue rate"
+    },
+    {
+      "id": "LOSS_TYPE_FEEDBACK",
+      "priority": 5,
+      "issue": "Lack of adaptation to recurring failure classes",
+      "evidence": "713 selection failures",
+      "affected_races": 1046,
+      "expected_impact": "Context-aware selection tuning",
+      "safe_to_implement_now": true,
+      "blocked_by_hfs": false,
+      "proposed_files_later": [
+        "app/playbooks/sentient_feedback_bridge.py"
+      ],
+      "required_tests": [
+        "Weight adjustment audit"
+      ],
+      "rollback_plan": "Freeze sentient state influence",
+      "promotion_gate": "30-day shadow stability"
+    },
+    {
+      "id": "HFS_FEATURE_REPAIR",
+      "priority": 6,
+      "issue": "Core doctrine signals (MPI/Chaos) unverified",
+      "evidence": "HFS_TRAINING_SAFE=FALSE",
+      "affected_races": 1046,
+      "expected_impact": "Unlock V17 deep feature training",
+      "safe_to_implement_now": false,
+      "blocked_by_hfs": true,
+      "proposed_files_later": [
+        "scripts/backfill_historical_feature_store.py"
+      ],
+      "required_tests": [
+        "HFS Value and Schema Consistency"
+      ],
+      "rollback_plan": "Revert to HFS_BLOCK_001",
+      "promotion_gate": "Successful full-history dry-run"
+    }
+  ],
+  "promotion_gates": [
+    "7-day shadow replay pass",
+    "HFS_TRAINING_SAFE=TRUE",
+    "Council sign-off"
+  ],
+  "verdict": "READY_FOR_EXPERIMENT"
+}

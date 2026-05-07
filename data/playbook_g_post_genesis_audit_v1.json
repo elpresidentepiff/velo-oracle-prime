@@ -1,0 +1,40 @@
+{
+  "total_events_learned": 1046,
+  "wins_learned": 201,
+  "losses_learned": 845,
+  "loss_count_by_type": {
+    "WRONG_HORSE": 713,
+    "NONE": 201,
+    "CALIBRATION_ERROR": 132
+  },
+  "recurring_failure_patterns": [
+    "High-prob volatility",
+    "Late market drift impact"
+  ],
+  "confidence_warnings": [
+    "Strike category (>45%) shows high implosion risk"
+  ],
+  "market_warnings": [
+    "Model blind to strong market support for non-selections"
+  ],
+  "calibration_warnings": [
+    "Probability drift in top-tier predictions"
+  ],
+  "data_quality_warnings": [
+    "Missing pre-race odds timestamps in historical source"
+  ],
+  "protected_patterns": [
+    "favourites_protected",
+    "favourites_abandoned",
+    "market_lies_detected",
+    "safe_bets_imploded",
+    "recurring_setups"
+  ],
+  "tomorrow_watchlist": [
+    "Monitor strike rate on >40% probs",
+    "Analyze favourite implosion clusters"
+  ],
+  "what_playbook_g_would_change_if_live": "Apply aggressive sentiment multiplier to short-priced drift",
+  "what_playbook_g_is_blocked_from_changing": "Runner probabilities (Shadow mode only)",
+  "playbook_g_shadow_verdict": "LEARNING_USEFUL_BUT_WEAK_MODEL"
+}

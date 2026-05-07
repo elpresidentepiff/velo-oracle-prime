@@ -1,0 +1,26 @@
+[
+  {
+    "priority": 1,
+    "issue": "High-Confidence Probability Drift",
+    "evidence": "48 losses with prob > 45%",
+    "category": "probability calibration",
+    "safe_to_implement_now": true,
+    "blocked_by_hfs": false
+  },
+  {
+    "priority": 2,
+    "issue": "Chalk Blindness",
+    "issue_desc": "Favourite missed when model diverges without doctrine",
+    "category": "favourite/market sanity check",
+    "safe_to_implement_now": false,
+    "blocked_by_hfs": false
+  },
+  {
+    "priority": 3,
+    "issue": "Environmental Volatility",
+    "issue_desc": "Chaos Bloom not capping confidence",
+    "category": "confidence cap",
+    "safe_to_implement_now": false,
+    "blocked_by_hfs": true
+  }
+]
