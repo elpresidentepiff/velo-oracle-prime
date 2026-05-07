@@ -1166,3 +1166,84 @@ Racing Post PDFs
 - No CASHRUN may run before Racing Post fields exist.
 - No VP30 card may pass without metadata and candidate gate.
 - No script should be run manually out of order if the bootstrap command (`scripts/velo_day_bootstrap.py`) exists.
+
+---
+
+## Safe Ensemble Candidate Review
+
+**Date:** 2026-05-07  
+**Simulation script:** `scripts/simulate_safe_ensemble_variants.py`  
+**Evidence corpus:** `data/velo_unified_evidence_corpus_v1.csv` (794 rows, 721 with won+SP)  
+**Sample:** 321 top-selections at VP≥0.25  
+
+### Current Live Blend Status
+
+| Metric | Value |
+|---|---|
+| SR | 26.48% |
+| Frame rate | 64.49% |
+| ROI | **-24.38%** |
+| Avg SP | 6.06 |
+| V0 baseline selections | 321 |
+
+The live blend is economically negative. SQPE is the only confirmed value-positive anchor. Several sidecars add SR/frame signal but degrade ROI by pulling the system toward overpriced/short-SP selections.
+
+### Harmful Sidecar Findings
+
+| Sidecar | Audit finding | ROI impact (ablation) |
+|---|---|---|
+| release_day_prob | Harmful (combined effect) | Worsens ROI when removed alone (-1.35pp) |
+| comment_intel_score | Harmful (combined effect) | Worsens ROI when removed alone (-1.35pp) |
+| place_prob | Overbet-risk | Marginal improvement when removed (+1.15pp) — FRAME_ONLY |
+| improvement_score | Overbet-risk | Worsens ROI when removed alone (-2.22pp) |
+| market_deception_score | Strong signal | Significant hurt when removed (-5.45pp) — KEEP |
+| longshot_prob | Overbet-risk | Minor hurt when removed (-1.69pp) |
+
+**Key finding:** Individual ablations show small effects because the other harmful sidecars remain. The collective removal of non-MDS sidecars (V3, V5) delivers the improvement.
+
+### Simulated Candidate Blends
+
+| Variant | SR% | ROI% | ROI Δ vs V0 | Changed | W+ | W- |
+|---|---|---|---|---|---|---|
+| V0_CURRENT_LIVE | 26.48 | -24.38 | — | — | — | — |
+| V1_SQPE_ONLY | 17.13 | -12.28 | +12.10pp | 354 | 25 | 55 |
+| V2_SQPE_MDS_PLACE | 26.48 | -29.02 | -4.64pp | 232 | 24 | 24 |
+| **V3_SQPE_MDS_ONLY** | **27.10** | **-7.79** | **+16.59pp** | 262 | 24 | 22 |
+| V4_REMOVE_HARMFUL | 25.55 | -29.95 | -5.57pp | 228 | 23 | 26 |
+| **V5_VALUE_DISCIPLINE** | **26.17** | **-8.34** | **+16.04pp** | 260 | 22 | 23 |
+
+### Direct Question Answers
+
+1. **Does removing release_day_prob improve ROI?** No — removing it alone worsens ROI (-1.35pp). It has no standalone positive effect. Collective removal with other non-MDS sidecars is needed.
+2. **Does removing comment_intel_score improve ROI?** No — same as above (-1.35pp alone). Collective removal required.
+3. **Does removing improvement_score reduce SR but improve ROI?** No — removing it worsens ROI (-2.22pp). Its SR/frame contribution is real. The issue is the full blend overweights confidence sidecars collectively.
+4. **Does MDS deserve to stay live?** Yes — removing MDS costs -5.45pp ROI. Confirmed value-additive.
+5. **Does place_prob deserve live or frame-only?** Frame-only. Removing it marginally improves ROI (+1.15pp) — it inflates confidence on placeable-but-not-winning horses.
+6. **Is SQPE-only better economically than current?** Yes — SQPE-only ROI=-12.28% vs current -24.38% (+12.10pp). However, SR drops from 26.48% to 17.13% (lost 55 winners to gain 25). Not a clean trade.
+7. **Safest candidate blend:** V3_SQPE_MDS_ONLY (ROI=-7.79%, SR=27.1%, +16.59pp vs current).
+
+### Recommended Action
+
+| Decision | Status |
+|---|---|
+| KEEP_CURRENT_LIVE | Yes — no production change yet |
+| CREATE_SHADOW_SAFE_BLEND | Pending — V3_SQPE_MDS_ONLY is the candidate |
+| FREEZE_RELEASE_COMMENT_FOR_REVIEW | Yes — confirmed collectively harmful |
+| PAPER_COMPARE_SAFE_BLEND | Next step — shadow-run V3 alongside current |
+| DO_NOT_CHANGE | Overridden only when shadow comparison evidence clears |
+
+**No production weight change unless explicitly approved after shadow comparison.**  
+Prove the safer blend first. If V3_SQPE_MDS_ONLY beats current on ROI/drawdown in forward shadow without killing strike/frame → create SHADOW_SAFE_BLEND gate.
+
+### Operating Rules (Permanent)
+
+```
+NO production weight change without shadow evidence gate passed
+NO SQPE change
+NO model retraining
+NO router promotion
+NO staking
+V3_SQPE_MDS_ONLY is the candidate blend for shadow comparison
+MDS stays live — confirmed value-positive
+place_prob moves to frame-annotation only if V3 shadow confirms
+```
