@@ -1702,6 +1702,44 @@ def main():
     except Exception as e:
         print(f"\nLocal backup skipped: {e}")
 
+    # ── STEP 6b: V3 Shadow Safe Blend logging (SHADOW ONLY — no production effect) ──
+    try:
+        from src.velo.shadow_safe_blend import (
+            append_to_shadow_ledger,
+            compute_safe_blend_v3,
+        )
+
+        v3_logged = 0
+        v3_changed = 0
+        for race, preds, tier, _reasons in scored:
+            if not preds:
+                continue
+            top = preds[0]
+            ann = compute_safe_blend_v3(preds)
+            append_to_shadow_ledger(
+                date_str=date_str,
+                race_id=race.get("race_id", ""),
+                course=race.get("course", ""),
+                off_time=race.get("off_time", ""),
+                race_name=race.get("race_name", ""),
+                live_top_horse=top.get("horse", ""),
+                live_top_horse_id=top.get("horse_id", ""),
+                live_top_vp=float(top.get("velo_prime_prob") or 0),
+                live_top_tier=tier,
+                safe_v3_top_horse=ann["safe_blend_v3_top_pick"],
+                safe_v3_top_horse_id=ann["safe_blend_v3_top_horse_id"],
+                safe_v3_score=ann["safe_blend_v3_score"],
+                changed_top_selection=ann["safe_blend_v3_changes_top_selection"],
+            )
+            v3_logged += 1
+            if ann["safe_blend_v3_changes_top_selection"]:
+                v3_changed += 1
+
+        print(f"\nV3 Shadow Blend: logged {v3_logged} races | "
+              f"changed top pick: {v3_changed} | STATUS=SHADOW_ONLY")
+    except Exception as _v3_err:
+        print(f"\nV3 Shadow Blend: skipped (non-fatal) — {_v3_err}")
+
     # ── STEP 7: Verify counts ─────────────────────────────────────────────────
     print("\nSTEP 7: Count verification")
     print(f"  Races fetched:    {len(raw_races)}")
