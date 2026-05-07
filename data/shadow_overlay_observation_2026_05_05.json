@@ -1,0 +1,34 @@
+{
+  "date": "2026-05-05",
+  "baseline": {
+    "races_evaluated": 32,
+    "strike_rate": 0.09375,
+    "brier_score": 0.112577723125,
+    "high_confidence_losses": 1
+  },
+  "overlays": {
+    "calibration_cap_35": {
+      "brier_score": 0.11476103125,
+      "high_confidence_losses": 0,
+      "strike_rate": 0.09375
+    },
+    "calibration_cap_30": {
+      "brier_score": 0.1116105946875,
+      "high_confidence_losses": 0,
+      "strike_rate": 0.09375
+    },
+    "volatility_confidence_cap": {
+      "brier_score": 0.1155920909375,
+      "high_confidence_losses": 0,
+      "strike_rate": 0.09375
+    }
+  },
+  "selection_repair_status": "NOT_SOLVED",
+  "easy_winner_rescue_status": "BLOCKED_BY_MARKET_AND_RANKING_DATA",
+  "production_scoring_changed": false,
+  "model_weights_changed": false,
+  "live_sentient_state_touched": false,
+  "supabase_writes_attempted": false,
+  "hfs_features_used": false,
+  "verdict": "PASS"
+}
