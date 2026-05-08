@@ -1393,3 +1393,14 @@ Promotion gate:
 - `n >= 20 replay days` -> calibration review only
 - `n >= 50 replay days` -> possible operator-trust review
 - live betting promotion -> forbidden
+
+Current replay verdict:
+
+- `SHADOW ONLY`
+- VP30 core required
+- Racing API enrichment helps
+- `BANKER_ONLY` is the cleanest replay shape
+- `BANKER_PLUS_GLUE_ONLY` is the next cleanest replay shape
+- CASHRUN remains separate until isolated ACCA lift exists
+- no live execution
+- no staking
