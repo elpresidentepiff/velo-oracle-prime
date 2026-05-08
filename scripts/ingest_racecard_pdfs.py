@@ -599,8 +599,12 @@ def merge_race_data(
         def _sanitise_name(n: str) -> str:
             """Strip trailing digit sequences from horse names (parser leak defence)."""
             import re as _re
-            # Strip trailing digit sequences e.g. 'cosmic connection 123123'
+            # Strip trailing digit sequences with space e.g. 'Cosmic Connection 123'
             n = _re.sub(r'(\s+\d+)+$', '', n).strip()
+            # Strip directly-concatenated trailing digits e.g. 'Gethegoodtimesroll46'
+            # Only strip if the name has at least 6 chars before the digits (avoid stripping
+            # legitimate names like 'Scat Daddy' where there are no trailing digits)
+            n = _re.sub(r'(?<=[a-zA-Z])\d+$', '', n).strip()
             return n
 
         def _make_horse_dict(source_dict: dict) -> dict:
