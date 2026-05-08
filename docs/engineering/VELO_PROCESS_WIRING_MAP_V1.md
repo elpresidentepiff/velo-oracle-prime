@@ -1155,3 +1155,186 @@ The CASHRUN detector identifies possible handicap/cash-run intent from Racing Po
 - No CASHRUN may run before Racing Post fields exist.
 - No VP30 card may pass without metadata and candidate gate.
 - No script should be run manually out of order if the bootstrap command (`scripts/velo_day_bootstrap.py`) exists.
+
+---
+
+## Section 14 — Sentient Daily Learning Loop: Current Truth (2026-05-08)
+
+### Status
+
+| Layer | Status |
+|---|---|
+| Manual repair path | **WORKING** — 924/925 observe calls succeeded |
+| Normal EOD bridge (pre-patch) | **WAS BROKEN** — patched 2026-05-08 |
+| Normal EOD bridge (post-patch) | **WORKING** — audit classification READY_FOR_7_DAY_SHADOW |
+| Shadow daily accumulation | **ALLOWED** — bridge audit passes all criteria |
+| Live promotion | **BLOCKED** — HFS_TRAINING_SAFE=False + 7–14 day accumulation required |
+
+### What Forensic Audit Proved
+
+The manual repair script (`scripts/sentient_loop_repair_v1.py`) demonstrated that the loop **can** learn. The normal daily bridge (`scripts/eod_shadow_learning_bridge.py`) had four confirmed bugs that prevented real learning:
+
+1. **MPI formula wrong**: was `vp * 100`. Fixed: `(vp*0.6 + mds*0.4)*100` matching ensemble formula.
+2. **SP hardcoded**: was always `5.0`. Fixed: extracted from `results_YYYY_MM_DD.json` runners `sp_dec`.
+3. **learning_allowed always False**: Fixed: `True` when outcome closed, race_id and winner_id present.
+4. **chaos_bloom None → TypeError**: Fixed: derived from `macro_chaos_mode + favourite_trap_risk`, or `0.0` with provenance `defaulted_missing_macro`.
+
+### Bridge Patch Verification (2026-05-07)
+
+| Criterion | Value | Pass |
+|---|---|---|
+| Events scanned | 41 | — |
+| observe_race_outcome attempted | 41 | — |
+| observe_race_outcome success | 41 (100%) | ✓ |
+| MPI null | 0 | ✓ |
+| MPI mean | 20.92 | — |
+| chaos_bloom null | 0 | ✓ |
+| SP hardcoded | 0 | ✓ |
+| Duplicate keys | 0 | ✓ |
+| Live state untouched | True | ✓ |
+| State Δ races | +41 | ✓ |
+| DAILY_CLOSE_READY | True | ✓ |
+| LIVE_PROMOTION_READY | False | — |
+
+### Shadow State Files
+
+| File | Purpose | Races |
+|---|---|---|
+| `data/sentient_state.json` | **Live state** — frozen at 1646 since 2026-04-25 | 1,646 |
+| `data/sentient_state_shadow_repair_v1.json` | Manual repair baseline | 930 |
+| `data/sentient_state_shadow_daily.json` | **Daily bridge target** — accumulates from today | Growing |
+| `data/sentient_state_training_artifact_20260502.json` | Training run artifact — NOT promoted | 4,643 |
+
+### Scripts
+
+| Script | Purpose | Status |
+|---|---|---|
+| `scripts/eod_shadow_learning_bridge.py` | **Daily bridge** — run after results close | Patched v2 |
+| `scripts/audit_sentient_daily_bridge.py` | Bridge regression audit — run after bridge | New |
+| `scripts/sentient_loop_repair_v1.py` | Manual repair (one-time) | Complete |
+| `scripts/sentient_loop_forensic_audit.py` | Daily loop verification | Active |
+| `scripts/sentient_loop_post_repair_audit.py` | Post-repair A-R analysis | Active |
+
+### Daily Accumulation Sequence (after results close)
+
+```
+1. scripts/run_results_sigma.py --date YYYY-MM-DD
+2. scripts/eod_shadow_learning_bridge.py --date YYYY-MM-DD
+3. scripts/audit_sentient_daily_bridge.py --date YYYY-MM-DD
+4. scripts/sentient_loop_forensic_audit.py
+```
+
+### Promotion Gates (unchanged — permanent hard rules)
+
+- `HFS_TRAINING_SAFE=False` — must pass HFS signal integrity audit before any change
+- 7–14 consecutive days of DAILY_CLOSE_READY=True in shadow
+- Operator sign-off required — no automatic promotion at any threshold
+- Live sentient_state.json must never be modified by any script
+
+### Hard Rules
+
+- No live sentient_state.json write from any script without explicit operator command.
+- No live promotion until all gates pass.
+- No scoring change from shadow learning.
+- Shadow-only until explicitly unlocked.
+
+---
+
+## Section 15 — Proposed ACCA Lane: Chain Quality Layer
+
+### Company line
+
+```text
+Racing API  = structure
+Racing Post = intent
+VP          = probability
+MDS         = market deception
+CASHRUN     = handicap plot detection
+ACCA_LANE   = chain quality / leg compatibility
+```
+
+### Status
+
+```text
+PROPOSED_ONLY
+SHADOW_OPERATOR_ONLY
+NOT_BUILT_YET
+NO_LIVE_SCORING_CHANGE
+NO_STAKING
+NO_ROUTER_CHANGE
+NO_BETFAIR
+FORWARD_TEST_REQUIRED
+```
+
+### Purpose
+
+The acca lane should identify whether a race day naturally supports realistic doubles, trebles, and longer fold chains.
+
+This lane must not think like a single-runner scorer.
+It must think in:
+
+1. leg quality
+2. combo quality
+3. day regime
+
+### Proposed day regimes
+
+- `ACCA_DAY_STRONG`
+- `ACCA_DAY_PLAYABLE`
+- `ACCA_DAY_THIN`
+- `NO_ACCA_DAY`
+
+### Proposed leg roles
+
+- `BANKER`
+- `GLUE`
+- `BOOSTER`
+- `WILDCARD`
+- `TRAP`
+- `BLOCKED`
+
+### Proposed inputs
+
+- same-day `velo_verdicts`
+- VP30 / tier / place support
+- MDS and blocker labels
+- CASHRUN class and confidence when present
+- industry selections parsed from Racing Post
+- Racing API enrichment as shadow-only context
+- race structure fields: course, off_time, field size, handicap state
+
+### Proposed files
+
+| File | Role |
+|---|---|
+| `scripts/acca_detector.py` | Detects candidate acca legs, assigns roles, classifies day, builds fold ladders |
+| `scripts/acca_results_audit.py` | Replays historical dates and measures fold hit-rate / ROI by chain type |
+| `docs/engineering/VELO_ACCA_LANE_PROTOCOL_V1.md` | Lane contract once build is approved |
+| `docs/engineering/VELO_ACCA_LANE_PROPOSAL_V1.md` | Proposal and design brief |
+
+### Proposed outputs
+
+| File | Format |
+|---|---|
+| `data/acca_lane_report_YYYY_MM_DD.md` | Full operator report |
+| `data/acca_lane_report_YYYY_MM_DD.json` | Structured machine-readable report |
+| `data/acca_lane_report_YYYY_MM_DD.csv` | Candidate-leg and fold table |
+| `data/acca_operator_card_YYYY_MM_DD.md` | Compact operator card |
+
+### Safety contract
+
+```text
+NO change to velo_prime_prob
+NO change to SQPE or ensemble
+NO change to decision_tier
+NO change to router
+NO staking
+NO Betfair
+NO live execution
+NO Telegram betting language
+READ-ONLY from same-day verdicts, CASHRUN output, and external selection context
+```
+
+### Build rule
+
+The acca lane must be built as a dedicated shadow lane with its own scoring contract, not as a generic “best horses” list or a brute-force combination printer.
