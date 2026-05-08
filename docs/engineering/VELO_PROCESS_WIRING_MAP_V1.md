@@ -1256,9 +1256,8 @@ ACCA_LANE   = chain quality / leg compatibility
 ### Status
 
 ```text
-PROPOSED_ONLY
 SHADOW_OPERATOR_ONLY
-NOT_BUILT_YET
+BUILT_FOR_SHADOW_USE
 NO_LIVE_SCORING_CHANGE
 NO_STAKING
 NO_ROUTER_CHANGE
@@ -1277,14 +1276,14 @@ It must think in:
 2. combo quality
 3. day regime
 
-### Proposed day regimes
+### Day regimes
 
 - `ACCA_DAY_STRONG`
 - `ACCA_DAY_PLAYABLE`
 - `ACCA_DAY_THIN`
 - `NO_ACCA_DAY`
 
-### Proposed leg roles
+### Leg roles
 
 - `BANKER`
 - `GLUE`
@@ -1293,7 +1292,7 @@ It must think in:
 - `TRAP`
 - `BLOCKED`
 
-### Proposed inputs
+### Inputs
 
 - same-day `velo_verdicts`
 - VP30 / tier / place support
@@ -1303,16 +1302,16 @@ It must think in:
 - Racing API enrichment as shadow-only context
 - race structure fields: course, off_time, field size, handicap state
 
-### Proposed files
+### Files
 
 | File | Role |
 |---|---|
 | `scripts/acca_detector.py` | Detects candidate acca legs, assigns roles, classifies day, builds fold ladders |
 | `scripts/acca_results_audit.py` | Replays historical dates and measures fold hit-rate / ROI by chain type |
-| `docs/engineering/VELO_ACCA_LANE_PROTOCOL_V1.md` | Lane contract once build is approved |
+| `docs/engineering/VELO_ACCA_LANE_PROTOCOL_V1.md` | Lane contract |
 | `docs/engineering/VELO_ACCA_LANE_PROPOSAL_V1.md` | Proposal and design brief |
 
-### Proposed outputs
+### Outputs
 
 | File | Format |
 |---|---|
