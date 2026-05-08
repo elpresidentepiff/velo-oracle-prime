@@ -1224,6 +1224,54 @@ The manual repair script (`scripts/sentient_loop_repair_v1.py`) demonstrated tha
 4. scripts/sentient_loop_forensic_audit.py
 ```
 
+### SENTIENT SHADOW DAILY CLOSE — 7-DAY WINDOW
+
+**Every evening after results close:**
+
+```bash
+source venv/bin/activate
+
+# Step 1 — run shadow learning bridge
+PYTHONPATH=. python scripts/eod_shadow_learning_bridge.py --date YYYY-MM-DD
+
+# Step 2 — run audit (both steps are mandatory — a day without audit does not count)
+PYTHONPATH=. python scripts/audit_sentient_daily_bridge.py --date YYYY-MM-DD
+```
+
+**Pass criteria (all must be true for day to count):**
+
+| Criterion | Threshold |
+|---|---|
+| observe count | > 0 |
+| null outcome count | = 0 |
+| MPI null count | = 0 |
+| chaos_bloom null count | = 0 |
+| shadow state written to | shadow file only (`sentient_state_shadow_daily.json`) |
+| live sentient_state.json hash | UNCHANGED |
+| no scoring changes | confirmed |
+| no live control | confirmed |
+| no promotion | confirmed |
+
+**Fail criteria (any triggers immediate STOP):**
+
+| Trigger | Action |
+|---|---|
+| live sentient_state.json hash changes | IMMEDIATE HALT |
+| null outcomes in bridge output | STOP — debug before next run |
+| observe count = 0 when results exist | STOP — check results file for date |
+| bridge writes to live scoring path | CRITICAL — halt all bridge ops |
+| scoring/model/router mutation | CRITICAL — halt and investigate |
+
+**Classification output:**
+
+```
+SENTIENT_DAILY_BRIDGE_READY_FOR_7_DAY_SHADOW   → day counts
+REPAIR_INCOMPLETE                               → STOP, fix before next run
+BLOCKED                                         → STOP, read block reason in audit output
+```
+
+**Window status:** `SHADOW_SENTIENT_LEARNING_LOOP_READY / NOT_LIVE_CONTROL`
+
 ### Promotion Gates (unchanged — permanent hard rules)
 
 - `HFS_TRAINING_SAFE=False` — must pass HFS signal integrity audit before any change
@@ -1240,7 +1288,7 @@ The manual repair script (`scripts/sentient_loop_repair_v1.py`) demonstrated tha
 
 ---
 
-## Section 15 — Proposed ACCA Lane: Chain Quality Layer
+## Section 15 — ACCA_LANE_V1: Shadow Chain Quality Lane
 
 ### Company line
 
@@ -1334,6 +1382,14 @@ NO Telegram betting language
 READ-ONLY from same-day verdicts, CASHRUN output, and external selection context
 ```
 
-### Build rule
+### Promotion rule
 
-The acca lane must be built as a dedicated shadow lane with its own scoring contract, not as a generic “best horses” list or a brute-force combination printer.
+The acca lane is judged only by replay and forward-test results.
+It is blocked from live promotion and does not affect VP, router, staking, or execution.
+
+Promotion gate:
+
+- `n < 20 replay days` -> `SHADOW ONLY`
+- `n >= 20 replay days` -> calibration review only
+- `n >= 50 replay days` -> possible operator-trust review
+- live betting promotion -> forbidden
