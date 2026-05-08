@@ -101,10 +101,11 @@ class SentientLoopbackEngine:
     Plus: KINGMAKER MODULE — Identifies which horse shapes/decides/collapses the race
     """
 
-    def __init__(self, state_file: str = None):
+    def __init__(self, state_file: str = None, disable_cloud_backup: bool = False):
         if state_file is None:
             state_file = _DEFAULT_STATE_FILE
         self.state_file = state_file
+        self.disable_cloud_backup = disable_cloud_backup
         self.state = self._load_state()
 
     def _load_state(self) -> dict[str, Any]:
@@ -191,7 +192,10 @@ class SentientLoopbackEngine:
             logger.error("[G] Could not save sentient state to disk: %s", e)
 
         # Layer 3: Supabase cloud backup
-        self._backup_to_supabase()
+        if not self.disable_cloud_backup:
+            self._backup_to_supabase()
+        else:
+            logger.debug("[G] Cloud backup disabled by flag")
 
     def _backup_to_supabase(self):
         """
