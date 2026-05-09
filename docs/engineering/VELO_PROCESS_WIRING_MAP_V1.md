@@ -1877,3 +1877,63 @@ Operator card = the cockpit           (everything the operator needs to decide)
 No confusion if provenance is kept. Every field says where it came from.
 VÉLØ can see the whole race without hallucinating what is connected.
 
+---
+
+## Live Weight Contract — Runtime-Proven Truth (2026-05-08)
+
+**Active profile: SQPE_IMPROVEMENT_MDS_V1** (default since commit b7e4e0c, 2026-05-08)
+**Rollback: `VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE`**
+**Audit script: `scripts/audit_live_weight_contract.py`**
+**Proof method: static inspection + ablation on 49 persisted verdict races (2026-05-08)**
+
+This section supersedes any prior weight tables that contradict it.
+
+### Runtime-Proven Truth Table
+
+| Signal | Declared weight | In _DISABLED? | In _BADGE_ONLY? | Changes VP? | Status |
+|---|---|---|---|---|---|
+| sqpe_v17 | 0.45 | No | No | **YES** | **LIVE_WEIGHTED** |
+| improvement_score | 0.12 | No | No | **YES** (delta=0.035) | **LIVE_WEIGHTED** |
+| market_deception_score | 0.10 | No | No | **YES** (delta=0.0022–0.008) | **LIVE_WEIGHTED** |
+| place_prob | 0.08 | YES (SQPE_IMPROVEMENT_MDS_V1) | YES | NO | **BLOCKED** |
+| longshot_score | 0.07 | YES (SQPE_IMPROVEMENT_MDS_V1) | YES | NO | **BLOCKED** |
+| release_window_score | 0.00 | YES (both profiles) | YES | NO | **STORED_ONLY** |
+| comment_intel_score | 0.00 | YES (both profiles) | YES | NO | **STORED_ONLY** |
+| Racing API trainer/jockey/course/dist stats | — | — | — | NO | **SHADOW_ONLY** |
+
+### Contradiction Resolved
+
+Prior governance docs described the **LEGACY_FULL_ENSEMBLE** profile state (pre-2026-05-08):
+- improvement_score was DISABLED in that profile — correct for that era
+- release_window_score and comment_intel_score were DISABLED in that profile — correct
+
+After **Ensemble Surgery v1** (commit b7e4e0c, 2026-05-08), SQPE_IMPROVEMENT_MDS_V1 became default:
+- improvement_score is now **LIVE_WEIGHTED** at 0.12 — confirmed by ablation (VP delta=0.035)
+- release_window_score and comment_intel_score remain **STORED_ONLY** — weight=0.00 in both profiles
+
+Any document claiming `release_window_score=0.10` or `comment_intel_score=0.08` as live weights was **WRONG**.
+These scores are passed to verdict fields for observability but never enter the weighted average.
+
+### Profile Comparison
+
+| Component | LEGACY_FULL_ENSEMBLE | SQPE_IMPROVEMENT_MDS_V1 (current) |
+|---|---|---|
+| sqpe_v17 | LIVE_WEIGHTED (0.45) | LIVE_WEIGHTED (0.45) |
+| improvement_score | BLOCKED | **LIVE_WEIGHTED (0.12)** |
+| market_deception_score | LIVE_WEIGHTED (0.10) | LIVE_WEIGHTED (0.10) |
+| place_prob | LIVE_WEIGHTED (0.08) | **BLOCKED** |
+| longshot_score | LIVE_GATED sp≥10 (0.07) | **BLOCKED** |
+| release_window_score | STORED_ONLY (0.00) | STORED_ONLY (0.00) |
+| comment_intel_score | STORED_ONLY (0.00) | STORED_ONLY (0.00) |
+
+### Ablation Proof (trace race: rac_11929346, 2026-05-08)
+
+| Component | Top prob delta | Max runner delta | Ranking changed | Verdict |
+|---|---|---|---|---|
+| improvement_score | 0.035 | 0.035 | NO | **LIVE_WEIGHTED — confirmed** |
+| market_deception_score | 0.0022 | 0.0079 | NO | **LIVE_WEIGHTED — confirmed** |
+| release_window_score | 0.0 | 0.0 | NO | STORED_ONLY — confirmed |
+| place_prob | 0.0 | 0.0 | NO | BLOCKED — confirmed |
+| comment_intel_score | 0.0 | 0.0 | NO | STORED_ONLY — confirmed |
+| longshot_score | 0.0 | 0.0 | NO | BLOCKED (no SP≥10 runners in trace) |
+

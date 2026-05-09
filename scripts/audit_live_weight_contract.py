@@ -340,14 +340,24 @@ def _final_contract(day_runs: list[dict[str, Any]], ablation: dict[str, Any]) ->
             "status": "LIVE_WEIGHTED",
         }
     ]
+    from src.intelligence.velo_prime_ensemble import _DISABLED_COMPONENTS, _FROZEN_COMPONENTS
     for component in COMPONENTS:
         non_null = sum(run["component_summary"][component]["non_null_rows"] for run in day_runs) > 0
         gated = sum(run["component_summary"][component]["gated_rows"] for run in day_runs) > 0
         changes = ablation["ablations"][component]["changes_vp"]
-        status = "LIVE_WEIGHTED"
+        in_disabled = component in _DISABLED_COMPONENTS
+        declared_w = _WEIGHTS.get(component, 0.0)
         if component == "longshot_score":
-            status = "LIVE_GATED" if gated else "DEFAULTED_ONLY"
+            status = "LIVE_GATED" if (gated and not in_disabled) else "BLOCKED"
+        elif in_disabled and declared_w == 0.0:
+            status = "STORED_ONLY"
+        elif in_disabled:
+            status = "BLOCKED"
         elif not non_null:
+            status = "DEFAULTED_ONLY"
+        elif changes:
+            status = "LIVE_WEIGHTED"
+        else:
             status = "DEFAULTED_ONLY"
         rows.append(
             {
