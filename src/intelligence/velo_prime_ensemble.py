@@ -173,49 +173,65 @@ def _g_shadow_adjustment(
 # ─── Weights ───────────────────────────────────────────────────────────────────
 # Tunable. Defaults based on architecture brief.
 _WEIGHTS = {
-    # ── LIVE components (enter the weighted average) ──────────────────────────
-    "sqpe_v17":              0.45,  # base model (strongest single signal per L004)
-    "market_deception_score":0.10,
-    "place_prob":            0.08,
-    "longshot_score":        0.07,  # only applied when sp > 10.0
-    # ── STORED FOR OBSERVABILITY — NOT IN ENSEMBLE ────────────────────────────
-    # These weights are defined for reference but the components are all listed
-    # in _DISABLED_COMPONENTS below and will NEVER enter the weighted average.
-    # They are computed and persisted in velo_verdicts for auditing only.
-    # See excluded_from_ensemble field on every verdict row for confirmation.
-    "improvement_score":     0.12,  # DISABLED — ablation 2026-04-04: hurts top-1 (-0.6 ppts)
-    "release_window_score":  0.00,  # DISABLED_FROM_LIVE_WEIGHT — live_sidecar_ablation_audit: harmful ROI
-    "comment_intel_score":   0.00,  # DISABLED_FROM_LIVE_WEIGHT — live_sidecar_ablation_audit: harmful ROI
+    # ── Component weights — active set determined by VELO_ENSEMBLE_PROFILE ────
+    # Raw scores for all components remain computed and logged in velo_verdicts.
+    # Only components NOT in _DISABLED_COMPONENTS enter the weighted average.
+    "sqpe_v17":              0.45,  # core model — always live (both profiles)
+    "improvement_score":     0.12,  # LIVE in SQPE_IMPROVEMENT_MDS_V1 | DISABLED in LEGACY
+    "market_deception_score":0.10,  # LIVE in both profiles
+    "place_prob":            0.08,  # BADGE_ONLY in SQPE_IMPROVEMENT_MDS_V1 | LIVE in LEGACY
+    "longshot_score":        0.07,  # FROZEN in SQPE_IMPROVEMENT_MDS_V1 | LIVE in LEGACY (sp>10)
+    "release_window_score":  0.00,  # STORED_ONLY — both profiles
+    "comment_intel_score":   0.00,  # STORED_ONLY — both profiles
 }
 
-# ─── Disabled components ────────────────────────────────────────────────────────
-# Components listed here are excluded from the ensemble regardless of weight.
-# Condition for disabling: required input features are not available in the live
-# scoring pipeline, or the component demonstrated harmful ROI in live audit.
+# ─── Ensemble Profiles ──────────────────────────────────────────────────────────
+# Switch via: VELO_ENSEMBLE_PROFILE env var (default: SQPE_IMPROVEMENT_MDS_V1)
+# Rollback: set VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE
 #
-# Disabled from live VP weighting after live_sidecar_ablation_audit: 
-# release_day_prob/comment_intel_score showed harmful ROI profile. 
-# Fields remain logged for audit/operator visibility.
+# LEGACY_FULL_ENSEMBLE  — pre-surgery state (2026-04-04 to 2026-05-08)
+#   Live: SQPE + MDS + place_prob + longshot(sp>10)
+#   Disabled: improvement_score, release_window_score, comment_intel_score
+#   Audit result: ROI = -3.1% (sqpe_alone_control_audit 2026-05-08, n=342)
 #
-# release_window_score — requires RPD timing features (setup_run_flag,
-#   cash_run_flag, trainer_timing_score, runs_since_win/place …)
-#   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
-#   Persisted in velo_verdicts as release_day_prob for observability — NOT used.
-#
-# comment_intel_score — requires RPD intent features (quiet_run_score,
-#   decoy_support_flag, jockey_switch_intent, setup_run_flag, cash_run_flag …)
-#   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
-#   Persisted in full_analysis for observability — NOT used.
-#
-# Re-enable only when the required feature pipeline is fully wired and
-# the field-level zero-variance kill switch (in predict_race) does NOT fire.
-_DISABLED_COMPONENTS: set[str] = {
-    "release_window_score", # STORED_ONLY
-    "comment_intel_score",  # STORED_ONLY
-    # Ablation backtest (2026-04-04, 647 races): improvement_score hurts top-1
-    # (-0.6 ppts vs SQPE+Place) and avgWinP (-0.003). No compensating case.
-    # Re-enable only if a retrained model demonstrates lift over SQPE+Place+MktDeception.
-    "improvement_score",
+# SQPE_IMPROVEMENT_MDS_V1 — surgery result (2026-05-08 onwards)
+#   Live: SQPE + improvement_score + MDS
+#   Badge/frozen: place_prob (BADGE_ONLY), longshot_score (FROZEN)
+#   Stored-only: release_window_score, comment_intel_score
+#   Audit result: ROI = +13.5% (sqpe_alone_control_audit 2026-05-08, n=338)
+PROFILE_LEGACY_FULL_ENSEMBLE    = "LEGACY_FULL_ENSEMBLE"
+PROFILE_SQPE_IMPROVEMENT_MDS_V1 = "SQPE_IMPROVEMENT_MDS_V1"
+
+_ACTIVE_PROFILE: str = _os.getenv("VELO_ENSEMBLE_PROFILE", PROFILE_SQPE_IMPROVEMENT_MDS_V1)
+
+_PROFILE_DISABLED: dict[str, set[str]] = {
+    PROFILE_LEGACY_FULL_ENSEMBLE: {
+        "release_window_score",  # STORED_ONLY
+        "comment_intel_score",   # STORED_ONLY
+        "improvement_score",     # was DISABLED: ablation 2026-04-04
+    },
+    PROFILE_SQPE_IMPROVEMENT_MDS_V1: {
+        "release_window_score",  # STORED_ONLY
+        "comment_intel_score",   # STORED_ONLY
+        "place_prob",            # BADGE_ONLY: sqpe_control_audit 2026-05-08, ROI negative alone
+        "longshot_score",        # FROZEN: FREEZE_CANDIDATE, SR drops, ROI=-0.065
+    },
+}
+
+# Active disabled set — resolved at import time from profile
+_DISABLED_COMPONENTS: set[str] = _PROFILE_DISABLED.get(
+    _ACTIVE_PROFILE, _PROFILE_DISABLED[PROFILE_SQPE_IMPROVEMENT_MDS_V1]
+)
+
+# Badge-only components — contribute raw scores to verdicts but not to VP probability
+_BADGE_ONLY_COMPONENTS: set[str] = {
+    "place_prob",            # frame/support badge; not value-positive alone
+    "release_window_score",  # stored-only
+    "comment_intel_score",   # stored-only
+}
+# Frozen components — actively harmful, weight locked at 0 until evidence changes
+_FROZEN_COMPONENTS: set[str] = {
+    "longshot_score",  # FREEZE_CANDIDATE: sqpe_control_audit 2026-05-08 ROI=-0.065
 }
 
 # ─── Ablation modes ─────────────────────────────────────────────────────────────
@@ -320,8 +336,9 @@ class VeloPrimePrediction:
         excluded = _DISABLED_COMPONENTS | policy_exclude | (killed or set())
         scores = {"sqpe_v17": self.sqpe_v17_prob}
         
-        # Log active policy
+        # Log active policy and ensemble profile
         self.verdict_flags.append(f"policy:{_ACTIVE_POLICY}")
+        self.verdict_flags.append(f"profile:{_ACTIVE_PROFILE}")
 
         if "improvement_score" not in excluded and self.improvement_score is not None:
             scores["improvement_score"] = self.improvement_score
