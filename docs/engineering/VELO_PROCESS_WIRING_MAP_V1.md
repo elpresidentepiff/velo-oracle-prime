@@ -1587,3 +1587,117 @@ NO_BETFAIR
 NO_AUTOMATIC_PROMOTION
 VP_GATE_RECALIBRATION_REQUIRED (after 30 live days)
 ```
+
+---
+
+## Sidecar Training & Calibration Spine (2026-05-08)
+
+### Racing API Stats — Connection Status
+
+Racing API trainer/jockey/course/distance analysis tables are CONNECTED in Supabase.
+**Total: 374,799 rows across 6 tables.**
+
+| Supabase Table | Rows | Purpose |
+|---|---|---|
+| `racing_api_trainer_analysis_courses` | 39,740 | Trainer × course stats |
+| `racing_api_trainer_analysis_distances` | 32,698 | Trainer × distance stats |
+| `racing_api_trainer_analysis_jockeys` | 146,395 | Trainer × jockey combo stats |
+| `racing_api_jockey_analysis_courses` | 28,391 | Jockey × course stats |
+| `racing_api_jockey_analysis_distances` | 20,573 | Jockey × distance stats |
+| `racing_api_jockey_analysis_trainers` | 106,842 | Jockey × trainer combo stats |
+
+**These stats are NOT live-weighted. They are TIER 1/TIER 2 only.**
+**No direct live activation without evidence gate passage.**
+
+### Always-Available Access
+
+```bash
+# Build local SQLite cache for offline/operator use:
+PYTHONPATH=. python scripts/refresh_racing_api_stat_cache.py --full-refresh
+
+# Pre-load for tomorrow's runners:
+PYTHONPATH=. python scripts/refresh_racing_api_stat_cache.py --runner-card YYYY-MM-DD
+
+# Check coverage:
+PYTHONPATH=. python scripts/refresh_racing_api_stat_cache.py --stats
+
+# Look up single entity:
+PYTHONPATH=. python scripts/refresh_racing_api_stat_cache.py --check-entity trn_12345
+```
+
+Cache: `data/racing_api_cache.db` — local SQLite, always accessible, no API rate limit.
+
+### Sidecar Promotion Tier Ladder
+
+| Tier | Label | Effect on VP |
+|---|---|---|
+| TIER 0 | DATA_AVAILABLE | Data exists, no effect |
+| TIER 1 | OPERATOR_VISIBLE | Appears on operator cards, no VP |
+| TIER 2 | SHADOW_SCORED | Produces scores and logs, no VP |
+| TIER 3 | CALIBRATION_TEST | Offline/forward calibration experiments, no VP |
+| TIER 4 | PAPER_MODIFIER | Can alter paper-only ranking, no live VP |
+| TIER 5 | LIVE_WEIGHT_CANDIDATE | Only after evidence gates + explicit approval |
+
+### Current Sidecar Tier Assignments
+
+| Component | Current Tier | Notes |
+|---|---|---|
+| sqpe_v17 | **TIER 5 — LIVE** | Core anchor (0.45 weight) |
+| improvement_score | **TIER 5 — LIVE** | Active from 2026-05-08 (0.12 weight) |
+| market_deception_score | **TIER 5 — LIVE** | Active (0.10 weight) |
+| place_prob | TIER 2 — BADGE_ONLY | Frozen from live VP (2026-05-08) |
+| longshot_score | TIER 2 — FROZEN | FREEZE_CANDIDATE, ROI=-6.5% |
+| release_day_prob | TIER 1 — OPERATOR_VISIBLE | Feature pipeline not wired |
+| comment_intel_score | TIER 1 — OPERATOR_VISIBLE | Feature pipeline not wired |
+| trainer_course_stats | TIER 3 — CALIBRATION_TEST | In full_analysis, n=19 VP30+ (9.9% coverage) |
+| trainer_dist_stats | TIER 3 — CALIBRATION_TEST | In full_analysis, 4.1% coverage |
+| jockey_course_stats | TIER 2 — SHADOW_SCORED | Low coverage: course_id not in races table |
+| jockey_dist_stats | TIER 2 — SHADOW_SCORED | Low coverage: dist_f format mismatch |
+| trainer_jockey_combo | TIER 3 — CALIBRATION_TEST | 63.8% coverage, VP30 SR=46.3% (n=95) |
+| jockey_trainer_combo | TIER 3 — CALIBRATION_TEST | 99.8% coverage, needs outcome analysis |
+| rpdc_score | TIER 2 — SHADOW_SCORED | 80.3% coverage, field mapping fixed 2026-05-08 |
+
+### Training Dataset
+
+```bash
+# Build full feature dataset:
+PYTHONPATH=. python scripts/build_sidecar_training_dataset.py
+# Output: data/sidecar_training_dataset_v1.csv (11,542 rows, 10.7% win base rate)
+#         data/sidecar_training_dataset_v1.md  (coverage report)
+```
+
+**Time-aware split:** train (pre-2026-04-09) / validation / test — NO random shuffle.
+
+### VP Gate Recalibration
+
+```bash
+PYTHONPATH=. python scripts/vp_gate_recalibration_audit.py
+# Output: data/vp_gate_recalibration_audit_latest.json/.md
+```
+
+**Current recommendation: KEEP_VP30** (2026-05-08 calibration run)
+
+Key findings:
+- VP30 baseline: SR=35.2%, frame=75.7%, ROI=-0.1159 (negative — SP compression from tight market)
+- VP30 + trainer_course_win_pct > 15%: SR=42.1%, ROI=+0.4632 (n=19 — needs more data)
+- VP30 + trainer_jockey_win_pct > 15%: SR=46.3%, ROI=+0.1328 (n=95 — promising)
+- Class 1-2 VP30: SR=45.0%, ROI=+0.2695 (n=20 — strong signal, small sample)
+- SP 4-8 band VP30: SR=7.8%, ROI=-0.6250 — **SUPPRESS in 4-8 SP range**
+
+**DO NOT change VP threshold until 30 live sigma days after Ensemble Surgery v1 (~2026-06-08).**
+
+### VP Gate Recalibration Required Items
+
+- [ ] Resolve dist_f format mismatch (races.distance_f integer vs Racing API '16f' string)
+- [ ] Add course_id to races table or build course_name→course_id mapping for jockey lookup
+- [ ] Collect 30+ live race days under SQPE_IMPROVEMENT_MDS_V1 profile
+- [ ] Re-run calibration with prospective data (current dataset is historical)
+
+### Operating Rules (permanent)
+
+```
+NO direct Racing API live-weight injection without evidence gate.
+NO Cashrun connection until RP ingestion pipeline is proven stable.
+NO VP threshold change before 2026-06-08 (30-day monitoring gate).
+NO sidecar promotion based on historical calibration alone — need prospective confirmation.
+```
