@@ -1511,3 +1511,79 @@ NO router promotion below threshold.
 | improvement_score>0.40 | 62 (historical) | +38 prospective → badge discussion | Build badge lane |
 | SQPE_ALONE audit | running | n>=50 for classification | sqpe_alone_control_audit.py |
 - no staking
+
+---
+
+## Ensemble Surgery v1 — Active Profile (2026-05-08)
+
+**Commit:** b7e4e0c  
+**Branch:** main  
+**Status:** LIVE_PROFILE_UNDER_MONITORING
+
+### Before / After
+
+| Component | LEGACY_FULL_ENSEMBLE (before) | SQPE_IMPROVEMENT_MDS_V1 (after) |
+|---|---|---|
+| sqpe_v17 | LIVE (0.45) | LIVE (0.45) |
+| improvement_score | DISABLED | LIVE (0.12) |
+| market_deception_score | LIVE (0.10) | LIVE (0.10) |
+| place_prob | LIVE (0.08) | BADGE_ONLY (excluded from VP) |
+| longshot_score | LIVE (0.07, sp>10) | FROZEN (excluded from VP) |
+| release_window_score | STORED_ONLY | STORED_ONLY |
+| comment_intel_score | STORED_ONLY | STORED_ONLY |
+
+**Evidence:** sqpe_alone_control_audit n=338-342 (2026-05-08)  
+- LEGACY ROI = **-3.1%**  
+- SQPE_IMPROVEMENT_MDS_V1 ROI = **+13.5%**
+
+### Rollback
+
+```bash
+VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE
+```
+Restores pre-surgery state immediately. No code change required.  
+Profile is logged in every `verdict_flags` as `profile:{name}`.
+
+### VP Recalibration Warning
+
+Average VP dropped ~0.05 because `improvement_score` raw values (0.02–0.15) are much lower than `place_prob` (0.40–0.80). The weighted average compresses.
+
+| Gate | Legacy count (2026-05-07 test n=41) | New profile count |
+|---|---|---|
+| VP ≥ 0.30 | 17 (41.5%) | 9 (22.0%) |
+| VP ≥ 0.25 | 23 (56.1%) | 14 (34.1%) |
+| VP ≥ 0.20 | 32 (78.0%) | 22 (53.7%) |
+
+**DO NOT change VP thresholds until 30 live sigma days are resolved.**  
+VP25-30 band is flagged `UNDER_CALIBRATION` until evidence arrives.
+
+### 30-Day Monitoring Requirement
+
+- Daily: run `scripts/run_ensemble_shadow_comparison.py --date YYYY-MM-DD`
+- Output: `data/ensemble_profile_comparison_YYYY_MM_DD.md`
+- Track: `data/ensemble_profile_monitor_latest.csv`
+- Decision gate: 2026-06-08 (30 live days from surgery)
+
+### No Staking / No Betfair / No Telegram Betting
+
+The surgery changed **only** the VP weighting profile.
+
+| System | Changed? |
+|---|---|
+| Betfair order execution | NO — hard RuntimeError gates unchanged |
+| Telegram betting alerts | NO — no betting message path changed |
+| Paper ledger (POWER_ANCHOR) | NO — SIM mode unchanged |
+| Candidate execution gate | NOT CHANGED — VP30 floor unchanged |
+| CASHRUN | NOT CONNECTED |
+| Racing API shadow lane | SHADOW_ONLY unchanged |
+
+### Release Safety State
+
+```
+LIVE_SCORING_PROFILE_CHANGED
+LIVE_PROFILE_UNDER_MONITORING
+NO_STAKING
+NO_BETFAIR
+NO_AUTOMATIC_PROMOTION
+VP_GATE_RECALIBRATION_REQUIRED (after 30 live days)
+```

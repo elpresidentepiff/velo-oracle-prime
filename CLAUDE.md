@@ -320,7 +320,16 @@ docs/VELO_SPOTLIGHT_HARD_LIMITS.md     — Spotlight CANNOT override structural 
 - `src/intelligence/velo_prime_ensemble.py` — VeloPrimeEnsemble producing VELO_PRIME_prob
 - `scripts/generate_macro_reports.py` — 3 reports in reports/: structural_trend, macro_volatility, doctrine_linkage
 - End-to-end smoke test PASSING: race 856450 (Huntingdon 2024-01-12), winner correctly ranked #1
-- Still needed: wire to live prediction pipeline, specialist score persistence to Supabase `velo_verdicts`
+
+### Ensemble Surgery v1 — DONE (2026-05-08, commit b7e4e0c)
+Active profile: **SQPE_IMPROVEMENT_MDS_V1** (default from 2026-05-08)
+- Live weights: `sqpe_v17=0.45`, `improvement_score=0.12`, `market_deception_score=0.10`
+- Badge-only (stored, not weighted): `place_prob`, `release_window_score`, `comment_intel_score`
+- Frozen (excluded): `longshot_score` (FREEZE_CANDIDATE per control audit)
+- Rollback: `VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE` restores pre-surgery state
+- Profile logged in `verdict_flags` as `profile:{name}` on every scored race
+- Evidence: sqpe_alone_control_audit n=338-342 → LEGACY ROI=-3.1%, NEW ROI=+13.5%
+- VP recalibration: avg VP shifts ~-0.05 (improvement_score raw values lower than place_prob — expected)
 
 ## What Is Still Needed
 - `ANTHROPIC_API_KEY` — add to `.env` then run `scripts/test_claude.py`
@@ -451,24 +460,42 @@ VÉLØ Oracle Prime is an auditable racing intelligence operating system. It pre
 ## Daily Operating Scripts — Run In This Order
 
 ```bash
-# 1. Score today's races (runs automatically via Railway cron, or manually):
+# ── MORNING (Railway fires automatically at 06:00 UTC) ──────────────────────
+# 0. Build RPDC tags for today's runners (run BEFORE scoring, after yesterday's ingest):
+source venv/bin/activate && PYTHONPATH=. python scripts/build_rpdc_daily.py --date YYYY-MM-DD
+
+# 1. Score today's races (Railway cron, or manually):
 source venv/bin/activate && PYTHONPATH=. python scripts/run_prime_today.py
 
-# 2. After results close — sigma audit:
+# ── EVENING (after results close) ────────────────────────────────────────────
+# 2. Sigma audit:
 source venv/bin/activate && PYTHONPATH=. python scripts/run_results_sigma.py --date YYYY-MM-DD
 
-# 3. After sigma — append new races to innovation protocol:
+# 3. Ingest today's results into racing_horse_runs (feeds tomorrow's RPDC):
+source venv/bin/activate && PYTHONPATH=. python scripts/ingest_results_to_horse_runs.py --date YYYY-MM-DD
+
+# 4. Append new races to innovation protocol:
 source venv/bin/activate && PYTHONPATH=. python scripts/build_innovation_protocol.py --date YYYY-MM-DD
 
-# 4. Run router shadow audit (evidence accumulation):
+# 5. Run router shadow audit (evidence accumulation):
 PYTHONUTF8=1 source venv/bin/activate && PYTHONPATH=. python scripts/router_shadow_audit.py --prev-csv data/router_shadow_audit_latest.csv
 
-# 5. Periodic (weekly or after 20+ new results) — unified evidence audit:
-source venv/bin/activate && PYTHONPATH=. python scripts/run_velo_unified_evidence_audit.py
-
-# 6. After each closed race day — execution bridge paper ledger close:
+# 6. Execution bridge paper ledger close:
 source venv/bin/activate && PYTHONPATH=. python scripts/run_execution_bridge_shadow.py --date YYYY-MM-DD --mode SIM --audit-results
+
+# ── PERIODIC ─────────────────────────────────────────────────────────────────
+# 7. Weekly or after 20+ new results — unified evidence audit:
+source venv/bin/activate && PYTHONPATH=. python scripts/run_velo_unified_evidence_audit.py
 ```
+
+### RPDC Pipeline Dependency Chain
+```
+run_results_sigma (downloads results JSON)
+    → ingest_results_to_horse_runs (writes racing_horse_runs)
+        → build_rpdc_daily (reads history, writes runner_release_candidates)
+            → run_prime_today (_attach_rpdc_from_row reads runner_release_candidates)
+```
+The chain must run in order. Each step depends on the previous day's output.
 
 ---
 
@@ -534,7 +561,7 @@ The Telegram format is locked — never change it. See memory file `feedback_sig
 | **Market deception score > 0.5** | **31** | **54.8%** | **+34.2%** | **KEEP — exceptional** |
 | **Improvement score > 0.40** | **62** | **43.5%** | **+22.9%** | **KEEP — proven** |
 | **Place prob > 0.80** | **392** | **31.6%** | **+11.0%** | **KEEP — solid** |
-| RPDC release score > 0.5 | 54 | 24.1% | +3.5% | KEEP — watchlist |
+| RPDC release score > 0.5 | 54 | 24.1% | +3.5% | KEEP — watchlist (field mapping fixed 2026-05-08, will populate from next Railway deploy) |
 | Archetype=Structure | 270 | 21.1% | +0.5% | WATCHLIST — minimal lift |
 | Archetype=Compression | 40 | 20.0% | -0.6% | SUPPRESS — no lift |
 | G Shadow multiplier > 1.0 | 0 | — | — | BROKEN_OR_UNWIRED |
@@ -702,7 +729,9 @@ Every file with execution-path relevance classified. Labels are permanent until 
 | File | Label | Risk | Notes |
 |---|---|---|---|
 | `scripts/run_prime_today.py` | `LIVE_RUNTIME` | LOW | Daily scoring orchestrator — Railway cron |
-| `scripts/run_results_sigma.py` | `LIVE_RUNTIME` | LOW | Post-race sigma audit |
+| `scripts/run_results_sigma.py` | `LIVE_RUNTIME` | LOW | Post-race sigma audit + results download |
+| `scripts/ingest_results_to_horse_runs.py` | `LIVE_RUNTIME` | LOW | Upserts results JSON into racing_horse_runs — run after sigma |
+| `scripts/build_rpdc_daily.py` | `LIVE_RUNTIME` | LOW | Computes RPDC tags from history, writes runner_release_candidates — run next morning before scoring |
 | `scripts/build_innovation_protocol.py` | `AUDIT_EVIDENCE` | LOW | Verdict-result dedup, readonly |
 | `scripts/router_shadow_audit.py` | `AUDIT_EVIDENCE` | LOW | Router lane evidence, readonly |
 | `scripts/racing_api_shadow_forward_audit.py` | `AUDIT_EVIDENCE` | LOW | Racing API enrichment audit, readonly |
