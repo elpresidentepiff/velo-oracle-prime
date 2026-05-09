@@ -1719,3 +1719,161 @@ NO Cashrun connection until RP ingestion pipeline is proven stable.
 NO VP threshold change before 2026-06-08 (30-day monitoring gate).
 NO sidecar promotion based on historical calibration alone — need prospective confirmation.
 ```
+
+---
+
+## Dual Source Fusion — Racing API + Racing Post
+
+_Added: 2026-05-08_
+
+### Architecture Declaration
+
+Racing API and Racing Post are not competing sources. They are two halves of the same brain:
+
+- **Racing API** = identity, structure, connection strength
+- **Racing Post** = form, intent, mark compression, handicap plot trail
+
+Both feed one runner intelligence packet. Neither source overwrites the other.
+Every field in the fused packet must preserve its provenance:
+`source = Racing API | Racing Post | derived`
+`status = LIVE | SHADOW | OPERATOR | BLOCKED`
+
+### Source Field Map
+
+**Racing API provides:**
+
+| Field group | Fields |
+|---|---|
+| Identity | race_id, horse_id, trainer_id, jockey_id, course, distance, class |
+| Trainer stats | trainer_course_win_pct, trainer_dist_win_pct, trainer_jockey_win_pct |
+| Jockey stats | jockey_course_win_pct, jockey_dist_win_pct, jockey_trainer_win_pct |
+| Sample context | A/E ratios, sample sizes per stat |
+
+**Racing Post provides:**
+
+| Field group | Fields |
+|---|---|
+| Ratings | current OR, current TS, current RPR |
+| Form history | last 6 OR, last 6 TS, last 6 RPR, last winning OR (if available) |
+| Narrative | Spotlight, Postdata, form comments |
+| Signals | setup-run language, class/trip/going clues, handicap mark history |
+| Form string | full form string |
+
+### Source Priority Rules
+
+| Field category | Primary source | Fallback |
+|---|---|---|
+| Identity fields (race_id, horse_id, etc.) | Racing API / Supabase | Racing Post race header |
+| Race metadata (course, distance, class) | Supabase races / Racing API | Racing Post race header |
+| Trainer/jockey stats | Racing API analysis tables | None |
+| OR / TS / RPR (current + last 6) | Racing Post | None |
+| Spotlight / Postdata | Racing Post only | None |
+| CASHRUN derivation | Racing Post mark/form trail + Racing API trainer/jockey/course/distance support | — |
+
+### Runner Intelligence Packet Schema
+
+The fused packet consumed by CASHRUN:
+
+```
+api_identity:
+  race_id          — source: Racing API / Supabase
+  horse_id         — source: Racing API / Supabase
+  trainer_id       — source: Racing API / Supabase
+  jockey_id        — source: Racing API / Supabase
+  course           — source: Racing API / Supabase
+  distance         — source: Racing API / Supabase
+  class            — source: Racing API / Supabase
+
+api_stat_context:
+  trainer_course_win_pct     — source: Racing API, status: SHADOW
+  jockey_course_win_pct      — source: Racing API, status: SHADOW
+  trainer_distance_win_pct   — source: Racing API, status: SHADOW
+  jockey_distance_win_pct    — source: Racing API, status: SHADOW
+  trainer_jockey_win_pct     — source: Racing API, status: SHADOW
+  jockey_trainer_win_pct     — source: Racing API, status: SHADOW
+  ae_ratio                   — source: Racing API, status: SHADOW
+  sample_sizes               — source: Racing API, status: SHADOW
+
+rp_form_context:
+  current_or       — source: Racing Post, status: OPERATOR
+  current_ts       — source: Racing Post, status: OPERATOR
+  current_rpr      — source: Racing Post, status: OPERATOR
+  last_6_or[]      — source: Racing Post, status: OPERATOR
+  last_6_ts[]      — source: Racing Post, status: OPERATOR
+  last_6_rpr[]     — source: Racing Post, status: OPERATOR
+  last_winning_or  — source: Racing Post, status: OPERATOR (if available)
+  form_string      — source: Racing Post, status: OPERATOR
+
+rp_intent_context:
+  spotlight        — source: Racing Post, status: OPERATOR
+  postdata         — source: Racing Post, status: OPERATOR
+  form_comments    — source: Racing Post, status: OPERATOR
+  keywords: [
+    "well handicapped", "dangerous", "back on winning mark",
+    "below last winning mark", "interesting", "better than bare result",
+    "shaped better", "return to trip", "market support significant"
+  ]
+
+derived_cashrun_signals:
+  mark_compression_score       — source: derived, status: OPERATOR
+  ts_rpr_hidden_form_score     — source: derived, status: OPERATOR
+  setup_run_score              — source: derived, status: OPERATOR
+  trainer_jockey_intent_score  — source: derived (Racing API + RP), status: OPERATOR
+  spotlight_postdata_intent_score — source: derived, status: OPERATOR
+  negative_suppression_score   — source: derived, status: OPERATOR
+  final_cashrun_score          — source: derived, status: OPERATOR
+  final_cashrun_class          — source: derived, status: OPERATOR
+```
+
+### CASHRUN Signal Derivation Rules
+
+**mark_compression_score**
+```
+if current_or < last_winning_or:
+    mark_compression_score = (last_winning_or - current_or) / last_winning_or
+else:
+    mark_compression_score = 0.0
+```
+Captures how far below its last winning mark a horse is running — the primary CASHRUN indicator.
+
+**ts_rpr_hidden_form_score**
+Low variance in last_6_ts + RPR holding steady despite OR drop → latent form present.
+Signals that handicapper has not caught up with true ability.
+
+**trainer_jockey_intent_score**
+Uses Racing API `trainer_jockey_win_pct` + course and distance stats.
+A positive combo (above-average partnership at this course/distance) lifts the score.
+Reflects deliberate placement and connection intent.
+
+**final_cashrun_class thresholds**
+
+| Class | Score threshold | Meaning |
+|---|---|---|
+| CASHRUN_A | ≥ 0.65 | High-confidence setup — all signals aligned |
+| CASHRUN_B | ≥ 0.45 | Probable setup — most signals positive |
+| CASHRUN_WATCH | ≥ 0.25 | Partial signal — monitor for market confirmation |
+| SUPPRESS | < 0.25 | Insufficient evidence — do not surface |
+
+### Status Governance
+
+All CASHRUN-related signals are currently: **OPERATOR_VISIBILITY_ONLY**
+
+They are not in VP weights. They do not affect `velo_prime_prob`.
+They are surfaced in operator cards and audit trails only.
+
+Promotion path: OPERATOR → SHADOW_SCORED → CALIBRATION_TEST → PAPER_MODIFIER → LIVE_WEIGHT_CANDIDATE
+Each step requires evidence gate passage (n ≥ 50 prospective resolved rows minimum).
+
+### Cockpit Metaphor
+
+```
+Racing API    = the skeleton          (who, where, connection strength)
+Racing Post   = the nervous system    (form, intent, mark trail)
+CASHRUN       = the intent detector   (is this horse being set up today?)
+VP            = the probability engine (how likely is this horse to win?)
+Operator card = the cockpit           (everything the operator needs to decide)
+```
+
+No confusion if provenance is kept. Every field says where it came from.
+VÉLØ can see the whole race without hallucinating what is connected.
+
