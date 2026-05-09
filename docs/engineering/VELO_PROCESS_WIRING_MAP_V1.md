@@ -1937,3 +1937,64 @@ These scores are passed to verdict fields for observability but never enter the 
 | comment_intel_score | 0.0 | 0.0 | NO | STORED_ONLY — confirmed |
 | longshot_score | 0.0 | 0.0 | NO | BLOCKED (no SP≥10 runners in trace) |
 
+
+---
+
+## Railway Runtime vs Local Evidence Files
+
+Last updated: 2026-05-08 | Commit: (this section)
+
+### Three Distinct States — Never Conflate
+
+| State | Meaning | How to check |
+|---|---|---|
+| **Railway deployed** | Code pushed to main, Railway rebuild completed | Railway dashboard or git push confirmation |
+| **Railway scored** | `run_prime_today.py` ran on Railway and verdict rows exist in Supabase | `audit_railway_supabase_run_status.py --date YYYY-MM-DD` |
+| **Local hydrated** | `data/velo_prime_verdicts_YYYY_MM_DD.json` exists on local filesystem | `sync_verdicts_from_supabase.py --date YYYY-MM-DD` |
+
+**Railway writes verdicts to Supabase. Railway's filesystem is ephemeral. Local `data/` is never automatically hydrated.**
+
+### Canonical Scripts
+
+| Script | Purpose | Label |
+|---|---|---|
+| `scripts/audit_railway_supabase_run_status.py` | Check whether Railway scored for a date | READ-ONLY |
+| `scripts/sync_verdicts_from_supabase.py` | Pull Supabase verdicts → local `data/` | READ-ONLY |
+
+`scripts/run_prime_today.py` = **scoring script**. It is not a pull or sync tool. Do not run it to "fetch" verdicts.
+
+### Status Codes (`audit_railway_supabase_run_status.py`)
+
+| Status | Meaning |
+|---|---|
+| `SCORED_AND_SYNC_READY` | Verdict rows found for date — run sync script |
+| `DEPLOY_ONLY_NOT_SCORED` | Railway deployed but scoring cron has not fired yet |
+| `SCORED_BUT_DATE_FILTER_WRONG` | Verdicts exist via race_id join but not in date window |
+| `PARTIAL_VERDICTS` | Some race_ids have verdicts, some missing |
+| `SCORING_FAILED_NO_VERDICTS` | No verdicts at all — check Railway logs |
+| `UNKNOWN_NEEDS_RAILWAY_LOGS` | Indeterminate — check Railway manually |
+
+### Correct Post-Railway Operator Flow
+
+```bash
+# 1. Check whether Railway actually scored
+PYTHONPATH=. python scripts/audit_railway_supabase_run_status.py --date YYYY-MM-DD
+
+# 2. Hydrate local verdict file from Supabase
+PYTHONPATH=. python scripts/sync_verdicts_from_supabase.py --date YYYY-MM-DD
+
+# 3. Run operator stack (requires local verdicts)
+PYTHONPATH=. python scripts/vp30_operator_card.py --date YYYY-MM-DD
+PYTHONPATH=. python scripts/racing_api_enrichment_operator_card.py --date YYYY-MM-DD
+PYTHONPATH=. python scripts/acca_detector.py --date YYYY-MM-DD
+
+# CASHRUN runs from PDFs/racecard_merged — no Railway dependency
+PYTHONPATH=. python scripts/cashrun_detector.py --date YYYY-MM-DD
+```
+
+### Current Status (2026-05-09)
+
+- Railway deployed: YES (push `65eda03..` to main)
+- Railway scored: NO (`DEPLOY_ONLY_NOT_SCORED` — cron fires at 06:00 UTC)
+- Local hydrated: NO (`data/velo_prime_verdicts_2026_05_09.json` missing)
+- CASHRUN complete: YES (`data/cashrun_operator_card_2026_05_09.md` written from PDFs)
