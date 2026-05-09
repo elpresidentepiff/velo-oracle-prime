@@ -1403,4 +1403,111 @@ Current replay verdict:
 - `BANKER_PLUS_GLUE_ONLY` is the next cleanest replay shape
 - CASHRUN remains separate until isolated ACCA lift exists
 - no live execution
+
+---
+
+## Current Runtime Truth — SQPE and Sidecars (2026-05-08)
+
+Last updated: 2026-05-08 | Source: live_sidecar_ablation_audit + unified evidence audit.
+
+### SQPE v17 (weight=0.45) — LIVE ANCHOR
+
+SQPE v17 is the main scoring anchor. It is the **only** component with proven positive ROI in live audit. All sidecar weights are defined relative to SQPE v17. No sidecar replaces SQPE. No sidecar is promoted without passing the evidence gate.
+
+### Sidecar Status (2026-05-08)
+
+All sidecars are under audit. The classifications below are the current evidence state. No weight changes are applied. No promotion occurs without explicit operator decision and evidence gate passage.
+
+#### improvement_score (weight=0.12 declared — DISABLED from ensemble)
+
+- Weight=0.12 declared in `_WEIGHTS`, but component is listed in `_DISABLED_COMPONENTS`.
+- Runtime confirmation: `improvement_score` does NOT enter the weighted average.
+- Ablation audit: SR improves at high values, but ROI=-0.194. OVERBET_RISK.
+- Unified audit evidence: improvement_score>0.40 SR=43.5% (n=62) — signal exists in threshold range but not in ensemble probability.
+- Status: **OVERBET_RISK / BADGE_ONLY_CANDIDATE**
+- Under audit. No weight change until evidence gate n>=100 with positive ROI.
+
+#### market_deception_score (weight=0.10 — LIVE)
+
+- Live-weighted at 0.10. Enters ensemble probability.
+- Ablation audit: SR improves strongly at high values, ROI=-0.067. OVERBET_RISK.
+- Unified audit evidence: MDS>0.5 SR=54.8%, Frame=96.8% (n=31) — highest-lift signal in the system.
+- Status: **LIVE_WEIGHT_REDUCE_CANDIDATE / OVERBET_RISK**
+- Signal is real and powerful at MDS>0.5 threshold. Risk is in ensemble weight, not the signal itself.
+- Under audit. No weight change until prospective n>=50 at MDS>0.5 cleared.
+
+#### place_prob (weight=0.08 — LIVE)
+
+- Live-weighted at 0.08. Enters ensemble probability.
+- Ablation audit: SR improves at high values, ROI=-0.094. OVERBET_RISK.
+- Unified audit evidence: place_prob>0.80 SR=31.6% (n=392).
+- Status: **OVERBET_RISK / BADGE_ONLY_CANDIDATE**
+- Frame improves but ROI is negative. Recommended as operator coverage badge, not probability weight.
+- Under audit. No weight change.
+
+#### longshot_score (weight=0.07 — LIVE, SP>=10 only)
+
+- Live-weighted at 0.07. Only enters ensemble when SP>=10.
+- Ablation audit: SR improves at high values, ROI=-0.116. OVERBET_RISK.
+- Small SP>=10 sub-population — low n.
+- Status: **OVERBET_RISK / BADGE_ONLY_CANDIDATE**
+- Under audit. Isolate to SP>=10 candidate lane, n>=30 before reconsideration.
+
+#### release_window_score (weight=0.00 — NOT IN ENSEMBLE)
+
+- Previously believed disabled. Runtime audit confirmed weight=0.00 in this worktree. Monitor only.
+- Required features (setup_run_flag, cash_run_flag, trainer_timing_score) are NOT wired in `_build_live_features()`.
+- Attribution audit: std=0.0, unique=1 — zero variance kill-switch fires.
+- Status: **HOLD / SHADOW_ONLY**
+- No live weight. Re-enable only when required feature pipeline is fully wired.
+
+#### comment_intel_score (weight=0.00 — NOT IN ENSEMBLE)
+
+- Previously believed disabled. Runtime audit confirmed weight=0.00 in this worktree. Monitor only.
+- Required features (quiet_run_score, decoy_support_flag, jockey_switch_intent) are NOT wired.
+- Attribution audit: std=0.0, unique=1 — zero variance kill-switch fires.
+- Status: **HOLD / SHADOW_ONLY**
+- No live weight. Re-enable only when required feature pipeline is fully wired.
+
+#### Racing API enrichment (weight=0.00 — SHADOW/OPERATOR ONLY)
+
+- No live weight. Connection/course/distance shadow scores stored in `racing_api_shadow_forward_ledger.csv`.
+- Leakage status: `RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK` — no production weight changes until prospective validation clears.
+- Status: **SHADOW_ONLY**
+
+#### POWER_ANCHOR (paper only — hard live guard)
+
+- Paper ledger only. Hard RuntimeError if VELO_EXECUTION_MODE=LIVE.
+- Current state: n=3, gate is n>=20 before first review.
+- 2/2 closed wins (Hickory Lad, Infraad). Gate confirmed non-decorative.
+- Status: **PAPER_ONLY — no review until n>=20**
+
+#### V2 router (promotion held)
+
+- V2_CLASS4_ONLY: n=17, needs +3 results to reach WATCHLIST gate (n=20).
+- V1_BASE: n=27, WATCHLIST status. Needs +23 → SHADOW_CANDIDATE.
+- V6_GOLD_SEAM: n=5, LOW_SAMPLE.
+- No router rule changes. Evidence accumulation only.
+- Status: **V2 promotion-held at n=17, gate is n=20**
+
+### Hard Rules (permanent — never override)
+
+```
+NO sidecar gets promoted without evidence gate passage.
+NO sidecar gets demoted without evidence gate passage.
+NO weight changes from audit script output alone — operator decision required.
+NO live staking.
+NO model changes.
+NO router promotion below threshold.
+```
+
+### Next Audit Thresholds
+
+| Signal | Current n | Gate | Action |
+|---|---|---|---|
+| V2_CLASS4_ONLY router | 17 | +3 → WATCHLIST | Accumulate results |
+| POWER_ANCHOR paper | 3 | +17 → first review | Accumulate results |
+| MDS>0.5 prospective | 31 (historical) | +50 prospective → weight review | Build prospective sample |
+| improvement_score>0.40 | 62 (historical) | +38 prospective → badge discussion | Build badge lane |
+| SQPE_ALONE audit | running | n>=50 for classification | sqpe_alone_control_audit.py |
 - no staking
