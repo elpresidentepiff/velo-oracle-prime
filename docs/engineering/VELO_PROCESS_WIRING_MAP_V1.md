@@ -1651,9 +1651,9 @@ Cache: `data/racing_api_cache.db` — local SQLite, always accessible, no API ra
 | comment_intel_score | TIER 1 — OPERATOR_VISIBLE | Feature pipeline not wired |
 | trainer_course_stats | TIER 3 — CALIBRATION_TEST | In full_analysis, n=19 VP30+ (9.9% coverage) |
 | trainer_dist_stats | TIER 3 — CALIBRATION_TEST | In full_analysis, 4.1% coverage |
-| jockey_course_stats | TIER 2 — SHADOW_SCORED | Low coverage: course_id not in races table |
-| jockey_dist_stats | TIER 2 — SHADOW_SCORED | Low coverage: dist_f format mismatch |
-| trainer_jockey_combo | TIER 3 — CALIBRATION_TEST | 63.8% coverage, VP30 SR=46.3% (n=95) |
+| jockey_course_stats | TIER 3 — CALIBRATION_TEST | **98.1% coverage** (fixed 2026-05-08: racing_horse_runs join) |
+| jockey_dist_stats | TIER 3 — CALIBRATION_TEST | **98.1% coverage** (fixed 2026-05-08: distance_normalizer) |
+| trainer_jockey_combo | TIER 3 — CALIBRATION_TEST | 72.3% coverage, VP30 SR=44.5% (n=101) |
 | jockey_trainer_combo | TIER 3 — CALIBRATION_TEST | 99.8% coverage, needs outcome analysis |
 | rpdc_score | TIER 2 — SHADOW_SCORED | 80.3% coverage, field mapping fixed 2026-05-08 |
 
@@ -1677,10 +1677,11 @@ PYTHONPATH=. python scripts/vp_gate_recalibration_audit.py
 
 **Current recommendation: KEEP_VP30** (2026-05-08 calibration run)
 
-Key findings:
+Key findings (recalibrated 2026-05-08 with fixed joins):
 - VP30 baseline: SR=35.2%, frame=75.7%, ROI=-0.1159 (negative — SP compression from tight market)
 - VP30 + trainer_course_win_pct > 15%: SR=42.1%, ROI=+0.4632 (n=19 — needs more data)
-- VP30 + trainer_jockey_win_pct > 15%: SR=46.3%, ROI=+0.1328 (n=95 — promising)
+- VP30 + jockey_dist_win_pct > 15%: **SR=51.0%, ROI=+0.1388 (n=96 — NEWLY LIVE after fix)**
+- VP30 + trainer_jockey_win_pct > 15%: SR=44.5%, ROI=+0.1587 (n=101 — promising)
 - Class 1-2 VP30: SR=45.0%, ROI=+0.2695 (n=20 — strong signal, small sample)
 - SP 4-8 band VP30: SR=7.8%, ROI=-0.6250 — **SUPPRESS in 4-8 SP range**
 
@@ -1688,10 +1689,27 @@ Key findings:
 
 ### VP Gate Recalibration Required Items
 
-- [ ] Resolve dist_f format mismatch (races.distance_f integer vs Racing API '16f' string)
-- [ ] Add course_id to races table or build course_name→course_id mapping for jockey lookup
+- [x] Resolve dist_f format mismatch — **FIXED 2026-05-08** (`src/velo/distance_normalizer.py` + racing_horse_runs join)
+- [x] Add course_id join — **FIXED 2026-05-08** (`src/velo/course_identity_resolver.py` + racing_horse_runs.course_id)
 - [ ] Collect 30+ live race days under SQPE_IMPROVEMENT_MDS_V1 profile
 - [ ] Re-run calibration with prospective data (current dataset is historical)
+
+### Racing API Sidecar Join Contract (as of 2026-05-08)
+
+Source of truth: `racing_horse_runs` table (90,869 rows).
+
+| Join | Source | Key | Coverage |
+|---|---|---|---|
+| course_id | racing_horse_runs | (race_id, horse_id) → course_id | 94.5% of velo_verdicts race_ids |
+| distance_f | racing_horse_runs | (race_id, horse_id) → distance_f (float furlongs) | 94.5% |
+| dist_f string | `float_to_dist_key()` in distance_normalizer | float → "Xf" / "X.Xf" | matches Racing API table format |
+
+**Resolver files:**
+- `src/velo/distance_normalizer.py` — `float_to_dist_key(float)` → "Xf" string
+- `src/velo/course_identity_resolver.py` — `CourseIdentityResolver.get_course_id_by_race(race_id)` → "crs_XXXX"
+
+The `/courses` API endpoint is not on the current plan (403). Course resolution uses
+`racing_horse_runs.course_id` directly — no API call required.
 
 ### Operating Rules (permanent)
 

@@ -1,5 +1,5 @@
 # VÉLØ Sidecar Training Dataset v1
-Generated: 2026-05-08 20:25
+Generated: 2026-05-08 20:53
 
 ## Summary
 Total rows: 11542
@@ -18,9 +18,9 @@ Win baseline: 10.68%
 |---|---|
 | trainer_course_win_pct (from full_analysis) | 1143/11542 (9.9%) |
 | trainer_dist_win_pct (from full_analysis) | 475/11542 (4.1%) |
-| jockey_course_win_pct (from Supabase) | 0/11542 (0.0%) |
-| jockey_dist_win_pct (from Supabase) | 373/11542 (3.2%) |
-| trainer_jockey_win_pct | 7363/11542 (63.8%) |
+| jockey_course_win_pct (from Supabase) | 11326/11542 (98.1%) |
+| jockey_dist_win_pct (from Supabase) | 11325/11542 (98.1%) |
+| trainer_jockey_win_pct | 8343/11542 (72.3%) |
 | jockey_trainer_win_pct | 11517/11542 (99.8%) |
 | rpdc_score | 9264/11542 (80.3%) |
 | sigma_outcome | 828/11542 (7.2%) |

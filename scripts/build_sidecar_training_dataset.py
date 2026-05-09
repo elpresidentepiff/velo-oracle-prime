@@ -24,6 +24,7 @@ from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
+from src.velo.distance_normalizer import float_to_dist_key
 
 load_dotenv(dotenv_path=".env")
 
@@ -94,14 +95,12 @@ def _build_lookup(rows: list, *key_fields) -> dict:
 
 
 def _norm_dist(dist_f_raw) -> str | None:
-    """Normalize distance to 'Xf' string for Racing API lookup."""
-    if dist_f_raw is None:
-        return None
-    if isinstance(dist_f_raw, str):
-        return dist_f_raw if dist_f_raw.endswith("f") else f"{dist_f_raw}f"
-    # integer stored in races.distance_f — try as-is then as tenths
-    v = int(dist_f_raw)
-    return f"{v}f"
+    """Normalize distance to Racing API 'Xf' string key.
+
+    racing_horse_runs.distance_f is already a float (e.g. 6.5);
+    float_to_dist_key converts to "6.5f" matching analysis table format.
+    """
+    return float_to_dist_key(dist_f_raw)
 
 
 def main() -> None:
@@ -119,6 +118,9 @@ def main() -> None:
     sigma_rows = _fetch_all("sigma_audits", select="race_id,horse_id,outcome,verdict_score")
     rpdc_rows = _fetch_all("runner_release_candidates",
                            select="race_id,horse_id,rpdc_release_score,rpdc_tags,rpdc_cash_window_flag")
+    # racing_horse_runs: authoritative source for course_id and distance_f (float furlongs)
+    rhr_rows = _fetch_all("racing_horse_runs",
+                          select="race_id,horse_id,course_id,distance_f", verbose=True)
 
     print("Step 2: Loading Racing API jockey stats...")
     jc_rows = _fetch_all("racing_api_jockey_analysis_courses",
@@ -140,6 +142,9 @@ def main() -> None:
                           if r.get("race_id") and r.get("horse_id")}
     rpdc_by_key: dict = {(r["race_id"], r["horse_id"]): r for r in rpdc_rows
                          if r.get("race_id") and r.get("horse_id")}
+    # racing_horse_runs keyed by (race_id, horse_id) for course_id + distance_f lookup
+    rhr_by_key: dict = {(r["race_id"], r["horse_id"]): r for r in rhr_rows
+                        if r.get("race_id") and r.get("horse_id")}
 
     jc_lkp = _build_lookup(jc_rows, "entity_id", "course_id")
     jd_lkp = _build_lookup(jd_rows, "entity_id", "dist_f")
@@ -174,11 +179,9 @@ def main() -> None:
 
         race = races_by_id.get(race_id, {})
         course = race.get("course")
-        # Extract course_id — races table doesn't store it; use course name as proxy
-        course_id = None  # course_id not in races table schema
-        dist_f_raw = race.get("distance_f")
-        dist_f_str = _norm_dist(dist_f_raw)
         field_size = race.get("runners_count")
+        # course_id and distance_f resolved from racing_horse_runs (authoritative)
+        # These are set per-horse below using rhr_by_key
 
         for horse in fa:
             horse_id = horse.get("horse_id")
@@ -212,6 +215,12 @@ def main() -> None:
                     rpdc_tags = json.loads(rpdc_tags)
                 except Exception:
                     rpdc_tags = [rpdc_tags]
+
+            # Resolve course_id and dist_f from racing_horse_runs (authoritative join)
+            rhr = rhr_by_key.get(key, {})
+            course_id = rhr.get("course_id")
+            dist_f_float = rhr.get("distance_f")
+            dist_f_str = _norm_dist(dist_f_float) if dist_f_float is not None else None
 
             # Jockey Racing API lookups
             jc = jc_lkp.get((jockey_id, course_id), {}) if jockey_id and course_id else {}

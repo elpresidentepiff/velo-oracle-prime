@@ -1,5 +1,5 @@
 # VP Gate Recalibration Audit
-Generated: 2026-05-08T20:26:19.120399
+Generated: 2026-05-08T20:53:48.235343
 Dataset: data/sidecar_training_dataset_v1.csv (11542 rows)
 
 ## Recommendation: **KEEP_VP30**
@@ -20,8 +20,8 @@ Dataset: data/sidecar_training_dataset_v1.csv (11542 rows)
 |---|---|---|---|---|
 | vp30_baseline | 341 | 35.2% | 75.7% | -0.1159 |
 | vp30_trainer_course_gt15 | 19 | 42.1% | 84.2% | +0.4632 |
-| vp30_jockey_dist_gt15 | 0 | 0.0% | 0.0% | — |
-| vp30_trainer_jockey_gt15 | 95 | 46.3% | 83.2% | +0.1328 |
+| vp30_jockey_dist_gt15 | 96 | 51.0% | 85.4% | +0.1388 |
+| vp30_trainer_jockey_gt15 | 101 | 44.5% | 79.2% | +0.1587 |
 
 ## Racing API Signal Assessment
 - Improves WIN probability: YES
