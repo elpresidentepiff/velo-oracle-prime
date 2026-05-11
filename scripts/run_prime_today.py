@@ -46,6 +46,7 @@ from app.core.runtime_env import (  # noqa: E402
     resolve_supabase_url,
     utc_now,
 )
+from runtime_truth_support import append_telegram_event, get_commit_sha  # noqa: E402
 
 log = logging.getLogger("velo.run_prime")
 
@@ -62,6 +63,9 @@ TODAY = datetime.now().strftime("%Y_%m_%d")
 TODAY_DISPLAY = datetime.now().strftime("%d %b %Y")
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+_TG_DATE = ""
+_TG_SERVICE = "velo-prime-scoring"
+_TG_NOTIFY_ENABLED = True
 
 CANONICAL_ENDPOINT = "https://velo-oracle-production.up.railway.app"
 
@@ -81,7 +85,7 @@ def _racing_headers() -> dict[str, str]:
     }
 
 
-def tg(text: str) -> bool:
+def _legacy_tg(text: str) -> bool:
     if not TOKEN or not CHAT_ID:
         print(f"  [TG SKIP — no token/chat]: {text[:80]}")
         return False
@@ -101,6 +105,22 @@ def tg(text: str) -> bool:
     except Exception as e:
         print(f"  [TG FAIL]: {e}")
         return False
+
+
+def tg(text: str, label: str = "generic") -> bool:
+    preview = text.splitlines()[0] if text else ""
+    sent = _legacy_tg(text)
+    if _TG_DATE:
+        append_telegram_event(
+            date_str=_TG_DATE,
+            service=_TG_SERVICE,
+            event_type=label,
+            sent=sent,
+            notify_enabled=bool(TOKEN and CHAT_ID) and _TG_NOTIFY_ENABLED,
+            message_preview=preview,
+            error=None if sent else ("NO_TOKEN_OR_CHAT" if not TOKEN or not CHAT_ID else "SEND_FAILED"),
+        )
+    return sent
 
 
 @dataclass
@@ -184,25 +204,21 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
     else:
         qs = urlencode({"date": date_str})
     url = f"{RACING_BASE}/racecards/standard" + (f"?{qs}" if qs else "")
-    import requests as _req
-    from requests.adapters import HTTPAdapter
-    try:
-        from urllib3.util.ssl_ import create_urllib3_context
-        class _TLSAdapter(HTTPAdapter):
-            def init_poolmanager(self, *args, **kwargs):
-                ctx = create_urllib3_context()
-                ctx.set_ciphers("DEFAULT@SECLEVEL=1")
-                kwargs["ssl_context"] = ctx
-                super().init_poolmanager(*args, **kwargs)
-        _sess = _req.Session()
-        _sess.mount("https://", _TLSAdapter())
-    except Exception:
-        _sess = _req.Session()
-    _sess.auth = (RACING_USER, RACING_PASS)
-    _sess.headers.update({"Accept": "application/json", "User-Agent": "VeloPrime/1.0"})
-    _r = _sess.get(url, timeout=30, verify=False)
-    _r.raise_for_status()
-    raw = _r.json()
+    import ssl as _ssl
+    _ctx = _ssl.create_default_context()
+    _ctx.check_hostname = False
+    _ctx.verify_mode = _ssl.CERT_NONE
+    _creds = base64.b64encode(f"{RACING_USER}:{RACING_PASS}".encode()).decode()
+    _req_obj = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Basic {_creds}",
+            "Accept": "application/json",
+            "User-Agent": "VeloPrime/1.0",
+        },
+    )
+    with urllib.request.urlopen(_req_obj, context=_ctx, timeout=30) as _resp:
+        raw = json.loads(_resp.read())
 
     # Best-effort cache write — skipped silently on Railway ephemeral storage
     try:
@@ -214,6 +230,17 @@ def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
 
     races = raw if isinstance(raw, list) else raw.get("racecards", [])
     return races, "api"
+
+
+def _emit_daily_truth_packet(target_date: str, *, repair_local_archive: bool) -> None:
+    """Best-effort daily truth packet emission after scoring completes."""
+    try:
+        from velo_daily_run_truth_watchdog import write_report
+
+        report = write_report(target_date, repair_local_archive=repair_local_archive)
+        print(f"  Daily truth packet: {Path(report['json_path']).name}")
+    except Exception as exc:
+        print(f"  Daily truth packet skipped: {exc}")
 
 
 # ── Decision Synthesis Layer ──────────────────────────────────────────────────
@@ -1044,6 +1071,7 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
             "trigger_source": trigger_src,
             "started_at": now.isoformat().replace("+00:00", "Z"),
             "environment": env_str,
+            "commit_sha": get_commit_sha(),
         }
         resp = db.table("pipeline_runs").insert(row).execute()
         if resp.data:
@@ -1068,6 +1096,7 @@ def _close_pipeline_run(db, run_id: str | None, status: str, races: int, runners
             "finished_at": utc_now().isoformat().replace("+00:00", "Z"),
             "races_processed": races,
             "runners_processed": runners,
+            "commit_sha": get_commit_sha(),
         }
         if error:
             patch["error_message"] = error[:500]
@@ -1097,6 +1126,7 @@ def _fetch_race_rpdc(race_id: str) -> dict[str, dict]:
 
 
 def main():
+    global _TG_DATE, _TG_NOTIFY_ENABLED
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
     parser.add_argument("--dry-run", action="store_true")
@@ -1108,6 +1138,8 @@ def main():
     date_tag = args.date.replace("-", "_") if args.date else TODAY
     date_str = date_tag.replace("_", "-")
     persistence_enabled = not args.dry_run
+    _TG_DATE = date_str
+    _TG_NOTIFY_ENABLED = notify_enabled
 
     print(f"\nVELO PRIME RACE-DAY EXECUTION — {date_str}")
     print("=" * 60)
@@ -1176,16 +1208,7 @@ def main():
     date_mismatch = loaded_dates and date_str not in loaded_dates
     is_live = racecard_source == "api"
     live_label = "LIVE_API" if is_live else "CACHE"
-    import subprocess
-
-    try:
-        commit_sha = (
-            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, stderr=subprocess.DEVNULL)
-            .decode()
-            .strip()
-        )
-    except Exception:
-        commit_sha = "unknown"
+    commit_sha = get_commit_sha()
 
     print(f"\n{'=' * 60}")
     print("  SOURCE TRUTH HEADER")
@@ -1206,6 +1229,7 @@ def main():
     if date_mismatch and notify_enabled:
         print("  TELEGRAM SUPPRESSED — date mismatch, would send stale card as live")
         notify_enabled = False
+        _TG_NOTIFY_ENABLED = False
 
     print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
 
@@ -1796,6 +1820,8 @@ def main():
         # Total failure — nothing persisted
         err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
         _close_pipeline_run(db, run_id, "FAIL", persist_ok, total_runners, err_summary)
+        if persistence_enabled:
+            _emit_daily_truth_packet(date_str, repair_local_archive=True)
         print(f"\nFAIL — 0/{len(normalized)} races in velo_verdicts")
         tg(
             f"VELO ALERT — FAIL — {TODAY_DISPLAY}\n"
@@ -1825,6 +1851,8 @@ def main():
         # Partial run — some persisted, some failed → DEGRADED
         err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
         _close_pipeline_run(db, run_id, "DEGRADED", persist_ok, total_runners, err_summary)
+        if persistence_enabled:
+            _emit_daily_truth_packet(date_str, repair_local_archive=True)
         print(f"\nDEGRADED — {persist_ok}/{len(normalized)} races in velo_verdicts ({persist_fail} failed)")
         tg(
             f"VELO ALERT — DEGRADED — {TODAY_DISPLAY}\n"
@@ -1852,6 +1880,8 @@ def main():
         )
     else:
         _close_pipeline_run(db, run_id, "PASS", persist_ok, total_runners)
+        if persistence_enabled:
+            _emit_daily_truth_packet(date_str, repair_local_archive=True)
         print(f"\nPASS — {persist_ok}/{len(normalized)} races in velo_verdicts")
         return RunPrimeResult(
             status="PASS",
