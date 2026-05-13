@@ -1268,10 +1268,11 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             for row in sb_verdict_rows:
                 gov_by_race[row["race_id"]] = row
         except Exception as e:
-            logger.warning("Supabase governance overlay failed: %s", e)
+            logger.warning("Supabase query failed: %s", e)
 
-    if not raw_verdicts and sb_verdict_rows:
+    if (not raw_verdicts or loaded_date != target_date) and sb_verdict_rows:
         raw_verdicts = sb_verdict_rows
+        loaded_date = target_date
         source_label = "supabase_verdicts_exact"
 
     fallback_date = None
@@ -1561,6 +1562,10 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "cashrun_score": (cashrun_match or {}).get("final_cashrun_score"),
                 "cashrun_confidence": (cashrun_match or {}).get("confidence_level"),
                 "cashrun_operator_read": (cashrun_match or {}).get("final_operator_read"),
+                "cash_run_flag": bool((cashrun_match or {}).get("cashrun_class") in ("CASHRUN_READY", "CASHRUN_WATCH")),
+                "vp30": top_prob >= 0.30,
+                "mds_high": float(v.get("market_deception_score", top.get("market_deception_score", 0)) or 0) > 0.50,
+                "improve_high": float(v.get("improvement_score", top.get("improvement_score", 0)) or 0) > 0.40,
                 "operator_read_profile": operator_read_profile,
                 "operator_skepticism_flags": skepticism_flags,
             }
