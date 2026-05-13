@@ -267,28 +267,60 @@ def cmd_sigma(args: argparse.Namespace) -> None:
 
 
 def cmd_learn_shadow(args: argparse.Namespace) -> None:
-    # Phase 3 — stays dry-run / contract only
-    dry = _is_dry_run(args)
-    print(f"--- LEARN-SHADOW --- date={args.date} dry_run={dry} target={args.target_state}")
-    if args.execute:
-        print("[NOTICE] learn-shadow is Phase 3 — live execution not yet implemented. Running contract only.")
-    ops = OpsService(dry_run=True, execute=False)
+    build_events_only = getattr(args, "build_events_only", False)
+    sample_size = getattr(args, "sample_size", None)
+
+    # Phase 3A: build events (optionally write to DB with --execute --build-events-only)
+    # Phase 3B: shadow consumption — not yet implemented
+    if args.execute and not build_events_only:
+        print("[NOTICE] learn-shadow Phase 3B (shadow consumption) not yet implemented.")
+        print("[NOTICE] Pass --build-events-only to write learning events to DB.")
+
+    # DB writes only when --execute + --build-events-only; always read sigma_audits
+    engine_execute = args.execute and build_events_only
+    dry_label = not engine_execute
+
+    print(
+        f"--- LEARN-SHADOW --- date={args.date} dry_run={dry_label} "
+        f"target={args.target_state} build_events_only={build_events_only} "
+        f"sample_size={sample_size}"
+    )
+
+    ops = OpsService(dry_run=dry_label, execute=engine_execute)
     job_id = ops.start_job(args.date, "learn-shadow")
-    engine = LearningEngine(dry_run=True, execute=False, target_state=args.target_state)
+
+    engine = LearningEngine(
+        dry_run=dry_label,
+        execute=engine_execute,
+        target_state=args.target_state,
+    )
+
     events = engine.create_learning_events(args.date)
-    result = engine.consume_events_into_shadow(events)
+
+    db_result: dict = {"written": 0, "skipped": 0, "status": "dry_run"}
+    if engine_execute:
+        db_result = engine.write_events_to_db(events, sample_size=sample_size)
+
     _write_artifact("learn-shadow", args.date, {
         "job_type": "learn-shadow",
         "date": args.date,
-        "dry_run": True,
+        "dry_run": dry_label,
         "target_state": args.target_state,
-        "intended_action": f"Build learning events → consume into {args.target_state}",
+        "build_events_only": build_events_only,
+        "sample_size": sample_size,
         "sentient_state_touched": False,
         "playbook_g_promoted": False,
-        "engine_result": result,
-        "status": "DRY_RUN_CONTRACT_ONLY",
+        "playbook_g_consumed": False,
+        "events_built": len(events),
+        "db_result": db_result,
+        "status": "DRY_RUN_EVENTS_COUNTED" if dry_label else "EVENTS_WRITTEN",
     })
-    ops.finish_job(job_id, "SUCCESS", metrics={"events_created": len(events), "events_consumed": 0})
+
+    ops.finish_job(
+        job_id,
+        "SUCCESS",
+        metrics={"events_built": len(events), "events_written": db_result.get("written", 0)},
+    )
 
 
 def cmd_healthcheck(args: argparse.Namespace) -> None:
@@ -350,7 +382,9 @@ def main() -> None:
     sub.add_parser("predict",          parents=[shared], help="Run VÉLØ predictions")
     sub.add_parser("snapshot-market",  parents=[shared], help="Capture pre-race market state")
     sub.add_parser("sigma",            parents=[shared], help="Reconcile results with predictions")
-    sub.add_parser("learn-shadow",     parents=[shared], help="Build and consume learning events (Phase 3 — contract only)")
+    learn_shadow_p = sub.add_parser("learn-shadow", parents=[shared], help="Build learning events (Phase 3A); shadow consume Phase 3B")
+    learn_shadow_p.add_argument("--build-events-only", action="store_true", default=False, help="Build and write events to DB; skip shadow consumption (Phase 3A)")
+    learn_shadow_p.add_argument("--sample-size", type=int, default=None, metavar="N", help="Limit to first N events for testing")
     sub.add_parser("healthcheck",      parents=[shared], help="Report system status")
     sub.add_parser("full-day",         parents=[shared], help="Full pipeline: ingest→predict→sigma→healthcheck")
 
