@@ -366,9 +366,117 @@ class LearningEngine:
             "status": "ok",
         }
 
-    # ── Phase 3B stub ─────────────────────────────────────────────────────────
+    # ── Phase 3B ──────────────────────────────────────────────────────────────
+
+    def read_unconsumed_events(self, date: str) -> list[dict]:
+        """Read velo_learning_events rows that are not yet shadow-consumed for this date + target_state."""
+        try:
+            result = (
+                self._get_sb().client
+                .table("velo_learning_events")
+                .select("*")
+                .eq("run_date", date)
+                .eq("target_state_name", self.target_state)
+                .eq("consumed_shadow", False)
+                .eq("learning_allowed", True)
+                .execute()
+            )
+            rows = result.data or []
+            logger.info(
+                "[LearningEngine] Found %d unconsumed events for %s / %s",
+                len(rows), date, self.target_state,
+            )
+            return rows
+        except Exception as exc:
+            logger.warning("[LearningEngine] read_unconsumed_events failed: %s", exc)
+            return []
 
     def consume_events_into_shadow(self, events: list[dict]) -> dict[str, Any]:
-        """Phase 3B — shadow consumption not yet implemented. Returns no-op."""
-        logger.info("[LearningEngine] Phase 3B not yet implemented — shadow consumption skipped")
-        return {"consumed": 0, "status": "phase_3b_not_implemented"}
+        """
+        Phase 3B — consume learning events into shadow Playbook G state.
+        Loads data/sentient_state_{target_state}.json via SentientLoopbackEngine
+        with disable_cloud_backup=True. Marks consumed_shadow=True per row after
+        each successful observe_race_outcome call. consumed_live is never set.
+        """
+        from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine  # noqa: PLC0415
+
+        if not events:
+            logger.info("[LearningEngine] consume_events_into_shadow: no events to consume")
+            return {"consumed": 0, "skipped": 0, "status": "no_events", "before_race_count": 0, "after_race_count": 0}
+
+        shadow_path = str(ROOT / "data" / f"sentient_state_{self.target_state}.json")
+        g = SentientLoopbackEngine(state_file=shadow_path, disable_cloud_backup=True)
+        before_count = g.state.get("total_races_observed", 0)
+
+        consumed = 0
+        skipped = 0
+        consumed_ids: list[str] = []
+
+        for event in events:
+            event_id = event.get("event_id", "?")
+            pred_blob = event.get("prediction") or {}
+            result_blob = event.get("result") or {}
+            sidecars = event.get("sidecars") or {}
+            race_ctx = sidecars.get("race_context") or {}
+
+            race_data: dict[str, Any] = {
+                "race_id": race_ctx.get("race_id") or event.get("race_id"),
+                "course": race_ctx.get("course"),
+                "off_time": race_ctx.get("off_time"),
+                # Coerce None to safe numeric defaults — SentientLoopbackEngine uses > / < comparisons.
+                # mpi/chaos_bloom are proxy-derived (0–1 scale) or absent; 0 / 0 won't trigger thresholds.
+                "mpi": race_ctx.get("mpi") or 0,
+                "mpi_source": race_ctx.get("mpi_source"),
+                "chaos_bloom": race_ctx.get("chaos_bloom") or 0,
+                "chaos_bloom_source": race_ctx.get("chaos_bloom_source"),
+                "narrative_disruption": race_ctx.get("narrative_disruption") or 0,
+                "integrity_score": race_ctx.get("integrity_score") or 100,
+                "hfs_context_quality": race_ctx.get("hfs_context_quality"),
+                "missing_hfs_context": race_ctx.get("missing_hfs_context"),
+            }
+
+            prediction: dict[str, Any] = {
+                "power_anchor": pred_blob.get("predicted_horse", ""),
+                "confidence": float(pred_blob.get("velo_prime_prob") or 0.0),
+            }
+
+            actual_result: dict[str, Any] = {
+                "winner": result_blob.get("actual_winner", ""),
+                "sp": float(result_blob.get("sp") or 0.0),
+                "won": bool(result_blob.get("won", False)),
+                "placed": bool(result_blob.get("placed", False)),
+                "finishing_position": result_blob.get("finishing_position"),
+                "favourite_won": False,  # not tracked in sigma_audits
+                "winner_profile": {},    # not available at this stage
+            }
+
+            try:
+                g.observe_race_outcome(race_data, prediction, actual_result)
+                if self.execute:
+                    self._get_sb().client.table("velo_learning_events").update(
+                        {"consumed_shadow": True}
+                    ).eq("event_id", event_id).eq("target_state_name", self.target_state).execute()
+                consumed += 1
+                consumed_ids.append(event_id)
+                logger.info(
+                    "[LearningEngine] Consumed event %s (horse=%s won=%s)",
+                    event_id, prediction["power_anchor"], actual_result["won"],
+                )
+            except Exception as exc:
+                logger.warning("[LearningEngine] consume failed for event %s: %s", event_id, exc)
+                skipped += 1
+
+        after_count = g.state.get("total_races_observed", 0)
+        logger.info(
+            "[LearningEngine] Shadow consume complete: consumed=%d skipped=%d races %d→%d",
+            consumed, skipped, before_count, after_count,
+        )
+
+        return {
+            "consumed": consumed,
+            "skipped": skipped,
+            "consumed_ids": consumed_ids,
+            "before_race_count": before_count,
+            "after_race_count": after_count,
+            "status": "ok" if consumed > 0 else "nothing_consumed",
+        }

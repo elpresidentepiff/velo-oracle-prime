@@ -270,13 +270,48 @@ def cmd_learn_shadow(args: argparse.Namespace) -> None:
     build_events_only = getattr(args, "build_events_only", False)
     sample_size = getattr(args, "sample_size", None)
 
-    # Phase 3A: build events (optionally write to DB with --execute --build-events-only)
-    # Phase 3B: shadow consumption — not yet implemented
+    # ── Phase 3B: consume unconsumed events into shadow state ─────────────────
     if args.execute and not build_events_only:
-        print("[NOTICE] learn-shadow Phase 3B (shadow consumption) not yet implemented.")
-        print("[NOTICE] Pass --build-events-only to write learning events to DB.")
+        print(
+            f"--- LEARN-SHADOW (Phase 3B consume) --- date={args.date} "
+            f"target={args.target_state} sample_size={sample_size}"
+        )
+        ops = OpsService(dry_run=False, execute=True)
+        job_id = ops.start_job(args.date, "learn-shadow")
+        engine = LearningEngine(dry_run=False, execute=True, target_state=args.target_state)
 
-    # DB writes only when --execute + --build-events-only; always read sigma_audits
+        events = engine.read_unconsumed_events(args.date)
+        if sample_size:
+            events = events[:sample_size]
+        consume_result = engine.consume_events_into_shadow(events)
+
+        _write_artifact("learn-shadow", args.date, {
+            "job_type": "learn-shadow",
+            "date": args.date,
+            "dry_run": False,
+            "target_state": args.target_state,
+            "build_events_only": False,
+            "sample_size": sample_size,
+            "sentient_state_touched": True,
+            "playbook_g_promoted": False,
+            "playbook_g_consumed": True,
+            "events_found": len(events),
+            "consume_result": consume_result,
+            "status": "SHADOW_CONSUMED",
+        })
+        ops.finish_job(
+            job_id,
+            "SUCCESS",
+            metrics={
+                "events_found": len(events),
+                "events_consumed": consume_result.get("consumed", 0),
+                "before_race_count": consume_result.get("before_race_count", 0),
+                "after_race_count": consume_result.get("after_race_count", 0),
+            },
+        )
+        return
+
+    # ── Phase 3A: build events (+ write to DB with --build-events-only) ──────
     engine_execute = args.execute and build_events_only
     dry_label = not engine_execute
 
