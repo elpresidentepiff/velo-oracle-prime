@@ -48,13 +48,23 @@ def _classify_hfs_context(top: dict) -> tuple[bool, str, str | None]:
     """
     Returns (missing_hfs_context, hfs_context_quality, missing_hfs_reason).
 
-    missing_hfs_context=True unless values are proven from true HFS.
-    All current pipeline output uses proxy-derived mpi/chaos — always proxy_derived.
+    missing_hfs_context=True unless values are proven from verified HFS sources.
+    Policy: absent source cannot prove HFS provenance → proxy_derived.
+    All current pipeline output is proxy_derived (no verified HFS sources exist yet).
     """
     mpi_source = top.get("mpi_source") or ""
     chaos_source = top.get("chaos_bloom_source") or ""
     horse_state_failed = bool(top.get("horse_state_failed", False))
     horse_state = top.get("horse_state") or {}
+
+    # Absent source cannot verify HFS provenance → proxy_derived
+    if not mpi_source or not chaos_source:
+        parts: list[str] = ["mpi_source or chaos_bloom_source absent — cannot verify HFS provenance"]
+        if horse_state_failed:
+            parts.append("horse_state_failed")
+        elif not horse_state:
+            parts.append("horse_state_empty")
+        return True, "proxy_derived", "; ".join(parts)
 
     is_proxy = (
         mpi_source in _PROXY_SOURCES
@@ -64,7 +74,7 @@ def _classify_hfs_context(top: dict) -> tuple[bool, str, str | None]:
     )
 
     if is_proxy:
-        parts: list[str] = []
+        parts = []
         if mpi_source in _PROXY_SOURCES or chaos_source in _PROXY_SOURCES:
             parts.append("mpi/chaos present but proxy-derived, not HFS-originated")
         if horse_state_failed:

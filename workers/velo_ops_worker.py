@@ -473,6 +473,119 @@ def cmd_full_day(args: argparse.Namespace) -> None:
     cmd_healthcheck(args)
 
 
+def cmd_bulk_shadow_build(args: argparse.Namespace) -> None:
+    """
+    Build learning events for multiple historical dates into a shadow target state.
+    Idempotent: existing events are skipped (ignore_duplicates=True).
+
+    Eligible dates: those with both a velo_prime_verdicts artifact AND sigma_audits rows.
+    Dates with no events after build are logged as ZERO_EVENTS (data quality, not errors).
+
+    HFS policy: all current pipeline events are proxy_derived.
+    missing_hfs_context=True for every event. No exceptions.
+    """
+    dry = _is_dry_run(args)
+    target = args.target_state
+
+    explicit_dates: list[str] = [d.strip() for d in args.dates.split(",") if d.strip()] if args.dates else []
+
+    print(
+        f"--- BULK-SHADOW-BUILD --- target={target} dry_run={dry} "
+        f"dates={'explicit (' + str(len(explicit_dates)) + ')' if explicit_dates else 'auto-discover'}"
+    )
+
+    if not dry:
+        ops = OpsService(dry_run=False, execute=True)
+        job_id = ops.start_job("bulk", "bulk-shadow-build")
+
+    engine = LearningEngine(dry_run=dry, execute=not dry, target_state=target)
+
+    # Auto-discover eligible dates if not supplied explicitly
+    if not explicit_dates:
+        try:
+            sb_client = engine._get_sb().client
+            sigma_dates: set[str] = set()
+            offset, page = 0, 1000
+            while True:
+                r = sb_client.table("sigma_audits").select("date").range(offset, offset + page - 1).execute()
+                batch = r.data or []
+                for row in batch:
+                    d = row.get("date")
+                    if d:
+                        sigma_dates.add(d)
+                if len(batch) < page:
+                    break
+                offset += page
+        except Exception as exc:
+            print(f"[WARN] Could not query sigma_audits dates: {exc}. Pass --dates explicitly.")
+            sigma_dates = set()
+        pred_dates = set()
+        for p in (ROOT / "data").glob("velo_prime_verdicts_*.json"):
+            key = p.name.replace("velo_prime_verdicts_", "").replace(".json", "").replace("_", "-")
+            pred_dates.add(key)
+        eligible_dates = sorted(pred_dates & sigma_dates)
+    else:
+        eligible_dates = sorted(explicit_dates)
+
+    print(f"[BULK] Processing {len(eligible_dates)} dates for target={target}")
+
+    summary: dict = {
+        "target_state": target,
+        "dry_run": dry,
+        "dates_processed": len(eligible_dates),
+        "total_events_built": 0,
+        "total_written": 0,
+        "total_skipped": 0,
+        "zero_event_dates": [],
+        "by_date": {},
+    }
+
+    for date in eligible_dates:
+        events = engine.create_learning_events(date)
+        db_result: dict = {"written": 0, "skipped": 0, "status": "dry_run"}
+        if not dry:
+            db_result = engine.write_events_to_db(events)
+
+        proxy_count = sum(1 for e in events if e.get("missing_hfs_context"))
+        summary["total_events_built"] += len(events)
+        summary["total_written"] += db_result.get("written", 0)
+        summary["total_skipped"] += db_result.get("skipped", 0)
+        summary["by_date"][date] = {
+            "events_built": len(events),
+            "written": db_result.get("written", 0),
+            "skipped": db_result.get("skipped", 0),
+            "proxy_classified": proxy_count,
+            "status": db_result.get("status", "dry_run"),
+        }
+        if len(events) == 0:
+            summary["zero_event_dates"].append(date)
+            print(f"  [ZERO_EVENTS] {date} — no eligible events (data quality, skipping)")
+        else:
+            print(
+                f"  {date}: built={len(events)} written={db_result.get('written',0)} "
+                f"skipped={db_result.get('skipped',0)} proxy={proxy_count}/{len(events)}"
+            )
+
+    print(
+        f"\n[BULK SUMMARY] total_built={summary['total_events_built']} "
+        f"written={summary['total_written']} skipped={summary['total_skipped']} "
+        f"zero_dates={len(summary['zero_event_dates'])}"
+    )
+
+    if not dry:
+        ops.finish_job(
+            job_id,
+            "SUCCESS",
+            metrics={
+                "total_events_built": summary["total_events_built"],
+                "total_written": summary["total_written"],
+                "total_skipped": summary["total_skipped"],
+            },
+        )
+
+    _write_artifact("bulk-shadow-build", "bulk", summary)
+
+
 def cmd_daily_eod(args: argparse.Namespace) -> None:
     """
     Phase 4A — daily EOD orchestration.
@@ -736,6 +849,8 @@ def main() -> None:
     learn_shadow_p.add_argument("--sample-size", type=int, default=None, metavar="N", help="Limit to first N events for testing")
     sub.add_parser("healthcheck",      parents=[shared], help="Report system status")
     sub.add_parser("full-day",         parents=[shared], help="Full pipeline: ingest→predict→sigma→healthcheck")
+    bulk_p = sub.add_parser("bulk-shadow-build", parents=[shared], help="Build learning events for multiple dates into shadow target state")
+    bulk_p.add_argument("--dates", default="", help="Comma-separated dates YYYY-MM-DD. Omit to auto-discover from sigma_audits + verdict artifacts.")
     sub.add_parser("daily-eod",        parents=[shared], help="EOD cycle: sigma→learn-shadow-build→consume→healthcheck→report (ingest NOT automated)")
     sub.add_parser("forensic-report",  parents=[shared], help="Read-only forensic report for a date (no pipeline stages)")
 
@@ -750,6 +865,7 @@ def main() -> None:
         "learn-shadow":     cmd_learn_shadow,
         "healthcheck":      cmd_healthcheck,
         "full-day":         cmd_full_day,
+        "bulk-shadow-build": cmd_bulk_shadow_build,
         "daily-eod":        cmd_daily_eod,
         "forensic-report":  cmd_forensic_report,
     }
