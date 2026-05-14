@@ -936,8 +936,8 @@ def print_summary(merged: dict, venue: str, date: str):
         horses = race["horses"]
         total_horses += len(horses)
 
-        print(f"\n  {race_time} — {race.get('race_info', '')}")
-        print(f"  {'Horse':<25s} {'OR':>4s} {'BWL':>4s} {'Δ':>4s} {'TS':>4s} {'TSM':>4s} {'RPR':>4s} {'Plot':>5s} {'Comp':>5s} {'Conv':>5s} {'Spot':>5s}")
+        print(f"\n  {race_time} - {race.get('race_info', '')}")
+        print(f"  {'Horse':<25s} {'OR':>4s} {'BWL':>4s} {'dOR':>4s} {'TS':>4s} {'TSM':>4s} {'RPR':>4s} {'Plot':>5s} {'Comp':>5s} {'Conv':>5s} {'Spot':>5s}")
         print("  " + "-" * 86)
 
         for h in horses:
@@ -959,10 +959,10 @@ def print_summary(merged: dict, venue: str, date: str):
 
             marker = ""
             if plot is not None and plot >= 0.9:
-                marker = " ◆ PLOT"
+                marker = " [PLOT]"
                 plot_candidates += 1
             elif plot is not None and plot >= 0.7:
-                marker = " ○ near"
+                marker = " [NEAR]"
                 plot_candidates += 1
 
             name = h.get("horse_name", "?")[:24]
