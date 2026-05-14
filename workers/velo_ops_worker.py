@@ -30,6 +30,7 @@ Safety guards:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import os
@@ -93,6 +94,79 @@ def _run_script(script_path: Path, extra_args: list[str], timeout: int = 900) ->
         env=_subprocess_env(),
         timeout=timeout,
     )
+
+
+def _resolve_date(date_str: str) -> str:
+    """Resolve 'today' → Europe/London racing date. Pass through YYYY-MM-DD unchanged."""
+    if date_str.lower() == "today":
+        from zoneinfo import ZoneInfo  # noqa: PLC0415
+        return datetime.now(ZoneInfo("Europe/London")).strftime("%Y-%m-%d")
+    return date_str
+
+
+def _take_preflight_snapshot(date: str, target_state: str, ops: "OpsService") -> dict:
+    """
+    Record system state before daily-eod runs.
+    Always attempts DB reads (read-only); degrades gracefully if unavailable.
+    """
+    snap: dict = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "live_state": {},
+        "shadow_state": {},
+        "cloud_backup": {"status": "not_queried"},
+        "event_counts": {"status": "not_queried"},
+        "job_counts": {"status": "not_queried"},
+    }
+
+    for label, path in [
+        ("live_state",   ROOT / "data" / "sentient_state.json"),
+        ("shadow_state", ROOT / "data" / f"sentient_state_{target_state}.json"),
+    ]:
+        if path.exists():
+            raw = path.read_bytes()
+            data = json.loads(raw)
+            snap[label] = {
+                "hash": hashlib.md5(raw).hexdigest(),
+                "races": data.get("total_races_observed", 0),
+                "last_updated": data.get("last_updated"),
+            }
+        else:
+            snap[label] = {"exists": False}
+
+    try:
+        r = ops._get_sb().client.table("velo_learning_events").select(
+            "consumed_shadow,consumed_live"
+        ).eq("run_date", date).eq("target_state_name", target_state).execute()
+        rows = r.data or []
+        snap["event_counts"] = {
+            "total": len(rows),
+            "consumed_shadow_true": sum(1 for x in rows if x["consumed_shadow"]),
+            "consumed_shadow_false": sum(1 for x in rows if not x["consumed_shadow"]),
+            "consumed_live_true": sum(1 for x in rows if x["consumed_live"]),
+        }
+    except Exception as exc:
+        snap["event_counts"] = {"error": str(exc)}
+
+    try:
+        cb = ops._get_sb().client.table("learned_patterns").select(
+            "occurrences,last_observed,updated_at"
+        ).eq("pattern_name", "SENTIENT_STATE_BACKUP").execute()
+        snap["cloud_backup"] = cb.data[0] if cb.data else {"exists": False}
+    except Exception as exc:
+        snap["cloud_backup"] = {"error": str(exc)}
+
+    try:
+        jobs = ops.read_jobs_for_date(date)
+        snap["job_counts"] = {
+            "total": len(jobs),
+            "pass": sum(1 for j in jobs if j.get("status") == "PASS"),
+            "fail": sum(1 for j in jobs if j.get("status") == "FAIL"),
+            "running": sum(1 for j in jobs if j.get("status") == "RUNNING"),
+        }
+    except Exception as exc:
+        snap["job_counts"] = {"error": str(exc)}
+
+    return snap
 
 
 # ── Command implementations ────────────────────────────────────────────────────
@@ -399,6 +473,246 @@ def cmd_full_day(args: argparse.Namespace) -> None:
     cmd_healthcheck(args)
 
 
+def cmd_daily_eod(args: argparse.Namespace) -> None:
+    """
+    Phase 4A — daily EOD orchestration.
+    Sequence: sigma → learn-shadow build → learn-shadow consume → healthcheck → forensic report.
+
+    NOTE: Ingestion (ingest command) is NOT automated in Phase 4A.
+    Ingest remains manual / external until a safe ingest wrapper is verified in Phase 5.
+
+    Safety gates (hard stop):
+      - consumed_live=True detected at preflight
+      - sigma subprocess non-zero exit
+      - events_built > 0 but written=0 and skipped=0 (DB upsert malfunction)
+      - live sentient_state.json hash changes during run
+      - cloud backup updated_at changes during run
+
+    Rollback note (document only — do not run automatically):
+      If shadow state is restored from backup, reset DB consumed flags first:
+        UPDATE velo_learning_events SET consumed_shadow=false
+        WHERE run_date='YYYY-MM-DD' AND target_state_name='shadow_repair_v1';
+      Then re-run daily-eod consume stage.
+    """
+    dry = _is_dry_run(args)
+    date = args.date
+
+    print(
+        f"--- DAILY-EOD --- date={date} dry_run={dry} "
+        f"network={args.allow_network} target={args.target_state}"
+    )
+    print("[NOTE] Ingestion is NOT automated in Phase 4A — run ingest manually if needed.")
+
+    ops = OpsService(dry_run=dry, execute=args.execute)
+    eod_job_id = ops.start_job(date, "daily-eod")
+
+    # ── Preflight snapshot ────────────────────────────────────────────────────
+    preflight = _take_preflight_snapshot(date, args.target_state, ops)
+    live_hash_before = preflight.get("live_state", {}).get("hash")
+    cloud_ts_before = preflight.get("cloud_backup", {}).get("updated_at")
+
+    print(
+        f"[PREFLIGHT] live_races={preflight['live_state'].get('races')} "
+        f"shadow_races={preflight['shadow_state'].get('races')} "
+        f"events_total={preflight['event_counts'].get('total', 'N/A')} "
+        f"consumed_live={preflight['event_counts'].get('consumed_live_true', 'N/A')}"
+    )
+
+    # Hard stop: consumed_live already present for this date
+    if preflight.get("event_counts", {}).get("consumed_live_true", 0) > 0:
+        print("[HARD STOP] consumed_live=True detected at preflight. SAFETY_VIOLATION.")
+        ops.finish_failure(eod_job_id, "SAFETY_VIOLATION", "consumed_live_true_at_preflight")
+        _write_artifact("daily-eod", date, {
+            "overall_status": "SAFETY_VIOLATION",
+            "stop_reason": "consumed_live_true_at_preflight",
+            "preflight": preflight,
+        })
+        sys.exit(1)
+
+    pipeline: dict = {
+        "sigma":         {"status": "SKIPPED"},
+        "learn_build":   {"status": "SKIPPED"},
+        "learn_consume": {"status": "SKIPPED"},
+        "healthcheck":   {"status": "SKIPPED"},
+    }
+    warnings: list[str] = []
+
+    # ── Stage 1: Sigma ────────────────────────────────────────────────────────
+    sigma_args = argparse.Namespace(
+        date=date, execute=args.execute, allow_network=args.allow_network,
+        dry_run=dry, target_state=args.target_state,
+    )
+    try:
+        cmd_sigma(sigma_args)
+        pipeline["sigma"] = {"status": "PASS"}
+    except SystemExit as exc:
+        code = exc.code if exc.code is not None else 1
+        pipeline["sigma"] = {"status": "FAIL", "exit_code": code}
+        ops.finish_failure(eod_job_id, "SIGMA_FAILED", f"sigma exit {code}")
+        _write_artifact("daily-eod", date, {
+            "overall_status": "SIGMA_FAILED",
+            "stop_reason": f"sigma_exit_{code}",
+            "pipeline": pipeline,
+            "preflight": preflight,
+        })
+        sys.exit(code)
+
+    # ── Stage 2: Learn-shadow build ───────────────────────────────────────────
+    engine = LearningEngine(dry_run=dry, execute=args.execute, target_state=args.target_state)
+    events = engine.create_learning_events(date)
+    db_build: dict = {"written": 0, "skipped": 0, "status": "dry_run"}
+    if args.execute:
+        db_build = engine.write_events_to_db(events)
+
+    build_status = "PASS"
+    if len(events) == 0:
+        build_status = "WARN"
+        warnings.append("ZERO_EVENTS_BUILT — sigma may have produced no qualifying rows for this date")
+    elif args.execute and db_build.get("written", 0) == 0 and db_build.get("skipped", 0) == 0:
+        build_status = "FAIL"
+
+    pipeline["learn_build"] = {
+        "status": build_status,
+        "events_built": len(events),
+        "written": db_build.get("written", 0),
+        "skipped": db_build.get("skipped", 0),
+    }
+
+    # Hard stop: events exist but DB accepted nothing (upsert malfunction)
+    if build_status == "FAIL":
+        ops.finish_failure(eod_job_id, "DB_WRITE_FAILURE", "events_built_but_nothing_written_or_skipped")
+        _write_artifact("daily-eod", date, {
+            "overall_status": "ZERO_EVENTS",
+            "stop_reason": "events_built_but_db_write_empty",
+            "pipeline": pipeline,
+            "preflight": preflight,
+        })
+        sys.exit(1)
+
+    # ── Stage 3: Learn-shadow consume ─────────────────────────────────────────
+    consume_result: dict = {
+        "consumed": 0, "skipped": 0, "status": "dry_run",
+        "before_race_count": 0, "after_race_count": 0,
+    }
+    if args.execute:
+        unconsumed = engine.read_unconsumed_events(date)
+        consume_result = engine.consume_events_into_shadow(unconsumed)
+        consume_status = "WARN" if consume_result.get("skipped", 0) > 0 else "PASS"
+        if consume_result.get("skipped", 0) > 0:
+            warnings.append(f"PARTIAL_CONSUME: {consume_result['skipped']} events skipped")
+        pipeline["learn_consume"] = {
+            "status": consume_status,
+            "events_found": len(unconsumed),
+            "consumed": consume_result.get("consumed", 0),
+            "skipped": consume_result.get("skipped", 0),
+            "before_race_count": consume_result.get("before_race_count", 0),
+            "after_race_count": consume_result.get("after_race_count", 0),
+        }
+    else:
+        pipeline["learn_consume"] = {"status": "DRY_RUN"}
+
+    # ── Live state integrity check ────────────────────────────────────────────
+    live_path = ROOT / "data" / "sentient_state.json"
+    if live_path.exists() and live_hash_before:
+        live_hash_after = hashlib.md5(live_path.read_bytes()).hexdigest()
+        if live_hash_after != live_hash_before:
+            print("[HARD STOP] sentient_state.json hash changed during run. SAFETY_VIOLATION.")
+            ops.finish_failure(eod_job_id, "SAFETY_VIOLATION", "live_state_hash_changed")
+            _write_artifact("daily-eod", date, {
+                "overall_status": "SAFETY_VIOLATION",
+                "stop_reason": "live_state_hash_changed",
+                "pipeline": pipeline,
+                "preflight": preflight,
+            })
+            sys.exit(1)
+
+    # ── Cloud backup integrity check ──────────────────────────────────────────
+    if cloud_ts_before:
+        try:
+            cb = ops._get_sb().client.table("learned_patterns").select("updated_at").eq(
+                "pattern_name", "SENTIENT_STATE_BACKUP"
+            ).execute()
+            cloud_ts_after = cb.data[0].get("updated_at") if cb.data else None
+            if cloud_ts_after and cloud_ts_after != cloud_ts_before:
+                print("[HARD STOP] Cloud backup updated_at changed. SAFETY_VIOLATION.")
+                ops.finish_failure(eod_job_id, "SAFETY_VIOLATION", "cloud_backup_touched")
+                _write_artifact("daily-eod", date, {
+                    "overall_status": "SAFETY_VIOLATION",
+                    "stop_reason": "cloud_backup_touched",
+                    "pipeline": pipeline,
+                    "preflight": preflight,
+                })
+                sys.exit(1)
+        except Exception as exc:
+            warnings.append(f"CLOUD_BACKUP_CHECK_FAILED: {exc}")
+
+    # ── Stage 4: Healthcheck ──────────────────────────────────────────────────
+    hc_args = argparse.Namespace(
+        date=date, execute=args.execute, dry_run=dry, target_state=args.target_state,
+    )
+    cmd_healthcheck(hc_args)
+    pipeline["healthcheck"] = {"status": "PASS"}
+
+    # ── Forensic report ───────────────────────────────────────────────────────
+    report = engine.generate_daily_report(
+        date=date,
+        pipeline=pipeline,
+        preflight=preflight,
+        consume_result=consume_result,
+        warnings=warnings,
+    )
+
+    report_dir = ROOT / "data" / "phase4_daily_reports"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    report_path = report_dir / f"{date}_daily_eod_report.json"
+    report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(f"[REPORT] {report_path}")
+
+    ops.finish_job(
+        eod_job_id,
+        "SUCCESS",
+        metrics={
+            "events_built": len(events),
+            "events_consumed": consume_result.get("consumed", 0),
+            "shadow_races_before": consume_result.get("before_race_count", 0),
+            "shadow_races_after": consume_result.get("after_race_count", 0),
+            "overall_status": report.get("overall_status"),
+        },
+    )
+    _write_artifact("daily-eod", date, report)
+    print(f"[DAILY-EOD] {report.get('overall_status')}")
+
+
+def cmd_forensic_report(args: argparse.Namespace) -> None:
+    """
+    Generate a forensic report for a given date without running any pipeline stages.
+    Reads current state from disk and DB only. Safe to run at any time.
+    """
+    dry = _is_dry_run(args)
+    date = args.date
+    print(f"--- FORENSIC-REPORT --- date={date} dry_run={dry} target={args.target_state}")
+
+    ops = OpsService(dry_run=dry, execute=args.execute)
+    engine = LearningEngine(dry_run=dry, execute=args.execute, target_state=args.target_state)
+    preflight = _take_preflight_snapshot(date, args.target_state, ops)
+
+    report = engine.generate_daily_report(
+        date=date,
+        pipeline={},
+        preflight=preflight,
+        consume_result={},
+        warnings=["forensic_report_only — no pipeline stages run"],
+    )
+
+    report_dir = ROOT / "data" / "phase4_daily_reports"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    report_path = report_dir / f"{date}_forensic_report.json"
+    report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(f"[REPORT] {report_path}")
+    _write_artifact("forensic-report", date, report)
+    print(f"[FORENSIC-REPORT] {report.get('overall_status')}")
+
+
 def main() -> None:
     setup_logging()
     shared = argparse.ArgumentParser(add_help=False)
@@ -422,8 +736,11 @@ def main() -> None:
     learn_shadow_p.add_argument("--sample-size", type=int, default=None, metavar="N", help="Limit to first N events for testing")
     sub.add_parser("healthcheck",      parents=[shared], help="Report system status")
     sub.add_parser("full-day",         parents=[shared], help="Full pipeline: ingest→predict→sigma→healthcheck")
+    sub.add_parser("daily-eod",        parents=[shared], help="EOD cycle: sigma→learn-shadow-build→consume→healthcheck→report (ingest NOT automated)")
+    sub.add_parser("forensic-report",  parents=[shared], help="Read-only forensic report for a date (no pipeline stages)")
 
     args = parser.parse_args()
+    args.date = _resolve_date(args.date)
 
     dispatch = {
         "ingest":           cmd_ingest,
@@ -433,6 +750,8 @@ def main() -> None:
         "learn-shadow":     cmd_learn_shadow,
         "healthcheck":      cmd_healthcheck,
         "full-day":         cmd_full_day,
+        "daily-eod":        cmd_daily_eod,
+        "forensic-report":  cmd_forensic_report,
     }
     dispatch[args.command](args)
 

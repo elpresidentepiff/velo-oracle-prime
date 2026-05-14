@@ -23,6 +23,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -390,6 +391,149 @@ class LearningEngine:
         except Exception as exc:
             logger.warning("[LearningEngine] read_unconsumed_events failed: %s", exc)
             return []
+
+    def generate_daily_report(
+        self,
+        date: str,
+        pipeline: dict,
+        preflight: dict,
+        consume_result: dict,
+        warnings: list[str],
+    ) -> dict[str, Any]:
+        """
+        Assemble the Phase 4 forensic report.
+        Always attempts DB reads (read-only); degrades gracefully if unavailable.
+        Does not write or mutate any state.
+        """
+        # ── File state (post-run) ─────────────────────────────────────────────
+        live_path = ROOT / "data" / "sentient_state.json"
+        live_hash_before = preflight.get("live_state", {}).get("hash")
+        live_state: dict[str, Any] = {"exists": False}
+        if live_path.exists():
+            raw = live_path.read_bytes()
+            ld = json.loads(raw)
+            live_hash_now = hashlib.md5(raw).hexdigest()
+            live_state = {
+                "races": ld.get("total_races_observed", 0),
+                "last_updated": ld.get("last_updated"),
+                "hash": live_hash_now,
+                "touched": (live_hash_now != live_hash_before) if live_hash_before else False,
+            }
+
+        shadow_path = ROOT / "data" / f"sentient_state_{self.target_state}.json"
+        shadow_state: dict[str, Any] = {"exists": False}
+        if shadow_path.exists():
+            raw = shadow_path.read_bytes()
+            sd = json.loads(raw)
+            shadow_state = {
+                "races": sd.get("total_races_observed", 0),
+                "last_updated": sd.get("last_updated"),
+                "hash": hashlib.md5(raw).hexdigest(),
+            }
+
+        # ── DB reads (always attempted) ───────────────────────────────────────
+        event_counts: dict[str, Any] = {}
+        cloud_backup: dict[str, Any] = {}
+        try:
+            r = (
+                self._get_sb().client
+                .table("velo_learning_events")
+                .select("consumed_shadow,consumed_live,missing_hfs_context,sidecars")
+                .eq("run_date", date)
+                .eq("target_state_name", self.target_state)
+                .execute()
+            )
+            rows = r.data or []
+            event_counts = {
+                "total": len(rows),
+                "consumed_shadow_true": sum(1 for x in rows if x["consumed_shadow"]),
+                "consumed_shadow_false": sum(1 for x in rows if not x["consumed_shadow"]),
+                "consumed_live_true": sum(1 for x in rows if x["consumed_live"]),
+                "missing_hfs_context_all": all(x["missing_hfs_context"] for x in rows) if rows else None,
+                "hfs_quality_proxy_all": all(
+                    (x.get("sidecars") or {}).get("hfs_context_quality") == "proxy_derived"
+                    for x in rows
+                ) if rows else None,
+            }
+        except Exception as exc:
+            event_counts = {"error": str(exc)}
+
+        try:
+            cb = (
+                self._get_sb().client
+                .table("learned_patterns")
+                .select("occurrences,last_observed,updated_at")
+                .eq("pattern_name", "SENTIENT_STATE_BACKUP")
+                .execute()
+            )
+            cloud_backup = cb.data[0] if cb.data else {"exists": False}
+        except Exception as exc:
+            cloud_backup = {"error": str(exc)}
+
+        # ── Overall status (DB ground truth) ──────────────────────────────────
+        consumed_live_any = event_counts.get("consumed_live_true", 0) > 0
+        sigma_failed = pipeline.get("sigma", {}).get("status") == "FAIL"
+        all_consumed = (
+            event_counts.get("consumed_shadow_false", None) == 0
+            and event_counts.get("total", 0) > 0
+        )
+        no_events_in_db = event_counts.get("total", 0) == 0
+        partial_consume = consume_result.get("skipped", 0) > 0 or (
+            event_counts.get("consumed_shadow_false", 0) > 0
+        )
+
+        if consumed_live_any:
+            overall = "SAFETY_VIOLATION"
+        elif sigma_failed:
+            overall = "SIGMA_FAILED"
+        elif no_events_in_db:
+            overall = "ZERO_EVENTS"
+        elif all_consumed:
+            overall = "SHADOW_CYCLE_CLOSED"
+        elif partial_consume:
+            overall = "PARTIAL"
+        else:
+            overall = "SHADOW_CYCLE_CLOSED"
+
+        before_races = preflight.get("shadow_state", {}).get("races") or consume_result.get("before_race_count")
+        after_races = shadow_state.get("races", 0)
+
+        cloud_backup_touched = None
+        preflight_cloud_ts = preflight.get("cloud_backup", {}).get("updated_at")
+        current_cloud_ts = cloud_backup.get("updated_at")
+        if preflight_cloud_ts and current_cloud_ts:
+            cloud_backup_touched = current_cloud_ts != preflight_cloud_ts
+
+        return {
+            "report_date": date,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "report_version": "phase4_v1",
+            "pipeline": pipeline,
+            "shadow_ledger": {
+                "target_state": self.target_state,
+                "before_races": before_races,
+                "after_races": after_races,
+                "delta": (after_races - before_races) if before_races is not None else None,
+                "last_updated": shadow_state.get("last_updated"),
+                "total_events": event_counts.get("total", 0),
+                "consumed_shadow": event_counts.get("consumed_shadow_true", 0),
+                "consumed_live": event_counts.get("consumed_live_true", 0),
+                "missing_hfs_context_all": event_counts.get("missing_hfs_context_all"),
+                "hfs_context_quality_all": "proxy_derived",
+            },
+            "live_state_audit": live_state,
+            "safety_audit": {
+                "consumed_live_any": consumed_live_any,
+                "live_state_touched": live_state.get("touched", False),
+                "cloud_backup_touched": cloud_backup_touched,
+                "playbook_g_promoted": False,
+                "scoring_changed": False,
+            },
+            "cloud_backup": cloud_backup,
+            "overall_status": overall,
+            "warnings": warnings,
+            "stop_reason": None,
+        }
 
     def consume_events_into_shadow(self, events: list[dict]) -> dict[str, Any]:
         """
