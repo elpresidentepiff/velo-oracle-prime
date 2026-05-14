@@ -1,0 +1,2664 @@
+{
+  "started_utc": "2026-05-14T01:51:48Z",
+  "finished_utc": "2026-05-14T01:53:06Z",
+  "scope": {
+    "start_date": "2026-05-07",
+    "through_date": "2026-05-13",
+    "racecard_days": 3,
+    "max_trainers": 20,
+    "max_jockeys": 20,
+    "max_horses": 20,
+    "normalize_performed": false
+  },
+  "capability_map": [
+    {
+      "endpoint": "/v1/racecards/free",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [
+        "day",
+        "region_codes",
+        "course_ids",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "limit",
+        "query",
+        "racecards",
+        "skip",
+        "total"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/racecards/basic",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [
+        "day",
+        "region_codes",
+        "course_ids",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "limit",
+        "query",
+        "racecards",
+        "skip",
+        "total"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/racecards/standard",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [
+        "day",
+        "region_codes",
+        "course_ids",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "limit",
+        "query",
+        "racecards",
+        "skip",
+        "total"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/racecards/pro",
+      "method": "GET",
+      "accessible": "blocked",
+      "status_code": 401,
+      "required_params": [],
+      "optional_params": [
+        "date",
+        "region_codes",
+        "course_ids",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "detail"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": "Pro Plan required"
+    },
+    {
+      "endpoint": "/v1/racecards/{race_id}/standard",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "race_id"
+      ],
+      "optional_params": [],
+      "sample_keys": [
+        "age_band",
+        "betting_forecast",
+        "big_race",
+        "course",
+        "course_id",
+        "date",
+        "distance",
+        "distance_f",
+        "distance_round",
+        "field_size",
+        "going",
+        "going_detailed",
+        "is_abandoned",
+        "jumps",
+        "off_dt",
+        "off_time",
+        "pattern",
+        "prize",
+        "race_class",
+        "race_id",
+        "race_name",
+        "race_status",
+        "rail_movements",
+        "rating_band",
+        "region"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/results",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "age_band",
+        "class",
+        "comments",
+        "course",
+        "course_id",
+        "date",
+        "dist",
+        "dist_f",
+        "dist_m",
+        "dist_y",
+        "going",
+        "jumps",
+        "non_runners",
+        "off",
+        "off_dt",
+        "pattern",
+        "race_id",
+        "race_name",
+        "rating_band",
+        "region",
+        "runners",
+        "sex_rest",
+        "surface",
+        "tote_csf",
+        "tote_ex"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/results/today",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [
+        "region",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "<empty_or_scalar_list>"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/results/today/free",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [
+        "region",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "<empty_or_scalar_list>"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/odds/{race_id}/{horse_id}",
+      "method": "GET",
+      "accessible": "blocked",
+      "status_code": 401,
+      "required_params": [
+        "race_id",
+        "horse_id"
+      ],
+      "optional_params": [],
+      "sample_keys": [
+        "detail"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": "Pro Plan required"
+    },
+    {
+      "endpoint": "/v1/horses/search",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "name"
+      ],
+      "optional_params": [],
+      "sample_keys": [
+        "search_results"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/horses/{horse_id}/results",
+      "method": "GET",
+      "accessible": "blocked",
+      "status_code": 401,
+      "required_params": [
+        "horse_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "detail"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": "Pro Plan required"
+    },
+    {
+      "endpoint": "/v1/horses/{horse_id}/standard",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "horse_id"
+      ],
+      "optional_params": [],
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/horses/{horse_id}/pro",
+      "method": "GET",
+      "accessible": "blocked",
+      "status_code": 401,
+      "required_params": [
+        "horse_id"
+      ],
+      "optional_params": [],
+      "sample_keys": [
+        "detail"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": "Pro Plan required"
+    },
+    {
+      "endpoint": "/v1/jockeys/search",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "name"
+      ],
+      "optional_params": [],
+      "sample_keys": [
+        "search_results"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/jockeys/{jockey_id}/results",
+      "method": "GET",
+      "accessible": "blocked",
+      "status_code": 401,
+      "required_params": [
+        "jockey_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "detail"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": "Pro Plan required"
+    },
+    {
+      "endpoint": "/v1/jockeys/{jockey_id}/analysis/courses",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "jockey_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction"
+      ],
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/jockeys/{jockey_id}/analysis/distances",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "jockey_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction"
+      ],
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/jockeys/{jockey_id}/analysis/trainers",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "jockey_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction"
+      ],
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/trainers/search",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "name"
+      ],
+      "optional_params": [],
+      "sample_keys": [
+        "search_results"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/trainers/{trainer_id}/results",
+      "method": "GET",
+      "accessible": "blocked",
+      "status_code": 401,
+      "required_params": [
+        "trainer_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction",
+        "limit",
+        "skip"
+      ],
+      "sample_keys": [
+        "detail"
+      ],
+      "pagination_support": true,
+      "plan_limit_message": "Pro Plan required"
+    },
+    {
+      "endpoint": "/v1/trainers/{trainer_id}/analysis/courses",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "trainer_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction"
+      ],
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/trainers/{trainer_id}/analysis/distances",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "trainer_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction"
+      ],
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/trainers/{trainer_id}/analysis/jockeys",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [
+        "trainer_id"
+      ],
+      "optional_params": [
+        "start_date",
+        "end_date",
+        "region",
+        "course",
+        "type",
+        "going",
+        "race_class",
+        "min_distance_y",
+        "max_distance_y",
+        "age_band",
+        "sex_restriction"
+      ],
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/courses",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [
+        "region_codes"
+      ],
+      "sample_keys": [
+        "courses",
+        "total"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    },
+    {
+      "endpoint": "/v1/courses/regions",
+      "method": "GET",
+      "accessible": "accessible",
+      "status_code": 200,
+      "required_params": [],
+      "optional_params": [],
+      "sample_keys": [
+        "region",
+        "region_code"
+      ],
+      "pagination_support": false,
+      "plan_limit_message": null
+    }
+  ],
+  "results_gapfill": [
+    {
+      "date": "2026-05-07",
+      "pages": 1,
+      "rows": 49,
+      "statuses": [
+        200
+      ]
+    },
+    {
+      "date": "2026-05-08",
+      "pages": 1,
+      "rows": 50,
+      "statuses": [
+        200
+      ]
+    },
+    {
+      "date": "2026-05-09",
+      "pages": 1,
+      "rows": 90,
+      "statuses": [
+        200
+      ]
+    },
+    {
+      "date": "2026-05-10",
+      "pages": 1,
+      "rows": 35,
+      "statuses": [
+        200
+      ]
+    },
+    {
+      "date": "2026-05-11",
+      "pages": 1,
+      "rows": 43,
+      "statuses": [
+        200
+      ]
+    },
+    {
+      "date": "2026-05-12",
+      "pages": 1,
+      "rows": 48,
+      "statuses": [
+        200
+      ]
+    },
+    {
+      "date": "2026-05-13",
+      "pages": 1,
+      "rows": 59,
+      "statuses": [
+        200
+      ]
+    }
+  ],
+  "racecards": [
+    {
+      "endpoint": "racecards/free",
+      "day": "today",
+      "status_code": 200,
+      "race_count": 39,
+      "runner_count": 430
+    },
+    {
+      "endpoint": "racecards/basic",
+      "day": "today",
+      "status_code": 200,
+      "race_count": 39,
+      "runner_count": 430
+    },
+    {
+      "endpoint": "racecards/standard",
+      "day": "today",
+      "status_code": 200,
+      "race_count": 39,
+      "runner_count": 430
+    },
+    {
+      "endpoint": "racecards/free",
+      "day": "tomorrow",
+      "status_code": 200,
+      "race_count": 52,
+      "runner_count": 601
+    },
+    {
+      "endpoint": "racecards/basic",
+      "day": "tomorrow",
+      "status_code": 200,
+      "race_count": 52,
+      "runner_count": 601
+    },
+    {
+      "endpoint": "racecards/standard",
+      "day": "tomorrow",
+      "status_code": 200,
+      "race_count": 52,
+      "runner_count": 601
+    }
+  ],
+  "courses_regions": [
+    {
+      "endpoint": "courses",
+      "status_code": 200,
+      "count": 979,
+      "sample_keys": [
+        "courses",
+        "total"
+      ]
+    },
+    {
+      "endpoint": "courses/regions",
+      "status_code": 200,
+      "count": 55,
+      "sample_keys": [
+        "region",
+        "region_code"
+      ]
+    }
+  ],
+  "trainer_analysis": [
+    {
+      "trainer_id": "trn_140445",
+      "trainer_name": "Andrew Balding",
+      "endpoint": "trainers/trn_140445/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_140445",
+      "trainer_name": "Andrew Balding",
+      "endpoint": "trainers/trn_140445/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_140445",
+      "trainer_name": "Andrew Balding",
+      "endpoint": "trainers/trn_140445/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_301977",
+      "trainer_name": "Olly Murphy",
+      "endpoint": "trainers/trn_301977/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_301977",
+      "trainer_name": "Olly Murphy",
+      "endpoint": "trainers/trn_301977/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_301977",
+      "trainer_name": "Olly Murphy",
+      "endpoint": "trainers/trn_301977/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_205551",
+      "trainer_name": "David O'Meara",
+      "endpoint": "trainers/trn_205551/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_205551",
+      "trainer_name": "David O'Meara",
+      "endpoint": "trainers/trn_205551/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_205551",
+      "trainer_name": "David O'Meara",
+      "endpoint": "trainers/trn_205551/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_91368",
+      "trainer_name": "Tim Easterby",
+      "endpoint": "trainers/trn_91368/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_91368",
+      "trainer_name": "Tim Easterby",
+      "endpoint": "trainers/trn_91368/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_91368",
+      "trainer_name": "Tim Easterby",
+      "endpoint": "trainers/trn_91368/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_30735",
+      "trainer_name": "William Haggas",
+      "endpoint": "trainers/trn_30735/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_30735",
+      "trainer_name": "William Haggas",
+      "endpoint": "trainers/trn_30735/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_30735",
+      "trainer_name": "William Haggas",
+      "endpoint": "trainers/trn_30735/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_163305",
+      "trainer_name": "Gordon Elliott",
+      "endpoint": "trainers/trn_163305/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_163305",
+      "trainer_name": "Gordon Elliott",
+      "endpoint": "trainers/trn_163305/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_163305",
+      "trainer_name": "Gordon Elliott",
+      "endpoint": "trainers/trn_163305/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_74304",
+      "trainer_name": "John Patrick Ryan",
+      "endpoint": "trainers/trn_74304/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_74304",
+      "trainer_name": "John Patrick Ryan",
+      "endpoint": "trainers/trn_74304/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_74304",
+      "trainer_name": "John Patrick Ryan",
+      "endpoint": "trainers/trn_74304/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_45171",
+      "trainer_name": "K R Burke",
+      "endpoint": "trainers/trn_45171/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_45171",
+      "trainer_name": "K R Burke",
+      "endpoint": "trainers/trn_45171/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_45171",
+      "trainer_name": "K R Burke",
+      "endpoint": "trainers/trn_45171/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_344619",
+      "trainer_name": "John & Thady Gosden",
+      "endpoint": "trainers/trn_344619/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_344619",
+      "trainer_name": "John & Thady Gosden",
+      "endpoint": "trainers/trn_344619/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_344619",
+      "trainer_name": "John & Thady Gosden",
+      "endpoint": "trainers/trn_344619/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_125253",
+      "trainer_name": "Ralph Beckett",
+      "endpoint": "trainers/trn_125253/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_125253",
+      "trainer_name": "Ralph Beckett",
+      "endpoint": "trainers/trn_125253/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_125253",
+      "trainer_name": "Ralph Beckett",
+      "endpoint": "trainers/trn_125253/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_202725",
+      "trainer_name": "Kevin Ryan",
+      "endpoint": "trainers/trn_202725/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_202725",
+      "trainer_name": "Kevin Ryan",
+      "endpoint": "trainers/trn_202725/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_202725",
+      "trainer_name": "Kevin Ryan",
+      "endpoint": "trainers/trn_202725/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_386964",
+      "trainer_name": "Richard & Peter Fahey",
+      "endpoint": "trainers/trn_386964/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_386964",
+      "trainer_name": "Richard & Peter Fahey",
+      "endpoint": "trainers/trn_386964/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_386964",
+      "trainer_name": "Richard & Peter Fahey",
+      "endpoint": "trainers/trn_386964/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_70155",
+      "trainer_name": "Jim Goldie",
+      "endpoint": "trainers/trn_70155/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_70155",
+      "trainer_name": "Jim Goldie",
+      "endpoint": "trainers/trn_70155/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_70155",
+      "trainer_name": "Jim Goldie",
+      "endpoint": "trainers/trn_70155/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_122130",
+      "trainer_name": "P J Rothwell",
+      "endpoint": "trainers/trn_122130/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_122130",
+      "trainer_name": "P J Rothwell",
+      "endpoint": "trainers/trn_122130/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_122130",
+      "trainer_name": "P J Rothwell",
+      "endpoint": "trainers/trn_122130/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_11241",
+      "trainer_name": "Henry De Bromhead",
+      "endpoint": "trainers/trn_11241/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_11241",
+      "trainer_name": "Henry De Bromhead",
+      "endpoint": "trainers/trn_11241/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_11241",
+      "trainer_name": "Henry De Bromhead",
+      "endpoint": "trainers/trn_11241/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_264699",
+      "trainer_name": "David Menuisier",
+      "endpoint": "trainers/trn_264699/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_264699",
+      "trainer_name": "David Menuisier",
+      "endpoint": "trainers/trn_264699/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_264699",
+      "trainer_name": "David Menuisier",
+      "endpoint": "trainers/trn_264699/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_215334",
+      "trainer_name": "Ed Walker",
+      "endpoint": "trainers/trn_215334/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_215334",
+      "trainer_name": "Ed Walker",
+      "endpoint": "trainers/trn_215334/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_215334",
+      "trainer_name": "Ed Walker",
+      "endpoint": "trainers/trn_215334/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_92169",
+      "trainer_name": "R Mike Smith",
+      "endpoint": "trainers/trn_92169/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_92169",
+      "trainer_name": "R Mike Smith",
+      "endpoint": "trainers/trn_92169/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_92169",
+      "trainer_name": "R Mike Smith",
+      "endpoint": "trainers/trn_92169/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_360648",
+      "trainer_name": "James Owen",
+      "endpoint": "trainers/trn_360648/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_360648",
+      "trainer_name": "James Owen",
+      "endpoint": "trainers/trn_360648/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_360648",
+      "trainer_name": "James Owen",
+      "endpoint": "trainers/trn_360648/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_346887",
+      "trainer_name": "Michael & David Easterby",
+      "endpoint": "trainers/trn_346887/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_346887",
+      "trainer_name": "Michael & David Easterby",
+      "endpoint": "trainers/trn_346887/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    },
+    {
+      "trainer_id": "trn_346887",
+      "trainer_name": "Michael & David Easterby",
+      "endpoint": "trainers/trn_346887/analysis/jockeys",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockeys",
+        "query",
+        "total_runners",
+        "trainer"
+      ]
+    }
+  ],
+  "jockey_analysis": [
+    {
+      "jockey_id": "jky_279558",
+      "jockey_name": "Sean Bowen",
+      "endpoint": "jockeys/jky_279558/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_279558",
+      "jockey_name": "Sean Bowen",
+      "endpoint": "jockeys/jky_279558/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_279558",
+      "jockey_name": "Sean Bowen",
+      "endpoint": "jockeys/jky_279558/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_278184",
+      "jockey_name": "Oisin Murphy",
+      "endpoint": "jockeys/jky_278184/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278184",
+      "jockey_name": "Oisin Murphy",
+      "endpoint": "jockeys/jky_278184/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278184",
+      "jockey_name": "Oisin Murphy",
+      "endpoint": "jockeys/jky_278184/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_258039",
+      "jockey_name": "David Probert",
+      "endpoint": "jockeys/jky_258039/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_258039",
+      "jockey_name": "David Probert",
+      "endpoint": "jockeys/jky_258039/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_258039",
+      "jockey_name": "David Probert",
+      "endpoint": "jockeys/jky_258039/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_289173",
+      "jockey_name": "Darragh O'Keeffe",
+      "endpoint": "jockeys/jky_289173/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_289173",
+      "jockey_name": "Darragh O'Keeffe",
+      "endpoint": "jockeys/jky_289173/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_289173",
+      "jockey_name": "Darragh O'Keeffe",
+      "endpoint": "jockeys/jky_289173/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_287232",
+      "jockey_name": "Rossa Ryan",
+      "endpoint": "jockeys/jky_287232/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_287232",
+      "jockey_name": "Rossa Ryan",
+      "endpoint": "jockeys/jky_287232/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_287232",
+      "jockey_name": "Rossa Ryan",
+      "endpoint": "jockeys/jky_287232/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_246693",
+      "jockey_name": "Daniel Tudhope",
+      "endpoint": "jockeys/jky_246693/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_246693",
+      "jockey_name": "Daniel Tudhope",
+      "endpoint": "jockeys/jky_246693/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_246693",
+      "jockey_name": "Daniel Tudhope",
+      "endpoint": "jockeys/jky_246693/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_233301",
+      "jockey_name": "Billy Loughnane",
+      "endpoint": "jockeys/jky_233301/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_233301",
+      "jockey_name": "Billy Loughnane",
+      "endpoint": "jockeys/jky_233301/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_233301",
+      "jockey_name": "Billy Loughnane",
+      "endpoint": "jockeys/jky_233301/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_262572",
+      "jockey_name": "Danny Mullins",
+      "endpoint": "jockeys/jky_262572/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_262572",
+      "jockey_name": "Danny Mullins",
+      "endpoint": "jockeys/jky_262572/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_262572",
+      "jockey_name": "Danny Mullins",
+      "endpoint": "jockeys/jky_262572/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_295557",
+      "jockey_name": "Cieren Fallon",
+      "endpoint": "jockeys/jky_295557/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_295557",
+      "jockey_name": "Cieren Fallon",
+      "endpoint": "jockeys/jky_295557/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_295557",
+      "jockey_name": "Cieren Fallon",
+      "endpoint": "jockeys/jky_295557/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_281841",
+      "jockey_name": "Tom Marquand",
+      "endpoint": "jockeys/jky_281841/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_281841",
+      "jockey_name": "Tom Marquand",
+      "endpoint": "jockeys/jky_281841/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_281841",
+      "jockey_name": "Tom Marquand",
+      "endpoint": "jockeys/jky_281841/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_304524",
+      "jockey_name": "Harry Davies",
+      "endpoint": "jockeys/jky_304524/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_304524",
+      "jockey_name": "Harry Davies",
+      "endpoint": "jockeys/jky_304524/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_304524",
+      "jockey_name": "Harry Davies",
+      "endpoint": "jockeys/jky_304524/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_309894",
+      "jockey_name": "Michael Kenneally(5)",
+      "endpoint": "jockeys/jky_309894/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_309894",
+      "jockey_name": "Michael Kenneally(5)",
+      "endpoint": "jockeys/jky_309894/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_309894",
+      "jockey_name": "Michael Kenneally(5)",
+      "endpoint": "jockeys/jky_309894/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_277005",
+      "jockey_name": "Donagh Meyler",
+      "endpoint": "jockeys/jky_277005/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_277005",
+      "jockey_name": "Donagh Meyler",
+      "endpoint": "jockeys/jky_277005/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_277005",
+      "jockey_name": "Donagh Meyler",
+      "endpoint": "jockeys/jky_277005/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_278418",
+      "jockey_name": "Hector Crouch",
+      "endpoint": "jockeys/jky_278418/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278418",
+      "jockey_name": "Hector Crouch",
+      "endpoint": "jockeys/jky_278418/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278418",
+      "jockey_name": "Hector Crouch",
+      "endpoint": "jockeys/jky_278418/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_278085",
+      "jockey_name": "Hollie Doyle",
+      "endpoint": "jockeys/jky_278085/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278085",
+      "jockey_name": "Hollie Doyle",
+      "endpoint": "jockeys/jky_278085/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278085",
+      "jockey_name": "Hollie Doyle",
+      "endpoint": "jockeys/jky_278085/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_278322",
+      "jockey_name": "Rob Hornby",
+      "endpoint": "jockeys/jky_278322/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278322",
+      "jockey_name": "Rob Hornby",
+      "endpoint": "jockeys/jky_278322/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_278322",
+      "jockey_name": "Rob Hornby",
+      "endpoint": "jockeys/jky_278322/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_283989",
+      "jockey_name": "Lewis Edmunds",
+      "endpoint": "jockeys/jky_283989/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_283989",
+      "jockey_name": "Lewis Edmunds",
+      "endpoint": "jockeys/jky_283989/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_283989",
+      "jockey_name": "Lewis Edmunds",
+      "endpoint": "jockeys/jky_283989/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_270729",
+      "jockey_name": "Jason Hart",
+      "endpoint": "jockeys/jky_270729/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_270729",
+      "jockey_name": "Jason Hart",
+      "endpoint": "jockeys/jky_270729/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_270729",
+      "jockey_name": "Jason Hart",
+      "endpoint": "jockeys/jky_270729/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_301050",
+      "jockey_name": "Saffie Osborne",
+      "endpoint": "jockeys/jky_301050/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_301050",
+      "jockey_name": "Saffie Osborne",
+      "endpoint": "jockeys/jky_301050/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_301050",
+      "jockey_name": "Saffie Osborne",
+      "endpoint": "jockeys/jky_301050/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    },
+    {
+      "jockey_id": "jky_257379",
+      "jockey_name": "William Buick",
+      "endpoint": "jockeys/jky_257379/analysis/courses",
+      "status_code": 200,
+      "sample_keys": [
+        "courses",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_257379",
+      "jockey_name": "William Buick",
+      "endpoint": "jockeys/jky_257379/analysis/distances",
+      "status_code": 200,
+      "sample_keys": [
+        "distances",
+        "id",
+        "jockey",
+        "query",
+        "total_rides"
+      ]
+    },
+    {
+      "jockey_id": "jky_257379",
+      "jockey_name": "William Buick",
+      "endpoint": "jockeys/jky_257379/analysis/trainers",
+      "status_code": 200,
+      "sample_keys": [
+        "id",
+        "jockey",
+        "query",
+        "total_rides",
+        "trainers"
+      ]
+    }
+  ],
+  "horse_profiles": [
+    {
+      "horse_id": "hrs_36696219",
+      "horse_name": "Mermaids Cave",
+      "endpoint": "horses/hrs_36696219/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_63650363",
+      "horse_name": "Lauralynn",
+      "endpoint": "horses/hrs_63650363/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_34860805",
+      "horse_name": "All Authorized",
+      "endpoint": "horses/hrs_34860805/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_62068804",
+      "horse_name": "Kakirra",
+      "endpoint": "horses/hrs_62068804/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_46265436",
+      "horse_name": "Atlantic City",
+      "endpoint": "horses/hrs_46265436/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_50402408",
+      "horse_name": "Springhill Warrior",
+      "endpoint": "horses/hrs_50402408/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_37603559",
+      "horse_name": "Into Battle",
+      "endpoint": "horses/hrs_37603559/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_25470186",
+      "horse_name": "Roach Power",
+      "endpoint": "horses/hrs_25470186/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_63811069",
+      "horse_name": "Caturra Lights",
+      "endpoint": "horses/hrs_63811069/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_54242685",
+      "horse_name": "Constitution River",
+      "endpoint": "horses/hrs_54242685/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_36035657",
+      "horse_name": "Jan Brueghel",
+      "endpoint": "horses/hrs_36035657/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_49143416",
+      "horse_name": "I'm Just Ken",
+      "endpoint": "horses/hrs_49143416/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_51988972",
+      "horse_name": "Jupiter Ammon",
+      "endpoint": "horses/hrs_51988972/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_57103410",
+      "horse_name": "Magnetude",
+      "endpoint": "horses/hrs_57103410/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_50809780",
+      "horse_name": "Loriko",
+      "endpoint": "horses/hrs_50809780/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_40920439",
+      "horse_name": "Big Boy Barney",
+      "endpoint": "horses/hrs_40920439/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_29621746",
+      "horse_name": "Another Day Out",
+      "endpoint": "horses/hrs_29621746/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_23417555",
+      "horse_name": "Braganza Bay",
+      "endpoint": "horses/hrs_23417555/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_63809515",
+      "horse_name": "St Julie",
+      "endpoint": "horses/hrs_63809515/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    },
+    {
+      "horse_id": "hrs_51618539",
+      "horse_name": "Mehmas Champion",
+      "endpoint": "horses/hrs_51618539/standard",
+      "status_code": 200,
+      "sample_keys": [
+        "dam",
+        "dam_id",
+        "damsire",
+        "damsire_id",
+        "id",
+        "name",
+        "sire",
+        "sire_id"
+      ]
+    }
+  ],
+  "errors": [],
+  "schema": {
+    "status_code": 200,
+    "path_count": 58,
+    "version": "1.4.3"
+  },
+  "entity_selection": {
+    "trainers_available": 399,
+    "jockeys_available": 424,
+    "horses_available": 1242,
+    "trainers_selected": 20,
+    "jockeys_selected": 20,
+    "horses_selected": 20
+  },
+  "raw_response_counts": {
+    "schema": 1,
+    "capability_map": 23,
+    "results": 7,
+    "racecards": 6,
+    "courses": 1,
+    "regions": 1,
+    "trainers": 60,
+    "jockeys": 60,
+    "horses": 20,
+    "errors": 0
+  },
+  "rows_normalized": 0,
+  "normalization_note": "Raw capture only. Normalization skipped under corrected contained scope."
+}
