@@ -660,7 +660,7 @@ class LearningEngine:
 
         after_count = g.state.get("total_races_observed", 0)
         logger.info(
-            "[LearningEngine] Shadow consume complete: consumed=%d skipped=%d races %d→%d",
+            "[LearningEngine] Shadow consume complete: consumed=%d skipped=%d races %d->%d",
             consumed, skipped, before_count, after_count,
         )
 

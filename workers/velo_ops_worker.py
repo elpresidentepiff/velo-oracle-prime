@@ -169,6 +169,30 @@ def _take_preflight_snapshot(date: str, target_state: str, ops: "OpsService") ->
     return snap
 
 
+def _get_cloud_backup_updated_at(ops: "OpsService") -> str | None:
+    """
+    Resolve the canonical SENTIENT_STATE_BACKUP row safely.
+    Prefer pattern_name, but fall back to pattern_type for compatibility.
+    """
+    rows = ops._get_sb().client.table("learned_patterns").select(
+        "updated_at"
+    ).eq("pattern_name", "SENTIENT_STATE_BACKUP").order(
+        "updated_at", desc=True
+    ).limit(1).execute()
+    if rows.data:
+        return rows.data[0].get("updated_at")
+
+    fallback = ops._get_sb().client.table("learned_patterns").select(
+        "updated_at"
+    ).eq("pattern_type", "SENTIENT_STATE_BACKUP").order(
+        "updated_at", desc=True
+    ).limit(1).execute()
+    if fallback.data:
+        return fallback.data[0].get("updated_at")
+
+    return None
+
+
 # ── Command implementations ────────────────────────────────────────────────────
 
 
@@ -628,10 +652,7 @@ def cmd_bulk_shadow_consume(args: argparse.Namespace) -> None:
     cloud_ts_before: str | None = None
     try:
         ops_tmp = OpsService(dry_run=True, execute=False)
-        cb = ops_tmp._get_sb().client.table("learned_patterns").select("updated_at").eq(
-            "pattern_type", "SENTIENT_STATE_BACKUP"
-        ).order("updated_at", desc=True).limit(1).execute()
-        cloud_ts_before = cb.data[0].get("updated_at") if cb.data else None
+        cloud_ts_before = _get_cloud_backup_updated_at(ops_tmp)
     except Exception:
         pass
 
@@ -642,7 +663,7 @@ def cmd_bulk_shadow_consume(args: argparse.Namespace) -> None:
     print(f"[BULK-CONSUME] Found {len(events)} unconsumed events to process")
 
     if not events:
-        print("[BULK-CONSUME] No unconsumed events — idempotency confirmed.")
+        print("[BULK-CONSUME] No unconsumed events - idempotency confirmed.")
         _write_artifact("bulk-shadow-consume", "all", {
             "target_state": target,
             "dry_run": dry,
@@ -692,10 +713,7 @@ def cmd_bulk_shadow_consume(args: argparse.Namespace) -> None:
 
     cloud_ts_after: str | None = None
     try:
-        cb2 = ops_tmp._get_sb().client.table("learned_patterns").select("updated_at").eq(
-            "pattern_type", "SENTIENT_STATE_BACKUP"
-        ).order("updated_at", desc=True).limit(1).execute()
-        cloud_ts_after = cb2.data[0].get("updated_at") if cb2.data else None
+        cloud_ts_after = _get_cloud_backup_updated_at(ops_tmp)
     except Exception:
         pass
 
@@ -736,7 +754,7 @@ def cmd_bulk_shadow_consume(args: argparse.Namespace) -> None:
 
     print(
         f"[BULK-CONSUME] consumed={consumed} skipped={skipped} "
-        f"races {shadow_races_before}→{shadow_races_after} "
+        f"races {shadow_races_before}->{shadow_races_after} "
         f"live_hash={live_hash_after} (unchanged={live_unchanged}) "
         f"safety={safety}"
     )
