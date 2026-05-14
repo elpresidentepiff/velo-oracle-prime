@@ -108,12 +108,18 @@ def load_verdicts(sb, date_str: str) -> list[dict]:
 
 
 def extract_top_runner(verdict: dict) -> dict:
-    """Pull horse/horse_id/scores from full_analysis[0]."""
+    """Pull horse/horse_id/scores from the top prediction in full_analysis."""
     fa = verdict.get("full_analysis") or []
     if isinstance(fa, dict):
+        preds = fa.get("predictions")
+        if isinstance(preds, list) and preds and isinstance(preds[0], dict):
+            return preds[0]
         fa = list(fa.values())
-    if fa and isinstance(fa, list) and isinstance(fa[0], dict):
-        return fa[0]
+    if isinstance(fa, list) and fa:
+        if isinstance(fa[0], dict):
+            return fa[0]
+        if isinstance(fa[0], list) and fa[0] and isinstance(fa[0][0], dict):
+            return fa[0][0]
     return {}
 
 
