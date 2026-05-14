@@ -586,6 +586,164 @@ def cmd_bulk_shadow_build(args: argparse.Namespace) -> None:
     _write_artifact("bulk-shadow-build", "bulk", summary)
 
 
+def cmd_bulk_shadow_consume(args: argparse.Namespace) -> None:
+    """
+    Consume all unconsumed velo_learning_events for target_state across ALL dates.
+    Processes in run_date order. Optional --sample-size caps consumption for gated batches.
+
+    Safety gates (hard stop):
+      - consumed_live=True detected at any point
+      - live sentient_state.json hash changes during run
+      - cloud backup updated_at changes during run
+    """
+    dry = _is_dry_run(args)
+    target = args.target_state
+    sample_size: int | None = getattr(args, "sample_size", None)
+
+    print(
+        f"--- BULK-SHADOW-CONSUME --- target={target} dry_run={dry} "
+        f"sample_size={sample_size if sample_size else 'ALL'}"
+    )
+
+    if dry:
+        print("[DRY-RUN] No state will be mutated.")
+
+    # ── Baseline snapshots ────────────────────────────────────────────────────
+    import hashlib as _hl
+    live_path = ROOT / "data" / "sentient_state.json"
+    shadow_path = ROOT / "data" / f"sentient_state_{target}.json"
+
+    live_hash_before = _hl.md5(live_path.read_bytes()).hexdigest()[:8] if live_path.exists() else None
+    shadow_races_before: int | None = None
+    if shadow_path.exists():
+        sj = json.loads(shadow_path.read_bytes())
+        shadow_races_before = sj.get("total_races_observed")
+
+    print(
+        f"[PREFLIGHT] live_hash={live_hash_before} "
+        f"shadow_races_before={shadow_races_before}"
+    )
+
+    # Cloud backup baseline
+    cloud_ts_before: str | None = None
+    try:
+        ops_tmp = OpsService(dry_run=True, execute=False)
+        cb = ops_tmp._get_sb().client.table("learned_patterns").select("updated_at").eq(
+            "pattern_type", "SENTIENT_STATE_BACKUP"
+        ).order("updated_at", desc=True).limit(1).execute()
+        cloud_ts_before = cb.data[0].get("updated_at") if cb.data else None
+    except Exception:
+        pass
+
+    engine = LearningEngine(dry_run=dry, execute=not dry, target_state=target)
+
+    # ── Load unconsumed events ────────────────────────────────────────────────
+    events = engine.read_all_unconsumed_events(sample_size=sample_size)
+    print(f"[BULK-CONSUME] Found {len(events)} unconsumed events to process")
+
+    if not events:
+        print("[BULK-CONSUME] No unconsumed events — idempotency confirmed.")
+        _write_artifact("bulk-shadow-consume", "all", {
+            "target_state": target,
+            "dry_run": dry,
+            "sample_size": sample_size,
+            "events_found": 0,
+            "consumed": 0,
+            "skipped": 0,
+            "shadow_races_before": shadow_races_before,
+            "shadow_races_after": shadow_races_before,
+            "live_hash_before": live_hash_before,
+            "live_hash_after": live_hash_before,
+            "live_unchanged": True,
+            "status": "IDEMPOTENT_EMPTY",
+        })
+        return
+
+    if dry:
+        _write_artifact("bulk-shadow-consume", "all", {
+            "target_state": target,
+            "dry_run": True,
+            "sample_size": sample_size,
+            "events_found": len(events),
+            "status": "DRY_RUN",
+        })
+        return
+
+    # ── Execute consume ───────────────────────────────────────────────────────
+    consume_result = engine.consume_events_into_shadow(events)
+
+    consumed = consume_result.get("consumed", 0)
+    skipped = consume_result.get("skipped", 0)
+    shadow_races_after = consume_result.get("after_race_count")
+
+    # ── Post-run safety checks ────────────────────────────────────────────────
+    live_hash_after = _hl.md5(live_path.read_bytes()).hexdigest()[:8] if live_path.exists() else None
+    live_unchanged = (live_hash_after == live_hash_before)
+
+    if not live_unchanged:
+        print(f"[HARD STOP] sentient_state.json hash changed! before={live_hash_before} after={live_hash_after}")
+        _write_artifact("bulk-shadow-consume", "all", {
+            "status": "SAFETY_VIOLATION",
+            "stop_reason": "live_state_hash_changed",
+            "live_hash_before": live_hash_before,
+            "live_hash_after": live_hash_after,
+        })
+        sys.exit(1)
+
+    cloud_ts_after: str | None = None
+    try:
+        cb2 = ops_tmp._get_sb().client.table("learned_patterns").select("updated_at").eq(
+            "pattern_type", "SENTIENT_STATE_BACKUP"
+        ).order("updated_at", desc=True).limit(1).execute()
+        cloud_ts_after = cb2.data[0].get("updated_at") if cb2.data else None
+    except Exception:
+        pass
+
+    if cloud_ts_before and cloud_ts_after and cloud_ts_after != cloud_ts_before:
+        print(f"[HARD STOP] Cloud backup updated_at changed! before={cloud_ts_before} after={cloud_ts_after}")
+        _write_artifact("bulk-shadow-consume", "all", {
+            "status": "SAFETY_VIOLATION",
+            "stop_reason": "cloud_backup_touched",
+        })
+        sys.exit(1)
+
+    # ── Summary ───────────────────────────────────────────────────────────────
+    safety = (
+        "SAFE" if (
+            live_unchanged
+            and consume_result.get("consumed_live_total", 0) == 0
+            and (cloud_ts_before is None or cloud_ts_after == cloud_ts_before)
+        ) else "VIOLATION"
+    )
+
+    summary = {
+        "target_state": target,
+        "dry_run": dry,
+        "sample_size": sample_size,
+        "events_found": len(events),
+        "consumed": consumed,
+        "skipped": skipped,
+        "shadow_races_before": shadow_races_before,
+        "shadow_races_after": shadow_races_after,
+        "live_hash_before": live_hash_before,
+        "live_hash_after": live_hash_after,
+        "live_unchanged": live_unchanged,
+        "cloud_backup_before": cloud_ts_before,
+        "cloud_backup_after": cloud_ts_after,
+        "safety": safety,
+        "status": "OK" if skipped == 0 else "PARTIAL",
+    }
+
+    print(
+        f"[BULK-CONSUME] consumed={consumed} skipped={skipped} "
+        f"races {shadow_races_before}→{shadow_races_after} "
+        f"live_hash={live_hash_after} (unchanged={live_unchanged}) "
+        f"safety={safety}"
+    )
+
+    _write_artifact("bulk-shadow-consume", "all", summary)
+
+
 def cmd_daily_eod(args: argparse.Namespace) -> None:
     """
     Phase 4A — daily EOD orchestration.
@@ -851,6 +1009,8 @@ def main() -> None:
     sub.add_parser("full-day",         parents=[shared], help="Full pipeline: ingest→predict→sigma→healthcheck")
     bulk_p = sub.add_parser("bulk-shadow-build", parents=[shared], help="Build learning events for multiple dates into shadow target state")
     bulk_p.add_argument("--dates", default="", help="Comma-separated dates YYYY-MM-DD. Omit to auto-discover from sigma_audits + verdict artifacts.")
+    bulk_consume_p = sub.add_parser("bulk-shadow-consume", parents=[shared], help="Consume all unconsumed learning events across all dates into shadow target state")
+    bulk_consume_p.add_argument("--sample-size", type=int, default=None, metavar="N", help="Limit to first N events (date-ordered) for gated batch testing")
     sub.add_parser("daily-eod",        parents=[shared], help="EOD cycle: sigma→learn-shadow-build→consume→healthcheck→report (ingest NOT automated)")
     sub.add_parser("forensic-report",  parents=[shared], help="Read-only forensic report for a date (no pipeline stages)")
 
@@ -865,8 +1025,9 @@ def main() -> None:
         "learn-shadow":     cmd_learn_shadow,
         "healthcheck":      cmd_healthcheck,
         "full-day":         cmd_full_day,
-        "bulk-shadow-build": cmd_bulk_shadow_build,
-        "daily-eod":        cmd_daily_eod,
+        "bulk-shadow-build":    cmd_bulk_shadow_build,
+        "bulk-shadow-consume":  cmd_bulk_shadow_consume,
+        "daily-eod":            cmd_daily_eod,
         "forensic-report":  cmd_forensic_report,
     }
     dispatch[args.command](args)

@@ -402,6 +402,44 @@ class LearningEngine:
             logger.warning("[LearningEngine] read_unconsumed_events failed: %s", exc)
             return []
 
+    def read_all_unconsumed_events(self, sample_size: int | None = None) -> list[dict]:
+        """
+        Read all unconsumed events across all dates for this target_state, ordered by run_date.
+        Paginated to handle > 1000 rows. Optional sample_size caps the result.
+        """
+        rows: list[dict] = []
+        offset, page = 0, 1000
+        try:
+            while True:
+                result = (
+                    self._get_sb().client
+                    .table("velo_learning_events")
+                    .select("*")
+                    .eq("target_state_name", self.target_state)
+                    .eq("consumed_shadow", False)
+                    .eq("learning_allowed", True)
+                    .order("run_date", desc=False)
+                    .range(offset, offset + page - 1)
+                    .execute()
+                )
+                batch = result.data or []
+                rows.extend(batch)
+                if len(batch) < page:
+                    break
+                offset += page
+                if sample_size and len(rows) >= sample_size:
+                    break
+        except Exception as exc:
+            logger.warning("[LearningEngine] read_all_unconsumed_events failed: %s", exc)
+            return []
+        if sample_size:
+            rows = rows[:sample_size]
+        logger.info(
+            "[LearningEngine] Found %d unconsumed events across all dates / %s (sample_size=%s)",
+            len(rows), self.target_state, sample_size,
+        )
+        return rows
+
     def generate_daily_report(
         self,
         date: str,
