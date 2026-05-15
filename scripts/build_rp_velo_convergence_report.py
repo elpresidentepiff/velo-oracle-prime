@@ -17,8 +17,14 @@ MDS_HIGH_THRESHOLD = 0.25
 IMPROVEMENT_HIGH_THRESHOLD = 0.20
 
 VENUE_NAME_MAP = {
+    "AIN": "Aintree",
     "CLO": "Clonmel",
     "FON": "Fontwell",
+    "HAM": "Hamilton",
+    "KLB": "Kilbeggan",
+    "LEO": "Leopardstown",
+    "NBY": "Newbury",
+    "NMK": "Newmarket",
     "PER": "Perth",
     "SAL": "Salisbury",
     "YOR": "York",
@@ -340,9 +346,9 @@ def build_summary(rows: list[dict[str, Any]], rp_map: dict[tuple[str, str], Race
     }
 
 
-def write_markdown(path: Path, rows: list[dict[str, Any]], summary: dict[str, Any]) -> None:
+def write_markdown(path: Path, rows: list[dict[str, Any]], summary: dict[str, Any], date_str: str) -> None:
     lines = [
-        "# RP / VELO Convergence Report - 2026-05-14",
+        f"# RP / VELO Convergence Report - {date_str}",
         "",
         "## Summary",
         "",
@@ -402,7 +408,7 @@ def main() -> None:
     json_path = REPORT_DIR / f"rp_velo_convergence_{args.date}.json"
     md_path = REPORT_DIR / f"rp_velo_convergence_{args.date}.md"
     json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    write_markdown(md_path, rows, summary)
+    write_markdown(md_path, rows, summary, args.date)
 
     print(json.dumps({"json": str(json_path), "md": str(md_path)}, indent=2))
 
