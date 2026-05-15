@@ -33,6 +33,7 @@ env/
 *~
 # Environment Variables
 .env
+.env.*
 .env.local
 .env.*.local
 # Data & Cache
@@ -94,6 +95,13 @@ railway_velo_oracle_env.txt
 # Telegram audio
 telegram_cards/*.mp3
 telegram_cards/*.wav
+
+# Local secret containment
+scripts/send_telegram_summary.py
+data/*telegram*credential*
+data/*telegram*token*
+data/*bot*token*
+data/*chat_id*
 
 # Temp directories
 .tmp/
