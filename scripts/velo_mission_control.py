@@ -220,6 +220,9 @@ def _load_learning_summary(date: str, sigma: dict[str, Any], sentinel_report: di
     if sigma["status"] in {"WAITING", "SIGMA_RESULTS_NOT_READY"}:
         allowed = False
         reason = "SIGMA_WAITING"
+    elif sigma["status"] == "PARTIAL":
+        allowed = False
+        reason = "SIGMA_PARTIAL_RERUN_REQUIRED"
     elif sentinel_report["classification"] == "BLOCK":
         allowed = False
         reason = "SAFETY_BLOCK"
@@ -247,7 +250,9 @@ def _next_safe_command(
     if convergence["status"] == "MISSING":
         return f"python scripts/build_rp_velo_convergence_report.py --date {date}", None
     if sigma["status"] == "WAITING":
-        return f"wait for results, then rerun daily-eod for {date} on {APPROVED_SHADOW_TARGET}", None
+        return f"wait for results, then: python scripts/run_results_sigma.py --date {date}", None
+    if sigma["status"] == "PARTIAL":
+        return f"python scripts/run_results_sigma.py --date {date}", "SIGMA_PARTIAL_RERUN_REQUIRED"
     return f"python workers/velo_ops_worker.py daily-eod --date {date} --execute --allow-network --target-state {APPROVED_SHADOW_TARGET}", None
 
 
@@ -272,9 +277,14 @@ def build_mission_control(date: str) -> dict[str, Any]:
     )
 
     current_branch = _safe_git(["branch", "--show-current"]) or "UNKNOWN"
-    overall_status = "BLOCKED" if sentinel_report["classification"] == "BLOCK" else (
-        "WARN" if sentinel_report["classification"] == "WARN" else "READY"
-    )
+    if sentinel_report["classification"] == "BLOCK":
+        overall_status = "BLOCKED"
+    elif sigma["status"] == "PARTIAL":
+        overall_status = "WARN"
+    elif sentinel_report["classification"] == "WARN":
+        overall_status = "WARN"
+    else:
+        overall_status = "READY"
 
     payload = {
         "date": date,
