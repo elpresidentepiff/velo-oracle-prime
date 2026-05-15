@@ -219,6 +219,59 @@ def _get_sigma_audits_count(date: str, ops: "OpsService") -> int:
         return 0
 
 
+# ── Sentinel preflight ────────────────────────────────────────────────────────
+
+
+def _run_sentinel_preflight(
+    args: argparse.Namespace,
+    command: str,
+    *,
+    learning_requested: bool = False,
+) -> None:
+    """
+    Run SafetySentinel evaluate() before any --execute command.
+    BLOCK  → hard stop, exit(1). No override.
+    WARN   → stop with exit(2) unless --allow-warn provided.
+    SAFE   → proceed silently.
+    """
+    from app.services.safety_sentinel import SafetySentinel  # noqa: PLC0415
+
+    target = getattr(args, "target_state", "shadow_full_train_v2")
+    report = SafetySentinel().evaluate(
+        date=args.date,
+        command=command,
+        target_state=target,
+        learning_requested=learning_requested,
+    )
+    classification = report["classification"]
+
+    warn_checks = [
+        c["name"]
+        for c in report.get("checks", [])
+        if c.get("severity") == "WARN" and c.get("status") == "FAIL"
+    ]
+    detail = report.get("blocked_reason") or (", ".join(warn_checks) if warn_checks else "")
+    suffix = f" — {detail}" if detail else ""
+    print(f"[SENTINEL] {classification}{suffix}")
+
+    if classification == "BLOCK":
+        print(
+            f"[SENTINEL BLOCK] Hard stop. {report.get('blocked_reason', '')}. "
+            "See data/safety_sentinel/latest.json. No override in V1."
+        )
+        sys.exit(1)
+
+    if classification == "WARN":
+        if not getattr(args, "allow_warn", False):
+            print(
+                "[SENTINEL WARN] Operator acknowledgement required. "
+                "Re-run with --allow-warn to proceed."
+            )
+            print(f"  Report: data/safety_sentinel/{args.date}_preflight.json")
+            sys.exit(2)
+        print("[SENTINEL WARN] --allow-warn provided. Proceeding under operator acknowledgement.")
+
+
 # ── Command implementations ────────────────────────────────────────────────────
 
 
@@ -245,6 +298,8 @@ def cmd_ingest(args: argparse.Namespace) -> None:
 def cmd_predict(args: argparse.Namespace) -> None:
     dry = _is_dry_run(args)
     print(f"--- PREDICT --- date={args.date} dry_run={dry}")
+    if args.execute:
+        _run_sentinel_preflight(args, "predict")
     ops = OpsService(dry_run=dry, execute=args.execute)
     job_id = ops.start_job(args.date, "predict")
 
@@ -330,6 +385,8 @@ def cmd_sigma(args: argparse.Namespace) -> None:
     if not dry and not args.allow_network:
         print("[BLOCKED] --allow-network required for live sigma. Aborting.")
         sys.exit(1)
+    if args.execute:
+        _run_sentinel_preflight(args, "sigma")
     ops = OpsService(dry_run=dry, execute=args.execute)
     job_id = ops.start_job(args.date, "sigma")
 
@@ -393,6 +450,9 @@ def cmd_sigma(args: argparse.Namespace) -> None:
 def cmd_learn_shadow(args: argparse.Namespace) -> None:
     build_events_only = getattr(args, "build_events_only", False)
     sample_size = getattr(args, "sample_size", None)
+
+    if args.execute:
+        _run_sentinel_preflight(args, "learn-shadow", learning_requested=True)
 
     # ── Phase 3B: consume unconsumed events into shadow state ─────────────────
     if args.execute and not build_events_only:
@@ -655,6 +715,9 @@ def cmd_bulk_shadow_consume(args: argparse.Namespace) -> None:
         f"sample_size={sample_size if sample_size else 'ALL'}"
     )
 
+    if args.execute:
+        _run_sentinel_preflight(args, "bulk-shadow-consume", learning_requested=True)
+
     if dry:
         print("[DRY-RUN] No state will be mutated.")
 
@@ -817,6 +880,9 @@ def cmd_daily_eod(args: argparse.Namespace) -> None:
         f"network={args.allow_network} target={args.target_state}"
     )
     print("[NOTE] Ingestion is NOT automated in Phase 4A — run ingest manually if needed.")
+
+    if args.execute:
+        _run_sentinel_preflight(args, "daily-eod", learning_requested=True)
 
     ops = OpsService(dry_run=dry, execute=args.execute)
     eod_job_id = ops.start_job(date, "daily-eod")
@@ -1077,6 +1143,7 @@ def main() -> None:
     shared.add_argument("--execute", action="store_true", default=False, help="Enable real execution (overrides dry-run)")
     shared.add_argument("--allow-network", action="store_true", default=False, help="Allow network / API / DB calls")
     shared.add_argument("--target-state", default="shadow_repair_v1", help="Shadow state target for learn-shadow")
+    shared.add_argument("--allow-warn", action="store_true", default=False, help="Proceed past Sentinel WARN classification (operator acknowledgement)")
 
     parser = argparse.ArgumentParser(
         description="VÉLØ Ops Worker V2 — deterministic daily orchestrator",
