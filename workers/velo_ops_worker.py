@@ -193,6 +193,32 @@ def _get_cloud_backup_updated_at(ops: "OpsService") -> str | None:
     return None
 
 
+def _get_results_cache_race_count(date: str) -> int:
+    """Return cached result race count for the date, or 0 if unavailable."""
+    path = ROOT / "data" / f"results_{date.replace('-', '_')}.json"
+    if not path.exists():
+        return 0
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+    results = payload.get("results", [])
+    return len(results) if isinstance(results, list) else 0
+
+
+def _get_sigma_audits_count(date: str, ops: "OpsService") -> int:
+    """Return sigma_audits row count for the date, falling back to row length."""
+    try:
+        resp = ops._get_sb().client.table("sigma_audits").select(
+            "race_id", count="exact"
+        ).eq("date", date).execute()
+        if getattr(resp, "count", None) is not None:
+            return int(resp.count or 0)
+        return len(resp.data or [])
+    except Exception:
+        return 0
+
+
 # ── Command implementations ────────────────────────────────────────────────────
 
 
@@ -833,7 +859,11 @@ def cmd_daily_eod(args: argparse.Namespace) -> None:
     )
     try:
         cmd_sigma(sigma_args)
-        pipeline["sigma"] = {"status": "PASS"}
+        pipeline["sigma"] = {
+            "status": "PASS",
+            "results_races": _get_results_cache_race_count(date),
+            "sigma_audits_written": _get_sigma_audits_count(date, ops),
+        }
     except SystemExit as exc:
         code = exc.code if exc.code is not None else 1
         pipeline["sigma"] = {"status": "FAIL", "exit_code": code}
@@ -847,6 +877,43 @@ def cmd_daily_eod(args: argparse.Namespace) -> None:
         sys.exit(code)
 
     # ── Stage 2: Learn-shadow build ───────────────────────────────────────────
+    if (
+        pipeline["sigma"].get("results_races", 0) == 0
+        or pipeline["sigma"].get("sigma_audits_written", 0) == 0
+    ):
+        report = {
+            "date": date,
+            "target_state": args.target_state,
+            "overall_status": "SIGMA_RESULTS_NOT_READY",
+            "stop_reason": "ZERO_RESULTS_HARD_STOP",
+            "pipeline": {
+                **pipeline,
+                "learn_build": {"status": "SKIPPED"},
+                "learn_consume": {"status": "SKIPPED"},
+                "healthcheck": {"status": "SKIPPED"},
+            },
+            "preflight": preflight,
+            "warnings": [
+                "No usable Sigma result truth was persisted for this date.",
+                "Learning build and consume were skipped by hard-stop guard.",
+            ],
+            "live_state_touched": False,
+            "shadow_delta": 0,
+        }
+        report_dir = ROOT / "data" / "phase4_daily_reports"
+        report_dir.mkdir(parents=True, exist_ok=True)
+        report_path = report_dir / f"{date}_daily_eod_report.json"
+        report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(f"[REPORT] {report_path}")
+        ops.finish_failure(
+            eod_job_id,
+            "SIGMA_RESULTS_NOT_READY",
+            "ZERO_RESULTS_HARD_STOP",
+        )
+        _write_artifact("daily-eod", date, report)
+        print(f"[DAILY-EOD] {report.get('overall_status')}")
+        sys.exit(1)
+
     engine = LearningEngine(dry_run=dry, execute=args.execute, target_state=args.target_state)
     events = engine.create_learning_events(date)
     db_build: dict = {"written": 0, "skipped": 0, "status": "dry_run"}
