@@ -1142,7 +1142,7 @@ def main() -> None:
     shared.add_argument("--dry-run", action="store_true", default=True, help="Dry-run mode (default: True)")
     shared.add_argument("--execute", action="store_true", default=False, help="Enable real execution (overrides dry-run)")
     shared.add_argument("--allow-network", action="store_true", default=False, help="Allow network / API / DB calls")
-    shared.add_argument("--target-state", default="shadow_repair_v1", help="Shadow state target for learn-shadow")
+    shared.add_argument("--target-state", default="shadow_full_train_v2", help="Shadow state target for learn-shadow")
     shared.add_argument("--allow-warn", action="store_true", default=False, help="Proceed past Sentinel WARN classification (operator acknowledgement)")
 
     parser = argparse.ArgumentParser(

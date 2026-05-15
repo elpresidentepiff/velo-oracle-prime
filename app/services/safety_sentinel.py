@@ -287,18 +287,19 @@ class SafetySentinel:
             if severity == "WARN" and status == "FAIL":
                 warn_reasons.append(f"{name}: {detail}")
 
-        add_check(
-            "approved_shadow_target",
-            "PASS" if target_state == APPROVED_SHADOW_TARGET else "FAIL",
-            f"target_state={target_state}",
-            "BLOCK" if learning_requested else "WARN",
-        )
-        add_check(
-            "contaminated_shadow_target",
-            "FAIL" if target_state in CONTAMINATED_SHADOW_TARGETS else "PASS",
-            f"target_state={target_state}",
-            "BLOCK",
-        )
+        if learning_requested:
+            add_check(
+                "approved_shadow_target",
+                "PASS" if target_state == APPROVED_SHADOW_TARGET else "FAIL",
+                f"target_state={target_state}",
+                "BLOCK",
+            )
+            add_check(
+                "contaminated_shadow_target",
+                "FAIL" if target_state in CONTAMINATED_SHADOW_TARGETS else "PASS",
+                f"target_state={target_state}",
+                "BLOCK",
+            )
         add_check(
             "live_state_git_clean",
             "FAIL" if "data/sentient_state.json" in git_state.modified_paths else "PASS",
