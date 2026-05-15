@@ -1,0 +1,131 @@
+{
+  "generated_at": "2026-05-15T03:27:32.632240+00:00",
+  "audit_version": "CASHRUN_ACTIVATION_AUDIT_V1",
+  "date_range": {
+    "from": "2026-05-01",
+    "to": "2026-05-15"
+  },
+  "total_rows": 2543,
+  "matched_rows": 1591,
+  "unmatched_rows": 952,
+  "buckets": {
+    "CASHRUN_READY": {
+      "n": 1,
+      "with_result": 0,
+      "wins": 0,
+      "places": 0,
+      "sr": 0.0,
+      "place_rate": 0.0,
+      "roi": 0.0,
+      "avg_sp": 0.0,
+      "vp30_overlap_n": 0,
+      "vp30_overlap_pct": 0.0,
+      "mds_overlap_n": 0,
+      "mds_overlap_pct": 0.0,
+      "verdict": "INSUFFICIENT_SAMPLE"
+    },
+    "CASHRUN_WATCH": {
+      "n": 15,
+      "with_result": 6,
+      "wins": 1,
+      "places": 2,
+      "sr": 0.1667,
+      "place_rate": 0.3333,
+      "roi": -0.25,
+      "avg_sp": 5.55,
+      "vp30_overlap_n": 0,
+      "vp30_overlap_pct": 0.0,
+      "mds_overlap_n": 0,
+      "mds_overlap_pct": 0.0,
+      "verdict": "INSUFFICIENT_SAMPLE"
+    },
+    "WEAK_SIGNAL": {
+      "n": 162,
+      "with_result": 102,
+      "wins": 11,
+      "places": 31,
+      "sr": 0.1078,
+      "place_rate": 0.3039,
+      "roi": 0.5102,
+      "avg_sp": 14.59,
+      "vp30_overlap_n": 5,
+      "vp30_overlap_pct": 0.0309,
+      "mds_overlap_n": 0,
+      "mds_overlap_pct": 0.0,
+      "verdict": "EVIDENCE_BUILDING"
+    },
+    "SUPPRESS": {
+      "n": 1474,
+      "with_result": 900,
+      "wins": 97,
+      "places": 296,
+      "sr": 0.1078,
+      "place_rate": 0.3289,
+      "roi": -0.2612,
+      "avg_sp": 27.89,
+      "vp30_overlap_n": 26,
+      "vp30_overlap_pct": 0.0176,
+      "mds_overlap_n": 12,
+      "mds_overlap_pct": 0.0081,
+      "verdict": "EVIDENCE_BUILDING"
+    }
+  },
+  "crossover_analysis": {
+    "cashrun_watch_plus_vp30": {
+      "n": 0,
+      "with_result": 0,
+      "wins": 0,
+      "places": 0,
+      "sr": 0.0,
+      "place_rate": 0.0,
+      "roi": 0.0,
+      "avg_sp": 0.0,
+      "vp30_overlap_n": 0,
+      "vp30_overlap_pct": 0.0,
+      "mds_overlap_n": 0,
+      "mds_overlap_pct": 0.0
+    },
+    "cashrun_weak_plus_vp30": {
+      "n": 5,
+      "with_result": 3,
+      "wins": 1,
+      "places": 2,
+      "sr": 0.3333,
+      "place_rate": 0.6667,
+      "roi": 0.8333,
+      "avg_sp": 4.58,
+      "vp30_overlap_n": 5,
+      "vp30_overlap_pct": 1.0,
+      "mds_overlap_n": 0,
+      "mds_overlap_pct": 0.0
+    },
+    "cashrun_suppress_plus_vp30": {
+      "n": 26,
+      "with_result": 17,
+      "wins": 10,
+      "places": 14,
+      "sr": 0.5882,
+      "place_rate": 0.8235,
+      "roi": 0.6988,
+      "avg_sp": 4.85,
+      "vp30_overlap_n": 26,
+      "vp30_overlap_pct": 1.0,
+      "mds_overlap_n": 11,
+      "mds_overlap_pct": 0.4231
+    },
+    "any_cashrun_plus_vp30": {
+      "n": 31,
+      "with_result": 20,
+      "wins": 11,
+      "places": 16,
+      "sr": 0.55,
+      "place_rate": 0.8,
+      "roi": 0.719,
+      "avg_sp": 4.81,
+      "vp30_overlap_n": 31,
+      "vp30_overlap_pct": 1.0,
+      "mds_overlap_n": 11,
+      "mds_overlap_pct": 0.3548
+    }
+  }
+}
