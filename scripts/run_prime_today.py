@@ -38,6 +38,11 @@ from urllib.parse import urlencode
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 from app.core.runtime_env import (  # noqa: E402
     load_optional_env_file,
@@ -1230,6 +1235,26 @@ def main():
         print("  TELEGRAM SUPPRESSED — date mismatch, would send stale card as live")
         notify_enabled = False
         _TG_NOTIFY_ENABLED = False
+
+    if date_mismatch and persistence_enabled:
+        err_summary = f"DATE_MISMATCH_STALE_CARD loaded={loaded_date_str} requested={date_str}"
+        print("  PERSISTENCE BLOCKED — stale card cannot be written as current-day truth")
+        _close_pipeline_run(db, run_id, "FAIL", 0, 0, err_summary)
+        _emit_daily_truth_packet(date_str, repair_local_archive=False)
+        return RunPrimeResult(
+            status="BLOCKED",
+            exit_code=1,
+            date_str=date_str,
+            racecard_source=racecard_source,
+            races_fetched=len(raw_races),
+            races_normalized=0,
+            races_scored=0,
+            persist_ok=0,
+            persist_fail=0,
+            score_errors=0,
+            notifications_enabled=notify_enabled,
+            persistence_enabled=persistence_enabled,
+        )
 
     print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
 

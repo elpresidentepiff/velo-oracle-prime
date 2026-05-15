@@ -25,6 +25,7 @@ import logging
 import math
 import os
 import re
+import subprocess
 from datetime import UTC, datetime, timedelta
 
 # from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
@@ -43,6 +44,22 @@ def _safe(val, default=0.0):
         return v if not math.isnan(v) else default
     except (TypeError, ValueError):
         return default
+
+
+def _runtime_commit_sha() -> str:
+    for key in ("RAILWAY_GIT_COMMIT_SHA", "GIT_COMMIT_SHA", "COMMIT_SHA"):
+        value = (os.getenv(key) or "").strip()
+        if value:
+            return value[:40]
+    try:
+        root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        return (
+            subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, stderr=subprocess.DEVNULL)
+            .decode()
+            .strip()
+        )
+    except Exception:
+        return "unknown"
 
 
 def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], field_rpr_vals: list[float]) -> dict:
@@ -836,6 +853,8 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "engine_version": "velo_prime_v1",
             "doctrine_version": "d010",
             "ensemble_version": top.get("ensemble_version", ENSEMBLE_VERSION),
+            "git_commit_sha": _runtime_commit_sha(),
+            "decision_tier": decision_tier,
             "top_rank_horse_id": top.get("horse_id", ""),
             "top_rank_score": top.get("velo_prime_prob"),
             "confidence_level": top.get("confidence_level"),
@@ -855,13 +874,14 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "release_day_prob": top.get("release_day_prob"),
             "place_prob": top.get("place_prob"),
             "longshot_prob": top.get("longshot_prob"),
-            # PDF Intelligence Deep-Wiring (rpdc column mapping)
-            "rpdc_release_score": float(top.get("plot_conviction", 0.0)),
-            "rpdc_cash_window_flag": bool(top.get("plot_conviction", 0.0) >= 0.7),
-            "rpdc_primary_tag": "PDF_PLOT" if top.get("plot_conviction", 0.0) >= 0.7 else None,
-            "rpdc_tags": top.get("intent_signals", [])
-            + ([f"PLOT:{top.get('plot_conviction')}"] if top.get("plot_conviction") else []),
-            "rpdc_tag_count": len(top.get("intent_signals", [])),
+            # RPDC tags — populated by _attach_rpdc_from_row() in run_prime_today.py
+            # rpdc_release_score is the weighted tag score from runner_release_candidates
+            # plot_conviction is a separate PDF intel signal stored in full_analysis only
+            "rpdc_release_score": float(top.get("rpdc_release_score") or 0.0),
+            "rpdc_cash_window_flag": bool(top.get("rpdc_cash_window_flag", False)),
+            "rpdc_primary_tag": top.get("rpdc_primary_tag"),
+            "rpdc_tags": top.get("rpdc_tags") or [],
+            "rpdc_tag_count": int(top.get("rpdc_tag_count") or 0),
             "full_analysis": {
                 "top_horse": top.get("horse"),
                 "plot_conviction": top.get("plot_conviction"),
@@ -924,6 +944,7 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 "intent_signals": top.get("intent_signals", []),
             },
             "governance": {
+                "decision_tier": decision_tier,
                 "assigned_product": top.get("assigned_product"),
                 "router_reasons": top.get("router_reasons"),
             },
@@ -1005,6 +1026,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 "governance",
                 ["assigned_product", "router_reasons", "execution_allowed"],
                 "Apply migration to add governance columns to velo_verdicts.",
+            ),
+            (
+                "runtime_truth",
+                ["git_commit_sha"],
+                "Apply migration to add git_commit_sha to velo_verdicts.",
             ),
         ]
         def _is_schema_error(exc: Exception) -> bool:
