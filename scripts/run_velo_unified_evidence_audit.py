@@ -365,7 +365,8 @@ def main():
     merged["track_norm"] = merged["track"].apply(norm_course)
 
     # Try to add VP from JSON where Supabase VP is missing
-    vj_lookup = vj.set_index(["file_date", "course_norm", "off_time"])[
+    vj_deduped = vj.drop_duplicates(subset=["file_date", "course_norm", "off_time"], keep="first")
+    vj_lookup = vj_deduped.set_index(["file_date", "course_norm", "off_time"])[
         ["vp_json", "conf_json", "archetype_json", "cash_run_flag_json",
          "setup_run_flag_json", "place_prob_json", "mds_json",
          "improvement_score_json", "release_day_prob_json",

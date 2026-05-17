@@ -1,0 +1,105 @@
+{
+  "run_ts": "2026-05-17 11:58 UTC",
+  "sp_zone": "3.0\u20138.5",
+  "total_corpus_with_results": 893,
+  "global_sr": 14.8,
+  "global_frame": 36.2,
+  "mid_price": {
+    "n": 279,
+    "sr": 17.2,
+    "frame": 53.4,
+    "winners": 48,
+    "losers": 231
+  },
+  "router_qualified": {
+    "n": 18,
+    "sr": 33.3,
+    "frame": 72.2,
+    "winners": 6,
+    "losers": 12
+  },
+  "router_suppressed_advisory": {
+    "n": 261,
+    "sr": 16.1,
+    "frame": 52.1,
+    "winners": 42,
+    "losers": 219
+  },
+  "money_question": {
+    "winners_suppressed": 42,
+    "pct_winners_lost": 31.8,
+    "losers_removed": 219,
+    "pct_losers_removed": 28.8,
+    "loser_to_winner_ratio_suppressed": 5.2
+  },
+  "net_effect_if_suppression_active": {
+    "retained_n": 526,
+    "retained_sr": 17.1,
+    "retained_frame": 35.6,
+    "sr_delta": 2.3,
+    "frame_delta": -0.6
+  },
+  "per_lane_breakdown": [
+    {
+      "lane": "V1_BASE",
+      "mid_price_n": 18,
+      "mid_price_sr": 33.3,
+      "mid_price_frame": 72.2,
+      "wins": 6
+    },
+    {
+      "lane": "V2_CLASS4",
+      "mid_price_n": 15,
+      "mid_price_sr": 33.3,
+      "mid_price_frame": 66.7,
+      "wins": 5
+    },
+    {
+      "lane": "V6_GOLD_SEAM",
+      "mid_price_n": 10,
+      "mid_price_sr": 40.0,
+      "mid_price_frame": 70.0,
+      "wins": 4
+    }
+  ],
+  "tier_breakdown_of_suppressed": {
+    "A": {
+      "n": 33,
+      "wins": 3,
+      "sr": 9.1,
+      "frame": 57.6
+    },
+    "B": {
+      "n": 103,
+      "wins": 20,
+      "sr": 19.4,
+      "frame": 53.4
+    },
+    "C": {
+      "n": 53,
+      "wins": 5,
+      "sr": 9.4,
+      "frame": 49.1
+    },
+    "D": {
+      "n": 11,
+      "wins": 2,
+      "sr": 18.2,
+      "frame": 63.6
+    },
+    "X": {
+      "n": 30,
+      "wins": 4,
+      "sr": 13.3,
+      "frame": 40.0
+    }
+  },
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "staking_change": false,
+    "router_change": false,
+    "telegram_change": false,
+    "classification": "ADVISORY_ONLY"
+  }
+}

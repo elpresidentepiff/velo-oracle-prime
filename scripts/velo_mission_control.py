@@ -18,8 +18,15 @@ from app.services.ops_service import OpsService
 from app.services.safety_sentinel import APPROVED_SHADOW_TARGET, SafetySentinel
 
 VP30_THRESHOLD = 0.30
+VP40_THRESHOLD = 0.40
 MDS_HIGH_THRESHOLD = 0.50
-IMPROVEMENT_HIGH_THRESHOLD = 0.20
+IMPROVEMENT_HIGH_THRESHOLD = 0.40
+IMPROVEMENT_ANY_THRESHOLD = 0.20
+
+# Router lane labels that indicate a qualified selection
+ROUTER_QUALIFIED_LANES = {"V1_BASE", "V2_CLASS4", "V6_GOLD_SEAM"}
+# candidate_execution_lane values that indicate no router qualification
+ROUTER_UNQUALIFIED_LANE_VALUES = {"NO_BET", "ATTACK_LANE_MISS", None, ""}
 
 
 def _read_json(path: Path) -> Any:
@@ -48,6 +55,18 @@ def _load_run_truth(date: str) -> dict[str, Any] | None:
         return None
 
 
+def _is_router_qualified(top: dict[str, Any]) -> bool:
+    """True if the selection passed at least one router lane."""
+    lane = top.get("candidate_execution_lane") or ""
+    if lane and lane not in ROUTER_UNQUALIFIED_LANE_VALUES:
+        return True
+    # Also check per-lane boolean flags when present
+    for flag in ("router_v1_shadow_pass", "router_v2_class4_shadow_pass", "router_v6_gold_seam_watchlist"):
+        if top.get(flag) is True:
+            return True
+    return False
+
+
 def _load_verdict_summary(date: str) -> dict[str, Any]:
     path = ROOT / "data" / f"velo_prime_verdicts_{date.replace('-', '_')}.json"
     if not path.exists():
@@ -55,34 +74,69 @@ def _load_verdict_summary(date: str) -> dict[str, Any]:
             "status": "MISSING",
             "verdict_count": 0,
             "vp30_count": 0,
+            "vp40_count": 0,
             "mds_high_count": 0,
             "improvement_high_count": 0,
             "tier_counts": {"A": 0, "B": 0, "C": 0, "X": 0},
+            "midprice_advisory": {
+                "router_qualified_count": 0,
+                "router_suppressed_advisory_count": 0,
+                "suppressed_horses": [],
+            },
         }
     data = _read_json(path)
     rows = data if isinstance(data, list) else []
     tier_counts = {"A": 0, "B": 0, "C": 0, "X": 0}
     vp30_count = 0
+    vp40_count = 0
     mds_high_count = 0
     improvement_high_count = 0
+    router_qualified_count = 0
+    router_suppressed_advisory_count = 0
+    suppressed_horses: list[dict[str, Any]] = []
+
     for row in rows:
         tier = str(row.get("tier", "X")).upper()
         if tier in tier_counts:
             tier_counts[tier] += 1
         top = row.get("top") or {}
-        if float(top.get("velo_prime_prob") or 0.0) >= VP30_THRESHOLD:
+        vp = float(top.get("velo_prime_prob") or 0.0)
+        if vp >= VP30_THRESHOLD:
             vp30_count += 1
+        if vp >= VP40_THRESHOLD:
+            vp40_count += 1
         if float(top.get("market_deception_score") or 0.0) > MDS_HIGH_THRESHOLD:
             mds_high_count += 1
         if float(top.get("improvement_score") or 0.0) >= IMPROVEMENT_HIGH_THRESHOLD:
             improvement_high_count += 1
+        # Midprice router advisory — advisory flag only, no scoring impact
+        qualified = _is_router_qualified(top)
+        if qualified:
+            router_qualified_count += 1
+        else:
+            router_suppressed_advisory_count += 1
+            suppressed_horses.append({
+                "race": f"{row.get('course','?')} {row.get('off_time','?')}",
+                "horse": top.get("horse", "?"),
+                "vp": round(vp, 3),
+                "tier": tier,
+                "lane": top.get("candidate_execution_lane", ""),
+            })
+
     return {
         "status": "PASS" if rows else "MISSING",
         "verdict_count": len(rows),
         "vp30_count": vp30_count,
+        "vp40_count": vp40_count,
         "mds_high_count": mds_high_count,
         "improvement_high_count": improvement_high_count,
         "tier_counts": tier_counts,
+        "midprice_advisory": {
+            "router_qualified_count": router_qualified_count,
+            "router_suppressed_advisory_count": router_suppressed_advisory_count,
+            "suppressed_horses": suppressed_horses[:20],
+            "note": "ADVISORY ONLY — no scoring or staking change",
+        },
     }
 
 
@@ -250,9 +304,9 @@ def _next_safe_command(
     if convergence["status"] == "MISSING":
         return f"python scripts/build_rp_velo_convergence_report.py --date {date}", None
     if sigma["status"] == "WAITING":
-        return f"wait for results, then: python scripts/run_results_sigma.py --date {date}", None
+        return f"wait for results, then: python scripts/run_results_sigma.py --date {date} --sigma-only", None
     if sigma["status"] == "PARTIAL":
-        return f"python scripts/run_results_sigma.py --date {date}", "SIGMA_PARTIAL_RERUN_REQUIRED"
+        return f"python scripts/run_results_sigma.py --date {date} --sigma-only", "SIGMA_PARTIAL_RERUN_REQUIRED"
     return f"python workers/velo_ops_worker.py daily-eod --date {date} --execute --allow-network --target-state {APPROVED_SHADOW_TARGET}", None
 
 
@@ -333,8 +387,13 @@ def main() -> None:
     args = parser.parse_args()
 
     payload = build_mission_control(args.date)
+    pred = payload["prediction"]
+    mid = pred.get("midprice_advisory", {})
     print(f"VELO Mission Control - {payload['date']}")
-    print(f"Prediction: {payload['prediction']['status']}")
+    print(f"Prediction: {pred['status']}  Verdicts={pred['verdict_count']}")
+    print(f"  VP≥0.30: {pred['vp30_count']}  VP≥0.40: {pred['vp40_count']}  MDS_HIGH: {pred['mds_high_count']}  IMPROVER: {pred['improvement_high_count']}")
+    print(f"  Tier A: {pred['tier_counts']['A']}  Tier B: {pred['tier_counts']['B']}  Tier C: {pred['tier_counts']['C']}")
+    print(f"  MIDPRICE ADVISORY — Router-qualified: {mid.get('router_qualified_count',0)}  Suppressed advisory: {mid.get('router_suppressed_advisory_count',0)}")
     print(f"RP Coverage: {payload['racing_post']['status']} ({payload['racing_post']['coverage_pct']}%)")
     print(f"CASHRUN: WATCH={payload['cashrun']['watch']}")
     print(f"Sigma: {payload['sigma']['status']}")
