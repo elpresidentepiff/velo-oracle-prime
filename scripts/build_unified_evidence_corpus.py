@@ -375,7 +375,8 @@ def load_local_results_map() -> dict[tuple[str, str], dict]:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except Exception:
             continue
-        for race in payload.get("results", []):
+        races_list = payload.get("results", []) if isinstance(payload, dict) else payload
+        for race in races_list:
             race_id = race.get("race_id")
             for runner in race.get("runners", []):
                 horse_id = runner.get("horse_id")

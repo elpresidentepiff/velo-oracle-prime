@@ -1,0 +1,110 @@
+{
+  "run_ts": "2026-05-17 12:30 UTC",
+  "sigma_pool": {
+    "rows": 1898,
+    "dates": 66,
+    "source": "Supabase sigma_audits"
+  },
+  "corpus": {
+    "total_rows": 1521,
+    "dates": 38,
+    "with_results": 1310,
+    "clean_training_name": "SIGMA_2K_SAFE_TRAINING_SLICE_V1"
+  },
+  "gap": {
+    "raw_to_clean": 588,
+    "pct_captured": 69.0
+  },
+  "categories": {
+    "A_no_local_verdict": {
+      "rows": 620,
+      "dates": 30,
+      "date_list": [
+        "2026-01-09",
+        "2026-01-15",
+        "2026-01-20",
+        "2026-01-25",
+        "2026-01-30",
+        "2026-02-05",
+        "2026-02-10",
+        "2026-02-15",
+        "2026-02-18",
+        "2026-02-20",
+        "2026-02-22",
+        "2026-02-25",
+        "2026-03-19",
+        "2026-03-25",
+        "2026-03-28",
+        "2026-03-29",
+        "2026-03-31",
+        "2026-04-01",
+        "2026-04-02",
+        "2026-04-03"
+      ],
+      "explanation": "Sigma rows from dates where no local velo_prime_verdicts_*.json exists. These days were scored on Railway only \u2014 verdicts live in Supabase but not locally.",
+      "recoverable": false,
+      "action": "Would require pulling verdict JSON from Supabase for each missing date \u2014 possible but complex."
+    },
+    "B_verdict_no_result": {
+      "rows": 76,
+      "dates": 2,
+      "date_list": [
+        "2026-04-21",
+        "2026-05-11"
+      ],
+      "explanation": "Local verdict exists but no results file was scraped (upcoming races or scrape failed).",
+      "recoverable": true,
+      "action": "Run scrape_results_atr.py for missing dates."
+    },
+    "C_corpus_no_result_match": {
+      "rows": 211,
+      "sp_missing": 199,
+      "dates_affected": [
+        "2026-03-17",
+        "2026-03-18",
+        "2026-03-20",
+        "2026-03-21",
+        "2026-03-23",
+        "2026-03-26",
+        "2026-03-27",
+        "2026-04-11",
+        "2026-04-16",
+        "2026-04-17"
+      ],
+      "explanation": "Rows in corpus with VP signal but no SP/result. Result scraper produced no match for these races.",
+      "recoverable": false,
+      "action": "Accept as training-excluded. Investigate if pattern (e.g. all abandoned races, AW cards, Ireland-only cards)."
+    },
+    "D_recoverable_dates": {
+      "dates_with_verdicts_and_results_not_yet_in_corpus": [
+        "2026-04-20",
+        "2026-05-06"
+      ],
+      "count": 2,
+      "approx_rows": 71,
+      "action": "Re-run build_unified_evidence_corpus.py to capture these dates"
+    },
+    "E_x_tier_by_design": {
+      "rows": 199,
+      "explanation": "X-tier rows are in corpus but excluded from SR/frame calculations by audit design. They are included in the training slice for completeness but labelled.",
+      "recoverable": "N/A"
+    },
+    "F_missing_horse_id": {
+      "rows": 0,
+      "explanation": "Rows without horse_id \u2014 identity not resolved from any source.",
+      "recoverable": false
+    },
+    "G_insufficient_fields": {
+      "rows": 3,
+      "explanation": "Rows missing 3+ of 4 key signal fields (VP, MDS, improvement, place_prob).",
+      "recoverable": false
+    }
+  },
+  "classification_before_fix": "SIGMA_2K_SAFE_TRAINING_SLICE_V1_STALE",
+  "classification_after_fix": "SIGMA_2K_SAFE_TRAINING_SLICE_V1_CURRENT",
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "staking_change": false
+  }
+}

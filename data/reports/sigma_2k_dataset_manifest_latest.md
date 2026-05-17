@@ -1,31 +1,31 @@
 # Sigma 2K Training Dataset Manifest
-**Built:** 2026-05-17 12:10 UTC
-**Git SHA:** `5c88dd687836`
+**Built:** 2026-05-17 12:30 UTC
+**Git SHA:** `0b9e7930de2b`
 **Schema:** `sigma_2k_v1`
 
 ## Row Counts
 
 | Source | Rows |
 |---|---|
-| Unified evidence corpus | 794 |
+| Unified evidence corpus | 1521 |
 | Innovation protocol | 893 |
-| Merged total | 794 |
-| **With results (training rows)** | **721** |
+| Merged total | 1521 |
+| **With results (training rows)** | **1310** |
 
 ## Dataset Stats
 
 | Metric | Value |
 |---|---|
-| Dates covered | 22 |
-| Courses | 65 |
-| Strike rate | 19.7% |
-| Frame rate | 51.7% |
-| VP≥0.30 rows | 210 |
-| VP≥0.40 rows | 73 |
-| MDS>0.50 rows | 22 |
-| Improvement>0.40 rows | 29 |
-| Router-qualified rows | 27 |
-| Midprice advisory rows | 694 |
+| Dates covered | 38 |
+| Courses | 89 |
+| Strike rate | 20.9% |
+| Frame rate | 51.1% |
+| VP≥0.30 rows | 399 |
+| VP≥0.40 rows | 150 |
+| MDS>0.50 rows | 41 |
+| Improvement>0.40 rows | 56 |
+| Router-qualified rows | 32 |
+| Midprice advisory rows | 1278 |
 
 ## Column Split
 
