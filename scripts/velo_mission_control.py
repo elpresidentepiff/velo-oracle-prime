@@ -248,6 +248,51 @@ def _load_vp40_policy_status() -> dict[str, Any]:
         return {}
 
 
+def _load_vp40_tier_a_policy_status() -> dict[str, Any]:
+    """Load VP40_TIER_A shadow policy review for Mission Control advisory display."""
+    path = ROOT / "data" / "reports" / "vp40_tier_a_shadow_policy_review_latest.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        s = data.get("overall", {})
+        rec = data.get("recommendation", {})
+        outlier = data.get("outlier_analysis", {})
+        strip1 = next((r for r in outlier.get("strip_test", []) if r.get("excluding_top") == 1), {})
+        raw_sims = data.get("refined_simulations", {})
+        sims = raw_sims if isinstance(raw_sims, dict) else {s["name"]: s for s in raw_sims if "name" in s}
+        no_mid = sims.get("VP40_TIER_A_NO_MIDPRICE", {})
+        return {
+            "date": data.get("date"),
+            "n": s.get("n"),
+            "sr": s.get("sr"),
+            "frame_rate": s.get("frame_rate"),
+            "roi": s.get("roi"),
+            "verdict": rec.get("verdict"),
+            "critical_issues": rec.get("critical_issues", []),
+            "roi_without_top_winner": strip1.get("roi_stripped"),
+            "top_winner_horse": strip1.get("excluded_horse"),
+            "top_winner_sp": strip1.get("excluded_sp"),
+            "no_midprice_n": no_mid.get("n"),
+            "no_midprice_sr": no_mid.get("sr"),
+            "no_midprice_roi": no_mid.get("roi"),
+        }
+    except Exception:
+        return {}
+
+
+def _load_vp40_comparison() -> dict[str, Any]:
+    """Load VP40 vs VP40_TIER_A comparison report for Mission Control display."""
+    path = ROOT / "data" / "reports" / "vp40_vs_vp40_tier_a_comparison_latest.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data.get("comparison", {})
+    except Exception:
+        return {}
+
+
 def _load_corpus_progress() -> dict[str, Any]:
     """Read training corpus size from manifest or parquet and compute 2K progress."""
     manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
@@ -698,6 +743,47 @@ def main() -> None:
         else:
             print("  No critical issues.")
         print(f"  Next gate: n>=250 AND ROI stable without outlier winner")
+        print(f"  No live action. POLICY_SIMULATION_ONLY.")
+        print("─" * 62)
+
+    # ── VP40_TIER_A Policy Status ─────────────────────────────────────────────
+    vp40a_status = _load_vp40_tier_a_policy_status()
+    comparison = _load_vp40_comparison()
+    if vp40a_status:
+        print()
+        print("─" * 62)
+        print("VP40_TIER_A SHADOW POLICY STATUS (advisory, no live action)")
+        print("─" * 62)
+        verdict_a = vp40a_status.get("verdict", "?")
+        n_a = vp40a_status.get("n", "?")
+        sr_a = vp40a_status.get("sr", "?")
+        frame_a = vp40a_status.get("frame_rate", "?")
+        roi_a = vp40a_status.get("roi")
+        roi_ex_a = vp40a_status.get("roi_without_top_winner")
+        top_horse_a = vp40a_status.get("top_winner_horse", "?")
+        top_sp_a = vp40a_status.get("top_winner_sp", "?")
+        roi_a_str = f"{roi_a:+.1f}%" if roi_a is not None else "—"
+        roi_ex_a_str = f"{roi_ex_a:+.1f}%" if roi_ex_a is not None else "—"
+        print(f"  Verdict:          {verdict_a}")
+        print(f"  n={n_a}  SR={sr_a}%  Frame={frame_a}%  ROI={roi_a_str}")
+        print(f"  ROI ex-top-winner: {roi_ex_a_str} (ex {top_horse_a} SP={top_sp_a})")
+        nm_n = vp40a_status.get("no_midprice_n")
+        nm_sr = vp40a_status.get("no_midprice_sr")
+        nm_roi = vp40a_status.get("no_midprice_roi")
+        if nm_n is not None:
+            nm_roi_str = f"{nm_roi:+.1f}%" if nm_roi is not None else "—"
+            print(f"  NO_MIDPRICE sim:   n={nm_n}  SR={nm_sr}%  ROI={nm_roi_str}  [SP<3.0 or SP>8.5]")
+        critical_a = vp40a_status.get("critical_issues", [])
+        if critical_a:
+            for ci in critical_a:
+                print(f"  *** {ci[:90]}")
+        if comparison:
+            safer = comparison.get("materially_safer", {}).get("answer", "?")
+            same_outlier = comparison.get("roi_ex_top_winner", {}).get("same_outlier")
+            print(f"  vs VP40_LANE: {safer}")
+            if same_outlier:
+                print(f"  Outlier: {top_horse_a} SP={top_sp_a} is Tier A — same dependency in both lanes")
+        print(f"  Next gate: n>=250 AND ROI stable without Roysse")
         print(f"  No live action. POLICY_SIMULATION_ONLY.")
         print("─" * 62)
 
