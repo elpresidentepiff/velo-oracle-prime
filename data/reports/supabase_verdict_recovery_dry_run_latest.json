@@ -1,0 +1,119 @@
+{
+  "run_ts": "2026-05-17 12:56 UTC",
+  "mode": "DRY_RUN",
+  "local_verdict_dates": 40,
+  "local_result_dates": 55,
+  "supabase_vv_dates": 21,
+  "phase_a": {
+    "candidate_dates": 1,
+    "races": 22,
+    "training_safe_estimate": 0,
+    "fidelity": "FULL",
+    "details": [
+      {
+        "date": "2026-04-26",
+        "races": 22,
+        "has_results": false,
+        "training_safe_estimate": 0
+      }
+    ]
+  },
+  "phase_b": {
+    "candidate_dates": 12,
+    "vp_extracted_total": 301,
+    "fidelity": "PARTIAL_VP_ONLY",
+    "signal_warning": "mds/improvement/place_prob=null \u2192 likely Category G in corpus",
+    "details": [
+      {
+        "date": "2026-03-19",
+        "sigma_rows": 26,
+        "parseable": 0,
+        "vp_extracted": 0
+      },
+      {
+        "date": "2026-03-25",
+        "sigma_rows": 30,
+        "parseable": 0,
+        "vp_extracted": 0
+      },
+      {
+        "date": "2026-03-28",
+        "sigma_rows": 32,
+        "parseable": 32,
+        "vp_extracted": 32
+      },
+      {
+        "date": "2026-03-29",
+        "sigma_rows": 22,
+        "parseable": 22,
+        "vp_extracted": 22
+      },
+      {
+        "date": "2026-03-31",
+        "sigma_rows": 27,
+        "parseable": 27,
+        "vp_extracted": 27
+      },
+      {
+        "date": "2026-04-01",
+        "sigma_rows": 33,
+        "parseable": 33,
+        "vp_extracted": 33
+      },
+      {
+        "date": "2026-04-02",
+        "sigma_rows": 27,
+        "parseable": 27,
+        "vp_extracted": 27
+      },
+      {
+        "date": "2026-04-03",
+        "sigma_rows": 22,
+        "parseable": 22,
+        "vp_extracted": 22
+      },
+      {
+        "date": "2026-04-12",
+        "sigma_rows": 36,
+        "parseable": 36,
+        "vp_extracted": 36
+      },
+      {
+        "date": "2026-04-13",
+        "sigma_rows": 29,
+        "parseable": 29,
+        "vp_extracted": 29
+      },
+      {
+        "date": "2026-04-14",
+        "sigma_rows": 35,
+        "parseable": 35,
+        "vp_extracted": 35
+      },
+      {
+        "date": "2026-04-15",
+        "sigma_rows": 38,
+        "parseable": 38,
+        "vp_extracted": 38
+      }
+    ]
+  },
+  "files_written": [],
+  "gap_assessment": {
+    "category_a_estimated_rows": 620,
+    "category_a_estimated_dates": 30,
+    "recoverable_phase_a_full_fidelity": 22,
+    "recoverable_phase_b_partial": 301,
+    "unrecoverable_estimate": 319,
+    "root_cause": "Pre-2026-04-22 Railway scoring did not write to Supabase velo_verdicts. Supabase velo_verdicts only available from 2026-04-22 onwards. sigma_audits notes contain VP text only, no sidecar signals.",
+    "recommendation": "Accept SIGMA_2K_SAFE_TRAINING_SLICE_V1 (1310 rows) as the current baseline. Daily scoring accumulation is the growth path. Phase B reconstruction adds date coverage but limited training value."
+  },
+  "governance": {
+    "db_mutation": false,
+    "scoring_change": false,
+    "model_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "CORPUS_RECOVERY_AUDIT_ONLY"
+  }
+}
