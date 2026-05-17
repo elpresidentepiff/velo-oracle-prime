@@ -26,6 +26,7 @@ Usage:
 """
 
 import argparse
+import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -517,6 +518,10 @@ def main():
     # ── Build outputs ─────────────────────────────────────────────────────────
     md = build_md(results, total_rows, total_results, prev, run_ts)
 
+    named_lanes = _load_named_lane_stats()
+    if named_lanes:
+        md += _build_named_lane_section(named_lanes)
+
     csv_rows = []
     for r in results:
         csv_rows.append({
@@ -570,6 +575,60 @@ def main():
     print(f"  Snapshot:   {snap_csv.name}")
     print(f"              {snap_md.name}")
     print(f"  Ledger:     {LEDGER_PATH.name}  ({ledger_rows} total rows)")
+
+
+def _load_named_lane_stats() -> list[dict]:
+    """Load named signal lane stats from latest report. Returns empty list if not available."""
+    path = ROOT / "data" / "reports" / "named_signal_lanes_latest.json"
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data.get("lanes", [])
+    except Exception:
+        return []
+
+
+def _build_named_lane_section(lanes: list[dict]) -> str:
+    """Build a named signal lane summary section for appending to the router audit MD."""
+    lines = [
+        "",
+        "---",
+        "",
+        "## Named Signal Lanes (Advisory — No Router Change)",
+        "",
+        "Regime-awareness layer. Advisory tracking only. No scoring, routing, or staking impact.",
+        "",
+        "| Lane | n | SR | Frame | Status | Action |",
+        "|---|---|---|---|---|---|",
+    ]
+    ACTION_MAP = {
+        "MDS_HIGH_LANE":         "PRIORITY_WATCH",
+        "IMPROVER_LANE":         "PRIORITY_WATCH",
+        "VP40_TIER_A_LANE":      "PRIORITY_WATCH",
+        "VP40_LANE":             "WATCH",
+        "SHORTFAV_VP30":         "WATCH",
+        "MIDPRICE_ROUTER_QUAL":  "WATCH",
+        "MIDPRICE_SUPPRESS":     "SUPPRESS_ADVISORY",
+        "LONGSHOT_SUPPRESS":     "SUPPRESS_ADVISORY",
+    }
+    for lane in lanes:
+        name = lane.get("lane", "?")
+        n = lane.get("n", 0)
+        sr = lane.get("sr", 0.0)
+        fr = lane.get("frame", lane.get("frame_rate", 0.0))
+        status = lane.get("promotion_status", "?")
+        sample_warn = " ⚠️" if lane.get("sample_warning") else ""
+        action = ACTION_MAP.get(name, "—")
+        lines.append(
+            f"| {name} | {n} | {sr:.1f}% | {fr:.1f}% | {status}{sample_warn} | {action} |"
+        )
+    lines += [
+        "",
+        "*Source: data/reports/named_signal_lanes_latest.json*",
+        "*Governance: ADVISORY_TRACKING_ONLY | NO_SCORING_CHANGE | NO_ROUTER_CHANGE*",
+    ]
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":
