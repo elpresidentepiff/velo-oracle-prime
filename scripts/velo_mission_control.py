@@ -220,6 +220,34 @@ def _load_lane_outcome_summary() -> dict[str, Any]:
     return outcome
 
 
+def _load_vp40_policy_status() -> dict[str, Any]:
+    """Load VP40 shadow policy review for Mission Control advisory display."""
+    path = ROOT / "data" / "reports" / "vp40_shadow_policy_review_latest.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        s = data.get("overall", {})
+        rec = data.get("recommendation", {})
+        outlier = data.get("outlier_analysis", {})
+        strip1 = next((r for r in outlier.get("strip_test", []) if r.get("excluding_top") == 1), {})
+        return {
+            "date": data.get("date"),
+            "n": s.get("n"),
+            "sr": s.get("sr"),
+            "frame_rate": s.get("frame_rate"),
+            "roi": s.get("roi"),
+            "verdict": rec.get("verdict"),
+            "issues": rec.get("issues", []),
+            "critical_issues": rec.get("critical_issues", []),
+            "roi_without_top_winner": strip1.get("roi_stripped"),
+            "top_winner_horse": strip1.get("excluded_horse"),
+            "top_winner_sp": strip1.get("excluded_sp"),
+        }
+    except Exception:
+        return {}
+
+
 def _load_corpus_progress() -> dict[str, Any]:
     """Read training corpus size from manifest or parquet and compute 2K progress."""
     manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
@@ -641,6 +669,36 @@ def main() -> None:
                 print(f"  {lane_name}: n={cn} SR={sr:.1f}%  +{remaining} to n={gate_n}  ({est_days} at 3–5 rows/day)")
             else:
                 print(f"  {lane_name}: n={cn} SR={sr:.1f}%  GATE n={gate_n} REACHED")
+        print("─" * 62)
+
+    # ── VP40 Policy Status ────────────────────────────────────────────────────
+    vp40_status = _load_vp40_policy_status()
+    if vp40_status:
+        print()
+        print("─" * 62)
+        print("VP40 SHADOW POLICY STATUS (advisory, no live action)")
+        print("─" * 62)
+        verdict = vp40_status.get("verdict", "?")
+        n = vp40_status.get("n", "?")
+        sr = vp40_status.get("sr", "?")
+        frame = vp40_status.get("frame_rate", "?")
+        roi = vp40_status.get("roi")
+        roi_ex = vp40_status.get("roi_without_top_winner")
+        top_horse = vp40_status.get("top_winner_horse", "?")
+        top_sp = vp40_status.get("top_winner_sp", "?")
+        roi_str = f"{roi:+.1f}%" if roi is not None else "—"
+        roi_ex_str = f"{roi_ex:+.1f}%" if roi_ex is not None else "—"
+        print(f"  Verdict:          {verdict}")
+        print(f"  n={n}  SR={sr}%  Frame={frame}%  ROI={roi_str}")
+        print(f"  ROI ex-top-winner: {roi_ex_str} (ex {top_horse} SP={top_sp})")
+        critical = vp40_status.get("critical_issues", [])
+        if critical:
+            for ci in critical:
+                print(f"  *** {ci[:90]}")
+        else:
+            print("  No critical issues.")
+        print(f"  Next gate: n>=250 AND ROI stable without outlier winner")
+        print(f"  No live action. POLICY_SIMULATION_ONLY.")
         print("─" * 62)
 
     print(f"RP Coverage: {payload['racing_post']['status']} ({payload['racing_post']['coverage_pct']}%)")
