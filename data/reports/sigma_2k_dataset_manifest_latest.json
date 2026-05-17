@@ -1,0 +1,101 @@
+{
+  "build_ts": "2026-05-17 12:10 UTC",
+  "git_commit_sha": "5c88dd687836",
+  "feature_schema_version": "sigma_2k_v1",
+  "source_files": [
+    "/mnt/c/Users/puror/velo-oracle-prime/data/velo_unified_evidence_corpus_v1.csv",
+    "/mnt/c/Users/puror/velo-oracle-prime/data/velo_innovation_protocol_1k_deduped.csv"
+  ],
+  "row_counts": {
+    "corpus_raw": 794,
+    "ip_raw": 893,
+    "merged_total": 794,
+    "with_results": 721
+  },
+  "columns": {
+    "identity": [
+      "date",
+      "race_id",
+      "horse_id",
+      "horse",
+      "course",
+      "off_time",
+      "decision_tier",
+      "confidence_level",
+      "assigned_product",
+      "canonical_identity_source",
+      "canonical_result_source",
+      "canonical_signal_source"
+    ],
+    "prediction_features": [
+      "velo_prime_prob",
+      "sqpe_v17_prob",
+      "market_deception_score",
+      "improvement_score",
+      "place_prob",
+      "longshot_prob",
+      "release_day_prob",
+      "comment_intel_score",
+      "g_shadow_mode",
+      "router_v1_shadow_pass",
+      "router_v2_class4_shadow_pass",
+      "router_v6_gold_seam_watchlist",
+      "router_shadow_lane",
+      "power_anchor_mode",
+      "watch_only_mode",
+      "b_low_vp_suppress",
+      "racing_api_connection_shadow_score",
+      "racing_api_course_shadow_score",
+      "racing_api_distance_shadow_score",
+      "racing_api_enrichment_shadow_score",
+      "vp_band",
+      "vp40_flag",
+      "vp30_flag",
+      "mds_high_flag",
+      "mds_band",
+      "improver_high_flag",
+      "imp_band",
+      "router_qualified",
+      "midprice_router_suppression_advisory",
+      "race_type",
+      "class_num",
+      "field_size",
+      "going",
+      "distance",
+      "archetype",
+      "macro_chaos",
+      "candidate_execution_lane",
+      "candidate_execution_allowed"
+    ],
+    "result_labels": [
+      "result_position",
+      "won",
+      "placed",
+      "sp_decimal",
+      "actual_winner_sp",
+      "result_matched",
+      "sp_band"
+    ]
+  },
+  "dataset_stats": {
+    "dates": 22,
+    "courses": 65,
+    "sr_pct": 19.7,
+    "frame_pct": 51.7,
+    "vp30_n": 210,
+    "vp40_n": 73,
+    "mds_high_n": 22,
+    "improver_high_n": 29,
+    "router_qualified_n": 27,
+    "midprice_advisory_n": 694
+  },
+  "leakage_confirmed_false": true,
+  "consumed_live": 0,
+  "scoring_change": false,
+  "model_change": false,
+  "staking_change": false,
+  "artifacts": {
+    "parquet": "/mnt/c/Users/puror/velo-oracle-prime/data/training/sigma_2k_training_dataset_latest.parquet",
+    "json": "/mnt/c/Users/puror/velo-oracle-prime/data/training/sigma_2k_training_dataset_latest.json"
+  }
+}
