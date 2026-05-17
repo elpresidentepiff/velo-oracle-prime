@@ -179,6 +179,18 @@ def _load_verdict_summary(date: str) -> dict[str, Any]:
     }
 
 
+def _load_named_lane_corpus() -> dict[str, dict[str, Any]]:
+    """Load cumulative corpus n/SR per named lane from latest lane stats report."""
+    path = ROOT / "data" / "reports" / "named_signal_lanes_latest.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return {lane["lane"]: lane for lane in data.get("lanes", [])}
+    except Exception:
+        return {}
+
+
 def _load_corpus_progress() -> dict[str, Any]:
     """Read training corpus size from manifest or parquet and compute 2K progress."""
     manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
@@ -463,18 +475,81 @@ def main() -> None:
     print(f"  Tier A: {pred['tier_counts']['A']}  Tier B: {pred['tier_counts']['B']}  Tier C: {pred['tier_counts']['C']}")
     print(f"  MIDPRICE ADVISORY — Router-qualified: {mid.get('router_qualified_count',0)}  Suppressed advisory: {mid.get('router_suppressed_advisory_count',0)}")
 
-    # Named lane candidates — advisory display only
-    print("NAMED LANES (advisory only):")
-    for lane, info in named.items():
+    # ── Named Lane V2 Card ────────────────────────────────────────────────────
+    print()
+    print("=" * 62)
+    print("NAMED SIGNAL LANES — V2 CARD (advisory only, no execution)")
+    print("=" * 62)
+
+    # PRIORITY_WATCH — detailed horse cards
+    print("\n[PRIORITY_WATCH]")
+    pw_any = False
+    for lane, signal_key, label in [
+        ("MDS_HIGH_LANE",    "mds", "MDS"),
+        ("IMPROVER_LANE",    "imp", "IMP"),
+        ("VP40_TIER_A_LANE", None,  None),
+    ]:
+        info = named.get(lane, {})
+        horses = info.get("horses", [])
+        if not horses:
+            continue
+        pw_any = True
+        print(f"  {lane}  ({info.get('count', 0)} today)")
+        for c in horses[:5]:
+            h = c.get("horse", "?")
+            vp = c.get("vp", "?")
+            race = c.get("race", "?")
+            sig_str = f"  {label}={c[signal_key]}" if signal_key and signal_key in c else ""
+            tier_str = f"  [{c['tier']}]" if "tier" in c else ""
+            print(f"    {h:<22} VP={vp}{sig_str}{tier_str}  {race}")
+    if not pw_any:
+        print("  (none today)")
+
+    # WATCH — brief listing
+    print("\n[WATCH]")
+    for lane in ("VP40_LANE", "SHORTFAV_VP30", "MIDPRICE_ROUTER_QUAL"):
+        info = named.get(lane, {})
         n = info.get("count", 0)
-        horses = [c.get("horse", "?") for c in info.get("horses", [])]
+        names = [c.get("horse", "?") for c in info.get("horses", [])[:6]]
         if n:
-            print(f"  {lane}: {n} — {', '.join(horses[:5])}")
+            print(f"  {lane}: {n} — {', '.join(names)}")
         else:
             print(f"  {lane}: 0")
 
+    # SUPPRESS_ADVISORY — names as advisory reference
+    print("\n[SUPPRESS_ADVISORY]")
+    sup = named.get("MIDPRICE_SUPPRESS", {})
+    sup_n = sup.get("count", 0)
+    if sup_n:
+        sup_names = [c.get("horse", "?") for c in sup.get("horses", [])[:8]]
+        print(f"  MIDPRICE_SUPPRESS: {sup_n} — {', '.join(sup_names)}")
+    else:
+        print("  MIDPRICE_SUPPRESS: 0")
+
     # 2K milestone progress
-    print(f"SIGMA CORPUS: {corp.get('training_safe_rows', '?')}/{corp.get('milestone_2k_target', 2000)} training-safe rows ({corp.get('pct_to_2k', '?')}%) — {corp.get('rows_to_2k', '?')} to 2K")
+    print(f"\nSIGMA CORPUS: {corp.get('training_safe_rows', '?')}/{corp.get('milestone_2k_target', 2000)} "
+          f"training-safe rows ({corp.get('pct_to_2k', '?')}%) — {corp.get('rows_to_2k', '?')} to 2K")
+
+    # Next review thresholds from cumulative corpus stats
+    corpus_lanes = _load_named_lane_corpus()
+    if corpus_lanes:
+        print("NEXT REVIEW THRESHOLDS (corpus):")
+        gates = [
+            ("MDS_HIGH_LANE", 50, "SHADOW_LANE_TRACKING"),
+            ("IMPROVER_LANE", 100, "shadow policy discussion"),
+            ("VP40_LANE", 300, "model weight discussion"),
+            ("MIDPRICE_ROUTER_QUAL", 50, "advisory promotion"),
+        ]
+        for lane_name, gate_n, gate_label in gates:
+            cl = corpus_lanes.get(lane_name, {})
+            cn = cl.get("n", 0)
+            remaining = max(0, gate_n - cn)
+            sr = cl.get("sr", 0.0)
+            if remaining > 0:
+                print(f"  {lane_name}: n={cn} SR={sr:.1f}%  →  +{remaining} to n={gate_n} ({gate_label})")
+            else:
+                print(f"  {lane_name}: n={cn} SR={sr:.1f}%  →  GATE REACHED (n={gate_n}, {gate_label})")
+    print("=" * 62)
 
     print(f"RP Coverage: {payload['racing_post']['status']} ({payload['racing_post']['coverage_pct']}%)")
     print(f"CASHRUN: WATCH={payload['cashrun']['watch']}")
