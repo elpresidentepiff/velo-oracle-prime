@@ -1,0 +1,63 @@
+{
+  "run_ts": "2026-05-17 16:47 UTC",
+  "date": "2026-05-17",
+  "comparison": {
+    "n_retained": {
+      "vp40": 150,
+      "vp40_tier_a": 132,
+      "removed": 18,
+      "retained_pct": 88.0
+    },
+    "winners_retained": {
+      "vp40": 68,
+      "vp40_tier_a": 59,
+      "winners_removed": 9
+    },
+    "losers_removed": 9,
+    "sr_delta": {
+      "vp40": 45.3,
+      "vp40_tier_a": 44.7,
+      "delta": "-0.6"
+    },
+    "frame_delta": {
+      "vp40": 80.7,
+      "vp40_tier_a": 80.3,
+      "delta": "-0.4"
+    },
+    "roi_delta": {
+      "vp40": 8.2,
+      "vp40_tier_a": 9.4,
+      "delta": "+1.2"
+    },
+    "roi_ex_top_winner": {
+      "vp40": -13.9,
+      "vp40_tier_a": -15.7,
+      "same_outlier": true,
+      "outlier_horse": "Roysse",
+      "outlier_sp": 34.0
+    },
+    "midprice_drain": {
+      "vp40_n": 45,
+      "vp40_sr": 17.8,
+      "vp40_roi": -18.9,
+      "vp40a_n": 37,
+      "vp40a_sr": 16.2,
+      "vp40a_roi": -23.0,
+      "drain_reduced": true
+    },
+    "verdict_vp40": "WATCH_ONLY",
+    "verdict_vp40a": "WATCH_ONLY",
+    "materially_safer": {
+      "answer": "MARGINALLY \u2014 same critical failures",
+      "detail": "VP40_TIER_A removes 18 noisy rows (Tier B/C/X) but Roysse is Tier A, so both lanes share the same outlier dependency. Midprice drain persists within Tier A at SP3.0-8.5 (SR=16.2%, ROI=-23.0%). The Tier A filter is not a fix for the structural problems \u2014 it is a tighter lens on the same edge."
+    }
+  },
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "router_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "POLICY_SIMULATION_ONLY"
+  }
+}
