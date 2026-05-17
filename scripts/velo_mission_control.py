@@ -191,6 +191,35 @@ def _load_named_lane_corpus() -> dict[str, dict[str, Any]]:
         return {}
 
 
+def _load_lane_outcome_summary() -> dict[str, Any]:
+    """Load lane outcome tracker and promotion gate report for Mission Control display."""
+    outcome: dict[str, Any] = {}
+    tracker_path = ROOT / "data" / "reports" / "named_lane_outcome_tracker_latest.json"
+    gate_path = ROOT / "data" / "reports" / "named_lane_promotion_gate_report_latest.json"
+
+    if tracker_path.exists():
+        try:
+            data = json.loads(tracker_path.read_text(encoding="utf-8"))
+            outcome["tracker_date"] = data.get("date")
+            outcome["lanes"] = {lane["lane"]: lane for lane in data.get("lanes", [])}
+            outcome["today_candidates"] = data.get("today_candidates", {})
+        except Exception:
+            pass
+
+    if gate_path.exists():
+        try:
+            data = json.loads(gate_path.read_text(encoding="utf-8"))
+            by_lane = {}
+            for r in data.get("results", []):
+                gs = r.get("gate_analysis", {})
+                by_lane[r["lane"]] = {"verdict": gs.get("verdict"), "gates_passed": gs.get("gates_passed"), "gates_total": gs.get("gates_total")}
+            outcome["gate_verdicts"] = by_lane
+        except Exception:
+            pass
+
+    return outcome
+
+
 def _load_corpus_progress() -> dict[str, Any]:
     """Read training corpus size from manifest or parquet and compute 2K progress."""
     manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
@@ -550,6 +579,69 @@ def main() -> None:
             else:
                 print(f"  {lane_name}: n={cn} SR={sr:.1f}%  →  GATE REACHED (n={gate_n}, {gate_label})")
     print("=" * 62)
+
+    # ── Lane Outcome Closure Section ─────────────────────────────────────────
+    lane_outcomes = _load_lane_outcome_summary()
+    if lane_outcomes.get("lanes"):
+        print()
+        print("─" * 62)
+        print("LANE OUTCOME CLOSURE (from outcome tracker + gate report)")
+        print("─" * 62)
+        tracker_date = lane_outcomes.get("tracker_date", "?")
+        print(f"Tracker date: {tracker_date}")
+        print()
+
+        gate_verdicts = lane_outcomes.get("gate_verdicts", {})
+        lanes_data = lane_outcomes.get("lanes", {})
+
+        # Priority lanes: show outcome health
+        print("Outcome health by action:")
+        for group_label, group_lanes in [
+            ("PRIORITY_WATCH", ["MDS_HIGH_LANE", "IMPROVER_LANE", "VP40_TIER_A_LANE"]),
+            ("WATCH",          ["VP40_LANE", "SHORTFAV_VP30", "MIDPRICE_ROUTER_QUAL"]),
+            ("SUPPRESS_ADV",   ["MIDPRICE_SUPPRESS", "LONGSHOT_SUPPRESS"]),
+        ]:
+            print(f"  [{group_label}]")
+            for lane_name in group_lanes:
+                ld = lanes_data.get(lane_name, {})
+                gv = gate_verdicts.get(lane_name, {})
+                if not ld:
+                    continue
+                n = ld.get("n", 0)
+                sr = ld.get("sr", 0.0)
+                roi = ld.get("roi")
+                roi_str = f" ROI={roi:+.1f}%" if roi is not None else ""
+                verdict = gv.get("verdict", "?")
+                gates_str = f"{gv.get('gates_passed', '?')}/{gv.get('gates_total', '?')}" if gv else "?"
+                coll = ld.get("collapse_check", {}).get("status", "")
+                coll_str = f" *** COLLAPSE ***" if coll == "COLLAPSE_WARNING" else ""
+                print(f"    {lane_name:<24} n={n:>4} SR={sr:.1f}%{roi_str}  [{verdict}] {gates_str} gates{coll_str}")
+
+        # Shadow policy candidates alert
+        sp_cands = [ln for ln, gv in gate_verdicts.items() if gv.get("verdict") == "SHADOW_POLICY_CANDIDATE"]
+        if sp_cands:
+            print()
+            print(f"*** SHADOW_POLICY_CANDIDATE: {', '.join(sp_cands)}")
+            print("    Operator promotion discussion required.")
+
+        # Weekly health: next review date estimate
+        print()
+        print("Next promotion review thresholds:")
+        review_gates = [
+            ("MDS_HIGH_LANE", 50), ("IMPROVER_LANE", 100),
+            ("VP40_LANE", 300), ("MIDPRICE_ROUTER_QUAL", 50),
+        ]
+        for lane_name, gate_n in review_gates:
+            ld = lanes_data.get(lane_name, {})
+            cn = ld.get("n", 0)
+            remaining = max(0, gate_n - cn)
+            sr = ld.get("sr", 0.0)
+            est_days = f"~{remaining // 5}–{remaining // 3} days" if remaining > 0 else "REACHED"
+            if remaining > 0:
+                print(f"  {lane_name}: n={cn} SR={sr:.1f}%  +{remaining} to n={gate_n}  ({est_days} at 3–5 rows/day)")
+            else:
+                print(f"  {lane_name}: n={cn} SR={sr:.1f}%  GATE n={gate_n} REACHED")
+        print("─" * 62)
 
     print(f"RP Coverage: {payload['racing_post']['status']} ({payload['racing_post']['coverage_pct']}%)")
     print(f"CASHRUN: WATCH={payload['cashrun']['watch']}")
