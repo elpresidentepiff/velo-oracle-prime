@@ -22,6 +22,10 @@ VP40_THRESHOLD = 0.40
 MDS_HIGH_THRESHOLD = 0.50
 IMPROVEMENT_HIGH_THRESHOLD = 0.40
 IMPROVEMENT_ANY_THRESHOLD = 0.20
+SP_MIDPRICE_LOW = 3.0
+SP_MIDPRICE_HIGH = 8.5
+TRAINING_SAFE_BASELINE = 1310
+TRAINING_2K_TARGET = 2000
 
 # Router lane labels that indicate a qualified selection
 ROUTER_QUALIFIED_LANES = {"V1_BASE", "V2_CLASS4", "V6_GOLD_SEAM"}
@@ -95,29 +99,60 @@ def _load_verdict_summary(date: str) -> dict[str, Any]:
     router_suppressed_advisory_count = 0
     suppressed_horses: list[dict[str, Any]] = []
 
+    lane_candidates: dict[str, list[dict[str, Any]]] = {
+        "MDS_HIGH_LANE": [],
+        "IMPROVER_LANE": [],
+        "VP40_LANE": [],
+        "VP40_TIER_A_LANE": [],
+        "SHORTFAV_VP30": [],
+        "MIDPRICE_ROUTER_QUAL": [],
+        "MIDPRICE_SUPPRESS": [],
+    }
+
     for row in rows:
         tier = str(row.get("tier", "X")).upper()
         if tier in tier_counts:
             tier_counts[tier] += 1
         top = row.get("top") or {}
         vp = float(top.get("velo_prime_prob") or 0.0)
+        mds = float(top.get("market_deception_score") or 0.0)
+        imp = float(top.get("improvement_score") or 0.0)
+        sp = float(top.get("sp_decimal") or 0.0)
+        horse = top.get("horse", "?")
+        race_label = f"{row.get('course','?')} {row.get('off_time','?')}"
+        candidate_base = {"horse": horse, "race": race_label, "vp": round(vp, 3)}
+
         if vp >= VP30_THRESHOLD:
             vp30_count += 1
         if vp >= VP40_THRESHOLD:
             vp40_count += 1
-        if float(top.get("market_deception_score") or 0.0) > MDS_HIGH_THRESHOLD:
+            lane_candidates["VP40_LANE"].append({**candidate_base, "tier": tier})
+            if tier == "A":
+                lane_candidates["VP40_TIER_A_LANE"].append({**candidate_base, "tier": tier})
+        if mds > MDS_HIGH_THRESHOLD:
             mds_high_count += 1
-        if float(top.get("improvement_score") or 0.0) >= IMPROVEMENT_HIGH_THRESHOLD:
+            if vp >= VP30_THRESHOLD:
+                lane_candidates["MDS_HIGH_LANE"].append({**candidate_base, "mds": round(mds, 3)})
+        if imp >= IMPROVEMENT_HIGH_THRESHOLD:
             improvement_high_count += 1
+            if vp >= VP30_THRESHOLD:
+                lane_candidates["IMPROVER_LANE"].append({**candidate_base, "imp": round(imp, 3)})
+        if sp > 0 and sp < SP_MIDPRICE_LOW and vp >= VP30_THRESHOLD:
+            lane_candidates["SHORTFAV_VP30"].append({**candidate_base, "sp": sp})
+
         # Midprice router advisory — advisory flag only, no scoring impact
         qualified = _is_router_qualified(top)
         if qualified:
             router_qualified_count += 1
+            if SP_MIDPRICE_LOW <= sp <= SP_MIDPRICE_HIGH:
+                lane_candidates["MIDPRICE_ROUTER_QUAL"].append({**candidate_base, "sp": sp})
         else:
             router_suppressed_advisory_count += 1
+            if SP_MIDPRICE_LOW <= sp <= SP_MIDPRICE_HIGH:
+                lane_candidates["MIDPRICE_SUPPRESS"].append({**candidate_base, "sp": sp})
             suppressed_horses.append({
-                "race": f"{row.get('course','?')} {row.get('off_time','?')}",
-                "horse": top.get("horse", "?"),
+                "race": race_label,
+                "horse": horse,
                 "vp": round(vp, 3),
                 "tier": tier,
                 "lane": top.get("candidate_execution_lane", ""),
@@ -131,12 +166,40 @@ def _load_verdict_summary(date: str) -> dict[str, Any]:
         "mds_high_count": mds_high_count,
         "improvement_high_count": improvement_high_count,
         "tier_counts": tier_counts,
+        "named_lanes": {
+            lane: {"count": len(cands), "horses": cands[:10]}
+            for lane, cands in lane_candidates.items()
+        },
         "midprice_advisory": {
             "router_qualified_count": router_qualified_count,
             "router_suppressed_advisory_count": router_suppressed_advisory_count,
             "suppressed_horses": suppressed_horses[:20],
             "note": "ADVISORY ONLY — no scoring or staking change",
         },
+    }
+
+
+def _load_corpus_progress() -> dict[str, Any]:
+    """Read training corpus size from manifest or parquet and compute 2K progress."""
+    manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            n = int(manifest.get("result_matched_rows") or manifest.get("rows_with_results", 0))
+        except Exception:
+            n = TRAINING_SAFE_BASELINE
+    else:
+        n = TRAINING_SAFE_BASELINE
+
+    rows_to_2k = TRAINING_2K_TARGET - n
+    pct = round(n / TRAINING_2K_TARGET * 100, 1)
+    return {
+        "training_safe_rows": n,
+        "milestone_2k_target": TRAINING_2K_TARGET,
+        "rows_to_2k": rows_to_2k,
+        "pct_to_2k": pct,
+        "corpus_name": "SIGMA_2K_SAFE_TRAINING_SLICE_V1",
+        "growth_path": "daily_clean_accumulation",
     }
 
 
@@ -317,6 +380,7 @@ def build_mission_control(date: str) -> dict[str, Any]:
 
     run_truth = _load_run_truth(date)
     prediction = _load_verdict_summary(date)
+    corpus_progress = _load_corpus_progress()
     racing_post = _load_rp_summary(date, prediction["verdict_count"])
     cashrun = _load_cashrun_summary(date)
     convergence = _load_convergence_summary(date)
@@ -348,6 +412,7 @@ def build_mission_control(date: str) -> dict[str, Any]:
         "blocked_reason": blocked_reason,
         "latest_prediction_job": (run_truth or {}).get("latest_pipeline_run"),
         "prediction": prediction,
+        "corpus_progress": corpus_progress,
         "racing_post": racing_post,
         "cashrun": cashrun,
         "convergence": convergence,
@@ -389,11 +454,28 @@ def main() -> None:
     payload = build_mission_control(args.date)
     pred = payload["prediction"]
     mid = pred.get("midprice_advisory", {})
+    named = pred.get("named_lanes", {})
+    corp = payload.get("corpus_progress", {})
+
     print(f"VELO Mission Control - {payload['date']}")
     print(f"Prediction: {pred['status']}  Verdicts={pred['verdict_count']}")
     print(f"  VP≥0.30: {pred['vp30_count']}  VP≥0.40: {pred['vp40_count']}  MDS_HIGH: {pred['mds_high_count']}  IMPROVER: {pred['improvement_high_count']}")
     print(f"  Tier A: {pred['tier_counts']['A']}  Tier B: {pred['tier_counts']['B']}  Tier C: {pred['tier_counts']['C']}")
     print(f"  MIDPRICE ADVISORY — Router-qualified: {mid.get('router_qualified_count',0)}  Suppressed advisory: {mid.get('router_suppressed_advisory_count',0)}")
+
+    # Named lane candidates — advisory display only
+    print("NAMED LANES (advisory only):")
+    for lane, info in named.items():
+        n = info.get("count", 0)
+        horses = [c.get("horse", "?") for c in info.get("horses", [])]
+        if n:
+            print(f"  {lane}: {n} — {', '.join(horses[:5])}")
+        else:
+            print(f"  {lane}: 0")
+
+    # 2K milestone progress
+    print(f"SIGMA CORPUS: {corp.get('training_safe_rows', '?')}/{corp.get('milestone_2k_target', 2000)} training-safe rows ({corp.get('pct_to_2k', '?')}%) — {corp.get('rows_to_2k', '?')} to 2K")
+
     print(f"RP Coverage: {payload['racing_post']['status']} ({payload['racing_post']['coverage_pct']}%)")
     print(f"CASHRUN: WATCH={payload['cashrun']['watch']}")
     print(f"Sigma: {payload['sigma']['status']}")

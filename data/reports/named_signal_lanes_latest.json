@@ -1,0 +1,222 @@
+{
+  "run_ts": "2026-05-17 13:12 UTC",
+  "date": "2026-05-17",
+  "training_rows": 1310,
+  "global_sr": 19.7,
+  "global_frame": 51.7,
+  "lanes": [
+    {
+      "lane": "MDS_HIGH_LANE",
+      "n": 39,
+      "wins": 27,
+      "placed": 36,
+      "sr": 69.2,
+      "frame": 92.3,
+      "roi": -7.2,
+      "avg_sp": 1.58,
+      "median_sp": 1.44,
+      "sr_delta": 49.5,
+      "frame_delta": 40.6,
+      "sample_warning": true,
+      "promotion_status": "PROVEN",
+      "description": "VP>=0.30 AND MDS>0.50 \u2014 crown jewel signal"
+    },
+    {
+      "lane": "IMPROVER_LANE",
+      "n": 38,
+      "wins": 16,
+      "placed": 29,
+      "sr": 42.1,
+      "frame": 76.3,
+      "roi": -36.3,
+      "avg_sp": 2.49,
+      "median_sp": 1.92,
+      "sr_delta": 22.4,
+      "frame_delta": 24.6,
+      "sample_warning": true,
+      "promotion_status": "PROVEN",
+      "description": "VP>=0.30 AND improvement_score>0.40"
+    },
+    {
+      "lane": "VP40_LANE",
+      "n": 150,
+      "wins": 68,
+      "placed": 121,
+      "sr": 45.3,
+      "frame": 80.7,
+      "roi": 8.2,
+      "avg_sp": 3.45,
+      "median_sp": 2.25,
+      "sr_delta": 25.6,
+      "frame_delta": 29.0,
+      "sample_warning": false,
+      "promotion_status": "PROVEN",
+      "description": "VP>=0.40"
+    },
+    {
+      "lane": "VP40_TIER_A_LANE",
+      "n": 132,
+      "wins": 59,
+      "placed": 106,
+      "sr": 44.7,
+      "frame": 80.3,
+      "roi": 9.4,
+      "avg_sp": 3.32,
+      "median_sp": 2.0,
+      "sr_delta": 25.0,
+      "frame_delta": 28.6,
+      "sample_warning": false,
+      "promotion_status": "PROVEN",
+      "description": "VP>=0.40 AND tier A"
+    },
+    {
+      "lane": "SHORTFAV_VP30",
+      "n": 186,
+      "wins": 97,
+      "placed": 158,
+      "sr": 52.2,
+      "frame": 84.9,
+      "roi": -9.5,
+      "avg_sp": 1.89,
+      "median_sp": 1.81,
+      "sr_delta": 32.5,
+      "frame_delta": 33.2,
+      "sample_warning": false,
+      "promotion_status": "PROVEN",
+      "description": "SP<3.0 AND VP>=0.30 \u2014 short-price + high conviction"
+    },
+    {
+      "lane": "MIDPRICE_ROUTER_QUAL",
+      "n": 18,
+      "wins": 6,
+      "placed": 13,
+      "sr": 33.3,
+      "frame": 72.2,
+      "roi": 12.5,
+      "avg_sp": 3.44,
+      "median_sp": 3.5,
+      "sr_delta": 13.6,
+      "frame_delta": 20.5,
+      "sample_warning": true,
+      "promotion_status": "INSUFFICIENT_SAMPLE",
+      "description": "SP 3.0\u20138.5 AND router qualified (V1/V2/V6)"
+    },
+    {
+      "lane": "MIDPRICE_SUPPRESS",
+      "n": 545,
+      "wins": 87,
+      "placed": 284,
+      "sr": 16.0,
+      "frame": 52.1,
+      "roi": -23.1,
+      "avg_sp": 5.21,
+      "median_sp": 5.0,
+      "sr_delta": -3.7,
+      "frame_delta": 0.4,
+      "sample_warning": false,
+      "promotion_status": "SUPPRESS_CONFIRMED",
+      "description": "SP 3.0\u20138.5 AND no router \u2014 advisory suppression"
+    },
+    {
+      "lane": "LONGSHOT_SUPPRESS",
+      "n": 413,
+      "wins": 26,
+      "placed": 101,
+      "sr": 6.3,
+      "frame": 24.5,
+      "roi": -11.7,
+      "avg_sp": 20.38,
+      "median_sp": 15.0,
+      "sr_delta": -13.4,
+      "frame_delta": -27.2,
+      "sample_warning": false,
+      "promotion_status": "SUPPRESS_CONFIRMED",
+      "description": "SP>8.5 \u2014 confirmed dead zone"
+    }
+  ],
+  "today_candidates": {
+    "IMPROVER_LANE": [
+      {
+        "horse": "Ride The Thunder",
+        "race": "Hamilton 16:45",
+        "vp": 0.382,
+        "mds": 0.308,
+        "imp": 0.411,
+        "sp": 0.0,
+        "tier": "low"
+      }
+    ],
+    "VP40_LANE": [
+      {
+        "horse": "Plaid",
+        "race": "Hamilton 17:45",
+        "vp": 0.448,
+        "mds": 0.279,
+        "imp": 0.34,
+        "sp": 0.0,
+        "tier": "low"
+      },
+      {
+        "horse": "Trojan Soldier",
+        "race": "Ripon 14:17",
+        "vp": 0.467,
+        "mds": 0.232,
+        "imp": 0.311,
+        "sp": 0.0,
+        "tier": "low"
+      },
+      {
+        "horse": "Cawthorne Cracker",
+        "race": "Stratford 15:05",
+        "vp": 0.554,
+        "mds": 0.053,
+        "imp": 0.116,
+        "sp": 0.0,
+        "tier": "low"
+      },
+      {
+        "horse": "A Little Something",
+        "race": "Stratford 16:05",
+        "vp": 0.457,
+        "mds": 0.28,
+        "imp": 0.2,
+        "sp": 0.0,
+        "tier": "low"
+      },
+      {
+        "horse": "Arrycan",
+        "race": "Stratford 17:05",
+        "vp": 0.673,
+        "mds": 0.243,
+        "imp": 0.182,
+        "sp": 0.0,
+        "tier": "low"
+      },
+      {
+        "horse": "Lightsoutandaway",
+        "race": "Stratford 17:35",
+        "vp": 0.522,
+        "mds": 0.015,
+        "imp": 0.087,
+        "sp": 0.0,
+        "tier": "low"
+      }
+    ]
+  },
+  "corpus_progress": {
+    "training_safe_rows": 1310,
+    "milestone_2k": 2000,
+    "rows_to_2k": 690,
+    "pct_to_2k": 65.5,
+    "corpus_name": "SIGMA_2K_SAFE_TRAINING_SLICE_V1",
+    "growth_path": "daily_clean_accumulation"
+  },
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "router_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "ADVISORY_TRACKING_ONLY"
+  }
+}
