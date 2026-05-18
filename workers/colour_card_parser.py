@@ -66,6 +66,24 @@ BREEDING_RE = re.compile(r"^(?:b|ch|gr|ro|br|bl)\s+(?:g|m|c|f|h)\s+", re.IGNOREC
 # Trainer/owner line: two or more words, no numbers
 TRAINER_RE = re.compile(r"^[A-Za-z\s\'\.\,\&\(\)\-]+$")
 
+# Stall-owner-trainer line: (stall) OWNER NAME  T Surname
+# e.g. "(6) Homecroft Wealth Racing R Teal"
+STALL_LINE_RE = re.compile(r"^\((\d+)\)\s+(.+)$")
+
+
+def _extract_trainer_from_stall_line(text: str) -> tuple[str, str]:
+    """Return (owner, trainer) from '(stall) OWNER T Surname' text.
+
+    Trainer in RP colour cards is always the last 2 words (Initial Surname).
+    E.g. 'Homecroft Wealth Racing R Teal' → owner='Homecroft Wealth Racing', trainer='R Teal'
+    """
+    words = text.strip().split()
+    if len(words) >= 2:
+        return " ".join(words[:-2]), " ".join(words[-2:])
+    if words:
+        return "", words[-1]
+    return "", ""
+
 FORECAST_RE = re.compile(r"^Betting forecast:\s*(.+)", re.IGNORECASE)
 SPOTLIGHT_RE = re.compile(r"^SPOTLIGHT VERDICT\s+(.*)", re.IGNORECASE)
 PREV_WINNER_RE = re.compile(r"^\d{4}\s+\(\d+\s+ran\)")
@@ -268,6 +286,19 @@ def parse_colour_card_pdf(path: Path) -> dict:
                     # Breeding line
                     if BREEDING_RE.match(line):
                         current_horse["breeding"] = line
+                        sub_line += 1
+                        continue
+
+                    # Stall-owner-trainer line: "(6) Homecroft Wealth Racing R Teal"
+                    # Must come before TRAINER_RE check — this line has digits.
+                    m_stall = STALL_LINE_RE.match(line)
+                    if m_stall:
+                        owner_trainer_text = m_stall.group(2)
+                        owner, trainer = _extract_trainer_from_stall_line(owner_trainer_text)
+                        if not current_horse["owner"]:
+                            current_horse["owner"] = owner
+                        if not current_horse["trainer"]:
+                            current_horse["trainer"] = trainer
                         sub_line += 1
                         continue
 

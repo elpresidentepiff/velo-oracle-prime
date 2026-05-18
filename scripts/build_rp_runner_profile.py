@@ -195,9 +195,62 @@ def _load_jtcd_profiles() -> dict[str, pd.DataFrame | None]:
     return profiles
 
 
+def _build_trainer_surname_map(profiles: dict) -> dict[str, list[str]]:
+    """Build {SURNAME_UPPER: [full_trainer_name, ...]} index from JTC-D trainer tables.
+
+    RP colour cards use 'Initial Surname' format (e.g. 'D Easterby').
+    Raceform uses full names (e.g. 'Tim Easterby').
+    This map resolves 'D Easterby' → 'Tim Easterby' via surname + initial matching.
+    """
+    names: set[str] = set()
+    for key in ["trainer_course", "trainer_dist", "trainer_jockey"]:
+        df = profiles.get(key)
+        if df is not None and "trainer" in df.columns:
+            names.update(df["trainer"].dropna().unique())
+    surname_map: dict[str, list[str]] = {}
+    for name in names:
+        parts = str(name).split()
+        if parts:
+            surname = parts[-1].upper()
+            surname_map.setdefault(surname, [])
+            if name not in surname_map[surname]:
+                surname_map[surname].append(name)
+    return surname_map
+
+
+def _resolve_trainer_name(raw: str, surname_map: dict[str, list[str]]) -> str:
+    """Resolve RP 'Initial Surname' to raceform full name via surname map.
+
+    'D Easterby' → finds all trainers with surname 'EASTERBY', narrows by initial 'D'.
+    Returns resolved full name, or original if no unique match found.
+    """
+    if not raw:
+        return raw
+    parts = raw.strip().split()
+    if len(parts) < 2:
+        return raw
+    surname = parts[-1].upper()
+    initial = parts[-2][0].upper() if parts[-2] else ""
+    candidates = surname_map.get(surname, [])
+    if not candidates:
+        return raw   # surname not in raceform — return as-is
+    if len(candidates) == 1:
+        return candidates[0]
+    # Narrow by initial
+    narrowed = [c for c in candidates if c.split()[0][0].upper() == initial]
+    if len(narrowed) == 1:
+        return narrowed[0]
+    if narrowed:
+        return narrowed[0]  # best guess: first alphabetically matching initial
+    return candidates[0]   # last resort: first match by surname only
+
+
 def _lookup_jtcd(profiles: dict, trainer: str, jockey: str,
-                  course: str, dist_band: str) -> dict:
-    out: dict = {}
+                  course: str, dist_band: str,
+                  surname_map: dict[str, list[str]] | None = None) -> dict:
+    # Resolve trainer to raceform full name before lookup
+    resolved_trainer = _resolve_trainer_name(trainer, surname_map) if surname_map else trainer
+    out: dict = {"_trainer_resolved": resolved_trainer}
 
     def _get(df: pd.DataFrame | None, key_cols: list, key_vals: list) -> float | None:
         if df is None or not all(key_vals):
@@ -210,11 +263,11 @@ def _lookup_jtcd(profiles: dict, trainer: str, jockey: str,
         rows = df[mask]
         return round(float(rows.iloc[0]["jtc_signal"]), 4) if len(rows) > 0 else None
 
-    out["trainer_course_sr"] = _get(profiles["trainer_course"], ["trainer", "course"], [trainer, course])
-    out["trainer_dist_sr"] = _get(profiles["trainer_dist"], ["trainer", "dist_band"], [trainer, dist_band])
-    out["jockey_course_sr"] = _get(profiles["jockey_course"], ["jockey", "course"], [jockey, course])
-    out["jockey_dist_sr"] = _get(profiles["jockey_dist"], ["jockey", "dist_band"], [jockey, dist_band])
-    out["trainer_jockey_sr"] = _get(profiles["trainer_jockey"], ["trainer", "jockey"], [trainer, jockey])
+    out["trainer_course_sr"]  = _get(profiles["trainer_course"],  ["trainer", "course"],    [resolved_trainer, course])
+    out["trainer_dist_sr"]    = _get(profiles["trainer_dist"],    ["trainer", "dist_band"],  [resolved_trainer, dist_band])
+    out["jockey_course_sr"]   = _get(profiles["jockey_course"],   ["jockey",  "course"],     [jockey, course])
+    out["jockey_dist_sr"]     = _get(profiles["jockey_dist"],     ["jockey",  "dist_band"],  [jockey, dist_band])
+    out["trainer_jockey_sr"]  = _get(profiles["trainer_jockey"],  ["trainer", "jockey"],     [resolved_trainer, jockey])
     return out
 
 
@@ -281,10 +334,12 @@ def main():
     bridge = _build_racecard_bridge(date)
     print(f"Identity bridge: {len(bridge)} horses from Racing API snapshot")
 
-    # ── Step 4: JTC-D profiles ───────────────────────────────────
+    # ── Step 4: JTC-D profiles + trainer surname map ─────────────
     jtcd = _load_jtcd_profiles()
     jtcd_available = sum(1 for v in jtcd.values() if v is not None)
-    print(f"JTC-D profiles: {jtcd_available}/5 tables loaded")
+    trainer_surname_map = _build_trainer_surname_map(jtcd)
+    print(f"JTC-D profiles: {jtcd_available}/5 tables loaded | "
+          f"trainer surname map: {len(trainer_surname_map):,} surnames")
 
     # ── Step 5: Parse colour cards ───────────────────────────────
     all_rows: list[dict] = []
@@ -321,16 +376,19 @@ def main():
                 norm_name = normalize_horse_name(horse_name)
                 id_data = bridge.get(norm_name, {})
 
-                # Jockey from colour card (more reliable per-race than API for same day)
+                # Jockey: colour card primary, Racing API fallback
                 jockey_cc = horse_data.get("jockey", "")
                 jockey = jockey_cc or id_data.get("jockey", "")
                 jockey_id = id_data.get("jockey_id")
 
-                trainer = id_data.get("trainer", "")
+                # Trainer: colour card primary, Racing API fallback
+                # Racing API bridge is optional enrichment — 401 is not a blocker
+                trainer_cc = horse_data.get("trainer", "")
+                trainer = trainer_cc or id_data.get("trainer", "")
                 trainer_id = id_data.get("trainer_id")
                 horse_id = id_data.get("horse_id")
 
-                jtcd_data = _lookup_jtcd(jtcd, trainer, jockey, venue, dist_band)
+                jtcd_data = _lookup_jtcd(jtcd, trainer, jockey, venue, dist_band, trainer_surname_map)
 
                 # OR/TS/RPR: colour card is authoritative (from RP PDF, not API)
                 cc_or = horse_data.get("cc_or")
