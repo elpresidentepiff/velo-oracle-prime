@@ -1,0 +1,199 @@
+{
+  "run_ts": "2026-05-17 17:21 UTC",
+  "date": "2026-05-17",
+  "bands": [
+    {
+      "name": "VP40_TIER_A_ALL",
+      "description": "All VP40_TIER_A (baseline)",
+      "stats": {
+        "n": 132,
+        "wins": 59,
+        "frames": 106,
+        "sr": 44.7,
+        "frame_rate": 80.3,
+        "roi": 10.3,
+        "avg_sp": 3.32,
+        "median_sp": 2.0,
+        "max_sp": 34.0,
+        "roi_ex_top1": -15.1,
+        "top_winner": "Roysse",
+        "top_winner_sp": 34.0,
+        "top1_pct": 23.5,
+        "top3_pct": 32.9,
+        "llr": 7,
+        "llr_pct": 5.3
+      },
+      "stability": "UNSTABLE: OUTLIER_DEP+WINNER_CONC"
+    },
+    {
+      "name": "VP40_TIER_A_SHORTPRICE",
+      "description": "SP < 3.0 \u2014 removes drain + Roysse",
+      "stats": {
+        "n": 85,
+        "wins": 51,
+        "frames": 76,
+        "sr": 60.0,
+        "frame_rate": 89.4,
+        "roi": -3.6,
+        "avg_sp": 1.75,
+        "median_sp": 1.73,
+        "max_sp": 2.88,
+        "roi_ex_top1": -5.6,
+        "top_winner": "Egotistical",
+        "top_winner_sp": 2.6,
+        "top1_pct": 3.2,
+        "top3_pct": 9.2,
+        "llr": 3,
+        "llr_pct": 3.5
+      },
+      "stability": "UNSTABLE: NEG_ROI"
+    },
+    {
+      "name": "VP40_TIER_A_SP_2X",
+      "description": "SP 2.0\u20132.99 \u2014 healthiest sub-band",
+      "stats": {
+        "n": 24,
+        "wins": 11,
+        "frames": 20,
+        "sr": 45.8,
+        "frame_rate": 83.3,
+        "roi": 3.6,
+        "avg_sp": 2.36,
+        "median_sp": 2.38,
+        "max_sp": 2.88,
+        "roi_ex_top1": -3.3,
+        "top_winner": "Egotistical",
+        "top_winner_sp": 2.6,
+        "top1_pct": 10.5,
+        "top3_pct": 30.2,
+        "llr": 3,
+        "llr_pct": 12.5
+      },
+      "stability": "UNSTABLE: OUTLIER_DEP"
+    },
+    {
+      "name": "VP40_TIER_A_SP_LT2",
+      "description": "SP < 2.0 \u2014 short-price favourites",
+      "stats": {
+        "n": 61,
+        "wins": 40,
+        "frames": 56,
+        "sr": 65.6,
+        "frame_rate": 91.8,
+        "roi": -6.4,
+        "avg_sp": 1.51,
+        "median_sp": 1.5,
+        "max_sp": 1.91,
+        "roi_ex_top1": -8.1,
+        "top_winner": "Dunstall Star",
+        "top_winner_sp": 1.9,
+        "top1_pct": 3.3,
+        "top3_pct": 9.9,
+        "llr": 2,
+        "llr_pct": 3.3
+      },
+      "stability": "UNSTABLE: NEG_ROI"
+    },
+    {
+      "name": "VP40_TIER_A_MIDPRICE",
+      "description": "SP 3.0\u20138.5 \u2014 confirmed drain zone",
+      "stats": {
+        "n": 37,
+        "wins": 6,
+        "frames": 26,
+        "sr": 16.2,
+        "frame_rate": 70.3,
+        "roi": -23.0,
+        "avg_sp": 4.35,
+        "median_sp": 4.0,
+        "max_sp": 8.0,
+        "roi_ex_top1": -43.1,
+        "top_winner": "Pageant Girl",
+        "top_winner_sp": 8.0,
+        "top1_pct": 28.1,
+        "top3_pct": 63.2,
+        "llr": 12,
+        "llr_pct": 32.4
+      },
+      "stability": "UNSTABLE: LOW_SR+NEG_ROI+WINNER_CONC"
+    },
+    {
+      "name": "VP40_TIER_A_LONGSHOT",
+      "description": "SP > 8.5 \u2014 outlier / Roysse zone",
+      "stats": {
+        "n": 9,
+        "wins": 1,
+        "frames": 3,
+        "sr": 11.1,
+        "frame_rate": 33.3,
+        "roi": 277.8,
+        "avg_sp": 13.89,
+        "median_sp": 12.0,
+        "max_sp": 34.0,
+        "roi_ex_top1": -100.0,
+        "top_winner": "Roysse",
+        "top_winner_sp": 34.0,
+        "top1_pct": 100.0,
+        "top3_pct": 100.0,
+        "llr": 8,
+        "llr_pct": 88.9
+      },
+      "stability": "INSUFFICIENT_N"
+    },
+    {
+      "name": "VP40_TIER_A_NO_MIDPRICE",
+      "description": "SP<3.0 OR SP>8.5 \u2014 excl drain zone",
+      "stats": {
+        "n": 94,
+        "wins": 52,
+        "frames": 79,
+        "sr": 55.3,
+        "frame_rate": 84.0,
+        "roi": 23.3,
+        "avg_sp": 2.91,
+        "median_sp": 1.77,
+        "max_sp": 34.0,
+        "roi_ex_top1": -11.9,
+        "top_winner": "Roysse",
+        "top_winner_sp": 34.0,
+        "top1_pct": 29.3,
+        "top3_pct": 33.7,
+        "llr": 5,
+        "llr_pct": 5.3
+      },
+      "stability": "UNSTABLE: OUTLIER_DEP+WINNER_CONC"
+    },
+    {
+      "name": "VP40_TIER_A_NO_MIDPRICE_NO_LONGSHOT",
+      "description": "SP<3.0 only \u2014 excl drain + excl Roysse",
+      "stats": {
+        "n": 85,
+        "wins": 51,
+        "frames": 76,
+        "sr": 60.0,
+        "frame_rate": 89.4,
+        "roi": -3.6,
+        "avg_sp": 1.75,
+        "median_sp": 1.73,
+        "max_sp": 2.88,
+        "roi_ex_top1": -5.6,
+        "top_winner": "Egotistical",
+        "top_winner_sp": 2.6,
+        "top1_pct": 3.2,
+        "top3_pct": 9.2,
+        "llr": 3,
+        "llr_pct": 3.5
+      },
+      "stability": "UNSTABLE: NEG_ROI"
+    }
+  ],
+  "key_finding": "SHORTPRICE (SP<3.0) eliminates Roysse outlier dependency (top-1 concentration ~3%). MIDPRICE (SP3-8.5) is structural drain across all lenses. LONGSHOT (SP>8.5) is Roysse zone. Price hygiene is mandatory.",
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "router_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "POLICY_SIMULATION_ONLY"
+  }
+}
