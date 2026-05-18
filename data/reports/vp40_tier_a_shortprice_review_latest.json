@@ -1,0 +1,203 @@
+{
+  "run_ts": "2026-05-17 17:19 UTC",
+  "date": "2026-05-17",
+  "lane": "VP40_TIER_A_SHORTPRICE",
+  "definition": "velo_prime_prob >= 0.40 AND decision_tier == A AND sp_decimal < 3.0",
+  "corpus_rows": 1310,
+  "sp_min": 1.06,
+  "overall": {
+    "n": 85,
+    "wins": 51,
+    "frames": 76,
+    "sr": 60.0,
+    "frame_rate": 89.4,
+    "roi": -3.6,
+    "avg_sp": 1.75,
+    "median_sp": 1.73,
+    "max_sp": 2.88
+  },
+  "losing_run": {
+    "llr": 3,
+    "llr_pct": 3.5,
+    "max_drawdown": 4.0
+  },
+  "outlier_analysis": {
+    "strip_test": [
+      {
+        "excluding_top": 1,
+        "excluded_horse": "Egotistical",
+        "excluded_sp": 2.6,
+        "excluded_vp": 0.415,
+        "roi_stripped": -5.6,
+        "roi_still_positive": "False"
+      },
+      {
+        "excluding_top": 2,
+        "excluded_horse": "Lady Blanche",
+        "excluded_sp": 2.5,
+        "excluded_vp": 0.441,
+        "roi_stripped": -7.5,
+        "roi_still_positive": "False"
+      },
+      {
+        "excluding_top": 3,
+        "excluded_horse": "Conclave",
+        "excluded_sp": 2.4,
+        "excluded_vp": 0.682,
+        "roi_stripped": -9.2,
+        "roi_still_positive": "False"
+      }
+    ],
+    "top_winner_horse": "Egotistical",
+    "top_winner_sp": 2.6,
+    "top_winner_vp": 0.415,
+    "top1_return_pct": 3.2,
+    "top3_return_pct": 9.2,
+    "total_return": 81.93
+  },
+  "course_breakdown": [
+    {
+      "course": "Yarmouth",
+      "n": 5,
+      "wins": 4,
+      "sr": 80.0,
+      "roi": 26.2,
+      "collapse": false
+    },
+    {
+      "course": "Naas",
+      "n": 4,
+      "wins": 4,
+      "sr": 100.0,
+      "roi": 58.0,
+      "collapse": false
+    },
+    {
+      "course": "Cork",
+      "n": 3,
+      "wins": 2,
+      "sr": 66.7,
+      "roi": 7.3,
+      "collapse": false
+    },
+    {
+      "course": "Fontwell",
+      "n": 3,
+      "wins": 1,
+      "sr": 33.3,
+      "roi": -62.7,
+      "collapse": false
+    },
+    {
+      "course": "Hamilton",
+      "n": 3,
+      "wins": 2,
+      "sr": 66.7,
+      "roi": 14.7,
+      "collapse": false
+    },
+    {
+      "course": "Limerick",
+      "n": 3,
+      "wins": 2,
+      "sr": 66.7,
+      "roi": 23.0,
+      "collapse": false
+    },
+    {
+      "course": "Redcar",
+      "n": 3,
+      "wins": 2,
+      "sr": 66.7,
+      "roi": 57.3,
+      "collapse": false
+    },
+    {
+      "course": "Ripon",
+      "n": 3,
+      "wins": 2,
+      "sr": 66.7,
+      "roi": -16.7,
+      "collapse": false
+    },
+    {
+      "course": "Warwick",
+      "n": 3,
+      "wins": 0,
+      "sr": 0.0,
+      "roi": -100.0,
+      "collapse": false
+    },
+    {
+      "course": "Wolverhampton (AW)",
+      "n": 3,
+      "wins": 1,
+      "sr": 33.3,
+      "roi": -62.7,
+      "collapse": false
+    }
+  ],
+  "class_breakdown": [
+    {
+      "class": 4,
+      "n": 11,
+      "wins": 4,
+      "sr": 36.4,
+      "roi": -32.4,
+      "collapse": true
+    }
+  ],
+  "going_breakdown": [],
+  "subgroup_collapse_flags": [
+    "CLASS_COLLAPSE: Class4 n=11 SR=36.4%"
+  ],
+  "overlap_analysis": [
+    {
+      "lane": "MDS_HIGH_LANE",
+      "n_shared": 28,
+      "pct_of_shortprice": 32.9,
+      "shared_wins": 22
+    },
+    {
+      "lane": "IMPROVER_LANE",
+      "n_shared": 15,
+      "pct_of_shortprice": 17.6,
+      "shared_wins": 10
+    },
+    {
+      "lane": "SHORTFAV_VP30",
+      "n_shared": 85,
+      "pct_of_shortprice": 100.0,
+      "shared_wins": 51
+    },
+    {
+      "lane": "ROUTER_QUALIFIED",
+      "n_shared": 6,
+      "pct_of_shortprice": 7.1,
+      "shared_wins": 2
+    }
+  ],
+  "recommendation": {
+    "verdict": "WATCH_ONLY",
+    "rationale": "n=85, SR=60.0%, ROI=-3.6%. Gate 1 (n<150) and Gate 5 (ROI<0%) both fail. ROI compression is mathematical at avg SP=1.75 \u2014 not a signal failure. Monitor to n>=150.",
+    "strengths": [
+      "HIGH_SR: 60.0% \u2014 strong win rate for this price zone",
+      "CONTROLLED_LLR: longest losing run = 3",
+      "LOW_OUTLIER_DEPENDENCY: top winner = 3.2% of total return"
+    ],
+    "issues": [
+      "INSUFFICIENT_N: n=85 below minimum gate (n>=150). Preferred n>=250.",
+      "NEGATIVE_ROI: -3.6% \u2014 flat stake negative. Short prices compress ROI even at high SR.",
+      "SUBGROUP_COLLAPSE: CLASS_COLLAPSE: Class4 n=11 SR=36.4%"
+    ],
+    "critical_issues": []
+  },
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "router_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "POLICY_SIMULATION_ONLY"
+  }
+}
