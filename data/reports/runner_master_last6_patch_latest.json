@@ -1,0 +1,78 @@
+{
+  "generated": "2026-05-18",
+  "patch": "runner_master_with_last6",
+  "governance": "NO_SCORING_CHANGE | NO_MODEL_CHANGE | NO_ROUTER_CHANGE | NO_STAKING_CHANGE",
+  "master_rows_before": 1310,
+  "master_rows_after": 1310,
+  "rows_lost": 0,
+  "cols_before": 112,
+  "cols_after": 112,
+  "new_cols": [
+    "last6_runs",
+    "or_slope_6",
+    "ts_slope_6",
+    "rpr_slope_6",
+    "or_drop_from_peak",
+    "ts_vs_or_gap",
+    "or_peak_6",
+    "ts_peak_recent",
+    "rpr_peak_recent",
+    "rating_rebound_flag",
+    "silent_improver_flag",
+    "exposed_regression_flag",
+    "last_6_or",
+    "last_6_ts",
+    "last_6_rpr",
+    "last_6_pos"
+  ],
+  "join_coverage": {
+    "master_unique_pairs": 1310,
+    "spine_unique_pairs": 1542,
+    "overlap": 1310,
+    "overlap_pct": 100.0,
+    "not_in_spine": 0,
+    "rows_with_last6_data": 880,
+    "rows_without_last6_data": 430,
+    "last6_coverage_pct": 67.2
+  },
+  "null_rates": {
+    "last6_runs": 0.0,
+    "or_slope_6": 55.8,
+    "ts_slope_6": 43.4,
+    "rpr_slope_6": 40.1,
+    "or_drop_from_peak": 53.5,
+    "ts_vs_or_gap": 60.5,
+    "or_peak_6": 52.2,
+    "ts_peak_recent": 36.3,
+    "rpr_peak_recent": 34.0,
+    "rating_rebound_flag": 0.0,
+    "silent_improver_flag": 0.0,
+    "exposed_regression_flag": 0.0
+  },
+  "flag_counts": {
+    "rating_rebound_flag": 320,
+    "silent_improver_flag": 135,
+    "exposed_regression_flag": 143
+  },
+  "slope_stats": {
+    "or_slope_6": {
+      "n": 579,
+      "mean": 0.071,
+      "p25": -1.257,
+      "p75": 1.043
+    },
+    "ts_slope_6": {
+      "n": 742,
+      "mean": 1.967,
+      "p25": -3.0,
+      "p75": 5.7
+    },
+    "rpr_slope_6": {
+      "n": 785,
+      "mean": 0.757,
+      "p25": -2.3,
+      "p75": 3.4
+    }
+  },
+  "raceform_gap_warning": "Aug 2025 \u2013 Feb 2026 not covered. Last-6 uses pre-Aug 2025 history for March-May 2026 rows."
+}

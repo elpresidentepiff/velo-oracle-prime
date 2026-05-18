@@ -1,0 +1,39 @@
+{
+  "rows": 1310,
+  "columns": 112,
+  "date_range": {
+    "min": "2026-03-17",
+    "max": "2026-05-17"
+  },
+  "coverage": {
+    "trainer_identity": 0.9145,
+    "trainer_course_sr": 0.6313,
+    "jockey_course_sr": 0.5328,
+    "rp_or_same_day": 0.0244
+  },
+  "governance": "NO_SCORING_CHANGE | NO_MODEL_CHANGE | SHADOW_AUDIT_ONLY",
+  "last_patched": "2026-05-18",
+  "patch": "runner_master_with_last6",
+  "last6_cols_added": [
+    "last6_runs",
+    "or_slope_6",
+    "ts_slope_6",
+    "rpr_slope_6",
+    "or_drop_from_peak",
+    "ts_vs_or_gap",
+    "or_peak_6",
+    "ts_peak_recent",
+    "rpr_peak_recent",
+    "rating_rebound_flag",
+    "silent_improver_flag",
+    "exposed_regression_flag",
+    "last_6_or",
+    "last_6_ts",
+    "last_6_rpr",
+    "last_6_pos"
+  ],
+  "last6_coverage_pct": 67.2,
+  "rating_rebound_count": 320,
+  "silent_improver_count": 135,
+  "exposed_regression_count": 143
+}
