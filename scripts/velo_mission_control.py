@@ -325,6 +325,19 @@ def _load_vp40_shortprice_status() -> dict[str, Any]:
         return {}
 
 
+def _get_sp2x_n() -> int:
+    """Read VP40_TIER_A_SP_2X current n from trigger watch artifact."""
+    path = ROOT / "data" / "reports" / "vp40_tier_a_trigger_watch_latest.json"
+    if not path.exists():
+        return 24  # fallback to protocol baseline
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        lane = next((l for l in data.get("lanes", []) if l.get("name") == "VP40_TIER_A_SP_2X"), {})
+        return lane.get("stats", {}).get("n", 24)
+    except Exception:
+        return 24
+
+
 def _load_corpus_progress() -> dict[str, Any]:
     """Read training corpus size from manifest or parquet and compute 2K progress."""
     manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
@@ -864,10 +877,12 @@ def main() -> None:
         print("─" * 62)
         print()
         print("  LANE POLICY STATUS SUMMARY:")
-        print(f"  VP40_LANE           = WATCH_ONLY  (Gate 4+7 FAIL — Roysse SP=34)")
-        print(f"  VP40_TIER_A         = WATCH_ONLY  (Gate 4+7 FAIL — Roysse is Tier A)")
+        sp2x_n = _get_sp2x_n()
+        print(f"  VP40_LANE              = WATCH_ONLY    (Gate 4+7 FAIL — Roysse SP=34)")
+        print(f"  VP40_TIER_A            = WATCH_ONLY    (Gate 4+7 FAIL — Roysse is Tier A)")
         print(f"  VP40_TIER_A_SHORTPRICE = UNDER_REVIEW  (n={sp_n}/150 — outlier resolved)")
-        print(f"  Price hygiene is mandatory. Midprice (SP3-8.5) and longshot (SP>8.5) excluded.")
+        print(f"  VP40_TIER_A_SP_2X      = WATCHING      n={sp2x_n}/50 ROI=+3.6% — embryo lane")
+        print(f"  Price hygiene mandatory. Midprice drain + Roysse zone excluded from candidates.")
         print("─" * 62)
 
     print(f"RP Coverage: {payload['racing_post']['status']} ({payload['racing_post']['coverage_pct']}%)")
