@@ -1,0 +1,51 @@
+{
+  "generated": "2026-05-17",
+  "source": "raceform_v17_features.parquet",
+  "raceform_date_range": "2015-01-01 to 2025-07-05",
+  "raceform_gap_warning": "Aug 2025 \u2013 Feb 2026 not covered. For March-May 2026 sigma rows, last-6 uses pre-Aug 2025 history only.",
+  "total_unique_targets": 1542,
+  "found_in_raceform": 1039,
+  "not_found": 503,
+  "coverage_pct": 67.4,
+  "rows": 1542,
+  "columns": [
+    "horse",
+    "horse_norm",
+    "race_date",
+    "race_id",
+    "source",
+    "last6_runs",
+    "last_6_or",
+    "last_6_ts",
+    "last_6_rpr",
+    "last_6_pos",
+    "last_6_sp",
+    "last_6_course",
+    "last_6_distance",
+    "last_6_going",
+    "or_slope_6",
+    "ts_slope_6",
+    "rpr_slope_6",
+    "or_peak_6",
+    "ts_peak_recent",
+    "rpr_peak_recent",
+    "or_drop_from_peak",
+    "ts_vs_or_gap",
+    "rating_rebound_flag",
+    "silent_improver_flag",
+    "exposed_regression_flag"
+  ],
+  "slope_interpretation": {
+    "or_slope_6": "positive = OR rising (handicapper catching up); negative = OR falling (potentially well-weighted)",
+    "ts_slope_6": "positive = horse's performance (TS) improving over last 6",
+    "rpr_slope_6": "positive = RPR improving",
+    "or_drop_from_peak": "or_peak - current_or; positive = below peak weight (possibly well-handicapped)",
+    "ts_vs_or_gap": "current_ts - current_or; positive = TS above OR (running beyond handicap mark)"
+  },
+  "flag_rules": {
+    "rating_rebound_flag": "TS shows V-shape: dip in mid-sequence then recent recovery",
+    "silent_improver_flag": "ts_slope >= 1.5 AND or_slope <= 0.0 (TS improving, OR not catching up)",
+    "exposed_regression_flag": "rpr_slope <= -1.5 AND ts_slope <= -1.5 AND n_runs >= 3"
+  },
+  "governance": "NO_SCORING_CHANGE | NO_MODEL_CHANGE | SHADOW_ONLY"
+}
