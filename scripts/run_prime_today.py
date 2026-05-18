@@ -231,9 +231,12 @@ def _load_rp_profile_as_racecards(date_str: str) -> list[dict]:
             last_run = str(int(last_run_raw)) if pd.notna(last_run_raw) else None
             # Synthetic horse_id: RP profile has no Racing API horse_id (None).
             # Generate a stable derived ID so persist_race_predictions does not reject.
+            # Use _norm_horse_name() to strip spaces/punctuation — must match the
+            # normalisation used by scrape_results_atr.py and sigma's result lookup.
+            # Bug introduced 1dc8d5b: used .lower() only, preserving spaces → mismatch.
             raw_hid = _v(row.get("horse_id"))
             if not raw_hid:
-                horse_norm_val = str(row.get("horse_norm") or row.get("horse") or "").lower()
+                horse_norm_val = _norm_horse_name(row.get("horse_norm") or row.get("horse") or "")
                 raw_hid = f"RP_{horse_norm_val}" if horse_norm_val else None
             runners.append({
                 "horse":      _v(row.get("horse")),
