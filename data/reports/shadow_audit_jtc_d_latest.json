@@ -1,0 +1,211 @@
+{
+  "version": "V2_FULL_FIELD",
+  "date_range": {
+    "min": "2026-03-17",
+    "max": "2026-05-17"
+  },
+  "total_runners": 16934,
+  "total_races": 1704,
+  "sigma_candidates": 1272,
+  "avg_field_size": 9.94,
+  "chance_baseline_pct": 10.1,
+  "sigma_win_rate_pct": 20.9,
+  "min_runners_filter": 3,
+  "methods": [
+    {
+      "signal": "trainer_course_sr",
+      "races": 1407,
+      "top1_rate": 21.3,
+      "top3_rate": 50.0,
+      "mrr": 0.418,
+      "roi": 1.8,
+      "avg_winner_rank": 4.29
+    },
+    {
+      "signal": "jockey_course_sr",
+      "races": 1485,
+      "top1_rate": 21.3,
+      "top3_rate": 49.9,
+      "mrr": 0.4174,
+      "roi": -0.1,
+      "avg_winner_rank": 4.34
+    },
+    {
+      "signal": "trainer_jockey_sr",
+      "races": 1186,
+      "top1_rate": 24.9,
+      "top3_rate": 57.3,
+      "mrr": 0.4632,
+      "roi": 18.6,
+      "avg_winner_rank": 3.65
+    },
+    {
+      "signal": "tc_jc",
+      "races": 1603,
+      "top1_rate": 19.9,
+      "top3_rate": 48.1,
+      "mrr": 0.4053,
+      "roi": -13.8,
+      "avg_winner_rank": 4.48
+    },
+    {
+      "signal": "tc_jc_tj",
+      "races": 1608,
+      "top1_rate": 20.3,
+      "top3_rate": 47.5,
+      "mrr": 0.4059,
+      "roi": -14.3,
+      "avg_winner_rank": 4.51
+    },
+    {
+      "signal": "full_jtcd",
+      "races": 1645,
+      "top1_rate": 20.2,
+      "top3_rate": 48.0,
+      "mrr": 0.4052,
+      "roi": -19.1,
+      "avg_winner_rank": 4.52
+    }
+  ],
+  "breakdown": {
+    "race_type": [
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 120,
+        "top1_rate": 25.0,
+        "top3_rate": 62.5,
+        "mrr": 0.4782,
+        "roi": 22.7,
+        "avg_winner_rank": 3.32,
+        "group": "Chase"
+      },
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 778,
+        "top1_rate": 24.7,
+        "top3_rate": 54.2,
+        "mrr": 0.4526,
+        "roi": 19.4,
+        "avg_winner_rank": 3.83,
+        "group": "Flat"
+      },
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 250,
+        "top1_rate": 23.2,
+        "top3_rate": 60.8,
+        "mrr": 0.4663,
+        "roi": 13.0,
+        "avg_winner_rank": 3.44,
+        "group": "Hurdle"
+      },
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 38,
+        "top1_rate": 39.5,
+        "top3_rate": 81.6,
+        "mrr": 0.6127,
+        "roi": 25.3,
+        "avg_winner_rank": 2.39,
+        "group": "NH Flat"
+      }
+    ],
+    "dist_cat": [
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 355,
+        "top1_rate": 22.0,
+        "top3_rate": 53.0,
+        "mrr": 0.4299,
+        "roi": 13.9,
+        "avg_winner_rank": 3.97,
+        "group": "sprint"
+      },
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 300,
+        "top1_rate": 25.3,
+        "top3_rate": 54.3,
+        "mrr": 0.4571,
+        "roi": 10.3,
+        "avg_winner_rank": 3.82,
+        "group": "mile"
+      },
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 531,
+        "top1_rate": 26.6,
+        "top3_rate": 62.0,
+        "mrr": 0.4888,
+        "roi": 26.4,
+        "avg_winner_rank": 3.34,
+        "group": "route"
+      }
+    ],
+    "handicap": [
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 727,
+        "top1_rate": 21.2,
+        "top3_rate": 52.0,
+        "mrr": 0.426,
+        "roi": 24.6,
+        "avg_winner_rank": 3.95,
+        "group": "Handicap"
+      },
+      {
+        "signal": "trainer_jockey_sr",
+        "races": 459,
+        "top1_rate": 30.7,
+        "top3_rate": 65.8,
+        "mrr": 0.522,
+        "roi": 9.1,
+        "avg_winner_rank": 3.18,
+        "group": "Non-handicap"
+      }
+    ]
+  },
+  "sigma_lift": {
+    "n_sigma_candidates": 1272,
+    "n_winners": 264
+  },
+  "sigma_lift_signals": {
+    "velo_prime_prob": {
+      "winner_mean": 0.32015,
+      "non_winner_mean": 0.24532,
+      "lift": 0.07482,
+      "winner_coverage": 1.0
+    },
+    "trainer_course_sr": {
+      "winner_mean": 0.15052,
+      "non_winner_mean": 0.12778,
+      "lift": 0.02274,
+      "winner_coverage": 0.758
+    },
+    "jockey_course_sr": {
+      "winner_mean": 0.14377,
+      "non_winner_mean": 0.12228,
+      "lift": 0.02149,
+      "winner_coverage": 0.871
+    },
+    "trainer_jockey_sr": {
+      "winner_mean": 0.15631,
+      "non_winner_mean": 0.12903,
+      "lift": 0.02728,
+      "winner_coverage": 0.674
+    },
+    "trainer_dist_sr": {
+      "winner_mean": 0.15036,
+      "non_winner_mean": 0.12388,
+      "lift": 0.02647,
+      "winner_coverage": 0.78
+    },
+    "jockey_dist_sr": {
+      "winner_mean": 0.13487,
+      "non_winner_mean": 0.11992,
+      "lift": 0.01495,
+      "winner_coverage": 0.913
+    }
+  },
+  "governance": "NO_SCORING_CHANGE | NO_MODEL_CHANGE | SHADOW_AUDIT_ONLY"
+}
