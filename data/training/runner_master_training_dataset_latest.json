@@ -1,0 +1,312 @@
+{
+  "generated": "2026-05-18",
+  "source": "runner_master_profile_latest.parquet",
+  "rows": 1310,
+  "id_cols": [
+    "date",
+    "race_id",
+    "horse_id",
+    "horse",
+    "course",
+    "off_time",
+    "trainer",
+    "jockey"
+  ],
+  "feature_cols": [
+    "velo_prime_prob",
+    "sqpe_v17_prob",
+    "market_deception_score",
+    "improvement_score",
+    "place_prob",
+    "release_day_prob",
+    "comment_intel_score",
+    "longshot_prob",
+    "vp40_flag",
+    "vp30_flag",
+    "mds_high_flag",
+    "improver_high_flag",
+    "router_qualified",
+    "b_low_vp_suppress",
+    "router_v1_shadow_pass",
+    "router_v2_class4_shadow_pass",
+    "router_v6_gold_seam_watchlist",
+    "dist_band",
+    "race_type",
+    "class_num",
+    "field_size",
+    "archetype",
+    "ofr_api",
+    "ts_api",
+    "rpr_api",
+    "trainer_rtf",
+    "last6_runs",
+    "or_slope_6",
+    "ts_slope_6",
+    "rpr_slope_6",
+    "or_drop_from_peak",
+    "ts_vs_or_gap",
+    "or_peak_6",
+    "ts_peak_recent",
+    "rpr_peak_recent",
+    "rating_rebound_flag",
+    "silent_improver_flag",
+    "exposed_regression_flag",
+    "trainer_jockey_sr",
+    "trainer_course_sr",
+    "jockey_course_sr",
+    "trainer_dist_sr",
+    "jockey_dist_sr",
+    "sp_decimal",
+    "sp_band",
+    "tier_numeric",
+    "tj_high_flag",
+    "dist_band_f",
+    "is_flat",
+    "is_jumps",
+    "is_handicap",
+    "is_class4_lower",
+    "sp_band_midpoint"
+  ],
+  "target_cols": [
+    "won",
+    "placed",
+    "result_position",
+    "actual_sp",
+    "profit_loss_1pt"
+  ],
+  "total_cols": 66,
+  "tj_high_threshold": 0.0847,
+  "target_distribution": {
+    "won_n": 274,
+    "won_pct": 20.9,
+    "placed_n": 669,
+    "placed_pct": 51.1,
+    "flat_stake_roi_pct": -17.0
+  },
+  "feature_coverage": {
+    "velo_prime_prob": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "sqpe_v17_prob": {
+      "non_null": 1175,
+      "pct": 89.7
+    },
+    "market_deception_score": {
+      "non_null": 1308,
+      "pct": 99.8
+    },
+    "improvement_score": {
+      "non_null": 1308,
+      "pct": 99.8
+    },
+    "place_prob": {
+      "non_null": 1308,
+      "pct": 99.8
+    },
+    "release_day_prob": {
+      "non_null": 1175,
+      "pct": 89.7
+    },
+    "comment_intel_score": {
+      "non_null": 1175,
+      "pct": 89.7
+    },
+    "longshot_prob": {
+      "non_null": 1175,
+      "pct": 89.7
+    },
+    "vp40_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "vp30_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "mds_high_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "improver_high_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "router_qualified": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "b_low_vp_suppress": {
+      "non_null": 1176,
+      "pct": 89.8
+    },
+    "router_v1_shadow_pass": {
+      "non_null": 810,
+      "pct": 61.8
+    },
+    "router_v2_class4_shadow_pass": {
+      "non_null": 810,
+      "pct": 61.8
+    },
+    "router_v6_gold_seam_watchlist": {
+      "non_null": 810,
+      "pct": 61.8
+    },
+    "dist_band": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "race_type": {
+      "non_null": 29,
+      "pct": 2.2
+    },
+    "class_num": {
+      "non_null": 169,
+      "pct": 12.9
+    },
+    "field_size": {
+      "non_null": 169,
+      "pct": 12.9
+    },
+    "archetype": {
+      "non_null": 169,
+      "pct": 12.9
+    },
+    "ofr_api": {
+      "non_null": 1034,
+      "pct": 78.9
+    },
+    "ts_api": {
+      "non_null": 1128,
+      "pct": 86.1
+    },
+    "rpr_api": {
+      "non_null": 1202,
+      "pct": 91.8
+    },
+    "trainer_rtf": {
+      "non_null": 1071,
+      "pct": 81.8
+    },
+    "last6_runs": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "or_slope_6": {
+      "non_null": 579,
+      "pct": 44.2
+    },
+    "ts_slope_6": {
+      "non_null": 742,
+      "pct": 56.6
+    },
+    "rpr_slope_6": {
+      "non_null": 785,
+      "pct": 59.9
+    },
+    "or_drop_from_peak": {
+      "non_null": 609,
+      "pct": 46.5
+    },
+    "ts_vs_or_gap": {
+      "non_null": 517,
+      "pct": 39.5
+    },
+    "or_peak_6": {
+      "non_null": 626,
+      "pct": 47.8
+    },
+    "ts_peak_recent": {
+      "non_null": 834,
+      "pct": 63.7
+    },
+    "rpr_peak_recent": {
+      "non_null": 865,
+      "pct": 66.0
+    },
+    "rating_rebound_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "silent_improver_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "exposed_regression_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "trainer_jockey_sr": {
+      "non_null": 733,
+      "pct": 56.0
+    },
+    "trainer_course_sr": {
+      "non_null": 827,
+      "pct": 63.1
+    },
+    "jockey_course_sr": {
+      "non_null": 698,
+      "pct": 53.3
+    },
+    "trainer_dist_sr": {
+      "non_null": 1077,
+      "pct": 82.2
+    },
+    "jockey_dist_sr": {
+      "non_null": 878,
+      "pct": 67.0
+    },
+    "sp_decimal": {
+      "non_null": 1306,
+      "pct": 99.7
+    },
+    "sp_band": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "tier_numeric": {
+      "non_null": 1273,
+      "pct": 97.2
+    },
+    "tj_high_flag": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "dist_band_f": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "is_flat": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "is_jumps": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "is_handicap": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "is_class4_lower": {
+      "non_null": 1310,
+      "pct": 100.0
+    },
+    "sp_band_midpoint": {
+      "non_null": 0,
+      "pct": 0.0
+    }
+  },
+  "leakage_status": "PASSED",
+  "governance": "NO_SCORING_CHANGE | NO_MODEL_CHANGE | NO_ROUTER_CHANGE | NO_STAKING_CHANGE",
+  "notes": {
+    "sp_decimal": "SP is the realised Starting Price (post-race). Used as market proxy for pre-race market assessment. Isolated in target block as 'actual_sp'. Do not use sp_decimal as a feature in models where SP leakage is a concern.",
+    "raceform_gap": "last-6 features use pre-Aug 2025 history only for March-May 2026 rows.",
+    "jtcd_coverage": "JTC-D signals built from raceform 2015-2025. trainer_jockey_sr covers 56% of sigma rows (733/1310).",
+    "next_steps": [
+      "Step 4: feature audit \u2014 measure each feature alone vs won/placed",
+      "Step 5: train on rolling date split only (no random split)",
+      "Preferred models: logistic regression (baseline) + LightGBM"
+    ]
+  }
+}
