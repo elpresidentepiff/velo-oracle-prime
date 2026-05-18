@@ -1,0 +1,2011 @@
+{
+  "generated": "2026-05-18",
+  "source": "runner_master_training_dataset_latest.parquet",
+  "n_rows": 1310,
+  "n_winners": 274,
+  "baseline_wr": 20.92,
+  "baseline_roi": -17.25,
+  "governance": "NO_SCORING_CHANGE | NO_MODEL_CHANGE | NO_ROUTER_CHANGE | NO_STAKING_CHANGE",
+  "numeric_signals": [
+    {
+      "signal": "velo_prime_prob",
+      "label": "VELO Prime Prob",
+      "type": "numeric",
+      "n": 1310,
+      "n_winners": 274,
+      "win_rate": 20.92,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 100.0,
+      "winner_mean": 0.3205,
+      "loser_mean": 0.2456,
+      "winner_median": 0.3,
+      "loser_median": 0.2213,
+      "mean_diff": 0.0749,
+      "spearman_rho": 0.2181,
+      "spearman_pval": 0.0,
+      "spearman_sig": true,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 132,
+          "win_rate": 12.1,
+          "roi": -31.64,
+          "mean_val": 0.1099
+        },
+        {
+          "decile": 1,
+          "n": 131,
+          "win_rate": 13.7,
+          "roi": -28.31,
+          "mean_val": 0.1515
+        },
+        {
+          "decile": 2,
+          "n": 130,
+          "win_rate": 16.9,
+          "roi": 11.15,
+          "mean_val": 0.1794
+        },
+        {
+          "decile": 3,
+          "n": 131,
+          "win_rate": 8.4,
+          "roi": -43.74,
+          "mean_val": 0.1996
+        },
+        {
+          "decile": 4,
+          "n": 131,
+          "win_rate": 17.6,
+          "roi": -24.48,
+          "mean_val": 0.2204
+        },
+        {
+          "decile": 5,
+          "n": 131,
+          "win_rate": 16.8,
+          "roi": -31.13,
+          "mean_val": 0.2484
+        },
+        {
+          "decile": 6,
+          "n": 131,
+          "win_rate": 19.8,
+          "roi": -31.91,
+          "mean_val": 0.2812
+        },
+        {
+          "decile": 7,
+          "n": 131,
+          "win_rate": 26.0,
+          "roi": 3.56,
+          "mean_val": 0.3234
+        },
+        {
+          "decile": 8,
+          "n": 131,
+          "win_rate": 34.4,
+          "roi": 22.51,
+          "mean_val": 0.3766
+        },
+        {
+          "decile": 9,
+          "n": 131,
+          "win_rate": 43.5,
+          "roi": -18.15,
+          "mean_val": 0.5229
+        }
+      ],
+      "top_decile_wr": 43.5,
+      "top_decile_roi": -18.15,
+      "top_decile_lift": 22.6,
+      "bot_decile_wr": 12.1,
+      "bot_decile_drag": 8.8,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 82,
+          "win_rate": 61.0,
+          "roi": -3.39
+        },
+        "fav(3-5)": {
+          "n": 28,
+          "win_rate": 10.7,
+          "roi": -66.07
+        },
+        "mid(5-8.5)": {
+          "n": 11,
+          "win_rate": 27.3,
+          "roi": 68.18
+        },
+        "long(8.5-15)": {
+          "n": 7,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 2,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -20.32,
+      "stripped_sp": 41.0,
+      "n_stripped": 1309,
+      "top1_pct": 3.8,
+      "top3_pct": 9.0,
+      "full_roi": -17.25
+    },
+    {
+      "signal": "trainer_jockey_sr",
+      "label": "TJ Partnership SR",
+      "type": "numeric",
+      "n": 733,
+      "n_winners": 167,
+      "win_rate": 22.78,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 56.0,
+      "winner_mean": 0.1602,
+      "loser_mean": 0.1324,
+      "winner_median": 0.157,
+      "loser_median": 0.1221,
+      "mean_diff": 0.0278,
+      "spearman_rho": 0.1864,
+      "spearman_pval": 0.0,
+      "spearman_sig": true,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 79,
+          "win_rate": 17.7,
+          "roi": -12.66,
+          "mean_val": 0.0548
+        },
+        {
+          "decile": 1,
+          "n": 69,
+          "win_rate": 15.9,
+          "roi": 16.33,
+          "mean_val": 0.0831
+        },
+        {
+          "decile": 2,
+          "n": 74,
+          "win_rate": 16.2,
+          "roi": -41.19,
+          "mean_val": 0.0966
+        },
+        {
+          "decile": 3,
+          "n": 71,
+          "win_rate": 15.5,
+          "roi": -38.13,
+          "mean_val": 0.1084
+        },
+        {
+          "decile": 4,
+          "n": 74,
+          "win_rate": 16.2,
+          "roi": -43.04,
+          "mean_val": 0.1213
+        },
+        {
+          "decile": 5,
+          "n": 73,
+          "win_rate": 17.8,
+          "roi": -21.48,
+          "mean_val": 0.1371
+        },
+        {
+          "decile": 6,
+          "n": 73,
+          "win_rate": 20.5,
+          "roi": -33.38,
+          "mean_val": 0.1529
+        },
+        {
+          "decile": 7,
+          "n": 74,
+          "win_rate": 29.7,
+          "roi": 3.05,
+          "mean_val": 0.1742
+        },
+        {
+          "decile": 8,
+          "n": 73,
+          "win_rate": 41.1,
+          "roi": 17.71,
+          "mean_val": 0.2003
+        },
+        {
+          "decile": 9,
+          "n": 73,
+          "win_rate": 37.0,
+          "roi": -13.38,
+          "mean_val": 0.2619
+        }
+      ],
+      "top_decile_wr": 37.0,
+      "top_decile_roi": -13.38,
+      "top_decile_lift": 14.2,
+      "bot_decile_wr": 17.7,
+      "bot_decile_drag": 5.1,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 44,
+          "win_rate": 45.5,
+          "roi": -22.39
+        },
+        "fav(3-5)": {
+          "n": 20,
+          "win_rate": 30.0,
+          "roi": 20.4
+        },
+        "mid(5-8.5)": {
+          "n": 7,
+          "win_rate": 14.3,
+          "roi": -28.57
+        },
+        "long(8.5-15)": {
+          "n": 1,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 1,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -22.23,
+      "stripped_sp": 41.0,
+      "n_stripped": 732,
+      "top1_pct": 6.7,
+      "top3_pct": 11.6,
+      "full_roi": -16.75
+    },
+    {
+      "signal": "ts_slope_6",
+      "label": "TS Slope (last-6)",
+      "type": "numeric",
+      "n": 742,
+      "n_winners": 127,
+      "win_rate": 17.12,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 56.6,
+      "winner_mean": 2.7576,
+      "loser_mean": 1.8041,
+      "winner_median": 1.1757,
+      "loser_median": 1.2,
+      "mean_diff": 0.9535,
+      "spearman_rho": 0.0417,
+      "spearman_pval": 0.2563,
+      "spearman_sig": false,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 75,
+          "win_rate": 13.3,
+          "roi": -25.8,
+          "mean_val": -13.0941
+        },
+        {
+          "decile": 1,
+          "n": 75,
+          "win_rate": 18.7,
+          "roi": -10.37,
+          "mean_val": -5.2753
+        },
+        {
+          "decile": 2,
+          "n": 73,
+          "win_rate": 11.0,
+          "roi": -60.89,
+          "mean_val": -3.0551
+        },
+        {
+          "decile": 3,
+          "n": 74,
+          "win_rate": 24.3,
+          "roi": 67.27,
+          "mean_val": -1.4742
+        },
+        {
+          "decile": 4,
+          "n": 74,
+          "win_rate": 18.9,
+          "roi": -29.12,
+          "mean_val": 0.25
+        },
+        {
+          "decile": 5,
+          "n": 74,
+          "win_rate": 8.1,
+          "roi": -57.66,
+          "mean_val": 1.8489
+        },
+        {
+          "decile": 6,
+          "n": 74,
+          "win_rate": 18.9,
+          "roi": -18.09,
+          "mean_val": 3.5101
+        },
+        {
+          "decile": 7,
+          "n": 74,
+          "win_rate": 16.2,
+          "roi": 16.34,
+          "mean_val": 5.6015
+        },
+        {
+          "decile": 8,
+          "n": 75,
+          "win_rate": 20.0,
+          "roi": 13.76,
+          "mean_val": 8.9454
+        },
+        {
+          "decile": 9,
+          "n": 74,
+          "win_rate": 21.6,
+          "roi": -13.8,
+          "mean_val": 22.555
+        }
+      ],
+      "top_decile_wr": 21.6,
+      "top_decile_roi": -13.8,
+      "top_decile_lift": 4.5,
+      "bot_decile_wr": 13.3,
+      "bot_decile_drag": 3.8,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 17,
+          "win_rate": 35.3,
+          "roi": -40.94
+        },
+        "fav(3-5)": {
+          "n": 20,
+          "win_rate": 20.0,
+          "roi": -26.25
+        },
+        "mid(5-8.5)": {
+          "n": 18,
+          "win_rate": 27.8,
+          "roi": 61.11
+        },
+        "long(8.5-15)": {
+          "n": 12,
+          "win_rate": 8.3,
+          "roi": -16.67
+        },
+        "outsider(15+)": {
+          "n": 7,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -17.17,
+      "stripped_sp": 41.0,
+      "n_stripped": 741,
+      "top1_pct": 6.3,
+      "top3_pct": 15.0,
+      "full_roi": -11.75
+    },
+    {
+      "signal": "or_slope_6",
+      "label": "OR Slope (last-6)",
+      "type": "numeric",
+      "n": 579,
+      "n_winners": 90,
+      "win_rate": 15.54,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 44.2,
+      "winner_mean": 0.7777,
+      "loser_mean": -0.0587,
+      "winner_median": 0.0,
+      "loser_median": -0.2286,
+      "mean_diff": 0.8364,
+      "spearman_rho": 0.0661,
+      "spearman_pval": 0.1121,
+      "spearman_sig": false,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 58,
+          "win_rate": 13.8,
+          "roi": -55.47,
+          "mean_val": -3.8578
+        },
+        {
+          "decile": 1,
+          "n": 58,
+          "win_rate": 13.8,
+          "roi": -0.55,
+          "mean_val": -1.8948
+        },
+        {
+          "decile": 2,
+          "n": 58,
+          "win_rate": 19.0,
+          "roi": -37.48,
+          "mean_val": -1.3077
+        },
+        {
+          "decile": 3,
+          "n": 58,
+          "win_rate": 12.1,
+          "roi": -42.74,
+          "mean_val": -0.8552
+        },
+        {
+          "decile": 4,
+          "n": 58,
+          "win_rate": 6.9,
+          "roi": -46.47,
+          "mean_val": -0.3898
+        },
+        {
+          "decile": 5,
+          "n": 57,
+          "win_rate": 17.5,
+          "roi": 32.93,
+          "mean_val": 0.003
+        },
+        {
+          "decile": 6,
+          "n": 59,
+          "win_rate": 13.6,
+          "roi": 42.73,
+          "mean_val": 0.4734
+        },
+        {
+          "decile": 7,
+          "n": 57,
+          "win_rate": 10.5,
+          "roi": -42.25,
+          "mean_val": 1.0437
+        },
+        {
+          "decile": 8,
+          "n": 58,
+          "win_rate": 32.8,
+          "roi": 52.21,
+          "mean_val": 1.8733
+        },
+        {
+          "decile": 9,
+          "n": 58,
+          "win_rate": 15.5,
+          "roi": -31.47,
+          "mean_val": 5.6336
+        }
+      ],
+      "top_decile_wr": 15.5,
+      "top_decile_roi": -31.47,
+      "top_decile_lift": -0.0,
+      "bot_decile_wr": 13.8,
+      "bot_decile_drag": 1.7,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 15,
+          "win_rate": 20.0,
+          "roi": -55.53
+        },
+        "fav(3-5)": {
+          "n": 14,
+          "win_rate": 14.3,
+          "roi": -45.86
+        },
+        "mid(5-8.5)": {
+          "n": 10,
+          "win_rate": 30.0,
+          "roi": 55.0
+        },
+        "long(8.5-15)": {
+          "n": 7,
+          "win_rate": 14.3,
+          "roi": 42.86
+        },
+        "outsider(15+)": {
+          "n": 12,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -19.73,
+      "stripped_sp": 41.0,
+      "n_stripped": 578,
+      "top1_pct": 8.1,
+      "top3_pct": 19.4,
+      "full_roi": -12.79
+    },
+    {
+      "signal": "rpr_slope_6",
+      "label": "RPR Slope (last-6)",
+      "type": "numeric",
+      "n": 785,
+      "n_winners": 139,
+      "win_rate": 17.71,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 59.9,
+      "winner_mean": 1.0234,
+      "loser_mean": 0.6996,
+      "winner_median": 0.6,
+      "loser_median": 0.2779,
+      "mean_diff": 0.3238,
+      "spearman_rho": 0.0212,
+      "spearman_pval": 0.5531,
+      "spearman_sig": false,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 79,
+          "win_rate": 17.7,
+          "roi": -10.27,
+          "mean_val": -10.7067
+        },
+        {
+          "decile": 1,
+          "n": 78,
+          "win_rate": 16.7,
+          "roi": -6.62,
+          "mean_val": -4.314
+        },
+        {
+          "decile": 2,
+          "n": 79,
+          "win_rate": 20.3,
+          "roi": 60.46,
+          "mean_val": -2.3496
+        },
+        {
+          "decile": 3,
+          "n": 78,
+          "win_rate": 12.8,
+          "roi": -8.45,
+          "mean_val": -1.1295
+        },
+        {
+          "decile": 4,
+          "n": 79,
+          "win_rate": 16.5,
+          "roi": -20.59,
+          "mean_val": -0.0675
+        },
+        {
+          "decile": 5,
+          "n": 78,
+          "win_rate": 16.7,
+          "roi": -29.62,
+          "mean_val": 0.9302
+        },
+        {
+          "decile": 6,
+          "n": 79,
+          "win_rate": 17.7,
+          "roi": -29.63,
+          "mean_val": 2.1384
+        },
+        {
+          "decile": 7,
+          "n": 78,
+          "win_rate": 20.5,
+          "roi": -8.53,
+          "mean_val": 3.4145
+        },
+        {
+          "decile": 8,
+          "n": 79,
+          "win_rate": 21.5,
+          "roi": -26.09,
+          "mean_val": 5.7451
+        },
+        {
+          "decile": 9,
+          "n": 78,
+          "win_rate": 16.7,
+          "roi": -58.63,
+          "mean_val": 14.0238
+        }
+      ],
+      "top_decile_wr": 16.7,
+      "top_decile_roi": -58.63,
+      "top_decile_lift": -1.0,
+      "bot_decile_wr": 17.7,
+      "bot_decile_drag": 0.0,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 19,
+          "win_rate": 47.4,
+          "roi": -26.21
+        },
+        "fav(3-5)": {
+          "n": 15,
+          "win_rate": 13.3,
+          "roi": -48.33
+        },
+        "mid(5-8.5)": {
+          "n": 18,
+          "win_rate": 11.1,
+          "roi": -41.67
+        },
+        "long(8.5-15)": {
+          "n": 12,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 14,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -18.86,
+      "stripped_sp": 41.0,
+      "n_stripped": 784,
+      "top1_pct": 6.1,
+      "top3_pct": 14.5,
+      "full_roi": -13.74
+    },
+    {
+      "signal": "or_drop_from_peak",
+      "label": "OR Drop from Peak",
+      "type": "numeric",
+      "n": 609,
+      "n_winners": 103,
+      "win_rate": 16.91,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 46.5,
+      "winner_mean": 2.4951,
+      "loser_mean": 3.9842,
+      "winner_median": 0.0,
+      "loser_median": 2.0,
+      "mean_diff": -1.4891,
+      "spearman_rho": -0.1215,
+      "spearman_pval": 0.0027,
+      "spearman_sig": true,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 291,
+          "win_rate": 21.6,
+          "roi": 22.16,
+          "mean_val": 0.189
+        },
+        {
+          "decile": 1,
+          "n": 44,
+          "win_rate": 11.4,
+          "roi": -62.93,
+          "mean_val": 2.0
+        },
+        {
+          "decile": 2,
+          "n": 37,
+          "win_rate": 16.2,
+          "roi": -32.03,
+          "mean_val": 3.0
+        },
+        {
+          "decile": 3,
+          "n": 78,
+          "win_rate": 10.3,
+          "roi": -44.06,
+          "mean_val": 4.4487
+        },
+        {
+          "decile": 4,
+          "n": 63,
+          "win_rate": 15.9,
+          "roi": -25.51,
+          "mean_val": 6.4286
+        },
+        {
+          "decile": 5,
+          "n": 36,
+          "win_rate": 13.9,
+          "roi": 37.17,
+          "mean_val": 8.3889
+        },
+        {
+          "decile": 6,
+          "n": 60,
+          "win_rate": 10.0,
+          "roi": -70.63,
+          "mean_val": 16.0833
+        }
+      ],
+      "top_decile_wr": 10.0,
+      "top_decile_roi": -70.63,
+      "top_decile_lift": -6.9,
+      "bot_decile_wr": 21.6,
+      "bot_decile_drag": -4.7,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 6,
+          "win_rate": 50.0,
+          "roi": 0.67
+        },
+        "fav(3-5)": {
+          "n": 9,
+          "win_rate": 33.3,
+          "roi": 28.67
+        },
+        "mid(5-8.5)": {
+          "n": 15,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "long(8.5-15)": {
+          "n": 13,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 17,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -15.54,
+      "stripped_sp": 41.0,
+      "n_stripped": 608,
+      "top1_pct": 7.4,
+      "top3_pct": 17.7,
+      "full_roi": -8.95
+    },
+    {
+      "signal": "ts_vs_or_gap",
+      "label": "TS vs OR Gap",
+      "type": "numeric",
+      "n": 517,
+      "n_winners": 88,
+      "win_rate": 17.02,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 39.5,
+      "winner_mean": -33.0114,
+      "loser_mean": -30.4079,
+      "winner_median": -30.5,
+      "loser_median": -26.0,
+      "mean_diff": -2.6035,
+      "spearman_rho": -0.0421,
+      "spearman_pval": 0.3396,
+      "spearman_sig": false,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 53,
+          "win_rate": 20.8,
+          "roi": 15.25,
+          "mean_val": -75.6226
+        },
+        {
+          "decile": 1,
+          "n": 56,
+          "win_rate": 21.4,
+          "roi": 75.18,
+          "mean_val": -54.1964
+        },
+        {
+          "decile": 2,
+          "n": 48,
+          "win_rate": 16.7,
+          "roi": 10.08,
+          "mean_val": -44.25
+        },
+        {
+          "decile": 3,
+          "n": 52,
+          "win_rate": 15.4,
+          "roi": -38.4,
+          "mean_val": -35.75
+        },
+        {
+          "decile": 4,
+          "n": 51,
+          "win_rate": 15.7,
+          "roi": -30.08,
+          "mean_val": -29.9216
+        },
+        {
+          "decile": 5,
+          "n": 55,
+          "win_rate": 14.5,
+          "roi": -46.98,
+          "mean_val": -23.8
+        },
+        {
+          "decile": 6,
+          "n": 52,
+          "win_rate": 19.2,
+          "roi": 58.6,
+          "mean_val": -19.0192
+        },
+        {
+          "decile": 7,
+          "n": 51,
+          "win_rate": 13.7,
+          "roi": -51.41,
+          "mean_val": -13.5686
+        },
+        {
+          "decile": 8,
+          "n": 60,
+          "win_rate": 16.7,
+          "roi": -25.23,
+          "mean_val": -6.9833
+        },
+        {
+          "decile": 9,
+          "n": 39,
+          "win_rate": 15.4,
+          "roi": -52.08,
+          "mean_val": 0.2821
+        }
+      ],
+      "top_decile_wr": 15.4,
+      "top_decile_roi": -52.08,
+      "top_decile_lift": -1.6,
+      "bot_decile_wr": 20.8,
+      "bot_decile_drag": -3.8,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 7,
+          "win_rate": 57.1,
+          "roi": -11.57
+        },
+        "fav(3-5)": {
+          "n": 8,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "mid(5-8.5)": {
+          "n": 7,
+          "win_rate": 28.6,
+          "roi": 78.57
+        },
+        "long(8.5-15)": {
+          "n": 10,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 7,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -14.99,
+      "stripped_sp": 41.0,
+      "n_stripped": 516,
+      "top1_pct": 8.5,
+      "top3_pct": 20.4,
+      "full_roi": -7.22
+    },
+    {
+      "signal": "current_or",
+      "label": "Current OR",
+      "type": "numeric",
+      "n": 1034,
+      "n_winners": 195,
+      "win_rate": 18.86,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 78.9,
+      "winner_mean": 91.8974,
+      "loser_mean": 80.0095,
+      "winner_median": 91.0,
+      "loser_median": 77.0,
+      "mean_diff": 11.8879,
+      "spearman_rho": 0.1835,
+      "spearman_pval": 0.0,
+      "spearman_sig": true,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 114,
+          "win_rate": 6.1,
+          "roi": -65.5,
+          "mean_val": 46.693
+        },
+        {
+          "decile": 1,
+          "n": 96,
+          "win_rate": 12.5,
+          "roi": -28.99,
+          "mean_val": 53.8229
+        },
+        {
+          "decile": 2,
+          "n": 107,
+          "win_rate": 12.1,
+          "roi": -24.17,
+          "mean_val": 62.6916
+        },
+        {
+          "decile": 3,
+          "n": 106,
+          "win_rate": 17.0,
+          "roi": -25.25,
+          "mean_val": 71.5566
+        },
+        {
+          "decile": 4,
+          "n": 99,
+          "win_rate": 17.2,
+          "roi": -11.16,
+          "mean_val": 76.5758
+        },
+        {
+          "decile": 5,
+          "n": 103,
+          "win_rate": 24.3,
+          "roi": 55.91,
+          "mean_val": 81.767
+        },
+        {
+          "decile": 6,
+          "n": 112,
+          "win_rate": 21.4,
+          "roi": -29.15,
+          "mean_val": 91.4643
+        },
+        {
+          "decile": 7,
+          "n": 101,
+          "win_rate": 19.8,
+          "roi": -9.4,
+          "mean_val": 103.1287
+        },
+        {
+          "decile": 8,
+          "n": 102,
+          "win_rate": 28.4,
+          "roi": 13.69,
+          "mean_val": 112.5
+        },
+        {
+          "decile": 9,
+          "n": 94,
+          "win_rate": 31.9,
+          "roi": -28.31,
+          "mean_val": 129.0106
+        }
+      ],
+      "top_decile_wr": 31.9,
+      "top_decile_roi": -28.31,
+      "top_decile_lift": 13.0,
+      "bot_decile_wr": 6.1,
+      "bot_decile_drag": 12.8,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 44,
+          "win_rate": 50.0,
+          "roi": -17.3
+        },
+        "fav(3-5)": {
+          "n": 18,
+          "win_rate": 16.7,
+          "roi": -47.22
+        },
+        "mid(5-8.5)": {
+          "n": 21,
+          "win_rate": 19.0,
+          "roi": 2.38
+        },
+        "long(8.5-15)": {
+          "n": 6,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 4,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -19.69,
+      "stripped_sp": 41.0,
+      "n_stripped": 1033,
+      "top1_pct": 4.7,
+      "top3_pct": 11.3,
+      "full_roi": -15.8
+    },
+    {
+      "signal": "current_ts",
+      "label": "Current TS",
+      "type": "numeric",
+      "n": 1128,
+      "n_winners": 239,
+      "win_rate": 21.19,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 86.1,
+      "winner_mean": 86.5941,
+      "loser_mean": 82.9235,
+      "winner_median": 81.0,
+      "loser_median": 80.0,
+      "mean_diff": 3.6706,
+      "spearman_rho": 0.0369,
+      "spearman_pval": 0.2155,
+      "spearman_sig": false,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 114,
+          "win_rate": 19.3,
+          "roi": -12.58,
+          "mean_val": 34.4737
+        },
+        {
+          "decile": 1,
+          "n": 137,
+          "win_rate": 19.7,
+          "roi": -12.49,
+          "mean_val": 53.4672
+        },
+        {
+          "decile": 2,
+          "n": 98,
+          "win_rate": 16.3,
+          "roi": -21.24,
+          "mean_val": 60.551
+        },
+        {
+          "decile": 3,
+          "n": 108,
+          "win_rate": 22.2,
+          "roi": -21.43,
+          "mean_val": 67.6389
+        },
+        {
+          "decile": 4,
+          "n": 122,
+          "win_rate": 24.6,
+          "roi": 26.99,
+          "mean_val": 76.1803
+        },
+        {
+          "decile": 5,
+          "n": 105,
+          "win_rate": 20.0,
+          "roi": 18.9,
+          "mean_val": 84.4095
+        },
+        {
+          "decile": 6,
+          "n": 111,
+          "win_rate": 18.0,
+          "roi": -33.69,
+          "mean_val": 92.6577
+        },
+        {
+          "decile": 7,
+          "n": 111,
+          "win_rate": 24.3,
+          "roi": -5.5,
+          "mean_val": 101.4505
+        },
+        {
+          "decile": 8,
+          "n": 113,
+          "win_rate": 24.8,
+          "roi": -34.04,
+          "mean_val": 113.0
+        },
+        {
+          "decile": 9,
+          "n": 109,
+          "win_rate": 22.0,
+          "roi": -40.38,
+          "mean_val": 160.0826
+        }
+      ],
+      "top_decile_wr": 22.0,
+      "top_decile_roi": -40.38,
+      "top_decile_lift": 0.8,
+      "bot_decile_wr": 19.3,
+      "bot_decile_drag": 1.9,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 33,
+          "win_rate": 42.4,
+          "roi": -18.97
+        },
+        "fav(3-5)": {
+          "n": 25,
+          "win_rate": 20.0,
+          "roi": -31.0
+        },
+        "mid(5-8.5)": {
+          "n": 28,
+          "win_rate": 14.3,
+          "roi": -25.0
+        },
+        "long(8.5-15)": {
+          "n": 12,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 10,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -16.74,
+      "stripped_sp": 41.0,
+      "n_stripped": 1127,
+      "top1_pct": 4.2,
+      "top3_pct": 10.0,
+      "full_roi": -13.17
+    },
+    {
+      "signal": "current_rpr",
+      "label": "Current RPR",
+      "type": "numeric",
+      "n": 1202,
+      "n_winners": 254,
+      "win_rate": 21.13,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "coverage_pct": 91.8,
+      "winner_mean": 102.4173,
+      "loser_mean": 97.846,
+      "winner_median": 100.0,
+      "loser_median": 97.5,
+      "mean_diff": 4.5713,
+      "spearman_rho": 0.0807,
+      "spearman_pval": 0.0051,
+      "spearman_sig": true,
+      "deciles": [
+        {
+          "decile": 0,
+          "n": 133,
+          "win_rate": 12.0,
+          "roi": -29.79,
+          "mean_val": 64.0376
+        },
+        {
+          "decile": 1,
+          "n": 120,
+          "win_rate": 12.5,
+          "roi": -51.28,
+          "mean_val": 73.225
+        },
+        {
+          "decile": 2,
+          "n": 122,
+          "win_rate": 24.6,
+          "roi": -5.19,
+          "mean_val": 80.1803
+        },
+        {
+          "decile": 3,
+          "n": 113,
+          "win_rate": 28.3,
+          "roi": -3.92,
+          "mean_val": 86.5133
+        },
+        {
+          "decile": 4,
+          "n": 127,
+          "win_rate": 23.6,
+          "roi": -4.24,
+          "mean_val": 94.8583
+        },
+        {
+          "decile": 5,
+          "n": 119,
+          "win_rate": 16.8,
+          "roi": -31.31,
+          "mean_val": 101.7899
+        },
+        {
+          "decile": 6,
+          "n": 109,
+          "win_rate": 20.2,
+          "roi": 31.3,
+          "mean_val": 108.5688
+        },
+        {
+          "decile": 7,
+          "n": 121,
+          "win_rate": 19.8,
+          "roi": -38.75,
+          "mean_val": 116.0661
+        },
+        {
+          "decile": 8,
+          "n": 123,
+          "win_rate": 30.1,
+          "roi": 15.33,
+          "mean_val": 125.4146
+        },
+        {
+          "decile": 9,
+          "n": 115,
+          "win_rate": 24.3,
+          "roi": -30.57,
+          "mean_val": 143.0087
+        }
+      ],
+      "top_decile_wr": 24.3,
+      "top_decile_roi": -30.57,
+      "top_decile_lift": 3.2,
+      "bot_decile_wr": 12.0,
+      "bot_decile_drag": 9.1,
+      "top_decile_sp_bands": {
+        "short(<3)": {
+          "n": 35,
+          "win_rate": 45.7,
+          "roi": -14.0
+        },
+        "fav(3-5)": {
+          "n": 25,
+          "win_rate": 24.0,
+          "roi": -19.0
+        },
+        "mid(5-8.5)": {
+          "n": 34,
+          "win_rate": 14.7,
+          "roi": -13.24
+        },
+        "long(8.5-15)": {
+          "n": 13,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "outsider(15+)": {
+          "n": 7,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -18.62,
+      "stripped_sp": 41.0,
+      "n_stripped": 1201,
+      "top1_pct": 4.0,
+      "top3_pct": 9.6,
+      "full_roi": -15.28
+    }
+  ],
+  "flag_signals": [
+    {
+      "signal": "silent_improver_flag",
+      "label": "Silent Improver",
+      "type": "flag",
+      "n_flag_true": 135,
+      "n_flag_false": 1175,
+      "flag_rate": 10.3,
+      "sample_verdict": "MODERATE_SAMPLE",
+      "on_n": 135,
+      "on_wr": 14.81,
+      "on_roi": -15.63,
+      "off_n": 1175,
+      "off_wr": 21.62,
+      "off_roi": -17.43,
+      "lift_vs_off": -6.81,
+      "roi_delta": 1.8,
+      "flag_true_sp_bands": {
+        "short(<3)": {
+          "n": 16,
+          "win_rate": 43.8,
+          "roi": -12.06
+        },
+        "fav(3-5)": {
+          "n": 32,
+          "win_rate": 15.6,
+          "roi": -42.72
+        },
+        "mid(5-8.5)": {
+          "n": 29,
+          "win_rate": 10.3,
+          "roi": -31.03
+        },
+        "long(8.5-15)": {
+          "n": 35,
+          "win_rate": 11.4,
+          "roi": 10.0
+        },
+        "outsider(15+)": {
+          "n": 23,
+          "win_rate": 4.3,
+          "roi": 0.0
+        }
+      },
+      "roi_stripped": -32.16,
+      "stripped_sp": 23.0,
+      "n_stripped": 134,
+      "top1_pct": 20.2,
+      "top3_pct": 37.8,
+      "verdict": "NEGATIVE_SIGNAL"
+    },
+    {
+      "signal": "rating_rebound_flag",
+      "label": "Rating Rebound",
+      "type": "flag",
+      "n_flag_true": 320,
+      "n_flag_false": 990,
+      "flag_rate": 24.4,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "on_n": 320,
+      "on_wr": 15.94,
+      "on_roi": -11.65,
+      "off_n": 990,
+      "off_wr": 22.53,
+      "off_roi": -19.05,
+      "lift_vs_off": -6.59,
+      "roi_delta": 7.4,
+      "flag_true_sp_bands": {
+        "short(<3)": {
+          "n": 48,
+          "win_rate": 37.5,
+          "roi": -28.88
+        },
+        "fav(3-5)": {
+          "n": 68,
+          "win_rate": 16.2,
+          "roi": -37.4
+        },
+        "mid(5-8.5)": {
+          "n": 76,
+          "win_rate": 15.8,
+          "roi": -8.55
+        },
+        "long(8.5-15)": {
+          "n": 69,
+          "win_rate": 10.1,
+          "roi": 5.07
+        },
+        "outsider(15+)": {
+          "n": 58,
+          "win_rate": 3.4,
+          "roi": 10.34
+        }
+      },
+      "roi_stripped": -24.23,
+      "stripped_sp": 41.0,
+      "n_stripped": 319,
+      "top1_pct": 14.5,
+      "top3_pct": 27.2,
+      "verdict": "NEGATIVE_SIGNAL"
+    },
+    {
+      "signal": "exposed_regression_flag",
+      "label": "Exposed Regression",
+      "type": "flag",
+      "n_flag_true": 143,
+      "n_flag_false": 1167,
+      "flag_rate": 10.9,
+      "sample_verdict": "MODERATE_SAMPLE",
+      "on_n": 143,
+      "on_wr": 18.18,
+      "on_roi": -13.73,
+      "off_n": 1167,
+      "off_wr": 21.25,
+      "off_roi": -17.68,
+      "lift_vs_off": -3.07,
+      "roi_delta": 3.95,
+      "flag_true_sp_bands": {
+        "short(<3)": {
+          "n": 19,
+          "win_rate": 63.2,
+          "roi": 22.95
+        },
+        "fav(3-5)": {
+          "n": 24,
+          "win_rate": 25.0,
+          "roi": -14.58
+        },
+        "mid(5-8.5)": {
+          "n": 33,
+          "win_rate": 12.1,
+          "roi": -24.24
+        },
+        "long(8.5-15)": {
+          "n": 36,
+          "win_rate": 5.6,
+          "roi": -43.06
+        },
+        "outsider(15+)": {
+          "n": 31,
+          "win_rate": 6.5,
+          "roi": 9.68
+        }
+      },
+      "roi_stripped": -26.51,
+      "stripped_sp": 19.0,
+      "n_stripped": 142,
+      "top1_pct": 15.4,
+      "top3_pct": 36.5,
+      "verdict": "NEGATIVE_SIGNAL"
+    },
+    {
+      "signal": "mds_high_flag",
+      "label": "MDS High",
+      "type": "flag",
+      "n_flag_true": 41,
+      "n_flag_false": 1269,
+      "flag_rate": 3.1,
+      "sample_verdict": "SMALL_SAMPLE",
+      "on_n": 41,
+      "on_wr": 65.85,
+      "on_roi": -11.76,
+      "off_n": 1269,
+      "off_wr": 19.46,
+      "off_roi": -17.42,
+      "lift_vs_off": 46.39,
+      "roi_delta": 5.66,
+      "flag_true_sp_bands": {
+        "short(<3)": {
+          "n": 37,
+          "win_rate": 70.3,
+          "roi": -2.22
+        },
+        "fav(3-5)": {
+          "n": 2,
+          "win_rate": 0.0,
+          "roi": -100.0
+        },
+        "mid(5-8.5)": {
+          "n": 1,
+          "win_rate": 0.0,
+          "roi": -100.0
+        }
+      },
+      "roi_stripped": -14.8,
+      "stripped_sp": 2.1,
+      "n_stripped": 40,
+      "top1_pct": 5.8,
+      "top3_pct": 16.4,
+      "verdict": "WEAK_POSITIVE"
+    },
+    {
+      "signal": "tj_high_flag",
+      "label": "TJ HIGH (global D8)",
+      "type": "flag",
+      "n_flag_true": 615,
+      "n_flag_false": 695,
+      "flag_rate": 46.9,
+      "sample_verdict": "ADEQUATE_SAMPLE",
+      "on_n": 615,
+      "on_wr": 23.41,
+      "on_roi": -17.93,
+      "off_n": 695,
+      "off_wr": 18.71,
+      "off_roi": -16.64,
+      "lift_vs_off": 4.7,
+      "roi_delta": -1.29,
+      "flag_true_sp_bands": {
+        "short(<3)": {
+          "n": 203,
+          "win_rate": 42.4,
+          "roi": -23.86
+        },
+        "fav(3-5)": {
+          "n": 142,
+          "win_rate": 21.8,
+          "roi": -18.56
+        },
+        "mid(5-8.5)": {
+          "n": 114,
+          "win_rate": 14.9,
+          "roi": -8.33
+        },
+        "long(8.5-15)": {
+          "n": 80,
+          "win_rate": 8.8,
+          "roi": -10.0
+        },
+        "outsider(15+)": {
+          "n": 75,
+          "win_rate": 2.7,
+          "roi": -22.67
+        }
+      },
+      "roi_stripped": -24.48,
+      "stripped_sp": 41.0,
+      "n_stripped": 614,
+      "top1_pct": 8.1,
+      "top3_pct": 14.1,
+      "verdict": "WEAK_POSITIVE"
+    }
+  ],
+  "compound_signals": [
+    {
+      "label": "VP\u22650.30 + TJ_HIGH",
+      "n_on": 211,
+      "n_off": 1099,
+      "rate": 16.1,
+      "conditions": [
+        "vp30_flag high",
+        "tj_high_flag high"
+      ],
+      "sample_verdict": "MODERATE_SAMPLE",
+      "on_n": 211,
+      "on_wr": 35.07,
+      "on_roi": -13.48,
+      "off_n": 1099,
+      "off_wr": 18.2,
+      "off_roi": -17.97,
+      "lift_vs_off": 16.87,
+      "roi_stripped": -17.36,
+      "stripped_sp": 9.0,
+      "n_stripped": 210,
+      "top1_pct": 4.9,
+      "top3_pct": 14.2
+    },
+    {
+      "label": "VP\u22650.30 + silent_improver",
+      "n_on": 29,
+      "n_off": 1281,
+      "rate": 2.2,
+      "conditions": [
+        "vp30_flag high",
+        "silent_improver_flag high"
+      ],
+      "sample_verdict": "INSUFFICIENT_SAMPLE",
+      "on_n": 29,
+      "on_wr": 24.14,
+      "on_roi": -38.28,
+      "off_n": 1281,
+      "off_wr": 20.84,
+      "off_roi": -16.77,
+      "lift_vs_off": 3.3,
+      "roi_stripped": -51.54,
+      "stripped_sp": 4.33,
+      "n_stripped": 28,
+      "top1_pct": 24.2,
+      "top3_pct": 58.4
+    },
+    {
+      "label": "VP\u22650.30 + rating_rebound",
+      "n_on": 70,
+      "n_off": 1240,
+      "rate": 5.3,
+      "conditions": [
+        "vp30_flag high",
+        "rating_rebound_flag high"
+      ],
+      "sample_verdict": "SMALL_SAMPLE",
+      "on_n": 70,
+      "on_wr": 25.71,
+      "on_roi": -4.07,
+      "off_n": 1240,
+      "off_wr": 20.65,
+      "off_roi": -17.99,
+      "lift_vs_off": 5.06,
+      "roi_stripped": -20.07,
+      "stripped_sp": 12.0,
+      "n_stripped": 69,
+      "top1_pct": 17.9,
+      "top3_pct": 46.2
+    },
+    {
+      "label": "VP\u22650.30 + ts_slope>2",
+      "n_on": 86,
+      "n_off": 1224,
+      "rate": 6.6,
+      "conditions": [
+        "vp30_flag high",
+        "ts_slope_6 >=2"
+      ],
+      "sample_verdict": "SMALL_SAMPLE",
+      "on_n": 86,
+      "on_wr": 29.07,
+      "on_roi": 1.03,
+      "off_n": 1224,
+      "off_wr": 20.34,
+      "off_roi": -18.53,
+      "lift_vs_off": 8.73,
+      "roi_stripped": -11.89,
+      "stripped_sp": 12.0,
+      "n_stripped": 85,
+      "top1_pct": 13.8,
+      "top3_pct": 34.5
+    },
+    {
+      "label": "VP\u22650.30 + or_drop>3",
+      "n_on": 48,
+      "n_off": 1262,
+      "rate": 3.7,
+      "conditions": [
+        "vp30_flag high",
+        "or_drop_from_peak >=3"
+      ],
+      "sample_verdict": "SMALL_SAMPLE",
+      "on_n": 48,
+      "on_wr": 22.92,
+      "on_roi": -33.71,
+      "off_n": 1262,
+      "off_wr": 20.84,
+      "off_roi": -16.62,
+      "lift_vs_off": 2.08,
+      "roi_stripped": -44.0,
+      "stripped_sp": 5.5,
+      "n_stripped": 47,
+      "top1_pct": 17.3,
+      "top3_pct": 46.6
+    },
+    {
+      "label": "VP\u22650.40 + TJ_HIGH",
+      "n_on": 79,
+      "n_off": 1231,
+      "rate": 6.0,
+      "conditions": [
+        "vp40_flag high",
+        "tj_high_flag high"
+      ],
+      "sample_verdict": "SMALL_SAMPLE",
+      "on_n": 79,
+      "on_wr": 51.9,
+      "on_roi": -1.72,
+      "off_n": 1231,
+      "off_wr": 18.93,
+      "off_roi": -18.24,
+      "lift_vs_off": 32.97,
+      "roi_stripped": -10.72,
+      "stripped_sp": 8.0,
+      "n_stripped": 78,
+      "top1_pct": 10.3,
+      "top3_pct": 21.9
+    },
+    {
+      "label": "VP\u22650.30 only (no TJ)",
+      "n_on": 188,
+      "n_off": 1122,
+      "rate": 14.4,
+      "conditions": [
+        "vp30_flag high",
+        "tj_high_flag low"
+      ],
+      "sample_verdict": "MODERATE_SAMPLE",
+      "on_n": 188,
+      "on_wr": 33.51,
+      "on_roi": 18.63,
+      "off_n": 1122,
+      "off_wr": 18.81,
+      "off_roi": -23.26,
+      "lift_vs_off": 14.7,
+      "roi_stripped": 1.09,
+      "stripped_sp": 34.0,
+      "n_stripped": 187,
+      "top1_pct": 15.2,
+      "top3_pct": 26.0
+    },
+    {
+      "label": "exposed_regression + VP<0.20",
+      "n_on": 104,
+      "n_off": 1206,
+      "rate": 7.9,
+      "conditions": [
+        "exposed_regression_flag high",
+        "vp30_flag low"
+      ],
+      "sample_verdict": "MODERATE_SAMPLE",
+      "on_n": 104,
+      "on_wr": 11.54,
+      "on_roi": -20.73,
+      "off_n": 1206,
+      "off_wr": 21.72,
+      "off_roi": -16.95,
+      "lift_vs_off": -10.18,
+      "roi_stripped": -38.41,
+      "stripped_sp": 19.0,
+      "n_stripped": 103,
+      "top1_pct": 23.0,
+      "top3_pct": 54.6
+    }
+  ],
+  "tj_threshold_audit": {
+    "n_tj_covered": 733,
+    "n_total": 1310,
+    "coverage_pct": 56.0,
+    "global_d8_threshold": 0.0847,
+    "today_d8_threshold": 0.1847,
+    "tj_distribution": {
+      "min": 0.0339,
+      "p20": 0.0881,
+      "p50": 0.1296,
+      "p80": 0.1847,
+      "p90": 0.2156,
+      "max": 0.3397
+    },
+    "global_d8": {
+      "threshold": 0.0847,
+      "n_high": 615,
+      "n_low": 118,
+      "pct_of_covered": 83.9,
+      "high_wr": 23.41,
+      "high_roi": -17.93,
+      "low_wr": 19.49,
+      "low_roi": -10.58,
+      "lift_high_vs_low": 3.92,
+      "roi_stripped": -24.48,
+      "stripped_sp": 41.0,
+      "n_stripped": 614,
+      "top1_pct": 8.1,
+      "top3_pct": 14.1
+    },
+    "today_top20": {
+      "threshold": 0.1847,
+      "n_high": 148,
+      "n_low": 585,
+      "pct_of_covered": 20.2,
+      "high_wr": 39.86,
+      "high_roi": 4.32,
+      "low_wr": 18.46,
+      "low_roi": -22.08,
+      "lift_high_vs_low": 21.4,
+      "roi_stripped": -3.82,
+      "stripped_sp": 13.0,
+      "n_stripped": 147,
+      "top1_pct": 8.4,
+      "top3_pct": 17.2
+    },
+    "diagnosis": "THRESHOLD_TOO_LOW"
+  },
+  "sp_leakage_audit": {
+    "sp_in_dataset": true,
+    "n_with_sp": 1306,
+    "sp_is_pre_race": false,
+    "sp_leakage_risk": "HIGH",
+    "recommendation": "DO_NOT_USE_SP_AS_FEATURE_IN_PRODUCTION",
+    "sp_ok_for": [
+      "ROI_calculation",
+      "SP_band_stratification",
+      "target_actual_sp"
+    ],
+    "sp_vs_won_rho": -0.3927,
+    "sp_vs_won_pval": 0.0,
+    "sp_vs_won_note": "Negative rho expected (lower SP = favourite = more likely to win). If rho strongly negative, SP is a powerful but post-hoc signal. Using SP as a feature would rank future predictions by implied odds, not VELO signal.",
+    "sp_deciles": [
+      {
+        "decile": 0,
+        "n": 136,
+        "mean_sp": 1.54,
+        "win_rate": 65.4,
+        "roi": -1.85
+      },
+      {
+        "decile": 1,
+        "n": 129,
+        "mean_sp": 2.18,
+        "win_rate": 38.0,
+        "roi": -17.97
+      },
+      {
+        "decile": 2,
+        "n": 135,
+        "mean_sp": 2.96,
+        "win_rate": 23.7,
+        "roi": -29.73
+      },
+      {
+        "decile": 3,
+        "n": 165,
+        "mean_sp": 3.95,
+        "win_rate": 18.8,
+        "roi": -27.34
+      },
+      {
+        "decile": 4,
+        "n": 104,
+        "mean_sp": 4.81,
+        "win_rate": 17.3,
+        "roi": -15.87
+      },
+      {
+        "decile": 5,
+        "n": 142,
+        "mean_sp": 6.19,
+        "win_rate": 12.0,
+        "roi": -28.87
+      },
+      {
+        "decile": 6,
+        "n": 120,
+        "mean_sp": 8.26,
+        "win_rate": 12.5,
+        "roi": 1.67
+      },
+      {
+        "decile": 7,
+        "n": 114,
+        "mean_sp": 10.83,
+        "win_rate": 9.6,
+        "roi": 2.19
+      },
+      {
+        "decile": 8,
+        "n": 145,
+        "mean_sp": 15.8,
+        "win_rate": 4.8,
+        "roi": -27.59
+      },
+      {
+        "decile": 9,
+        "n": 116,
+        "mean_sp": 39.22,
+        "win_rate": 2.6,
+        "roi": -15.52
+      }
+    ]
+  },
+  "vp_detailed": {
+    "signal": "velo_prime_prob",
+    "label": "VELO Prime Probability",
+    "type": "numeric",
+    "n": 1310,
+    "n_winners": 274,
+    "win_rate": 20.92,
+    "sample_verdict": "ADEQUATE_SAMPLE",
+    "coverage_pct": 100.0,
+    "winner_mean": 0.3205,
+    "loser_mean": 0.2456,
+    "winner_median": 0.3,
+    "loser_median": 0.2213,
+    "mean_diff": 0.0749,
+    "spearman_rho": 0.2181,
+    "spearman_pval": 0.0,
+    "spearman_sig": true,
+    "deciles": [
+      {
+        "decile": 0,
+        "n": 132,
+        "win_rate": 12.1,
+        "roi": -31.64,
+        "mean_val": 0.1099
+      },
+      {
+        "decile": 1,
+        "n": 131,
+        "win_rate": 13.7,
+        "roi": -28.31,
+        "mean_val": 0.1515
+      },
+      {
+        "decile": 2,
+        "n": 130,
+        "win_rate": 16.9,
+        "roi": 11.15,
+        "mean_val": 0.1794
+      },
+      {
+        "decile": 3,
+        "n": 131,
+        "win_rate": 8.4,
+        "roi": -43.74,
+        "mean_val": 0.1996
+      },
+      {
+        "decile": 4,
+        "n": 131,
+        "win_rate": 17.6,
+        "roi": -24.48,
+        "mean_val": 0.2204
+      },
+      {
+        "decile": 5,
+        "n": 131,
+        "win_rate": 16.8,
+        "roi": -31.13,
+        "mean_val": 0.2484
+      },
+      {
+        "decile": 6,
+        "n": 131,
+        "win_rate": 19.8,
+        "roi": -31.91,
+        "mean_val": 0.2812
+      },
+      {
+        "decile": 7,
+        "n": 131,
+        "win_rate": 26.0,
+        "roi": 3.56,
+        "mean_val": 0.3234
+      },
+      {
+        "decile": 8,
+        "n": 131,
+        "win_rate": 34.4,
+        "roi": 22.51,
+        "mean_val": 0.3766
+      },
+      {
+        "decile": 9,
+        "n": 131,
+        "win_rate": 43.5,
+        "roi": -18.15,
+        "mean_val": 0.5229
+      }
+    ],
+    "top_decile_wr": 43.5,
+    "top_decile_roi": -18.15,
+    "top_decile_lift": 22.6,
+    "bot_decile_wr": 12.1,
+    "bot_decile_drag": 8.8,
+    "top_decile_sp_bands": {
+      "short(<3)": {
+        "n": 82,
+        "win_rate": 61.0,
+        "roi": -3.39
+      },
+      "fav(3-5)": {
+        "n": 28,
+        "win_rate": 10.7,
+        "roi": -66.07
+      },
+      "mid(5-8.5)": {
+        "n": 11,
+        "win_rate": 27.3,
+        "roi": 68.18
+      },
+      "long(8.5-15)": {
+        "n": 7,
+        "win_rate": 0.0,
+        "roi": -100.0
+      },
+      "outsider(15+)": {
+        "n": 2,
+        "win_rate": 0.0,
+        "roi": -100.0
+      }
+    },
+    "roi_stripped": -20.32,
+    "stripped_sp": 41.0,
+    "n_stripped": 1309,
+    "top1_pct": 3.8,
+    "top3_pct": 9.0,
+    "full_roi": -17.25,
+    "vp_bands": {
+      "VP<0.20": {
+        "n": 463,
+        "win_rate": 13.39,
+        "roi": -24.98
+      },
+      "VP 0.20-0.30": {
+        "n": 448,
+        "win_rate": 16.74,
+        "roi": -26.08
+      },
+      "VP 0.30-0.40": {
+        "n": 249,
+        "win_rate": 27.71,
+        "roi": -2.29
+      },
+      "VP>=0.40": {
+        "n": 150,
+        "win_rate": 45.33,
+        "roi": 8.19
+      },
+      "VP>=0.30": {
+        "n": 399,
+        "win_rate": 34.34,
+        "roi": 1.65
+      }
+    },
+    "vp30_tj_compound": {
+      "n": 211,
+      "win_rate": 35.07,
+      "roi": -13.48
+    },
+    "vp30_no_tj": {
+      "n": 188,
+      "win_rate": 33.51,
+      "roi": 18.63
+    }
+  },
+  "sp_feature_governance": {
+    "sp_feature_set_NO_SP": {
+      "status": "PRODUCTION_SAFE",
+      "sp_decimal_excluded": true,
+      "recommendation": "Use this set for any shadow or live model"
+    },
+    "sp_feature_set_SP_DIAGNOSTIC": {
+      "status": "DIAGNOSTIC_ONLY",
+      "sp_decimal_included": true,
+      "recommendation": "DO_NOT_USE_IN_PRODUCTION_MODEL",
+      "reason": "sp_decimal is the realised SP (post-race settlement). A model trained with SP as a feature learns to rank by market odds, not by VELO's independent signal. This defeats the purpose. SP may only be used for ROI calculation (target), SP-band stratification, or as a post-hoc diagnostic."
+    }
+  }
+}
