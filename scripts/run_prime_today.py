@@ -182,24 +182,125 @@ def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None
     _ENRICHMENT_CACHES = load_enrichment_caches(_SB_URL, _SB_KEY)
 
 
-def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
-    """Return (races_list, source) where source is 'cache' or 'api'.
-
-    Tries local cache first. If absent, fetches directly from Racing API
-    (requires RACING_API_USERNAME + RACING_API_PASSWORD in env).
-    Saves the API response to cache as a best-effort local backup.
-    Safe to run with no pre-existing local files (Railway cron compatible).
+def _load_rp_profile_as_racecards(date_str: str) -> list[dict]:
     """
-    cache_path = ROOT / "data" / f"racecards_{date_tag}_standard.json"
+    Build synthetic racecard list from the RP runner profile parquet.
 
+    Fallback B in the racecard priority chain:
+      A. cached racecard JSON  →  B. this function  →  C. live Racing API
+
+    Produces minimal race dicts compatible with normalize_race() +
+    score_race_velo_prime(). VP scores reflect RP-profile features only —
+    no live market data, no Racing API enrichment. All races scored as "uk"
+    jurisdiction (RP data is UK/IRE only; "GB" region passes both bands).
+
+    Returns an empty list if no rows exist for date_str.
+    Raises FileNotFoundError if the profile parquet is absent entirely.
+    """
+    import math
+
+    import pandas as pd
+
+    profile_path = ROOT / "data" / "features" / "rp_runner_profile_latest.parquet"
+    if not profile_path.exists():
+        raise FileNotFoundError(f"RP profile not found: {profile_path}")
+
+    rp = pd.read_parquet(profile_path)
+    rp_today = rp[rp["race_date"].astype(str) == date_str].copy()
+    if rp_today.empty:
+        return []
+
+    def _v(val):
+        """Coerce pandas scalar to Python native, mapping NaN/NaT to None."""
+        if val is None:
+            return None
+        try:
+            if isinstance(val, float) and math.isnan(val):
+                return None
+        except Exception:
+            pass
+        return val
+
+    races: list[dict] = []
+    for race_id, group in rp_today.groupby("race_id"):
+        first = group.iloc[0]
+
+        runners = []
+        for _, row in group.iterrows():
+            last_run_raw = row.get("days_since_run")
+            last_run = str(int(last_run_raw)) if pd.notna(last_run_raw) else None
+            runners.append({
+                "horse":      _v(row.get("horse")),
+                "horse_id":   _v(row.get("horse_id")),
+                "ofr":        _v(row.get("current_or")),
+                "rpr":        _v(row.get("current_rpr")),
+                "ts":         _v(row.get("current_ts")),
+                "trainer":    _v(row.get("trainer")),
+                "trainer_id": _v(row.get("trainer_id")),
+                "jockey":     _v(row.get("jockey")),
+                "jockey_id":  _v(row.get("jockey_id")),
+                "age":        _v(row.get("age")),
+                "form":       _v(row.get("form_figures")),
+                "draw":       _v(row.get("stall")),
+                "headgear":   _v(row.get("headgear")),
+                "last_run":   last_run,
+                "spotlight":  _v(row.get("horse_comment")),
+            })
+
+        course = str(first.get("course") or "")
+        races.append({
+            "race_id":            str(race_id),
+            "course":             course,
+            "course_id":          course,
+            "date":               date_str,
+            "off_time":           str(first.get("off_time") or ""),
+            "race_name":          str(first.get("race_info") or ""),
+            "distance":           str(first.get("dist_text") or ""),
+            "race_class":         str(first.get("class_band") or ""),
+            "region":             "GB",
+            "field_size":         len(runners),
+            "runners":            runners,
+            "_rp_profile_source": True,
+        })
+
+    return races
+
+
+def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
+    """Return (races_list, source) where source is 'cache', 'rp_profile', or 'api'.
+
+    Priority order:
+      A. Local cache  (data/racecards_{date_tag}_standard.json)
+      B. RP runner profile  (data/features/rp_runner_profile_latest.parquet)
+         — produces partial VP scores; no live market data
+      C. Live Racing API  (requires RACING_API_USERNAME + RACING_API_PASSWORD)
+
+    The Racing API is only contacted when A and B are both unavailable.
+    Saves the API response to cache as a best-effort local backup.
+    """
+    # A: local cache
+    cache_path = ROOT / "data" / f"racecards_{date_tag}_standard.json"
     if cache_path.exists():
         raw = json.loads(cache_path.read_text())
         races = raw if isinstance(raw, list) else raw.get("racecards", [])
         return races, "cache"
 
-    # Cache absent — fetch directly from Racing API
+    # B: RP runner profile fallback
+    try:
+        rp_races = _load_rp_profile_as_racecards(date_str)
+        if rp_races:
+            print(f"  RP profile fallback: {len(rp_races)} synthetic racecards for {date_str}")
+            return rp_races, "rp_profile"
+        print(f"  RP profile fallback: no rows for {date_str} — proceeding to live API")
+    except Exception as _rp_err:
+        print(f"  RP profile fallback unavailable: {_rp_err}")
+
+    # C: live Racing API
     if not RACING_USER or not RACING_PASS:
-        raise RuntimeError("No cached racecards and RACING_API_USERNAME/PASSWORD not set — cannot fetch")
+        raise RuntimeError(
+            "No cached racecards, RP profile unavailable for this date, "
+            "and RACING_API_USERNAME/PASSWORD not set — cannot fetch"
+        )
     from datetime import date as _date
     _today = str(_date.today())
     if date_str == _today:
@@ -1212,7 +1313,8 @@ def main():
     loaded_date_str = ", ".join(sorted(loaded_dates)) if loaded_dates else "unknown"
     date_mismatch = loaded_dates and date_str not in loaded_dates
     is_live = racecard_source == "api"
-    live_label = "LIVE_API" if is_live else "CACHE"
+    _source_labels = {"api": "LIVE_API", "cache": "CACHE", "rp_profile": "RP_PROFILE_FALLBACK"}
+    live_label = _source_labels.get(racecard_source, racecard_source.upper())
     commit_sha = get_commit_sha()
 
     print(f"\n{'=' * 60}")
@@ -1223,12 +1325,14 @@ def main():
     print(f"  commit_sha     : {commit_sha}")
     print("  router_version : ProductRouter v1 (live-safe)")
     if date_mismatch:
-        print(f"  ⚠ DATE MISMATCH — loaded card is NOT for {date_str}")
-        print("  ⚠ This is a cache/stale fetch. Marking output NON-LIVE.")
+        print(f"  WARNING: DATE MISMATCH — loaded card is NOT for {date_str}")
+        print("  WARNING: This is a cache/stale fetch. Marking output NON-LIVE.")
+    elif racecard_source == "rp_profile":
+        print("  INFO: Source = RP_PROFILE_FALLBACK. VP scores partial (no live market data).")
     elif not is_live:
-        print("  ℹ Source = CACHE. Card date matches request.")
+        print("  INFO: Source = CACHE. Card date matches request.")
     else:
-        print("  ✓ Source = LIVE API. Card date matches request.")
+        print("  OK: Source = LIVE API. Card date matches request.")
     print(f"{'=' * 60}\n")
 
     if date_mismatch and notify_enabled:
