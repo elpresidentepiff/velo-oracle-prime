@@ -1,0 +1,60 @@
+{
+  "run_ts": "2026-05-17 17:40 UTC",
+  "date": "2026-05-17",
+  "prev_date": null,
+  "any_trigger_fired": false,
+  "lanes": [
+    {
+      "name": "VP40_TIER_A_SP_2X",
+      "label": "embryo lane \u2014 healthiest sub-band",
+      "definition": "VP>=0.40 AND Tier A AND 2.0<=SP<3.0",
+      "trigger_n": 50,
+      "trigger_action": "run vp40_tier_a_sp_2x_review.py \u2014 forensic review per PROTOCOL_V1",
+      "status": "WAIT",
+      "pct_to_trigger": 48.0,
+      "delta_n": 0,
+      "stats": {
+        "n": 24,
+        "wins": 11,
+        "frames": 20,
+        "sr": 45.8,
+        "frame_rate": 83.3,
+        "roi": 3.6,
+        "avg_sp": 2.36,
+        "top_winner": "Egotistical",
+        "top_winner_sp": 2.6,
+        "top1_pct": 10.5
+      }
+    },
+    {
+      "name": "VP40_TIER_A_SHORTPRICE",
+      "label": "outlier-clean lane \u2014 UNDER_REVIEW",
+      "definition": "VP>=0.40 AND Tier A AND SP<3.0",
+      "trigger_n": 150,
+      "trigger_action": "rerun vp40_tier_a_shortprice_review.py \u2014 full promotion gate assessment",
+      "status": "WAIT",
+      "pct_to_trigger": 56.7,
+      "delta_n": 0,
+      "stats": {
+        "n": 85,
+        "wins": 51,
+        "frames": 76,
+        "sr": 60.0,
+        "frame_rate": 89.4,
+        "roi": -3.6,
+        "avg_sp": 1.75,
+        "top_winner": "Egotistical",
+        "top_winner_sp": 2.6,
+        "top1_pct": 3.2
+      }
+    }
+  ],
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "router_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "TRIGGER_DISCIPLINE_ONLY"
+  }
+}
