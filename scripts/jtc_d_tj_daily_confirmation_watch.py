@@ -124,6 +124,49 @@ def _load_racecard(date_str: str) -> list[dict]:
     return []
 
 
+def _load_racecard_from_rp_profile(date_str: str) -> list[dict]:
+    """Fallback: build synthetic racecard structure from rp_runner_profile_latest.parquet."""
+    rp_path = ROOT / "data" / "features" / "rp_runner_profile_latest.parquet"
+    if not rp_path.exists():
+        return []
+    try:
+        import pandas as _pd
+        df = _pd.read_parquet(rp_path)
+        df["_date_str"] = _pd.to_datetime(df["race_date"]).dt.strftime("%Y-%m-%d")
+        today_df = df[df["_date_str"] == date_str]
+        if today_df.empty:
+            return []
+        # Group by race_id to build race cards
+        races = []
+        for race_id, grp in today_df.groupby("race_id"):
+            first = grp.iloc[0]
+            runners_list = []
+            for _, row in grp.iterrows():
+                runners_list.append({
+                    "horse":     str(row.get("horse", "")),
+                    "horse_id":  str(row.get("horse_id", "") or ""),
+                    "trainer":   str(row.get("trainer", "") or ""),
+                    "jockey":    str(row.get("jockey", "") or ""),
+                    "_tj_sr_precomputed": row.get("trainer_jockey_sr"),
+                })
+            races.append({
+                "race_id":    race_id,
+                "course":     str(first.get("course", "")),
+                "off_time":   str(first.get("off_time", "")),
+                "race_name":  str(first.get("race_info", "")),
+                "distance":   str(first.get("dist_text", "") or first.get("dist_band", "")),
+                "type":       "",
+                "race_class": str(first.get("class_band", "")),
+                "runners":    runners_list,
+                "_source":    "rp_profile",
+            })
+        print(f"  RP profile fallback: {len(races)} races, {len(today_df)} runners for {date_str}")
+        return races
+    except Exception as e:
+        print(f"  WARNING: RP profile racecard fallback failed: {e}")
+        return []
+
+
 def _load_vp_scores(date_str: str) -> dict[str, float]:
     """Load VP scores for today's candidates from Supabase velo_verdicts.
     Returns {horse_id: velo_prime_prob}. Returns empty dict on failure."""
@@ -195,12 +238,15 @@ def main():
     print(f"TJ lookup: {len(tj_lookup):,} partnerships")
     print(f"TJ threshold (>=D8, 80th pct): {tj_threshold:.4f}")
 
-    # Load racecard
+    # Load racecard — fallback to RP runner profile when API racecard absent
     racecards = _load_racecard(date_str)
+    if not racecards:
+        racecards = _load_racecard_from_rp_profile(date_str)
     if not racecards:
         print(f"No racecard found for {date_str}. Run run_prime_today.py first.")
         raise SystemExit(1)
-    print(f"Racecard: {len(racecards)} races loaded")
+    racecard_source = racecards[0].get("_source", "api") if racecards else "none"
+    print(f"Racecard: {len(racecards)} races loaded (source: {racecard_source})")
 
     # Load VP scores from Supabase
     vp_scores = _load_vp_scores(date_str)
@@ -235,8 +281,13 @@ def main():
                 except Exception:
                     pass
 
-            tj_key = (trainer.upper(), jockey.upper())
-            tj_val = tj_lookup.get(tj_key)
+            # Use precomputed TJ SR from RP profile if available (fallback path)
+            tj_precomputed = runner.get("_tj_sr_precomputed")
+            if tj_precomputed is not None and not (isinstance(tj_precomputed, float) and tj_precomputed != tj_precomputed):
+                tj_val = float(tj_precomputed)
+            else:
+                tj_key = (trainer.upper(), jockey.upper())
+                tj_val = tj_lookup.get(tj_key)
             vp = vp_scores.get(hid, 0.0)
             is_tj_high = tj_val is not None and tj_val >= tj_threshold
             is_velo_candidate = vp > 0

@@ -16,7 +16,7 @@
 | | |
 |---|---|
 | Master unique (horse, date) | 1,310 |
-| Spine unique (horse, date)  | 1,542 |
+| Spine unique (horse, date)  | 1,616 |
 | Overlap                     | 1,310 (100.0%) |
 | Rows with last-6 data       | 880 (67.2%) |
 | Rows with 0 runs            | 430 (32.8%) |

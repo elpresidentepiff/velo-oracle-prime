@@ -25,6 +25,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 RACEFORM_PATH     = ROOT / "data" / "raceform_v17_features.parquet"
 MASTER_PATH       = ROOT / "data" / "features" / "runner_master_profile_latest.parquet"
+RP_PROFILE_PATH   = ROOT / "data" / "features" / "rp_runner_profile_latest.parquet"
 RACECARD_DIR      = ROOT / "data"
 OUTPUT_PATH       = ROOT / "data" / "features" / "horse_last6_rating_spine.parquet"
 
@@ -301,6 +302,32 @@ def load_racecard_targets(racecard_dir: Path, today: date) -> list[dict]:
     return []
 
 
+def load_rp_profile_targets(path: Path, today: date) -> list[dict]:
+    """Load today's runners from rp_runner_profile_latest.parquet — fallback when API racecard absent."""
+    if not path.exists():
+        return []
+    try:
+        df = pd.read_parquet(path, columns=["horse", "race_date", "race_id"])
+        today_str = str(today)
+        df["race_date_str"] = pd.to_datetime(df["race_date"]).dt.strftime("%Y-%m-%d")
+        today_rows = df[df["race_date_str"] == today_str]
+        if len(today_rows) == 0:
+            return []
+        targets = []
+        for _, row in today_rows.iterrows():
+            targets.append({
+                "horse":   str(row["horse"]),
+                "date":    today,
+                "race_id": str(row.get("race_id", "")),
+                "source":  "rp_profile",
+            })
+        print(f"  RP profile: {len(targets)} runners for {today} (API racecard fallback)")
+        return targets
+    except Exception as e:
+        print(f"  WARNING: RP profile fallback failed: {e}")
+        return []
+
+
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -313,7 +340,11 @@ def main():
 
     # 2. Collect targets
     print("\nCollecting targets...")
-    targets = load_sigma_targets(MASTER_PATH) + load_racecard_targets(RACECARD_DIR, today)
+    racecard_targets = load_racecard_targets(RACECARD_DIR, today)
+    # Fallback: if no API racecard, use today's RP runner profile for live runners
+    if not racecard_targets:
+        racecard_targets = load_rp_profile_targets(RP_PROFILE_PATH, today)
+    targets = load_sigma_targets(MASTER_PATH) + racecard_targets
 
     # Deduplicate on (horse_norm, date) — sigma rows win (source = sigma first)
     seen: set[tuple] = set()
