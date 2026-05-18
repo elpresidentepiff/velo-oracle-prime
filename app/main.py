@@ -1490,6 +1490,16 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             or (meta.race_name if meta else "")
             or local_meta.get("race_name", "")
         )
+        # Final fallback: parse race_id when course/off_time still empty.
+        # Format: YYYY-MM-DD_CourseName_HHMM (e.g. 2026-05-18_Lingfield_350 → 3:50)
+        if race_id and (not course or not off_time):
+            _rid_parts = race_id.split("_")
+            if len(_rid_parts) >= 3 and _rid_parts[-1].isdigit():
+                if not course:
+                    course = " ".join(_rid_parts[1:-1])
+                if not off_time:
+                    _t = _rid_parts[-1]
+                    off_time = f"{_t[0]}:{_t[1:]}" if len(_t) == 3 else f"{_t[:2]}:{_t[2:]}"
         tier = v.get("decision_tier") or v.get("tier", "?")
         cashrun_match = cashrun_by_key.get(
             (

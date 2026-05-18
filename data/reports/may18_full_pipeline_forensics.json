@@ -1,0 +1,311 @@
+{
+  "date": "2026-05-18",
+  "generated_at": "2026-05-18T23:09:53.037004",
+  "classification": [
+    "MAY18_SIGMA_INVALID_SAMPLE",
+    "RESULT_RECONCILIATION_FAILURE",
+    "RP_IDENTITY_BRIDGE_FAILURE",
+    "SYNTHETIC_ID_NORMALISATION_DRIFT",
+    "NO_LEARNING_ALLOWED"
+  ],
+  "expected_races": 34,
+  "supabase_predictions": 34,
+  "local_json_predictions": 34,
+  "result_races_in_file": 31,
+  "sigma_evaluated_races": 7,
+  "sigma_nr_absent_claimed": 24,
+  "sigma_no_result": 3,
+  "forensic_taxonomy": {
+    "MATCH_WIN": 2,
+    "MATCH_PLACED": 1,
+    "MATCH_MISS": 4,
+    "RESULT_RACE_MISSING": 3,
+    "TRUE_NON_RUNNER": 0,
+    "SYNTHETIC_ID_NORMALISATION_DRIFT": 22,
+    "HORSE_ID_MISMATCH_NAME_OK": 2,
+    "HORSE_ID_MISMATCH_UNKNOWN": 0,
+    "UNKNOWN": 0
+  },
+  "forensic_detail": {
+    "MATCH_WIN": [
+      {
+        "race_id": "2026-05-18_Windsor_640",
+        "horse_id": "RP_lequinto",
+        "horse": "Lequinto",
+        "sp": "10/3"
+      },
+      {
+        "race_id": "2026-05-18_Lingfield_457",
+        "horse_id": "RP_adalida",
+        "horse": "Adalida",
+        "sp": "2/1"
+      }
+    ],
+    "MATCH_PLACED": [
+      {
+        "race_id": "2026-05-18_ROS_720",
+        "horse_id": "RP_wipeawayyourtears",
+        "horse": "Wipeawayyourtears",
+        "position": "3"
+      }
+    ],
+    "MATCH_MISS": [
+      {
+        "race_id": "2026-05-18_Wolverhampton_600",
+        "horse_id": "RP_powernap",
+        "horse": "Powernap",
+        "position": "5"
+      },
+      {
+        "race_id": "2026-05-18_Redcar_340",
+        "horse_id": "RP_profiteer",
+        "horse": "Profiteer",
+        "position": "11"
+      },
+      {
+        "race_id": "2026-05-18_Redcar_310",
+        "horse_id": "RP_letmeseethecolts",
+        "horse": "Letmeseethecolts",
+        "position": "7"
+      },
+      {
+        "race_id": "2026-05-18_CRL_510",
+        "horse_id": "RP_detective",
+        "horse": "Detective",
+        "position": "10"
+      }
+    ],
+    "RESULT_RACE_MISSING": [
+      {
+        "race_id": "2026-05-18_Windsor_610",
+        "horse_id": "RP_tahalel",
+        "note": "Race not in Sporting Life result file"
+      },
+      {
+        "race_id": "2026-05-18_Lingfield_350",
+        "horse_id": "RP_ray mon dough",
+        "note": "Race not in Sporting Life result file"
+      },
+      {
+        "race_id": "2026-05-18_CRL_400",
+        "horse_id": "RP_great profit",
+        "note": "Race not in Sporting Life result file"
+      }
+    ],
+    "TRUE_NON_RUNNER": [],
+    "SYNTHETIC_ID_NORMALISATION_DRIFT": [
+      {
+        "race_id": "2026-05-18_Wolverhampton_900",
+        "predicted_horse_id": "RP_kelly burn",
+        "predicted_horse_id_norm": "rp_kellyburn",
+        "result_runner_name_match": "Kelly Burn",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_kelly burn' vs expected: 'rp_kellyburn'"
+      },
+      {
+        "race_id": "2026-05-18_Wolverhampton_830",
+        "predicted_horse_id": "RP_dontwaste a moment",
+        "predicted_horse_id_norm": "rp_dontwasteamoment",
+        "result_runner_name_match": "Dontwaste A Moment",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_dontwaste a moment' vs expected: 'rp_dontwasteamoment'"
+      },
+      {
+        "race_id": "2026-05-18_Wolverhampton_800",
+        "predicted_horse_id": "RP_silkies sib",
+        "predicted_horse_id_norm": "rp_silkiessib",
+        "result_runner_name_match": "Silkies Sib",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_silkies sib' vs expected: 'rp_silkiessib'"
+      },
+      {
+        "race_id": "2026-05-18_Wolverhampton_730",
+        "predicted_horse_id": "RP_lyra lea",
+        "predicted_horse_id_norm": "rp_lyralea",
+        "result_runner_name_match": "Lyra Lea",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_lyra lea' vs expected: 'rp_lyralea'"
+      },
+      {
+        "race_id": "2026-05-18_Windsor_810",
+        "predicted_horse_id": "RP_cape toronada",
+        "predicted_horse_id_norm": "rp_capetoronada",
+        "result_runner_name_match": "Cape Toronada",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_cape toronada' vs expected: 'rp_capetoronada'"
+      },
+      {
+        "race_id": "2026-05-18_Windsor_740",
+        "predicted_horse_id": "RP_sir william",
+        "predicted_horse_id_norm": "rp_sirwilliam",
+        "result_runner_name_match": "Sir William",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_sir william' vs expected: 'rp_sirwilliam'"
+      },
+      {
+        "race_id": "2026-05-18_Windsor_710",
+        "predicted_horse_id": "RP_grey sands",
+        "predicted_horse_id_norm": "rp_greysands",
+        "result_runner_name_match": "Grey Sands",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_grey sands' vs expected: 'rp_greysands'"
+      },
+      {
+        "race_id": "2026-05-18_Windsor_540",
+        "predicted_horse_id": "RP_rhythm n hooves",
+        "predicted_horse_id_norm": "rp_rhythmnhooves",
+        "result_runner_name_match": "Rhythm N Hooves",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_rhythm n hooves' vs expected: 'rp_rhythmnhooves'"
+      },
+      {
+        "race_id": "2026-05-18_Redcar_443",
+        "predicted_horse_id": "RP_long shot",
+        "predicted_horse_id_norm": "rp_longshot",
+        "result_runner_name_match": "Long Shot",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_long shot' vs expected: 'rp_longshot'"
+      },
+      {
+        "race_id": "2026-05-18_Redcar_410",
+        "predicted_horse_id": "RP_harswell river",
+        "predicted_horse_id_norm": "rp_harswellriver",
+        "result_runner_name_match": "Harswell River",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_harswell river' vs expected: 'rp_harswellriver'"
+      },
+      {
+        "race_id": "2026-05-18_Redcar_240",
+        "predicted_horse_id": "RP_electric lightning",
+        "predicted_horse_id_norm": "rp_electriclightning",
+        "result_runner_name_match": "Electric Lightning",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_electric lightning' vs expected: 'rp_electriclightning'"
+      },
+      {
+        "race_id": "2026-05-18_ROS_820",
+        "predicted_horse_id": "RP_cuckaloo hill",
+        "predicted_horse_id_norm": "rp_cuckaloohill",
+        "result_runner_name_match": "Cuckaloo Hill",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_cuckaloo hill' vs expected: 'rp_cuckaloohill'"
+      },
+      {
+        "race_id": "2026-05-18_ROS_650",
+        "predicted_horse_id": "RP_rising sky",
+        "predicted_horse_id_norm": "rp_risingsky",
+        "result_runner_name_match": "Rising Sky",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_rising sky' vs expected: 'rp_risingsky'"
+      },
+      {
+        "race_id": "2026-05-18_ROS_550",
+        "predicted_horse_id": "RP_irish rumour",
+        "predicted_horse_id_norm": "rp_irishrumour",
+        "result_runner_name_match": "Irish Rumour",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_irish rumour' vs expected: 'rp_irishrumour'"
+      },
+      {
+        "race_id": "2026-05-18_ROS_450",
+        "predicted_horse_id": "RP_cosmic funk",
+        "predicted_horse_id_norm": "rp_cosmicfunk",
+        "result_runner_name_match": "Cosmic Funk",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_cosmic funk' vs expected: 'rp_cosmicfunk'"
+      },
+      {
+        "race_id": "2026-05-18_Lingfield_422",
+        "predicted_horse_id": "RP_recon mission",
+        "predicted_horse_id_norm": "rp_reconmission",
+        "result_runner_name_match": "Recon Mission",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_recon mission' vs expected: 'rp_reconmission'"
+      },
+      {
+        "race_id": "2026-05-18_Lingfield_250",
+        "predicted_horse_id": "RP_high favour",
+        "predicted_horse_id_norm": "rp_highfavour",
+        "result_runner_name_match": "High Favour",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_high favour' vs expected: 'rp_highfavour'"
+      },
+      {
+        "race_id": "2026-05-18_Lingfield_220",
+        "predicted_horse_id": "RP_panama black",
+        "predicted_horse_id_norm": "rp_panamablack",
+        "result_runner_name_match": "Panama Black",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_panama black' vs expected: 'rp_panamablack'"
+      },
+      {
+        "race_id": "2026-05-18_CRL_435",
+        "predicted_horse_id": "RP_mereside princess",
+        "predicted_horse_id_norm": "rp_meresideprincess",
+        "result_runner_name_match": "Mereside Princess",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_mereside princess' vs expected: 'rp_meresideprincess'"
+      },
+      {
+        "race_id": "2026-05-18_CRL_330",
+        "predicted_horse_id": "RP_billy no mates",
+        "predicted_horse_id_norm": "rp_billynomates",
+        "result_runner_name_match": "Billy No Mates",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_billy no mates' vs expected: 'rp_billynomates'"
+      },
+      {
+        "race_id": "2026-05-18_CRL_300",
+        "predicted_horse_id": "RP_iris dancer",
+        "predicted_horse_id_norm": "rp_irisdancer",
+        "result_runner_name_match": "Iris Dancer",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_iris dancer' vs expected: 'rp_irisdancer'"
+      },
+      {
+        "race_id": "2026-05-18_CRL_230",
+        "predicted_horse_id": "RP_imperial guard",
+        "predicted_horse_id_norm": "rp_imperialguard",
+        "result_runner_name_match": "Imperial Guard",
+        "note": "RP_ id has spaces \u2014 result file uses no-space norm. Predicted: 'RP_imperial guard' vs expected: 'rp_imperialguard'"
+      }
+    ],
+    "HORSE_ID_MISMATCH_NAME_OK": [
+      {
+        "race_id": "2026-05-18_ROS_750",
+        "predicted_horse_id": "RP_cooley's mist",
+        "predicted_horse_id_norm": "rp_cooley'smist",
+        "result_runner_name_match": "Cooley'S Mist",
+        "note": "HORSE_ID_MISMATCH_NAME_OK"
+      },
+      {
+        "race_id": "2026-05-18_ROS_620",
+        "predicted_horse_id": "RP_huff'n'puff",
+        "predicted_horse_id_norm": "rp_huff'n'puff",
+        "result_runner_name_match": "Huff'N'Puff",
+        "note": "HORSE_ID_MISMATCH_NAME_OK"
+      }
+    ],
+    "HORSE_ID_MISMATCH_UNKNOWN": [],
+    "UNKNOWN": []
+  },
+  "identity_issues": {
+    "top_rank_horse_id_with_spaces": 25,
+    "top_rank_horse_id_no_spaces": 9,
+    "top_rank_horse_id_empty": 0
+  },
+  "root_cause": {
+    "component": "synthetic_id_normalisation_inconsistency",
+    "scoring_path_norm": "horse_norm_column_preserves_spaces",
+    "scraper_path_norm": "re_sub_strips_non_alnum_including_spaces",
+    "sigma_match": "strict_equality_no_normalisation",
+    "effect": "multi_word_horse_names_always_fail_identity_match",
+    "confidence": "PROVEN_FROM_ARTIFACTS",
+    "artifact_evidence": [
+      "supabase velo_verdicts top_rank_horse_id: 'RP_imperial guard'",
+      "results_2026_05_18.json runner horse_id: 'RP_imperialguard'",
+      "25/34 predictions have spaces in synthetic id",
+      "9/34 single-word names matched correctly (7 had results, 2 no-result-race)"
+    ]
+  },
+  "valid_sigma_results": {
+    "matches_found": 7,
+    "wins": 2,
+    "placed": 1,
+    "misses": 4,
+    "note": "FORENSIC_ONLY \u2014 not accepted as valid daily sigma sample"
+  },
+  "learning_guard": {
+    "learning_allowed": false,
+    "eod_consume": false,
+    "shadow_consume": false,
+    "training_dataset_update": false,
+    "sigma_valid": false,
+    "required_before_unblock": [
+      "patch synthetic_id normalisation to be consistent",
+      "rerun scraper with consistent IDs",
+      "rerun sigma with consistent IDs",
+      "verify matched_race_coverage >= 90%",
+      "operator approval"
+    ]
+  }
+}
