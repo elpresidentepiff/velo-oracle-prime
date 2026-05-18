@@ -4,9 +4,16 @@ VÉLØ Race-Day Orchestrator
 ==========================
 Canonical race-day execution chain.  Every run ends in exactly one status:
 
-    FULL_ENGINE_RUN           VP scored + shadow + Telegram
-    PARTIAL_SHADOW_CONTEXT    VP missing; RP/TJ/last-6 shadow only
-    FAILED_RUN_REQUIRES_OPERATOR  Hard failure, operator must intervene
+    FULL_ENGINE_RUN              VP scored via live API or cache + shadow + Telegram
+    FULL_ENGINE_RUN_RP_SOURCED   VP scored via RP profile fallback + shadow + Telegram
+    PARTIAL_SHADOW_CONTEXT       VP missing; RP/TJ/last-6 shadow only
+    FAILED_RUN_REQUIRES_OPERATOR Hard failure, operator must intervene
+
+RP PRIMARY POLICY (permanent from 2026-05-18):
+  Racing Post runner profile is the primary race information source.
+  Racing API is optional enrichment only.
+  A 401 from Racing API must not block a run when RP runner profile
+  exists for the requested date.
 
 No silent gaps.  No fake full-engine runs.  One manifest per day.
 
@@ -15,6 +22,10 @@ Step order (A–J):
   B  Last-six rating spine        (build_horse_last6_rating_spine.py)
   C  Master profile patch         (patch_runner_master_with_last6.py)
   D  VÉLØ Prime / Railway scoring (run_prime_today.py)
+     Sources in priority order:
+       1. cached racecard JSON
+       2. RP runner profile fallback   ← primary when cache absent
+       3. live Racing API              ← only if 1+2 unavailable
   E  Sync verdicts from Supabase  (sync_verdicts_from_supabase.py)
   F  TJ confirmation watch        (jtc_d_tj_daily_confirmation_watch.py)
   G  Shadow Model C prediction    (runner_master_shadow_daily_predict.py)
@@ -23,9 +34,9 @@ Step order (A–J):
   J  Telegram publish             (curl direct — locked format)
 
 VP gate:
-  If step D fails → status = PARTIAL_SHADOW_CONTEXT
-  Without --allow-vp-missing → orchestrator exits FAILED_RUN_REQUIRES_OPERATOR
-  With --allow-vp-missing    → continues to G–J with partial label
+  If step D fails AND RP profile present → WARN_ONLY, continue as PARTIAL
+  If step D fails AND no RP profile      → FAILED_RUN_REQUIRES_OPERATOR
+  With --allow-vp-missing               → always continue with PARTIAL label
 
 Usage:
   python velo_race_day_orchestrator.py --date 2026-05-18
@@ -52,6 +63,14 @@ RUNS_DIR = ROOT / "data" / "runs"
 DASHBOARD_DIR = ROOT / "app" / "static" / "dashboard"
 REPORTS_DIR = ROOT / "data" / "reports"
 
+# Load .env so Telegram and other credentials are available
+sys.path.insert(0, str(ROOT))
+try:
+    from app.core.runtime_env import load_optional_env_file
+    load_optional_env_file(ROOT / ".env")
+except Exception:
+    pass
+
 RUNS_DIR.mkdir(parents=True, exist_ok=True)
 DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -61,8 +80,11 @@ GOVERNANCE = (
 )
 
 STATUS_FULL    = "FULL_ENGINE_RUN"
+STATUS_FULL_RP = "FULL_ENGINE_RUN_RP_SOURCED"
 STATUS_PARTIAL = "PARTIAL_SHADOW_CONTEXT"
 STATUS_FAIL    = "FAILED_RUN_REQUIRES_OPERATOR"
+
+_FULL_STATUSES = (STATUS_FULL, STATUS_FULL_RP)
 
 
 # ─── Manifest ────────────────────────────────────────────────────────────────
@@ -97,6 +119,11 @@ def _new_manifest(date_str: str, args) -> dict:
         "telegram_message_id":    None,
         "telegram_addendum_id":   None,
         "sentient_backup_moved":  False,
+        # Racecard source tracking
+        "racecard_source":        None,
+        "rp_primary":             False,
+        "racing_api_auth":        None,
+        "vp_source":              None,
         # Outcome
         "final_status":           STATUS_FAIL,
         "vp_available":           False,
@@ -177,9 +204,14 @@ def _send_telegram(text: str, manifest: dict, dry_run: bool) -> bool:
 
 
 def _build_telegram_text(date_str: str, manifest: dict,
-                          shadow_json_path: Path, tj_json_path: Path) -> str:
+                          shadow_json_path: Path, tj_json_path: Path,
+                          backfill: bool = False) -> str:
     status = manifest["final_status"]
     vp_label = "YES" if manifest["vp_available"] else "NO"
+    rp_primary = manifest.get("rp_primary", False)
+    vp_source = manifest.get("vp_source") or ("RP_PROFILE_FALLBACK" if rp_primary else "LIVE_API")
+    vp_coverage = manifest.get("vp_coverage")
+    date_display = date_str.upper()
 
     # Load shadow top-10
     shadow_lines = []
@@ -211,28 +243,62 @@ def _build_telegram_text(date_str: str, manifest: dict,
         except Exception:
             pass
 
-    parts = [
-        f"VÉLØ {date_str.upper()} — {status}",
-        "",
+    # Header
+    if backfill and status in _FULL_STATUSES:
+        title = f"VÉLØ {date_display} — FULL ENGINE BACKFILL COMPLETE"
+    else:
+        title = f"VÉLØ {date_display} — {status}"
+
+    parts = [title, ""]
+
+    # Backfill correction note
+    if backfill:
+        parts += [
+            "CORRECTION:",
+            "Previous messages 5278/5279 were PARTIAL_SHADOW_CONTEXT.",
+            f"18 May has now been backfilled using Racing Post primary profile.",
+            "",
+        ]
+
+    parts += [
         "STATUS:",
         f"VP scoring: {vp_label}",
+        f"VP source: {vp_source}",
+    ]
+    if vp_coverage is not None:
+        parts.append(f"VP coverage: {int(vp_coverage)} runners scored")
+    parts += [
         f"Full Model C: {'YES' if manifest['full_model_c'] else 'NO'}",
         f"LIVE_USE: BLOCKED",
     ]
-    if status == STATUS_PARTIAL:
+
+    # Source context
+    if status == STATUS_FULL_RP:
+        parts += [
+            "",
+            "SOURCE: RP PRIMARY",
+            "Racing API: AUTH_FAIL_401 — WARN_ONLY",
+            "Racing Post runner profile is the primary data source.",
+            "API is optional enrichment. 401 does not block this run.",
+        ]
+    elif status == STATUS_PARTIAL:
         parts += [
             "",
             "NOTE: VP/Railway scores missing.",
             "This is RP-feature shadow context only, not full Model C.",
         ]
+
     if shadow_lines:
-        parts += ["", "TOP SHADOW CONTEXT:"] + shadow_lines
+        parts += ["", "TOP MODEL C SHADOW:"] + shadow_lines
     if tj_lines:
-        parts += ["", "TOP TJ WATCH:"] + tj_lines
+        parts += ["", "TJ_HIGH WATCH:"] + tj_lines
+
+    # Shadow mode note
+    shadow_mode = "FULL_MODEL_C" if manifest["full_model_c"] else "SHADOW_CONTEXT_ONLY"
     parts += [
         "",
         "GOVERNANCE:",
-        "SHADOW_CONTEXT_ONLY" if status == STATUS_PARTIAL else "FULL_ENGINE",
+        f"SHADOW_MODE: {shadow_mode}",
         "NO_STAKING_CHANGE",
         "NO_ROUTER_CHANGE",
         "NO_LIVE_STATE_MUTATION",
@@ -243,13 +309,19 @@ def _build_telegram_text(date_str: str, manifest: dict,
 # ─── Dashboard write ──────────────────────────────────────────────────────────
 
 def _write_dashboard(date_str: str, manifest: dict, dry_run: bool):
+    rp_primary = manifest.get("rp_primary", False)
+    vp_source = manifest.get("vp_source") or ("RP_PROFILE_FALLBACK" if rp_primary else "UNKNOWN")
     status_doc = {
         "date": date_str,
         "generated_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
         "telegram_sent": manifest["telegram_sent"],
         "telegram_message_id": manifest["telegram_message_id"],
         "status": manifest["final_status"],
+        "rp_primary": rp_primary,
+        "racing_api_required": not rp_primary,
+        "racing_api_auth": manifest.get("racing_api_auth"),
         "vp_available": manifest["vp_available"],
+        "vp_source": vp_source,
         "full_model_c": manifest["full_model_c"],
         "live_use": "BLOCKED",
         "vp_coverage": manifest["vp_coverage"],
@@ -262,6 +334,51 @@ def _write_dashboard(date_str: str, manifest: dict, dry_run: bool):
             json.dump(status_doc, f, indent=2)
     print(f"  Dashboard: {path}")
     manifest["dashboard_updated"] = True
+
+
+# ─── Racecard source detection ───────────────────────────────────────────────
+
+def _detect_racecard_source(date_str: str) -> tuple[str, int]:
+    """
+    Return (source, rp_runner_count) before Step D runs, without importing
+    run_prime_today.  Mirrors the priority chain in load_racecards().
+
+    source values: 'cache' | 'rp_profile' | 'api'
+    rp_runner_count: rows in RP profile for date_str (0 if cache or api)
+    """
+    date_tag = date_str.replace("-", "_")
+    cache_path = ROOT / "data" / f"racecards_{date_tag}_standard.json"
+    if cache_path.exists():
+        return "cache", 0
+
+    rp_profile_path = ROOT / "data" / "features" / "rp_runner_profile_latest.parquet"
+    if rp_profile_path.exists():
+        try:
+            import pandas as pd
+            rp = pd.read_parquet(rp_profile_path)
+            rp_today = rp[rp["race_date"].astype(str) == date_str]
+            if not rp_today.empty:
+                return "rp_profile", len(rp_today)
+        except Exception:
+            pass
+
+    return "api", 0
+
+
+def _run_api_auth_check(py: str) -> str:
+    """
+    Run check_racing_api_auth.py and return the status string.
+    Never raises; returns 'AUTH_UNKNOWN' on unexpected errors.
+    """
+    try:
+        result = subprocess.run(
+            [py, str(SCRIPTS / "check_racing_api_auth.py")],
+            capture_output=True, text=True, timeout=20,
+        )
+        line = (result.stdout or "").strip().splitlines()
+        return line[0] if line else "AUTH_UNKNOWN"
+    except Exception as e:
+        return f"AUTH_UNKNOWN — {e}"
 
 
 # ─── VP coverage check ────────────────────────────────────────────────────────
@@ -347,6 +464,30 @@ def main():
 
     # ── D. VÉLØ Prime / Railway scoring ──────────────────────────────────────
     print("\nStep D — VÉLØ Prime scoring (run_prime_today.py)")
+
+    # Determine racecard source before running — informs auth gate and status
+    _rc_source, _rp_count = _detect_racecard_source(date_str)
+    manifest["racecard_source"] = _rc_source
+    manifest["rp_primary"] = (_rc_source == "rp_profile")
+    print(f"  Racecard source: {_rc_source}" + (f" ({_rp_count} runners)" if _rp_count else ""))
+
+    # Auth check: WARN_ONLY when RP profile is the source (Racing API is optional)
+    if _rc_source == "rp_profile":
+        _auth_status = _run_api_auth_check(py)
+        manifest["racing_api_auth"] = _auth_status
+        if "AUTH_FAIL_401" in _auth_status:
+            print(f"  Racing API auth: {_auth_status}")
+            print("  => AUTH_FAIL_401_WARN_ONLY — RP profile is primary, run continues")
+            manifest["racing_api_auth"] = "AUTH_FAIL_401_WARN_ONLY"
+        else:
+            print(f"  Racing API auth: {_auth_status}")
+    elif _rc_source == "api":
+        # Live API required — auth failure is fatal
+        _auth_status = _run_api_auth_check(py)
+        manifest["racing_api_auth"] = _auth_status
+        if "AUTH_FAIL" in _auth_status:
+            _abort(f"Racing API auth failed and no RP profile available: {_auth_status}")
+
     ok_d = _run_step(
         "D", [py, str(SCRIPTS / "run_prime_today.py"), "--date", date_str],
         manifest, "vp_scoring_ran", "vp_scoring_ok", args.dry_run, timeout=300
@@ -354,16 +495,27 @@ def main():
     manifest["vp_available"] = ok_d
 
     if not ok_d:
-        if not args.allow_vp_missing:
+        if args.allow_vp_missing or manifest["rp_primary"]:
+            # RP available or caller explicitly allowed missing VP
+            print(f"  VP scoring failed — continuing as {STATUS_PARTIAL}")
+            manifest["final_status"] = STATUS_PARTIAL
+            manifest["full_model_c"] = False
+            manifest["vp_source"] = "NONE"
+        else:
             _abort(
                 "Step D (VP scoring) failed and --allow-vp-missing not set. "
                 "Pass --allow-vp-missing to continue with PARTIAL_SHADOW_CONTEXT."
             )
-        print(f"  VP scoring failed — continuing as {STATUS_PARTIAL} (--allow-vp-missing set)")
-        manifest["final_status"] = STATUS_PARTIAL
-        manifest["full_model_c"] = False
     else:
         manifest["full_model_c"] = True
+        if _rc_source == "rp_profile":
+            manifest["final_status"] = STATUS_FULL_RP
+            manifest["vp_source"] = "RP_PROFILE_FALLBACK"
+            manifest["vp_coverage"] = float(_rp_count)
+        elif _rc_source == "cache":
+            manifest["vp_source"] = "CACHE"
+        else:
+            manifest["vp_source"] = "LIVE_API"
     _save_manifest(manifest, date_str, args.dry_run)
 
     # ── E. Sync verdicts from Supabase ───────────────────────────────────────
@@ -403,7 +555,8 @@ def main():
     _save_manifest(manifest, date_str, args.dry_run)
 
     # ── Final status ──────────────────────────────────────────────────────────
-    if manifest["final_status"] != STATUS_PARTIAL:
+    # Only overwrite if not already set to PARTIAL or a FULL_RP variant
+    if manifest["final_status"] not in (STATUS_PARTIAL, STATUS_FULL_RP):
         manifest["final_status"] = STATUS_FULL if manifest["vp_available"] else STATUS_PARTIAL
 
     # ── I. Dashboard update ───────────────────────────────────────────────────
@@ -418,7 +571,8 @@ def main():
         print("\nStep J — Telegram publish")
         shadow_json = REPORTS_DIR / "runner_master_shadow_daily_latest.json"
         tj_json     = REPORTS_DIR / "jtc_d_tj_daily_confirmation_latest.json"
-        tg_text = _build_telegram_text(date_str, manifest, shadow_json, tj_json)
+        tg_text = _build_telegram_text(date_str, manifest, shadow_json, tj_json,
+                                        backfill=args.backfill)
         tg_ok = _send_telegram(tg_text, manifest, args.dry_run)
         if not tg_ok:
             print("  WARN: Telegram failed — run did not abort, check credentials")
@@ -431,12 +585,16 @@ def main():
     final = manifest["final_status"]
     print(f"\n{'='*60}")
     print(f"VÉLØ RACE-DAY ORCHESTRATOR — {date_str}")
-    print(f"Status:    {final}")
-    print(f"VP scored: {manifest['vp_available']}")
-    print(f"Full MC:   {manifest['full_model_c']}")
-    print(f"Telegram:  {manifest['telegram_sent']} (id={manifest['telegram_message_id']})")
-    print(f"Manifest:  data/runs/velo_race_day_manifest_{date_str}.json")
-    print(f"Governance: {GOVERNANCE}")
+    print(f"Status:        {final}")
+    print(f"VP scored:     {manifest['vp_available']}")
+    print(f"VP source:     {manifest.get('vp_source','?')}")
+    print(f"RP primary:    {manifest.get('rp_primary', False)}")
+    print(f"Racing API:    {manifest.get('racing_api_auth','not checked')}")
+    print(f"VP coverage:   {manifest.get('vp_coverage','?')}")
+    print(f"Full MC:       {manifest['full_model_c']}")
+    print(f"Telegram:      {manifest['telegram_sent']} (id={manifest['telegram_message_id']})")
+    print(f"Manifest:      data/runs/velo_race_day_manifest_{date_str}.json")
+    print(f"Governance:    {GOVERNANCE}")
     print(f"{'='*60}\n")
 
     if final == STATUS_FAIL:

@@ -13,9 +13,9 @@
 | VP scores available | **NO — shadow score excludes VP signal** |
 | Top-decile threshold | 0.2772 |
 | Runners in top decile | 32 |
-| Data quality OK | 87 |
-| Partial missing | 78 |
-| High missing | 141 |
+| Data quality OK | 83 |
+| Partial missing | 81 |
+| High missing | 142 |
 
 ---
 
@@ -50,11 +50,11 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | 2 | Imperial Guard | 0.223 | nan | -2 |  |  | 0.088 | 67 | 2.0 | -3.51 | 3 | OK |
 | 3 | Harb | 0.202 | nan | -3 | ✓ |  | 0.190 | 62 | 3.0 | +2.74 | 3 | OK |
 | 4 | Harry Mole | 0.191 | nan | -4 |  |  | — | 57 | — | — | 9 | HIGH_MISSING |
-| 5 | Blue Lakota | 0.183 | nan | -5 |  |  | — | 64 | 1.0 | -9.60 | 5 | PARTIAL_MISSING |
-| 6 | Hurt You Never | 0.157 | nan | -6 |  |  | 0.122 | 69 | 1.0 | +0.54 | 3 | OK |
-| 7 | Acrisius | 0.143 | nan | -7 |  |  | 0.172 | 75 | 1.0 | -2.54 | 3 | OK |
-| 8 | Keldeo | 0.136 | nan | -8 |  |  | 0.080 | 72 | 0.0 | -0.86 | 3 | OK |
-| 9 | Dc Cogent | 0.133 | nan | -9 |  |  | 0.156 | 66 | 0.0 | -1.49 | 3 | OK |
+| 5 | Blue Lakota | 0.151 | nan | -5 |  |  | 0.161 | 64 | 1.0 | -9.60 | 4 | PARTIAL_MISSING |
+| 6 | Acrisius | 0.149 | nan | -6 |  |  | — | 75 | 1.0 | -2.54 | 4 | PARTIAL_MISSING |
+| 7 | Keldeo | 0.136 | nan | -7 |  |  | 0.080 | 72 | 0.0 | -0.86 | 3 | OK |
+| 8 | Dc Cogent | 0.133 | nan | -8 |  |  | 0.156 | 66 | 0.0 | -1.49 | 3 | OK |
+| 9 | Hurt You Never | 0.129 | nan | -9 |  |  | — | 69 | 1.0 | +0.54 | 4 | PARTIAL_MISSING |
 | 10 | Speeding Bullet | 0.115 | nan | -10 |  |  | 0.119 | 69 | 6.0 | -0.57 | 3 | OK |
 | 11 | Fierce | 0.110 | nan | -11 |  |  | — | 68 | 2.0 | +7.83 | 4 | PARTIAL_MISSING |
 
@@ -96,7 +96,7 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1★ | Counting Cards | 0.373 | nan | -1 | ✓ |  | 0.209 | 70 | — | +21.50 | 6 | PARTIAL_MISSING |
-| 2★ | Impressor | 0.303 | nan | -2 |  |  | — | 68 | 0.0 | +0.17 | 4 | PARTIAL_MISSING |
+| 2★ | Impressor | 0.293 | nan | -2 |  |  | 0.083 | 68 | 0.0 | +0.17 | 3 | OK |
 | 3 | Mr Dreamseller | 0.275 | nan | -3 |  |  | — | 71 | — | — | 9 | HIGH_MISSING |
 | 4 | Iris Dancer | 0.223 | nan | -4 | ✓ |  | 0.190 | 60 | 0.0 | -1.19 | 3 | OK |
 | 5 | Surprised | 0.209 | nan | -5 |  |  | 0.156 | 70 | 0.0 | -9.90 | 4 | PARTIAL_MISSING |
@@ -117,10 +117,10 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | 2★ | Ammoony | 0.283 | nan | -2 |  |  | 0.099 | 69 | — | — | 8 | HIGH_MISSING |
 | 3★ | Myrrh | 0.278 | nan | -3 |  |  | — | 70 | — | — | 9 | HIGH_MISSING |
 | 4 | Eze Sur Mer | 0.275 | nan | -4 |  |  | — | 67 | — | — | 9 | HIGH_MISSING |
-| 5 | Bergamo Gold | 0.274 | nan | -5 |  |  | 0.124 | 64 | — | — | 8 | HIGH_MISSING |
-| 6 | Clocker | 0.202 | nan | -6 |  |  | — | 65 | — | — | 9 | HIGH_MISSING |
-| 7 | Letmeseethecolts | 0.190 | nan | -7 |  |  | 0.101 | 58 | 0.0 | -2.69 | 3 | OK |
-| 8 | Princess Niyla | 0.182 | nan | -8 |  |  | — | 65 | 0.0 | -1.77 | 4 | PARTIAL_MISSING |
+| 5 | Clocker | 0.202 | nan | -5 |  |  | — | 65 | — | — | 9 | HIGH_MISSING |
+| 6 | Letmeseethecolts | 0.190 | nan | -6 |  |  | 0.101 | 58 | 0.0 | -2.69 | 3 | OK |
+| 7 | Princess Niyla | 0.182 | nan | -7 |  |  | — | 65 | 0.0 | -1.77 | 4 | PARTIAL_MISSING |
+| 8 | Bergamo Gold | 0.174 | nan | -8 |  |  | 0.146 | 64 | — | — | 8 | HIGH_MISSING |
 | 9 | Fire Eyes | 0.078 | nan | -9 |  |  | 0.076 | 63 | 6.0 | +5.43 | 3 | OK |
 
 ## 3.30 — CRL (8 runners)
@@ -157,7 +157,7 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | Ray Mon Dough | 0.169 | nan | -1 |  |  | — | 90 | — | — | 9 | HIGH_MISSING |
+| 1 | Ray Mon Dough | 0.171 | nan | -1 |  |  | 0.071 | 90 | — | — | 8 | HIGH_MISSING |
 
 ## 4.00 — CRL (1 runners)
 
@@ -170,10 +170,10 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1★ | Perfect Ruler | 0.404 | nan | -1 | ✓ |  | 0.209 | 60 | — | — | 8 | HIGH_MISSING |
-| 2 | Full Gas | 0.232 | nan | -2 |  |  | — | 58 | — | — | 8 | HIGH_MISSING |
-| 3 | Forever Twenty | 0.215 | nan | -3 |  |  | 0.130 | 56 | — | — | 8 | HIGH_MISSING |
+| 2 | Forever Twenty | 0.215 | nan | -2 |  |  | 0.130 | 56 | — | — | 8 | HIGH_MISSING |
+| 3 | Full Gas | 0.193 | nan | -3 |  |  | 0.115 | 58 | — | — | 7 | HIGH_MISSING |
 | 4 | Twilight Serenade | 0.181 | nan | -4 |  |  | — | 49 | — | — | 9 | HIGH_MISSING |
-| 5 | Queenies Pal | 0.181 | nan | -5 |  |  | 0.062 | 51 | — | — | 8 | HIGH_MISSING |
+| 5 | Queenies Pal | 0.177 | nan | -5 |  |  | — | 51 | — | — | 9 | HIGH_MISSING |
 | 6 | Only Dream Big | 0.153 | nan | -6 |  |  | 0.117 | 54 | — | — | 8 | HIGH_MISSING |
 | 7 | Hey Havana | 0.148 | nan | -7 |  |  | 0.104 | 59 | — | — | 8 | HIGH_MISSING |
 | 8 | Maximum Velocity | 0.146 | nan | -8 |  |  | 0.104 | 57 | — | — | 8 | HIGH_MISSING |
@@ -185,11 +185,11 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | Profit Street | 0.235 | nan | -1 |  |  | — | 68 | 7.0 | -4.51 | 4 | PARTIAL_MISSING |
-| 2 | Invincible Speed | 0.130 | nan | -2 |  |  | — | 71 | 3.0 | +2.06 | 4 | PARTIAL_MISSING |
+| 2 | Invincible Speed | 0.130 | nan | -2 |  |  | 0.076 | 71 | 3.0 | +2.06 | 3 | OK |
 | 3 | Whenthedealinsdone | 0.124 | nan | -3 |  |  | 0.164 | 74 | 0.0 | +1.54 | 3 | OK |
 | 4 | Recon Mission | 0.120 | nan | -4 |  |  | — | 61 | 0.0 | +2.86 | 4 | PARTIAL_MISSING |
 | 5 | Twilight Jet | 0.116 | nan | -5 |  |  | — | 74 | 9.0 | -8.63 | 4 | PARTIAL_MISSING |
-| 6 | No Return | 0.105 | nan | -6 |  |  | 0.034 | 72 | 4.0 | +5.23 | 3 | OK |
+| 6 | No Return | 0.108 | nan | -6 |  |  | 0.104 | 72 | 4.0 | +5.23 | 3 | OK |
 | 7 | Hedge Fund | 0.102 | nan | -7 |  |  | 0.141 | 74 | 7.0 | -0.63 | 3 | OK |
 
 ## 4.35 — CRL (10 runners)
@@ -212,14 +212,14 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | Maybe Soon | 0.216 | nan | -1 |  |  | 0.138 | 56 | — | — | 8 | HIGH_MISSING |
-| 2 | Realistic Dream | 0.191 | nan | -2 |  |  | — | 57 | — | — | 9 | HIGH_MISSING |
-| 3 | Black Rock Beauty | 0.186 | nan | -3 |  |  | — | 58 | — | — | 9 | HIGH_MISSING |
-| 4 | Secret Testimony | 0.148 | nan | -4 |  |  | 0.103 | 59 | — | — | 8 | HIGH_MISSING |
-| 5 | Truly Special | 0.133 | nan | -5 |  |  | 0.115 | 53 | — | — | 8 | HIGH_MISSING |
+| 2 | Secret Testimony | 0.192 | nan | -2 |  |  | — | 59 | — | — | 9 | HIGH_MISSING |
+| 3 | Realistic Dream | 0.191 | nan | -3 |  |  | — | 57 | — | — | 9 | HIGH_MISSING |
+| 4 | Black Rock Beauty | 0.186 | nan | -4 |  |  | — | 58 | — | — | 9 | HIGH_MISSING |
+| 5 | Truly Special | 0.176 | nan | -5 |  |  | — | 53 | — | — | 9 | HIGH_MISSING |
 | 6 | Long Shot | 0.133 | nan | -6 |  |  | 0.117 | 51 | — | — | 8 | HIGH_MISSING |
 | 7 | Twilight Dawn | 0.130 | nan | -7 |  |  | 0.106 | 50 | — | — | 8 | HIGH_MISSING |
 | 8 | Enduring Story | 0.113 | nan | -8 |  |  | 0.086 | 45 | — | — | 8 | HIGH_MISSING |
-| 9 | Walk On Walk On | 0.106 | nan | -9 |  |  | 0.062 | 55 | — | +30.00 | 6 | PARTIAL_MISSING |
+| 9 | Walk On Walk On | 0.104 | nan | -9 |  |  | — | 55 | — | +30.00 | 7 | HIGH_MISSING |
 
 ## 4.50 — ROS (5 runners)
 
@@ -235,10 +235,10 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1★ | Enter Sandman | 0.359 | nan | -1 |  |  | 0.142 | 70 | — | — | 8 | HIGH_MISSING |
-| 2 | Beach Partee | 0.262 | nan | -2 |  |  | — | 63 | — | — | 8 | HIGH_MISSING |
-| 3 | Viking Glory | 0.245 | nan | -3 |  |  | 0.076 | 66 | — | — | 8 | HIGH_MISSING |
-| 4 | Life After Love | 0.236 | nan | -4 |  |  | 0.103 | 68 | — | — | 8 | HIGH_MISSING |
+| 1★ | Enter Sandman | 0.278 | nan | -1 |  |  | — | 70 | — | — | 9 | HIGH_MISSING |
+| 2 | Viking Glory | 0.256 | nan | -2 |  |  | — | 66 | — | — | 9 | HIGH_MISSING |
+| 3 | Life After Love | 0.236 | nan | -3 |  |  | 0.103 | 68 | — | — | 8 | HIGH_MISSING |
+| 4 | Beach Partee | 0.229 | nan | -4 |  |  | 0.093 | 63 | — | — | 7 | HIGH_MISSING |
 | 5 | Yes Waliim | 0.225 | nan | -5 |  |  | — | 64 | — | — | 9 | HIGH_MISSING |
 | 6 | Solar Invincible | 0.216 | nan | -6 |  |  | 0.117 | 66 | — | — | 8 | HIGH_MISSING |
 | 7 | Bessie Wallis | 0.210 | nan | -7 |  |  | 0.155 | 68 | — | — | 8 | HIGH_MISSING |
@@ -267,7 +267,7 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1★ | All Ways Glamorous | 0.455 | nan | -1 | ✓ |  | 0.209 | 86 | 0.0 | +5.74 | 3 | OK |
-| 2★ | Adrestia | 0.444 | nan | -2 |  |  | 0.141 | 99 | 0.0 | +0.46 | 3 | OK |
+| 2★ | Adrestia | 0.374 | nan | -2 |  |  | 0.083 | 99 | 0.0 | +0.46 | 3 | OK |
 | 3★ | Rogue Enforcer | 0.356 | nan | -3 |  |  | 0.135 | 95 | — | +0.09 | 6 | PARTIAL_MISSING |
 | 4 | Regal Envoy | 0.275 | nan | -4 |  |  | 0.118 | 88 | 0.0 | -2.89 | 3 | OK |
 | 5 | Redorange | 0.268 | nan | -5 |  |  | 0.157 | 100 | 0.0 | +6.20 | 3 | OK |
@@ -289,10 +289,10 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | 5 | Go Out | 0.212 | nan | -5 |  |  | — | 68 | — | -9.00 | 7 | HIGH_MISSING |
 | 6 | Bella Colombia | 0.178 | nan | -6 |  |  | 0.112 | 62 | — | +0.90 | 5 | PARTIAL_MISSING |
 | 7 | Suerte | 0.177 | nan | -7 |  |  | 0.067 | 61 | 0.0 | -2.50 | 4 | PARTIAL_MISSING |
-| 8 | Thrifty Of Digby | 0.162 | nan | -8 |  |  | 0.119 | 70 | 0.0 | +3.80 | 4 | PARTIAL_MISSING |
-| 9 | Mercurial | 0.156 | nan | -9 |  |  | — | 72 | 9.0 | +6.00 | 4 | PARTIAL_MISSING |
-| 10 | Loingseoir | 0.154 | nan | -10 |  |  | 0.123 | 71 | 1.0 | +1.26 | 3 | OK |
-| 11 | Free Solo | 0.138 | nan | -11 |  |  | — | 70 | 0.0 | +9.71 | 4 | PARTIAL_MISSING |
+| 8 | Mercurial | 0.156 | nan | -8 |  |  | — | 72 | 9.0 | +6.00 | 4 | PARTIAL_MISSING |
+| 9 | Loingseoir | 0.154 | nan | -9 |  |  | 0.123 | 71 | 1.0 | +1.26 | 3 | OK |
+| 10 | Free Solo | 0.138 | nan | -10 |  |  | — | 70 | 0.0 | +9.71 | 4 | PARTIAL_MISSING |
+| 11 | Thrifty Of Digby | 0.134 | nan | -11 |  |  | — | 70 | 0.0 | +3.80 | 5 | PARTIAL_MISSING |
 | 12 | Zabriskie Point | 0.129 | nan | -12 |  |  | 0.102 | 61 | 7.0 | -0.23 | 3 | OK |
 | 13 | Lohengrin | 0.124 | nan | -13 |  |  | — | 66 | 3.0 | -7.56 | 4 | PARTIAL_MISSING |
 | 14 | Blue Anthem | 0.124 | nan | -14 |  |  | — | 64 | 0.0 | +2.23 | 4 | PARTIAL_MISSING |
@@ -348,8 +348,8 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1★ | Kilcrea Rock | 0.290 | nan | -1 |  |  | — | 81 | 0.0 | -3.20 | 5 | PARTIAL_MISSING |
-| 2 | Syzygy | 0.246 | nan | -2 |  |  | 0.124 | 83 | — | — | 8 | HIGH_MISSING |
-| 3 | Gotta Catch'Em All | 0.214 | nan | -3 |  |  | 0.102 | 66 | — | — | 8 | HIGH_MISSING |
+| 2 | Gotta Catch'Em All | 0.214 | nan | -2 |  |  | 0.102 | 66 | — | — | 8 | HIGH_MISSING |
+| 3 | Syzygy | 0.197 | nan | -3 |  |  | 0.071 | 83 | — | — | 8 | HIGH_MISSING |
 | 4 | Queen Lioness | 0.192 | nan | -4 |  |  | — | 82 | — | — | 9 | HIGH_MISSING |
 | 5 | Electric Beauty | 0.171 | nan | -5 |  |  | 0.084 | 77 | 2.0 | -1.80 | 3 | OK |
 | 6 | Robot Rock | 0.171 | nan | -6 |  |  | 0.089 | 65 | — | — | 8 | HIGH_MISSING |
@@ -368,9 +368,9 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | 2 | Wardlaw | 0.275 | nan | -2 |  |  | — | 71 | — | — | 9 | HIGH_MISSING |
 | 3 | Grey Sands | 0.204 | nan | -3 |  |  | — | 61 | — | — | 9 | HIGH_MISSING |
 | 4 | Sir Griflet | 0.196 | nan | -4 |  |  | 0.162 | 68 | — | — | 8 | HIGH_MISSING |
-| 5 | Oh Yes You Do | 0.188 | nan | -5 |  |  | 0.163 | 71 | — | — | 8 | HIGH_MISSING |
-| 6 | King Of Berkshire | 0.184 | nan | -6 |  |  | 0.184 | 74 | — | — | 8 | HIGH_MISSING |
-| 7 | Any Which Way | 0.148 | nan | -7 |  |  | — | 74 | — | — | 9 | HIGH_MISSING |
+| 5 | Any Which Way | 0.195 | nan | -5 |  |  | 0.132 | 74 | — | — | 8 | HIGH_MISSING |
+| 6 | Oh Yes You Do | 0.188 | nan | -6 |  |  | 0.163 | 71 | — | — | 8 | HIGH_MISSING |
+| 7 | King Of Berkshire | 0.184 | nan | -7 |  |  | 0.184 | 74 | — | — | 8 | HIGH_MISSING |
 
 ## 7.20 — ROS (14 runners)
 
@@ -379,23 +379,23 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | 1★ | Sea Of Dubka | 0.352 | nan | -1 | ✓ |  | 0.189 | 62 | — | — | 8 | HIGH_MISSING |
 | 2★ | Adel | 0.278 | nan | -2 |  |  | — | 70 | — | — | 9 | HIGH_MISSING |
 | 3 | Musashi | 0.256 | nan | -3 |  |  | — | 66 | — | — | 9 | HIGH_MISSING |
-| 4 | Admiral Will Brown | 0.243 | nan | -4 |  |  | 0.124 | 65 | — | — | 8 | HIGH_MISSING |
-| 5 | Retro Gal | 0.232 | nan | -5 |  |  | 0.122 | 62 | — | — | 8 | HIGH_MISSING |
+| 4 | Retro Gal | 0.232 | nan | -4 |  |  | 0.122 | 62 | — | — | 8 | HIGH_MISSING |
+| 5 | Tenacious | 0.218 | nan | -5 |  |  | — | 62 | — | — | 9 | HIGH_MISSING |
 | 6 | Captain Con | 0.216 | nan | -6 |  |  | 0.123 | 60 | — | — | 8 | HIGH_MISSING |
-| 7 | Wipeawayyourtears | 0.202 | nan | -7 |  |  | — | 54 | — | — | 9 | HIGH_MISSING |
-| 8 | Arizona Star | 0.190 | nan | -8 |  |  | 0.062 | 58 | — | — | 8 | HIGH_MISSING |
-| 9 | Survivor'S Code | 0.178 | nan | -9 |  |  | — | 52 | — | — | 9 | HIGH_MISSING |
-| 10 | Femme Beauty | 0.178 | nan | -10 |  |  | 0.114 | 62 | — | -1.20 | 6 | PARTIAL_MISSING |
-| 11 | Lilo Pelekai | 0.177 | nan | -11 |  |  | — | 51 | — | — | 9 | HIGH_MISSING |
-| 12 | Onyeisi | 0.162 | nan | -12 |  |  | 0.083 | 60 | — | — | 8 | HIGH_MISSING |
-| 13 | Tenacious | 0.157 | nan | -13 |  |  | 0.107 | 62 | — | — | 8 | HIGH_MISSING |
+| 7 | Admiral Will Brown | 0.206 | nan | -7 |  |  | 0.071 | 65 | — | — | 8 | HIGH_MISSING |
+| 8 | Wipeawayyourtears | 0.202 | nan | -8 |  |  | — | 54 | — | — | 9 | HIGH_MISSING |
+| 9 | Arizona Star | 0.190 | nan | -9 |  |  | 0.062 | 58 | — | — | 8 | HIGH_MISSING |
+| 10 | Survivor'S Code | 0.178 | nan | -10 |  |  | — | 52 | — | — | 9 | HIGH_MISSING |
+| 11 | Femme Beauty | 0.178 | nan | -11 |  |  | 0.114 | 62 | — | -1.20 | 6 | PARTIAL_MISSING |
+| 12 | Lilo Pelekai | 0.177 | nan | -12 |  |  | — | 51 | — | — | 9 | HIGH_MISSING |
+| 13 | Onyeisi | 0.162 | nan | -13 |  |  | 0.083 | 60 | — | — | 8 | HIGH_MISSING |
 | 14 | Connecteo | 0.152 | nan | -14 |  |  | 0.081 | 58 | — | — | 8 | HIGH_MISSING |
 
 ## 7.30 — Wolverhampton (7 runners)
 
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1★ | Symbol Of Majesty | 0.524 | nan | -1 | ✓ |  | 0.210 | 86 | — | — | 8 | HIGH_MISSING |
+| 1★ | Symbol Of Majesty | 0.441 | nan | -1 | ✓ |  | 0.252 | 86 | — | — | 8 | HIGH_MISSING |
 | 2★ | Morven | 0.318 | nan | -2 |  |  | 0.184 | 82 | — | — | 8 | HIGH_MISSING |
 | 3★ | Lyra Lea | 0.313 | nan | -3 |  |  | 0.137 | 72 | — | — | 8 | HIGH_MISSING |
 | 4 | Golden Mabel | 0.273 | nan | -4 |  |  | 0.034 | 66 | — | — | 8 | HIGH_MISSING |
@@ -412,8 +412,8 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | 3 | Son Of Man | 0.213 | nan | -3 |  |  | 0.078 | 85 | 2.0 | -2.57 | 3 | OK |
 | 4 | Siouxfonic | 0.192 | nan | -4 |  |  | — | 79 | — | — | 9 | HIGH_MISSING |
 | 5 | Due To Henry | 0.137 | nan | -5 |  |  | 0.117 | 78 | 3.0 | -1.57 | 3 | OK |
-| 6 | Sir William | 0.133 | nan | -6 |  |  | — | 76 | 4.0 | +5.37 | 4 | PARTIAL_MISSING |
-| 7 | Wisper | 0.132 | nan | -7 |  |  | 0.088 | 86 | 2.0 | +5.74 | 3 | OK |
+| 6 | Wisper | 0.133 | nan | -6 |  |  | — | 86 | 2.0 | +5.74 | 4 | PARTIAL_MISSING |
+| 7 | Sir William | 0.133 | nan | -7 |  |  | — | 76 | 4.0 | +5.37 | 4 | PARTIAL_MISSING |
 | 8 | Don Simon | 0.115 | nan | -8 |  |  | 0.101 | 75 | 1.0 | -0.29 | 3 | OK |
 
 ## 7.50 — ROS (10 runners)
@@ -435,14 +435,14 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 
 | # | Horse | Shadow | VP | Δ rank | TJ★ | MDS★ | TJ SR | OR | OR drop | TS slope | Missing | DQ |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | The Ubermensch | 0.218 | nan | -1 |  |  | — | 62 | — | — | 9 | HIGH_MISSING |
-| 2 | Karakula | 0.209 | nan | -2 | ✓ |  | 0.225 | 61 | 0.0 | +3.20 | 4 | PARTIAL_MISSING |
-| 3 | Bizou | 0.117 | nan | -3 |  |  | 0.096 | 65 | 0.0 | +2.80 | 4 | PARTIAL_MISSING |
-| 4 | Between Me And U | 0.105 | nan | -4 |  |  | 0.175 | 65 | 5.0 | +1.54 | 3 | OK |
-| 5 | Dingwall | 0.103 | nan | -5 |  |  | 0.154 | 64 | 2.0 | -5.31 | 3 | OK |
-| 6 | Age Of Baroque | 0.099 | nan | -6 |  |  | 0.052 | 65 | 5.0 | +6.37 | 3 | OK |
-| 7 | Stipulation | 0.090 | nan | -7 |  |  | — | 65 | 7.0 | +3.86 | 4 | PARTIAL_MISSING |
-| 8 | Silkies Sib | 0.080 | nan | -8 |  |  | 0.111 | 56 | 7.0 | -1.91 | 3 | OK |
+| 1 | The Ubermensch | 0.162 | nan | -1 |  |  | 0.102 | 62 | — | — | 8 | HIGH_MISSING |
+| 2 | Bizou | 0.117 | nan | -2 |  |  | 0.096 | 65 | 0.0 | +2.80 | 4 | PARTIAL_MISSING |
+| 3 | Between Me And U | 0.105 | nan | -3 |  |  | 0.175 | 65 | 5.0 | +1.54 | 3 | OK |
+| 4 | Dingwall | 0.103 | nan | -4 |  |  | 0.154 | 64 | 2.0 | -5.31 | 3 | OK |
+| 5 | Age Of Baroque | 0.099 | nan | -5 |  |  | 0.052 | 65 | 5.0 | +6.37 | 3 | OK |
+| 6 | Karakula | 0.099 | nan | -6 |  |  | — | 61 | 0.0 | +3.20 | 5 | PARTIAL_MISSING |
+| 7 | Stipulation | 0.089 | nan | -7 |  |  | 0.097 | 65 | 7.0 | +3.86 | 3 | OK |
+| 8 | Silkies Sib | 0.081 | nan | -8 |  |  | — | 56 | 7.0 | -1.91 | 4 | PARTIAL_MISSING |
 
 ## 8.10 — Windsor (12 runners)
 
@@ -470,15 +470,15 @@ _Promotion gates are monitoring conditions only. No action permitted until opera
 | 3 | Piatra Neamt | 0.137 | nan | -3 |  |  | — | 46 | — | — | 9 | HIGH_MISSING |
 | 4 | Miss Australie | 0.126 | nan | -4 |  |  | 0.102 | 57 | 4.0 | +7.77 | 3 | OK |
 | 5 | Whosethebestboy | 0.125 | nan | -5 |  |  | 0.105 | 52 | — | +14.00 | 6 | PARTIAL_MISSING |
-| 6 | Cuckaloo Hill | 0.120 | nan | -6 |  |  | 0.063 | 50 | 0.0 | +6.60 | 3 | OK |
+| 6 | Cuckaloo Hill | 0.122 | nan | -6 |  |  | — | 50 | 0.0 | +6.60 | 4 | PARTIAL_MISSING |
 | 7 | If Dora Could | 0.111 | nan | -7 |  |  | — | 50 | — | +0.50 | 7 | HIGH_MISSING |
 | 8 | Kartayaz | 0.098 | nan | -8 |  |  | — | 40 | 5.0 | -4.50 | 5 | PARTIAL_MISSING |
 | 9 | Deluca Chop | 0.097 | nan | -9 |  |  | — | 40 | 0.0 | +3.94 | 4 | PARTIAL_MISSING |
 | 10 | Mapa | 0.093 | nan | -10 |  |  | 0.067 | 53 | 10.0 | -3.80 | 4 | PARTIAL_MISSING |
 | 11 | Prom Queen | 0.086 | nan | -11 |  |  | 0.096 | 48 | 4.0 | +2.75 | 4 | PARTIAL_MISSING |
 | 12 | Grey Fable | 0.072 | nan | -12 |  |  | 0.086 | 59 | 41.0 | -4.74 | 3 | OK |
-| 13 | Idomything | 0.070 | nan | -13 |  |  | 0.052 | 47 | 11.0 | -6.25 | 3 | OK |
-| 14 | Edge Of Darkness | 0.026 | nan | -14 |  |  | 0.106 | 47 | 39.0 | +4.89 | 3 | OK |
+| 13 | Idomything | 0.071 | nan | -13 |  |  | — | 47 | 11.0 | -6.25 | 4 | PARTIAL_MISSING |
+| 14 | Edge Of Darkness | 0.035 | nan | -14 |  |  | — | 47 | 39.0 | +4.89 | 4 | PARTIAL_MISSING |
 
 ## 8.30 — Wolverhampton (10 runners)
 
@@ -528,4 +528,4 @@ LIVE_USE                      = BLOCKED
 
 **Governance:** NO_SCORING_CHANGE | NO_ROUTER_CHANGE | NO_STAKING_CHANGE | NO_TELEGRAM_CHANGE | NO_LIVE_STATE_MUTATION
 
-_Generated: 2026-05-18T04:20:03_
+_Generated: 2026-05-18T05:27:46_
