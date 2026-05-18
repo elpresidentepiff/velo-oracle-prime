@@ -1,0 +1,625 @@
+{
+  "version": "JTC_D_TRAINER_JOCKEY_CONFIRMATION_V1",
+  "n_candidates": 733,
+  "n_with_tj": 733,
+  "total_wins": 167,
+  "tj_median": 0.1296,
+  "quartile_analysis": [
+    {
+      "label": "Q1 (lowest)",
+      "n": 184,
+      "win_rate": 15.2,
+      "frame_rate": 41.3,
+      "roi": -14.8,
+      "avg_vp": 0.2363,
+      "avg_tj": 0.0728,
+      "avg_sp": 12.29,
+      "n_wins": 28
+    },
+    {
+      "label": "Q2",
+      "n": 183,
+      "win_rate": 17.5,
+      "frame_rate": 51.4,
+      "roi": -33.3,
+      "avg_vp": 0.2594,
+      "avg_tj": 0.112,
+      "avg_sp": 8.2,
+      "n_wins": 32
+    },
+    {
+      "label": "Q3",
+      "n": 184,
+      "win_rate": 21.2,
+      "frame_rate": 58.2,
+      "roi": -23.2,
+      "avg_vp": 0.2739,
+      "avg_tj": 0.1497,
+      "avg_sp": 6.84,
+      "n_wins": 39
+    },
+    {
+      "label": "Q4 (highest)",
+      "n": 182,
+      "win_rate": 37.4,
+      "frame_rate": 71.4,
+      "roi": 4.5,
+      "avg_vp": 0.2966,
+      "avg_tj": 0.2212,
+      "avg_sp": 3.84,
+      "n_wins": 68
+    }
+  ],
+  "winner_concentration": {
+    "q4_pct": 40.7,
+    "d10_pct": 16.2
+  },
+  "vp_tj_interaction": [
+    {
+      "label": "VP<0.30 + TJ_low",
+      "n": 263,
+      "win_rate": 11.4,
+      "frame_rate": 39.5,
+      "roi": -25.8,
+      "avg_vp": 0.1939,
+      "avg_tj": 0.0901,
+      "avg_sp": 11.96,
+      "n_wins": 30
+    },
+    {
+      "label": "VP<0.30 + TJ_high",
+      "n": 232,
+      "win_rate": 22.4,
+      "frame_rate": 54.3,
+      "roi": -12.2,
+      "avg_vp": 0.206,
+      "avg_tj": 0.1828,
+      "avg_sp": 6.68,
+      "n_wins": 52
+    },
+    {
+      "label": "VP\u22650.30 + TJ_low",
+      "n": 104,
+      "win_rate": 28.8,
+      "frame_rate": 63.5,
+      "roi": -19.4,
+      "avg_vp": 0.3844,
+      "avg_tj": 0.0981,
+      "avg_sp": 5.89,
+      "n_wins": 30
+    },
+    {
+      "label": "VP\u22650.30 + TJ_high",
+      "n": 134,
+      "win_rate": 41.0,
+      "frame_rate": 82.8,
+      "roi": -4.8,
+      "avg_vp": 0.4224,
+      "avg_tj": 0.1895,
+      "avg_sp": 3.04,
+      "n_wins": 55
+    }
+  ],
+  "dist_breakdown": [
+    {
+      "label": "sprint ALL",
+      "n": 229,
+      "win_rate": 21.4,
+      "frame_rate": 53.7,
+      "roi": -12.3,
+      "avg_vp": 0.2587,
+      "avg_tj": 0.1242,
+      "avg_sp": 8.26,
+      "n_wins": 49,
+      "q4": {
+        "label": "sprint TJ_Q4",
+        "n": 32,
+        "win_rate": 46.9,
+        "frame_rate": 81.2,
+        "roi": 11.8,
+        "avg_vp": 0.2812,
+        "avg_tj": 0.2113,
+        "avg_sp": 5.77,
+        "n_wins": 15
+      },
+      "rest": {
+        "label": "sprint TJ_Q1-3",
+        "n": 197,
+        "win_rate": 17.3,
+        "frame_rate": 49.2,
+        "roi": -16.3,
+        "avg_vp": 0.2551,
+        "avg_tj": 0.1101,
+        "avg_sp": 8.67,
+        "n_wins": 34
+      }
+    },
+    {
+      "label": "mile ALL",
+      "n": 162,
+      "win_rate": 24.1,
+      "frame_rate": 56.8,
+      "roi": -37.2,
+      "avg_vp": 0.2758,
+      "avg_tj": 0.1428,
+      "avg_sp": 8.08,
+      "n_wins": 39,
+      "q4": {
+        "label": "mile TJ_Q4",
+        "n": 46,
+        "win_rate": 45.7,
+        "frame_rate": 82.6,
+        "roi": 9.8,
+        "avg_vp": 0.3496,
+        "avg_tj": 0.2155,
+        "avg_sp": 2.75,
+        "n_wins": 21
+      },
+      "rest": {
+        "label": "mile TJ_Q1-3",
+        "n": 116,
+        "win_rate": 15.5,
+        "frame_rate": 46.6,
+        "roi": -55.8,
+        "avg_vp": 0.2465,
+        "avg_tj": 0.114,
+        "avg_sp": 10.19,
+        "n_wins": 18
+      }
+    },
+    {
+      "label": "route ALL",
+      "n": 342,
+      "win_rate": 23.1,
+      "frame_rate": 56.1,
+      "roi": -10.0,
+      "avg_vp": 0.2673,
+      "avg_tj": 0.1465,
+      "avg_sp": 7.36,
+      "n_wins": 79,
+      "q4": {
+        "label": "route TJ_Q4",
+        "n": 104,
+        "win_rate": 30.8,
+        "frame_rate": 63.5,
+        "roi": -0.2,
+        "avg_vp": 0.2779,
+        "avg_tj": 0.2268,
+        "avg_sp": 3.73,
+        "n_wins": 32
+      },
+      "rest": {
+        "label": "route TJ_Q1-3",
+        "n": 238,
+        "win_rate": 19.7,
+        "frame_rate": 52.9,
+        "roi": -14.3,
+        "avg_vp": 0.2627,
+        "avg_tj": 0.1114,
+        "avg_sp": 8.95,
+        "n_wins": 47
+      }
+    }
+  ],
+  "race_type_breakdown": [
+    {
+      "label": "Flat ALL",
+      "n": 466,
+      "win_rate": 22.5,
+      "frame_rate": 53.6,
+      "roi": -12.2,
+      "avg_vp": 0.2657,
+      "avg_tj": 0.133,
+      "avg_sp": 8.48,
+      "n_wins": 105,
+      "q4": {
+        "label": "Flat TJ_Q4",
+        "n": 100,
+        "win_rate": 43.0,
+        "frame_rate": 79.0,
+        "roi": 19.7,
+        "avg_vp": 0.3155,
+        "avg_tj": 0.2123,
+        "avg_sp": 4.06,
+        "n_wins": 43
+      },
+      "rest": {
+        "label": "Flat TJ_Q1-3",
+        "n": 366,
+        "win_rate": 16.9,
+        "frame_rate": 46.7,
+        "roi": -21.0,
+        "avg_vp": 0.2521,
+        "avg_tj": 0.1113,
+        "avg_sp": 9.69,
+        "n_wins": 62
+      }
+    },
+    {
+      "label": "Jumps ALL",
+      "n": 267,
+      "win_rate": 23.2,
+      "frame_rate": 58.8,
+      "roi": -24.6,
+      "avg_vp": 0.2679,
+      "avg_tj": 0.1487,
+      "avg_sp": 6.61,
+      "n_wins": 62,
+      "q4": {
+        "label": "Jumps TJ_Q4",
+        "n": 82,
+        "win_rate": 30.5,
+        "frame_rate": 62.2,
+        "roi": -14.1,
+        "avg_vp": 0.2736,
+        "avg_tj": 0.232,
+        "avg_sp": 3.57,
+        "n_wins": 25
+      },
+      "rest": {
+        "label": "Jumps TJ_Q1-3",
+        "n": 185,
+        "win_rate": 20.0,
+        "frame_rate": 57.3,
+        "roi": -29.3,
+        "avg_vp": 0.2654,
+        "avg_tj": 0.1118,
+        "avg_sp": 7.97,
+        "n_wins": 37
+      }
+    }
+  ],
+  "handicap_breakdown": [
+    {
+      "label": "Handicap ALL",
+      "n": 451,
+      "win_rate": 14.0,
+      "frame_rate": 45.9,
+      "roi": -20.9,
+      "avg_vp": 0.2326,
+      "avg_tj": 0.1223,
+      "avg_sp": 10.39,
+      "n_wins": 63,
+      "q4": {
+        "label": "Handicap TJ_Q4",
+        "n": 71,
+        "win_rate": 18.3,
+        "frame_rate": 60.6,
+        "roi": -2.4,
+        "avg_vp": 0.2584,
+        "avg_tj": 0.205,
+        "avg_sp": 5.71,
+        "n_wins": 13
+      },
+      "rest": {
+        "label": "Handicap TJ_Q1-3",
+        "n": 380,
+        "win_rate": 13.2,
+        "frame_rate": 43.2,
+        "roi": -24.4,
+        "avg_vp": 0.2278,
+        "avg_tj": 0.1068,
+        "avg_sp": 11.27,
+        "n_wins": 50
+      }
+    },
+    {
+      "label": "Non-Handicap ALL",
+      "n": 282,
+      "win_rate": 36.9,
+      "frame_rate": 70.9,
+      "roi": -10.1,
+      "avg_vp": 0.3207,
+      "avg_tj": 0.165,
+      "avg_sp": 3.67,
+      "n_wins": 104,
+      "q4": {
+        "label": "Non-Handicap TJ_Q4",
+        "n": 111,
+        "win_rate": 49.5,
+        "frame_rate": 78.4,
+        "roi": 8.9,
+        "avg_vp": 0.3211,
+        "avg_tj": 0.2316,
+        "avg_sp": 2.65,
+        "n_wins": 55
+      },
+      "rest": {
+        "label": "Non-Handicap TJ_Q1-3",
+        "n": 171,
+        "win_rate": 28.7,
+        "frame_rate": 66.1,
+        "roi": -22.4,
+        "avg_vp": 0.3204,
+        "avg_tj": 0.1219,
+        "avg_sp": 4.34,
+        "n_wins": 49
+      }
+    }
+  ],
+  "sp_band_breakdown": [
+    {
+      "label": "short(<3)",
+      "n": 217,
+      "win_rate": 44.2,
+      "frame_rate": 82.0,
+      "roi": -20.1,
+      "avg_vp": 0.3457,
+      "avg_tj": 0.1722,
+      "avg_sp": 2.03,
+      "n_wins": 96,
+      "q4": {
+        "label": "",
+        "n": 107,
+        "win_rate": 43.9,
+        "frame_rate": 81.3,
+        "roi": -22.7,
+        "avg_vp": 0.3454,
+        "avg_tj": 0.2228,
+        "avg_sp": 2.0,
+        "n_wins": 47
+      },
+      "rest": {
+        "label": "",
+        "n": 110,
+        "win_rate": 44.5,
+        "frame_rate": 82.7,
+        "roi": -17.6,
+        "avg_vp": 0.346,
+        "avg_tj": 0.1231,
+        "avg_sp": 2.05,
+        "n_wins": 49
+      }
+    },
+    {
+      "label": "fav(3-5)",
+      "n": 168,
+      "win_rate": 20.8,
+      "frame_rate": 63.1,
+      "roi": -21.8,
+      "avg_vp": 0.2596,
+      "avg_tj": 0.1417,
+      "avg_sp": 3.79,
+      "n_wins": 35,
+      "q4": {
+        "label": "",
+        "n": 39,
+        "win_rate": 30.8,
+        "frame_rate": 66.7,
+        "roi": 15.2,
+        "avg_vp": 0.2374,
+        "avg_tj": 0.2323,
+        "avg_sp": 3.69,
+        "n_wins": 12
+      },
+      "rest": {
+        "label": "",
+        "n": 129,
+        "win_rate": 17.8,
+        "frame_rate": 62.0,
+        "roi": -33.0,
+        "avg_vp": 0.2664,
+        "avg_tj": 0.1143,
+        "avg_sp": 3.82,
+        "n_wins": 23
+      }
+    },
+    {
+      "label": "mid(5-8.5)",
+      "n": 141,
+      "win_rate": 15.6,
+      "frame_rate": 49.6,
+      "roi": -3.9,
+      "avg_vp": 0.2306,
+      "avg_tj": 0.1271,
+      "avg_sp": 6.2,
+      "n_wins": 22,
+      "q4": {
+        "label": "",
+        "n": 26,
+        "win_rate": 26.9,
+        "frame_rate": 42.3,
+        "roi": 55.8,
+        "avg_vp": 0.2212,
+        "avg_tj": 0.2028,
+        "avg_sp": 6.31,
+        "n_wins": 7
+      },
+      "rest": {
+        "label": "",
+        "n": 115,
+        "win_rate": 13.0,
+        "frame_rate": 51.3,
+        "roi": -17.4,
+        "avg_vp": 0.2327,
+        "avg_tj": 0.11,
+        "avg_sp": 6.18,
+        "n_wins": 15
+      }
+    },
+    {
+      "label": "long(8.5-15)",
+      "n": 101,
+      "win_rate": 10.9,
+      "frame_rate": 34.7,
+      "roi": 10.9,
+      "avg_vp": 0.2247,
+      "avg_tj": 0.1124,
+      "avg_sp": 10.56,
+      "n_wins": 11,
+      "q4": {
+        "label": "",
+        "n": 4,
+        "win_rate": 50.0,
+        "frame_rate": 100.0,
+        "roi": 450.0,
+        "avg_vp": 0.2424,
+        "avg_tj": 0.2139,
+        "avg_sp": 10.25,
+        "n_wins": 2
+      },
+      "rest": {
+        "label": "",
+        "n": 97,
+        "win_rate": 9.3,
+        "frame_rate": 32.0,
+        "roi": -7.2,
+        "avg_vp": 0.224,
+        "avg_tj": 0.1082,
+        "avg_sp": 10.58,
+        "n_wins": 9
+      }
+    },
+    {
+      "label": "outsider(15+)",
+      "n": 105,
+      "win_rate": 1.9,
+      "frame_rate": 16.2,
+      "roi": -44.8,
+      "avg_vp": 0.1968,
+      "avg_tj": 0.1059,
+      "avg_sp": 25.64,
+      "n_wins": 2,
+      "q4": {
+        "label": "",
+        "n": 6,
+        "win_rate": 0.0,
+        "frame_rate": 33.3,
+        "roi": -100.0,
+        "avg_vp": 0.1743,
+        "avg_tj": 0.2057,
+        "avg_sp": 22.67,
+        "n_wins": 0
+      },
+      "rest": {
+        "label": "",
+        "n": 99,
+        "win_rate": 2.0,
+        "frame_rate": 15.2,
+        "roi": -41.4,
+        "avg_vp": 0.1982,
+        "avg_tj": 0.0998,
+        "avg_sp": 25.82,
+        "n_wins": 2
+      }
+    }
+  ],
+  "decile_strip": [
+    {
+      "label": "D1",
+      "n": 79,
+      "win_rate": 17.7,
+      "frame_rate": 44.3,
+      "roi": -12.7,
+      "avg_vp": 0.2264,
+      "avg_tj": 0.0548,
+      "avg_sp": 13.9,
+      "n_wins": 14
+    },
+    {
+      "label": "D2",
+      "n": 69,
+      "win_rate": 15.9,
+      "frame_rate": 36.2,
+      "roi": 16.3,
+      "avg_vp": 0.2416,
+      "avg_tj": 0.0831,
+      "avg_sp": 11.67,
+      "n_wins": 11
+    },
+    {
+      "label": "D3",
+      "n": 74,
+      "win_rate": 16.2,
+      "frame_rate": 51.4,
+      "roi": -41.2,
+      "avg_vp": 0.2548,
+      "avg_tj": 0.0966,
+      "avg_sp": 8.61,
+      "n_wins": 12
+    },
+    {
+      "label": "D4",
+      "n": 71,
+      "win_rate": 15.5,
+      "frame_rate": 49.3,
+      "roi": -38.1,
+      "avg_vp": 0.2343,
+      "avg_tj": 0.1084,
+      "avg_sp": 8.2,
+      "n_wins": 11
+    },
+    {
+      "label": "D5",
+      "n": 74,
+      "win_rate": 16.2,
+      "frame_rate": 50.0,
+      "roi": -43.0,
+      "avg_vp": 0.2826,
+      "avg_tj": 0.1213,
+      "avg_sp": 8.63,
+      "n_wins": 12
+    },
+    {
+      "label": "D6",
+      "n": 73,
+      "win_rate": 17.8,
+      "frame_rate": 56.2,
+      "roi": -21.5,
+      "avg_vp": 0.2615,
+      "avg_tj": 0.1371,
+      "avg_sp": 7.22,
+      "n_wins": 13
+    },
+    {
+      "label": "D7",
+      "n": 73,
+      "win_rate": 20.5,
+      "frame_rate": 58.9,
+      "roi": -33.4,
+      "avg_vp": 0.285,
+      "avg_tj": 0.1529,
+      "avg_sp": 6.11,
+      "n_wins": 15
+    },
+    {
+      "label": "D8",
+      "n": 74,
+      "win_rate": 29.7,
+      "frame_rate": 66.2,
+      "roi": 3.1,
+      "avg_vp": 0.2816,
+      "avg_tj": 0.1742,
+      "avg_sp": 5.58,
+      "n_wins": 22
+    },
+    {
+      "label": "D9",
+      "n": 73,
+      "win_rate": 41.1,
+      "frame_rate": 64.4,
+      "roi": 17.7,
+      "avg_vp": 0.3059,
+      "avg_tj": 0.2003,
+      "avg_sp": 4.44,
+      "n_wins": 30
+    },
+    {
+      "label": "D10",
+      "n": 73,
+      "win_rate": 37.0,
+      "frame_rate": 78.1,
+      "roi": -13.4,
+      "avg_vp": 0.2921,
+      "avg_tj": 0.2619,
+      "avg_sp": 3.39,
+      "n_wins": 27
+    }
+  ],
+  "verdict": "STRONG \u2014 TJ monotonically increases WR, Q4 ROI positive. Use as quality filter.",
+  "status": "CONFIRMED_QUALITY_FILTER",
+  "monotone_wr": true,
+  "lift_q4_vs_q1_pp": 22.2,
+  "roi_delta_q4_vs_q1_pp": 19.3,
+  "governance": "NO_SCORING_CHANGE | NO_MODEL_CHANGE | SHADOW_ONLY"
+}
