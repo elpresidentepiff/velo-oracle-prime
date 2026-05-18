@@ -1,0 +1,88 @@
+{
+  "root_cause_commit": "1dc8d5b",
+  "bad_line": "horse_norm_val = str(row.get(\"horse_norm\") or row.get(\"horse\") or \"\").lower()",
+  "fixed_line": "horse_norm_val = _norm_horse_name(row.get(\"horse_norm\") or row.get(\"horse\") or \"\")",
+  "test_cases": [
+    {
+      "horse_name": "Imperial Guard",
+      "horse_norm_column_value": "IMPERIAL GUARD",
+      "prediction_side_id": "RP_imperial guard",
+      "result_side_id": "RP_imperialguard",
+      "match": false,
+      "status": "FAIL",
+      "multi_word": true
+    },
+    {
+      "horse_name": "Ride The Thunder",
+      "horse_norm_column_value": "RIDE THE THUNDER",
+      "prediction_side_id": "RP_ride the thunder",
+      "result_side_id": "RP_ridethethunder",
+      "match": false,
+      "status": "FAIL",
+      "multi_word": true
+    },
+    {
+      "horse_name": "Trojan Soldier",
+      "horse_norm_column_value": "TROJAN SOLDIER",
+      "prediction_side_id": "RP_trojan soldier",
+      "result_side_id": "RP_trojansoldier",
+      "match": false,
+      "status": "FAIL",
+      "multi_word": true
+    },
+    {
+      "horse_name": "Cooley's Mist",
+      "horse_norm_column_value": "COOLEY'S MIST",
+      "prediction_side_id": "RP_cooley's mist",
+      "result_side_id": "RP_cooleysmist",
+      "match": false,
+      "status": "FAIL",
+      "multi_word": true
+    },
+    {
+      "horse_name": "Billy No Mates",
+      "horse_norm_column_value": "BILLY NO MATES",
+      "prediction_side_id": "RP_billy no mates",
+      "result_side_id": "RP_billynomates",
+      "match": false,
+      "status": "FAIL",
+      "multi_word": true
+    },
+    {
+      "horse_name": "Dontwaste A Moment",
+      "horse_norm_column_value": "DONTWASTE A MOMENT",
+      "prediction_side_id": "RP_dontwaste a moment",
+      "result_side_id": "RP_dontwasteamoment",
+      "match": false,
+      "status": "FAIL",
+      "multi_word": true
+    },
+    {
+      "horse_name": "Plaid",
+      "horse_norm_column_value": "PLAID",
+      "prediction_side_id": "RP_plaid",
+      "result_side_id": "RP_plaid",
+      "match": true,
+      "status": "PASS",
+      "multi_word": false
+    },
+    {
+      "horse_name": "Adalida",
+      "horse_norm_column_value": "ADALIDA",
+      "prediction_side_id": "RP_adalida",
+      "result_side_id": "RP_adalida",
+      "match": true,
+      "status": "PASS",
+      "multi_word": false
+    },
+    {
+      "horse_name": "Letmeseethecolts",
+      "horse_norm_column_value": "LETMESEETHECOLTS",
+      "prediction_side_id": "RP_letmeseethecolts",
+      "result_side_id": "RP_letmeseethecolts",
+      "match": true,
+      "status": "PASS",
+      "multi_word": false
+    }
+  ]
+}
