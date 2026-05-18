@@ -8,17 +8,19 @@ Chain:
   + Racing API results (actual finishers)
   -> reconcile top_pick vs actual winner
   -> sigma: strike rate, frame rate, miss classes, prob calibration
-  -> persist to Supabase (runner_results, learned_patterns)
-  -> Telegram sigma report
+  -> persist sigma_audits truth to Supabase
+  -> optional side effects only when explicitly enabled
 
 Usage:
-    python scripts/run_results_sigma.py [--date YYYY-MM-DD]
+    python scripts/run_results_sigma.py [--date YYYY-MM-DD] [--sigma-only]
+    python scripts/run_results_sigma.py --date YYYY-MM-DD --notify-telegram --write-patterns --write-ledger
 """
 
 import argparse
 import base64
 import json
 import os
+import re
 import sys
 import urllib.request
 import urllib.error
@@ -30,6 +32,7 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
 from app.core.runtime_env import load_optional_env_file, utc_now_iso  # noqa: E402
+from runtime_truth_support import append_telegram_event, get_commit_sha  # noqa: E402
 
 load_optional_env_file(ROOT / ".env")
 
@@ -42,6 +45,11 @@ TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 TODAY = date.today().strftime("%Y-%m-%d")
 TODAY_DISPLAY = date.today().strftime("%d %b %Y")
+_TG_DATE = ""
+_TG_SERVICE = "velo-results-sigma"
+_TG_NOTIFY_ENABLED = False
+_WRITE_PATTERNS = False
+_WRITE_LEDGER = False
 
 RACING_USER = os.getenv("RACING_API_USERNAME", "")
 RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
@@ -103,6 +111,7 @@ def _open_sigma_run(source_date: str) -> str | None:
             "trigger_source": os.getenv("TRIGGER_SOURCE", "manual") or "manual",
             "started_at": utc_now_iso(),
             "environment": os.getenv("RAILWAY_ENVIRONMENT", "production"),
+            "commit_sha": get_commit_sha(),
         },
     )
     return run_id if status in (200, 201) else None
@@ -115,6 +124,7 @@ def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = Non
         "run_state": "completed",
         "status": status,
         "finished_at": utc_now_iso(),
+        "commit_sha": get_commit_sha(),
     }
     if error:
         patch["error_message"] = error[:500]
@@ -124,7 +134,7 @@ def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = Non
 # ── helpers ──────────────────────────────────────────────────────────────────
 
 
-def tg(text: str) -> bool:
+def _legacy_tg(text: str) -> bool:
     if not TOKEN or not CHAT_ID:
         print(f"[TG SKIP]: {text[:60]}")
         return False
@@ -138,6 +148,28 @@ def tg(text: str) -> bool:
     except Exception as e:
         print(f"[TG FAIL]: {e}")
         return False
+
+
+def tg(text: str, label: str = "generic") -> bool:
+    preview = text.splitlines()[0] if text else ""
+    if _TG_NOTIFY_ENABLED:
+        sent = _legacy_tg(text)
+        error = None if sent else ("NO_TOKEN_OR_CHAT" if not TOKEN or not CHAT_ID else "SEND_FAILED")
+    else:
+        sent = False
+        error = "NOTIFY_DISABLED"
+        print(f"[TG DISABLED:{label}]: {preview[:80]}")
+    if _TG_DATE:
+        append_telegram_event(
+            date_str=_TG_DATE,
+            service=_TG_SERVICE,
+            event_type=label,
+            sent=sent,
+            notify_enabled=bool(TOKEN and CHAT_ID) and _TG_NOTIFY_ENABLED,
+            message_preview=preview,
+            error=error,
+        )
+    return sent
 
 
 def racing_get(path: str) -> dict:
@@ -188,15 +220,46 @@ def sb_upsert(path: str, data: dict | list, on_conflict: str) -> bool:
 
 
 def main():
+    global _TG_DATE, _TG_NOTIFY_ENABLED, _WRITE_PATTERNS, _WRITE_LEDGER
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
+    parser.add_argument(
+        "--sigma-only",
+        action="store_true",
+        help="Governed default: write sigma_audits only; Telegram, learned_patterns, and ledger stay disabled.",
+    )
+    parser.add_argument(
+        "--notify-telegram",
+        action="store_true",
+        help="Opt in to Telegram notifications. Disabled by default while Telegram rotation/audit remains open.",
+    )
+    parser.add_argument(
+        "--write-patterns",
+        action="store_true",
+        help="Opt in to learned_patterns writes. Disabled by default; shadow learning owns learning state.",
+    )
+    parser.add_argument(
+        "--write-ledger",
+        action="store_true",
+        help="Opt in to betting_ledger writes. Disabled by default; sigma-only reconciliation should not settle bets.",
+    )
     args = parser.parse_args()
     race_date = args.date or TODAY
+    _TG_DATE = race_date
+    _TG_NOTIFY_ENABLED = bool(args.notify_telegram and TOKEN and CHAT_ID)
+    _WRITE_PATTERNS = bool(args.write_patterns)
+    _WRITE_LEDGER = bool(args.write_ledger)
     run_id = _open_sigma_run(race_date)
     os.environ["_ACTIVE_SIGMA_RUN_ID"] = run_id or ""
 
     print(f"\nVELO RESULTS + SIGMA — {race_date}")
     print("=" * 60)
+    print(
+        "Side effects: "
+        f"telegram={'ON' if _TG_NOTIFY_ENABLED else 'OFF'} "
+        f"learned_patterns={'ON' if _WRITE_PATTERNS else 'OFF'} "
+        f"betting_ledger={'ON' if _WRITE_LEDGER else 'OFF'}"
+    )
 
     # ── PREFLIGHT GATE ────────────────────────────────────────────────────────
     print("\nPREFLIGHT")
@@ -215,9 +278,30 @@ def main():
     )
     print(f"  Predictions loaded: {len(verdicts_raw)}")
     if not verdicts_raw:
-        print("  ABORT: no predictions found for this date")
-        tg(f"VELO SIGMA ABORT — {race_date}\nNo predictions found in velo_verdicts.")
-        sys.exit(1)
+        # Verdicts may have been generated the day before (PDF-racecard pipeline runs evening).
+        # Fall back to local JSON before aborting.
+        backup_fallback = ROOT / "data" / f"velo_prime_verdicts_{race_date.replace('-', '_')}.json"
+        if backup_fallback.exists():
+            print(f"  [FALLBACK] Supabase empty — loading from local backup: {backup_fallback.name}")
+            try:
+                for r in json.loads(backup_fallback.read_text()):
+                    top = r.get("top", {})
+                    verdicts_raw.append({
+                        "race_id":         r["race_id"],
+                        "top_rank_horse_id": top.get("horse_id", "") or top.get("horse", ""),
+                        "velo_prime_prob": top.get("velo_prime_prob", 0),
+                        "decision_tier":   r.get("tier", "X"),
+                        "confidence_level": top.get("confidence_level", "low"),
+                        "generated_at":    f"{race_date}T06:00:00",
+                        "full_analysis":   None,
+                    })
+                print(f"  Fallback loaded: {len(verdicts_raw)} races")
+            except Exception as e:
+                print(f"  [WARN] local fallback unreadable: {e}")
+        if not verdicts_raw:
+            print("  ABORT: no predictions found for this date")
+            tg(f"VELO SIGMA ABORT — {race_date}\nNo predictions found in velo_verdicts.")
+            sys.exit(1)
 
     # Build lookup: race_id -> verdict row (keep latest generated_at if duplicates exist)
     predictions: dict = {}
@@ -260,11 +344,19 @@ def main():
 
         # Parse selections — may arrive as string or list depending on Supabase client
         selections = []
-        if isinstance(selections_raw, list):
+        if isinstance(selections_raw, dict):
+            selections = selections_raw.get("predictions") or []
+        elif isinstance(selections_raw, list):
             selections = selections_raw
         elif isinstance(selections_raw, str):
             try:
-                selections = json.loads(selections_raw)
+                parsed = json.loads(selections_raw)
+                if isinstance(parsed, dict):
+                    selections = parsed.get("predictions") or []
+                elif isinstance(parsed, list):
+                    selections = parsed
+                else:
+                    selections = []
             except Exception:
                 selections = []
 
@@ -333,7 +425,8 @@ def main():
         rid = race.get("race_id") or race.get("id", "")
         runners = race.get("runners", [])
         sorted_runners = sorted(
-            [r for r in runners if r.get("position", "").isdigit()], key=lambda r: int(r["position"])
+            [r for r in runners if r.get("position", "").isdigit() and int(r["position"]) > 0],
+            key=lambda r: int(r["position"])
         )
         winner = sorted_runners[0] if sorted_runners else {}
         top3 = sorted_runners[:3]
@@ -362,7 +455,9 @@ def main():
     all_matched = []
 
     # Positions that mean "did not finish / was not a runner" — exclude from stats
-    DNF_POSITIONS = {"NR", "WD", "PU", "F", "BD", "UR", "SU", "RO", "REF", "DSQ", ""}
+    DNF_POSITIONS = {"NR", "WD", "PU", "F", "BD", "UR", "SU", "RO", "REF", "DSQ", "",
+                     "DNF", "FALLEN", "PULLED_UP", "UNSEATED_RIDER", "BROUGHT_DOWN",
+                     "REFUSED", "CARRIED_OUT", "SLIPPED_UP"}
 
     for race_id, pred in predictions.items():
         result = results_by_id.get(race_id)
@@ -391,18 +486,73 @@ def main():
 
         # ── Non-runner gate: predicted horse did not start/finish ─────────────
         full_runners = result.get("full_runners", [])
+        runner_ids_in_result = {r.get("horse_id", "") for r in full_runners if r.get("horse_id")}
+        found_in_result = False
+        matched_runner_id = None  # canonical ID as found in result (may differ from predicted)
+
+        def _sid_norm(s: str) -> str:
+            """Strip non-alnum for RP_ synthetic ID comparison."""
+            return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
         for runner in full_runners:
-            if runner.get("horse_id") == predicted_horse_id:
+            rid = runner.get("horse_id", "")
+            # Primary: strict equality (canonical Racing API IDs)
+            strict_match = rid == predicted_horse_id
+            # Fallback: normalised comparison for RP_ synthetic IDs (guards against
+            # normalisation drift — incident 1dc8d5b where scorer used spaces, scraper did not)
+            norm_match = (
+                not strict_match
+                and predicted_horse_id.startswith("RP_")
+                and rid.startswith("RP_")
+                and _sid_norm(rid) == _sid_norm(predicted_horse_id)
+            )
+            if strict_match or norm_match:
+                found_in_result = True
+                matched_runner_id = rid
+                if norm_match:
+                    print(f"  [ID-NORM-FALLBACK] {race_id}: matched {predicted_horse_id!r} → {rid!r} via normalisation")
                 pos = str(runner.get("position", "")).strip().upper()
                 if pos in DNF_POSITIONS:
                     non_runners.append(race_id)
                     print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded from stats")
                 break
+
+        # If the predicted horse_id doesn't appear in results at all — classify correctly.
+        # NR-ABSENT must only mean the horse was genuinely absent (scratched/WD).
+        # Identity join failures must be surfaced separately, never silently discarded.
+        if not found_in_result and predicted_horse_id:
+            # Attempt name-based fallback before declaring absent
+            horse_part = predicted_horse_id[3:] if predicted_horse_id.startswith("RP_") else predicted_horse_id
+            name_norm = _sid_norm(horse_part)
+            name_match_runner = None
+            for runner in full_runners:
+                rname_norm = _sid_norm(runner.get("horse", ""))
+                if rname_norm and rname_norm == name_norm:
+                    name_match_runner = runner
+                    break
+            if name_match_runner:
+                found_in_result = True
+                matched_runner_id = name_match_runner.get("horse_id", "")
+                print(f"  [NAME-NORM-FALLBACK] {race_id}: {info.get('horse','?')} — matched via horse name normalisation")
+                pos = str(name_match_runner.get("position", "")).strip().upper()
+                if pos in DNF_POSITIONS:
+                    non_runners.append(race_id)
+                    print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded from stats")
+            else:
+                non_runners.append(race_id)
+                print(f"  [NR-ABSENT] {race_id}: {info.get('horse','?')} — not in result runners — excluded")
+
         if race_id in non_runners:
             continue
 
-        is_hit = predicted_horse_id == result["winner_id"]
-        is_frame = predicted_horse_id in result["top3_ids"]
+        # Use matched_runner_id for win/frame checks so normalised fallback results work
+        effective_id = matched_runner_id or predicted_horse_id
+        is_hit = effective_id == result["winner_id"] or (
+            result["winner_id"] and _sid_norm(effective_id) == _sid_norm(result["winner_id"])
+        )
+        is_frame = effective_id in result["top3_ids"] or any(
+            _sid_norm(effective_id) == _sid_norm(t) for t in result["top3_ids"]
+        )
         miss_class = "n/a"
 
         if is_hit:
@@ -644,6 +794,8 @@ def main():
     # Schema: pattern_name (unique), description, confidence_level (numeric),
     #         first_observed, last_observed, is_active
     print("\nSTEP 7: Learned patterns")
+    if not _WRITE_PATTERNS:
+        print("  SKIP: learned_patterns writes disabled (use --write-patterns to enable)")
     now_iso = utc_now_iso()
     patterns_saved = 0
     for r in all_matched:
@@ -659,7 +811,7 @@ def main():
                 "successful_predictions": 1,
                 "success_rate": 1.0,
             }
-            if sb_upsert("/learned_patterns", pattern, "pattern_name"):
+            if _WRITE_PATTERNS and sb_upsert("/learned_patterns", pattern, "pattern_name"):
                 patterns_saved += 1
 
     print(f"  Learned patterns saved: {patterns_saved}")
@@ -668,6 +820,8 @@ def main():
     # For each B/C tier verdict with a matched result, write a ledger row.
     # Idempotent: race_ids already in ledger for this date are skipped explicitly.
     print("\nSTEP 7b: Betting ledger")
+    if not _WRITE_LEDGER:
+        print("  SKIP: betting_ledger writes disabled (use --write-ledger to enable)")
     STAKE = {"B": 10.0, "C": 5.0}
     ledger_ok = 0
     skip_reasons: dict = {
@@ -675,6 +829,7 @@ def main():
         "already_written": 0,  # race_id already in betting_ledger for this date
         "non_runner": 0,  # predicted horse absent from result set entirely
         "no_sp": 0,  # horse ran but sp_dec missing or ≤ 1.0
+        "side_effect_disabled": 0,  # ledger writes require explicit --write-ledger
         "write_error": 0,  # DB upsert failed
     }
 
@@ -730,6 +885,10 @@ def main():
             else:
                 skip_reasons["no_sp"] += 1
                 print(f"    skip [no_sp]: {row['predicted']} ({rid}) — sp_dec absent or ≤ 1.0")
+            continue
+
+        if not _WRITE_LEDGER:
+            skip_reasons["side_effect_disabled"] += 1
             continue
 
         is_win = row["outcome"] == "WIN"
@@ -812,12 +971,12 @@ def main():
         f"SIGMA: {sigma_note}\n"
         f"Engine: velo_prime_v1 (SQPE v17 + specialists)"
     )
-    tg(sigma_msg)
+    tg(sigma_msg, label="sigma_main")
     print("  Sent: main sigma report")
 
     # Hits breakdown
     if hit_lines:
-        tg("VELO WINS — " + TODAY_DISPLAY + "\n" + "\n".join(hit_lines))
+        tg("VELO WINS — " + TODAY_DISPLAY + "\n" + "\n".join(hit_lines), label="sigma_wins")
         print(f"  Sent: {len(hit_lines)} hits")
 
     # Miss class breakdown
@@ -832,7 +991,8 @@ def main():
                 for r in notable_misses[:5]
             ]
             or ["  none"]
-        )
+        ),
+        label="sigma_miss_analysis",
     )
     print(f"  Sent: miss analysis ({len(notable_misses)} notable fades)")
 
@@ -842,7 +1002,7 @@ def main():
         frame_msg += "\n".join(
             [f"  {r['course']} {r['off']}  {r['predicted']} placed — won: {r['actual_name']}" for r in frame_lines[:10]]
         )
-        tg(frame_msg)
+        tg(frame_msg, label="sigma_frames")
         print(f"  Sent: {len(frame_lines)} frames")
 
     # Final report — status reflects sigma write truth
@@ -854,7 +1014,8 @@ def main():
         f"Frame rate:  {frame_rate:.1%}\n"
         f"Ledger bets: {ledger_ok}  bankroll: £{current_bankroll:.2f}\n"
         f"Supabase: sigma_audits={sigma_ok}/{total_matched}  learned_patterns={patterns_saved}\n"
-        f"Status: {sigma_status}"
+        f"Status: {sigma_status}",
+        label="sigma_final",
     )
     print(f"  Sent: final report ({sigma_status})")
 
@@ -863,7 +1024,8 @@ def main():
         tg(
             f"VELO ALERT — SIGMA FAIL — {TODAY_DISPLAY}\n"
             f"All {total_matched} sigma_audits writes failed.\n"
-            f"Post-race truth not persisted. Investigate immediately."
+            f"Post-race truth not persisted. Investigate immediately.",
+            label="sigma_alert",
         )
         print("\nFAIL — sigma_ok=0: no reconciliation truth persisted")
         sys.exit(1)
@@ -876,6 +1038,13 @@ def main():
     print(f"  Miss classes: {miss_classes}")
     print(f"  Sigma note:   {sigma_note}")
     print(f"  Supabase:     sigma_audits={sigma_ok} learned_patterns={patterns_saved}")
+    try:
+        from velo_miss_forensics import write_report as write_miss_forensics_report
+
+        forensic = write_miss_forensics_report(race_date)
+        print(f"  Miss forensics: {Path(forensic['json_path']).name}")
+    except Exception as exc:
+        print(f"  Miss forensics skipped: {exc}")
     _close_sigma_run(run_id, status="PASS")
 
 
