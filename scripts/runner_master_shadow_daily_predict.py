@@ -41,6 +41,8 @@ warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH   = ROOT / "data" / "features" / "runner_master_profile_latest.parquet"
+RP_PROFILE_PATH = ROOT / "data" / "features" / "rp_runner_profile_latest.parquet"
+SPINE_PATH     = ROOT / "data" / "features" / "horse_last6_rating_spine.parquet"
 MODEL_PATH     = ROOT / "data" / "models"   / "runner_master_shadow_model_v1.pkl"
 SHADOW_DIR     = ROOT / "data" / "shadow"
 REPORT_DIR     = ROOT / "data" / "reports"
@@ -171,6 +173,65 @@ def build_features(df: pd.DataFrame, tj_p80: float, impute_vals: dict,
     return X[feature_cols].values, out
 
 
+# ─── RP profile fallback ─────────────────────────────────────────────────────
+
+def _build_from_rp_profile(target_date: str) -> tuple[pd.DataFrame, bool]:
+    """
+    Build a master-compatible dataframe from rp_runner_profile + last-6 spine.
+    Used when runner_master_profile doesn't yet have today's VELO-scored rows.
+    velo_prime_prob will be NaN → imputed to 0 (WARNING logged in report).
+    Returns (df, vp_available=False).
+    """
+    if not RP_PROFILE_PATH.exists():
+        return pd.DataFrame(), False
+
+    rp = pd.read_parquet(RP_PROFILE_PATH)
+    rp = rp[rp["race_date"] == target_date].copy()
+    if len(rp) == 0:
+        return pd.DataFrame(), False
+
+    # Align column names to master profile layout
+    rp = rp.rename(columns={
+        "race_date":   "date",
+        "current_or":  "ofr_api",
+        "current_ts":  "ts_api",
+        "current_rpr": "rpr_api",
+    })
+
+    # Fields not present in RP profile — fill with sensible defaults
+    rp["velo_prime_prob"]     = np.nan   # NOT YET SCORED
+    rp["mds_high_flag"]       = False
+    rp["class_num"]           = np.nan
+    rp["field_size"]          = np.nan
+    rp["race_type"]           = np.nan
+    rp["or_slope_6"]          = np.nan
+    rp["ts_slope_6"]          = np.nan
+    rp["rpr_slope_6"]         = np.nan
+    rp["or_drop_from_peak"]   = np.nan
+    rp["ts_vs_or_gap"]        = np.nan
+    rp["horse_id"]            = rp.get("horse_id", pd.Series([""] * len(rp), index=rp.index))
+
+    # Join last-6 spine on horse_norm to get slopes
+    if SPINE_PATH.exists():
+        spine = pd.read_parquet(SPINE_PATH)
+        # spine race_date may be datetime.date objects — normalise to string for comparison
+        spine_date_col = spine["race_date"].astype(str)
+        spine_today = spine[spine_date_col == target_date][
+            ["horse_norm", "or_slope_6", "ts_slope_6", "rpr_slope_6",
+             "or_drop_from_peak", "ts_vs_or_gap"]
+        ].drop_duplicates("horse_norm")
+        if "horse_norm" in rp.columns and len(spine_today) > 0:
+            # Normalise to lowercase for join — RP profile uses uppercase, spine uses lowercase
+            rp["_norm_lc"] = rp["horse_norm"].str.lower()
+            spine_today = spine_today.rename(columns={"horse_norm": "_norm_lc"})
+            # Drop existing slope cols before join
+            for c in ["or_slope_6", "ts_slope_6", "rpr_slope_6", "or_drop_from_peak", "ts_vs_or_gap"]:
+                rp = rp.drop(columns=[c], errors="ignore")
+            rp = rp.merge(spine_today, on="_norm_lc", how="left").drop(columns=["_norm_lc"], errors="ignore")
+
+    return rp, False
+
+
 # ─── Accumulation counter ─────────────────────────────────────────────────────
 
 def _count_accumulated_shadow(target_date_str: str) -> dict:
@@ -220,21 +281,33 @@ def main(target_date: str | None = None):
     print()
 
     # ── Load profile ──────────────────────────────────────────────────────────
+    vp_available = True
     if not PROFILE_PATH.exists():
         raise FileNotFoundError(f"Profile not found: {PROFILE_PATH}")
     full_df = pd.read_parquet(PROFILE_PATH)
 
     # Filter to target date
     today_df = full_df[full_df["date"] == today_str].copy().reset_index(drop=True)
+
     if len(today_df) == 0:
-        # Try latest date as fallback
-        latest_date = str(full_df["date"].max())
-        print(f"WARNING: No rows for {today_str}. Falling back to latest date: {latest_date}")
-        today_df = full_df[full_df["date"] == latest_date].copy().reset_index(drop=True)
-        today_str = latest_date
+        # Try RP profile + last-6 spine fallback (VELO not yet scored today)
+        rp_df, vp_available = _build_from_rp_profile(today_str)
+        if len(rp_df) > 0:
+            print(f"INFO: runner_master has no rows for {today_str}.")
+            print(f"      Falling back to rp_runner_profile ({len(rp_df)} runners).")
+            print(f"      WARNING: velo_prime_prob NOT AVAILABLE — VP signal excluded from shadow score.")
+            today_df = rp_df.reset_index(drop=True)
+        else:
+            # Last resort: latest date in master
+            latest_date = str(full_df["date"].max())
+            print(f"WARNING: No rows for {today_str} in master or RP profile. "
+                  f"Falling back to latest date: {latest_date}")
+            today_df = full_df[full_df["date"] == latest_date].copy().reset_index(drop=True)
+            today_str = latest_date
 
     n_runners = len(today_df)
-    print(f"Runners: {n_runners} | Date: {today_str}")
+    vp_warn = "" if vp_available else " | VP_NOT_SCORED — shadow score excludes VP signal"
+    print(f"Runners: {n_runners} | Date: {today_str}{vp_warn}")
 
     # ── Build features ────────────────────────────────────────────────────────
     X, enriched = build_features(today_df, tj_p80, impute_vals, feature_cols)
@@ -251,8 +324,8 @@ def main(target_date: str | None = None):
 
     # Per-race ranking — group by (course, off_time) since race_id is per-runner in this profile
     enriched["_race_group"] = enriched["course"].astype(str) + "|" + enriched["off_time"].astype(str)
-    enriched["vp_rank"]     = enriched.groupby("_race_group")["velo_prime_prob"].rank(ascending=False, method="min").astype(int)
-    enriched["shadow_rank"] = enriched.groupby("_race_group")["shadow_score_c"].rank(ascending=False, method="min").astype(int)
+    enriched["vp_rank"]     = enriched.groupby("_race_group")["velo_prime_prob"].rank(ascending=False, method="min").fillna(0).astype(int)
+    enriched["shadow_rank"] = enriched.groupby("_race_group")["shadow_score_c"].rank(ascending=False, method="min").fillna(0).astype(int)
     enriched["rank_delta"]  = enriched["vp_rank"] - enriched["shadow_rank"]  # positive = shadow ranks higher
 
     n_races_grouped = enriched["_race_group"].nunique()
@@ -351,6 +424,8 @@ def main(target_date: str | None = None):
         "governance":       GOVERNANCE,
         "model_version":    version,
         "model_status":     artifact["status"],
+        "vp_score_available": vp_available,
+        "vp_warning":       "" if vp_available else "VP_NOT_SCORED — shadow score excludes VP signal. Run scoring pipeline first.",
         "n_runners":        n_runners,
         "n_races":          races,
         "top_decile_thresh": round(top_decile_thresh, 4),
@@ -378,6 +453,7 @@ def main(target_date: str | None = None):
         f"|---|---|",
         f"| Runners | {n_runners} |",
         f"| Races | {races} |",
+        f"| VP scores available | {'YES' if vp_available else '**NO — shadow score excludes VP signal**'} |",
         f"| Top-decile threshold | {top_decile_thresh:.4f} |",
         f"| Runners in top decile | {n_top_decile} |",
         f"| Data quality OK | {dq_summary['OK']} |",
