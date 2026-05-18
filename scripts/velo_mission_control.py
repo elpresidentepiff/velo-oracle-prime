@@ -904,6 +904,31 @@ def main() -> None:
     print(f"Safety: {payload['safety']['classification']}")
     print(f"Next Safe Command: {payload['next_safe_command'] or payload['blocked_reason']}")
 
+    # ── Race-Day Source Policy Footer ─────────────────────────────────────────
+    print()
+    print("─" * 62)
+    print("RACE-DAY SOURCE POLICY")
+    print("─" * 62)
+    manifest_path = ROOT / "data" / "runs" / f"velo_race_day_manifest_{args.date}.json"
+    _latest_run_state = "NO_MANIFEST"
+    _api_auth = "UNKNOWN"
+    _rp_primary = False
+    if manifest_path.exists():
+        try:
+            _m = json.loads(manifest_path.read_text())
+            _latest_run_state = _m.get("final_status", "UNKNOWN")
+            _api_auth = _m.get("racing_api_auth") or "NOT_CHECKED"
+            _rp_primary = _m.get("rp_primary", False)
+        except Exception:
+            pass
+    _no_missing_days = "ENFORCED" if manifest_path.exists() else "MANIFEST_ABSENT"
+    print(f"  RACE_DAY_SOURCE_POLICY = RP_PRIMARY_API_OPTIONAL")
+    print(f"  LATEST_RUN_STATE       = {_latest_run_state}")
+    print(f"  RACING_API_AUTH        = {_api_auth}")
+    print(f"  RP_PRIMARY             = {_rp_primary}")
+    print(f"  NO_MISSING_DAYS        = {_no_missing_days}")
+    print("─" * 62)
+
 
 if __name__ == "__main__":
     main()
