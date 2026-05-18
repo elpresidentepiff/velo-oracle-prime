@@ -293,6 +293,38 @@ def _load_vp40_comparison() -> dict[str, Any]:
         return {}
 
 
+def _load_vp40_shortprice_status() -> dict[str, Any]:
+    """Load VP40_TIER_A_SHORTPRICE review for Mission Control advisory display."""
+    path = ROOT / "data" / "reports" / "vp40_tier_a_shortprice_review_latest.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        s = data.get("overall", {})
+        rec = data.get("recommendation", {})
+        outlier = data.get("outlier_analysis", {})
+        strip1 = next((r for r in outlier.get("strip_test", []) if r.get("excluding_top") == 1), {})
+        return {
+            "date": data.get("date"),
+            "n": s.get("n"),
+            "sr": s.get("sr"),
+            "frame_rate": s.get("frame_rate"),
+            "roi": s.get("roi"),
+            "verdict": rec.get("verdict"),
+            "critical_issues": rec.get("critical_issues", []),
+            "issues": rec.get("issues", []),
+            "strengths": rec.get("strengths", []),
+            "roi_without_top_winner": strip1.get("roi_stripped"),
+            "top_winner_horse": strip1.get("excluded_horse"),
+            "top_winner_sp": strip1.get("excluded_sp"),
+            "top1_pct": outlier.get("top1_return_pct"),
+            "top3_pct": outlier.get("top3_return_pct"),
+            "llr": data.get("losing_run", {}).get("llr"),
+        }
+    except Exception:
+        return {}
+
+
 def _load_corpus_progress() -> dict[str, Any]:
     """Read training corpus size from manifest or parquet and compute 2K progress."""
     manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
@@ -785,6 +817,57 @@ def main() -> None:
                 print(f"  Outlier: {top_horse_a} SP={top_sp_a} is Tier A — same dependency in both lanes")
         print(f"  Next gate: n>=250 AND ROI stable without Roysse")
         print(f"  No live action. POLICY_SIMULATION_ONLY.")
+        print("─" * 62)
+
+    # ── VP40_TIER_A_SHORTPRICE Status ─────────────────────────────────────────
+    sp_status = _load_vp40_shortprice_status()
+    if sp_status:
+        print()
+        print("─" * 62)
+        print("VP40_TIER_A_SHORTPRICE STATUS (SP<3.0 — advisory, no live action)")
+        print("─" * 62)
+        sp_verdict = sp_status.get("verdict", "?")
+        sp_n = sp_status.get("n", "?")
+        sp_sr = sp_status.get("sr", "?")
+        sp_frame = sp_status.get("frame_rate", "?")
+        sp_roi = sp_status.get("roi")
+        sp_roi_ex = sp_status.get("roi_without_top_winner")
+        sp_top_horse = sp_status.get("top_winner_horse", "?")
+        sp_top_sp = sp_status.get("top_winner_sp", "?")
+        sp_top1_pct = sp_status.get("top1_pct")
+        sp_top3_pct = sp_status.get("top3_pct")
+        sp_llr = sp_status.get("llr")
+        sp_roi_str = f"{sp_roi:+.1f}%" if sp_roi is not None else "—"
+        sp_roi_ex_str = f"{sp_roi_ex:+.1f}%" if sp_roi_ex is not None else "—"
+        print(f"  Status:           UNDER_REVIEW")
+        print(f"  Verdict:          {sp_verdict}")
+        print(f"  n={sp_n}  SR={sp_sr}%  Frame={sp_frame}%  ROI={sp_roi_str}")
+        print(f"  ROI ex-top-winner: {sp_roi_ex_str} (ex {sp_top_horse} SP={sp_top_sp})")
+        if sp_top1_pct is not None:
+            print(f"  Winner concentration: top-1={sp_top1_pct}%  top-3={sp_top3_pct}%  [Gate 7: <20%/<40%]")
+        if sp_llr is not None:
+            print(f"  LLR: {sp_llr}  (Gate 6: LLR<=15% of n)")
+        sp_crit = sp_status.get("critical_issues", [])
+        sp_issues = sp_status.get("issues", [])
+        sp_strengths = sp_status.get("strengths", [])
+        if sp_crit:
+            for ci in sp_crit:
+                print(f"  *** CRITICAL: {ci[:88]}")
+        else:
+            print(f"  No critical issues — outlier dependency resolved (Roysse excluded by SP<3.0)")
+        if sp_issues:
+            for iss in sp_issues[:2]:
+                print(f"  ISSUE: {iss[:88]}")
+        if sp_strengths:
+            print(f"  STRENGTH: {sp_strengths[0][:88]}")
+        print(f"  NO LIVE POLICY PROMOTION. POLICY_SIMULATION_ONLY.")
+        print("─" * 62)
+        print()
+        print("  LANE POLICY STATUS SUMMARY:")
+        print(f"  VP40_LANE           = WATCH_ONLY  (Gate 4+7 FAIL — Roysse SP=34)")
+        print(f"  VP40_TIER_A         = WATCH_ONLY  (Gate 4+7 FAIL — Roysse is Tier A)")
+        print(f"  VP40_TIER_A_SHORTPRICE = UNDER_REVIEW  (n={sp_n}/150 — outlier resolved)")
+        print(f"  Price hygiene is mandatory. Midprice (SP3-8.5) and longshot (SP>8.5) excluded.")
         print("─" * 62)
 
     print(f"RP Coverage: {payload['racing_post']['status']} ({payload['racing_post']['coverage_pct']}%)")
