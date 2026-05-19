@@ -203,6 +203,29 @@ def build_career_memory(corpus: pd.DataFrame, rp: pd.DataFrame | None) -> pd.Dat
             and frames >= 1
             and improvement_high_events >= 1
         )
+        third_run_candidate = (
+            starts == 3
+            and wins == 0
+            and improvement_high_events >= 1
+        )
+        returning_horse_flag = (
+            days_since_run is not None and days_since_run >= 90
+        )
+
+        # Peak signal values
+        best_vp_seen = _safe_float(vp_vals.max()) if len(vp_vals) > 0 else None
+        best_mds_seen = _safe_float(mds_vals.max()) if len(mds_vals) > 0 else None
+        best_improvement_seen = _safe_float(impr_vals.max()) if len(impr_vals) > 0 else None
+
+        # Lane history count (total router-lane appearances)
+        lane_history_count = int(grp["router_shadow_lane"].notna().sum())
+
+        # Latest RPDC tags from corpus (most recent race's tag field)
+        latest_rpdc_tags = None
+        if "rpdc_tags" in grp.columns:
+            recent_tags = grp["rpdc_tags"].dropna()
+            if len(recent_tags) > 0:
+                latest_rpdc_tags = str(recent_tags.iloc[-1])
 
         records.append({
             "group_key": group_key,
@@ -210,9 +233,13 @@ def build_career_memory(corpus: pd.DataFrame, rp: pd.DataFrame | None) -> pd.Dat
             "horse_ids_all": json.dumps(horse_ids),
             "horse_name": horse_names[0] if horse_names else group_key,
             "horse_names_all": json.dumps(horse_names),
+            "first_seen_date": first_seen,
+            "latest_seen_date": last_seen,
+            # V1 compat aliases
             "first_seen": first_seen,
             "last_seen": last_seen,
             "starts_observed": starts,
+            "observed_start_count": starts,
             "wins_observed": wins,
             "frames_observed": frames,
             "win_rate": round(wins / starts, 4) if starts > 0 else None,
@@ -233,20 +260,29 @@ def build_career_memory(corpus: pd.DataFrame, rp: pd.DataFrame | None) -> pd.Dat
             "avg_velo_prime_prob": avg_vp,
             "avg_market_deception_score": avg_mds,
             "avg_improvement_score": avg_improvement,
+            # Peak signal values
+            "best_vp_seen": best_vp_seen,
+            "best_mds_seen": best_mds_seen,
+            "best_improvement_seen": best_improvement_seen,
             # High-signal event counts
             "mds_high_events": mds_high_events,
             "improvement_high_events": improvement_high_events,
             "vp_ge_30_events": vp_ge_30_events,
             "vp_ge_40_events": vp_ge_40_events,
-            # Tier and lane history
-            "tier_distribution": json.dumps(tier_dist),
+            # Lane history
             "router_lane_history": json.dumps(lane_hist),
+            "lane_history_count": lane_history_count,
+            # Tier and RPDC history
+            "tier_distribution": json.dumps(tier_dist),
+            "latest_rpdc_tags": latest_rpdc_tags,
             # Trend
             "vp_trend": vp_trend,
             "career_trajectory": trajectory,
             # Special flags
             "juvenile_2yo_flag": juvenile_flag,
             "second_run_improve_flag": second_run_improve,
+            "third_run_candidate_flag": third_run_candidate,
+            "returning_horse_flag": returning_horse_flag,
             # Metadata
             "built_at": datetime.now(timezone.utc).isoformat(),
         })
@@ -296,6 +332,8 @@ def write_md(df: pd.DataFrame, n_corpus: int) -> None:
         f"|---|---|",
         f"| Juvenile/2yo | {juveniles} |",
         f"| Second-run improve candidate | {second_run} |",
+        f"| Third-run candidate | {df['third_run_candidate_flag'].sum()} |",
+        f"| Returning horse (≥90 days off) | {df['returning_horse_flag'].sum()} |",
         f"| MDS high ≥2 events | {multi_mds} |",
         f"| VP ≥ 0.40 at least once | {(df['vp_ge_40_events'] >= 1).sum()} |",
         "",
@@ -359,7 +397,10 @@ def run():
 
     print(f"\nJuveniles/2yo flag:         {df['juvenile_2yo_flag'].sum()}")
     print(f"Second-run improve:          {df['second_run_improve_flag'].sum()}")
+    print(f"Third-run candidate:         {df['third_run_candidate_flag'].sum()}")
+    print(f"Returning horse (≥90d):      {df['returning_horse_flag'].sum()}")
     print(f"MDS high ≥2 events:          {(df['mds_high_events'] >= 2).sum()}")
+    print(f"VP≥0.40 at least once:       {(df['vp_ge_40_events'] >= 1).sum()}")
     print("=" * 60)
 
 

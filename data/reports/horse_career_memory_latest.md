@@ -1,6 +1,6 @@
 # VÉLØ HORSE CAREER MEMORY — LATEST
 
-**Built:** 2026-05-19T00:27:49.795606+00:00  
+**Built:** 2026-05-19T05:43:33.633795+00:00  
 **Corpus rows:** 1310  
 **Unique horses:** 1240
 
@@ -26,6 +26,8 @@
 |---|---|
 | Juvenile/2yo | 0 |
 | Second-run improve candidate | 5 |
+| Third-run candidate | 0 |
+| Returning horse (≥90 days off) | 0 |
 | MDS high ≥2 events | 0 |
 | VP ≥ 0.40 at least once | 149 |
 
