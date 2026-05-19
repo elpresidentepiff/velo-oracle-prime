@@ -1,0 +1,159 @@
+# VÉLØ MODEL ARENA V2
+
+**Run at:** 2026-05-19T07:45:06.410836+00:00  
+**Train:** 1048 | **Val:** 262 | **Split:** 2026-05-10  
+**SQPE baseline Brier (win):** 0.207244  
+**Packages:** XGBoost 3.2.0 | CatBoost 1.2.10 | Optuna 4.8.0 | LightGBM 4.6.0
+
+---
+
+## Win Target (sorted by Brier ↓)
+
+| Feature Set | Model | Brier ↓ | AUC ↑ | ROI | Classification |
+|---|---|---|---|---|---|
+| MARKET_ONLY | random_forest | **0.159857** | 0.677189 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| NO_VP_COMPOSITE | random_forest | **0.161326** | 0.681288 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| RAW_SIDECARS_ONLY | random_forest | **0.161803** | 0.676809 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| FULL_META | random_forest | **0.162527** | 0.673343 | -0.0208 | ~ META_CALIBRATOR_PROMISING |
+| NO_VP_COMPOSITE | logistic | **0.1634** | 0.638607 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| RAW_SIDECARS_ONLY | logistic | **0.1634** | 0.638607 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| FULL_META | logistic | **0.16395** | 0.637973 | -0.0208 | ~ META_CALIBRATOR_PROMISING |
+| NO_VP_COMPOSITE | catboost | **0.164022** | 0.666498 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| RAW_SIDECARS_ONLY | catboost | **0.164022** | 0.666498 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| FULL_META | catboost | **0.167213** | 0.644185 | -0.0208 | ~ META_CALIBRATOR_PROMISING |
+| MARKET_ONLY | catboost | **0.168365** | 0.657919 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| MARKET_ONLY | logistic | **0.168624** | 0.6381 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| FULL_META | xgboost | **0.169788** | 0.638776 | -0.0208 | ~ META_CALIBRATOR_PROMISING |
+| MARKET_ONLY | xgboost | **0.169789** | 0.646002 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| NO_VP_COMPOSITE | xgboost | **0.171346** | 0.635396 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| RAW_SIDECARS_ONLY | xgboost | **0.171697** | 0.636241 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| HORSE_MEMORY | logistic | **0.173405** | 0.508747 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| HORSE_MEMORY | xgboost | **0.173684** | 0.486351 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| HORSE_MEMORY | catboost | **0.173989** | 0.513438 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| MARKET_ONLY | lightgbm | **0.174012** | 0.655426 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| NO_VP_COMPOSITE | lightgbm | **0.174219** | 0.632099 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| RAW_SIDECARS_ONLY | lightgbm | **0.174219** | 0.632099 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| HORSE_MEMORY | lightgbm | **0.175243** | 0.510311 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| NO_VP_NO_MARKET | logistic | **0.175438** | 0.556077 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| HORSE_MEMORY | random_forest | **0.175602** | 0.515551 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| FULL_META | lightgbm | **0.176931** | 0.629817 | -0.0208 | ~ META_CALIBRATOR_PROMISING |
+| NO_VP_NO_MARKET | random_forest | **0.179443** | 0.570825 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| NO_VP_NO_MARKET | catboost | **0.188522** | 0.504564 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| NO_VP_NO_MARKET | xgboost | **0.19557** | 0.462559 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+| NO_VP_NO_MARKET | lightgbm | **0.199551** | 0.474307 | -0.0208 | ✓ INDEPENDENT_MODEL_PROMISING |
+
+*SQPE baseline: 0.207244*
+
+---
+
+## Frame Target
+
+| Feature Set | Model | Brier ↓ | AUC ↑ | Classification |
+|---|---|---|---|---|
+| FULL_META | logistic | **0.210724** | 0.729148 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_COMPOSITE | logistic | **0.212891** | 0.7164 | ✗ CURRENT_STACK_BEATS_ALL |
+| RAW_SIDECARS_ONLY | logistic | **0.212891** | 0.7164 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_COMPOSITE | random_forest | **0.214866** | 0.735332 | ✗ CURRENT_STACK_BEATS_ALL |
+| RAW_SIDECARS_ONLY | random_forest | **0.216119** | 0.727478 | ✗ CURRENT_STACK_BEATS_ALL |
+| FULL_META | random_forest | **0.216868** | 0.716957 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_COMPOSITE | catboost | **0.219918** | 0.699168 | ✗ CURRENT_STACK_BEATS_ALL |
+| RAW_SIDECARS_ONLY | catboost | **0.219918** | 0.699168 | ✗ CURRENT_STACK_BEATS_ALL |
+| MARKET_ONLY | random_forest | **0.221922** | 0.708311 | ✗ CURRENT_STACK_BEATS_ALL |
+| FULL_META | catboost | **0.224083** | 0.694332 | ✗ CURRENT_STACK_BEATS_ALL |
+| MARKET_ONLY | logistic | **0.225726** | 0.697028 | ✗ CURRENT_STACK_BEATS_ALL |
+| MARKET_ONLY | catboost | **0.22592** | 0.699109 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_COMPOSITE | xgboost | **0.228556** | 0.684485 | ✗ CURRENT_STACK_BEATS_ALL |
+| RAW_SIDECARS_ONLY | xgboost | **0.230613** | 0.681232 | ✗ CURRENT_STACK_BEATS_ALL |
+| FULL_META | xgboost | **0.23282** | 0.681086 | ✗ CURRENT_STACK_BEATS_ALL |
+| MARKET_ONLY | xgboost | **0.233693** | 0.675781 | ✗ CURRENT_STACK_BEATS_ALL |
+| FULL_META | lightgbm | **0.238831** | 0.6771 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_COMPOSITE | lightgbm | **0.239155** | 0.670623 | ✗ CURRENT_STACK_BEATS_ALL |
+| RAW_SIDECARS_ONLY | lightgbm | **0.239155** | 0.670623 | ✗ CURRENT_STACK_BEATS_ALL |
+| MARKET_ONLY | lightgbm | **0.242571** | 0.665055 | ✗ CURRENT_STACK_BEATS_ALL |
+| HORSE_MEMORY | catboost | **0.250253** | 0.521775 | ✗ CURRENT_STACK_BEATS_ALL |
+| HORSE_MEMORY | random_forest | **0.251433** | 0.507356 | ✗ CURRENT_STACK_BEATS_ALL |
+| HORSE_MEMORY | logistic | **0.252931** | 0.500352 | ✗ CURRENT_STACK_BEATS_ALL |
+| HORSE_MEMORY | xgboost | **0.255308** | 0.501641 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_NO_MARKET | logistic | **0.25633** | 0.554686 | ✗ CURRENT_STACK_BEATS_ALL |
+| HORSE_MEMORY | lightgbm | **0.256878** | 0.492556 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_NO_MARKET | random_forest | **0.259732** | 0.539154 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_NO_MARKET | catboost | **0.275461** | 0.523563 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_NO_MARKET | xgboost | **0.290338** | 0.496307 | ✗ CURRENT_STACK_BEATS_ALL |
+| NO_VP_NO_MARKET | lightgbm | **0.293198** | 0.50466 | ✗ CURRENT_STACK_BEATS_ALL |
+
+---
+
+## Suppress Target
+
+| Feature Set | Model | Brier ↓ | AUC ↑ | Classification |
+|---|---|---|---|---|
+| FULL_META | xgboost | **0.000509** | 1.0 | S SUPPRESS_MODEL_EVALUATED |
+| FULL_META | random_forest | **0.001986** | 1.0 | S SUPPRESS_MODEL_EVALUATED |
+| FULL_META | logistic | **0.004676** | 0.999297 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_COMPOSITE | logistic | **0.089217** | 0.930874 | S SUPPRESS_MODEL_EVALUATED |
+| RAW_SIDECARS_ONLY | logistic | **0.089217** | 0.930874 | S SUPPRESS_MODEL_EVALUATED |
+| MARKET_ONLY | logistic | **0.090578** | 0.930435 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_COMPOSITE | catboost | **0.095118** | 0.91278 | S SUPPRESS_MODEL_EVALUATED |
+| RAW_SIDECARS_ONLY | catboost | **0.095118** | 0.91278 | S SUPPRESS_MODEL_EVALUATED |
+| RAW_SIDECARS_ONLY | random_forest | **0.097069** | 0.92332 | S SUPPRESS_MODEL_EVALUATED |
+| RAW_SIDECARS_ONLY | xgboost | **0.097915** | 0.902152 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_COMPOSITE | xgboost | **0.098124** | 0.900834 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_COMPOSITE | random_forest | **0.098444** | 0.921739 | S SUPPRESS_MODEL_EVALUATED |
+| MARKET_ONLY | random_forest | **0.098938** | 0.91357 | S SUPPRESS_MODEL_EVALUATED |
+| MARKET_ONLY | catboost | **0.105257** | 0.89776 | S SUPPRESS_MODEL_EVALUATED |
+| MARKET_ONLY | lightgbm | **0.106658** | 0.889592 | S SUPPRESS_MODEL_EVALUATED |
+| MARKET_ONLY | xgboost | **0.10709** | 0.886517 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_COMPOSITE | lightgbm | **0.107823** | 0.888977 | S SUPPRESS_MODEL_EVALUATED |
+| RAW_SIDECARS_ONLY | lightgbm | **0.107823** | 0.888977 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_NO_MARKET | random_forest | **0.153157** | 0.708388 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_NO_MARKET | logistic | **0.156547** | 0.669609 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_NO_MARKET | catboost | **0.162307** | 0.683663 | S SUPPRESS_MODEL_EVALUATED |
+| HORSE_MEMORY | xgboost | **0.166204** | 0.499868 | S SUPPRESS_MODEL_EVALUATED |
+| HORSE_MEMORY | lightgbm | **0.166845** | 0.487176 | S SUPPRESS_MODEL_EVALUATED |
+| HORSE_MEMORY | logistic | **0.168929** | 0.49899 | S SUPPRESS_MODEL_EVALUATED |
+| HORSE_MEMORY | random_forest | **0.170072** | 0.47747 | S SUPPRESS_MODEL_EVALUATED |
+| HORSE_MEMORY | catboost | **0.171961** | 0.490558 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_NO_MARKET | xgboost | **0.177469** | 0.602679 | S SUPPRESS_MODEL_EVALUATED |
+| NO_VP_NO_MARKET | lightgbm | **0.187454** | 0.556873 | S SUPPRESS_MODEL_EVALUATED |
+
+---
+
+## Key Verdict
+
+| Metric | Value |
+|---|---|
+| SQPE baseline Brier | 0.207244 |
+| Independent signal confirmed | YES |
+| Frame remains current stack | YES |
+| NO_VP_COMPOSITE best win | 0.161326 |
+| NO_VP_NO_MARKET best win | 0.175438 |
+| RAW_SIDECARS_ONLY best win | 0.161803 |
+| MARKET_ONLY best win | 0.159857 |
+| HORSE_MEMORY best win | 0.173405 |
+| FULL_META best win | 0.162527 |
+
+---
+
+## Feature Importance — NO_VP_COMPOSITE Logistic (win)
+
+| Feature | Importance |
+|---|---|
+| market_deception_score | 0.992668 |
+| improvement_score | 0.302005 |
+| longshot_prob | 0.27963 |
+| place_prob | 0.230372 |
+| sqpe_v17_prob | 0.106242 |
+| release_day_prob | 0.0 |
+| comment_intel_score | 0.0 |
+| confidence_level_encoded | 0.0 |
+
+---
+
+## Governance
+
+```
+No production model changes.
+No scoring changes.
+No SP as predictive feature.
+Rolling horse memory: leakage-free (prior-only stats).
+```
