@@ -1,0 +1,102 @@
+{
+  "run_at": "2026-05-19T05:43:33.262484+00:00",
+  "total_records": 1000,
+  "sources": {
+    "supabase_horse_comments": 1000,
+    "rp_profile": 0
+  },
+  "claim_coverage": {
+    "improvement_claim": {
+      "n": 53,
+      "pct": 5.3
+    },
+    "handicap_claim": {
+      "n": 58,
+      "pct": 5.8
+    },
+    "stable_intent_claim": {
+      "n": 9,
+      "pct": 0.9
+    },
+    "trip_claim": {
+      "n": 25,
+      "pct": 2.5
+    },
+    "ground_claim": {
+      "n": 85,
+      "pct": 8.5
+    },
+    "class_claim": {
+      "n": 0,
+      "pct": 0.0
+    },
+    "fitness_claim": {
+      "n": 36,
+      "pct": 3.6
+    },
+    "negative_claim": {
+      "n": 157,
+      "pct": 15.7
+    },
+    "unsupported_hype_claim": {
+      "n": 32,
+      "pct": 3.2
+    }
+  },
+  "sample_extractions": [
+    {
+      "horse_name": "Hexagonal",
+      "n_claims": 3,
+      "claims": [
+        "handicap_claim",
+        "negative_claim",
+        "unsupported_hype_claim"
+      ],
+      "comment_snippet": "Definite promise in a couple of turf maidens last year but disappointed on handicap debut at Dundalk; unexposed and remains with potential so check th"
+    },
+    {
+      "horse_name": "Hexagonal",
+      "n_claims": 3,
+      "claims": [
+        "handicap_claim",
+        "negative_claim",
+        "unsupported_hype_claim"
+      ],
+      "comment_snippet": "Definite promise in a couple of turf maidens last year but disappointed on handicap debut at Dundalk; unexposed and remains with potential so check th"
+    },
+    {
+      "horse_name": "Hexagonal",
+      "n_claims": 3,
+      "claims": [
+        "handicap_claim",
+        "negative_claim",
+        "unsupported_hype_claim"
+      ],
+      "comment_snippet": "Definite promise in a couple of turf maidens last year but disappointed on handicap debut at Dundalk; unexposed and remains with potential so check th"
+    },
+    {
+      "horse_name": "Handin Manypockets",
+      "n_claims": 2,
+      "claims": [
+        "handicap_claim",
+        "negative_claim"
+      ],
+      "comment_snippet": "Lightly raced gelding who was beaten under 10l in a useful 2m4f maiden hurdle at Cheltenham three runs back; struggled on handicap debut at Taunton (3"
+    },
+    {
+      "horse_name": "Check The Score",
+      "n_claims": 2,
+      "claims": [
+        "improvement_claim",
+        "ground_claim"
+      ],
+      "comment_snippet": "No match for the winner at Southwell but that was over hurdles and after 363 days off; won his only previous chase by 3l at Market Rasen 13 months ago"
+    }
+  ],
+  "governance": {
+    "phase": "A_REGEX_BASELINE",
+    "no_scoring_change": true,
+    "no_live_state_mutation": true,
+    "phase_b_dspy_pending_approval": true
+  }
+}
