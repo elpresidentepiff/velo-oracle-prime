@@ -1,0 +1,548 @@
+{
+  "run_at": "2026-05-19T00:29:33.404369+00:00",
+  "corpus_path": "/mnt/c/Users/puror/velo-oracle-prime/data/velo_unified_evidence_corpus_v1.csv",
+  "n_train_total": 1048,
+  "n_val_total": 262,
+  "val_split_date": "2026-05-10",
+  "sqpe_baseline_brier_win": 0.210688,
+  "features": [
+    "velo_prime_prob",
+    "sqpe_v17_prob",
+    "market_deception_score",
+    "improvement_score",
+    "place_prob",
+    "longshot_prob",
+    "release_day_prob",
+    "comment_intel_score",
+    "decision_tier_encoded",
+    "confidence_level_encoded"
+  ],
+  "targets": [
+    "win",
+    "frame"
+  ],
+  "dependencies": {
+    "lightgbm": "INSTALLED 4.6.0",
+    "xgboost": "MISSING \u2014 install not automatic, operator approval required",
+    "catboost": "MISSING \u2014 install not automatic, operator approval required",
+    "optuna": "MISSING \u2014 install not automatic, operator approval required",
+    "mlflow": "MISSING \u2014 install not automatic, operator approval required"
+  },
+  "results": [
+    {
+      "model": "logistic_baseline",
+      "target": "win",
+      "n_train": 1048,
+      "n_val": 262,
+      "brier_score": 0.164972,
+      "log_loss": 0.510646,
+      "auc": 0.653294,
+      "val_sr": 0.2252,
+      "decile_metrics": [
+        {
+          "decile": 0,
+          "n": 52,
+          "sr": 0.1538,
+          "avg_prob": 0.0785,
+          "roi": -0.2233
+        },
+        {
+          "decile": 1,
+          "n": 1,
+          "sr": 1.0,
+          "avg_prob": 0.0939,
+          "roi": 5.0
+        },
+        {
+          "decile": 2,
+          "n": 26,
+          "sr": 0.0769,
+          "avg_prob": 0.0962,
+          "roi": -0.5654
+        },
+        {
+          "decile": 3,
+          "n": 28,
+          "sr": 0.1786,
+          "avg_prob": 0.1123,
+          "roi": 0.0268
+        },
+        {
+          "decile": 4,
+          "n": 24,
+          "sr": 0.1667,
+          "avg_prob": 0.1311,
+          "roi": -0.4154
+        },
+        {
+          "decile": 5,
+          "n": 26,
+          "sr": 0.2308,
+          "avg_prob": 0.1686,
+          "roi": 0.3173
+        },
+        {
+          "decile": 6,
+          "n": 27,
+          "sr": 0.1852,
+          "avg_prob": 0.2189,
+          "roi": -0.1804
+        },
+        {
+          "decile": 7,
+          "n": 35,
+          "sr": 0.2571,
+          "avg_prob": 0.3086,
+          "roi": 0.9577
+        },
+        {
+          "decile": 8,
+          "n": 24,
+          "sr": 0.375,
+          "avg_prob": 0.4065,
+          "roi": -0.3317
+        },
+        {
+          "decile": 9,
+          "n": 19,
+          "sr": 0.5263,
+          "avg_prob": 0.5819,
+          "roi": -0.2932
+        }
+      ],
+      "roi_full": NaN,
+      "roi_outlier_stripped": 0.0
+    },
+    {
+      "model": "random_forest",
+      "target": "win",
+      "n_train": 1048,
+      "n_val": 262,
+      "brier_score": 0.165976,
+      "log_loss": 0.509709,
+      "auc": 0.665776,
+      "val_sr": 0.2252,
+      "decile_metrics": [
+        {
+          "decile": 0,
+          "n": 27,
+          "sr": 0.0,
+          "avg_prob": 0.0665,
+          "roi": -1.0
+        },
+        {
+          "decile": 1,
+          "n": 26,
+          "sr": 0.1538,
+          "avg_prob": 0.0818,
+          "roi": -0.1573
+        },
+        {
+          "decile": 2,
+          "n": 26,
+          "sr": 0.2692,
+          "avg_prob": 0.1092,
+          "roi": 0.2992
+        },
+        {
+          "decile": 3,
+          "n": 26,
+          "sr": 0.1538,
+          "avg_prob": 0.1364,
+          "roi": -0.0577
+        },
+        {
+          "decile": 4,
+          "n": 26,
+          "sr": 0.3077,
+          "avg_prob": 0.1691,
+          "roi": 0.3769
+        },
+        {
+          "decile": 5,
+          "n": 26,
+          "sr": 0.0385,
+          "avg_prob": 0.1935,
+          "roi": -0.8942
+        },
+        {
+          "decile": 6,
+          "n": 26,
+          "sr": 0.1923,
+          "avg_prob": 0.2147,
+          "roi": 1.4231
+        },
+        {
+          "decile": 7,
+          "n": 26,
+          "sr": 0.2692,
+          "avg_prob": 0.2499,
+          "roi": 0.1831
+        },
+        {
+          "decile": 8,
+          "n": 26,
+          "sr": 0.4231,
+          "avg_prob": 0.3272,
+          "roi": -0.1219
+        },
+        {
+          "decile": 9,
+          "n": 27,
+          "sr": 0.4444,
+          "avg_prob": 0.5242,
+          "roi": -0.2774
+        }
+      ],
+      "roi_full": NaN,
+      "roi_outlier_stripped": 0.0
+    },
+    {
+      "model": "lightgbm",
+      "target": "win",
+      "n_train": 1048,
+      "n_val": 262,
+      "brier_score": 0.183007,
+      "log_loss": 0.599927,
+      "auc": 0.621608,
+      "val_sr": 0.2252,
+      "decile_metrics": [
+        {
+          "decile": 0,
+          "n": 27,
+          "sr": 0.0741,
+          "avg_prob": 0.0124,
+          "roi": -0.6296
+        },
+        {
+          "decile": 1,
+          "n": 26,
+          "sr": 0.1538,
+          "avg_prob": 0.0262,
+          "roi": -0.3731
+        },
+        {
+          "decile": 2,
+          "n": 26,
+          "sr": 0.3077,
+          "avg_prob": 0.0426,
+          "roi": 1.1154
+        },
+        {
+          "decile": 3,
+          "n": 26,
+          "sr": 0.2308,
+          "avg_prob": 0.0741,
+          "roi": 1.4904
+        },
+        {
+          "decile": 4,
+          "n": 26,
+          "sr": 0.1154,
+          "avg_prob": 0.1247,
+          "roi": -0.7612
+        },
+        {
+          "decile": 5,
+          "n": 26,
+          "sr": 0.2692,
+          "avg_prob": 0.1755,
+          "roi": 0.0519
+        },
+        {
+          "decile": 6,
+          "n": 26,
+          "sr": 0.1154,
+          "avg_prob": 0.2221,
+          "roi": -0.5127
+        },
+        {
+          "decile": 7,
+          "n": 26,
+          "sr": 0.1923,
+          "avg_prob": 0.2952,
+          "roi": -0.1785
+        },
+        {
+          "decile": 8,
+          "n": 26,
+          "sr": 0.3462,
+          "avg_prob": 0.3948,
+          "roi": -0.3096
+        },
+        {
+          "decile": 9,
+          "n": 27,
+          "sr": 0.4444,
+          "avg_prob": 0.6565,
+          "roi": -0.1389
+        }
+      ],
+      "roi_full": NaN,
+      "roi_outlier_stripped": 0.0
+    },
+    {
+      "model": "xgboost",
+      "target": "win",
+      "status": "MISSING_PACKAGE",
+      "brier_score": null,
+      "log_loss": null,
+      "auc": null
+    },
+    {
+      "model": "catboost",
+      "target": "win",
+      "status": "MISSING_PACKAGE",
+      "brier_score": null,
+      "log_loss": null,
+      "auc": null
+    },
+    {
+      "model": "logistic_baseline",
+      "target": "frame",
+      "n_train": 1048,
+      "n_val": 262,
+      "brier_score": 0.212,
+      "log_loss": 0.619323,
+      "auc": 0.724287,
+      "val_sr": 0.4733,
+      "decile_metrics": [
+        {
+          "decile": 0,
+          "n": 39,
+          "sr": 0.2308,
+          "avg_prob": 0.2098
+        },
+        {
+          "decile": 1,
+          "n": 15,
+          "sr": 0.4,
+          "avg_prob": 0.2843
+        },
+        {
+          "decile": 2,
+          "n": 35,
+          "sr": 0.2857,
+          "avg_prob": 0.3353
+        },
+        {
+          "decile": 3,
+          "n": 31,
+          "sr": 0.3548,
+          "avg_prob": 0.3737
+        },
+        {
+          "decile": 4,
+          "n": 11,
+          "sr": 0.3636,
+          "avg_prob": 0.3833
+        },
+        {
+          "decile": 5,
+          "n": 26,
+          "sr": 0.4615,
+          "avg_prob": 0.4809
+        },
+        {
+          "decile": 6,
+          "n": 29,
+          "sr": 0.4828,
+          "avg_prob": 0.6141
+        },
+        {
+          "decile": 7,
+          "n": 23,
+          "sr": 0.6522,
+          "avg_prob": 0.6813
+        },
+        {
+          "decile": 8,
+          "n": 34,
+          "sr": 0.7941,
+          "avg_prob": 0.7869
+        },
+        {
+          "decile": 9,
+          "n": 19,
+          "sr": 0.8421,
+          "avg_prob": 0.9601
+        }
+      ]
+    },
+    {
+      "model": "random_forest",
+      "target": "frame",
+      "n_train": 1048,
+      "n_val": 262,
+      "brier_score": 0.215284,
+      "log_loss": 0.630586,
+      "auc": 0.721891,
+      "val_sr": 0.4733,
+      "decile_metrics": [
+        {
+          "decile": 0,
+          "n": 27,
+          "sr": 0.1481,
+          "avg_prob": 0.2625
+        },
+        {
+          "decile": 1,
+          "n": 26,
+          "sr": 0.2692,
+          "avg_prob": 0.3192
+        },
+        {
+          "decile": 2,
+          "n": 26,
+          "sr": 0.3846,
+          "avg_prob": 0.3678
+        },
+        {
+          "decile": 3,
+          "n": 26,
+          "sr": 0.3462,
+          "avg_prob": 0.4156
+        },
+        {
+          "decile": 4,
+          "n": 26,
+          "sr": 0.3846,
+          "avg_prob": 0.4516
+        },
+        {
+          "decile": 5,
+          "n": 26,
+          "sr": 0.5769,
+          "avg_prob": 0.4968
+        },
+        {
+          "decile": 6,
+          "n": 26,
+          "sr": 0.4231,
+          "avg_prob": 0.5471
+        },
+        {
+          "decile": 7,
+          "n": 26,
+          "sr": 0.6538,
+          "avg_prob": 0.6201
+        },
+        {
+          "decile": 8,
+          "n": 26,
+          "sr": 0.7308,
+          "avg_prob": 0.7282
+        },
+        {
+          "decile": 9,
+          "n": 27,
+          "sr": 0.8148,
+          "avg_prob": 0.8758
+        }
+      ]
+    },
+    {
+      "model": "lightgbm",
+      "target": "frame",
+      "n_train": 1048,
+      "n_val": 262,
+      "brier_score": 0.239972,
+      "log_loss": 0.711912,
+      "auc": 0.677302,
+      "val_sr": 0.4733,
+      "decile_metrics": [
+        {
+          "decile": 0,
+          "n": 27,
+          "sr": 0.2963,
+          "avg_prob": 0.0945
+        },
+        {
+          "decile": 1,
+          "n": 26,
+          "sr": 0.4231,
+          "avg_prob": 0.1708
+        },
+        {
+          "decile": 2,
+          "n": 26,
+          "sr": 0.2308,
+          "avg_prob": 0.2351
+        },
+        {
+          "decile": 3,
+          "n": 26,
+          "sr": 0.3462,
+          "avg_prob": 0.3096
+        },
+        {
+          "decile": 4,
+          "n": 26,
+          "sr": 0.4231,
+          "avg_prob": 0.4042
+        },
+        {
+          "decile": 5,
+          "n": 26,
+          "sr": 0.4231,
+          "avg_prob": 0.5192
+        },
+        {
+          "decile": 6,
+          "n": 26,
+          "sr": 0.5385,
+          "avg_prob": 0.6268
+        },
+        {
+          "decile": 7,
+          "n": 26,
+          "sr": 0.5,
+          "avg_prob": 0.7272
+        },
+        {
+          "decile": 8,
+          "n": 26,
+          "sr": 0.7308,
+          "avg_prob": 0.8582
+        },
+        {
+          "decile": 9,
+          "n": 27,
+          "sr": 0.8148,
+          "avg_prob": 0.9708
+        }
+      ]
+    },
+    {
+      "model": "xgboost",
+      "target": "frame",
+      "status": "MISSING_PACKAGE",
+      "brier_score": null,
+      "log_loss": null,
+      "auc": null
+    },
+    {
+      "model": "catboost",
+      "target": "frame",
+      "status": "MISSING_PACKAGE",
+      "brier_score": null,
+      "log_loss": null,
+      "auc": null
+    }
+  ],
+  "classifications": {
+    "logistic_baseline_win": "SHADOW_MODEL_PROMISING",
+    "random_forest_win": "SHADOW_MODEL_PROMISING",
+    "lightgbm_win": "SHADOW_MODEL_PROMISING",
+    "logistic_baseline_frame": "CURRENT_STACK_BEATS_ALL",
+    "random_forest_frame": "CURRENT_STACK_BEATS_ALL",
+    "lightgbm_frame": "CURRENT_STACK_BEATS_ALL"
+  },
+  "governance": {
+    "no_production_model_change": true,
+    "no_scoring_change": true,
+    "no_sp_as_predictive_feature": true,
+    "promotion_gate": "must beat SQPE Brier on time-split validation",
+    "approved_by": null
+  }
+}
