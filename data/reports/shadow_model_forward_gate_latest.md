@@ -1,6 +1,6 @@
 # VÉLØ SHADOW MODEL FORWARD GATE
 
-**Run at:** 2026-05-19T08:19:24.953662+00:00  
+**Run at:** 2026-05-19T11:50:22.254705+00:00  
 **Model:** NO_VP_COMPOSITE_logistic_win  
 **Training cutoff:** 2026-05-10  
 **Gate status:** `GATE_OPEN_ACCUMULATING`
