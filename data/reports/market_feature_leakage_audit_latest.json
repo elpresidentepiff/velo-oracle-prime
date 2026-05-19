@@ -1,0 +1,79 @@
+{
+  "audit": "MARKET_FEATURE_LEAKAGE_AUDIT_V1",
+  "feature_set": "MARKET_ONLY",
+  "run_at": "2026-05-19T11:53:54.265091+00:00",
+  "features_audited": 4,
+  "leakage_detected_count": 0,
+  "overall_verdict": "CLEAN_NO_LEAKAGE",
+  "safe_for_training": true,
+  "safe_for_forward_gate": true,
+  "feature_audit": [
+    {
+      "feature": "market_deception_score",
+      "source_artifact": "scripts/train_specialist_models.py \u2192 models/specialist/market_deception_model/",
+      "derivation": "Specialist ML model trained on pre-race form signals. Inputs: going_flag, headgear_change, trainer_strike_rate_going, draw_position_normalized, class_drop_flag, days_since_last_run, comment_manipulation_flag. Trained on historical race-level data. Score assigned per runner from model output.",
+      "known_pre_race": true,
+      "derived_from_sp": false,
+      "derived_from_result": false,
+      "timestamp_avail": "Race card release (morning of race or earlier)",
+      "safe_for_training": true,
+      "safe_for_forward_gate": true,
+      "notes": "MDS is produced by a model trained on non-result features. The model target at training time is a historical outcome, but the SCORE is generated from pre-race inputs only. Verified: no SP, no BSP, no result columns in MDS inference path. Source: scripts/train_specialist_models.py lines 180-210 \u2014 feature list excludes sp_decimal, bsp_decimal, win_flag, place_flag. CLEAN.",
+      "leakage_detected": false,
+      "verdict": "CLEAN"
+    },
+    {
+      "feature": "place_prob",
+      "source_artifact": "scripts/train_specialist_models.py \u2192 models/specialist/place_model/",
+      "derivation": "Specialist ML model for each-way placement probability. Inputs: sqpe_v17_prob, improvement_score, comment_intel_score, draw_position_normalized, field_size, going_category. Score assigned pre-race.",
+      "known_pre_race": true,
+      "derived_from_sp": false,
+      "derived_from_result": false,
+      "timestamp_avail": "Race card release (morning of race or earlier)",
+      "safe_for_training": true,
+      "safe_for_forward_gate": true,
+      "notes": "place_prob model trained on historical place outcomes but SCORES from pre-race features. Confirmed: no SP, no BSP in inference-time features. SQPE is an input but SQPE itself is also pre-race (trained on form data). CLEAN.",
+      "leakage_detected": false,
+      "verdict": "CLEAN"
+    },
+    {
+      "feature": "longshot_prob",
+      "source_artifact": "scripts/train_specialist_models.py \u2192 models/specialist/longshot_model/",
+      "derivation": "Specialist ML model for longshot identification (sp >= 10 target at training). Inputs: comment_intel_score, draw_position_normalized, days_since_last_run, going_flag, trainer_strike_rate, field_size. IMPORTANT: 'sp >= 10' is the TRAINING TARGET, not an inference input. At inference time, no SP is used \u2014 model only receives pre-race signals.",
+      "known_pre_race": true,
+      "derived_from_sp": false,
+      "derived_from_result": false,
+      "timestamp_avail": "Race card release (morning of race or earlier)",
+      "safe_for_training": true,
+      "safe_for_forward_gate": true,
+      "notes": "Training target is historical SP >= 10 (longshot flag). This is a LABEL at training time \u2014 not an inference-time feature. At prediction time, longshot_prob is produced purely from pre-race form features. This is the standard supervised learning setup: label derived from result, but score computed from pre-race features only. CLEAN. Note: longshot_prob MUST NOT be used as a predictive feature in contexts where SP is available (i.e., only use in pre-race, never post-race refit). This constraint is already enforced by the training cutoff rule.",
+      "leakage_detected": false,
+      "verdict": "CLEAN"
+    },
+    {
+      "feature": "release_day_prob",
+      "source_artifact": "scripts/train_specialist_models.py \u2192 models/specialist/release_window_model/",
+      "derivation": "Specialist ML model for release-window probability (horse running in its optimal release window: 14\u201335 days since last run). Inputs: days_since_last_run, going_preference_match, trainer_strike_rate, comment_freshness_score, prior_release_window_win_rate. Score is a probability of being in optimal condition window.",
+      "known_pre_race": true,
+      "derived_from_sp": false,
+      "derived_from_result": false,
+      "timestamp_avail": "Race card release \u2014 days_since_last_run computable from declared entry",
+      "safe_for_training": true,
+      "safe_for_forward_gate": true,
+      "notes": "All inputs computable from declared racecard (trainer form, last run date, going). No result SP or outcome in the inference feature set. Training target is historical result-based (did horse run well in window?) but inference score is pre-race only. CLEAN.",
+      "leakage_detected": false,
+      "verdict": "CLEAN"
+    }
+  ],
+  "data_range_check": {
+    "status": "NO_PARQUET_FOUND",
+    "note": "Cannot verify value ranges \u2014 manual verification required"
+  },
+  "audit_rules": {
+    "known_pre_race": "Feature value available before race starts",
+    "derived_from_sp": "SP (starting price) used in computation \u2014 LEAKAGE",
+    "derived_from_result": "Win/place/BSP used in computation \u2014 LEAKAGE",
+    "safe_for_training": "True = no leakage, value known pre-race",
+    "safe_for_forward_gate": "True = safe for prospective shadow gate"
+  }
+}
