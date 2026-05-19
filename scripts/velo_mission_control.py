@@ -338,6 +338,17 @@ def _get_sp2x_n() -> int:
         return 24
 
 
+def _load_cpu_shadow_gate_status() -> dict[str, Any]:
+    """Read CPU shadow model forward gate status from latest gate JSON."""
+    path = ROOT / "data" / "reports" / "shadow_model_forward_gate_latest.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def _load_corpus_progress() -> dict[str, Any]:
     """Read training corpus size from manifest or parquet and compute 2K progress."""
     manifest_path = ROOT / "data" / "training" / "sigma_2k_training_manifest_latest.json"
@@ -759,6 +770,41 @@ def main() -> None:
                 print(f"  {lane_name}: n={cn} SR={sr:.1f}%  +{remaining} to n={gate_n}  ({est_days} at 3–5 rows/day)")
             else:
                 print(f"  {lane_name}: n={cn} SR={sr:.1f}%  GATE n={gate_n} REACHED")
+        print("─" * 62)
+
+    # ── CPU Shadow Model Gate Status ─────────────────────────────────────────
+    cpu_shadow = _load_cpu_shadow_gate_status()
+    if cpu_shadow:
+        print()
+        print("─" * 62)
+        print("CPU SHADOW MODEL GATE (read-only — no production approval)")
+        print("─" * 62)
+        fw = cpu_shadow.get("forward_gate", {})
+        challenger = cpu_shadow.get("challenger", "NO_VP_COMPOSITE_logistic_win")
+        gate_status = fw.get("gate_status", "UNKNOWN")
+        n_forward = fw.get("forward_n", 0)
+        gate_min = fw.get("gate_min_runners", 300)
+        remaining = fw.get("runners_until_gate", "?")
+        ch_brier = fw.get("challenger_brier")
+        sq_brier = fw.get("sqpe_brier")
+        delta = fw.get("delta_brier")
+        td_sr = fw.get("top_decile_sr")
+        td_n = fw.get("top_decile_n")
+        ch_brier_str = f"{ch_brier:.5f}" if ch_brier is not None else "?"
+        sq_brier_str = f"{sq_brier:.5f}" if sq_brier is not None else "?"
+        delta_str = f"{delta:+.5f}" if delta is not None else "?"
+        td_sr_str = f"{td_sr:.1%}" if td_sr is not None else "?"
+        print(f"  Challenger:       {challenger}")
+        print(f"  Feature set:      NO_VP_COMPOSITE")
+        print(f"  Gate:             {n_forward}/{gate_min} runners — {gate_status}")
+        print(f"  Remaining:        {remaining} runners to minimum threshold")
+        print(f"  Challenger Brier: {ch_brier_str}")
+        print(f"  SQPE Brier:       {sq_brier_str}")
+        print(f"  Delta:            {delta_str}")
+        print(f"  Top-decile SR:    {td_sr_str} (n={td_n})")
+        print(f"  Promotion status: NOT APPROVED")
+        print(f"  8 gates required: all pending until n>={gate_min}")
+        print(f"  Production:       consumed_live=False — NO SCORING CHANGE")
         print("─" * 62)
 
     # ── VP40 Policy Status ────────────────────────────────────────────────────
