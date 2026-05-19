@@ -1,0 +1,111 @@
+{
+  "run_at": "2026-05-19T08:19:24.953662+00:00",
+  "shadow_model": "NO_VP_COMPOSITE_logistic_win",
+  "feature_set": "NO_VP_COMPOSITE",
+  "features": [
+    "sqpe_v17_prob",
+    "market_deception_score",
+    "improvement_score",
+    "place_prob",
+    "longshot_prob",
+    "release_day_prob",
+    "comment_intel_score",
+    "confidence_level_encoded"
+  ],
+  "training_cutoff": "2026-05-10",
+  "n_forward_runners": 246,
+  "gate": {
+    "status": "GATE_OPEN_ACCUMULATING",
+    "runners_needed": 300,
+    "top_decile_needed": 75,
+    "runners_to_gate": 54,
+    "top_decile_to_gate": 42,
+    "runners_met": false,
+    "top_decile_met": false
+  },
+  "win_metrics": {
+    "brier": 0.16866,
+    "auc": 0.626786,
+    "top_decile_n": 33,
+    "top_decile_sr": 0.4545,
+    "roi_full": 0.025,
+    "roi_top_decile": -0.2731
+  },
+  "sqpe_win_brier": 0.2140053038571429,
+  "brier_delta_vs_sqpe": -0.045345,
+  "beats_sqpe_forward": true,
+  "frame_metrics": {
+    "brier": 0.281337,
+    "auc": 0.697544,
+    "top_decile_n": 33,
+    "top_decile_sr": 0.8485
+  },
+  "win_sr_by_decile": [
+    {
+      "decile": 0,
+      "n": 27,
+      "sr": 0.1852,
+      "avg_prob": 0.0648
+    },
+    {
+      "decile": 1,
+      "n": 36,
+      "sr": 0.1111,
+      "avg_prob": 0.0911
+    },
+    {
+      "decile": 2,
+      "n": 12,
+      "sr": 0.4167,
+      "avg_prob": 0.0966
+    },
+    {
+      "decile": 3,
+      "n": 26,
+      "sr": 0.2308,
+      "avg_prob": 0.1147
+    },
+    {
+      "decile": 4,
+      "n": 22,
+      "sr": 0.0909,
+      "avg_prob": 0.1377
+    },
+    {
+      "decile": 5,
+      "n": 38,
+      "sr": 0.1053,
+      "avg_prob": 0.1859
+    },
+    {
+      "decile": 6,
+      "n": 13,
+      "sr": 0.1538,
+      "avg_prob": 0.2188
+    },
+    {
+      "decile": 7,
+      "n": 23,
+      "sr": 0.3913,
+      "avg_prob": 0.288
+    },
+    {
+      "decile": 8,
+      "n": 32,
+      "sr": 0.3125,
+      "avg_prob": 0.3989
+    },
+    {
+      "decile": 9,
+      "n": 17,
+      "sr": 0.5294,
+      "avg_prob": 0.6615
+    }
+  ],
+  "governance": {
+    "no_scoring_change": true,
+    "no_production_promotion": true,
+    "training_cutoff_immutable": true,
+    "forward_data_only": true
+  }
+}
