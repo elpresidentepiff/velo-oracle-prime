@@ -1547,6 +1547,13 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         assigned_product = assigned_product or "UNKNOWN"
         operator_read_profile, skepticism_flags = _operator_read_profile(tier, top_prob)
 
+        _eff_conf = (
+            top.get("confidence_level_effective")
+            or top.get("effective_confidence")
+            or ("high" if top_prob >= 0.45 else "normal" if top_prob >= 0.15 else "low")
+        )
+        _signal_stack = top.get("signal_stack") or v.get("signal_stack")
+
         verdicts.append(
             {
                 "race_id": race_id,
@@ -1557,6 +1564,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "tier": tier,
                 "decision_tier": tier,
                 "confidence_level": v.get("confidence_level", top.get("confidence_level", "low")),
+                "effective_confidence": _eff_conf,
                 "velo_prime_prob": v.get("velo_prime_prob", top.get("velo_prime_prob", 0)),
                 "prob_gap": prob_gap,
                 "market_deception_score": v.get("market_deception_score", top.get("market_deception_score", 0)),
@@ -1577,6 +1585,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "improve_high": float(v.get("improvement_score", top.get("improvement_score", 0)) or 0) > 0.40,
                 "operator_read_profile": operator_read_profile,
                 "operator_skepticism_flags": skepticism_flags,
+                "signal_stack": _signal_stack,
             }
         )
 
