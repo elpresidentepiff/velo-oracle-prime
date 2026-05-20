@@ -1,7 +1,7 @@
 # VÉLØ Field-to-Decision Map
 
 **Issue:** #73 — VÉLØ Deep Input Audit  
-**Last updated:** 2026-05-20  
+**Last updated:** 2026-05-19  
 **Commit verified against:** `947077b58416ef203c7ef99b39fc1f4962c97387`  
 **Evidence:** Code trace + runtime timing audit (2026-05-17, 30 races, 261 runners)
 
@@ -18,9 +18,12 @@
 | `OPERATOR_ONLY` | Only shown in Telegram or log output |
 | `DISPLAY_ONLY` | Stored in Supabase, shown in cards — never read by scorer/router/tierer |
 | `STORED_ONLY` | Persisted to `velo_verdicts`; observability only |
+| `FEATURE_DICT_ONLY` | Enters `_build_live_features()` feats dict but is not consumed by any model — not in `ALL_V17_FEATURES` or any specialist `metadata.json` features list, and not directly read by tier/router/shadow logic |
 | `IGNORED` | Present in raw data; never read |
 
 A field is only classified `LIVE_SCORING` if it can be traced from raw runner data through to a value that changes `velo_prime_prob`, rank order, `decision_tier`, router lane, or shadow ledger output.
+
+> **Doctrine rule:** Entering `_build_live_features()` is **not** sufficient evidence for `LIVE_SCORING`. A field must appear in `ALL_V17_FEATURES` (`model_manager.py:51–92`) **or** a specialist model `metadata.json` `features` list **or** be directly read by a tier/router/shadow function to be classified as consumed. Fields that enter the feats dict but are not in any model's feature list are `FEATURE_DICT_ONLY` at best.
 
 ---
 
@@ -31,8 +34,9 @@ A field is only classified `LIVE_SCORING` if it can be traced from raw runner da
 | Field | Classification | Evidence | Mutates | Notes |
 |---|---|---|---|---|
 | `spotlight` (raw text) | **SHADOW_ONLY** | `run_prime_today.py:1448` — parsed **after** `score_race_velo_prime()` returns | `spotlight_score` badge (0–1, stored) | Timing audit confirmed: raw text never enters `_build_live_features()`. NLP extraction post-scoring. Cannot affect `velo_prime_prob`. |
-| `postdata_score` | **LIVE_SCORING** | `velo_prime_service.py:182, 344` — extracted in `_build_live_features()` from `runner["pdf_intel"]["postdata_score"]` | `velo_prime_prob` via feature vector | PDF intel attached **before** `score_race_velo_prime()` call (line 1389–1430). Enters ensemble feature vector. |
-| `or_compression_score` | **LIVE_SCORING** | `velo_prime_service.py:181` — extracted in `_build_live_features()` | `velo_prime_prob` via feature vector | Enters feature vector alongside `postdata_score`. No explicit specialist model, but feeds SQPE feature space. |
+| `postdata_score` | **STORED_ONLY** | `velo_prime_service.py:182` — enters feats dict; `:344` — stored on runner; `run_prime_today.py:869, 922` — persisted to `velo_verdicts` | none | **Not in `ALL_V17_FEATURES`** (`model_manager.py:51–92`). **Not in any specialist `metadata.json`** (all 7 checked). Enters feats dict but no model reads it. Stored for observability and operator use only. |
+| `or_compression_score` | **FEATURE_DICT_ONLY** | `velo_prime_service.py:181` — enters feats dict only | none | **Not in `ALL_V17_FEATURES`**. **Not in any specialist `metadata.json`**. Not stored back on runner (no `runner["or_compression_score"]` assignment). Passed into `route_data` in `run_prime_today.py` but `product_router.py` contains no gate that reads it (confirmed by grep). Consumed nowhere. Cf. `mark_compression_score` below which IS live. |
+| `mark_compression_score` | **LIVE_SCORING** | `model_manager.py:78` — in `V17_DOCTRINE_FEATURES` → `ALL_V17_FEATURES`; specialist metadata: improvement_model, market_deception_model, place_model, longshot_model, release_window_model | `velo_prime_prob` via SQPE v17 + 5 specialists | Distinct from `or_compression_score`. Derived from OR trajectory history, not from `pdf_intel`. Confirmed live in model feature vectors. |
 | `plot_conviction` | **TIER_GATE** | `run_prime_today.py:406–416` — `_apply_tie_v3_gate()` PLOT_UPGRADE rule | `decision_tier` (upgrade C→B at ≥0.70, B→A at ≥0.85) | Extracted pre-scoring, stored on runner. TIE gate reads it post-scoring to upgrade tier. Does **not** alter `velo_prime_prob`. |
 | `is_postdata_pick` | **DISPLAY_ONLY** | `run_prime_today.py:1522` — passed to `route_data` dict | none | Included in `route_verdict()` input but no logic in `product_router.py` gates on it. |
 | `is_topspeed_pick` | **DISPLAY_ONLY** | `run_prime_today.py:1523` — passed to `route_data` dict | none | Same as `is_postdata_pick`. Router ignores it. |
@@ -86,13 +90,17 @@ A field is only classified `LIVE_SCORING` if it can be traced from raw runner da
 run_prime_today.py — per-race loop
 
   1. runner["pdf_intel"] attached to normalized runners
-     ↳ postdata_score, or_compression_score, plot_conviction,
-       is_postdata_pick, is_topspeed_pick CAN enter scoring from here
+     ↳ plot_conviction → TIER_GATE (TIE v3 reads it post-scoring)
+     ↳ is_postdata_pick, is_topspeed_pick → DISPLAY_ONLY (router ignores)
+     ↳ postdata_score → STORED_ONLY (enters feats dict, stored on runner, no model reads it)
+     ↳ or_compression_score → FEATURE_DICT_ONLY (enters feats dict, not stored, no model reads it)
 
   2. score_race_velo_prime(race) called
      ↳ _build_live_features() extracts:
-       - official_rating, rpr, ts, sp_dec, race_class, going, field_size
-       - postdata_score, or_compression_score (from pdf_intel if present)
+       - official_rating, rpr, ts, sp_dec, race_class, going, field_size → LIVE_SCORING (in ALL_V17_FEATURES)
+       - mark_compression_score → LIVE_SCORING (in ALL_V17_FEATURES + 5 specialist models)
+       - postdata_score, or_compression_score → enter feats dict ONLY — NOT in ALL_V17_FEATURES, NOT in any specialist metadata → not consumed
+     ↳ predict_sqpe(features={}, runner, race) — SQPE builds its own feature vector from runner/race directly; feats dict is NOT passed to SQPE
      ↳ VeloPrimeEnsemble.predict_race() computes velo_prime_prob:
        - sqpe_v17 (0.45) + improvement_score (0.12) + market_deception_score (0.10)
        - place_prob, release_window_score, comment_intel_score: BADGE_ONLY / 0.0 weight
@@ -169,20 +177,20 @@ SP 3.0–8.5 = 58% of all misses (352/606 cases, 49-day audit).
 | `spotlight_score` | SHADOW_ONLY (0% weight) | **NOT YET** — parsed post-scoring; would need to be moved or a pre-score flag extracted |
 | `is_postdata_pick` | DISPLAY_ONLY | **NOT YET** — wired to router but ignored; could gate a mid-price lane |
 | `plot_conviction` | TIER_GATE (upgrades only) | PARTIAL — upgrades C→B/B→A; could add mid-price weight condition |
-| `or_compression_score` | LIVE_SCORING (feature) | YES — already in feature vector; no SP-specific weighting yet |
+| `or_compression_score` | FEATURE_DICT_ONLY | **NOT YET** — enters feats dict but no model reads it; not in `ALL_V17_FEATURES` or any specialist metadata. Potential future signal but currently unconsumed |
 | `place_prob` | TIER_GATE (BADGE_ONLY) | YES — place ROI in MDS+VP30 zone = +73%; could be SP-gated condition |
 
 **Conclusion:** The signals needed for Mid-Price Hunter exist and most are already in the scoring path. The gap is that ensemble weights are **SP-agnostic**. A future mid-price lane would need SP-conditional weighting or a dedicated SP-zone specialist. No code changes in this audit — classification only.
 
 ---
 
-## Summary Table (all 26 fields)
+## Summary Table (all 27 fields)
 
 | # | Field | Classification |
 |---|---|---|
 | 1 | spotlight | SHADOW_ONLY |
-| 2 | postdata_score | LIVE_SCORING |
-| 3 | or_compression_score | LIVE_SCORING |
+| 2 | postdata_score | STORED_ONLY |
+| 3 | or_compression_score | FEATURE_DICT_ONLY |
 | 4 | plot_conviction | TIER_GATE |
 | 5 | is_postdata_pick | DISPLAY_ONLY |
 | 6 | is_topspeed_pick | DISPLAY_ONLY |
@@ -206,3 +214,4 @@ SP 3.0–8.5 = 58% of all misses (352/606 cases, 49-day audit).
 | 24 | prob_gap | TIER_GATE |
 | 25 | velo_prime_prob | LIVE_SCORING (output) |
 | 26 | trainer_timing_score | TIER_GATE |
+| 27 | mark_compression_score | LIVE_SCORING |
