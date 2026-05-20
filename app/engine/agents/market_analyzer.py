@@ -51,7 +51,9 @@ class MarketAnalyzer:
         horse_name = runner.get("horse_name", "")
 
         # Canonical schema fields — set by racing_api_normalizer before reaching agents
-        odds = float(runner.get("best_odds_decimal") or runner.get("win_odds") or runner.get("sp") or runner.get("odds") or 0)
+        odds = float(
+            runner.get("best_odds_decimal") or runner.get("win_odds") or runner.get("sp") or runner.get("odds") or 0
+        )
         or_rating = float(runner.get("official_rating") or runner.get("or") or runner.get("or_rating") or 0)
 
         evidence = {"horse_name": horse_name, "odds": odds, "or_rating": or_rating, "factors": []}

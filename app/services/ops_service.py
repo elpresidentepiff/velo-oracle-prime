@@ -19,18 +19,18 @@ ARTIFACT_DIR = ROOT / "data" / "ops_worker_dry_run"
 
 # Sigma failure taxonomy — ordered by specificity (first match wins)
 _SIGMA_PATTERNS: list[tuple[str, list[str]]] = [
-    ("API_FAILURE",             ["api error", "http error", "connection error", "timeout", "connectionerror", "httperror"]),
-    ("DB_WRITE_FAILURE",        ["db write", "supabase error", "insert failed", "db_write_failure", "postgrest"]),
-    ("DUPLICATE_RACE",          ["duplicate race", "duplicate_race", "already reconciled"]),
-    ("DUPLICATE_RUNNER",        ["duplicate runner", "duplicate_runner"]),
-    ("IDENTITY_MISMATCH",       ["identity mismatch", "horse name mismatch", "identity_mismatch", "name mismatch"]),
-    ("NON_RUNNER_CONFLICT",     ["non-runner", "non_runner", "void race", "race void"]),
-    ("MISSING_PREDICTION",      ["missing_prediction", "no prediction", "not in verdicts", "prediction not found"]),
-    ("AMBIGUOUS_MATCH",         ["ambiguous", "multiple match", "ambiguous_match"]),
-    ("CONTEXT_VOID",            ["context void", "no context", "context_void"]),
-    ("ODDS_MISSING",            ["odds missing", "sp missing", "no odds", "odds_missing", "no sp"]),
-    ("RESULT_PARTIAL",          ["partial result", "incomplete result", "result_partial"]),
-    ("MISSING_RESULT",          ["no result", "result not found", "missing_result", "no results available"]),
+    ("API_FAILURE", ["api error", "http error", "connection error", "timeout", "connectionerror", "httperror"]),
+    ("DB_WRITE_FAILURE", ["db write", "supabase error", "insert failed", "db_write_failure", "postgrest"]),
+    ("DUPLICATE_RACE", ["duplicate race", "duplicate_race", "already reconciled"]),
+    ("DUPLICATE_RUNNER", ["duplicate runner", "duplicate_runner"]),
+    ("IDENTITY_MISMATCH", ["identity mismatch", "horse name mismatch", "identity_mismatch", "name mismatch"]),
+    ("NON_RUNNER_CONFLICT", ["non-runner", "non_runner", "void race", "race void"]),
+    ("MISSING_PREDICTION", ["missing_prediction", "no prediction", "not in verdicts", "prediction not found"]),
+    ("AMBIGUOUS_MATCH", ["ambiguous", "multiple match", "ambiguous_match"]),
+    ("CONTEXT_VOID", ["context void", "no context", "context_void"]),
+    ("ODDS_MISSING", ["odds missing", "sp missing", "no odds", "odds_missing", "no sp"]),
+    ("RESULT_PARTIAL", ["partial result", "incomplete result", "result_partial"]),
+    ("MISSING_RESULT", ["no result", "result not found", "missing_result", "no results available"]),
 ]
 
 
@@ -45,6 +45,7 @@ class OpsService:
     def _get_sb(self):
         if self._sb is None:
             from src.data.supabase_client import get_supabase_client  # noqa: PLC0415
+
             self._sb = get_supabase_client()
         return self._sb
 

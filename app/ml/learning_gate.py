@@ -261,7 +261,11 @@ class ActivityDependentLearningGate:
 
 
 def evaluate_learning_gate(
-    engine_outputs: dict, ablation_results: dict, race_outcome: dict, integrity_check: dict | None = None, race_ctx: dict = None
+    engine_outputs: dict,
+    ablation_results: dict,
+    race_outcome: dict,
+    integrity_check: dict | None = None,
+    race_ctx: dict = None,
 ) -> LearningGateResult:
     """
     Convenience function to evaluate learning gate.

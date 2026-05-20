@@ -13,6 +13,7 @@ from .types import ParseError, Race, Runner
 
 _OFF_TIME_RE = re.compile(r"^\s*(?P<off>\d{1,2}\.\d{2})\b")
 
+
 def parse_xx_v2_card(pdf_path: str, course_name: str, meeting_date: str) -> tuple[list[Race], list[ParseError]]:
     """
     Parse alternate XX racecard PDF (F_0003_XX) using word-stream tokenization.
@@ -46,17 +47,21 @@ def parse_xx_v2_card(pdf_path: str, course_name: str, meeting_date: str) -> tupl
 
                     # Distance search: look at this line and next 2 lines
                     dist_text = "unknown"
-                    for j in range(i, min(i+3, len(lines))):
+                    for j in range(i, min(i + 3, len(lines))):
                         d_match = re.search(r"\b(\d+[mfy]\b.*)", lines[j])
                         if d_match:
                             dist_text = d_match.group(1).strip()
                             break
 
                     current_race = Race(
-                        race_id=race_id, course=course_name, off_time=off_time,
-                        race_name=line[len(off_time_str):].strip(),
-                        distance_text=dist_text, runners=[], runners_count=0,
-                        raw={"v2_layout": True}
+                        race_id=race_id,
+                        course=course_name,
+                        off_time=off_time,
+                        race_name=line[len(off_time_str) :].strip(),
+                        distance_text=dist_text,
+                        runners=[],
+                        runners_count=0,
+                        raw={"v2_layout": True},
                     )
                     dy, df, dm = parse_distance(dist_text)
                     current_race.distance_yards = dy
@@ -120,9 +125,7 @@ def parse_xx_v2_card(pdf_path: str, course_name: str, meeting_date: str) -> tupl
                         raw_name = raw_name[1:]
 
                     runner = Runner(
-                        runner_number=num, draw=draw,
-                        name=normalize_horse_name(raw_name),
-                        raw={"v2_line": line}
+                        runner_number=num, draw=draw, name=normalize_horse_name(raw_name), raw={"v2_line": line}
                     )
                     current_race.runners.append(runner)
                     current_race.runners_count += 1

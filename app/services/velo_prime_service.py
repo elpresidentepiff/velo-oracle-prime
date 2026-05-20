@@ -1007,6 +1007,7 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
                 "Apply migration to add governance columns to velo_verdicts.",
             ),
         ]
+
         def _is_schema_error(exc: Exception) -> bool:
             msg = str(exc).lower()
             return "schema cache" in msg or "could not find the" in msg or "column" in msg

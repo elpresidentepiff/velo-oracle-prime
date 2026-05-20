@@ -50,28 +50,18 @@ class TokenDecoder:
             if gear_chars:
                 gear = gear_chars
 
-            return {
-                "or_mark": or_mark,
-                "position": position,
-                "gear": gear,
-                "is_win": is_win
-            }
+            return {"or_mark": or_mark, "position": position, "gear": gear, "is_win": is_win}
 
         # Try compact format (e.g., '180')
         match = self.COMPACT_RE.match(cleaned)
         if match:
             or_mark = int(match.group("or"))
             position = int(match.group("pos"))
-            is_win = (position == 1)
+            is_win = position == 1
             tail = match.group("tail")
             gear = "".join(c for c in tail if c.isalpha()) or None
 
-            return {
-                "or_mark": or_mark,
-                "position": position,
-                "gear": gear,
-                "is_win": is_win
-            }
+            return {"or_mark": or_mark, "position": position, "gear": gear, "is_win": is_win}
 
         # Fallback
         nums = re.findall(r"\d+", cleaned)

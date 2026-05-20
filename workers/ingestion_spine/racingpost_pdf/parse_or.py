@@ -19,7 +19,17 @@ _HORSE_LINE_RE = re.compile(
     r"(?:\s+(?P<weight>\d{1,2}-\d{1,2}[A-Za-z0-9]*)|\s+(?P<numbers_no_weight>(?:-?\d+\s*)+))$"
 )
 _LEAKED_PREFIX_TOKENS = {
-    "S", "SD", "G", "GF", "GS", "Y", "YS", "GY", "HY", "SH", "SS",
+    "S",
+    "SD",
+    "G",
+    "GF",
+    "GS",
+    "Y",
+    "YS",
+    "GY",
+    "HY",
+    "SH",
+    "SS",
 }
 
 
@@ -65,7 +75,9 @@ def _parse_rating_card(
                     horse_name, payload = parsed
                     ratings_map[current_race_id][horse_name] = payload
     except Exception as exc:
-        errors.append(ParseError(severity="error", message=f"Failed to parse {prefix.upper()} PDF: {exc}", location="file"))
+        errors.append(
+            ParseError(severity="error", message=f"Failed to parse {prefix.upper()} PDF: {exc}", location="file")
+        )
 
     return ratings_map, errors
 
@@ -147,7 +159,7 @@ def _clean_rating_horse_name(name: str) -> str:
         tokens = tokens[1:]
 
     # Strip trailing pure-digit tokens (leaked OR/TS/RPR numbers e.g. "COSMIC CONNECTION 123 123")
-    while len(tokens) > 1 and re.match(r'^\d+$', tokens[-1]):
+    while len(tokens) > 1 and re.match(r"^\d+$", tokens[-1]):
         tokens = tokens[:-1]
 
     return " ".join(tokens)
