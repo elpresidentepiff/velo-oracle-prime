@@ -5,8 +5,11 @@ Persists full per-runner prediction snapshots for every scored race.
 Storage only — never modifies scoring, routing, or execution.
 
 Output:
-  - Local JSONL: data/runner_snapshots_YYYY_MM_DD.jsonl  (primary)
-  - Supabase: runner_prediction_snapshots table          (best-effort, fails silently)
+  - Local JSONL: data/runner_snapshots_{date_tag}_{run_id}.jsonl  (primary)
+  - Supabase: runner_prediction_snapshots table                   (best-effort, fails silently)
+
+Each snapshot file is uniquely identified by run_id so same-day reruns,
+Railway retries, and partial runs never overwrite each other.
 
 Hard constraints (permanent — never override):
   live_scoring_changed = False  always
@@ -72,9 +75,24 @@ _LIVE_SCORING_CHANGED = False
 _WRITE_EXECUTION_ALLOWED = False
 
 
+def build_run_id(date_tag: str, commit_sha: str) -> str:
+    """
+    Build a deterministic run_id for one scoring batch.
+
+    Format: {date_tag}_{commit_sha[:8]}_{utc_epoch_ms}
+
+    The epoch suffix ensures uniqueness across same-day reruns and
+    Railway retries even when commit_sha is identical.
+    """
+    epoch_ms = int(datetime.now(tz=UTC).timestamp() * 1000)
+    sha8 = (commit_sha or "unknown")[:8]
+    return f"{date_tag}_{sha8}_{epoch_ms}"
+
+
 def _build_snapshot_row(
     pred: dict[str, Any],
     rank: int,
+    run_id: str,
     race_id: str,
     race_date: str,
     course: str,
@@ -85,6 +103,7 @@ def _build_snapshot_row(
     created_at: str,
 ) -> dict[str, Any]:
     row: dict[str, Any] = {
+        "run_id": run_id,
         "created_at": created_at,
         "race_date": race_date,
         "race_id": race_id,
@@ -111,6 +130,7 @@ def write_runner_snapshots(
     scored: list[tuple[dict, list[dict], str, list]],
     date_str: str,
     date_tag: str,
+    run_id: str,
     snapshot_dir: Path | str | None = None,
     supabase_client: Any | None = None,
 ) -> int:
@@ -121,6 +141,7 @@ def write_runner_snapshots(
         scored: list of (race, preds, tier, reasons) tuples from the scoring loop.
         date_str: ISO date string e.g. "2026-05-20".
         date_tag: underscore date tag e.g. "2026_05_20" for filenames.
+        run_id: unique batch identity for this scoring run (see build_run_id()).
         snapshot_dir: override for data/ directory path.
         supabase_client: optional live Supabase client for DB write.
 
@@ -147,6 +168,7 @@ def write_runner_snapshots(
                 _build_snapshot_row(
                     pred=pred,
                     rank=rank,
+                    run_id=run_id,
                     race_id=race_id,
                     race_date=date_str,
                     course=course,
@@ -162,7 +184,7 @@ def write_runner_snapshots(
         log.warning("runner_snapshot_store: no rows to write")
         return 0
 
-    written = _write_local_jsonl(rows, date_tag, snapshot_dir)
+    written = _write_local_jsonl(rows, date_tag, run_id, snapshot_dir)
     _write_supabase(rows, supabase_client)
     return written
 
@@ -170,12 +192,13 @@ def write_runner_snapshots(
 def _write_local_jsonl(
     rows: list[dict[str, Any]],
     date_tag: str,
+    run_id: str,
     snapshot_dir: Path | str | None,
 ) -> int:
     try:
         base = Path(snapshot_dir or _DEFAULT_SNAPSHOT_DIR)
         base.mkdir(parents=True, exist_ok=True)
-        out_path = base / f"runner_snapshots_{date_tag}.jsonl"
+        out_path = base / f"runner_snapshots_{date_tag}_{run_id}.jsonl"
         with out_path.open("w", encoding="utf-8") as fh:
             for row in rows:
                 fh.write(json.dumps(row, default=str) + "\n")

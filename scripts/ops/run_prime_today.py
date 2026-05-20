@@ -1204,7 +1204,10 @@ def main():
     from app.services.velo_prime_service import persist_race_predictions, score_race_velo_prime
     from src.rpd import RPDv2Engine
     from src.velo.midprice_hunter import evaluate_and_log as _midprice_evaluate
-    from src.velo.runner_snapshot_store import write_runner_snapshots as _write_runner_snapshots
+    from src.velo.runner_snapshot_store import (
+        build_run_id as _build_run_id,
+        write_runner_snapshots as _write_runner_snapshots,
+    )
     from supabase import create_client as _sb_create
     from workers.racing_api_normalizer import normalize_race
 
@@ -1258,6 +1261,7 @@ def main():
     is_live = racecard_source == "api"
     live_label = "LIVE_API" if is_live else "CACHE"
     commit_sha = get_commit_sha()
+    _snapshot_run_id = _build_run_id(date_tag, commit_sha)
 
     print(f"\n{'=' * 60}")
     print("  SOURCE TRUTH HEADER")
@@ -1915,9 +1919,10 @@ def main():
             scored=scored,
             date_str=date_str,
             date_tag=date_tag,
+            run_id=_snapshot_run_id,
             supabase_client=db if persistence_enabled else None,
         )
-        print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}.jsonl")
+        print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}_{_snapshot_run_id}.jsonl")
     except Exception as _snap_exc:
         print(f"\nRunner snapshot write skipped: {_snap_exc}")
     _timer.mark("runner_snapshots", races=len(scored), runners=sum(len(p) for _, p, _, _ in scored))

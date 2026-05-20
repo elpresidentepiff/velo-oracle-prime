@@ -13,6 +13,7 @@
 
 CREATE TABLE IF NOT EXISTS runner_prediction_snapshots (
     id                      BIGSERIAL PRIMARY KEY,
+    run_id                  TEXT        NOT NULL,  -- batch identity: {date_tag}_{sha8}_{epoch_ms}
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     race_date               DATE        NOT NULL,
     race_id                 TEXT        NOT NULL,
@@ -79,6 +80,10 @@ CREATE TABLE IF NOT EXISTS runner_prediction_snapshots (
     live_scoring_changed    BOOLEAN NOT NULL DEFAULT FALSE,
     write_execution_allowed BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+-- Index for batch identity queries (all rows for a specific scoring run)
+CREATE INDEX IF NOT EXISTS idx_rps_run_id
+    ON runner_prediction_snapshots (run_id);
 
 -- Index for Mid-Price Hunter Phase 2 delta queries (winner join by race_id + date)
 CREATE INDEX IF NOT EXISTS idx_rps_race_id_date
