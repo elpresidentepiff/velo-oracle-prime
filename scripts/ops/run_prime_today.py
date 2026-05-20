@@ -1203,6 +1203,7 @@ def main():
 
     from app.services.velo_prime_service import persist_race_predictions, score_race_velo_prime
     from src.rpd import RPDv2Engine
+    from src.velo.midprice_hunter import evaluate_and_log as _midprice_evaluate
     from supabase import create_client as _sb_create
     from workers.racing_api_normalizer import normalize_race
 
@@ -1603,6 +1604,26 @@ def main():
                     reasons.append(f"PDF_PLOT_CONVICTION:{pdf_intel['plot_conviction']:.2f}")
 
                 scored.append((race, preds, tier, reasons))
+
+                # ── Mid-Price Hunter shadow evaluation ────────────────────
+                # SHADOW ONLY — never alters velo_prime_prob, tier, routing,
+                # or execution. Runs after score_race_velo_prime() returns.
+                try:
+                    _midprice_evaluate(
+                        race_id=race.get("race_id", ""),
+                        race_date=date_str,
+                        course=race.get("course", ""),
+                        off_time=race.get("off_time", ""),
+                        tier=tier,
+                        top_pick=top.get("horse", ""),
+                        top_vp=top.get("velo_prime_prob"),
+                        top_mds=top.get("market_deception_score"),
+                        top_improvement=top.get("improvement_score"),
+                        top_place_prob=top.get("place_prob"),
+                    )
+                except Exception as _mph_exc:
+                    log.warning("midprice_hunter shadow eval failed: %s", _mph_exc)
+
                 _n_runners_this_race = len(preds)
                 _per_runner_avg_ms = round(_t_score_vp / _n_runners_this_race * 1000, 3) if _n_runners_this_race else 0.0
                 _race_timings.append({
