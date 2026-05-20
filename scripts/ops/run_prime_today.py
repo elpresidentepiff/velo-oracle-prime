@@ -1187,6 +1187,10 @@ def main():
         build_run_id as _build_run_id,
         write_runner_snapshots as _write_runner_snapshots,
     )
+    from src.velo.feature_audit import (
+        detect_vp_flatline as _detect_vp_flatline,
+        flatline_summary_for_run as _flatline_summary_for_run,
+    )
     from src.velo.signal_stack import build_signal_stack_payload as _build_signal_stack
     from supabase import create_client as _sb_create
     from workers.racing_api_normalizer import normalize_race
@@ -1369,6 +1373,7 @@ def main():
     _race_timings: list[dict] = []
     _spotlight_total = 0
     _pdf_intel_attached_total = 0
+    _flatlines: list[dict] = []
     for race in normalized:
         cid = f"{race.get('course')} {race.get('off_time', '?')}"
 
@@ -1465,6 +1470,18 @@ def main():
                     pred["rpd_evidence_codes"] = rpd_evidence
                 _spotlight_total += _spotlight_this_race
 
+                # ── Flatline detector (Issue #85) ─────────────────────────────
+                # Read-only post-scoring check — never alters velo_prime_prob,
+                # rank order, tier, router lane, or execution.
+                _flatline_info = _detect_vp_flatline(
+                    race.get("race_id", ""),
+                    preds,
+                    racecard_source,
+                )
+                if _flatline_info:
+                    _flatlines.append(_flatline_info)
+                    log.warning(_flatline_info["warning"])
+
                 top = preds[0]
                 second = preds[1] if len(preds) > 1 else {}
                 sec_prob = float(second.get("velo_prime_prob") or 0)
@@ -1473,6 +1490,7 @@ def main():
                 # Raw label (pre-normalization) is preserved separately.
                 top["confidence_level_raw"] = top.get("confidence_level")
                 top["confidence_level_effective"] = effective_confidence(float(top.get("velo_prime_prob") or 0))
+                top["rp_flatline_warning"] = _flatline_info.get("warning") if _flatline_info else None
                 # Shadow suspect cohort flag — A-tier with weak place support.
                 # No gate change. Passive monitor only. Track for 30 days to build
                 # enough sample to decide whether to tighten the A-gate conditionally.
@@ -1653,6 +1671,20 @@ def main():
             print(f"  FAIL  {cid} — {e}")
 
     print(f"\n  Scored: {len(scored)}  Errors: {len(score_errors)}")
+
+    # ── Flatline summary (Issue #85) ──────────────────────────────────────────
+    _flatline_summary = _flatline_summary_for_run(_flatlines, total_races=len(scored))
+    if _flatlines:
+        print(
+            f"\n  RP_FEATURE_FLATLINE: {_flatline_summary['flatline_count']}/{_flatline_summary['total_races']} races "
+            f"({_flatline_summary['flatline_pct']:.1%}) — "
+            f"{_flatline_summary['fully_uniform_count']} fully uniform, "
+            f"{_flatline_summary['majority_tied_count']} majority tied"
+        )
+        for _fl in _flatlines:
+            print(f"    {_fl['race_id']}: {_fl['warning'][:100]}")
+    else:
+        print(f"\n  RP_FEATURE_FLATLINE: 0/{len(scored)} races — VP well-differentiated")
 
     # ── GOVERNED CARD SUMMARY ─────────────────────────────────────────────────
     from collections import Counter
@@ -1930,6 +1962,7 @@ def main():
             spotlight_total=_spotlight_total,
             pdf_intel_total=_pdf_intel_attached_total,
         )
+        _timing_payload["flatline_summary"] = _flatline_summary
         _timing_out.parent.mkdir(parents=True, exist_ok=True)
         _timing_out.write_text(json.dumps(_timing_payload, indent=2, default=str))
         print(f"\nTIMING AUDIT: {_timing_out.name}")

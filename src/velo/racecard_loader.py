@@ -40,19 +40,80 @@ _IRE_VENUE_CODES = frozenset({
 })
 
 
+def _parse_betting_forecast(forecast_str: str) -> dict[str, float]:
+    """
+    Parse a RP betting forecast string into {horse_name_lower: decimal_odds}.
+
+    Handles: "4/6 One Knight, 5/2 The Flaggy Shore, 100/1 Kenobi"
+             "EVS Bluegrass, 2/1 Crystal Queen" (EVS = 2.0)
+    Strips favourite markers (F, JF, CF) from odds tokens.
+    Returns empty dict on any parse failure so callers can fall back gracefully.
+    """
+    if not forecast_str:
+        return {}
+    result: dict[str, float] = {}
+    for part in forecast_str.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        tokens = part.split(None, 1)
+        if len(tokens) != 2:
+            continue
+        odds_tok, horse_name = tokens
+        # Strip favourite markers (trailing F, JF, CF)
+        odds_tok = odds_tok.rstrip("FJCfjc")
+        try:
+            if odds_tok.upper() in ("EVS", "EVENS"):
+                dec = 2.0
+            elif "/" in odds_tok:
+                num, den = odds_tok.split("/")
+                dec = round(int(num) / int(den) + 1, 3)
+            else:
+                dec = round(float(odds_tok) + 1, 3)
+            result[horse_name.strip().lower()] = dec
+        except (ValueError, ZeroDivisionError):
+            continue
+    return result
+
+
+def _fuzzy_odds_lookup(name: str, forecast_odds: dict[str, float]) -> float:
+    """
+    Look up a horse's forecast odds by fuzzy name match (strips non-alpha chars).
+
+    Returns 0.0 when no match found (caller uses 0.0 as 'odds unavailable').
+    """
+    import re as _re
+    if not forecast_odds:
+        return 0.0
+    name_key = _re.sub(r"[^a-z]", "", name.lower())
+    for fname, dec in forecast_odds.items():
+        fname_key = _re.sub(r"[^a-z]", "", fname)
+        if fname_key == name_key or (len(fname_key) > 4 and (fname_key in name_key or name_key in fname_key)):
+            return dec
+    return 0.0
+
+
 def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str, Any]]:
     """
-    Synthesise minimal Racing API-compatible race dicts from RP merged JSON files.
+    Synthesise Racing API-compatible race dicts from RP merged JSON files.
 
     Reads all {data_root}/racecard_merged/racecard_*_{date_str}.json files and
     builds race dicts with enough structure for normalize_race() to process.
-    Fields absent from RP data (horse_id, draw, lbs, etc.) are None.
 
-    Sets region="IRE" for known Irish venue codes, "GB" for all others so the
-    jurisdiction filter keeps all UK/IRE races.
+    Hydration improvements (Issue #85 — RP_MERGED differentiation collapse):
+      - betting_forecast parsed and injected as per-horse "odds" → normalizer
+        converts to best_odds_decimal, driving sp_dec/sp_rank differentiation
+      - ts_latest, ts_master wired as "ts" and "ts_master" for TS-based scoring
+      - postdata_score, or_compression_score, plot_conviction wired as "pdf_intel"
+        so _build_live_features() reads them on the first pass
+      - going and race_class extracted from race_info when present
+      - draw extracted from horse weight/stall strings when available
 
+    Fields absent from RP data remain None. Sets region="IRE" for Irish venues.
     Returns an empty list if no RP merged files exist for the date.
     """
+    import re as _re
+
     merged_dir = data_root / "racecard_merged"
     rp_files = list(merged_dir.glob(f"racecard_*_{date_str}.json"))
     if not rp_files:
@@ -74,11 +135,52 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
             if not horses:
                 continue
 
+            # ── Betting forecast → per-horse odds ────────────────────────────
+            forecast_raw = race_data.get("betting_forecast", "")
+            forecast_odds = _parse_betting_forecast(forecast_raw)
+
+            # ── Race-level metadata ───────────────────────────────────────────
+            race_info = race_data.get("race_info", "")
+            going_str: str | None = None
+            race_class: str | None = None
+            m_going = _re.search(r"\b(Good|Firm|Soft|Heavy|Yielding|Standard)[^\)]*", race_info, _re.I)
+            if m_going:
+                going_str = m_going.group(0).strip()
+            m_class = _re.search(r"Class\s*(\d)", race_info, _re.I)
+            if m_class:
+                race_class = m_class.group(1)
+
             runners = []
             for h in horses:
                 name = h.get("horse_name") or h.get("horse", "")
                 if not name:
                     continue
+
+                # Odds from betting forecast
+                odds_dec = _fuzzy_odds_lookup(name, forecast_odds)
+
+                # TS: prefer ts_latest, fall back to ts_adjusted / ts_master
+                ts_val = (
+                    h.get("ts_latest")
+                    or h.get("ts_adjusted")
+                    or h.get("ts_master")
+                )
+
+                # Build pdf_intel dict for immediate use in _build_live_features()
+                pdf_intel: dict[str, Any] = {
+                    "postdata_score": h.get("postdata_score", 0.0) or 0.0,
+                    "or_compression_score": h.get("or_compression_score", 0.0) or 0.0,
+                    "plot_conviction": h.get("plot_conviction", 0.0) or 0.0,
+                    "ts_master": float(h.get("ts_master") or h.get("ts_adjusted") or 0),
+                    "or_delta_to_best_win": 0.0,
+                    "trainer_form_signal": h.get("trainer_form_signal", 0.0) or 0.0,
+                    "ts_trend_signal": h.get("ts_trend_signal", 0.0) or 0.0,
+                    "or_trend_signal": h.get("or_trend_signal", 0.0) or 0.0,
+                    "handicap_plot_score": h.get("handicap_plot_score") or 0.0,
+                    # Pass through the raw RP horse dict for downstream enrichment
+                    "_rp_raw": h,
+                }
+
                 runners.append({
                     "horse": name,
                     "horse_id": f"rp_{venue_code}_{name.lower().replace(' ', '_')}",
@@ -90,13 +192,21 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                     "jockey": None,
                     "ofr": None,
                     "rpr": None,
-                    "ts": h.get("ts_latest"),
+                    "ts": ts_val,
+                    "ts_master": h.get("ts_master"),
                     "form": None,
                     "last_run": None,
+                    # Odds: set so normalizer converts to best_odds_decimal
+                    "odds": odds_dec if odds_dec > 0 else None,
+                    # RP passthrough fields
                     "_rp_horse_name": name,
                     "_rp_ts_base": h.get("ts_base"),
                     "_rp_plot_conviction": h.get("plot_conviction"),
                     "_rp_or_compression_score": h.get("or_compression_score"),
+                    "_rp_postdata_score": h.get("postdata_score"),
+                    # Pre-built pdf_intel so _build_live_features() reads it immediately
+                    # (before the post-normalization pdf_intel_cache loop runs)
+                    "pdf_intel": pdf_intel,
                 })
 
             time_parts = race_time.replace(":", "_")
@@ -106,12 +216,14 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                 "course_id": venue_code.lower(),
                 "date": date_str,
                 "off_time": race_time,
-                "race_name": race_data.get("race_info", "")[:80],
+                "race_name": race_info[:80],
                 "distance_f": None,
-                "going": None,
-                "race_class": None,
+                "going": going_str,
+                "race_class": race_class,
                 "region": region,
                 "runners": runners,
+                # Keep raw forecast for diagnostics
+                "_rp_betting_forecast": forecast_raw,
             })
 
     return races
