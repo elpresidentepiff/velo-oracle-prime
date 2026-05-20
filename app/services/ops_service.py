@@ -7,11 +7,10 @@ Dry-run path is identical to Phase 1 (no DB side effects).
 from __future__ import annotations
 
 import logging
-import os
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger("velo.ops_service")
 
@@ -59,7 +58,7 @@ class OpsService:
                 "run_date": date,
                 "job_type": job_type,
                 "status": "RUNNING",
-                "started_at": datetime.now(timezone.utc).isoformat(),
+                "started_at": datetime.now(UTC).isoformat(),
             }
             try:
                 self._get_sb().client.table("velo_job_runs").insert(row).execute()
@@ -73,13 +72,13 @@ class OpsService:
     def finish_success(
         self,
         job_id: str,
-        metrics: Optional[Dict[str, Any]] = None,
-        output_artifacts: Optional[Dict[str, Any]] = None,
+        metrics: dict[str, Any] | None = None,
+        output_artifacts: dict[str, Any] | None = None,
     ) -> None:
         if self.execute:
             update = {
                 "status": "PASS",
-                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "finished_at": datetime.now(UTC).isoformat(),
                 "metrics": metrics or {},
                 "output_artifacts": output_artifacts or {},
             }
@@ -95,7 +94,7 @@ class OpsService:
         if self.execute:
             update = {
                 "status": "FAIL",
-                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "finished_at": datetime.now(UTC).isoformat(),
                 "error_type": error_type,
                 "error_message": error_message[:2000],
             }
@@ -109,7 +108,7 @@ class OpsService:
 
     # ── Phase 1 compatibility shims ───────────────────────────────────────────
 
-    def finish_job(self, job_id: str, status: str, metrics: Optional[Dict[str, Any]] = None) -> None:
+    def finish_job(self, job_id: str, status: str, metrics: dict[str, Any] | None = None) -> None:
         if status == "SUCCESS":
             self.finish_success(job_id, metrics=metrics)
         else:
@@ -129,7 +128,7 @@ class OpsService:
 
     # ── Healthcheck reads ─────────────────────────────────────────────────────
 
-    def read_jobs_for_date(self, date: str) -> List[Dict[str, Any]]:
+    def read_jobs_for_date(self, date: str) -> list[dict[str, Any]]:
         try:
             result = (
                 self._get_sb()
