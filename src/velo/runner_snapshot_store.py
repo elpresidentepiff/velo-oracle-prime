@@ -12,9 +12,10 @@ Each snapshot file is uniquely identified by run_id so same-day reruns,
 Railway retries, and partial runs never overwrite each other.
 
 Hard constraints (permanent — never override):
-  live_scoring_changed = False  always
-  execution_allowed    = False  always
-  write failure        = warning only, never raises into scoring path
+  live_scoring_changed    = False  always (storage invariant, not copied from pred)
+  write_execution_allowed = False  always (storage invariant, not copied from pred)
+  execution_allowed       = stored verbatim from pred (runner's own field, not overridden)
+  write failure           = warning only, never raises into scoring path
 """
 
 from __future__ import annotations
@@ -217,6 +218,6 @@ def _write_supabase(
         return
     try:
         supabase_client.table("runner_prediction_snapshots").insert(rows).execute()
-        log.info("runner_snapshot_store: upserted %d rows to Supabase", len(rows))
+        log.info("runner_snapshot_store: inserted %d rows to Supabase", len(rows))
     except Exception as exc:
         log.warning("runner_snapshot_store: Supabase write failed (non-fatal): %s", exc)
