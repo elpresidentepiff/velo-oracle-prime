@@ -861,6 +861,35 @@ td:last-child  { padding-right: 20px; }
 .ss-watchlist{ background:var(--gold-glow);    color:var(--gold);   border:1px solid rgba(255,184,0,0.3); }
 .ss-suppress{ background: var(--red-glow);     color:var(--red);    border:1px solid rgba(255,34,85,0.3); }
 .ss-forensics{background:var(--purple-glow);   color:var(--purple); border:1px solid rgba(153,85,255,0.3);}
+
+/* ── Sidecar detail row (Issue #84) ──────────────────────────────────────── */
+.sc-stack {
+  display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; align-items: center;
+}
+.sc-chip {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  padding: 1px 5px; border-radius: 2px; white-space: nowrap; letter-spacing: 0.04em;
+  cursor: default;
+}
+.sc-high  { background: rgba(0,255,136,0.10); color: var(--green);  border: 1px solid rgba(0,255,136,0.25); }
+.sc-med   { background: rgba(255,184,0,0.09); color: var(--gold);   border: 1px solid rgba(255,184,0,0.22); }
+.sc-dim   { background: rgba(0,212,255,0.04); color: var(--fg-muted); border: 1px solid var(--border-dim); }
+.sc-stale { color: var(--amber); font-size: 0.50rem; margin-left: 2px; opacity: 0.8; }
+.sc-blockers {
+  width: 100%; margin-top: 3px;
+  font-family: var(--font-mono); font-size: 0.52rem;
+  color: var(--amber);
+  display: flex; flex-wrap: wrap; gap: 2px; align-items: center;
+}
+.sc-blk-label { opacity: 0.7; margin-right: 2px; }
+.sc-blocker {
+  background: rgba(255,140,0,0.09); border: 1px solid rgba(255,140,0,0.22);
+  padding: 0 4px; border-radius: 2px;
+}
+.conf-high   { color: var(--green); }
+.conf-normal { color: var(--gold); }
+.conf-low    { color: var(--fg-secondary); }
+.conf-stale  { font-size: 0.50rem; color: var(--amber); margin-left: 3px; opacity: 0.8; }
 </style>
 
 <div id="sib-wrap">
@@ -2014,7 +2043,7 @@ window.__SSC_INLINE = {"date":"2026-05-02","generated_at":"2026-05-02T14:35:51.8
 </div>
 
 <script>
-const API = 'http://127.0.0.1:8000/api/governed-card';
+const API = '/api/governed-card';
 let allRows = [];
 let activeFilters = { product: 'ALL', tier: 'ALL', exec: 'ALL' };
 
@@ -2142,14 +2171,74 @@ function animateCount(id, target) {
   }, 40);
 }
 
+function _effConf(vp) {
+  return vp >= 0.45 ? 'high' : vp >= 0.15 ? 'normal' : 'low';
+}
+
+function buildSidecarHtml(row) {
+  const tier = row.decision_tier || row.tier || '';
+  const vp   = parseFloat(row.velo_prime_prob || 0);
+  const mds  = parseFloat(row.market_deception_score || 0);
+  const imp  = parseFloat(row.improvement_score || 0);
+  const pp   = parseFloat(row.place_prob || 0);
+  const reasons = row.router_reasons || [];
+  const execAllowed = row.execution_allowed;
+  const spDec = parseFloat(row.sp_dec || row.sp || 0);
+
+  // Show for A/B tiers or VP >= 0.20 — skip very low noise rows
+  if (!['A','B'].includes(tier) && vp < 0.20) return '';
+
+  // Effective confidence (post-normalization)
+  const storedConf = (row.confidence_level || 'low').toLowerCase();
+  const effConf = row.effective_confidence || _effConf(vp);
+  const confMismatch = storedConf === 'low' && effConf !== 'low';
+
+  // Execution blockers — derive client-side matching signal_stack.py logic
+  const blockers = [];
+  if (!execAllowed && reasons.includes('UNAUTHORISED_SELECTION')) {
+    if (spDec === 0) blockers.push('SP_MISSING');
+    const src = (row.signal_stack && row.signal_stack.source) || '';
+    if (src === 'rp_merged' || src.includes('rp_merged')) blockers.push('SOURCE_RP_MERGED');
+    if (confMismatch && effConf === 'high') blockers.push('CONF_STALE_LOW');
+    else if (storedConf === 'low' && effConf === 'normal') blockers.push('LOW_DISPLAY_CONF');
+    blockers.push('ROUTER_FALLBACK');
+  } else if (!execAllowed && reasons.length) {
+    blockers.push(...reasons);
+  }
+
+  const mdsClass  = mds > 0.5 ? 'sc-high' : mds > 0.1 ? 'sc-med' : 'sc-dim';
+  const impClass  = imp > 0.4 ? 'sc-high' : imp > 0.2 ? 'sc-med' : 'sc-dim';
+  const ppClass   = pp  > 0.8 ? 'sc-high' : pp  > 0.6 ? 'sc-med' : 'sc-dim';
+  const confClass = effConf === 'high' ? 'sc-high' : effConf === 'normal' ? 'sc-med' : 'sc-dim';
+
+  let html = '<div class="sc-stack">';
+  html += `<span class="sc-chip ${mdsClass}" title="Market Deception Score">MDS ${mds.toFixed(3)}</span>`;
+  html += `<span class="sc-chip ${impClass}" title="Improvement Score">IMP ${imp.toFixed(3)}</span>`;
+  html += `<span class="sc-chip ${ppClass}" title="Place Probability">PL ${pp.toFixed(3)}</span>`;
+  html += `<span class="sc-chip ${confClass}" title="Effective confidence (post VP-normalization)">${effConf.toUpperCase()}`;
+  if (confMismatch) html += `<span class="sc-stale" title="Stored label (pre-normalization): ${storedConf}"> ↑stale:${storedConf}</span>`;
+  html += '</span>';
+  if (blockers.length) {
+    html += '<div class="sc-blockers">';
+    html += '<span class="sc-blk-label">BLOCKED:</span>';
+    blockers.forEach(b => { html += `<span class="sc-blocker">${b}</span>`; });
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
 function renderTable(rows) {
   const tbody = document.getElementById('race-tbody');
   tbody.innerHTML = '';
   rows.forEach((row, idx) => {
     const product  = row.assigned_product  || 'UNKNOWN';
     const tier     = row.decision_tier     || row.tier || '?';
-    const conf     = (row.confidence_level || 'low').toLowerCase();
-    const prob     = parseFloat(row.velo_prime_prob   || 0).toFixed(4);
+    const vp       = parseFloat(row.velo_prime_prob || 0);
+    const storedConf = (row.confidence_level || 'low').toLowerCase();
+    const effConf  = (row.effective_confidence || _effConf(vp)).toLowerCase();
+    const confMismatch = storedConf === 'low' && effConf !== 'low';
+    const prob     = vp.toFixed(4);
     const gap      = parseFloat(row.prob_gap          || 0).toFixed(4);
     const mds      = parseFloat(row.market_deception_score || 0).toFixed(4);
     const exec     = row.execution_allowed;
@@ -2162,19 +2251,27 @@ function renderTable(rows) {
     tr.dataset.exec    = exec ? 'true' : 'false';
     tr.style.animation = `fadeInRow 0.3s ease ${idx * 0.03}s both`;
 
-    // ── Signal Stack badge logic ─────────────────────────────────
-    const vp     = parseFloat(row.velo_prime_prob || 0);
+    // ── Signal Stack badges (existing) ───────────────────────────
     const tier_v = row.decision_tier || row.tier || '';
     const mds_v  = parseFloat(row.market_deception_score || 0);
     const imp_v  = parseFloat(row.improvement_score || 0);
     const pp_v   = parseFloat(row.place_prob || 0);
     const badges = [];
-    if (mds_v > 0.50)                          badges.push('<span class="ss-badge ss-elite">🔥 MDS_HIGH</span>');
-    if (vp >= 0.30 && tier_v === 'A')          badges.push('<span class="ss-badge ss-proven">✅ VP30_TIER_A</span>');
-    if (imp_v > 0.40)                          badges.push('<span class="ss-badge ss-proven">📈 IMPROVE_HIGH</span>');
-    if (pp_v > 0.80)                           badges.push('<span class="ss-badge ss-watchlist">🟡 PLACE_HIGH</span>');
-    if (tier_v === 'B' && vp < 0.30)           badges.push('<span class="ss-badge ss-suppress">⚠ B_LOW_VP</span>');
+    if (mds_v > 0.50)                 badges.push('<span class="ss-badge ss-elite">🔥 MDS_HIGH</span>');
+    if (vp >= 0.30 && tier_v === 'A') badges.push('<span class="ss-badge ss-proven">✅ VP30_TIER_A</span>');
+    if (imp_v > 0.40)                 badges.push('<span class="ss-badge ss-proven">📈 IMPROVE_HIGH</span>');
+    if (pp_v > 0.80)                  badges.push('<span class="ss-badge ss-watchlist">🟡 PLACE_HIGH</span>');
+    if (tier_v === 'B' && vp < 0.30)  badges.push('<span class="ss-badge ss-suppress">⚠ B_LOW_VP</span>');
     const badgeHtml = badges.length ? `<div class="ss-wrap">${badges.join('')}</div>` : '';
+
+    // ── Sidecar detail block (Issue #84) ─────────────────────────
+    const sidecarHtml = buildSidecarHtml(row);
+
+    // ── Confidence column — show effective, flag stale ───────────
+    const confDisplay = effConf.toUpperCase();
+    const confStaleFrag = confMismatch
+      ? `<span class="conf-stale" title="Stored pre-normalization label: ${storedConf}"> ↑stale</span>`
+      : '';
 
     tr.innerHTML = `
       <td class="td-course">
@@ -2185,9 +2282,10 @@ function renderTable(rows) {
         <div class="horse-name">${row.horse || '—'}</div>
         <div class="race-id">${row.race_id || ''}</div>
         ${badgeHtml}
+        ${sidecarHtml}
       </td>
       <td><span class="tier-badge tier-${tier}">${tier}</span></td>
-      <td><span class="conf-${conf}">${conf.toUpperCase()}</span></td>
+      <td><span class="conf-${effConf}">${confDisplay}</span>${confStaleFrag}</td>
       <td><span class="mono">${prob}</span></td>
       <td><span class="mono">${gap}</span></td>
       <td><span class="mono ${mdsAlert}">${mds}</span></td>

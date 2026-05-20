@@ -1187,6 +1187,7 @@ def main():
         build_run_id as _build_run_id,
         write_runner_snapshots as _write_runner_snapshots,
     )
+    from src.velo.signal_stack import build_signal_stack_payload as _build_signal_stack
     from supabase import create_client as _sb_create
     from workers.racing_api_normalizer import normalize_race
 
@@ -1540,6 +1541,17 @@ def main():
                 top["candidate_execution_reason"]  = candidate["candidate_execution_reason"]
                 top["candidate_execution_lane"]    = candidate["candidate_execution_lane"]
 
+                # ── Signal Stack payload (Issue #84) ──────────────────────────
+                # Display/persistence truth — no scoring or routing side effects.
+                top["signal_stack"] = _build_signal_stack(
+                    race=race,
+                    top=top,
+                    tier=tier,
+                    sec_prob=sec_prob,
+                    racecard_source=racecard_source,
+                    route_data=route_data,
+                )
+
                 # ── Phase 5: Racing API Shadow Enrichment (forward-test only) ──
                 # GOVERNANCE: shadow fields only — never alters velo_prime_prob,
                 # tier, assigned_product, candidate_execution_allowed, or router.
@@ -1880,6 +1892,7 @@ def main():
                     "scored": len(preds),
                     "tier": tier,
                     "top": preds[0] if preds else {},
+                    "signal_stack": preds[0].get("signal_stack") if preds else None,
                 }
             )
         out_path.parent.mkdir(parents=True, exist_ok=True)
