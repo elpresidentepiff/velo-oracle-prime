@@ -10,10 +10,10 @@ class PostdataGridParser:
     """
     Parses the 0011 Postdata summary grid.
     """
-    
+
     # Standard layout: Trainer | Going | Dist | Course | Draw | Ability
     COLS = ["trainer", "going", "distance", "course", "draw", "ability"]
-    
+
     def map_flags(self, flags_text: str) -> dict[str, Any]:
         """
         Map a raw string of ✓, ✘, ? into specific columns.
@@ -21,10 +21,10 @@ class PostdataGridParser:
         """
         if not flags_text:
             return {}
-            
+
         # Standard tokens in Postdata grid
         tokens = flags_text.strip().split()
-        
+
         result = {}
         for i, token in enumerate(tokens):
             if i < len(self.COLS):
@@ -38,7 +38,7 @@ class PostdataGridParser:
                 else:
                     val = "neutral"
                 result[f"{col_name}_flag"] = val
-                    
+
         return result
 
     def get_trainer_signal(self, flags: dict[str, Any]) -> str:

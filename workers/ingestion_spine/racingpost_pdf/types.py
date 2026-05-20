@@ -47,7 +47,7 @@ class Runner(BaseModel):
     draw: int | None = None
     headgear: str | None = None
     form_figures: str | None = None
-    
+
     # Plot Intelligence
     comment: str | None = Field(None, description="Spotlight prose comment")
     postdata_pick: bool = False

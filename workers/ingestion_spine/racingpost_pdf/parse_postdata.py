@@ -14,7 +14,6 @@ import pdfplumber
 from .normalize import normalize_horse_name
 from .types import ParseError, Race
 
-
 _OFF_TIME_RE = re.compile(r"^\d{1,2}:\d{2}$")
 _PICK_LINE_RE = re.compile(r"^POSTDATA\s+(?P<postdata>.+?)\s+TOPSPEED\s+(?P<topspeed>.+)$", re.IGNORECASE)
 
@@ -36,7 +35,7 @@ def parse_postdata_card(
 
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            for page_num, page in enumerate(pdf.pages, start=1):
+            for _page_num, page in enumerate(pdf.pages, start=1):
                 for section in _extract_postdata_sections(page):
                     off_time = section["off_time"]
                     race = races_by_off_time.get(off_time)

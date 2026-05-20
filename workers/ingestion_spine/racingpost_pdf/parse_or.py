@@ -12,7 +12,6 @@ import pdfplumber
 from .normalize import normalize_horse_name
 from .types import ParseError
 
-
 _SECTION_RE = re.compile(r"^(?P<off>\d{1,2}\.\d{2})\b")
 _HORSE_LINE_RE = re.compile(
     r"^(?P<prefix>.*?)"
@@ -20,7 +19,17 @@ _HORSE_LINE_RE = re.compile(
     r"(?:\s+(?P<weight>\d{1,2}-\d{1,2}[A-Za-z0-9]*)|\s+(?P<numbers_no_weight>(?:-?\d+\s*)+))$"
 )
 _LEAKED_PREFIX_TOKENS = {
-    "S", "SD", "G", "GF", "GS", "Y", "YS", "GY", "HY", "SH", "SS",
+    "S",
+    "SD",
+    "G",
+    "GF",
+    "GS",
+    "Y",
+    "YS",
+    "GY",
+    "HY",
+    "SH",
+    "SS",
 }
 
 
@@ -66,7 +75,9 @@ def _parse_rating_card(
                     horse_name, payload = parsed
                     ratings_map[current_race_id][horse_name] = payload
     except Exception as exc:
-        errors.append(ParseError(severity="error", message=f"Failed to parse {prefix.upper()} PDF: {exc}", location="file"))
+        errors.append(
+            ParseError(severity="error", message=f"Failed to parse {prefix.upper()} PDF: {exc}", location="file")
+        )
 
     return ratings_map, errors
 
@@ -86,8 +97,8 @@ def _parse_horse_line(line: str, *, prefix: str) -> tuple[str, dict[str, Any]] |
 
     horse_name = _clean_rating_horse_name(match.group("name"))
     history_tokens = _extract_history_tokens(match.group("prefix"))
-    
-    # In F_0015, the rating numbers might be in 'weight' (misidentified) 
+
+    # In F_0015, the rating numbers might be in 'weight' (misidentified)
     # or 'numbers_no_weight'
     raw_nums = match.group("numbers_no_weight") or match.group("weight")
     if not raw_nums:
@@ -100,7 +111,7 @@ def _parse_horse_line(line: str, *, prefix: str) -> tuple[str, dict[str, Any]] |
         except ValueError:
             # Skip pieces like '9-10' which are weights, not ratings
             continue
-            
+
     if not numbers:
         return None
 
@@ -109,7 +120,7 @@ def _parse_horse_line(line: str, *, prefix: str) -> tuple[str, dict[str, Any]] |
     # We look for (1) or (1-) markers which indicate a win.
     best_winning_life = None
     win_pattern = re.compile(r"(\d+)\(1-?\)")
-    
+
     all_prev_ratings = []
     for token in history_tokens:
         win_match = win_pattern.search(token)
@@ -117,7 +128,7 @@ def _parse_horse_line(line: str, *, prefix: str) -> tuple[str, dict[str, Any]] |
             rating = int(win_match.group(1))
             if best_winning_life is None or rating > best_winning_life:
                 best_winning_life = rating
-        
+
         # Also just collect all numbers to have a general sense of history
         nums = re.findall(r"\d+", token)
         if nums:
@@ -131,7 +142,7 @@ def _parse_horse_line(line: str, *, prefix: str) -> tuple[str, dict[str, Any]] |
         f"{prefix}_history_tokens": history_tokens,
         f"{prefix}_best_winning_life": best_winning_life,
     }
-    
+
     if prefix == "or":
         payload["best_winning_life"] = best_winning_life
         if best_winning_life and current_or:
@@ -148,7 +159,7 @@ def _clean_rating_horse_name(name: str) -> str:
         tokens = tokens[1:]
 
     # Strip trailing pure-digit tokens (leaked OR/TS/RPR numbers e.g. "COSMIC CONNECTION 123 123")
-    while len(tokens) > 1 and re.match(r'^\d+$', tokens[-1]):
+    while len(tokens) > 1 and re.match(r"^\d+$", tokens[-1]):
         tokens = tokens[:-1]
 
     return " ".join(tokens)

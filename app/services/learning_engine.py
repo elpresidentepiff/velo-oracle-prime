@@ -23,7 +23,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -32,10 +32,12 @@ logger = logging.getLogger("velo.learning_engine")
 ROOT = Path(__file__).resolve().parents[2]
 
 # Sources that are proxy-derived, not true HFS
-_PROXY_SOURCES = frozenset({
-    "derived_from_vp_mds",
-    "derived_from_macro_field_trap",
-})
+_PROXY_SOURCES = frozenset(
+    {
+        "derived_from_vp_mds",
+        "derived_from_macro_field_trap",
+    }
+)
 
 
 def _make_event_id(run_date: str, race_id: str, horse_id: str, event_type: str) -> str:
@@ -66,12 +68,7 @@ def _classify_hfs_context(top: dict) -> tuple[bool, str, str | None]:
             parts.append("horse_state_empty")
         return True, "proxy_derived", "; ".join(parts)
 
-    is_proxy = (
-        mpi_source in _PROXY_SOURCES
-        or chaos_source in _PROXY_SOURCES
-        or horse_state_failed
-        or not horse_state
-    )
+    is_proxy = mpi_source in _PROXY_SOURCES or chaos_source in _PROXY_SOURCES or horse_state_failed or not horse_state
 
     if is_proxy:
         parts = []
@@ -108,6 +105,7 @@ class LearningEngine:
     def _get_sb(self):
         if self._sb is None:
             from src.data.supabase_client import get_supabase_client  # noqa: PLC0415
+
             self._sb = get_supabase_client()
         return self._sb
 
@@ -130,10 +128,7 @@ class LearningEngine:
             logger.warning("[LearningEngine] results file not found: %s", path)
             return {}
         raw = json.loads(path.read_text(encoding="utf-8"))
-        races: list[dict] = (
-            raw.get("results", []) if isinstance(raw, dict)
-            else (raw if isinstance(raw, list) else [])
-        )
+        races: list[dict] = raw.get("results", []) if isinstance(raw, dict) else (raw if isinstance(raw, list) else [])
         index: dict[str, dict] = {}
         for race in races:
             race_id = race.get("race_id")
@@ -159,8 +154,8 @@ class LearningEngine:
         """Index sigma_audits rows as {race_id: row}. Always reads — read-only operation."""
         try:
             result = (
-                self._get_sb().client
-                .table("sigma_audits")
+                self._get_sb()
+                .client.table("sigma_audits")
                 .select(
                     "race_id,outcome,decision_tier,horse_id,"
                     "actual_winner_id,actual_winner_sp,actual_winner_name,off_time"
@@ -242,11 +237,7 @@ class LearningEngine:
             if actual_sp is None and result:
                 actual_sp = result.get("winner_sp")
             bsp = (result or {}).get("winner_bsp")
-            finishing_pos = (
-                self._predicted_position(result["runners"], horse_id)
-                if result and horse_id
-                else None
-            )
+            finishing_pos = self._predicted_position(result["runners"], horse_id) if result and horse_id else None
 
             result_blob: dict[str, Any] = {
                 "actual_winner": actual_winner_name,
@@ -299,31 +290,31 @@ class LearningEngine:
                 "race_context": race_context,
             }
 
-            events.append({
-                "run_date": date,
-                "race_id": race_id,
-                "horse_id": horse_id or None,
-                "event_type": "sigma_reconciliation",
-                "event_id": event_id,
-                "target_state_name": self.target_state,
-                "consumption_id": consumption_id,
-                "prediction": prediction_blob,
-                "result": result_blob,
-                "sidecars": sidecars_blob,
-                "learning_allowed": True,   # shadow-eligible; consumed_live never set
-                "missing_hfs_context": missing_hfs,
-                "consumed_shadow": False,
-                "consumed_live": False,
-            })
+            events.append(
+                {
+                    "run_date": date,
+                    "race_id": race_id,
+                    "horse_id": horse_id or None,
+                    "event_type": "sigma_reconciliation",
+                    "event_id": event_id,
+                    "target_state_name": self.target_state,
+                    "consumption_id": consumption_id,
+                    "prediction": prediction_blob,
+                    "result": result_blob,
+                    "sidecars": sidecars_blob,
+                    "learning_allowed": True,  # shadow-eligible; consumed_live never set
+                    "missing_hfs_context": missing_hfs,
+                    "consumed_shadow": False,
+                    "consumed_live": False,
+                }
+            )
 
         logger.info("[LearningEngine] Built %d learning events for %s", len(events), date)
         return events
 
     # ── DB write ──────────────────────────────────────────────────────────────
 
-    def write_events_to_db(
-        self, events: list[dict], sample_size: int | None = None
-    ) -> dict[str, Any]:
+    def write_events_to_db(self, events: list[dict], sample_size: int | None = None) -> dict[str, Any]:
         """
         Upsert events into velo_learning_events.
         Idempotent: ignore_duplicates=True — re-run never creates duplicates.
@@ -356,8 +347,8 @@ class LearningEngine:
             }
             try:
                 res = (
-                    self._get_sb().client
-                    .table("velo_learning_events")
+                    self._get_sb()
+                    .client.table("velo_learning_events")
                     .upsert(row, on_conflict="event_id,target_state_name", ignore_duplicates=True)
                     .execute()
                 )
@@ -383,8 +374,8 @@ class LearningEngine:
         """Read velo_learning_events rows that are not yet shadow-consumed for this date + target_state."""
         try:
             result = (
-                self._get_sb().client
-                .table("velo_learning_events")
+                self._get_sb()
+                .client.table("velo_learning_events")
                 .select("*")
                 .eq("run_date", date)
                 .eq("target_state_name", self.target_state)
@@ -395,7 +386,9 @@ class LearningEngine:
             rows = result.data or []
             logger.info(
                 "[LearningEngine] Found %d unconsumed events for %s / %s",
-                len(rows), date, self.target_state,
+                len(rows),
+                date,
+                self.target_state,
             )
             return rows
         except Exception as exc:
@@ -412,8 +405,8 @@ class LearningEngine:
         try:
             while True:
                 result = (
-                    self._get_sb().client
-                    .table("velo_learning_events")
+                    self._get_sb()
+                    .client.table("velo_learning_events")
                     .select("*")
                     .eq("target_state_name", self.target_state)
                     .eq("consumed_shadow", False)
@@ -436,7 +429,9 @@ class LearningEngine:
             rows = rows[:sample_size]
         logger.info(
             "[LearningEngine] Found %d unconsumed events across all dates / %s (sample_size=%s)",
-            len(rows), self.target_state, sample_size,
+            len(rows),
+            self.target_state,
+            sample_size,
         )
         return rows
 
@@ -484,8 +479,8 @@ class LearningEngine:
         cloud_backup: dict[str, Any] = {}
         try:
             r = (
-                self._get_sb().client
-                .table("velo_learning_events")
+                self._get_sb()
+                .client.table("velo_learning_events")
                 .select("consumed_shadow,consumed_live,missing_hfs_context,sidecars")
                 .eq("run_date", date)
                 .eq("target_state_name", self.target_state)
@@ -499,17 +494,18 @@ class LearningEngine:
                 "consumed_live_true": sum(1 for x in rows if x["consumed_live"]),
                 "missing_hfs_context_all": all(x["missing_hfs_context"] for x in rows) if rows else None,
                 "hfs_quality_proxy_all": all(
-                    (x.get("sidecars") or {}).get("hfs_context_quality") == "proxy_derived"
-                    for x in rows
-                ) if rows else None,
+                    (x.get("sidecars") or {}).get("hfs_context_quality") == "proxy_derived" for x in rows
+                )
+                if rows
+                else None,
             }
         except Exception as exc:
             event_counts = {"error": str(exc)}
 
         try:
             cb = (
-                self._get_sb().client
-                .table("learned_patterns")
+                self._get_sb()
+                .client.table("learned_patterns")
                 .select("occurrences,last_observed,updated_at")
                 .eq("pattern_name", "SENTIENT_STATE_BACKUP")
                 .execute()
@@ -521,14 +517,9 @@ class LearningEngine:
         # ── Overall status (DB ground truth) ──────────────────────────────────
         consumed_live_any = event_counts.get("consumed_live_true", 0) > 0
         sigma_failed = pipeline.get("sigma", {}).get("status") == "FAIL"
-        all_consumed = (
-            event_counts.get("consumed_shadow_false", None) == 0
-            and event_counts.get("total", 0) > 0
-        )
+        all_consumed = event_counts.get("consumed_shadow_false", None) == 0 and event_counts.get("total", 0) > 0
         no_events_in_db = event_counts.get("total", 0) == 0
-        partial_consume = consume_result.get("skipped", 0) > 0 or (
-            event_counts.get("consumed_shadow_false", 0) > 0
-        )
+        partial_consume = consume_result.get("skipped", 0) > 0 or (event_counts.get("consumed_shadow_false", 0) > 0)
 
         if consumed_live_any:
             overall = "SAFETY_VIOLATION"
@@ -554,7 +545,7 @@ class LearningEngine:
 
         return {
             "report_date": date,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "report_version": "phase4_v1",
             "pipeline": pipeline,
             "shadow_ledger": {
@@ -639,20 +630,22 @@ class LearningEngine:
                 "placed": bool(result_blob.get("placed", False)),
                 "finishing_position": result_blob.get("finishing_position"),
                 "favourite_won": False,  # not tracked in sigma_audits
-                "winner_profile": {},    # not available at this stage
+                "winner_profile": {},  # not available at this stage
             }
 
             try:
                 g.observe_race_outcome(race_data, prediction, actual_result)
                 if self.execute:
-                    self._get_sb().client.table("velo_learning_events").update(
-                        {"consumed_shadow": True}
-                    ).eq("event_id", event_id).eq("target_state_name", self.target_state).execute()
+                    self._get_sb().client.table("velo_learning_events").update({"consumed_shadow": True}).eq(
+                        "event_id", event_id
+                    ).eq("target_state_name", self.target_state).execute()
                 consumed += 1
                 consumed_ids.append(event_id)
                 logger.info(
                     "[LearningEngine] Consumed event %s (horse=%s won=%s)",
-                    event_id, prediction["power_anchor"], actual_result["won"],
+                    event_id,
+                    prediction["power_anchor"],
+                    actual_result["won"],
                 )
             except Exception as exc:
                 logger.warning("[LearningEngine] consume failed for event %s: %s", event_id, exc)
@@ -661,7 +654,10 @@ class LearningEngine:
         after_count = g.state.get("total_races_observed", 0)
         logger.info(
             "[LearningEngine] Shadow consume complete: consumed=%d skipped=%d races %d->%d",
-            consumed, skipped, before_count, after_count,
+            consumed,
+            skipped,
+            before_count,
+            after_count,
         )
 
         return {

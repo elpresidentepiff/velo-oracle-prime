@@ -7,11 +7,10 @@ Dry-run path is identical to Phase 1 (no DB side effects).
 from __future__ import annotations
 
 import logging
-import os
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger("velo.ops_service")
 
@@ -20,18 +19,18 @@ ARTIFACT_DIR = ROOT / "data" / "ops_worker_dry_run"
 
 # Sigma failure taxonomy — ordered by specificity (first match wins)
 _SIGMA_PATTERNS: list[tuple[str, list[str]]] = [
-    ("API_FAILURE",             ["api error", "http error", "connection error", "timeout", "connectionerror", "httperror"]),
-    ("DB_WRITE_FAILURE",        ["db write", "supabase error", "insert failed", "db_write_failure", "postgrest"]),
-    ("DUPLICATE_RACE",          ["duplicate race", "duplicate_race", "already reconciled"]),
-    ("DUPLICATE_RUNNER",        ["duplicate runner", "duplicate_runner"]),
-    ("IDENTITY_MISMATCH",       ["identity mismatch", "horse name mismatch", "identity_mismatch", "name mismatch"]),
-    ("NON_RUNNER_CONFLICT",     ["non-runner", "non_runner", "void race", "race void"]),
-    ("MISSING_PREDICTION",      ["missing_prediction", "no prediction", "not in verdicts", "prediction not found"]),
-    ("AMBIGUOUS_MATCH",         ["ambiguous", "multiple match", "ambiguous_match"]),
-    ("CONTEXT_VOID",            ["context void", "no context", "context_void"]),
-    ("ODDS_MISSING",            ["odds missing", "sp missing", "no odds", "odds_missing", "no sp"]),
-    ("RESULT_PARTIAL",          ["partial result", "incomplete result", "result_partial"]),
-    ("MISSING_RESULT",          ["no result", "result not found", "missing_result", "no results available"]),
+    ("API_FAILURE", ["api error", "http error", "connection error", "timeout", "connectionerror", "httperror"]),
+    ("DB_WRITE_FAILURE", ["db write", "supabase error", "insert failed", "db_write_failure", "postgrest"]),
+    ("DUPLICATE_RACE", ["duplicate race", "duplicate_race", "already reconciled"]),
+    ("DUPLICATE_RUNNER", ["duplicate runner", "duplicate_runner"]),
+    ("IDENTITY_MISMATCH", ["identity mismatch", "horse name mismatch", "identity_mismatch", "name mismatch"]),
+    ("NON_RUNNER_CONFLICT", ["non-runner", "non_runner", "void race", "race void"]),
+    ("MISSING_PREDICTION", ["missing_prediction", "no prediction", "not in verdicts", "prediction not found"]),
+    ("AMBIGUOUS_MATCH", ["ambiguous", "multiple match", "ambiguous_match"]),
+    ("CONTEXT_VOID", ["context void", "no context", "context_void"]),
+    ("ODDS_MISSING", ["odds missing", "sp missing", "no odds", "odds_missing", "no sp"]),
+    ("RESULT_PARTIAL", ["partial result", "incomplete result", "result_partial"]),
+    ("MISSING_RESULT", ["no result", "result not found", "missing_result", "no results available"]),
 ]
 
 
@@ -46,6 +45,7 @@ class OpsService:
     def _get_sb(self):
         if self._sb is None:
             from src.data.supabase_client import get_supabase_client  # noqa: PLC0415
+
             self._sb = get_supabase_client()
         return self._sb
 
@@ -59,7 +59,7 @@ class OpsService:
                 "run_date": date,
                 "job_type": job_type,
                 "status": "RUNNING",
-                "started_at": datetime.now(timezone.utc).isoformat(),
+                "started_at": datetime.now(UTC).isoformat(),
             }
             try:
                 self._get_sb().client.table("velo_job_runs").insert(row).execute()
@@ -73,13 +73,13 @@ class OpsService:
     def finish_success(
         self,
         job_id: str,
-        metrics: Optional[Dict[str, Any]] = None,
-        output_artifacts: Optional[Dict[str, Any]] = None,
+        metrics: dict[str, Any] | None = None,
+        output_artifacts: dict[str, Any] | None = None,
     ) -> None:
         if self.execute:
             update = {
                 "status": "PASS",
-                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "finished_at": datetime.now(UTC).isoformat(),
                 "metrics": metrics or {},
                 "output_artifacts": output_artifacts or {},
             }
@@ -95,7 +95,7 @@ class OpsService:
         if self.execute:
             update = {
                 "status": "FAIL",
-                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "finished_at": datetime.now(UTC).isoformat(),
                 "error_type": error_type,
                 "error_message": error_message[:2000],
             }
@@ -109,7 +109,7 @@ class OpsService:
 
     # ── Phase 1 compatibility shims ───────────────────────────────────────────
 
-    def finish_job(self, job_id: str, status: str, metrics: Optional[Dict[str, Any]] = None) -> None:
+    def finish_job(self, job_id: str, status: str, metrics: dict[str, Any] | None = None) -> None:
         if status == "SUCCESS":
             self.finish_success(job_id, metrics=metrics)
         else:
@@ -129,7 +129,7 @@ class OpsService:
 
     # ── Healthcheck reads ─────────────────────────────────────────────────────
 
-    def read_jobs_for_date(self, date: str) -> List[Dict[str, Any]]:
+    def read_jobs_for_date(self, date: str) -> list[dict[str, Any]]:
         try:
             result = (
                 self._get_sb()

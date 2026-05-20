@@ -134,12 +134,9 @@ def run_security_check() -> dict[str, Any]:
             result["passed"] = True
             result["coverage_scope"] = "partial"
             result["checked_objects"] = [f"RLS:{t}" for t in tables_to_check]
-            result["unchecked_objects"] = [
-                f"{k}:{v}" for k, v in UNCHECKED_OBJECTS.items()
-            ]
+            result["unchecked_objects"] = [f"{k}:{v}" for k, v in UNCHECKED_OBJECTS.items()]
             logger.info(
-                "[security_validator] pg_class accessible — partial coverage. "
-                "RLS status unconfirmed via PostgREST."
+                "[security_validator] pg_class accessible — partial coverage. RLS status unconfirmed via PostgREST."
             )
         except Exception as pg_exc:
             error_code = _classify_security_error(pg_exc)

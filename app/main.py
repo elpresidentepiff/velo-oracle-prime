@@ -1451,7 +1451,11 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         horse_name = top.get("horse") or v.get("horse") or v.get("horse_name") or ""
 
         top_prob = _safe_float(v.get("velo_prime_prob", top.get("velo_prime_prob", 0)))
-        prob_gap = _safe_float(top.get("prob_gap")) if top.get("prob_gap") is not None else _derive_prob_gap(top_prob, full_analysis)
+        prob_gap = (
+            _safe_float(top.get("prob_gap"))
+            if top.get("prob_gap") is not None
+            else _derive_prob_gap(top_prob, full_analysis)
+        )
 
         # Governance: prefer live Supabase values (post-migration), fall back to top dict
         gov = gov_by_race.get(race_id, {})
@@ -1463,9 +1467,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         if execution_allowed is None:
             execution_allowed = top.get("execution_allowed")
         assigned_product_source = (
-            "supabase_governance" if gov.get("assigned_product")
-            else "verdict_row" if v.get("assigned_product")
-            else "verdict_top" if top.get("assigned_product")
+            "supabase_governance"
+            if gov.get("assigned_product")
+            else "verdict_row"
+            if v.get("assigned_product")
+            else "verdict_top"
+            if top.get("assigned_product")
             else "unresolved"
         )
         meta = meta_map.get(race_id)
@@ -1531,7 +1538,9 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             if execution_allowed is None:
                 execution_allowed = routed.get("execution_allowed", False)
             suffix = "product_router_display_fallback"
-            assigned_product_source = suffix if assigned_product_source == "unresolved" else f"{assigned_product_source}+{suffix}"
+            assigned_product_source = (
+                suffix if assigned_product_source == "unresolved" else f"{assigned_product_source}+{suffix}"
+            )
 
         if execution_allowed is None:
             execution_allowed = False

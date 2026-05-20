@@ -570,6 +570,7 @@ async def validate_batch(batch_id: str):
 
     try:
         from data_quality.gx_context import create_races_suite, create_runners_suite, get_gx_context
+
         _gx_available = True
     except ImportError:
         _gx_available = False
@@ -687,7 +688,9 @@ async def validate_batch(batch_id: str):
                 "runners_success": runners_results.success,
                 "races_results": races_results.to_json_dict(),
                 "runners_results": runners_results.to_json_dict(),
-            } if _gx_available and gx_success is not None else {"skipped": True},
+            }
+            if _gx_available and gx_success is not None
+            else {"skipped": True},
         }
 
         # Update batch status

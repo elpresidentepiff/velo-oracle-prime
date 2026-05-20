@@ -10,7 +10,6 @@ Container layout (PYTHONPATH=/app):
 """
 
 from .._parsers_base import FormParser, RacecardsParser, RunnersParser
-
 from .quality import calculate_race_quality, calculate_runner_confidence
 
 __all__ = [

@@ -377,7 +377,7 @@ class SentientLoopbackEngine:
 
         if predicted_winner and actual_winner and not correct:
             logger.debug("[G] Prediction mismatch: predicted='%s' actual='%s'", predicted_winner, actual_winner)
-            
+
         sp = float(actual_result.get("sp") or 0.0)
         profit = (sp - 1.0) if correct else -1.0
 
@@ -511,11 +511,11 @@ class SentientLoopbackEngine:
 
         # Track recent performance based on profit/loss, not just win/loss
         profit = error_vector.get("profit", -1.0)
-        
+
         # Ensure list exists
         if "recent_profit" not in appetite:
             appetite["recent_profit"] = []
-            
+
         appetite["recent_profit"].append(profit)
         if len(appetite["recent_profit"]) > 10:
             appetite["recent_profit"] = appetite["recent_profit"][-10:]

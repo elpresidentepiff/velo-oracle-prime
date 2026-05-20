@@ -13,7 +13,6 @@ import pdfplumber
 from .normalize import normalize_horse_name
 from .types import ParseError, Race
 
-
 _OFF_TIME_RE = re.compile(r"^(?P<off>\d{1,2}\.\d{2})\b")
 _RUNNER_HEADER_RE = re.compile(r"^(?P<name>.+?)\s+\d+\s+\d{1,2}-\d{1,2}[a-z0-9]*\b", re.IGNORECASE)
 
@@ -35,7 +34,7 @@ def parse_spotlight_card(
 
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            for page_num, page in enumerate(pdf.pages, start=1):
+            for _page_num, page in enumerate(pdf.pages, start=1):
                 lines = [line.strip() for line in (page.extract_text() or "").splitlines() if line and line.strip()]
                 off_time = _extract_off_time(lines)
                 if not off_time:

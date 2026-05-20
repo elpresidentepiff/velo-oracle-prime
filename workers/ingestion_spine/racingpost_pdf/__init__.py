@@ -77,7 +77,7 @@ def parse_meeting(pdf_paths: list[str], validate_output: bool = True) -> ParseRe
         races, parse_errors = parse_xx_v2_card(xx_pdf, course_name, str(meeting_date))
     else:
         races, parse_errors = parse_xx_card(xx_pdf, course_name, str(meeting_date))
-    
+
     errors.extend(parse_errors)
 
     if not races:
