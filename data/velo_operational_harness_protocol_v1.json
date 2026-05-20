@@ -1,0 +1,70 @@
+{
+  "version": "V1",
+  "status": "ACTIVE_DRAFT",
+  "architecture": [
+    "Planner",
+    "Generator",
+    "Evaluator",
+    "Reject/Repair",
+    "Improve",
+    "LLM Council",
+    "Commit/Next Gate"
+  ],
+  "roles": {
+    "planner": "Defines mission, scope, files, commands, tests, pass/fail, stop condition, return schema, and commit permission.",
+    "generator": "Implements only inside allowed scope and reports exact outputs.",
+    "evaluator": "Verifies evidence, tests, diffs, safety status, and verdict."
+  },
+  "phases": [
+    "PLAN",
+    "BUILD",
+    "TEST",
+    "REJECT_OR_REPAIR",
+    "IMPROVE",
+    "COUNCIL_SIGN_OFF",
+    "NEXT_GATE"
+  ],
+  "forbidden_actions": [
+    "production scoring change",
+    "dashboard edit during backend gate",
+    "SSL bypass",
+    "silent Supabase write",
+    "live sentient state mutation",
+    "HFS write before no-write proof",
+    "unauthorized commit"
+  ],
+  "evidence_requirements": [
+    "TASK_TYPE",
+    "COMMANDS_RUN",
+    "EXIT_CODES",
+    "FILES_CREATED",
+    "FILES_CHANGED",
+    "FORBIDDEN_FILES_DIRTY",
+    "TESTS_PASSED",
+    "TESTS_FAILED",
+    "SUPABASE_WRITES_ATTEMPTED",
+    "LIVE_SENTIENT_STATE_TOUCHED",
+    "HFS_TRAINING_SAFE",
+    "VERDICT"
+  ],
+  "verdict_definitions": {
+    "PASS": "All required artifacts exist, tests pass, forbidden files clean, safety gates active, evidence supports verdict.",
+    "PARTIAL": "Useful work exists but non-critical requirements remain incomplete. No promotion allowed.",
+    "BLOCKED": "Work cannot proceed because preflight, safety, credentials, or source availability failed.",
+    "FAIL": "Safety rules were violated or evidence did not support claims."
+  },
+  "commit_rules": [
+    "explicit commit permission required",
+    "staged files must be listed",
+    "forbidden files must not be staged",
+    "git diff --cached must be reviewed",
+    "commit hash must be returned"
+  ],
+  "safety_rules": {
+    "hfs_training_safe": false,
+    "live_learning_blocked": true,
+    "supabase_writes_default": false,
+    "production_scoring_changes_default": false
+  },
+  "next_gate": "REAL_HFS_DRY_RUN_NO_WRITE"
+}

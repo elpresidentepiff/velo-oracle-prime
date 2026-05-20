@@ -1,0 +1,32 @@
+{
+  "job_type": "healthcheck",
+  "date": "2026-05-14",
+  "dry_run": false,
+  "intended_action": "Report pipeline completeness and safety state",
+  "sentient_state_touched": false,
+  "migrations_applied": false,
+  "jobs_from_db": [
+    {
+      "job_type": "predict",
+      "status": "FAIL",
+      "started_at": "2026-05-13T22:55:27.118235+00:00",
+      "finished_at": "2026-05-13T22:56:20.733823+00:00",
+      "error_type": "SUBPROCESS_TIMEOUT",
+      "metrics": {}
+    },
+    {
+      "job_type": "predict",
+      "status": "PASS",
+      "started_at": "2026-05-14T00:36:34.048199+00:00",
+      "finished_at": "2026-05-14T00:40:59.449221+00:00",
+      "error_type": null,
+      "metrics": {
+        "exit_code": 0
+      }
+    }
+  ],
+  "job_summary": {
+    "predict": "PASS"
+  },
+  "status": "HEALTHY"
+}

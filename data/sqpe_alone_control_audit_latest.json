@@ -1,0 +1,177 @@
+{
+  "generated_at": "2026-05-15T01:30:24.176214Z",
+  "race_inputs_with_outcomes": 378,
+  "configurations": [
+    {
+      "config": "SQPE_ONLY",
+      "description": "SQPE v17 alone, all sidecars excluded",
+      "n": 333,
+      "wins": 64,
+      "places": 158,
+      "strike_rate": 0.1922,
+      "frame_rate": 0.4745,
+      "flat_roi": 0.0726,
+      "avg_sp": 12.118,
+      "median_sp": 7.0,
+      "vp30_count": 35,
+      "top_selection_changes_vs_sqpe": 0
+    },
+    {
+      "config": "FULL_ENSEMBLE",
+      "description": "Current live ensemble (SQPE + MDS + place_prob + longshot)",
+      "n": 338,
+      "wins": 82,
+      "places": 185,
+      "strike_rate": 0.2426,
+      "frame_rate": 0.5473,
+      "flat_roi": 0.1353,
+      "avg_sp": 9.737,
+      "median_sp": 5.5,
+      "vp30_count": 74,
+      "top_selection_changes_vs_sqpe": 122
+    },
+    {
+      "config": "SQPE_PLUS_IMPROVEMENT",
+      "description": "SQPE + improvement_score",
+      "n": 333,
+      "wins": 67,
+      "places": 158,
+      "strike_rate": 0.2012,
+      "frame_rate": 0.4745,
+      "flat_roi": 0.0385,
+      "avg_sp": 11.645,
+      "median_sp": 7.0,
+      "vp30_count": 52,
+      "top_selection_changes_vs_sqpe": 96
+    },
+    {
+      "config": "SQPE_PLUS_MDS",
+      "description": "SQPE + market_deception_score",
+      "n": 342,
+      "wins": 86,
+      "places": 200,
+      "strike_rate": 0.2515,
+      "frame_rate": 0.5848,
+      "flat_roi": 0.0365,
+      "avg_sp": 8.181,
+      "median_sp": 5.0,
+      "vp30_count": 73,
+      "top_selection_changes_vs_sqpe": 91
+    },
+    {
+      "config": "SQPE_PLUS_PLACE",
+      "description": "SQPE + place_prob",
+      "n": 343,
+      "wins": 74,
+      "places": 181,
+      "strike_rate": 0.2157,
+      "frame_rate": 0.5277,
+      "flat_roi": 0.0364,
+      "avg_sp": 9.665,
+      "median_sp": 5.5,
+      "vp30_count": 113,
+      "top_selection_changes_vs_sqpe": 143
+    },
+    {
+      "config": "SQPE_PLUS_LONGSHOT",
+      "description": "SQPE + longshot_score",
+      "n": 334,
+      "wins": 51,
+      "places": 142,
+      "strike_rate": 0.1527,
+      "frame_rate": 0.4251,
+      "flat_roi": -0.0651,
+      "avg_sp": 14.353,
+      "median_sp": 9.0,
+      "vp30_count": 54,
+      "top_selection_changes_vs_sqpe": 94
+    },
+    {
+      "config": "SQPE_PLUS_IMPROVE_MDS",
+      "description": "SQPE + improvement_score + MDS",
+      "n": 338,
+      "wins": 82,
+      "places": 185,
+      "strike_rate": 0.2426,
+      "frame_rate": 0.5473,
+      "flat_roi": 0.1353,
+      "avg_sp": 9.737,
+      "median_sp": 5.5,
+      "vp30_count": 74,
+      "top_selection_changes_vs_sqpe": 122
+    }
+  ],
+  "classifications": [
+    {
+      "config": "SQPE_PLUS_IMPROVEMENT",
+      "sidecar": "improvement_score",
+      "classification": "SIDECAR_BADGE_ONLY",
+      "n": 333,
+      "strike_rate": 0.2012,
+      "frame_rate": 0.4745,
+      "flat_roi": 0.0385,
+      "avg_sp": 11.645,
+      "top_changes_vs_sqpe": 96
+    },
+    {
+      "config": "SQPE_PLUS_MDS",
+      "sidecar": "market_deception_score",
+      "classification": "SIDECAR_HELPS_FRAME",
+      "n": 342,
+      "strike_rate": 0.2515,
+      "frame_rate": 0.5848,
+      "flat_roi": 0.0365,
+      "avg_sp": 8.181,
+      "top_changes_vs_sqpe": 91
+    },
+    {
+      "config": "SQPE_PLUS_PLACE",
+      "sidecar": "place_prob",
+      "classification": "SIDECAR_HELPS_FRAME",
+      "n": 343,
+      "strike_rate": 0.2157,
+      "frame_rate": 0.5277,
+      "flat_roi": 0.0364,
+      "avg_sp": 9.665,
+      "top_changes_vs_sqpe": 143
+    },
+    {
+      "config": "SQPE_PLUS_LONGSHOT",
+      "sidecar": "longshot_score",
+      "classification": "SIDECAR_FREEZE_CANDIDATE",
+      "n": 334,
+      "strike_rate": 0.1527,
+      "frame_rate": 0.4251,
+      "flat_roi": -0.0651,
+      "avg_sp": 14.353,
+      "top_changes_vs_sqpe": 94
+    },
+    {
+      "config": "SQPE_PLUS_IMPROVE_MDS",
+      "sidecar": "improvement_score + MDS",
+      "classification": "SIDECAR_HELPS_VALUE",
+      "n": 338,
+      "strike_rate": 0.2426,
+      "frame_rate": 0.5473,
+      "flat_roi": 0.1353,
+      "avg_sp": 9.737,
+      "top_changes_vs_sqpe": 122
+    }
+  ],
+  "qa": {
+    "A_sqpe_alone_better_roi": false,
+    "B_ensemble_improves_frame_but_hurts_roi": false,
+    "C_sidecars_improve_frame": [
+      "improvement_score",
+      "market_deception_score",
+      "place_prob"
+    ],
+    "D_sidecars_improve_ev": [
+      "improvement_score + MDS"
+    ],
+    "E_sidecars_overbet_short": [],
+    "F_sidecars_badge_only": [
+      "improvement_score"
+    ]
+  }
+}

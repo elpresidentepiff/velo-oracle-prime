@@ -1,0 +1,355 @@
+{
+  "date": "2026-05-17",
+  "generated_at": "2026-05-18T00:41:00.292197+00:00",
+  "overall_status": "WARN",
+  "next_safe_command": "python scripts/build_rp_velo_convergence_report.py --date 2026-05-17",
+  "blocked_reason": null,
+  "latest_prediction_job": {
+    "id": "6bd1ce37-b9b2-4586-9f28-855805876496",
+    "service_name": "velo-prime-scoring",
+    "run_type": "daily_scoring",
+    "source_date": "2026-05-17",
+    "status": "PASS",
+    "run_state": "completed",
+    "started_at": "2026-05-17T08:59:39.425194+00:00",
+    "finished_at": "2026-05-17T09:00:46.264475+00:00",
+    "races_processed": 30,
+    "runners_processed": 261,
+    "error_message": null,
+    "trigger_source": "manual",
+    "commit_sha": "619f25a4416c8d659a60d5d6db262b626c3f57c7",
+    "environment": "production"
+  },
+  "prediction": {
+    "status": "PASS",
+    "verdict_count": 30,
+    "vp30_count": 16,
+    "vp40_count": 6,
+    "mds_high_count": 0,
+    "improvement_high_count": 1,
+    "tier_counts": {
+      "A": 8,
+      "B": 18,
+      "C": 0,
+      "X": 4
+    },
+    "named_lanes": {
+      "MDS_HIGH_LANE": {
+        "count": 0,
+        "horses": []
+      },
+      "IMPROVER_LANE": {
+        "count": 1,
+        "horses": [
+          {
+            "horse": "Ride The Thunder",
+            "race": "Hamilton 16:45",
+            "vp": 0.382,
+            "imp": 0.411
+          }
+        ]
+      },
+      "VP40_LANE": {
+        "count": 6,
+        "horses": [
+          {
+            "horse": "Plaid",
+            "race": "Hamilton 17:45",
+            "vp": 0.448,
+            "tier": "B"
+          },
+          {
+            "horse": "Trojan Soldier",
+            "race": "Ripon 14:17",
+            "vp": 0.467,
+            "tier": "B"
+          },
+          {
+            "horse": "Cawthorne Cracker",
+            "race": "Stratford 15:05",
+            "vp": 0.554,
+            "tier": "A"
+          },
+          {
+            "horse": "A Little Something",
+            "race": "Stratford 16:05",
+            "vp": 0.457,
+            "tier": "B"
+          },
+          {
+            "horse": "Arrycan",
+            "race": "Stratford 17:05",
+            "vp": 0.673,
+            "tier": "A"
+          },
+          {
+            "horse": "Lightsoutandaway",
+            "race": "Stratford 17:35",
+            "vp": 0.522,
+            "tier": "B"
+          }
+        ]
+      },
+      "VP40_TIER_A_LANE": {
+        "count": 2,
+        "horses": [
+          {
+            "horse": "Cawthorne Cracker",
+            "race": "Stratford 15:05",
+            "vp": 0.554,
+            "tier": "A"
+          },
+          {
+            "horse": "Arrycan",
+            "race": "Stratford 17:05",
+            "vp": 0.673,
+            "tier": "A"
+          }
+        ]
+      },
+      "SHORTFAV_VP30": {
+        "count": 0,
+        "horses": []
+      },
+      "MIDPRICE_ROUTER_QUAL": {
+        "count": 0,
+        "horses": []
+      },
+      "MIDPRICE_SUPPRESS": {
+        "count": 0,
+        "horses": []
+      }
+    },
+    "midprice_advisory": {
+      "router_qualified_count": 14,
+      "router_suppressed_advisory_count": 16,
+      "suppressed_horses": [
+        {
+          "race": "Hamilton 15:45",
+          "horse": "Dakota Brave",
+          "vp": 0.179,
+          "tier": "X",
+          "lane": "NO_BET"
+        },
+        {
+          "race": "Hamilton 17:15",
+          "horse": "Marty Hopkirk",
+          "vp": 0.365,
+          "tier": "A",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Hamilton 18:15",
+          "horse": "Who Wants Me",
+          "vp": 0.339,
+          "tier": "B",
+          "lane": "NO_BET"
+        },
+        {
+          "race": "Naas 13:56",
+          "horse": "Bobby Mcgee",
+          "vp": 0.296,
+          "tier": "B",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Naas 14:26",
+          "horse": "Senna'S Girl",
+          "vp": 0.225,
+          "tier": "B",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Naas 14:56",
+          "horse": "Cyclone Code",
+          "vp": 0.191,
+          "tier": "X",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Naas 15:26",
+          "horse": "Guardian Of Realm",
+          "vp": 0.147,
+          "tier": "B",
+          "lane": "NO_BET"
+        },
+        {
+          "race": "Naas 15:56",
+          "horse": "Rahmi",
+          "vp": 0.228,
+          "tier": "B",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Naas 16:26",
+          "horse": "Victorious",
+          "vp": 0.224,
+          "tier": "B",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Naas 17:26",
+          "horse": "Likedbymike",
+          "vp": 0.254,
+          "tier": "B",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Ripon 14:47",
+          "horse": "Crimson Blaze",
+          "vp": 0.146,
+          "tier": "X",
+          "lane": "NO_BET"
+        },
+        {
+          "race": "Ripon 15:17",
+          "horse": "Everyoneknowsadave",
+          "vp": 0.253,
+          "tier": "B",
+          "lane": "NO_BET"
+        },
+        {
+          "race": "Ripon 16:20",
+          "horse": "Black Orchid",
+          "vp": 0.131,
+          "tier": "X",
+          "lane": "NO_BET"
+        },
+        {
+          "race": "Ripon 16:50",
+          "horse": "Far Ahead",
+          "vp": 0.221,
+          "tier": "B",
+          "lane": "NO_BET"
+        },
+        {
+          "race": "Ripon 17:20",
+          "horse": "What A Tahoo",
+          "vp": 0.2,
+          "tier": "B",
+          "lane": "ATTACK_LANE_MISS"
+        },
+        {
+          "race": "Stratford 16:35",
+          "horse": "A Good Yomp",
+          "vp": 0.172,
+          "tier": "B",
+          "lane": "ATTACK_LANE_MISS"
+        }
+      ],
+      "note": "ADVISORY ONLY \u2014 no scoring or staking change"
+    }
+  },
+  "corpus_progress": {
+    "training_safe_rows": 1310,
+    "milestone_2k_target": 2000,
+    "rows_to_2k": 690,
+    "pct_to_2k": 65.5,
+    "corpus_name": "SIGMA_2K_SAFE_TRAINING_SLICE_V1",
+    "growth_path": "daily_clean_accumulation"
+  },
+  "racing_post": {
+    "status": "PASS",
+    "races": 30,
+    "horses": 261,
+    "coverage_pct": 100.0
+  },
+  "cashrun": {
+    "status": "MISSING",
+    "ready": 0,
+    "watch": 0,
+    "weak": 0,
+    "suppress": 0,
+    "top_watch": []
+  },
+  "convergence": {
+    "status": "MISSING",
+    "high_convergence_count": 0,
+    "conflict_count": 0,
+    "cashrun_velo_overlap_count": 0
+  },
+  "sigma": {
+    "status": "PASS",
+    "result_races": 30,
+    "matched_races": 21,
+    "audit_rows": 21
+  },
+  "learning": {
+    "allowed": true,
+    "reason": "READY",
+    "approved_shadow_target": "shadow_full_train_v2",
+    "shadow_race_count": 1975,
+    "consumed_live_count": 0
+  },
+  "state_audit": {
+    "live_state_hash": "1016D89DCEB28DA5D5CAD5C33850D6FE84040569FCF399F1E60745D513D997A3",
+    "live_state_touched": false,
+    "cloud_backup_updated_at": "2026-05-02T19:55:26.059253",
+    "cloud_backup_touched": false
+  },
+  "repo": {
+    "dirty": true,
+    "forbidden_files_modified": false,
+    "current_branch": "ops-worker-shadow-loop-preserve",
+    "ops_worker_visible": true
+  },
+  "safety": {
+    "classification": "WARN",
+    "checks": [
+      {
+        "name": "live_state_git_clean",
+        "status": "PASS",
+        "severity": "BLOCK",
+        "detail": "live_hash=1016D89DCEB28DA5D5CAD5C33850D6FE84040569FCF399F1E60745D513D997A3"
+      },
+      {
+        "name": "consumed_live_zero",
+        "status": "PASS",
+        "severity": "BLOCK",
+        "detail": "consumed_live_count=0"
+      },
+      {
+        "name": "forbidden_paths_clean",
+        "status": "PASS",
+        "severity": "BLOCK",
+        "detail": "no forbidden paths modified"
+      },
+      {
+        "name": "secret_files_clean",
+        "status": "PASS",
+        "severity": "BLOCK",
+        "detail": "no secret-like paths modified"
+      },
+      {
+        "name": "verify_false_absent",
+        "status": "PASS",
+        "severity": "BLOCK",
+        "detail": "no verify=False hits in changed files"
+      },
+      {
+        "name": "new_executable_scripts_staged",
+        "status": "PASS",
+        "severity": "BLOCK",
+        "detail": "no staged executable additions"
+      },
+      {
+        "name": "repo_dirty",
+        "status": "FAIL",
+        "severity": "WARN",
+        "detail": "modified_paths=1340"
+      },
+      {
+        "name": "runbook_docs_dirty",
+        "status": "FAIL",
+        "severity": "WARN",
+        "detail": "docs/engineering/VELO_LLM_COUNCIL_V1.md, docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md"
+      },
+      {
+        "name": "prediction_overwrite_risk",
+        "status": "PASS",
+        "severity": "BLOCK",
+        "detail": "prediction_exists=True"
+      }
+    ]
+  }
+}

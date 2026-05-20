@@ -1,0 +1,40 @@
+{
+  "rows_generated": 3,
+  "rows_training_safe": 1,
+  "rows_leakage_risk": 2,
+  "mpi_sum_status": "PASS",
+  "chaos_within_race_status": "PASS",
+  "reconstruction_version_present": true,
+  "batch_id_present": true,
+  "audit_id_present": true,
+  "supabase_writes_attempted": false,
+  "sample_rows": [
+    {
+      "race_id": "verify_race_001",
+      "horse_id": "h1",
+      "reconstruction_version": "V17_REPAIR_B1",
+      "batch_id": "1f439036-119a-4326-8935-fd93e4bd5b6c",
+      "audit_id": "8272e91e-4215-4e23-8e9a-6b8721d27377",
+      "training_safe": true,
+      "leakage_status": "CLEAN"
+    },
+    {
+      "race_id": "verify_race_001",
+      "horse_id": "h2",
+      "reconstruction_version": "V17_REPAIR_B1",
+      "batch_id": "1f439036-119a-4326-8935-fd93e4bd5b6c",
+      "audit_id": "8272e91e-4215-4e23-8e9a-6b8721d27377",
+      "training_safe": false,
+      "leakage_status": "LEAKAGE_RISK"
+    },
+    {
+      "race_id": "verify_race_001",
+      "horse_id": "h3",
+      "reconstruction_version": "V17_REPAIR_B1",
+      "batch_id": "1f439036-119a-4326-8935-fd93e4bd5b6c",
+      "audit_id": "8272e91e-4215-4e23-8e9a-6b8721d27377",
+      "training_safe": false,
+      "leakage_status": "LEAKAGE_RISK"
+    }
+  ]
+}

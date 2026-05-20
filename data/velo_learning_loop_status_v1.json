@@ -1,0 +1,36 @@
+{
+  "report_version": "1.0",
+  "timestamp": "2026-05-06T03:30:00Z",
+  "loop_status": {
+    "overall": "SHADOW_ONLY",
+    "live_learning": "BLOCKED",
+    "shadow_learning": "ACTIVE_GATED"
+  },
+  "safety_gates": {
+    "containment": "PASS",
+    "hfs_training_safe": false,
+    "learning_allowed_default": false,
+    "supabase_writes_disabled": true,
+    "live_state_protection": "ACTIVE"
+  },
+  "components": {
+    "prediction_to_sigma": "CONNECTED",
+    "sigma_to_eod_bridge": "CONNECTED",
+    "eod_bridge_to_loss_ledger": "CONNECTED",
+    "loss_ledger_to_shadow_events": "CONNECTED",
+    "shadow_events_to_adapter": "CONNECTED",
+    "adapter_to_shadow_state": "GATED_BY_LEARNING_ALLOWED",
+    "adapter_to_live_state": "DISCONNECTED"
+  },
+  "blockers": [
+    "HFS_TRAINING_SAFE is FALSE",
+    "Playbook G direct integration is UNSAFE",
+    "Sentient State is STALE (last updated 2026-04-25)"
+  ],
+  "required_promotion_gates": [
+    "HFS repair audit PASS",
+    "Shadow loop outcome validation (7-day shadow run)",
+    "Idempotency verified in production events",
+    "Explicit VÉLØ Command Authority sign-off"
+  ]
+}

@@ -1,0 +1,29 @@
+diff --git a/app/services/velo_prime_service.py b/app/services/velo_prime_service.py
+index 3a43e1b..4a7d558 100644
+--- a/app/services/velo_prime_service.py
++++ b/app/services/velo_prime_service.py
+@@ -1051,6 +1051,24 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
+ 
+         if _schema_drift:
+             return False
++
++        # Upsert race metadata into races table so governed card can read
++        # course/off_time without needing the local JSON file.
++        try:
++            from datetime import date as _date
++            _race_row = {
++                "race_id":    race.get("race_id"),
++                "course":     race.get("course") or "",
++                "race_name":  race.get("race_name") or race.get("name") or "",
++                "time":       race.get("off_time") or race.get("time") or "",
++                "date":       race.get("date") or _date.today().isoformat(),
++                "race_type":  race.get("type") or "",
++                "class":      str(race.get("class") or ""),
++            }
++            sb.table("races").upsert(_race_row, on_conflict="race_id").execute()
++        except Exception as _race_err:
++            log.warning("races upsert skipped for %s: %s", race.get("race_id"), _race_err)
++
+         log.info(
+             "Persisted verdict for race %s — top: %s (%.4f)",
+             race.get("race_id"),

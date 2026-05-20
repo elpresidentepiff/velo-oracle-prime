@@ -1,0 +1,119 @@
+{
+  "generated_at": "2026-05-15T01:54:30.959230Z",
+  "date_audited": "2026-05-14",
+  "classification": "SENTIENT_DAILY_BRIDGE_READY_FOR_7_DAY_SHADOW",
+  "A_events_scanned": {
+    "events_scanned": 35
+  },
+  "B_observe_attempted": {
+    "observe_attempted": 35
+  },
+  "C_observe_succeeded": {
+    "observe_succeeded": 35,
+    "success_rate_pct": 100.0,
+    "pass_threshold_pct": 99.0,
+    "pass": true
+  },
+  "D_failed_events": {
+    "failed_count": 0,
+    "failures": []
+  },
+  "E_learning_allowed": {
+    "learning_allowed_true": 35,
+    "learning_allowed_false": 0,
+    "block_reason_breakdown": {},
+    "pass": true
+  },
+  "F_mpi_stats": {
+    "null_count": 0,
+    "coverage_pct": 100.0,
+    "source_breakdown": {
+      "derived_from_vp_mds": 35
+    },
+    "count": 35,
+    "min": 4.95,
+    "max": 54.95,
+    "mean": 17.8517,
+    "variance": 132.245238,
+    "pass": true
+  },
+  "G_chaos_bloom_stats": {
+    "null_count": 0,
+    "coverage_pct": 100.0,
+    "source_breakdown": {
+      "derived_from_macro_fields": 35
+    },
+    "typeerror_risk": false,
+    "count": 35,
+    "min": 30.0,
+    "max": 30.0,
+    "mean": 30.0,
+    "variance": 0.0,
+    "pass": true
+  },
+  "H_sp_provenance": {
+    "real_sp_count": 35,
+    "hardcoded_count": 0,
+    "missing_count": 0,
+    "source_breakdown": {
+      "result_runner_sp_dec": 35
+    },
+    "coverage_pct": 100.0,
+    "count": 35,
+    "min": 1.67,
+    "max": 101.0,
+    "mean": 11.2486,
+    "variance": 380.300507,
+    "pass": true
+  },
+  "I_idempotency": {
+    "total_keys": 35,
+    "duplicate_count": 0,
+    "duplicate_examples": [],
+    "pass": true
+  },
+  "J_target_state": {
+    "distinct_targets": [
+      "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_shadow_daily.json"
+    ],
+    "target_is_shadow": true,
+    "target_not_live": true
+  },
+  "K_live_hash": {
+    "live_hash_before": "1016d89dceb28da5d5cad5c33850d6fe\u2026",
+    "live_hash_after": "1016d89dceb28da5d5cad5c33850d6fe\u2026",
+    "live_state_untouched": true,
+    "pass": true
+  },
+  "L_state_mutation": {
+    "shadow_races_before": 41,
+    "shadow_races_after": 76,
+    "delta": 35,
+    "state_mutated": true,
+    "aggression": 0.3
+  },
+  "M_DAILY_CLOSE_READY": {
+    "DAILY_CLOSE_READY": true,
+    "criteria": {
+      "live_untouched": true,
+      "observe_success_99pct": true,
+      "mpi_no_null": true,
+      "chaos_no_null": true,
+      "no_duplicate_keys": true
+    }
+  },
+  "N_LIVE_PROMOTION_READY": {
+    "LIVE_PROMOTION_READY": false,
+    "blockers": [
+      "HFS_TRAINING_SAFE=False \u2014 hard gate unchanged",
+      "7-14 day shadow accumulation not yet complete",
+      "Operator sign-off not yet given"
+    ]
+  },
+  "O_blockers": {
+    "blockers": [
+      "HFS_TRAINING_SAFE=False \u2014 live promotion blocked",
+      "7-14 day shadow accumulation must complete before promotion review"
+    ]
+  }
+}

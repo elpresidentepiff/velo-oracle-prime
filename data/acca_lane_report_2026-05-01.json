@@ -1,0 +1,99 @@
+{
+  "date": "2026-05-01",
+  "status": "SHADOW_OPERATOR_ONLY",
+  "lane": "ACCA_LANE_V1",
+  "day_regime": "NO_ACCA_DAY",
+  "candidates_scanned": 1,
+  "cashrun_status": "PRESENT",
+  "industry_status": "MISSING_OPTIONAL",
+  "racing_api_enrichment_status": "MISSING_OPTIONAL",
+  "source_summary": {
+    "metadata_complete_n": 0,
+    "metadata_total_n": 1,
+    "metadata_coverage": 0.0
+  },
+  "role_counts": {
+    "BANKER": 0,
+    "GLUE": 0,
+    "BOOSTER": 0,
+    "WILDCARD": 0,
+    "TRAP": 0,
+    "BLOCKED": 1
+  },
+  "folds": {
+    "strongest_2_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "strongest_3_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "strongest_4_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "controlled_5_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "speculative_6_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    }
+  },
+  "trap_legs": [],
+  "rejected_legs": [
+    {
+      "horse": "",
+      "course": "",
+      "off_time": "",
+      "leg_role": "BLOCKED",
+      "reasons": [
+        "UNRESOLVED_METADATA"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "horse": "",
+      "horse_id": "h1",
+      "race_id": "r1",
+      "course": "",
+      "off_time": "",
+      "race_name": "",
+      "vp": 0.4,
+      "decision_tier": "?",
+      "place_prob": 0.0,
+      "mds": 0.0,
+      "improvement_score": 0.0,
+      "candidate_execution_allowed": null,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [],
+      "suppress_flags": [],
+      "leg_score": 7.0,
+      "leg_role": "BLOCKED",
+      "trap_flags": [
+        "UNRESOLVED_METADATA"
+      ],
+      "source_completeness": "BLOCKED_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 24.0,
+        "place_frame_score": 0.0,
+        "mds_market_shape_score": 0.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 5.0,
+        "negative_adjustments": 22.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ]
+}

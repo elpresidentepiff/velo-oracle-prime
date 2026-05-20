@@ -1,0 +1,205 @@
+{
+  "metadata": {
+    "date": "2026-05-15",
+    "run_at": "2026-05-14T18:56:41.956813",
+    "orchestrator_version": "v0.1-gated"
+  },
+  "evidence_packet": {
+    "metadata": {
+      "date": "2026-05-15",
+      "alt_date": "2026_05_15",
+      "generated_at": "2026-05-14T18:56:41.956765",
+      "status": "LOADED",
+      "council_status": "READY"
+    },
+    "evidence_sources": {
+      "vp30_operator_card": {
+        "source_name": "vp30_operator_card",
+        "status": "FOUND",
+        "path": "data/vp30_operator_card_2026-05-15.md",
+        "date_matched": "2026-05-15",
+        "required_for_release": true,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "racing_api_enrichment": {
+        "source_name": "racing_api_enrichment",
+        "status": "FOUND",
+        "path": "data/racing_api_enrichment_operator_card_2026-05-15.md",
+        "date_matched": "2026-05-15",
+        "required_for_release": true,
+        "label": "SHADOW",
+        "content": ""
+      },
+      "cashrun_report": {
+        "source_name": "cashrun_report",
+        "status": "FOUND",
+        "path": "data/cashrun_report_2026_05_15.md",
+        "date_matched": "2026-05-15",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "live_sidecar_audit": {
+        "source_name": "live_sidecar_audit",
+        "status": "FOUND",
+        "path": "data/live_sidecar_ablation_audit_latest.md",
+        "date_matched": "2026-05-15",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "signal_promotion_board": {
+        "source_name": "signal_promotion_board",
+        "status": "FOUND",
+        "path": "data/signal_promotion_board_latest.md",
+        "date_matched": "2026-05-15",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "router_shadow_audit": {
+        "source_name": "router_shadow_audit",
+        "status": "FOUND",
+        "path": "data/router_shadow_audit_latest.md",
+        "date_matched": "2026-05-15",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "execution_bridge_ledger": {
+        "source_name": "execution_bridge_ledger",
+        "status": "FOUND",
+        "path": "data/velo_execution_bridge_paper_ledger.csv",
+        "date_matched": "2026-05-15",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "one_truth_file": {
+        "source_name": "one_truth_file",
+        "status": "FOUND",
+        "path": "docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md",
+        "date_matched": "2026-05-15",
+        "required_for_release": true,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      }
+    },
+    "verdicts": []
+  },
+  "agent_responses": [
+    {
+      "agent": "DATA AUDITOR",
+      "role": "Data Quality Verification",
+      "response": "Analysis complete for DATA AUDITOR",
+      "labels": [
+        "SHADOW",
+        "MISSING"
+      ]
+    },
+    {
+      "agent": "RACING API CONNECTIONS ANALYST",
+      "role": "Trainer/Jockey Connection Analysis",
+      "response": "Analysis complete for RACING API CONNECTIONS ANALYST",
+      "labels": [
+        "SHADOW",
+        "MISSING"
+      ]
+    },
+    {
+      "agent": "CASHRUN ANALYST",
+      "role": "Handicap Plot Detection",
+      "response": "Analysis complete for CASHRUN ANALYST",
+      "labels": [
+        "SHADOW",
+        "MISSING"
+      ]
+    },
+    {
+      "agent": "MARKET ECONOMIST",
+      "role": "Value and Overbet Analysis",
+      "response": "Analysis complete for MARKET ECONOMIST",
+      "labels": [
+        "SHADOW",
+        "MISSING"
+      ]
+    },
+    {
+      "agent": "RED TEAM SKEPTIC",
+      "role": "Adversarial Analysis",
+      "response": "Analysis complete for RED TEAM SKEPTIC",
+      "labels": [
+        "SHADOW",
+        "MISSING"
+      ]
+    },
+    {
+      "agent": "PRIME CHAIR",
+      "role": "Final Synthesis and Governance",
+      "response": "Analysis complete for PRIME CHAIR",
+      "labels": [
+        "SHADOW",
+        "MISSING"
+      ]
+    }
+  ],
+  "verifications": [
+    {
+      "agent": "DATA AUDITOR",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "RACING API CONNECTIONS ANALYST",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "CASHRUN ANALYST",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "MARKET ECONOMIST",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "RED TEAM SKEPTIC",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "PRIME CHAIR",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    }
+  ],
+  "final_report": "# V\u00c9L\u00d8 LLM Council Operator Report - 2026-05-15\n\n**Run Date:** 2026-05-14T18:56:41.999520\n**Council Status:** READY\n**Status:** SHADOW / OPERATOR ONLY\n\n## 1. Executive Summary (Prime Chair)\nAnalysis complete for PRIME CHAIR\n\n## 2. Agent Deliberations\n### DATA AUDITOR\n**Role:** Data Quality Verification\n**Labels:** SHADOW, MISSING\n**Read:** Analysis complete for DATA AUDITOR\n\n### RACING API CONNECTIONS ANALYST\n**Role:** Trainer/Jockey Connection Analysis\n**Labels:** SHADOW, MISSING\n**Read:** Analysis complete for RACING API CONNECTIONS ANALYST\n\n### CASHRUN ANALYST\n**Role:** Handicap Plot Detection\n**Labels:** SHADOW, MISSING\n**Read:** Analysis complete for CASHRUN ANALYST\n\n### MARKET ECONOMIST\n**Role:** Value and Overbet Analysis\n**Labels:** SHADOW, MISSING\n**Read:** Analysis complete for MARKET ECONOMIST\n\n### RED TEAM SKEPTIC\n**Role:** Adversarial Analysis\n**Labels:** SHADOW, MISSING\n**Read:** Analysis complete for RED TEAM SKEPTIC\n\n## 3. Evidence Status\n- **vp30_operator_card**: FOUND [REQUIRED]\n  - Path: `data/vp30_operator_card_2026-05-15.md`\n- **racing_api_enrichment**: FOUND [REQUIRED]\n  - Path: `data/racing_api_enrichment_operator_card_2026-05-15.md`\n- **cashrun_report**: FOUND \n  - Path: `data/cashrun_report_2026_05_15.md`\n- **live_sidecar_audit**: FOUND \n  - Path: `data/live_sidecar_ablation_audit_latest.md`\n- **signal_promotion_board**: FOUND \n  - Path: `data/signal_promotion_board_latest.md`\n- **router_shadow_audit**: FOUND \n  - Path: `data/router_shadow_audit_latest.md`\n- **execution_bridge_ledger**: FOUND \n  - Path: `data/velo_execution_bridge_paper_ledger.csv`\n- **one_truth_file**: FOUND [REQUIRED]\n  - Path: `docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md`\n\n## 4. Safety Audit\n- NO staking impact confirmed: YES\n- NO weight change impact confirmed: YES\n- NO live Betfair impact confirmed: YES\n",
+  "council_status": "READY"
+}

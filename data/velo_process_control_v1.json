@@ -1,0 +1,52 @@
+{
+  "processes": [
+    {
+      "name": "AGENT_BOOT",
+      "canonical_command": "N/A",
+      "read_first": ["CLAUDE.md", "VELO_MASTER_LOG.md"],
+      "source_of_truth": "ARTIFACT_MAP.md",
+      "output_artifacts": [],
+      "status": "STABLE"
+    },
+    {
+      "name": "DAILY_PREDICTIONS",
+      "canonical_command": "python3 scripts/run_prime_today.py",
+      "read_first": ["docs/VELO_DAILY_PROCESS.md"],
+      "source_of_truth": "Supabase races/runners",
+      "output_artifacts": ["Supabase predictions", "Telegram summary"],
+      "status": "STABLE"
+    },
+    {
+      "name": "PDF_TRACK_FILE_INTAKE",
+      "canonical_command": "python3 scripts/ingest_racecard_pdfs.py",
+      "read_first": ["docs/PDF_PARSING.md"],
+      "source_of_truth": "data/incoming_pdfs/",
+      "output_artifacts": ["Parsed signals in Supabase"],
+      "status": "STABLE"
+    },
+    {
+      "name": "SIGMA_RESULTS",
+      "canonical_command": "python3 scripts/run_results_sigma.py",
+      "read_first": ["docs/VELO_SIGMA_FORENSIC_AUDIT.md"],
+      "source_of_truth": "Racing API /results",
+      "output_artifacts": ["runner_results", "Telegram report"],
+      "status": "STABLE"
+    },
+    {
+      "name": "DASHBOARD_DAILY_PUBLISH",
+      "canonical_command": "python3 scripts/publish_daily_predictions_to_dashboard.py",
+      "read_first": ["docs/engineering/DASHBOARD_DAILY_PREDICTIONS_PUBLISHER_V1.md"],
+      "source_of_truth": "velo_verdicts table",
+      "output_artifacts": ["data/dashboard_daily_predictions_YYYYMMDD.json"],
+      "status": "STABLE"
+    },
+    {
+      "name": "HFS_SIGNAL_INTEGRITY",
+      "canonical_command": "python3 scripts/audit_hfs_signal_integrity_block001.py",
+      "read_first": ["docs/FEATURE_MART.md"],
+      "source_of_truth": "historical_feature_store",
+      "output_artifacts": ["Audit reports"],
+      "status": "DEGRADED (Flat Signals)"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "api_name": "The Racing API",
+  "plan_tier": "Standard",
+  "rate_limit": {
+    "requests_per_second": 3,
+    "enforcement": "Strict",
+    "headers_required": ["Authorization (Basic)", "User-Agent", "Accept (application/json)"]
+  },
+  "accessible_endpoints": [
+    "racecards/standard?day=YYYY-MM-DD",
+    "horses/{horse_id}/results"
+  ],
+  "inaccessible_endpoints": [
+    "pro/*",
+    "big-race/*",
+    "betfair_bsp_native"
+  ],
+  "extraction_rules": {
+    "order": [
+      "1. Fetch racecards/standard for target date",
+      "2. Parse runners for base stats (headgear, spotlight, wind_surgery, ofr, rpr, ts, form)",
+      "3. Fetch individual horse results only when necessary (respecting rate limits)"
+    ],
+    "safe_retry_backoff": "Exponential backoff starting at 1s, max 3 retries.",
+    "no_guessed_routes": true
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "template_fields": [
+    "TASK_TYPE",
+    "CURRENT_STATUS",
+    "MISSION",
+    "WHY",
+    "ABSOLUTE_RULES",
+    "FILES_TO_READ",
+    "FILES_ALLOWED_TO_CREATE",
+    "FILES_ALLOWED_TO_CHANGE",
+    "FORBIDDEN_FILES",
+    "COMMANDS_TO_RUN",
+    "REQUIRED_ARTIFACTS",
+    "REQUIRED_TESTS",
+    "PASS_CONDITIONS",
+    "PARTIAL_CONDITIONS",
+    "BLOCKED_CONDITIONS",
+    "FAIL_CONDITIONS",
+    "STOP_CONDITION",
+    "ROLLBACK_PLAN",
+    "COMMIT_ALLOWED",
+    "FILES_ALLOWED_TO_COMMIT",
+    "RETURN_ONLY",
+    "NEXT_GATE"
+  ],
+  "required_sections": [
+    "scope",
+    "safety",
+    "commands",
+    "artifacts",
+    "tests",
+    "verdict rules"
+  ],
+  "pass_conditions": [
+    "required artifacts present",
+    "required tests pass",
+    "forbidden files clean",
+    "return schema complete"
+  ],
+  "blocked_conditions": [
+    "missing credentials",
+    "missing source data",
+    "forbidden file dirty",
+    "unsafe state",
+    "failed preflight"
+  ],
+  "fail_conditions": [
+    "forbidden file changed",
+    "false pass claim",
+    "unsafe write attempted",
+    "missing evidence for claimed result"
+  ],
+  "return_only_fields": [
+    "TASK_TYPE",
+    "COMMANDS_RUN",
+    "EXIT_CODES",
+    "FILES_CREATED",
+    "FILES_CHANGED",
+    "FORBIDDEN_FILES_DIRTY",
+    "TESTS_PASSED",
+    "TESTS_FAILED",
+    "VERDICT",
+    "NEXT_GATE"
+  ]
+}

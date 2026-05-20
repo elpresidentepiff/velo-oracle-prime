@@ -1,135 +1,172 @@
-# VÉLØ ORACLE PRIME
+# VÉLØ Oracle Prime
 
-**A strategic intelligence engine for horse racing prediction, built on verifiable signal, strict quarantine doctrine, and probabilistic scoring.**
+Auditable horse racing prediction and decision-support system.
 
----
-
-## What Is VÉLØ?
-
-VÉLØ Oracle Prime is a data-driven racing intelligence system. It ingests race card data, applies a structured analytical engine (SQPE + quarantine gates), and produces scored strike recommendations with explicit confidence levels. It does not guess. It does not bet on noise. It quarantines races where signal is insufficient.
-
-The engine is built around a core doctrine:
-
-> **Truth before optimization. Memory before learning. Doctrine before power.**
+VÉLØ scores UK/IRE races daily, reconciles predictions against results via a nightly Sigma loop, and accumulates evidence for future model improvement. It is not a live betting system. It is intelligence infrastructure built on an auditable, evidence-gated foundation.
 
 ---
 
-## Core Architecture
+## What It Does
+
+- **Morning:** Ingests Racing Post PDFs, builds a runner profile, scores all races, sends a Telegram card with selections tiered A/B/C/X.
+- **Evening:** Scrapes results, runs a Sigma reconciliation audit, sends Telegram report, updates Supabase, appends to the training corpus.
+- **Shadow gate:** A challenger model runs in parallel, accumulating forward-test evidence toward a 300-runner promotion review gate.
+- **Paper ledger:** An execution bridge simulates bet sizing decisions in SIM-only mode. No live betting.
+
+---
+
+## Current Production Architecture
 
 ```
-[Race Card Ingest]
-       │
-       ▼
-[Feature Forge]  →  Form, Going, Field Size, Trainer Intent, Market Shape
-       │
-       ▼
-[VÉLØ Engine]    →  Quarantine Gates → SQPE Scoring → Verdict
-       │
-       ▼
-[Output Layer]   →  Prediction JSON + Strike Report + Supabase Write
+RP PDFs (morning)
+    │
+    ├─ build_rp_runner_profile.py  →  rp_runner_profile_latest.parquet
+    │
+    └─ run_prime_today.py
+           │
+           ├─ SQPE v17 (0.45 weight) + 7 specialist models
+           ├─ VeloPrimeEnsemble  (src/intelligence/velo_prime_ensemble.py)
+           ├─ Decision tiers: A / B / C / X
+           │
+           ├─ → velo_verdicts (Supabase)
+           └─ → Telegram card + local JSON backup
+
+Results (evening)
+    │
+    ├─ scrape_results_atr.py        →  results_YYYY_MM_DD.json
+    ├─ run_results_sigma.py         →  sigma_audits (Supabase) + Telegram
+    ├─ ingest_results_to_horse_runs.py
+    └─ build_shadow_model_forward_gate.py   (shadow gate tracker)
 ```
 
-**Key Components:**
-
-| Layer | Location | Purpose |
-|:---|:---|:---|
-| API Gateway | `app/api/` | Agent registration, observation, action endpoints |
-| Engine Core | `app/engine/` | SQPE scoring, quarantine gate logic |
-| ML Models | `app/ml/` | Glicko-2 rating, ablation tests, learning gate |
-| Strategy | `app/strategy/` | Value overlay, Kelly staking, market analysis |
-| Workers | `workers/` | Background prediction jobs |
-| Scrapers | `scrapers/` | Race card data ingestion |
+Railway deploys `app/main.py` (FastAPI) on a cron schedule. Supabase is the persistence layer.
 
 ---
 
-## Quarantine Doctrine
+## Local Setup
 
-The engine enforces strict quarantine gates before issuing any strike:
-
-| Gate | Condition | Action |
-|:---|:---|:---|
-| Q5 | Heavy/Soft going + 12+ runners | QUARANTINE |
-| Q6 | < 5 runners | Conditional strike only |
-| Q7 | Maiden with no form data | QUARANTINE |
-| Q8 | Market chaos detected | QUARANTINE |
-| Q9 | Conflicting picks + high chaos | QUARANTINE or LOW |
-
-**Target quarantine rate: 45%.** If the engine is quarantining fewer than 40% of races, the gates are too loose.
-
----
-
-## Confidence Levels
-
-| Level | Conditions |
-|:---|:---|
-| **HIGH** | Small field + consensus OR AW + consensus + chaos ≤ 2 |
-| **MEDIUM** | Consensus + chaos ≤ 3 OR AW + chaos ≤ 3 |
-| **LOW** | Conflicting picks OR chaos 4 OR soft/heavy going |
-| **NONE** | Quarantined — no strike issued |
-
----
-
-## Strike Report Format
-
-Predictions are saved to `predictions/` as JSON and compiled into Markdown/PDF reports in `results/`.
-
-**Sample prediction JSON:**
-```json
-{
-  "race_id": "naas_20260308_race4",
-  "meeting": "Naas",
-  "date": "2026-03-08",
-  "race_number": 4,
-  "time": "16:37",
-  "distance": "2m4f",
-  "going": "HEAVY",
-  "chaos_rating": 3,
-  "quarantine_status": "STRIKE_CONDITIONAL",
-  "top_strike": "Ballygunner Castle",
-  "confidence": "MEDIUM",
-  "suppression_signals": ["S7"]
-}
-```
-
----
-
-## Quick Start
+**Requirements:** Python 3.12, venv
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+git clone https://github.com/elpresidentepiff/velo-oracle-prime
+cd velo-oracle-prime
+python -m venv venv
+source venv/bin/activate       # Linux/Mac
+# venv\Scripts\activate        # Windows
+pip install -r requirements_production.txt
+cp .env.example .env           # fill in your credentials
+```
 
-# Run engine on a race meeting
-python run_daily_predictions.py
-
-# Run tests
-pytest tests/
+**Required env vars** (see `.env.example` for full list):
+```
+SUPABASE_URL=
+SUPABASE_KEY=
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+RACING_API_USERNAME=
+RACING_API_PASSWORD=
 ```
 
 ---
 
-## Documentation
+## Daily Scoring Flow
 
-Full documentation lives in `/docs`:
+```bash
+# Morning — after RP PDFs arrive in data/incoming_pdfs/YYYY-MM-DD/
+source venv/bin/activate
+PYTHONPATH=. python scripts/ops/build_rp_runner_profile.py --date YYYY-MM-DD
+PYTHONPATH=. python scripts/ops/run_prime_today.py
 
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — System design
-- [`docs/VELO_DEVELOPER_BLUEPRINT.md`](docs/VELO_DEVELOPER_BLUEPRINT.md) — Developer guide
-- [`docs/ML_INTEGRATION_GUIDE.md`](docs/ML_INTEGRATION_GUIDE.md) — ML model details
-- [`docs/DATABASE_SCHEMA.md`](docs/DATABASE_SCHEMA.md) — Supabase schema
-- [`docs/QUICK_START.md`](docs/QUICK_START.md) — Getting started
-
----
-
-## Tech Stack
-
-- **Backend:** Python 3.11, FastAPI, Prefect
-- **Database:** Supabase (PostgreSQL)
-- **Deployment:** Railway
-- **ML:** Scikit-learn, XGBoost, Glicko-2
-- **Data:** Racing Post, Racing API, Betfair
+# Evening — after results close
+PYTHONPATH=. python scripts/ops/scrape_results_atr.py --date YYYY-MM-DD
+PYTHONPATH=. python scripts/ops/run_results_sigma.py --date YYYY-MM-DD --notify-telegram
+PYTHONPATH=. python scripts/ops/ingest_results_to_horse_runs.py --date YYYY-MM-DD
+PYTHONPATH=. python scripts/ops/build_innovation_protocol.py --date YYYY-MM-DD
+PYTHONPATH=. python scripts/backtest/build_shadow_model_forward_gate.py
+```
 
 ---
 
-## Doctrine
+## Scripts Layout
 
-*The engine runs when you call it. It learns while it waits.*
+```
+scripts/
+  ops/         Live operational scripts (scoring, sigma, ingestion, reporting)
+  audit/       Forensic audits, evidence analysis, operator visibility tools
+  backtest/    Model training, calibration, shadow gate management
+
+archive/
+  legacy/      Old experiments, stale docs, historical one-off reports
+```
+
+---
+
+## Live vs Shadow vs Paper-Only
+
+| Layer | Status | Description |
+|---|---|---|
+| Scoring (SQPE v17 + ensemble) | **LIVE** | Produces daily verdicts |
+| Telegram reporting | **LIVE** | A/B/C/X card + sigma report |
+| Supabase persistence | **LIVE** | velo_verdicts, sigma_audits |
+| Playbook G / sentient loop | **SHADOW** | Evidence accumulation only |
+| Shadow model (NO_VP_COMPOSITE) | **SHADOW GATE** | n=284/300 — not promoted |
+| VeloExecutionBridge | **PAPER/SIM** | Hard LIVE → RuntimeError gate |
+| Betfair execution | **BLOCKED** | Simulation mode only |
+
+---
+
+## Safety Gates
+
+These are permanent. Never remove them.
+
+```python
+# src/velo/execution_bridge.py
+if os.getenv("VELO_EXECUTION_MODE") == "LIVE":
+    raise RuntimeError("LIVE execution blocked")
+```
+
+**Never import in the live scoring path:**
+- `app/agents/betfair_execution_agent.py` — contains `place_order()`
+- `app/agents/betfair_trading_agents.py` — contains `place_bet()`
+
+**Never commit:** `.env`, credentials, model `.pkl` files.
+
+---
+
+## Where Docs Live
+
+| Document | Location |
+|---|---|
+| **Single source of truth** | `CURRENT_RUNTIME_TRUTH.md` |
+| Engineering decisions | `docs/engineering/` |
+| Process wiring | `docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md` |
+| Shadow model governance | `docs/engineering/VELO_SHADOW_MODEL_ARTIFACT_GOVERNANCE_V1.md` |
+| Safety sentinel | `docs/engineering/VELO_SAFETY_SENTINEL_V1.md` |
+
+---
+
+## Evidence Baseline
+
+49-day audit as of 2026-04-28 (1,391 sigma rows):
+
+| Signal | SR | Frame |
+|---|---|---|
+| Tier A (VP≥0.30) | 40.1% | 77.2% |
+| MDS > 0.50 | 54.8% | 96.8% |
+| improvement_score > 0.40 | 43.5% | 82.3% |
+| VP ≥ 0.30 | 32.2% | 69.3% |
+| Global | 20.6% | 48.4% |
+
+Full audit: `data/evidence_vault/velo_unified_evidence_audit_v1.json`
+
+---
+
+## Legacy History
+
+Historical experiments, old agents, one-off analyses, and stale docs live in:
+
+```
+archive/legacy/2026-05-19-cleanup/
+```
+
+Full git history is preserved from inception (697+ commits).

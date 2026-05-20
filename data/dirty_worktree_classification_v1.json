@@ -1,0 +1,100 @@
+{
+  "worktree_status": "DIRTY",
+  "backup_patch_created": true,
+  "files": {
+    "app/main.py": {
+      "classification": "SHADOW_LOOP_SAFETY_KEEP",
+      "summary": "Added /api/dashboard-daily for Panel C. Enhanced Supabase verdict loading for authoritative scores when local JSON is stale.",
+      "required_for_shadow_heartbeat": false,
+      "touches_live_sentient_state": false,
+      "writes_supabase": false,
+      "changes_live_scoring": false,
+      "changes_dashboard": true,
+      "changes_ingestion": false,
+      "changes_sigma": false,
+      "recommended_action": "KEEP",
+      "risk": "LOW"
+    },
+    "app/playbooks/playbook_g_sentient_loopback.py": {
+      "classification": "SHADOW_LOOP_SAFETY_KEEP",
+      "summary": "Added disable_cloud_backup flag to SentientLoopbackEngine to isolate shadow learning from live Supabase backups.",
+      "required_for_shadow_heartbeat": true,
+      "touches_live_sentient_state": false,
+      "writes_supabase": false,
+      "changes_live_scoring": false,
+      "changes_dashboard": false,
+      "changes_ingestion": false,
+      "changes_sigma": false,
+      "recommended_action": "KEEP",
+      "risk": "LOW"
+    },
+    "app/services/velo_prime_service.py": {
+      "classification": "SHADOW_LOOP_SAFETY_KEEP",
+      "summary": "Added race metadata upsert into 'races' table during verdict persistence to improve dashboard UI reliability.",
+      "required_for_shadow_heartbeat": false,
+      "touches_live_sentient_state": false,
+      "writes_supabase": true,
+      "changes_live_scoring": false,
+      "changes_dashboard": true,
+      "changes_ingestion": false,
+      "changes_sigma": false,
+      "recommended_action": "KEEP",
+      "risk": "LOW"
+    },
+    "app/static/dashboard/index.html": {
+      "classification": "SHADOW_LOOP_SAFETY_KEEP",
+      "summary": "Added UI components for Panel C: Daily Predictions All Runners with prob, MDS, and improvement score metrics.",
+      "required_for_shadow_heartbeat": false,
+      "touches_live_sentient_state": false,
+      "writes_supabase": false,
+      "changes_live_scoring": false,
+      "changes_dashboard": true,
+      "changes_ingestion": false,
+      "changes_sigma": false,
+      "recommended_action": "KEEP",
+      "risk": "LOW"
+    },
+    "scripts/backfill_historical_feature_store.py": {
+      "classification": "HFS_REPAIR_CANDIDATE_HOLD",
+      "summary": "Integration of pure feature functions for MPI/Chaos/Temporal Safety. Hardened leakage detection and provenance.",
+      "required_for_shadow_heartbeat": false,
+      "touches_live_sentient_state": false,
+      "writes_supabase": true,
+      "changes_live_scoring": false,
+      "changes_dashboard": false,
+      "changes_ingestion": false,
+      "changes_sigma": false,
+      "recommended_action": "HOLD",
+      "risk": "MEDIUM"
+    },
+    "scripts/ingest_racecard_pdfs.py": {
+      "classification": "UNAUTHORIZED_REVERT",
+      "summary": "Added bounds checking for PDF table row access.",
+      "required_for_shadow_heartbeat": false,
+      "touches_live_sentient_state": false,
+      "writes_supabase": false,
+      "changes_live_scoring": false,
+      "changes_dashboard": false,
+      "changes_ingestion": true,
+      "changes_sigma": false,
+      "recommended_action": "REVERT",
+      "risk": "LOW"
+    },
+    "scripts/run_results_sigma.py": {
+      "classification": "HEARTBEAT_CRITICAL_KEEP",
+      "summary": "Improved non-runner detection for horses withdrawing before race start to prevent statistical skew.",
+      "required_for_shadow_heartbeat": true,
+      "touches_live_sentient_state": false,
+      "writes_supabase": false,
+      "changes_live_scoring": false,
+      "changes_dashboard": false,
+      "changes_ingestion": false,
+      "changes_sigma": true,
+      "recommended_action": "KEEP",
+      "risk": "LOW"
+    }
+  },
+  "experiments_blocked": true,
+  "hfs_dry_run_blocked": true,
+  "recommended_next_action": "Revert scripts/ingest_racecard_pdfs.py. Commit Heartbeat Critical and Shadow Loop Safety files in a single containment commit. Hold HFS backfill changes."
+}

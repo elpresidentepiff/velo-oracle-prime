@@ -1,0 +1,41 @@
+{
+  "audit_version": "v1",
+  "audit_date": "2026-05-05",
+  "components": {
+    "infrastructure_as_code": {
+      "dockerfile": "PRESENT_ACTIVE",
+      "docker_compose": "PRESENT_ACTIVE",
+      "railway_toml": "PRESENT_ACTIVE"
+    },
+    "ci_cd": {
+      "github_actions": "PRESENT_ACTIVE",
+      "workflows": ["ci.yml", "score-daily.yml", "smoke-prod.yml", "gx-validate.yml", "backfill-sigma.yml", "prefect-smoke.yml"]
+    },
+    "testing": {
+      "test_suite": "PRESENT_PARTIAL",
+      "pre_deploy_tests": "PRESENT_ACTIVE"
+    },
+    "database_migrations": {
+      "alembic": "PRESENT_ACTIVE",
+      "supabase_migrations": "UNKNOWN_NOT_VERIFIED"
+    },
+    "rollback_capability": {
+      "app_deployments": "PRESENT_ACTIVE (via Railway)",
+      "db_migrations": "PRESENT_PARTIAL (via Alembic, but manual intervention likely needed)"
+    },
+    "backups": {
+      "supabase_automated": "UNKNOWN_NOT_VERIFIED"
+    }
+  },
+  "answers": {
+    "A_infrastructure_as_code": "Yes, we have Dockerfiles, docker-compose, and railway.toml.",
+    "B_ci_cd": "Yes, GitHub Actions automatically test and deploy (Railway auto-deploys main branch).",
+    "C_tests_before_deploy": "ci.yml and smoke-prod.yml run automated tests.",
+    "D_app_rollback": "Yes, Railway supports one-click rollbacks to previous deployments.",
+    "E_db_rollback": "Partial. Alembic is present for 'downgrade', but Supabase state rollbacks are complex.",
+    "F_supabase_backups": "Unknown/Not Verified in repo code. Assumed managed by Supabase cloud console.",
+    "G_break_production_response": "If an agent breaks prod, revert the PR in GitHub, wait for CI to greenlight, and let Railway auto-deploy the revert.",
+    "H_rollback_commands": "Alembic: `alembic downgrade -1`. Git: `git revert HEAD`. Railway: UI Rollback.",
+    "I_next_required_creation": "A formal rollback runbook detailing exact steps for Alembic downgrades vs Supabase Point-in-Time Recovery."
+  }
+}

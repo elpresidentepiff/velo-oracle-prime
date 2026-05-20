@@ -1,0 +1,2124 @@
+{
+  "date": "2026-05-17",
+  "status": "SHADOW_OPERATOR_ONLY",
+  "lane": "ACCA_LANE_V1",
+  "day_regime": "ACCA_DAY_THIN",
+  "candidates_scanned": 30,
+  "cashrun_status": "MISSING_OPTIONAL",
+  "industry_status": "PRESENT",
+  "racing_api_enrichment_status": "MISSING_OPTIONAL",
+  "source_summary": {
+    "metadata_complete_n": 30,
+    "metadata_total_n": 30,
+    "metadata_coverage": 1.0
+  },
+  "role_counts": {
+    "BANKER": 1,
+    "GLUE": 5,
+    "BOOSTER": 1,
+    "WILDCARD": 9,
+    "TRAP": 14,
+    "BLOCKED": 0
+  },
+  "folds": {
+    "strongest_2_fold": {
+      "generated": true,
+      "size": 2,
+      "combo_score": 154.3,
+      "legs": [
+        {
+          "horse": "A Little Something",
+          "course": "Stratford",
+          "off_time": "16:05",
+          "race_name": "2m 3f 98y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+          "leg_role": "BOOSTER",
+          "vp": 0.4569,
+          "place_prob": 0.9929,
+          "mds": 0.2796,
+          "leg_score": 58.26
+        },
+        {
+          "horse": "Arrycan",
+          "course": "Stratford",
+          "off_time": "17:05",
+          "race_name": "2m 6f 125y (Class 4) Last 8 outings",
+          "leg_role": "BANKER",
+          "vp": 0.6732,
+          "place_prob": 0.9983,
+          "mds": 0.2429,
+          "leg_score": 76.04
+        }
+      ]
+    },
+    "strongest_3_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "strongest_4_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "controlled_5_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "speculative_6_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    }
+  },
+  "trap_legs": [
+    {
+      "horse": "Plaid",
+      "horse_id": "hrs_44e1c1a0",
+      "race_id": "pdf_956b71d2",
+      "course": "Hamilton",
+      "off_time": "17:45",
+      "race_name": "1m 1f 35y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4475,
+      "decision_tier": "B",
+      "place_prob": 0.9861,
+      "mds": 0.2787,
+      "improvement_score": 0.3395,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 47.54,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 26.85,
+        "place_frame_score": 19.72,
+        "mds_market_shape_score": 6.97,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Trojan Soldier",
+      "horse_id": "hrs_fdf07ede",
+      "race_id": "pdf_4204c21c",
+      "course": "Ripon",
+      "off_time": "14:17",
+      "race_name": "2m (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4674,
+      "decision_tier": "B",
+      "place_prob": 0.9222,
+      "mds": 0.2317,
+      "improvement_score": 0.3111,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 46.28,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 28.04,
+        "place_frame_score": 18.44,
+        "mds_market_shape_score": 5.79,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Everyoneknowsadave",
+      "horse_id": "hrs_33f00f52",
+      "race_id": "pdf_baf0ee46",
+      "course": "Ripon",
+      "off_time": "15:17",
+      "race_name": "1m 1f 170y (Class 5) Last 8 outings",
+      "vp": 0.2531,
+      "decision_tier": "B",
+      "place_prob": 0.8128,
+      "mds": 0.1238,
+      "improvement_score": 0.2535,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.54,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.19,
+        "place_frame_score": 16.26,
+        "mds_market_shape_score": 3.09,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "L'Eagle Aid",
+      "horse_id": "hrs_c2c46474",
+      "race_id": "pdf_cfe427a2",
+      "course": "Hamilton",
+      "off_time": "18:45",
+      "race_name": "1m 3f 15y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3316,
+      "decision_tier": "B",
+      "place_prob": 0.9532,
+      "mds": 0.1667,
+      "improvement_score": 0.276,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 37.13,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 19.9,
+        "place_frame_score": 19.06,
+        "mds_market_shape_score": 4.17,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Victorious",
+      "horse_id": "hrs_c1d8bc8e",
+      "race_id": "pdf_0cf7aa56",
+      "course": "Naas",
+      "off_time": "16:26",
+      "race_name": "5f 205y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2235,
+      "decision_tier": "B",
+      "place_prob": 0.3085,
+      "mds": 0.0152,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 33.96,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.41,
+        "place_frame_score": 6.17,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rahmi",
+      "horse_id": "hrs_c32db251",
+      "race_id": "pdf_b6cd7d6d",
+      "course": "Naas",
+      "off_time": "15:56",
+      "race_name": "7f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2281,
+      "decision_tier": "B",
+      "place_prob": 0.7518,
+      "mds": 0.0434,
+      "improvement_score": 0.0352,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.81,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.69,
+        "place_frame_score": 15.04,
+        "mds_market_shape_score": 1.08,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "A Good Yomp",
+      "horse_id": "hrs_b2dca281",
+      "race_id": "pdf_dbef2381",
+      "course": "Stratford",
+      "off_time": "16:35",
+      "race_name": "2m 70y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1722,
+      "decision_tier": "B",
+      "place_prob": 0.665,
+      "mds": 0.0318,
+      "improvement_score": 0.0768,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 28.43,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.33,
+        "place_frame_score": 13.3,
+        "mds_market_shape_score": 0.8,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Far Ahead",
+      "horse_id": "hrs_96cb9cf0",
+      "race_id": "pdf_94aff569",
+      "course": "Ripon",
+      "off_time": "16:50",
+      "race_name": "1m (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2213,
+      "decision_tier": "B",
+      "place_prob": 0.8471,
+      "mds": 0.1262,
+      "improvement_score": 0.2721,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 27.38,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.28,
+        "place_frame_score": 16.94,
+        "mds_market_shape_score": 3.16,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "What A Tahoo",
+      "horse_id": "hrs_2ccbc6e0",
+      "race_id": "pdf_2412430c",
+      "course": "Ripon",
+      "off_time": "17:20",
+      "race_name": "6f (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2003,
+      "decision_tier": "B",
+      "place_prob": 0.4875,
+      "mds": 0.0096,
+      "improvement_score": 0.0187,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 26.01,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.02,
+        "place_frame_score": 9.75,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Guardian Of Realm",
+      "horse_id": "hrs_013d9376",
+      "race_id": "pdf_157b036e",
+      "course": "Naas",
+      "off_time": "15:26",
+      "race_name": "1m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1467,
+      "decision_tier": "B",
+      "place_prob": 0.2587,
+      "mds": 0.011,
+      "improvement_score": 0.0879,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 18.25,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.8,
+        "place_frame_score": 5.17,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Crimson Blaze",
+      "horse_id": "hrs_725525cb",
+      "race_id": "pdf_e3ffcb4c",
+      "course": "Ripon",
+      "off_time": "14:47",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1461,
+      "decision_tier": "X",
+      "place_prob": 0.1392,
+      "mds": 0.011,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.77,
+        "place_frame_score": 2.78,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cyclone Code",
+      "horse_id": "hrs_22d18689",
+      "race_id": "pdf_c29ed256",
+      "course": "Naas",
+      "off_time": "14:56",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1913,
+      "decision_tier": "X",
+      "place_prob": 0.2358,
+      "mds": 0.0152,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.48,
+        "place_frame_score": 4.72,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Dakota Brave",
+      "horse_id": "hrs_c68cb7b4",
+      "race_id": "pdf_6b3992a4",
+      "course": "Hamilton",
+      "off_time": "15:45",
+      "race_name": "6f 6y (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1791,
+      "decision_tier": "X",
+      "place_prob": 0.2358,
+      "mds": 0.0152,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.75,
+        "place_frame_score": 4.72,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Black Orchid",
+      "horse_id": "hrs_46c2107a",
+      "race_id": "pdf_f1e7bce4",
+      "course": "Ripon",
+      "off_time": "16:20",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1308,
+      "decision_tier": "X",
+      "place_prob": 0.0731,
+      "mds": 0.011,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 7.85,
+        "place_frame_score": 1.46,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ],
+  "rejected_legs": [
+    {
+      "horse": "Plaid",
+      "course": "Hamilton",
+      "off_time": "17:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Trojan Soldier",
+      "course": "Ripon",
+      "off_time": "14:17",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Everyoneknowsadave",
+      "course": "Ripon",
+      "off_time": "15:17",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "L'Eagle Aid",
+      "course": "Hamilton",
+      "off_time": "18:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Victorious",
+      "course": "Naas",
+      "off_time": "16:26",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Rahmi",
+      "course": "Naas",
+      "off_time": "15:56",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "A Good Yomp",
+      "course": "Stratford",
+      "off_time": "16:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Far Ahead",
+      "course": "Ripon",
+      "off_time": "16:50",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "What A Tahoo",
+      "course": "Ripon",
+      "off_time": "17:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Guardian Of Realm",
+      "course": "Naas",
+      "off_time": "15:26",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Crimson Blaze",
+      "course": "Ripon",
+      "off_time": "14:47",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Cyclone Code",
+      "course": "Naas",
+      "off_time": "14:56",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Dakota Brave",
+      "course": "Hamilton",
+      "off_time": "15:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Black Orchid",
+      "course": "Ripon",
+      "off_time": "16:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "horse": "Arrycan",
+      "horse_id": "hrs_a30eefef",
+      "race_id": "pdf_e4430b35",
+      "course": "Stratford",
+      "off_time": "17:05",
+      "race_name": "2m 6f 125y (Class 4) Last 8 outings",
+      "vp": 0.6732,
+      "decision_tier": "A",
+      "place_prob": 0.9983,
+      "mds": 0.2429,
+      "improvement_score": 0.1819,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 76.04,
+      "leg_role": "BANKER",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 19.97,
+        "mds_market_shape_score": 6.07,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cawthorne Cracker",
+      "horse_id": "hrs_455f6741",
+      "race_id": "pdf_53a7b477",
+      "course": "Stratford",
+      "off_time": "15:05",
+      "race_name": "2m 213y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.5542,
+      "decision_tier": "A",
+      "place_prob": 0.9983,
+      "mds": 0.0528,
+      "improvement_score": 0.1161,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 71.29,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 19.97,
+        "mds_market_shape_score": 1.32,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ride The Thunder",
+      "horse_id": "hrs_793e91a2",
+      "race_id": "pdf_dcc698ac",
+      "course": "Hamilton",
+      "off_time": "16:45",
+      "race_name": "1m 5f 16y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.382,
+      "decision_tier": "A",
+      "place_prob": 0.9729,
+      "mds": 0.308,
+      "improvement_score": 0.4114,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 70.08,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 22.92,
+        "place_frame_score": 19.46,
+        "mds_market_shape_score": 7.7,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Royal Bay Cen",
+      "horse_id": "hrs_08cc9830",
+      "race_id": "pdf_d48c083a",
+      "course": "Naas",
+      "off_time": "16:56",
+      "race_name": "5f 205y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3812,
+      "decision_tier": "A",
+      "place_prob": 0.9392,
+      "mds": 0.0698,
+      "improvement_score": 0.1234,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 63.4,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 22.87,
+        "place_frame_score": 18.78,
+        "mds_market_shape_score": 1.75,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Horace Wallace",
+      "horse_id": "hrs_9ac1a08d",
+      "race_id": "pdf_7dd7acb6",
+      "course": "Hamilton",
+      "off_time": "16:15",
+      "race_name": "6f 6y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3562,
+      "decision_tier": "A",
+      "place_prob": 0.9301,
+      "mds": 0.1359,
+      "improvement_score": 0.2248,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 63.37,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 21.37,
+        "place_frame_score": 18.6,
+        "mds_market_shape_score": 3.4,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Marty Hopkirk",
+      "horse_id": "hrs_b257e7ff",
+      "race_id": "pdf_3a839772",
+      "course": "Hamilton",
+      "off_time": "17:15",
+      "race_name": "5f 7y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3655,
+      "decision_tier": "A",
+      "place_prob": 0.8177,
+      "mds": 0.1975,
+      "improvement_score": 0.3845,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 63.22,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 21.93,
+        "place_frame_score": 16.35,
+        "mds_market_shape_score": 4.94,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "A Little Something",
+      "horse_id": "hrs_2af2bc06",
+      "race_id": "pdf_23002736",
+      "course": "Stratford",
+      "off_time": "16:05",
+      "race_name": "2m 3f 98y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4569,
+      "decision_tier": "B",
+      "place_prob": 0.9929,
+      "mds": 0.2796,
+      "improvement_score": 0.1996,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 58.26,
+      "leg_role": "BOOSTER",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 27.41,
+        "place_frame_score": 19.86,
+        "mds_market_shape_score": 6.99,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lightsoutandaway",
+      "horse_id": "hrs_16f3f79a",
+      "race_id": "pdf_29ede0d6",
+      "course": "Stratford",
+      "off_time": "17:35",
+      "race_name": "2m 70y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.5224,
+      "decision_tier": "B",
+      "place_prob": 0.4898,
+      "mds": 0.0152,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 54.18,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 9.8,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Bobby Mcgee",
+      "horse_id": "hrs_14bddb19",
+      "race_id": "pdf_27854d10",
+      "course": "Naas",
+      "off_time": "13:56",
+      "race_name": "1m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2965,
+      "decision_tier": "B",
+      "place_prob": 0.9181,
+      "mds": 0.0424,
+      "improvement_score": 0.1388,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 51.21,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 17.79,
+        "place_frame_score": 18.36,
+        "mds_market_shape_score": 1.06,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Likedbymike",
+      "horse_id": "hrs_2bf875fc",
+      "race_id": "pdf_300b1896",
+      "course": "Naas",
+      "off_time": "17:26",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2541,
+      "decision_tier": "B",
+      "place_prob": 0.8925,
+      "mds": 0.0512,
+      "improvement_score": 0.1199,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 48.38,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.25,
+        "place_frame_score": 17.85,
+        "mds_market_shape_score": 1.28,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Beaujolais Nouveau",
+      "horse_id": "hrs_01807e56",
+      "race_id": "pdf_a9f63963",
+      "course": "Ripon",
+      "off_time": "15:50",
+      "race_name": "6f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3615,
+      "decision_tier": "A",
+      "place_prob": 0.7043,
+      "mds": 0.0886,
+      "improvement_score": 0.1552,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 47.99,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 21.69,
+        "place_frame_score": 14.09,
+        "mds_market_shape_score": 2.21,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Plaid",
+      "horse_id": "hrs_44e1c1a0",
+      "race_id": "pdf_956b71d2",
+      "course": "Hamilton",
+      "off_time": "17:45",
+      "race_name": "1m 1f 35y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4475,
+      "decision_tier": "B",
+      "place_prob": 0.9861,
+      "mds": 0.2787,
+      "improvement_score": 0.3395,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 47.54,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 26.85,
+        "place_frame_score": 19.72,
+        "mds_market_shape_score": 6.97,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "I'M Dan Dare",
+      "horse_id": "hrs_003725a6",
+      "race_id": "pdf_d8c0d5a3",
+      "course": "Ripon",
+      "off_time": "17:50",
+      "race_name": "6f (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3927,
+      "decision_tier": "A",
+      "place_prob": 0.6274,
+      "mds": 0.0115,
+      "improvement_score": 0.0427,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 46.4,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 23.56,
+        "place_frame_score": 12.55,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Trojan Soldier",
+      "horse_id": "hrs_fdf07ede",
+      "race_id": "pdf_4204c21c",
+      "course": "Ripon",
+      "off_time": "14:17",
+      "race_name": "2m (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4674,
+      "decision_tier": "B",
+      "place_prob": 0.9222,
+      "mds": 0.2317,
+      "improvement_score": 0.3111,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 46.28,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 28.04,
+        "place_frame_score": 18.44,
+        "mds_market_shape_score": 5.79,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Who Wants Me",
+      "horse_id": "hrs_5678f175",
+      "race_id": "pdf_a8d93092",
+      "course": "Hamilton",
+      "off_time": "18:15",
+      "race_name": "6f 6y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3387,
+      "decision_tier": "B",
+      "place_prob": 0.9051,
+      "mds": 0.1382,
+      "improvement_score": 0.2683,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 45.88,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 20.32,
+        "place_frame_score": 18.1,
+        "mds_market_shape_score": 3.45,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Am The Moon",
+      "horse_id": "hrs_5cd5c136",
+      "race_id": "pdf_3e8b9d3a",
+      "course": "Stratford",
+      "off_time": "15:35",
+      "race_name": "3m 2f 83y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3541,
+      "decision_tier": "B",
+      "place_prob": 0.9349,
+      "mds": 0.0443,
+      "improvement_score": 0.0576,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 45.05,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 21.25,
+        "place_frame_score": 18.7,
+        "mds_market_shape_score": 1.11,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Senna'S Girl",
+      "horse_id": "hrs_a7ae8798",
+      "race_id": "pdf_9d21497c",
+      "course": "Naas",
+      "off_time": "14:26",
+      "race_name": "1m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2246,
+      "decision_tier": "B",
+      "place_prob": 0.7863,
+      "mds": 0.0183,
+      "improvement_score": 0.1099,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 43.66,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.48,
+        "place_frame_score": 15.73,
+        "mds_market_shape_score": 0.46,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Our Guide",
+      "horse_id": "hrs_c0ff11b6",
+      "race_id": "pdf_ad87ad31",
+      "course": "Stratford",
+      "off_time": "14:35",
+      "race_name": "2m 6f 7y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3508,
+      "decision_tier": "B",
+      "place_prob": 0.3245,
+      "mds": 0.0125,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 41.85,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 21.05,
+        "place_frame_score": 6.49,
+        "mds_market_shape_score": 0.31,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Everyoneknowsadave",
+      "horse_id": "hrs_33f00f52",
+      "race_id": "pdf_baf0ee46",
+      "course": "Ripon",
+      "off_time": "15:17",
+      "race_name": "1m 1f 170y (Class 5) Last 8 outings",
+      "vp": 0.2531,
+      "decision_tier": "B",
+      "place_prob": 0.8128,
+      "mds": 0.1238,
+      "improvement_score": 0.2535,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.54,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.19,
+        "place_frame_score": 16.26,
+        "mds_market_shape_score": 3.09,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "L'Eagle Aid",
+      "horse_id": "hrs_c2c46474",
+      "race_id": "pdf_cfe427a2",
+      "course": "Hamilton",
+      "off_time": "18:45",
+      "race_name": "1m 3f 15y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3316,
+      "decision_tier": "B",
+      "place_prob": 0.9532,
+      "mds": 0.1667,
+      "improvement_score": 0.276,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 37.13,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 19.9,
+        "place_frame_score": 19.06,
+        "mds_market_shape_score": 4.17,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Victorious",
+      "horse_id": "hrs_c1d8bc8e",
+      "race_id": "pdf_0cf7aa56",
+      "course": "Naas",
+      "off_time": "16:26",
+      "race_name": "5f 205y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2235,
+      "decision_tier": "B",
+      "place_prob": 0.3085,
+      "mds": 0.0152,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 33.96,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.41,
+        "place_frame_score": 6.17,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rahmi",
+      "horse_id": "hrs_c32db251",
+      "race_id": "pdf_b6cd7d6d",
+      "course": "Naas",
+      "off_time": "15:56",
+      "race_name": "7f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2281,
+      "decision_tier": "B",
+      "place_prob": 0.7518,
+      "mds": 0.0434,
+      "improvement_score": 0.0352,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.81,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.69,
+        "place_frame_score": 15.04,
+        "mds_market_shape_score": 1.08,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "A Good Yomp",
+      "horse_id": "hrs_b2dca281",
+      "race_id": "pdf_dbef2381",
+      "course": "Stratford",
+      "off_time": "16:35",
+      "race_name": "2m 70y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1722,
+      "decision_tier": "B",
+      "place_prob": 0.665,
+      "mds": 0.0318,
+      "improvement_score": 0.0768,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 28.43,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.33,
+        "place_frame_score": 13.3,
+        "mds_market_shape_score": 0.8,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Far Ahead",
+      "horse_id": "hrs_96cb9cf0",
+      "race_id": "pdf_94aff569",
+      "course": "Ripon",
+      "off_time": "16:50",
+      "race_name": "1m (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2213,
+      "decision_tier": "B",
+      "place_prob": 0.8471,
+      "mds": 0.1262,
+      "improvement_score": 0.2721,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 27.38,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.28,
+        "place_frame_score": 16.94,
+        "mds_market_shape_score": 3.16,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "What A Tahoo",
+      "horse_id": "hrs_2ccbc6e0",
+      "race_id": "pdf_2412430c",
+      "course": "Ripon",
+      "off_time": "17:20",
+      "race_name": "6f (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2003,
+      "decision_tier": "B",
+      "place_prob": 0.4875,
+      "mds": 0.0096,
+      "improvement_score": 0.0187,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 26.01,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.02,
+        "place_frame_score": 9.75,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Guardian Of Realm",
+      "horse_id": "hrs_013d9376",
+      "race_id": "pdf_157b036e",
+      "course": "Naas",
+      "off_time": "15:26",
+      "race_name": "1m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1467,
+      "decision_tier": "B",
+      "place_prob": 0.2587,
+      "mds": 0.011,
+      "improvement_score": 0.0879,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 18.25,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.8,
+        "place_frame_score": 5.17,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Crimson Blaze",
+      "horse_id": "hrs_725525cb",
+      "race_id": "pdf_e3ffcb4c",
+      "course": "Ripon",
+      "off_time": "14:47",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1461,
+      "decision_tier": "X",
+      "place_prob": 0.1392,
+      "mds": 0.011,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.77,
+        "place_frame_score": 2.78,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cyclone Code",
+      "horse_id": "hrs_22d18689",
+      "race_id": "pdf_c29ed256",
+      "course": "Naas",
+      "off_time": "14:56",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1913,
+      "decision_tier": "X",
+      "place_prob": 0.2358,
+      "mds": 0.0152,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.48,
+        "place_frame_score": 4.72,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Dakota Brave",
+      "horse_id": "hrs_c68cb7b4",
+      "race_id": "pdf_6b3992a4",
+      "course": "Hamilton",
+      "off_time": "15:45",
+      "race_name": "6f 6y (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1791,
+      "decision_tier": "X",
+      "place_prob": 0.2358,
+      "mds": 0.0152,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.75,
+        "place_frame_score": 4.72,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Black Orchid",
+      "horse_id": "hrs_46c2107a",
+      "race_id": "pdf_f1e7bce4",
+      "course": "Ripon",
+      "off_time": "16:20",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1308,
+      "decision_tier": "X",
+      "place_prob": 0.0731,
+      "mds": 0.011,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 7.85,
+        "place_frame_score": 1.46,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ]
+}

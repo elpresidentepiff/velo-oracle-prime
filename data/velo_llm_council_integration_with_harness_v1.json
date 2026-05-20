@@ -1,0 +1,25 @@
+{
+  "council_role": "Audits harness output after execution and decides whether the run deserves trust.",
+  "harness_role": "Controls execution before and during work through scope, files, commands, and verdict rules.",
+  "council_verdicts": [
+    "COUNCIL_PASS",
+    "COUNCIL_PASS_WITH_WARNINGS",
+    "COUNCIL_REJECT",
+    "COUNCIL_BLOCKED"
+  ],
+  "council_rejection_conditions": [
+    "forbidden dirty files",
+    "artifact incompleteness",
+    "contradictory evidence",
+    "unsafe state mutation",
+    "unauthorized commit scope"
+  ],
+  "live_learning_restrictions": [
+    "cannot approve live learning when HFS_TRAINING_SAFE is false",
+    "cannot approve live Playbook G mutation from shadow evidence"
+  ],
+  "production_change_restrictions": [
+    "cannot approve production scoring changes from shadow-only evidence",
+    "cannot approve runtime promotion without safety proof"
+  ]
+}

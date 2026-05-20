@@ -1,0 +1,216 @@
+{
+  "generated_on": "2026-04-30",
+  "repo_root": "C:\\Users\\puror\\velo-oracle-prime",
+  "branch": "main",
+  "purpose": "Canonical runtime map for VELO Oracle Prime",
+  "recent_commit_focus": [
+    {
+      "commit": "bfe983a",
+      "summary": "Racing API shadow enrichment forward-test logging"
+    },
+    {
+      "commit": "0d24bbb",
+      "summary": "Telegram Signal Stack display patch"
+    },
+    {
+      "commit": "0bf2be7",
+      "summary": "Operator visibility resolution"
+    },
+    {
+      "commit": "c1e61d2",
+      "summary": "Playbook G v3 offline candidate package"
+    },
+    {
+      "commit": "d4029f1",
+      "summary": "Shadow ledger design, Telegram attribution panel, Special Day V2"
+    },
+    {
+      "commit": "3a007eb",
+      "summary": "Candidate lane design"
+    },
+    {
+      "commit": "0cfbbed",
+      "summary": "Unified evidence audit truth layer"
+    },
+    {
+      "commit": "06ba74b",
+      "summary": "Router shadow audit hardening"
+    },
+    {
+      "commit": "fb46db5",
+      "summary": "Execution Router Evidence Engine"
+    }
+  ],
+  "canonical_runtime": {
+    "live_runtime": [
+      {
+        "path": "scripts/run_prime_today.py",
+        "role": "Primary race-day scoring pipeline",
+        "status": "LIVE_RUNTIME"
+      },
+      {
+        "path": "app/services/velo_prime_service.py",
+        "role": "Canonical score_race_velo_prime wire-in layer",
+        "status": "LIVE_RUNTIME"
+      },
+      {
+        "path": "src/intelligence/velo_prime_ensemble.py",
+        "role": "Production probability meta-ensemble",
+        "status": "LIVE_RUNTIME"
+      },
+      {
+        "path": "scripts/run_results_sigma.py",
+        "role": "Results reconciliation and sigma reporting",
+        "status": "LIVE_RUNTIME"
+      },
+      {
+        "path": "src/preflight.py",
+        "role": "Hard precondition gate for scoring entrypoints",
+        "status": "LIVE_RUNTIME"
+      }
+    ],
+    "live_support": [
+      {
+        "path": "app/core/runtime_env.py",
+        "role": "Environment and runtime resolution helpers",
+        "status": "LIVE_SUPPORT"
+      },
+      {
+        "path": "src/velo/racing_api_shadow_enrichment.py",
+        "role": "Shadow-only Racing API enrichment caches and ledger fields",
+        "status": "LIVE_SUPPORT"
+      },
+      {
+        "path": "scripts/preflight_10am_check.py",
+        "role": "Read-only preflight operational check",
+        "status": "LIVE_SUPPORT"
+      },
+      {
+        "path": "scripts/velo_morning_cockpit.py",
+        "role": "Operator briefing across truth tables",
+        "status": "LIVE_SUPPORT"
+      },
+      {
+        "path": "scripts/production_checks.py",
+        "role": "Infra endpoint checks for Railway and Cloudflare surfaces",
+        "status": "LIVE_SUPPORT"
+      },
+      {
+        "path": "scripts/velo_ops_check.py",
+        "role": "Cross-check of git, Railway, Supabase, Telegram and route health",
+        "status": "LIVE_SUPPORT"
+      }
+    ],
+    "audit_and_evidence": [
+      {
+        "path": "scripts/run_velo_unified_evidence_audit.py",
+        "role": "Master evidence audit layer",
+        "status": "AUDIT_EVIDENCE"
+      },
+      {
+        "path": "scripts/router_shadow_audit.py",
+        "role": "Router shadow governance and threshold tracking",
+        "status": "AUDIT_EVIDENCE"
+      },
+      {
+        "path": "scripts/racing_api_shadow_forward_audit.py",
+        "role": "Racing API shadow enrichment forward audit",
+        "status": "AUDIT_EVIDENCE"
+      },
+      {
+        "path": "scripts/audit_telegram_signal_visibility.py",
+        "role": "Operator visibility audit",
+        "status": "AUDIT_EVIDENCE"
+      },
+      {
+        "path": "scripts/audit_vp30_lineage.py",
+        "role": "VP30 lineage and evidence definitions",
+        "status": "AUDIT_EVIDENCE"
+      },
+      {
+        "path": "scripts/generate_special_day_report.py",
+        "role": "Special day evidence report generation",
+        "status": "AUDIT_EVIDENCE"
+      }
+    ],
+    "execution_betting": [
+      {
+        "path": "app/agents/betting_agents.py",
+        "role": "Multi-agent betting system with betting_ledger writes",
+        "status": "EXECUTION_BETTING"
+      },
+      {
+        "path": "app/agents/betfair_execution_agent.py",
+        "role": "Betfair execution bridge around Oracle and Playbooks",
+        "status": "EXECUTION_BETTING"
+      },
+      {
+        "path": "app/agents/betfair_trading_agents.py",
+        "role": "Back-to-lay automated trading agents",
+        "status": "EXECUTION_BETTING"
+      },
+      {
+        "path": "src/velo/execution_bridge.py",
+        "role": "Execution-related bridge layer",
+        "status": "EXECUTION_BETTING"
+      },
+      {
+        "path": "src/velo/execution_guard.py",
+        "role": "Execution guardrail layer",
+        "status": "EXECUTION_BETTING"
+      }
+    ],
+    "legacy_agent_scaffold": [
+      {
+        "path": "src/agents/base_agent.py",
+        "role": "Generic orchestrator and message classes",
+        "status": "LEGACY_AGENT"
+      },
+      {
+        "path": "src/agents/specialized_agents.py",
+        "role": "Placeholder Analyst/Risk/Execution/Learning agents",
+        "status": "LEGACY_AGENT"
+      },
+      {
+        "path": "src/agents/velo_scout.py",
+        "role": "Legacy race intake agent using stale API routes",
+        "status": "LEGACY_AGENT"
+      },
+      {
+        "path": "src/agents/velo_prime.py",
+        "role": "Legacy conversational wrapper around Five Filters",
+        "status": "LEGACY_AGENT"
+      },
+      {
+        "path": "src/agents/velo_archivist.py",
+        "role": "Older agent-era support code",
+        "status": "LEGACY_AGENT"
+      },
+      {
+        "path": "src/agents/velo_manus.py",
+        "role": "Older agent-era support code",
+        "status": "LEGACY_AGENT"
+      },
+      {
+        "path": "src/agents/velo_synth.py",
+        "role": "Older agent-era support code",
+        "status": "LEGACY_AGENT"
+      }
+    ]
+  },
+  "key_findings": [
+    "The current production path is script-driven, not agent-driven.",
+    "The repo contains three overlapping eras: legacy agent scaffolding, betting and execution systems, and newer audit and evidence infrastructure.",
+    "The newest coherent system is the audit and operator visibility layer.",
+    "Legacy agent files are not safe to treat as production workers without a rebuild.",
+    "Betting and execution agents conflict with the current audit-first, no-staking operational posture."
+  ],
+  "risks": [
+    "Multiple competing architectures obscure the canonical runtime path.",
+    "Legacy Scout uses stale Racing API routes and is not aligned with proven live endpoints.",
+    "Specialized legacy agents include placeholder randomness and are not trustworthy.",
+    "Execution and betting modules can be mistaken for active production paths despite governance drift.",
+    "Operational docs have some staleness, including production script listings that do not fully match current files."
+  ],
+  "next_recommended_action": "Create a quarantine and ownership pass: mark legacy agent files and execution-betting modules explicitly in docs and code comments before building any new Supervisor, Verifier, or Deep-Dive layer."
+}

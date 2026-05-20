@@ -1,0 +1,41 @@
+{
+  "system_version": "v10.1",
+  "audit_date": "2026-05-05",
+  "global_status": "UNDER_CONTROL_AUDIT",
+  "components": {
+    "playbook_g": {
+      "state": "SHADOW_ONLY",
+      "learning": "DISABLED",
+      "trust_level": "UNSAFE"
+    },
+    "scoring_engine": {
+      "state": "FROZEN",
+      "changes_allowed": false
+    },
+    "ml_models": {
+      "readiness": "UNKNOWN_NOT_VERIFIED",
+      "retraining_allowed": false
+    },
+    "historical_feature_store": {
+      "trust_level": "UNKNOWN_NOT_VERIFIED",
+      "known_issues": ["mpi_flatness", "chaos_bloom_proxy"]
+    },
+    "dashboard": {
+      "confidence_claims": "AUDITED_ONLY",
+      "polish_allowed": false
+    }
+  },
+  "command_authority": {
+    "required_declaration_fields": [
+      "TASK_TYPE",
+      "SOURCE_OF_TRUTH",
+      "FILES_TO_READ",
+      "FILES_TO_CHANGE",
+      "COMMAND_TO_RUN",
+      "EXPECTED_OUTPUT",
+      "FORBIDDEN_ACTIONS",
+      "STOP_CONDITION",
+      "ROLLBACK_PLAN"
+    ]
+  }
+}

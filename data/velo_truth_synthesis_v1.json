@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-04-26T00:00:00Z",
+  "verdict": "REAL_SYSTEM_SIGNAL_PROVEN_BUT_HISTORY_SPINE_REPAIR_REQUIRED",
+  "executive_abstract": {
+    "summary": "VÉLØ Oracle Prime is an auditable racing intelligence operating system that predicts horse racing outcomes via a live-evaluated, multi-model ensemble (SQPE + VeloPrimeEnsemble). It verifies itself through a rigid nightly Sigma audit loop. Currently, live market-assisted signals (VP30, MDS_HIGH) are empirically proven to deliver substantial lift over 49 days. However, its historical learning spine (HFS) remains unproven and currently blocked due to a severed feature-generation contract (flat MPI/Chaos Bloom) that prevents safe Playbook G training."
+  },
+  "intended_system": {
+    "Oracle": "ASPIRATIONAL",
+    "Playbooks": "ACTIVE_RESEARCH",
+    "SQPE": "ACTIVE_PRODUCTION",
+    "VeloPrimeEnsemble": "ACTIVE_PRODUCTION",
+    "Doctrine Layer": "ACTIVE_PRODUCTION",
+    "Router": "ACTIVE_PRODUCTION",
+    "Evidence Vault": "ACTIVE_PRODUCTION",
+    "Telegram Operator": "ACTIVE_PRODUCTION",
+    "Historical Feature Store": "REPAIR_REQUIRED"
+  },
+  "runtime_reality": {
+    "live_scoring_path": "app/services/velo_prime_service.py -> score_race_velo_prime()",
+    "vp_generator": "VeloPrimeEnsemble.predict_race() utilizing SQPE v17 outputs and doctrine modifiers",
+    "hfs_generator": "scripts/backfill_historical_feature_store.py utilizing score_race_velo_prime",
+    "orphaned_or_bypassed": "PlaybookOrchestrator and OracleAnalyzer are structurally present but largely bypassed in the core live scoring pipeline, which favors direct execution via velo_prime_service."
+  },
+  "evidence_layer": {
+    "base_strike_rate": {"metric": "20.6%", "sample": "1,391 sigma rows (49 days)", "confidence": "HIGH"},
+    "vp30_threshold": {"metric": "32.2% SR / 69.3% Frame", "sample": "49 days", "confidence": "HIGH"},
+    "mds_high": {"metric": "54.8% SR", "sample": "49 days", "confidence": "HIGH"}
+  },
+  "database_truth": {
+    "counts": {
+      "horses": 183276,
+      "jockeys": 747,
+      "trainers": 909,
+      "courses": 979,
+      "races": 3381,
+      "runners": 14861,
+      "runner_results": 31995,
+      "runner_form_lines": 0
+    },
+    "assessment": "Identity layer is robustly populated. Live and recent historical results exist. Form history is missing, forcing reliance on derived proxies rather than raw trajectory mapping."
+  },
+  "hfs_truth": {
+    "status": "REPAIR_REQUIRED",
+    "block_001_state": "Row-complete (1128 rows) but Signal-Incomplete.",
+    "signal_failure": "mpi and chaos_bloom are null/flat. The bridge successfully writes the rows, but the live prediction loop fails to emit historical proxies for these fields, preventing safe training."
+  },
+  "model_artifact_truth": {
+    "sqpe_v17": {"type": "GradientBoostingClassifier with Isotonic Calibration", "status": "ACTIVE"},
+    "specialist_models": {"type": "TIE, Longshot, Benter", "status": "STUB_LOADED_IN_RUNTIME"}
+  },
+  "falsified_assumptions": [
+    {"belief": "Archive HFS is training-safe by row count alone", "correction": "Row count guarantees data spine, not signal integrity. Flat signals poison training."},
+    {"belief": "Repo intent equals runtime reality", "correction": "Complex playbooks and oracles exist in code, but execution relies on a much simpler, procedural velo_prime_service pipeline."}
+  ],
+  "next_gates": [
+    "A. Racing API capability map only",
+    "B. HFS signal integrity repair",
+    "C. runner_form_lines strategy decision",
+    "D. repo hygiene audit",
+    "E. candidate lane ledger dry-run",
+    "F. Playbook G training only after HFS signal safety"
+  ]
+}

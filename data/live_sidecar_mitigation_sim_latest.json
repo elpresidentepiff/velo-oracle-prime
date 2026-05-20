@@ -1,0 +1,83 @@
+{
+  "generated_at": "2026-05-02T20:09:43.275582Z",
+  "sample_n": 301,
+  "profiles": {
+    "A_CURRENT_LIVE": {
+      "desc": "Current live weights (baseline)",
+      "metrics": {
+        "n": 301,
+        "sr": 0.206,
+        "frame": 0.4352,
+        "roi": -0.2259,
+        "avg_sp": 6.6,
+        "vp30_n": 52,
+        "vp30_sr": 0.2692,
+        "max_drawdown": 89.68,
+        "max_losing_run": 21
+      }
+    },
+    "B_CORE_ONLY": {
+      "desc": "SQPE only",
+      "metrics": {
+        "n": 301,
+        "sr": 0.2126,
+        "frame": 0.4884,
+        "roi": -0.0257,
+        "avg_sp": 6.6,
+        "vp30_n": 52,
+        "vp30_sr": 0.2692,
+        "max_drawdown": 47.97,
+        "max_losing_run": 20
+      }
+    },
+    "C_CORE_PLUS_MDS_PLACE": {
+      "desc": "SQPE + MDS + place_prob + longshot gated SP>=10",
+      "metrics": {
+        "n": 301,
+        "sr": 0.206,
+        "frame": 0.4518,
+        "roi": -0.2342,
+        "avg_sp": 6.6,
+        "vp30_n": 52,
+        "vp30_sr": 0.2692,
+        "max_drawdown": 92.18,
+        "max_losing_run": 24
+      }
+    },
+    "D_REMOVE_RED_FLAGS": {
+      "desc": "Remove release+comment; keep IMP",
+      "metrics": {
+        "n": 301,
+        "sr": 0.1993,
+        "frame": 0.4385,
+        "roi": -0.2608,
+        "avg_sp": 6.6,
+        "vp30_n": 52,
+        "vp30_sr": 0.2692,
+        "max_drawdown": 100.18,
+        "max_losing_run": 27
+      }
+    },
+    "E_STRICT_VALUE": {
+      "desc": "SQPE + MDS only; longshot gated SP>=10",
+      "metrics": {
+        "n": 301,
+        "sr": 0.2093,
+        "frame": 0.4784,
+        "roi": -0.0807,
+        "avg_sp": 6.6,
+        "vp30_n": 52,
+        "vp30_sr": 0.2692,
+        "max_drawdown": 71.0,
+        "max_losing_run": 34
+      }
+    }
+  },
+  "best_roi": "B_CORE_ONLY",
+  "best_sr": "B_CORE_ONLY",
+  "best_frame": "B_CORE_ONLY",
+  "shadow_candidate": "B_CORE_ONLY",
+  "release_day_prob_disable_test": false,
+  "comment_disable_test": false,
+  "improvement_score_verdict": "SHADOW_TEST"
+}

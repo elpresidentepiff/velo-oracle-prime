@@ -1,0 +1,341 @@
+{
+  "audit_date": "2026-05-08",
+  "declared_weights": {
+    "sqpe_v17": 0.45,
+    "improvement_score": 0.12,
+    "market_deception_score": 0.1,
+    "place_prob": 0.08,
+    "longshot_score": 0.07,
+    "release_window_score": 0.0,
+    "comment_intel_score": 0.0
+  },
+  "service_mapping": {
+    "improvement_score": "passed_from_spec_scores",
+    "release_window_score": "passed_from_spec_scores",
+    "market_deception_score": "passed_from_spec_scores",
+    "place_prob": "passed_from_spec_scores",
+    "comment_intel_score": "passed_from_spec_scores",
+    "longshot_score": "passed_from_spec_scores"
+  },
+  "runtime_proof": {
+    "runtime_mode": "persisted_runtime_fallback",
+    "racecard_source": "persisted_verdict_runtime_sample",
+    "races_traced": 49,
+    "trace_race": {
+      "race_id": "rac_11929346",
+      "course": null,
+      "off_time": null,
+      "component_summary": {
+        "runner_count": 10,
+        "improvement_score": {
+          "passed_rows": 10,
+          "non_null_rows": 10,
+          "zero_rows": 0,
+          "gated_rows": 0
+        },
+        "release_window_score": {
+          "passed_rows": 10,
+          "non_null_rows": 10,
+          "zero_rows": 0,
+          "gated_rows": 0
+        },
+        "market_deception_score": {
+          "passed_rows": 10,
+          "non_null_rows": 10,
+          "zero_rows": 0,
+          "gated_rows": 0
+        },
+        "place_prob": {
+          "passed_rows": 10,
+          "non_null_rows": 10,
+          "zero_rows": 0,
+          "gated_rows": 0
+        },
+        "comment_intel_score": {
+          "passed_rows": 10,
+          "non_null_rows": 10,
+          "zero_rows": 0,
+          "gated_rows": 0
+        },
+        "longshot_score": {
+          "passed_rows": 10,
+          "non_null_rows": 10,
+          "zero_rows": 0,
+          "gated_rows": 0
+        }
+      },
+      "macro_context": {
+        "year": 2024,
+        "race_code": "flat",
+        "avg_field_size": 9.5,
+        "fixtures_scheduled": 1070.0,
+        "fixtures_ran": 1030.0,
+        "fixtures_abandoned": 40.0,
+        "fav_compress_pct": 0.344,
+        "total_starts": 72500.0,
+        "individual_runners": 13350.0,
+        "avg_runs_per_horse": 5.430711610486892,
+        "competitiveness_index": 1.01056338028169,
+        "competitiveness_index_code": 1.0044052863436124,
+        "fixture_strain_index": 0.9626168224299065,
+        "abandonment_stress_index": 0.037383177570093455,
+        "favourite_compression_index": 1.0432145564821833,
+        "run_density_index": 1.0055191380861286,
+        "field_size_regime": "normal",
+        "covid_year": false,
+        "ambiguity_flag": false,
+        "macro_available": true,
+        "chaos_mode": false,
+        "low_field_warning": false,
+        "favourite_trap_risk": "normal",
+        "regime_label": "normal"
+      }
+    },
+    "day_component_counts": {
+      "improvement_score": {
+        "non_null_rows": 543,
+        "gated_rows": 0
+      },
+      "release_window_score": {
+        "non_null_rows": 543,
+        "gated_rows": 0
+      },
+      "market_deception_score": {
+        "non_null_rows": 543,
+        "gated_rows": 0
+      },
+      "place_prob": {
+        "non_null_rows": 543,
+        "gated_rows": 0
+      },
+      "comment_intel_score": {
+        "non_null_rows": 543,
+        "gated_rows": 0
+      },
+      "longshot_score": {
+        "non_null_rows": 543,
+        "gated_rows": 0
+      }
+    },
+    "ablation": {
+      "baseline_top": {
+        "horse": "Illy's Roo",
+        "race_id": "rac_11929346",
+        "sqpe_v17_prob": 0.057,
+        "velo_prime_prob": 0.2036,
+        "improvement_score": 0.0813,
+        "release_window_score": 0.0754,
+        "market_deception_score": 0.0112,
+        "place_prob": 0.594,
+        "comment_intel_score": 0.0889,
+        "longshot_score": 0.1,
+        "confidence_level": "low",
+        "regime_override": null,
+        "verdict_flags": [
+          "policy:current",
+          "profile:SQPE_IMPROVEMENT_MDS_V1",
+          "g_threshold:0.60",
+          "g_lay_the_story_weak:0.00x",
+          "g_shadow_tracking_weak:0.06x",
+          "g_shadow:applied_not_live",
+          "mode:FULL_MINUS_DEAD"
+        ],
+        "macro_regime": "normal",
+        "macro_favourite_trap": "normal",
+        "macro_available": true,
+        "active_components": [
+          "improvement_score",
+          "market_deception_score",
+          "sqpe_v17"
+        ],
+        "excluded_from_ensemble": [
+          "comment_intel_score",
+          "longshot_score",
+          "place_prob",
+          "release_window_score"
+        ],
+        "g_base_prob": 0.0545,
+        "g_shadow_multiplier": 0.5167,
+        "g_shadow_horse_id": "",
+        "g_shadow_flags": [
+          "g_threshold:0.60",
+          "g_lay_the_story_weak:0.00x",
+          "g_shadow_tracking_weak:0.06x",
+          "g_shadow:applied_not_live"
+        ],
+        "g_shadow_mode": true,
+        "doctrines_fired": [
+          "LAY_THE_STORY",
+          "SHADOW_TRACKING"
+        ],
+        "mpi": 0.0372,
+        "chaos_bloom": 0.3,
+        "mpi_source": "derived_from_vp_mds",
+        "chaos_bloom_source": "derived_from_macro_field_trap",
+        "mpi_block_reason": null,
+        "chaos_bloom_block_reason": null,
+        "signal_contract_version": "hfs_signal_contract_v1"
+      },
+      "ablations": {
+        "improvement_score": {
+          "top_horse_before": "Illy's Roo",
+          "top_horse_after": "Illy's Roo",
+          "top_prob_before": 0.2036,
+          "top_prob_after": 0.1686,
+          "top_prob_delta": 0.035,
+          "ranking_changed": false,
+          "max_abs_runner_delta": 0.035,
+          "component_had_non_null_rows": true,
+          "component_had_gated_rows": false,
+          "changes_vp": true
+        },
+        "release_window_score": {
+          "top_horse_before": "Illy's Roo",
+          "top_horse_after": "Illy's Roo",
+          "top_prob_before": 0.2036,
+          "top_prob_after": 0.2036,
+          "top_prob_delta": 0.0,
+          "ranking_changed": false,
+          "max_abs_runner_delta": 0.0,
+          "component_had_non_null_rows": true,
+          "component_had_gated_rows": false,
+          "changes_vp": false
+        },
+        "market_deception_score": {
+          "top_horse_before": "Illy's Roo",
+          "top_horse_after": "Illy's Roo",
+          "top_prob_before": 0.2036,
+          "top_prob_after": 0.2058,
+          "top_prob_delta": 0.0022,
+          "ranking_changed": false,
+          "max_abs_runner_delta": 0.0079,
+          "component_had_non_null_rows": true,
+          "component_had_gated_rows": false,
+          "changes_vp": true
+        },
+        "place_prob": {
+          "top_horse_before": "Illy's Roo",
+          "top_horse_after": "Illy's Roo",
+          "top_prob_before": 0.2036,
+          "top_prob_after": 0.2036,
+          "top_prob_delta": 0.0,
+          "ranking_changed": false,
+          "max_abs_runner_delta": 0.0,
+          "component_had_non_null_rows": true,
+          "component_had_gated_rows": false,
+          "changes_vp": false
+        },
+        "comment_intel_score": {
+          "top_horse_before": "Illy's Roo",
+          "top_horse_after": "Illy's Roo",
+          "top_prob_before": 0.2036,
+          "top_prob_after": 0.2036,
+          "top_prob_delta": 0.0,
+          "ranking_changed": false,
+          "max_abs_runner_delta": 0.0,
+          "component_had_non_null_rows": true,
+          "component_had_gated_rows": false,
+          "changes_vp": false
+        },
+        "longshot_score": {
+          "top_horse_before": "Illy's Roo",
+          "top_horse_after": "Illy's Roo",
+          "top_prob_before": 0.2036,
+          "top_prob_after": 0.2036,
+          "top_prob_delta": 0.0,
+          "ranking_changed": false,
+          "max_abs_runner_delta": 0.0,
+          "component_had_non_null_rows": true,
+          "component_had_gated_rows": false,
+          "changes_vp": false
+        }
+      }
+    }
+  },
+  "final_contract": [
+    {
+      "signal": "sqpe_v17",
+      "declared_weight": 0.45,
+      "passed_into_ensemble": true,
+      "non_null": true,
+      "changes_vp": true,
+      "status": "LIVE_WEIGHTED"
+    },
+    {
+      "signal": "improvement_score",
+      "declared_weight": 0.12,
+      "passed_into_ensemble": true,
+      "non_null": true,
+      "changes_vp": true,
+      "status": "LIVE_WEIGHTED",
+      "trace_non_null_rows": 10,
+      "trace_gated_rows": 0
+    },
+    {
+      "signal": "release_window_score",
+      "declared_weight": 0.0,
+      "passed_into_ensemble": true,
+      "non_null": true,
+      "changes_vp": false,
+      "status": "LIVE_WEIGHTED",
+      "trace_non_null_rows": 10,
+      "trace_gated_rows": 0
+    },
+    {
+      "signal": "market_deception_score",
+      "declared_weight": 0.1,
+      "passed_into_ensemble": true,
+      "non_null": true,
+      "changes_vp": true,
+      "status": "LIVE_WEIGHTED",
+      "trace_non_null_rows": 10,
+      "trace_gated_rows": 0
+    },
+    {
+      "signal": "place_prob",
+      "declared_weight": 0.08,
+      "passed_into_ensemble": true,
+      "non_null": true,
+      "changes_vp": false,
+      "status": "LIVE_WEIGHTED",
+      "trace_non_null_rows": 10,
+      "trace_gated_rows": 0
+    },
+    {
+      "signal": "comment_intel_score",
+      "declared_weight": 0.0,
+      "passed_into_ensemble": true,
+      "non_null": true,
+      "changes_vp": false,
+      "status": "LIVE_WEIGHTED",
+      "trace_non_null_rows": 10,
+      "trace_gated_rows": 0
+    },
+    {
+      "signal": "longshot_score",
+      "declared_weight": 0.07,
+      "passed_into_ensemble": true,
+      "non_null": true,
+      "changes_vp": false,
+      "status": "DEFAULTED_ONLY",
+      "trace_non_null_rows": 10,
+      "trace_gated_rows": 0
+    },
+    {
+      "signal": "racing_api_enrichment_shadow_score",
+      "declared_weight": null,
+      "passed_into_ensemble": false,
+      "non_null": false,
+      "changes_vp": false,
+      "status": "SHADOW_ONLY"
+    },
+    {
+      "signal": "trainer/jockey/course/distance stats",
+      "declared_weight": null,
+      "passed_into_ensemble": false,
+      "non_null": false,
+      "changes_vp": false,
+      "status": "SHADOW_ONLY"
+    }
+  ]
+}

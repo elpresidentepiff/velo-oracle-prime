@@ -1,0 +1,28 @@
+{
+  "contract_version": "v2",
+  "audit_date": "2026-05-05",
+  "temporal_safety": {
+    "leakage_prevention": "strict_timestamp_boundary",
+    "allowed_pre_race_fields": ["pre_race_odds_dec", "implied_prob", "mpi", "chaos_bloom"],
+    "audit_only_fields": ["sp_dec", "bsp_dec", "result_position", "winner_flag"]
+  },
+  "signal_definitions": {
+    "mpi": {
+      "level": "runner",
+      "formula": "implied_p / total_race_implied_p",
+      "required_inputs": ["pre_race_odds_dec"],
+      "training_safe_condition": "odds_timestamp < race_start_time"
+    },
+    "chaos_bloom": {
+      "level": "race",
+      "formula": "shannon_entropy(mpi) / ln(runners)",
+      "validation_logic": "variance_across_races > 0 AND variance_within_race == 0"
+    },
+    "v17_doctrine": {
+      "level": "runner",
+      "source": "V17FeatureExtractor",
+      "error_handling": "mark_feature_error_not_default"
+    }
+  },
+  "training_safety_verdict": "HFS_BLOCK001_REPAIR_REQUIRED"
+}

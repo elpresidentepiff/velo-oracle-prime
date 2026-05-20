@@ -1,0 +1,4621 @@
+{
+  "date": "2026-05-16",
+  "status": "SHADOW_OPERATOR_ONLY",
+  "lane": "ACCA_LANE_V1",
+  "day_regime": "ACCA_DAY_THIN",
+  "candidates_scanned": 60,
+  "cashrun_status": "MISSING_OPTIONAL",
+  "industry_status": "PRESENT",
+  "racing_api_enrichment_status": "MISSING_OPTIONAL",
+  "source_summary": {
+    "metadata_complete_n": 60,
+    "metadata_total_n": 60,
+    "metadata_coverage": 1.0
+  },
+  "role_counts": {
+    "BANKER": 1,
+    "GLUE": 7,
+    "BOOSTER": 3,
+    "WILDCARD": 12,
+    "TRAP": 37,
+    "BLOCKED": 0
+  },
+  "folds": {
+    "strongest_2_fold": {
+      "generated": true,
+      "size": 2,
+      "combo_score": 159.67,
+      "legs": [
+        {
+          "horse": "Personal Ambition",
+          "course": "Bangor-On-Dee",
+          "off_time": "15:55",
+          "race_name": "2m 1f 77y (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+          "leg_role": "BANKER",
+          "vp": 0.6216,
+          "place_prob": 0.9972,
+          "mds": 0.6167,
+          "leg_score": 79.94
+        },
+        {
+          "horse": "Gilbertina",
+          "course": "Bangor-On-Dee",
+          "off_time": "16:30",
+          "race_name": "3m 30y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+          "leg_role": "BOOSTER",
+          "vp": 0.3295,
+          "place_prob": 0.934,
+          "mds": 0.0943,
+          "leg_score": 60.81
+        }
+      ]
+    },
+    "strongest_3_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "strongest_4_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "controlled_5_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "speculative_6_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    }
+  },
+  "trap_legs": [
+    {
+      "horse": "West Wind Blows",
+      "horse_id": "hrs_fcf92858",
+      "race_id": "pdf_79422d0c",
+      "course": "Newbury",
+      "off_time": "13:25",
+      "race_name": "1m 4f (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4927,
+      "decision_tier": "B",
+      "place_prob": 0.9987,
+      "mds": 0.4185,
+      "improvement_score": 0.3277,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 53.54,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 29.56,
+        "place_frame_score": 19.97,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "City Of Poets",
+      "horse_id": "hrs_3ab420f0",
+      "race_id": "pdf_9e131283",
+      "course": "Thirsk",
+      "off_time": "16:47",
+      "race_name": "7f 218y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3992,
+      "decision_tier": "B",
+      "place_prob": 0.9598,
+      "mds": 0.2856,
+      "improvement_score": 0.3949,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 44.29,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 23.95,
+        "place_frame_score": 19.2,
+        "mds_market_shape_score": 7.14,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cairdeas",
+      "horse_id": "hrs_0235f951",
+      "race_id": "pdf_de2d9e09",
+      "course": "Doncaster",
+      "off_time": "18:38",
+      "race_name": "6f 2y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2117,
+      "decision_tier": "B",
+      "place_prob": 0.9518,
+      "mds": 0.1551,
+      "improvement_score": 0.2683,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 39.62,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.7,
+        "place_frame_score": 19.04,
+        "mds_market_shape_score": 3.88,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Green Triangle",
+      "horse_id": "hrs_8ab41e51",
+      "race_id": "pdf_04350d90",
+      "course": "Newbury",
+      "off_time": "17:00",
+      "race_name": "1m (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2052,
+      "decision_tier": "B",
+      "place_prob": 0.9775,
+      "mds": 0.1397,
+      "improvement_score": 0.3188,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 39.35,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.31,
+        "place_frame_score": 19.55,
+        "mds_market_shape_score": 3.49,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rajaking",
+      "horse_id": "hrs_01865063",
+      "race_id": "pdf_5ca34eb8",
+      "course": "Newmarket",
+      "off_time": "15:27",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.26,
+      "decision_tier": "B",
+      "place_prob": 0.8189,
+      "mds": 0.0893,
+      "improvement_score": 0.2265,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.21,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.6,
+        "place_frame_score": 16.38,
+        "mds_market_shape_score": 2.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Orange Emperor",
+      "horse_id": "hrs_b4fd9089",
+      "race_id": "pdf_9719fec8",
+      "course": "Doncaster",
+      "off_time": "19:08",
+      "race_name": "6f 2y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2387,
+      "decision_tier": "B",
+      "place_prob": 0.4788,
+      "mds": 0.0116,
+      "improvement_score": 0.041,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 38.19,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.32,
+        "place_frame_score": 9.58,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rajapour",
+      "horse_id": "hrs_8b135902",
+      "race_id": "pdf_95943515",
+      "course": "Thirsk",
+      "off_time": "16:12",
+      "race_name": "7f 218y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3127,
+      "decision_tier": "B",
+      "place_prob": 0.9539,
+      "mds": 0.2521,
+      "improvement_score": 0.3136,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 38.14,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 18.76,
+        "place_frame_score": 19.08,
+        "mds_market_shape_score": 6.3,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Emerald Harmony",
+      "horse_id": "hrs_2c2f1e82",
+      "race_id": "pdf_aeb96d3e",
+      "course": "Thirsk",
+      "off_time": "15:37",
+      "race_name": "5f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2526,
+      "decision_tier": "B",
+      "place_prob": 0.8056,
+      "mds": 0.1106,
+      "improvement_score": 0.2841,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.03,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.16,
+        "place_frame_score": 16.11,
+        "mds_market_shape_score": 2.77,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Notable Speech",
+      "horse_id": "hrs_ff89438a",
+      "race_id": "pdf_d4891cb1",
+      "course": "Newbury",
+      "off_time": "14:35",
+      "race_name": "1m (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2058,
+      "decision_tier": "B",
+      "place_prob": 0.9419,
+      "mds": 0.0985,
+      "improvement_score": 0.1186,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 37.65,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.35,
+        "place_frame_score": 18.84,
+        "mds_market_shape_score": 2.46,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "My Love Is King",
+      "horse_id": "hrs_5b4117eb",
+      "race_id": "pdf_0080b2af",
+      "course": "Newbury",
+      "off_time": "15:45",
+      "race_name": "1m 2f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3105,
+      "decision_tier": "B",
+      "place_prob": 0.9892,
+      "mds": 0.1676,
+      "improvement_score": 0.3735,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 36.6,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 18.63,
+        "place_frame_score": 19.78,
+        "mds_market_shape_score": 4.19,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Supersundae",
+      "horse_id": "hrs_80e6dca7",
+      "race_id": "pdf_d6a1e35c",
+      "course": "Wexford",
+      "off_time": "16:25",
+      "race_name": "2m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2196,
+      "decision_tier": "B",
+      "place_prob": 0.9087,
+      "mds": 0.0466,
+      "improvement_score": 0.0906,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 36.52,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.18,
+        "place_frame_score": 18.17,
+        "mds_market_shape_score": 1.17,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Bizarre Law",
+      "horse_id": "hrs_850528a0",
+      "race_id": "pdf_fdd357bb",
+      "course": "Doncaster",
+      "off_time": "20:45",
+      "race_name": "7f 6y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3187,
+      "decision_tier": "B",
+      "place_prob": 0.9268,
+      "mds": 0.1509,
+      "improvement_score": 0.1929,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 35.43,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 19.12,
+        "place_frame_score": 18.54,
+        "mds_market_shape_score": 3.77,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Carida",
+      "horse_id": "hrs_b58f835e",
+      "race_id": "pdf_47a47a45",
+      "course": "Doncaster",
+      "off_time": "20:15",
+      "race_name": "7f 6y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2318,
+      "decision_tier": "B",
+      "place_prob": 0.367,
+      "mds": 0.0059,
+      "improvement_score": 0.0177,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 35.4,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.91,
+        "place_frame_score": 7.34,
+        "mds_market_shape_score": 0.15,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Esna",
+      "horse_id": "hrs_4566ae2b",
+      "race_id": "pdf_5648fb41",
+      "course": "Newbury",
+      "off_time": "14:00",
+      "race_name": "1m 2f (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1879,
+      "decision_tier": "B",
+      "place_prob": 0.4742,
+      "mds": 0.0041,
+      "improvement_score": 0.0121,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 34.86,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.27,
+        "place_frame_score": 9.48,
+        "mds_market_shape_score": 0.1,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Turty Tree",
+      "horse_id": "hrs_a58cfcaa",
+      "race_id": "pdf_602ee13c",
+      "course": "Newmarket",
+      "off_time": "16:02",
+      "race_name": "1m 4f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2058,
+      "decision_tier": "B",
+      "place_prob": 0.8507,
+      "mds": 0.0173,
+      "improvement_score": 0.0482,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.79,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.35,
+        "place_frame_score": 17.01,
+        "mds_market_shape_score": 0.43,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Morning Express",
+      "horse_id": "hrs_62ab3f86",
+      "race_id": "pdf_ef89eb6a",
+      "course": "Wexford",
+      "off_time": "17:32",
+      "race_name": "2m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2479,
+      "decision_tier": "B",
+      "place_prob": 0.2113,
+      "mds": 0.007,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 33.28,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.87,
+        "place_frame_score": 4.23,
+        "mds_market_shape_score": 0.18,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Son",
+      "horse_id": "hrs_498d3c6b",
+      "race_id": "pdf_336a6bd4",
+      "course": "Newmarket",
+      "off_time": "14:50",
+      "race_name": "7f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1564,
+      "decision_tier": "B",
+      "place_prob": 0.8925,
+      "mds": 0.079,
+      "improvement_score": 0.1817,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.21,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 9.38,
+        "place_frame_score": 17.85,
+        "mds_market_shape_score": 1.98,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Purosangue",
+      "horse_id": "hrs_2c03a273",
+      "race_id": "pdf_624b220a",
+      "course": "Newbury",
+      "off_time": "16:20",
+      "race_name": "6f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2709,
+      "decision_tier": "B",
+      "place_prob": 0.9464,
+      "mds": 0.1584,
+      "improvement_score": 0.3027,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 33.14,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 16.25,
+        "place_frame_score": 18.93,
+        "mds_market_shape_score": 3.96,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Palace Artois",
+      "horse_id": "hrs_4c531fd2",
+      "race_id": "pdf_1ab7a003",
+      "course": "Doncaster",
+      "off_time": "19:40",
+      "race_name": "7f 213y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2404,
+      "decision_tier": "C",
+      "place_prob": 0.4662,
+      "mds": 0.0062,
+      "improvement_score": 0.0181,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 32.9,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.42,
+        "place_frame_score": 9.32,
+        "mds_market_shape_score": 0.15,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Double Tiger",
+      "horse_id": "hrs_270d8e42",
+      "race_id": "pdf_3a1e8064",
+      "course": "Uttoxeter",
+      "off_time": "17:50",
+      "race_name": "2m 3f 207y (Class 4) Last 8 outings",
+      "vp": 0.1909,
+      "decision_tier": "B",
+      "place_prob": 0.3549,
+      "mds": 0.0109,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 32.82,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.45,
+        "place_frame_score": 7.1,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lethimfly",
+      "horse_id": "hrs_d9f93853",
+      "race_id": "pdf_23560c3f",
+      "course": "Navan",
+      "off_time": "15:32",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2538,
+      "decision_tier": "B",
+      "place_prob": 0.8868,
+      "mds": 0.1218,
+      "improvement_score": 0.2037,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 30.01,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.23,
+        "place_frame_score": 17.74,
+        "mds_market_shape_score": 3.04,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Noble Raider",
+      "horse_id": "hrs_edeb7c59",
+      "race_id": "pdf_f1f811f7",
+      "course": "Doncaster",
+      "off_time": "17:27",
+      "race_name": "5f 3y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.169,
+      "decision_tier": "B",
+      "place_prob": 0.1849,
+      "mds": 0.0109,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 28.11,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.14,
+        "place_frame_score": 3.7,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cholo",
+      "horse_id": "hrs_32eb50d8",
+      "race_id": "pdf_14c2b4e9",
+      "course": "Wexford",
+      "off_time": "15:15",
+      "race_name": "2m 1f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1604,
+      "decision_tier": "B",
+      "place_prob": 0.6682,
+      "mds": 0.0111,
+      "improvement_score": 0.0819,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 27.27,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 9.62,
+        "place_frame_score": 13.36,
+        "mds_market_shape_score": 0.28,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ganesha",
+      "horse_id": "hrs_ebbe069d",
+      "race_id": "pdf_50cb381b",
+      "course": "Thirsk",
+      "off_time": "17:57",
+      "race_name": "6f (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2104,
+      "decision_tier": "B",
+      "place_prob": 0.8428,
+      "mds": 0.1194,
+      "improvement_score": 0.2562,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 26.47,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.62,
+        "place_frame_score": 16.86,
+        "mds_market_shape_score": 2.99,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Miss Lia",
+      "horse_id": "hrs_23cf1b09",
+      "race_id": "pdf_5c258477",
+      "course": "Wexford",
+      "off_time": "14:05",
+      "race_name": "2m 4f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1366,
+      "decision_tier": "B",
+      "place_prob": 0.6853,
+      "mds": 0.0098,
+      "improvement_score": 0.0496,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 26.15,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.2,
+        "place_frame_score": 13.71,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Fedneys Park",
+      "horse_id": "hrs_422c22db",
+      "race_id": "pdf_8cba9a27",
+      "course": "Wexford",
+      "off_time": "14:40",
+      "race_name": "2m 1f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1333,
+      "decision_tier": "C",
+      "place_prob": 0.4093,
+      "mds": 0.003,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 25.26,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.0,
+        "place_frame_score": 8.19,
+        "mds_market_shape_score": 0.07,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Beep Beep Becky",
+      "horse_id": "hrs_13e7027e",
+      "race_id": "pdf_0e101fd6",
+      "course": "Uttoxeter",
+      "off_time": "17:20",
+      "race_name": "2m 4f 189y (Class 5) Last 8 outings",
+      "vp": 0.1359,
+      "decision_tier": "C",
+      "place_prob": 0.1522,
+      "mds": 0.0105,
+      "improvement_score": 0.0837,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 20.46,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.15,
+        "place_frame_score": 3.04,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Mojo Risin",
+      "horse_id": "hrs_8dc3b8b8",
+      "race_id": "pdf_13f01e45",
+      "course": "Bangor-On-Dee",
+      "off_time": "14:10",
+      "race_name": "2m 145y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1937,
+      "decision_tier": "X",
+      "place_prob": 0.1953,
+      "mds": 0.0102,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 5.78,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.62,
+        "place_frame_score": 3.91,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Dromana Mist",
+      "horse_id": "hrs_34240a4d",
+      "race_id": "pdf_842ce3a8",
+      "course": "Wexford",
+      "off_time": "13:30",
+      "race_name": "2m 4f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1692,
+      "decision_tier": "X",
+      "place_prob": 0.141,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 3.23,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.15,
+        "place_frame_score": 2.82,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Celeron",
+      "horse_id": "hrs_1f3a8471",
+      "race_id": "pdf_a84cc40b",
+      "course": "Navan",
+      "off_time": "13:12",
+      "race_name": "5f 180y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0874,
+      "decision_tier": "X",
+      "place_prob": 0.1065,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.24,
+        "place_frame_score": 2.13,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Classic Bellini",
+      "horse_id": "hrs_b91820b7",
+      "race_id": "pdf_8de2cf76",
+      "course": "Thirsk",
+      "off_time": "13:52",
+      "race_name": "5f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0914,
+      "decision_tier": "X",
+      "place_prob": 0.1065,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.48,
+        "place_frame_score": 2.13,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ambience",
+      "horse_id": "hrs_166ab3e1",
+      "race_id": "pdf_89c5fd3d",
+      "course": "Newmarket",
+      "off_time": "14:15",
+      "race_name": "6f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1429,
+      "decision_tier": "X",
+      "place_prob": 0.1862,
+      "mds": 0.0125,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.57,
+        "place_frame_score": 3.72,
+        "mds_market_shape_score": 0.31,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Big Negotiator",
+      "horse_id": "hrs_a86d3f5b",
+      "race_id": "pdf_03fd70f9",
+      "course": "Navan",
+      "off_time": "14:20",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1576,
+      "decision_tier": "X",
+      "place_prob": 0.1862,
+      "mds": 0.0125,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 9.46,
+        "place_frame_score": 3.72,
+        "mds_market_shape_score": 0.31,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Bettabebougie",
+      "horse_id": "hrs_9f14226e",
+      "race_id": "pdf_c457fe34",
+      "course": "Thirsk",
+      "off_time": "14:23",
+      "race_name": "5f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0997,
+      "decision_tier": "X",
+      "place_prob": 0.1095,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.98,
+        "place_frame_score": 2.19,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Allirelandmaterial",
+      "horse_id": "hrs_587a4af9",
+      "race_id": "pdf_31e6c468",
+      "course": "Navan",
+      "off_time": "14:55",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0945,
+      "decision_tier": "X",
+      "place_prob": 0.0813,
+      "mds": 0.0102,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.67,
+        "place_frame_score": 1.63,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Genchev",
+      "horse_id": "hrs_658dd721",
+      "race_id": "pdf_fb569085",
+      "course": "Navan",
+      "off_time": "17:15",
+      "race_name": "1m 2f 40y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1282,
+      "decision_tier": "X",
+      "place_prob": 0.1851,
+      "mds": 0.011,
+      "improvement_score": 0.0879,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 7.69,
+        "place_frame_score": 3.7,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Flight Control",
+      "horse_id": "hrs_7a497bc8",
+      "race_id": "pdf_d8c24773",
+      "course": "Doncaster",
+      "off_time": "18:02",
+      "race_name": "6f 2y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1027,
+      "decision_tier": "X",
+      "place_prob": 0.1372,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 6.16,
+        "place_frame_score": 2.74,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ],
+  "rejected_legs": [
+    {
+      "horse": "West Wind Blows",
+      "course": "Newbury",
+      "off_time": "13:25",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "City Of Poets",
+      "course": "Thirsk",
+      "off_time": "16:47",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Cairdeas",
+      "course": "Doncaster",
+      "off_time": "18:38",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Green Triangle",
+      "course": "Newbury",
+      "off_time": "17:00",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Rajaking",
+      "course": "Newmarket",
+      "off_time": "15:27",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Orange Emperor",
+      "course": "Doncaster",
+      "off_time": "19:08",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Rajapour",
+      "course": "Thirsk",
+      "off_time": "16:12",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Emerald Harmony",
+      "course": "Thirsk",
+      "off_time": "15:37",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Notable Speech",
+      "course": "Newbury",
+      "off_time": "14:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "My Love Is King",
+      "course": "Newbury",
+      "off_time": "15:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Supersundae",
+      "course": "Wexford",
+      "off_time": "16:25",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Bizarre Law",
+      "course": "Doncaster",
+      "off_time": "20:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Carida",
+      "course": "Doncaster",
+      "off_time": "20:15",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Esna",
+      "course": "Newbury",
+      "off_time": "14:00",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Turty Tree",
+      "course": "Newmarket",
+      "off_time": "16:02",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Morning Express",
+      "course": "Wexford",
+      "off_time": "17:32",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Son",
+      "course": "Newmarket",
+      "off_time": "14:50",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Purosangue",
+      "course": "Newbury",
+      "off_time": "16:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Palace Artois",
+      "course": "Doncaster",
+      "off_time": "19:40",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Double Tiger",
+      "course": "Uttoxeter",
+      "off_time": "17:50",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Lethimfly",
+      "course": "Navan",
+      "off_time": "15:32",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Noble Raider",
+      "course": "Doncaster",
+      "off_time": "17:27",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Cholo",
+      "course": "Wexford",
+      "off_time": "15:15",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Ganesha",
+      "course": "Thirsk",
+      "off_time": "17:57",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Miss Lia",
+      "course": "Wexford",
+      "off_time": "14:05",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Fedneys Park",
+      "course": "Wexford",
+      "off_time": "14:40",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Beep Beep Becky",
+      "course": "Uttoxeter",
+      "off_time": "17:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Mojo Risin",
+      "course": "Bangor-On-Dee",
+      "off_time": "14:10",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X"
+      ]
+    },
+    {
+      "horse": "Dromana Mist",
+      "course": "Wexford",
+      "off_time": "13:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X"
+      ]
+    },
+    {
+      "horse": "Celeron",
+      "course": "Navan",
+      "off_time": "13:12",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Classic Bellini",
+      "course": "Thirsk",
+      "off_time": "13:52",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Ambience",
+      "course": "Newmarket",
+      "off_time": "14:15",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Big Negotiator",
+      "course": "Navan",
+      "off_time": "14:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Bettabebougie",
+      "course": "Thirsk",
+      "off_time": "14:23",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Allirelandmaterial",
+      "course": "Navan",
+      "off_time": "14:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Genchev",
+      "course": "Navan",
+      "off_time": "17:15",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Flight Control",
+      "course": "Doncaster",
+      "off_time": "18:02",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "horse": "Personal Ambition",
+      "horse_id": "hrs_ea55dede",
+      "race_id": "pdf_a6ccd3cb",
+      "course": "Bangor-On-Dee",
+      "off_time": "15:55",
+      "race_name": "2m 1f 77y (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.6216,
+      "decision_tier": "A",
+      "place_prob": 0.9972,
+      "mds": 0.6167,
+      "improvement_score": 0.5378,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 79.94,
+      "leg_role": "BANKER",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 19.94,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Minella Rescue",
+      "horse_id": "hrs_c8d0370d",
+      "race_id": "pdf_49035d2a",
+      "course": "Uttoxeter",
+      "off_time": "18:50",
+      "race_name": "2m 7f 70y (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4802,
+      "decision_tier": "A",
+      "place_prob": 0.8915,
+      "mds": 0.2695,
+      "improvement_score": 0.2028,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 73.38,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 28.81,
+        "place_frame_score": 17.83,
+        "mds_market_shape_score": 6.74,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "That'S Nice",
+      "horse_id": "hrs_8ccffff0",
+      "race_id": "pdf_4241ad98",
+      "course": "Uttoxeter",
+      "off_time": "19:20",
+      "race_name": "2m 4f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.5086,
+      "decision_tier": "A",
+      "place_prob": 0.9774,
+      "mds": 0.0799,
+      "improvement_score": 0.0763,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 71.55,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 19.55,
+        "mds_market_shape_score": 2.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Sharp Romance",
+      "horse_id": "hrs_2417854a",
+      "race_id": "pdf_238b8281",
+      "course": "Newmarket",
+      "off_time": "16:37",
+      "race_name": "1m 2f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.5357,
+      "decision_tier": "A",
+      "place_prob": 0.9093,
+      "mds": 0.0238,
+      "improvement_score": 0.0778,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 68.78,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 18.19,
+        "mds_market_shape_score": 0.6,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Roysse",
+      "horse_id": "hrs_908a501c",
+      "race_id": "pdf_852c1b05",
+      "course": "Bangor-On-Dee",
+      "off_time": "15:20",
+      "race_name": "2m 145y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4162,
+      "decision_tier": "A",
+      "place_prob": 0.9733,
+      "mds": 0.1359,
+      "improvement_score": 0.1391,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 67.84,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 24.97,
+        "place_frame_score": 19.47,
+        "mds_market_shape_score": 3.4,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "African Spirit",
+      "horse_id": "hrs_b7fca722",
+      "race_id": "pdf_6e6a3006",
+      "course": "Newmarket",
+      "off_time": "17:10",
+      "race_name": "7f (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4444,
+      "decision_tier": "A",
+      "place_prob": 0.8368,
+      "mds": 0.1379,
+      "improvement_score": 0.1719,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 66.85,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 26.66,
+        "place_frame_score": 16.74,
+        "mds_market_shape_score": 3.45,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "King Ulanda",
+      "horse_id": "hrs_a9018b82",
+      "race_id": "pdf_98300905",
+      "course": "Bangor-On-Dee",
+      "off_time": "17:05",
+      "race_name": "2m 1f 77y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3894,
+      "decision_tier": "A",
+      "place_prob": 0.9329,
+      "mds": 0.0374,
+      "improvement_score": 0.1385,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 62.96,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 23.36,
+        "place_frame_score": 18.66,
+        "mds_market_shape_score": 0.94,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Genbu",
+      "horse_id": "hrs_f29d054e",
+      "race_id": "pdf_2ee6a12d",
+      "course": "Uttoxeter",
+      "off_time": "20:30",
+      "race_name": "1m 7f 168y (Class 5) Last 8 outings",
+      "vp": 0.352,
+      "decision_tier": "A",
+      "place_prob": 0.9832,
+      "mds": 0.0719,
+      "improvement_score": 0.1965,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 62.58,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 21.12,
+        "place_frame_score": 19.66,
+        "mds_market_shape_score": 1.8,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Gilbertina",
+      "horse_id": "hrs_0ed8a204",
+      "race_id": "pdf_cc403ec6",
+      "course": "Bangor-On-Dee",
+      "off_time": "16:30",
+      "race_name": "3m 30y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3295,
+      "decision_tier": "A",
+      "place_prob": 0.934,
+      "mds": 0.0943,
+      "improvement_score": 0.1428,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 60.81,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 19.77,
+        "place_frame_score": 18.68,
+        "mds_market_shape_score": 2.36,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Caraway",
+      "horse_id": "hrs_73986a2a",
+      "race_id": "pdf_30e6aaa8",
+      "course": "Thirsk",
+      "off_time": "15:00",
+      "race_name": "1m 4f 8y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3421,
+      "decision_tier": "A",
+      "place_prob": 0.8362,
+      "mds": 0.0444,
+      "improvement_score": 0.165,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 58.36,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 20.53,
+        "place_frame_score": 16.72,
+        "mds_market_shape_score": 1.11,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Getuptheyard",
+      "horse_id": "hrs_34fec5fc",
+      "race_id": "pdf_359cfef8",
+      "course": "Uttoxeter",
+      "off_time": "18:20",
+      "race_name": "2m 7f 70y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.374,
+      "decision_tier": "B",
+      "place_prob": 0.9614,
+      "mds": 0.0336,
+      "improvement_score": 0.08,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 56.51,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 22.44,
+        "place_frame_score": 19.23,
+        "mds_market_shape_score": 0.84,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "West Wind Blows",
+      "horse_id": "hrs_fcf92858",
+      "race_id": "pdf_79422d0c",
+      "course": "Newbury",
+      "off_time": "13:25",
+      "race_name": "1m 4f (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4927,
+      "decision_tier": "B",
+      "place_prob": 0.9987,
+      "mds": 0.4185,
+      "improvement_score": 0.3277,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 53.54,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 29.56,
+        "place_frame_score": 19.97,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Fallacy",
+      "horse_id": "hrs_5c325d8e",
+      "race_id": "pdf_09a7a061",
+      "course": "Navan",
+      "off_time": "16:42",
+      "race_name": "1m 2f 40y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.4606,
+      "decision_tier": "B",
+      "place_prob": 0.4998,
+      "mds": 0.0032,
+      "improvement_score": 0.0042,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 51.71,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 27.64,
+        "place_frame_score": 10.0,
+        "mds_market_shape_score": 0.08,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Royal Fixation",
+      "horse_id": "hrs_fd16ce68",
+      "race_id": "pdf_9a4beef0",
+      "course": "Newbury",
+      "off_time": "15:10",
+      "race_name": "6f (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2844,
+      "decision_tier": "B",
+      "place_prob": 0.9212,
+      "mds": 0.0795,
+      "improvement_score": 0.1375,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 51.48,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 17.06,
+        "place_frame_score": 18.42,
+        "mds_market_shape_score": 1.99,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Hit The Frame",
+      "horse_id": "hrs_b076003f",
+      "race_id": "pdf_9a6fac07",
+      "course": "Wexford",
+      "off_time": "16:55",
+      "race_name": "3m 1f 100y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2489,
+      "decision_tier": "B",
+      "place_prob": 0.9654,
+      "mds": 0.0346,
+      "improvement_score": 0.1364,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 49.11,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.93,
+        "place_frame_score": 19.31,
+        "mds_market_shape_score": 0.86,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Indian Spirit",
+      "horse_id": "hrs_54cb416a",
+      "race_id": "pdf_526d590b",
+      "course": "Newmarket",
+      "off_time": "13:42",
+      "race_name": "1m (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3702,
+      "decision_tier": "B",
+      "place_prob": 0.8875,
+      "mds": 0.2054,
+      "improvement_score": 0.3823,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 49.1,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 22.21,
+        "place_frame_score": 17.75,
+        "mds_market_shape_score": 5.13,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Trojan Fighter",
+      "horse_id": "hrs_e9aa4292",
+      "race_id": "pdf_e7856941",
+      "course": "Navan",
+      "off_time": "16:07",
+      "race_name": "1m 5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2761,
+      "decision_tier": "B",
+      "place_prob": 0.8866,
+      "mds": 0.0197,
+      "improvement_score": 0.0788,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 48.79,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 16.57,
+        "place_frame_score": 17.73,
+        "mds_market_shape_score": 0.49,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Mr Mahler",
+      "horse_id": "hrs_cec8cdb3",
+      "race_id": "pdf_a23e56e9",
+      "course": "Bangor-On-Dee",
+      "off_time": "14:45",
+      "race_name": "2m 3f 123y (Class 5) Last 8 outings",
+      "vp": 0.2704,
+      "decision_tier": "B",
+      "place_prob": 0.8749,
+      "mds": 0.0258,
+      "improvement_score": 0.1004,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 48.37,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 16.22,
+        "place_frame_score": 17.5,
+        "mds_market_shape_score": 0.65,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ziggy'S Queen",
+      "horse_id": "hrs_9f7f652f",
+      "race_id": "pdf_2cf37b6a",
+      "course": "Thirsk",
+      "off_time": "17:25",
+      "race_name": "7f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2098,
+      "decision_tier": "B",
+      "place_prob": 0.8534,
+      "mds": 0.0931,
+      "improvement_score": 0.1845,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.98,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.59,
+        "place_frame_score": 17.07,
+        "mds_market_shape_score": 2.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Nashville Notions",
+      "horse_id": "hrs_4c80bde2",
+      "race_id": "pdf_740eb8b5",
+      "course": "Wexford",
+      "off_time": "15:50",
+      "race_name": "3m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2171,
+      "decision_tier": "B",
+      "place_prob": 0.9114,
+      "mds": 0.0248,
+      "improvement_score": 0.1344,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.87,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.03,
+        "place_frame_score": 18.23,
+        "mds_market_shape_score": 0.62,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Saint Vic",
+      "horse_id": "hrs_c8fc4d32",
+      "race_id": "pdf_3194f035",
+      "course": "Uttoxeter",
+      "off_time": "19:55",
+      "race_name": "2m 3f 207y (Class 5) Last 8 outings",
+      "vp": 0.2339,
+      "decision_tier": "B",
+      "place_prob": 0.8352,
+      "mds": 0.0241,
+      "improvement_score": 0.1187,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.34,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.03,
+        "place_frame_score": 16.7,
+        "mds_market_shape_score": 0.6,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lost Signal",
+      "horse_id": "hrs_7962bf0a",
+      "race_id": "pdf_b019f95d",
+      "course": "Newbury",
+      "off_time": "17:40",
+      "race_name": "1m (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2421,
+      "decision_tier": "B",
+      "place_prob": 0.7394,
+      "mds": 0.0559,
+      "improvement_score": 0.0986,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 44.71,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.53,
+        "place_frame_score": 14.79,
+        "mds_market_shape_score": 1.4,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "City Of Poets",
+      "horse_id": "hrs_3ab420f0",
+      "race_id": "pdf_9e131283",
+      "course": "Thirsk",
+      "off_time": "16:47",
+      "race_name": "7f 218y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3992,
+      "decision_tier": "B",
+      "place_prob": 0.9598,
+      "mds": 0.2856,
+      "improvement_score": 0.3949,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 44.29,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 23.95,
+        "place_frame_score": 19.2,
+        "mds_market_shape_score": 7.14,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Livingston Range",
+      "horse_id": "hrs_72815102",
+      "race_id": "pdf_0c99f04e",
+      "course": "Navan",
+      "off_time": "13:47",
+      "race_name": "5f 180y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2501,
+      "decision_tier": "B",
+      "place_prob": 0.6393,
+      "mds": 0.0176,
+      "improvement_score": 0.1109,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 42.23,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.01,
+        "place_frame_score": 12.79,
+        "mds_market_shape_score": 0.44,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cavalry Call",
+      "horse_id": "hrs_85eb853b",
+      "race_id": "pdf_ccd0cedc",
+      "course": "Doncaster",
+      "off_time": "16:50",
+      "race_name": "1m 3f 197y (Class 6) Last 8 outings",
+      "vp": 0.3816,
+      "decision_tier": "B",
+      "place_prob": 0.2445,
+      "mds": 0.0125,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 42.1,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 22.9,
+        "place_frame_score": 4.89,
+        "mds_market_shape_score": 0.31,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cairdeas",
+      "horse_id": "hrs_0235f951",
+      "race_id": "pdf_de2d9e09",
+      "course": "Doncaster",
+      "off_time": "18:38",
+      "race_name": "6f 2y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2117,
+      "decision_tier": "B",
+      "place_prob": 0.9518,
+      "mds": 0.1551,
+      "improvement_score": 0.2683,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 39.62,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.7,
+        "place_frame_score": 19.04,
+        "mds_market_shape_score": 3.88,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Green Triangle",
+      "horse_id": "hrs_8ab41e51",
+      "race_id": "pdf_04350d90",
+      "course": "Newbury",
+      "off_time": "17:00",
+      "race_name": "1m (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2052,
+      "decision_tier": "B",
+      "place_prob": 0.9775,
+      "mds": 0.1397,
+      "improvement_score": 0.3188,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 39.35,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.31,
+        "place_frame_score": 19.55,
+        "mds_market_shape_score": 3.49,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rajaking",
+      "horse_id": "hrs_01865063",
+      "race_id": "pdf_5ca34eb8",
+      "course": "Newmarket",
+      "off_time": "15:27",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.26,
+      "decision_tier": "B",
+      "place_prob": 0.8189,
+      "mds": 0.0893,
+      "improvement_score": 0.2265,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.21,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.6,
+        "place_frame_score": 16.38,
+        "mds_market_shape_score": 2.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Orange Emperor",
+      "horse_id": "hrs_b4fd9089",
+      "race_id": "pdf_9719fec8",
+      "course": "Doncaster",
+      "off_time": "19:08",
+      "race_name": "6f 2y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2387,
+      "decision_tier": "B",
+      "place_prob": 0.4788,
+      "mds": 0.0116,
+      "improvement_score": 0.041,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 38.19,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.32,
+        "place_frame_score": 9.58,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rajapour",
+      "horse_id": "hrs_8b135902",
+      "race_id": "pdf_95943515",
+      "course": "Thirsk",
+      "off_time": "16:12",
+      "race_name": "7f 218y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3127,
+      "decision_tier": "B",
+      "place_prob": 0.9539,
+      "mds": 0.2521,
+      "improvement_score": 0.3136,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 38.14,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 18.76,
+        "place_frame_score": 19.08,
+        "mds_market_shape_score": 6.3,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Emerald Harmony",
+      "horse_id": "hrs_2c2f1e82",
+      "race_id": "pdf_aeb96d3e",
+      "course": "Thirsk",
+      "off_time": "15:37",
+      "race_name": "5f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2526,
+      "decision_tier": "B",
+      "place_prob": 0.8056,
+      "mds": 0.1106,
+      "improvement_score": 0.2841,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.03,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.16,
+        "place_frame_score": 16.11,
+        "mds_market_shape_score": 2.77,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Notable Speech",
+      "horse_id": "hrs_ff89438a",
+      "race_id": "pdf_d4891cb1",
+      "course": "Newbury",
+      "off_time": "14:35",
+      "race_name": "1m (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2058,
+      "decision_tier": "B",
+      "place_prob": 0.9419,
+      "mds": 0.0985,
+      "improvement_score": 0.1186,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 37.65,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.35,
+        "place_frame_score": 18.84,
+        "mds_market_shape_score": 2.46,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "My Love Is King",
+      "horse_id": "hrs_5b4117eb",
+      "race_id": "pdf_0080b2af",
+      "course": "Newbury",
+      "off_time": "15:45",
+      "race_name": "1m 2f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3105,
+      "decision_tier": "B",
+      "place_prob": 0.9892,
+      "mds": 0.1676,
+      "improvement_score": 0.3735,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 36.6,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 18.63,
+        "place_frame_score": 19.78,
+        "mds_market_shape_score": 4.19,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Supersundae",
+      "horse_id": "hrs_80e6dca7",
+      "race_id": "pdf_d6a1e35c",
+      "course": "Wexford",
+      "off_time": "16:25",
+      "race_name": "2m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2196,
+      "decision_tier": "B",
+      "place_prob": 0.9087,
+      "mds": 0.0466,
+      "improvement_score": 0.0906,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 36.52,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.18,
+        "place_frame_score": 18.17,
+        "mds_market_shape_score": 1.17,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Bizarre Law",
+      "horse_id": "hrs_850528a0",
+      "race_id": "pdf_fdd357bb",
+      "course": "Doncaster",
+      "off_time": "20:45",
+      "race_name": "7f 6y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.3187,
+      "decision_tier": "B",
+      "place_prob": 0.9268,
+      "mds": 0.1509,
+      "improvement_score": 0.1929,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 35.43,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 19.12,
+        "place_frame_score": 18.54,
+        "mds_market_shape_score": 3.77,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Carida",
+      "horse_id": "hrs_b58f835e",
+      "race_id": "pdf_47a47a45",
+      "course": "Doncaster",
+      "off_time": "20:15",
+      "race_name": "7f 6y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2318,
+      "decision_tier": "B",
+      "place_prob": 0.367,
+      "mds": 0.0059,
+      "improvement_score": 0.0177,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 35.4,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 13.91,
+        "place_frame_score": 7.34,
+        "mds_market_shape_score": 0.15,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Esna",
+      "horse_id": "hrs_4566ae2b",
+      "race_id": "pdf_5648fb41",
+      "course": "Newbury",
+      "off_time": "14:00",
+      "race_name": "1m 2f (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1879,
+      "decision_tier": "B",
+      "place_prob": 0.4742,
+      "mds": 0.0041,
+      "improvement_score": 0.0121,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 34.86,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.27,
+        "place_frame_score": 9.48,
+        "mds_market_shape_score": 0.1,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Turty Tree",
+      "horse_id": "hrs_a58cfcaa",
+      "race_id": "pdf_602ee13c",
+      "course": "Newmarket",
+      "off_time": "16:02",
+      "race_name": "1m 4f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2058,
+      "decision_tier": "B",
+      "place_prob": 0.8507,
+      "mds": 0.0173,
+      "improvement_score": 0.0482,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.79,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.35,
+        "place_frame_score": 17.01,
+        "mds_market_shape_score": 0.43,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Morning Express",
+      "horse_id": "hrs_62ab3f86",
+      "race_id": "pdf_ef89eb6a",
+      "course": "Wexford",
+      "off_time": "17:32",
+      "race_name": "2m Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2479,
+      "decision_tier": "B",
+      "place_prob": 0.2113,
+      "mds": 0.007,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 33.28,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.87,
+        "place_frame_score": 4.23,
+        "mds_market_shape_score": 0.18,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Son",
+      "horse_id": "hrs_498d3c6b",
+      "race_id": "pdf_336a6bd4",
+      "course": "Newmarket",
+      "off_time": "14:50",
+      "race_name": "7f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1564,
+      "decision_tier": "B",
+      "place_prob": 0.8925,
+      "mds": 0.079,
+      "improvement_score": 0.1817,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.21,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 9.38,
+        "place_frame_score": 17.85,
+        "mds_market_shape_score": 1.98,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Purosangue",
+      "horse_id": "hrs_2c03a273",
+      "race_id": "pdf_624b220a",
+      "course": "Newbury",
+      "off_time": "16:20",
+      "race_name": "6f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2709,
+      "decision_tier": "B",
+      "place_prob": 0.9464,
+      "mds": 0.1584,
+      "improvement_score": 0.3027,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 33.14,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 16.25,
+        "place_frame_score": 18.93,
+        "mds_market_shape_score": 3.96,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Palace Artois",
+      "horse_id": "hrs_4c531fd2",
+      "race_id": "pdf_1ab7a003",
+      "course": "Doncaster",
+      "off_time": "19:40",
+      "race_name": "7f 213y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2404,
+      "decision_tier": "C",
+      "place_prob": 0.4662,
+      "mds": 0.0062,
+      "improvement_score": 0.0181,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 32.9,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 14.42,
+        "place_frame_score": 9.32,
+        "mds_market_shape_score": 0.15,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Double Tiger",
+      "horse_id": "hrs_270d8e42",
+      "race_id": "pdf_3a1e8064",
+      "course": "Uttoxeter",
+      "off_time": "17:50",
+      "race_name": "2m 3f 207y (Class 4) Last 8 outings",
+      "vp": 0.1909,
+      "decision_tier": "B",
+      "place_prob": 0.3549,
+      "mds": 0.0109,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 32.82,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.45,
+        "place_frame_score": 7.1,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lethimfly",
+      "horse_id": "hrs_d9f93853",
+      "race_id": "pdf_23560c3f",
+      "course": "Navan",
+      "off_time": "15:32",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2538,
+      "decision_tier": "B",
+      "place_prob": 0.8868,
+      "mds": 0.1218,
+      "improvement_score": 0.2037,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 30.01,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 15.23,
+        "place_frame_score": 17.74,
+        "mds_market_shape_score": 3.04,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Noble Raider",
+      "horse_id": "hrs_edeb7c59",
+      "race_id": "pdf_f1f811f7",
+      "course": "Doncaster",
+      "off_time": "17:27",
+      "race_name": "5f 3y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.169,
+      "decision_tier": "B",
+      "place_prob": 0.1849,
+      "mds": 0.0109,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 28.11,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.14,
+        "place_frame_score": 3.7,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cholo",
+      "horse_id": "hrs_32eb50d8",
+      "race_id": "pdf_14c2b4e9",
+      "course": "Wexford",
+      "off_time": "15:15",
+      "race_name": "2m 1f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1604,
+      "decision_tier": "B",
+      "place_prob": 0.6682,
+      "mds": 0.0111,
+      "improvement_score": 0.0819,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 27.27,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 9.62,
+        "place_frame_score": 13.36,
+        "mds_market_shape_score": 0.28,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ganesha",
+      "horse_id": "hrs_ebbe069d",
+      "race_id": "pdf_50cb381b",
+      "course": "Thirsk",
+      "off_time": "17:57",
+      "race_name": "6f (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.2104,
+      "decision_tier": "B",
+      "place_prob": 0.8428,
+      "mds": 0.1194,
+      "improvement_score": 0.2562,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 26.47,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 12.62,
+        "place_frame_score": 16.86,
+        "mds_market_shape_score": 2.99,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Miss Lia",
+      "horse_id": "hrs_23cf1b09",
+      "race_id": "pdf_5c258477",
+      "course": "Wexford",
+      "off_time": "14:05",
+      "race_name": "2m 4f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1366,
+      "decision_tier": "B",
+      "place_prob": 0.6853,
+      "mds": 0.0098,
+      "improvement_score": 0.0496,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 26.15,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.2,
+        "place_frame_score": 13.71,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.0,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Fedneys Park",
+      "horse_id": "hrs_422c22db",
+      "race_id": "pdf_8cba9a27",
+      "course": "Wexford",
+      "off_time": "14:40",
+      "race_name": "2m 1f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1333,
+      "decision_tier": "C",
+      "place_prob": 0.4093,
+      "mds": 0.003,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 25.26,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.0,
+        "place_frame_score": 8.19,
+        "mds_market_shape_score": 0.07,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Beep Beep Becky",
+      "horse_id": "hrs_13e7027e",
+      "race_id": "pdf_0e101fd6",
+      "course": "Uttoxeter",
+      "off_time": "17:20",
+      "race_name": "2m 4f 189y (Class 5) Last 8 outings",
+      "vp": 0.1359,
+      "decision_tier": "C",
+      "place_prob": 0.1522,
+      "mds": 0.0105,
+      "improvement_score": 0.0837,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 20.46,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.15,
+        "place_frame_score": 3.04,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Mojo Risin",
+      "horse_id": "hrs_8dc3b8b8",
+      "race_id": "pdf_13f01e45",
+      "course": "Bangor-On-Dee",
+      "off_time": "14:10",
+      "race_name": "2m 145y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1937,
+      "decision_tier": "X",
+      "place_prob": 0.1953,
+      "mds": 0.0102,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 5.78,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 11.62,
+        "place_frame_score": 3.91,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Dromana Mist",
+      "horse_id": "hrs_34240a4d",
+      "race_id": "pdf_842ce3a8",
+      "course": "Wexford",
+      "off_time": "13:30",
+      "race_name": "2m 4f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1692,
+      "decision_tier": "X",
+      "place_prob": 0.141,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 3.23,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 10.15,
+        "place_frame_score": 2.82,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Celeron",
+      "horse_id": "hrs_1f3a8471",
+      "race_id": "pdf_a84cc40b",
+      "course": "Navan",
+      "off_time": "13:12",
+      "race_name": "5f 180y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0874,
+      "decision_tier": "X",
+      "place_prob": 0.1065,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.24,
+        "place_frame_score": 2.13,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Classic Bellini",
+      "horse_id": "hrs_b91820b7",
+      "race_id": "pdf_8de2cf76",
+      "course": "Thirsk",
+      "off_time": "13:52",
+      "race_name": "5f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0914,
+      "decision_tier": "X",
+      "place_prob": 0.1065,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.48,
+        "place_frame_score": 2.13,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ambience",
+      "horse_id": "hrs_166ab3e1",
+      "race_id": "pdf_89c5fd3d",
+      "course": "Newmarket",
+      "off_time": "14:15",
+      "race_name": "6f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1429,
+      "decision_tier": "X",
+      "place_prob": 0.1862,
+      "mds": 0.0125,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 8.57,
+        "place_frame_score": 3.72,
+        "mds_market_shape_score": 0.31,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Big Negotiator",
+      "horse_id": "hrs_a86d3f5b",
+      "race_id": "pdf_03fd70f9",
+      "course": "Navan",
+      "off_time": "14:20",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1576,
+      "decision_tier": "X",
+      "place_prob": 0.1862,
+      "mds": 0.0125,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 9.46,
+        "place_frame_score": 3.72,
+        "mds_market_shape_score": 0.31,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Bettabebougie",
+      "horse_id": "hrs_9f14226e",
+      "race_id": "pdf_c457fe34",
+      "course": "Thirsk",
+      "off_time": "14:23",
+      "race_name": "5f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0997,
+      "decision_tier": "X",
+      "place_prob": 0.1095,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.98,
+        "place_frame_score": 2.19,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Allirelandmaterial",
+      "horse_id": "hrs_587a4af9",
+      "race_id": "pdf_31e6c468",
+      "course": "Navan",
+      "off_time": "14:55",
+      "race_name": "5f Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.0945,
+      "decision_tier": "X",
+      "place_prob": 0.0813,
+      "mds": 0.0102,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 5.67,
+        "place_frame_score": 1.63,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Genchev",
+      "horse_id": "hrs_658dd721",
+      "race_id": "pdf_fb569085",
+      "course": "Navan",
+      "off_time": "17:15",
+      "race_name": "1m 2f 40y Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1282,
+      "decision_tier": "X",
+      "place_prob": 0.1851,
+      "mds": 0.011,
+      "improvement_score": 0.0879,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 7.69,
+        "place_frame_score": 3.7,
+        "mds_market_shape_score": 0.27,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Flight Control",
+      "horse_id": "hrs_7a497bc8",
+      "race_id": "pdf_d8c24773",
+      "course": "Doncaster",
+      "off_time": "18:02",
+      "race_name": "6f 2y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "vp": 0.1027,
+      "decision_tier": "X",
+      "place_prob": 0.1372,
+      "mds": 0.0105,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": null,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "LOW_SOURCE",
+      "score_breakdown": {
+        "vp_confidence_score": 6.16,
+        "place_frame_score": 2.74,
+        "mds_market_shape_score": 0.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.0,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ]
+}

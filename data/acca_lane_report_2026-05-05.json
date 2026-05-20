@@ -1,0 +1,2227 @@
+{
+  "date": "2026-05-05",
+  "status": "SHADOW_OPERATOR_ONLY",
+  "lane": "ACCA_LANE_V1",
+  "day_regime": "ACCA_DAY_THIN",
+  "candidates_scanned": 32,
+  "cashrun_status": "PRESENT",
+  "industry_status": "MISSING_OPTIONAL",
+  "racing_api_enrichment_status": "USED",
+  "source_summary": {
+    "metadata_complete_n": 32,
+    "metadata_total_n": 32,
+    "metadata_coverage": 1.0
+  },
+  "role_counts": {
+    "BANKER": 1,
+    "GLUE": 3,
+    "BOOSTER": 2,
+    "WILDCARD": 11,
+    "TRAP": 15,
+    "BLOCKED": 0
+  },
+  "folds": {
+    "strongest_2_fold": {
+      "generated": true,
+      "size": 2,
+      "combo_score": 159.74,
+      "legs": [
+        {
+          "horse": "Fairye Forth",
+          "course": "Ffos Las",
+          "off_time": "3:18",
+          "race_name": "Mickey Bowen 51 Winners Novices' Hurdle (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.723,
+          "place_prob": 0.9987,
+          "mds": 0.7307,
+          "leg_score": 79.97
+        },
+        {
+          "horse": "Edgewell",
+          "course": "Hereford",
+          "off_time": "5:42",
+          "race_name": "CopyBet Supporting UK Racing Handicap Chase (ARC Summer Chase Series Qualifier) (GBB Race)",
+          "leg_role": "BOOSTER",
+          "vp": 0.381,
+          "place_prob": 0.8262,
+          "mds": 0.0262,
+          "leg_score": 60.04
+        }
+      ]
+    },
+    "strongest_3_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "strongest_4_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "controlled_5_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "speculative_6_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    }
+  },
+  "trap_legs": [
+    {
+      "horse": "Wee Mary",
+      "horse_id": "hrs_41629581",
+      "race_id": "rac_11928813",
+      "course": "Ayr",
+      "off_time": "2:30",
+      "race_name": "Half Price Brunch/Lunch @westernhousehotel Handicap",
+      "vp": 0.201,
+      "decision_tier": "B",
+      "place_prob": 0.8757,
+      "mds": 0.014,
+      "improvement_score": 0.0807,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4012,
+      "racing_api_connection_score": 0.436,
+      "racing_api_course_score": 0.41,
+      "racing_api_distance_score": 0.375,
+      "cashrun_class": "CASHRUN_WATCH",
+      "cashrun_score": 60.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 39.96,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.06,
+        "place_frame_score": 17.51,
+        "mds_market_shape_score": 0.35,
+        "cashrun_score": 6.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ebony Maw",
+      "horse_id": "hrs_20041413",
+      "race_id": "rac_11928748",
+      "course": "Ayr",
+      "off_time": "5:00",
+      "race_name": "Book Sounds Of Summer Racenight Handicap",
+      "vp": 0.2392,
+      "decision_tier": "B",
+      "place_prob": 0.7971,
+      "mds": 0.0181,
+      "improvement_score": 0.0126,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4287,
+      "racing_api_connection_score": 0.398,
+      "racing_api_course_score": 0.444,
+      "racing_api_distance_score": null,
+      "cashrun_class": "WEAK_SIGNAL",
+      "cashrun_score": 37.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 36.79,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.35,
+        "place_frame_score": 15.94,
+        "mds_market_shape_score": 0.45,
+        "cashrun_score": 2.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Daytona Lady",
+      "horse_id": "hrs_29945083",
+      "race_id": "rac_11931725",
+      "course": "Wolverhampton (AW)",
+      "off_time": "9:00",
+      "race_name": "Get The Inside Track With raceday-ready.com Fillies' Handicap",
+      "vp": 0.2518,
+      "decision_tier": "B",
+      "place_prob": 0.7376,
+      "mds": 0.0196,
+      "improvement_score": 0.0126,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4008,
+      "racing_api_connection_score": 0.398,
+      "racing_api_course_score": 0.413,
+      "racing_api_distance_score": 0.39,
+      "cashrun_class": "WEAK_SIGNAL",
+      "cashrun_score": 47.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 36.39,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.11,
+        "place_frame_score": 14.75,
+        "mds_market_shape_score": 0.49,
+        "cashrun_score": 2.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Hale Bopp",
+      "horse_id": "hrs_21714889",
+      "race_id": "rac_11954644",
+      "course": "Gowran Park",
+      "off_time": "8:08",
+      "race_name": "Save 33% Buying Tickets Online Handicap",
+      "vp": 0.2121,
+      "decision_tier": "B",
+      "place_prob": 0.4542,
+      "mds": 0.0183,
+      "improvement_score": 0.0855,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.262,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.207,
+      "racing_api_distance_score": 0.317,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 2.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.29,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.73,
+        "place_frame_score": 9.08,
+        "mds_market_shape_score": 0.46,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Whatcombe",
+      "horse_id": "hrs_44785895",
+      "race_id": "rac_11942047",
+      "course": "Hereford",
+      "off_time": "6:12",
+      "race_name": "Safer Gambling At CopyBet Maiden Hurdle (GBB Race)",
+      "vp": 0.2703,
+      "decision_tier": "C",
+      "place_prob": 0.414,
+      "mds": 0.0996,
+      "improvement_score": 0.1444,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4648,
+      "racing_api_connection_score": 0.548,
+      "racing_api_course_score": 0.49,
+      "racing_api_distance_score": 0.369,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 10.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 36.03,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 16.22,
+        "place_frame_score": 8.28,
+        "mds_market_shape_score": 2.49,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cause I Like You",
+      "horse_id": "hrs_58745134",
+      "race_id": "rac_11954631",
+      "course": "Gowran Park",
+      "off_time": "7:38",
+      "race_name": "Follow Us On Instagram Apprentice Handicap",
+      "vp": 0.1968,
+      "decision_tier": "B",
+      "place_prob": 0.4402,
+      "mds": 0.055,
+      "improvement_score": 0.1486,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4257,
+      "racing_api_connection_score": 0.416,
+      "racing_api_course_score": 0.415,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 0.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.03,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.81,
+        "place_frame_score": 8.8,
+        "mds_market_shape_score": 1.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Western Bandit",
+      "horse_id": "hrs_63422632",
+      "race_id": "rac_11954579",
+      "course": "Gowran Park",
+      "off_time": "5:37",
+      "race_name": "Thomastown Maiden",
+      "vp": 0.2212,
+      "decision_tier": "C",
+      "place_prob": 0.4741,
+      "mds": 0.1624,
+      "improvement_score": 0.3828,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4277,
+      "racing_api_connection_score": 0.536,
+      "racing_api_course_score": 0.379,
+      "racing_api_distance_score": 0.368,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 0.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 35.86,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.27,
+        "place_frame_score": 9.48,
+        "mds_market_shape_score": 4.06,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Eve's Boy",
+      "horse_id": "hrs_41662292",
+      "race_id": "rac_11928761",
+      "course": "Ayr",
+      "off_time": "4:00",
+      "race_name": "Book Unite Scotland Summer Raceday Handicap",
+      "vp": 0.2249,
+      "decision_tier": "B",
+      "place_prob": 0.71,
+      "mds": 0.0453,
+      "improvement_score": 0.0221,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.386,
+      "racing_api_connection_score": 0.382,
+      "racing_api_course_score": 0.366,
+      "racing_api_distance_score": 0.408,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 17.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.87,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.49,
+        "place_frame_score": 14.2,
+        "mds_market_shape_score": 1.13,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cluain Chormaic",
+      "horse_id": "hrs_51434222",
+      "race_id": "rac_11942073",
+      "course": "Hereford",
+      "off_time": "7:17",
+      "race_name": "Wye Valley Metals Handicap Hurdle",
+      "vp": 0.3087,
+      "decision_tier": "B",
+      "place_prob": 0.3767,
+      "mds": 0.099,
+      "improvement_score": 0.0646,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.404,
+      "racing_api_connection_score": 0.142,
+      "racing_api_course_score": 0.388,
+      "racing_api_distance_score": 0.543,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.57,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.52,
+        "place_frame_score": 7.53,
+        "mds_market_shape_score": 2.48,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Coconut Bay",
+      "horse_id": "hrs_30175852",
+      "race_id": "rac_11928800",
+      "course": "Ayr",
+      "off_time": "3:00",
+      "race_name": "Sunday Lunch At Western House Hotel Handicap",
+      "vp": 0.2021,
+      "decision_tier": "B",
+      "place_prob": 0.6825,
+      "mds": 0.026,
+      "improvement_score": 0.0126,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.463,
+      "racing_api_connection_score": 0.57,
+      "racing_api_course_score": 0.454,
+      "racing_api_distance_score": 0.365,
+      "cashrun_class": "WEAK_SIGNAL",
+      "cashrun_score": 42.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.47,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.13,
+        "place_frame_score": 13.65,
+        "mds_market_shape_score": 0.65,
+        "cashrun_score": 2.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Shielas Well",
+      "horse_id": "hrs_42163240",
+      "race_id": "rac_11931751",
+      "course": "Wolverhampton (AW)",
+      "off_time": "6:30",
+      "race_name": "Download The Raceday Ready App Apprentice Handicap",
+      "vp": 0.224,
+      "decision_tier": "B",
+      "place_prob": 0.6753,
+      "mds": 0.0444,
+      "improvement_score": 0.0445,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.418,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.44,
+      "racing_api_distance_score": 0.396,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 30.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.1,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.44,
+        "place_frame_score": 13.51,
+        "mds_market_shape_score": 1.11,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Hell Hound",
+      "horse_id": "hrs_34571600",
+      "race_id": "rac_11926720",
+      "course": "Ffos Las",
+      "off_time": "4:18",
+      "race_name": "Sean Bowen Champion Jockey Handicap Chase (ARC Summer Chase Series Qualifier) (GBB Race)",
+      "vp": 0.187,
+      "decision_tier": "C",
+      "place_prob": 0.3674,
+      "mds": 0.1107,
+      "improvement_score": 0.0832,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.402,
+      "racing_api_connection_score": 0.456,
+      "racing_api_course_score": 0.334,
+      "racing_api_distance_score": 0.416,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 32.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 30.38,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.22,
+        "place_frame_score": 7.35,
+        "mds_market_shape_score": 2.77,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Prairie Queen",
+      "horse_id": "hrs_37702294",
+      "race_id": "rac_11942099",
+      "course": "Hereford",
+      "off_time": "8:17",
+      "race_name": "Wye Valley Skips Handicap Chase (ARC Summer Chase Series Qualifier)",
+      "vp": 0.1827,
+      "decision_tier": "C",
+      "place_prob": 0.5002,
+      "mds": 0.0121,
+      "improvement_score": 0.0247,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2836,
+      "racing_api_connection_score": 0.262,
+      "racing_api_course_score": 0.262,
+      "racing_api_distance_score": 0.316,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 30.3,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.96,
+        "place_frame_score": 10.0,
+        "mds_market_shape_score": 0.3,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Makinbecon",
+      "horse_id": "hrs_41378393",
+      "race_id": "rac_11926759",
+      "course": "Ffos Las",
+      "off_time": "4:48",
+      "race_name": "Gwyn Brace Handicap Hurdle",
+      "vp": 0.1726,
+      "decision_tier": "C",
+      "place_prob": 0.466,
+      "mds": 0.018,
+      "improvement_score": 0.0944,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.378,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.392,
+      "racing_api_distance_score": 0.364,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 2.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 29.16,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.36,
+        "place_frame_score": 9.32,
+        "mds_market_shape_score": 0.45,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Isla Bella",
+      "horse_id": "hrs_40646872",
+      "race_id": "rac_11931764",
+      "course": "Wolverhampton (AW)",
+      "off_time": "8:30",
+      "race_name": "Tips For Every Race At raceday-ready.com Handicap",
+      "vp": 0.2076,
+      "decision_tier": "B",
+      "place_prob": 0.5735,
+      "mds": 0.0096,
+      "improvement_score": 0.0373,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2556,
+      "racing_api_connection_score": 0.124,
+      "racing_api_course_score": 0.3,
+      "racing_api_distance_score": 0.277,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 28.19,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.46,
+        "place_frame_score": 11.47,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ],
+  "rejected_legs": [
+    {
+      "horse": "Wee Mary",
+      "course": "Ayr",
+      "off_time": "2:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Ebony Maw",
+      "course": "Ayr",
+      "off_time": "5:00",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Daytona Lady",
+      "course": "Wolverhampton (AW)",
+      "off_time": "9:00",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Hale Bopp",
+      "course": "Gowran Park",
+      "off_time": "8:08",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Whatcombe",
+      "course": "Hereford",
+      "off_time": "6:12",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Cause I Like You",
+      "course": "Gowran Park",
+      "off_time": "7:38",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Western Bandit",
+      "course": "Gowran Park",
+      "off_time": "5:37",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Eve's Boy",
+      "course": "Ayr",
+      "off_time": "4:00",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Cluain Chormaic",
+      "course": "Hereford",
+      "off_time": "7:17",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Coconut Bay",
+      "course": "Ayr",
+      "off_time": "3:00",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Shielas Well",
+      "course": "Wolverhampton (AW)",
+      "off_time": "6:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Hell Hound",
+      "course": "Ffos Las",
+      "off_time": "4:18",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Prairie Queen",
+      "course": "Hereford",
+      "off_time": "8:17",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Makinbecon",
+      "course": "Ffos Las",
+      "off_time": "4:48",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Isla Bella",
+      "course": "Wolverhampton (AW)",
+      "off_time": "8:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "horse": "Fairye Forth",
+      "horse_id": "hrs_40352613",
+      "race_id": "rac_11926707",
+      "course": "Ffos Las",
+      "off_time": "3:18",
+      "race_name": "Mickey Bowen 51 Winners Novices' Hurdle (GBB Race)",
+      "vp": 0.723,
+      "decision_tier": "A",
+      "place_prob": 0.9987,
+      "mds": 0.7307,
+      "improvement_score": 0.3522,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4943,
+      "racing_api_connection_score": 0.484,
+      "racing_api_course_score": 0.53,
+      "racing_api_distance_score": 0.469,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 5.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 79.97,
+      "leg_role": "BANKER",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 19.97,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Bintaziza",
+      "horse_id": "hrs_63742140",
+      "race_id": "rac_11931712",
+      "course": "Wolverhampton (AW)",
+      "off_time": "7:00",
+      "race_name": "Get Raceday Ready Fillies' Restricted Novice Stakes (Bands B, C And D) (GBB Race)",
+      "vp": 0.4053,
+      "decision_tier": "A",
+      "place_prob": 0.9947,
+      "mds": 0.4835,
+      "improvement_score": 0.3862,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4777,
+      "racing_api_connection_score": 0.424,
+      "racing_api_course_score": 0.478,
+      "racing_api_distance_score": 0.531,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 5.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 74.21,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 24.32,
+        "place_frame_score": 19.89,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Faiyum",
+      "horse_id": "hrs_51091159",
+      "race_id": "rac_11954605",
+      "course": "Gowran Park",
+      "off_time": "6:38",
+      "race_name": "Irish Stallion Farms EBF Victor McCalmont Memorial Stakes (Listed Race)",
+      "vp": 0.4295,
+      "decision_tier": "A",
+      "place_prob": 0.9921,
+      "mds": 0.2533,
+      "improvement_score": 0.2137,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4372,
+      "racing_api_connection_score": 0.418,
+      "racing_api_course_score": 0.455,
+      "racing_api_distance_score": 0.429,
+      "cashrun_class": "WEAK_SIGNAL",
+      "cashrun_score": 40.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 73.94,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 25.77,
+        "place_frame_score": 19.84,
+        "mds_market_shape_score": 6.33,
+        "cashrun_score": 2.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "The Publican's Son",
+      "horse_id": "hrs_54842536",
+      "race_id": "rac_11954566",
+      "course": "Gowran Park",
+      "off_time": "5:07",
+      "race_name": "Societies Welcome At Gowran Park Maiden",
+      "vp": 0.3687,
+      "decision_tier": "A",
+      "place_prob": 0.9857,
+      "mds": 0.4023,
+      "improvement_score": 0.7177,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4173,
+      "racing_api_connection_score": 0.46,
+      "racing_api_course_score": 0.4,
+      "racing_api_distance_score": 0.392,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 5.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 71.84,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.12,
+        "place_frame_score": 19.71,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Edgewell",
+      "horse_id": "hrs_34003025",
+      "race_id": "rac_11942034",
+      "course": "Hereford",
+      "off_time": "5:42",
+      "race_name": "CopyBet Supporting UK Racing Handicap Chase (ARC Summer Chase Series Qualifier) (GBB Race)",
+      "vp": 0.381,
+      "decision_tier": "A",
+      "place_prob": 0.8262,
+      "mds": 0.0262,
+      "improvement_score": 0.0868,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.5225,
+      "racing_api_connection_score": 0.45,
+      "racing_api_course_score": 0.742,
+      "racing_api_distance_score": 0.448,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 2.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 60.04,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.86,
+        "place_frame_score": 16.52,
+        "mds_market_shape_score": 0.66,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Triple Haych",
+      "horse_id": "hrs_53116231",
+      "race_id": "rac_11942086",
+      "course": "Hereford",
+      "off_time": "7:47",
+      "race_name": "Green Dragon Hotel Novices' Handicap Hurdle (GBB Race)",
+      "vp": 0.5733,
+      "decision_tier": "A",
+      "place_prob": 0.7187,
+      "mds": 0.0331,
+      "improvement_score": 0.106,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.2968,
+      "racing_api_connection_score": 0.352,
+      "racing_api_course_score": 0.279,
+      "racing_api_distance_score": 0.287,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 55.23,
+      "leg_role": "BOOSTER",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 14.37,
+        "mds_market_shape_score": 0.83,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Almeiyda",
+      "horse_id": "hrs_57286754",
+      "race_id": "rac_11954618",
+      "course": "Gowran Park",
+      "off_time": "7:08",
+      "race_name": "Irish Stallion Farms EBF Fillies Maiden",
+      "vp": 0.37,
+      "decision_tier": "A",
+      "place_prob": 0.6792,
+      "mds": 0.1857,
+      "improvement_score": 0.3605,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.359,
+      "racing_api_connection_score": 0.38,
+      "racing_api_course_score": 0.34,
+      "racing_api_distance_score": 0.357,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 10.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 50.46,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.2,
+        "place_frame_score": 13.58,
+        "mds_market_shape_score": 4.64,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Floresta",
+      "horse_id": "hrs_50965075",
+      "race_id": "rac_11954592",
+      "course": "Gowran Park",
+      "off_time": "6:07",
+      "race_name": "Irish Stallion Farms EBF Vintage Tipple Stakes (Listed Race)",
+      "vp": 0.2951,
+      "decision_tier": "B",
+      "place_prob": 0.7842,
+      "mds": 0.0493,
+      "improvement_score": 0.0682,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4744,
+      "racing_api_connection_score": 0.422,
+      "racing_api_course_score": 0.54,
+      "racing_api_distance_score": 0.435,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 25.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 48.67,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.71,
+        "place_frame_score": 15.68,
+        "mds_market_shape_score": 1.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Star Turn",
+      "horse_id": "hrs_35675661",
+      "race_id": "rac_11926746",
+      "course": "Ffos Las",
+      "off_time": "3:48",
+      "race_name": "James Bowen Ton Up Novices' Handicap Hurdle",
+      "vp": 0.2888,
+      "decision_tier": "B",
+      "place_prob": 0.8239,
+      "mds": 0.028,
+      "improvement_score": 0.0837,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4987,
+      "racing_api_connection_score": 0.492,
+      "racing_api_course_score": 0.443,
+      "racing_api_distance_score": 0.561,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 48.56,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.33,
+        "place_frame_score": 16.48,
+        "mds_market_shape_score": 0.7,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Summerstorms Dream",
+      "horse_id": "hrs_52329529",
+      "race_id": "rac_11928774",
+      "course": "Ayr",
+      "off_time": "4:30",
+      "race_name": "Ayr Racecourse Racing Club Handicap",
+      "vp": 0.2419,
+      "decision_tier": "B",
+      "place_prob": 0.9597,
+      "mds": 0.0218,
+      "improvement_score": 0.0787,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4992,
+      "racing_api_connection_score": 0.544,
+      "racing_api_course_score": 0.529,
+      "racing_api_distance_score": 0.447,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 17.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 48.3,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.51,
+        "place_frame_score": 19.19,
+        "mds_market_shape_score": 0.55,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Tinsel",
+      "horse_id": "hrs_49143892",
+      "race_id": "rac_11931738",
+      "course": "Wolverhampton (AW)",
+      "off_time": "7:30",
+      "race_name": "Free Digital Racecard At raceday-ready.com Handicap",
+      "vp": 0.3611,
+      "decision_tier": "B",
+      "place_prob": 0.9892,
+      "mds": 0.1057,
+      "improvement_score": 0.0228,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.452,
+      "racing_api_connection_score": 0.574,
+      "racing_api_course_score": 0.412,
+      "racing_api_distance_score": 0.37,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 7.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 48.14,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 21.67,
+        "place_frame_score": 19.78,
+        "mds_market_shape_score": 2.64,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Prince Rhinegold",
+      "horse_id": "hrs_29691557",
+      "race_id": "rac_11926772",
+      "course": "Ffos Las",
+      "off_time": "2:48",
+      "race_name": "Weatherbys nhstallions.co.uk Handicap Hurdle",
+      "vp": 0.3751,
+      "decision_tier": "A",
+      "place_prob": 0.6518,
+      "mds": 0.0205,
+      "improvement_score": 0.1226,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.28,
+      "racing_api_connection_score": 0.226,
+      "racing_api_course_score": 0.275,
+      "racing_api_distance_score": 0.312,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 46.08,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.51,
+        "place_frame_score": 13.04,
+        "mds_market_shape_score": 0.51,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "The Long Walk",
+      "horse_id": "hrs_46108139",
+      "race_id": "rac_11942060",
+      "course": "Hereford",
+      "off_time": "6:47",
+      "race_name": "CopyBet Overnight Best Odds Guaranteed Handicap Hurdle",
+      "vp": 0.3042,
+      "decision_tier": "B",
+      "place_prob": 0.6011,
+      "mds": 0.0378,
+      "improvement_score": 0.0379,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4652,
+      "racing_api_connection_score": 0.46,
+      "racing_api_course_score": 0.385,
+      "racing_api_distance_score": 0.548,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 17.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.27,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.25,
+        "place_frame_score": 12.02,
+        "mds_market_shape_score": 0.95,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Poetic Grace",
+      "horse_id": "hrs_49143304",
+      "race_id": "rac_11931699",
+      "course": "Wolverhampton (AW)",
+      "off_time": "8:00",
+      "race_name": "Download The Racecourse App Raceday Ready Handicap",
+      "vp": 0.2808,
+      "decision_tier": "B",
+      "place_prob": 0.6875,
+      "mds": 0.0212,
+      "improvement_score": 0.0813,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3608,
+      "racing_api_connection_score": 0.408,
+      "racing_api_course_score": 0.356,
+      "racing_api_distance_score": 0.342,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.16,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 16.85,
+        "place_frame_score": 13.75,
+        "mds_market_shape_score": 0.53,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Of Corse I Can",
+      "horse_id": "hrs_27040510",
+      "race_id": "rac_11926733",
+      "course": "Ffos Las",
+      "off_time": "5:22",
+      "race_name": "Adept GRP Cabinets Handicap Chase (ARC Summer Chase Series Qualifier)",
+      "vp": 0.2548,
+      "decision_tier": "B",
+      "place_prob": 0.7155,
+      "mds": 0.02,
+      "improvement_score": 0.0933,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.372,
+      "racing_api_connection_score": 0.542,
+      "racing_api_course_score": 0.394,
+      "racing_api_distance_score": 0.191,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 10.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 44.14,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.29,
+        "place_frame_score": 14.31,
+        "mds_market_shape_score": 0.5,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Uncle Liam",
+      "horse_id": "hrs_45256764",
+      "race_id": "rac_11928787",
+      "course": "Ayr",
+      "off_time": "3:30",
+      "race_name": "Luxury Breaks At Western House Hotel Handicap",
+      "vp": 0.186,
+      "decision_tier": "B",
+      "place_prob": 0.8308,
+      "mds": 0.0171,
+      "improvement_score": 0.0462,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4895,
+      "racing_api_connection_score": 0.544,
+      "racing_api_course_score": 0.529,
+      "racing_api_distance_score": 0.356,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 42.25,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.16,
+        "place_frame_score": 16.62,
+        "mds_market_shape_score": 0.43,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Stoneacre Joe",
+      "horse_id": "hrs_49141379",
+      "race_id": "rac_11928735",
+      "course": "Ayr",
+      "off_time": "2:00",
+      "race_name": "Weddings At Western House Hotel Maiden Stakes (GBB Race)",
+      "vp": 0.3008,
+      "decision_tier": "B",
+      "place_prob": 0.7443,
+      "mds": 0.1937,
+      "improvement_score": 0.3384,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4,
+      "racing_api_connection_score": 0.402,
+      "racing_api_course_score": 0.429,
+      "racing_api_distance_score": 0.37,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 41.82,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.05,
+        "place_frame_score": 14.89,
+        "mds_market_shape_score": 4.84,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Wee Mary",
+      "horse_id": "hrs_41629581",
+      "race_id": "rac_11928813",
+      "course": "Ayr",
+      "off_time": "2:30",
+      "race_name": "Half Price Brunch/Lunch @westernhousehotel Handicap",
+      "vp": 0.201,
+      "decision_tier": "B",
+      "place_prob": 0.8757,
+      "mds": 0.014,
+      "improvement_score": 0.0807,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4012,
+      "racing_api_connection_score": 0.436,
+      "racing_api_course_score": 0.41,
+      "racing_api_distance_score": 0.375,
+      "cashrun_class": "CASHRUN_WATCH",
+      "cashrun_score": 60.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 39.96,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.06,
+        "place_frame_score": 17.51,
+        "mds_market_shape_score": 0.35,
+        "cashrun_score": 6.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ebony Maw",
+      "horse_id": "hrs_20041413",
+      "race_id": "rac_11928748",
+      "course": "Ayr",
+      "off_time": "5:00",
+      "race_name": "Book Sounds Of Summer Racenight Handicap",
+      "vp": 0.2392,
+      "decision_tier": "B",
+      "place_prob": 0.7971,
+      "mds": 0.0181,
+      "improvement_score": 0.0126,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4287,
+      "racing_api_connection_score": 0.398,
+      "racing_api_course_score": 0.444,
+      "racing_api_distance_score": null,
+      "cashrun_class": "WEAK_SIGNAL",
+      "cashrun_score": 37.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 36.79,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.35,
+        "place_frame_score": 15.94,
+        "mds_market_shape_score": 0.45,
+        "cashrun_score": 2.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Daytona Lady",
+      "horse_id": "hrs_29945083",
+      "race_id": "rac_11931725",
+      "course": "Wolverhampton (AW)",
+      "off_time": "9:00",
+      "race_name": "Get The Inside Track With raceday-ready.com Fillies' Handicap",
+      "vp": 0.2518,
+      "decision_tier": "B",
+      "place_prob": 0.7376,
+      "mds": 0.0196,
+      "improvement_score": 0.0126,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4008,
+      "racing_api_connection_score": 0.398,
+      "racing_api_course_score": 0.413,
+      "racing_api_distance_score": 0.39,
+      "cashrun_class": "WEAK_SIGNAL",
+      "cashrun_score": 47.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 36.39,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.11,
+        "place_frame_score": 14.75,
+        "mds_market_shape_score": 0.49,
+        "cashrun_score": 2.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Hale Bopp",
+      "horse_id": "hrs_21714889",
+      "race_id": "rac_11954644",
+      "course": "Gowran Park",
+      "off_time": "8:08",
+      "race_name": "Save 33% Buying Tickets Online Handicap",
+      "vp": 0.2121,
+      "decision_tier": "B",
+      "place_prob": 0.4542,
+      "mds": 0.0183,
+      "improvement_score": 0.0855,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.262,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.207,
+      "racing_api_distance_score": 0.317,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 2.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.29,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.73,
+        "place_frame_score": 9.08,
+        "mds_market_shape_score": 0.46,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Whatcombe",
+      "horse_id": "hrs_44785895",
+      "race_id": "rac_11942047",
+      "course": "Hereford",
+      "off_time": "6:12",
+      "race_name": "Safer Gambling At CopyBet Maiden Hurdle (GBB Race)",
+      "vp": 0.2703,
+      "decision_tier": "C",
+      "place_prob": 0.414,
+      "mds": 0.0996,
+      "improvement_score": 0.1444,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4648,
+      "racing_api_connection_score": 0.548,
+      "racing_api_course_score": 0.49,
+      "racing_api_distance_score": 0.369,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 10.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 36.03,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 16.22,
+        "place_frame_score": 8.28,
+        "mds_market_shape_score": 2.49,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cause I Like You",
+      "horse_id": "hrs_58745134",
+      "race_id": "rac_11954631",
+      "course": "Gowran Park",
+      "off_time": "7:38",
+      "race_name": "Follow Us On Instagram Apprentice Handicap",
+      "vp": 0.1968,
+      "decision_tier": "B",
+      "place_prob": 0.4402,
+      "mds": 0.055,
+      "improvement_score": 0.1486,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4257,
+      "racing_api_connection_score": 0.416,
+      "racing_api_course_score": 0.415,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 0.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.03,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.81,
+        "place_frame_score": 8.8,
+        "mds_market_shape_score": 1.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Western Bandit",
+      "horse_id": "hrs_63422632",
+      "race_id": "rac_11954579",
+      "course": "Gowran Park",
+      "off_time": "5:37",
+      "race_name": "Thomastown Maiden",
+      "vp": 0.2212,
+      "decision_tier": "C",
+      "place_prob": 0.4741,
+      "mds": 0.1624,
+      "improvement_score": 0.3828,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4277,
+      "racing_api_connection_score": 0.536,
+      "racing_api_course_score": 0.379,
+      "racing_api_distance_score": 0.368,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 0.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 35.86,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.27,
+        "place_frame_score": 9.48,
+        "mds_market_shape_score": 4.06,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Eve's Boy",
+      "horse_id": "hrs_41662292",
+      "race_id": "rac_11928761",
+      "course": "Ayr",
+      "off_time": "4:00",
+      "race_name": "Book Unite Scotland Summer Raceday Handicap",
+      "vp": 0.2249,
+      "decision_tier": "B",
+      "place_prob": 0.71,
+      "mds": 0.0453,
+      "improvement_score": 0.0221,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.386,
+      "racing_api_connection_score": 0.382,
+      "racing_api_course_score": 0.366,
+      "racing_api_distance_score": 0.408,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 17.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.87,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.49,
+        "place_frame_score": 14.2,
+        "mds_market_shape_score": 1.13,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cluain Chormaic",
+      "horse_id": "hrs_51434222",
+      "race_id": "rac_11942073",
+      "course": "Hereford",
+      "off_time": "7:17",
+      "race_name": "Wye Valley Metals Handicap Hurdle",
+      "vp": 0.3087,
+      "decision_tier": "B",
+      "place_prob": 0.3767,
+      "mds": 0.099,
+      "improvement_score": 0.0646,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.404,
+      "racing_api_connection_score": 0.142,
+      "racing_api_course_score": 0.388,
+      "racing_api_distance_score": 0.543,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.57,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.52,
+        "place_frame_score": 7.53,
+        "mds_market_shape_score": 2.48,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Coconut Bay",
+      "horse_id": "hrs_30175852",
+      "race_id": "rac_11928800",
+      "course": "Ayr",
+      "off_time": "3:00",
+      "race_name": "Sunday Lunch At Western House Hotel Handicap",
+      "vp": 0.2021,
+      "decision_tier": "B",
+      "place_prob": 0.6825,
+      "mds": 0.026,
+      "improvement_score": 0.0126,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.463,
+      "racing_api_connection_score": 0.57,
+      "racing_api_course_score": 0.454,
+      "racing_api_distance_score": 0.365,
+      "cashrun_class": "WEAK_SIGNAL",
+      "cashrun_score": 42.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.47,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.13,
+        "place_frame_score": 13.65,
+        "mds_market_shape_score": 0.65,
+        "cashrun_score": 2.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Shielas Well",
+      "horse_id": "hrs_42163240",
+      "race_id": "rac_11931751",
+      "course": "Wolverhampton (AW)",
+      "off_time": "6:30",
+      "race_name": "Download The Raceday Ready App Apprentice Handicap",
+      "vp": 0.224,
+      "decision_tier": "B",
+      "place_prob": 0.6753,
+      "mds": 0.0444,
+      "improvement_score": 0.0445,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.418,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.44,
+      "racing_api_distance_score": 0.396,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 30.0,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 32.1,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.44,
+        "place_frame_score": 13.51,
+        "mds_market_shape_score": 1.11,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Hell Hound",
+      "horse_id": "hrs_34571600",
+      "race_id": "rac_11926720",
+      "course": "Ffos Las",
+      "off_time": "4:18",
+      "race_name": "Sean Bowen Champion Jockey Handicap Chase (ARC Summer Chase Series Qualifier) (GBB Race)",
+      "vp": 0.187,
+      "decision_tier": "C",
+      "place_prob": 0.3674,
+      "mds": 0.1107,
+      "improvement_score": 0.0832,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.402,
+      "racing_api_connection_score": 0.456,
+      "racing_api_course_score": 0.334,
+      "racing_api_distance_score": 0.416,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 32.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 30.38,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.22,
+        "place_frame_score": 7.35,
+        "mds_market_shape_score": 2.77,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Prairie Queen",
+      "horse_id": "hrs_37702294",
+      "race_id": "rac_11942099",
+      "course": "Hereford",
+      "off_time": "8:17",
+      "race_name": "Wye Valley Skips Handicap Chase (ARC Summer Chase Series Qualifier)",
+      "vp": 0.1827,
+      "decision_tier": "C",
+      "place_prob": 0.5002,
+      "mds": 0.0121,
+      "improvement_score": 0.0247,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2836,
+      "racing_api_connection_score": 0.262,
+      "racing_api_course_score": 0.262,
+      "racing_api_distance_score": 0.316,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 12.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 30.3,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.96,
+        "place_frame_score": 10.0,
+        "mds_market_shape_score": 0.3,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Makinbecon",
+      "horse_id": "hrs_41378393",
+      "race_id": "rac_11926759",
+      "course": "Ffos Las",
+      "off_time": "4:48",
+      "race_name": "Gwyn Brace Handicap Hurdle",
+      "vp": 0.1726,
+      "decision_tier": "C",
+      "place_prob": 0.466,
+      "mds": 0.018,
+      "improvement_score": 0.0944,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.378,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.392,
+      "racing_api_distance_score": 0.364,
+      "cashrun_class": "SUPPRESS",
+      "cashrun_score": 2.5,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 29.16,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "FULL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.36,
+        "place_frame_score": 9.32,
+        "mds_market_shape_score": 0.45,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Isla Bella",
+      "horse_id": "hrs_40646872",
+      "race_id": "rac_11931764",
+      "course": "Wolverhampton (AW)",
+      "off_time": "8:30",
+      "race_name": "Tips For Every Race At raceday-ready.com Handicap",
+      "vp": 0.2076,
+      "decision_tier": "B",
+      "place_prob": 0.5735,
+      "mds": 0.0096,
+      "improvement_score": 0.0373,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2556,
+      "racing_api_connection_score": 0.124,
+      "racing_api_course_score": 0.3,
+      "racing_api_distance_score": 0.277,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 28.19,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.46,
+        "place_frame_score": 11.47,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ]
+}

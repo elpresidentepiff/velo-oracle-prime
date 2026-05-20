@@ -1,0 +1,94 @@
+{
+  "audit_version": "v1",
+  "audit_date": "2026-05-05",
+  "issues": [
+    {
+      "step": "AGENT_BOOT",
+      "id": "MISSING_DOC_RUNBOOK",
+      "impact": "High",
+      "description": "docs/engineering/VELO_AGENT_SETUP_AND_RUNBOOK_V1.md is missing.",
+      "finding": "Initially thought missing, confirmed MISSING_CONFIRMED after global search.",
+      "workaround": "Read VELO_MASTER_LOG.md and CLAUDE.md for basic orientation.",
+      "fix": "Create canonical runbook.",
+      "priority": "P0",
+      "status": "OPEN"
+    },
+    {
+      "step": "AGENT_BOOT",
+      "id": "MISSING_DOC_PROCESS_CONTROL",
+      "impact": "High",
+      "description": "docs/engineering/VELO_PROCESS_CONTROL.md is missing.",
+      "finding": "MISSING_CONFIRMED. VELO_PROCESS_WIRING_MAP_V1.md exists but is not the requested control file.",
+      "workaround": "None, agent must guess canonical commands.",
+      "fix": "Create VELO_PROCESS_CONTROL.md (Step 10 of this audit).",
+      "priority": "P0",
+      "status": "OPEN"
+    },
+    {
+      "step": "AGENT_BOOT",
+      "id": "MISSING_DOC_BLOCKERS",
+      "impact": "Medium",
+      "description": "docs/engineering/VELO_KNOWN_ISSUES_AND_BLOCKERS_V1.md is missing.",
+      "finding": "MISSING_CONFIRMED.",
+      "workaround": "Read VELO_MASTER_LOG.md for incident history.",
+      "fix": "Create known issues log.",
+      "priority": "P1",
+      "status": "OPEN"
+    },
+    {
+      "step": "DASHBOARD_PUBLISH",
+      "id": "ENV_DEPENDENCY_PYTHON",
+      "impact": "Low",
+      "description": "'python' command not found; must use 'python3'.",
+      "finding": "Standard bash 'python' alias missing.",
+      "workaround": "Use 'python3'.",
+      "fix": "Update documentation to specify python3 or venv usage.",
+      "priority": "P2",
+      "status": "OPEN"
+    },
+    {
+      "step": "DASHBOARD_PUBLISH",
+      "id": "MISSING_PACKAGE_SUPABASE",
+      "impact": "Medium",
+      "description": "'supabase' python package not installed or not in current path.",
+      "finding": "Dry-run skipped Supabase races due to 'supabase_package_not_installed'.",
+      "workaround": "Local JSON fallback worked.",
+      "fix": "Ensure 'pip install supabase' is in setup instructions.",
+      "priority": "P1",
+      "status": "OPEN"
+    },
+    {
+      "step": "ORIENTATION",
+      "id": "EXTERNAL_RESEARCH_DOC",
+      "impact": "Low",
+      "description": "VELO_TRUTH_THESIS_V1.md is located outside the velo-oracle-prime repo.",
+      "finding": "Found at /mnt/c/Users/puror/docs/research/VELO_TRUTH_THESIS_V1.md.",
+      "workaround": "Access via absolute path.",
+      "fix": "Consider symlinking or moving into repo docs/ if appropriate.",
+      "priority": "P2",
+      "status": "OPEN"
+    },
+    {
+      "step": "RACING_API_CAPABILITY",
+      "id": "UNCLEAR_CAPABILITY_MAP",
+      "impact": "Medium",
+      "description": "No formal documentation for Racing API capabilities/schemas.",
+      "finding": "Only explore_racing_api.py exists for probing.",
+      "workaround": "Run exploration script.",
+      "fix": "Document endpoint schema and plan limits.",
+      "priority": "P1",
+      "status": "OPEN"
+    },
+    {
+      "step": "HFS_SIGNAL_INTEGRITY",
+      "id": "FLAT_SIGNALS_MPI_CHAOS",
+      "impact": "High",
+      "description": "MPI and Chaos Bloom signals may be 'flat' (constant) in Block 001.",
+      "finding": "Audit script scripts/audit_hfs_signal_integrity_block001.py exists to check this.",
+      "workaround": "None, requires data repair.",
+      "fix": "Run signal recovery/repair on HFS.",
+      "priority": "P0",
+      "status": "OPEN"
+    }
+  ]
+}
