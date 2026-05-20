@@ -1,0 +1,31 @@
+{
+  "date": "2026-05-14",
+  "bridge_version": "v2_patched_2026_05_08",
+  "metrics": {
+    "strike_rate": 0.14285714285714285,
+    "top_1_accuracy": 0.14285714285714285,
+    "top_3_accuracy": 0.37142857142857144,
+    "brier_score": 0.106141584,
+    "calibration_error": 0.17571428571428568,
+    "favourite_strike_rate": 0,
+    "non_favourite_strike_rate": 0.14285714285714285,
+    "missing_result_rate": 0.0,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 29,
+      "NONE": 5,
+      "CALIBRATION_ERROR": 1
+    },
+    "event_count": 35,
+    "duplicate_skipped_count": 0
+  },
+  "shadow_state_file": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_shadow_daily.json",
+  "outcome_ledger": "/mnt/c/Users/puror/velo-oracle-prime/data/playbook_g_outcome_events_shadow_daily.jsonl",
+  "loss_ledger": "/mnt/c/Users/puror/velo-oracle-prime/data/eod_loss_ledger_shadow_daily.jsonl",
+  "total_races_observed_shadow": 76,
+  "obs_called": 35,
+  "obs_success": 35,
+  "obs_failures": [],
+  "live_hash_before": "1016d89dceb28da5d5cad5c33850d6fe84040569fcf399f1e60745d513d997a3",
+  "live_hash_after": "1016d89dceb28da5d5cad5c33850d6fe84040569fcf399f1e60745d513d997a3",
+  "live_state_untouched": true
+}

@@ -1,0 +1,295 @@
+diff --git a/app/static/dashboard/index.html b/app/static/dashboard/index.html
+index 6126a88..3c1b401 100644
+--- a/app/static/dashboard/index.html
++++ b/app/static/dashboard/index.html
+@@ -634,6 +634,81 @@ td:last-child  { padding-right: 20px; }
+   border-radius: 2px;
+   box-shadow: 0 0 6px var(--cyan);
+ }
++
++/* ── Panel C: Daily Predictions All Runners ─────────────────────── */
++#arp-wrap {
++  margin: 28px 0 0;
++  border: 1px solid var(--cyan-dim);
++  border-radius: 4px;
++  overflow: hidden;
++}
++#arp-header {
++  display: flex; align-items: center; justify-content: space-between;
++  padding: 10px 16px;
++  background: rgba(0,200,255,0.06);
++  cursor: pointer;
++  user-select: none;
++  border-bottom: 1px solid transparent;
++}
++#arp-header:hover { background: rgba(0,200,255,0.1); }
++#arp-header-title { font-size: .75rem; letter-spacing: .12em; color: var(--cyan); font-weight: 700; }
++#arp-header-meta  { font-size: .68rem; color: var(--text-dim); }
++#arp-toggle-icon  { font-size: .75rem; color: var(--cyan-dim); }
++#arp-body { display: none; padding: 0 12px 16px; }
++#arp-body.open { display: block; }
++#arp-summary-bar  { font-size: .68rem; color: var(--text-dim); padding: 8px 4px 12px; border-bottom: 1px solid rgba(0,200,255,0.1); margin-bottom: 12px; }
++#arp-summary-bar span { color: var(--cyan); margin-right: 14px; }
++.arp-race { margin-bottom: 20px; }
++.arp-race-hdr {
++  display: flex; align-items: baseline; gap: 10px;
++  padding: 4px 0 6px;
++  border-bottom: 1px solid rgba(0,200,255,0.15);
++  margin-bottom: 4px;
++}
++.arp-course   { font-size: .78rem; color: var(--cyan); font-weight: 700; letter-spacing: .06em; }
++.arp-time     { font-size: .68rem; color: var(--text-dim); }
++.arp-tier-badge {
++  font-size: .6rem; font-weight: 700; padding: 1px 5px; border-radius: 2px;
++  letter-spacing: .08em;
++}
++.arp-tier-A { background: rgba(0,255,160,0.15); color: #00ffa0; border: 1px solid #00ffa044; }
++.arp-tier-B { background: rgba(0,200,255,0.10); color: var(--cyan); border: 1px solid var(--cyan-dim); }
++.arp-tier-C { background: rgba(255,200,0,0.08); color: #ffc800; border: 1px solid #ffc80033; }
++.arp-tier-D, .arp-tier-X, .arp-tier-q { background: rgba(255,60,60,0.08); color: #ff5555; border: 1px solid #ff555533; }
++.arp-runners  { width: 100%; border-collapse: collapse; font-size: .68rem; }
++.arp-runners th { color: var(--text-dim); font-weight: 500; letter-spacing: .08em; padding: 3px 6px; text-align: left; border-bottom: 1px solid rgba(0,200,255,0.08); }
++.arp-runners td { padding: 4px 6px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text); }
++.arp-runners tr:hover td { background: rgba(0,200,255,0.04); }
++.arp-rank    { color: var(--text-dim); width: 24px; }
++.arp-name    { font-weight: 600; min-width: 120px; }
++.arp-vp-hi   { color: #00ffa0; }
++.arp-vp-mid  { color: var(--cyan); }
++.arp-vp-lo   { color: var(--text-dim); }
++.arp-mds-hi  { color: #ff9800; font-weight: 700; }
++.arp-flags   { display: flex; gap: 3px; flex-wrap: wrap; }
++.arp-flag {
++  font-size: .55rem; font-weight: 700; padding: 1px 4px; border-radius: 2px;
++  letter-spacing: .06em; white-space: nowrap;
++}
++.arp-f-vpta    { background: rgba(0,255,160,0.2); color: #00ffa0; }
++.arp-f-mds     { background: rgba(255,152,0,0.2); color: #ff9800; }
++.arp-f-ta      { background: rgba(0,255,160,0.1); color: #00ffa0; }
++.arp-f-vp30    { background: rgba(0,200,255,0.1); color: var(--cyan); }
++.arp-f-imp     { background: rgba(200,100,255,0.15); color: #c864ff; }
++.arp-f-blvp    { background: rgba(255,60,60,0.1); color: #ff5555; }
++.arp-sidecar-btn {
++  font-size: .55rem; color: var(--text-dim); cursor: pointer; padding: 1px 5px;
++  border: 1px solid rgba(0,200,255,0.15); border-radius: 2px; background: none;
++}
++.arp-sidecar-btn:hover { color: var(--cyan); border-color: var(--cyan-dim); }
++.arp-sidecar-row td { padding: 0 !important; }
++.arp-sidecar-json {
++  display: none; font-size: .6rem; color: var(--text-dim);
++  background: rgba(0,0,0,0.3); padding: 8px 12px;
++  white-space: pre-wrap; word-break: break-all; font-family: monospace;
++  border-top: 1px solid rgba(0,200,255,0.08);
++}
++.arp-sidecar-json.open { display: block; }
+ </style>
+ </head>
+ <body>
+@@ -744,6 +819,19 @@ td:last-child  { padding-right: 20px; }
+   <button class="filter-btn" data-filter="exec" data-val="false">BLOCKED</button>
+ </div>
+ 
++<!-- Panel C: Daily Predictions — All Runners -->
++<div id="arp-wrap">
++  <div id="arp-header" onclick="toggleARP()">
++    <span id="arp-header-title">C · DAILY PREDICTIONS — ALL RUNNERS</span>
++    <span id="arp-header-meta">—</span>
++    <span id="arp-toggle-icon">▼</span>
++  </div>
++  <div id="arp-body">
++    <div id="arp-summary-bar">Loading…</div>
++    <div id="arp-races"></div>
++  </div>
++</div>
++
+ <!-- Race Table -->
+ <div id="race-table-wrap">
+   <div id="loading">LOADING GOVERNED CARD</div>
+@@ -755,9 +843,11 @@ td:last-child  { padding-right: 20px; }
+         <th>HORSE</th>
+         <th>TIER</th>
+         <th>CONF</th>
+-        <th>PROB</th>
+-        <th>GAP</th>
++        <th>VP%</th>
+         <th>MDS</th>
++        <th>IMP</th>
++        <th>PLACE%</th>
++        <th>FLAGS</th>
+         <th>PRODUCT</th>
+         <th>EXEC</th>
+         <th>REASONS</th>
+@@ -871,18 +961,36 @@ function renderTable(rows) {
+   const tbody = document.getElementById('race-tbody');
+   tbody.innerHTML = '';
+   rows.forEach((row, idx) => {
+-    const product  = row.assigned_product  || 'UNKNOWN';
++    const product  = (row.assigned_product && row.assigned_product !== 'UNKNOWN') ? row.assigned_product : null;
+     const tier     = row.decision_tier     || row.tier || '?';
+     const conf     = (row.confidence_level || 'low').toLowerCase();
+-    const prob     = parseFloat(row.velo_prime_prob   || 0).toFixed(4);
+-    const gap      = parseFloat(row.prob_gap          || 0).toFixed(4);
+-    const mds      = parseFloat(row.market_deception_score || 0).toFixed(4);
++    const vp       = parseFloat(row.velo_prime_prob   || 0);
++    const mds      = parseFloat(row.market_deception_score || 0);
++    const imp      = parseFloat(row.improvement_score || 0);
++    const place    = parseFloat(row.place_prob || 0);
+     const exec     = row.execution_allowed;
+     const reasons  = row.router_reasons || [];
+-    const mdsAlert = parseFloat(mds) > 0.10 ? 'alert' : parseFloat(mds) > 0.05 ? 'warn' : '';
++
++    // VP colour
++    const vpCls = vp >= 0.40 ? 'style="color:#00ffa0;font-weight:700"'
++                : vp >= 0.30 ? 'style="color:#00c8ff;font-weight:600"'
++                : 'style="color:#4a6a7a"';
++    // MDS colour
++    const mdsCls = mds > 0.50 ? 'style="color:#ff9800;font-weight:700"'
++                 : mds > 0.20 ? 'style="color:#ffc107"' : '';
++    // IMP colour
++    const impCls = imp > 0.40 ? 'style="color:#c864ff;font-weight:700"' : '';
++
++    // Signal badges
++    const badges = [
++      row.vp30      ? '<span class="arp-flag arp-f-vpta" style="font-size:.58rem">VP30</span>' : '',
++      row.mds_high  ? '<span class="arp-flag arp-f-mds"  style="font-size:.58rem">MDS</span>'  : '',
++      row.improve_high ? '<span class="arp-flag arp-f-imp" style="font-size:.58rem">IMP</span>' : '',
++      row.cash_run_flag ? '<span class="arp-flag" style="background:rgba(0,255,200,0.15);color:#00ffc8;font-size:.58rem">CASH</span>' : '',
++    ].join('');
+ 
+     const tr = document.createElement('tr');
+-    tr.dataset.product = product;
++    tr.dataset.product = product || 'UNKNOWN';
+     tr.dataset.tier    = tier;
+     tr.dataset.exec    = exec ? 'true' : 'false';
+     tr.style.animation = `fadeInRow 0.3s ease ${idx * 0.03}s both`;
+@@ -898,11 +1006,13 @@ function renderTable(rows) {
+       </td>
+       <td><span class="tier-badge tier-${tier}">${tier}</span></td>
+       <td><span class="conf-${conf}">${conf.toUpperCase()}</span></td>
+-      <td><span class="mono">${prob}</span></td>
+-      <td><span class="mono">${gap}</span></td>
+-      <td><span class="mono ${mdsAlert}">${mds}</span></td>
+-      <td><span class="prod-badge prod-${product}">${product.replace(/_/g,' ')}</span></td>
+-      <td>${exec ? '<span class="exec-yes">✓</span>' : '<span class="exec-no">✗</span>'}</td>
++      <td><span class="mono" ${vpCls}>${(vp*100).toFixed(1)}%</span></td>
++      <td><span class="mono" ${mdsCls}>${mds.toFixed(3)}</span></td>
++      <td><span class="mono" ${impCls}>${imp.toFixed(3)}</span></td>
++      <td><span class="mono">${(place*100).toFixed(1)}%</span></td>
++      <td><div class="arp-flags">${badges}</div></td>
++      <td>${product ? `<span class="prod-badge prod-${product}">${product.replace(/_/g,' ')}</span>` : '<span style="color:#2a4a5a">—</span>'}</td>
++      <td>${exec === true ? '<span class="exec-yes">✓</span>' : exec === false ? '<span class="exec-no">✗</span>' : '<span style="color:#2a4a5a">—</span>'}</td>
+       <td><div class="reasons">${reasons.map(r => `<span class="reason-pill">${r}</span>`).join('')}</div></td>
+     `;
+     tbody.appendChild(tr);
+@@ -936,6 +1046,112 @@ style.textContent = `@keyframes fadeInRow { from { opacity:0; transform:translat
+ document.head.appendChild(style);
+ 
+ loadCard();
++
++// ── Panel C: Daily Predictions All Runners ───────────────────────
++let _arpLoaded = false;
++
++function toggleARP() {
++  const body = document.getElementById('arp-body');
++  const icon = document.getElementById('arp-toggle-icon');
++  const open = body.classList.toggle('open');
++  icon.textContent = open ? '▲' : '▼';
++  document.getElementById('arp-header').style.borderBottomColor = open ? 'rgba(0,200,255,0.15)' : 'transparent';
++  if (open && !_arpLoaded) _loadARP();
++}
++
++function _arpVpClass(vp) {
++  if (vp === null || vp === undefined) return '';
++  if (vp >= 0.40) return 'arp-vp-hi';
++  if (vp >= 0.30) return 'arp-vp-mid';
++  return 'arp-vp-lo';
++}
++
++function _arpBadges(r) {
++  const parts = [];
++  if (r.vp30_tier_a)            parts.push('<span class="arp-flag arp-f-vpta">VP30·A</span>');
++  if (r.mds_high)               parts.push('<span class="arp-flag arp-f-mds">MDS HIGH</span>');
++  if (r.tier_a && !r.vp30_tier_a) parts.push('<span class="arp-flag arp-f-ta">TIER A</span>');
++  if (r.vp30 && !r.vp30_tier_a) parts.push('<span class="arp-flag arp-f-vp30">VP30</span>');
++  if (r.improve_high)           parts.push('<span class="arp-flag arp-f-imp">IMP HIGH</span>');
++  if (r.b_tier_low_vp_suppress) parts.push('<span class="arp-flag arp-f-blvp">B·LOW·VP</span>');
++  return parts.join('');
++}
++
++function _arpFmt(v, decimals=3) {
++  if (v === null || v === undefined) return '<span style="color:var(--text-dim)">—</span>';
++  return (parseFloat(v)*100).toFixed(decimals === 0 ? 0 : 1) + '%';
++}
++
++function _buildARPRaceBlock(race) {
++  const tierCls = 'arp-tier-' + (race.decision_tier || 'q');
++  const rows = race.runners.map((r, i) => {
++    const vpCls = _arpVpClass(r.velo_prime_prob);
++    const mdsHi = r.mds_high ? 'arp-mds-hi' : '';
++    const sid = JSON.stringify(r.sidecars || {}, null, 2);
++    const rowId = `arp-sd-${race.race_id}-${i}`;
++    return `
++      <tr>
++        <td class="arp-rank">${r.rank}</td>
++        <td class="arp-name">${r.horse_name || '—'}</td>
++        <td class="${vpCls}">${r.velo_prime_prob != null ? (r.velo_prime_prob*100).toFixed(1)+'%' : '—'}</td>
++        <td class="${mdsHi}">${r.market_deception_score != null ? r.market_deception_score.toFixed(3) : '—'}</td>
++        <td>${r.improvement_score != null ? r.improvement_score.toFixed(3) : '—'}</td>
++        <td>${r.place_prob != null ? (r.place_prob*100).toFixed(1)+'%' : '—'}</td>
++        <td><span class="arp-tier-badge ${tierCls}">${r.decision_tier || '?'}</span></td>
++        <td><div class="arp-flags">${_arpBadges(r)}</div></td>
++        <td><button class="arp-sidecar-btn" onclick="document.getElementById('${rowId}').classList.toggle('open')">JSON</button></td>
++      </tr>
++      <tr class="arp-sidecar-row"><td colspan="9"><pre id="${rowId}" class="arp-sidecar-json">${sid}</pre></td></tr>`;
++  }).join('');
++
++  return `<div class="arp-race">
++    <div class="arp-race-hdr">
++      <span class="arp-course">${race.course || race.race_id}</span>
++      <span class="arp-time">${race.race_time || ''}</span>
++      <span class="arp-tier-badge ${tierCls}">${race.decision_tier || '?'}</span>
++      <span style="font-size:.65rem;color:var(--text-dim)">${race.race_name || ''}</span>
++    </div>
++    <table class="arp-runners">
++      <thead><tr>
++        <th>#</th><th>HORSE</th><th>VP%</th><th>MDS</th><th>IMP</th><th>PLACE%</th><th>TIER</th><th>FLAGS</th><th></th>
++      </tr></thead>
++      <tbody>${rows}</tbody>
++    </table>
++  </div>`;
++}
++
++async function _loadARP() {
++  const today = new Date().toISOString().slice(0,10);
++  const summaryEl = document.getElementById('arp-summary-bar');
++  const racesEl   = document.getElementById('arp-races');
++  const metaEl    = document.getElementById('arp-header-meta');
++  summaryEl.textContent = 'Loading…';
++  try {
++    const res = await fetch(`/api/dashboard-daily?date=${today}`);
++    if (!res.ok) { summaryEl.textContent = `No predictions found for ${today}`; return; }
++    const data = await res.json();
++    _arpLoaded = true;
++    const meta = data.meta || {};
++    const races = data.races || [];
++    const totalRunners = races.reduce((s,r)=>s+(r.runners||[]).length, 0);
++    const tierA   = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.tier_a).length, 0);
++    const vp30    = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.vp30).length, 0);
++    const vpta    = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.vp30_tier_a).length, 0);
++    const mdsHi   = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.mds_high).length, 0);
++    metaEl.innerHTML = `${races.length} races · ${totalRunners} runners · <span style="color:var(--cyan)">${meta.source||''}</span>`;
++    summaryEl.innerHTML =
++      `<span>RACES <b>${races.length}</b></span>` +
++      `<span>RUNNERS <b>${totalRunners}</b></span>` +
++      `<span style="color:#00ffa0">TIER A <b>${tierA}</b></span>` +
++      `<span>VP30 <b>${vp30}</b></span>` +
++      `<span style="color:#00ffa0">VP30·A <b>${vpta}</b></span>` +
++      `<span style="color:#ff9800">MDS HIGH <b>${mdsHi}</b></span>` +
++      `<span style="color:var(--text-dim);margin-left:8px">${meta.publish_date||today}</span>`;
++    racesEl.innerHTML = races.sort((a,b)=>(a.race_time||'').localeCompare(b.race_time||'')).map(_buildARPRaceBlock).join('');
++  } catch(e) {
++    summaryEl.textContent = 'Error loading predictions: ' + e.message;
++  }
++}
+ </script>
+ </body>
+ </html>

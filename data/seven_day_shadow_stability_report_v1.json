@@ -1,0 +1,125 @@
+{
+  "dates_requested": [
+    "2026-04-29",
+    "2026-04-30",
+    "2026-05-01",
+    "2026-05-02",
+    "2026-05-03",
+    "2026-05-04",
+    "2026-05-05"
+  ],
+  "dates_processed": [
+    "2026-04-29",
+    "2026-05-01",
+    "2026-05-02",
+    "2026-05-03",
+    "2026-05-04",
+    "2026-05-05"
+  ],
+  "dates_skipped": [
+    {
+      "date": "2026-04-30",
+      "reason": "pred=False, res=True"
+    }
+  ],
+  "total_prediction_count": 221,
+  "total_result_count": 294,
+  "total_matched_races": 218,
+  "total_events_created": 218,
+  "total_engine_updates_first_runs": 0,
+  "total_engine_updates_duplicate_runs": 0,
+  "total_duplicates_skipped": 218,
+  "total_wins": 39,
+  "total_losses": 179,
+  "loss_count_by_type": {
+    "WRONG_HORSE": 144,
+    "NONE": 39,
+    "CALIBRATION_ERROR": 35,
+    "DATA_ERROR": 3
+  },
+  "sigma_verdicts_by_date": {
+    "2026-04-29": "ACCEPTABLE_DAY",
+    "2026-05-01": "STRONG_DAY",
+    "2026-05-02": "ACCEPTABLE_DAY",
+    "2026-05-03": "STRONG_DAY",
+    "2026-05-04": "ACCEPTABLE_DAY",
+    "2026-05-05": "WEAK_DAY"
+  },
+  "playbook_g_shadow_verdicts_by_date": {
+    "2026-04-29": "SHADOW_ONLY_OK",
+    "2026-05-01": "SHADOW_ONLY_OK",
+    "2026-05-02": "SHADOW_ONLY_OK",
+    "2026-05-03": "SHADOW_ONLY_OK",
+    "2026-05-04": "SHADOW_ONLY_OK",
+    "2026-05-05": "SHADOW_ONLY_OK"
+  },
+  "study_verdicts_by_date": {
+    "2026-04-29": "PASS",
+    "2026-05-01": "PASS",
+    "2026-05-02": "PASS",
+    "2026-05-03": "PASS",
+    "2026-05-04": "PASS",
+    "2026-05-05": "PASS_WITH_WARNINGS"
+  },
+  "weak_days": [
+    "2026-05-05"
+  ],
+  "dangerous_days": [],
+  "common_failure_patterns": {
+    "High-prob volatility": 5,
+    "None detected": 1
+  },
+  "top_confidence_misses": [
+    {
+      "race_id": "rac_11915241",
+      "horse": "Town Queen",
+      "prob": 0.6343,
+      "result": "LOSS",
+      "date": "2026-05-02"
+    },
+    {
+      "race_id": "rac_11915280",
+      "horse": "Tamam Star",
+      "prob": 0.6111,
+      "result": "LOSS",
+      "date": "2026-05-02"
+    },
+    {
+      "race_id": "rac_11916320",
+      "horse": "Bellatina",
+      "prob": 0.5954,
+      "result": "LOSS",
+      "date": "2026-04-29"
+    },
+    {
+      "race_id": "rac_11912433",
+      "horse": "Moonshine Man",
+      "prob": 0.5776,
+      "result": "LOSS",
+      "date": "2026-05-02"
+    },
+    {
+      "race_id": "rac_11942086",
+      "horse": "Triple Haych",
+      "prob": 0.5733,
+      "result": "LOSS",
+      "date": "2026-05-05"
+    }
+  ],
+  "tomorrow_watchlists_created": 6,
+  "max_data_error_rate": 0.03636363636363636,
+  "failed_dates": [],
+  "council_failures": [],
+  "study_failures": [],
+  "live_sentient_state_hash_before": "1016d89dceb28da5d5cad5c33850d6fe84040569fcf399f1e60745d513d997a3",
+  "shadow_state_hash_before": "7d8b519213f64f64d9d524e952200295351f06735613d95873c18a11c5eb8323",
+  "supabase_writes_attempted": false,
+  "supabase_backup_attempted": false,
+  "hfs_read_attempted": false,
+  "hfs_features_used": false,
+  "live_sentient_state_hash_after": "1016d89dceb28da5d5cad5c33850d6fe84040569fcf399f1e60745d513d997a3",
+  "shadow_state_hash_after": "19b01ca773726e14249acacfa953c21cf72aa50687652595208f272a2dd501aa",
+  "live_sentient_state_unchanged": true,
+  "shadow_state_changed": true,
+  "verdict": "PASS"
+}

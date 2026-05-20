@@ -1,0 +1,2177 @@
+{
+  "status": "SHADOW_OPERATOR_ONLY",
+  "dates": [
+    "2026-05-05",
+    "2026-05-04",
+    "2026-05-03",
+    "2026-05-02",
+    "2026-05-01",
+    "2026-05-07",
+    "2026-04-29"
+  ],
+  "modes": {
+    "BASELINE_ACCA": {
+      "days_covered": 7,
+      "dates": [
+        "2026-05-05",
+        "2026-05-04",
+        "2026-05-03",
+        "2026-05-02",
+        "2026-05-01",
+        "2026-05-07",
+        "2026-04-29"
+      ],
+      "candidate_legs": 262,
+      "folds_generated": {
+        "2": 5,
+        "3": 4,
+        "4": 4,
+        "5": 1,
+        "6": 1
+      },
+      "fold_hit_rates": {
+        "2": {
+          "generated": 5,
+          "hits": 3,
+          "hit_rate": 0.6
+        },
+        "3": {
+          "generated": 4,
+          "hits": 2,
+          "hit_rate": 0.5
+        },
+        "4": {
+          "generated": 4,
+          "hits": 1,
+          "hit_rate": 0.25
+        },
+        "5": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        },
+        "6": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        }
+      },
+      "day_regime_accuracy": 0.5714,
+      "trap_false_positives": 13,
+      "trap_false_positive_rate": 0.0956,
+      "trusted_leg_failures": 12,
+      "trusted_leg_failure_rate": 0.2264,
+      "average_leg_vp": 0.3078,
+      "average_enrichment_score": 0.4248,
+      "per_day": [
+        {
+          "date": "2026-05-05",
+          "mode": "BASELINE_ACCA",
+          "candidate_legs": 32,
+          "average_leg_vp": 0.295,
+          "average_enrichment_score": 0.4093,
+          "day_regime": "ACCA_DAY_WEAK",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 1,
+          "trap_total": 15,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 6
+        },
+        {
+          "date": "2026-05-04",
+          "mode": "BASELINE_ACCA",
+          "candidate_legs": 59,
+          "average_leg_vp": 0.2891,
+          "average_enrichment_score": 0.4409,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 34,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 10
+        },
+        {
+          "date": "2026-05-03",
+          "mode": "BASELINE_ACCA",
+          "candidate_legs": 36,
+          "average_leg_vp": 0.333,
+          "average_enrichment_score": 0.4313,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_WEAK",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 16,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 9
+        },
+        {
+          "date": "2026-05-02",
+          "mode": "BASELINE_ACCA",
+          "candidate_legs": 55,
+          "average_leg_vp": 0.2648,
+          "average_enrichment_score": 0.4219,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 36,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 11
+        },
+        {
+          "date": "2026-05-01",
+          "mode": "BASELINE_ACCA",
+          "candidate_legs": 1,
+          "average_leg_vp": 0.4,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-07",
+          "mode": "BASELINE_ACCA",
+          "candidate_legs": 41,
+          "average_leg_vp": 0.2926,
+          "average_enrichment_score": 0.4262,
+          "day_regime": "ACCA_DAY_STRONG",
+          "actual_regime": "ACCA_DAY_STRONG",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "5": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "6": {
+              "generated": true,
+              "result": "HIT"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 15,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 9
+        },
+        {
+          "date": "2026-04-29",
+          "mode": "BASELINE_ACCA",
+          "candidate_legs": 38,
+          "average_leg_vp": 0.2803,
+          "average_enrichment_score": 0.4189,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_MEDIUM",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 20,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 8
+        }
+      ],
+      "baseline_comparison": "MIXED_VS_BASELINE"
+    },
+    "WITHOUT_RACING_API_ENRICHMENT": {
+      "days_covered": 7,
+      "dates": [
+        "2026-05-05",
+        "2026-05-04",
+        "2026-05-03",
+        "2026-05-02",
+        "2026-05-01",
+        "2026-05-07",
+        "2026-04-29"
+      ],
+      "candidate_legs": 262,
+      "folds_generated": {
+        "2": 5,
+        "3": 3,
+        "4": 3,
+        "5": 1,
+        "6": 1
+      },
+      "fold_hit_rates": {
+        "2": {
+          "generated": 5,
+          "hits": 2,
+          "hit_rate": 0.4
+        },
+        "3": {
+          "generated": 3,
+          "hits": 1,
+          "hit_rate": 0.3333
+        },
+        "4": {
+          "generated": 3,
+          "hits": 1,
+          "hit_rate": 0.3333
+        },
+        "5": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        },
+        "6": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        }
+      },
+      "day_regime_accuracy": 0.4286,
+      "trap_false_positives": 13,
+      "trap_false_positive_rate": 0.0949,
+      "trusted_leg_failures": 12,
+      "trusted_leg_failure_rate": 0.2264,
+      "average_leg_vp": 0.3078,
+      "average_enrichment_score": null,
+      "per_day": [
+        {
+          "date": "2026-05-05",
+          "mode": "WITHOUT_RACING_API_ENRICHMENT",
+          "candidate_legs": 32,
+          "average_leg_vp": 0.295,
+          "average_enrichment_score": null,
+          "day_regime": "ACCA_DAY_WEAK",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 1,
+          "trap_total": 15,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 6
+        },
+        {
+          "date": "2026-05-04",
+          "mode": "WITHOUT_RACING_API_ENRICHMENT",
+          "candidate_legs": 59,
+          "average_leg_vp": 0.2891,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 35,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 10
+        },
+        {
+          "date": "2026-05-03",
+          "mode": "WITHOUT_RACING_API_ENRICHMENT",
+          "candidate_legs": 36,
+          "average_leg_vp": 0.333,
+          "average_enrichment_score": null,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_WEAK",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 16,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 9
+        },
+        {
+          "date": "2026-05-02",
+          "mode": "WITHOUT_RACING_API_ENRICHMENT",
+          "candidate_legs": 55,
+          "average_leg_vp": 0.2648,
+          "average_enrichment_score": null,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 36,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 11
+        },
+        {
+          "date": "2026-05-01",
+          "mode": "WITHOUT_RACING_API_ENRICHMENT",
+          "candidate_legs": 1,
+          "average_leg_vp": 0.4,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-07",
+          "mode": "WITHOUT_RACING_API_ENRICHMENT",
+          "candidate_legs": 41,
+          "average_leg_vp": 0.2926,
+          "average_enrichment_score": null,
+          "day_regime": "ACCA_DAY_STRONG",
+          "actual_regime": "ACCA_DAY_STRONG",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "5": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "6": {
+              "generated": true,
+              "result": "HIT"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 15,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 9
+        },
+        {
+          "date": "2026-04-29",
+          "mode": "WITHOUT_RACING_API_ENRICHMENT",
+          "candidate_legs": 38,
+          "average_leg_vp": 0.2803,
+          "average_enrichment_score": null,
+          "day_regime": "ACCA_DAY_WEAK",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 20,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 8
+        }
+      ],
+      "baseline_comparison": "WORSENS_BASELINE"
+    },
+    "WITHOUT_CASHRUN": {
+      "days_covered": 7,
+      "dates": [
+        "2026-05-05",
+        "2026-05-04",
+        "2026-05-03",
+        "2026-05-02",
+        "2026-05-01",
+        "2026-05-07",
+        "2026-04-29"
+      ],
+      "candidate_legs": 262,
+      "folds_generated": {
+        "2": 5,
+        "3": 4,
+        "4": 4,
+        "5": 1,
+        "6": 1
+      },
+      "fold_hit_rates": {
+        "2": {
+          "generated": 5,
+          "hits": 3,
+          "hit_rate": 0.6
+        },
+        "3": {
+          "generated": 4,
+          "hits": 2,
+          "hit_rate": 0.5
+        },
+        "4": {
+          "generated": 4,
+          "hits": 1,
+          "hit_rate": 0.25
+        },
+        "5": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        },
+        "6": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        }
+      },
+      "day_regime_accuracy": 0.5714,
+      "trap_false_positives": 13,
+      "trap_false_positive_rate": 0.0949,
+      "trusted_leg_failures": 12,
+      "trusted_leg_failure_rate": 0.2308,
+      "average_leg_vp": 0.3078,
+      "average_enrichment_score": 0.4248,
+      "per_day": [
+        {
+          "date": "2026-05-05",
+          "mode": "WITHOUT_CASHRUN",
+          "candidate_legs": 32,
+          "average_leg_vp": 0.295,
+          "average_enrichment_score": 0.4093,
+          "day_regime": "ACCA_DAY_WEAK",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 1,
+          "trap_total": 15,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 6
+        },
+        {
+          "date": "2026-05-04",
+          "mode": "WITHOUT_CASHRUN",
+          "candidate_legs": 59,
+          "average_leg_vp": 0.2891,
+          "average_enrichment_score": 0.4409,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 35,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 9
+        },
+        {
+          "date": "2026-05-03",
+          "mode": "WITHOUT_CASHRUN",
+          "candidate_legs": 36,
+          "average_leg_vp": 0.333,
+          "average_enrichment_score": 0.4313,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_WEAK",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 16,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 9
+        },
+        {
+          "date": "2026-05-02",
+          "mode": "WITHOUT_CASHRUN",
+          "candidate_legs": 55,
+          "average_leg_vp": 0.2648,
+          "average_enrichment_score": 0.4219,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 36,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 11
+        },
+        {
+          "date": "2026-05-01",
+          "mode": "WITHOUT_CASHRUN",
+          "candidate_legs": 1,
+          "average_leg_vp": 0.4,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-07",
+          "mode": "WITHOUT_CASHRUN",
+          "candidate_legs": 41,
+          "average_leg_vp": 0.2926,
+          "average_enrichment_score": 0.4262,
+          "day_regime": "ACCA_DAY_STRONG",
+          "actual_regime": "ACCA_DAY_STRONG",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "5": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "6": {
+              "generated": true,
+              "result": "HIT"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 15,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 9
+        },
+        {
+          "date": "2026-04-29",
+          "mode": "WITHOUT_CASHRUN",
+          "candidate_legs": 38,
+          "average_leg_vp": 0.2803,
+          "average_enrichment_score": 0.4189,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_MEDIUM",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 20,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 8
+        }
+      ],
+      "baseline_comparison": "MIXED_VS_BASELINE"
+    },
+    "WITHOUT_TRAP_FILTER": {
+      "days_covered": 7,
+      "dates": [
+        "2026-05-05",
+        "2026-05-04",
+        "2026-05-03",
+        "2026-05-02",
+        "2026-05-01",
+        "2026-05-07",
+        "2026-04-29"
+      ],
+      "candidate_legs": 262,
+      "folds_generated": {
+        "2": 5,
+        "3": 4,
+        "4": 4,
+        "5": 1,
+        "6": 1
+      },
+      "fold_hit_rates": {
+        "2": {
+          "generated": 5,
+          "hits": 3,
+          "hit_rate": 0.6
+        },
+        "3": {
+          "generated": 4,
+          "hits": 2,
+          "hit_rate": 0.5
+        },
+        "4": {
+          "generated": 4,
+          "hits": 1,
+          "hit_rate": 0.25
+        },
+        "5": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        },
+        "6": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        }
+      },
+      "day_regime_accuracy": 0.5714,
+      "trap_false_positives": 7,
+      "trap_false_positive_rate": 0.0745,
+      "trusted_leg_failures": 13,
+      "trusted_leg_failure_rate": 0.197,
+      "average_leg_vp": 0.3078,
+      "average_enrichment_score": 0.4248,
+      "per_day": [
+        {
+          "date": "2026-05-05",
+          "mode": "WITHOUT_TRAP_FILTER",
+          "candidate_legs": 32,
+          "average_leg_vp": 0.295,
+          "average_enrichment_score": 0.4093,
+          "day_regime": "ACCA_DAY_WEAK",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 1,
+          "trap_total": 8,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 8
+        },
+        {
+          "date": "2026-05-04",
+          "mode": "WITHOUT_TRAP_FILTER",
+          "candidate_legs": 59,
+          "average_leg_vp": 0.2891,
+          "average_enrichment_score": 0.4409,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 1,
+          "trap_total": 24,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 12
+        },
+        {
+          "date": "2026-05-03",
+          "mode": "WITHOUT_TRAP_FILTER",
+          "candidate_legs": 36,
+          "average_leg_vp": 0.333,
+          "average_enrichment_score": 0.4313,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_WEAK",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 8,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 11
+        },
+        {
+          "date": "2026-05-02",
+          "mode": "WITHOUT_TRAP_FILTER",
+          "candidate_legs": 55,
+          "average_leg_vp": 0.2648,
+          "average_enrichment_score": 0.4219,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 30,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 13
+        },
+        {
+          "date": "2026-05-01",
+          "mode": "WITHOUT_TRAP_FILTER",
+          "candidate_legs": 1,
+          "average_leg_vp": 0.4,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-07",
+          "mode": "WITHOUT_TRAP_FILTER",
+          "candidate_legs": 41,
+          "average_leg_vp": 0.2926,
+          "average_enrichment_score": 0.4262,
+          "day_regime": "ACCA_DAY_STRONG",
+          "actual_regime": "ACCA_DAY_STRONG",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "5": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "6": {
+              "generated": true,
+              "result": "HIT"
+            }
+          },
+          "trap_false_positives": 1,
+          "trap_total": 8,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 13
+        },
+        {
+          "date": "2026-04-29",
+          "mode": "WITHOUT_TRAP_FILTER",
+          "candidate_legs": 38,
+          "average_leg_vp": 0.2803,
+          "average_enrichment_score": 0.4189,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_MEDIUM",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 2,
+          "trap_total": 16,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 9
+        }
+      ],
+      "baseline_comparison": "MIXED_VS_BASELINE"
+    },
+    "WITHOUT_VP30_CORE": {
+      "days_covered": 7,
+      "dates": [
+        "2026-05-05",
+        "2026-05-04",
+        "2026-05-03",
+        "2026-05-02",
+        "2026-05-01",
+        "2026-05-07",
+        "2026-04-29"
+      ],
+      "candidate_legs": 262,
+      "folds_generated": {
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "fold_hit_rates": {
+        "2": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        },
+        "3": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        },
+        "4": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        },
+        "5": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        },
+        "6": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        }
+      },
+      "day_regime_accuracy": 1.0,
+      "trap_false_positives": 24,
+      "trap_false_positive_rate": 0.1071,
+      "trusted_leg_failures": 0,
+      "trusted_leg_failure_rate": 0.0,
+      "average_leg_vp": 0.3078,
+      "average_enrichment_score": 0.4248,
+      "per_day": [
+        {
+          "date": "2026-05-05",
+          "mode": "WITHOUT_VP30_CORE",
+          "candidate_legs": 32,
+          "average_leg_vp": 0.295,
+          "average_enrichment_score": 0.4093,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 1,
+          "trap_total": 28,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-04",
+          "mode": "WITHOUT_VP30_CORE",
+          "candidate_legs": 59,
+          "average_leg_vp": 0.2891,
+          "average_enrichment_score": 0.4409,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 7,
+          "trap_total": 51,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-03",
+          "mode": "WITHOUT_VP30_CORE",
+          "candidate_legs": 36,
+          "average_leg_vp": 0.333,
+          "average_enrichment_score": 0.4313,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 29,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-02",
+          "mode": "WITHOUT_VP30_CORE",
+          "candidate_legs": 55,
+          "average_leg_vp": 0.2648,
+          "average_enrichment_score": 0.4219,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 5,
+          "trap_total": 48,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-01",
+          "mode": "WITHOUT_VP30_CORE",
+          "candidate_legs": 1,
+          "average_leg_vp": 0.4,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-07",
+          "mode": "WITHOUT_VP30_CORE",
+          "candidate_legs": 41,
+          "average_leg_vp": 0.2926,
+          "average_enrichment_score": 0.4262,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 5,
+          "trap_total": 34,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 3
+        },
+        {
+          "date": "2026-04-29",
+          "mode": "WITHOUT_VP30_CORE",
+          "candidate_legs": 38,
+          "average_leg_vp": 0.2803,
+          "average_enrichment_score": 0.4189,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 3,
+          "trap_total": 34,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        }
+      ],
+      "baseline_comparison": "MIXED_VS_BASELINE"
+    },
+    "BANKER_ONLY": {
+      "days_covered": 7,
+      "dates": [
+        "2026-05-05",
+        "2026-05-04",
+        "2026-05-03",
+        "2026-05-02",
+        "2026-05-01",
+        "2026-05-07",
+        "2026-04-29"
+      ],
+      "candidate_legs": 12,
+      "folds_generated": {
+        "2": 4,
+        "3": 1,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "fold_hit_rates": {
+        "2": {
+          "generated": 4,
+          "hits": 3,
+          "hit_rate": 0.75
+        },
+        "3": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        },
+        "4": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        },
+        "5": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        },
+        "6": {
+          "generated": 0,
+          "hits": 0,
+          "hit_rate": null
+        }
+      },
+      "day_regime_accuracy": 0.5714,
+      "trap_false_positives": 0,
+      "trap_false_positive_rate": 0.0,
+      "trusted_leg_failures": 0,
+      "trusted_leg_failure_rate": 0.0,
+      "average_leg_vp": 0.4662,
+      "average_enrichment_score": 0.4655,
+      "per_day": [
+        {
+          "date": "2026-05-05",
+          "mode": "BANKER_ONLY",
+          "candidate_legs": 1,
+          "average_leg_vp": 0.723,
+          "average_enrichment_score": 0.4943,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 1
+        },
+        {
+          "date": "2026-05-04",
+          "mode": "BANKER_ONLY",
+          "candidate_legs": 0,
+          "average_leg_vp": 0.0,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-03",
+          "mode": "BANKER_ONLY",
+          "candidate_legs": 2,
+          "average_leg_vp": 0.7572,
+          "average_enrichment_score": 0.4934,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "ACCA_DAY_WEAK",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 2
+        },
+        {
+          "date": "2026-05-02",
+          "mode": "BANKER_ONLY",
+          "candidate_legs": 2,
+          "average_leg_vp": 0.6227,
+          "average_enrichment_score": 0.4203,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 2
+        },
+        {
+          "date": "2026-05-01",
+          "mode": "BANKER_ONLY",
+          "candidate_legs": 0,
+          "average_leg_vp": 0.0,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-07",
+          "mode": "BANKER_ONLY",
+          "candidate_legs": 5,
+          "average_leg_vp": 0.5186,
+          "average_enrichment_score": 0.4878,
+          "day_regime": "ACCA_DAY_WEAK",
+          "actual_regime": "ACCA_DAY_MEDIUM",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 5
+        },
+        {
+          "date": "2026-04-29",
+          "mode": "BANKER_ONLY",
+          "candidate_legs": 2,
+          "average_leg_vp": 0.6416,
+          "average_enrichment_score": 0.4316,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "ACCA_DAY_WEAK",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 2
+        }
+      ],
+      "baseline_comparison": "IMPROVES_BASELINE"
+    },
+    "BANKER_PLUS_GLUE_ONLY": {
+      "days_covered": 7,
+      "dates": [
+        "2026-05-05",
+        "2026-05-04",
+        "2026-05-03",
+        "2026-05-02",
+        "2026-05-01",
+        "2026-05-07",
+        "2026-04-29"
+      ],
+      "candidate_legs": 36,
+      "folds_generated": {
+        "2": 4,
+        "3": 4,
+        "4": 4,
+        "5": 1,
+        "6": 1
+      },
+      "fold_hit_rates": {
+        "2": {
+          "generated": 4,
+          "hits": 3,
+          "hit_rate": 0.75
+        },
+        "3": {
+          "generated": 4,
+          "hits": 2,
+          "hit_rate": 0.5
+        },
+        "4": {
+          "generated": 4,
+          "hits": 1,
+          "hit_rate": 0.25
+        },
+        "5": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        },
+        "6": {
+          "generated": 1,
+          "hits": 1,
+          "hit_rate": 1.0
+        }
+      },
+      "day_regime_accuracy": 0.5714,
+      "trap_false_positives": 0,
+      "trap_false_positive_rate": 0.0,
+      "trusted_leg_failures": 6,
+      "trusted_leg_failure_rate": 0.1667,
+      "average_leg_vp": 0.4222,
+      "average_enrichment_score": 0.4584,
+      "per_day": [
+        {
+          "date": "2026-05-05",
+          "mode": "BANKER_PLUS_GLUE_ONLY",
+          "candidate_legs": 4,
+          "average_leg_vp": 0.4816,
+          "average_enrichment_score": 0.4566,
+          "day_regime": "ACCA_DAY_WEAK",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 4
+        },
+        {
+          "date": "2026-05-04",
+          "mode": "BANKER_PLUS_GLUE_ONLY",
+          "candidate_legs": 8,
+          "average_leg_vp": 0.4317,
+          "average_enrichment_score": 0.4589,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 3,
+          "trusted_leg_total": 8
+        },
+        {
+          "date": "2026-05-03",
+          "mode": "BANKER_PLUS_GLUE_ONLY",
+          "candidate_legs": 6,
+          "average_leg_vp": 0.5115,
+          "average_enrichment_score": 0.4951,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_WEAK",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 6
+        },
+        {
+          "date": "2026-05-02",
+          "mode": "BANKER_PLUS_GLUE_ONLY",
+          "candidate_legs": 8,
+          "average_leg_vp": 0.5081,
+          "average_enrichment_score": 0.4282,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": false,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "3": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "4": {
+              "generated": true,
+              "result": "INCOMPLETE"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 2,
+          "trusted_leg_total": 8
+        },
+        {
+          "date": "2026-05-01",
+          "mode": "BANKER_PLUS_GLUE_ONLY",
+          "candidate_legs": 0,
+          "average_leg_vp": 0.0,
+          "average_enrichment_score": null,
+          "day_regime": "NO_ACCA_DAY",
+          "actual_regime": "NO_ACCA_DAY",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "3": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "4": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 0
+        },
+        {
+          "date": "2026-05-07",
+          "mode": "BANKER_PLUS_GLUE_ONLY",
+          "candidate_legs": 6,
+          "average_leg_vp": 0.4996,
+          "average_enrichment_score": 0.4924,
+          "day_regime": "ACCA_DAY_STRONG",
+          "actual_regime": "ACCA_DAY_STRONG",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "5": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "6": {
+              "generated": true,
+              "result": "HIT"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 0,
+          "trusted_leg_total": 6
+        },
+        {
+          "date": "2026-04-29",
+          "mode": "BANKER_PLUS_GLUE_ONLY",
+          "candidate_legs": 4,
+          "average_leg_vp": 0.5231,
+          "average_enrichment_score": 0.4193,
+          "day_regime": "ACCA_DAY_MEDIUM",
+          "actual_regime": "ACCA_DAY_MEDIUM",
+          "regime_match": true,
+          "folds": {
+            "2": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "3": {
+              "generated": true,
+              "result": "HIT"
+            },
+            "4": {
+              "generated": true,
+              "result": "MISS"
+            },
+            "5": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            },
+            "6": {
+              "generated": false,
+              "result": "SUPPRESSED"
+            }
+          },
+          "trap_false_positives": 0,
+          "trap_total": 0,
+          "trusted_leg_failures": 1,
+          "trusted_leg_total": 4
+        }
+      ],
+      "baseline_comparison": "IMPROVES_BASELINE"
+    }
+  }
+}

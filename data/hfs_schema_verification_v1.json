@@ -1,0 +1,22 @@
+{
+  "audit_date": "2026-05-05",
+  "table_name": "historical_feature_store",
+  "actual_columns": [
+    "id", "race_id", "horse_id", "horse_name", "reconstruction_version", "race_date", 
+    "course", "jurisdiction", "distance_f", "going", "race_class", "field_size", 
+    "draw", "age", "weight_lbs", "official_rating", "rpr", "ts", "sp_dec", 
+    "implied_prob", "log_sp", "sp_rank", "is_fav", "or_vs_field", "rpr_vs_field", 
+    "draw_pct", "mpi", "chaos_bloom", "integrity_score", "power_anchor", 
+    "plot_conviction", "or_delta_to_best_win", "winner_flag", "placed_flag", 
+    "finish_position", "narrative_disruption", "story_anchor", "is_synthetic", 
+    "source_tables", "feature_json", "created_at", "updated_at"
+  ],
+  "missing_mandatory": [
+    "market_deception_score", "improvement_score", "trainer_score", "jockey_score",
+    "course_score", "distance_score", "pace_profile", "field_strength", 
+    "market_pressure", "pre_race_odds_dec", "odds_timestamp", "odds_source",
+    "feature_status", "feature_quality", "feature_provenance", "training_safe",
+    "leakage_status", "batch_id", "audit_id"
+  ],
+  "schema_status": "UNFIT"
+}

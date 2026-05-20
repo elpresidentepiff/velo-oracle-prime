@@ -1,0 +1,29 @@
+{
+  "contract_version": "v3",
+  "audit_date": "2026-05-05",
+  "temporal_safety": {
+    "leakage_prevention": "strict_timestamp_boundary",
+    "pre_race_gate": "odds_timestamp < prediction_timestamp <= race_start_time",
+    "status_labels": ["CLEAN", "LEAKAGE_RISK", "UNVERIFIED"]
+  },
+  "defaults_policy": {
+    "inference": "allowed_degraded",
+    "training": "FORBIDDEN",
+    "learning": "FORBIDDEN",
+    "quality_impact": "DEGRADED"
+  },
+  "provenance_requirements": [
+    "feature_status",
+    "feature_quality",
+    "feature_provenance",
+    "training_safe",
+    "leakage_status",
+    "batch_id",
+    "audit_id"
+  ],
+  "signal_definitions": {
+    "mpi": { "level": "runner", "formula": "implied_p / field_total" },
+    "chaos_bloom": { "level": "race", "validation": "variance_across_races > 0 AND variance_within_race == 0" }
+  },
+  "training_safety_verdict": "HFS_BLOCK001_RECONSTRUCTION_REQUIRED"
+}

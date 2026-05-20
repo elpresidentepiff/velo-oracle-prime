@@ -1,0 +1,2549 @@
+{
+  "date": "2026-05-03",
+  "status": "SHADOW_OPERATOR_ONLY",
+  "lane": "ACCA_LANE_V1",
+  "day_regime": "ACCA_DAY_PLAYABLE",
+  "candidates_scanned": 36,
+  "cashrun_status": "PRESENT",
+  "industry_status": "MISSING_OPTIONAL",
+  "racing_api_enrichment_status": "USED",
+  "source_summary": {
+    "metadata_complete_n": 36,
+    "metadata_total_n": 36,
+    "metadata_coverage": 1.0
+  },
+  "role_counts": {
+    "BANKER": 2,
+    "GLUE": 4,
+    "BOOSTER": 3,
+    "WILDCARD": 11,
+    "TRAP": 16,
+    "BLOCKED": 0
+  },
+  "folds": {
+    "strongest_2_fold": {
+      "generated": true,
+      "size": 2,
+      "combo_score": 182.86,
+      "legs": [
+        {
+          "horse": "Westport",
+          "course": "Hamilton",
+          "off_time": "2:05",
+          "race_name": "Aspire Cleaning & Facilities Ltd Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.8327,
+          "place_prob": 0.9492,
+          "mds": 0.7709,
+          "leg_score": 78.98
+        },
+        {
+          "horse": "Conclave",
+          "course": "Hamilton",
+          "off_time": "3:15",
+          "race_name": "Darley Stallions EBF Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6818,
+          "place_prob": 0.9682,
+          "mds": 0.4039,
+          "leg_score": 79.36
+        }
+      ]
+    },
+    "strongest_3_fold": {
+      "generated": true,
+      "size": 3,
+      "combo_score": 251.69,
+      "legs": [
+        {
+          "horse": "Westport",
+          "course": "Hamilton",
+          "off_time": "2:05",
+          "race_name": "Aspire Cleaning & Facilities Ltd Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.8327,
+          "place_prob": 0.9492,
+          "mds": 0.7709,
+          "leg_score": 78.98
+        },
+        {
+          "horse": "Conclave",
+          "course": "Hamilton",
+          "off_time": "3:15",
+          "race_name": "Darley Stallions EBF Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6818,
+          "place_prob": 0.9682,
+          "mds": 0.4039,
+          "leg_score": 79.36
+        },
+        {
+          "horse": "Yousaynothingatall",
+          "course": "Cork",
+          "off_time": "4:50",
+          "race_name": "Irish Stallion Farms EBF Median Auction Fillies Maiden (Smullen Series)",
+          "leg_role": "GLUE",
+          "vp": 0.4553,
+          "place_prob": 0.8854,
+          "mds": 0.2492,
+          "leg_score": 71.26
+        }
+      ]
+    },
+    "strongest_4_fold": {
+      "generated": true,
+      "size": 4,
+      "combo_score": 320.34,
+      "legs": [
+        {
+          "horse": "Westport",
+          "course": "Hamilton",
+          "off_time": "2:05",
+          "race_name": "Aspire Cleaning & Facilities Ltd Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.8327,
+          "place_prob": 0.9492,
+          "mds": 0.7709,
+          "leg_score": 78.98
+        },
+        {
+          "horse": "Conclave",
+          "course": "Hamilton",
+          "off_time": "3:15",
+          "race_name": "Darley Stallions EBF Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6818,
+          "place_prob": 0.9682,
+          "mds": 0.4039,
+          "leg_score": 79.36
+        },
+        {
+          "horse": "Ranga Tang",
+          "course": "Salisbury",
+          "off_time": "4:20",
+          "race_name": "Fitzdares Extra Places Every Day EBF Maiden Stakes (GBB/GBBPlus Race)",
+          "leg_role": "GLUE",
+          "vp": 0.3497,
+          "place_prob": 0.9921,
+          "mds": 0.3604,
+          "leg_score": 69.83
+        },
+        {
+          "horse": "Yousaynothingatall",
+          "course": "Cork",
+          "off_time": "4:50",
+          "race_name": "Irish Stallion Farms EBF Median Auction Fillies Maiden (Smullen Series)",
+          "leg_role": "GLUE",
+          "vp": 0.4553,
+          "place_prob": 0.8854,
+          "mds": 0.2492,
+          "leg_score": 71.26
+        }
+      ]
+    },
+    "controlled_5_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "speculative_6_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    }
+  },
+  "trap_legs": [
+    {
+      "horse": "Genoah",
+      "horse_id": "hrs_36738548",
+      "race_id": "rac_11952928",
+      "course": "Cork",
+      "off_time": "3:43",
+      "race_name": "HORSE AND JOCKEY HOTEL Cork Derby (Premier Handicap)",
+      "vp": 0.1692,
+      "decision_tier": "B",
+      "place_prob": 0.768,
+      "mds": 0.0174,
+      "improvement_score": 0.1717,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3773,
+      "racing_api_connection_score": 0.408,
+      "racing_api_course_score": 0.34,
+      "racing_api_distance_score": 0.384,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 39.98,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.15,
+        "place_frame_score": 15.36,
+        "mds_market_shape_score": 0.43,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Baiana",
+      "horse_id": "hrs_57504153",
+      "race_id": "rac_11952785",
+      "course": "Sligo",
+      "off_time": "1:35",
+      "race_name": "Download The Tote App Fillies Maiden",
+      "vp": 0.2946,
+      "decision_tier": "B",
+      "place_prob": 0.7395,
+      "mds": 0.0672,
+      "improvement_score": 0.1187,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4604,
+      "racing_api_connection_score": 0.564,
+      "racing_api_course_score": 0.483,
+      "racing_api_distance_score": 0.386,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.19,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.68,
+        "place_frame_score": 14.79,
+        "mds_market_shape_score": 1.68,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Basilette",
+      "horse_id": "hrs_33110511",
+      "race_id": "rac_11915449",
+      "course": "Salisbury",
+      "off_time": "4:55",
+      "race_name": "Fitzdares Handicap",
+      "vp": 0.2304,
+      "decision_tier": "B",
+      "place_prob": 0.9309,
+      "mds": 0.0549,
+      "improvement_score": 0.1165,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3875,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.331,
+      "racing_api_distance_score": 0.444,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 37.85,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.82,
+        "place_frame_score": 18.62,
+        "mds_market_shape_score": 1.37,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "My Kurkum",
+      "horse_id": "hrs_21912359",
+      "race_id": "rac_11952811",
+      "course": "Sligo",
+      "off_time": "2:45",
+      "race_name": "Tote Never Beaten By SP Handicap",
+      "vp": 0.2049,
+      "decision_tier": "B",
+      "place_prob": 0.525,
+      "mds": 0.037,
+      "improvement_score": 0.145,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.253,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.253,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 37.74,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.29,
+        "place_frame_score": 10.5,
+        "mds_market_shape_score": 0.92,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Moonhall Lass",
+      "horse_id": "hrs_41534906",
+      "race_id": "rac_11915462",
+      "course": "Salisbury",
+      "off_time": "1:30",
+      "race_name": "Find Us At fitzdares.com Amateur Jockeys' Handicap",
+      "vp": 0.6056,
+      "decision_tier": "B",
+      "place_prob": 0.5088,
+      "mds": 0.1281,
+      "improvement_score": 0.0391,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.542,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": 0.542,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 37.43,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 10.18,
+        "mds_market_shape_score": 3.2,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Precise",
+      "horse_id": "hrs_53211277",
+      "race_id": "rac_11875422",
+      "course": "Newmarket",
+      "off_time": "3:35",
+      "race_name": "Betfred 1000 Guineas Stakes (Group 1) (Fillies)",
+      "vp": 0.1462,
+      "decision_tier": "B",
+      "place_prob": 0.6356,
+      "mds": 0.0452,
+      "improvement_score": 0.0783,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4416,
+      "racing_api_connection_score": 0.524,
+      "racing_api_course_score": 0.382,
+      "racing_api_distance_score": 0.46,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.66,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.77,
+        "place_frame_score": 12.71,
+        "mds_market_shape_score": 1.13,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Poetry Of Time",
+      "horse_id": "hrs_50434748",
+      "race_id": "rac_11915436",
+      "course": "Salisbury",
+      "off_time": "3:10",
+      "race_name": "Download The Fitzdares App Novice Stakes (GBB Race)",
+      "vp": 0.3756,
+      "decision_tier": "B",
+      "place_prob": 0.6432,
+      "mds": 0.1916,
+      "improvement_score": 0.1187,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.504,
+      "racing_api_connection_score": 0.52,
+      "racing_api_course_score": 0.545,
+      "racing_api_distance_score": 0.447,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 34.24,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.54,
+        "place_frame_score": 12.86,
+        "mds_market_shape_score": 4.79,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Pliny",
+      "horse_id": "hrs_55545588",
+      "race_id": "rac_11952863",
+      "course": "Sligo",
+      "off_time": "5:07",
+      "race_name": "Apex Controls Ltd. Handicap",
+      "vp": 0.2466,
+      "decision_tier": "B",
+      "place_prob": 0.6283,
+      "mds": 0.0651,
+      "improvement_score": 0.2033,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.27,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.502,
+      "racing_api_distance_score": 0.308,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.02,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.8,
+        "place_frame_score": 12.57,
+        "mds_market_shape_score": 1.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Share The Treasure",
+      "horse_id": "hrs_37505069",
+      "race_id": "rac_11952824",
+      "course": "Sligo",
+      "off_time": "3:22",
+      "race_name": "Tote.ie Apprentice Handicap",
+      "vp": 0.1956,
+      "decision_tier": "B",
+      "place_prob": 0.2879,
+      "mds": 0.0092,
+      "improvement_score": 0.0819,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.253,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.506,
+      "racing_api_distance_score": 0.4,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 31.75,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.74,
+        "place_frame_score": 5.76,
+        "mds_market_shape_score": 0.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "County Carlow",
+      "horse_id": "hrs_62779157",
+      "race_id": "rac_11952798",
+      "course": "Sligo",
+      "off_time": "2:10",
+      "race_name": "Tote.ie Median Auction Maiden",
+      "vp": 0.3542,
+      "decision_tier": "B",
+      "place_prob": 0.487,
+      "mds": 0.266,
+      "improvement_score": 0.2025,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4792,
+      "racing_api_connection_score": 0.584,
+      "racing_api_course_score": 0.444,
+      "racing_api_distance_score": 0.392,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 31.69,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 21.25,
+        "place_frame_score": 9.74,
+        "mds_market_shape_score": 6.65,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Atomic City",
+      "horse_id": "hrs_58347576",
+      "race_id": "rac_11952967",
+      "course": "Cork",
+      "off_time": "5:27",
+      "race_name": "Irish Stallion Farms EBF (C & G) Maiden",
+      "vp": 0.3493,
+      "decision_tier": "B",
+      "place_prob": 0.4322,
+      "mds": 0.2726,
+      "improvement_score": 0.251,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4387,
+      "racing_api_connection_score": 0.46,
+      "racing_api_course_score": 0.364,
+      "racing_api_distance_score": 0.492,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 30.46,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 20.96,
+        "place_frame_score": 8.64,
+        "mds_market_shape_score": 6.82,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "The Piper's Call",
+      "horse_id": "hrs_53390141",
+      "race_id": "rac_11952889",
+      "course": "Cork",
+      "off_time": "1:55",
+      "race_name": "UNQUESTIONABLE Standing At Rathbarry Stud Maiden",
+      "vp": 0.2244,
+      "decision_tier": "B",
+      "place_prob": 0.7915,
+      "mds": 0.1852,
+      "improvement_score": 0.5409,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.1876,
+      "racing_api_connection_score": 0.146,
+      "racing_api_course_score": 0.274,
+      "racing_api_distance_score": 0.186,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 27.94,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.46,
+        "place_frame_score": 15.83,
+        "mds_market_shape_score": 4.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.02,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Doon The Glen",
+      "horse_id": "hrs_36079939",
+      "race_id": "rac_11915358",
+      "course": "Hamilton",
+      "off_time": "5:00",
+      "race_name": "Hampton By Hilton Hotel Hamilton Park Handicap",
+      "vp": 0.1668,
+      "decision_tier": "B",
+      "place_prob": 0.6767,
+      "mds": 0.0098,
+      "improvement_score": 0.0787,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.488,
+      "racing_api_connection_score": 0.544,
+      "racing_api_course_score": 0.494,
+      "racing_api_distance_score": 0.426,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 27.84,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.01,
+        "place_frame_score": 13.53,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cathedral",
+      "horse_id": "hrs_41661431",
+      "race_id": "rac_11915046",
+      "course": "Newmarket",
+      "off_time": "2:20",
+      "race_name": "Betfred Dahlia Stakes (Group 2) (Fillies & Mares)",
+      "vp": 0.1431,
+      "decision_tier": "B",
+      "place_prob": 0.4255,
+      "mds": 0.0152,
+      "improvement_score": 0.0447,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3832,
+      "racing_api_connection_score": 0.438,
+      "racing_api_course_score": 0.367,
+      "racing_api_distance_score": 0.306,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 21.51,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.59,
+        "place_frame_score": 8.51,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "The Dancing Pirate",
+      "horse_id": "hrs_62168260",
+      "race_id": "rac_11915085",
+      "course": "Newmarket",
+      "off_time": "4:45",
+      "race_name": "Tattersalls Online \u00a340,000 EBF Novice Stakes (GBB Race)",
+      "vp": 0.2884,
+      "decision_tier": "B",
+      "place_prob": 0.2101,
+      "mds": 0.1017,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4547,
+      "racing_api_connection_score": 0.486,
+      "racing_api_course_score": 0.414,
+      "racing_api_distance_score": 0.464,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 18.09,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.3,
+        "place_frame_score": 4.2,
+        "mds_market_shape_score": 2.54,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Collecting Coin",
+      "horse_id": "hrs_45701754",
+      "race_id": "rac_11952902",
+      "course": "Cork",
+      "off_time": "2:30",
+      "race_name": "Book Tickets Online At CorkRacecourse.ie Handicap",
+      "vp": 0.1587,
+      "decision_tier": "X",
+      "place_prob": 0.3367,
+      "mds": 0.0218,
+      "improvement_score": 0.0358,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3123,
+      "racing_api_connection_score": 0.254,
+      "racing_api_course_score": 0.327,
+      "racing_api_distance_score": 0.356,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_LG_FLAT_HCAP_E2.2"
+      ],
+      "suppress_flags": [
+        "DX_LG_FLAT_HCAP_E2.2"
+      ],
+      "leg_score": 6.83,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 9.52,
+        "place_frame_score": 6.73,
+        "mds_market_shape_score": 0.55,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ],
+  "rejected_legs": [
+    {
+      "horse": "Genoah",
+      "course": "Cork",
+      "off_time": "3:43",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Baiana",
+      "course": "Sligo",
+      "off_time": "1:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Basilette",
+      "course": "Salisbury",
+      "off_time": "4:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "My Kurkum",
+      "course": "Sligo",
+      "off_time": "2:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Moonhall Lass",
+      "course": "Salisbury",
+      "off_time": "1:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Precise",
+      "course": "Newmarket",
+      "off_time": "3:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Poetry Of Time",
+      "course": "Salisbury",
+      "off_time": "3:10",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Pliny",
+      "course": "Sligo",
+      "off_time": "5:07",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Share The Treasure",
+      "course": "Sligo",
+      "off_time": "3:22",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "County Carlow",
+      "course": "Sligo",
+      "off_time": "2:10",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Atomic City",
+      "course": "Cork",
+      "off_time": "5:27",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "The Piper's Call",
+      "course": "Cork",
+      "off_time": "1:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Doon The Glen",
+      "course": "Hamilton",
+      "off_time": "5:00",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Cathedral",
+      "course": "Newmarket",
+      "off_time": "2:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "The Dancing Pirate",
+      "course": "Newmarket",
+      "off_time": "4:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Collecting Coin",
+      "course": "Cork",
+      "off_time": "2:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "horse": "Conclave",
+      "horse_id": "hrs_62202147",
+      "race_id": "rac_11915293",
+      "course": "Hamilton",
+      "off_time": "3:15",
+      "race_name": "Darley Stallions EBF Novice Stakes (GBB Race)",
+      "vp": 0.6818,
+      "decision_tier": "A",
+      "place_prob": 0.9682,
+      "mds": 0.4039,
+      "improvement_score": 0.1473,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.5053,
+      "racing_api_connection_score": 0.54,
+      "racing_api_course_score": 0.525,
+      "racing_api_distance_score": 0.451,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 79.36,
+      "leg_role": "BANKER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 19.36,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Westport",
+      "horse_id": "hrs_62170927",
+      "race_id": "rac_11915319",
+      "course": "Hamilton",
+      "off_time": "2:05",
+      "race_name": "Aspire Cleaning & Facilities Ltd Novice Stakes (GBB Race)",
+      "vp": 0.8327,
+      "decision_tier": "A",
+      "place_prob": 0.9492,
+      "mds": 0.7709,
+      "improvement_score": 0.2897,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4816,
+      "racing_api_connection_score": 0.53,
+      "racing_api_course_score": 0.674,
+      "racing_api_distance_score": 0.337,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 78.98,
+      "leg_role": "BANKER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 18.98,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Yousaynothingatall",
+      "horse_id": "hrs_57286796",
+      "race_id": "rac_11952954",
+      "course": "Cork",
+      "off_time": "4:50",
+      "race_name": "Irish Stallion Farms EBF Median Auction Fillies Maiden (Smullen Series)",
+      "vp": 0.4553,
+      "decision_tier": "A",
+      "place_prob": 0.8854,
+      "mds": 0.2492,
+      "improvement_score": 0.3857,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4387,
+      "racing_api_connection_score": 0.46,
+      "racing_api_course_score": 0.364,
+      "racing_api_distance_score": 0.492,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 71.26,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 27.32,
+        "place_frame_score": 17.71,
+        "mds_market_shape_score": 6.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ranga Tang",
+      "horse_id": "hrs_57103417",
+      "race_id": "rac_11915397",
+      "course": "Salisbury",
+      "off_time": "4:20",
+      "race_name": "Fitzdares Extra Places Every Day EBF Maiden Stakes (GBB/GBBPlus Race)",
+      "vp": 0.3497,
+      "decision_tier": "A",
+      "place_prob": 0.9921,
+      "mds": 0.3604,
+      "improvement_score": 0.4505,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.5304,
+      "racing_api_connection_score": 0.544,
+      "racing_api_course_score": 0.562,
+      "racing_api_distance_score": 0.501,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 69.83,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 20.98,
+        "place_frame_score": 19.84,
+        "mds_market_shape_score": 9.01,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Alpine Sierra",
+      "horse_id": "hrs_24855355",
+      "race_id": "rac_11915332",
+      "course": "Hamilton",
+      "off_time": "5:35",
+      "race_name": "Racing TV Handicap",
+      "vp": 0.3772,
+      "decision_tier": "A",
+      "place_prob": 0.9906,
+      "mds": 0.0919,
+      "improvement_score": 0.0883,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.5144,
+      "racing_api_connection_score": 0.544,
+      "racing_api_course_score": 0.494,
+      "racing_api_distance_score": 0.496,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 64.74,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.63,
+        "place_frame_score": 19.81,
+        "mds_market_shape_score": 2.3,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Humble Spark",
+      "horse_id": "hrs_28532693",
+      "race_id": "rac_11915306",
+      "course": "Hamilton",
+      "off_time": "2:40",
+      "race_name": "Heineken Buttonhook Handicap (GBBPlus Race)",
+      "vp": 0.3721,
+      "decision_tier": "A",
+      "place_prob": 0.9721,
+      "mds": 0.053,
+      "improvement_score": 0.0822,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.5,
+      "racing_api_connection_score": 0.544,
+      "racing_api_course_score": 0.494,
+      "racing_api_distance_score": 0.424,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 63.09,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.33,
+        "place_frame_score": 19.44,
+        "mds_market_shape_score": 1.32,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Siam Ruby",
+      "horse_id": "hrs_59276014",
+      "race_id": "rac_11915423",
+      "course": "Salisbury",
+      "off_time": "3:48",
+      "race_name": "Call Fitzdares For Top Prices Fillies' Handicap",
+      "vp": 0.3727,
+      "decision_tier": "A",
+      "place_prob": 0.848,
+      "mds": 0.0651,
+      "improvement_score": 0.015,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.45,
+      "racing_api_connection_score": 0.484,
+      "racing_api_course_score": 0.437,
+      "racing_api_distance_score": 0.429,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 60.95,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.36,
+        "place_frame_score": 16.96,
+        "mds_market_shape_score": 1.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Starliner",
+      "horse_id": "hrs_35729652",
+      "race_id": "rac_11915345",
+      "course": "Hamilton",
+      "off_time": "3:53",
+      "race_name": "Aspire Cleaning & Facilities Throughout Scotland Handicap",
+      "vp": 0.3259,
+      "decision_tier": "A",
+      "place_prob": 0.9886,
+      "mds": 0.064,
+      "improvement_score": 0.1817,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.335,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.352,
+      "racing_api_distance_score": 0.318,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 60.93,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 19.55,
+        "place_frame_score": 19.77,
+        "mds_market_shape_score": 1.6,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Call Me Tomorrow",
+      "horse_id": "hrs_63650440",
+      "race_id": "rac_11915072",
+      "course": "Newmarket",
+      "off_time": "4:10",
+      "race_name": "Tattersalls \u00a340,000 EBF Fillies' Novice Stakes (GBB Race)",
+      "vp": 0.498,
+      "decision_tier": "A",
+      "place_prob": 0.661,
+      "mds": 0.1732,
+      "improvement_score": 0.1161,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4163,
+      "racing_api_connection_score": 0.434,
+      "racing_api_course_score": 0.387,
+      "racing_api_distance_score": 0.428,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 57.47,
+      "leg_role": "BOOSTER",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 29.88,
+        "place_frame_score": 13.22,
+        "mds_market_shape_score": 4.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ziggy Starshine",
+      "horse_id": "hrs_60820228",
+      "race_id": "rac_11915384",
+      "course": "Salisbury",
+      "off_time": "2:00",
+      "race_name": "Fitzdares Fillies' Conditions Stakes (GBB/IRE Incentive Race)",
+      "vp": 0.444,
+      "decision_tier": "A",
+      "place_prob": 0.6663,
+      "mds": 0.1747,
+      "improvement_score": 0.0837,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.591,
+      "racing_api_connection_score": 0.698,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": 0.484,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 54.39,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 26.64,
+        "place_frame_score": 13.33,
+        "mds_market_shape_score": 4.37,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.06,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Over Spiced",
+      "horse_id": "hrs_40859399",
+      "race_id": "rac_11915410",
+      "course": "Salisbury",
+      "off_time": "2:35",
+      "race_name": "Track Radio Launches Tomorrow Handicap",
+      "vp": 0.3275,
+      "decision_tier": "B",
+      "place_prob": 0.8652,
+      "mds": 0.0252,
+      "improvement_score": 0.0264,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4363,
+      "racing_api_connection_score": 0.712,
+      "racing_api_course_score": 0.166,
+      "racing_api_distance_score": 0.431,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 51.63,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 19.65,
+        "place_frame_score": 17.3,
+        "mds_market_shape_score": 0.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Grey Intentions",
+      "horse_id": "hrs_54998160",
+      "race_id": "rac_11952941",
+      "course": "Cork",
+      "off_time": "4:15",
+      "race_name": "Racing Again Sunday, May 10th Apprentice Handicap",
+      "vp": 0.3573,
+      "decision_tier": "B",
+      "place_prob": 0.4497,
+      "mds": 0.0468,
+      "improvement_score": 0.156,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.3988,
+      "racing_api_connection_score": 0.626,
+      "racing_api_course_score": 0.4,
+      "racing_api_distance_score": 0.371,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.64,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 21.44,
+        "place_frame_score": 8.99,
+        "mds_market_shape_score": 1.17,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Goblet Of Fire",
+      "horse_id": "hrs_31189592",
+      "race_id": "rac_11901877",
+      "course": "Newmarket",
+      "off_time": "2:55",
+      "race_name": "Betfred Handicap (Heritage Handicap) (GBBPlus Race)",
+      "vp": 0.2106,
+      "decision_tier": "B",
+      "place_prob": 0.8912,
+      "mds": 0.0227,
+      "improvement_score": 0.0811,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.6585,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.778,
+      "racing_api_distance_score": 0.539,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.09,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.64,
+        "place_frame_score": 17.82,
+        "mds_market_shape_score": 0.57,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.07,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Matriarchal",
+      "horse_id": "hrs_63323295",
+      "race_id": "rac_11952876",
+      "course": "Cork",
+      "off_time": "1:20",
+      "race_name": "Irish EBF Auction Series Maiden (IRE Incentive Race)",
+      "vp": 0.3486,
+      "decision_tier": "B",
+      "place_prob": 0.6127,
+      "mds": 0.2373,
+      "improvement_score": 0.3962,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3088,
+      "racing_api_connection_score": 0.382,
+      "racing_api_course_score": 0.408,
+      "racing_api_distance_score": 0.173,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 43.13,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 20.92,
+        "place_frame_score": 12.25,
+        "mds_market_shape_score": 5.93,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "God Knows",
+      "horse_id": "hrs_31149090",
+      "race_id": "rac_11952837",
+      "course": "Sligo",
+      "off_time": "3:58",
+      "race_name": "Irish Stallion Farms EBF Fillies Handicap",
+      "vp": 0.3345,
+      "decision_tier": "A",
+      "place_prob": 0.5843,
+      "mds": 0.0167,
+      "improvement_score": 0.0805,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.5093,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.506,
+      "racing_api_distance_score": 0.511,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 42.22,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 20.07,
+        "place_frame_score": 11.69,
+        "mds_market_shape_score": 0.42,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 18.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Creative Dancer",
+      "horse_id": "hrs_25121278",
+      "race_id": "rac_11952850",
+      "course": "Sligo",
+      "off_time": "4:32",
+      "race_name": "Web The Tool Company Handicap",
+      "vp": 0.3485,
+      "decision_tier": "B",
+      "place_prob": 0.3316,
+      "mds": 0.0131,
+      "improvement_score": 0.0787,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.559,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.386,
+      "racing_api_distance_score": 0.732,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 41.93,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 20.91,
+        "place_frame_score": 6.63,
+        "mds_market_shape_score": 0.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.06,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Study Of Words",
+      "horse_id": "hrs_55577725",
+      "race_id": "rac_11915098",
+      "course": "Newmarket",
+      "off_time": "5:20",
+      "race_name": "HKJC World Pool Handicap (GBBPlus Race)",
+      "vp": 0.3264,
+      "decision_tier": "B",
+      "place_prob": 0.8154,
+      "mds": 0.0792,
+      "improvement_score": 0.0153,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.542,
+      "racing_api_connection_score": 0.56,
+      "racing_api_course_score": 0.577,
+      "racing_api_distance_score": 0.498,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 41.93,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 19.58,
+        "place_frame_score": 16.31,
+        "mds_market_shape_score": 1.98,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Havana Anna",
+      "horse_id": "hrs_52897110",
+      "race_id": "rac_11952915",
+      "course": "Cork",
+      "off_time": "3:05",
+      "race_name": "Goffs Irish EBF Polonia Stakes (Listed Race) (Fillies)",
+      "vp": 0.3006,
+      "decision_tier": "B",
+      "place_prob": 0.9179,
+      "mds": 0.0503,
+      "improvement_score": 0.3372,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.306,
+      "racing_api_connection_score": 0.408,
+      "racing_api_course_score": 0.36,
+      "racing_api_distance_score": 0.201,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 41.68,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.04,
+        "place_frame_score": 18.36,
+        "mds_market_shape_score": 1.26,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Sacred Ground",
+      "horse_id": "hrs_57223530",
+      "race_id": "rac_11915059",
+      "course": "Newmarket",
+      "off_time": "1:45",
+      "race_name": "Oliver Brown Pretty Polly Stakes (Listed Race) (Fillies)",
+      "vp": 0.3064,
+      "decision_tier": "B",
+      "place_prob": 0.8501,
+      "mds": 0.083,
+      "improvement_score": 0.0658,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.481,
+      "racing_api_connection_score": 0.498,
+      "racing_api_course_score": 0.477,
+      "racing_api_distance_score": 0.468,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 41.51,
+      "leg_role": "WILDCARD",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.38,
+        "place_frame_score": 17.0,
+        "mds_market_shape_score": 2.08,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ellie's de Vega",
+      "horse_id": "hrs_52418114",
+      "race_id": "rac_11915371",
+      "course": "Hamilton",
+      "off_time": "4:25",
+      "race_name": "Carolyn Murray Birthday Celebrations Handicap",
+      "vp": 0.2645,
+      "decision_tier": "B",
+      "place_prob": 0.5456,
+      "mds": 0.0118,
+      "improvement_score": 0.0166,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.332,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.324,
+      "racing_api_distance_score": 0.34,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 41.11,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.87,
+        "place_frame_score": 10.91,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Genoah",
+      "horse_id": "hrs_36738548",
+      "race_id": "rac_11952928",
+      "course": "Cork",
+      "off_time": "3:43",
+      "race_name": "HORSE AND JOCKEY HOTEL Cork Derby (Premier Handicap)",
+      "vp": 0.1692,
+      "decision_tier": "B",
+      "place_prob": 0.768,
+      "mds": 0.0174,
+      "improvement_score": 0.1717,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3773,
+      "racing_api_connection_score": 0.408,
+      "racing_api_course_score": 0.34,
+      "racing_api_distance_score": 0.384,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 39.98,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.15,
+        "place_frame_score": 15.36,
+        "mds_market_shape_score": 0.43,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Baiana",
+      "horse_id": "hrs_57504153",
+      "race_id": "rac_11952785",
+      "course": "Sligo",
+      "off_time": "1:35",
+      "race_name": "Download The Tote App Fillies Maiden",
+      "vp": 0.2946,
+      "decision_tier": "B",
+      "place_prob": 0.7395,
+      "mds": 0.0672,
+      "improvement_score": 0.1187,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4604,
+      "racing_api_connection_score": 0.564,
+      "racing_api_course_score": 0.483,
+      "racing_api_distance_score": 0.386,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.19,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.68,
+        "place_frame_score": 14.79,
+        "mds_market_shape_score": 1.68,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Basilette",
+      "horse_id": "hrs_33110511",
+      "race_id": "rac_11915449",
+      "course": "Salisbury",
+      "off_time": "4:55",
+      "race_name": "Fitzdares Handicap",
+      "vp": 0.2304,
+      "decision_tier": "B",
+      "place_prob": 0.9309,
+      "mds": 0.0549,
+      "improvement_score": 0.1165,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3875,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.331,
+      "racing_api_distance_score": 0.444,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 37.85,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.82,
+        "place_frame_score": 18.62,
+        "mds_market_shape_score": 1.37,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "My Kurkum",
+      "horse_id": "hrs_21912359",
+      "race_id": "rac_11952811",
+      "course": "Sligo",
+      "off_time": "2:45",
+      "race_name": "Tote Never Beaten By SP Handicap",
+      "vp": 0.2049,
+      "decision_tier": "B",
+      "place_prob": 0.525,
+      "mds": 0.037,
+      "improvement_score": 0.145,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.253,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.253,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 37.74,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.29,
+        "place_frame_score": 10.5,
+        "mds_market_shape_score": 0.92,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Moonhall Lass",
+      "horse_id": "hrs_41534906",
+      "race_id": "rac_11915462",
+      "course": "Salisbury",
+      "off_time": "1:30",
+      "race_name": "Find Us At fitzdares.com Amateur Jockeys' Handicap",
+      "vp": 0.6056,
+      "decision_tier": "B",
+      "place_prob": 0.5088,
+      "mds": 0.1281,
+      "improvement_score": 0.0391,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.542,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": null,
+      "racing_api_distance_score": 0.542,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 37.43,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 10.18,
+        "mds_market_shape_score": 3.2,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Precise",
+      "horse_id": "hrs_53211277",
+      "race_id": "rac_11875422",
+      "course": "Newmarket",
+      "off_time": "3:35",
+      "race_name": "Betfred 1000 Guineas Stakes (Group 1) (Fillies)",
+      "vp": 0.1462,
+      "decision_tier": "B",
+      "place_prob": 0.6356,
+      "mds": 0.0452,
+      "improvement_score": 0.0783,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4416,
+      "racing_api_connection_score": 0.524,
+      "racing_api_course_score": 0.382,
+      "racing_api_distance_score": 0.46,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.66,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.77,
+        "place_frame_score": 12.71,
+        "mds_market_shape_score": 1.13,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Poetry Of Time",
+      "horse_id": "hrs_50434748",
+      "race_id": "rac_11915436",
+      "course": "Salisbury",
+      "off_time": "3:10",
+      "race_name": "Download The Fitzdares App Novice Stakes (GBB Race)",
+      "vp": 0.3756,
+      "decision_tier": "B",
+      "place_prob": 0.6432,
+      "mds": 0.1916,
+      "improvement_score": 0.1187,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.504,
+      "racing_api_connection_score": 0.52,
+      "racing_api_course_score": 0.545,
+      "racing_api_distance_score": 0.447,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 34.24,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 22.54,
+        "place_frame_score": 12.86,
+        "mds_market_shape_score": 4.79,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Pliny",
+      "horse_id": "hrs_55545588",
+      "race_id": "rac_11952863",
+      "course": "Sligo",
+      "off_time": "5:07",
+      "race_name": "Apex Controls Ltd. Handicap",
+      "vp": 0.2466,
+      "decision_tier": "B",
+      "place_prob": 0.6283,
+      "mds": 0.0651,
+      "improvement_score": 0.2033,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.27,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.502,
+      "racing_api_distance_score": 0.308,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.02,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.8,
+        "place_frame_score": 12.57,
+        "mds_market_shape_score": 1.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Share The Treasure",
+      "horse_id": "hrs_37505069",
+      "race_id": "rac_11952824",
+      "course": "Sligo",
+      "off_time": "3:22",
+      "race_name": "Tote.ie Apprentice Handicap",
+      "vp": 0.1956,
+      "decision_tier": "B",
+      "place_prob": 0.2879,
+      "mds": 0.0092,
+      "improvement_score": 0.0819,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.253,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.506,
+      "racing_api_distance_score": 0.4,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 31.75,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.74,
+        "place_frame_score": 5.76,
+        "mds_market_shape_score": 0.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "County Carlow",
+      "horse_id": "hrs_62779157",
+      "race_id": "rac_11952798",
+      "course": "Sligo",
+      "off_time": "2:10",
+      "race_name": "Tote.ie Median Auction Maiden",
+      "vp": 0.3542,
+      "decision_tier": "B",
+      "place_prob": 0.487,
+      "mds": 0.266,
+      "improvement_score": 0.2025,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4792,
+      "racing_api_connection_score": 0.584,
+      "racing_api_course_score": 0.444,
+      "racing_api_distance_score": 0.392,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 31.69,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 21.25,
+        "place_frame_score": 9.74,
+        "mds_market_shape_score": 6.65,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Atomic City",
+      "horse_id": "hrs_58347576",
+      "race_id": "rac_11952967",
+      "course": "Cork",
+      "off_time": "5:27",
+      "race_name": "Irish Stallion Farms EBF (C & G) Maiden",
+      "vp": 0.3493,
+      "decision_tier": "B",
+      "place_prob": 0.4322,
+      "mds": 0.2726,
+      "improvement_score": 0.251,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4387,
+      "racing_api_connection_score": 0.46,
+      "racing_api_course_score": 0.364,
+      "racing_api_distance_score": 0.492,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 30.46,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 20.96,
+        "place_frame_score": 8.64,
+        "mds_market_shape_score": 6.82,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "The Piper's Call",
+      "horse_id": "hrs_53390141",
+      "race_id": "rac_11952889",
+      "course": "Cork",
+      "off_time": "1:55",
+      "race_name": "UNQUESTIONABLE Standing At Rathbarry Stud Maiden",
+      "vp": 0.2244,
+      "decision_tier": "B",
+      "place_prob": 0.7915,
+      "mds": 0.1852,
+      "improvement_score": 0.5409,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.1876,
+      "racing_api_connection_score": 0.146,
+      "racing_api_course_score": 0.274,
+      "racing_api_distance_score": 0.186,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 27.94,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.46,
+        "place_frame_score": 15.83,
+        "mds_market_shape_score": 4.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.02,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Doon The Glen",
+      "horse_id": "hrs_36079939",
+      "race_id": "rac_11915358",
+      "course": "Hamilton",
+      "off_time": "5:00",
+      "race_name": "Hampton By Hilton Hotel Hamilton Park Handicap",
+      "vp": 0.1668,
+      "decision_tier": "B",
+      "place_prob": 0.6767,
+      "mds": 0.0098,
+      "improvement_score": 0.0787,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.488,
+      "racing_api_connection_score": 0.544,
+      "racing_api_course_score": 0.494,
+      "racing_api_distance_score": 0.426,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 27.84,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.01,
+        "place_frame_score": 13.53,
+        "mds_market_shape_score": 0.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Cathedral",
+      "horse_id": "hrs_41661431",
+      "race_id": "rac_11915046",
+      "course": "Newmarket",
+      "off_time": "2:20",
+      "race_name": "Betfred Dahlia Stakes (Group 2) (Fillies & Mares)",
+      "vp": 0.1431,
+      "decision_tier": "B",
+      "place_prob": 0.4255,
+      "mds": 0.0152,
+      "improvement_score": 0.0447,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3832,
+      "racing_api_connection_score": 0.438,
+      "racing_api_course_score": 0.367,
+      "racing_api_distance_score": 0.306,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 21.51,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.59,
+        "place_frame_score": 8.51,
+        "mds_market_shape_score": 0.38,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "The Dancing Pirate",
+      "horse_id": "hrs_62168260",
+      "race_id": "rac_11915085",
+      "course": "Newmarket",
+      "off_time": "4:45",
+      "race_name": "Tattersalls Online \u00a340,000 EBF Novice Stakes (GBB Race)",
+      "vp": 0.2884,
+      "decision_tier": "B",
+      "place_prob": 0.2101,
+      "mds": 0.1017,
+      "improvement_score": 0.0872,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4547,
+      "racing_api_connection_score": 0.486,
+      "racing_api_course_score": 0.414,
+      "racing_api_distance_score": 0.464,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 18.09,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.3,
+        "place_frame_score": 4.2,
+        "mds_market_shape_score": 2.54,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Collecting Coin",
+      "horse_id": "hrs_45701754",
+      "race_id": "rac_11952902",
+      "course": "Cork",
+      "off_time": "2:30",
+      "race_name": "Book Tickets Online At CorkRacecourse.ie Handicap",
+      "vp": 0.1587,
+      "decision_tier": "X",
+      "place_prob": 0.3367,
+      "mds": 0.0218,
+      "improvement_score": 0.0358,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3123,
+      "racing_api_connection_score": 0.254,
+      "racing_api_course_score": 0.327,
+      "racing_api_distance_score": 0.356,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_LG_FLAT_HCAP_E2.2"
+      ],
+      "suppress_flags": [
+        "DX_LG_FLAT_HCAP_E2.2"
+      ],
+      "leg_score": 6.83,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 9.52,
+        "place_frame_score": 6.73,
+        "mds_market_shape_score": 0.55,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ]
+}

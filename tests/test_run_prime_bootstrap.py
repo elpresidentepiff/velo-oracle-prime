@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from scripts import run_prime_today
+from scripts.ops import run_prime_today
 
 
 def test_bootstrap_runtime_disables_notifications_when_requested(monkeypatch):

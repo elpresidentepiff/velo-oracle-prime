@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-05-09T00:07:26.663162Z",
+  "existing_tables": [
+    "historical_feature_store",
+    "velo_features",
+    "runner_derived_features"
+  ],
+  "table_analyses": [
+    {
+      "table": "historical_feature_store",
+      "total": 0,
+      "rows_2026": 0,
+      "rows_pre2026": 0,
+      "mpi_null_count": 0,
+      "mpi_null_pct": 0.0,
+      "mpi_stats": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null
+      },
+      "mpi_source_counts": {},
+      "chaos_bloom_null_count": 0,
+      "chaos_bloom_null_pct": 0.0,
+      "chaos_bloom_stats": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null
+      },
+      "winner_parity": null,
+      "winner_pct": null,
+      "winner_count": 0,
+      "duplicate_count": 0,
+      "vector_completeness": null,
+      "missing_vec": null,
+      "missing_vec_pct": null,
+      "key_features_checked": [],
+      "key_field_null_rates": {},
+      "scoring_status_counts": {},
+      "signal_contract_version_counts": {},
+      "live_mpi_null": null,
+      "live_cb_null": null,
+      "archive_mpi_null_rate": null,
+      "live_mpi_null_rate": null,
+      "archive_cb_null_rate": null,
+      "live_cb_null_rate": null,
+      "classification": "HFS_TRAINING_BLOCKED",
+      "blocked_reasons": [
+        "TABLE_EMPTY_OR_NOT_FOUND"
+      ]
+    },
+    {
+      "table": "velo_features",
+      "total": 0,
+      "rows_2026": 0,
+      "rows_pre2026": 0,
+      "mpi_null_count": 0,
+      "mpi_null_pct": 0.0,
+      "mpi_stats": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null
+      },
+      "mpi_source_counts": {},
+      "chaos_bloom_null_count": 0,
+      "chaos_bloom_null_pct": 0.0,
+      "chaos_bloom_stats": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null
+      },
+      "winner_parity": null,
+      "winner_pct": null,
+      "winner_count": 0,
+      "duplicate_count": 0,
+      "vector_completeness": null,
+      "missing_vec": null,
+      "missing_vec_pct": null,
+      "key_features_checked": [],
+      "key_field_null_rates": {},
+      "scoring_status_counts": {},
+      "signal_contract_version_counts": {},
+      "live_mpi_null": null,
+      "live_cb_null": null,
+      "archive_mpi_null_rate": null,
+      "live_mpi_null_rate": null,
+      "archive_cb_null_rate": null,
+      "live_cb_null_rate": null,
+      "classification": "HFS_TRAINING_BLOCKED",
+      "blocked_reasons": [
+        "TABLE_EMPTY_OR_NOT_FOUND"
+      ]
+    },
+    {
+      "table": "runner_derived_features",
+      "total": 0,
+      "rows_2026": 0,
+      "rows_pre2026": 0,
+      "mpi_null_count": 0,
+      "mpi_null_pct": 0.0,
+      "mpi_stats": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null
+      },
+      "mpi_source_counts": {},
+      "chaos_bloom_null_count": 0,
+      "chaos_bloom_null_pct": 0.0,
+      "chaos_bloom_stats": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null
+      },
+      "winner_parity": null,
+      "winner_pct": null,
+      "winner_count": 0,
+      "duplicate_count": 0,
+      "vector_completeness": null,
+      "missing_vec": null,
+      "missing_vec_pct": null,
+      "key_features_checked": [],
+      "key_field_null_rates": {},
+      "scoring_status_counts": {},
+      "signal_contract_version_counts": {},
+      "live_mpi_null": null,
+      "live_cb_null": null,
+      "archive_mpi_null_rate": null,
+      "live_mpi_null_rate": null,
+      "archive_cb_null_rate": null,
+      "live_cb_null_rate": null,
+      "classification": "HFS_TRAINING_BLOCKED",
+      "blocked_reasons": [
+        "TABLE_EMPTY_OR_NOT_FOUND"
+      ]
+    }
+  ],
+  "overall_status": "HFS_TRAINING_BLOCKED",
+  "blocker_summary": [
+    "historical_feature_store: TABLE_EMPTY_OR_NOT_FOUND",
+    "velo_features: TABLE_EMPTY_OR_NOT_FOUND",
+    "runner_derived_features: TABLE_EMPTY_OR_NOT_FOUND"
+  ],
+  "recommendation": "HFS training blocked. Steps to fix: (1) Run backfill_hfs_mpi_chaos_bloom.py --apply (requires DB password). (2) Re-run backfill_historical_feature_store.py --year 2026 --only-null-signals. (3) Re-run this audit to confirm HFS_TRAINING_READY."
+}

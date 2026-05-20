@@ -1,0 +1,79 @@
+diff --git a/src/intelligence/velo_prime_ensemble.py b/src/intelligence/velo_prime_ensemble.py
+index 3d0b82a..906124c 100644
+--- a/src/intelligence/velo_prime_ensemble.py
++++ b/src/intelligence/velo_prime_ensemble.py
+@@ -170,6 +170,15 @@ def _g_shadow_adjustment(
+ 
+     return multiplier, flags, doctrine_fired, pain_horse_id
+ 
++# ─── Live Weight Safety Gates ──────────────────────────────────────────────────
++# Controlled by environment variables to allow safe ablation testing
++# without requiring code redeployment. Sidecar audit (2026-05-02) identified
++# release/comment as harmful ROI, and improvement as overbet risk.
++_ENABLE_RELEASE = _os.getenv("VELO_ENABLE_RELEASE_DAY_LIVE_WEIGHT", "false").lower() == "true"
++_ENABLE_COMMENT = _os.getenv("VELO_ENABLE_COMMENT_INTEL_LIVE_WEIGHT", "false").lower() == "true"
++_ENABLE_IMPROVEMENT = _os.getenv("VELO_ENABLE_IMPROVEMENT_LIVE_WEIGHT", "true").lower() == "true"
++_ENABLE_LONGSHOT = _os.getenv("VELO_ENABLE_LONGSHOT_LIVE_WEIGHT", "true").lower() == "true"
++
+ # ─── Weights ───────────────────────────────────────────────────────────────────
+ # Tunable. Defaults based on architecture brief.
+ _WEIGHTS = {
+@@ -177,15 +186,10 @@ _WEIGHTS = {
+     "sqpe_v17":              0.45,  # base model (strongest single signal per L004)
+     "market_deception_score":0.10,
+     "place_prob":            0.08,
+-    "longshot_score":        0.07,  # only applied when sp > 10.0
+-    # ── STORED FOR OBSERVABILITY — NOT IN ENSEMBLE ────────────────────────────
+-    # These weights are defined for reference but the components are all listed
+-    # in _DISABLED_COMPONENTS below and will NEVER enter the weighted average.
+-    # They are computed and persisted in velo_verdicts for auditing only.
+-    # See excluded_from_ensemble field on every verdict row for confirmation.
+-    "improvement_score":     0.12,  # DISABLED — ablation 2026-04-04: hurts top-1 (-0.6 ppts)
+-    "release_window_score":  0.00,  # DISABLED_FROM_LIVE_WEIGHT — live_sidecar_ablation_audit: harmful ROI
+-    "comment_intel_score":   0.00,  # DISABLED_FROM_LIVE_WEIGHT — live_sidecar_ablation_audit: harmful ROI
++    "longshot_score":        0.07 if _ENABLE_LONGSHOT else 0.00,  # additionally gated by SP > 10.0
++    "improvement_score":     0.12 if _ENABLE_IMPROVEMENT else 0.00,
++    "release_window_score":  0.10 if _ENABLE_RELEASE else 0.00,
++    "comment_intel_score":   0.08 if _ENABLE_COMMENT else 0.00,
+ }
+ 
+ # ─── Disabled components ────────────────────────────────────────────────────────
+@@ -196,27 +200,17 @@ _WEIGHTS = {
+ # Disabled from live VP weighting after live_sidecar_ablation_audit: 
+ # release_day_prob/comment_intel_score showed harmful ROI profile. 
+ # Fields remain logged for audit/operator visibility.
+-#
+-# release_window_score — requires RPD timing features (setup_run_flag,
+-#   cash_run_flag, trainer_timing_score, runs_since_win/place …)
+-#   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
+-#   Persisted in velo_verdicts as release_day_prob for observability — NOT used.
+-#
+-# comment_intel_score — requires RPD intent features (quiet_run_score,
+-#   decoy_support_flag, jockey_switch_intent, setup_run_flag, cash_run_flag …)
+-#   NOT wired in _build_live_features(). Attribution audit: std=0.0, unique=1.
+-#   Persisted in full_analysis for observability — NOT used.
+-#
+-# Re-enable only when the required feature pipeline is fully wired and
+-# the field-level zero-variance kill switch (in predict_race) does NOT fire.
+-_DISABLED_COMPONENTS: set[str] = {
+-    "release_window_score", # STORED_ONLY
+-    "comment_intel_score",  # STORED_ONLY
+-    # Ablation backtest (2026-04-04, 647 races): improvement_score hurts top-1
+-    # (-0.6 ppts vs SQPE+Place) and avgWinP (-0.003). No compensating case.
+-    # Re-enable only if a retrained model demonstrates lift over SQPE+Place+MktDeception.
+-    "improvement_score",
+-}
++_DISABLED_COMPONENTS: set[str] = set()
++
++if not _ENABLE_RELEASE:
++    _DISABLED_COMPONENTS.add("release_window_score") # STORED_ONLY
++if not _ENABLE_COMMENT:
++    _DISABLED_COMPONENTS.add("comment_intel_score")  # STORED_ONLY
++if not _ENABLE_IMPROVEMENT:
++    _DISABLED_COMPONENTS.add("improvement_score")
++if not _ENABLE_LONGSHOT:
++    _DISABLED_COMPONENTS.add("longshot_score")
++
+ 
+ # ─── Ablation modes ─────────────────────────────────────────────────────────────
+ # Used for backtesting only. Production always runs FULL_MINUS_DEAD.

@@ -1,0 +1,634 @@
+{
+  "date": "2026-05-16",
+  "status": "OK",
+  "summary": {
+    "miss_count": 40,
+    "primary_causes": {
+      "SOURCE_GAP_UNMATCHED_RESULT": 2,
+      "LOW_SIGNAL_VOLUME_TRUSTED": 29,
+      "A_TIER_WRONG_HORSE": 2,
+      "MID_PRICE_WINNER_BEAT_US": 4,
+      "A_TIER_LOSS_TO_OUTSIDER": 1,
+      "OUTSIDER_CHAOS": 1,
+      "SHORT_FAVOURITE_BEAT_US": 1
+    },
+    "flags": {
+      "LOW_SIGNAL_VOLUME": 29,
+      "MID_PRICE_WINNER": 21,
+      "HIGH_CONFIDENCE_LOSS": 3,
+      "A_TIER_LOSS": 4,
+      "VP30_LOSS": 9,
+      "OUTSIDER_WINNER": 10,
+      "SHORT_FAVOURITE_WINNER": 7
+    },
+    "trusted_failures": 9,
+    "trusted_failure_rate": 22.5
+  },
+  "misses": [
+    {
+      "race_id": "pdf_a6ccd3cb",
+      "course": "Bangor-On-Dee",
+      "off_time": "15:55",
+      "horse": "Personal Ambition",
+      "tier": "A",
+      "velo_prime_prob": 0.6216,
+      "winner": "Grain D'Oudairies",
+      "winner_sp": 5.5,
+      "primary_cause": "A_TIER_WRONG_HORSE",
+      "flags": [
+        "HIGH_CONFIDENCE_LOSS",
+        "A_TIER_LOSS",
+        "VP30_LOSS",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_49035d2a",
+      "course": "Uttoxeter",
+      "off_time": "18:50",
+      "horse": "Minella Rescue",
+      "tier": "A",
+      "velo_prime_prob": 0.4802,
+      "winner": "Geezer Rockstar",
+      "winner_sp": 4.33,
+      "primary_cause": "A_TIER_WRONG_HORSE",
+      "flags": [
+        "HIGH_CONFIDENCE_LOSS",
+        "A_TIER_LOSS",
+        "VP30_LOSS",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_6e6a3006",
+      "course": "Newmarket",
+      "off_time": "17:10",
+      "horse": "African Spirit",
+      "tier": "A",
+      "velo_prime_prob": 0.4444,
+      "winner": "Cherry Cobbler",
+      "winner_sp": 12.0,
+      "primary_cause": "A_TIER_LOSS_TO_OUTSIDER",
+      "flags": [
+        "HIGH_CONFIDENCE_LOSS",
+        "A_TIER_LOSS",
+        "VP30_LOSS",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_9e131283",
+      "course": "Thirsk",
+      "off_time": "16:47",
+      "horse": "City Of Poets",
+      "tier": "B",
+      "velo_prime_prob": 0.3992,
+      "winner": "Empire Of Light",
+      "winner_sp": 11.0,
+      "primary_cause": "OUTSIDER_CHAOS",
+      "flags": [
+        "VP30_LOSS",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_ccd0cedc",
+      "course": "Doncaster",
+      "off_time": "16:50",
+      "horse": "Cavalry Call",
+      "tier": "B",
+      "velo_prime_prob": 0.3816,
+      "winner": "Sisterandbrother",
+      "winner_sp": 3.25,
+      "primary_cause": "MID_PRICE_WINNER_BEAT_US",
+      "flags": [
+        "VP30_LOSS",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_359cfef8",
+      "course": "Uttoxeter",
+      "off_time": "18:20",
+      "horse": "Getuptheyard",
+      "tier": "B",
+      "velo_prime_prob": 0.374,
+      "winner": "Crack Ops",
+      "winner_sp": 2.75,
+      "primary_cause": "SHORT_FAVOURITE_BEAT_US",
+      "flags": [
+        "VP30_LOSS",
+        "SHORT_FAVOURITE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_526d590b",
+      "course": "Newmarket",
+      "off_time": "13:42",
+      "horse": "Indian Spirit",
+      "tier": "B",
+      "velo_prime_prob": 0.3702,
+      "winner": "Sterling Knight",
+      "winner_sp": 7.0,
+      "primary_cause": "MID_PRICE_WINNER_BEAT_US",
+      "flags": [
+        "VP30_LOSS",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_cc403ec6",
+      "course": "Bangor-On-Dee",
+      "off_time": "16:30",
+      "horse": "Gilbertina",
+      "tier": "A",
+      "velo_prime_prob": 0.3295,
+      "winner": "Special John",
+      "winner_sp": 4.0,
+      "primary_cause": "MID_PRICE_WINNER_BEAT_US",
+      "flags": [
+        "A_TIER_LOSS",
+        "VP30_LOSS",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_0080b2af",
+      "course": "Newbury",
+      "off_time": "15:45",
+      "horse": "My Love Is King",
+      "tier": "B",
+      "velo_prime_prob": 0.3105,
+      "winner": "Lost Boys",
+      "winner_sp": 4.33,
+      "primary_cause": "MID_PRICE_WINNER_BEAT_US",
+      "flags": [
+        "VP30_LOSS",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_9a4beef0",
+      "course": "Newbury",
+      "off_time": "15:10",
+      "horse": "Royal Fixation",
+      "tier": "B",
+      "velo_prime_prob": 0.2844,
+      "winner": "Song Of The Clyde",
+      "winner_sp": 19.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_e7856941",
+      "course": "Navan",
+      "off_time": "16:07",
+      "horse": "Trojan Fighter",
+      "tier": "B",
+      "velo_prime_prob": 0.2761,
+      "winner": "Limestone",
+      "winner_sp": 2.62,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "SHORT_FAVOURITE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_624b220a",
+      "course": "Newbury",
+      "off_time": "16:20",
+      "horse": "Purosangue",
+      "tier": "B",
+      "velo_prime_prob": 0.2709,
+      "winner": "Far Above Dream",
+      "winner_sp": 9.5,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_a23e56e9",
+      "course": "Bangor-On-Dee",
+      "off_time": "14:45",
+      "horse": "Mr Mahler",
+      "tier": "B",
+      "velo_prime_prob": 0.2704,
+      "winner": "Dream'S Ka",
+      "winner_sp": 3.5,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_5ca34eb8",
+      "course": "Newmarket",
+      "off_time": "15:27",
+      "horse": "Rajaking",
+      "tier": "B",
+      "velo_prime_prob": 0.26,
+      "winner": "Expert Agent",
+      "winner_sp": 5.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_23560c3f",
+      "course": "Navan",
+      "off_time": "15:32",
+      "horse": "Lethimfly",
+      "tier": "B",
+      "velo_prime_prob": 0.2538,
+      "winner": "Howd'Yadoit",
+      "winner_sp": 4.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_aeb96d3e",
+      "course": "Thirsk",
+      "off_time": "15:37",
+      "horse": "Emerald Harmony",
+      "tier": "B",
+      "velo_prime_prob": 0.2526,
+      "winner": "Right And Exact",
+      "winner_sp": 7.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_0c99f04e",
+      "course": "Navan",
+      "off_time": "13:47",
+      "horse": "Livingston Range",
+      "tier": "B",
+      "velo_prime_prob": 0.2501,
+      "winner": "Baggot Street",
+      "winner_sp": 34.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_9a6fac07",
+      "course": "Wexford",
+      "off_time": "16:55",
+      "horse": "Hit The Frame",
+      "tier": "B",
+      "velo_prime_prob": 0.2489,
+      "winner": "North Of Nashville",
+      "winner_sp": 10.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_ef89eb6a",
+      "course": "Wexford",
+      "off_time": "17:32",
+      "horse": "Morning Express",
+      "tier": "B",
+      "velo_prime_prob": 0.2479,
+      "winner": "The Besty Woman",
+      "winner_sp": 2.5,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "SHORT_FAVOURITE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_b019f95d",
+      "course": "Newbury",
+      "off_time": "17:40",
+      "horse": "Lost Signal",
+      "tier": "B",
+      "velo_prime_prob": 0.2421,
+      "winner": "Euston Hall",
+      "winner_sp": 9.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_1ab7a003",
+      "course": "Doncaster",
+      "off_time": "19:40",
+      "horse": "Palace Artois",
+      "tier": "C",
+      "velo_prime_prob": 0.2404,
+      "winner": "Tarmonbarry Kid",
+      "winner_sp": 9.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_9719fec8",
+      "course": "Doncaster",
+      "off_time": "19:08",
+      "horse": "Orange Emperor",
+      "tier": "B",
+      "velo_prime_prob": 0.2387,
+      "winner": "Watchdog",
+      "winner_sp": 4.5,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_3194f035",
+      "course": "Uttoxeter",
+      "off_time": "19:55",
+      "horse": "Saint Vic",
+      "tier": "B",
+      "velo_prime_prob": 0.2339,
+      "winner": "Fighting Falcon",
+      "winner_sp": 6.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_47a47a45",
+      "course": "Doncaster",
+      "off_time": "20:15",
+      "horse": "Carida",
+      "tier": "B",
+      "velo_prime_prob": 0.2318,
+      "winner": "Back From Dubai",
+      "winner_sp": 12.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_740eb8b5",
+      "course": "Wexford",
+      "off_time": "15:50",
+      "horse": "Nashville Notions",
+      "tier": "B",
+      "velo_prime_prob": 0.2171,
+      "winner": "Teenage Kiss",
+      "winner_sp": 6.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_50cb381b",
+      "course": "Thirsk",
+      "off_time": "17:57",
+      "horse": "Ganesha",
+      "tier": "B",
+      "velo_prime_prob": 0.2104,
+      "winner": "Run This Way",
+      "winner_sp": 7.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_2cf37b6a",
+      "course": "Thirsk",
+      "off_time": "17:25",
+      "horse": "Ziggy'S Queen",
+      "tier": "B",
+      "velo_prime_prob": 0.2098,
+      "winner": "Brighton Boy",
+      "winner_sp": 9.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_602ee13c",
+      "course": "Newmarket",
+      "off_time": "16:02",
+      "horse": "Turty Tree",
+      "tier": "B",
+      "velo_prime_prob": 0.2058,
+      "winner": "Chasing Time",
+      "winner_sp": 23.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_04350d90",
+      "course": "Newbury",
+      "off_time": "17:00",
+      "horse": "Green Triangle",
+      "tier": "B",
+      "velo_prime_prob": 0.2052,
+      "winner": "Classic",
+      "winner_sp": 11.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_13f01e45",
+      "course": "Bangor-On-Dee",
+      "off_time": "14:10",
+      "horse": "Mojo Risin",
+      "tier": "X",
+      "velo_prime_prob": 0.1937,
+      "winner": "Saint Jeannais",
+      "winner_sp": 2.2,
+      "primary_cause": "SOURCE_GAP_UNMATCHED_RESULT",
+      "flags": [
+        "UNMATCHED_RESULT"
+      ]
+    },
+    {
+      "race_id": "pdf_3a1e8064",
+      "course": "Uttoxeter",
+      "off_time": "17:50",
+      "horse": "Double Tiger",
+      "tier": "B",
+      "velo_prime_prob": 0.1909,
+      "winner": "Chicker",
+      "winner_sp": 3.75,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_336a6bd4",
+      "course": "Newmarket",
+      "off_time": "14:50",
+      "horse": "Son",
+      "tier": "B",
+      "velo_prime_prob": 0.1564,
+      "winner": "Superposition",
+      "winner_sp": 21.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_89c5fd3d",
+      "course": "Newmarket",
+      "off_time": "14:15",
+      "horse": "Ambience",
+      "tier": "X",
+      "velo_prime_prob": 0.1429,
+      "winner": "Jolivette",
+      "winner_sp": 3.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "SHORT_FAVOURITE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_5c258477",
+      "course": "Wexford",
+      "off_time": "14:05",
+      "horse": "Miss Lia",
+      "tier": "B",
+      "velo_prime_prob": 0.1366,
+      "winner": "Morell River",
+      "winner_sp": 8.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "MID_PRICE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_0e101fd6",
+      "course": "Uttoxeter",
+      "off_time": "17:20",
+      "horse": "Beep Beep Becky",
+      "tier": "C",
+      "velo_prime_prob": 0.1359,
+      "winner": "Jiair Madrik",
+      "winner_sp": 13.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_8cba9a27",
+      "course": "Wexford",
+      "off_time": "14:40",
+      "horse": "Fedneys Park",
+      "tier": "C",
+      "velo_prime_prob": 0.1333,
+      "winner": "Mo Ghille Mar",
+      "winner_sp": 23.0,
+      "primary_cause": "SOURCE_GAP_UNMATCHED_RESULT",
+      "flags": [
+        "UNMATCHED_RESULT"
+      ]
+    },
+    {
+      "race_id": "pdf_c457fe34",
+      "course": "Thirsk",
+      "off_time": "14:23",
+      "horse": "Bettabebougie",
+      "tier": "X",
+      "velo_prime_prob": 0.0997,
+      "winner": "Kodi Bear Light",
+      "winner_sp": 1.73,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "SHORT_FAVOURITE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_31e6c468",
+      "course": "Navan",
+      "off_time": "14:55",
+      "horse": "Allirelandmaterial",
+      "tier": "X",
+      "velo_prime_prob": 0.0945,
+      "winner": "Namiid",
+      "winner_sp": 2.88,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "SHORT_FAVOURITE_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_8de2cf76",
+      "course": "Thirsk",
+      "off_time": "13:52",
+      "horse": "Classic Bellini",
+      "tier": "X",
+      "velo_prime_prob": 0.0914,
+      "winner": "Dee'S Funny Girl",
+      "winner_sp": 17.0,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "OUTSIDER_WINNER"
+      ]
+    },
+    {
+      "race_id": "pdf_a84cc40b",
+      "course": "Navan",
+      "off_time": "13:12",
+      "horse": "Celeron",
+      "tier": "X",
+      "velo_prime_prob": 0.0874,
+      "winner": "Barrow Boy",
+      "winner_sp": 2.25,
+      "primary_cause": "LOW_SIGNAL_VOLUME_TRUSTED",
+      "flags": [
+        "LOW_SIGNAL_VOLUME",
+        "SHORT_FAVOURITE_WINNER"
+      ]
+    }
+  ]
+}

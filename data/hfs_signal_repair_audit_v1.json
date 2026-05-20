@@ -1,0 +1,22 @@
+{
+  "audit_version": "v1",
+  "audit_date": "2026-05-05",
+  "status": "UNRESOLVED",
+  "root_cause_analysis": {
+    "data_exists": true,
+    "data_not_wired": true,
+    "proxy_defaults_used": true,
+    "exact_broken_source": "build_unified_evidence_corpus.py / publish_daily_predictions_to_dashboard.py",
+    "description": "The data for jockey, trainer, course, and distance exists in the database profiles and API payloads. However, the feature builders are not joining this data into the doctrine fields (mpi, chaos_bloom, narrative_disruption). Instead, they are using 'archive_proxy_market_rank_v1' and 'archive_proxy_market_entropy_going_v1' which produce flat or null values."
+  },
+  "training_safe_verdict": {
+    "block_001_safe": false,
+    "reason": "Training on constant/flat proxy data creates a brittle sentient loop. Playbook G cannot be promoted to live betting until signals are fully wired."
+  },
+  "repair_plan": [
+    "1. Update the feature builder (build_rp_runner_signals.py / build_unified_evidence_corpus.py) to explicitly join jockey/trainer/course stats.",
+    "2. Remove proxy fallbacks for mpi and chaos_bloom.",
+    "3. Implement proper odds entropy calculation if Betfair BSP is unavailable, using standard SPs.",
+    "4. Re-run backfill_historical_feature_store.py to populate Block 001."
+  ]
+}

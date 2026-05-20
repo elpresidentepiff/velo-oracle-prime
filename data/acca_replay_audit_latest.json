@@ -1,0 +1,345 @@
+{
+  "status": "SHADOW_OPERATOR_ONLY",
+  "dates_replayed": [
+    "2026-05-05",
+    "2026-05-04",
+    "2026-05-03",
+    "2026-05-02",
+    "2026-05-01",
+    "2026-05-07",
+    "2026-04-29"
+  ],
+  "dates_skipped": [
+    "2026-05-06"
+  ],
+  "days": [
+    {
+      "date": "2026-05-05",
+      "candidates_scanned": 32,
+      "metadata_coverage": 1.0,
+      "cashrun_status": "PRESENT",
+      "racing_api_enrichment_status": "USED",
+      "reported_day_regime": "ACCA_DAY_WEAK",
+      "actual_regime": "NO_ACCA_DAY",
+      "regime_match": false,
+      "folds": {
+        "2_fold": {
+          "generated": true,
+          "result": "MISS"
+        },
+        "3_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "4_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "5_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "6_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        }
+      },
+      "trap_count": 15,
+      "winners_incorrectly_trapped": 1,
+      "losers_incorrectly_trusted": 1,
+      "trusted_leg_total": 6,
+      "fold_hit_count": 0,
+      "no_acca_day_correct": null,
+      "naive_top_vp_2_fold_status": "MISS",
+      "recommended_calibration_change": "Loosen trap calibration on high-VP / high-industry legs and review decoy thresholds."
+    },
+    {
+      "date": "2026-05-04",
+      "candidates_scanned": 59,
+      "metadata_coverage": 1.0,
+      "cashrun_status": "PRESENT",
+      "racing_api_enrichment_status": "USED",
+      "reported_day_regime": "NO_ACCA_DAY",
+      "actual_regime": "NO_ACCA_DAY",
+      "regime_match": true,
+      "folds": {
+        "2_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "3_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "4_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "5_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "6_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        }
+      },
+      "trap_count": 34,
+      "winners_incorrectly_trapped": 3,
+      "losers_incorrectly_trusted": 3,
+      "trusted_leg_total": 10,
+      "fold_hit_count": 0,
+      "no_acca_day_correct": true,
+      "naive_top_vp_2_fold_status": "MISS",
+      "recommended_calibration_change": "Loosen trap calibration on high-VP / high-industry legs and review decoy thresholds."
+    },
+    {
+      "date": "2026-05-03",
+      "candidates_scanned": 36,
+      "metadata_coverage": 1.0,
+      "cashrun_status": "PRESENT",
+      "racing_api_enrichment_status": "USED",
+      "reported_day_regime": "ACCA_DAY_MEDIUM",
+      "actual_regime": "ACCA_DAY_WEAK",
+      "regime_match": false,
+      "folds": {
+        "2_fold": {
+          "generated": true,
+          "result": "HIT"
+        },
+        "3_fold": {
+          "generated": true,
+          "result": "INCOMPLETE"
+        },
+        "4_fold": {
+          "generated": true,
+          "result": "INCOMPLETE"
+        },
+        "5_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "6_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        }
+      },
+      "trap_count": 16,
+      "winners_incorrectly_trapped": 2,
+      "losers_incorrectly_trusted": 2,
+      "trusted_leg_total": 9,
+      "fold_hit_count": 1,
+      "no_acca_day_correct": null,
+      "naive_top_vp_2_fold_status": "HIT",
+      "recommended_calibration_change": "Loosen trap calibration on high-VP / high-industry legs and review decoy thresholds."
+    },
+    {
+      "date": "2026-05-02",
+      "candidates_scanned": 55,
+      "metadata_coverage": 1.0,
+      "cashrun_status": "MISSING_OPTIONAL",
+      "racing_api_enrichment_status": "USED",
+      "reported_day_regime": "ACCA_DAY_MEDIUM",
+      "actual_regime": "NO_ACCA_DAY",
+      "regime_match": false,
+      "folds": {
+        "2_fold": {
+          "generated": true,
+          "result": "MISS"
+        },
+        "3_fold": {
+          "generated": true,
+          "result": "INCOMPLETE"
+        },
+        "4_fold": {
+          "generated": true,
+          "result": "INCOMPLETE"
+        },
+        "5_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "6_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        }
+      },
+      "trap_count": 36,
+      "winners_incorrectly_trapped": 3,
+      "losers_incorrectly_trusted": 3,
+      "trusted_leg_total": 11,
+      "fold_hit_count": 0,
+      "no_acca_day_correct": null,
+      "naive_top_vp_2_fold_status": "MISS",
+      "recommended_calibration_change": "Loosen trap calibration on high-VP / high-industry legs and review decoy thresholds."
+    },
+    {
+      "date": "2026-05-01",
+      "candidates_scanned": 1,
+      "metadata_coverage": 0.0,
+      "cashrun_status": "PRESENT",
+      "racing_api_enrichment_status": "MISSING_OPTIONAL",
+      "reported_day_regime": "NO_ACCA_DAY",
+      "actual_regime": "NO_ACCA_DAY",
+      "regime_match": true,
+      "folds": {
+        "2_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "3_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "4_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "5_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "6_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        }
+      },
+      "trap_count": 0,
+      "winners_incorrectly_trapped": 0,
+      "losers_incorrectly_trusted": 0,
+      "trusted_leg_total": 0,
+      "fold_hit_count": 0,
+      "no_acca_day_correct": true,
+      "naive_top_vp_2_fold_status": null,
+      "recommended_calibration_change": "Keep suppression logic unchanged; day filter behaved correctly."
+    },
+    {
+      "date": "2026-05-07",
+      "candidates_scanned": 41,
+      "metadata_coverage": 1.0,
+      "cashrun_status": "MISSING_OPTIONAL",
+      "racing_api_enrichment_status": "USED",
+      "reported_day_regime": "ACCA_DAY_STRONG",
+      "actual_regime": "ACCA_DAY_STRONG",
+      "regime_match": true,
+      "folds": {
+        "2_fold": {
+          "generated": true,
+          "result": "HIT"
+        },
+        "3_fold": {
+          "generated": true,
+          "result": "HIT"
+        },
+        "4_fold": {
+          "generated": true,
+          "result": "HIT"
+        },
+        "5_fold": {
+          "generated": true,
+          "result": "HIT"
+        },
+        "6_fold": {
+          "generated": true,
+          "result": "HIT"
+        }
+      },
+      "trap_count": 15,
+      "winners_incorrectly_trapped": 2,
+      "losers_incorrectly_trusted": 1,
+      "trusted_leg_total": 9,
+      "fold_hit_count": 5,
+      "no_acca_day_correct": null,
+      "naive_top_vp_2_fold_status": "HIT",
+      "recommended_calibration_change": "Loosen trap calibration on high-VP / high-industry legs and review decoy thresholds."
+    },
+    {
+      "date": "2026-04-29",
+      "candidates_scanned": 38,
+      "metadata_coverage": 1.0,
+      "cashrun_status": "MISSING_OPTIONAL",
+      "racing_api_enrichment_status": "USED",
+      "reported_day_regime": "ACCA_DAY_MEDIUM",
+      "actual_regime": "ACCA_DAY_MEDIUM",
+      "regime_match": true,
+      "folds": {
+        "2_fold": {
+          "generated": true,
+          "result": "HIT"
+        },
+        "3_fold": {
+          "generated": true,
+          "result": "HIT"
+        },
+        "4_fold": {
+          "generated": true,
+          "result": "MISS"
+        },
+        "5_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        },
+        "6_fold": {
+          "generated": false,
+          "result": "SUPPRESSED"
+        }
+      },
+      "trap_count": 20,
+      "winners_incorrectly_trapped": 2,
+      "losers_incorrectly_trusted": 2,
+      "trusted_leg_total": 8,
+      "fold_hit_count": 2,
+      "no_acca_day_correct": null,
+      "naive_top_vp_2_fold_status": "HIT",
+      "recommended_calibration_change": "Loosen trap calibration on high-VP / high-industry legs and review decoy thresholds."
+    }
+  ],
+  "total_days_replayed": 7,
+  "regime_accuracy": 0.5714,
+  "fold_hit_rates": {
+    "2": {
+      "generated": 5,
+      "hits": 3,
+      "hit_rate": 0.6
+    },
+    "3": {
+      "generated": 4,
+      "hits": 2,
+      "hit_rate": 0.5
+    },
+    "4": {
+      "generated": 4,
+      "hits": 1,
+      "hit_rate": 0.25
+    },
+    "5": {
+      "generated": 1,
+      "hits": 1,
+      "hit_rate": 1.0
+    },
+    "6": {
+      "generated": 1,
+      "hits": 1,
+      "hit_rate": 1.0
+    }
+  },
+  "trap_false_positive_rate": 0.0956,
+  "trusted_leg_failure_rate": 0.2264,
+  "racing_api_enrichment_impact": {
+    "days_used": 6,
+    "days_missing": 1,
+    "note": "Coverage is visible in replay. Causal lift is not isolated without an enrichment-off ablation."
+  },
+  "cashrun_missing_impact": {
+    "days_present": 4,
+    "days_missing": 3,
+    "note": "Replay records presence vs missing, but causal impact needs a CASHRUN on/off comparison."
+  },
+  "calibration_recommendations": [
+    "Replay more dates before trusting 5-fold or 6-fold output beyond shadow.",
+    "Review trap logic on strong-VP winners incorrectly flagged as decoys.",
+    "Run a Racing API enrichment on/off ablation before claiming structural lift.",
+    "Run a CASHRUN on/off comparison once enough overlapping days exist.",
+    "Require full metadata coverage before any 5-fold or 6-fold is generated."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "planner_contract": {
+    "owns": [
+      "scope",
+      "safety boundary",
+      "pass/fail standard",
+      "stop condition"
+    ],
+    "cannot": [
+      "implement",
+      "mark work complete without evaluator evidence"
+    ]
+  },
+  "generator_contract": {
+    "owns": [
+      "implementation only"
+    ],
+    "must": [
+      "obey allowed files",
+      "avoid forbidden files",
+      "avoid extra work",
+      "report exact outputs"
+    ],
+    "cannot": [
+      "claim success early",
+      "hide errors",
+      "commit unless authorized"
+    ]
+  },
+  "evaluator_contract": {
+    "owns": [
+      "evidence"
+    ],
+    "must": [
+      "distrust claims until verified",
+      "check diffs",
+      "check tests",
+      "check artifacts",
+      "check forbidden files",
+      "check live state safety",
+      "check Supabase write status",
+      "issue PASS/PARTIAL/BLOCKED/FAIL"
+    ]
+  },
+  "invalid_behaviors": [
+    "scope drift",
+    "forbidden file edits",
+    "fake PASS report",
+    "silent write attempt",
+    "unauthorized commit"
+  ],
+  "escalation_rules": [
+    "stop on forbidden file dirtiness",
+    "stop on contradictory evidence",
+    "stop on Supabase write attempt",
+    "stop on live state mutation"
+  ],
+  "rollback_rules": [
+    "prefer containment over improvisation",
+    "never revert unrelated user work",
+    "only revert mission-owned changes if authorized"
+  ]
+}

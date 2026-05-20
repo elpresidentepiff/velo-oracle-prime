@@ -1,0 +1,180 @@
+{
+  "job_type": "healthcheck",
+  "date": "2026-05-13",
+  "dry_run": false,
+  "intended_action": "Report pipeline completeness and safety state",
+  "sentient_state_touched": false,
+  "migrations_applied": false,
+  "jobs_from_db": [
+    {
+      "job_type": "test-phase2-verify",
+      "status": "PASS",
+      "started_at": "2026-05-13T22:35:54.639214+00:00",
+      "finished_at": "2026-05-13T22:36:02.492585+00:00",
+      "error_type": "TEST_PASS",
+      "metrics": {
+        "test": 1
+      }
+    },
+    {
+      "job_type": "sigma",
+      "status": "ABORTED",
+      "started_at": "2026-05-13T22:37:00.004059+00:00",
+      "finished_at": "2026-05-13T22:51:02.355904+00:00",
+      "error_type": "TEST_TIMEOUT_OR_TERMINATED",
+      "metrics": {}
+    },
+    {
+      "job_type": "sigma",
+      "status": "PASS",
+      "started_at": "2026-05-13T22:38:14.072017+00:00",
+      "finished_at": "2026-05-13T22:38:49.107151+00:00",
+      "error_type": null,
+      "metrics": {
+        "exit_code": 0
+      }
+    },
+    {
+      "job_type": "predict",
+      "status": "FAIL",
+      "started_at": "2026-05-13T22:53:14.867977+00:00",
+      "finished_at": "2026-05-13T22:54:07.831157+00:00",
+      "error_type": "SUBPROCESS_TIMEOUT",
+      "metrics": {}
+    },
+    {
+      "job_type": "sigma",
+      "status": "PASS",
+      "started_at": "2026-05-13T22:56:35.376873+00:00",
+      "finished_at": "2026-05-13T22:57:09.75894+00:00",
+      "error_type": null,
+      "metrics": {
+        "exit_code": 0
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-13T23:37:36.688736+00:00",
+      "finished_at": "2026-05-13T23:37:47.683482+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_built": 34,
+        "events_written": 5
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-13T23:38:16.905179+00:00",
+      "finished_at": "2026-05-13T23:38:27.87207+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_built": 34,
+        "events_written": 0
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-13T23:52:25.989196+00:00",
+      "finished_at": "2026-05-13T23:52:36.700331+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_found": 5,
+        "events_consumed": 0,
+        "after_race_count": 935,
+        "before_race_count": 930
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-13T23:53:50.26415+00:00",
+      "finished_at": "2026-05-13T23:54:08.595285+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_found": 5,
+        "events_consumed": 5,
+        "after_race_count": 935,
+        "before_race_count": 930
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-13T23:55:14.122719+00:00",
+      "finished_at": "2026-05-13T23:55:24.522654+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_found": 0,
+        "events_consumed": 0,
+        "after_race_count": 0,
+        "before_race_count": 0
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-14T00:03:36.676204+00:00",
+      "finished_at": "2026-05-14T00:03:51.080352+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_built": 34,
+        "events_written": 29
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-14T00:06:08.47764+00:00",
+      "finished_at": "2026-05-14T00:06:21.589935+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_found": 29,
+        "events_consumed": 29,
+        "after_race_count": 964,
+        "before_race_count": 935
+      }
+    },
+    {
+      "job_type": "learn-shadow",
+      "status": "PASS",
+      "started_at": "2026-05-14T00:06:27.34573+00:00",
+      "finished_at": "2026-05-14T00:06:36.601599+00:00",
+      "error_type": null,
+      "metrics": {
+        "events_found": 0,
+        "events_consumed": 0,
+        "after_race_count": 0,
+        "before_race_count": 0
+      }
+    },
+    {
+      "job_type": "daily-eod",
+      "status": "RUNNING",
+      "started_at": "2026-05-14T00:23:05.683834+00:00",
+      "finished_at": null,
+      "error_type": null,
+      "metrics": {}
+    },
+    {
+      "job_type": "sigma",
+      "status": "PASS",
+      "started_at": "2026-05-14T00:23:22.680186+00:00",
+      "finished_at": "2026-05-14T00:24:19.957533+00:00",
+      "error_type": null,
+      "metrics": {
+        "exit_code": 0
+      }
+    }
+  ],
+  "job_summary": {
+    "test-phase2-verify": "PASS",
+    "sigma": "PASS",
+    "predict": "FAIL",
+    "learn-shadow": "PASS",
+    "daily-eod": "RUNNING"
+  },
+  "status": "STUB"
+}

@@ -1,0 +1,217 @@
+diff --git a/app/main.py b/app/main.py
+index a9f6bb7..a734e7c 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -1103,7 +1103,7 @@ async def governed_card(date: str = Query(default=None)):
+         except Exception as e:
+             logger.warning("Could not read verdict file %s: %s", verdict_path, e)
+ 
+-    # ── Source 2: Supabase governance overlay ────────────────────────────────
++    # ── Source 2: Supabase — primary when local JSON is from a different date ──
+     gov_by_race: dict = {}
+     sb_url = resolve_supabase_url()
+     sb_key = resolve_supabase_service_key()
+@@ -1112,17 +1112,94 @@ async def governed_card(date: str = Query(default=None)):
+             from supabase import create_client as _sb_create
+ 
+             db = _sb_create(sb_url, sb_key)
+-            resp = (
++
++            # When local JSON is a fallback from a different date, load today's
++            # verdicts from Supabase as the primary race/runner data source.
++            # Use top-level velo_verdicts columns directly — these are the
++            # authoritative stored scores, not derived from full_analysis.
++            if loaded_date != target_date:
++                sb_resp = (
++                    db.table("velo_verdicts")
++                    .select(
++                        "race_id, decision_tier, full_analysis, confidence_level, "
++                        "velo_prime_prob, market_deception_score, improvement_score, "
++                        "place_prob, assigned_product, router_reasons, execution_allowed, "
++                        "top_rank_horse_id, top_rank_score"
++                    )
++                    .gte("generated_at", f"{target_date}T00:00:00")
++                    .lte("generated_at", f"{target_date}T23:59:59")
++                    .execute()
++                )
++                sb_rows = sb_resp.data or []
++                if sb_rows:
++                    # Fetch race metadata (course, time) from races table
++                    race_ids = [r["race_id"] for r in sb_rows if r.get("race_id")]
++                    race_meta_map: dict = {}
++                    try:
++                        mr = db.table("races").select("race_id,course,race_name,time").in_("race_id", race_ids).execute()
++                        for rm in (mr.data or []):
++                            race_meta_map[rm["race_id"]] = rm
++                    except Exception:
++                        pass
++
++                    raw_verdicts = []
++                    for row in sb_rows:
++                        rid = row.get("race_id", "")
++                        rm = race_meta_map.get(rid, {})
++                        raw_time = rm.get("time") or ""
++                        off_time = raw_time[:5] if raw_time else ""
++
++                        # Get horse name from full_analysis top runner
++                        fa = row.get("full_analysis") or []
++                        if isinstance(fa, dict):
++                            fa = fa.get("predictions") or []
++                        try:
++                            runners = sorted(fa, key=lambda p: float(p.get("velo_prime_prob") or 0), reverse=True) if fa else []
++                            top_runner = runners[0] if runners else {}
++                        except Exception:
++                            top_runner = {}
++                        horse_name = top_runner.get("horse") or row.get("top_rank_horse_id") or ""
++
++                        # Build top dict using row-level columns (authoritative) with
++                        # horse name from full_analysis runner
++                        top = {
++                            "horse":                   horse_name,
++                            "horse_id":                row.get("top_rank_horse_id") or "",
++                            "velo_prime_prob":         row.get("velo_prime_prob"),
++                            "market_deception_score":  row.get("market_deception_score"),
++                            "improvement_score":       row.get("improvement_score"),
++                            "place_prob":              row.get("place_prob"),
++                            "confidence_level":        row.get("confidence_level"),
++                            "assigned_product":        row.get("assigned_product"),
++                            "router_reasons":          row.get("router_reasons") or [],
++                            "execution_allowed":       row.get("execution_allowed"),
++                            "archetype_label":         top_runner.get("archetype_label") or "",
++                            "cash_run_flag":           top_runner.get("cash_run_flag") or False,
++                        }
++                        raw_verdicts.append({
++                            "race_id":   rid,
++                            "course":    rm.get("course") or "",
++                            "off_time":  off_time,
++                            "race_name": rm.get("race_name") or "",
++                            "tier":      row.get("decision_tier") or "?",
++                            "top":       top,
++                            "scored":    len(fa) if isinstance(fa, list) else 0,
++                        })
++                    loaded_date = target_date
++                    source_label = f"supabase:{len(sb_rows)}_rows"
++
++            # Governance overlay — always query target_date for execution flags
++            gov_resp = (
+                 db.table("velo_verdicts")
+                 .select("race_id, assigned_product, router_reasons, execution_allowed")
+-                .gte("generated_at", f"{loaded_date}T00:00:00")
+-                .lte("generated_at", f"{loaded_date}T23:59:59")
++                .gte("generated_at", f"{target_date}T00:00:00")
++                .lte("generated_at", f"{target_date}T23:59:59")
+                 .execute()
+             )
+-            for row in resp.data or []:
++            for row in gov_resp.data or []:
+                 gov_by_race[row["race_id"]] = row
+         except Exception as e:
+-            logger.warning("Supabase governance overlay failed: %s", e)
++            logger.warning("Supabase query failed: %s", e)
+ 
+     # ── Merge & shape verdicts ────────────────────────────────────────────────
+     verdicts = []
+@@ -1144,6 +1221,7 @@ async def governed_card(date: str = Query(default=None)):
+         if execution_allowed is None:
+             execution_allowed = top.get("execution_allowed", False)
+ 
++        vp = float(top.get("velo_prime_prob") or 0)
+         verdicts.append(
+             {
+                 "race_id": race_id,
+@@ -1153,14 +1231,19 @@ async def governed_card(date: str = Query(default=None)):
+                 "tier": v.get("tier", "?"),
+                 "decision_tier": v.get("tier", "?"),
+                 "confidence_level": top.get("confidence_level", "low"),
+-                "velo_prime_prob": top.get("velo_prime_prob", 0),
++                "velo_prime_prob": vp,
+                 "prob_gap": prob_gap,
+-                "market_deception_score": top.get("market_deception_score", 0),
++                "market_deception_score": float(top.get("market_deception_score") or 0),
++                "improvement_score": float(top.get("improvement_score") or 0),
++                "place_prob": float(top.get("place_prob") or 0),
+                 "assigned_product": assigned_product,
+                 "router_reasons": router_reasons if isinstance(router_reasons, list) else [router_reasons],
+                 "execution_allowed": execution_allowed,
+-                "place_prob": top.get("place_prob", 0),
+                 "archetype_label": top.get("archetype_label", ""),
++                "cash_run_flag": bool(top.get("cash_run_flag")),
++                "vp30": vp >= 0.30,
++                "mds_high": float(top.get("market_deception_score") or 0) > 0.50,
++                "improve_high": float(top.get("improvement_score") or 0) > 0.40,
+             }
+         )
+ 
+@@ -1198,6 +1281,72 @@ async def governed_card(date: str = Query(default=None)):
+     }
+ 
+ 
++@app.get("/api/dashboard-daily")
++async def dashboard_daily(date: str = Query(default=None)):
++    """
++    Serve daily predictions for dashboard panel C.
++    Reads data/dashboard_daily_predictions_YYYYMMDD.json (written by publisher script).
++    Falls back to most recent available file if exact date not found.
++    """
++    from datetime import UTC, datetime as _dt
++
++    target_date = date or _dt.now(UTC).strftime("%Y-%m-%d")
++    date_tag = target_date.replace("-", "_")
++    root = pathlib.Path(__file__).parent.parent
++    path = root / "data" / f"dashboard_daily_predictions_{date_tag}.json"
++
++    if not path.exists():
++        # Find most recent available file
++        candidates = sorted(root.glob("data/dashboard_daily_predictions_*.json"), reverse=True)
++        if not candidates:
++            raise HTTPException(
++                status_code=404,
++                detail={
++                    "error": "no_predictions_found",
++                    "requested_date": target_date,
++                    "hint": f"Run: python scripts/publish_daily_predictions_to_dashboard.py --date {target_date}",
++                },
++            )
++        path = candidates[0]
++
++    try:
++        payload = json.loads(path.read_text())
++    except Exception as e:
++        raise HTTPException(status_code=500, detail=f"Failed to read predictions file: {e}")
++
++    # Group flat predictions list into races
++    predictions = payload.get("predictions", [])
++    race_map: dict = {}
++    for p in predictions:
++        rid = p.get("race_id", "")
++        if rid not in race_map:
++            race_map[rid] = {
++                "race_id":      rid,
++                "race_time":    p.get("race_time", ""),
++                "course":       p.get("course", ""),
++                "race_name":    p.get("race_name", ""),
++                "decision_tier": p.get("decision_tier", "?"),
++                "runners":      [],
++            }
++        race_map[rid]["runners"].append(p)
++
++    race_list = sorted(race_map.values(), key=lambda r: r.get("race_time") or "")
++
++    return {
++        "meta": {
++            "publish_date":     payload.get("publish_date", target_date),
++            "requested_date":   target_date,
++            "loaded_file":      path.name,
++            "races":            len(race_list),
++            "runners":          len(predictions),
++            "source":           payload.get("source", ""),
++            "publisher_version": payload.get("publisher_version", ""),
++            "generated_at":     payload.get("generated_at", ""),
++        },
++        "races": race_list,
++    }
++
++
+ # Root endpoint
+ @app.get("/")
+ async def root():

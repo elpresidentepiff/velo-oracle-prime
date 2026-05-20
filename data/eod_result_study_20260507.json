@@ -1,0 +1,98 @@
+{
+  "date": "2026-05-07",
+  "overall_verdict": "PASS",
+  "sigma": {
+    "races_studied": 41,
+    "predictions_matched": 41,
+    "results_matched": 49,
+    "winners_found": 12,
+    "strike_rate": 0.2926829268292683,
+    "top_1_accuracy": 0.2926829268292683,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.16545261780487805,
+    "calibration_error": 0.12104634146341461,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 24,
+    "calibration_error_count": 5,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "rac_11928969",
+        "horse": "Caturra Lights",
+        "prob": 0.4386,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "rac_11927123",
+        "horse": "Big Boy Barney",
+        "prob": 0.4233,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "rac_11927110",
+        "horse": "Loriko",
+        "prob": 0.5961,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rac_11937965",
+        "horse": "Lauralynn",
+        "prob": 0.5627,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rac_11927162",
+        "horse": "Braganza Bay",
+        "prob": 0.5496,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "ACCEPTABLE_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 41 races today",
+    "shadow_state_after_summary": "Evolved to 43 races",
+    "events_studied": 41,
+    "updates_applied": 41,
+    "duplicates_skipped": 41,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 24,
+      "CALIBRATION_ERROR": 5,
+      "NONE": 12
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": true,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

@@ -1,0 +1,56 @@
+# VÉLØ SIGNAL TRACKER — 2026-05-12
+
+```
+STATUS:          OPERATOR_VISIBILITY_ONLY
+SCORING_CHANGES: NO
+MODEL_CHANGES:   NO
+SQPE_CHANGES:    NO
+ROUTER_CHANGES:  NO
+STAKING:         NO
+LIVE_EXECUTION:  NO
+DATE:            2026-05-12
+GENERATED:       2026-05-12T21:22:59.489514+00:00
+```
+
+---
+
+## Signal Performance — 2026-05-12
+
+Sigma review rows loaded: **38**
+
+| Stack | n fired | n won | n placed | SR | Frame | Baseline SR | Alert |
+|---|---:|---:|---:|---:|---:|---:|---|
+| MDS_HIGH | 4 | 3 | 4 | 75.0% | 100.0% | 54.8% | OK |
+| IMP_HIGH | 5 | 1 | 3 | 20.0% | 60.0% | 43.5% | OK |
+| VP30_TIER_A | 10 | 3 | 7 | 30.0% | 70.0% | 40.1% | OK |
+| ELITE_STACK | 3 | 3 | 3 | 100.0% | 100.0% | 40.1% | OK |
+| STRONG_STACK | 3 | 3 | 3 | 100.0% | 100.0% | 54.8% | OK |
+| VP30_IMPROVE | 3 | 0 | 1 | 0.0% | 33.3% | 43.5% | OK |
+| VP30_BASE | 9 | 1 | 7 | 11.1% | 77.8% | 32.2% | OK |
+
+## Signal Status: NO DIVERGENCE ALERTS TODAY
+
+## Baseline Reference (49-day audit, 2026-04-28)
+
+| Signal | Baseline SR | Baseline Frame | n_audit | Alert threshold |
+|---|---:|---:|---:|---|
+| MDS_HIGH | 54.8% | 96.8% | 31 | SR<30% at n≥10 |
+| IMP_HIGH | 43.5% | 82.3% | 62 | SR<25% at n≥10 |
+| VP30_TIER_A | 40.1% | 77.2% | 162 | SR<20% at n≥10 |
+| ELITE_STACK | 40.1% | 77.2% | 28 | SR<15% at n≥8 |
+| STRONG_STACK | 54.8% | 96.8% | 35 | SR<20% at n≥8 |
+| VP30_IMPROVE | 43.5% | 87.0% | 46 | SR<20% at n≥8 |
+| VP30_BASE | 32.2% | 69.3% | 345 | SR<15% at n≥15 |
+
+## Today's Sidecar Stack Counts
+
+- Total scored: 39
+- VP30: 16
+- ELITE_STACK: 3
+- STRONG_STACK: 3
+- VP30_IMPROVE: 3
+- SUPPRESS: 17
+
+---
+
+*OPERATOR VISIBILITY ONLY — Signal tracker is intelligence and audit output. No scoring, model, SQPE, or router changes. No staking. No live execution.*

@@ -765,7 +765,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_prime_today.py"
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "ops" / "run_prime_today.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
 
@@ -1097,16 +1097,133 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     execution_allowed) — merged by race_id where available.
     Falls back gracefully when either source is missing.
     """
+    import csv as _csv
     import json as _json
     import subprocess as _sp
 
     # Date resolution — try today in UTC, fall back to most recent local file
     target_date = date or utc_now().strftime("%Y-%m-%d")
     date_tag = target_date.replace("-", "_")
+    root = pathlib.Path(__file__).parent.parent
+
+    def _norm_name(value: str) -> str:
+        return (value or "").upper().split("(")[0].strip()
+
+    def _norm_time(value: str) -> str:
+        return (value or "").replace(".", ":").strip()
+
+    def _norm_course(value: str) -> str:
+        return (value or "").upper().split("(")[0].strip()
+
+    def _load_local_racecard_meta(date_value: str) -> dict[str, dict]:
+        """
+        Best-effort local metadata fallback for same-day dashboard rendering.
+
+        Some exact-date Supabase verdict rows are flat and omit course/off_time.
+        When that happens, resolve by unique horse name from local merged RP cards.
+        """
+        meta_by_horse: dict[str, dict] = {}
+        duplicate_names: set[str] = set()
+        for path in sorted((root / "data" / "racecard_merged").glob(f"*{date_value}*.json")):
+            try:
+                payload = _json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            venue = payload.get("venue") or path.stem.split("_")[1] if isinstance(payload, dict) else ""
+            races = payload.get("races") if isinstance(payload, dict) else None
+            if not isinstance(races, dict):
+                continue
+            for race_time, race_blob in races.items():
+                if not isinstance(race_blob, dict):
+                    continue
+                # Keep race titles honest: RP race_info is distance/class metadata,
+                # not a true race name, so do not surface it as the dashboard title.
+                race_name = race_blob.get("race_name") or ""
+                for horse in race_blob.get("horses") or []:
+                    if not isinstance(horse, dict):
+                        continue
+                    horse_name = horse.get("horse_name") or horse.get("horse") or ""
+                    key = _norm_name(horse_name)
+                    if not key:
+                        continue
+                    candidate = {
+                        "course": horse.get("course") or venue,
+                        "off_time": horse.get("race_time") or race_time,
+                        "race_name": race_name,
+                        "trainer": horse.get("trainer") or "",
+                        "jockey": horse.get("jockey") or "",
+                    }
+                    if key in meta_by_horse:
+                        duplicate_names.add(key)
+                    else:
+                        meta_by_horse[key] = candidate
+        for key in duplicate_names:
+            meta_by_horse.pop(key, None)
+        return meta_by_horse
+
+    cashrun_path = root / "data" / f"cashrun_report_{date_tag}.csv"
+    cashrun_rows: list[dict] = []
+    cashrun_by_key: dict[tuple[str, str, str], dict] = {}
+    cashrun_by_horse: dict[str, dict] = {}
+    cashrun_duplicate_horses: set[str] = set()
+    cashrun_loaded_date = None
+    cashrun_status = "MISSING"
+    cashrun_counts = {
+        "ready": 0,
+        "watch": 0,
+        "weak": 0,
+        "suppress": 0,
+    }
+    if cashrun_path.exists():
+        try:
+            with cashrun_path.open("r", encoding="utf-8") as f:
+                reader = _csv.DictReader(f)
+                cashrun_rows = list(reader)
+            cashrun_loaded_date = target_date
+            cashrun_status = "PRESENT"
+            for row in cashrun_rows:
+                key = (
+                    _norm_course(row.get("course", "")),
+                    _norm_time(row.get("off_time", "")),
+                    _norm_name(row.get("horse", "")),
+                )
+                if all(key):
+                    cashrun_by_key[key] = row
+                horse_key = _norm_name(row.get("horse", ""))
+                if horse_key:
+                    if horse_key in cashrun_by_horse:
+                        cashrun_duplicate_horses.add(horse_key)
+                    else:
+                        cashrun_by_horse[horse_key] = row
+                klass = (row.get("cashrun_class") or "").upper()
+                if klass == "CASHRUN_READY":
+                    cashrun_counts["ready"] += 1
+                elif klass == "CASHRUN_WATCH":
+                    cashrun_counts["watch"] += 1
+                elif klass == "WEAK_SIGNAL":
+                    cashrun_counts["weak"] += 1
+                elif klass == "SUPPRESS":
+                    cashrun_counts["suppress"] += 1
+        except Exception as e:
+            logger.warning("Could not read cashrun report %s: %s", cashrun_path, e)
+            cashrun_status = "ERROR"
+            cashrun_rows = []
+            cashrun_by_key = {}
+            cashrun_by_horse = {}
+    for horse_key in cashrun_duplicate_horses:
+        cashrun_by_horse.pop(horse_key, None)
 
     # ── Source 1: local verdict JSON ─────────────────────────────────────────
-    root = pathlib.Path(__file__).parent.parent
     verdict_path = root / "data" / f"velo_prime_verdicts_{date_tag}.json"
+    if not verdict_path.exists():
+        try:
+            from sync_verdicts_from_supabase import sync_local_verdict_archive as _sync_local_verdict_archive
+
+            sync_result = _sync_local_verdict_archive(target_date)
+            if sync_result.get("status") == "LOCAL_HYDRATED":
+                logger.info("Hydrated local verdict archive for %s via Supabase sync", target_date)
+        except Exception as e:
+            logger.warning("Local verdict archive hydration failed for %s: %s", target_date, e)
 
     # Never cross-date fallback to a different local verdict file.
     source_label = "local_json_exact"
@@ -1115,7 +1232,13 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     raw_verdicts = []
     if verdict_path and verdict_path.exists():
         try:
-            raw_verdicts = _json.loads(verdict_path.read_text())
+            payload = _json.loads(verdict_path.read_text())
+            if isinstance(payload, dict):
+                raw_verdicts = payload.get("verdicts") or payload.get("rows") or []
+            elif isinstance(payload, list):
+                raw_verdicts = payload
+            else:
+                raw_verdicts = []
         except Exception as e:
             logger.warning("Could not read verdict file %s: %s", verdict_path, e)
 
@@ -1145,10 +1268,11 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             for row in sb_verdict_rows:
                 gov_by_race[row["race_id"]] = row
         except Exception as e:
-            logger.warning("Supabase governance overlay failed: %s", e)
+            logger.warning("Supabase query failed: %s", e)
 
-    if not raw_verdicts and sb_verdict_rows:
+    if (not raw_verdicts or loaded_date != target_date) and sb_verdict_rows:
         raw_verdicts = sb_verdict_rows
+        loaded_date = target_date
         source_label = "supabase_verdicts_exact"
 
     fallback_date = None
@@ -1161,7 +1285,13 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     if not raw_verdicts and allow_fallback and fallback_path:
         try:
-            raw_verdicts = _json.loads(fallback_path.read_text())
+            fallback_payload = _json.loads(fallback_path.read_text())
+            if isinstance(fallback_payload, dict):
+                raw_verdicts = fallback_payload.get("verdicts") or fallback_payload.get("rows") or []
+            elif isinstance(fallback_payload, list):
+                raw_verdicts = fallback_payload
+            else:
+                raw_verdicts = []
             loaded_date = fallback_date or target_date
             source_label = "local_json_fallback"
         except Exception as e:
@@ -1209,10 +1339,19 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "sidecar_loaded_date": sidecar_loaded_date,
                 "sidecar_status": sidecar_status,
                 "sidecar_date_match": sidecar_date_match,
+                "cashrun_loaded_date": cashrun_loaded_date,
+                "cashrun_status": cashrun_status,
+                "cashrun_counts": cashrun_counts,
                 "metadata_coverage": sidecar_metadata_coverage,
                 "record_count": 0,
                 "gov_overlay": len(gov_by_race) > 0,
                 "exact_date_file_present": verdict_path.exists(),
+            },
+            "cashrun": {
+                "status": cashrun_status,
+                "loaded_date": cashrun_loaded_date,
+                "counts": cashrun_counts,
+                "rows": cashrun_rows,
             },
             "verdicts": [],
         }
@@ -1236,6 +1375,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             meta_map = resolver.resolve_batch(race_ids, verdict_map)
         except Exception as e:
             logger.warning("Race metadata resolver failed: %s", e)
+    local_meta_by_horse = _load_local_racecard_meta(target_date)
 
     router = None
     try:
@@ -1282,6 +1422,25 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         )
         return next((val for val in sp_vals if val > 0), 0.0)
 
+    def _operator_read_profile(tier: str, prob: float) -> tuple[str, list[str]]:
+        flags: list[str] = []
+        if tier != "A":
+            flags.append("NON_A_TIER")
+        if prob < 0.30:
+            flags.append("SUB_VP30")
+        if tier in {"C", "D", "X"}:
+            flags.append("LOW_QUALITY_TIER")
+        if prob < 0.20:
+            flags.append("VERY_LOW_VP")
+
+        if tier == "A" and prob >= 0.30:
+            return "CORE_FOCUS", flags
+        if tier == "B" and prob >= 0.30:
+            return "SECONDARY_FOCUS", flags
+        if tier in {"A", "B"} and prob >= 0.20:
+            return "WATCH_SKEPTICAL", flags
+        return "LOW_QUALITY_SKEPTICAL", flags
+
     verdicts = []
     for v in raw_verdicts:
         race_id = v.get("race_id", "")
@@ -1289,27 +1448,58 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         top = v.get("top", {})
         if not top and isinstance(full_analysis, list) and full_analysis and isinstance(full_analysis[0], dict):
             top = full_analysis[0]
+        horse_name = top.get("horse") or v.get("horse") or v.get("horse_name") or ""
 
         top_prob = _safe_float(v.get("velo_prime_prob", top.get("velo_prime_prob", 0)))
         prob_gap = _safe_float(top.get("prob_gap")) if top.get("prob_gap") is not None else _derive_prob_gap(top_prob, full_analysis)
 
         # Governance: prefer live Supabase values (post-migration), fall back to top dict
         gov = gov_by_race.get(race_id, {})
-        assigned_product = gov.get("assigned_product") or top.get("assigned_product")
-        router_reasons = gov.get("router_reasons") or top.get("router_reasons") or []
+        assigned_product = gov.get("assigned_product") or v.get("assigned_product") or top.get("assigned_product")
+        router_reasons = gov.get("router_reasons") or v.get("router_reasons") or top.get("router_reasons") or []
         execution_allowed = gov.get("execution_allowed")
         if execution_allowed is None:
+            execution_allowed = v.get("execution_allowed")
+        if execution_allowed is None:
             execution_allowed = top.get("execution_allowed")
-        assigned_product_source = "supabase_governance" if gov.get("assigned_product") else "verdict_top" if top.get("assigned_product") else "unresolved"
+        assigned_product_source = (
+            "supabase_governance" if gov.get("assigned_product")
+            else "verdict_row" if v.get("assigned_product")
+            else "verdict_top" if top.get("assigned_product")
+            else "unresolved"
+        )
         meta = meta_map.get(race_id)
-        course = v.get("course", "") or top.get("course", "") or (meta.course if meta else "")
+        local_meta = local_meta_by_horse.get(_norm_name(horse_name), {})
+        course = (
+            v.get("course", "")
+            or top.get("course", "")
+            or (meta.course if meta else "")
+            or local_meta.get("course", "")
+        )
         off_time = (
             v.get("off_time", "")
+            or v.get("race_time", "")
             or top.get("off_time", "")
             or top.get("race_time", "")
             or (meta.off_time if meta else "")
+            or local_meta.get("off_time", "")
+        )
+        race_name = (
+            v.get("race_name", "")
+            or top.get("race_name", "")
+            or (meta.race_name if meta else "")
+            or local_meta.get("race_name", "")
         )
         tier = v.get("decision_tier") or v.get("tier", "?")
+        cashrun_match = cashrun_by_key.get(
+            (
+                _norm_course(course),
+                _norm_time(off_time),
+                _norm_name(horse_name),
+            )
+        )
+        if not cashrun_match:
+            cashrun_match = cashrun_by_horse.get(_norm_name(horse_name))
 
         if router and (not assigned_product or execution_allowed is None or not router_reasons):
             route_data = {
@@ -1346,30 +1536,45 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         if execution_allowed is None:
             execution_allowed = False
         assigned_product = assigned_product or "UNKNOWN"
+        operator_read_profile, skepticism_flags = _operator_read_profile(tier, top_prob)
 
         verdicts.append(
             {
                 "race_id": race_id,
                 "course": course,
                 "off_time": off_time,
-                "horse": top.get("horse", ""),
+                "race_name": race_name,
+                "horse": horse_name,
                 "tier": tier,
                 "decision_tier": tier,
-                "confidence_level": top.get("confidence_level", "low"),
+                "confidence_level": v.get("confidence_level", top.get("confidence_level", "low")),
                 "velo_prime_prob": v.get("velo_prime_prob", top.get("velo_prime_prob", 0)),
                 "prob_gap": prob_gap,
                 "market_deception_score": v.get("market_deception_score", top.get("market_deception_score", 0)),
+                "improvement_score": v.get("improvement_score", top.get("improvement_score", 0)),
                 "assigned_product": assigned_product,
                 "assigned_product_source": assigned_product_source,
                 "router_reasons": router_reasons if isinstance(router_reasons, list) else [router_reasons],
                 "execution_allowed": execution_allowed,
                 "place_prob": v.get("place_prob", top.get("place_prob", 0)),
-                "archetype_label": top.get("archetype_label", ""),
+                "archetype_label": v.get("archetype_label", top.get("archetype_label", "")),
+                "cashrun_class": (cashrun_match or {}).get("cashrun_class"),
+                "cashrun_score": (cashrun_match or {}).get("final_cashrun_score"),
+                "cashrun_confidence": (cashrun_match or {}).get("confidence_level"),
+                "cashrun_operator_read": (cashrun_match or {}).get("final_operator_read"),
+                "cash_run_flag": bool((cashrun_match or {}).get("cashrun_class") in ("CASHRUN_READY", "CASHRUN_WATCH")),
+                "vp30": top_prob >= 0.30,
+                "mds_high": float(v.get("market_deception_score", top.get("market_deception_score", 0)) or 0) > 0.50,
+                "improve_high": float(v.get("improvement_score", top.get("improvement_score", 0)) or 0) > 0.40,
+                "operator_read_profile": operator_read_profile,
+                "operator_skepticism_flags": skepticism_flags,
             }
         )
 
     # Sort by off_time
     verdicts.sort(key=lambda x: x.get("off_time") or "")
+    metadata_complete = sum(1 for row in verdicts if row.get("course") and row.get("off_time") and row.get("horse"))
+    metadata_coverage = round(metadata_complete / len(verdicts), 4) if verdicts else 0.0
 
     # ── Commit SHA ───────────────────────────────────────────────────────────
     try:
@@ -1403,13 +1608,22 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             "sidecar_loaded_date": sidecar_loaded_date,
             "sidecar_status": sidecar_status,
             "sidecar_date_match": sidecar_date_match,
-            "metadata_coverage": sidecar_metadata_coverage,
+            "cashrun_loaded_date": cashrun_loaded_date,
+            "cashrun_status": cashrun_status,
+            "cashrun_counts": cashrun_counts,
+            "metadata_coverage": metadata_coverage,
             "commit_sha": commit,
             "router_version": "ProductRouter v1 (live-safe)",
             "record_count": len(verdicts),
             "date_mismatch": date_mismatch,
             "gov_overlay": len(gov_by_race) > 0,
             "exact_date_file_present": verdict_path.exists(),
+        },
+        "cashrun": {
+            "status": cashrun_status,
+            "loaded_date": cashrun_loaded_date,
+            "counts": cashrun_counts,
+            "rows": cashrun_rows,
         },
         "verdicts": verdicts,
     }

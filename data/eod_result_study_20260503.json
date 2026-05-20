@@ -1,0 +1,98 @@
+{
+  "date": "2026-05-03",
+  "overall_verdict": "PASS",
+  "sigma": {
+    "races_studied": 36,
+    "predictions_matched": 36,
+    "results_matched": 58,
+    "winners_found": 11,
+    "strike_rate": 0.3055555555555556,
+    "top_1_accuracy": 0.3055555555555556,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.16593721083333335,
+    "calibration_error": 0.07830277777777779,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 20,
+    "calibration_error_count": 5,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "rac_11915072",
+        "horse": "Call Me Tomorrow",
+        "prob": 0.498,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "rac_11915384",
+        "horse": "Ziggy Starshine",
+        "prob": 0.444,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "rac_11915319",
+        "horse": "Westport",
+        "prob": 0.8327,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rac_11915293",
+        "horse": "Conclave",
+        "prob": 0.6818,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rac_11915462",
+        "horse": "Moonhall Lass",
+        "prob": 0.6056,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "STRONG_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 36 races today",
+    "shadow_state_after_summary": "Evolved to 224 races",
+    "events_studied": 36,
+    "updates_applied": 0,
+    "duplicates_skipped": 36,
+    "loss_count_by_type": {
+      "NONE": 11,
+      "CALIBRATION_ERROR": 5,
+      "WRONG_HORSE": 20
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

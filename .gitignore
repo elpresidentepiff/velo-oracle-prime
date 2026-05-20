@@ -75,11 +75,37 @@ incoming/
 training_data/
 .gitnexus
 
-# Large data files
+# Large data files — never commit these
 data/*.parquet
 data/*.csv
 data/*.pkl
+data/*.txt
+data/raw_*/
+data/racecard_merged/
+data/racecards_*_standard.json
+data/incoming_pdfs/
+data/spotlight_parsed/
+data/racing_api_raw/
+data/raceform_*.parquet
+data/backtest_*.csv
+data/train_*.csv
+data/features/*.parquet
+data/features/*.json
+data/velo_prime_verdicts_*.json
+data/results_*.json
+data/dashboard_*.json
+data/velo_daily_*.json
+data/velo_innovation_protocol_*.csv
+data/velo_unified_evidence_*.csv
+data/velo_unified_evidence_*.md
+
+# Model binaries — reproduce via training scripts
 models/**/*.pkl
+models/**/*.pkl.bak
+
+# Cache directories
+.mypy_cache/
+.ruff_cache/
 
 .hermes/
 .env

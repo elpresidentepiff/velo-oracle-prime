@@ -23,7 +23,7 @@ class TestPhase5Operational(unittest.TestCase):
     
     def test_02_parquet_conversion_exists(self):
         """Test Parquet conversion module exists"""
-        self.assertTrue(Path("scripts/convert_to_parquet_v2.py").exists())
+        self.assertTrue(Path("scripts/backtest/convert_to_parquet_v2.py").exists())
         self.assertTrue(Path("app/data/dataset_loader_parquet.py").exists())
         print("✅ Parquet conversion module exists")
     

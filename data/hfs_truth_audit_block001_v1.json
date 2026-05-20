@@ -1,0 +1,63 @@
+{
+  "audit_version": "v1",
+  "audit_date": "2026-05-05",
+  "verdict": "HFS_BLOCK001_TRAINING_SAFE = FALSE",
+  "summary": "The HFS is currently contaminated with 'data dark' placeholders and unwired doctrine signals. Training on this data will lead to a collapse in model intelligence.",
+  "signals": {
+    "mpi": {
+      "status": "BROKEN/NULL",
+      "source_data_exists": true,
+      "source_table_or_file": "races, runner_results",
+      "join_key": "race_id, horse_id",
+      "builder_file": "app/services/velo_prime_service.py",
+      "builder_logic": "Not computed in main scoring path. Proxies only exist in audit scripts.",
+      "fallback_used": true,
+      "fallback_value": null,
+      "downstream_used_by": ["scoring", "dashboard", "playbook_g"],
+      "variance": {
+        "status": "NULL_IN_RECENT_BATCHES",
+        "distinct_count": 0
+      },
+      "training_safe": false,
+      "required_fix": "Implement real market probability distribution calculation in VeloPrimeEnsemble."
+    },
+    "chaos_bloom": {
+      "status": "BROKEN/NULL",
+      "source_data_exists": true,
+      "source_table_or_file": "races, runner_results",
+      "join_key": "race_id, horse_id",
+      "builder_file": "app/services/velo_prime_service.py",
+      "builder_logic": "Not computed in main scoring path. Proxies only exist in audit scripts.",
+      "fallback_used": true,
+      "fallback_value": null,
+      "downstream_used_by": ["scoring", "dashboard", "playbook_g"],
+      "variance": {
+        "status": "NULL_IN_RECENT_BATCHES",
+        "distinct_count": 0
+      },
+      "training_safe": false,
+      "required_fix": "Implement Shannon Entropy calculation from market odds in VeloPrimeEnsemble."
+    },
+    "v17_doctrine_features": {
+      "status": "DEFAULT/FLAT",
+      "source_data_exists": true,
+      "source_table_or_file": "The Racing API (horse history)",
+      "join_key": "horse_id",
+      "builder_file": "app/services/v17_feature_extractor.py",
+      "builder_logic": "Extractor defined but NOT called by the primary scoring service used for backfills.",
+      "fallback_used": true,
+      "fallback_value": "0.0, 0.33, 5.0, etc.",
+      "downstream_used_by": ["specialist_models", "playbook_g"],
+      "evidence": ["app/services/velo_prime_service.py:175"],
+      "training_safe": false,
+      "required_fix": "Wire V17FeatureExtractor().extract() into the core scoring path."
+    },
+    "narrative_disruption": {
+      "status": "NULL",
+      "source_data_exists": false,
+      "source_table_or_file": "None",
+      "builder_logic": "Not implemented in pipeline.",
+      "training_safe": false
+    }
+  }
+}

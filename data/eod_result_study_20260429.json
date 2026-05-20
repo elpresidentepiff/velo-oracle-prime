@@ -1,0 +1,98 @@
+{
+  "date": "2026-04-29",
+  "overall_verdict": "PASS",
+  "sigma": {
+    "races_studied": 38,
+    "predictions_matched": 38,
+    "results_matched": 47,
+    "winners_found": 7,
+    "strike_rate": 0.18421052631578946,
+    "top_1_accuracy": 0.18421052631578946,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.13322118263157892,
+    "calibration_error": 0.11581052631578947,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 27,
+    "calibration_error_count": 4,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "rac_11916320",
+        "horse": "Bellatina",
+        "prob": 0.5954,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "rac_11916307",
+        "horse": "Gold Star Gazing",
+        "prob": 0.4974,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "rac_11914253",
+        "horse": "Hickory Lad",
+        "prob": 0.6871,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rac_11914344",
+        "horse": "Infraad",
+        "prob": 0.5961,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rac_11940357",
+        "horse": "Lady Blanche",
+        "prob": 0.4409,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "ACCEPTABLE_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 38 races today",
+    "shadow_state_after_summary": "Evolved to 135 races",
+    "events_studied": 38,
+    "updates_applied": 0,
+    "duplicates_skipped": 38,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 27,
+      "NONE": 7,
+      "CALIBRATION_ERROR": 4
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

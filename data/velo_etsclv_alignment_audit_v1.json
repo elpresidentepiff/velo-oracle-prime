@@ -1,0 +1,103 @@
+{
+  "generated_at": "2026-04-29",
+  "status": "complete",
+  "purpose": "Align VELO company and evidence docs to ETCSLV doctrine",
+  "reviewed_files": [
+    "docs/company/VELO_COMPANY_MASTER_PLAN_V1.md",
+    "docs/company/VELO_WEBSITE_APP_MVP_SPEC_V1.md",
+    "docs/company/VELO_WHITEPAPER_OUTLINE_V1.md",
+    "docs/company/VELO_FUNDING_PACK_OUTLINE_V1.md",
+    "docs/evidence/VELO_OPERATING_TRUTH_BOARD_V1.md",
+    "docs/evidence/VELO_SIGNAL_RANKINGS_V1.md",
+    "docs/evidence/VELO_49_DAY_SIGNAL_DISCOVERY_REPORT_V1.md",
+    "docs/evidence/VELO_GOOGLE_DOC_EXPORT_49_DAY_SIGNAL_DISCOVERY.md",
+    "docs/evidence/VELO_TELEGRAM_SIGNAL_ATTRIBUTION_PANEL_LIVE_PATCH_V1.md",
+    "data/velo_current_state.json",
+    "data/velo_artifact_index.json"
+  ],
+  "created_files": [
+    "docs/company/VELO_ETCSLV_OPERATING_ARCHITECTURE_V1.md",
+    "docs/company/VELO_COMPANY_STORY_V1.md",
+    "docs/company/VELO_INVESTOR_NARRATIVE_V1.md",
+    "docs/evidence/VELO_ETCSLV_ALIGNMENT_AUDIT_V1.md",
+    "data/velo_etsclv_alignment_audit_v1.json"
+  ],
+  "mapping": {
+    "Execution Loop": [
+      "scripts/run_prime_today.py",
+      "score_race_velo_prime()",
+      "scripts/run_results_sigma.py"
+    ],
+    "Tool Registry": [
+      "VeloPrimeEnsemble",
+      "SQPE",
+      "specialist sidecars",
+      "signal glossary",
+      "candidate lanes",
+      "Signal Stack badges"
+    ],
+    "Context Manager": [
+      "merged racecards",
+      "macro regime",
+      "race archetypes",
+      "course/going/class context"
+    ],
+    "State Store": [
+      "Supabase verdict and audit state",
+      "data/evidence_vault/",
+      "data/velo_current_state.json",
+      "data/velo_artifact_index.json",
+      "router ledgers"
+    ],
+    "Life Cycle Hooks": [
+      "sigma reconciliation",
+      "router thresholds",
+      "special-day reports",
+      "candidate-lane promotion and suppression",
+      "Playbook G offline lifecycle"
+    ],
+    "Verification Interface": [
+      "Unified Evidence Audit",
+      "Router Evidence Engine",
+      "Signal Stack",
+      "Operating Truth Board",
+      "special-day reports",
+      "Telegram visibility audit"
+    ]
+  },
+  "current_discoveries": {
+    "VP30_TIER_A": {
+      "sr": 0.401,
+      "frame": 0.772,
+      "n": 162
+    },
+    "MDS_HIGH": {
+      "sr": 0.548,
+      "frame": 0.968,
+      "n": 31
+    },
+    "IMPROVE_HIGH": {
+      "sr": 0.435,
+      "frame": 0.823,
+      "n": 62
+    },
+    "B_LOW_VP_SUPPRESS": {
+      "sr": 0.169,
+      "frame": 0.441,
+      "n": 272
+    },
+    "MID_PRICE_ZONE_WATCH": {
+      "pct_of_misses": 0.58
+    }
+  },
+  "alignment_verdict": {
+    "whitepaper_business_plan_aligned": true,
+    "company_story_aligned": true,
+    "evidence_docs_aligned": true
+  },
+  "story": {
+    "first_era": "build VELO",
+    "second_era": "make VELO legible, auditable, and commercially credible"
+  },
+  "next_required_mission": "wait_for_next_live_telegram_signal_stack_then_audit"
+}

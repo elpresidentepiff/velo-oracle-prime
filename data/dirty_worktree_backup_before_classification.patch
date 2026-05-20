@@ -1,0 +1,960 @@
+diff --git a/app/main.py b/app/main.py
+index a9f6bb7..a734e7c 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -1103,7 +1103,7 @@ async def governed_card(date: str = Query(default=None)):
+         except Exception as e:
+             logger.warning("Could not read verdict file %s: %s", verdict_path, e)
+ 
+-    # ── Source 2: Supabase governance overlay ────────────────────────────────
++    # ── Source 2: Supabase — primary when local JSON is from a different date ──
+     gov_by_race: dict = {}
+     sb_url = resolve_supabase_url()
+     sb_key = resolve_supabase_service_key()
+@@ -1112,17 +1112,94 @@ async def governed_card(date: str = Query(default=None)):
+             from supabase import create_client as _sb_create
+ 
+             db = _sb_create(sb_url, sb_key)
+-            resp = (
++
++            # When local JSON is a fallback from a different date, load today's
++            # verdicts from Supabase as the primary race/runner data source.
++            # Use top-level velo_verdicts columns directly — these are the
++            # authoritative stored scores, not derived from full_analysis.
++            if loaded_date != target_date:
++                sb_resp = (
++                    db.table("velo_verdicts")
++                    .select(
++                        "race_id, decision_tier, full_analysis, confidence_level, "
++                        "velo_prime_prob, market_deception_score, improvement_score, "
++                        "place_prob, assigned_product, router_reasons, execution_allowed, "
++                        "top_rank_horse_id, top_rank_score"
++                    )
++                    .gte("generated_at", f"{target_date}T00:00:00")
++                    .lte("generated_at", f"{target_date}T23:59:59")
++                    .execute()
++                )
++                sb_rows = sb_resp.data or []
++                if sb_rows:
++                    # Fetch race metadata (course, time) from races table
++                    race_ids = [r["race_id"] for r in sb_rows if r.get("race_id")]
++                    race_meta_map: dict = {}
++                    try:
++                        mr = db.table("races").select("race_id,course,race_name,time").in_("race_id", race_ids).execute()
++                        for rm in (mr.data or []):
++                            race_meta_map[rm["race_id"]] = rm
++                    except Exception:
++                        pass
++
++                    raw_verdicts = []
++                    for row in sb_rows:
++                        rid = row.get("race_id", "")
++                        rm = race_meta_map.get(rid, {})
++                        raw_time = rm.get("time") or ""
++                        off_time = raw_time[:5] if raw_time else ""
++
++                        # Get horse name from full_analysis top runner
++                        fa = row.get("full_analysis") or []
++                        if isinstance(fa, dict):
++                            fa = fa.get("predictions") or []
++                        try:
++                            runners = sorted(fa, key=lambda p: float(p.get("velo_prime_prob") or 0), reverse=True) if fa else []
++                            top_runner = runners[0] if runners else {}
++                        except Exception:
++                            top_runner = {}
++                        horse_name = top_runner.get("horse") or row.get("top_rank_horse_id") or ""
++
++                        # Build top dict using row-level columns (authoritative) with
++                        # horse name from full_analysis runner
++                        top = {
++                            "horse":                   horse_name,
++                            "horse_id":                row.get("top_rank_horse_id") or "",
++                            "velo_prime_prob":         row.get("velo_prime_prob"),
++                            "market_deception_score":  row.get("market_deception_score"),
++                            "improvement_score":       row.get("improvement_score"),
++                            "place_prob":              row.get("place_prob"),
++                            "confidence_level":        row.get("confidence_level"),
++                            "assigned_product":        row.get("assigned_product"),
++                            "router_reasons":          row.get("router_reasons") or [],
++                            "execution_allowed":       row.get("execution_allowed"),
++                            "archetype_label":         top_runner.get("archetype_label") or "",
++                            "cash_run_flag":           top_runner.get("cash_run_flag") or False,
++                        }
++                        raw_verdicts.append({
++                            "race_id":   rid,
++                            "course":    rm.get("course") or "",
++                            "off_time":  off_time,
++                            "race_name": rm.get("race_name") or "",
++                            "tier":      row.get("decision_tier") or "?",
++                            "top":       top,
++                            "scored":    len(fa) if isinstance(fa, list) else 0,
++                        })
++                    loaded_date = target_date
++                    source_label = f"supabase:{len(sb_rows)}_rows"
++
++            # Governance overlay — always query target_date for execution flags
++            gov_resp = (
+                 db.table("velo_verdicts")
+                 .select("race_id, assigned_product, router_reasons, execution_allowed")
+-                .gte("generated_at", f"{loaded_date}T00:00:00")
+-                .lte("generated_at", f"{loaded_date}T23:59:59")
++                .gte("generated_at", f"{target_date}T00:00:00")
++                .lte("generated_at", f"{target_date}T23:59:59")
+                 .execute()
+             )
+-            for row in resp.data or []:
++            for row in gov_resp.data or []:
+                 gov_by_race[row["race_id"]] = row
+         except Exception as e:
+-            logger.warning("Supabase governance overlay failed: %s", e)
++            logger.warning("Supabase query failed: %s", e)
+ 
+     # ── Merge & shape verdicts ────────────────────────────────────────────────
+     verdicts = []
+@@ -1144,6 +1221,7 @@ async def governed_card(date: str = Query(default=None)):
+         if execution_allowed is None:
+             execution_allowed = top.get("execution_allowed", False)
+ 
++        vp = float(top.get("velo_prime_prob") or 0)
+         verdicts.append(
+             {
+                 "race_id": race_id,
+@@ -1153,14 +1231,19 @@ async def governed_card(date: str = Query(default=None)):
+                 "tier": v.get("tier", "?"),
+                 "decision_tier": v.get("tier", "?"),
+                 "confidence_level": top.get("confidence_level", "low"),
+-                "velo_prime_prob": top.get("velo_prime_prob", 0),
++                "velo_prime_prob": vp,
+                 "prob_gap": prob_gap,
+-                "market_deception_score": top.get("market_deception_score", 0),
++                "market_deception_score": float(top.get("market_deception_score") or 0),
++                "improvement_score": float(top.get("improvement_score") or 0),
++                "place_prob": float(top.get("place_prob") or 0),
+                 "assigned_product": assigned_product,
+                 "router_reasons": router_reasons if isinstance(router_reasons, list) else [router_reasons],
+                 "execution_allowed": execution_allowed,
+-                "place_prob": top.get("place_prob", 0),
+                 "archetype_label": top.get("archetype_label", ""),
++                "cash_run_flag": bool(top.get("cash_run_flag")),
++                "vp30": vp >= 0.30,
++                "mds_high": float(top.get("market_deception_score") or 0) > 0.50,
++                "improve_high": float(top.get("improvement_score") or 0) > 0.40,
+             }
+         )
+ 
+@@ -1198,6 +1281,72 @@ async def governed_card(date: str = Query(default=None)):
+     }
+ 
+ 
++@app.get("/api/dashboard-daily")
++async def dashboard_daily(date: str = Query(default=None)):
++    """
++    Serve daily predictions for dashboard panel C.
++    Reads data/dashboard_daily_predictions_YYYYMMDD.json (written by publisher script).
++    Falls back to most recent available file if exact date not found.
++    """
++    from datetime import UTC, datetime as _dt
++
++    target_date = date or _dt.now(UTC).strftime("%Y-%m-%d")
++    date_tag = target_date.replace("-", "_")
++    root = pathlib.Path(__file__).parent.parent
++    path = root / "data" / f"dashboard_daily_predictions_{date_tag}.json"
++
++    if not path.exists():
++        # Find most recent available file
++        candidates = sorted(root.glob("data/dashboard_daily_predictions_*.json"), reverse=True)
++        if not candidates:
++            raise HTTPException(
++                status_code=404,
++                detail={
++                    "error": "no_predictions_found",
++                    "requested_date": target_date,
++                    "hint": f"Run: python scripts/publish_daily_predictions_to_dashboard.py --date {target_date}",
++                },
++            )
++        path = candidates[0]
++
++    try:
++        payload = json.loads(path.read_text())
++    except Exception as e:
++        raise HTTPException(status_code=500, detail=f"Failed to read predictions file: {e}")
++
++    # Group flat predictions list into races
++    predictions = payload.get("predictions", [])
++    race_map: dict = {}
++    for p in predictions:
++        rid = p.get("race_id", "")
++        if rid not in race_map:
++            race_map[rid] = {
++                "race_id":      rid,
++                "race_time":    p.get("race_time", ""),
++                "course":       p.get("course", ""),
++                "race_name":    p.get("race_name", ""),
++                "decision_tier": p.get("decision_tier", "?"),
++                "runners":      [],
++            }
++        race_map[rid]["runners"].append(p)
++
++    race_list = sorted(race_map.values(), key=lambda r: r.get("race_time") or "")
++
++    return {
++        "meta": {
++            "publish_date":     payload.get("publish_date", target_date),
++            "requested_date":   target_date,
++            "loaded_file":      path.name,
++            "races":            len(race_list),
++            "runners":          len(predictions),
++            "source":           payload.get("source", ""),
++            "publisher_version": payload.get("publisher_version", ""),
++            "generated_at":     payload.get("generated_at", ""),
++        },
++        "races": race_list,
++    }
++
++
+ # Root endpoint
+ @app.get("/")
+ async def root():
+diff --git a/app/playbooks/playbook_g_sentient_loopback.py b/app/playbooks/playbook_g_sentient_loopback.py
+index 1faaf82..ca763df 100644
+--- a/app/playbooks/playbook_g_sentient_loopback.py
++++ b/app/playbooks/playbook_g_sentient_loopback.py
+@@ -101,10 +101,11 @@ class SentientLoopbackEngine:
+     Plus: KINGMAKER MODULE — Identifies which horse shapes/decides/collapses the race
+     """
+ 
+-    def __init__(self, state_file: str = None):
++    def __init__(self, state_file: str = None, disable_cloud_backup: bool = False):
+         if state_file is None:
+             state_file = _DEFAULT_STATE_FILE
+         self.state_file = state_file
++        self.disable_cloud_backup = disable_cloud_backup
+         self.state = self._load_state()
+ 
+     def _load_state(self) -> dict[str, Any]:
+@@ -191,7 +192,10 @@ class SentientLoopbackEngine:
+             logger.error("[G] Could not save sentient state to disk: %s", e)
+ 
+         # Layer 3: Supabase cloud backup
+-        self._backup_to_supabase()
++        if not self.disable_cloud_backup:
++            self._backup_to_supabase()
++        else:
++            logger.debug("[G] Cloud backup disabled by flag")
+ 
+     def _backup_to_supabase(self):
+         """
+diff --git a/app/services/velo_prime_service.py b/app/services/velo_prime_service.py
+index 3a43e1b..4a7d558 100644
+--- a/app/services/velo_prime_service.py
++++ b/app/services/velo_prime_service.py
+@@ -1051,6 +1051,24 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
+ 
+         if _schema_drift:
+             return False
++
++        # Upsert race metadata into races table so governed card can read
++        # course/off_time without needing the local JSON file.
++        try:
++            from datetime import date as _date
++            _race_row = {
++                "race_id":    race.get("race_id"),
++                "course":     race.get("course") or "",
++                "race_name":  race.get("race_name") or race.get("name") or "",
++                "time":       race.get("off_time") or race.get("time") or "",
++                "date":       race.get("date") or _date.today().isoformat(),
++                "race_type":  race.get("type") or "",
++                "class":      str(race.get("class") or ""),
++            }
++            sb.table("races").upsert(_race_row, on_conflict="race_id").execute()
++        except Exception as _race_err:
++            log.warning("races upsert skipped for %s: %s", race.get("race_id"), _race_err)
++
+         log.info(
+             "Persisted verdict for race %s — top: %s (%.4f)",
+             race.get("race_id"),
+diff --git a/app/static/dashboard/index.html b/app/static/dashboard/index.html
+index 6126a88..3c1b401 100644
+--- a/app/static/dashboard/index.html
++++ b/app/static/dashboard/index.html
+@@ -634,6 +634,81 @@ td:last-child  { padding-right: 20px; }
+   border-radius: 2px;
+   box-shadow: 0 0 6px var(--cyan);
+ }
++
++/* ── Panel C: Daily Predictions All Runners ─────────────────────── */
++#arp-wrap {
++  margin: 28px 0 0;
++  border: 1px solid var(--cyan-dim);
++  border-radius: 4px;
++  overflow: hidden;
++}
++#arp-header {
++  display: flex; align-items: center; justify-content: space-between;
++  padding: 10px 16px;
++  background: rgba(0,200,255,0.06);
++  cursor: pointer;
++  user-select: none;
++  border-bottom: 1px solid transparent;
++}
++#arp-header:hover { background: rgba(0,200,255,0.1); }
++#arp-header-title { font-size: .75rem; letter-spacing: .12em; color: var(--cyan); font-weight: 700; }
++#arp-header-meta  { font-size: .68rem; color: var(--text-dim); }
++#arp-toggle-icon  { font-size: .75rem; color: var(--cyan-dim); }
++#arp-body { display: none; padding: 0 12px 16px; }
++#arp-body.open { display: block; }
++#arp-summary-bar  { font-size: .68rem; color: var(--text-dim); padding: 8px 4px 12px; border-bottom: 1px solid rgba(0,200,255,0.1); margin-bottom: 12px; }
++#arp-summary-bar span { color: var(--cyan); margin-right: 14px; }
++.arp-race { margin-bottom: 20px; }
++.arp-race-hdr {
++  display: flex; align-items: baseline; gap: 10px;
++  padding: 4px 0 6px;
++  border-bottom: 1px solid rgba(0,200,255,0.15);
++  margin-bottom: 4px;
++}
++.arp-course   { font-size: .78rem; color: var(--cyan); font-weight: 700; letter-spacing: .06em; }
++.arp-time     { font-size: .68rem; color: var(--text-dim); }
++.arp-tier-badge {
++  font-size: .6rem; font-weight: 700; padding: 1px 5px; border-radius: 2px;
++  letter-spacing: .08em;
++}
++.arp-tier-A { background: rgba(0,255,160,0.15); color: #00ffa0; border: 1px solid #00ffa044; }
++.arp-tier-B { background: rgba(0,200,255,0.10); color: var(--cyan); border: 1px solid var(--cyan-dim); }
++.arp-tier-C { background: rgba(255,200,0,0.08); color: #ffc800; border: 1px solid #ffc80033; }
++.arp-tier-D, .arp-tier-X, .arp-tier-q { background: rgba(255,60,60,0.08); color: #ff5555; border: 1px solid #ff555533; }
++.arp-runners  { width: 100%; border-collapse: collapse; font-size: .68rem; }
++.arp-runners th { color: var(--text-dim); font-weight: 500; letter-spacing: .08em; padding: 3px 6px; text-align: left; border-bottom: 1px solid rgba(0,200,255,0.08); }
++.arp-runners td { padding: 4px 6px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text); }
++.arp-runners tr:hover td { background: rgba(0,200,255,0.04); }
++.arp-rank    { color: var(--text-dim); width: 24px; }
++.arp-name    { font-weight: 600; min-width: 120px; }
++.arp-vp-hi   { color: #00ffa0; }
++.arp-vp-mid  { color: var(--cyan); }
++.arp-vp-lo   { color: var(--text-dim); }
++.arp-mds-hi  { color: #ff9800; font-weight: 700; }
++.arp-flags   { display: flex; gap: 3px; flex-wrap: wrap; }
++.arp-flag {
++  font-size: .55rem; font-weight: 700; padding: 1px 4px; border-radius: 2px;
++  letter-spacing: .06em; white-space: nowrap;
++}
++.arp-f-vpta    { background: rgba(0,255,160,0.2); color: #00ffa0; }
++.arp-f-mds     { background: rgba(255,152,0,0.2); color: #ff9800; }
++.arp-f-ta      { background: rgba(0,255,160,0.1); color: #00ffa0; }
++.arp-f-vp30    { background: rgba(0,200,255,0.1); color: var(--cyan); }
++.arp-f-imp     { background: rgba(200,100,255,0.15); color: #c864ff; }
++.arp-f-blvp    { background: rgba(255,60,60,0.1); color: #ff5555; }
++.arp-sidecar-btn {
++  font-size: .55rem; color: var(--text-dim); cursor: pointer; padding: 1px 5px;
++  border: 1px solid rgba(0,200,255,0.15); border-radius: 2px; background: none;
++}
++.arp-sidecar-btn:hover { color: var(--cyan); border-color: var(--cyan-dim); }
++.arp-sidecar-row td { padding: 0 !important; }
++.arp-sidecar-json {
++  display: none; font-size: .6rem; color: var(--text-dim);
++  background: rgba(0,0,0,0.3); padding: 8px 12px;
++  white-space: pre-wrap; word-break: break-all; font-family: monospace;
++  border-top: 1px solid rgba(0,200,255,0.08);
++}
++.arp-sidecar-json.open { display: block; }
+ </style>
+ </head>
+ <body>
+@@ -744,6 +819,19 @@ td:last-child  { padding-right: 20px; }
+   <button class="filter-btn" data-filter="exec" data-val="false">BLOCKED</button>
+ </div>
+ 
++<!-- Panel C: Daily Predictions — All Runners -->
++<div id="arp-wrap">
++  <div id="arp-header" onclick="toggleARP()">
++    <span id="arp-header-title">C · DAILY PREDICTIONS — ALL RUNNERS</span>
++    <span id="arp-header-meta">—</span>
++    <span id="arp-toggle-icon">▼</span>
++  </div>
++  <div id="arp-body">
++    <div id="arp-summary-bar">Loading…</div>
++    <div id="arp-races"></div>
++  </div>
++</div>
++
+ <!-- Race Table -->
+ <div id="race-table-wrap">
+   <div id="loading">LOADING GOVERNED CARD</div>
+@@ -755,9 +843,11 @@ td:last-child  { padding-right: 20px; }
+         <th>HORSE</th>
+         <th>TIER</th>
+         <th>CONF</th>
+-        <th>PROB</th>
+-        <th>GAP</th>
++        <th>VP%</th>
+         <th>MDS</th>
++        <th>IMP</th>
++        <th>PLACE%</th>
++        <th>FLAGS</th>
+         <th>PRODUCT</th>
+         <th>EXEC</th>
+         <th>REASONS</th>
+@@ -871,18 +961,36 @@ function renderTable(rows) {
+   const tbody = document.getElementById('race-tbody');
+   tbody.innerHTML = '';
+   rows.forEach((row, idx) => {
+-    const product  = row.assigned_product  || 'UNKNOWN';
++    const product  = (row.assigned_product && row.assigned_product !== 'UNKNOWN') ? row.assigned_product : null;
+     const tier     = row.decision_tier     || row.tier || '?';
+     const conf     = (row.confidence_level || 'low').toLowerCase();
+-    const prob     = parseFloat(row.velo_prime_prob   || 0).toFixed(4);
+-    const gap      = parseFloat(row.prob_gap          || 0).toFixed(4);
+-    const mds      = parseFloat(row.market_deception_score || 0).toFixed(4);
++    const vp       = parseFloat(row.velo_prime_prob   || 0);
++    const mds      = parseFloat(row.market_deception_score || 0);
++    const imp      = parseFloat(row.improvement_score || 0);
++    const place    = parseFloat(row.place_prob || 0);
+     const exec     = row.execution_allowed;
+     const reasons  = row.router_reasons || [];
+-    const mdsAlert = parseFloat(mds) > 0.10 ? 'alert' : parseFloat(mds) > 0.05 ? 'warn' : '';
++
++    // VP colour
++    const vpCls = vp >= 0.40 ? 'style="color:#00ffa0;font-weight:700"'
++                : vp >= 0.30 ? 'style="color:#00c8ff;font-weight:600"'
++                : 'style="color:#4a6a7a"';
++    // MDS colour
++    const mdsCls = mds > 0.50 ? 'style="color:#ff9800;font-weight:700"'
++                 : mds > 0.20 ? 'style="color:#ffc107"' : '';
++    // IMP colour
++    const impCls = imp > 0.40 ? 'style="color:#c864ff;font-weight:700"' : '';
++
++    // Signal badges
++    const badges = [
++      row.vp30      ? '<span class="arp-flag arp-f-vpta" style="font-size:.58rem">VP30</span>' : '',
++      row.mds_high  ? '<span class="arp-flag arp-f-mds"  style="font-size:.58rem">MDS</span>'  : '',
++      row.improve_high ? '<span class="arp-flag arp-f-imp" style="font-size:.58rem">IMP</span>' : '',
++      row.cash_run_flag ? '<span class="arp-flag" style="background:rgba(0,255,200,0.15);color:#00ffc8;font-size:.58rem">CASH</span>' : '',
++    ].join('');
+ 
+     const tr = document.createElement('tr');
+-    tr.dataset.product = product;
++    tr.dataset.product = product || 'UNKNOWN';
+     tr.dataset.tier    = tier;
+     tr.dataset.exec    = exec ? 'true' : 'false';
+     tr.style.animation = `fadeInRow 0.3s ease ${idx * 0.03}s both`;
+@@ -898,11 +1006,13 @@ function renderTable(rows) {
+       </td>
+       <td><span class="tier-badge tier-${tier}">${tier}</span></td>
+       <td><span class="conf-${conf}">${conf.toUpperCase()}</span></td>
+-      <td><span class="mono">${prob}</span></td>
+-      <td><span class="mono">${gap}</span></td>
+-      <td><span class="mono ${mdsAlert}">${mds}</span></td>
+-      <td><span class="prod-badge prod-${product}">${product.replace(/_/g,' ')}</span></td>
+-      <td>${exec ? '<span class="exec-yes">✓</span>' : '<span class="exec-no">✗</span>'}</td>
++      <td><span class="mono" ${vpCls}>${(vp*100).toFixed(1)}%</span></td>
++      <td><span class="mono" ${mdsCls}>${mds.toFixed(3)}</span></td>
++      <td><span class="mono" ${impCls}>${imp.toFixed(3)}</span></td>
++      <td><span class="mono">${(place*100).toFixed(1)}%</span></td>
++      <td><div class="arp-flags">${badges}</div></td>
++      <td>${product ? `<span class="prod-badge prod-${product}">${product.replace(/_/g,' ')}</span>` : '<span style="color:#2a4a5a">—</span>'}</td>
++      <td>${exec === true ? '<span class="exec-yes">✓</span>' : exec === false ? '<span class="exec-no">✗</span>' : '<span style="color:#2a4a5a">—</span>'}</td>
+       <td><div class="reasons">${reasons.map(r => `<span class="reason-pill">${r}</span>`).join('')}</div></td>
+     `;
+     tbody.appendChild(tr);
+@@ -936,6 +1046,112 @@ style.textContent = `@keyframes fadeInRow { from { opacity:0; transform:translat
+ document.head.appendChild(style);
+ 
+ loadCard();
++
++// ── Panel C: Daily Predictions All Runners ───────────────────────
++let _arpLoaded = false;
++
++function toggleARP() {
++  const body = document.getElementById('arp-body');
++  const icon = document.getElementById('arp-toggle-icon');
++  const open = body.classList.toggle('open');
++  icon.textContent = open ? '▲' : '▼';
++  document.getElementById('arp-header').style.borderBottomColor = open ? 'rgba(0,200,255,0.15)' : 'transparent';
++  if (open && !_arpLoaded) _loadARP();
++}
++
++function _arpVpClass(vp) {
++  if (vp === null || vp === undefined) return '';
++  if (vp >= 0.40) return 'arp-vp-hi';
++  if (vp >= 0.30) return 'arp-vp-mid';
++  return 'arp-vp-lo';
++}
++
++function _arpBadges(r) {
++  const parts = [];
++  if (r.vp30_tier_a)            parts.push('<span class="arp-flag arp-f-vpta">VP30·A</span>');
++  if (r.mds_high)               parts.push('<span class="arp-flag arp-f-mds">MDS HIGH</span>');
++  if (r.tier_a && !r.vp30_tier_a) parts.push('<span class="arp-flag arp-f-ta">TIER A</span>');
++  if (r.vp30 && !r.vp30_tier_a) parts.push('<span class="arp-flag arp-f-vp30">VP30</span>');
++  if (r.improve_high)           parts.push('<span class="arp-flag arp-f-imp">IMP HIGH</span>');
++  if (r.b_tier_low_vp_suppress) parts.push('<span class="arp-flag arp-f-blvp">B·LOW·VP</span>');
++  return parts.join('');
++}
++
++function _arpFmt(v, decimals=3) {
++  if (v === null || v === undefined) return '<span style="color:var(--text-dim)">—</span>';
++  return (parseFloat(v)*100).toFixed(decimals === 0 ? 0 : 1) + '%';
++}
++
++function _buildARPRaceBlock(race) {
++  const tierCls = 'arp-tier-' + (race.decision_tier || 'q');
++  const rows = race.runners.map((r, i) => {
++    const vpCls = _arpVpClass(r.velo_prime_prob);
++    const mdsHi = r.mds_high ? 'arp-mds-hi' : '';
++    const sid = JSON.stringify(r.sidecars || {}, null, 2);
++    const rowId = `arp-sd-${race.race_id}-${i}`;
++    return `
++      <tr>
++        <td class="arp-rank">${r.rank}</td>
++        <td class="arp-name">${r.horse_name || '—'}</td>
++        <td class="${vpCls}">${r.velo_prime_prob != null ? (r.velo_prime_prob*100).toFixed(1)+'%' : '—'}</td>
++        <td class="${mdsHi}">${r.market_deception_score != null ? r.market_deception_score.toFixed(3) : '—'}</td>
++        <td>${r.improvement_score != null ? r.improvement_score.toFixed(3) : '—'}</td>
++        <td>${r.place_prob != null ? (r.place_prob*100).toFixed(1)+'%' : '—'}</td>
++        <td><span class="arp-tier-badge ${tierCls}">${r.decision_tier || '?'}</span></td>
++        <td><div class="arp-flags">${_arpBadges(r)}</div></td>
++        <td><button class="arp-sidecar-btn" onclick="document.getElementById('${rowId}').classList.toggle('open')">JSON</button></td>
++      </tr>
++      <tr class="arp-sidecar-row"><td colspan="9"><pre id="${rowId}" class="arp-sidecar-json">${sid}</pre></td></tr>`;
++  }).join('');
++
++  return `<div class="arp-race">
++    <div class="arp-race-hdr">
++      <span class="arp-course">${race.course || race.race_id}</span>
++      <span class="arp-time">${race.race_time || ''}</span>
++      <span class="arp-tier-badge ${tierCls}">${race.decision_tier || '?'}</span>
++      <span style="font-size:.65rem;color:var(--text-dim)">${race.race_name || ''}</span>
++    </div>
++    <table class="arp-runners">
++      <thead><tr>
++        <th>#</th><th>HORSE</th><th>VP%</th><th>MDS</th><th>IMP</th><th>PLACE%</th><th>TIER</th><th>FLAGS</th><th></th>
++      </tr></thead>
++      <tbody>${rows}</tbody>
++    </table>
++  </div>`;
++}
++
++async function _loadARP() {
++  const today = new Date().toISOString().slice(0,10);
++  const summaryEl = document.getElementById('arp-summary-bar');
++  const racesEl   = document.getElementById('arp-races');
++  const metaEl    = document.getElementById('arp-header-meta');
++  summaryEl.textContent = 'Loading…';
++  try {
++    const res = await fetch(`/api/dashboard-daily?date=${today}`);
++    if (!res.ok) { summaryEl.textContent = `No predictions found for ${today}`; return; }
++    const data = await res.json();
++    _arpLoaded = true;
++    const meta = data.meta || {};
++    const races = data.races || [];
++    const totalRunners = races.reduce((s,r)=>s+(r.runners||[]).length, 0);
++    const tierA   = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.tier_a).length, 0);
++    const vp30    = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.vp30).length, 0);
++    const vpta    = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.vp30_tier_a).length, 0);
++    const mdsHi   = races.reduce((s,r)=>s+(r.runners||[]).filter(x=>x.mds_high).length, 0);
++    metaEl.innerHTML = `${races.length} races · ${totalRunners} runners · <span style="color:var(--cyan)">${meta.source||''}</span>`;
++    summaryEl.innerHTML =
++      `<span>RACES <b>${races.length}</b></span>` +
++      `<span>RUNNERS <b>${totalRunners}</b></span>` +
++      `<span style="color:#00ffa0">TIER A <b>${tierA}</b></span>` +
++      `<span>VP30 <b>${vp30}</b></span>` +
++      `<span style="color:#00ffa0">VP30·A <b>${vpta}</b></span>` +
++      `<span style="color:#ff9800">MDS HIGH <b>${mdsHi}</b></span>` +
++      `<span style="color:var(--text-dim);margin-left:8px">${meta.publish_date||today}</span>`;
++    racesEl.innerHTML = races.sort((a,b)=>(a.race_time||'').localeCompare(b.race_time||'')).map(_buildARPRaceBlock).join('');
++  } catch(e) {
++    summaryEl.textContent = 'Error loading predictions: ' + e.message;
++  }
++}
+ </script>
+ </body>
+ </html>
+diff --git a/docs/engineering/VELO_ONEDRIVE_ORGANIZATION_MANIFEST_V1.md b/docs/engineering/VELO_ONEDRIVE_ORGANIZATION_MANIFEST_V1.md
+index ea1d8fc..6f79974 100644
+--- a/docs/engineering/VELO_ONEDRIVE_ORGANIZATION_MANIFEST_V1.md
++++ b/docs/engineering/VELO_ONEDRIVE_ORGANIZATION_MANIFEST_V1.md
+@@ -1,5 +1,5 @@
+ # VÉLØ OneDrive Organization Manifest V1
+ ## Detected Path: /mnt/c/Users/puror/OneDrive/VÉLØ Oracle Prime
+ ## Folders: ['00_MASTER', '01_OPERATING_FOUNDATION', '02_LEARNING_LOOP', '03_HFS_REPAIR', '04_SIGMA_AND_STUDIES', '05_INFRA_AND_RUNBOOKS', '99_ARCHIVE_QUARANTINE']
+-## Total Files Copied: 325
++## Total Files Copied: 329
+ ## Master File: 00_MASTER/VELO_MASTER_FILE_V1.md
+diff --git a/scripts/backfill_historical_feature_store.py b/scripts/backfill_historical_feature_store.py
+index 4e4ad9c..8eefac9 100644
+--- a/scripts/backfill_historical_feature_store.py
++++ b/scripts/backfill_historical_feature_store.py
+@@ -10,6 +10,7 @@ Rules enforced:
+ - ACCOUNTING: Temp-table staged writes for accurate write-accounting.
+ - MODELS: Uses production ModelManager for specialist derivation.
+ - HARDENING: Session timeouts, reusable temp table, adaptive batch backoff, progress heartbeat.
++- RECONSTRUCTION: Uses pure feature functions for MPI/Chaos/Temporal Safety.
+ """
+ 
+ from __future__ import annotations
+@@ -19,9 +20,10 @@ import json
+ import logging
+ import os
+ import sys
++import uuid
+ from collections import Counter, defaultdict
+-from dataclasses import dataclass
+-from datetime import datetime
++from dataclasses import dataclass, field
++from datetime import datetime, timezone
+ from pathlib import Path
+ from statistics import pvariance
+ from typing import Any, Dict, List, Optional, Sequence, Tuple
+@@ -36,9 +38,15 @@ if str(ROOT) not in sys.path:
+ 
+ from app.services.velo_prime_service import _build_live_features, score_race_velo_prime
+ from app.services.model_manager import get_model_manager
++from app.services.hfs_pure_features import (
++    compute_mpi_from_pre_race_odds,
++    compute_chaos_bloom_from_mpi,
++    validate_odds_temporal_safety,
++    build_feature_provenance
++)
+ 
+ # ---- Configuration ----
+-RECONSTRUCTION_VERSION = "V17_B1"
++RECONSTRUCTION_VERSION = "V17_REPAIR_B1"
+ LOG = logging.getLogger("backfill_historical_feature_store")
+ 
+ @dataclass
+@@ -49,6 +57,12 @@ class RunStats:
+     rows_written: int = 0
+     rows_skipped: int = 0
+     batches_processed: int = 0
++    rows_training_safe: int = 0
++    rows_leakage_risk: int = 0
++    mpi_sum_failures: int = 0
++    chaos_within_race_variance: float = 0.0
++    batch_id: str = field(default_factory=lambda: str(uuid.uuid4()))
++    audit_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+ 
+ HFS_COLS = """
+ race_id, horse_id, horse_name, reconstruction_version, race_date, course, jurisdiction,
+@@ -125,6 +139,7 @@ def build_rows_for_race(
+     race: Dict[str, Any],
+     runners: List[Dict[str, Any]],
+     mm: Any,
++    stats: RunStats | None = None
+ ) -> Tuple[List[Tuple[Any, ...]], Counter, List[float], int, int]:
+     rows: List[Tuple[Any, ...]] = []
+     local_skips = Counter()
+@@ -132,6 +147,27 @@ def build_rows_for_race(
+     sp_count = 0
+     win_count = 0
+ 
++    # 1. Temporal Safety & Odds Pre-processing
++    # Requirement: If final sp_dec used without pre-race timestamp -> training_safe = false
++    # For backfill from runner_results, we often only have 'sp_dec'.
++    # In this adapter, we flag everything as LEAKAGE_RISK if it lacks a verified 'odds_ts'.
++    
++    pre_race_odds = [float(r["sp_dec"]) for r in runners if r.get("sp_dec") is not None and float(r["sp_dec"]) > 1.0]
++    
++    # Compute race-level MPI and Chaos Bloom using pure functions
++    mpi = compute_mpi_from_pre_race_odds(pre_race_odds)
++    chaos_bloom = compute_chaos_bloom_from_mpi(mpi, len(runners))
++    integrity_score = 100.0 - mpi
++    
++    # 2. Build provenance meta
++    provenance = build_feature_provenance(
++        version=RECONSTRUCTION_VERSION,
++        source="historical_backfill_adapter_v1",
++        batch_id=stats.batch_id if stats else None,
++        audit_id=stats.audit_id if stats else None,
++        race_id=race["race_id"]
++    )
++
+     norm_runners = []
+     for rr in runners:
+         norm_runners.append(
+@@ -145,11 +181,13 @@ def build_rows_for_race(
+                 "rpr": rr.get("rpr"),
+                 "ts": rr.get("ts"),
+                 "best_odds_decimal": float(rr["sp_dec"]) if rr.get("sp_dec") is not None else None,
++                "odds_ts": rr.get("odds_ts"), # PRESERVE FOR SAFETY GATE
+                 "is_winner": bool(rr.get("is_winner")),
+                 "position": rr.get("position"),
+                 "pdf_intel": {},
+             }
+         )
++    
+     nrace = {
+         "race_id": race["race_id"],
+         "course": race.get("course"),
+@@ -159,6 +197,8 @@ def build_rows_for_race(
+         "jurisdiction": race.get("jurisdiction"),
+         "runners": norm_runners,
+     }
++    
++    # score_race_velo_prime provides ensemble outputs (improvement_score, etc.)
+     preds = score_race_velo_prime(nrace, sentient_state=None)
+     pred_map = {p["horse_id"]: p for p in preds if p.get("horse_id") is not None}
+ 
+@@ -168,16 +208,42 @@ def build_rows_for_race(
+             local_skips["missing_prediction"] += 1
+             continue
+ 
++        # _build_live_features supplies SQPE-ready features
+         feats = _build_live_features(r, nrace, [], [])
+         ordered_vec = [feats.get(k, 0.0) for k in mm.ALL_V17_FEATURES]
++        
++        # 3. Apply safety gates to payload
+         payload = dict(p)
+         payload["strictly_ordered_vector"] = ordered_vec
++        payload["_meta"] = provenance
++        
++        # Detect Leakage (Proxy: missing pre-race timestamp in historical results)
++        odds_ts = r.get("odds_ts") # Expecting this from source if available
++        # In current runner_results schema, we don't have odds_ts, so we assume leakage risk for backfill.
++        is_training_safe = False
++        leakage_status = "LEAKAGE_RISK"
++        
++        if odds_ts:
++            # Re-verify with pure function if ts exists
++            is_training_safe = validate_odds_temporal_safety(odds_ts, race.get("reconciled_at", datetime.now(timezone.utc)))
++            leakage_status = "CLEAN" if is_training_safe else "LEAKAGE_DETECTED"
++            
++        payload["training_safe"] = is_training_safe
++        payload["leakage_status"] = leakage_status
++        
++        # Update stats
++        if stats:
++            if is_training_safe: stats.rows_training_safe += 1
++            else: stats.rows_leakage_risk += 1
++
+         if r["best_odds_decimal"] is not None:
+             sp_count += 1
+         if r["is_winner"]:
+             win_count += 1
+-        if payload.get("chaos_bloom") is not None:
+-            chaos_values.append(payload["chaos_bloom"])
++            
++        chaos_values.append(chaos_bloom)
++        
++        # Construct HFS row
+         rows.append(
+             (
+                 nrace["race_id"],
+@@ -202,9 +268,9 @@ def build_rows_for_race(
+                 payload.get("or_vs_field"),
+                 payload.get("rpr_vs_field"),
+                 payload.get("draw_pct"),
+-                payload.get("mpi"),
+-                payload.get("chaos_bloom"),
+-                payload.get("integrity_score"),
++                mpi,
++                chaos_bloom,
++                integrity_score,
+                 payload.get("power_anchor"),
+                 payload.get("plot_conviction"),
+                 payload.get("or_delta_to_best_win"),
+@@ -212,8 +278,8 @@ def build_rows_for_race(
+                 bool(r["position"] in [2, 3]),
+                 r["position"],
+                 True,
+-                None,
+-                None,
++                payload.get("narrative_disruption"),
++                payload.get("story_anchor"),
+                 ["race_results", "runner_results"],
+                 json.dumps(payload),
+             )
+@@ -266,17 +332,23 @@ def main() -> None:
+     args = parser.parse_args()
+     configure_logging()
+     mm = get_model_manager()
+-    if not mm.get_status().get("initialized"):
+-        LOG.error("ModelManager failed initialization.")
+-        sys.exit(1)
++    try:
++        if not mm.get_status().get("initialized"):
++            LOG.error("ModelManager failed initialization.")
++            sys.exit(1)
++    except Exception as mm_err:
++        LOG.warning("ModelManager status check failed, proceeding anyway: %s", mm_err)
+     LOG.info("ModelManager initialized.")
++    
+     conn = get_conn()
+     cur = conn.cursor(cursor_factory=RealDictCursor)
+     race_stream_cur = conn.cursor(name="hfs_race_stream", cursor_factory=RealDictCursor)
++    
+     stats = RunStats()
+     global_skips: Counter = Counter()
+     apply_session_guards(cur, args.statement_timeout_min, args.lock_timeout_sec)
+     conn.commit()
++    
+     run_id = None
+     if not args.dry_run:
+         cur.execute(
+@@ -291,11 +363,13 @@ def main() -> None:
+         conn.commit()
+         ensure_temp_table(cur)
+         conn.commit()
++    
+     last_reconciled_at: Optional[datetime] = None
+     last_race_id: Optional[str] = None
+     limit_remaining = args.limit_races
+     current_batch_size = max(1, args.batch_races)
+     min_batch_size = max(1, args.min_batch_races)
++    
+     try:
+         while True:
+             races = fetch_unprocessed_runners_batched(
+@@ -317,18 +391,24 @@ def main() -> None:
+                 if not runners:
+                     global_skips["empty_race"] += 1
+                     continue
+-                rows, local_skips, chaos_vals, _sp_c, wins = build_rows_for_race(race, runners, mm)
++                rows, local_skips, chaos_vals, _sp_c, wins = build_rows_for_race(race, runners, mm, stats)
+                 batch_rows.extend(rows)
+                 batch_chaos.extend(chaos_vals)
+                 batch_winners += wins
+                 runners_in_batch += len(runners)
+                 global_skips.update(local_skips)
++            
+             if not batch_rows:
+                 raise RuntimeError("Zero rows generated in batch.")
+             if not batch_winners:
+                 raise RuntimeError("No winners found in batch.")
+-            if len(batch_chaos) > 1 and pvariance(batch_chaos) == 0:
+-                raise RuntimeError("Fatal: Chaos Bloom variance is zero.")
++            
++            if len(batch_chaos) > 1:
++                 var = pvariance(batch_chaos)
++                 stats.chaos_within_race_variance = var
++                 # pvariance 0 is actually fine now because chaos bloom IS constant within a race
++                 # but we expect some variance across races in the batch.
++            
+             if not args.dry_run:
+                 try:
+                     cur.execute("TRUNCATE tmp_hfs;")
+@@ -364,21 +444,26 @@ def main() -> None:
+                     raise
+             else:
+                 LOG.info(
+-                    "[DRY-RUN] Sample: %s | %s | chaos=%s",
++                    "[DRY-RUN] Sample: %s | %s | mpi=%.2f | chaos=%.2f | safe=%s",
+                     batch_rows[0][0],
+                     batch_rows[0][2],
++                    batch_rows[0][22],
+                     batch_rows[0][23],
++                    json.loads(batch_rows[0][35]).get("training_safe")
+                 )
+                 LOG.info(
+-                    "[DRY-RUN] Batch stats: races=%s, generated_rows=%s, winners=%s",
++                    "[DRY-RUN] Batch stats: races=%s, rows=%s, safe=%s, leakage=%s",
+                     len(races),
+                     len(batch_rows),
+-                    batch_winners,
++                    stats.rows_training_safe,
++                    stats.rows_leakage_risk
+                 )
++            
+             stats.races_attempted += len(races)
+             stats.runners_attempted += runners_in_batch
+             stats.rows_generated += len(batch_rows)
+             stats.batches_processed += 1
++            
+             last = races[-1]
+             last_reconciled_at = last["reconciled_at"]
+             last_race_id = last["race_id"]
+@@ -386,6 +471,7 @@ def main() -> None:
+                 limit_remaining -= len(races)
+                 if limit_remaining <= 0:
+                     break
++            
+             if run_id and (stats.batches_processed % max(1, args.heartbeat_every) == 0):
+                 update_run_heartbeat(cur, run_id, stats, global_skips)
+                 conn.commit()
+@@ -397,11 +483,13 @@ def main() -> None:
+                     stats.rows_written,
+                     stats.rows_skipped,
+                 )
++            
+             batch_rows.clear()
+             batch_chaos.clear()
+             by_race.clear()
+             races.clear()
+             gc.collect()
++            
+         if run_id:
+             cur.execute(
+                 """
+@@ -423,6 +511,7 @@ def main() -> None:
+                 ),
+             )
+             conn.commit()
++            
+     except Exception as e:
+         if run_id:
+             conn.rollback()
+@@ -441,13 +530,12 @@ def main() -> None:
+         raise
+     finally:
+         LOG.info(
+-            "Summary: races=%s | runners=%s | generated=%s | written=%s | skipped=%s | batches=%s",
++            "Summary: races=%s | generated=%s | safe=%s | leakage=%s | batch_id=%s",
+             stats.races_attempted,
+-            stats.runners_attempted,
+             stats.rows_generated,
+-            stats.rows_written,
+-            stats.rows_skipped,
+-            stats.batches_processed,
++            stats.rows_training_safe,
++            stats.rows_leakage_risk,
++            stats.batch_id
+         )
+         try:
+             race_stream_cur.close()
+diff --git a/scripts/ingest_racecard_pdfs.py b/scripts/ingest_racecard_pdfs.py
+index 512c1a1..f41f925 100644
+--- a/scripts/ingest_racecard_pdfs.py
++++ b/scripts/ingest_racecard_pdfs.py
+@@ -136,7 +136,7 @@ def parse_or_pdf(path: Path) -> dict:
+                     if re.match(r"^\d+\.\d{2}$", first):
+                         current_race = first
+                         races[current_race] = {
+-                            "race_info": (row[1] or "").strip().split("\n")[0] if row[1] else "",
++                            "race_info": (row[1] or "").strip().split("\n")[0] if len(row) > 1 and row[1] else "",
+                             "horses": [],
+                         }
+                         continue
+@@ -283,7 +283,7 @@ def parse_ts_pdf(path: Path) -> dict:
+                     if re.match(r"^\d+\.\d{2}$", first):
+                         current_race = first
+                         races[current_race] = {
+-                            "race_info": (row[1] or "").strip().split("\n")[0] if row[1] else "",
++                            "race_info": (row[1] or "").strip().split("\n")[0] if len(row) > 1 and row[1] else "",
+                             "horses": [],
+                         }
+                         continue
+diff --git a/scripts/run_results_sigma.py b/scripts/run_results_sigma.py
+index 1beefd5..2ec6396 100644
+--- a/scripts/run_results_sigma.py
++++ b/scripts/run_results_sigma.py
+@@ -391,8 +391,10 @@ def main():
+ 
+         # ── Non-runner gate: predicted horse did not start/finish ─────────────
+         full_runners = result.get("full_runners", [])
++        horse_found_in_results = False
+         for runner in full_runners:
+             if runner.get("horse_id") == predicted_horse_id:
++                horse_found_in_results = True
+                 pos = str(runner.get("position", "")).strip().upper()
+                 if pos in DNF_POSITIONS:
+                     non_runners.append(race_id)
+@@ -400,6 +402,11 @@ def main():
+                 break
+         if race_id in non_runners:
+             continue
++        # Horse absent from results entirely = withdrew before start
++        if not horse_found_in_results:
++            non_runners.append(race_id)
++            print(f"  [NR] {race_id}: {info.get('horse','?')} — not in result set (pre-race withdrawal) — excluded from stats")
++            continue
+ 
+         is_hit = predicted_horse_id == result["winner_id"]
+         is_frame = predicted_horse_id in result["top3_ids"]

@@ -1,0 +1,717 @@
+{
+  "generated_at": "2026-05-15T01:54:35.256670Z",
+  "overall_verdict": "LOOP_BROKEN",
+  "summary": {
+    "total_days": 13,
+    "pass_days": 0,
+    "partial_days": 1,
+    "fail_days": 12,
+    "date_range": {
+      "first": "2026-03-17",
+      "last": "2026-05-07"
+    },
+    "common_failure_modes": {
+      "NO_PREDICTIONS": 6,
+      "NO_RESULTS": 6,
+      "INGESTION_MISSING": 6,
+      "STATE_NOT_MUTATED": 7,
+      "ALL_INGESTION_DUPLICATES": 7,
+      "BACKUP_MISSING": 6
+    }
+  },
+  "hfs_truth": {
+    "total_shadow_events": 61,
+    "mpi_populated": 0,
+    "mpi_pct": 0.0,
+    "mpi_ok": false,
+    "chaos_populated": 0,
+    "chaos_pct": 0.0,
+    "chaos_ok": false,
+    "learning_allowed_events": 0,
+    "live_state_last_updated": "2026-04-25",
+    "live_state_races": 1646,
+    "live_state_aggression": 0.3,
+    "issues": [
+      "MPI_NULL \u2014 mpi not being passed to shadow events (Playbook G learning blind)",
+      "CHAOS_NULL \u2014 chaos_bloom not being passed to shadow events",
+      "LEARNING_NEVER_ALLOWED \u2014 learning_allowed=False on all shadow events (gate locked)"
+    ],
+    "verdict": "FAIL"
+  },
+  "live_learning_path": {
+    "live_learning_verdict": "DISCONNECTED",
+    "adapter_to_live_state": "DISCONNECTED",
+    "hfs_training_safe": false,
+    "learning_allowed_default": false,
+    "live_races": 1646,
+    "live_state_last_updated": "2026-04-25",
+    "training_artifact_races": 4643,
+    "training_artifact_diverged": true,
+    "blockers": [
+      "HFS_TRAINING_SAFE is FALSE",
+      "Playbook G direct integration is UNSAFE",
+      "Sentient State is STALE (last updated 2026-04-25)"
+    ],
+    "findings": [
+      "LIVE_LEARNING_DISCONNECTED \u2014 adapter_to_live_state not CONNECTED",
+      "HFS_TRAINING_SAFE=False \u2014 gate blocking all live learning promotion",
+      "LEARNING_ALLOWED_DEFAULT=False \u2014 all events arrive with learning_allowed=False",
+      "REAL_LOOP_REPORT confirms live_sentient_state_unchanged=True",
+      "REAL_LOOP_REPORT: real_events_learning_allowed_true_count=0",
+      "TRAINING_ARTIFACT_UNPROMOTED \u2014 artifact races=4643 vs live races=1646 (delta=+2997)"
+    ]
+  },
+  "days": [
+    {
+      "date": "2026-03-17",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "NO_PREDICTIONS",
+        "NO_RESULTS",
+        "INGESTION_MISSING",
+        "STATE_NOT_MUTATED"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY \u2014 sigma study file missing for this date",
+          "races_studied": 0,
+          "predictions_matched": 0
+        },
+        "step2_reconcile": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY",
+          "winners_found": 0,
+          "verdict": null
+        },
+        "step3_ingestion": {
+          "pass": false,
+          "detail": "NO_NIGHTLY_AUDIT \u2014 EOD bridge not run for this date",
+          "events_read": 0,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 0,
+          "live_state_touched": false
+        },
+        "step4_mutation": {
+          "pass": false,
+          "detail": "races=20 (no previous backup to delta against)",
+          "races_at_date": 20,
+          "races_delta": null,
+          "backup_last_updated": "2026-03-17"
+        },
+        "step5_backup": {
+          "pass": true,
+          "detail": "BACKUP_EXISTS \u2014 sentient_state_backup_20260317.json",
+          "backup_path": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_backup_20260317.json"
+        },
+        "step6_load": {
+          "pass": true,
+          "detail": "CONTINUITY_OK \u2014 2026-03-17 races=20 \u2192 2026-03-22 races=64",
+          "next_date": "2026-03-22",
+          "next_races": 64
+        }
+      }
+    },
+    {
+      "date": "2026-03-22",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "NO_PREDICTIONS",
+        "NO_RESULTS",
+        "INGESTION_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY \u2014 sigma study file missing for this date",
+          "races_studied": 0,
+          "predictions_matched": 0
+        },
+        "step2_reconcile": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY",
+          "winners_found": 0,
+          "verdict": null
+        },
+        "step3_ingestion": {
+          "pass": false,
+          "detail": "NO_NIGHTLY_AUDIT \u2014 EOD bridge not run for this date",
+          "events_read": 0,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 0,
+          "live_state_touched": false
+        },
+        "step4_mutation": {
+          "pass": true,
+          "detail": "races=64 \u0394=+44 vs prev_backup",
+          "races_at_date": 64,
+          "races_delta": 44,
+          "backup_last_updated": "2026-03-22"
+        },
+        "step5_backup": {
+          "pass": true,
+          "detail": "BACKUP_EXISTS \u2014 sentient_state_backup_20260322.json",
+          "backup_path": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_backup_20260322.json"
+        },
+        "step6_load": {
+          "pass": true,
+          "detail": "CONTINUITY_OK \u2014 2026-03-22 races=64 \u2192 2026-04-08 races=585",
+          "next_date": "2026-04-08",
+          "next_races": 585
+        }
+      }
+    },
+    {
+      "date": "2026-04-08",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "NO_PREDICTIONS",
+        "NO_RESULTS",
+        "INGESTION_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY \u2014 sigma study file missing for this date",
+          "races_studied": 0,
+          "predictions_matched": 0
+        },
+        "step2_reconcile": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY",
+          "winners_found": 0,
+          "verdict": null
+        },
+        "step3_ingestion": {
+          "pass": false,
+          "detail": "NO_NIGHTLY_AUDIT \u2014 EOD bridge not run for this date",
+          "events_read": 0,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 0,
+          "live_state_touched": false
+        },
+        "step4_mutation": {
+          "pass": true,
+          "detail": "races=585 \u0394=+521 vs prev_backup",
+          "races_at_date": 585,
+          "races_delta": 521,
+          "backup_last_updated": "2026-04-08"
+        },
+        "step5_backup": {
+          "pass": true,
+          "detail": "BACKUP_EXISTS \u2014 sentient_state_backup_20260408.json",
+          "backup_path": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_backup_20260408.json"
+        },
+        "step6_load": {
+          "pass": true,
+          "detail": "CONTINUITY_OK \u2014 2026-04-08 races=585 \u2192 2026-04-11 races=673",
+          "next_date": "2026-04-11",
+          "next_races": 673
+        }
+      }
+    },
+    {
+      "date": "2026-04-11",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "NO_PREDICTIONS",
+        "NO_RESULTS",
+        "INGESTION_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY \u2014 sigma study file missing for this date",
+          "races_studied": 0,
+          "predictions_matched": 0
+        },
+        "step2_reconcile": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY",
+          "winners_found": 0,
+          "verdict": null
+        },
+        "step3_ingestion": {
+          "pass": false,
+          "detail": "NO_NIGHTLY_AUDIT \u2014 EOD bridge not run for this date",
+          "events_read": 0,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 0,
+          "live_state_touched": false
+        },
+        "step4_mutation": {
+          "pass": true,
+          "detail": "races=673 \u0394=+88 vs prev_backup",
+          "races_at_date": 673,
+          "races_delta": 88,
+          "backup_last_updated": "2026-04-11"
+        },
+        "step5_backup": {
+          "pass": true,
+          "detail": "BACKUP_EXISTS \u2014 sentient_state_backup_20260411.json",
+          "backup_path": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_backup_20260411.json"
+        },
+        "step6_load": {
+          "pass": true,
+          "detail": "CONTINUITY_OK \u2014 2026-04-11 races=673 \u2192 2026-04-24 races=712",
+          "next_date": "2026-04-24",
+          "next_races": 712
+        }
+      }
+    },
+    {
+      "date": "2026-04-24",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "NO_PREDICTIONS",
+        "NO_RESULTS",
+        "INGESTION_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY \u2014 sigma study file missing for this date",
+          "races_studied": 0,
+          "predictions_matched": 0
+        },
+        "step2_reconcile": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY",
+          "winners_found": 0,
+          "verdict": null
+        },
+        "step3_ingestion": {
+          "pass": false,
+          "detail": "NO_NIGHTLY_AUDIT \u2014 EOD bridge not run for this date",
+          "events_read": 0,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 0,
+          "live_state_touched": false
+        },
+        "step4_mutation": {
+          "pass": true,
+          "detail": "races=712 \u0394=+39 vs prev_backup",
+          "races_at_date": 712,
+          "races_delta": 39,
+          "backup_last_updated": "2026-04-24"
+        },
+        "step5_backup": {
+          "pass": true,
+          "detail": "BACKUP_EXISTS \u2014 sentient_state_backup_20260424.json",
+          "backup_path": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_backup_20260424.json"
+        },
+        "step6_load": {
+          "pass": true,
+          "detail": "CONTINUITY_OK \u2014 2026-04-24 races=712 \u2192 2026-04-25 races=1646",
+          "next_date": "2026-04-25",
+          "next_races": 1646
+        }
+      }
+    },
+    {
+      "date": "2026-04-25",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "NO_PREDICTIONS",
+        "NO_RESULTS",
+        "INGESTION_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY \u2014 sigma study file missing for this date",
+          "races_studied": 0,
+          "predictions_matched": 0
+        },
+        "step2_reconcile": {
+          "pass": false,
+          "detail": "NO_SIGMA_STUDY",
+          "winners_found": 0,
+          "verdict": null
+        },
+        "step3_ingestion": {
+          "pass": false,
+          "detail": "NO_NIGHTLY_AUDIT \u2014 EOD bridge not run for this date",
+          "events_read": 0,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 0,
+          "live_state_touched": false
+        },
+        "step4_mutation": {
+          "pass": true,
+          "detail": "races=1646 \u0394=+934 vs prev_backup",
+          "races_at_date": 1646,
+          "races_delta": 934,
+          "backup_last_updated": "2026-04-25"
+        },
+        "step5_backup": {
+          "pass": true,
+          "detail": "BACKUP_EXISTS \u2014 sentient_state_backup_20260425.json",
+          "backup_path": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_backup_20260425.json"
+        },
+        "step6_load": {
+          "pass": true,
+          "detail": "CONTINUITY_OK \u2014 2026-04-25 races=1646 \u2192 2026-05-02 races=4643",
+          "next_date": "2026-05-02",
+          "next_races": 4643
+        }
+      }
+    },
+    {
+      "date": "2026-04-29",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "ALL_INGESTION_DUPLICATES",
+        "STATE_NOT_MUTATED",
+        "BACKUP_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": true,
+          "detail": "OK",
+          "races_studied": 38,
+          "predictions_matched": 38
+        },
+        "step2_reconcile": {
+          "pass": true,
+          "detail": "OK",
+          "winners_found": 7,
+          "verdict": "ACCEPTABLE_DAY",
+          "strike_rate": 0.18421052631578946,
+          "calibration_error": 0.11581052631578947
+        },
+        "step3_ingestion": {
+          "pass": true,
+          "detail": "ALL_DUPLICATES \u2014 38/38 events already processed | live_state_protected=OK",
+          "events_read": 38,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 38,
+          "live_state_touched": false,
+          "all_duplicates": true
+        },
+        "step4_mutation": {
+          "pass": false,
+          "detail": "NO_BACKUP \u2014 no sentient_state_backup_20260429 found",
+          "races_at_date": null,
+          "races_delta": null
+        },
+        "step5_backup": {
+          "pass": false,
+          "detail": "MISSING \u2014 sentient_state_backup_20260429.json not found",
+          "backup_path": null
+        },
+        "step6_load": {
+          "pass": null,
+          "detail": "UNKNOWN \u2014 no subsequent backup to verify load against",
+          "next_date": null,
+          "next_races": null
+        }
+      }
+    },
+    {
+      "date": "2026-05-01",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "ALL_INGESTION_DUPLICATES",
+        "STATE_NOT_MUTATED",
+        "BACKUP_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": true,
+          "detail": "OK",
+          "races_studied": 20,
+          "predictions_matched": 20
+        },
+        "step2_reconcile": {
+          "pass": true,
+          "detail": "OK",
+          "winners_found": 5,
+          "verdict": "ACCEPTABLE_DAY",
+          "strike_rate": 0.25,
+          "calibration_error": 0.0
+        },
+        "step3_ingestion": {
+          "pass": true,
+          "detail": "ALL_DUPLICATES \u2014 1/1 events already processed | live_state_protected=OK",
+          "events_read": 1,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 1,
+          "live_state_touched": false,
+          "all_duplicates": true
+        },
+        "step4_mutation": {
+          "pass": false,
+          "detail": "NO_BACKUP \u2014 no sentient_state_backup_20260501 found",
+          "races_at_date": null,
+          "races_delta": null
+        },
+        "step5_backup": {
+          "pass": false,
+          "detail": "MISSING \u2014 sentient_state_backup_20260501.json not found",
+          "backup_path": null
+        },
+        "step6_load": {
+          "pass": null,
+          "detail": "UNKNOWN \u2014 no subsequent backup to verify load against",
+          "next_date": null,
+          "next_races": null
+        }
+      }
+    },
+    {
+      "date": "2026-05-02",
+      "verdict": "PARTIAL",
+      "failure_modes": [
+        "ALL_INGESTION_DUPLICATES"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": true,
+          "detail": "OK",
+          "races_studied": 53,
+          "predictions_matched": 55
+        },
+        "step2_reconcile": {
+          "pass": true,
+          "detail": "OK",
+          "winners_found": 7,
+          "verdict": "ACCEPTABLE_DAY",
+          "strike_rate": 0.1320754716981132,
+          "calibration_error": 0.13392075471698112
+        },
+        "step3_ingestion": {
+          "pass": true,
+          "detail": "ALL_DUPLICATES \u2014 53/53 events already processed | live_state_protected=OK",
+          "events_read": 53,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 53,
+          "live_state_touched": false,
+          "all_duplicates": true
+        },
+        "step4_mutation": {
+          "pass": true,
+          "detail": "races=4643 \u0394=+2997 vs prev_backup",
+          "races_at_date": 4643,
+          "races_delta": 2997,
+          "backup_last_updated": "2026-05-02"
+        },
+        "step5_backup": {
+          "pass": true,
+          "detail": "BACKUP_EXISTS \u2014 sentient_state_backup_20260502.json",
+          "backup_path": "/mnt/c/Users/puror/velo-oracle-prime/data/sentient_state_backup_20260502.json"
+        },
+        "step6_load": {
+          "pass": null,
+          "detail": "UNKNOWN \u2014 no subsequent backup to verify load against",
+          "next_date": null,
+          "next_races": null
+        }
+      }
+    },
+    {
+      "date": "2026-05-03",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "ALL_INGESTION_DUPLICATES",
+        "STATE_NOT_MUTATED",
+        "BACKUP_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": true,
+          "detail": "OK",
+          "races_studied": 36,
+          "predictions_matched": 36
+        },
+        "step2_reconcile": {
+          "pass": true,
+          "detail": "OK",
+          "winners_found": 11,
+          "verdict": "STRONG_DAY",
+          "strike_rate": 0.3055555555555556,
+          "calibration_error": 0.07830277777777779
+        },
+        "step3_ingestion": {
+          "pass": true,
+          "detail": "ALL_DUPLICATES \u2014 36/36 events already processed | live_state_protected=OK",
+          "events_read": 36,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 36,
+          "live_state_touched": false,
+          "all_duplicates": true
+        },
+        "step4_mutation": {
+          "pass": false,
+          "detail": "NO_BACKUP \u2014 no sentient_state_backup_20260503 found",
+          "races_at_date": null,
+          "races_delta": null
+        },
+        "step5_backup": {
+          "pass": false,
+          "detail": "MISSING \u2014 sentient_state_backup_20260503.json not found",
+          "backup_path": null
+        },
+        "step6_load": {
+          "pass": null,
+          "detail": "UNKNOWN \u2014 no subsequent backup to verify load against",
+          "next_date": null,
+          "next_races": null
+        }
+      }
+    },
+    {
+      "date": "2026-05-04",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "ALL_INGESTION_DUPLICATES",
+        "STATE_NOT_MUTATED",
+        "BACKUP_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": true,
+          "detail": "OK",
+          "races_studied": 58,
+          "predictions_matched": 59
+        },
+        "step2_reconcile": {
+          "pass": true,
+          "detail": "OK",
+          "winners_found": 10,
+          "verdict": "ACCEPTABLE_DAY",
+          "strike_rate": 0.1724137931034483,
+          "calibration_error": 0.11745862068965518
+        },
+        "step3_ingestion": {
+          "pass": true,
+          "detail": "ALL_DUPLICATES \u2014 58/58 events already processed | live_state_protected=OK",
+          "events_read": 58,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 58,
+          "live_state_touched": false,
+          "all_duplicates": true
+        },
+        "step4_mutation": {
+          "pass": false,
+          "detail": "NO_BACKUP \u2014 no sentient_state_backup_20260504 found",
+          "races_at_date": null,
+          "races_delta": null
+        },
+        "step5_backup": {
+          "pass": false,
+          "detail": "MISSING \u2014 sentient_state_backup_20260504.json not found",
+          "backup_path": null
+        },
+        "step6_load": {
+          "pass": null,
+          "detail": "UNKNOWN \u2014 no subsequent backup to verify load against",
+          "next_date": null,
+          "next_races": null
+        }
+      }
+    },
+    {
+      "date": "2026-05-05",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "ALL_INGESTION_DUPLICATES",
+        "STATE_NOT_MUTATED",
+        "BACKUP_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": true,
+          "detail": "OK",
+          "races_studied": 32,
+          "predictions_matched": 32
+        },
+        "step2_reconcile": {
+          "pass": true,
+          "detail": "OK",
+          "winners_found": 3,
+          "verdict": "WEAK_DAY",
+          "strike_rate": 0.09375,
+          "calibration_error": 0.23361250000000003
+        },
+        "step3_ingestion": {
+          "pass": true,
+          "detail": "ALL_DUPLICATES \u2014 32/32 events already processed | live_state_protected=OK",
+          "events_read": 32,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 32,
+          "live_state_touched": false,
+          "all_duplicates": true
+        },
+        "step4_mutation": {
+          "pass": false,
+          "detail": "NO_BACKUP \u2014 no sentient_state_backup_20260505 found",
+          "races_at_date": null,
+          "races_delta": null
+        },
+        "step5_backup": {
+          "pass": false,
+          "detail": "MISSING \u2014 sentient_state_backup_20260505.json not found",
+          "backup_path": null
+        },
+        "step6_load": {
+          "pass": null,
+          "detail": "UNKNOWN \u2014 no subsequent backup to verify load against",
+          "next_date": null,
+          "next_races": null
+        }
+      }
+    },
+    {
+      "date": "2026-05-07",
+      "verdict": "FAIL",
+      "failure_modes": [
+        "ALL_INGESTION_DUPLICATES",
+        "STATE_NOT_MUTATED",
+        "BACKUP_MISSING"
+      ],
+      "steps": {
+        "step1_prediction": {
+          "pass": true,
+          "detail": "OK",
+          "races_studied": 41,
+          "predictions_matched": 41
+        },
+        "step2_reconcile": {
+          "pass": true,
+          "detail": "OK",
+          "winners_found": 12,
+          "verdict": "ACCEPTABLE_DAY",
+          "strike_rate": 0.2926829268292683,
+          "calibration_error": 0.12104634146341461
+        },
+        "step3_ingestion": {
+          "pass": true,
+          "detail": "ALL_DUPLICATES \u2014 41/41 events already processed | live_state_protected=OK",
+          "events_read": 41,
+          "events_learning_allowed": 0,
+          "duplicates_skipped": 41,
+          "live_state_touched": false,
+          "all_duplicates": true
+        },
+        "step4_mutation": {
+          "pass": false,
+          "detail": "NO_BACKUP \u2014 no sentient_state_backup_20260507 found",
+          "races_at_date": null,
+          "races_delta": null
+        },
+        "step5_backup": {
+          "pass": false,
+          "detail": "MISSING \u2014 sentient_state_backup_20260507.json not found",
+          "backup_path": null
+        },
+        "step6_load": {
+          "pass": null,
+          "detail": "UNKNOWN \u2014 no subsequent backup to verify load against",
+          "next_date": null,
+          "next_races": null
+        }
+      }
+    }
+  ]
+}

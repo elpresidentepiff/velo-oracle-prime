@@ -1,0 +1,4384 @@
+{
+  "date": "2026-05-02",
+  "status": "SHADOW_OPERATOR_ONLY",
+  "lane": "ACCA_LANE_V1",
+  "day_regime": "ACCA_DAY_PLAYABLE",
+  "candidates_scanned": 55,
+  "cashrun_status": "MISSING_OPTIONAL",
+  "industry_status": "MISSING_OPTIONAL",
+  "racing_api_enrichment_status": "USED",
+  "source_summary": {
+    "metadata_complete_n": 55,
+    "metadata_total_n": 55,
+    "metadata_coverage": 1.0
+  },
+  "role_counts": {
+    "BANKER": 2,
+    "GLUE": 6,
+    "BOOSTER": 3,
+    "WILDCARD": 8,
+    "TRAP": 36,
+    "BLOCKED": 0
+  },
+  "folds": {
+    "strongest_2_fold": {
+      "generated": true,
+      "size": 2,
+      "combo_score": 177.15,
+      "legs": [
+        {
+          "horse": "Tamam Star",
+          "course": "Thirsk",
+          "off_time": "1:35",
+          "race_name": "Steve Poskitt's 60th Birthday Restricted Maiden Stakes (Bands C and D) (GBB/IRE Incentive Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6111,
+          "place_prob": 0.903,
+          "mds": 0.3422,
+          "leg_score": 76.62
+        },
+        {
+          "horse": "Town Queen",
+          "course": "Thirsk",
+          "off_time": "2:10",
+          "race_name": "British EBF Fillies' Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6343,
+          "place_prob": 0.9711,
+          "mds": 0.442,
+          "leg_score": 79.42
+        }
+      ]
+    },
+    "strongest_3_fold": {
+      "generated": true,
+      "size": 3,
+      "combo_score": 250.92,
+      "legs": [
+        {
+          "horse": "Tamam Star",
+          "course": "Thirsk",
+          "off_time": "1:35",
+          "race_name": "Steve Poskitt's 60th Birthday Restricted Maiden Stakes (Bands C and D) (GBB/IRE Incentive Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6111,
+          "place_prob": 0.903,
+          "mds": 0.3422,
+          "leg_score": 76.62
+        },
+        {
+          "horse": "Town Queen",
+          "course": "Thirsk",
+          "off_time": "2:10",
+          "race_name": "British EBF Fillies' Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6343,
+          "place_prob": 0.9711,
+          "mds": 0.442,
+          "leg_score": 79.42
+        },
+        {
+          "horse": "Wodhooh",
+          "course": "Punchestown",
+          "off_time": "4:15",
+          "race_name": "SBK Irish EBF Mares Champion Hurdle (Grade 1)",
+          "leg_role": "GLUE",
+          "vp": 0.4234,
+          "place_prob": 0.9854,
+          "mds": 0.3808,
+          "leg_score": 74.63
+        }
+      ]
+    },
+    "strongest_4_fold": {
+      "generated": true,
+      "size": 4,
+      "combo_score": 323.21,
+      "legs": [
+        {
+          "horse": "Tamam Star",
+          "course": "Thirsk",
+          "off_time": "1:35",
+          "race_name": "Steve Poskitt's 60th Birthday Restricted Maiden Stakes (Bands C and D) (GBB/IRE Incentive Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6111,
+          "place_prob": 0.903,
+          "mds": 0.3422,
+          "leg_score": 76.62
+        },
+        {
+          "horse": "Town Queen",
+          "course": "Thirsk",
+          "off_time": "2:10",
+          "race_name": "British EBF Fillies' Novice Stakes (GBB Race)",
+          "leg_role": "BANKER",
+          "vp": 0.6343,
+          "place_prob": 0.9711,
+          "mds": 0.442,
+          "leg_score": 79.42
+        },
+        {
+          "horse": "Wodhooh",
+          "course": "Punchestown",
+          "off_time": "4:15",
+          "race_name": "SBK Irish EBF Mares Champion Hurdle (Grade 1)",
+          "leg_role": "GLUE",
+          "vp": 0.4234,
+          "place_prob": 0.9854,
+          "mds": 0.3808,
+          "leg_score": 74.63
+        },
+        {
+          "horse": "Rocket Boots",
+          "course": "Doncaster",
+          "off_time": "5:50",
+          "race_name": "Ings Environmental Susan Duker Memorial EBF Novice Stakes (GBB Race)",
+          "leg_role": "GLUE",
+          "vp": 0.505,
+          "place_prob": 0.827,
+          "mds": 0.2579,
+          "leg_score": 72.99
+        }
+      ]
+    },
+    "controlled_5_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    },
+    "speculative_6_fold": {
+      "generated": false,
+      "reason": "SUPPRESSED"
+    }
+  },
+  "trap_legs": [
+    {
+      "horse": "Tap Tap Shamie",
+      "horse_id": "hrs_41052235",
+      "race_id": "rac_11954163",
+      "course": "Uttoxeter",
+      "off_time": "1:55",
+      "race_name": "Support The Stoke City Foundation \"National Hunt\" Maiden Hurdle (GBB Race) (Div II)",
+      "vp": 0.4327,
+      "decision_tier": "B",
+      "place_prob": 0.8371,
+      "mds": 0.3452,
+      "improvement_score": 0.352,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.517,
+      "racing_api_connection_score": 0.542,
+      "racing_api_course_score": 0.517,
+      "racing_api_distance_score": 0.492,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 45.39,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 25.96,
+        "place_frame_score": 16.74,
+        "mds_market_shape_score": 8.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Double Digits",
+      "horse_id": "hrs_32682636",
+      "race_id": "rac_11912446",
+      "course": "Hexham",
+      "off_time": "6:45",
+      "race_name": "mybettingsites.com Handicap Hurdle",
+      "vp": 0.2837,
+      "decision_tier": "B",
+      "place_prob": 0.4262,
+      "mds": 0.0133,
+      "improvement_score": 0.015,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.591,
+      "racing_api_connection_score": 0.674,
+      "racing_api_course_score": 0.558,
+      "racing_api_distance_score": 0.541,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 39.94,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.02,
+        "place_frame_score": 8.52,
+        "mds_market_shape_score": 0.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.06,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Noelan Star",
+      "horse_id": "hrs_58316384",
+      "race_id": "rac_11915124",
+      "course": "Doncaster",
+      "off_time": "5:10",
+      "race_name": "Download The At The Races App Restricted Novice Stakes (For Horses In Bands B, C And D) (GBB Race)",
+      "vp": 0.3504,
+      "decision_tier": "B",
+      "place_prob": 0.7462,
+      "mds": 0.3648,
+      "improvement_score": 0.2196,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4787,
+      "racing_api_connection_score": 0.506,
+      "racing_api_course_score": 0.44,
+      "racing_api_distance_score": 0.49,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 39.12,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 21.02,
+        "place_frame_score": 14.92,
+        "mds_market_shape_score": 9.12,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Corsican Caper",
+      "horse_id": "hrs_31698016",
+      "race_id": "rac_11912537",
+      "course": "Uttoxeter",
+      "off_time": "3:50",
+      "race_name": "Pirtek UK & Ireland Handicap Hurdle",
+      "vp": 0.2438,
+      "decision_tier": "B",
+      "place_prob": 0.4737,
+      "mds": 0.0169,
+      "improvement_score": 0.0955,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3503,
+      "racing_api_connection_score": 0.322,
+      "racing_api_course_score": 0.391,
+      "racing_api_distance_score": 0.338,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 38.56,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.63,
+        "place_frame_score": 9.47,
+        "mds_market_shape_score": 0.42,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Appier",
+      "horse_id": "hrs_25427731",
+      "race_id": "rac_11914825",
+      "course": "Goodwood",
+      "off_time": "2:45",
+      "race_name": "Munro UK Equity Income Fund Handicap (GBBPlus Race)",
+      "vp": 0.2441,
+      "decision_tier": "B",
+      "place_prob": 0.4793,
+      "mds": 0.0084,
+      "improvement_score": 0.0358,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.378,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.334,
+      "racing_api_distance_score": 0.4,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 38.48,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.65,
+        "place_frame_score": 9.59,
+        "mds_market_shape_score": 0.21,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lexington Wood",
+      "horse_id": "hrs_51766309",
+      "race_id": "rac_11912563",
+      "course": "Uttoxeter",
+      "off_time": "1:20",
+      "race_name": "Support The Stoke City Foundation \"National Hunt\" Maiden Hurdle (GBB Race) (Div I)",
+      "vp": 0.3302,
+      "decision_tier": "B",
+      "place_prob": 0.4843,
+      "mds": 0.1916,
+      "improvement_score": 0.2622,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.517,
+      "racing_api_connection_score": 0.542,
+      "racing_api_course_score": 0.517,
+      "racing_api_distance_score": 0.492,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.34,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 19.81,
+        "place_frame_score": 9.69,
+        "mds_market_shape_score": 4.79,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Earnest Belief",
+      "horse_id": "hrs_52418212",
+      "race_id": "rac_11954137",
+      "course": "Hexham",
+      "off_time": "5:45",
+      "race_name": "Bobby Roberts Memorial Maiden Hurdle (GBB Race) (Div II)",
+      "vp": 0.2578,
+      "decision_tier": "B",
+      "place_prob": 0.2936,
+      "mds": 0.0792,
+      "improvement_score": 0.1161,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3497,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.296,
+      "racing_api_distance_score": 0.353,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 37.35,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.47,
+        "place_frame_score": 5.87,
+        "mds_market_shape_score": 1.98,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lady Hornblower",
+      "horse_id": "hrs_55148583",
+      "race_id": "rac_11915176",
+      "course": "Doncaster",
+      "off_time": "4:35",
+      "race_name": "Sky Sports Racing Sky 415 Handicap",
+      "vp": 0.267,
+      "decision_tier": "B",
+      "place_prob": 0.321,
+      "mds": 0.0085,
+      "improvement_score": 0.015,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3503,
+      "racing_api_connection_score": 0.406,
+      "racing_api_course_score": 0.354,
+      "racing_api_distance_score": 0.291,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.69,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 16.02,
+        "place_frame_score": 6.42,
+        "mds_market_shape_score": 0.21,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Alcarath",
+      "horse_id": "hrs_55273155",
+      "race_id": "rac_11901864",
+      "course": "Newmarket",
+      "off_time": "2:20",
+      "race_name": "Betfred Suffolk Stakes (Heritage Handicap)",
+      "vp": 0.1984,
+      "decision_tier": "B",
+      "place_prob": 0.5207,
+      "mds": 0.0131,
+      "improvement_score": 0.0807,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3433,
+      "racing_api_connection_score": 0.152,
+      "racing_api_course_score": 0.432,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.68,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.9,
+        "place_frame_score": 10.41,
+        "mds_market_shape_score": 0.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Gstaad",
+      "horse_id": "hrs_51766610",
+      "race_id": "rac_11875409",
+      "course": "Newmarket",
+      "off_time": "3:35",
+      "race_name": "Betfred 2000 Guineas Stakes (Group 1) (No Geldings)",
+      "vp": 0.1541,
+      "decision_tier": "B",
+      "place_prob": 0.6108,
+      "mds": 0.0468,
+      "improvement_score": 0.0763,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4553,
+      "racing_api_connection_score": 0.524,
+      "racing_api_course_score": 0.382,
+      "racing_api_distance_score": 0.46,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.68,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 9.25,
+        "place_frame_score": 12.22,
+        "mds_market_shape_score": 1.17,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "My Boy Christy",
+      "horse_id": "hrs_48052375",
+      "race_id": "rac_11912498",
+      "course": "Hexham",
+      "off_time": "8:15",
+      "race_name": "Winchcombe Working Mens FC Tour 2026 Handicap Hurdle",
+      "vp": 0.1981,
+      "decision_tier": "B",
+      "place_prob": 0.4933,
+      "mds": 0.0228,
+      "improvement_score": 0.0854,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.488,
+      "racing_api_connection_score": 0.996,
+      "racing_api_course_score": 0.457,
+      "racing_api_distance_score": 0.265,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.37,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.89,
+        "place_frame_score": 9.87,
+        "mds_market_shape_score": 0.57,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Saccary",
+      "horse_id": "hrs_30725520",
+      "race_id": "rac_11912602",
+      "course": "Uttoxeter",
+      "off_time": "12:45",
+      "race_name": "QuinnBet Daily Free Bet Handicap Hurdle",
+      "vp": 0.1911,
+      "decision_tier": "B",
+      "place_prob": 0.4921,
+      "mds": 0.0141,
+      "improvement_score": 0.0822,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4147,
+      "racing_api_connection_score": 0.444,
+      "racing_api_course_score": 0.403,
+      "racing_api_distance_score": 0.397,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 35.7,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.47,
+        "place_frame_score": 9.84,
+        "mds_market_shape_score": 0.35,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Tazaman",
+      "horse_id": "hrs_20050667",
+      "race_id": "rac_11915150",
+      "course": "Doncaster",
+      "off_time": "7:02",
+      "race_name": "Free Tips On attheraces.com Handicap",
+      "vp": 0.2355,
+      "decision_tier": "B",
+      "place_prob": 0.7786,
+      "mds": 0.0146,
+      "improvement_score": 0.0175,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3475,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.413,
+      "racing_api_distance_score": 0.282,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 34.1,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.13,
+        "place_frame_score": 15.57,
+        "mds_market_shape_score": 0.36,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ashdown Forest",
+      "horse_id": "hrs_45661735",
+      "race_id": "rac_11915254",
+      "course": "Thirsk",
+      "off_time": "3:15",
+      "race_name": "Sky Bet Sunday At Thirsk 31 May Book Now Handicap",
+      "vp": 0.2662,
+      "decision_tier": "B",
+      "place_prob": 0.6802,
+      "mds": 0.0119,
+      "improvement_score": 0.0063,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4267,
+      "racing_api_connection_score": 0.474,
+      "racing_api_course_score": 0.401,
+      "racing_api_distance_score": 0.405,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.92,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.97,
+        "place_frame_score": 13.6,
+        "mds_market_shape_score": 0.3,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Naval Light",
+      "horse_id": "hrs_53052223",
+      "race_id": "rac_11915007",
+      "course": "Newmarket",
+      "off_time": "4:10",
+      "race_name": "Turners Handicap",
+      "vp": 0.1894,
+      "decision_tier": "B",
+      "place_prob": 0.4039,
+      "mds": 0.0129,
+      "improvement_score": 0.0385,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4487,
+      "racing_api_connection_score": 0.464,
+      "racing_api_course_score": 0.428,
+      "racing_api_distance_score": 0.454,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 33.81,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.36,
+        "place_frame_score": 8.08,
+        "mds_market_shape_score": 0.32,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rock Opera",
+      "horse_id": "hrs_30016455",
+      "race_id": "rac_11915228",
+      "course": "Thirsk",
+      "off_time": "3:55",
+      "race_name": "Alison And Andrew Richardson Ruby Anniversary Handicap",
+      "vp": 0.2011,
+      "decision_tier": "B",
+      "place_prob": 0.2904,
+      "mds": 0.0092,
+      "improvement_score": 0.0099,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2913,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.4,
+      "racing_api_distance_score": 0.437,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 32.13,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.07,
+        "place_frame_score": 5.81,
+        "mds_market_shape_score": 0.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Flora Of Bermuda",
+      "horse_id": "hrs_35445375",
+      "race_id": "rac_11914981",
+      "course": "Newmarket",
+      "off_time": "1:10",
+      "race_name": "Oddschecker Ellen Chaloner Stakes (Listed Race) (Formerly The Kilvington Stakes) (Fillies & Mares)",
+      "vp": 0.2514,
+      "decision_tier": "B",
+      "place_prob": 0.5725,
+      "mds": 0.0451,
+      "improvement_score": 0.0529,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4408,
+      "racing_api_connection_score": 0.596,
+      "racing_api_course_score": 0.386,
+      "racing_api_distance_score": 0.418,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 31.71,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.08,
+        "place_frame_score": 11.45,
+        "mds_market_shape_score": 1.13,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Velvet Rhythm",
+      "horse_id": "hrs_55634152",
+      "race_id": "rac_11915033",
+      "course": "Newmarket",
+      "off_time": "5:20",
+      "race_name": "Air Charter Services \"Confined\" Handicap (For Horses Which Have Won No More Than One Race)",
+      "vp": 0.1739,
+      "decision_tier": "B",
+      "place_prob": 0.3129,
+      "mds": 0.0073,
+      "improvement_score": 0.0243,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.395,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.365,
+      "racing_api_distance_score": 0.425,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 30.91,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.43,
+        "place_frame_score": 6.26,
+        "mds_market_shape_score": 0.18,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Golly Gosh",
+      "horse_id": "hrs_51988888",
+      "race_id": "rac_11912589",
+      "course": "Uttoxeter",
+      "off_time": "4:20",
+      "race_name": "Pirtek Stoke Classic Novices' Handicap Hurdle",
+      "vp": 0.1929,
+      "decision_tier": "C",
+      "place_prob": 0.4557,
+      "mds": 0.02,
+      "improvement_score": 0.0743,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4613,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.492,
+      "racing_api_distance_score": 0.4,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 30.23,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.57,
+        "place_frame_score": 9.11,
+        "mds_market_shape_score": 0.5,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Berkshire Boom",
+      "horse_id": "hrs_50434671",
+      "race_id": "rac_11914838",
+      "course": "Goodwood",
+      "off_time": "4:30",
+      "race_name": "Fitzdares Offers Bespoke Bets Handicap",
+      "vp": 0.1775,
+      "decision_tier": "B",
+      "place_prob": 0.2312,
+      "mds": 0.0131,
+      "improvement_score": 0.0441,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4128,
+      "racing_api_connection_score": 0.472,
+      "racing_api_course_score": 0.319,
+      "racing_api_distance_score": 0.477,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 29.64,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.65,
+        "place_frame_score": 4.62,
+        "mds_market_shape_score": 0.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Party Vibes",
+      "horse_id": "hrs_34571411",
+      "race_id": "rac_11912524",
+      "course": "Uttoxeter",
+      "off_time": "2:35",
+      "race_name": "Staffordshire Chamber Of Commerce Staffordshire Plate Handicap Chase (GBB Race)",
+      "vp": 0.1836,
+      "decision_tier": "B",
+      "place_prob": 0.6718,
+      "mds": 0.0442,
+      "improvement_score": 0.1344,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2613,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.377,
+      "racing_api_distance_score": 0.407,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 29.58,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.02,
+        "place_frame_score": 13.44,
+        "mds_market_shape_score": 1.1,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Oscar's Sister",
+      "horse_id": "hrs_29228647",
+      "race_id": "rac_11915163",
+      "course": "Doncaster",
+      "off_time": "8:02",
+      "race_name": "attheraces.com/marketmovers Handicap",
+      "vp": 0.1891,
+      "decision_tier": "C",
+      "place_prob": 0.433,
+      "mds": 0.0064,
+      "improvement_score": 0.0282,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.455,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.509,
+      "racing_api_distance_score": 0.401,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 29.21,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.35,
+        "place_frame_score": 8.66,
+        "mds_market_shape_score": 0.16,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Play By The Rules",
+      "horse_id": "hrs_24959557",
+      "race_id": "rac_11912472",
+      "course": "Hexham",
+      "off_time": "7:15",
+      "race_name": "Elizabeth Elliott Birthday Celebration Handicap Chase",
+      "vp": 0.1958,
+      "decision_tier": "B",
+      "place_prob": 0.6359,
+      "mds": 0.0217,
+      "improvement_score": 0.0798,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.5527,
+      "racing_api_connection_score": 0.778,
+      "racing_api_course_score": 0.391,
+      "racing_api_distance_score": 0.489,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 29.06,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.75,
+        "place_frame_score": 12.72,
+        "mds_market_shape_score": 0.54,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.06,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Double Rush",
+      "horse_id": "hrs_44417534",
+      "race_id": "rac_11901851",
+      "course": "Newmarket",
+      "off_time": "1:45",
+      "race_name": "Betfred Handicap (Heritage Handicap)",
+      "vp": 0.2776,
+      "decision_tier": "B",
+      "place_prob": 0.7145,
+      "mds": 0.1296,
+      "improvement_score": 0.0708,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.42,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.449,
+      "racing_api_distance_score": 0.391,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 28.23,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 16.66,
+        "place_frame_score": 14.29,
+        "mds_market_shape_score": 3.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Oneforthegutter",
+      "horse_id": "hrs_25580702",
+      "race_id": "rac_11914994",
+      "course": "Newmarket",
+      "off_time": "4:45",
+      "race_name": "Boodles Handicap (GBBPlus Race)",
+      "vp": 0.1919,
+      "decision_tier": "B",
+      "place_prob": 0.5876,
+      "mds": 0.0169,
+      "improvement_score": 0.1165,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4768,
+      "racing_api_connection_score": 0.554,
+      "racing_api_course_score": 0.465,
+      "racing_api_distance_score": 0.45,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 27.74,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.51,
+        "place_frame_score": 11.75,
+        "mds_market_shape_score": 0.42,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Pride Of Place",
+      "horse_id": "hrs_35417151",
+      "race_id": "rac_11953110",
+      "course": "Punchestown",
+      "off_time": "6:35",
+      "race_name": "35th Running Of The \"Have The Conversation - Say Yes To Organ Donation\" Punchestown Charity Race",
+      "vp": 0.1796,
+      "decision_tier": "B",
+      "place_prob": 0.0125,
+      "mds": 0.003,
+      "improvement_score": 0.07,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.403,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.434,
+      "racing_api_distance_score": 0.372,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 25.14,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.78,
+        "place_frame_score": 0.25,
+        "mds_market_shape_score": 0.07,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Fakir d'Oudairies",
+      "horse_id": "hrs_13966008",
+      "race_id": "rac_11953058",
+      "course": "Punchestown",
+      "off_time": "2:30",
+      "race_name": "Howden Cross Country Chase",
+      "vp": 0.1431,
+      "decision_tier": "B",
+      "place_prob": 0.4779,
+      "mds": 0.0701,
+      "improvement_score": 0.0987,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4165,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.4,
+      "racing_api_distance_score": 0.433,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 23.94,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.59,
+        "place_frame_score": 9.56,
+        "mds_market_shape_score": 1.75,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Flight Plan",
+      "horse_id": "hrs_31996118",
+      "race_id": "rac_11915202",
+      "course": "Thirsk",
+      "off_time": "2:40",
+      "race_name": "Sky Bet Thirsk Hunt Cup Handicap",
+      "vp": 0.1286,
+      "decision_tier": "C",
+      "place_prob": 0.3041,
+      "mds": 0.0115,
+      "improvement_score": 0.015,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4063,
+      "racing_api_connection_score": 0.456,
+      "racing_api_course_score": 0.365,
+      "racing_api_distance_score": 0.398,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 23.13,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 7.72,
+        "place_frame_score": 6.08,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ski Lodge",
+      "horse_id": "hrs_35150325",
+      "race_id": "rac_11912550",
+      "course": "Uttoxeter",
+      "off_time": "4:50",
+      "race_name": "QuinnBet Handicap Chase (ARC Summer Chase Series Qualifier) (GBB Race)",
+      "vp": 0.1951,
+      "decision_tier": "B",
+      "place_prob": 0.2552,
+      "mds": 0.0208,
+      "improvement_score": 0.0121,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.493,
+      "racing_api_connection_score": 0.558,
+      "racing_api_course_score": 0.475,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 21.38,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.71,
+        "place_frame_score": 5.1,
+        "mds_market_shape_score": 0.52,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Shagraan",
+      "horse_id": "hrs_35554589",
+      "race_id": "rac_11914968",
+      "course": "Newmarket",
+      "off_time": "2:55",
+      "race_name": "HKJC World Pool Palace House Stakes (Group 3)",
+      "vp": 0.1235,
+      "decision_tier": "C",
+      "place_prob": 0.2169,
+      "mds": 0.0115,
+      "improvement_score": 0.0406,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4333,
+      "racing_api_connection_score": 0.46,
+      "racing_api_course_score": 0.397,
+      "racing_api_distance_score": 0.443,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 21.08,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 7.41,
+        "place_frame_score": 4.34,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Classic Encounter",
+      "horse_id": "hrs_36639925",
+      "race_id": "rac_11915020",
+      "course": "Newmarket",
+      "off_time": "5:55",
+      "race_name": "National Stud Handicap",
+      "vp": 0.1281,
+      "decision_tier": "C",
+      "place_prob": 0.1759,
+      "mds": 0.0118,
+      "improvement_score": 0.0177,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3963,
+      "racing_api_connection_score": 0.398,
+      "racing_api_course_score": 0.337,
+      "racing_api_distance_score": 0.454,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 20.54,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 7.69,
+        "place_frame_score": 3.52,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Apolon De Charnie",
+      "horse_id": "hrs_56931063",
+      "race_id": "rac_11935326",
+      "course": "Punchestown",
+      "off_time": "4:55",
+      "race_name": "Ballymore Champion Four Year Old Hurdle (Grade 1)",
+      "vp": 0.1346,
+      "decision_tier": "X",
+      "place_prob": 0.2685,
+      "mds": 0.0657,
+      "improvement_score": 0.0676,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.5423,
+      "racing_api_connection_score": 0.566,
+      "racing_api_course_score": 0.547,
+      "racing_api_distance_score": 0.514,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 5.14,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.08,
+        "place_frame_score": 5.37,
+        "mds_market_shape_score": 1.64,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.05,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Union Station",
+      "horse_id": "hrs_38884741",
+      "race_id": "rac_11953071",
+      "course": "Punchestown",
+      "off_time": "3:05",
+      "race_name": "DAR Golf Handicap Chase",
+      "vp": 0.0782,
+      "decision_tier": "X",
+      "place_prob": 0.4238,
+      "mds": 0.003,
+      "improvement_score": 0.0399,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3167,
+      "racing_api_connection_score": 0.328,
+      "racing_api_course_score": 0.311,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 4.69,
+        "place_frame_score": 8.48,
+        "mds_market_shape_score": 0.07,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Iceberg Theory",
+      "horse_id": "hrs_34457031",
+      "race_id": "rac_11953084",
+      "course": "Punchestown",
+      "off_time": "3:45",
+      "race_name": "Palmerstown House Estate Pat Taaffe Handicap Chase (Listed Race)",
+      "vp": 0.0836,
+      "decision_tier": "X",
+      "place_prob": 0.4618,
+      "mds": 0.0032,
+      "improvement_score": 0.0659,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2968,
+      "racing_api_connection_score": 0.164,
+      "racing_api_course_score": 0.261,
+      "racing_api_distance_score": 0.399,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 5.02,
+        "place_frame_score": 9.24,
+        "mds_market_shape_score": 0.08,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "One Big Boum",
+      "horse_id": "hrs_35175987",
+      "race_id": "rac_11939941",
+      "course": "Punchestown",
+      "off_time": "5:30",
+      "race_name": "Lawlor's Of Naas Handicap Hurdle (Listed Race)",
+      "vp": 0.0914,
+      "decision_tier": "X",
+      "place_prob": 0.5399,
+      "mds": 0.0092,
+      "improvement_score": 0.1127,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3323,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.2,
+      "racing_api_distance_score": 0.397,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 5.48,
+        "place_frame_score": 10.8,
+        "mds_market_shape_score": 0.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Runningtostandstil",
+      "horse_id": "hrs_64258047",
+      "race_id": "rac_11953097",
+      "course": "Punchestown",
+      "off_time": "6:05",
+      "race_name": "Sebden Steel Celebrating 30 Years In Business (Pro/Am) INH Flat Race",
+      "vp": 0.0932,
+      "decision_tier": "X",
+      "place_prob": 0.0934,
+      "mds": 0.033,
+      "improvement_score": 0.0837,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.47,
+      "racing_api_connection_score": 0.668,
+      "racing_api_course_score": 0.445,
+      "racing_api_distance_score": 0.396,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 5.59,
+        "place_frame_score": 1.87,
+        "mds_market_shape_score": 0.83,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.05,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ],
+  "rejected_legs": [
+    {
+      "horse": "Tap Tap Shamie",
+      "course": "Uttoxeter",
+      "off_time": "1:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Double Digits",
+      "course": "Hexham",
+      "off_time": "6:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Noelan Star",
+      "course": "Doncaster",
+      "off_time": "5:10",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Corsican Caper",
+      "course": "Uttoxeter",
+      "off_time": "3:50",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Appier",
+      "course": "Goodwood",
+      "off_time": "2:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Lexington Wood",
+      "course": "Uttoxeter",
+      "off_time": "1:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Earnest Belief",
+      "course": "Hexham",
+      "off_time": "5:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Lady Hornblower",
+      "course": "Doncaster",
+      "off_time": "4:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Alcarath",
+      "course": "Newmarket",
+      "off_time": "2:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Gstaad",
+      "course": "Newmarket",
+      "off_time": "3:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "My Boy Christy",
+      "course": "Hexham",
+      "off_time": "8:15",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Saccary",
+      "course": "Uttoxeter",
+      "off_time": "12:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Tazaman",
+      "course": "Doncaster",
+      "off_time": "7:02",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Ashdown Forest",
+      "course": "Thirsk",
+      "off_time": "3:15",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Naval Light",
+      "course": "Newmarket",
+      "off_time": "4:10",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Rock Opera",
+      "course": "Thirsk",
+      "off_time": "3:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Flora Of Bermuda",
+      "course": "Newmarket",
+      "off_time": "1:10",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Velvet Rhythm",
+      "course": "Newmarket",
+      "off_time": "5:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Golly Gosh",
+      "course": "Uttoxeter",
+      "off_time": "4:20",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Berkshire Boom",
+      "course": "Goodwood",
+      "off_time": "4:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Party Vibes",
+      "course": "Uttoxeter",
+      "off_time": "2:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Oscar's Sister",
+      "course": "Doncaster",
+      "off_time": "8:02",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Play By The Rules",
+      "course": "Hexham",
+      "off_time": "7:15",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Double Rush",
+      "course": "Newmarket",
+      "off_time": "1:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "HIGH_DECOY_RISK"
+      ]
+    },
+    {
+      "horse": "Oneforthegutter",
+      "course": "Newmarket",
+      "off_time": "4:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Pride Of Place",
+      "course": "Punchestown",
+      "off_time": "6:35",
+      "leg_role": "TRAP",
+      "reasons": [
+        "UNAUTHORISED_SELECTION"
+      ]
+    },
+    {
+      "horse": "Fakir d'Oudairies",
+      "course": "Punchestown",
+      "off_time": "2:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Flight Plan",
+      "course": "Thirsk",
+      "off_time": "2:40",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Ski Lodge",
+      "course": "Uttoxeter",
+      "off_time": "4:50",
+      "leg_role": "TRAP",
+      "reasons": [
+        "WEAK_MARGIN"
+      ]
+    },
+    {
+      "horse": "Shagraan",
+      "course": "Newmarket",
+      "off_time": "2:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Classic Encounter",
+      "course": "Newmarket",
+      "off_time": "5:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_ROT"
+      ]
+    },
+    {
+      "horse": "Apolon De Charnie",
+      "course": "Punchestown",
+      "off_time": "4:55",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X"
+      ]
+    },
+    {
+      "horse": "Union Station",
+      "course": "Punchestown",
+      "off_time": "3:05",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Iceberg Theory",
+      "course": "Punchestown",
+      "off_time": "3:45",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "One Big Boum",
+      "course": "Punchestown",
+      "off_time": "5:30",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ]
+    },
+    {
+      "horse": "Runningtostandstil",
+      "course": "Punchestown",
+      "off_time": "6:05",
+      "leg_role": "TRAP",
+      "reasons": [
+        "TIER_X"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "horse": "Town Queen",
+      "horse_id": "hrs_63840035",
+      "race_id": "rac_11915241",
+      "course": "Thirsk",
+      "off_time": "2:10",
+      "race_name": "British EBF Fillies' Novice Stakes (GBB Race)",
+      "vp": 0.6343,
+      "decision_tier": "A",
+      "place_prob": 0.9711,
+      "mds": 0.442,
+      "improvement_score": 0.3335,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4243,
+      "racing_api_connection_score": 0.456,
+      "racing_api_course_score": 0.365,
+      "racing_api_distance_score": 0.452,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 79.42,
+      "leg_role": "BANKER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 19.42,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Tamam Star",
+      "horse_id": "hrs_63811020",
+      "race_id": "rac_11915280",
+      "course": "Thirsk",
+      "off_time": "1:35",
+      "race_name": "Steve Poskitt's 60th Birthday Restricted Maiden Stakes (Bands C and D) (GBB/IRE Incentive Race)",
+      "vp": 0.6111,
+      "decision_tier": "A",
+      "place_prob": 0.903,
+      "mds": 0.3422,
+      "improvement_score": 0.2867,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4163,
+      "racing_api_connection_score": 0.456,
+      "racing_api_course_score": 0.365,
+      "racing_api_distance_score": 0.428,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 76.62,
+      "leg_role": "BANKER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 18.06,
+        "mds_market_shape_score": 8.55,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Wodhooh",
+      "horse_id": "hrs_32567745",
+      "race_id": "rac_11935313",
+      "course": "Punchestown",
+      "off_time": "4:15",
+      "race_name": "SBK Irish EBF Mares Champion Hurdle (Grade 1)",
+      "vp": 0.4234,
+      "decision_tier": "A",
+      "place_prob": 0.9854,
+      "mds": 0.3808,
+      "improvement_score": 0.0675,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4312,
+      "racing_api_connection_score": 0.466,
+      "racing_api_course_score": 0.421,
+      "racing_api_distance_score": 0.424,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 74.63,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 25.4,
+        "place_frame_score": 19.71,
+        "mds_market_shape_score": 9.52,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rocket Boots",
+      "horse_id": "hrs_63618758",
+      "race_id": "rac_11915137",
+      "course": "Doncaster",
+      "off_time": "5:50",
+      "race_name": "Ings Environmental Susan Duker Memorial EBF Novice Stakes (GBB Race)",
+      "vp": 0.505,
+      "decision_tier": "A",
+      "place_prob": 0.827,
+      "mds": 0.2579,
+      "improvement_score": 0.5848,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.537,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.575,
+      "racing_api_distance_score": 0.499,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 72.99,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 16.54,
+        "mds_market_shape_score": 6.45,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ciarrai Abu",
+      "horse_id": "hrs_56127575",
+      "race_id": "rac_11914799",
+      "course": "Goodwood",
+      "off_time": "12:55",
+      "race_name": "Elston Supports UK Financial Advisers Restricted Maiden Stakes (For Horses In Bands C And D) (GBB)",
+      "vp": 0.4653,
+      "decision_tier": "A",
+      "place_prob": 0.824,
+      "mds": 0.235,
+      "improvement_score": 0.2196,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.4324,
+      "racing_api_connection_score": 0.5,
+      "racing_api_course_score": 0.355,
+      "racing_api_distance_score": 0.476,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 70.27,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 27.92,
+        "place_frame_score": 16.48,
+        "mds_market_shape_score": 5.88,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Moonshine Man",
+      "horse_id": "hrs_45759630",
+      "race_id": "rac_11912433",
+      "course": "Hexham",
+      "off_time": "6:15",
+      "race_name": "Max And Naomi Are Getting Married Novices' Limited Handicap Chase (GBB Race)",
+      "vp": 0.5776,
+      "decision_tier": "A",
+      "place_prob": 0.934,
+      "mds": 0.039,
+      "improvement_score": 0.0773,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.3344,
+      "racing_api_connection_score": 0.192,
+      "racing_api_course_score": 0.416,
+      "racing_api_distance_score": 0.436,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 69.66,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 30.0,
+        "place_frame_score": 18.68,
+        "mds_market_shape_score": 0.97,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Blue Bolt",
+      "horse_id": "hrs_51523920",
+      "race_id": "rac_11914864",
+      "course": "Goodwood",
+      "off_time": "2:05",
+      "race_name": "Fitzdares Conqueror Fillies' Stakes (Listed Race)",
+      "vp": 0.3943,
+      "decision_tier": "A",
+      "place_prob": 0.9008,
+      "mds": 0.2311,
+      "improvement_score": 0.029,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.5284,
+      "racing_api_connection_score": 0.862,
+      "racing_api_course_score": 0.444,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 67.45,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 23.66,
+        "place_frame_score": 18.02,
+        "mds_market_shape_score": 5.78,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Trucial Pearl",
+      "horse_id": "hrs_54464081",
+      "race_id": "rac_11915189",
+      "course": "Doncaster",
+      "off_time": "7:32",
+      "race_name": "Free Race Replays On attheraces.com Handicap",
+      "vp": 0.4542,
+      "decision_tier": "A",
+      "place_prob": 0.9621,
+      "mds": 0.029,
+      "improvement_score": 0.1428,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3212,
+      "racing_api_connection_score": 0.232,
+      "racing_api_course_score": 0.271,
+      "racing_api_distance_score": 0.416,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 67.22,
+      "leg_role": "GLUE",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 27.25,
+        "place_frame_score": 19.24,
+        "mds_market_shape_score": 0.73,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Seeyouinmydreams",
+      "horse_id": "hrs_30016182",
+      "race_id": "rac_11912511",
+      "course": "Hexham",
+      "off_time": "4:40",
+      "race_name": "mybettingsites.com/ie Everything New On Irish Bookies Selling Hurdle",
+      "vp": 0.4592,
+      "decision_tier": "B",
+      "place_prob": 0.9987,
+      "mds": 0.5478,
+      "improvement_score": 0.2926,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.5056,
+      "racing_api_connection_score": 0.478,
+      "racing_api_course_score": 0.64,
+      "racing_api_distance_score": 0.466,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 61.58,
+      "leg_role": "BOOSTER",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 27.55,
+        "place_frame_score": 19.97,
+        "mds_market_shape_score": 10.0,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Fitzella",
+      "horse_id": "hrs_49141729",
+      "race_id": "rac_11939824",
+      "course": "Goodwood",
+      "off_time": "1:30",
+      "race_name": "Fitzdares Chelmer Fillies' Stakes (Listed Race)",
+      "vp": 0.3614,
+      "decision_tier": "A",
+      "place_prob": 0.8636,
+      "mds": 0.0785,
+      "improvement_score": 0.0783,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.454,
+      "racing_api_connection_score": 0.604,
+      "racing_api_course_score": 0.403,
+      "racing_api_distance_score": 0.43,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 60.92,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 21.68,
+        "place_frame_score": 17.27,
+        "mds_market_shape_score": 1.96,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Tom Desjy",
+      "horse_id": "hrs_41052067",
+      "race_id": "rac_11912576",
+      "course": "Uttoxeter",
+      "off_time": "3:10",
+      "race_name": "Lord Thomas Playdough Ryan Novices' Handicap Chase",
+      "vp": 0.3454,
+      "decision_tier": "A",
+      "place_prob": 0.7777,
+      "mds": 0.1803,
+      "improvement_score": 0.1631,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.495,
+      "racing_api_connection_score": 0.542,
+      "racing_api_course_score": 0.484,
+      "racing_api_distance_score": 0.459,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 60.79,
+      "leg_role": "BOOSTER",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 20.72,
+        "place_frame_score": 15.55,
+        "mds_market_shape_score": 4.51,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 20.0,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Papa Cocktail",
+      "horse_id": "hrs_23566375",
+      "race_id": "rac_11915111",
+      "course": "Doncaster",
+      "off_time": "6:27",
+      "race_name": "Sky Sports Racing Virgin 512 Handicap",
+      "vp": 0.3085,
+      "decision_tier": "B",
+      "place_prob": 0.7644,
+      "mds": 0.0279,
+      "improvement_score": 0.127,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.403,
+      "racing_api_connection_score": 0.428,
+      "racing_api_course_score": 0.383,
+      "racing_api_distance_score": 0.398,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 48.54,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.51,
+        "place_frame_score": 15.29,
+        "mds_market_shape_score": 0.7,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Crackalackin",
+      "horse_id": "hrs_47868618",
+      "race_id": "rac_11912485",
+      "course": "Hexham",
+      "off_time": "5:15",
+      "race_name": "Bobby Roberts Memorial Maiden Hurdle (GBB Race) (Div I)",
+      "vp": 0.3142,
+      "decision_tier": "B",
+      "place_prob": 0.6067,
+      "mds": 0.0933,
+      "improvement_score": 0.1836,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.402,
+      "racing_api_connection_score": 0.38,
+      "racing_api_course_score": 0.345,
+      "racing_api_distance_score": 0.481,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 47.36,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 18.85,
+        "place_frame_score": 12.13,
+        "mds_market_shape_score": 2.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rory Rocket",
+      "horse_id": "hrs_44721698",
+      "race_id": "rac_11914851",
+      "course": "Goodwood",
+      "off_time": "3:20",
+      "race_name": "Highclere Castle Gin Handicap",
+      "vp": 0.2585,
+      "decision_tier": "B",
+      "place_prob": 0.8433,
+      "mds": 0.0157,
+      "improvement_score": 0.0807,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.325,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.497,
+      "racing_api_distance_score": 0.153,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 46.8,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.51,
+        "place_frame_score": 16.87,
+        "mds_market_shape_score": 0.39,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Startled",
+      "horse_id": "hrs_49144144",
+      "race_id": "rac_11914812",
+      "course": "Goodwood",
+      "off_time": "5:05",
+      "race_name": "Fitzdares Telephone And Text Betting Service Handicap",
+      "vp": 0.2875,
+      "decision_tier": "B",
+      "place_prob": 0.6878,
+      "mds": 0.019,
+      "improvement_score": 0.0783,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3977,
+      "racing_api_connection_score": 0.498,
+      "racing_api_course_score": 0.249,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 45.52,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.25,
+        "place_frame_score": 13.76,
+        "mds_market_shape_score": 0.47,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Tap Tap Shamie",
+      "horse_id": "hrs_41052235",
+      "race_id": "rac_11954163",
+      "course": "Uttoxeter",
+      "off_time": "1:55",
+      "race_name": "Support The Stoke City Foundation \"National Hunt\" Maiden Hurdle (GBB Race) (Div II)",
+      "vp": 0.4327,
+      "decision_tier": "B",
+      "place_prob": 0.8371,
+      "mds": 0.3452,
+      "improvement_score": 0.352,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.517,
+      "racing_api_connection_score": 0.542,
+      "racing_api_course_score": 0.517,
+      "racing_api_distance_score": 0.492,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 45.39,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 25.96,
+        "place_frame_score": 16.74,
+        "mds_market_shape_score": 8.63,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Halfway House Lad",
+      "horse_id": "hrs_33644408",
+      "race_id": "rac_11912459",
+      "course": "Hexham",
+      "off_time": "7:45",
+      "race_name": "drainrat.co.uk Rat Entry Diagnosis Specialist Handicap Chase",
+      "vp": 0.2493,
+      "decision_tier": "B",
+      "place_prob": 0.7298,
+      "mds": 0.0346,
+      "improvement_score": 0.0962,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4984,
+      "racing_api_connection_score": 0.61,
+      "racing_api_course_score": 0.596,
+      "racing_api_distance_score": 0.345,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 44.47,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.96,
+        "place_frame_score": 14.6,
+        "mds_market_shape_score": 0.86,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Kiss Me My Love",
+      "horse_id": "hrs_41090882",
+      "race_id": "rac_11915267",
+      "course": "Thirsk",
+      "off_time": "5:00",
+      "race_name": "Sky Bet Irish Day Saturday 16th May Book Now Handicap",
+      "vp": 0.2472,
+      "decision_tier": "B",
+      "place_prob": 0.6197,
+      "mds": 0.0167,
+      "improvement_score": 0.0228,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.412,
+      "racing_api_connection_score": 0.524,
+      "racing_api_course_score": 0.336,
+      "racing_api_distance_score": 0.376,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 41.68,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.83,
+        "place_frame_score": 12.39,
+        "mds_market_shape_score": 0.42,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Equity Law",
+      "horse_id": "hrs_34472893",
+      "race_id": "rac_11915215",
+      "course": "Thirsk",
+      "off_time": "4:25",
+      "race_name": "Every Race Live On Racing TV Handicap",
+      "vp": 0.218,
+      "decision_tier": "B",
+      "place_prob": 0.6722,
+      "mds": 0.0146,
+      "improvement_score": 0.0773,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3408,
+      "racing_api_connection_score": 0.342,
+      "racing_api_course_score": 0.312,
+      "racing_api_distance_score": 0.369,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 40.92,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 13.08,
+        "place_frame_score": 13.44,
+        "mds_market_shape_score": 0.36,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Urban Glimpse",
+      "horse_id": "hrs_44384592",
+      "race_id": "rac_11914786",
+      "course": "Goodwood",
+      "off_time": "4:00",
+      "race_name": "Listen To Track Radio Next Week Handicap",
+      "vp": 0.1921,
+      "decision_tier": "B",
+      "place_prob": 0.7313,
+      "mds": 0.0186,
+      "improvement_score": 0.0788,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4152,
+      "racing_api_connection_score": 0.472,
+      "racing_api_course_score": 0.319,
+      "racing_api_distance_score": 0.483,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 40.66,
+      "leg_role": "WILDCARD",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.53,
+        "place_frame_score": 14.63,
+        "mds_market_shape_score": 0.46,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Double Digits",
+      "horse_id": "hrs_32682636",
+      "race_id": "rac_11912446",
+      "course": "Hexham",
+      "off_time": "6:45",
+      "race_name": "mybettingsites.com Handicap Hurdle",
+      "vp": 0.2837,
+      "decision_tier": "B",
+      "place_prob": 0.4262,
+      "mds": 0.0133,
+      "improvement_score": 0.015,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.591,
+      "racing_api_connection_score": 0.674,
+      "racing_api_course_score": 0.558,
+      "racing_api_distance_score": 0.541,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 39.94,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 17.02,
+        "place_frame_score": 8.52,
+        "mds_market_shape_score": 0.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.06,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Noelan Star",
+      "horse_id": "hrs_58316384",
+      "race_id": "rac_11915124",
+      "course": "Doncaster",
+      "off_time": "5:10",
+      "race_name": "Download The At The Races App Restricted Novice Stakes (For Horses In Bands B, C And D) (GBB Race)",
+      "vp": 0.3504,
+      "decision_tier": "B",
+      "place_prob": 0.7462,
+      "mds": 0.3648,
+      "improvement_score": 0.2196,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4787,
+      "racing_api_connection_score": 0.506,
+      "racing_api_course_score": 0.44,
+      "racing_api_distance_score": 0.49,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 39.12,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 21.02,
+        "place_frame_score": 14.92,
+        "mds_market_shape_score": 9.12,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Corsican Caper",
+      "horse_id": "hrs_31698016",
+      "race_id": "rac_11912537",
+      "course": "Uttoxeter",
+      "off_time": "3:50",
+      "race_name": "Pirtek UK & Ireland Handicap Hurdle",
+      "vp": 0.2438,
+      "decision_tier": "B",
+      "place_prob": 0.4737,
+      "mds": 0.0169,
+      "improvement_score": 0.0955,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3503,
+      "racing_api_connection_score": 0.322,
+      "racing_api_course_score": 0.391,
+      "racing_api_distance_score": 0.338,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 38.56,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.63,
+        "place_frame_score": 9.47,
+        "mds_market_shape_score": 0.42,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Appier",
+      "horse_id": "hrs_25427731",
+      "race_id": "rac_11914825",
+      "course": "Goodwood",
+      "off_time": "2:45",
+      "race_name": "Munro UK Equity Income Fund Handicap (GBBPlus Race)",
+      "vp": 0.2441,
+      "decision_tier": "B",
+      "place_prob": 0.4793,
+      "mds": 0.0084,
+      "improvement_score": 0.0358,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.378,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.334,
+      "racing_api_distance_score": 0.4,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 38.48,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.65,
+        "place_frame_score": 9.59,
+        "mds_market_shape_score": 0.21,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lexington Wood",
+      "horse_id": "hrs_51766309",
+      "race_id": "rac_11912563",
+      "course": "Uttoxeter",
+      "off_time": "1:20",
+      "race_name": "Support The Stoke City Foundation \"National Hunt\" Maiden Hurdle (GBB Race) (Div I)",
+      "vp": 0.3302,
+      "decision_tier": "B",
+      "place_prob": 0.4843,
+      "mds": 0.1916,
+      "improvement_score": 0.2622,
+      "candidate_execution_allowed": true,
+      "racing_api_enrichment_score": 0.517,
+      "racing_api_connection_score": 0.542,
+      "racing_api_course_score": 0.517,
+      "racing_api_distance_score": 0.492,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 38.34,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 19.81,
+        "place_frame_score": 9.69,
+        "mds_market_shape_score": 4.79,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Earnest Belief",
+      "horse_id": "hrs_52418212",
+      "race_id": "rac_11954137",
+      "course": "Hexham",
+      "off_time": "5:45",
+      "race_name": "Bobby Roberts Memorial Maiden Hurdle (GBB Race) (Div II)",
+      "vp": 0.2578,
+      "decision_tier": "B",
+      "place_prob": 0.2936,
+      "mds": 0.0792,
+      "improvement_score": 0.1161,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3497,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.296,
+      "racing_api_distance_score": 0.353,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 37.35,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.47,
+        "place_frame_score": 5.87,
+        "mds_market_shape_score": 1.98,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Lady Hornblower",
+      "horse_id": "hrs_55148583",
+      "race_id": "rac_11915176",
+      "course": "Doncaster",
+      "off_time": "4:35",
+      "race_name": "Sky Sports Racing Sky 415 Handicap",
+      "vp": 0.267,
+      "decision_tier": "B",
+      "place_prob": 0.321,
+      "mds": 0.0085,
+      "improvement_score": 0.015,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3503,
+      "racing_api_connection_score": 0.406,
+      "racing_api_course_score": 0.354,
+      "racing_api_distance_score": 0.291,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.69,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 16.02,
+        "place_frame_score": 6.42,
+        "mds_market_shape_score": 0.21,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Alcarath",
+      "horse_id": "hrs_55273155",
+      "race_id": "rac_11901864",
+      "course": "Newmarket",
+      "off_time": "2:20",
+      "race_name": "Betfred Suffolk Stakes (Heritage Handicap)",
+      "vp": 0.1984,
+      "decision_tier": "B",
+      "place_prob": 0.5207,
+      "mds": 0.0131,
+      "improvement_score": 0.0807,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3433,
+      "racing_api_connection_score": 0.152,
+      "racing_api_course_score": 0.432,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.68,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.9,
+        "place_frame_score": 10.41,
+        "mds_market_shape_score": 0.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Gstaad",
+      "horse_id": "hrs_51766610",
+      "race_id": "rac_11875409",
+      "course": "Newmarket",
+      "off_time": "3:35",
+      "race_name": "Betfred 2000 Guineas Stakes (Group 1) (No Geldings)",
+      "vp": 0.1541,
+      "decision_tier": "B",
+      "place_prob": 0.6108,
+      "mds": 0.0468,
+      "improvement_score": 0.0763,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4553,
+      "racing_api_connection_score": 0.524,
+      "racing_api_course_score": 0.382,
+      "racing_api_distance_score": 0.46,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.68,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 9.25,
+        "place_frame_score": 12.22,
+        "mds_market_shape_score": 1.17,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "My Boy Christy",
+      "horse_id": "hrs_48052375",
+      "race_id": "rac_11912498",
+      "course": "Hexham",
+      "off_time": "8:15",
+      "race_name": "Winchcombe Working Mens FC Tour 2026 Handicap Hurdle",
+      "vp": 0.1981,
+      "decision_tier": "B",
+      "place_prob": 0.4933,
+      "mds": 0.0228,
+      "improvement_score": 0.0854,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.488,
+      "racing_api_connection_score": 0.996,
+      "racing_api_course_score": 0.457,
+      "racing_api_distance_score": 0.265,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 36.37,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.89,
+        "place_frame_score": 9.87,
+        "mds_market_shape_score": 0.57,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Saccary",
+      "horse_id": "hrs_30725520",
+      "race_id": "rac_11912602",
+      "course": "Uttoxeter",
+      "off_time": "12:45",
+      "race_name": "QuinnBet Daily Free Bet Handicap Hurdle",
+      "vp": 0.1911,
+      "decision_tier": "B",
+      "place_prob": 0.4921,
+      "mds": 0.0141,
+      "improvement_score": 0.0822,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4147,
+      "racing_api_connection_score": 0.444,
+      "racing_api_course_score": 0.403,
+      "racing_api_distance_score": 0.397,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 35.7,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.47,
+        "place_frame_score": 9.84,
+        "mds_market_shape_score": 0.35,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Tazaman",
+      "horse_id": "hrs_20050667",
+      "race_id": "rac_11915150",
+      "course": "Doncaster",
+      "off_time": "7:02",
+      "race_name": "Free Tips On attheraces.com Handicap",
+      "vp": 0.2355,
+      "decision_tier": "B",
+      "place_prob": 0.7786,
+      "mds": 0.0146,
+      "improvement_score": 0.0175,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3475,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.413,
+      "racing_api_distance_score": 0.282,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 34.1,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 14.13,
+        "place_frame_score": 15.57,
+        "mds_market_shape_score": 0.36,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ashdown Forest",
+      "horse_id": "hrs_45661735",
+      "race_id": "rac_11915254",
+      "course": "Thirsk",
+      "off_time": "3:15",
+      "race_name": "Sky Bet Sunday At Thirsk 31 May Book Now Handicap",
+      "vp": 0.2662,
+      "decision_tier": "B",
+      "place_prob": 0.6802,
+      "mds": 0.0119,
+      "improvement_score": 0.0063,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4267,
+      "racing_api_connection_score": 0.474,
+      "racing_api_course_score": 0.401,
+      "racing_api_distance_score": 0.405,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 33.92,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.97,
+        "place_frame_score": 13.6,
+        "mds_market_shape_score": 0.3,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Naval Light",
+      "horse_id": "hrs_53052223",
+      "race_id": "rac_11915007",
+      "course": "Newmarket",
+      "off_time": "4:10",
+      "race_name": "Turners Handicap",
+      "vp": 0.1894,
+      "decision_tier": "B",
+      "place_prob": 0.4039,
+      "mds": 0.0129,
+      "improvement_score": 0.0385,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4487,
+      "racing_api_connection_score": 0.464,
+      "racing_api_course_score": 0.428,
+      "racing_api_distance_score": 0.454,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 33.81,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.36,
+        "place_frame_score": 8.08,
+        "mds_market_shape_score": 0.32,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Rock Opera",
+      "horse_id": "hrs_30016455",
+      "race_id": "rac_11915228",
+      "course": "Thirsk",
+      "off_time": "3:55",
+      "race_name": "Alison And Andrew Richardson Ruby Anniversary Handicap",
+      "vp": 0.2011,
+      "decision_tier": "B",
+      "place_prob": 0.2904,
+      "mds": 0.0092,
+      "improvement_score": 0.0099,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2913,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.4,
+      "racing_api_distance_score": 0.437,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 32.13,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 12.07,
+        "place_frame_score": 5.81,
+        "mds_market_shape_score": 0.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.03,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Flora Of Bermuda",
+      "horse_id": "hrs_35445375",
+      "race_id": "rac_11914981",
+      "course": "Newmarket",
+      "off_time": "1:10",
+      "race_name": "Oddschecker Ellen Chaloner Stakes (Listed Race) (Formerly The Kilvington Stakes) (Fillies & Mares)",
+      "vp": 0.2514,
+      "decision_tier": "B",
+      "place_prob": 0.5725,
+      "mds": 0.0451,
+      "improvement_score": 0.0529,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4408,
+      "racing_api_connection_score": 0.596,
+      "racing_api_course_score": 0.386,
+      "racing_api_distance_score": 0.418,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 31.71,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 15.08,
+        "place_frame_score": 11.45,
+        "mds_market_shape_score": 1.13,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Velvet Rhythm",
+      "horse_id": "hrs_55634152",
+      "race_id": "rac_11915033",
+      "course": "Newmarket",
+      "off_time": "5:20",
+      "race_name": "Air Charter Services \"Confined\" Handicap (For Horses Which Have Won No More Than One Race)",
+      "vp": 0.1739,
+      "decision_tier": "B",
+      "place_prob": 0.3129,
+      "mds": 0.0073,
+      "improvement_score": 0.0243,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.395,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.365,
+      "racing_api_distance_score": 0.425,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 30.91,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.43,
+        "place_frame_score": 6.26,
+        "mds_market_shape_score": 0.18,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Golly Gosh",
+      "horse_id": "hrs_51988888",
+      "race_id": "rac_11912589",
+      "course": "Uttoxeter",
+      "off_time": "4:20",
+      "race_name": "Pirtek Stoke Classic Novices' Handicap Hurdle",
+      "vp": 0.1929,
+      "decision_tier": "C",
+      "place_prob": 0.4557,
+      "mds": 0.02,
+      "improvement_score": 0.0743,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4613,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.492,
+      "racing_api_distance_score": 0.4,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 30.23,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.57,
+        "place_frame_score": 9.11,
+        "mds_market_shape_score": 0.5,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Berkshire Boom",
+      "horse_id": "hrs_50434671",
+      "race_id": "rac_11914838",
+      "course": "Goodwood",
+      "off_time": "4:30",
+      "race_name": "Fitzdares Offers Bespoke Bets Handicap",
+      "vp": 0.1775,
+      "decision_tier": "B",
+      "place_prob": 0.2312,
+      "mds": 0.0131,
+      "improvement_score": 0.0441,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4128,
+      "racing_api_connection_score": 0.472,
+      "racing_api_course_score": 0.319,
+      "racing_api_distance_score": 0.477,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 29.64,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.65,
+        "place_frame_score": 4.62,
+        "mds_market_shape_score": 0.33,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Party Vibes",
+      "horse_id": "hrs_34571411",
+      "race_id": "rac_11912524",
+      "course": "Uttoxeter",
+      "off_time": "2:35",
+      "race_name": "Staffordshire Chamber Of Commerce Staffordshire Plate Handicap Chase (GBB Race)",
+      "vp": 0.1836,
+      "decision_tier": "B",
+      "place_prob": 0.6718,
+      "mds": 0.0442,
+      "improvement_score": 0.1344,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2613,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.377,
+      "racing_api_distance_score": 0.407,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 29.58,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.02,
+        "place_frame_score": 13.44,
+        "mds_market_shape_score": 1.1,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.03,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Oscar's Sister",
+      "horse_id": "hrs_29228647",
+      "race_id": "rac_11915163",
+      "course": "Doncaster",
+      "off_time": "8:02",
+      "race_name": "attheraces.com/marketmovers Handicap",
+      "vp": 0.1891,
+      "decision_tier": "C",
+      "place_prob": 0.433,
+      "mds": 0.0064,
+      "improvement_score": 0.0282,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.455,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.509,
+      "racing_api_distance_score": 0.401,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 29.21,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.35,
+        "place_frame_score": 8.66,
+        "mds_market_shape_score": 0.16,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.05,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Play By The Rules",
+      "horse_id": "hrs_24959557",
+      "race_id": "rac_11912472",
+      "course": "Hexham",
+      "off_time": "7:15",
+      "race_name": "Elizabeth Elliott Birthday Celebration Handicap Chase",
+      "vp": 0.1958,
+      "decision_tier": "B",
+      "place_prob": 0.6359,
+      "mds": 0.0217,
+      "improvement_score": 0.0798,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.5527,
+      "racing_api_connection_score": 0.778,
+      "racing_api_course_score": 0.391,
+      "racing_api_distance_score": 0.489,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 29.06,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.75,
+        "place_frame_score": 12.72,
+        "mds_market_shape_score": 0.54,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.06,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Double Rush",
+      "horse_id": "hrs_44417534",
+      "race_id": "rac_11901851",
+      "course": "Newmarket",
+      "off_time": "1:45",
+      "race_name": "Betfred Handicap (Heritage Handicap)",
+      "vp": 0.2776,
+      "decision_tier": "B",
+      "place_prob": 0.7145,
+      "mds": 0.1296,
+      "improvement_score": 0.0708,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.42,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.449,
+      "racing_api_distance_score": 0.391,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "suppress_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "leg_score": 28.23,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "HIGH_DECOY_RISK"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 16.66,
+        "place_frame_score": 14.29,
+        "mds_market_shape_score": 3.24,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 18.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Oneforthegutter",
+      "horse_id": "hrs_25580702",
+      "race_id": "rac_11914994",
+      "course": "Newmarket",
+      "off_time": "4:45",
+      "race_name": "Boodles Handicap (GBBPlus Race)",
+      "vp": 0.1919,
+      "decision_tier": "B",
+      "place_prob": 0.5876,
+      "mds": 0.0169,
+      "improvement_score": 0.1165,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4768,
+      "racing_api_connection_score": 0.554,
+      "racing_api_course_score": 0.465,
+      "racing_api_distance_score": 0.45,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 27.74,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.51,
+        "place_frame_score": 11.75,
+        "mds_market_shape_score": 0.42,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Pride Of Place",
+      "horse_id": "hrs_35417151",
+      "race_id": "rac_11953110",
+      "course": "Punchestown",
+      "off_time": "6:35",
+      "race_name": "35th Running Of The \"Have The Conversation - Say Yes To Organ Donation\" Punchestown Charity Race",
+      "vp": 0.1796,
+      "decision_tier": "B",
+      "place_prob": 0.0125,
+      "mds": 0.003,
+      "improvement_score": 0.07,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.403,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.434,
+      "racing_api_distance_score": 0.372,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "suppress_flags": [
+        "UNAUTHORISED_SELECTION"
+      ],
+      "leg_score": 25.14,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 10.78,
+        "place_frame_score": 0.25,
+        "mds_market_shape_score": 0.07,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 14.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Fakir d'Oudairies",
+      "horse_id": "hrs_13966008",
+      "race_id": "rac_11953058",
+      "course": "Punchestown",
+      "off_time": "2:30",
+      "race_name": "Howden Cross Country Chase",
+      "vp": 0.1431,
+      "decision_tier": "B",
+      "place_prob": 0.4779,
+      "mds": 0.0701,
+      "improvement_score": 0.0987,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4165,
+      "racing_api_connection_score": null,
+      "racing_api_course_score": 0.4,
+      "racing_api_distance_score": 0.433,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 23.94,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.59,
+        "place_frame_score": 9.56,
+        "mds_market_shape_score": 1.75,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.04,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Flight Plan",
+      "horse_id": "hrs_31996118",
+      "race_id": "rac_11915202",
+      "course": "Thirsk",
+      "off_time": "2:40",
+      "race_name": "Sky Bet Thirsk Hunt Cup Handicap",
+      "vp": 0.1286,
+      "decision_tier": "C",
+      "place_prob": 0.3041,
+      "mds": 0.0115,
+      "improvement_score": 0.015,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4063,
+      "racing_api_connection_score": 0.456,
+      "racing_api_course_score": 0.365,
+      "racing_api_distance_score": 0.398,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 23.13,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 7.72,
+        "place_frame_score": 6.08,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Ski Lodge",
+      "horse_id": "hrs_35150325",
+      "race_id": "rac_11912550",
+      "course": "Uttoxeter",
+      "off_time": "4:50",
+      "race_name": "QuinnBet Handicap Chase (ARC Summer Chase Series Qualifier) (GBB Race)",
+      "vp": 0.1951,
+      "decision_tier": "B",
+      "place_prob": 0.2552,
+      "mds": 0.0208,
+      "improvement_score": 0.0121,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.493,
+      "racing_api_connection_score": 0.558,
+      "racing_api_course_score": 0.475,
+      "racing_api_distance_score": 0.446,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "WEAK_MARGIN"
+      ],
+      "suppress_flags": [
+        "WEAK_MARGIN"
+      ],
+      "leg_score": 21.38,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "WEAK_MARGIN"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 11.71,
+        "place_frame_score": 5.1,
+        "mds_market_shape_score": 0.52,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 12.05,
+        "negative_adjustments": 8.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Shagraan",
+      "horse_id": "hrs_35554589",
+      "race_id": "rac_11914968",
+      "course": "Newmarket",
+      "off_time": "2:55",
+      "race_name": "HKJC World Pool Palace House Stakes (Group 3)",
+      "vp": 0.1235,
+      "decision_tier": "C",
+      "place_prob": 0.2169,
+      "mds": 0.0115,
+      "improvement_score": 0.0406,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.4333,
+      "racing_api_connection_score": 0.46,
+      "racing_api_course_score": 0.397,
+      "racing_api_distance_score": 0.443,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 21.08,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 7.41,
+        "place_frame_score": 4.34,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Classic Encounter",
+      "horse_id": "hrs_36639925",
+      "race_id": "rac_11915020",
+      "course": "Newmarket",
+      "off_time": "5:55",
+      "race_name": "National Stud Handicap",
+      "vp": 0.1281,
+      "decision_tier": "C",
+      "place_prob": 0.1759,
+      "mds": 0.0118,
+      "improvement_score": 0.0177,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3963,
+      "racing_api_connection_score": 0.398,
+      "racing_api_course_score": 0.337,
+      "racing_api_distance_score": 0.454,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "TIER_ROT"
+      ],
+      "suppress_flags": [
+        "TIER_ROT"
+      ],
+      "leg_score": 20.54,
+      "leg_role": "TRAP",
+      "trap_flags": [],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 7.69,
+        "place_frame_score": 3.52,
+        "mds_market_shape_score": 0.29,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 9.04,
+        "negative_adjustments": 0.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Apolon De Charnie",
+      "horse_id": "hrs_56931063",
+      "race_id": "rac_11935326",
+      "course": "Punchestown",
+      "off_time": "4:55",
+      "race_name": "Ballymore Champion Four Year Old Hurdle (Grade 1)",
+      "vp": 0.1346,
+      "decision_tier": "X",
+      "place_prob": 0.2685,
+      "mds": 0.0657,
+      "improvement_score": 0.0676,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.5423,
+      "racing_api_connection_score": 0.566,
+      "racing_api_course_score": 0.547,
+      "racing_api_distance_score": 0.514,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 5.14,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 8.08,
+        "place_frame_score": 5.37,
+        "mds_market_shape_score": 1.64,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.05,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Union Station",
+      "horse_id": "hrs_38884741",
+      "race_id": "rac_11953071",
+      "course": "Punchestown",
+      "off_time": "3:05",
+      "race_name": "DAR Golf Handicap Chase",
+      "vp": 0.0782,
+      "decision_tier": "X",
+      "place_prob": 0.4238,
+      "mds": 0.003,
+      "improvement_score": 0.0399,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3167,
+      "racing_api_connection_score": 0.328,
+      "racing_api_course_score": 0.311,
+      "racing_api_distance_score": null,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 4.69,
+        "place_frame_score": 8.48,
+        "mds_market_shape_score": 0.07,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Iceberg Theory",
+      "horse_id": "hrs_34457031",
+      "race_id": "rac_11953084",
+      "course": "Punchestown",
+      "off_time": "3:45",
+      "race_name": "Palmerstown House Estate Pat Taaffe Handicap Chase (Listed Race)",
+      "vp": 0.0836,
+      "decision_tier": "X",
+      "place_prob": 0.4618,
+      "mds": 0.0032,
+      "improvement_score": 0.0659,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.2968,
+      "racing_api_connection_score": 0.164,
+      "racing_api_course_score": 0.261,
+      "racing_api_distance_score": 0.399,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 5.02,
+        "place_frame_score": 9.24,
+        "mds_market_shape_score": 0.08,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "One Big Boum",
+      "horse_id": "hrs_35175987",
+      "race_id": "rac_11939941",
+      "course": "Punchestown",
+      "off_time": "5:30",
+      "race_name": "Lawlor's Of Naas Handicap Hurdle (Listed Race)",
+      "vp": 0.0914,
+      "decision_tier": "X",
+      "place_prob": 0.5399,
+      "mds": 0.0092,
+      "improvement_score": 0.1127,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.3323,
+      "racing_api_connection_score": 0.4,
+      "racing_api_course_score": 0.2,
+      "racing_api_distance_score": 0.397,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "suppress_flags": [
+        "DX_NO_SIGNAL"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X",
+        "DX_NO_SIGNAL"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 5.48,
+        "place_frame_score": 10.8,
+        "mds_market_shape_score": 0.23,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.03,
+        "negative_adjustments": 25.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    },
+    {
+      "horse": "Runningtostandstil",
+      "horse_id": "hrs_64258047",
+      "race_id": "rac_11953097",
+      "course": "Punchestown",
+      "off_time": "6:05",
+      "race_name": "Sebden Steel Celebrating 30 Years In Business (Pro/Am) INH Flat Race",
+      "vp": 0.0932,
+      "decision_tier": "X",
+      "place_prob": 0.0934,
+      "mds": 0.033,
+      "improvement_score": 0.0837,
+      "candidate_execution_allowed": false,
+      "racing_api_enrichment_score": 0.47,
+      "racing_api_connection_score": 0.668,
+      "racing_api_course_score": 0.445,
+      "racing_api_distance_score": 0.396,
+      "cashrun_class": "MISSING_OPTIONAL",
+      "cashrun_score": null,
+      "industry_confirmation_count": 0,
+      "industry_tipsters": [],
+      "blocker_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "suppress_flags": [
+        "DX_JUMP_NHCAP_BLOCK"
+      ],
+      "leg_score": 0.0,
+      "leg_role": "TRAP",
+      "trap_flags": [
+        "TIER_X"
+      ],
+      "source_completeness": "PARTIAL",
+      "score_breakdown": {
+        "vp_confidence_score": 5.59,
+        "place_frame_score": 1.87,
+        "mds_market_shape_score": 0.83,
+        "cashrun_score": 0.0,
+        "industry_confirmation_score": 0.0,
+        "tier_cleanliness_score": 0.05,
+        "negative_adjustments": 10.0
+      },
+      "candidate_execution_visibility": "VISIBILITY_ONLY"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "report_date": "2026-05-13",
+  "generated_at": "2026-05-14T00:24:21.767626+00:00",
+  "report_version": "phase4_v1",
+  "pipeline": {
+    "sigma": {
+      "status": "PASS"
+    },
+    "learn_build": {
+      "status": "PASS",
+      "events_built": 34,
+      "written": 0,
+      "skipped": 34
+    },
+    "learn_consume": {
+      "status": "PASS",
+      "events_found": 0,
+      "consumed": 0,
+      "skipped": 0,
+      "before_race_count": 0,
+      "after_race_count": 0
+    },
+    "healthcheck": {
+      "status": "PASS"
+    }
+  },
+  "shadow_ledger": {
+    "target_state": "shadow_repair_v1",
+    "before_races": 964,
+    "after_races": 964,
+    "delta": 0,
+    "last_updated": "2026-05-13T17:06:21.483383",
+    "total_events": 34,
+    "consumed_shadow": 34,
+    "consumed_live": 0,
+    "missing_hfs_context_all": true,
+    "hfs_context_quality_all": "proxy_derived"
+  },
+  "live_state_audit": {
+    "races": 1646,
+    "last_updated": "2026-04-25T13:52:14.756912",
+    "hash": "6d393fc82a45f17cd893179552d1f111",
+    "touched": false
+  },
+  "safety_audit": {
+    "consumed_live_any": false,
+    "live_state_touched": false,
+    "cloud_backup_touched": false,
+    "playbook_g_promoted": false,
+    "scoring_changed": false
+  },
+  "cloud_backup": {
+    "occurrences": 1646,
+    "last_observed": "2026-04-25T13:52:14.756912",
+    "updated_at": "2026-05-02T19:55:26.059253"
+  },
+  "overall_status": "SHADOW_CYCLE_CLOSED",
+  "warnings": [],
+  "stop_reason": null
+}

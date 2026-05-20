@@ -1,0 +1,147 @@
+{
+  "corpus_total": 794,
+  "corpus_usable": 721,
+  "baseline_n": 321,
+  "profiles": [
+    {
+      "profile": "A_CURRENT",
+      "label": "Live blend (velo_prime_prob \u2265 0.25)",
+      "metrics": {
+        "n": 321,
+        "wins": 85,
+        "strike_rate_pct": 26.48,
+        "frame_rate_pct": 64.49,
+        "roi_pct": -24.38,
+        "total_pnl": -78.25,
+        "max_drawdown": 84.33,
+        "longest_lose_run": 16,
+        "avg_sp": 6.06,
+        "mds_high_n": 21,
+        "mds_high_pct": 6.5,
+        "improve_high_n": 50,
+        "improve_high_pct": 15.6,
+        "vp30_tier_n": 0,
+        "vp30_tier_pct": 0.0,
+        "tier_breakdown": {
+          "UNKNOWN": 5,
+          "X": 6,
+          "B": 157,
+          "A": 120,
+          "C": 33
+        }
+      },
+      "delta_roi_vs_A": 0.0,
+      "delta_sr_vs_A": 0.0,
+      "delta_fr_vs_A": 0.0,
+      "top_sel_changed": 0,
+      "top_sel_changed_pct": 0.0
+    },
+    {
+      "profile": "B_CLEAN_VALUE",
+      "label": "Clean value (SQPE + MDS + place_prob capped + longshot gated; release/comment zeroed)",
+      "metrics": {
+        "n": 321,
+        "wins": 86,
+        "strike_rate_pct": 26.79,
+        "frame_rate_pct": 62.62,
+        "roi_pct": -26.31,
+        "total_pnl": -84.46,
+        "max_drawdown": 90.82,
+        "longest_lose_run": 13,
+        "avg_sp": 6.0,
+        "mds_high_n": 22,
+        "mds_high_pct": 6.9,
+        "improve_high_n": 63,
+        "improve_high_pct": 19.6,
+        "vp30_tier_n": 0,
+        "vp30_tier_pct": 0.0,
+        "tier_breakdown": {
+          "C": 58,
+          "UNKNOWN": 16,
+          "B": 116,
+          "A": 99,
+          "X": 29,
+          "D": 3
+        }
+      },
+      "delta_roi_vs_A": -1.93,
+      "delta_sr_vs_A": 0.31,
+      "delta_fr_vs_A": -1.87,
+      "top_sel_changed": 236,
+      "top_sel_changed_pct": 73.5
+    },
+    {
+      "profile": "C_SQPE_MDS_ONLY",
+      "label": "SQPE + MDS + place_prob only",
+      "metrics": {
+        "n": 321,
+        "wins": 86,
+        "strike_rate_pct": 26.79,
+        "frame_rate_pct": 61.06,
+        "roi_pct": -30.13,
+        "total_pnl": -96.73,
+        "max_drawdown": 96.73,
+        "longest_lose_run": 20,
+        "avg_sp": 6.17,
+        "mds_high_n": 22,
+        "mds_high_pct": 6.9,
+        "improve_high_n": 58,
+        "improve_high_pct": 18.1,
+        "vp30_tier_n": 0,
+        "vp30_tier_pct": 0.0,
+        "tier_breakdown": {
+          "B": 116,
+          "C": 61,
+          "UNKNOWN": 17,
+          "X": 30,
+          "A": 93,
+          "D": 4
+        }
+      },
+      "delta_roi_vs_A": -5.75,
+      "delta_sr_vs_A": 0.31,
+      "delta_fr_vs_A": -3.43,
+      "top_sel_changed": 254,
+      "top_sel_changed_pct": 79.1
+    },
+    {
+      "profile": "D_SQPE_ONLY",
+      "label": "SQPE only (pure model baseline)",
+      "metrics": {
+        "n": 321,
+        "wins": 55,
+        "strike_rate_pct": 17.13,
+        "frame_rate_pct": 50.78,
+        "roi_pct": -12.28,
+        "total_pnl": -39.41,
+        "max_drawdown": 59.87,
+        "longest_lose_run": 19,
+        "avg_sp": 9.2,
+        "mds_high_n": 4,
+        "mds_high_pct": 1.2,
+        "improve_high_n": 20,
+        "improve_high_pct": 6.2,
+        "vp30_tier_n": 0,
+        "vp30_tier_pct": 0.0,
+        "tier_breakdown": {
+          "B": 124,
+          "X": 47,
+          "C": 73,
+          "A": 48,
+          "UNKNOWN": 20,
+          "D": 9
+        }
+      },
+      "delta_roi_vs_A": 12.1,
+      "delta_sr_vs_A": -9.35,
+      "delta_fr_vs_A": -13.71,
+      "top_sel_changed": 354,
+      "top_sel_changed_pct": 110.3
+    }
+  ],
+  "recommendations": [
+    "PROFILE_B \u2192 HOLD: ROI delta=-1.93pp | frame_ok=True | sr_ok=True",
+    "PROFILE_C \u2192 HOLD: SQPE+MDS+place_prob delta=-5.75pp",
+    "PROFILE_D \u2192 SQPE_ONLY_DOMINANT: ensemble sidecars collectively damaging \u2014 rebuild candidate. Gain +12.10pp"
+  ]
+}

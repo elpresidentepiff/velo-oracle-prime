@@ -1,0 +1,27 @@
+diff --git a/scripts/run_results_sigma.py b/scripts/run_results_sigma.py
+index 1beefd5..2ec6396 100644
+--- a/scripts/run_results_sigma.py
++++ b/scripts/run_results_sigma.py
+@@ -391,8 +391,10 @@ def main():
+ 
+         # ── Non-runner gate: predicted horse did not start/finish ─────────────
+         full_runners = result.get("full_runners", [])
++        horse_found_in_results = False
+         for runner in full_runners:
+             if runner.get("horse_id") == predicted_horse_id:
++                horse_found_in_results = True
+                 pos = str(runner.get("position", "")).strip().upper()
+                 if pos in DNF_POSITIONS:
+                     non_runners.append(race_id)
+@@ -400,6 +402,11 @@ def main():
+                 break
+         if race_id in non_runners:
+             continue
++        # Horse absent from results entirely = withdrew before start
++        if not horse_found_in_results:
++            non_runners.append(race_id)
++            print(f"  [NR] {race_id}: {info.get('horse','?')} — not in result set (pre-race withdrawal) — excluded from stats")
++            continue
+ 
+         is_hit = predicted_horse_id == result["winner_id"]
+         is_frame = predicted_horse_id in result["top3_ids"]

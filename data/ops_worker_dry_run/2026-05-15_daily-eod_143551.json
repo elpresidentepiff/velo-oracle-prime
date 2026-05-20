@@ -1,0 +1,58 @@
+{
+  "date": "2026-05-15",
+  "target_state": "shadow_full_train_v2",
+  "overall_status": "SIGMA_RESULTS_NOT_READY",
+  "stop_reason": "ZERO_RESULTS_HARD_STOP",
+  "pipeline": {
+    "sigma": {
+      "status": "PASS",
+      "results_races": 0,
+      "sigma_audits_written": 0
+    },
+    "learn_build": {
+      "status": "SKIPPED"
+    },
+    "learn_consume": {
+      "status": "SKIPPED"
+    },
+    "healthcheck": {
+      "status": "SKIPPED"
+    }
+  },
+  "preflight": {
+    "timestamp": "2026-05-15T14:35:48.234452+00:00",
+    "live_state": {
+      "hash": "6d393fc82a45f17cd893179552d1f111",
+      "races": 1646,
+      "last_updated": "2026-04-25T13:52:14.756912"
+    },
+    "shadow_state": {
+      "hash": "1de0b50b6b7e877f114c6e3f2d9b1d29",
+      "races": 1975,
+      "last_updated": "2026-05-13T19:40:02.876636"
+    },
+    "cloud_backup": {
+      "occurrences": 1646,
+      "last_observed": "2026-04-25T13:52:14.756912",
+      "updated_at": "2026-05-02T19:55:26.059253"
+    },
+    "event_counts": {
+      "total": 0,
+      "consumed_shadow_true": 0,
+      "consumed_shadow_false": 0,
+      "consumed_live_true": 0
+    },
+    "job_counts": {
+      "total": 2,
+      "pass": 0,
+      "fail": 2,
+      "running": 0
+    }
+  },
+  "warnings": [
+    "No usable Sigma result truth was persisted for this date.",
+    "Learning build and consume were skipped by hard-stop guard."
+  ],
+  "live_state_touched": false,
+  "shadow_delta": 0
+}
