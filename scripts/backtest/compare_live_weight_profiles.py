@@ -28,7 +28,7 @@ import math
 from pathlib import Path
 from typing import Any
 
-ROOT       = Path(__file__).resolve().parents[1]
+ROOT       = Path(__file__).resolve().parents[2]
 CORPUS     = ROOT / "data" / "velo_unified_evidence_corpus_v1.csv"
 OUT_JSON   = ROOT / "data" / "live_weight_profile_comparison_latest.json"
 OUT_MD     = ROOT / "data" / "live_weight_profile_comparison_latest.md"

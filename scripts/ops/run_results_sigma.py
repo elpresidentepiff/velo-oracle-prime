@@ -26,7 +26,7 @@ import uuid
 from datetime import date, datetime
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
 from app.core.runtime_env import load_optional_env_file, utc_now_iso  # noqa: E402

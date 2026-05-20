@@ -6,7 +6,7 @@ from pathlib import Path
 API_USER = "cHHxKCt4ePK3TpFrWNq3sax6"
 API_PASS = "D2Zlg9VcD4Sjbjcb7pMzpwwy"
 DATE = "2026-04-21"
-MERGED_DIR = Path(__file__).parent.parent / "data" / "racecard_merged"
+MERGED_DIR = Path(__file__).parent.parent.parent / "data" / "racecard_merged"
 
 VENUES = [
     ("PON", "Pontefract"),

@@ -14,7 +14,7 @@ from build_industry_comparison import (
 )
 
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO_ROOT / "data"
 DNF_POSITIONS = {"PU", "UR", "F", "R", "BD", "SU", "DSQ", "RR", "RO", "VOID"}
 

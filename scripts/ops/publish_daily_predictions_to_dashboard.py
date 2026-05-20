@@ -40,7 +40,7 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
 # ── Thresholds — sourced directly from run_prime_today.py signal stack ──────

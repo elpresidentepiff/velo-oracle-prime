@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from scripts.eod_shadow_learning_bridge import ShadowLearningBridge, SHADOW_OUTCOME_LEDGER, SHADOW_LOSS_LEDGER, SHADOW_SENTIENT_STATE
+from scripts.ops.eod_shadow_learning_bridge import ShadowLearningBridge, SHADOW_OUTCOME_LEDGER, SHADOW_LOSS_LEDGER, SHADOW_SENTIENT_STATE
 
 class TestShadowReplayValidation(unittest.TestCase):
     @classmethod

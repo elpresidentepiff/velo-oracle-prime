@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
 REPORTS_DIR = DATA / "reports"
 REPORTS_DIR.mkdir(exist_ok=True)

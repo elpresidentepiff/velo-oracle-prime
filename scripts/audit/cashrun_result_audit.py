@@ -238,7 +238,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", required=True)
     args = parser.parse_args()
-    repo_root = Path(__file__).parent.parent
+    repo_root = Path(__file__).parent.parent.parent
     audit = CashrunResultAudit(args.date, repo_root)
     if audit.load_results():
         audit.run_audit()

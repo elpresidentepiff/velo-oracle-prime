@@ -765,7 +765,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_prime_today.py"
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "ops" / "run_prime_today.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
 

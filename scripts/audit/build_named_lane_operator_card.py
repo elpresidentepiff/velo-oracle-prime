@@ -28,7 +28,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
 REPORTS_DIR = DATA / "reports"
 REPORTS_DIR.mkdir(exist_ok=True)

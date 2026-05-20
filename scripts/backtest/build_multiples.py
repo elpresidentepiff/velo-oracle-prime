@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 from itertools import combinations
 
-MERGED_DIR = Path(__file__).parent.parent / "data" / "racecard_merged"
+MERGED_DIR = Path(__file__).parent.parent.parent / "data" / "racecard_merged"
 DATE = "2026-04-22"
 
 # ★★★ horses from today's verdict report — ranked by conviction

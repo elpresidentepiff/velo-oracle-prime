@@ -9,7 +9,7 @@ from typing import Callable
 from deep_dive_recent_results import PickRecord, load_pick_records
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
 
 

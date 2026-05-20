@@ -33,7 +33,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-ROOT  = Path(__file__).resolve().parents[1]
+ROOT  = Path(__file__).resolve().parents[2]
 DATA  = ROOT / "data"
 OUT_JSON = DATA / "sentient_loop_forensic_audit_latest.json"
 OUT_MD   = DATA / "sentient_loop_forensic_audit_latest.md"

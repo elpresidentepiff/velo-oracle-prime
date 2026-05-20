@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from scripts.eod_result_study_layer import EODStudyLayer
+from scripts.audit.eod_result_study_layer import EODStudyLayer
 
 class TestEODResultStudyLayerHardened(unittest.TestCase):
     @classmethod

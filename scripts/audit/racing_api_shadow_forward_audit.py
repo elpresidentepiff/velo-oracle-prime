@@ -20,7 +20,7 @@ import json
 import math
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent
 DEFAULT_LEDGER = ROOT / "data" / "racing_api_shadow_forward_ledger.csv"
 
 SCORE_COLS = [

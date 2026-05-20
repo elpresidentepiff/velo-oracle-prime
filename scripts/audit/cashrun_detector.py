@@ -260,7 +260,7 @@ class CashrunDetector:
 
 if __name__ == "__main__":
     import sys
-    repo_root = Path(__file__).parent.parent
+    repo_root = Path(__file__).parent.parent.parent
     date = sys.argv[1] if len(sys.argv) > 1 else datetime.now().strftime("%Y-%m-%d")
     detector = CashrunDetector(date, repo_root)
     detector.run_daily_detection()

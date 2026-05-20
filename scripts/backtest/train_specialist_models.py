@@ -30,7 +30,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import roc_auc_score, log_loss
 
 warnings.filterwarnings("ignore")
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
 # ─── Config ────────────────────────────────────────────────────────────────────

@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 load_dotenv()
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent.parent.parent / "data"
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")

@@ -9,7 +9,7 @@ from typing import Any
 from build_industry_comparison import build_comparison
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
 
 

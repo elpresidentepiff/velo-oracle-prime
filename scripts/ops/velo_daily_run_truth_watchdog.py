@@ -27,7 +27,9 @@ from dotenv import load_dotenv
 from runtime_truth_support import append_telegram_event, telegram_truth_status
 from sync_verdicts_from_supabase import sync_local_verdict_archive
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).parent))
 load_dotenv(ROOT / ".env")
 
 try:

@@ -10,7 +10,7 @@ import argparse
 import logging
 
 # Add project root to path
-project_root = Path(__file__).parent.parent.parent
+project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from app.services.backtest.backtest_50k_v2 import run_backtest_50k_v2

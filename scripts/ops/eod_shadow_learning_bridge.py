@@ -30,7 +30,7 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
 from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine

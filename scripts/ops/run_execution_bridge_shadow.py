@@ -29,7 +29,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
 # Safety: ensure no LIVE mode leaks in before imports

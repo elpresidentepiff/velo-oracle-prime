@@ -10,13 +10,13 @@ APPROVED_ENV_BOOTSTRAP = {
 OPERATIONAL_PATHS = [
     ROOT / "app" / "main.py",
     ROOT / "app" / "services" / "velo_prime_service.py",
-    ROOT / "scripts" / "run_prime_today.py",
-    ROOT / "scripts" / "run_results_sigma.py",
+    ROOT / "scripts" / "ops" / "run_prime_today.py",
+    ROOT / "scripts" / "ops" / "run_results_sigma.py",
 ]
 MONITORED_LEGACY_PATHS = [
-    ROOT / "scripts" / "velo_ops_check.py",
-    ROOT / "scripts" / "notify_governed_results.py",
-    ROOT / "scripts" / "production_checks.py",
+    ROOT / "scripts" / "audit" / "velo_ops_check.py",
+    ROOT / "scripts" / "ops" / "notify_governed_results.py",
+    ROOT / "scripts" / "ops" / "production_checks.py",
 ]
 
 

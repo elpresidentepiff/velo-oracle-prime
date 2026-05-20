@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # Add src to path
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from src.velo.council.council_orchestrator import CouncilOrchestrator
 
@@ -12,7 +12,7 @@ def main():
     parser.get_all_evidence = parser.add_argument("--date", type=str, required=True, help="Date in YYYY-MM-DD format")
     args = parser.parse_args()
 
-    repo_root = Path(__file__).parent.parent
+    repo_root = Path(__file__).parent.parent.parent
     
     # Check if we are in the canonical worktree
     # (In a real run, we'd call scripts/assert_canonical_worktree.py)
