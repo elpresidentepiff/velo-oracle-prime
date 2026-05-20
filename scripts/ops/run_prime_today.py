@@ -1204,6 +1204,7 @@ def main():
     from app.services.velo_prime_service import persist_race_predictions, score_race_velo_prime
     from src.rpd import RPDv2Engine
     from src.velo.midprice_hunter import evaluate_and_log as _midprice_evaluate
+    from src.velo.runner_snapshot_store import write_runner_snapshots as _write_runner_snapshots
     from supabase import create_client as _sb_create
     from workers.racing_api_normalizer import normalize_race
 
@@ -1904,6 +1905,22 @@ def main():
     except Exception as e:
         print(f"\nLocal backup skipped: {e}")
     _timer.mark("local_backup")
+
+    # ── RUNNER SNAPSHOT STORE (Issue #80) ─────────────────────────────────────
+    # STORAGE ONLY — never alters scoring, routing, or execution.
+    # Batch write of all runners across all scored races.
+    # Failure logs a warning and returns 0; never aborts the pipeline.
+    try:
+        _snapshot_n = _write_runner_snapshots(
+            scored=scored,
+            date_str=date_str,
+            date_tag=date_tag,
+            supabase_client=db if persistence_enabled else None,
+        )
+        print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}.jsonl")
+    except Exception as _snap_exc:
+        print(f"\nRunner snapshot write skipped: {_snap_exc}")
+    _timer.mark("runner_snapshots", races=len(scored), runners=sum(len(p) for _, p, _, _ in scored))
 
     # ── TIMING AUDIT ──────────────────────────────────────────────────────────
     try:
