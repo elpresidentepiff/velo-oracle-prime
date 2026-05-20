@@ -221,59 +221,32 @@ def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None
     _ENRICHMENT_CACHES = load_enrichment_caches(_SB_URL, _SB_KEY)
 
 
-def load_racecards(date_tag: str, date_str: str) -> tuple[list, str]:
-    """Return (races_list, source) where source is 'cache' or 'api'.
 
-    Tries local cache first. If absent, fetches directly from Racing API
-    (requires RACING_API_USERNAME + RACING_API_PASSWORD in env).
-    Saves the API response to cache as a best-effort local backup.
-    Safe to run with no pre-existing local files (Railway cron compatible).
-    """
-    cache_path = ROOT / "data" / f"racecards_{date_tag}_standard.json"
+from src.velo.racecard_loader import (
+    load_racecards as _racecard_load,
+    load_rp_merged_as_racecards as _load_rp_merged_as_racecards,
+)
 
-    if cache_path.exists():
-        raw = json.loads(cache_path.read_text())
-        races = raw if isinstance(raw, list) else raw.get("racecards", [])
-        return races, "cache"
 
-    # Cache absent — fetch directly from Racing API
-    if not RACING_USER or not RACING_PASS:
-        raise RuntimeError("No cached racecards and RACING_API_USERNAME/PASSWORD not set — cannot fetch")
-    from datetime import date as _date
-    _today = str(_date.today())
-    if date_str == _today:
-        qs = urlencode({"day": "today"})
-    elif date_str > _today:
-        qs = ""  # free/standard returns next available race day when no date given
-    else:
-        qs = urlencode({"date": date_str})
-    url = f"{RACING_BASE}/racecards/standard" + (f"?{qs}" if qs else "")
-    import ssl as _ssl
-    _ctx = _ssl.create_default_context()
-    _ctx.check_hostname = False
-    _ctx.verify_mode = _ssl.CERT_NONE
-    _creds = base64.b64encode(f"{RACING_USER}:{RACING_PASS}".encode()).decode()
-    _req_obj = urllib.request.Request(
-        url,
-        headers={
-            "Authorization": f"Basic {_creds}",
-            "Accept": "application/json",
-            "User-Agent": "VeloPrime/1.0",
-        },
+def load_racecards(date_tag: str, date_str: str, source: str | None = None) -> tuple[list, str]:
+    """Delegate to src.velo.racecard_loader.load_racecards with runtime constants."""
+    races, src_label = _racecard_load(
+        date_tag=date_tag,
+        date_str=date_str,
+        data_root=ROOT / "data",
+        racing_base=RACING_BASE,
+        racing_user=RACING_USER,
+        racing_pass=RACING_PASS,
+        source=source,
     )
-    with urllib.request.urlopen(_req_obj, context=_ctx, timeout=30) as _resp:
-        raw = json.loads(_resp.read())
+    n_races = len(races)
+    n_runners = sum(len(r.get("runners", [])) for r in races)
+    if src_label == "rp_merged":
+        print(f"  source: RP_MERGED ({n_races} races synthesised from local PDF data, {n_runners} runners)")
+    elif src_label == "cache":
+        print(f"  source: CACHE ({n_races} races)")
+    return races, src_label
 
-    # Best-effort cache write — skipped silently on Railway ephemeral storage
-    try:
-        cache_path.parent.mkdir(parents=True, exist_ok=True)
-        cache_path.write_text(json.dumps(raw, indent=2))
-        print(f"  Saved to cache: {cache_path.name}")
-    except Exception as e:
-        print(f"  Cache write skipped: {e}")
-
-    races = raw if isinstance(raw, list) else raw.get("racecards", [])
-    return races, "api"
 
 
 def _emit_daily_truth_packet(target_date: str, *, repair_local_archive: bool) -> None:
@@ -1176,6 +1149,12 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-notify", action="store_true")
     parser.add_argument("--env-file", default=None)
+    parser.add_argument(
+        "--source",
+        choices=["auto", "cache", "rp", "api"],
+        default=None,
+        help="Racecard source: auto (default, tries cache→rp→api), cache, rp, api",
+    )
     args = parser.parse_args()
     notify_enabled = not args.no_notify and not args.dry_run
     _bootstrap_runtime(env_file=args.env_file, notify=notify_enabled)
@@ -1246,7 +1225,7 @@ def main():
 
     # ── STEP 1: Load racecards (cache or direct API fetch) ────────────────────
     print("\nSTEP 1: Load racecards")
-    raw_races, racecard_source = load_racecards(date_tag, date_str)
+    raw_races, racecard_source = load_racecards(date_tag, date_str, source=args.source)
     races_with_runners = [r for r in raw_races if r.get("runners")]
 
     # ── SOURCE TRUTH HEADER ───────────────────────────────────────────────────
@@ -1259,7 +1238,7 @@ def main():
     loaded_date_str = ", ".join(sorted(loaded_dates)) if loaded_dates else "unknown"
     date_mismatch = loaded_dates and date_str not in loaded_dates
     is_live = racecard_source == "api"
-    live_label = "LIVE_API" if is_live else "CACHE"
+    live_label = {"api": "LIVE_API", "cache": "CACHE", "rp_merged": "RP_MERGED"}.get(racecard_source, racecard_source.upper())
     commit_sha = get_commit_sha()
     _snapshot_run_id = _build_run_id(date_tag, commit_sha)
 
