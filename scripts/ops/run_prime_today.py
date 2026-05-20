@@ -28,6 +28,7 @@ import logging
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 import uuid
@@ -59,6 +60,48 @@ from src.velo.racing_api_shadow_enrichment import (  # noqa: E402
 
 _ENRICHMENT_CACHES = None  # loaded once in _bootstrap_runtime
 _SHADOW_LEDGER_PATH = ROOT / "data" / "racing_api_shadow_forward_ledger.csv"
+
+
+class _RuntimeTimer:
+    """Lightweight stage timer. No scoring logic dependency."""
+
+    def __init__(self) -> None:
+        self._t0 = time.perf_counter()
+        self._stages: list[dict] = []
+        self._last = self._t0
+
+    def mark(self, stage: str, races: int = 0, runners: int = 0, notes: str = "") -> float:
+        now = time.perf_counter()
+        dur = round(now - self._last, 4)
+        self._stages.append(
+            {"stage": stage, "duration_sec": dur, "races": races, "runners": runners, "notes": notes}
+        )
+        self._last = now
+        return dur
+
+    def elapsed(self) -> float:
+        return round(time.perf_counter() - self._t0, 4)
+
+    def to_dict(
+        self,
+        *,
+        date: str,
+        commit_sha: str,
+        source: str,
+        race_timings: list[dict],
+        spotlight_total: int,
+        pdf_intel_total: int,
+    ) -> dict:
+        return {
+            "date": date,
+            "commit_sha": commit_sha,
+            "source": source,
+            "total_runtime_sec": self.elapsed(),
+            "spotlight_runners_parsed": spotlight_total,
+            "pdf_intel_runners_attached": pdf_intel_total,
+            "stages": self._stages,
+            "race_timings": race_timings,
+        }
 
 TODAY = datetime.now().strftime("%Y_%m_%d")
 TODAY_DISPLAY = datetime.now().strftime("%d %b %Y")
@@ -1145,6 +1188,8 @@ def main():
     print(f"\nVELO PRIME RACE-DAY EXECUTION — {date_str}")
     print("=" * 60)
 
+    _timer = _RuntimeTimer()
+
     # ── PREFLIGHT GATE — must pass before anything else runs ─────────────────
     print("\nPREFLIGHT")
     print("-" * 40)
@@ -1153,6 +1198,7 @@ def main():
     pf_result = preflight_or_die(tg_fn=tg)  # exits with sys.exit(1) on FAIL
     print(f"  Status: {pf_result.status}")
     print("-" * 40)
+    _timer.mark("preflight")
     # ─────────────────────────────────────────────────────────────────────────
 
     from app.services.velo_prime_service import persist_race_predictions, score_race_velo_prime
@@ -1233,6 +1279,7 @@ def main():
         _TG_NOTIFY_ENABLED = False
 
     print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
+    _timer.mark("racecard_load", races=len(raw_races))
 
     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
     print("\nSTEP 2: Normalize (canonical schema — no raw payloads to workers)")
@@ -1244,6 +1291,8 @@ def main():
             n["fetch_timestamp"] = fetch_time
             normalized.append(n)
     print(f"  Normalized: {len(normalized)} races")
+    _n_runners_total = sum(len(r.get("runners", [])) for r in normalized)
+    _timer.mark("normalize", races=len(normalized), runners=_n_runners_total)
 
     # ── STEP 2b: UK/IRE jurisdiction filter ──────────────────────────────
     # Jurisdiction is resolved canonically by normalize_race() via _resolve_jurisdiction().
@@ -1326,8 +1375,14 @@ def main():
             else:
                 pdf_intel_cache[cc] = None
 
+    _pdf_courses_loaded = sum(1 for v in pdf_intel_cache.values() if v is not None)
+    _timer.mark("pdf_intel_preload", races=_pdf_courses_loaded, notes=f"{_pdf_courses_loaded}/{len(pdf_intel_cache)} courses with PDF data")
+
     scored = []
     score_errors = []
+    _race_timings: list[dict] = []
+    _spotlight_total = 0
+    _pdf_intel_attached_total = 0
     for race in normalized:
         cid = f"{race.get('course')} {race.get('off_time', '?')}"
 
@@ -1371,22 +1426,30 @@ def main():
                         runner["pdf_intel"] = h
                         break
 
+        _pdf_attached_this_race = sum(1 for r in race.get("runners", []) if r.get("pdf_intel"))
+        _pdf_intel_attached_total += _pdf_attached_this_race
+
+        _t_score_start = time.perf_counter()
         try:
             preds = score_race_velo_prime(race, sentient_state=_sentient_state)
+            _t_score_vp = time.perf_counter() - _t_score_start
             if preds:
                 # Load RPDC data for this race to inform RPD-C tags
                 race_rpdc = _fetch_race_rpdc(race.get("race_id", ""))
 
                 # RPD-C tagging — passive metadata only, no score/rank mutation
                 runner_map = {r.get("horse_name", ""): r for r in race.get("runners", [])}
+                _spotlight_this_race = 0
                 for pred in preds:
                     raw_runner = runner_map.get(pred.get("horse", ""), {})
                     horse_id = raw_runner.get("horse_id")
                     runner_rpdc = race_rpdc.get(horse_id, {})
 
-                    # Spotlight Parsing
+                    # Spotlight Parsing — NOTE: happens AFTER score_race_velo_prime,
+                    # so spotlight_score cannot affect velo_prime_prob or rank order.
                     spot_text = raw_runner.get("spotlight", "")
                     if spot_text:
+                        _spotlight_this_race += 1
                         # Extract full 15-category signals using workers/spotlight_parser.py
                         # Required args: raw_text, horse_name, race_id, race_date
                         spot_record = extract_spotlight_signals(
@@ -1414,6 +1477,7 @@ def main():
                     pred["rpd_tag"] = rpd_suggestion.suggested_tag.value
                     pred["rpd_confidence"] = rpd_suggestion.confidence
                     pred["rpd_evidence_codes"] = rpd_evidence
+                _spotlight_total += _spotlight_this_race
 
                 top = preds[0]
                 second = preds[1] if len(preds) > 1 else {}
@@ -1539,6 +1603,18 @@ def main():
                     reasons.append(f"PDF_PLOT_CONVICTION:{pdf_intel['plot_conviction']:.2f}")
 
                 scored.append((race, preds, tier, reasons))
+                _n_runners_this_race = len(preds)
+                _per_runner_avg_ms = round(_t_score_vp / _n_runners_this_race * 1000, 3) if _n_runners_this_race else 0.0
+                _race_timings.append({
+                    "race_id": race.get("race_id", ""),
+                    "course": race.get("course", ""),
+                    "off_time": race.get("off_time", ""),
+                    "runners": _n_runners_this_race,
+                    "score_race_velo_prime_sec": round(_t_score_vp, 4),
+                    "per_runner_avg_ms": _per_runner_avg_ms,
+                    "pdf_intel_attached_count": _pdf_attached_this_race,
+                    "spotlight_parsed_count": _spotlight_this_race,
+                })
                 prob_gap_val = float(top.get("velo_prime_prob", 0)) - sec_prob
                 gate_note = f" [TIE^{top.get('tie_gate_tier_upgrade', '')}]" if top.get("tie_gate_tier_upgrade") else ""
                 arch_note = f" [{top.get('race_archetype', '?')}:{(top.get('archetype_confidence') or '?')[0].upper()}]"
@@ -1602,6 +1678,7 @@ def main():
             print(f"  PERSIST FAIL: {rid} {race.get('course')}")
 
     print(f"  Verdicts: {persist_ok} OK / {persist_fail} FAIL / {len(scored)} total")
+    _timer.mark("persist", races=persist_ok + persist_fail, runners=sum(len(p) for _, p, _, _ in scored))
 
     # ── STEP 5: Build Telegram output ─────────────────────────────────────────
     print("\nSTEP 5: Send to Telegram")
@@ -1781,6 +1858,7 @@ def main():
         f"Final status:    {final_status}"
     )
     print(f"  Sent: final report ({final_status})")
+    _timer.mark("telegram")
 
     # ── STEP 6: Save local JSON (backup only — NOT system of record) ──────────
     # Best-effort only — skipped silently on Railway ephemeral storage
@@ -1804,6 +1882,30 @@ def main():
         print(f"\nLocal backup: {out_path.name} (NOT system of record)")
     except Exception as e:
         print(f"\nLocal backup skipped: {e}")
+    _timer.mark("local_backup")
+
+    # ── TIMING AUDIT ──────────────────────────────────────────────────────────
+    try:
+        _timing_out = ROOT / "data" / f"runtime_timing_audit_{date_tag}.json"
+        _timing_payload = _timer.to_dict(
+            date=date_str,
+            commit_sha=commit_sha,
+            source=racecard_source,
+            race_timings=_race_timings,
+            spotlight_total=_spotlight_total,
+            pdf_intel_total=_pdf_intel_attached_total,
+        )
+        _timing_out.parent.mkdir(parents=True, exist_ok=True)
+        _timing_out.write_text(json.dumps(_timing_payload, indent=2, default=str))
+        print(f"\nTIMING AUDIT: {_timing_out.name}")
+        print(f"  total_runtime_sec       : {_timing_payload['total_runtime_sec']:.3f}s")
+        print(f"  spotlight_runners_parsed: {_timing_payload['spotlight_runners_parsed']}")
+        print(f"  pdf_intel_attached      : {_timing_payload['pdf_intel_runners_attached']}")
+        for _s in _timing_payload["stages"]:
+            _note = f"  [{_s['notes']}]" if _s.get("notes") else ""
+            print(f"  {_s['stage']:<22s}: {_s['duration_sec']:>8.3f}s  races={_s['races']}  runners={_s['runners']}{_note}")
+    except Exception as _timing_exc:
+        print(f"\nTiming audit write skipped: {_timing_exc}")
 
     # ── STEP 7: Verify counts ─────────────────────────────────────────────────
     print("\nSTEP 7: Count verification")
