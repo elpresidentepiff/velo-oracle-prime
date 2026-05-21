@@ -926,6 +926,7 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "governance": {
                 "assigned_product": top.get("assigned_product"),
                 "router_reasons": top.get("router_reasons"),
+                "rp_flatline_warning": top.get("rp_flatline_warning"),
             },
         }
 

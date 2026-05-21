@@ -890,6 +890,13 @@ td:last-child  { padding-right: 20px; }
 .conf-normal { color: var(--gold); }
 .conf-low    { color: var(--fg-secondary); }
 .conf-stale  { font-size: 0.50rem; color: var(--amber); margin-left: 3px; opacity: 0.8; }
+.sc-flatline {
+  width: 100%; margin-top: 4px;
+  background: rgba(255,60,0,0.08); border: 1px solid rgba(255,60,0,0.30);
+  border-radius: 2px; padding: 3px 6px;
+  font-family: var(--font-mono); font-size: 0.52rem;
+  color: #ff6040; line-height: 1.4; white-space: pre-wrap;
+}
 </style>
 
 <div id="sib-wrap">
@@ -2223,6 +2230,15 @@ function buildSidecarHtml(row) {
     html += '<span class="sc-blk-label">BLOCKED:</span>';
     blockers.forEach(b => { html += `<span class="sc-blocker">${b}</span>`; });
     html += '</div>';
+  }
+  // RP_FEATURE_FLATLINE warning — show under the horse when VP was uniform
+  const flatlineWarn = row.rp_flatline_warning || '';
+  if (flatlineWarn) {
+    // Format: "RP_FEATURE_FLATLINE: 8/8 runners tied..." → break into label + body
+    const flatlineParts = flatlineWarn.split(': ');
+    const flatlineLabel = flatlineParts[0] || 'RP_FEATURE_FLATLINE';
+    const flatlineBody  = flatlineParts.slice(1).join(': ');
+    html += `<div class="sc-flatline" title="${flatlineWarn}">⚠ ${flatlineLabel}:<br>${flatlineBody}</div>`;
   }
   html += '</div>';
   return html;
