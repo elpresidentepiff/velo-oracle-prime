@@ -1554,6 +1554,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         )
         _signal_stack = top.get("signal_stack") or v.get("signal_stack")
 
+        # rp_flatline_warning — stored in full_analysis.governance (no migration needed)
+        _fa_gov = (
+            (v.get("full_analysis") or {}).get("governance", {}) if isinstance(v.get("full_analysis"), dict) else {}
+        )
+        _flatline_warning = _fa_gov.get("rp_flatline_warning") or top.get("rp_flatline_warning") or None
+
         verdicts.append(
             {
                 "race_id": race_id,
@@ -1586,6 +1592,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "operator_read_profile": operator_read_profile,
                 "operator_skepticism_flags": skepticism_flags,
                 "signal_stack": _signal_stack,
+                "rp_flatline_warning": _flatline_warning,
             }
         )
 
