@@ -9,7 +9,6 @@ Hard constraints: read-only, no scoring changes, no routing changes.
 
 from __future__ import annotations
 
-import re
 from typing import Any
 
 
@@ -80,8 +79,12 @@ def build_scoring_feature_audit(
             "constant_value": list(unique_vals)[0] if len(unique_vals) == 1 else None,
         }
 
-    # Compute constant-feature count: fields where all runners share the same value
-    constant_fields = [f for f, r in field_reports.items() if r["unique_value_count"] <= 1]
+    # Constant: field has exactly one distinct non-null value across all runners.
+    # Explicitly excludes all-missing fields (coverage=0) to keep audit categories disjoint.
+    constant_fields = [
+        f for f, r in field_reports.items()
+        if r["unique_value_count"] == 1 and r["coverage_pct"] > 0
+    ]
     missing_fields = [f for f, r in field_reports.items() if r["coverage_pct"] == 0.0]
 
     return {

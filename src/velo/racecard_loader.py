@@ -40,14 +40,14 @@ _IRE_VENUE_CODES = frozenset({
 })
 
 
-def _parse_betting_forecast(forecast_str: str) -> dict[str, float]:
+def _parse_betting_forecast(forecast_str: str | None) -> dict[str, float]:
     """
     Parse a RP betting forecast string into {horse_name_lower: decimal_odds}.
 
     Handles: "4/6 One Knight, 5/2 The Flaggy Shore, 100/1 Kenobi"
              "EVS Bluegrass, 2/1 Crystal Queen" (EVS = 2.0)
     Strips favourite markers (F, JF, CF) from odds tokens.
-    Returns empty dict on any parse failure so callers can fall back gracefully.
+    Segments that cannot be parsed are skipped; returns {} for None/empty input.
     """
     if not forecast_str:
         return {}
@@ -107,7 +107,6 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
       - postdata_score, or_compression_score, plot_conviction wired as "pdf_intel"
         so _build_live_features() reads them on the first pass
       - going and race_class extracted from race_info when present
-      - draw extracted from horse weight/stall strings when available
 
     Fields absent from RP data remain None. Sets region="IRE" for Irish venues.
     Returns an empty list if no RP merged files exist for the date.

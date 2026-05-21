@@ -274,7 +274,7 @@ def test_flatline_silent_when_differentiated():
 
 
 def test_flatline_at_boundary():
-    """Exactly 60% tie group → flatline fires."""
+    """Boundary: 50% tie group is below threshold (no flatline); 66.7% fires."""
     vps = [0.25, 0.25, 0.25, 0.10, 0.08, 0.05]  # 3/6 = 50% — below threshold
     result = detect_vp_flatline("rp_TEST", _preds(vps), "rp_merged")
     assert result is None  # 50% < 60%
