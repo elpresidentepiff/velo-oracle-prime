@@ -235,18 +235,35 @@ def _learning_admission_status(date_str: str) -> dict:
     ops_arts = sorted(glob.glob(str(ROOT / "data" / "ops_worker_dry_run" / f"{date_str}_learn-shadow_*.json")))
     build_result: dict = {}
     if ops_arts:
-        try:
-            art = json.loads(Path(ops_arts[-1]).read_text())
-            if art.get("build_events_only"):
-                build_result = {
-                    "events_built": art.get("events_built", 0),
-                    "events_written": art.get("db_result", {}).get("written", 0),
-                    "status": art.get("status", "UNKNOWN"),
-                    "sentient_state_touched": art.get("sentient_state_touched", False),
-                    "consumed_live": False,
-                }
-        except Exception:
-            pass
+        # Use most recent artifact — prefer Phase 3B consume over build-only if present
+        for art_path in reversed(ops_arts):
+            try:
+                art = json.loads(Path(art_path).read_text())
+                if art.get("build_events_only"):
+                    build_result = {
+                        "phase": "BUILD_ONLY",
+                        "events_built": art.get("events_built", 0),
+                        "events_written": art.get("db_result", {}).get("written", 0),
+                        "status": art.get("status", "UNKNOWN"),
+                        "sentient_state_touched": art.get("sentient_state_touched", False),
+                        "consumed_live": False,
+                    }
+                    break
+                elif art.get("status") == "SHADOW_CONSUMED":
+                    cr = art.get("consume_result", {})
+                    build_result = {
+                        "phase": "SHADOW_CONSUMED",
+                        "events_built": art.get("events_found", cr.get("consumed", 0)),
+                        "events_written": cr.get("consumed", 0),
+                        "status": art.get("status", "UNKNOWN"),
+                        "sentient_state_touched": art.get("sentient_state_touched", False),
+                        "consumed_live": False,
+                        "before_race_count": cr.get("before_race_count"),
+                        "after_race_count": cr.get("after_race_count"),
+                    }
+                    break
+            except Exception:
+                pass
     elig: dict = {}
     if elig_path.exists():
         try:
@@ -262,7 +279,11 @@ def _learning_admission_status(date_str: str) -> dict:
         "live_state_hash": elig.get("live_state_hash_before", "UNKNOWN"),
         "build_events_result": build_result,
         "admission_packet": "PRESENT" if packet_path.exists() else "MISSING",
-        "recommendation": "APPROVE_SHADOW_CONSUME" if elig.get("audit_status") == "ELIGIBLE" and build_result.get("events_written", 0) > 0 else "PENDING",
+        "recommendation": (
+            "CONSUMED_SHADOW_COMPLETE" if build_result.get("phase") == "SHADOW_CONSUMED"
+            else "APPROVE_SHADOW_CONSUME" if elig.get("audit_status") == "ELIGIBLE" and build_result.get("events_written", 0) > 0
+            else "PENDING"
+        ),
     }
 
 

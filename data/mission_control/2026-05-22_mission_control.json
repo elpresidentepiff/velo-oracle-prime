@@ -1,6 +1,6 @@
 {
   "date": "2026-05-22",
-  "generated_at": "2026-05-23T02:36:47.014540+00:00",
+  "generated_at": "2026-05-23T02:53:34.307145+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
     "a33c5bd8"
@@ -38,14 +38,17 @@
     "consumed_live_before": 0,
     "live_state_hash": "a1637542f7646aa9",
     "build_events_result": {
+      "phase": "SHADOW_CONSUMED",
       "events_built": 36,
       "events_written": 36,
-      "status": "EVENTS_WRITTEN",
-      "sentient_state_touched": false,
-      "consumed_live": false
+      "status": "SHADOW_CONSUMED",
+      "sentient_state_touched": true,
+      "consumed_live": false,
+      "before_race_count": 2019,
+      "after_race_count": 2055
     },
     "admission_packet": "PRESENT",
-    "recommendation": "APPROVE_SHADOW_CONSUME"
+    "recommendation": "CONSUMED_SHADOW_COMPLETE"
   },
   "race_shape_v1": {
     "race_shape_model_v1": "DESIGN_PENDING",
