@@ -620,12 +620,12 @@ VELO_INTERNATIONAL_PHASE0_COMPLETE
 FR_HK_TRAINING_SUBSTRATE_VERIFIED: 255862 rows, 7 courses, 22122 races
 ROW_COUNT_RECONCILIATION_COMPLETE: 14881_gap=Meydan_UAE
 JURISDICTION_PACKS_DEFINED: FR_FLAT_CORE, FR_AUTEUIL_JUMPS_V1, HK_SHA_TIN_V1, HK_HAPPY_VALLEY_V1
-OFFLINE_BASELINE_ARENA_COMPLETE: ALL_5_PACKS_VIABLE_SHADOW_CANDIDATE
-  HK_SHA_TIN_V1: AUC=0.9541
-  HK_HAPPY_VALLEY_V1: AUC=0.9591
-  FR_CHANTILLY_V1: AUC=0.9072
-  FR_FLAT_CORE: AUC=0.9076
-  FR_AUTEUIL_JUMPS_V1: AUC=0.9051
+OFFLINE_BASELINE_ARENA_COMPLETE: RESULTS_LEAKAGE_SUSPICIOUS
+  HK_SHA_TIN_V1: AUC=0.9541 VIABILITY_UNTRUSTED_PENDING_LEAKAGE_AUDIT
+  HK_HAPPY_VALLEY_V1: AUC=0.9591 VIABILITY_UNTRUSTED_PENDING_LEAKAGE_AUDIT
+  FR_CHANTILLY_V1: AUC=0.9072 VIABILITY_UNTRUSTED_PENDING_LEAKAGE_AUDIT
+  FR_FLAT_CORE: AUC=0.9076 VIABILITY_UNTRUSTED_PENDING_LEAKAGE_AUDIT
+  FR_AUTEUIL_JUMPS_V1: AUC=0.9051 VIABILITY_UNTRUSTED_PENDING_LEAKAGE_AUDIT
 FEATURE_CONTRACT_LOCKED: INTL_FEATURE_CONTRACT_V1.md
 MIGRATION_READY_NOT_APPLIED: AWAITING_OPERATOR_APPROVAL
 WORKERS_ARCHIVE_ONLY_NOT_ACTIVATED
@@ -642,9 +642,43 @@ SECOND_PACK_BUILD: FR_CHANTILLY_V1
 
 ---
 
+---
+
+## 14. Offline Arena Leakage Review Required
+
+**Status: VIABILITY_UNTRUSTED_PENDING_LEAKAGE_AUDIT**
+
+The first offline arena (Phase 1A) produced results that are outside normal racing model benchmarks:
+
+| Pack | AUC | SR | Fav SR | Risk Flag |
+|---|---|---|---|---|
+| HK_SHA_TIN_V1 | 0.9541 | 81.5% | 34.7% | LEAKAGE_SUSPICIOUS |
+| HK_HAPPY_VALLEY_V1 | 0.9591 | 84.3% | 26.9% | LEAKAGE_SUSPICIOUS |
+| FR_CHANTILLY_V1 | 0.9072 | 64.5% | 29.4% | LEAKAGE_SUSPICIOUS |
+| FR_FLAT_CORE | 0.9076 | 68.6% | 29.7% | LEAKAGE_SUSPICIOUS |
+| FR_AUTEUIL_JUMPS_V1 | 0.9051 | 67.3% | 27.5% | LEAKAGE_SUSPICIOUS |
+
+Typical racing model benchmark: AUC 0.72–0.85. AUC > 0.90 requires leakage proof.
+
+**Possible causes under investigation:**
+1. Fit scores (`course_fit_score`, `going_fit_score`, `distance_fit_score`, `trainer_timing_score`) may be computed including the current race's result (time-gate contamination)
+2. `class_num` has 42% null rate — zero-fill may create spurious signal
+3. `rpr_vs_field` combined with `or_vs_field` may over-represent the same signal (they're correlated)
+
+**Required before any pack is classified viable:**
+- Leakage audit: `scripts/audit_international_arena_leakage.py` — COMPLETE (REVIEW_REQUIRED)
+- Sanity tests with shuffle: `scripts/audit_international_arena_sanity.py` — RUNNING
+- Safe-only arena: `scripts/audit_international_baseline_arena_safe.py` — RUNNING
+- Governance: `docs/engineering/INTL_MODEL_PROMOTION_GOVERNANCE_V1.md` — WRITTEN
+
+**Migration and worker builds remain blocked until safe arena and shuffle test complete.**
+
+---
+
 **Generated:** 2026-05-23
 **Phase 0 status:** COMPLETE
-**Phase 1A status:** COMPLETE — offline arena run, all 5 packs viable
-**Phase 1B:** PENDING — operator approval required before migration
-**Phase 1C:** NOT STARTED — HKJC + PMU workers not yet built
-**Next action:** Operator decision: approve migration + worker builds, or continue offline model development only
+**Phase 1A status:** COMPLETE — arena run, results leakage-suspicious
+**Phase 1A-AUDIT:** IN_PROGRESS — leakage audit, sanity tests, safe arena running
+**Phase 1B:** BLOCKED — operator approval pending AND leakage audit must pass first
+**Phase 1C:** BLOCKED — workers not built AND leakage audit must pass first
+**Next action:** Wait for safe arena + shuffle test results, then issue final viability classification
