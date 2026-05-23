@@ -1,0 +1,427 @@
+{
+  "generated_at": "2026-05-23T19:45:56.090607+00:00",
+  "train_period": "2015-2022",
+  "valid_period": "2023",
+  "test_period": "2024-2025",
+  "packs": [
+    {
+      "pack": "HK_SHA_TIN_V1",
+      "courses": [
+        "Sha Tin (HK)"
+      ],
+      "n_total": 50976,
+      "n_train": 36975,
+      "n_valid": 3550,
+      "n_test": 10451,
+      "train_races": 2958,
+      "test_races": 832,
+      "features_used": [
+        "or_num",
+        "rpr_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "class_num",
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "wgt_lbs",
+        "runs_since_win",
+        "runs_since_place",
+        "mark_compression_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "trainer_timing_score"
+      ],
+      "n_features": 20,
+      "leakage_check": "CLEAN",
+      "baselines": {
+        "favourite_sr": 0.347,
+        "favourite_n": 830,
+        "best_rpr_sr": 0.4411,
+        "best_rpr_n": 832
+      },
+      "models": {
+        "logistic_regression": {
+          "top_pick_sr": 0.7837,
+          "n_picks": 832,
+          "auc": 0.9225,
+          "brier": 0.0453,
+          "calibration_error": 0.055,
+          "beats_fav": true,
+          "beats_rpr": true
+        },
+        "random_forest": {
+          "top_pick_sr": 0.6154,
+          "n_picks": 832,
+          "auc": 0.9177,
+          "brier": 0.0534,
+          "calibration_error": 0.1537,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_vs_field",
+            "rpr_num",
+            "or_vs_field"
+          ]
+        },
+        "lightgbm": {
+          "top_pick_sr": 0.8149,
+          "n_picks": 832,
+          "auc": 0.9541,
+          "brier": 0.0395,
+          "calibration_error": 0.043,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_num",
+            "rpr_vs_field",
+            "or_num"
+          ]
+        }
+      },
+      "verdict": "VIABLE_SHADOW_CANDIDATE",
+      "best_model_sr": 0.8149,
+      "beats_fav_baseline": true,
+      "beats_rpr_baseline": true,
+      "best_auc": 0.9541
+    },
+    {
+      "pack": "HK_HAPPY_VALLEY_V1",
+      "courses": [
+        "Happy Valley (HK)"
+      ],
+      "n_total": 30557,
+      "n_train": 22103,
+      "n_valid": 2467,
+      "n_test": 5987,
+      "train_races": 1905,
+      "test_races": 521,
+      "features_used": [
+        "or_num",
+        "rpr_num",
+        "or_vs_field",
+        "rpr_vs_field",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "class_num",
+        "dist_f",
+        "going_code",
+        "wgt_lbs",
+        "runs_since_win",
+        "runs_since_place",
+        "mark_compression_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "trainer_timing_score"
+      ],
+      "n_features": 19,
+      "leakage_check": "CLEAN",
+      "baselines": {
+        "favourite_sr": 0.2687,
+        "favourite_n": 521,
+        "best_rpr_sr": 0.4012,
+        "best_rpr_n": 521
+      },
+      "models": {
+        "logistic_regression": {
+          "top_pick_sr": 0.8426,
+          "n_picks": 521,
+          "auc": 0.9591,
+          "brier": 0.0444,
+          "calibration_error": 0.0737,
+          "beats_fav": true,
+          "beats_rpr": true
+        },
+        "random_forest": {
+          "top_pick_sr": 0.6065,
+          "n_picks": 521,
+          "auc": 0.9261,
+          "brier": 0.0586,
+          "calibration_error": 0.1968,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_vs_field",
+            "rpr_num",
+            "or_num"
+          ]
+        },
+        "lightgbm": {
+          "top_pick_sr": 0.8061,
+          "n_picks": 521,
+          "auc": 0.9548,
+          "brier": 0.0441,
+          "calibration_error": 0.0367,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_num",
+            "rpr_vs_field",
+            "or_vs_field"
+          ]
+        }
+      },
+      "verdict": "VIABLE_SHADOW_CANDIDATE",
+      "best_model_sr": 0.8426,
+      "beats_fav_baseline": true,
+      "beats_rpr_baseline": true,
+      "best_auc": 0.9591
+    },
+    {
+      "pack": "FR_CHANTILLY_V1",
+      "courses": [
+        "Chantilly (FR)"
+      ],
+      "n_total": 47568,
+      "n_train": 34519,
+      "n_valid": 5040,
+      "n_test": 8009,
+      "train_races": 2934,
+      "test_races": 676,
+      "features_used": [
+        "rpr_num",
+        "ts_num",
+        "rpr_vs_field",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "wgt_lbs",
+        "runs_since_win",
+        "runs_since_place",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "trainer_timing_score"
+      ],
+      "n_features": 17,
+      "leakage_check": "CLEAN",
+      "baselines": {
+        "favourite_sr": 0.2938,
+        "favourite_n": 674,
+        "best_rpr_sr": 0.5873,
+        "best_rpr_n": 676
+      },
+      "models": {
+        "logistic_regression": {
+          "top_pick_sr": 0.6302,
+          "n_picks": 676,
+          "auc": 0.8237,
+          "brier": 0.0568,
+          "calibration_error": 0.0256,
+          "beats_fav": true,
+          "beats_rpr": true
+        },
+        "random_forest": {
+          "top_pick_sr": 0.6435,
+          "n_picks": 676,
+          "auc": 0.8746,
+          "brier": 0.0582,
+          "calibration_error": 0.1556,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_vs_field",
+            "rpr_num",
+            "ts_num"
+          ]
+        },
+        "lightgbm": {
+          "top_pick_sr": 0.645,
+          "n_picks": 676,
+          "auc": 0.9072,
+          "brier": 0.0546,
+          "calibration_error": 0.0392,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_vs_field",
+            "rpr_num",
+            "wgt_lbs"
+          ]
+        }
+      },
+      "verdict": "VIABLE_SHADOW_CANDIDATE",
+      "best_model_sr": 0.645,
+      "beats_fav_baseline": true,
+      "beats_rpr_baseline": true,
+      "best_auc": 0.9072
+    },
+    {
+      "pack": "FR_FLAT_CORE",
+      "courses": [
+        "Chantilly (FR)",
+        "Deauville (FR)",
+        "Longchamp (FR)",
+        "Saint-Cloud (FR)"
+      ],
+      "n_total": 142352,
+      "n_train": 104863,
+      "n_valid": 14264,
+      "n_test": 23225,
+      "train_races": 9072,
+      "test_races": 2008,
+      "features_used": [
+        "rpr_num",
+        "ts_num",
+        "rpr_vs_field",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "wgt_lbs",
+        "runs_since_win",
+        "runs_since_place",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "trainer_timing_score"
+      ],
+      "n_features": 17,
+      "leakage_check": "CLEAN",
+      "baselines": {
+        "favourite_sr": 0.2973,
+        "favourite_n": 2005,
+        "best_rpr_sr": 0.5921,
+        "best_rpr_n": 2008
+      },
+      "models": {
+        "logistic_regression": {
+          "top_pick_sr": 0.6379,
+          "n_picks": 2008,
+          "auc": 0.8237,
+          "brier": 0.0595,
+          "calibration_error": 0.0246,
+          "beats_fav": true,
+          "beats_rpr": true
+        },
+        "random_forest": {
+          "top_pick_sr": 0.6628,
+          "n_picks": 2008,
+          "auc": 0.8691,
+          "brier": 0.0608,
+          "calibration_error": 0.1561,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_vs_field",
+            "rpr_num",
+            "ts_num"
+          ]
+        },
+        "lightgbm": {
+          "top_pick_sr": 0.6863,
+          "n_picks": 2008,
+          "auc": 0.9076,
+          "brier": 0.056,
+          "calibration_error": 0.0248,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_vs_field",
+            "wgt_lbs",
+            "rpr_num"
+          ]
+        }
+      },
+      "verdict": "VIABLE_SHADOW_CANDIDATE",
+      "best_model_sr": 0.6863,
+      "beats_fav_baseline": true,
+      "beats_rpr_baseline": true,
+      "best_auc": 0.9076
+    },
+    {
+      "pack": "FR_AUTEUIL_JUMPS_V1",
+      "courses": [
+        "Auteuil (FR)"
+      ],
+      "n_total": 31977,
+      "n_train": 24137,
+      "n_valid": 3030,
+      "n_test": 4810,
+      "train_races": 2332,
+      "test_races": 447,
+      "features_used": [
+        "rpr_num",
+        "rpr_vs_field",
+        "field_size",
+        "age_num",
+        "dist_f",
+        "going_code",
+        "wgt_lbs",
+        "runs_since_win",
+        "runs_since_place",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "trainer_timing_score"
+      ],
+      "n_features": 13,
+      "leakage_check": "CLEAN",
+      "baselines": {
+        "favourite_sr": 0.2752,
+        "favourite_n": 447,
+        "best_rpr_sr": 0.6242,
+        "best_rpr_n": 447
+      },
+      "models": {
+        "logistic_regression": {
+          "top_pick_sr": 0.6734,
+          "n_picks": 447,
+          "auc": 0.8981,
+          "brier": 0.0648,
+          "calibration_error": 0.093,
+          "beats_fav": true,
+          "beats_rpr": true
+        },
+        "random_forest": {
+          "top_pick_sr": 0.6018,
+          "n_picks": 447,
+          "auc": 0.8779,
+          "brier": 0.0682,
+          "calibration_error": 0.1506,
+          "beats_fav": true,
+          "beats_rpr": false,
+          "top3_features": [
+            "rpr_vs_field",
+            "rpr_num",
+            "field_size"
+          ]
+        },
+        "lightgbm": {
+          "top_pick_sr": 0.6421,
+          "n_picks": 447,
+          "auc": 0.9051,
+          "brier": 0.0643,
+          "calibration_error": 0.1544,
+          "beats_fav": true,
+          "beats_rpr": true,
+          "top3_features": [
+            "rpr_vs_field",
+            "rpr_num",
+            "field_size"
+          ]
+        }
+      },
+      "verdict": "VIABLE_SHADOW_CANDIDATE",
+      "best_model_sr": 0.6734,
+      "beats_fav_baseline": true,
+      "beats_rpr_baseline": true,
+      "best_auc": 0.9051
+    }
+  ]
+}
