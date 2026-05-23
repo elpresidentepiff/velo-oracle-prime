@@ -196,6 +196,39 @@ def _load_last_council_verdict(date_str: str) -> str:
     return "NOT_RUN"
 
 
+def _sigma_artifact_status(date_str: str) -> dict:
+    date_und = date_str.replace("-", "_")
+    candidates = [
+        ROOT / "data" / "sigma_results" / f"sigma_results_{date_und}.json",
+        ROOT / "data" / f"sigma_results_{date_und}.json",
+    ]
+    for path in candidates:
+        if path.exists():
+            try:
+                d = json.loads(path.read_text())
+                return {
+                    "status": "PRESENT",
+                    "path": str(path.relative_to(ROOT)),
+                    "sr": d.get("sr"),
+                    "wins": d.get("wins"),
+                    "evaluated_count": d.get("evaluated_count"),
+                }
+            except Exception:
+                pass
+    return {"status": "MISSING", "path": None, "sr": None}
+
+
+def _council_artifact_status(date_str: str) -> dict:
+    run_path = ROOT / "data" / "council_runs" / f"council_run_{date_str}.json"
+    packet_path = ROOT / "data" / "council_packets" / f"council_packet_{date_str}.json"
+    report_path = ROOT / "data" / "council_reports" / f"velo_council_report_{date_str}.md"
+    return {
+        "council_run": "PRESENT" if run_path.exists() else "MISSING",
+        "council_packet": "PRESENT" if packet_path.exists() else "MISSING",
+        "council_report": "PRESENT" if report_path.exists() else "MISSING",
+    }
+
+
 def build_mission_control(date_str: str) -> dict:
     rows = _load_snapshots(date_str)
     flatline_data = _detect_flatlines(rows)
@@ -208,6 +241,11 @@ def build_mission_control(date_str: str) -> dict:
     )
     council_verdict = _load_last_council_verdict(date_str)
     gate_v2 = _gate_v2_status()
+    sigma_artifact = _sigma_artifact_status(date_str)
+    council_artifacts = _council_artifact_status(date_str)
+
+    rcg = gate_v2.get("runner_calibration_gate", {})
+    dpg = gate_v2.get("decision_policy_gate", {})
 
     mc = {
         "date": date_str,
@@ -223,6 +261,16 @@ def build_mission_control(date_str: str) -> dict:
         "council_verdict": council_verdict,
         "learning_gate_status": learning_gate,
         "promotion_gate_status": promotion_gate,
+        "sigma_artifact": sigma_artifact,
+        "council_artifact_visibility": council_artifacts,
+        "runner_calibration_gate_status": rcg.get("status", "UNKNOWN"),
+        "runner_calibration_gate_runners": rcg.get("runner_count", 0),
+        "decision_policy_gate_status": dpg.get("status", "UNKNOWN"),
+        "decision_policy_gate_top_picks": dpg.get("top_pick_decisions", 0),
+        "research_status": {
+            "race_shape_model_v1": "DESIGN_PENDING",
+            "midprice_hunter_v2": "RESEARCH_PENDING",
+        },
         "cpu_shadow_gate_v1": {
             "status": "GATE_V1_AUDIT_ONLY",
             "contaminated": True,
@@ -274,11 +322,15 @@ def main() -> None:
     print(f"  learning_gate: {mc['learning_gate_status']}")
     print(f"  promotion_gate: {mc['promotion_gate_status']}")
     print(f"  council_verdict: {mc['council_verdict']}")
-    _g2 = mc.get('cpu_shadow_gate_v2', {})
-    _rcg = _g2.get('runner_calibration_gate', {})
-    _dpg = _g2.get('decision_policy_gate', {})
-    print(f"  gate_v2 runner_calibration: {_rcg.get('status','?')} (n={_rcg.get('runner_count','?')})")
-    print(f"  gate_v2 decision_policy:    {_dpg.get('status','?')} (top_picks={_dpg.get('top_pick_decisions','?')})")
+    _sa = mc.get('sigma_artifact', {})
+    print(f"  sigma_artifact: {_sa.get('status','?')} (sr={_sa.get('sr','?')}, wins={_sa.get('wins','?')}, n={_sa.get('evaluated_count','?')})")
+    _ca = mc.get('council_artifact_visibility', {})
+    print(f"  council_artifacts: run={_ca.get('council_run','?')} packet={_ca.get('council_packet','?')} report={_ca.get('council_report','?')}")
+    print(f"  runner_calibration_gate: {mc['runner_calibration_gate_status']} (n={mc['runner_calibration_gate_runners']})")
+    print(f"  decision_policy_gate:    {mc['decision_policy_gate_status']} (top_picks={mc['decision_policy_gate_top_picks']})")
+    _rs = mc.get('research_status', {})
+    print(f"  race_shape_model_v1: {_rs.get('race_shape_model_v1','?')}")
+    print(f"  midprice_hunter_v2:  {_rs.get('midprice_hunter_v2','?')}")
     print(f"  next: {mc['next_safe_command']}")
     print(f"  Written: {dated_path}")
     print(f"  Written: {latest_path}")
