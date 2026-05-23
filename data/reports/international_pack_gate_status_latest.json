@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-05-23T23:30:06.327032+00:00",
+  "gate_question": "Can VELO beat fav/RPR baselines on pre-race info only?",
+  "gate_status": "ACTIVE",
+  "migration_blocked": true,
+  "workers_blocked": true,
+  "packs": [
+    {
+      "pack": "HK_SHA_TIN_V1",
+      "provenance_gate_status": "ACTIVE",
+      "prerace_feature_safety": "AUDITED",
+      "arena_verdict": "FAILS_FAVOURITE_BASELINE",
+      "full_model_auc": 0.713,
+      "full_model_sr": 0.244,
+      "fav_sr": 0.347,
+      "beats_favourite": false,
+      "migration_eligible": false,
+      "worker_eligible": false,
+      "next_blocker": "Model does not beat favourite \u2014 more pre-race signals required",
+      "final_verdict": "FAILS_FAVOURITE_BASELINE"
+    },
+    {
+      "pack": "HK_HAPPY_VALLEY_V1",
+      "provenance_gate_status": "ACTIVE",
+      "prerace_feature_safety": "AUDITED",
+      "arena_verdict": "FAILS_FAVOURITE_BASELINE",
+      "full_model_auc": 0.6842,
+      "full_model_sr": 0.2073,
+      "fav_sr": 0.2687,
+      "beats_favourite": false,
+      "migration_eligible": false,
+      "worker_eligible": false,
+      "next_blocker": "Model does not beat favourite \u2014 more pre-race signals required",
+      "final_verdict": "FAILS_FAVOURITE_BASELINE"
+    },
+    {
+      "pack": "FR_CHANTILLY_V1",
+      "provenance_gate_status": "ACTIVE",
+      "prerace_feature_safety": "AUDITED",
+      "arena_verdict": "FAILS_FAVOURITE_BASELINE",
+      "full_model_auc": 0.6643,
+      "full_model_sr": 0.1807,
+      "fav_sr": 0.2942,
+      "beats_favourite": false,
+      "migration_eligible": false,
+      "worker_eligible": false,
+      "next_blocker": "Model does not beat favourite \u2014 more pre-race signals required",
+      "final_verdict": "FAILS_FAVOURITE_BASELINE"
+    },
+    {
+      "pack": "FR_FLAT_CORE",
+      "provenance_gate_status": "ACTIVE",
+      "prerace_feature_safety": "AUDITED",
+      "arena_verdict": "FAILS_FAVOURITE_BASELINE",
+      "full_model_auc": 0.6631,
+      "full_model_sr": 0.1971,
+      "fav_sr": 0.2969,
+      "beats_favourite": false,
+      "migration_eligible": false,
+      "worker_eligible": false,
+      "next_blocker": "Model does not beat favourite \u2014 more pre-race signals required",
+      "final_verdict": "FAILS_FAVOURITE_BASELINE"
+    },
+    {
+      "pack": "FR_AUTEUIL_JUMPS_V1",
+      "provenance_gate_status": "ACTIVE",
+      "prerace_feature_safety": "AUDITED",
+      "arena_verdict": "FAILS_FAVOURITE_BASELINE",
+      "full_model_auc": 0.6306,
+      "full_model_sr": 0.1816,
+      "fav_sr": 0.2758,
+      "beats_favourite": false,
+      "migration_eligible": false,
+      "worker_eligible": false,
+      "next_blocker": "Model does not beat favourite \u2014 more pre-race signals required",
+      "final_verdict": "FAILS_FAVOURITE_BASELINE"
+    }
+  ]
+}
