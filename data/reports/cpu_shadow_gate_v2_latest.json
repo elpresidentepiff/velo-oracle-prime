@@ -1,0 +1,42 @@
+{
+  "gate_id": "GATE_V2_POST_FLATLINE_FIX",
+  "generated_at": "2026-05-23T01:22:20.241403+00:00",
+  "start_date": "2026-05-21",
+  "fix_commit": "a33c5bd8",
+  "fix_commit_full": "a33c5bd84aa600a98bd9e1bfdc381750f20f23a4",
+  "gate_v1_status": "GATE_V1_AUDIT_ONLY",
+  "gate_v1_contamination": "CONFIRMED \u2014 pre-a33c5bd RP_MERGED flatline rows included",
+  "gate_v1_contaminated_runners_excluded": 807,
+  "gate_v2_runner_count": 786,
+  "gate_v2_qualified_days": [
+    "2026-05-21",
+    "2026-05-22"
+  ],
+  "gate_v2_day_count": 2,
+  "flatline_count": 0,
+  "identity_failures": 0,
+  "by_date": {
+    "2026-05-21": {
+      "date": "2026-05-21",
+      "sha8": "a33c5bd8",
+      "is_post_fix": true,
+      "runner_count": 369,
+      "race_count": 44,
+      "flatline_count": 0
+    },
+    "2026-05-22": {
+      "date": "2026-05-22",
+      "sha8": "a33c5bd8",
+      "is_post_fix": true,
+      "runner_count": 417,
+      "race_count": 43,
+      "flatline_count": 0
+    }
+  },
+  "promotion_threshold": 300,
+  "rows_to_threshold": 0,
+  "promotion_eligible": true,
+  "promotion_blocks": [],
+  "promotion_decision": "OPERATOR_DECISION_REQUIRED",
+  "live_promotion_allowed": false
+}
