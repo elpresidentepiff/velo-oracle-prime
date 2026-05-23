@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-05-23T08:27:38.508341+00:00",
+  "fix_date": "2026-05-21",
+  "gate_1": 150,
+  "gate_2": 300,
+  "decisions_made": 87,
+  "decisions_with_outcomes": 80,
+  "decisions_excluded_no_result": 7,
+  "n": 80,
+  "needed_to_gate_1": 63,
+  "needed_to_gate_2": 213,
+  "verdict": "NEEDS_MORE_DAYS",
+  "stats": {
+    "n": 80,
+    "wins": 22,
+    "sr": 0.275,
+    "sr_vs_baseline": 0.075,
+    "brier_score": 0.2091,
+    "brier_baseline": 0.2,
+    "brier_skill": -0.0455,
+    "top_decile_n": 8,
+    "top_decile_sr": 0.375,
+    "by_tier": {
+      "A": {
+        "n": 11,
+        "wins": 3,
+        "sr": 0.2727
+      },
+      "B": {
+        "n": 37,
+        "wins": 13,
+        "sr": 0.3514
+      },
+      "C": {
+        "n": 22,
+        "wins": 6,
+        "sr": 0.2727
+      },
+      "X": {
+        "n": 10,
+        "wins": 0,
+        "sr": 0.0
+      }
+    },
+    "by_vp_band": {
+      "VP_LT_20": {
+        "n": 41,
+        "wins": 10,
+        "sr": 0.2439
+      },
+      "VP_20_30": {
+        "n": 22,
+        "wins": 7,
+        "sr": 0.3182
+      },
+      "VP_30_40": {
+        "n": 12,
+        "wins": 3,
+        "sr": 0.25
+      },
+      "VP_GE_40": {
+        "n": 5,
+        "wins": 2,
+        "sr": 0.4
+      }
+    },
+    "best_subgroup": "B",
+    "worst_subgroup": "X"
+  },
+  "by_date": {
+    "2026-05-21": {
+      "n": 44,
+      "wins": 13,
+      "sr": 0.2955
+    },
+    "2026-05-22": {
+      "n": 36,
+      "wins": 9,
+      "sr": 0.25
+    }
+  }
+}
