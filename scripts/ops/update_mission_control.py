@@ -143,47 +143,38 @@ def _gate_status(flatline_count: int, identity_failure_count: int, source_truth:
 
 
 def _gate_v2_status() -> dict:
-    may21_path = ROOT / "data" / f"runner_snapshots_2026_05_21_2026_05_21_a33c5bd8_1779363549514.jsonl"
-    may22_path = ROOT / "data" / f"runner_snapshots_2026_05_22_2026_05_22_a33c5bd8_1779451028202.jsonl"
-    runner_count = 0
-    qualified_days = []
-    for p in [may21_path, may22_path]:
-        if p.exists():
-            n = sum(1 for _ in p.open())
-            if n > 0:
-                runner_count += n
-                qualified_days.append(p.stem.split("_")[3])
-
-    pattern = str(ROOT / "data" / "runner_snapshots_202*.jsonl")
-    all_snaps = glob.glob(pattern)
-    clean_snaps = [s for s in all_snaps if not any(cid in s for cid in CONTAMINATED_RUN_IDS)]
-    clean_dates = sorted(set(
-        Path(s).stem.split("_")[3] + "-" + Path(s).stem.split("_")[4] + "-" + Path(s).stem.split("_")[5]
-        for s in clean_snaps
-        if len(Path(s).stem.split("_")) >= 6
-    ))
-
-    clean_runner_total = 0
-    for p in clean_snaps:
-        clean_runner_total += sum(1 for _ in open(p))
-
+    gate_v2_path = ROOT / "data" / "reports" / "cpu_shadow_gate_v2_latest.json"
+    if gate_v2_path.exists():
+        try:
+            d = json.loads(gate_v2_path.read_text())
+            rcg = d.get("runner_calibration_gate", {})
+            dpg = d.get("decision_policy_gate", {})
+            return {
+                "gate_v1_status": "GATE_V1_AUDIT_ONLY",
+                "runner_calibration_gate": {
+                    "runner_count": rcg.get("runner_count", 0),
+                    "status": rcg.get("status", "UNKNOWN"),
+                    "threshold": rcg.get("threshold", 300),
+                    "review_threshold_met": rcg.get("review_threshold_met", False),
+                },
+                "decision_policy_gate": {
+                    "top_pick_decisions": dpg.get("top_pick_decisions", 0),
+                    "status": dpg.get("status", "NEEDS_MORE_DAYS"),
+                    "next_review": dpg.get("next_review", ""),
+                    "threshold_1": dpg.get("threshold_1", 150),
+                    "threshold_1_met": dpg.get("threshold_1_met", False),
+                },
+                "live_promotion_allowed": False,
+                "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
+                "mission_control_display": d.get("mission_control_display", {}),
+            }
+        except Exception:
+            pass
     return {
-        "gate_id": "GATE_V2_POST_FLATLINE_FIX",
-        "start_date": FIX_DATE,
-        "fix_commit": FIX_COMMIT[:8],
         "gate_v1_status": "GATE_V1_AUDIT_ONLY",
-        "gate_v1_contamination": "CONFIRMED — pre-a33c5bd RP_MERGED rows included",
-        "gate_v2_runner_count": clean_runner_total,
-        "gate_v2_qualified_days": len(clean_dates),
-        "review_threshold": 300,
-        "review_threshold_met": clean_runner_total >= 300,
+        "runner_calibration_gate": {"status": "UNKNOWN"},
+        "decision_policy_gate": {"status": "UNKNOWN"},
         "live_promotion_allowed": False,
-        "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
-        "display_status": (
-            "CPU_GATE_V2_REVIEW_TRIGGERED / NOT_APPROVED"
-            if clean_runner_total >= 300
-            else f"ACCUMULATING — {max(0, 300 - clean_runner_total)} runners to review threshold"
-        ),
     }
 
 
@@ -283,7 +274,11 @@ def main() -> None:
     print(f"  learning_gate: {mc['learning_gate_status']}")
     print(f"  promotion_gate: {mc['promotion_gate_status']}")
     print(f"  council_verdict: {mc['council_verdict']}")
-    print(f"  gate_v2_runners: {mc['cpu_shadow_gate_v2']['gate_v2_runner_count']}")
+    _g2 = mc.get('cpu_shadow_gate_v2', {})
+    _rcg = _g2.get('runner_calibration_gate', {})
+    _dpg = _g2.get('decision_policy_gate', {})
+    print(f"  gate_v2 runner_calibration: {_rcg.get('status','?')} (n={_rcg.get('runner_count','?')})")
+    print(f"  gate_v2 decision_policy:    {_dpg.get('status','?')} (top_picks={_dpg.get('top_pick_decisions','?')})")
     print(f"  next: {mc['next_safe_command']}")
     print(f"  Written: {dated_path}")
     print(f"  Written: {latest_path}")

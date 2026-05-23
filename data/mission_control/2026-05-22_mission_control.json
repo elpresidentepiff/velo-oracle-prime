@@ -1,6 +1,6 @@
 {
   "date": "2026-05-22",
-  "generated_at": "2026-05-23T01:46:37.975052+00:00",
+  "generated_at": "2026-05-23T01:55:58.937183+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
     "a33c5bd8"
@@ -11,7 +11,7 @@
   "majority_tied_count": 0,
   "identity_failure_count": 0,
   "runners_snapshotted": 417,
-  "council_verdict": "WATCH_ONLY",
+  "council_verdict": "PASS_TO_LEARNING",
   "learning_gate_status": "OPEN",
   "promotion_gate_status": "OPEN",
   "cpu_shadow_gate_v1": {
@@ -20,18 +20,26 @@
     "reason": "Contains pre-a33c5bd RP_MERGED rows \u2014 do not use for promotion"
   },
   "cpu_shadow_gate_v2": {
-    "gate_id": "GATE_V2_POST_FLATLINE_FIX",
-    "start_date": "2026-05-21",
-    "fix_commit": "a33c5bd8",
     "gate_v1_status": "GATE_V1_AUDIT_ONLY",
-    "gate_v1_contamination": "CONFIRMED \u2014 pre-a33c5bd RP_MERGED rows included",
-    "gate_v2_runner_count": 786,
-    "gate_v2_qualified_days": 2,
-    "review_threshold": 300,
-    "review_threshold_met": true,
+    "runner_calibration_gate": {
+      "runner_count": 786,
+      "status": "REVIEW_THRESHOLD_MET",
+      "threshold": 300,
+      "review_threshold_met": true
+    },
+    "decision_policy_gate": {
+      "top_pick_decisions": 87,
+      "status": "NEEDS_MORE_DAYS",
+      "next_review": "63 more top-pick decisions to first policy gate",
+      "threshold_1": 150,
+      "threshold_1_met": false
+    },
     "live_promotion_allowed": false,
     "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
-    "display_status": "CPU_GATE_V2_REVIEW_TRIGGERED / NOT_APPROVED"
+    "mission_control_display": {
+      "runner_calibration": "REVIEW_THRESHOLD_MET / NOT APPROVED",
+      "decision_policy": "NEEDS_MORE_DAYS \u2014 63 top-pick decisions to first gate"
+    }
   },
   "gate_rules": [
     "sigma_audits truth writes: NEVER blocked \u2014 raw result ledger always recorded",
