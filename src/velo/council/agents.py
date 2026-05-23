@@ -45,12 +45,17 @@ def _load_mc(date_str: str) -> dict:
 
 
 def _load_sigma(date_str: str) -> dict:
-    p = ROOT / "data" / f"sigma_results_{date_str.replace('-', '_')}.json"
-    if p.exists():
-        try:
-            return json.loads(p.read_text())
-        except Exception:
-            pass
+    date_und = date_str.replace("-", "_")
+    candidates = [
+        ROOT / "data" / "sigma_results" / f"sigma_results_{date_und}.json",
+        ROOT / "data" / f"sigma_results_{date_und}.json",
+    ]
+    for p in candidates:
+        if p.exists():
+            try:
+                return json.loads(p.read_text())
+            except Exception:
+                pass
     return {}
 
 

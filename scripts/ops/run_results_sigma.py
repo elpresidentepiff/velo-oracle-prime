@@ -868,6 +868,60 @@ def main():
         print("\nFAIL — sigma_ok=0: no reconciliation truth persisted")
         sys.exit(1)
 
+    # ── STEP 9: Write local sigma artifact for Council / Mission Control ─────
+    # This is a mirror artifact ONLY. sigma_audits truth is already in Supabase.
+    # Purpose: let Council (SigmaCoverageAgent) read local JSON without DB query.
+    print("\nSTEP 9: Write local sigma artifact")
+    _sigma_dir = ROOT / "data" / "sigma_results"
+    _sigma_dir.mkdir(parents=True, exist_ok=True)
+    _sigma_artifact = {
+        "date": race_date,
+        "generated_at": utc_now_iso(),
+        "expected_predictions": len(predictions),
+        "result_races": len(results_by_id),
+        "evaluated_count": total_matched,
+        "wins": total_hits,
+        "frames": total_frames,
+        "misses": total_misses,
+        "true_non_runners": total_nr,
+        "identity_failures": 0,
+        "no_result_count": no_result_ct,
+        "total_reviewed": total_matched,
+        "sr": round(strike_rate, 4),
+        "frame_rate": round(frame_rate, 4),
+        "miss_class_breakdown": miss_classes,
+        "high_conf_n": len(high_conf),
+        "high_conf_sr": round(high_strike, 4),
+        "avg_hit_prob": round(avg_hit_prob, 4),
+        "avg_miss_prob": round(avg_miss_prob, 4),
+        "source": "sigma_reconciliation",
+        "sigma_status": "PASS" if sigma_ok > 0 else "FAIL",
+        "sigma_note": sigma_note,
+        "learning_candidate_rows": sigma_ok,
+        "unresolved_rows": no_result_ct,
+        "raw_sigma_audits_preserved": True,
+    }
+    _dated_path = _sigma_dir / f"sigma_results_{race_date.replace('-', '_')}.json"
+    _dated_path.write_text(json.dumps(_sigma_artifact, indent=2))
+    print(f"  Written: {_dated_path}")
+
+    _md_lines = [
+        f"# VELO Sigma Results — {race_date}",
+        f"\n**Status:** {_sigma_artifact['sigma_status']} — {sigma_note}",
+        f"\n| Metric | Value |",
+        f"|---|---|",
+        f"| Evaluated | {total_matched} |",
+        f"| Wins | {total_hits} ({strike_rate:.1%}) |",
+        f"| Frames | {total_frames} |",
+        f"| Misses | {total_misses} |",
+        f"| Non-runners excluded | {total_nr} |",
+        f"| No-result | {no_result_ct} |",
+        f"| High-conf (VP≥0.30) | {len(high_conf)} picks, {high_strike:.1%} SR |",
+        f"| sigma_audits written | {sigma_ok}/{total_matched} |",
+        f"\n**raw_sigma_audits_preserved:** true",
+    ]
+    (_sigma_dir / f"sigma_results_{race_date.replace('-', '_')}.md").write_text("\n".join(_md_lines))
+
     # ── Summary ───────────────────────────────────────────────────────────────
     print(f"\n{'=' * 60}")
     print(f"SIGMA COMPLETE — {race_date}")
