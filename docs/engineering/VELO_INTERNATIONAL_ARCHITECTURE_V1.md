@@ -2,10 +2,16 @@
 ## France (FR) + Hong Kong (HK) Expansion Framework
 
 **Date:** 2026-05-23  
-**Status:** DESIGN DOCUMENT — Phase 0 COMPLETE | Phase 1A Offline Baseline Arena COMPLETE  
+**Status:** DESIGN DOCUMENT — Phase 0 COMPLETE | Provenance Gate ACTIVE — expansion BLOCKED  
 **Author:** Claude Prime / Co-Founder  
 **Classification:** Strategic — Not a live-runtime change  
-**Updated:** 2026-05-23 — Racing API removed, verified substrate 255,862 rows, Auteuil reclassified FR_JUMPS, all 5 packs VIABLE_SHADOW_CANDIDATE
+**Updated:** 2026-05-23 — Provenance audit complete. FR RPR/TS POST_RACE_LEAKAGE_CONFIRMED. HK RPR/OR PRE_RACE_SAFE. All packs NEEDS_FEATURE_ENGINEERING on lagged-only arena. Gate active: no migration, no workers, no promotion.
+
+```
+INTERNATIONAL_RATING_PROVENANCE_GATE_ACTIVE
+LAGGED_ONLY_ARENA_REQUIRED
+NO_MIGRATION | NO_WORKER_ACTIVATION | NO_PROMOTION
+```
 
 ---
 

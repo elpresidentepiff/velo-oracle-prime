@@ -6,6 +6,52 @@
 
 ---
 
+## ACTIVE BLOCKING GATE (as of 2026-05-23)
+
+```
+INTERNATIONAL_RATING_PROVENANCE_GATE_ACTIVE
+LAGGED_ONLY_ARENA_REQUIRED
+NO_MIGRATION
+NO_WORKER_ACTIVATION
+NO_PROMOTION
+```
+
+**The international expansion does not advance to migration, workers, training, or
+deployment until this gate closes.**
+
+**The gate closes only when the following question is answered YES:**
+
+> Can VÉLØ beat favourite and RPR baselines using ONLY information that would have
+> existed before the race started?
+
+Current answer: **NO.** All 5 packs return NEEDS_FEATURE_ENGINEERING on lagged-only
+arena. No pack beats the favourite SR on prior-run history alone.
+
+**Gate close path — what must be built:**
+- Sha Tin draw bias table (structural edge, publicly available from HKJC)
+- HK class trajectory (class movement over last 4 runs — available from form history)
+- FR penetrometer going mapping (PMU publishes numeric going pre-race)
+- FR Quinté+ flag (race classification — known pre-race)
+- FR distance preference from prior-run history (already in lagged features, needs tuning)
+- Local market structure proxy (HK: morning HKJC tote odds / FR: PMU morning odds)
+
+If re-running the lagged arena with these additional pre-race features produces a pack
+that beats the favourite SR, the gate opens for that pack only. Each pack is independent.
+
+If no pack beats the favourite after full pre-race feature set: the original arena was
+a mirage driven by post-race RPR/TS. Rebuild from scratch on lagged signals only.
+
+**Operator position (co-founder, 2026-05-23):**
+- Dataset: trusted enough to audit
+- Same-race ratings: untrusted until timestamp provenance proven
+- Original arena (AUC 0.90-0.95): NOT ACCEPTED
+- Safe arena: NOT ACCEPTED until lagged-only confirms
+- Migration: BLOCKED
+- Workers: BLOCKED
+- Promotion: BLOCKED
+
+---
+
 ## Why This Document Exists
 
 Phase 1A offline arena produced AUC=0.95 and SR=80%+ for HK packs. These values are outside normal
@@ -229,21 +275,29 @@ After live ingest is running and shadow scoring is active:
 ---
 
 ```
-DOCUMENT_STATUS:         LOCKED_GOVERNANCE
-GATE_0_HK_SHA_TIN:       PENDING_LAGGED_ARENA
-GATE_0_HK_HAPPY_VALLEY:  PENDING_LAGGED_ARENA
-GATE_0_FR_CHANTILLY:     PROVENANCE_FAILED
-GATE_0_FR_FLAT_CORE:     PROVENANCE_FAILED
-GATE_0_FR_AUTEUIL:       PROVENANCE_FAILED
-HK_RPR_PROVENANCE:       PRE_RACE_SAFE (winner_max 42-46%)
-HK_OR_PROVENANCE:        PRE_RACE_SAFE (winner_max 12-17%)
-FR_RPR_PROVENANCE:       POST_RACE_LEAKAGE_CONFIRMED (winner_max 70-73%)
-FR_TS_PROVENANCE:        POST_RACE_LEAKAGE_CONFIRMED (winner_max 75-77%)
-FR_SAME_RACE_RPR_TS:     PERMANENTLY_BANNED_UNTIL_SOURCE_CLARIFIED
-MIGRATION_STATUS:        NOT_APPLIED — blocked pending lagged arena
-WORKER_STATUS:           BLOCKED
-SCORING_STATUS:          OFFLINE_ONLY
-UK_PIPELINE_STATUS:      UNCHANGED
-SHUFFLE_IS_INSUFFICIENT: TRUE — see Rule 14
-LAGGED_ARENA_STATUS:     IN_PROGRESS
+DOCUMENT_STATUS:                  LOCKED_GOVERNANCE
+ACTIVE_BLOCKING_GATE:             INTERNATIONAL_RATING_PROVENANCE_GATE_ACTIVE
+GATE_QUESTION:                    Can VELO beat fav/RPR baselines on pre-race info only?
+GATE_CURRENT_ANSWER:              NO — all 5 packs NEEDS_FEATURE_ENGINEERING on lagged-only
+
+GATE_0_HK_SHA_TIN:                NEEDS_FEATURE_ENGINEERING (lagged AUC=0.70, SR<FavSR)
+GATE_0_HK_HAPPY_VALLEY:           NEEDS_FEATURE_ENGINEERING (lagged AUC=0.66, SR<FavSR)
+GATE_0_FR_CHANTILLY:              PROVENANCE_FAILED + NEEDS_FEATURE_ENGINEERING
+GATE_0_FR_FLAT_CORE:              PROVENANCE_FAILED + NEEDS_FEATURE_ENGINEERING
+GATE_0_FR_AUTEUIL:                PROVENANCE_FAILED + NEEDS_FEATURE_ENGINEERING
+
+HK_RPR_PROVENANCE:                PRE_RACE_SAFE (winner_max 42-46%)
+HK_OR_PROVENANCE:                 PRE_RACE_SAFE (winner_max 12-17%)
+FR_RPR_PROVENANCE:                POST_RACE_LEAKAGE_CONFIRMED (winner_max 70-73%)
+FR_TS_PROVENANCE:                 POST_RACE_LEAKAGE_CONFIRMED (winner_max 75-77%)
+FR_SAME_RACE_RPR_TS:              PERMANENTLY_BANNED
+
+MIGRATION_STATUS:                 NOT_APPLIED — BLOCKED
+WORKER_STATUS:                    BLOCKED
+PROMOTION_STATUS:                 BLOCKED
+SCORING_STATUS:                   OFFLINE_ONLY
+UK_PIPELINE_STATUS:               UNCHANGED
+SHUFFLE_IS_INSUFFICIENT:          TRUE — see Rule 14
+LAGGED_ARENA_STATUS:              COMPLETE — NEEDS_FEATURE_ENGINEERING all packs
+NEXT_REQUIRED_STEP:               Add draw/class/going/market features, re-run lagged arena
 ```
