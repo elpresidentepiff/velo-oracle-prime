@@ -2,10 +2,10 @@
 ## France (FR) + Hong Kong (HK) Expansion Framework
 
 **Date:** 2026-05-23  
-**Status:** DESIGN DOCUMENT — Phase 0 data verification COMPLETE  
+**Status:** DESIGN DOCUMENT — Phase 0 COMPLETE | Phase 1A Offline Baseline Arena COMPLETE  
 **Author:** Claude Prime / Co-Founder  
 **Classification:** Strategic — Not a live-runtime change  
-**Updated:** 2026-05-23 — Racing API removed, verified substrate 255,862 rows, Auteuil reclassified FR_JUMPS
+**Updated:** 2026-05-23 — Racing API removed, verified substrate 255,862 rows, Auteuil reclassified FR_JUMPS, all 5 packs VIABLE_SHADOW_CANDIDATE
 
 ---
 
@@ -20,8 +20,8 @@ Before building anything, run the inventory. We are not starting from zero.
 | HK ingestion worker | `archive/dead_workers/hk_daily_ingest.py` | DEAD — needs os import + reactivation | Tables: `hk_research.hk_races/results/history` |
 | FR ingestion worker | `archive/dead_workers/fr_daily_ingest.py` | DEAD — needs os import fix | Tables: `fr_research.fr_races/runners/results` |
 | Benter model | `src/models/benter.py` | IMPLEMENTED — α=0.9, β=1.1 | Calibrate() method included |
-| hk_research schema | Supabase | EXISTS — cold, never ingested live | `hk_races`, `hk_results`, `hk_horse_history`, `hk_ingestion_log` |
-| fr_research schema | Supabase | EXISTS — cold, never ingested live | `fr_races`, `fr_runners`, `fr_results`, `fr_market_snapshots`, `fr_ingestion_log` |
+| hk_research schema | Supabase | NOT YET CREATED — migration ready, awaiting approval | `migrations/intl_schemas_v1.sql` — 9 HK tables defined |
+| fr_research schema | Supabase | NOT YET CREATED — migration ready, awaiting approval | `migrations/intl_schemas_v1.sql` — 7 FR tables defined |
 
 **Signal quality from parquet (confirmed):**
 - `rpr_vs_field` correlation with winner target: HK=0.3257, FR=0.3363 — strong, consistent
@@ -418,7 +418,7 @@ HK races on Wed + Sat (Sha Tin). Wed also includes Happy Valley (night).
 
 ### 7A. Phase 0 — Baseline Signal Audit (Before Training Anything)
 
-Run these against the existing 270K parquet rows to confirm signal before touching a model:
+Run these against the existing 255,862 target-course parquet rows to confirm signal before touching a model:
 
 ```python
 # Already confirmed from parquet analysis:
@@ -582,33 +582,69 @@ All Phase 0 documents:
 | `data/reports/raceform_v17_international_profile.md` | Human-readable profile | All 7 courses TRAINING_SAFE |
 | `data/reports/international_signal_baselines_latest.json` | Signal correlation audit | RPR primary, OR absent in FR, TS absent in HK |
 | `data/reports/international_signal_baselines_latest.md` | Signal audit report | Auteuil classified FR_JUMPS |
+| `data/reports/international_row_count_reconciliation_latest.json` | Row count gap explanation | 14,881 gap = Meydan UAE — RECONCILED |
+| `data/reports/international_baseline_arena_latest.json` | Offline model viability | All 5 packs VIABLE_SHADOW_CANDIDATE |
+| `data/reports/international_baseline_arena_latest.md` | Arena results report | LightGBM AUC 0.90–0.96 across all packs |
 | `docs/audit/FR_HK_HISTORICAL_PERFORMANCE_AUDIT.md` | Historical claim check | HISTORICAL_RESULT_CLAIM_UNVERIFIED_BUT_TRAINING_DATA_EXISTS |
 | `docs/audit/INTL_INGEST_WORKER_AUDIT.md` | Worker readiness | ARCHIVE_ONLY_NOT_ACTIVATED |
 | `docs/audit/INTL_SCHEMA_MIGRATION_PREFLIGHT.md` | Migration review | MIGRATION_READY — not yet applied |
-| `scripts/audit_international_signal_baselines.py` | Repeatable audit script | Run anytime to refresh |
+| `docs/audit/INTERNATIONAL_ROW_COUNT_RECONCILIATION.md` | Row count reconciliation | RECONCILIATION_COMPLETE |
+| `docs/engineering/INTL_FEATURE_CONTRACT_V1.md` | Feature availability by jurisdiction | HK/FR mandatory + banned features locked |
+| `docs/engineering/INTL_SCHEMA_MIGRATION_APPROVAL_PACKET.md` | Migration approval packet | AWAITING_OPERATOR_APPROVAL |
+| `docs/engineering/INTL_WORKER_REPLACEMENT_PLAN_V1.md` | Worker replacement strategy | HKJC P1, PMU P2, Parquet P0 done |
+| `scripts/audit_international_signal_baselines.py` | Repeatable signal audit | Run anytime to refresh |
+| `scripts/audit_international_baseline_arena.py` | Offline model viability test | Repeatable — no live state |
+
+### Phase 1A Offline Baseline Arena Results
+
+Temporal split: Train 2015-2022, Valid 2023, Test 2024-2025. LightGBM best model per pack.
+
+| Pack | Test Rows | Fav SR | Best AUC | Best SR | Beats Fav | Verdict |
+|---|---|---|---|---|---|---|
+| HK_SHA_TIN_V1 | 10,451 | 34.7% | **0.9541** | 81.5% | YES | **VIABLE_SHADOW_CANDIDATE** |
+| HK_HAPPY_VALLEY_V1 | 5,987 | 26.9% | **0.9591** | 84.3% | YES | **VIABLE_SHADOW_CANDIDATE** |
+| FR_CHANTILLY_V1 | 8,009 | 29.4% | 0.9072 | 64.5% | YES | **VIABLE_SHADOW_CANDIDATE** |
+| FR_FLAT_CORE | 23,225 | 29.7% | 0.9076 | 68.6% | YES | **VIABLE_SHADOW_CANDIDATE** |
+| FR_AUTEUIL_JUMPS_V1 | 4,810 | 27.5% | 0.9051 | 67.3% | YES | **VIABLE_SHADOW_CANDIDATE** |
+
+**Top features confirmed across packs:** `rpr_num`, `rpr_vs_field`, `or_num` (HK only), `ts_num` (FR flat only), `wgt_lbs`, `field_size`.
+**Leakage status:** CLEAN — no SP/odds-derived features used.
+**Governance:** OFFLINE ONLY — no DB writes, no scoring pipeline, no live state.
 
 ---
 
 ## 13. Phase 0 Final Classification
 
 ```
-VELO_INTERNATIONAL_PHASE0_DATA_FOUND
-FR_HK_TRAINING_SUBSTRATE_VERIFIED_PENDING_AUDIT
-JURISDICTION_PACKS_DEFINED: FR_FLAT, FR_JUMPS, HK_ST, HK_HV
+VELO_INTERNATIONAL_PHASE0_COMPLETE
+FR_HK_TRAINING_SUBSTRATE_VERIFIED: 255862 rows, 7 courses, 22122 races
+ROW_COUNT_RECONCILIATION_COMPLETE: 14881_gap=Meydan_UAE
+JURISDICTION_PACKS_DEFINED: FR_FLAT_CORE, FR_AUTEUIL_JUMPS_V1, HK_SHA_TIN_V1, HK_HAPPY_VALLEY_V1
+OFFLINE_BASELINE_ARENA_COMPLETE: ALL_5_PACKS_VIABLE_SHADOW_CANDIDATE
+  HK_SHA_TIN_V1: AUC=0.9541
+  HK_HAPPY_VALLEY_V1: AUC=0.9591
+  FR_CHANTILLY_V1: AUC=0.9072
+  FR_FLAT_CORE: AUC=0.9076
+  FR_AUTEUIL_JUMPS_V1: AUC=0.9051
+FEATURE_CONTRACT_LOCKED: INTL_FEATURE_CONTRACT_V1.md
+MIGRATION_READY_NOT_APPLIED: AWAITING_OPERATOR_APPROVAL
 WORKERS_ARCHIVE_ONLY_NOT_ACTIVATED
 RACING_API_UNAVAILABLE
-MIGRATION_NOT_RUN
-NO_TRAINING_YET
 NO_LIVE_DEPLOYMENT
 AUTEUIL_CLASSIFIED_JUMPS_SEPARATE_FROM_FLAT
 DRAW_BIAS_CONFIRMED_SHA_TIN
 OR_ABSENT_FRANCE
 TS_ABSENT_HK_AND_AUTEUIL
 RPR_PRIMARY_CROSS_JURISDICTION_SIGNAL
+FIRST_PACK_BUILD: HK_SHA_TIN_V1
+SECOND_PACK_BUILD: FR_CHANTILLY_V1
 ```
 
 ---
 
 **Generated:** 2026-05-23
 **Phase 0 status:** COMPLETE
-**Next action:** Operator approval to proceed to Phase 1 — apply migration, build FR/HK ingest workers using free sources (PMU API + HKJC), begin cold archive collection
+**Phase 1A status:** COMPLETE — offline arena run, all 5 packs viable
+**Phase 1B:** PENDING — operator approval required before migration
+**Phase 1C:** NOT STARTED — HKJC + PMU workers not yet built
+**Next action:** Operator decision: approve migration + worker builds, or continue offline model development only
