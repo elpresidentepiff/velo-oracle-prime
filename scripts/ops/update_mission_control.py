@@ -287,6 +287,73 @@ def _learning_admission_status(date_str: str) -> dict:
     }
 
 
+def _corpus_governance_status() -> dict:
+    rebuild_path = ROOT / "data" / "reports" / "innovation_protocol_rebuild_2026-05-22.json"
+    proto_path = ROOT / "data" / "velo_innovation_protocol_1k_deduped.csv"
+    result: dict = {"status": "UNKNOWN"}
+    if rebuild_path.exists():
+        try:
+            d = json.loads(rebuild_path.read_text())
+            result = {
+                "status": "REBUILT",
+                "rows_after": d.get("corpus_totals", {}).get("rows_after"),
+                "dates_added": d.get("dates_added", []),
+                "dates_excluded": d.get("dates_excluded", []),
+                "exclusion_reason": d.get("exclusion_reason"),
+                "may_20_rows": d.get("may_20_rows"),
+                "may_20_check": d.get("may_20_check"),
+            }
+        except Exception:
+            pass
+    elif proto_path.exists():
+        result = {"status": "EXISTS_NO_REBUILD_REPORT"}
+    return result
+
+
+def _idempotency_status() -> dict:
+    idem_path = ROOT / "data" / "reports" / "may21_may22_shadow_consume_idempotency.json"
+    if not idem_path.exists():
+        return {"status": "NOT_RUN"}
+    try:
+        d = json.loads(idem_path.read_text())
+        return {
+            "status": "VERIFIED" if d.get("all_checks_pass") else "FAILED",
+            "all_checks_pass": d.get("all_checks_pass"),
+            "consumed_shadow": d.get("totals", {}).get("consumed_shadow"),
+            "consumed_live": d.get("consumed_live"),
+            "live_state_unchanged": d.get("live_state_unchanged"),
+            "shadow_train_v2_race_count": d.get("shadow_train_v2", {}).get("total_races_observed"),
+        }
+    except Exception:
+        return {"status": "ERROR"}
+
+
+def _precision_audit_status() -> dict:
+    prec_path = ROOT / "data" / "reports" / "race_shape_precision_audit_latest.json"
+    if not prec_path.exists():
+        return {"status": "NOT_RUN"}
+    try:
+        d = json.loads(prec_path.read_text())
+        subsets = d.get("subsets", [])
+        actionable = [s["label"] for s in subsets if s.get("verdict") == "ACTIONABLE_RISK_FLAG"]
+        fav_vuln = next((s for s in subsets if s["label"] == "FAV_VULNERABLE"), {})
+        warned = next((s for s in subsets if s["label"] == "SHAPE_WARNED"), {})
+        ultra = next((s for s in subsets if s["label"] == "FAV_VULN_ULTRA_COMPRESSED"), {})
+        return {
+            "status": "RUN",
+            "date": d.get("date"),
+            "ledger_rows": d.get("ledger_rows"),
+            "actionable_candidates": actionable,
+            "fav_vulnerable_sr": fav_vuln.get("sr"),
+            "shape_warned_sr": warned.get("sr"),
+            "fav_vuln_ultra_compressed_n": ultra.get("n"),
+            "fav_vuln_ultra_compressed_sr": ultra.get("sr"),
+            "fav_vuln_ultra_compressed_verdict": ultra.get("verdict"),
+        }
+    except Exception:
+        return {"status": "ERROR"}
+
+
 def _race_shape_status() -> dict:
     feat_path = ROOT / "data" / "features" / "race_shape_features_latest.json"
     overlap_path = ROOT / "data" / "reports" / "race_shape_midprice_overlap_latest.json"
@@ -340,6 +407,9 @@ def build_mission_control(date_str: str) -> dict:
     council_artifacts = _council_artifact_status(date_str)
     learning_admission = _learning_admission_status(date_str)
     race_shape = _race_shape_status()
+    corpus_governance = _corpus_governance_status()
+    idempotency = _idempotency_status()
+    precision_audit = _precision_audit_status()
 
     rcg = gate_v2.get("runner_calibration_gate", {})
     dpg = gate_v2.get("decision_policy_gate", {})
@@ -366,6 +436,9 @@ def build_mission_control(date_str: str) -> dict:
         "decision_policy_gate_top_picks": dpg.get("top_pick_decisions", 0),
         "learning_admission": learning_admission,
         "race_shape_v1": race_shape,
+        "corpus_governance": corpus_governance,
+        "shadow_consume_idempotency": idempotency,
+        "race_shape_precision_audit": precision_audit,
         "research_status": {
             "race_shape_model_v1": "DESIGN_PENDING",
             "midprice_hunter_v2": "RESEARCH_PENDING",
@@ -438,6 +511,13 @@ def main() -> None:
     _ov = _rsv1.get('midprice_overlap', {})
     print(f"  race_shape_features: {_fb.get('status','?')} (n={_fb.get('race_count','?')} races)")
     print(f"  midprice_overlap:    visible={_ov.get('winner_visible_pct','?')}% ranked2nd3rd={_ov.get('winner_ranked_2nd_3rd_pct','?')}% fav_vuln_misses={_ov.get('fav_vulnerable_misses','?')}")
+    _cg = mc.get('corpus_governance', {})
+    print(f"  corpus_governance:   status={_cg.get('status','?')} rows={_cg.get('rows_after','?')} may20_rows={_cg.get('may_20_rows','?')} may20_check={_cg.get('may20_check',_cg.get('may_20_check','?'))}")
+    _id = mc.get('shadow_consume_idempotency', {})
+    print(f"  idempotency:         status={_id.get('status','?')} consumed_shadow={_id.get('consumed_shadow','?')} consumed_live={_id.get('consumed_live','?')} shadow_v2_races={_id.get('shadow_train_v2_race_count','?')}")
+    _pa = mc.get('race_shape_precision_audit', {})
+    actionable = _pa.get('actionable_candidates', [])
+    print(f"  precision_audit:     status={_pa.get('status','?')} actionable={actionable} fav_vuln_ultra_sr={_pa.get('fav_vuln_ultra_compressed_sr','?')}")
     print(f"  next: {mc['next_safe_command']}")
     print(f"  Written: {dated_path}")
     print(f"  Written: {latest_path}")
