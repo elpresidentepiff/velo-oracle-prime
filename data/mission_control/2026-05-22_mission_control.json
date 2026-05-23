@@ -1,6 +1,6 @@
 {
   "date": "2026-05-22",
-  "generated_at": "2026-05-23T08:13:18.105871+00:00",
+  "generated_at": "2026-05-23T08:28:29.160392+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
     "a33c5bd8"
@@ -93,15 +93,50 @@
     "status": "RUN",
     "date": "2026-05-22",
     "ledger_rows": 36,
+    "ledger_rows_to_gate_150": 114,
+    "ledger_rows_to_gate_300": 264,
     "actionable_candidates": [
       "MIDPRICE_TRAP",
       "FAV_VULN_ULTRA_COMPRESSED"
     ],
-    "fav_vulnerable_sr": 0.2609,
-    "shape_warned_sr": 0.2258,
     "fav_vuln_ultra_compressed_n": 16,
     "fav_vuln_ultra_compressed_sr": 0.1875,
-    "fav_vuln_ultra_compressed_verdict": "ACTIONABLE_RISK_FLAG"
+    "fav_vuln_ultra_compressed_verdict": "ACTIONABLE_RISK_FLAG",
+    "tracker": {
+      "fav_vuln_ultra_compressed": {
+        "n": 16,
+        "sr": 0.1875,
+        "to_150": 134,
+        "verdict": "PROVISIONAL_RISK_FLAG"
+      },
+      "midprice_trap": {
+        "n": 5,
+        "sr": 0.2,
+        "to_150": 145,
+        "verdict": "PROVISIONAL_RISK_FLAG"
+      }
+    }
+  },
+  "cpu_decision_policy_tracker": {
+    "status": "RUN",
+    "decisions_made": 87,
+    "decisions_with_outcomes": 80,
+    "needed_to_150": 63,
+    "needed_to_300": 213,
+    "sr": 0.275,
+    "brier": 0.2091,
+    "top_decile_sr": 0.375,
+    "verdict": "NEEDS_MORE_DAYS"
+  },
+  "evidence_accumulation": {
+    "action": "ACCUMULATE_EVIDENCE",
+    "race_shape_rows": 36,
+    "race_shape_to_150": 114,
+    "race_shape_to_300": 264,
+    "cpu_decisions_made": 87,
+    "cpu_to_150": 63,
+    "cpu_to_300": 213,
+    "production_status": "NOT_APPROVED"
   },
   "research_status": {
     "race_shape_model_v1": "DESIGN_PENDING",

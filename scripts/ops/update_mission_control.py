@@ -330,25 +330,60 @@ def _idempotency_status() -> dict:
 
 def _precision_audit_status() -> dict:
     prec_path = ROOT / "data" / "reports" / "race_shape_precision_audit_latest.json"
-    if not prec_path.exists():
+    tracker_path = ROOT / "data" / "reports" / "race_shape_precision_tracker_latest.json"
+    result: dict = {"status": "NOT_RUN"}
+    if prec_path.exists():
+        try:
+            d = json.loads(prec_path.read_text())
+            subsets = d.get("subsets", [])
+            actionable = [s["label"] for s in subsets if s.get("verdict") == "ACTIONABLE_RISK_FLAG"]
+            ultra = next((s for s in subsets if s["label"] == "FAV_VULN_ULTRA_COMPRESSED"), {})
+            ledger_rows = d.get("ledger_rows", 0)
+            result = {
+                "status": "RUN",
+                "date": d.get("date"),
+                "ledger_rows": ledger_rows,
+                "ledger_rows_to_gate_150": max(0, 150 - ledger_rows),
+                "ledger_rows_to_gate_300": max(0, 300 - ledger_rows),
+                "actionable_candidates": actionable,
+                "fav_vuln_ultra_compressed_n": ultra.get("n"),
+                "fav_vuln_ultra_compressed_sr": ultra.get("sr"),
+                "fav_vuln_ultra_compressed_verdict": ultra.get("verdict"),
+            }
+        except Exception:
+            pass
+    if tracker_path.exists():
+        try:
+            td = json.loads(tracker_path.read_text())
+            flags = td.get("flags", [])
+            ultra_t = next((f for f in flags if f["flag"] == "FAV_VULN_ULTRA_COMPRESSED"), {})
+            mt_t = next((f for f in flags if f["flag"] == "MIDPRICE_TRAP"), {})
+            result["tracker"] = {
+                "fav_vuln_ultra_compressed": {"n": ultra_t.get("n"), "sr": ultra_t.get("sr"), "to_150": ultra_t.get("needed_to_gate_150"), "verdict": ultra_t.get("verdict")},
+                "midprice_trap": {"n": mt_t.get("n"), "sr": mt_t.get("sr"), "to_150": mt_t.get("needed_to_gate_150"), "verdict": mt_t.get("verdict")},
+            }
+        except Exception:
+            pass
+    return result
+
+
+def _cpu_tracker_status() -> dict:
+    tracker_path = ROOT / "data" / "reports" / "cpu_gate_v2_decision_policy_tracker_latest.json"
+    if not tracker_path.exists():
         return {"status": "NOT_RUN"}
     try:
-        d = json.loads(prec_path.read_text())
-        subsets = d.get("subsets", [])
-        actionable = [s["label"] for s in subsets if s.get("verdict") == "ACTIONABLE_RISK_FLAG"]
-        fav_vuln = next((s for s in subsets if s["label"] == "FAV_VULNERABLE"), {})
-        warned = next((s for s in subsets if s["label"] == "SHAPE_WARNED"), {})
-        ultra = next((s for s in subsets if s["label"] == "FAV_VULN_ULTRA_COMPRESSED"), {})
+        d = json.loads(tracker_path.read_text())
+        stats = d.get("stats", {})
         return {
             "status": "RUN",
-            "date": d.get("date"),
-            "ledger_rows": d.get("ledger_rows"),
-            "actionable_candidates": actionable,
-            "fav_vulnerable_sr": fav_vuln.get("sr"),
-            "shape_warned_sr": warned.get("sr"),
-            "fav_vuln_ultra_compressed_n": ultra.get("n"),
-            "fav_vuln_ultra_compressed_sr": ultra.get("sr"),
-            "fav_vuln_ultra_compressed_verdict": ultra.get("verdict"),
+            "decisions_made": d.get("decisions_made", 0),
+            "decisions_with_outcomes": d.get("decisions_with_outcomes", 0),
+            "needed_to_150": d.get("needed_to_gate_1", 0),
+            "needed_to_300": d.get("needed_to_gate_2", 0),
+            "sr": stats.get("sr"),
+            "brier": stats.get("brier_score"),
+            "top_decile_sr": stats.get("top_decile_sr"),
+            "verdict": d.get("verdict", "NEEDS_MORE_DAYS"),
         }
     except Exception:
         return {"status": "ERROR"}
@@ -391,6 +426,30 @@ def _race_shape_status() -> dict:
     }
 
 
+def _evidence_accumulation_action(precision_audit: dict, cpu_tracker: dict) -> dict:
+    """Compute the current evidence accumulation action label."""
+    ledger_rows = precision_audit.get("ledger_rows", 0)
+    cpu_decisions = cpu_tracker.get("decisions_made", 0)
+
+    if ledger_rows >= 150 and cpu_decisions >= 150:
+        action = "REVIEW_AT_150"
+    elif ledger_rows >= 300 and cpu_decisions >= 300:
+        action = "REVIEW_AT_300"
+    else:
+        action = "ACCUMULATE_EVIDENCE"
+
+    return {
+        "action": action,
+        "race_shape_rows": ledger_rows,
+        "race_shape_to_150": max(0, 150 - ledger_rows),
+        "race_shape_to_300": max(0, 300 - ledger_rows),
+        "cpu_decisions_made": cpu_decisions,
+        "cpu_to_150": max(0, 150 - cpu_decisions),
+        "cpu_to_300": max(0, 300 - cpu_decisions),
+        "production_status": "NOT_APPROVED",
+    }
+
+
 def build_mission_control(date_str: str) -> dict:
     rows = _load_snapshots(date_str)
     flatline_data = _detect_flatlines(rows)
@@ -410,6 +469,7 @@ def build_mission_control(date_str: str) -> dict:
     corpus_governance = _corpus_governance_status()
     idempotency = _idempotency_status()
     precision_audit = _precision_audit_status()
+    cpu_tracker = _cpu_tracker_status()
 
     rcg = gate_v2.get("runner_calibration_gate", {})
     dpg = gate_v2.get("decision_policy_gate", {})
@@ -439,6 +499,8 @@ def build_mission_control(date_str: str) -> dict:
         "corpus_governance": corpus_governance,
         "shadow_consume_idempotency": idempotency,
         "race_shape_precision_audit": precision_audit,
+        "cpu_decision_policy_tracker": cpu_tracker,
+        "evidence_accumulation": _evidence_accumulation_action(precision_audit, cpu_tracker),
         "research_status": {
             "race_shape_model_v1": "DESIGN_PENDING",
             "midprice_hunter_v2": "RESEARCH_PENDING",
@@ -518,6 +580,10 @@ def main() -> None:
     _pa = mc.get('race_shape_precision_audit', {})
     actionable = _pa.get('actionable_candidates', [])
     print(f"  precision_audit:     status={_pa.get('status','?')} actionable={actionable} fav_vuln_ultra_sr={_pa.get('fav_vuln_ultra_compressed_sr','?')}")
+    _ea = mc.get('evidence_accumulation', {})
+    print(f"  evidence_action:     {_ea.get('action','?')} | race_shape={_ea.get('race_shape_rows',0)}/150/300 | cpu={_ea.get('cpu_decisions_made',0)}/150/300 | production={_ea.get('production_status','?')}")
+    _ct = mc.get('cpu_decision_policy_tracker', {})
+    print(f"  cpu_tracker:         status={_ct.get('status','?')} decisions={_ct.get('decisions_made','?')} SR={_ct.get('sr','?')} to_150={_ct.get('needed_to_150','?')} verdict={_ct.get('verdict','?')}")
     print(f"  next: {mc['next_safe_command']}")
     print(f"  Written: {dated_path}")
     print(f"  Written: {latest_path}")
