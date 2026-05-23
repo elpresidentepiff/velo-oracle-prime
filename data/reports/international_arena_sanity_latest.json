@@ -1,0 +1,484 @@
+{
+  "generated_at": "2026-05-23T20:52:43.769442+00:00",
+  "packs": {
+    "HK_SHA_TIN_V1": {
+      "pack": "HK_SHA_TIN_V1",
+      "courses": [
+        "Sha Tin (HK)"
+      ],
+      "n_total": 50976,
+      "date_split": {
+        "date_parse_failures": 0,
+        "train_date_min": "2015-01-25",
+        "train_date_max": "2022-12-24",
+        "valid_date_min": "2023-05-07",
+        "valid_date_max": "2023-12-26",
+        "test_date_min": "2024-01-01",
+        "test_date_max": "2025-07-05",
+        "train_post_cutoff_rows": 0,
+        "test_pre_cutoff_rows": 0,
+        "verdict": "CLEAN"
+      },
+      "group_split": {
+        "train_races": 2958,
+        "valid_races": 290,
+        "test_races": 832,
+        "train_test_race_overlap": 0,
+        "train_valid_race_overlap": 0,
+        "valid_test_race_overlap": 0,
+        "verdict": "CLEAN",
+        "overlap_sample": []
+      },
+      "runner_vs_race_level": {
+        "n_test_runners": 10451,
+        "n_test_races": 832,
+        "n_winners": 832,
+        "avg_field_size": 12.56,
+        "race_level_top_pick_sr": 0.4399,
+        "expected_random_sr": 0.0796,
+        "note": "race_level_top_pick_sr = pct of races where model's top-prob runner won. This is the correct SR metric. Runner-level accuracy not shown (misleading)."
+      },
+      "feature_ablation": {
+        "fav_sr_baseline": 0.347,
+        "ablations": {
+          "RPR_ONLY": {
+            "auc": 0.875,
+            "top_pick_sr": 0.4399,
+            "n_races": 832,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field"
+            ],
+            "n_features": 1
+          },
+          "RPR_AND_OR": {
+            "auc": 0.9509,
+            "top_pick_sr": 0.8245,
+            "n_races": 832,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "or_vs_field",
+              "or_num"
+            ],
+            "n_features": 4
+          },
+          "RATINGS_ONLY": {
+            "auc": 0.9509,
+            "top_pick_sr": 0.8245,
+            "n_races": 832,
+            "status": "OK",
+            "features_available": [
+              "rpr_num",
+              "rpr_vs_field",
+              "or_num",
+              "or_vs_field"
+            ],
+            "n_features": 4
+          },
+          "SAFE_PRE_RACE_ONLY": {
+            "auc": 0.9443,
+            "top_pick_sr": 0.8005,
+            "n_races": 832,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "or_vs_field",
+              "field_size",
+              "draw_num",
+              "age_num",
+              "dist_f",
+              "going_code",
+              "wgt_lbs",
+              "is_aw",
+              "draw_pct"
+            ],
+            "n_features": 11
+          },
+          "NO_FIT_SCORES": {
+            "auc": 0.9443,
+            "top_pick_sr": 0.8005,
+            "n_races": 832,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "or_vs_field",
+              "field_size",
+              "draw_num",
+              "age_num",
+              "dist_f",
+              "going_code",
+              "wgt_lbs",
+              "is_aw",
+              "draw_pct"
+            ],
+            "n_features": 11
+          },
+          "FIT_SCORES_ONLY": {
+            "auc": 0.6604,
+            "top_pick_sr": 0.22,
+            "n_races": 832,
+            "status": "OK",
+            "features_available": [
+              "course_fit_score",
+              "going_fit_score",
+              "distance_fit_score",
+              "trainer_timing_score"
+            ],
+            "n_features": 4
+          }
+        }
+      },
+      "shuffle_test": {
+        "real_auc": 0.9504,
+        "shuffled_auc": 0.4738,
+        "real_top_pick_sr": 0.8065,
+        "shuffled_top_pick_sr": 0.0877,
+        "auc_collapse": 0.4766,
+        "verdict": "CLEAN \u2014 shuffle collapsed AUC as expected",
+        "features_used": [
+          "rpr_vs_field",
+          "rpr_num",
+          "or_vs_field",
+          "field_size",
+          "draw_num",
+          "age_num",
+          "dist_f",
+          "going_code",
+          "wgt_lbs",
+          "is_aw",
+          "draw_pct",
+          "or_num",
+          "or_vs_field",
+          "class_num",
+          "runs_since_win",
+          "runs_since_place",
+          "mark_compression_score",
+          "course_fit_score",
+          "going_fit_score",
+          "distance_fit_score",
+          "trainer_timing_score"
+        ]
+      },
+      "sanity_verdict": "SANITY_PASSED"
+    },
+    "HK_HAPPY_VALLEY_V1": {
+      "pack": "HK_HAPPY_VALLEY_V1",
+      "courses": [
+        "Happy Valley (HK)"
+      ],
+      "n_total": 30557,
+      "date_split": {
+        "date_parse_failures": 0,
+        "train_date_min": "2016-01-06",
+        "train_date_max": "2022-12-28",
+        "valid_date_min": "2023-05-03",
+        "valid_date_max": "2023-12-29",
+        "test_date_min": "2024-01-04",
+        "test_date_max": "2025-06-25",
+        "train_post_cutoff_rows": 0,
+        "test_pre_cutoff_rows": 0,
+        "verdict": "CLEAN"
+      },
+      "group_split": {
+        "train_races": 1905,
+        "valid_races": 218,
+        "test_races": 521,
+        "train_test_race_overlap": 0,
+        "train_valid_race_overlap": 0,
+        "valid_test_race_overlap": 0,
+        "verdict": "CLEAN",
+        "overlap_sample": []
+      },
+      "runner_vs_race_level": {
+        "n_test_runners": 5987,
+        "n_test_races": 521,
+        "n_winners": 521,
+        "avg_field_size": 11.49,
+        "race_level_top_pick_sr": 0.3877,
+        "expected_random_sr": 0.087,
+        "note": "race_level_top_pick_sr = pct of races where model's top-prob runner won. This is the correct SR metric. Runner-level accuracy not shown (misleading)."
+      },
+      "feature_ablation": {
+        "fav_sr_baseline": 0.2687,
+        "ablations": {
+          "RPR_ONLY": {
+            "auc": 0.8577,
+            "top_pick_sr": 0.3896,
+            "n_races": 521,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field"
+            ],
+            "n_features": 1
+          },
+          "RPR_AND_OR": {
+            "auc": 0.9524,
+            "top_pick_sr": 0.8234,
+            "n_races": 521,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "or_vs_field",
+              "or_num"
+            ],
+            "n_features": 4
+          },
+          "RATINGS_ONLY": {
+            "auc": 0.9524,
+            "top_pick_sr": 0.8234,
+            "n_races": 521,
+            "status": "OK",
+            "features_available": [
+              "rpr_num",
+              "rpr_vs_field",
+              "or_num",
+              "or_vs_field"
+            ],
+            "n_features": 4
+          },
+          "SAFE_PRE_RACE_ONLY": {
+            "auc": 0.9437,
+            "top_pick_sr": 0.7889,
+            "n_races": 521,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "or_vs_field",
+              "field_size",
+              "draw_num",
+              "age_num",
+              "dist_f",
+              "going_code",
+              "wgt_lbs",
+              "draw_pct"
+            ],
+            "n_features": 10
+          },
+          "NO_FIT_SCORES": {
+            "auc": 0.9437,
+            "top_pick_sr": 0.7889,
+            "n_races": 521,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "or_vs_field",
+              "field_size",
+              "draw_num",
+              "age_num",
+              "dist_f",
+              "going_code",
+              "wgt_lbs",
+              "draw_pct"
+            ],
+            "n_features": 10
+          },
+          "FIT_SCORES_ONLY": {
+            "auc": 0.6207,
+            "top_pick_sr": 0.1536,
+            "n_races": 521,
+            "status": "OK",
+            "features_available": [
+              "course_fit_score",
+              "going_fit_score",
+              "distance_fit_score",
+              "trainer_timing_score"
+            ],
+            "n_features": 4
+          }
+        }
+      },
+      "shuffle_test": {
+        "real_auc": 0.9522,
+        "shuffled_auc": 0.5096,
+        "real_top_pick_sr": 0.8004,
+        "shuffled_top_pick_sr": 0.096,
+        "auc_collapse": 0.4426,
+        "verdict": "CLEAN \u2014 shuffle collapsed AUC as expected",
+        "features_used": [
+          "rpr_vs_field",
+          "rpr_num",
+          "or_vs_field",
+          "field_size",
+          "draw_num",
+          "age_num",
+          "dist_f",
+          "going_code",
+          "wgt_lbs",
+          "draw_pct",
+          "or_num",
+          "or_vs_field",
+          "class_num",
+          "runs_since_win",
+          "runs_since_place",
+          "mark_compression_score",
+          "course_fit_score",
+          "going_fit_score",
+          "distance_fit_score",
+          "trainer_timing_score"
+        ]
+      },
+      "sanity_verdict": "SANITY_PASSED"
+    },
+    "FR_CHANTILLY_V1": {
+      "pack": "FR_CHANTILLY_V1",
+      "courses": [
+        "Chantilly (FR)"
+      ],
+      "n_total": 47568,
+      "date_split": {
+        "date_parse_failures": 0,
+        "train_date_min": "2015-01-23",
+        "train_date_max": "2022-12-23",
+        "valid_date_min": "2023-01-14",
+        "valid_date_max": "2023-12-30",
+        "test_date_min": "2024-01-13",
+        "test_date_max": "2025-06-28",
+        "train_post_cutoff_rows": 0,
+        "test_pre_cutoff_rows": 0,
+        "verdict": "CLEAN"
+      },
+      "group_split": {
+        "train_races": 2934,
+        "valid_races": 433,
+        "test_races": 676,
+        "train_test_race_overlap": 0,
+        "train_valid_race_overlap": 0,
+        "valid_test_race_overlap": 0,
+        "verdict": "CLEAN",
+        "overlap_sample": []
+      },
+      "runner_vs_race_level": {
+        "n_test_runners": 8009,
+        "n_test_races": 676,
+        "n_winners": 677,
+        "avg_field_size": 11.85,
+        "race_level_top_pick_sr": 0.5621,
+        "expected_random_sr": 0.0844,
+        "note": "race_level_top_pick_sr = pct of races where model's top-prob runner won. This is the correct SR metric. Runner-level accuracy not shown (misleading)."
+      },
+      "feature_ablation": {
+        "fav_sr_baseline": 0.2938,
+        "ablations": {
+          "RPR_ONLY": {
+            "auc": 0.8628,
+            "top_pick_sr": 0.568,
+            "n_races": 676,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field"
+            ],
+            "n_features": 1
+          },
+          "RPR_AND_OR": {
+            "auc": 0.8805,
+            "top_pick_sr": 0.5873,
+            "n_races": 676,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num"
+            ],
+            "n_features": 2
+          },
+          "RATINGS_ONLY": {
+            "auc": 0.8942,
+            "top_pick_sr": 0.6257,
+            "n_races": 676,
+            "status": "OK",
+            "features_available": [
+              "rpr_num",
+              "rpr_vs_field",
+              "ts_num"
+            ],
+            "n_features": 3
+          },
+          "SAFE_PRE_RACE_ONLY": {
+            "auc": 0.8975,
+            "top_pick_sr": 0.6361,
+            "n_races": 676,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "field_size",
+              "draw_num",
+              "age_num",
+              "dist_f",
+              "going_code",
+              "wgt_lbs",
+              "is_aw",
+              "draw_pct"
+            ],
+            "n_features": 10
+          },
+          "NO_FIT_SCORES": {
+            "auc": 0.8975,
+            "top_pick_sr": 0.6361,
+            "n_races": 676,
+            "status": "OK",
+            "features_available": [
+              "rpr_vs_field",
+              "rpr_num",
+              "field_size",
+              "draw_num",
+              "age_num",
+              "dist_f",
+              "going_code",
+              "wgt_lbs",
+              "is_aw",
+              "draw_pct"
+            ],
+            "n_features": 10
+          },
+          "FIT_SCORES_ONLY": {
+            "auc": 0.5933,
+            "top_pick_sr": 0.145,
+            "n_races": 676,
+            "status": "OK",
+            "features_available": [
+              "course_fit_score",
+              "going_fit_score",
+              "distance_fit_score",
+              "trainer_timing_score"
+            ],
+            "n_features": 4
+          }
+        }
+      },
+      "shuffle_test": {
+        "real_auc": 0.8984,
+        "shuffled_auc": 0.6051,
+        "real_top_pick_sr": 0.6213,
+        "shuffled_top_pick_sr": 0.1405,
+        "auc_collapse": 0.2933,
+        "verdict": "MARGINAL \u2014 shuffle partially collapsed AUC (investigate)",
+        "features_used": [
+          "rpr_vs_field",
+          "rpr_num",
+          "field_size",
+          "draw_num",
+          "age_num",
+          "dist_f",
+          "going_code",
+          "wgt_lbs",
+          "is_aw",
+          "draw_pct",
+          "runs_since_win",
+          "runs_since_place",
+          "course_fit_score",
+          "going_fit_score",
+          "distance_fit_score",
+          "trainer_timing_score"
+        ]
+      },
+      "sanity_verdict": "MARGINAL_INVESTIGATE"
+    }
+  }
+}
