@@ -27,13 +27,17 @@ deployment until this gate closes.**
 Current answer: **NO.** All 5 packs return NEEDS_FEATURE_ENGINEERING on lagged-only
 arena. No pack beats the favourite SR on prior-run history alone.
 
-**Gate close path — what must be built:**
-- Sha Tin draw bias table (structural edge, publicly available from HKJC)
-- HK class trajectory (class movement over last 4 runs — available from form history)
-- FR penetrometer going mapping (PMU publishes numeric going pre-race)
-- FR Quinté+ flag (race classification — known pre-race)
-- FR distance preference from prior-run history (already in lagged features, needs tuning)
-- Local market structure proxy (HK: morning HKJC tote odds / FR: PMU morning odds)
+**Gate close path — INTERNATIONAL_PRE_RACE_FEATURE_BUILDER_V1 (in progress):**
+- HK draw bias: draw_bucket + course_distance_draw_win_rate_lagged (BUILT)
+- HK class trajectory: class_drop_flag, class_rise_flag, prior_class_win_rate (BUILT)
+- HK rating consensus: rpr_rank_lagged + or_rank_lagged agreement (BUILT)
+- FR lagged RPR/TS from prior runs (BUILT — strictly prior, not same-race)
+- FR going bucket: going_is_fast/good/soft (BUILT)
+- FR race type: is_hurdle, is_chase, is_flat_code (BUILT)
+- FR penetrometer going: PLACEHOLDER — PMU API future enrichment
+- FR Quinté+ flag: PLACEHOLDER — PMU API future enrichment
+- FR class proxy: PLACEHOLDER — France Galop Valeur future enrichment
+- Local market structure: FUTURE — HKJC tote / PMU morning odds not yet ingested
 
 If re-running the lagged arena with these additional pre-race features produces a pack
 that beats the favourite SR, the gate opens for that pack only. Each pack is independent.
@@ -254,6 +258,35 @@ After live ingest is running and shadow scoring is active:
 | FR_CHANTILLY_V1 | FAILED | BLOCKED | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PROVENANCE_FAILED — same-race RPR/TS banned** |
 | FR_FLAT_CORE | FAILED | BLOCKED | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PROVENANCE_FAILED — same-race RPR/TS banned** |
 | FR_AUTEUIL_JUMPS_V1 | FAILED | BLOCKED | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PROVENANCE_FAILED — same-race RPR banned** |
+
+---
+
+## Pre-Race Feature Builder V1 — Gate Unlock Doctrine
+
+Built as `scripts/build_hk_prerace_features.py` and `scripts/build_fr_prerace_features.py`.
+Validated by `scripts/audit_intl_prerace_feature_safety.py`.
+Evaluated in `scripts/audit_international_prerace_arena_v1.py`.
+
+**Gate unlock criteria (per pack):**
+- AUC ≥ 0.75 on test holdout (2024-2025)
+- SR (race-level top-pick) > favourite SR
+- All features confirmed PRE_RACE_SAFE by safety audit
+- No features in REVIEW_REQUIRED or DROP categories used in model
+
+**Packs close independently.** One pack passing the gate does NOT advance other packs.
+
+**Migration only after at least one pack reaches GATE_REOPENED_SAFE_SHADOW_CANDIDATE.**
+Operator decision (El Presidente sign-off) required at each gate — no automatic promotion.
+
+**Feature pack order:**
+1. HK (draw + class + lagged RPR/OR) — cleanest pre-race signals available from parquet
+2. FR (lagged RPR/TS + going + race type) — penetrometer/Quinté+ deferred (PMU source)
+
+**Future enrichment required for FR gate:**
+- PMU numeric penetrometer (going quality beyond code)
+- Quinté+ race flag (highest-quality FR field)
+- France Galop Valeur rating (class proxy for FR-trained horses)
+- PMU morning odds (market structure — best pre-race signal in FR racing)
 
 ---
 

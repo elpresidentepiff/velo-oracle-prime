@@ -851,9 +851,8 @@ Typical racing model benchmark: AUC 0.72–0.85. AUC > 0.90 requires leakage pro
 
 **Generated:** 2026-05-23
 **Phase 0 status:** COMPLETE
-**Phase 1A status:** COMPLETE — arena run, results leakage-suspicious
-**Phase 1A-AUDIT:** COMPLETE — provenance audit confirms FR RPR/TS POST_RACE, HK RPR/OR PRE_RACE
-**Phase 1A-LAGGED:** IN_PROGRESS — lagged-only arena running (Task 4 of provenance audit)
-**Phase 1B:** BLOCKED — lagged arena must complete + operator approval required
+**Phase 1A status:** COMPLETE — provenance gate active, all packs NEEDS_FEATURE_ENGINEERING on lagged-only
+**Phase 1A-PRERACE:** IN_PROGRESS — International Pre-Race Feature Builder V1 running
+**Phase 1B:** BLOCKED — gate must open (pre-race arena) + operator approval
 **Phase 1C:** BLOCKED — workers not built AND Phase 1B not reached
-**Next action:** Lagged-only arena results → final viability classification per pack
+**Next action:** Pre-race arena V1 results → gate verdict per pack
