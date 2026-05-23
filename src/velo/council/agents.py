@@ -1,91 +1,363 @@
+"""
+VÉLØ LLM Council — real post-Sigma tribunal agents.
+
+Each agent reads local evidence artifacts and returns a structured verdict.
+No LLM API calls. Deterministic rule-based checks with explicit conditions.
+
+Council verdicts (Prime Chair only):
+  PASS_TO_LEARNING      — all gates pass, learning consume allowed
+  QUARANTINE_DAY        — contaminated run detected, block all learning
+  RERUN_AFTER_FIX       — identity or flatline failure, fix required first
+  WATCH_ONLY            — marginal day, accumulate evidence but no consume
+
+Governance correction (permanent):
+  Council DOES NOT block sigma_audits truth writes.
+  Council blocks: learning admission, shadow consume, promotion evidence.
+"""
+
+import glob
+import json
+from datetime import datetime
+from pathlib import Path
 from typing import List, Dict
 
+ROOT = Path(__file__).resolve().parents[3]
+
+CONTAMINATED_RUN_IDS = {"32cc27f9", "847964a6"}
+BASELINE_SR = 0.20
+
+
+def _extract_sha8(run_id: str) -> str:
+    parts = run_id.split("_")
+    if len(parts) >= 4:
+        return parts[3]
+    return run_id[:8]
+
+
+def _load_mc(date_str: str) -> dict:
+    p = ROOT / "data" / "mission_control" / f"{date_str}_mission_control.json"
+    if p.exists():
+        try:
+            return json.loads(p.read_text())
+        except Exception:
+            pass
+    return {}
+
+
+def _load_sigma(date_str: str) -> dict:
+    p = ROOT / "data" / f"sigma_results_{date_str.replace('-', '_')}.json"
+    if p.exists():
+        try:
+            return json.loads(p.read_text())
+        except Exception:
+            pass
+    return {}
+
+
+def _load_snapshots_meta(date_str: str) -> dict:
+    date_und = date_str.replace("-", "_")
+    patterns = [
+        str(ROOT / "data" / f"runner_snapshots_{date_str}*.jsonl"),
+        str(ROOT / "data" / f"runner_snapshots_{date_und}*.jsonl"),
+    ]
+    files = []
+    seen = set()
+    for pat in patterns:
+        for f in glob.glob(pat):
+            if f not in seen:
+                seen.add(f)
+                files.append(Path(f).name)
+    run_ids = set()
+    for name in files:
+        parts = Path(name).stem.split("_")
+        if len(parts) >= 4:
+            run_ids.add(parts[3])
+    return {"snapshot_files": files, "run_ids": sorted(run_ids)}
+
+
 class CouncilAgent:
-    def __init__(self, name: str, role: str, system_prompt: str):
+    def __init__(self, name: str, role: str):
         self.name = name
         self.role = role
-        self.system_prompt = system_prompt
 
     def run(self, evidence_packet: Dict) -> Dict:
-        """
-        Placeholder for LLM execution. 
-        In a real implementation, this would call the configured LLM.
-        """
-        return {
-            "agent": self.name,
-            "role": self.role,
-            "response": f"Analysis complete for {self.name}",
-            "labels": ["SHADOW", "MISSING"] # Default labels
-        }
+        raise NotImplementedError
+
 
 class DataAuditor(CouncilAgent):
     def __init__(self):
-        super().__init__(
-            name="DATA AUDITOR",
-            role="Data Quality Verification",
-            system_prompt="""You are the VÉLØ Data Auditor. Your job is to verify data quality before reasoning begins.
-Checks: metadata complete, IDs present, results available, duplicate contamination, missing files, source conflicts.
-You have VETO power. If required evidence (VP30 or Racing API Enrichment) is MISSING, you must VETO the run.
-Label the run as BLOCKED if data is corrupt or missing."""
-        )
+        super().__init__("DATA AUDITOR", "Data Quality Verification")
 
-class RacingAPIConnectionsAnalyst(CouncilAgent):
-    def __init__(self):
-        super().__init__(
-            name="RACING API CONNECTIONS ANALYST",
-            role="Trainer/Jockey Connection Analysis",
-            system_prompt="""You analyze trainer/jockey/course/distance strength using Racing API enrichment data.
-Look for positive connections, negative connections, and weak sample sizes.
-Output labels: SHADOW, PAPER, MISSING."""
-        )
+    def run(self, evidence_packet: Dict) -> Dict:
+        date_str = evidence_packet.get("metadata", {}).get("date", "")
+        mc = _load_mc(date_str)
+        snap = _load_snapshots_meta(date_str)
 
-class CashrunAnalyst(CouncilAgent):
-    def __init__(self):
-        super().__init__(
-            name="CASHRUN ANALYST",
-            role="Handicap Plot Detection",
-            system_prompt="""You find trainer setup and handicap plots using CASHRUN reports.
-Output labels: CASHRUN_READY, CASHRUN_WATCH, SUPPRESS."""
-        )
+        issues = []
+        labels = []
 
-class MarketEconomist(CouncilAgent):
-    def __init__(self):
-        super().__init__(
-            name="MARKET ECONOMIST",
-            role="Value and Overbet Analysis",
-            system_prompt="""You stop the council from backing obvious overbet horses.
-Analyze SP, implied probability, VP, and signal economics.
-Output labels: VALUE_POSITIVE, OVERBET_RISK, SUPPRESS."""
-        )
+        flatline = mc.get("flatline_count", 0)
+        if flatline > 0:
+            issues.append(f"FLATLINE: {flatline} fully-uniform races detected")
+            labels.append("FLATLINE")
 
-class RedTeamSkeptic(CouncilAgent):
+        contaminated = set(snap["run_ids"]) & CONTAMINATED_RUN_IDS
+        if contaminated:
+            issues.append(f"CONTAMINATED_RUN_IDS: {sorted(contaminated)}")
+            labels.append("CONTAMINATED")
+
+        if not snap["snapshot_files"]:
+            issues.append("NO_SNAPSHOTS: no runner snapshot files found for date")
+            labels.append("MISSING_SNAPSHOTS")
+
+        source = mc.get("source_truth", "UNKNOWN")
+        if source == "RP_MERGED_CONTAMINATED":
+            labels.append("SOURCE_CONTAMINATED")
+        elif source == "UNKNOWN":
+            labels.append("SOURCE_UNKNOWN")
+
+        if not issues:
+            labels.append("DATA_CLEAN")
+            response = f"Data audit PASS — source={source}, snapshots={len(snap['snapshot_files'])}, flatlines=0"
+        else:
+            response = "Data audit FAIL — " + " | ".join(issues)
+
+        return {
+            "agent": self.name,
+            "role": self.role,
+            "response": response,
+            "labels": labels,
+            "data": {
+                "flatline_count": flatline,
+                "contaminated_run_ids": sorted(contaminated),
+                "snapshot_files": snap["snapshot_files"],
+                "source_truth": source,
+            },
+        }
+
+
+class FlatlineGateAgent(CouncilAgent):
     def __init__(self):
-        super().__init__(
-            name="RED TEAM SKEPTIC",
-            role="Adversarial Analysis",
-            system_prompt="""You attack the council's recommendations.
-Look for low sample size, overfitting, missing metadata, and contradictions with the one truth file.
-No council report passes without your objections being addressed."""
-        )
+        super().__init__("FLATLINE GATE", "Scoring Integrity Check")
+
+    def run(self, evidence_packet: Dict) -> Dict:
+        date_str = evidence_packet.get("metadata", {}).get("date", "")
+        mc = _load_mc(date_str)
+
+        flatline = mc.get("flatline_count", 0)
+        uniform_races = mc.get("fully_uniform_races", [])
+        source = mc.get("source_truth", "UNKNOWN")
+
+        if flatline > 0:
+            return {
+                "agent": self.name,
+                "role": self.role,
+                "response": (
+                    f"FLATLINE BLOCK — {flatline} fully-uniform races: {uniform_races}. "
+                    f"source={source}. Learning blocked. Do not consume. Check RP_MERGED hydration."
+                ),
+                "labels": ["FLATLINE_BLOCK", "LEARNING_BLOCKED"],
+                "data": {"flatline_count": flatline, "uniform_races": uniform_races},
+            }
+
+        return {
+            "agent": self.name,
+            "role": self.role,
+            "response": f"Flatline gate PASS — no uniform races detected. source={source}",
+            "labels": ["FLATLINE_PASS"],
+            "data": {"flatline_count": 0},
+        }
+
+
+class SigmaCoverageAgent(CouncilAgent):
+    def __init__(self):
+        super().__init__("SIGMA COVERAGE", "Result Coverage Check")
+
+    def run(self, evidence_packet: Dict) -> Dict:
+        date_str = evidence_packet.get("metadata", {}).get("date", "")
+        sigma = _load_sigma(date_str)
+        mc = _load_mc(date_str)
+
+        runners_snap = mc.get("runners_snapshotted", 0)
+        sigma_rows = sigma.get("total_rows", sigma.get("audit_rows", 0))
+        wins = sigma.get("wins", 0)
+        total_reviewed = sigma.get("total_reviewed", sigma_rows)
+        sr = wins / total_reviewed if total_reviewed > 0 else 0.0
+
+        labels = []
+        if total_reviewed == 0:
+            labels.append("SIGMA_MISSING")
+            response = "No sigma results found for date — cannot evaluate coverage"
+        elif sr < BASELINE_SR * 0.5:
+            labels.append("SR_BELOW_HALF_BASELINE")
+            response = f"SR={sr:.1%} — significantly below baseline {BASELINE_SR:.0%}. Possible contamination."
+        elif sr < BASELINE_SR:
+            labels.append("SR_BELOW_BASELINE")
+            response = f"SR={sr:.1%} — below baseline {BASELINE_SR:.0%}. Watchlist day."
+        else:
+            labels.append("SR_ABOVE_BASELINE")
+            response = f"SR={sr:.1%} — at or above baseline {BASELINE_SR:.0%}. Coverage OK."
+
+        return {
+            "agent": self.name,
+            "role": self.role,
+            "response": response,
+            "labels": labels,
+            "data": {
+                "sigma_rows": sigma_rows,
+                "wins": wins,
+                "total_reviewed": total_reviewed,
+                "sr": round(sr, 4),
+            },
+        }
+
+
+class ContaminationDetectorAgent(CouncilAgent):
+    def __init__(self):
+        super().__init__("CONTAMINATION DETECTOR", "Run ID Contamination Check")
+
+    def run(self, evidence_packet: Dict) -> Dict:
+        date_str = evidence_packet.get("metadata", {}).get("date", "")
+        snap = _load_snapshots_meta(date_str)
+
+        contaminated = set(snap["run_ids"]) & CONTAMINATED_RUN_IDS
+        clean = set(snap["run_ids"]) - CONTAMINATED_RUN_IDS
+
+        if contaminated:
+            return {
+                "agent": self.name,
+                "role": self.role,
+                "response": (
+                    f"CONTAMINATED run_ids detected: {sorted(contaminated)}. "
+                    f"Clean runs also present: {sorted(clean)}. "
+                    f"Gate V2 must exclude contaminated rows. Learning blocked."
+                ),
+                "labels": ["CONTAMINATION_DETECTED", "GATE_V2_EXCLUDE"],
+                "data": {"contaminated": sorted(contaminated), "clean": sorted(clean)},
+            }
+
+        return {
+            "agent": self.name,
+            "role": self.role,
+            "response": f"No contaminated run_ids. Clean runs: {sorted(clean)}",
+            "labels": ["CONTAMINATION_CLEAR"],
+            "data": {"contaminated": [], "clean": sorted(clean)},
+        }
+
+
+class MidPriceSummaryAgent(CouncilAgent):
+    def __init__(self):
+        super().__init__("MIDPRICE SUMMARY", "Mid-Price Leak Summary")
+
+    def run(self, evidence_packet: Dict) -> Dict:
+        delta_path = ROOT / "data" / "midprice_winner_deltas.csv"
+        latest_path = ROOT / "data" / "reports" / "midprice_winner_delta_latest.json"
+
+        if latest_path.exists():
+            try:
+                d = json.loads(latest_path.read_text())
+                n = d.get("total_races", 0)
+                rescued = d.get("rescued_by_sidecar", 0)
+                pct = rescued / n * 100 if n > 0 else 0
+                return {
+                    "agent": self.name,
+                    "role": self.role,
+                    "response": f"Mid-price delta: {n} races, {rescued} rescuable by sidecar ({pct:.1f}%). Shadow audit only.",
+                    "labels": ["MIDPRICE_AUDITED"],
+                    "data": d,
+                }
+            except Exception:
+                pass
+
+        if delta_path.exists():
+            n_rows = sum(1 for _ in open(delta_path)) - 1
+            return {
+                "agent": self.name,
+                "role": self.role,
+                "response": f"Mid-price delta CSV exists ({n_rows} rows). Run midprice_winner_delta.py for full summary.",
+                "labels": ["MIDPRICE_CSV_ONLY"],
+                "data": {"csv_rows": n_rows},
+            }
+
+        return {
+            "agent": self.name,
+            "role": self.role,
+            "response": "Mid-price delta not yet built. Run scripts/audit/midprice_winner_delta.py post-sigma.",
+            "labels": ["MIDPRICE_NOT_BUILT"],
+            "data": {},
+        }
+
 
 class PrimeChair(CouncilAgent):
     def __init__(self):
-        super().__init__(
-            name="PRIME CHAIR",
-            role="Final Synthesis and Governance",
-            system_prompt="""You are the Prime Chair of the VÉLØ LLM Council.
-Synthesize all agent outputs, enforce gates, and stop hallucinations.
-If the DATA AUDITOR has issued a VETO or if evidence is INCOMPLETE, you MUST output: HOLD — EVIDENCE PACKET INCOMPLETE.
-Produce the final operator read and next action only if evidence is READY.
-Output labels: SHADOW, OPERATOR_ONLY."""
-        )
+        super().__init__("PRIME CHAIR", "Final Synthesis and Governance")
+
+    def run(self, evidence_packet: Dict) -> Dict:
+        date_str = evidence_packet.get("metadata", {}).get("date", "")
+        agent_responses = evidence_packet.get("_agent_responses", [])
+
+        blocking_labels = {
+            "FLATLINE_BLOCK", "CONTAMINATION_DETECTED", "CONTAMINATED",
+            "SOURCE_CONTAMINATED", "SR_BELOW_HALF_BASELINE",
+        }
+        watch_labels = {
+            "SR_BELOW_BASELINE", "SOURCE_UNKNOWN", "SIGMA_MISSING",
+            "MISSING_SNAPSHOTS", "MIDPRICE_NOT_BUILT",
+        }
+
+        all_labels: set = set()
+        blocking_reasons: list = []
+        watch_reasons: list = []
+
+        for resp in agent_responses:
+            labels = set(resp.get("labels", []))
+            all_labels.update(labels)
+            hit = labels & blocking_labels
+            if hit:
+                blocking_reasons.append(f"{resp['agent']}: {', '.join(sorted(hit))}")
+            hit2 = labels & watch_labels
+            if hit2:
+                watch_reasons.append(f"{resp['agent']}: {', '.join(sorted(hit2))}")
+
+        if blocking_reasons:
+            verdict = "QUARANTINE_DAY"
+            summary = (
+                f"QUARANTINE_DAY — {date_str}. "
+                f"Learning blocked. Shadow consume blocked. Promotion evidence blocked. "
+                f"sigma_audits truth records are preserved. "
+                f"Blocking: {'; '.join(blocking_reasons)}"
+            )
+        elif watch_reasons:
+            verdict = "WATCH_ONLY"
+            summary = (
+                f"WATCH_ONLY — {date_str}. "
+                f"Evidence accumulation continues. Do not consume for learning yet. "
+                f"Watch: {'; '.join(watch_reasons)}"
+            )
+        else:
+            verdict = "PASS_TO_LEARNING"
+            summary = (
+                f"PASS_TO_LEARNING — {date_str}. "
+                f"All gates clear. Learning consume permitted if operator approves."
+            )
+
+        return {
+            "agent": self.name,
+            "role": self.role,
+            "response": summary,
+            "labels": ["SHADOW", "OPERATOR_ONLY"],
+            "council_verdict": verdict,
+            "blocking_reasons": blocking_reasons,
+            "watch_reasons": watch_reasons,
+        }
+
 
 def get_v01_council() -> List[CouncilAgent]:
     return [
         DataAuditor(),
-        RacingAPIConnectionsAnalyst(),
-        CashrunAnalyst(),
-        MarketEconomist(),
-        RedTeamSkeptic(),
-        PrimeChair()
+        FlatlineGateAgent(),
+        SigmaCoverageAgent(),
+        ContaminationDetectorAgent(),
+        MidPriceSummaryAgent(),
+        PrimeChair(),
     ]

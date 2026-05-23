@@ -16,18 +16,19 @@ class CouncilOrchestrator:
             "metadata": {
                 "date": date_str,
                 "run_at": datetime.now().isoformat(),
-                "orchestrator_version": "v0.1-gated"
+                "orchestrator_version": "v0.2-real-tribunal"
             },
             "evidence_packet": None,
             "agent_responses": [],
             "verifications": [],
             "final_report": None,
-            "council_status": "PENDING"
+            "council_status": "PENDING",
+            "council_verdict": "NOT_RUN",
         }
 
     def run_council(self):
         print(f"--- VÉLØ LLM Council Run: {self.date_str} ---")
-        
+
         # 1. Load evidence
         print("Step 1: Loading evidence packet...")
         evidence = self.packet_loader.load_all_evidence(self.repo_root)
@@ -35,26 +36,27 @@ class CouncilOrchestrator:
         self.run_results["evidence_packet"] = evidence
         self.run_results["council_status"] = evidence["metadata"]["council_status"]
 
-        # 2. Run agents
+        # 2. Run non-chair agents first, then inject their responses into evidence for PrimeChair
         print("Step 2: Running council members...")
-        for agent in self.agents:
+        non_chair_agents = [a for a in self.agents if a.name != "PRIME CHAIR"]
+        chair_agent = next((a for a in self.agents if a.name == "PRIME CHAIR"), None)
+
+        for agent in non_chair_agents:
             print(f"  -> {agent.name} is deliberating...")
-            
-            # Special case for Prime Chair if evidence is incomplete
-            if agent.name == "PRIME CHAIR" and self.run_results["council_status"] == "EVIDENCE_INCOMPLETE":
-                response = {
-                    "agent": "PRIME CHAIR",
-                    "role": agent.role,
-                    "response": "HOLD — EVIDENCE PACKET INCOMPLETE. Required artifacts missing.",
-                    "labels": ["SHADOW", "BLOCKED", "MISSING"]
-                }
-            else:
-                response = agent.run(evidence)
-                
+            response = agent.run(evidence)
             self.run_results["agent_responses"].append(response)
-            
-            # 3. Verify agent output
             verification = CouncilVerification.verify_output(agent.name, response)
+            self.run_results["verifications"].append(verification)
+
+        # Pass all agent responses to PrimeChair for synthesis
+        if chair_agent:
+            print(f"  -> {chair_agent.name} is deliberating...")
+            evidence_with_responses = dict(evidence)
+            evidence_with_responses["_agent_responses"] = self.run_results["agent_responses"]
+            response = chair_agent.run(evidence_with_responses)
+            self.run_results["agent_responses"].append(response)
+            self.run_results["council_verdict"] = response.get("council_verdict", "UNKNOWN")
+            verification = CouncilVerification.verify_output(chair_agent.name, response)
             self.run_results["verifications"].append(verification)
 
         # 4. Final Synthesis
