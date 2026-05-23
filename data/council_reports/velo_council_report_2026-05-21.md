@@ -1,27 +1,27 @@
 # VÉLØ LLM Council Operator Report - 2026-05-21
 
-**Run Date:** 2026-05-22T18:44:43.381428
+**Run Date:** 2026-05-22T18:53:56.542938
 **Council Status:** EVIDENCE_INCOMPLETE
 **Status:** SHADOW / OPERATOR ONLY
 
 ## 1. Executive Summary (Prime Chair)
-WATCH_ONLY — 2026-05-21. Evidence accumulation continues. Do not consume for learning yet. Watch: DATA AUDITOR: SOURCE_UNKNOWN; SIGMA COVERAGE: SIGMA_MISSING
+PASS_TO_LEARNING — 2026-05-21. All gates clear. Learning consume permitted if operator approves.
 
 ## 2. Agent Deliberations
 ### DATA AUDITOR
 **Role:** Data Quality Verification
-**Labels:** SOURCE_UNKNOWN, DATA_CLEAN
-**Read:** Data audit PASS — source=UNKNOWN, snapshots=1, flatlines=0
+**Labels:** DATA_CLEAN
+**Read:** Data audit PASS — source=RP_MERGED_CLEAN, snapshots=1, flatlines=0
 
 ### FLATLINE GATE
 **Role:** Scoring Integrity Check
 **Labels:** FLATLINE_PASS
-**Read:** Flatline gate PASS — no uniform races detected. source=UNKNOWN
+**Read:** Flatline gate PASS — no uniform races detected. source=RP_MERGED_CLEAN
 
 ### SIGMA COVERAGE
 **Role:** Result Coverage Check
-**Labels:** SIGMA_MISSING
-**Read:** No sigma results found for date — cannot evaluate coverage
+**Labels:** SR_ABOVE_BASELINE
+**Read:** SR=29.5% — at or above baseline 20%. Coverage OK.
 
 ### CONTAMINATION DETECTOR
 **Role:** Run ID Contamination Check

@@ -1,11 +1,11 @@
 # VÉLØ LLM Council Operator Report - 2026-05-22
 
-**Run Date:** 2026-05-22T18:21:03.901548
+**Run Date:** 2026-05-22T18:53:13.018361
 **Council Status:** EVIDENCE_INCOMPLETE
 **Status:** SHADOW / OPERATOR ONLY
 
 ## 1. Executive Summary (Prime Chair)
-WATCH_ONLY — 2026-05-22. Evidence accumulation continues. Do not consume for learning yet. Watch: SIGMA COVERAGE: SIGMA_MISSING; MIDPRICE SUMMARY: MIDPRICE_NOT_BUILT
+PASS_TO_LEARNING — 2026-05-22. All gates clear. Learning consume permitted if operator approves.
 
 ## 2. Agent Deliberations
 ### DATA AUDITOR
@@ -20,8 +20,8 @@ WATCH_ONLY — 2026-05-22. Evidence accumulation continues. Do not consume for l
 
 ### SIGMA COVERAGE
 **Role:** Result Coverage Check
-**Labels:** SIGMA_MISSING
-**Read:** No sigma results found for date — cannot evaluate coverage
+**Labels:** SR_ABOVE_BASELINE
+**Read:** SR=25.0% — at or above baseline 20%. Coverage OK.
 
 ### CONTAMINATION DETECTOR
 **Role:** Run ID Contamination Check
@@ -30,8 +30,8 @@ WATCH_ONLY — 2026-05-22. Evidence accumulation continues. Do not consume for l
 
 ### MIDPRICE SUMMARY
 **Role:** Mid-Price Leak Summary
-**Labels:** MIDPRICE_NOT_BUILT
-**Read:** Mid-price delta not yet built. Run scripts/audit/midprice_winner_delta.py post-sigma.
+**Labels:** MIDPRICE_AUDITED
+**Read:** Mid-price delta: 80 races, 2 rescuable by sidecar (2.5%). Shadow audit only.
 
 ## 3. Evidence Status
 - **vp30_operator_card**: MISSING [REQUIRED]
