@@ -1,6 +1,6 @@
 {
   "date": "2026-05-22",
-  "generated_at": "2026-05-23T01:19:15.589573+00:00",
+  "generated_at": "2026-05-23T01:44:07.565556+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
     "a33c5bd8"
@@ -11,7 +11,7 @@
   "majority_tied_count": 0,
   "identity_failure_count": 0,
   "runners_snapshotted": 417,
-  "council_verdict": "STALE_OR_STUB",
+  "council_verdict": "WATCH_ONLY",
   "learning_gate_status": "OPEN",
   "promotion_gate_status": "OPEN",
   "cpu_shadow_gate_v1": {
@@ -27,9 +27,11 @@
     "gate_v1_contamination": "CONFIRMED \u2014 pre-a33c5bd RP_MERGED rows included",
     "gate_v2_runner_count": 786,
     "gate_v2_qualified_days": 2,
-    "promotion_threshold": 300,
-    "promotion_eligible": false,
-    "note": "Operator decision required before any promotion action"
+    "review_threshold": 300,
+    "review_threshold_met": true,
+    "live_promotion_allowed": false,
+    "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
+    "display_status": "CPU_GATE_V2_REVIEW_TRIGGERED / NOT_APPROVED"
   },
   "gate_rules": [
     "sigma_audits truth writes: NEVER blocked \u2014 raw result ledger always recorded",

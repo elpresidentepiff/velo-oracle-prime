@@ -175,9 +175,15 @@ def _gate_v2_status() -> dict:
         "gate_v1_contamination": "CONFIRMED — pre-a33c5bd RP_MERGED rows included",
         "gate_v2_runner_count": clean_runner_total,
         "gate_v2_qualified_days": len(clean_dates),
-        "promotion_threshold": 300,
-        "promotion_eligible": False,
-        "note": "Operator decision required before any promotion action",
+        "review_threshold": 300,
+        "review_threshold_met": clean_runner_total >= 300,
+        "live_promotion_allowed": False,
+        "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
+        "display_status": (
+            "CPU_GATE_V2_REVIEW_TRIGGERED / NOT_APPROVED"
+            if clean_runner_total >= 300
+            else f"ACCUMULATING — {max(0, 300 - clean_runner_total)} runners to review threshold"
+        ),
     }
 
 

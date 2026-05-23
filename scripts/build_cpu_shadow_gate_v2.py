@@ -130,7 +130,7 @@ def build() -> dict:
     if id_failures > 0:
         promotion_blocks.append(f"identity_failures={id_failures} > 0")
 
-    promotion_eligible = n >= PROMOTION_THRESHOLD and not promotion_blocks
+    review_threshold_met = n >= PROMOTION_THRESHOLD and not promotion_blocks
     rows_to_threshold = max(0, PROMOTION_THRESHOLD - n)
 
     state = {
@@ -148,11 +148,11 @@ def build() -> dict:
         "flatline_count": flatlines,
         "identity_failures": id_failures,
         "by_date": snap["by_date"],
-        "promotion_threshold": PROMOTION_THRESHOLD,
+        "review_threshold": PROMOTION_THRESHOLD,
         "rows_to_threshold": rows_to_threshold,
-        "promotion_eligible": promotion_eligible,
+        "review_threshold_met": review_threshold_met,
         "promotion_blocks": promotion_blocks,
-        "promotion_decision": "OPERATOR_DECISION_REQUIRED",
+        "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
         "live_promotion_allowed": False,
     }
     return state
@@ -170,14 +170,14 @@ def main() -> None:
     print(f"  Qualified days:  {state['gate_v2_day_count']} ({', '.join(state['gate_v2_qualified_days'])})")
     print(f"  Flatline count:  {state['flatline_count']}")
     print(f"  Identity fails:  {state['identity_failures']}")
-    print(f"  Promotion threshold: {state['promotion_threshold']}")
+    print(f"  Review threshold:    {state['review_threshold']}")
     print(f"  Rows to threshold:   {state['rows_to_threshold']}")
     print(f"  Gate V1 status:      {state['gate_v1_status']}")
-    print(f"  Promotion eligible:  {state['promotion_eligible']}")
+    print(f"  Review threshold met:{state['review_threshold_met']} (NOT promotion eligible)")
     if state["promotion_blocks"]:
         print(f"  Promotion blocked:   {'; '.join(state['promotion_blocks'])}")
-    if state["promotion_eligible"]:
-        print("  NOTE: n >= 300 reached. OPERATOR DECISION REQUIRED before any promotion.")
+    if state["review_threshold_met"]:
+        print("  STATUS: CPU_GATE_V2_REVIEW_TRIGGERED — LIVE_PROMOTION_NOT_ALLOWED — OPERATOR_DECISION_REQUIRED")
     print(f"  Written: {out_path}")
 
 
