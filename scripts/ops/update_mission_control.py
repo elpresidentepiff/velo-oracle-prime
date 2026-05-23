@@ -229,6 +229,80 @@ def _council_artifact_status(date_str: str) -> dict:
     }
 
 
+def _learning_admission_status(date_str: str) -> dict:
+    elig_path = ROOT / "data" / "reports" / f"{date_str}_learning_eligibility.json"
+    packet_path = ROOT / "docs" / "engineering" / "MAY22_SHADOW_LEARNING_ADMISSION_PACKET.md"
+    ops_arts = sorted(glob.glob(str(ROOT / "data" / "ops_worker_dry_run" / f"{date_str}_learn-shadow_*.json")))
+    build_result: dict = {}
+    if ops_arts:
+        try:
+            art = json.loads(Path(ops_arts[-1]).read_text())
+            if art.get("build_events_only"):
+                build_result = {
+                    "events_built": art.get("events_built", 0),
+                    "events_written": art.get("db_result", {}).get("written", 0),
+                    "status": art.get("status", "UNKNOWN"),
+                    "sentient_state_touched": art.get("sentient_state_touched", False),
+                    "consumed_live": False,
+                }
+        except Exception:
+            pass
+    elig: dict = {}
+    if elig_path.exists():
+        try:
+            elig = json.loads(elig_path.read_text())
+        except Exception:
+            pass
+    return {
+        "eligibility_status": elig.get("audit_status", "NOT_RUN"),
+        "eligible_rows": elig.get("eligible_count", 0),
+        "excluded_rows": elig.get("excluded_count", 0),
+        "consumed_shadow_before": elig.get("consumed_shadow_before", 0),
+        "consumed_live_before": elig.get("consumed_live_before", 0),
+        "live_state_hash": elig.get("live_state_hash_before", "UNKNOWN"),
+        "build_events_result": build_result,
+        "admission_packet": "PRESENT" if packet_path.exists() else "MISSING",
+        "recommendation": "APPROVE_SHADOW_CONSUME" if elig.get("audit_status") == "ELIGIBLE" and build_result.get("events_written", 0) > 0 else "PENDING",
+    }
+
+
+def _race_shape_status() -> dict:
+    feat_path = ROOT / "data" / "features" / "race_shape_features_latest.json"
+    overlap_path = ROOT / "data" / "reports" / "race_shape_midprice_overlap_latest.json"
+    shape_result: dict = {"status": "NOT_RUN"}
+    if feat_path.exists():
+        try:
+            d = json.loads(feat_path.read_text())
+            shape_result = {
+                "status": "FEATURES_BUILT",
+                "date": d.get("date"),
+                "race_count": d.get("race_count", 0),
+            }
+        except Exception:
+            pass
+    overlap_result: dict = {"status": "NOT_RUN"}
+    if overlap_path.exists():
+        try:
+            d = json.loads(overlap_path.read_text())
+            q = d.get("overlap_questions", {})
+            overlap_result = {
+                "status": "OVERLAP_RUN",
+                "date": d.get("date"),
+                "winner_visible_pct": d.get("winner_visible_pct"),
+                "winner_ranked_2nd_3rd_pct": d.get("winner_ranked_2nd_or_3rd_pct"),
+                "fav_vulnerable_misses": q.get("q2_fav_vulnerable_misses"),
+                "compressed_misses": q.get("q1_compressed_misses"),
+                "shadow_candidates": q.get("q6_shadow_tracking_candidates"),
+            }
+        except Exception:
+            pass
+    return {
+        "race_shape_model_v1": "DESIGN_PENDING",
+        "features_built": shape_result,
+        "midprice_overlap": overlap_result,
+    }
+
+
 def build_mission_control(date_str: str) -> dict:
     rows = _load_snapshots(date_str)
     flatline_data = _detect_flatlines(rows)
@@ -243,6 +317,8 @@ def build_mission_control(date_str: str) -> dict:
     gate_v2 = _gate_v2_status()
     sigma_artifact = _sigma_artifact_status(date_str)
     council_artifacts = _council_artifact_status(date_str)
+    learning_admission = _learning_admission_status(date_str)
+    race_shape = _race_shape_status()
 
     rcg = gate_v2.get("runner_calibration_gate", {})
     dpg = gate_v2.get("decision_policy_gate", {})
@@ -267,6 +343,8 @@ def build_mission_control(date_str: str) -> dict:
         "runner_calibration_gate_runners": rcg.get("runner_count", 0),
         "decision_policy_gate_status": dpg.get("status", "UNKNOWN"),
         "decision_policy_gate_top_picks": dpg.get("top_pick_decisions", 0),
+        "learning_admission": learning_admission,
+        "race_shape_v1": race_shape,
         "research_status": {
             "race_shape_model_v1": "DESIGN_PENDING",
             "midprice_hunter_v2": "RESEARCH_PENDING",
@@ -331,6 +409,14 @@ def main() -> None:
     _rs = mc.get('research_status', {})
     print(f"  race_shape_model_v1: {_rs.get('race_shape_model_v1','?')}")
     print(f"  midprice_hunter_v2:  {_rs.get('midprice_hunter_v2','?')}")
+    _la = mc.get('learning_admission', {})
+    _ber = _la.get('build_events_result', {})
+    print(f"  learning_admission:  eligibility={_la.get('eligibility_status','?')} eligible={_la.get('eligible_rows','?')} events_written={_ber.get('events_written','?')} recommendation={_la.get('recommendation','?')}")
+    _rsv1 = mc.get('race_shape_v1', {})
+    _fb = _rsv1.get('features_built', {})
+    _ov = _rsv1.get('midprice_overlap', {})
+    print(f"  race_shape_features: {_fb.get('status','?')} (n={_fb.get('race_count','?')} races)")
+    print(f"  midprice_overlap:    visible={_ov.get('winner_visible_pct','?')}% ranked2nd3rd={_ov.get('winner_ranked_2nd_3rd_pct','?')}% fav_vuln_misses={_ov.get('fav_vulnerable_misses','?')}")
     print(f"  next: {mc['next_safe_command']}")
     print(f"  Written: {dated_path}")
     print(f"  Written: {latest_path}")

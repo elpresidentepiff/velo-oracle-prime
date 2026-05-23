@@ -1,6 +1,6 @@
 {
   "date": "2026-05-22",
-  "generated_at": "2026-05-23T01:55:58.937183+00:00",
+  "generated_at": "2026-05-23T02:36:47.014540+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
     "a33c5bd8"
@@ -14,6 +14,60 @@
   "council_verdict": "PASS_TO_LEARNING",
   "learning_gate_status": "OPEN",
   "promotion_gate_status": "OPEN",
+  "sigma_artifact": {
+    "status": "PRESENT",
+    "path": "data/sigma_results/sigma_results_2026_05_22.json",
+    "sr": 0.25,
+    "wins": 9,
+    "evaluated_count": 36
+  },
+  "council_artifact_visibility": {
+    "council_run": "PRESENT",
+    "council_packet": "PRESENT",
+    "council_report": "PRESENT"
+  },
+  "runner_calibration_gate_status": "REVIEW_THRESHOLD_MET",
+  "runner_calibration_gate_runners": 786,
+  "decision_policy_gate_status": "NEEDS_MORE_DAYS",
+  "decision_policy_gate_top_picks": 87,
+  "learning_admission": {
+    "eligibility_status": "ELIGIBLE",
+    "eligible_rows": 36,
+    "excluded_rows": 7,
+    "consumed_shadow_before": 0,
+    "consumed_live_before": 0,
+    "live_state_hash": "a1637542f7646aa9",
+    "build_events_result": {
+      "events_built": 36,
+      "events_written": 36,
+      "status": "EVENTS_WRITTEN",
+      "sentient_state_touched": false,
+      "consumed_live": false
+    },
+    "admission_packet": "PRESENT",
+    "recommendation": "APPROVE_SHADOW_CONSUME"
+  },
+  "race_shape_v1": {
+    "race_shape_model_v1": "DESIGN_PENDING",
+    "features_built": {
+      "status": "FEATURES_BUILT",
+      "date": "2026-05-22",
+      "race_count": 36
+    },
+    "midprice_overlap": {
+      "status": "OVERLAP_RUN",
+      "date": "2026-05-22",
+      "winner_visible_pct": 92.6,
+      "winner_ranked_2nd_3rd_pct": 48.1,
+      "fav_vulnerable_misses": 17,
+      "compressed_misses": 2,
+      "shadow_candidates": 24
+    }
+  },
+  "research_status": {
+    "race_shape_model_v1": "DESIGN_PENDING",
+    "midprice_hunter_v2": "RESEARCH_PENDING"
+  },
   "cpu_shadow_gate_v1": {
     "status": "GATE_V1_AUDIT_ONLY",
     "contaminated": true,
