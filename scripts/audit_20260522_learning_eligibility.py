@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-May 22 Learning Eligibility Audit
+Learning Eligibility Audit — parameterised by date.
 
 Reads local artifacts and Supabase sigma_audits to classify every verdict race as
 eligible or excluded for shadow learning, and verify all hard-stop conditions.
 
 Outputs:
-  data/reports/2026-05-22_learning_eligibility.json
-  data/reports/2026-05-22_learning_eligibility.md
+  data/reports/{date}_learning_eligibility.json
+  data/reports/{date}_learning_eligibility.md
 
 Hard stops (exits 1 if any fire):
   flatline_count > 0
@@ -18,7 +18,7 @@ Hard stops (exits 1 if any fire):
   any row would set consumed_live=true
 
 Usage:
-    PYTHONPATH=. python scripts/audit_20260522_learning_eligibility.py
+    PYTHONPATH=. python scripts/audit_20260522_learning_eligibility.py [--date YYYY-MM-DD]
 """
 
 from __future__ import annotations
@@ -38,8 +38,6 @@ try:
 except Exception:
     pass
 
-DATE = "2026-05-22"
-DATE_UND = "2026_05_22"
 TARGET_STATE = "shadow_full_train_v2"
 REPORT_DIR = ROOT / "data" / "reports"
 
@@ -50,9 +48,10 @@ def _load_json(path: Path) -> dict | list:
     return json.loads(path.read_text())
 
 
-def _load_snapshots() -> list[dict]:
+def _load_snapshots(date_str: str) -> list[dict]:
     import glob
-    pattern = str(ROOT / "data" / f"runner_snapshots_{DATE_UND}_{DATE_UND}_*.jsonl")
+    date_und = date_str.replace("-", "_")
+    pattern = str(ROOT / "data" / f"runner_snapshots_{date_und}_{date_und}_*.jsonl")
     rows = []
     for fpath in glob.glob(pattern):
         with open(fpath) as f:
@@ -66,14 +65,14 @@ def _load_snapshots() -> list[dict]:
     return rows
 
 
-def _load_supabase_consumed_events() -> dict[str, dict]:
+def _load_supabase_consumed_events(date_str: str) -> dict[str, dict]:
     """Query velo_learning_events for existing rows on this date — read only."""
     try:
         from src.data.supabase_client import SupabaseClient
         sb = SupabaseClient()
         resp = sb.client.table("velo_learning_events").select(
             "race_id,horse_id,event_type,consumed_shadow,consumed_live"
-        ).eq("run_date", DATE).execute()
+        ).eq("run_date", date_str).execute()
         rows = resp.data or []
         return {f"{r['race_id']}:{r.get('horse_id','')}:{r.get('event_type','')}": r for r in rows}
     except Exception as exc:
@@ -81,30 +80,31 @@ def _load_supabase_consumed_events() -> dict[str, dict]:
         return {}
 
 
-def _load_sigma_audits() -> list[dict]:
-    """Read sigma_audits from Supabase for May 22 — read only."""
+def _load_sigma_audits(date_str: str) -> list[dict]:
+    """Read sigma_audits from Supabase for the date — read only."""
     try:
         from src.data.supabase_client import SupabaseClient
         sb = SupabaseClient()
         resp = sb.client.table("sigma_audits").select(
             "race_id,outcome,decision_tier,horse_id,actual_winner_name,actual_winner_sp,off_time"
-        ).eq("date", DATE).execute()
+        ).eq("date", date_str).execute()
         return resp.data or []
     except Exception as exc:
         print(f"[WARN] Could not read sigma_audits: {exc}")
         return []
 
 
-def run_audit() -> dict:
-    print(f"[Audit] Loading artifacts for {DATE}...")
+def run_audit(date_str: str) -> dict:
+    date_und = date_str.replace("-", "_")
+    print(f"[Audit] Loading artifacts for {date_str}...")
 
     # ── Load local artifacts ───────────────────────────────────────────────
-    mc = _load_json(ROOT / "data" / "mission_control" / f"{DATE}_mission_control.json")
-    council_run = _load_json(ROOT / "data" / "council_runs" / f"council_run_{DATE}.json")
-    verdicts = _load_json(ROOT / "data" / f"velo_prime_verdicts_{DATE_UND}.json")
-    results_raw = _load_json(ROOT / "data" / f"results_{DATE_UND}.json")
-    sigma_artifact = _load_json(ROOT / "data" / "sigma_results" / f"sigma_results_{DATE_UND}.json")
-    snapshots = _load_snapshots()
+    mc = _load_json(ROOT / "data" / "mission_control" / f"{date_str}_mission_control.json")
+    council_run = _load_json(ROOT / "data" / "council_runs" / f"council_run_{date_str}.json")
+    verdicts = _load_json(ROOT / "data" / f"velo_prime_verdicts_{date_und}.json")
+    results_raw = _load_json(ROOT / "data" / f"results_{date_und}.json")
+    sigma_artifact = _load_json(ROOT / "data" / "sigma_results" / f"sigma_results_{date_und}.json")
+    snapshots = _load_snapshots(date_str)
 
     results = results_raw.get("results", []) if isinstance(results_raw, dict) else results_raw
     result_map = {r["race_id"]: r for r in results}
@@ -128,13 +128,13 @@ def run_audit() -> dict:
 
     # ── Load Supabase data ─────────────────────────────────────────────────
     print("[Audit] Querying velo_learning_events (read-only)...")
-    existing_events = _load_supabase_consumed_events()
-    print(f"[Audit] Existing event rows for {DATE}: {len(existing_events)}")
+    existing_events = _load_supabase_consumed_events(date_str)
+    print(f"[Audit] Existing event rows for {date_str}: {len(existing_events)}")
 
     print("[Audit] Querying sigma_audits (read-only)...")
-    sigma_audits = _load_sigma_audits()
+    sigma_audits = _load_sigma_audits(date_str)
     sigma_audit_map = {r["race_id"]: r for r in sigma_audits}
-    print(f"[Audit] sigma_audits rows for {DATE}: {len(sigma_audits)}")
+    print(f"[Audit] sigma_audits rows for {date_str}: {len(sigma_audits)}")
 
     # ── Check consumed_live in existing events ─────────────────────────────
     consumed_live_events = [k for k, v in existing_events.items() if v.get("consumed_live")]
@@ -225,7 +225,7 @@ def run_audit() -> dict:
     dpt_tier_a = [r for r in excluded if r.get("course") == "DPT" and r.get("tier") == "A"]
 
     audit = {
-        "date": DATE,
+        "date": date_str,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "target_state": TARGET_STATE,
         "audit_status": "HARD_STOP" if hard_stops else "ELIGIBLE",
@@ -264,7 +264,7 @@ def run_audit() -> dict:
     return audit
 
 
-def _write_md(audit: dict) -> str:
+def _write_md(audit: dict) -> str:  # noqa: PLR0912
     hard_stop_block = ""
     if audit["hard_stops"]:
         stops = "\n".join(f"  - {s}" for s in audit["hard_stops"])
@@ -373,11 +373,16 @@ live_state_hash unchanged until Phase 3B shadow consume
 
 
 def main() -> None:
-    audit = run_audit()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--date", default="2026-05-22", help="YYYY-MM-DD")
+    args = parser.parse_args()
+
+    audit = run_audit(args.date)
 
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    json_path = REPORT_DIR / f"{DATE}_learning_eligibility.json"
-    md_path = REPORT_DIR / f"{DATE}_learning_eligibility.md"
+    json_path = REPORT_DIR / f"{args.date}_learning_eligibility.json"
+    md_path = REPORT_DIR / f"{args.date}_learning_eligibility.md"
 
     json_path.write_text(json.dumps(audit, indent=2))
     print(f"[Audit] Written: {json_path}")
