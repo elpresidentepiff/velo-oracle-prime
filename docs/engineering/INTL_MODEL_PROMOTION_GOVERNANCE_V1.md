@@ -147,19 +147,67 @@ After live ingest is running and shadow scoring is active:
 
 13. May 20 (SCORING_FLATLINE_CONTAMINATED) exclusion applies to UK pipeline only.
     International gates are independent of UK contamination dates.
+
+14. SHUFFLE TEST PASSING IS INSUFFICIENT FOR VIABILITY.
+    A clean shuffle test (AUC collapses to ~0.50) proves that within-race label
+    randomisation destroys the model — i.e., the model uses real structure across
+    runners in the same race. It does NOT prove those features were available BEFORE
+    the race started. A post-race performance rating will also pass a shuffle test.
+
+15. SAME-RACE RPR AND TS ARE BANNED unless pre-race provenance is proven.
+    Provenance test: winner-max-rating rate across all races.
+    - winner_max < 55% → PRE_RACE_SAFE (consistent with a top-pick SR)
+    - winner_max 55–70% → TIMESTAMP_UNKNOWN (banned pending investigation)
+    - winner_max > 70% → POST_RACE_LEAKAGE_CONFIRMED (ban permanently)
+    
+    Dominance audit findings (2026-05-23):
+    - HK rpr_vs_field: 42–46% winner-max → PRE_RACE_SAFE
+    - HK or_vs_field: 12–17% winner-max → PRE_RACE_SAFE (handicapper equalises)
+    - FR rpr_vs_field: 70–73% winner-max → POST_RACE_LEAKAGE_CONFIRMED
+    - FR ts_num: 75–77% winner-max → POST_RACE_LEAKAGE_CONFIRMED
+    
+    FR rpr_vs_field and FR ts_num are permanently banned from all FR arenas and
+    models until Racing Post confirms the data source is pre-race.
+
+16. LAGGED-ONLY ARENA IS THE MINIMUM ACCEPTABLE OFFLINE EVIDENCE.
+    An arena that uses current-race rpr_num / or_num / ts_num where provenance is
+    unconfirmed is not acceptable offline evidence even if it passes a shuffle test.
+    The lagged-only arena (prev_rpr_num, max_rpr_num_last3, avg_rpr_num_last3,
+    course_prior_wr, dist_prior_wr, days_since_last_run) is the minimum bar for
+    any pack where same-race rating provenance is unconfirmed or POST_RACE.
+
+17. NO MIGRATION UNTIL LAGGED-ONLY ARENA IS ASSESSED.
+    Schema migration (intl_schemas_v1.sql) remains blocked until:
+    (a) Lagged-only arena runs for all 5 packs
+    (b) Results are credible and non-extreme (AUC ≤ 0.85 for lagged features)
+    (c) Operator decision (El Presidente sign-off) on viability
+    Reason: migration is irreversible without DROP SCHEMA CASCADE. Do not create
+    production infrastructure for a model whose feature provenance is unproven.
 ```
 
 ---
 
 ## International Pack Status (as of 2026-05-23)
 
-| Pack | Gate 0 | Gate 1 | Gate 2 | Gate 3 | Gate 4 | Status |
+### Gate 0 Sub-gates
+| Pack | Leakage Audit | Shuffle Test | Safe Arena | Provenance Test | Lagged Arena | Gate 0 |
 |---|---|---|---|---|---|---|
-| HK_SHA_TIN_V1 | IN_PROGRESS | PENDING | NOT_PASSED | NOT_PASSED | NOT_STARTED | **LEAKAGE_AUDIT_IN_PROGRESS** |
-| HK_HAPPY_VALLEY_V1 | IN_PROGRESS | PENDING | NOT_PASSED | NOT_PASSED | NOT_STARTED | **LEAKAGE_AUDIT_IN_PROGRESS** |
-| FR_CHANTILLY_V1 | IN_PROGRESS | PENDING | NOT_PASSED | NOT_PASSED | NOT_STARTED | **LEAKAGE_AUDIT_IN_PROGRESS** |
-| FR_FLAT_CORE | IN_PROGRESS | PENDING | NOT_PASSED | NOT_PASSED | NOT_STARTED | **LEAKAGE_AUDIT_IN_PROGRESS** |
-| FR_AUTEUIL_JUMPS_V1 | IN_PROGRESS | PENDING | NOT_PASSED | NOT_PASSED | NOT_STARTED | **LEAKAGE_AUDIT_IN_PROGRESS** |
+| HK_SHA_TIN_V1 | PASS | PASS (0.47) | PASS | RPR PRE_RACE_SAFE / OR PRE_RACE_SAFE | IN_PROGRESS | **PENDING_LAGGED** |
+| HK_HAPPY_VALLEY_V1 | PASS | PASS (0.51) | PASS | RPR PRE_RACE_SAFE / OR PRE_RACE_SAFE | IN_PROGRESS | **PENDING_LAGGED** |
+| FR_CHANTILLY_V1 | PASS | MARGINAL (0.61) | PASS* | RPR POST_RACE / TS POST_RACE | IN_PROGRESS | **PROVENANCE_FAILED** |
+| FR_FLAT_CORE | PASS | NOT_RUN | PASS* | RPR POST_RACE / TS POST_RACE | IN_PROGRESS | **PROVENANCE_FAILED** |
+| FR_AUTEUIL_JUMPS_V1 | PASS | NOT_RUN | PASS* | RPR POST_RACE | IN_PROGRESS | **PROVENANCE_FAILED** |
+
+*Safe arena passed but used same-race rpr_vs_field which is now POST_RACE_LEAKAGE_CONFIRMED for FR. Safe arena FR results are invalidated.
+
+### Full Gate Status
+| Pack | Gate 0 | Gate 1 | Gate 2 | Gate 3 | Gate 4 | Current Status |
+|---|---|---|---|---|---|---|
+| HK_SHA_TIN_V1 | PENDING | PENDING | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PENDING_LAGGED_ARENA** |
+| HK_HAPPY_VALLEY_V1 | PENDING | PENDING | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PENDING_LAGGED_ARENA** |
+| FR_CHANTILLY_V1 | FAILED | BLOCKED | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PROVENANCE_FAILED — same-race RPR/TS banned** |
+| FR_FLAT_CORE | FAILED | BLOCKED | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PROVENANCE_FAILED — same-race RPR/TS banned** |
+| FR_AUTEUIL_JUMPS_V1 | FAILED | BLOCKED | NOT_PASSED | NOT_PASSED | NOT_STARTED | **PROVENANCE_FAILED — same-race RPR banned** |
 
 ---
 
@@ -181,11 +229,21 @@ After live ingest is running and shadow scoring is active:
 ---
 
 ```
-DOCUMENT_STATUS:      LOCKED_GOVERNANCE
-GATE_0_CURRENT:       IN_PROGRESS
-ALL_PACKS_STATUS:     LEAKAGE_AUDIT_IN_PROGRESS
-MIGRATION_STATUS:     NOT_APPLIED
-WORKER_STATUS:        BLOCKED
-SCORING_STATUS:       OFFLINE_ONLY
-UK_PIPELINE_STATUS:   UNCHANGED
+DOCUMENT_STATUS:         LOCKED_GOVERNANCE
+GATE_0_HK_SHA_TIN:       PENDING_LAGGED_ARENA
+GATE_0_HK_HAPPY_VALLEY:  PENDING_LAGGED_ARENA
+GATE_0_FR_CHANTILLY:     PROVENANCE_FAILED
+GATE_0_FR_FLAT_CORE:     PROVENANCE_FAILED
+GATE_0_FR_AUTEUIL:       PROVENANCE_FAILED
+HK_RPR_PROVENANCE:       PRE_RACE_SAFE (winner_max 42-46%)
+HK_OR_PROVENANCE:        PRE_RACE_SAFE (winner_max 12-17%)
+FR_RPR_PROVENANCE:       POST_RACE_LEAKAGE_CONFIRMED (winner_max 70-73%)
+FR_TS_PROVENANCE:        POST_RACE_LEAKAGE_CONFIRMED (winner_max 75-77%)
+FR_SAME_RACE_RPR_TS:     PERMANENTLY_BANNED_UNTIL_SOURCE_CLARIFIED
+MIGRATION_STATUS:        NOT_APPLIED — blocked pending lagged arena
+WORKER_STATUS:           BLOCKED
+SCORING_STATUS:          OFFLINE_ONLY
+UK_PIPELINE_STATUS:      UNCHANGED
+SHUFFLE_IS_INSUFFICIENT: TRUE — see Rule 14
+LAGGED_ARENA_STATUS:     IN_PROGRESS
 ```
