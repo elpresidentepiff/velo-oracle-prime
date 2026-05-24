@@ -1717,7 +1717,7 @@ def main():
             persist_map[rid] = True
             continue
 
-        success = persist_race_predictions(race, preds, decision_tier=tier)
+        success = persist_race_predictions(race, preds, decision_tier=tier, commit_sha=commit_sha)
         persist_map[rid] = success
 
         if success:

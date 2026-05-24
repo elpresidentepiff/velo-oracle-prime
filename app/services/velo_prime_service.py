@@ -759,7 +759,12 @@ def _enrich_full_analysis_from_warehouse(
 # ── Supabase persistence ──────────────────────────────────────────────────────
 
 
-def persist_race_predictions(race: dict, predictions: list[dict], decision_tier: str | None = None) -> bool:
+def persist_race_predictions(
+    race: dict,
+    predictions: list[dict],
+    decision_tier: str | None = None,
+    commit_sha: str | None = None,
+) -> bool:
     """
     Write top verdict + specialist scores to velo_verdicts.
     One row per race (top pick). Returns True on success.
@@ -910,6 +915,12 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
             "assigned_product": top.get("assigned_product"),
             "router_reasons": top.get("router_reasons"),
             "execution_allowed": top.get("execution_allowed"),
+            # ── Audit traceability ────────────────────────────────────────────────
+            # decision_tier: canonical tier from synthesize_decision() — previously
+            # accepted as parameter and validated but never written to the row dict.
+            # git_commit_sha: scoring run commit for audit queries; NULL until fixed.
+            "decision_tier": decision_tier,
+            "git_commit_sha": commit_sha,
         }
 
         # VÉLØ Oracle — Narrative and regime
