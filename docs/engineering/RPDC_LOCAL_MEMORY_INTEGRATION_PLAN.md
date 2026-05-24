@@ -239,8 +239,9 @@ MEMORY_ROWS:                          18,554
 MEMORY_DATE_RANGE:                    2026-03-17 → 2026-05-23
 MAY24_MATCH_RATE:                     62.7% (MODERATE)
 FORMULA_STATUS:                       FEATURE_DEGRADED
-IMPROVEMENT_SCORE_VARIANCE_RESTORED:  NO
-IMPROVEMENT_PRIMARY_BLOCKER:          OFR/RPR/age missing from RP F_0010 PDF racecard source
+IMPROVEMENT_SCORE_VARIANCE_RESTORED:  YES — 2026-05-24 (racecard_loader.py 3-line fix)
+IMPROVEMENT_PRIMARY_BLOCKER:          RESOLVED — current_or/rpr_master/age now pass through from rp_merged
+IMPROVEMENT_RANGE_POST_FIX:           0.2196 (was 0.0000)
 RPDC_ONLY_IMPROVEMENT_RANGE:          0.016 (marginal — kill switch threshold 1e-6)
 RACECARD_RESTORE_IMPROVEMENT_RANGE:   0.209 (material — kills switch, discrimination restored)
 SCORING_CHANGE:                       NONE

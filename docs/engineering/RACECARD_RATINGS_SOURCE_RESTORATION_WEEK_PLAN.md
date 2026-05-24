@@ -2,7 +2,7 @@
 
 **Prepared:** 2026-05-24  
 **Trigger:** improvement_score constant at 0.0872. Root cause: RP pipeline provides no OFR/RPR/age.  
-**Classification:** RATINGS_SOURCE_GAP_CONFIRMED / KEY_FINDING_RACECARD_MERGED_HAS_OR / COMPARE_ONLY_GATE_REQUIRED  
+**Classification:** RATINGS_SOURCE_GAP_CONFIRMED / FIX_APPLIED_2026-05-24 / IMPROVEMENT_VARIANCE_RESTORED / MAY25_FULL_FORMULA_RESTORED_PENDING_OPERATOR_REVIEW  
 **Hard constraint:** No formula change. No live scoring change. No model change. Compare-only proves variance before any integration.
 
 ---
@@ -196,7 +196,7 @@ These files are local cache and are read-only. They cannot provide ratings for M
 ## Classification
 
 ```
-STATUS:                               COMPARE_ONLY_GATE_PENDING
+STATUS:                               FIX_APPLIED_2026-05-24 / FULL_FORMULA_RESTORED_PENDING_OPERATOR_REVIEW
 KEY_FINDING:                          racecard_merged has current_or/rpr_master/age — discarded by normalizer
 FIX_COMPLEXITY:                       3 lines in src/velo/racecard_loader.py
 FIX_TYPE:                             PIPELINE_RESTORATION (not formula change)
