@@ -1,7 +1,7 @@
 # V14 Council Resolution Packet — 2026-05-23
 
 **Status:** GOVERNANCE_HYGIENE_COMPLETE — 5 items closed or classified  
-**Classification:** `V14_SINGLE_SOURCE_TRUTH_RECONCILIATION_ACTIVE`  
+**Classification:** `V14_SINGLE_SOURCE_TRUTH_RECONCILIATION_CLOSED`  
 **Date:** 2026-05-23  
 **Authority:** El Presidente
 
@@ -166,7 +166,7 @@ NO_SCORING_CHANGE: CONFIRMED — no runtime behavior was altered
 ## Final Classification
 
 ```
-V14_SINGLE_SOURCE_TRUTH_RECONCILIATION_ACTIVE: YES
+V14_SINGLE_SOURCE_TRUTH_RECONCILIATION_CLOSED: YES
 LIVE_SCORING_TRUTH_ESTABLISHED: YES — improvement_score=LIVE, place_prob=BADGE_ONLY, longshot_score=FROZEN
 POLICY_REGISTRY_RECONCILED_TO_RUNTIME: YES — SCORING_POLICY_LIVE corrected
 CURRENT_RUNTIME_TRUTH_RECONCILED: YES — Section 3 corrected

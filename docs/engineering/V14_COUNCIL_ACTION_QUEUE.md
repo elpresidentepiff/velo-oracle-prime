@@ -140,20 +140,32 @@ NO workers until Priority 6 sign-off AND source legality confirmed
 
 | Priority | Item | Status | Blocking? |
 |---|---|---|---|
-| 1 | SQPE V18 classification | COUNCIL_REQUIRED | No (governance only) |
-| 2 | CLAUDE.md stale refs | DOCS_EXECUTED | Council ratification |
-| 3 | Arena V2 market provenance | AUDIT_COMPLETE | Yes — international gate |
-| 4 | Feature registry review | REVIEW_PENDING | No |
-| 5 | Policy registry review | **RESOLVED_2026-05-23** | No — scoring truth established |
-| 6 | International gate decision | GATE_ACTIVE | Yes — all international work |
-| 7 | Phase 3 implementation | AWAITING_APPROVAL | Yes — agent harness build |
+| 1 | SQPE V18 operator archive decision | COUNCIL_REQUIRED | No (governance only) |
+| 2 | CLAUDE.md stale refs | **CLOSED_2026-05-23** | No |
+| 3 | Arena V2 provenance / Arena V3 requirement | AUDIT_COMPLETE | Yes — international gate |
+| 4 | Feature registry Council review | REVIEW_PENDING | No |
+| 5 | Policy registry reconciliation | **CLOSED_2026-05-23** | No |
+| 6 | International next gate sign-off | GATE_ACTIVE | Yes — all international work |
+| 7 | First implementation slice approval | AWAITING_APPROVAL | Yes — agent harness build |
+
+**Closed this session:**
+- Priority 2: CLAUDE.md stale refs — REMEDIATED_DOCUMENTATION_ONLY (commits `da666fe`)
+- Priority 5: Scoring weight discrepancy — CLOSED. improvement_score=LIVE_WEIGHTED(0.12), place_prob=BADGE_ONLY, longshot_score=FROZEN. Policy registry and CURRENT_RUNTIME_TRUTH.md corrected (commits `ff34490`, `ce51f0c`, `74a0e90`)
+
+**Remaining open (4 items require Council/operator decision):**
+- Priority 1: SQPE V18 — formal archive decision (pkl present, no runtime risk, no urgency)
+- Priority 3: Arena V3 morning odds arena — can only start after operator sign-off + source legality confirmed
+- Priority 4: Feature registry — Council review + formal sign-off
+- Priority 6: International gate — El Presidente explicit sign-off required
+- Priority 7: First implementation slice — Council approval required
 
 ---
 
 ```
 V14_COUNCIL_ACTION_QUEUE_STATUS: ACTIVE
-ITEMS_OPEN: 6 (Priority 5 resolved 2026-05-23)
-HIGHEST_PRIORITY: SQPE_V18_CLASSIFICATION (Priority 1)
+ITEMS_OPEN: 5
+ITEMS_CLOSED_THIS_SESSION: 2 (Priority 2 and Priority 5)
 HIGHEST_BLOCKING: INTERNATIONAL_GATE_DECISION (Priority 6)
-PRIORITY_5_RESOLVED: improvement_score=LIVE_WEIGHTED(0.12), place_prob=BADGE_ONLY, longshot_score=FROZEN
+LIVE_SCORING_TRUTH: ESTABLISHED_AND_CLOSED
+V14_SINGLE_SOURCE_TRUTH_RECONCILIATION: CLOSED_2026-05-23
 ```

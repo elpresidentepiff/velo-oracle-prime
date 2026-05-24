@@ -121,6 +121,63 @@ The first safe implementation step (Phase 3) is building the Agent Harness execu
 
 ---
 
+## Live Scoring Truth (Established 2026-05-23)
+
+Locked truth for all future audits, pitches, training reports, and feature work.  
+Source: `docs/engineering/LIVE_SCORING_TRUTH_AUDIT_2026_05_23.md`  
+Audit commit: `ff34490`
+
+### Live Core (VP-weighted)
+
+| Signal | Weight | Status |
+|---|---|---|
+| `sqpe_v17_prob` | 0.45 | LIVE_WEIGHTED |
+| `improvement_score` | 0.12 | LIVE_WEIGHTED |
+| `market_deception_score` | 0.10 | LIVE_WEIGHTED |
+
+**Effective VP formula:**  
+`VP = (0.45 × sqpe_v17 + 0.12 × improvement_score + 0.10 × MDS) / 0.67`
+
+### Display / Advisory (calculated, stored, not VP-weighted)
+
+| Signal | Status |
+|---|---|
+| `place_prob` | BADGE_ONLY |
+| `release_window_score` | STORED_ONLY (weight 0.00) |
+| `comment_intel_score` | STORED_ONLY (weight 0.00) |
+| `longshot_score` | FROZEN / DISPLAY_ONLY |
+
+### Shadow Only (not live, not weighted)
+
+| Signal | Status |
+|---|---|
+| Playbook G | SHADOW_ONLY — multiplier computed, NOT applied to VP |
+| Race Shape / CPU challenger | SHADOW_GATE — forward evidence accumulation |
+| International packs (Arena V2) | CLOSING_MARKET_ONLY — gate still active |
+
+### Unclassified Lab Models
+
+| Model | Status |
+|---|---|
+| SQPE V18 | NOT_WIRED / NO_PROMOTION — LAB_EXPERIMENT_COMPLETED_NO_LIFT |
+
+---
+
+## Governance Reconciliation (2026-05-23)
+
+`V14_SINGLE_SOURCE_TRUTH_RECONCILIATION_CLOSED`
+
+Documents corrected to match runtime:
+- `CURRENT_RUNTIME_TRUTH.md` Section 3 — signal truth table updated
+- `policy_registry_manifest_v1.json` SCORING_POLICY_LIVE — weights corrected
+
+Documents produced:
+- `LIVE_SCORING_TRUTH_AUDIT_2026_05_23.md`
+- `V14_COUNCIL_RESOLUTION_PACKET_2026_05_23.md`
+- `V14_SINGLE_SOURCE_TRUTH_CLOSEOUT_2026_05_23.md`
+
+---
+
 ## Confirmation
 
 ```
