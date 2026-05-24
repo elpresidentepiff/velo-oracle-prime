@@ -3,6 +3,7 @@
 **Status:** ACTIVE — items require Council decision  
 **Classification:** `COUNCIL_ACTION_REQUIRED` / `POST_MASTER_ROLLOUT`  
 **Date authored:** 2026-05-23  
+**Updated:** 2026-05-24 — Priority 0 added (live degradation gates)  
 **Authority:** El Presidente
 
 ---
@@ -14,6 +15,34 @@ This queue captures all open items requiring Council decision following the V14 
 ---
 
 ## Priority Queue
+
+### Priority 0 — RPDC and Supabase Fallback Gates (NEW — 2026-05-24)
+
+**Status:** IMPLEMENTATION_REQUIRED — live degradation confirmed  
+**Audit:** `docs/engineering/MAY24_SUPABASE_RPDC_INCIDENT_AUDIT.md`  
+**Operator packet:** `docs/engineering/MAY24_OPERATOR_CORRECTION_PACKET.md`  
+**Why urgent:** The 2026-05-24 scoring run was classified `OFFICIAL_VALID_FEATURE_DEGRADED`. improvement_score was silently excluded from the VP ensemble on all 29 races. The system sent "strong card" and "A-STRIKE" to Telegram without any degraded-feature banner. RPDC has been broken since 2026-05-08 (16+ days). None of these conditions triggered a Mission Control alert. This is a live scoring integrity gap — not a governance hygiene item.
+
+**Immediate actions required (before next scoring run):**
+1. Run `ingest_results_to_horse_runs.py --date 2026-05-23` to repair the chain
+2. Run `build_rpdc_daily.py --date 2026-05-24` to verify RPDC returns >0 runners
+3. Operator decision: RESCORE_TODAY / HOLD_AS_DEGRADED / COMPARE_ONLY
+
+**Six gates to implement (implementation requires Council approval):**
+
+| Gate | Trigger | Action |
+|---|---|---|
+| `RPDC_ZERO_BLOCK_OR_WARN` | build_rpdc_daily returns 0 runners | WARN in Telegram pre-flight + Mission Control |
+| `FEATURE_DEGRADED_BANNER` | Any live-weighted component excluded from ensemble | Banner in Telegram, dashboard, Mission Control |
+| `SUPABASE_PUBLISH_FALLBACK_WARN` | Dashboard publisher uses local_json_top_only | WARN in Telegram summary |
+| `SUPABASE_WRITE_PROOF_REQUIRED` | After every persist step | Query count + NULL check, log to mission_control |
+| `RPDC_COVERAGE_WARN` | runner_release_candidates > 3 days stale | Pre-flight WARN before scoring |
+| `LEARNING_ELIGIBILITY_BLOCK` | Sigma day where improvement_score was constant | Block EOD learning bridge |
+
+**Council action:** Approve gate implementation. Assign implementation owner. These are operational safety gates, not governance hygiene.  
+**Blocking:** Until gates are implemented, every scoring run without prior RPDC verification must be manually reviewed post-run.
+
+---
 
 ### Priority 1 — SQPE V18 Formal Classification
 
@@ -141,6 +170,7 @@ NO workers until Priority 6 sign-off AND source legality confirmed
 
 | Priority | Item | Status | Blocking? |
 |---|---|---|---|
+| **0** | **RPDC/Supabase fallback gates** | **IMPLEMENTATION_REQUIRED** | **Yes — next scoring run** |
 | 1 | SQPE V18 operator archive decision | COUNCIL_REQUIRED | No (governance only) |
 | 2 | CLAUDE.md stale refs | **CLOSED_2026-05-23** | No |
 | 3 | Arena V2 provenance / Arena V3 requirement | AUDIT_COMPLETE | Yes — international gate |
