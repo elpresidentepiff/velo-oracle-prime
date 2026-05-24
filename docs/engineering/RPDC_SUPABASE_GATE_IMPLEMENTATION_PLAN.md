@@ -1,8 +1,9 @@
 # RPDC and Supabase Gate Implementation Plan
 
-**Classification:** `IMPLEMENTATION_PLAN_ONLY` — not yet approved  
-**Status:** AWAITING_COUNCIL_APPROVAL  
+**Classification:** `IMPLEMENTATION_PLAN_PARTIAL_COMPLETE`  
+**Status:** FIRST_SLICE_IMPLEMENTED — Gates 2, 5, 6 + Task 4 live. Gates 1, 3, 4 pending.  
 **Date:** 2026-05-24  
+**Updated:** 2026-05-24 (first implementation slice committed)  
 **Authority:** El Presidente  
 **Reference:** `docs/engineering/MAY24_SUPABASE_RPDC_INCIDENT_AUDIT.md`  
 **Reference:** `docs/engineering/RPDC_DEGRADATION_SCOPE_AUDIT_2026_05_08_TO_2026_05_24.md`  
@@ -12,7 +13,7 @@
 
 ## Purpose
 
-This document proposes implementation for the six safety gates identified in the May 24 degraded-run incident. None of these gates are implemented today. Approved implementation only — no code changes until Council approval received.
+This document proposes implementation for the six safety gates identified in the May 24 degraded-run incident. Gates 2, 5, 6 and the Task 4 dead-fallback fix were implemented in the first approved slice (2026-05-24). Gates 1, 3, 4 remain pending Council approval before implementation.
 
 ---
 
@@ -49,7 +50,7 @@ if not runners_to_score:
 
 ---
 
-### Gate 2 — `FEATURE_DEGRADED_BANNER`
+### Gate 2 — `FEATURE_DEGRADED_BANNER` ✓ IMPLEMENTED (commit 2af37d1, 2026-05-24)
 
 **Trigger:** Any live-weighted component (`improvement_score`, `market_deception_score`, `sqpe_v17`) excluded from active_components across more than 80% of races in a day  
 **File to modify:** `scripts/ops/run_prime_today.py` — post-scoring summary section  
@@ -127,9 +128,9 @@ if null_tier_count > 0:
 
 ---
 
-### Gate 5 — `RPDC_COVERAGE_WARN`
+### Gate 5 — `RPDC_COVERAGE_WARN` ✓ IMPLEMENTED (commit 7512875, 2026-05-24)
 
-**Trigger:** `runner_release_candidates` latest `run_date` is more than 3 days behind scoring date  
+**Trigger:** `runner_release_candidates` latest `run_date` is more than 1 day behind scoring date (implemented threshold: >1 day; plan said 3, tightened on implementation)  
 **File to modify:** `scripts/ops/build_rpdc_daily.py` — pre-flight section  
 **Proposed action:**
 ```python
@@ -152,9 +153,9 @@ if latest:
 
 ---
 
-### Gate 6 — `LEARNING_ELIGIBILITY_BLOCK`
+### Gate 6 — `LEARNING_ELIGIBILITY_BLOCK` ✓ IMPLEMENTED (commit 1c3e07a, 2026-05-24)
 
-**Trigger:** sigma day where `improvement_score` was constant (feature degraded)  
+**Trigger:** sigma day where `improvement_score` was constant, OR any live-weighted component excluded on >80% of races, OR any individual race fired SQPE-only (partial contamination anomaly)  
 **File to modify:** `scripts/ops/eod_shadow_learning_bridge.py`  
 **Proposed action:**
 ```python
@@ -179,16 +180,11 @@ if is_constant:
 
 ## Additional Fix Required (not a gate)
 
-### `build_rpdc_daily.py` — fix velo_verdicts fallback
+### `build_rpdc_daily.py` — fix velo_verdicts fallback ✓ IMPLEMENTED (commit 7512875, 2026-05-24)
 
-The fallback path when no results file exists queries `velo_verdicts.top_rank_horse_id` — a column that does not exist in the live schema. This means the fallback has never worked.
+The fallback path when no results file exists queried `velo_verdicts.top_rank_horse_id` — a column that does not exist in the live schema. This meant the fallback had never worked.
 
-**Fix:** Replace with a query using actual live columns. Candidates:
-- Read from runner_snapshots JSONL if local file exists for the date
-- Query `velo_verdicts` using actual horse identifier columns
-- Accept runners list as CLI argument (`--runners-json path`)
-
-This is a bug fix, not a gate. Requires operator approval before touching build_rpdc_daily.py.
+**Implemented fix:** Replaced with runner_snapshots JSONL loader. The JSONL files are written by `run_prime_today.py` on scoring day and contain all runners from that day's scoring run. Deduplication by `horse_id:race_id` key. If no snapshots exist either, the script now prints `RPDC_SOURCE_UNAVAILABLE` with the exact paths checked and exits cleanly (no silent zero).
 
 ---
 
@@ -219,11 +215,15 @@ This is a bug fix, not a gate. Requires operator approval before touching build_
 All six gates require Council approval before any implementation begins (per V14 Standing Rules). The gates modify Telegram output and mission_control.json writes, both of which are protected under the Council action queue standing rules.
 
 ```
-PLAN_STATUS:          AWAITING_COUNCIL_APPROVAL
-IMPLEMENTATION_DONE:  NO
-CODE_CHANGES:         NONE — docs only
+PLAN_STATUS:          FIRST_SLICE_IMPLEMENTED
+GATES_IMPLEMENTED:    Gate 2 (FEATURE_DEGRADED_BANNER), Gate 5 (RPDC_COVERAGE_WARN),
+                      Gate 6 (LEARNING_ELIGIBILITY_BLOCK), Task 4 (dead fallback fix)
+GATES_PENDING:        Gate 1 (RPDC_ZERO_BLOCK_OR_WARN), Gate 3 (SUPABASE_PUBLISH_FALLBACK_WARN),
+                      Gate 4 (SUPABASE_WRITE_PROOF_REQUIRED)
+COMMITS:              1c3e07a (Gate 6), 7512875 (Gate 5 + Task 4), 2af37d1 (Gate 2)
+CODE_CHANGES:         eod_shadow_learning_bridge.py, build_rpdc_daily.py, run_prime_today.py
 SCORING_CHANGES:      NONE
 MODEL_CHANGES:        NONE
-TELEGRAM_CHANGES:     NONE (not yet approved)
-RUNTIME_CHANGES:      NONE (not yet approved)
+TELEGRAM_CHANGES:     Gate 2 banner added (approved)
+RUNTIME_CHANGES:      Gates active from next run
 ```
