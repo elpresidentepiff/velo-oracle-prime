@@ -1,6 +1,6 @@
 # VÉLØ Oracle Prime — Current Runtime Truth
 
-**Last updated:** 2026-05-19  
+**Last updated:** 2026-05-23 (Section 3 corrected — signal truth table reconciled to runtime code)  
 **Status:** PRODUCTION — read this before touching anything  
 **Authority:** This document supersedes TRUTH_REGISTRY.md, SYSTEM_MAP.md, BRANCH_MAP.md, and any phase-specific docs.
 
@@ -45,17 +45,21 @@ scripts/ops/run_prime_today.py   ← LIVE_RUNTIME entry point
 | Signal | Current weight | Live weighted? | Stored? | Shadow only? | Notes |
 |---|---|---|---|---|---|
 | `sqpe_v17_prob` (VP) | **0.45** | YES | YES | NO | Dominant anchor — SQPE v17 |
+| `improvement_score` | **0.12** | YES | YES | NO | LIVE_WEIGHTED — active since ensemble surgery 2026-05-08 |
 | `market_deception_score` (MDS) | **0.10** | YES | YES | NO | Best sidecar, SR=54.8% at MDS>0.5 |
-| `place_prob` | **0.08** | YES | YES | NO | Frame support |
-| `longshot_score` | **0.07** | YES, gated | YES | NO | SP≥10 gate only |
-| `improvement_score` | declared 0.12, **disabled** | NO | YES | Evidence/visibility | SR=43.5% proven but not live-weighted |
-| `release_window_score` | declared 0.10, **disabled** | NO | YES | Visibility only | Unproven in forward test |
-| `comment_intel_score` | declared 0.08, **disabled** | NO | YES | Visibility only | AUC=0.670, additive only |
-| Playbook G / sentient | 0 | NO | YES | Shadow audit | BLOCKED from live promotion |
-| NO_VP_COMPOSITE challenger | 0 | NO | Shadow gate | Shadow gate | Gate at n=284/300 runners |
+| `place_prob` | declared 0.08, **BADGE_ONLY** | NO (excluded from VP) | YES | NO | BADGE_ONLY — frame badge, not VP-weighted in current profile |
+| `longshot_score` | declared 0.07, **FROZEN** | NO (excluded from VP) | YES | NO | FROZEN (FREEZE_CANDIDATE) — ROI=-0.065; SP≥10 gate still used for tier X |
+| `release_window_score` | 0.00 (STORED_ONLY) | NO | YES | NO | STORED_ONLY — both profiles; calculated, stored, not weighted |
+| `comment_intel_score` | 0.00 (STORED_ONLY) | NO | YES | NO | STORED_ONLY — both profiles; calculated, stored, not weighted |
+| Playbook G / sentient | 0 | NO | YES | YES | Shadow mode — multiplier computed but NOT applied to VP |
+| NO_VP_COMPOSITE challenger | 0 | NO | Shadow gate | YES | Forward gate at n=284/300 runners |
 
 **Active ensemble profile:** `SQPE_IMPROVEMENT_MDS_V1` (commit b7e4e0c, 2026-05-08)  
-**Rollback:** `VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE`
+**Rollback:** `VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE`  
+**Section 3 corrected:** 2026-05-23 — prior table described LEGACY_FULL_ENSEMBLE (pre-surgery) state. See `LIVE_SCORING_TRUTH_AUDIT_2026_05_23.md` for full audit.
+
+**Effective VP formula (renormalized by active weights):**  
+`VP = (0.45 × sqpe_v17 + 0.12 × improvement_score + 0.10 × MDS) / 0.67`
 
 ---
 
@@ -224,7 +228,7 @@ ALWAYS:
 | 2K corpus milestone | ~2026-07 at current rate | Full V2 arena retraining |
 | VP40_TIER_A shortprice | n≥150 VP40+Tier A | Shortprice lane review |
 | SP_2X embryo lane | n≥50 SP≥2x selections | SP_2X policy review |
-| improvement_score live-weight | n≥100 matched forward | Formal gate review |
+| improvement_score evidence review | n≥100 matched forward | Forward evidence review (already LIVE_WEIGHTED since 2026-05-08) |
 
 ---
 
