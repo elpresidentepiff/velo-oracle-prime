@@ -1,10 +1,11 @@
 # V14 Manifest Validation Slice Report
 
-**Status:** VALIDATION_RUN_COMPLETE — schema gaps identified  
+**Status:** VALIDATION_PASS — both registries meet V14 schema  
 **Classification:** `FIRST_SAFE_IMPLEMENTATION_SLICE_APPROVED` / `READ_ONLY_MANIFEST_VALIDATION_ONLY`  
-**Date:** 2026-05-23  
+**Date (initial run):** 2026-05-23  
+**Date (schema upgrade + revalidation):** 2026-05-23  
 **Script:** `scripts/validate_v14_manifests.py --dry-run`  
-**Exit code:** `1` (FAIL — schema compliance gaps found, documented below)
+**Exit code:** `0` (PASS — all 17 feature rows and 14 policies pass; see upgrade run below)
 
 ---
 
@@ -187,18 +188,65 @@ NO_FILES_WRITTEN_BY_VALIDATOR: CONFIRMED
 
 ---
 
+## Registry Schema Upgrade — 2026-05-23
+
+Following the initial FAIL run, both registries were upgraded to V14 schema (docs-only — no runtime changes).
+
+### Feature Registry Upgrade (commit 923f724)
+
+- Expanded from 7 legacy columns to 15 required V14 columns
+- 17 rows translated, all per-row invariants satisfied:
+  - UK live rows (UK_FORM_CORE, UK_SIDECAR_SCORES, UK_RPDC_TAGS, JTC_D_PROFILES, UK_MACRO_REGIME): pre_race_safe=true, timestamp_provenance ∈ {known,lagged}, leakage_risk ∈ {none,low}
+  - HK/FR rows: live_scoring_allowed=false per INTERNATIONAL_RATING_PROVENANCE_GATE
+  - SHADOW_ONLY rows: live_scoring_allowed=false, shadow_allowed=true
+
+### Policy Registry Upgrade (commit 59920c6)
+
+- Renamed `id` → `policy_id` on all 14 policies
+- Added: `policy_type`, `scope`, `conditions`, `actions`, `owner`, `version`, `operator_approval_required`
+- policy_type assignments: scoring (4), shadow_consume (3), mission_control (1), council_handling (2), learning (1), provenance_gate (1), research_status (1), promotion (1)
+- operator_approval_required=true on all scoring/promotion/mission_control types
+
+### Revalidation Run
+
+```
+python scripts/validate_v14_manifests.py --dry-run
+```
+
+```
+[PASS] feature_registry: file exists
+[PASS] feature_registry: all 15 required columns present
+[PASS] feature_registry: all 17 rows pass per-row checks
+[PASS] policy_registry: file exists
+[PASS] policy_registry: valid JSON
+[PASS] policy_registry: 'policies' list present (14 entries)
+[PASS] policy_registry: all 14 policies pass field checks
+
+Passes  : 7
+Warnings: 0
+Issues  : 0
+
+Result: PASS
+Exit code: 0
+```
+
+---
+
 ## Final Classification
 
 ```
 FIRST_SAFE_IMPLEMENTATION_SLICE_APPROVED: YES
 READ_ONLY_MANIFEST_VALIDATION_ONLY: CONFIRMED
 VALIDATOR_OPERATIONAL: YES — exit code 0 on pass, 1 on fail
-VALIDATION_RESULT: FAIL (exit code 1) — expected, documents registry schema gap
+INITIAL_VALIDATION_RESULT: FAIL (exit code 1) — documented registry schema gap
+SCHEMA_UPGRADE_COMPLETE: YES — both registries upgraded to V14 schema
+REVALIDATION_RESULT: PASS (exit code 0)
 FEATURE_REGISTRY_ROWS: 17
 POLICY_REGISTRY_ENTRIES: 14
-SCHEMA_GAP_TYPE: DOCUMENTATION_ONLY — no runtime impact
-REGISTRY_UPGRADE_REQUIRED: YES — Council action queue Priority 4 (feature) + governance task (policy)
+FEATURE_REGISTRY_COMMITS: 923f724
+POLICY_REGISTRY_COMMITS: 59920c6
 NO_RUNTIME_ENFORCEMENT: CONFIRMED
 NO_SCORING_CHANGE: CONFIRMED
 NO_MODEL_PROMOTION: CONFIRMED
+REGISTRY_STATUS: READY_FOR_COUNCIL_REVIEW
 ```

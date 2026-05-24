@@ -58,13 +58,14 @@ This queue captures all open items requiring Council decision following the V14 
 
 ### Priority 4 — Feature Registry Review
 
-**Status:** REVIEW_PENDING  
+**Status:** READY_FOR_COUNCIL_REVIEW — schema upgrade complete  
 **Document:** `docs/engineering/feature_registry_manifest_v1.csv`  
-**Why pending:** The feature registry was produced as part of the V14 governance closure (commit `6e65261`). Council should review all 17 feature family entries to confirm classifications are accurate.  
-**Key entries to review:**
-- `MARKET_SIGNAL_INTL` — added for Arena V2, classified `CLOSING_MARKET_ONLY`
-- `RPDC_PROFILE` — field mapping fix 2026-05-08, verify provenance classification is current
-- Any feature family not yet present in the registry  
+**Upgrade:** Registry upgraded from V1 summary schema to V14 governance schema (commit `923f724`). All 17 rows now have: feature_name, feature_family, source, jurisdiction, pre_race_safe, timestamp_provenance, leakage_risk, live_scoring_allowed, shadow_allowed, training_allowed, null_policy, drift_policy, owner, last_reviewed, notes. Validator passes (exit code 0).  
+**Key entries for Council review:**
+- UK live rows (UK_FORM_CORE, UK_SIDECAR_SCORES, UK_RPDC_TAGS, JTC_D_PROFILES, UK_MACRO_REGIME) — confirm live_scoring_allowed=true and null/drift policies
+- HK/FR rows — confirm all live_scoring_allowed=false per INTERNATIONAL_RATING_PROVENANCE_GATE
+- SHADOW_ONLY rows (UK_RACE_SHAPE, SHADOW_MODEL_CHALLENGER) — confirm shadow classification
+- FUTURE_ENRICHMENT rows (HK_MORNING_ODDS, FR_MORNING_ODDS, FR_PENETROMETER, FR_QUINTET_PLUS, FR_CLASS_PROXY) — confirm not_yet_built status
 **Council action:** Review and sign off registry as canonical, or flag corrections.
 
 ---
@@ -143,19 +144,20 @@ NO workers until Priority 6 sign-off AND source legality confirmed
 | 1 | SQPE V18 operator archive decision | COUNCIL_REQUIRED | No (governance only) |
 | 2 | CLAUDE.md stale refs | **CLOSED_2026-05-23** | No |
 | 3 | Arena V2 provenance / Arena V3 requirement | AUDIT_COMPLETE | Yes — international gate |
-| 4 | Feature registry Council review | REVIEW_PENDING | No |
-| 5 | Policy registry reconciliation | **CLOSED_2026-05-23** | No |
+| 4 | Feature registry Council review | **READY_FOR_COUNCIL_REVIEW** | No |
+| 5 | Policy registry reconciliation + schema upgrade | **CLOSED_2026-05-23** | No |
 | 6 | International next gate sign-off | GATE_ACTIVE | Yes — all international work |
 | 7 | First implementation slice approval | AWAITING_APPROVAL | Yes — agent harness build |
 
 **Closed this session:**
-- Priority 2: CLAUDE.md stale refs — REMEDIATED_DOCUMENTATION_ONLY (commits `da666fe`)
-- Priority 5: Scoring weight discrepancy — CLOSED. improvement_score=LIVE_WEIGHTED(0.12), place_prob=BADGE_ONLY, longshot_score=FROZEN. Policy registry and CURRENT_RUNTIME_TRUTH.md corrected (commits `ff34490`, `ce51f0c`, `74a0e90`)
+- Priority 2: CLAUDE.md stale refs — REMEDIATED_DOCUMENTATION_ONLY (commit `da666fe`)
+- Priority 5: Scoring weight discrepancy + policy schema upgrade — CLOSED. improvement_score=LIVE_WEIGHTED(0.12), place_prob=BADGE_ONLY, longshot_score=FROZEN. Registry and CURRENT_RUNTIME_TRUTH.md corrected and upgraded to V14 schema (commits `ff34490`, `ce51f0c`, `74a0e90`, `59920c6`)
+- Manifest validator: V14_MANIFEST_SCHEMA_UPGRADE_COMPLETE. Both registries upgraded, validator exit 0. Commits `923f724` (feature CSV), `59920c6` (policy JSON).
 
 **Remaining open (4 items require Council/operator decision):**
 - Priority 1: SQPE V18 — formal archive decision (pkl present, no runtime risk, no urgency)
 - Priority 3: Arena V3 morning odds arena — can only start after operator sign-off + source legality confirmed
-- Priority 4: Feature registry — Council review + formal sign-off
+- Priority 4: Feature registry — schema upgrade done (commit `923f724`); Council review + formal sign-off now unblocked
 - Priority 6: International gate — El Presidente explicit sign-off required
 - Priority 7: First implementation slice — Council approval required
 
@@ -163,9 +165,11 @@ NO workers until Priority 6 sign-off AND source legality confirmed
 
 ```
 V14_COUNCIL_ACTION_QUEUE_STATUS: ACTIVE
-ITEMS_OPEN: 5
-ITEMS_CLOSED_THIS_SESSION: 2 (Priority 2 and Priority 5)
+ITEMS_OPEN: 4
+ITEMS_CLOSED_THIS_SESSION: 3 (Priority 2, Priority 5 scoring reconciliation, manifest schema upgrade)
+PRIORITY_4_STATUS: READY_FOR_COUNCIL_REVIEW — schema upgrade complete, validator passing
 HIGHEST_BLOCKING: INTERNATIONAL_GATE_DECISION (Priority 6)
 LIVE_SCORING_TRUTH: ESTABLISHED_AND_CLOSED
 V14_SINGLE_SOURCE_TRUTH_RECONCILIATION: CLOSED_2026-05-23
+V14_MANIFEST_SCHEMA_UPGRADE: COMPLETE_2026-05-23 — validator exit 0
 ```
