@@ -232,5 +232,7 @@ SCHEMA_COLUMN_EXISTS:      YES — decision_tier and git_commit_sha both in velo
 FIX_SIZE:                  decision_tier = 1 line; git_commit_sha = 2 lines + 1 call-site update
 SCORING_CHANGE:            NONE
 MODEL_CHANGE:              NONE
-IMPLEMENTATION:            AWAITING OPERATOR APPROVAL
+PATCH_APPROVED:            YES — 2026-05-24
+PATCH_STATUS:              IMPLEMENTED — see SUPABASE_PERSISTENCE_PATCH_CLOSURE_2026_05_24.md
+HISTORICAL_BACKFILL:       NOT DONE — historical NULLs remain as audit evidence
 ```
