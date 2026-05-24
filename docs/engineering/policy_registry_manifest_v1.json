@@ -1,0 +1,223 @@
+{
+  "registry_version": "1.0",
+  "generated_at": "2026-05-23",
+  "authority": "El Presidente",
+  "note": "Read-only design manifest. All changes require operator approval. No runtime changes are authorised by this document.",
+  "policies": [
+    {
+      "id": "SCORING_POLICY_LIVE",
+      "name": "Live Scoring Policy — SQPE_IMPROVEMENT_MDS_V1",
+      "status": "LIVE_ACTIVE",
+      "active_since": "2026-05-08",
+      "commit": "b7e4e0c",
+      "source_file": "src/velo/weight_policy_registry.py",
+      "policy_object": "LIVE_BASELINE_CURRENT",
+      "weights": {
+        "sqpe_v17": 0.45,
+        "improvement_score": 0.12,
+        "release_day_prob": 0.10,
+        "market_deception_score": 0.10,
+        "place_prob": 0.08,
+        "comment_intel_score": 0.08
+      },
+      "gated_weights": {
+        "longshot_score": {"weight": 0.07, "gate": "sp_dec >= 10.0"}
+      },
+      "rollback": "VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE",
+      "evidence": "sqpe_alone_control_audit n=338-342: LEGACY ROI=-3.1%, NEW ROI=+13.5%"
+    },
+    {
+      "id": "SCORING_POLICY_SHADOW_SAFE_V2",
+      "name": "Shadow Safe V2 Policy",
+      "status": "SHADOW_ONLY",
+      "source_file": "src/velo/weight_policy_registry.py",
+      "policy_object": "SHADOW_SAFE_V2",
+      "weights": {
+        "sqpe_v17": 0.80,
+        "market_deception_score": 0.08,
+        "place_prob": 0.06,
+        "improvement_score": 0.04
+      },
+      "notes": "High SQPE anchor. Dangerous/red-flag sidecars removed. Not yet promoted."
+    },
+    {
+      "id": "VP_GATE_POLICY",
+      "name": "VP Band Signal Gate",
+      "status": "LIVE_ACTIVE",
+      "thresholds": {
+        "SUPPRESS": "VP < 0.20",
+        "NOISY": "VP 0.20-0.30",
+        "PROMISING": "VP 0.30-0.40",
+        "PROVEN": "VP >= 0.40"
+      },
+      "primary_live_gate": "VP >= 0.30",
+      "primary_proven_gate": "VP >= 0.30 AND Tier A",
+      "evidence": {
+        "VP_ge_0.30_SR": "32.2%",
+        "VP_ge_0.30_TierA_SR": "40.1%",
+        "n": 345
+      }
+    },
+    {
+      "id": "TIER_CLASSIFICATION_POLICY",
+      "name": "Tier Classification (A/B/C/D/X)",
+      "status": "LIVE_ACTIVE",
+      "tiers": {
+        "A": "PROVEN — SR=40.1%, Frame=77.2%, avg_VP=0.425",
+        "B": "NOISY — SR=21.1%, Frame=50.0%, avg_VP=0.277",
+        "C": "SUPPRESS — SR=15.8%, Frame=42.2%, avg_VP=0.212",
+        "D": "SUPPRESS — SR=13.4%, Frame=33.9%, avg_VP=0.164",
+        "X": "EXCLUDED — 142 X-tier excluded from main audit"
+      },
+      "b_tier_split": {
+        "B_VP_ge_0.30": "WATCHLIST — SR=30.0%, n=130",
+        "B_VP_lt_0.30": "SUPPRESS — SR=16.9%, n=272"
+      }
+    },
+    {
+      "id": "VP40_WATCH_POLICY",
+      "name": "VP40 / VP40_TIER_A Watch Policy",
+      "status": "WATCH_ONLY",
+      "lanes": {
+        "VP40": "WATCH_ONLY",
+        "VP40_TIER_A": "WATCH_ONLY",
+        "VP40_TIER_A_SHORTPRICE": "UNDER_REVIEW"
+      },
+      "next_gates": {
+        "SP_2X": "n >= 50 required for review",
+        "Shortprice": "n >= 150 required for review"
+      }
+    },
+    {
+      "id": "EXECUTION_BRIDGE_POLICY",
+      "name": "VeloExecutionBridge Safety Policy",
+      "status": "PAPER_EXECUTION",
+      "source_file": "src/velo/execution_bridge.py",
+      "hard_guards": [
+        "VELO_EXECUTION_MODE=LIVE -> RuntimeError",
+        "BETFAIR_MODE=LIVE -> RuntimeError",
+        "suggested_stake=None always",
+        "max_liability=None always",
+        "simulation_only=True always"
+      ],
+      "directive_priority": [
+        "BLOCKED",
+        "CHAOS_CONTAINMENT_MODE",
+        "POWER_ANCHOR_MODE",
+        "FAVOURITE_LIABILITY_MODE",
+        "MULTI_THREAT_ZONE_MODE",
+        "WATCH_ONLY"
+      ],
+      "power_anchor_promotion_gates": {
+        "n_ge_20": "first review (earliest possible)",
+        "n_ge_60": "paper execution candidate discussion",
+        "n_ge_100": "live discussion",
+        "note": "No automatic promotion at any threshold — operator decision required"
+      }
+    },
+    {
+      "id": "ROUTER_LANE_POLICY",
+      "name": "Router Shadow Lane Evidence Policy",
+      "status": "ACCUMULATION_ONLY",
+      "source_file": "scripts/app/router_shadow_audit.py",
+      "lane_promotion_gates": {
+        "WATCHLIST": "n >= 20 AND ROI positive",
+        "SHADOW_CANDIDATE": "n >= 30 AND ROI positive AND Frame > 75%",
+        "LIVE_DISCUSSION": "n >= 100 AND multi-week evidence",
+        "FREEZE": "ROI < 0 at n >= 20 OR Frame < 70% at n >= 20"
+      },
+      "current_lanes": {
+        "V1_BASE": "WATCHLIST (n=27, SR=37.0%, ROI=+11.5%)",
+        "V2_CLASS4_ONLY": "LANE_ACTIVE (n=17, SR=41.2%, ROI=+30.2%)",
+        "V6_GOLD_SEAM": "LOW_SAMPLE (n=5, SR=60.0%, ROI=+115.0%)"
+      },
+      "hard_rule": "No router rule changes. Evidence accumulation only."
+    },
+    {
+      "id": "SIGMA_PROCESS_POLICY",
+      "name": "Daily Sigma Audit Process",
+      "status": "LIVE_ACTIVE",
+      "canonical_script": "scripts/app/run_results_sigma.py --date YYYY-MM-DD",
+      "banned_script": "close_sigma_loops.py",
+      "telegram_format": "LOCKED — never change",
+      "enforcement": "HARD — must never use alternative sigma scripts"
+    },
+    {
+      "id": "TRAINING_BLACKOUT_POLICY",
+      "name": "Training Data Blackout Dates",
+      "status": "PERMANENT",
+      "blackout_dates": [
+        {
+          "date": "2026-05-20",
+          "reason": "SCORING_FLATLINE_CONTAMINATED",
+          "rule": "Must never enter training or promotion evidence"
+        }
+      ]
+    },
+    {
+      "id": "INTERNATIONAL_PROVENANCE_GATE",
+      "name": "International Rating Provenance Gate",
+      "status": "ACTIVE_BLOCKING",
+      "locked_at": "589b428",
+      "gate_question": "Can VELO beat the favourite baseline using only information that existed before the race started?",
+      "current_answer": "NO — all 5 packs FAILS_FAVOURITE_BASELINE (Arena V1)",
+      "gate_close_criteria": {
+        "minimum": "At least one pack: AUC >= 0.75 AND SR > FavSR",
+        "then": "El Presidente sign-off required",
+        "then_next": "Migration applied (intl_schemas_v1.sql)",
+        "then_next_next": "Worker activation"
+      },
+      "blocked_actions": [
+        "Migration (intl_schemas_v1.sql) — NOT APPLIED",
+        "HKJC/PMU ingest workers — NOT BUILT",
+        "International model training/promotion — BLOCKED",
+        "No worker activation until Phase 1B (migration applied)"
+      ],
+      "arena_v2_status": "RUNNING — market signal layer added (SP-based). Results pending."
+    },
+    {
+      "id": "CREDENTIALS_POLICY",
+      "name": "Credentials and Security Policy",
+      "status": "PERMANENT",
+      "rules": [
+        "All credentials in .env — never hardcode, never commit",
+        "Read with os.getenv() only",
+        "fr_research and hk_research schemas NOT YET CREATED in Supabase",
+        "UK pipeline UNCHANGED throughout all international work"
+      ]
+    },
+    {
+      "id": "SQPE_V18_CLASSIFICATION",
+      "name": "SQPE V18 Classification Pending",
+      "status": "UNCLASSIFIED",
+      "file": "models/sqpe_v18/sqpe_v18.pkl",
+      "discovery": "2026-05-23 (V14 truth map pass)",
+      "action_required": "Operator to classify: SHADOW / ARCHIVED / PROMOTE. Not wired to any scoring path as of 2026-05-23.",
+      "hard_rule": "No model promotion without evidence gate (n >= 100 + operator sign-off). Do not wire to live path without Council review."
+    },
+    {
+      "id": "PLAYBOOK_G_POLICY",
+      "name": "Playbook G Training Policy",
+      "status": "TRAINING_READY",
+      "training_completed": "2026-05-02",
+      "training_races": 2997,
+      "sr": 0.592,
+      "directive_firing_threshold": 0.14,
+      "promotion_status": "BLOCKED — No Playbook G promotion without operator sign-off",
+      "hard_rule": "No Playbook G promotion changes without El Presidente approval"
+    },
+    {
+      "id": "SHADOW_MODEL_V1_POLICY",
+      "name": "Shadow Model V1 Forward Lane Policy",
+      "status": "SHADOW_ACTIVE",
+      "forward_lane_active_since": "2026-05-18",
+      "model_path": "models/shadow/model_arena/",
+      "promotion_gates": {
+        "runner_count": "300+ runners",
+        "top_decile_count": "75+ top-decile",
+        "decision": "operator decision required"
+      },
+      "current_evidence": "Model C Ensemble PASS_QUARANTINE. Top-decile ROI +11.86% vs VP +4.67% without SP."
+    }
+  ]
+}
