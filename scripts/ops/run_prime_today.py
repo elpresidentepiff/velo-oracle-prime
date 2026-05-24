@@ -1729,6 +1729,37 @@ def main():
     print(f"  Verdicts: {persist_ok} OK / {persist_fail} FAIL / {len(scored)} total")
     _timer.mark("persist", races=persist_ok + persist_fail, runners=sum(len(p) for _, p, _, _ in scored))
 
+    # ── Gate 2: Detect feature degradation ────────────────────────────────────
+    # Check if any live-weighted component was excluded from the ensemble on >80%
+    # of races. If so, build a banner to send at the top of Telegram output.
+    _LIVE_GATE_WEIGHTS = {"sqpe_v17": 0.45, "improvement_score": 0.12, "market_deception_score": 0.10}
+    _EXPECTED_DENOM = sum(_LIVE_GATE_WEIGHTS.values())  # 0.67
+    _degraded_components: list[str] = []
+    _feature_degraded_banner: str = ""
+    if scored:
+        _all_gate_tops = [preds[0] for _, preds, _, _ in scored if preds]
+        _gate_tracked = [t for t in _all_gate_tops if t.get("active_components") is not None]
+        if _gate_tracked:
+            for _comp in ("improvement_score", "market_deception_score"):
+                _excl = sum(1 for t in _gate_tracked if _comp not in (t.get("active_components") or []))
+                if _excl / len(_gate_tracked) > 0.80:
+                    _degraded_components.append(_comp)
+        if _degraded_components:
+            # Compute effective denominator from a sample top pick's active_components
+            _sample_active = _all_gate_tops[0].get("active_components") or []
+            _denom_used = round(sum(_LIVE_GATE_WEIGHTS.get(k, 0) for k in _sample_active), 2)
+            _feature_degraded_banner = (
+                f"⚠ VÉLØ FEATURE_DEGRADED — {TODAY_DISPLAY}\n"
+                f"{'─' * 34}\n"
+                + "\n".join(f"  EXCLUDED: {c}" for c in _degraded_components) + "\n"
+                + f"  Formula: {' + '.join(_sample_active)} only\n"
+                + f"  Denominator used: {_denom_used} (expected: {_EXPECTED_DENOM})\n"
+                + f"  VP confidence inflated. Rankings within each race unchanged.\n"
+                + f"  B-tier: treat with reduced conviction.\n"
+                + f"  Learning from today BLOCKED until reconciliation closes."
+            )
+            print(f"  FEATURE_DEGRADED detected: {_degraded_components}")
+
     # ── STEP 5: Build Telegram output ─────────────────────────────────────────
     print("\nSTEP 5: Send to Telegram")
 
@@ -1741,6 +1772,11 @@ def main():
         f"STATUS:     {pf_result.status}"
     )
     print("  Sent: pre-flight report")
+
+    # A0a. FEATURE_DEGRADED_BANNER — sent immediately after pre-flight if degraded
+    if _feature_degraded_banner and notify_enabled:
+        tg(_feature_degraded_banner, label="FEATURE_DEGRADED_BANNER")
+        print(f"  Sent: FEATURE_DEGRADED_BANNER ({', '.join(_degraded_components)})")
 
     # A1. CASH RUNS — scan merged PDF data for postdata PLOT candidates
     # Criteria: postdata_score >= 0.70 AND trainer_form == 'strong_positive'
