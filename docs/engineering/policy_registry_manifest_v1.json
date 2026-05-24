@@ -10,21 +10,34 @@
       "status": "LIVE_ACTIVE",
       "active_since": "2026-05-08",
       "commit": "b7e4e0c",
-      "source_file": "src/velo/weight_policy_registry.py",
-      "policy_object": "LIVE_BASELINE_CURRENT",
-      "weights": {
+      "source_file": "src/intelligence/velo_prime_ensemble.py",
+      "policy_object": "SQPE_IMPROVEMENT_MDS_V1",
+      "reconciled_at": "2026-05-23",
+      "reconciliation_source": "docs/engineering/LIVE_SCORING_TRUTH_AUDIT_2026_05_23.md",
+      "live_weighted": {
         "sqpe_v17": 0.45,
         "improvement_score": 0.12,
-        "release_day_prob": 0.10,
-        "market_deception_score": 0.10,
-        "place_prob": 0.08,
-        "comment_intel_score": 0.08
+        "market_deception_score": 0.10
       },
-      "gated_weights": {
-        "longshot_score": {"weight": 0.07, "gate": "sp_dec >= 10.0"}
+      "effective_vp_formula": "VP = (0.45 * sqpe_v17 + 0.12 * improvement_score + 0.10 * MDS) / 0.67",
+      "badge_only": {
+        "place_prob": "BADGE_ONLY — calculated, stored, displayed as badge; excluded from VP in SQPE_IMPROVEMENT_MDS_V1"
+      },
+      "frozen_not_weighted": {
+        "longshot_score": "FROZEN — FREEZE_CANDIDATE (ROI=-0.065); calculated, stored, excluded from VP; SP>=10 gate still used for tier X classification"
+      },
+      "stored_only": {
+        "release_window_score": "STORED_ONLY — weight 0.00, in disabled set for both profiles; calculated, stored, not weighted",
+        "comment_intel_score": "STORED_ONLY — weight 0.00, in disabled set for both profiles; calculated, stored, not weighted"
       },
       "rollback": "VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE",
-      "evidence": "sqpe_alone_control_audit n=338-342: LEGACY ROI=-3.1%, NEW ROI=+13.5%"
+      "evidence": "sqpe_alone_control_audit n=338-342: LEGACY ROI=-3.1%, NEW ROI=+13.5%",
+      "prior_errors_corrected": [
+        "release_day_prob: wrong field name — field is release_window_score; weight was 0.10 in registry but 0.00 in code",
+        "place_prob: listed as live-weighted 0.08 — actually BADGE_ONLY in current profile",
+        "comment_intel_score: listed as live-weighted 0.08 — actually STORED_ONLY (weight 0.00)",
+        "longshot_score: listed as gated_weights — actually FROZEN in current profile"
+      ]
     },
     {
       "id": "SCORING_POLICY_SHADOW_SAFE_V2",
@@ -173,7 +186,7 @@
         "International model training/promotion — BLOCKED",
         "No worker activation until Phase 1B (migration applied)"
       ],
-      "arena_v2_status": "RUNNING — market signal layer added (SP-based). Results pending."
+      "arena_v2_status": "COMPLETE — all 5 packs GATE_REOPENED_SAFE_SHADOW_CANDIDATE. SP-based features = CLOSING_MARKET_ONLY. Arena V3 (morning odds) required before deployment. See ARENA_V2_MARKET_PROVENANCE_AUDIT.md."
     },
     {
       "id": "CREDENTIALS_POLICY",

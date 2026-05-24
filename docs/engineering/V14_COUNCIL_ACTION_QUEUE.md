@@ -71,11 +71,24 @@ This queue captures all open items requiring Council decision following the V14 
 
 ### Priority 5 — Policy Registry Review
 
-**Status:** REVIEW_PENDING  
-**Document:** `docs/engineering/policy_registry_manifest_v1.json`  
-**Why pending:** 14 policies registered. Council should confirm all entries reflect current operating reality.  
-**Key discrepancy to resolve:** The policy registry declares `improvement_score=0.12`, `release_window_score=0.10`, `comment_intel_score=0.08` as live-weighted. `CURRENT_RUNTIME_TRUTH.md` records these three signals as DISABLED in the current live runtime (only `sqpe_v17_prob=0.45`, `market_deception_score=0.10`, `place_prob=0.08`, `longshot_score=0.07` active).  
-**Council action:** Confirm which document reflects current truth. Update whichever is wrong. This is a scoring policy discrepancy and cannot be left unresolved.
+**Status:** RESOLVED_2026-05-23 — reconciliation complete  
+**Document:** `docs/engineering/policy_registry_manifest_v1.json` (updated 2026-05-23)  
+**Audit:** `docs/engineering/LIVE_SCORING_TRUTH_AUDIT_2026_05_23.md`  
+**Resolution:** Runtime code (`velo_prime_ensemble.py`) was the authoritative source. Both `CURRENT_RUNTIME_TRUTH.md` Section 3 and `policy_registry_manifest_v1.json` SCORING_POLICY_LIVE had errors — they described the pre-surgery LEGACY_FULL_ENSEMBLE state, not SQPE_IMPROVEMENT_MDS_V1.
+
+**Confirmed live truth under SQPE_IMPROVEMENT_MDS_V1:**
+- `improvement_score`: **LIVE_WEIGHTED (0.12)** — was wrongly listed as disabled in CURRENT_RUNTIME_TRUTH.md
+- `place_prob`: **BADGE_ONLY** (excluded from VP) — was wrongly listed as 0.08 live-weighted
+- `longshot_score`: **FROZEN** (excluded from VP) — was wrongly listed as 0.07 live-weighted
+- `release_window_score`: STORED_ONLY (weight 0.00) — correct
+- `comment_intel_score`: STORED_ONLY (weight 0.00) — correct
+
+**Documents corrected:**
+- `CURRENT_RUNTIME_TRUTH.md` Section 3 — signal truth table updated
+- `policy_registry_manifest_v1.json` SCORING_POLICY_LIVE — weights corrected, badge_only/frozen/stored_only sections added
+- `CURRENT_RUNTIME_TRUTH.md` Next Gates — "improvement_score live-weight" removed (it is already live)
+
+**Council action:** Ratify the resolution. No further scoring investigation needed.
 
 ---
 
@@ -131,7 +144,7 @@ NO workers until Priority 6 sign-off AND source legality confirmed
 | 2 | CLAUDE.md stale refs | DOCS_EXECUTED | Council ratification |
 | 3 | Arena V2 market provenance | AUDIT_COMPLETE | Yes — international gate |
 | 4 | Feature registry review | REVIEW_PENDING | No |
-| 5 | Policy registry review | DISCREPANCY_FOUND | Yes — scoring policy truth |
+| 5 | Policy registry review | **RESOLVED_2026-05-23** | No — scoring truth established |
 | 6 | International gate decision | GATE_ACTIVE | Yes — all international work |
 | 7 | Phase 3 implementation | AWAITING_APPROVAL | Yes — agent harness build |
 
@@ -139,8 +152,8 @@ NO workers until Priority 6 sign-off AND source legality confirmed
 
 ```
 V14_COUNCIL_ACTION_QUEUE_STATUS: ACTIVE
-ITEMS_OPEN: 7
+ITEMS_OPEN: 6 (Priority 5 resolved 2026-05-23)
 HIGHEST_PRIORITY: SQPE_V18_CLASSIFICATION (Priority 1)
 HIGHEST_BLOCKING: INTERNATIONAL_GATE_DECISION (Priority 6)
-URGENT_DISCREPANCY: Policy registry vs CURRENT_RUNTIME_TRUTH scoring weights (Priority 5)
+PRIORITY_5_RESOLVED: improvement_score=LIVE_WEIGHTED(0.12), place_prob=BADGE_ONLY, longshot_score=FROZEN
 ```
