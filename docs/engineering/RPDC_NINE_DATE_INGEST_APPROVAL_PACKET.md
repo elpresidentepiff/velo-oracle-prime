@@ -1,6 +1,7 @@
 # RPDC Nine-Date Supabase Ingest — Operator Approval Packet
 
 **Prepared:** 2026-05-24  
+**Updated:** 2026-05-24 — improvement feature source audit added  
 **Status:** AWAITING_OPERATOR_APPROVAL — each date requires individual sign-off  
 **Hard rule:** No ingest runs until operator marks the date approved below  
 
@@ -18,6 +19,13 @@ prior-run history entry and improving the coverage rate on future cards.
 
 This is **not** required for today's scoring (Option B local JSONL already covers
 18,554 historical rows). This is a Supabase quality improvement only.
+
+**Priority note added 2026-05-24:** Nine-date ingest improves RPDC history completeness
+and RPDC match rate on future cards. However, it does NOT by itself restore
+`improvement_score` variance. The primary improvement_score blocker is the absence of
+OFR/RPR/age from the RP F_0010 PDF racecard source — not a Supabase gap.
+Improvement feature source restoration is the higher priority.
+See: `docs/engineering/IMPROVEMENT_FEATURE_SOURCE_AUDIT_2026_05_24.md`
 
 ---
 

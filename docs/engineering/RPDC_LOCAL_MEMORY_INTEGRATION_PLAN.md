@@ -82,12 +82,46 @@ As of 2026-05-24:
 - `improvement_score` = 0.0872 constant for all runners → zero-variance kill switch fires → excluded
 - RPDC context is available via `get_memory_summary_for_runner()` but is NOT injected into any component
 
-The scoring path with and without RPDC Option B is IDENTICAL. See audit:
+The scoring path with and without RPDC Option B is IDENTICAL for May25. See audit:
 `data/reports/rpdc_scoring_comparison_2026-05-25.json`
+
+**Why Option B does not restore improvement_score:**
+
+The improvement model (12 features, AUC=0.896) receives its inputs from two sources:
+1. The RP racecard: `ofr` → `or_vs_field`, `rpr` → `rpr_vs_field`, `age` → `age_num`
+2. The v17 Racing API extractor: 9 form-history features (runs_since_win, mark_compression_score, etc.)
+
+The RP F_0010 PDF racecard does **not** contain OFR, RPR, or horse age (numerical ratings).
+After Racing API decommission (2026-05-14), no standard racecard JSON with ratings is being
+generated. Therefore `or_vs_field`, `rpr_vs_field`, `age_num` all collapse to 0.0 for every
+runner — making the model output identical (~0.0872) for all runners on a card.
+
+RPDC Option B adds `curr_or_minus_last_win_or` (from `or_delta_to_win` in the JSONL), but this
+feature alone produces a range of only 0.016 in improvement_score. While this is technically
+enough to defeat the kill switch threshold (1e-6), it is a marginal effect.
+
+**The primary blocker is the racecard OFR/RPR/age source, not RPDC.**
+
+Sensitivity analysis (2026-05-24):
+- All features at DEFAULTS + RPDC or_delta injection → range = **0.016** (marginal)
+- All features at DEFAULTS + real OFR/RPR/age from racecard → range = **0.209** (material)
+
+See full analysis: `docs/engineering/IMPROVEMENT_FEATURE_SOURCE_AUDIT_2026_05_24.md`
 
 ---
 
 ## Future integration points (each requires separate operator decision)
+
+### Gate 0 — curr_or_minus_last_win_or injection (LOW risk, minor scoring impact)
+
+Inject `or_delta_to_win` from RPDC JSONL as `curr_or_minus_last_win_or` into `_build_live_features()`.
+This would defeat the kill switch at 62.7% match rate and allow improvement_score back into the
+ensemble at weight=0.12 — but with only range=0.016 in improvement_score values.
+
+**Code change:** One-line injection in `app/services/velo_prime_service.py` `_build_live_features()`.
+**Risk:** Low. RPDC memory read-only. No formula weight changes.
+**Impact:** Marginal — improvement_score enters ensemble but with minimal discriminative power.
+**Approval needed:** Operator decision.
 
 ### Gate 1 — RPDC annotation in runner context (LOW risk, no scoring change)
 
@@ -206,9 +240,13 @@ MEMORY_DATE_RANGE:                    2026-03-17 → 2026-05-23
 MAY24_MATCH_RATE:                     62.7% (MODERATE)
 FORMULA_STATUS:                       FEATURE_DEGRADED
 IMPROVEMENT_SCORE_VARIANCE_RESTORED:  NO
+IMPROVEMENT_PRIMARY_BLOCKER:          OFR/RPR/age missing from RP F_0010 PDF racecard source
+RPDC_ONLY_IMPROVEMENT_RANGE:          0.016 (marginal — kill switch threshold 1e-6)
+RACECARD_RESTORE_IMPROVEMENT_RANGE:   0.209 (material — kills switch, discrimination restored)
 SCORING_CHANGE:                       NONE
 SUPABASE_MUTATED:                     NO
 OLD_VERDICTS_MUTATED:                 NO
 OPTION_A_STATUS:                      NOT_APPROVED
 NINE_DATE_INGEST_STATUS:              NOT_APPROVED
+NINE_DATE_PRIORITY:                   LOWER than racecard OFR/RPR/age restoration
 ```
