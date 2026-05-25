@@ -170,6 +170,20 @@ def sb_post(path: str, data: dict | list) -> bool:
         return False
 
 
+def _off_to_timestamp(race_date: str, off: str) -> str:
+    """Convert VELO off time '2.30' (H.MM) to ISO timestamp '2026-05-25T14:30:00'."""
+    try:
+        h, m = off.split(".")
+        h = int(h)
+        m = int(m)
+        # VELO times are BST afternoon: 1-9 maps to 13:00-21:00, else morning
+        if 1 <= h <= 9:
+            h += 12
+        return f"{race_date}T{h:02d}:{m:02d}:00"
+    except Exception:
+        return race_date + "T00:00:00"
+
+
 def sb_upsert(path: str, data: dict | list, on_conflict: str) -> bool:
     sep = "&" if "?" in path else "?"
     url = f"{SB_URL}/rest/v1{path}{sep}on_conflict={on_conflict}"
@@ -221,7 +235,20 @@ def main():
 
     # Build lookup: race_id -> verdict row (keep latest generated_at if duplicates exist)
     predictions: dict = {}
+    degraded_count = 0
     for v in verdicts_raw:
+        # ── Learning Block Detection ──────────────────────────────────────────
+        # Check if the run was feature-degraded (>80% of core features missing)
+        try:
+            full = v.get("full_analysis") or {}
+            preds_list = full.get("predictions") or []
+            if preds_list:
+                excluded = preds_list[0].get("excluded_from_ensemble") or []
+                if "improvement_score" in excluded or "market_deception_score" in excluded:
+                    degraded_count += 1
+        except Exception:
+            pass
+
         rid = v["race_id"]
         if rid not in predictions:
             predictions[rid] = v
@@ -233,6 +260,13 @@ def main():
                 if (predictions[rid].get("top_rank_horse_id") or "") != (v.get("top_rank_horse_id") or ""):
                     print(f"  [WARN] multiple conflicting verdicts for {rid}, using latest generated_at")
                 predictions[rid] = v
+    
+    is_degraded_day = (degraded_count / len(verdicts_raw)) > 0.80 if verdicts_raw else False
+    if is_degraded_day:
+        print(f"  ⚠ LEARNING BLOCK: {degraded_count}/{len(verdicts_raw)} verdicts are FEATURE_DEGRADED.")
+        print("  ⚠ Sigma will reconcile results but will NOT update learned_patterns.")
+    else:
+        print(f"  Feature integrity: OK ({len(verdicts_raw) - degraded_count}/{len(verdicts_raw)} full features)")
 
     # ── Gap 2: resolve pick horse names from velo_verdicts.selections ─────────
     # Primary source: Supabase velo_verdicts.selections JSON array.
@@ -646,23 +680,25 @@ def main():
     print("\nSTEP 7: Learned patterns")
     now_iso = utc_now_iso()
     patterns_saved = 0
-    for r in all_matched:
-        if r["outcome"] == "WIN" and r["velo_prime_prob"] >= 0.25:
-            pattern = {
-                "pattern_name": f"prime_hit_{r['race_id']}",
-                "description": f"PRIME hit: {r['predicted']} @ prob={r['velo_prime_prob']:.4f} won {r['course']} {r['off']}",
-                "confidence_level": round(r["velo_prime_prob"], 4),
-                "first_observed": now_iso,
-                "last_observed": now_iso,
-                "is_active": True,
-                "occurrences": 1,
-                "successful_predictions": 1,
-                "success_rate": 1.0,
-            }
-            if sb_upsert("/learned_patterns", pattern, "pattern_name"):
-                patterns_saved += 1
-
-    print(f"  Learned patterns saved: {patterns_saved}")
+    if is_degraded_day:
+        print("  SKIPPED: Learning blocked due to FEATURE_DEGRADED status.")
+    else:
+        for r in all_matched:
+            if r["outcome"] == "WIN" and r["velo_prime_prob"] >= 0.25:
+                pattern = {
+                    "pattern_name": f"prime_hit_{r['race_id']}",
+                    "description": f"PRIME hit: {r['predicted']} @ prob={r['velo_prime_prob']:.4f} won {r['course']} {r['off']}",
+                    "confidence_level": round(r["velo_prime_prob"], 4),
+                    "first_observed": now_iso,
+                    "last_observed": now_iso,
+                    "is_active": True,
+                    "occurrences": 1,
+                    "successful_predictions": 1,
+                    "success_rate": 1.0,
+                }
+                if sb_upsert("/learned_patterns", pattern, "pattern_name"):
+                    patterns_saved += 1
+        print(f"  Learned patterns saved: {patterns_saved}")
 
     # ── STEP 7b: Betting ledger write ─────────────────────────────────────────
     # For each B/C tier verdict with a matched result, write a ledger row.
@@ -751,7 +787,7 @@ def main():
             "race_id": rid,
             "date": race_date,
             "course": row["course"],
-            "race_time": f"{race_date}T{row['off']}:00" if row.get("off") else placed_at,
+            "race_time": _off_to_timestamp(race_date, row["off"]) if row.get("off") else placed_at,
             "horse": row["predicted"],
             "bet_type": tier,
             "stake": stake,
