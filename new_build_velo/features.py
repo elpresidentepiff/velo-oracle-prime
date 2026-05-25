@@ -117,6 +117,8 @@ def build_features(*, execute: bool = False) -> dict[str, Any]:
     violations: list[str] = []
     coverage: Counter[str] = Counter()
 
+    emitted_keys: set[tuple[str | None, str | None]] = set()
+
     for runner in _iter_jsonl(DATABASE_ROOT / "runners.jsonl"):
         source_date = runner.get("source_date")
         name = runner.get("normalized_name")
@@ -177,6 +179,66 @@ def build_features(*, execute: bool = False) -> dict[str, Any]:
             if value not in (None, "", 0, False):
                 coverage[field] += 1
         rows.append(row)
+        emitted_keys.add((source_date, name))
+
+    # RP archive rows may not exist in Racing API card files yet. Keep them in
+    # the sandbox feature universe so outcome-linked archive rows can evaluate.
+    for outcome in outcomes.values():
+        source_date = outcome.get("race_date") or outcome.get("source_date")
+        name = outcome.get("normalized_name")
+        if (source_date, name) in emitted_keys:
+            continue
+        archive_flags = outcome.get("archive_context_flags") or []
+        row = {
+            "feature_row_id": stable_id(source_date, outcome.get("race_id"), outcome.get("rp_horse_id") or name),
+            "source": "new_build_feature_assembler",
+            "source_date": source_date,
+            "source_file": str(OUTCOME_V2_PATH),
+            "parser_version": "new_build_feature_assembler_v1",
+            "parsed_at": utc_now(),
+            "trust_policy": TRUST_POLICY,
+            "live_velo_impact": False,
+            "shadow_velo_impact": False,
+            "rpr_policy": "RPR_ARCHIVE_ONLY",
+            "new_build_velo_allowed": True,
+            "rpr_feature_allowed": False,
+            "race_id": outcome.get("race_id"),
+            "course_key": norm(outcome.get("course")),
+            "horse_key": name,
+            "trainer_key": "",
+            "jockey_key": "",
+            "owner_key": "",
+            "sire_key": "",
+            "dam_key": "",
+            "age": 0,
+            "draw": 0,
+            "days_since_run": 0,
+            "has_headgear": "HEADGEAR_CHANGE_ALERT" in archive_flags,
+            "wind_surgery_flag": "WIND_SURGERY_ALERT" in archive_flags,
+            "archive_flag_count": len(archive_flags),
+            "has_human_context": "HUMAN_CONTEXT_AVAILABLE" in archive_flags or "TRAINER_INTENT_SIGNAL" in archive_flags,
+            "tip_heat_flag": "TIP_HEAT" in archive_flags or "MARKET_OVERHYPE_RISK" in archive_flags,
+            "pedigree_context_flag": "PEDIGREE_CONTEXT_AVAILABLE" in archive_flags or "PEDIGREE_POSITIVE" in archive_flags,
+            "trainer_runs": 0,
+            "trainer_win_rate": 0.0,
+            "trainer_frame_rate": 0.0,
+            "jockey_runs": 0,
+            "jockey_win_rate": 0.0,
+            "jockey_frame_rate": 0.0,
+            "rpdc_seen": 0,
+            "rpdc_tag_count": 0,
+            "rpdc_release_score_avg": 0.0,
+            "rpdc_cash_window_count": 0,
+            "outcome_linked": outcome.get("classification") == "OUTCOME_CONFIRMED",
+            "outcome_bridge_classification": outcome.get("classification"),
+        }
+        bad = _feature_violation(row)
+        violations.extend(bad)
+        for field, value in row.items():
+            if value not in (None, "", 0, False):
+                coverage[field] += 1
+        rows.append(row)
+        emitted_keys.add((source_date, name))
 
     payload = {
         "generated_at": utc_now(),
