@@ -60,3 +60,42 @@ python scripts/ops/new_build_archive_pipeline.py --from-date 2026-05-25 --to-dat
 - RPR_ARCHIVE_ONLY
 - LIVE_VELO_UNTOUCHED
 - SHADOW_VELO_UNTOUCHED
+
+## Clean replica loop
+
+The New Build ingest/process/learn replica is:
+
+```powershell
+python scripts/ops/new_build_velo.py run-all --from-date 2026-05-25 --to-date 2026-05-29
+```
+
+Execute writes only to `data/new_build/`:
+
+```powershell
+python scripts/ops/new_build_velo.py run-all --from-date 2026-05-25 --to-date 2026-05-29 --execute
+```
+
+Stages:
+
+- `ingest`: parsed Racing Post archive -> normalized New Build runner spine
+- `process`: normalized runner spine -> archive context flags
+- `learn`: outcome bridge -> `data/new_build/learning/sandbox_state.json` and `sandbox_events.jsonl`
+
+The learning stage is sandbox-only. It does not touch Live VELO, Shadow VELO, Playbook G, Telegram, router/staking, or live state.
+
+## Source inventory
+
+New Build is not limited to the small Racing Post account capture window. It can discover the wider source spine:
+
+```powershell
+python scripts/ops/new_build_sources.py inventory --execute
+```
+
+Structured archive ingests:
+
+```powershell
+python scripts/ops/new_build_sources.py ingest-card --date 2026-05-15 --execute
+python scripts/ops/new_build_sources.py ingest-results --date 2026-05-13 --execute
+```
+
+These write only under `data/new_build/normalized/` and keep RPR archive-only.
