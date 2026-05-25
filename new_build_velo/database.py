@@ -51,6 +51,11 @@ TABLE_NAMES = (
 )
 
 
+def outcome_bridge_path() -> Path:
+    v2 = NEW_BUILD_ROOT / "bridges" / "outcome_bridge_v2.jsonl"
+    return v2 if v2.exists() else DATABASE_ROOT / "outcome_bridge.jsonl"
+
+
 def _base_meta(source: str, source_date: str | None, source_file: str | None) -> dict[str, Any]:
     return {
         "source": source,
@@ -365,7 +370,7 @@ def build_spine_status_report(*, execute: bool = False) -> dict[str, Any]:
 
 
 def build_learning_eligibility_report(*, execute: bool = False) -> dict[str, Any]:
-    outcome_path = DATABASE_ROOT / "outcome_bridge.jsonl"
+    outcome_path = outcome_bridge_path()
     rows = list(_iter_jsonl(outcome_path))
     rejection_reasons: Counter[str] = Counter()
     eligible = 0
@@ -439,12 +444,16 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     spine = sub.add_parser("build-spine")
     spine.add_argument("--execute", action="store_true")
+    build_norm = sub.add_parser("build-normalized")
+    build_norm.add_argument("--execute", action="store_true")
     status = sub.add_parser("status-report")
     status.add_argument("--execute", action="store_true")
     elig = sub.add_parser("learning-eligibility")
     elig.add_argument("--execute", action="store_true")
+    sandbox = sub.add_parser("sandbox-learn")
+    sandbox.add_argument("--execute", action="store_true")
     args = parser.parse_args(argv)
-    if args.command == "build-spine":
+    if args.command in {"build-spine", "build-normalized"}:
         payload = build_database_spine(execute=args.execute)
     elif args.command == "status-report":
         payload = build_spine_status_report(execute=args.execute)
