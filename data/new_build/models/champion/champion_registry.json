@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-05-25T22:15:33.679650Z",
+  "champion_name": "core_v0_or",
+  "champion_version": "Core_V0_OR",
+  "promoted_at": "2026-05-25T22:15:33.679650Z",
+  "promoted_from": "challenger",
+  "dethroned_champion": "core_v0",
+  "promotion_reason": "OR_FIX_CONFIRMED_AND_IMPROVES",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "rpr_violation": false,
+  "sp_violation": false,
+  "model_type": "LightGBM",
+  "features": [
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "wgt_lbs",
+    "or_vs_field",
+    "release_window_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "setup_run_flag",
+    "cash_run_flag",
+    "official_rating",
+    "is_rated"
+  ],
+  "metrics": {
+    "auc": 0.6777,
+    "brier": 0.0859,
+    "sr": 0.2186,
+    "frame": 0.508,
+    "races": 11650
+  },
+  "prior_champion_metrics": {
+    "auc": 0.6735,
+    "sr": 0.218,
+    "frame": 0.503,
+    "brier": 0.0861
+  },
+  "auc_delta": 0.0041999999999999815,
+  "sr_delta": 0.0005999999999999894,
+  "model_pkl": "data/new_build/models/core_v0_or/core_v0_or_model.pkl"
+}
