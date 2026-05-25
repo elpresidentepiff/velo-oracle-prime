@@ -1,0 +1,575 @@
+{
+  "generated_at": "2026-05-25T17:16:59.119900Z",
+  "classification": "NEW_BUILD_OUTCOME_DIAGNOSTICS_READY",
+  "mode": "EXECUTE",
+  "bridge_rows": 473,
+  "result_rows": 25987,
+  "bridge_date_range": {
+    "min": "2026-05-24",
+    "max": "2026-05-29"
+  },
+  "result_date_range": {
+    "min": "2026-03-15",
+    "max": "2026-05-25"
+  },
+  "bridge_dates": [
+    "2026-05-24",
+    "2026-05-25",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28",
+    "2026-05-29"
+  ],
+  "result_dates_count": 63,
+  "reason_counts": {
+    "RESULT_COURSE_MISSING_FOR_DATE": 6,
+    "HORSE_NAME_MISSING_IN_RESULT_COURSE": 40,
+    "LINKED": 9,
+    "STRICT_KEYS_PRESENT_BUT_NO_MATCH": 5,
+    "RESULT_DATE_MISSING": 413
+  },
+  "sample_unmatched": [
+    {
+      "horse": "Another Day Out",
+      "race_date": "2026-05-25",
+      "course": "Huntingdon",
+      "off_time": "2026-05-25T12:30:00+01:00",
+      "race_id": "rp_HUN_20260525_12.30",
+      "failed_reason": "RESULT_COURSE_MISSING_FOR_DATE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [],
+      "proposed_safe_next_step": "verify course naming and result coverage for this date"
+    },
+    {
+      "horse": "Alan Bresil",
+      "race_date": "2026-05-25",
+      "course": "Huntingdon",
+      "off_time": "2026-05-25T12:30:00+01:00",
+      "race_id": "rp_HUN_20260525_12.30",
+      "failed_reason": "RESULT_COURSE_MISSING_FOR_DATE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [],
+      "proposed_safe_next_step": "verify course naming and result coverage for this date"
+    },
+    {
+      "horse": "Geordie Night",
+      "race_date": "2026-05-25",
+      "course": "Huntingdon",
+      "off_time": "2026-05-25T12:30:00+01:00",
+      "race_id": "rp_HUN_20260525_12.30",
+      "failed_reason": "RESULT_COURSE_MISSING_FOR_DATE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [],
+      "proposed_safe_next_step": "verify course naming and result coverage for this date"
+    },
+    {
+      "horse": "The Wise Traveller",
+      "race_date": "2026-05-25",
+      "course": "Huntingdon",
+      "off_time": "2026-05-25T12:30:00+01:00",
+      "race_id": "rp_HUN_20260525_12.30",
+      "failed_reason": "RESULT_COURSE_MISSING_FOR_DATE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [],
+      "proposed_safe_next_step": "verify course naming and result coverage for this date"
+    },
+    {
+      "horse": "Juggernaut",
+      "race_date": "2026-05-25",
+      "course": "Huntingdon",
+      "off_time": "2026-05-25T12:30:00+01:00",
+      "race_id": "rp_HUN_20260525_12.30",
+      "failed_reason": "RESULT_COURSE_MISSING_FOR_DATE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [],
+      "proposed_safe_next_step": "verify course naming and result coverage for this date"
+    },
+    {
+      "horse": "Seventy",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:08:00+01:00",
+      "race_id": "rp_WDR_20260525_2.08",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Imperial Cult",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:08:00+01:00",
+      "race_id": "rp_WDR_20260525_2.08",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Opera Wave",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:08:00+01:00",
+      "race_id": "rp_WDR_20260525_2.08",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Sea Of Charm",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:08:00+01:00",
+      "race_id": "rp_WDR_20260525_2.08",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Free World",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:08:00+01:00",
+      "race_id": "rp_WDR_20260525_2.08",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Percy's Star",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:43:00+01:00",
+      "race_id": "rp_WDR_20260525_2.43",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Space Party",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:43:00+01:00",
+      "race_id": "rp_WDR_20260525_2.43",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Trinculo",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:43:00+01:00",
+      "race_id": "rp_WDR_20260525_2.43",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Moravian",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T14:43:00+01:00",
+      "race_id": "rp_WDR_20260525_2.43",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Sea Canary",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:18:00+01:00",
+      "race_id": "rp_WDR_20260525_3.18",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Aukus",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:18:00+01:00",
+      "race_id": "rp_WDR_20260525_3.18",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Joanna Hiffernan",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:18:00+01:00",
+      "race_id": "rp_WDR_20260525_3.18",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Nad Alshiba Green",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:53:00+01:00",
+      "race_id": "rp_WDR_20260525_3.53",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Trefor",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:53:00+01:00",
+      "race_id": "rp_WDR_20260525_3.53",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Uncle Don",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:53:00+01:00",
+      "race_id": null,
+      "failed_reason": "STRICT_KEYS_PRESENT_BUT_NO_MATCH",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect strict key mismatch manually"
+    },
+    {
+      "horse": "Kylian",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:53:00+01:00",
+      "race_id": "rp_WDR_20260525_3.53",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Sudden Flight",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:53:00+01:00",
+      "race_id": "rp_WDR_20260525_3.53",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Desert Cop",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T15:53:00+01:00",
+      "race_id": "rp_WDR_20260525_3.53",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Greek Order",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T16:25:00+01:00",
+      "race_id": "rp_WDR_20260525_4.25",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    },
+    {
+      "horse": "Urban Glimpse",
+      "race_date": "2026-05-25",
+      "course": "Windsor",
+      "off_time": "2026-05-25T16:25:00+01:00",
+      "race_id": "rp_WDR_20260525_4.25",
+      "failed_reason": "HORSE_NAME_MISSING_IN_RESULT_COURSE",
+      "available_result_dates_nearby": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "result_times_same_course": [
+        "2.08",
+        "2.43",
+        "3.18",
+        "3.53",
+        "4.25",
+        "5.00",
+        "5.30"
+      ],
+      "proposed_safe_next_step": "inspect identity bridge aliases before any fuzzy match"
+    }
+  ],
+  "primary_blocker": "RESULT_DATE_MISSING",
+  "recommended_next_step": "IMPORT_RESULTS_FOR_RP_ARCHIVE_DATES",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "rpr_policy": "RPR_ARCHIVE_ONLY",
+  "banned_feature_violations": 0,
+  "live_velo_touched": false,
+  "shadow_velo_touched": false
+}

@@ -1,0 +1,292 @@
+{
+  "generated_at": "2026-05-25T20:00:00Z",
+  "audit_version": "v1",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+
+  "sources": {
+    "A_race_day_rp_profiles": {
+      "path": "data/racing_post_account_parsed/YYYY-MM-DD/",
+      "files": ["horse_profiles.json", "horse_dossiers.json", "racecard_injection.json"],
+      "dates_available": ["2026-05-24", "2026-05-25", "2026-05-26", "2026-05-27"],
+      "description": "Scraped RP profile pages captured per race day — racecard plus horse identity/pedigree/trainer data"
+    },
+    "B_race_shape_form_history": {
+      "path": "data/race_shape/form_history_YYYY-MM-DD.json",
+      "files": ["form_history_2026-05-26.json", "form_history_2026-05-27.json"],
+      "horses": 161,
+      "total_runs": 2228,
+      "description": "Full form history scrape — all career runs per horse from hp-formTable HTML"
+    },
+    "C_racing_api_racecards": {
+      "path": "data/racecards_*_standard.json",
+      "files_available": 36,
+      "races": 1654,
+      "description": "Racing API structured racecards with horse/trainer/jockey IDs"
+    },
+    "D_racing_api_results": {
+      "path": "data/results_*.json",
+      "files_available": 62,
+      "races": 2742,
+      "description": "Racing API results with position/SP/outcome"
+    },
+    "E_raceform_parquets": {
+      "raceform_clean": "data/raceform_clean.parquet",
+      "raceform_v17_features": "data/raceform_v17_features.parquet",
+      "raceform_test_sample": "data/raceform_test_sample.parquet",
+      "description": "Large historical parquet files — Racing API training data"
+    },
+    "F_rpdc_backfill": {
+      "path": "data/rpdc_backfill/rpdc_tags_historical.jsonl",
+      "rows": 18554,
+      "description": "RPDC release/cash-window tags for historical runners"
+    }
+  },
+
+  "field_comparison": [
+    {
+      "field": "horse_identity",
+      "race_day_profiles": "GOOD — horse_uid, name, country, age, sex, colour",
+      "form_history": "GOOD — horse_rp_uid per run",
+      "racing_api": "GOOD — racing_api_horse_id, trainer_id, jockey_id",
+      "better_source": "racing_api (numeric IDs for join)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "run_frequency_runs_per_year",
+      "race_day_profiles": "PARTIAL — days_since_last_run only",
+      "form_history": "GOOD — full career run list allows exact calculation",
+      "racing_api": "PARTIAL — form string only (last 6 runs)",
+      "better_source": "form_history",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "layoff_patterns_inter_run_days",
+      "race_day_profiles": "PARTIAL — single days_since_run value",
+      "form_history": "GOOD — dates for all runs allow gap calculation",
+      "racing_api": "MISSING — no inter-run gaps beyond last_run",
+      "better_source": "form_history",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "course_history",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — course_name, course_rp_uid, course_key per run",
+      "racing_api": "GOOD — course per race",
+      "better_source": "form_history (career-level)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "course_switching",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — derivable from course sequence",
+      "racing_api": "PARTIAL — limited history",
+      "better_source": "form_history",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "distance_switching",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — distance per run",
+      "racing_api": "PARTIAL — current distance only",
+      "better_source": "form_history",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "jockey_changes",
+      "race_day_profiles": "PARTIAL — current jockey only",
+      "form_history": "GOOD — jockey_name + jockey_rp_uid per run",
+      "racing_api": "PARTIAL — jockey per racecard",
+      "better_source": "form_history",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "sp_history",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — sp_raw + sp_dec per run",
+      "racing_api": "GOOD — sp in results JSON",
+      "better_source": "form_history (career-level) + racing_api (wide history)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "result_consistency_win_place_fail",
+      "race_day_profiles": "PARTIAL — form_figures string",
+      "form_history": "GOOD — position + result_type (WIN/PLACED/LOSS) per run",
+      "racing_api": "GOOD — position in results",
+      "better_source": "form_history + racing_api results",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "field_size_context",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — field_size per run",
+      "racing_api": "PARTIAL — runners count in race",
+      "better_source": "form_history",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "beaten_margin",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — beaten_margin per run",
+      "racing_api": "GOOD — distance in results",
+      "better_source": "form_history (cleaner parsing)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "course_affinity_specialist_vs_nomad",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — full course visit sequence derivable",
+      "racing_api": "PARTIAL — labels.courseWinner boolean in entries",
+      "better_source": "form_history",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "going_history",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — going per run",
+      "racing_api": "GOOD — going per race",
+      "better_source": "form_history (career)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "trainer_current",
+      "race_day_profiles": "GOOD — trainer_uid, trainer_name, trainer_location, trainer_last_14_runs/wins/pct",
+      "form_history": "MISSING — not in form table",
+      "racing_api": "GOOD — trainer, trainer_id",
+      "better_source": "race_day_profiles (includes 14-day stats)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "trainer_per_run_history",
+      "race_day_profiles": "MISSING",
+      "form_history": "MISSING — not in form table",
+      "racing_api": "PARTIAL — trainer in results rows",
+      "better_source": "racing_api results (only source)",
+      "confidence": "PARTIAL"
+    },
+    {
+      "field": "class_race_type",
+      "race_day_profiles": "PARTIAL — race_class, race_type in racecard_injection",
+      "form_history": "MISSING — not extracted from form table",
+      "racing_api": "GOOD — race_class, race_type per race",
+      "better_source": "racing_api",
+      "confidence": "PARTIAL"
+    },
+    {
+      "field": "ts_topspeed",
+      "race_day_profiles": "PARTIAL — topspeed (archive_only label)",
+      "form_history": "GOOD — ts_rating per run",
+      "racing_api": "GOOD — ts field in results",
+      "better_source": "form_history (career-level TS sequence)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "rpr_rating",
+      "race_day_profiles": "PARTIAL — rp_rpr_archive_only",
+      "form_history": "GOOD — rpr_rating per run (ARCHIVE ONLY — never enters predictor)",
+      "racing_api": "GOOD — rpr (ARCHIVE ONLY)",
+      "better_source": "N/A — banned from predictor",
+      "confidence": "BANNED"
+    },
+    {
+      "field": "or_official_rating",
+      "race_day_profiles": "GOOD — official_rating",
+      "form_history": "GOOD — or_rating per run",
+      "racing_api": "GOOD — ofr field",
+      "better_source": "form_history (career sequence of OR changes)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "owner",
+      "race_day_profiles": "GOOD — owner_uid, owner_name",
+      "form_history": "MISSING",
+      "racing_api": "GOOD — owner, owner_id",
+      "better_source": "race_day_profiles / racing_api",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "pedigree_sire_dam",
+      "race_day_profiles": "GOOD — sire_uid, sire_name, dam_uid, dam_name, dam_sire",
+      "form_history": "MISSING",
+      "racing_api": "GOOD — sire, dam, damsire",
+      "better_source": "race_day_profiles (has avg win distances)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "headgear",
+      "race_day_profiles": "PARTIAL — headgear_first_time flag",
+      "form_history": "PARTIAL — gear field (e.g. 'p' for blinkers) per run",
+      "racing_api": "PARTIAL — headgear field",
+      "better_source": "form_history (shows sequence of gear usage)",
+      "confidence": "PARTIAL"
+    },
+    {
+      "field": "draw",
+      "race_day_profiles": "GOOD — draw in racecard_injection",
+      "form_history": "MISSING",
+      "racing_api": "GOOD — draw field",
+      "better_source": "racing_api",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "video_replay_url",
+      "race_day_profiles": "MISSING",
+      "form_history": "GOOD — video_url per run",
+      "racing_api": "MISSING",
+      "better_source": "form_history (unique to RP scrape)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "trainer_quotes_intent_signals",
+      "race_day_profiles": "GOOD — quotes, stable_tour_quotes (with rpPostmark and free text)",
+      "form_history": "MISSING",
+      "racing_api": "MISSING",
+      "better_source": "race_day_profiles (exclusive — no other source has this)",
+      "confidence": "GOOD"
+    },
+    {
+      "field": "newspaper_tip_count",
+      "race_day_profiles": "GOOD — newspaper_tip_count per horse",
+      "form_history": "MISSING",
+      "racing_api": "MISSING",
+      "better_source": "race_day_profiles",
+      "confidence": "GOOD"
+    }
+  ],
+
+  "horse_shape_upgrade_summary": {
+    "what_race_day_profiles_give": [
+      "Current trainer (with 14-day stats)",
+      "Pedigree (sire/dam/dam-sire with avg win distance)",
+      "Owner identity",
+      "Newspaper tip count",
+      "Trainer intent quotes and stable tour quotes",
+      "Entry list (upcoming races)",
+      "Headgear first-time flag",
+      "Days since last run",
+      "Form figures string (last 6)"
+    ],
+    "what_form_history_adds_beyond_race_day": [
+      "Full career run history (not just last 6) — up to 88 runs per horse going back to 2018",
+      "SP per run (career SP trajectory)",
+      "Position + field_size per run (career form profile)",
+      "Beaten margin per run",
+      "Jockey identity per run (career jockey switches)",
+      "Course per run (course affinity derivable)",
+      "Distance per run (distance switching profile)",
+      "Going per run (going preference derivable)",
+      "TS (TopSpeed) per run (career TS trajectory)",
+      "OR per run (Official Rating career progression)",
+      "result_type per run (WIN/PLACED/LOSS classification)",
+      "Winner name + SP per run (quality of opposition faced)",
+      "Video replay URL per run",
+      "Weight carried per run"
+    ],
+    "what_racing_api_adds": [
+      "Numeric horse_id/trainer_id/jockey_id for reliable joining",
+      "Race-level class and type",
+      "Full racecard structure",
+      "Result position and SP (current race day)"
+    ],
+    "verdict": "Form history is the major horse-shape data upgrade. It turns last-6 form into full career profiles. The upgrade enables: run frequency, layoff detection, course/distance/going affinity, jockey continuity, SP drift, TS drift, OR progression."
+  }
+}
