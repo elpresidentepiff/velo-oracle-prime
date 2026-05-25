@@ -96,6 +96,8 @@ Structured archive ingests:
 ```powershell
 python scripts/ops/new_build_sources.py ingest-card --date 2026-05-15 --execute
 python scripts/ops/new_build_sources.py ingest-results --date 2026-05-13 --execute
+python scripts/ops/new_build_sources.py ingest-all-cards --execute
+python scripts/ops/new_build_sources.py ingest-all-results --execute
 ```
 
 These write only under `data/new_build/normalized/` and keep RPR archive-only.

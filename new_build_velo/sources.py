@@ -120,6 +120,24 @@ def discover_sources(*, execute: bool = False) -> dict[str, Any]:
     return inventory
 
 
+def racecard_dates() -> list[str]:
+    dates: list[str] = []
+    for path in sorted(ROOT.glob("data/racecards_*_standard.json")):
+        match = RACECARD_RE.match(path.name)
+        if match:
+            dates.append(_date_from_match(match))
+    return dates
+
+
+def result_dates() -> list[str]:
+    dates: list[str] = []
+    for path in sorted(ROOT.glob("data/results_*.json")):
+        match = RESULTS_RE.match(path.name)
+        if match:
+            dates.append(_date_from_match(match))
+    return dates
+
+
 def ingest_racing_api_card(source_date: str, *, execute: bool = False) -> dict[str, Any]:
     path = ROOT / "data" / f"racecards_{source_date.replace('-', '_')}_standard.json"
     payload = load_json(path, {})
@@ -239,6 +257,45 @@ def ingest_racing_api_results(source_date: str, *, execute: bool = False) -> dic
     return out
 
 
+def ingest_all_cards(*, execute: bool = False) -> dict[str, Any]:
+    reports = [ingest_racing_api_card(day, execute=execute) for day in racecard_dates()]
+    payload = {
+        "generated_at": utc_now(),
+        "stage": "ingest_all_cards",
+        "status": "PASS",
+        "file_count": len(reports),
+        "race_count": sum(report.get("race_count") or 0 for report in reports),
+        "runner_count": sum(report.get("runner_count") or 0 for report in reports),
+        "trust_policy": TRUST_POLICY,
+        "velo_scoring_allowed": False,
+        "rpr_policy": RPR_POLICY,
+        "reports": reports,
+    }
+    if execute:
+        write_json(NEW_BUILD_ROOT / "ingest_all_cards_latest.json", payload)
+    return payload
+
+
+def ingest_all_results(*, execute: bool = False) -> dict[str, Any]:
+    reports = [ingest_racing_api_results(day, execute=execute) for day in result_dates()]
+    payload = {
+        "generated_at": utc_now(),
+        "stage": "ingest_all_results",
+        "status": "PASS",
+        "file_count": len(reports),
+        "race_count": sum(report.get("race_count") or 0 for report in reports),
+        "runner_count": sum(report.get("runner_count") or 0 for report in reports),
+        "winner_count": sum(report.get("winner_count") or 0 for report in reports),
+        "trust_policy": TRUST_POLICY,
+        "velo_scoring_allowed": False,
+        "rpr_policy": RPR_POLICY,
+        "reports": reports,
+    }
+    if execute:
+        write_json(NEW_BUILD_ROOT / "ingest_all_results_latest.json", payload)
+    return payload
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="New Build VELO source discovery and structured source ingest.")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -247,15 +304,23 @@ def main(argv: list[str] | None = None) -> int:
     card = sub.add_parser("ingest-card")
     card.add_argument("--date", required=True)
     card.add_argument("--execute", action="store_true")
+    cards = sub.add_parser("ingest-all-cards")
+    cards.add_argument("--execute", action="store_true")
     res = sub.add_parser("ingest-results")
     res.add_argument("--date", required=True)
     res.add_argument("--execute", action="store_true")
+    results = sub.add_parser("ingest-all-results")
+    results.add_argument("--execute", action="store_true")
     args = parser.parse_args(argv)
     if args.command == "inventory":
         output = discover_sources(execute=args.execute)
     elif args.command == "ingest-card":
         output = ingest_racing_api_card(args.date, execute=args.execute)
-    else:
+    elif args.command == "ingest-all-cards":
+        output = ingest_all_cards(execute=args.execute)
+    elif args.command == "ingest-results":
         output = ingest_racing_api_results(args.date, execute=args.execute)
+    else:
+        output = ingest_all_results(execute=args.execute)
     print(json.dumps(output, indent=2, ensure_ascii=False))
     return 0

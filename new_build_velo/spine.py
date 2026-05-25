@@ -96,6 +96,10 @@ def load_json(path: Path, default: Any) -> Any:
 
 
 def write_json(path: Path, payload: Any) -> None:
+    resolved = path.resolve()
+    allowed = NEW_BUILD_ROOT.resolve()
+    if allowed not in resolved.parents and resolved != allowed:
+        raise ValueError(f"New Build writes are restricted to {allowed}: {resolved}")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
@@ -304,6 +308,7 @@ def learn(*, from_date: str, to_date: str, execute: bool = False) -> dict[str, A
                 "trust_policy": TRUST_POLICY,
                 "velo_scoring_allowed": False,
                 "rpr_policy": RPR_POLICY,
+                "rpr_archive_only_excluded": True,
                 "learning_target": "new_build_sandbox_only",
             }
         )
@@ -328,6 +333,7 @@ def learn(*, from_date: str, to_date: str, execute: bool = False) -> dict[str, A
         "trust_policy": TRUST_POLICY,
         "velo_scoring_allowed": False,
         "rpr_policy": RPR_POLICY,
+        "rpr_archive_only_excluded": True,
         "live_velo_touched": False,
         "shadow_velo_touched": False,
     }
@@ -417,4 +423,3 @@ def main(argv: list[str] | None = None) -> int:
         payload = run_all(from_date=args.from_date, to_date=args.to_date, execute=args.execute)
     print(json.dumps(payload, indent=2, ensure_ascii=False))
     return 0
-

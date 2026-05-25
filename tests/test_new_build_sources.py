@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from new_build_velo.sources import discover_sources, ingest_racing_api_card, ingest_racing_api_results
+from new_build_velo.sources import discover_sources, ingest_all_cards, ingest_all_results, ingest_racing_api_card, ingest_racing_api_results
 
 
 def test_source_inventory_sees_industry_scale_inputs() -> None:
@@ -30,3 +30,17 @@ def test_racing_api_results_ingest_is_archive_only() -> None:
     assert payload["race_count"] == 59
     assert payload["winner_count"] == 59
     assert payload["velo_scoring_allowed"] is False
+
+
+def test_bulk_ingest_commands_cover_available_local_sources() -> None:
+    cards = ingest_all_cards(execute=False)
+    results = ingest_all_results(execute=False)
+
+    assert cards["file_count"] >= 30
+    assert cards["race_count"] >= 1600
+    assert cards["runner_count"] > 10000
+    assert cards["velo_scoring_allowed"] is False
+    assert results["file_count"] >= 50
+    assert results["race_count"] >= 2700
+    assert results["winner_count"] >= 2500
+    assert results["velo_scoring_allowed"] is False
