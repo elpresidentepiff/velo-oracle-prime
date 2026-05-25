@@ -14,6 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 PARSED_ROOT = ROOT / "data" / "racing_post_account_parsed"
 REPORT_ROOT = ROOT / "data" / "reports"
+BRIDGE_PATH = PARSED_ROOT / "horse_identity_bridge.json"
 
 RP_ONLY_FIELDS = {
     "owner", "sire", "dam", "dam_sire", "entries", "quotes", "sales", "notes",
@@ -94,6 +95,16 @@ def _rpdc_rows() -> dict[str, list[dict[str, Any]]]:
     return out
 
 
+def _load_bridge(date: str | None) -> dict[str, dict[str, Any]]:
+    payload = _load(BRIDGE_PATH, {})
+    out: dict[str, dict[str, Any]] = {}
+    for row in payload.get("bridge") or []:
+        if date and row.get("source_date") != date:
+            continue
+        out[_norm(row.get("rp_horse_name"))] = row
+    return out
+
+
 def _field_class(field: str, present_sources: set[str]) -> list[str]:
     labels: list[str] = []
     if len(present_sources) > 1:
@@ -115,9 +126,20 @@ def _field_class(field: str, present_sources: set[str]) -> list[str]:
     return labels
 
 
-def build(date: str, execute: bool) -> dict[str, Any]:
-    day = PARSED_ROOT / date
-    dossiers = _load(day / "horse_dossiers.json", {}).get("dossiers") or []
+def build(date: str | None, execute: bool) -> dict[str, Any]:
+    if date:
+        day = PARSED_ROOT / date
+        dossier_sets = [(date, _load(day / "horse_dossiers.json", {}).get("dossiers") or [])]
+    else:
+        dossier_sets = []
+        for day_dir in sorted(p for p in PARSED_ROOT.glob("20*-*-*") if p.is_dir()):
+            dossier_sets.append((day_dir.name, _load(day_dir / "horse_dossiers.json", {}).get("dossiers") or []))
+    dossiers: list[dict[str, Any]] = []
+    for source_date, rows in dossier_sets:
+        for row in rows:
+            item = dict(row)
+            item["_source_date"] = source_date
+            dossiers.append(item)
     profiles_24 = _load(PARSED_ROOT / "2026-05-24" / "horse_profiles.json", {}).get("horse_profiles") or []
     # Pilot explicitly includes Bow Echo even if not on May 25 racecard.
     for profile in profiles_24:
@@ -140,15 +162,18 @@ def build(date: str, execute: bool) -> dict[str, Any]:
                 "velo_scoring_allowed": False,
                 "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO",
             })
-    verdicts = {_norm(row.get("horse")): row for row in _verdict_rows(date)}
-    sigmas = _sigma_rows(date)
+    effective_date = date or "2026-05-25"
+    verdicts = {_norm(row.get("horse")): row for row in _verdict_rows(effective_date)}
+    sigmas = _sigma_rows(effective_date)
     rpdc = _rpdc_rows()
+    bridge_index = _load_bridge(date)
     matrix: list[dict[str, Any]] = []
     source_counter: Counter[str] = Counter()
     field_counter: Counter[str] = Counter()
 
     for dossier in dossiers:
         horse_key = _norm(dossier.get("horse"))
+        bridge = bridge_index.get(horse_key) or {}
         verdict = verdicts.get(horse_key) or {}
         sigma = sigmas.get(horse_key) or {}
         rpdc_rows = rpdc.get(horse_key) or []
@@ -168,13 +193,13 @@ def build(date: str, execute: bool) -> dict[str, Any]:
             for label in fields[field]:
                 field_counter[label] += 1
         sources_present = ["RP"]
-        if racing_api_available:
+        if racing_api_available or bridge.get("racing_api_horse_id"):
             sources_present.append("RACING_API")
-        if velo_available:
+        if velo_available or bridge.get("velo_horse_id"):
             sources_present.append("VELO")
-        if sigma:
+        if sigma or bridge.get("sigma_horse_id"):
             sources_present.append("SIGMA")
-        if rpdc_rows:
+        if rpdc_rows or bridge.get("rpdc_horse_id"):
             sources_present.append("RPDC")
         for source in sources_present:
             source_counter[source] += 1
@@ -182,7 +207,11 @@ def build(date: str, execute: bool) -> dict[str, Any]:
             "horse": dossier.get("horse"),
             "rp_horse_id": dossier.get("rp_horse_id"),
             "racing_api_horse_id": verdict.get("horse_id"),
-            "velo_runner_id": verdict.get("horse_id"),
+            "velo_runner_id": verdict.get("horse_id") or bridge.get("velo_horse_id"),
+            "identity_bridge_classification": bridge.get("classification", "BRIDGE_MISSING"),
+            "identity_confidence": bridge.get("identity_confidence", 0.0),
+            "identity_match_method": bridge.get("match_method"),
+            "identity_blocker_reason": bridge.get("blocker_reason"),
             "trainer": dossier.get("trainer"),
             "jockey": dossier.get("jockey"),
             "owner": dossier.get("owner"),
@@ -216,6 +245,7 @@ def build(date: str, execute: bool) -> dict[str, Any]:
         "horse_count": len(matrix),
         "source_presence_counts": dict(source_counter),
         "field_classification_counts": dict(field_counter),
+        "identity_bridge_counts": dict(Counter(row.get("identity_bridge_classification", "BRIDGE_MISSING") for row in matrix)),
         "scoring_impact": "NONE",
         "matrix": matrix,
     }
@@ -226,9 +256,12 @@ def build(date: str, execute: bool) -> dict[str, Any]:
         bow_path = REPORT_ROOT / "bow_echo_source_profile.md"
         uniqueness_path = REPORT_ROOT / "source_uniqueness_audit_latest.md"
         json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-        lines = ["# Source Value Matrix", "", f"- Date: `{date}`", f"- Horses compared: `{len(matrix)}`", "- Scoring impact: `NONE`", "", "## Source Presence"]
+        lines = ["# Source Value Matrix", "", f"- Date: `{date or 'ALL_BUILT'}`", f"- Horses compared: `{len(matrix)}`", "- Scoring impact: `NONE`", "", "## Source Presence"]
         for source, count in source_counter.most_common():
             lines.append(f"- {source}: `{count}`")
+        lines += ["", "## Identity Bridge"]
+        for name, count in payload["identity_bridge_counts"].items():
+            lines.append(f"- {name}: `{count}`")
         lines += ["", "## Sample Rows"]
         for row in matrix[:30]:
             lines.append(f"- **{row['horse']}**: sources={', '.join(row['sources_present'])}; tips={row.get('tip_count')}; RPDC={row.get('rpdc_tags')}")
@@ -240,6 +273,9 @@ def build(date: str, execute: bool) -> dict[str, Any]:
             bow_lines += [
                 f"- Horse: **{bow.get('horse')}**",
                 f"- RP horse id: `{bow.get('rp_horse_id')}`",
+                f"- Identity bridge status: `{bow.get('identity_bridge_classification')}`",
+                f"- Identity confidence: `{bow.get('identity_confidence')}`",
+                f"- Blocker: `{bow.get('identity_blocker_reason')}`",
                 f"- Trainer: `{bow.get('trainer')}`",
                 f"- Owner: `{bow.get('owner')}`",
                 f"- Sire / dam / dam sire: `{bow.get('sire')}` / `{bow.get('dam')}` / `{bow.get('dam_sire')}`",
@@ -255,6 +291,13 @@ def build(date: str, execute: bool) -> dict[str, Any]:
                 "- VÉLØ: no local Bow Echo verdict found in this pilot.",
                 "- Sigma: no local Bow Echo outcome found in this pilot.",
                 "- RPDC: no local Bow Echo memory found in this pilot.",
+                "",
+                "## What Is Needed To Make Bow Echo Measurable",
+                "",
+                "- A VÉLØ/Racing API runner row for Bow Echo on a dated racecard.",
+                "- A local runner snapshot or verdict artifact carrying Bow Echo identity.",
+                "- A Sigma/result row after Bow Echo runs.",
+                "- Optional RPDC history once Bow Echo has local outcome memory.",
                 "",
                 "## Keep Out Of Scoring",
                 "",
@@ -319,9 +362,10 @@ def build(date: str, execute: bool) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build source-value matrix.")
     parser.add_argument("--date", default="2026-05-25")
+    parser.add_argument("--all-built", action="store_true", help="Use all built RP dossier dates instead of one date.")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(build(args.date, args.execute), indent=2, ensure_ascii=False))
+    print(json.dumps(build(None if args.all_built else args.date, args.execute), indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
