@@ -190,7 +190,11 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                     "trainer": None,
                     "jockey": None,
                     "ofr": h.get("current_or") or None,
-                    "rpr": h.get("rpr_master") or None,
+                    # RP-derived RPR is archive/context only. Do not expose it as
+                    # live runner["rpr"], because downstream scoring consumes that key.
+                    "rpr": None,
+                    "rp_rpr_archive_only": h.get("rpr_master") or None,
+                    "rp_rpr_velo_allowed": False,
                     "ts": ts_val,
                     "ts_master": h.get("ts_master"),
                     "form": None,
