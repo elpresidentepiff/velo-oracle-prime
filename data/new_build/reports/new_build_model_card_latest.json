@@ -1,22 +1,9 @@
 {
   "generated_at": "2026-05-25T22:38:32.401164Z",
-  "champion_name": "core_v0_or_passport",
-  "champion_version": "Core_V0_OR_Passport_V1",
-  "promoted_at": "2026-05-25T22:38:32.401164Z",
-  "promoted_from": "challenger",
-  "dethroned_champion": "core_v0_or",
-  "promotion_reason": "PASSPORT_SIGNAL_CONFIRMED \u2014 4/4 unseen 2025 gates passed",
-  "classification": [
-    "PASSPORT_SIGNAL_CONFIRMED",
-    "V0_OR_PASSPORT_BEATS_CHAMPION_ON_UNSEEN_2025",
-    "PROMOTE_TO_NEW_BUILD_CHAMPION",
-    "HORSE_FIRST_STRATEGY_VALIDATED"
-  ],
+  "model": "Core_V0_OR_Passport_V1",
+  "status": "NEW_BUILD_CHAMPION",
   "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
   "velo_scoring_allowed": false,
-  "rpr_violation": false,
-  "sp_violation": false,
-  "model_pkl": "data/new_build/models/core_v0_or_passport/core_v0_or_passport_model.pkl",
   "features_frozen": [
     "dist_f",
     "going_code",
@@ -96,22 +83,13 @@
     "races": 5775,
     "runners": 57221
   },
-  "prior_champion_metrics_2025_unseen": {
-    "variant": "V0_OR",
-    "auc": 0.6788,
-    "brier": 0.0869,
-    "sr": 0.2222,
-    "frame": 0.5148,
-    "races": 5775,
-    "runners": 57221
-  },
-  "deltas_2025_unseen": {
+  "deltas": {
     "auc": 0.0134,
     "brier": -0.0007,
     "sr": 0.0194,
     "frame": 0.0256
   },
-  "promotion_gates_2025_unseen": {
+  "promotion_gates": {
     "auc": true,
     "brier": true,
     "sr": true,
@@ -269,5 +247,64 @@
       "importance_pct": 0.16
     }
   ],
-  "passport_importance_total_pct": 35.75
+  "passport_importance_total_pct": 35.75,
+  "calibration_2025": [
+    {
+      "band": "0.00\u20130.05",
+      "n": 10467,
+      "pred_prob": 0.0328,
+      "actual_wr": 0.0315,
+      "over_under": -0.0013
+    },
+    {
+      "band": "0.05\u20130.10",
+      "n": 23735,
+      "pred_prob": 0.0743,
+      "actual_wr": 0.0719,
+      "over_under": -0.0024
+    },
+    {
+      "band": "0.10\u20130.15",
+      "n": 13416,
+      "pred_prob": 0.122,
+      "actual_wr": 0.123,
+      "over_under": 0.001
+    },
+    {
+      "band": "0.15\u20130.20",
+      "n": 5610,
+      "pred_prob": 0.1714,
+      "actual_wr": 0.1761,
+      "over_under": 0.0047
+    },
+    {
+      "band": "0.20\u20130.25",
+      "n": 2232,
+      "pred_prob": 0.2214,
+      "actual_wr": 0.2249,
+      "over_under": 0.0035
+    },
+    {
+      "band": "0.25\u20130.30",
+      "n": 874,
+      "pred_prob": 0.2717,
+      "actual_wr": 0.3009,
+      "over_under": 0.0292
+    },
+    {
+      "band": "0.30\u20130.40",
+      "n": 629,
+      "pred_prob": 0.3375,
+      "actual_wr": 0.3482,
+      "over_under": 0.0107
+    },
+    {
+      "band": "0.40\u20131.01",
+      "n": 258,
+      "pred_prob": 0.4766,
+      "actual_wr": 0.4845,
+      "over_under": 0.0079
+    }
+  ],
+  "next_layer": "Intent_Layer_V1"
 }
