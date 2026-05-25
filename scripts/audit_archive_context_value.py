@@ -14,6 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PARSED_ROOT = ROOT / "data" / "racing_post_account_parsed"
 REPORT_ROOT = ROOT / "data" / "reports"
+OUTCOME_BRIDGE_PATH = PARSED_ROOT / "rp_archive_outcome_bridge.json"
 
 
 def _utc_now() -> str:
@@ -40,12 +41,31 @@ def _sigma_outcomes(date: str) -> dict[str, dict[str, Any]]:
     return out
 
 
+def _outcome_bridge_rows(start_date: str, end_date: str) -> dict[tuple[str, str], dict[str, Any]]:
+    payload = _load(OUTCOME_BRIDGE_PATH, {})
+    out: dict[tuple[str, str], dict[str, Any]] = {}
+    for row in payload.get("rows") or []:
+        date = row.get("race_date")
+        if not date or date < start_date or date > end_date:
+            continue
+        if row.get("classification") != "OUTCOME_CONFIRMED":
+            continue
+        if (row.get("identity_confidence") or 0) < 0.86:
+            continue
+        out[(date, _norm(row.get("rp_horse_name")))] = row
+    return out
+
+
 def _is_win(row: dict[str, Any]) -> bool:
+    if row.get("won") is not None:
+        return row.get("won") is True
     value = str(row.get("result") or row.get("outcome") or row.get("finish_position") or "").lower()
     return value in {"win", "winner", "1", "1st", "won"} or row.get("won") is True
 
 
 def _is_frame(row: dict[str, Any]) -> bool:
+    if row.get("framed") is not None:
+        return row.get("framed") is True
     value = str(row.get("result") or row.get("outcome") or row.get("finish_position") or "").lower()
     return _is_win(row) or value in {"frame", "placed", "place", "2", "2nd", "3", "3rd"} or row.get("framed") is True
 
@@ -66,12 +86,13 @@ def _signal_rows(dossier: dict[str, Any]) -> list[str]:
 def build(start_date: str, end_date: str, execute: bool) -> dict[str, Any]:
     buckets: dict[str, dict[str, int]] = defaultdict(lambda: {"sample": 0, "wins": 0, "frames": 0, "false_positive": 0})
     dates_checked = []
+    outcome_bridge = _outcome_bridge_rows(start_date, end_date)
     for day in sorted(PARSED_ROOT.glob("20*-*-*")):
         date = day.name
         if date < start_date or date > end_date:
             continue
         dossiers = _load(day / "horse_dossiers.json", {}).get("dossiers") or []
-        sigma = _sigma_outcomes(date)
+        sigma = {horse: row for (row_date, horse), row in outcome_bridge.items() if row_date == date}
         if not sigma:
             continue
         dates_checked.append(date)
