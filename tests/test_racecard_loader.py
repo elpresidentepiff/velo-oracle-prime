@@ -101,7 +101,10 @@ def test_cache_wins_before_rp(tmp_path):
     _make_rp_file(tmp_path)
     races, src = _loader(tmp_path)
     assert src == "cache"
-    assert races == _CACHE_RACES
+    # Sanitization adds rpr_policy + rp_rpr_velo_allowed — check identity fields only
+    assert len(races) == len(_CACHE_RACES)
+    assert races[0]["race_id"] == _CACHE_RACES[0]["race_id"]
+    assert races[0]["course"] == _CACHE_RACES[0]["course"]
 
 
 # ── RP merged source ──────────────────────────────────────────────────────────
@@ -241,3 +244,81 @@ def test_explicit_source_rp_fails_clearly_when_absent(tmp_path):
             racing_pass="pass",
             source="rp",
         )
+
+
+# ── RPR sanitization ──────────────────────────────────────────────────────────
+
+from src.velo.racecard_loader import _sanitize_api_rpr  # noqa: E402
+
+_CACHE_WITH_RPR = [
+    {
+        "race_id": "r1",
+        "course": "Ascot",
+        "date": _DATE_STR,
+        "region": "GB",
+        "runners": [
+            {"horse": "Alpha", "horse_id": "1", "rpr": 105, "jockey": "J", "trainer": "T"},
+            {"horse": "Beta",  "horse_id": "2", "rpr": 98,  "jockey": "J", "trainer": "T"},
+            {"horse": "Gamma", "horse_id": "3", "rpr": None, "jockey": "J", "trainer": "T"},
+        ],
+    }
+]
+
+
+def test_cache_source_sanitizes_rpr(tmp_path):
+    """Cache-sourced runners must have rpr nulled and archived."""
+    cache_races = [
+        {**r, "runners": [dict(run) for run in r["runners"]]}
+        for r in _CACHE_WITH_RPR
+    ]
+    (tmp_path / f"racecards_{_DATE_TAG}_standard.json").write_text(
+        json.dumps(cache_races)
+    )
+    races, src = _loader(tmp_path, source="cache")
+    assert src == "cache"
+    runner = races[0]["runners"][0]
+    assert runner["rpr"] is None, "rpr must be nulled after sanitization"
+    assert runner["rp_rpr_archive_only"] == 105, "live rpr must be archived"
+    assert runner["rp_rpr_velo_allowed"] is False
+
+
+def test_rp_merged_source_not_sanitized(tmp_path):
+    """RP-merged runners must not be modified by the sanitization step."""
+    _make_rp_file(tmp_path)
+    races, src = _loader(tmp_path, source="rp")
+    assert src == "rp_merged"
+    # RP merged runners have no 'rpr' key at all — sanitizer must not touch them
+    for race in races:
+        for runner in race["runners"]:
+            assert "rpr" not in runner or runner.get("rpr") is None
+
+
+def test_sanitize_api_rpr_direct():
+    """_sanitize_api_rpr moves live rpr to archive, nulls scoring field."""
+    import copy
+    races = copy.deepcopy(_CACHE_WITH_RPR)
+    result = _sanitize_api_rpr(races)
+    r0, r1, r2 = result[0]["runners"]
+    assert r0["rpr"] is None
+    assert r0["rp_rpr_archive_only"] == 105
+    assert r0["rp_rpr_velo_allowed"] is False
+    assert r1["rp_rpr_archive_only"] == 98
+    assert r2["rpr"] is None  # was already None — must stay None
+
+
+def test_sanitize_does_not_overwrite_existing_archive_value():
+    """If rp_rpr_archive_only is already set, it must not be overwritten."""
+    import copy
+    races = copy.deepcopy(_CACHE_WITH_RPR)
+    races[0]["runners"][0]["rp_rpr_archive_only"] = 999  # pre-existing value
+    result = _sanitize_api_rpr(races)
+    assert result[0]["runners"][0]["rp_rpr_archive_only"] == 999
+
+
+def test_allow_api_rpr_env_skips_sanitization(tmp_path):
+    """VELO_ALLOW_API_RPR=1 must bypass RPR sanitization entirely."""
+    import copy
+    races = copy.deepcopy(_CACHE_WITH_RPR)
+    with patch.dict("os.environ", {"VELO_ALLOW_API_RPR": "1"}):
+        result = _sanitize_api_rpr(races)
+    assert result[0]["runners"][0]["rpr"] == 105  # unchanged
