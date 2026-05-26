@@ -1,0 +1,5775 @@
+{
+  "generated_at": "2026-05-26T06:28:23.271130Z",
+  "status": "PASS",
+  "classification": "CURRENT_CARD_FEED_READY",
+  "feature_matrix_validation": {
+    "feature_columns_present": [
+      "pp_career_runs",
+      "pp_win_rate",
+      "pp_place_rate",
+      "pp_days_since_last",
+      "pp_layoff",
+      "pp_avg_sp_last5",
+      "pp_jockey_continuity",
+      "pp_course_seen",
+      "pp_or_change_3",
+      "pp_class_moved_up",
+      "pp_class_moved_down"
+    ],
+    "missing_champion_passport_features": [],
+    "null_rates": {
+      "pp_career_runs": 0.0,
+      "pp_win_rate": 0.0,
+      "pp_place_rate": 0.0,
+      "pp_days_since_last": 2.84,
+      "pp_layoff": 2.84,
+      "pp_avg_sp_last5": 2.84,
+      "pp_jockey_continuity": 0.0,
+      "pp_course_seen": 100.0,
+      "pp_or_change_3": 13.78,
+      "pp_class_moved_up": 31.1,
+      "pp_class_moved_down": 31.1
+    },
+    "schema_compatible": true,
+    "rpr_violations": 0,
+    "rpr_violation_keys": []
+  },
+  "races_processed": 56,
+  "runners_processed": 1417,
+  "passport_coverage": {
+    "found": 1210,
+    "total": 1417,
+    "coverage_pct": 85.39
+  },
+  "champion_feature_coverage": {
+    "found": 1210,
+    "total": 1417,
+    "coverage_pct": 85.39
+  },
+  "intent_feature_coverage": {
+    "found": 0,
+    "total": 1417,
+    "coverage_pct": 0.0
+  },
+  "missing_horses": [
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Libertango",
+      "rp_uid": "9263892",
+      "trainer": "George Boughey",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Miami To Ibiza",
+      "rp_uid": "9258994",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Shoof",
+      "rp_uid": "9290867",
+      "trainer": "George Scott",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Captaincy",
+      "rp_uid": "9290858",
+      "trainer": "Clive Cox",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Savage Mariner",
+      "rp_uid": "9290859",
+      "trainer": "Hugo Palmer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "High Calibre",
+      "rp_uid": "8881348",
+      "trainer": "Richard Hannon",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Rattenbury",
+      "rp_uid": "9198392",
+      "trainer": "Charles Hills",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Valdoro",
+      "rp_uid": "9212564",
+      "trainer": "Dylan Cunha",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "horse": "Royal Message",
+      "rp_uid": "9227253",
+      "trainer": "Ed Walker",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "horse": "Nour",
+      "rp_uid": "8881438",
+      "trainer": "K R Burke",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "horse": "Time Glory",
+      "rp_uid": "9115737",
+      "trainer": "Kevin Ryan",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "horse": "Khazamh",
+      "rp_uid": "9290872",
+      "trainer": "Richard & Peter Fahey",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "horse": "One Shot Kodi",
+      "rp_uid": "9290871",
+      "trainer": "Kevin Ryan",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "horse": "Liveadream",
+      "rp_uid": "9290877",
+      "trainer": "Phillip Makin",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "horse": "Talitha Rouge",
+      "rp_uid": "9290876",
+      "trainer": "David O'Meara",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Sale Shark",
+      "rp_uid": "9115859",
+      "trainer": "Hugo Palmer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Yorkshire Dream",
+      "rp_uid": "9231649",
+      "trainer": "Ben Haslam",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Virtuous Star",
+      "rp_uid": "9258990",
+      "trainer": "Richard & Peter Fahey",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Cornish Pol",
+      "rp_uid": "9263858",
+      "trainer": "Ivan Furtado",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Carrow Road",
+      "rp_uid": "9290860",
+      "trainer": "Chelsea Banham",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Shoof",
+      "rp_uid": "9290867",
+      "trainer": "George Scott",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Lincoln Warrior",
+      "rp_uid": "9295555",
+      "trainer": "Ivan Furtado",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Real Bullet",
+      "rp_uid": "9295562",
+      "trainer": "George Boughey",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Lavatera",
+      "rp_uid": "7020513",
+      "trainer": "Charlie Johnston",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Moon Zabeel",
+      "rp_uid": "9286451",
+      "trainer": "Charlie Johnston",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "horse": "Togeather Forever",
+      "rp_uid": "9295561",
+      "trainer": "Jim Goldie",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "Citrus Springs",
+      "rp_uid": "9286486",
+      "trainer": "Joseph Patrick O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "Magical Moonlight",
+      "rp_uid": "9295550",
+      "trainer": "J P Murtagh",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "Pisiffik Ginger",
+      "rp_uid": "9295551",
+      "trainer": "Mrs John Harrington",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "Three Ring Nation",
+      "rp_uid": "9295552",
+      "trainer": "Donnacha Aidan O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "Mandara Mist",
+      "rp_uid": "8187998",
+      "trainer": "P Twomey",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "Ventriloquist",
+      "rp_uid": "9024489",
+      "trainer": "John C McConnell",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "My Girl Grace",
+      "rp_uid": "9295553",
+      "trainer": "G M Lyons",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "horse": "Solas Na Gealai",
+      "rp_uid": "9295554",
+      "trainer": "J S Bolger",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Green Area",
+      "rp_uid": "9060384",
+      "trainer": "Charlie Johnston",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Indhaar",
+      "rp_uid": "9115629",
+      "trainer": "William Haggas",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Kinetic Impact",
+      "rp_uid": "9212579",
+      "trainer": "Charles Hills",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Madame Dragon",
+      "rp_uid": "9276853",
+      "trainer": "Polly Gundry",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Ingemar",
+      "rp_uid": "8144060",
+      "trainer": "Brian Meehan",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Deadline",
+      "rp_uid": "8188074",
+      "trainer": "Warren Greatrex",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Burning Impact",
+      "rp_uid": "8236218",
+      "trainer": "Ralph Beckett",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "horse": "Cosmic Girl",
+      "rp_uid": "9227219",
+      "trainer": "Andrew Balding",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-16",
+      "course": "Ascot",
+      "horse": "Rayif",
+      "rp_uid": "7789319",
+      "trainer": "F-H Graffard",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-16",
+      "course": "Ascot",
+      "horse": "Lyneham",
+      "rp_uid": "8259449",
+      "trainer": "C Ferland",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-16",
+      "course": "Ascot",
+      "horse": "Lord Clover",
+      "rp_uid": "8812062",
+      "trainer": "F-H Graffard",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-19",
+      "course": "Ascot",
+      "horse": "Moojeed",
+      "rp_uid": "7374075",
+      "trainer": "F-H Graffard",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Tosca No Candis",
+      "rp_uid": "9222249",
+      "trainer": "Robson De Aguiar",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Wateera",
+      "rp_uid": "9254355",
+      "trainer": "K R Burke",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Back To The Lodge",
+      "rp_uid": "9263833",
+      "trainer": "Daniel McLoughlin",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Etonnante",
+      "rp_uid": "9276857",
+      "trainer": "K R Burke",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Citrus Springs",
+      "rp_uid": "9286486",
+      "trainer": "Joseph Patrick O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Eyeconic",
+      "rp_uid": "9286488",
+      "trainer": "J A Stack",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Little Miss Muffet",
+      "rp_uid": "9286491",
+      "trainer": "Donnacha Aidan O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Madam Secretary",
+      "rp_uid": "9286492",
+      "trainer": "A P O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Thatsanotherstory",
+      "rp_uid": "9286494",
+      "trainer": "A Oliver",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Three Ring Nation",
+      "rp_uid": "9295552",
+      "trainer": "Donnacha Aidan O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Alpha",
+      "rp_uid": "9300194",
+      "trainer": "A P O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Alpine Wedding",
+      "rp_uid": "9300195",
+      "trainer": "P Twomey",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Apollo's Comet",
+      "rp_uid": "9300196",
+      "trainer": "Mrs John Harrington",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Carafinn",
+      "rp_uid": "9300197",
+      "trainer": "Henry De Bromhead",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Cedrela",
+      "rp_uid": "9300198",
+      "trainer": "Robson De Aguiar",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "horse": "Crystal Spray",
+      "rp_uid": "9300199",
+      "trainer": "A P O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-06-28",
+      "course": "Curragh",
+      "horse": "Stpaul'scathedral",
+      "rp_uid": "7780529",
+      "trainer": "A P O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Curragh",
+      "horse": "Proudly",
+      "rp_uid": "7601612",
+      "trainer": "A P O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Chief Minister",
+      "rp_uid": "8688449",
+      "trainer": "Eve Johnson Houghton",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Chianti",
+      "rp_uid": "8688496",
+      "trainer": "Archie Watson",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Mojito Madness",
+      "rp_uid": "8688498",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Water Angel",
+      "rp_uid": "8688504",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Cymbolism",
+      "rp_uid": "8688595",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Princess Ivy",
+      "rp_uid": "8688597",
+      "trainer": "Richard Hannon",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Naughty At Forty",
+      "rp_uid": "8688600",
+      "trainer": "Adrian Nicholls",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Emirates Express",
+      "rp_uid": "8688615",
+      "trainer": "Jack Morland",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Funky Town",
+      "rp_uid": "8688620",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Zouslavista",
+      "rp_uid": "8688659",
+      "trainer": "Joseph Patrick O'Brien",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Lady Rosalind",
+      "rp_uid": "8688670",
+      "trainer": "William Haggas",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Virtue Humble",
+      "rp_uid": "8688672",
+      "trainer": "Amanda Perrett",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Ragga Tip",
+      "rp_uid": "8688692",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Walkin On The Moon",
+      "rp_uid": "8688697",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Angels Lane",
+      "rp_uid": "8688700",
+      "trainer": "Henry Candy",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "00born With Grace",
+      "rp_uid": "8688730",
+      "trainer": "Hugo Palmer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Zigazig Ah",
+      "rp_uid": "8688788",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Liberian Girl",
+      "rp_uid": "8688802",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Heart Of Glass",
+      "rp_uid": "8688815",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "00kaiulani",
+      "rp_uid": "8688831",
+      "trainer": "Tim Easterby",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "00lamutanaahy",
+      "rp_uid": "8688834",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Edge Of Desire",
+      "rp_uid": "8688845",
+      "trainer": "Richard Spencer",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "00el Hadeeyah",
+      "rp_uid": "8688860",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "horse": "Minsmere",
+      "rp_uid": "8881164",
+      "trainer": "Richard Hannon",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "Wherewecanboogie",
+      "rp_uid": "8688523",
+      "trainer": "Kevin Ryan",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "Battle Fever",
+      "rp_uid": "8688529",
+      "trainer": "Kevin Ryan",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "00ohsosecret",
+      "rp_uid": "8688563",
+      "trainer": "Clive Cox",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "00jumeirah Street",
+      "rp_uid": "8688571",
+      "trainer": "Unknown",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "Herbert Hall",
+      "rp_uid": "8688577",
+      "trainer": "Brian Meehan",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "00athas An Bhean",
+      "rp_uid": "8688581",
+      "trainer": "Jack Morland",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "00the Shrew",
+      "rp_uid": "8688590",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "00restless Endeavour",
+      "rp_uid": "8688593",
+      "trainer": "George Boughey",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "00bereka",
+      "rp_uid": "8688594",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "Cymbolism",
+      "rp_uid": "8688595",
+      "trainer": null,
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "York City",
+      "rp_uid": "8688599",
+      "trainer": "Geoff Oldroyd",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "horse": "Naughty At Forty",
+      "rp_uid": "8688600",
+      "trainer": "Adrian Nicholls",
+      "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+    }
+  ],
+  "missing_horse_count": 207,
+  "unraced_new_horse_count": 207,
+  "rpr_violations": 0,
+  "rpr_violation_keys": [],
+  "race_reports": [
+    {
+      "race_date": "2026-05-26",
+      "course": "Leicester",
+      "off_time": "2026-05-26T14:10:00+01:00",
+      "race_id": "918928",
+      "race_title": "British EBF Maiden Stakes (GBB/IRE Incentive Race)",
+      "runner_count": 11,
+      "passport_coverage": 2,
+      "champion_feature_coverage": 2,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Victory Gold",
+          "rp_uid": "9212567",
+          "trainer": "Saeed bin Suroor",
+          "passport_strength_score": 3.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Lion O",
+          "rp_uid": "8881161",
+          "trainer": "Kevin Philippart De Foy",
+          "passport_strength_score": 0.35,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Victory Gold",
+        "rp_uid": "9212567",
+        "trainer": "Saeed bin Suroor",
+        "passport_strength_score": 3.05,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "9 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Libertango",
+          "rp_uid": "9263892",
+          "trainer": "George Boughey",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Miami To Ibiza",
+          "rp_uid": "9258994",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Shoof",
+          "rp_uid": "9290867",
+          "trainer": "George Scott",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Captaincy",
+          "rp_uid": "9290858",
+          "trainer": "Clive Cox",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Savage Mariner",
+          "rp_uid": "9290859",
+          "trainer": "Hugo Palmer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "off_time": "2026-05-26T14:20:00+01:00",
+      "race_id": "918943",
+      "race_title": "racingtv.com EBF Restricted Maiden Fillies' Stakes (Bands B, C And D) (EBF Qualifier) (GBB Race)",
+      "runner_count": 9,
+      "passport_coverage": 4,
+      "champion_feature_coverage": 4,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Bella Lucia",
+          "rp_uid": "9184992",
+          "trainer": "Gemma Tutty",
+          "passport_strength_score": 3.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Freedom Flame",
+          "rp_uid": "9166853",
+          "trainer": "Richard Hughes",
+          "passport_strength_score": 1.4,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Priscilla's Hope",
+          "rp_uid": "9120008",
+          "trainer": "Philip McBride",
+          "passport_strength_score": 1.35,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Bella Lucia",
+        "rp_uid": "9184992",
+        "trainer": "Gemma Tutty",
+        "passport_strength_score": 3.05,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "5 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Nour",
+          "rp_uid": "8881438",
+          "trainer": "K R Burke",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Time Glory",
+          "rp_uid": "9115737",
+          "trainer": "Kevin Ryan",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Khazamh",
+          "rp_uid": "9290872",
+          "trainer": "Richard & Peter Fahey",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "One Shot Kodi",
+          "rp_uid": "9290871",
+          "trainer": "Kevin Ryan",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Liveadream",
+          "rp_uid": "9290877",
+          "trainer": "Phillip Makin",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "off_time": "2026-05-26T14:50:00+01:00",
+      "race_id": "918942",
+      "race_title": "Watch Irish Racing On Racing TV Restricted Maiden Stakes (Bands A, B, C and D) (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": 5,
+      "champion_feature_coverage": 5,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Cape Fear",
+          "rp_uid": "8245527",
+          "trainer": "Andrew Balding",
+          "passport_strength_score": 2.45,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Hoseki",
+          "rp_uid": "8295085",
+          "trainer": "William Haggas",
+          "passport_strength_score": 1.85,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Champion Lawman",
+          "rp_uid": "7462311",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": 1.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Cape Fear",
+        "rp_uid": "8245527",
+        "trainer": "Andrew Balding",
+        "passport_strength_score": 2.45,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Talitha Rouge",
+          "rp_uid": "9290876",
+          "trainer": "David O'Meara",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "off_time": "2026-05-26T15:20:00+01:00",
+      "race_id": "918944",
+      "race_title": "Celebrate The Life Of Joe Newton Handicap",
+      "runner_count": 3,
+      "passport_coverage": 3,
+      "champion_feature_coverage": 3,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Gaelic Approach",
+          "rp_uid": "7529955",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": 2.4834,
+          "reason_codes": [
+            "CASH_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Wicksey",
+          "rp_uid": "7205021",
+          "trainer": "Ben Haslam",
+          "passport_strength_score": 2.1001,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Fairydale",
+          "rp_uid": "7793622",
+          "trainer": "Tim Easterby",
+          "passport_strength_score": 0.55,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Gaelic Approach",
+        "rp_uid": "7529955",
+        "trainer": "Charlie Johnston",
+        "passport_strength_score": 2.4834,
+        "reason_codes": [
+          "CASH_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "off_time": "2026-05-26T15:50:00+01:00",
+      "race_id": "918941",
+      "race_title": "Join Racing TV Now Handicap",
+      "runner_count": 6,
+      "passport_coverage": 6,
+      "champion_feature_coverage": 6,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Cosmos Raj",
+          "rp_uid": "3423161",
+          "trainer": "David O'Meara",
+          "passport_strength_score": 3.2647,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Eligible",
+          "rp_uid": "2140735",
+          "trainer": "Michael & David Easterby",
+          "passport_strength_score": 2.7213,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Desert Shadow",
+          "rp_uid": "6952473",
+          "trainer": "Saeed bin Suroor",
+          "passport_strength_score": 2.2428,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "FIRST_TIME_HEADGEAR",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Cosmos Raj",
+        "rp_uid": "3423161",
+        "trainer": "David O'Meara",
+        "passport_strength_score": 3.2647,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "off_time": "2026-05-26T16:20:00+01:00",
+      "race_id": "918947",
+      "race_title": "Racing TV Profits Returned To Racing Handicap",
+      "runner_count": 13,
+      "passport_coverage": 13,
+      "champion_feature_coverage": 13,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Territorial Star",
+          "rp_uid": "7020383",
+          "trainer": "Tony Culhane & Stella Barclay",
+          "passport_strength_score": 2.2428,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Willowinghurn",
+          "rp_uid": "7365392",
+          "trainer": "David O'Meara",
+          "passport_strength_score": 2.0215,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Hunterian",
+          "rp_uid": "8476547",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": 1.65,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Territorial Star",
+        "rp_uid": "7020383",
+        "trainer": "Tony Culhane & Stella Barclay",
+        "passport_strength_score": 2.2428,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "off_time": "2026-05-26T16:50:00+01:00",
+      "race_id": "918946",
+      "race_title": "Watch Racing TV In Stunning HD Fillies' Handicap",
+      "runner_count": 10,
+      "passport_coverage": 10,
+      "champion_feature_coverage": 10,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Lady Bouquet",
+          "rp_uid": "5073251",
+          "trainer": "Philip Kirby",
+          "passport_strength_score": 2.7368,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Kyber Crystal",
+          "rp_uid": "3558239",
+          "trainer": "Rebecca Menzies",
+          "passport_strength_score": 2.5185,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Crocus Time",
+          "rp_uid": "4924655",
+          "trainer": "Ron Barr",
+          "passport_strength_score": 2.3408,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Lady Bouquet",
+        "rp_uid": "5073251",
+        "trainer": "Philip Kirby",
+        "passport_strength_score": 2.7368,
+        "reason_codes": [
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-26",
+      "course": "Redcar",
+      "off_time": "2026-05-26T17:23:00+01:00",
+      "race_id": "918945",
+      "race_title": "Watch Race Replays On Racing TV Amateur Jockeys' Handicap",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "champion_feature_coverage": 12,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Fircombe Hall",
+          "rp_uid": "3096581",
+          "trainer": "Philip Kirby",
+          "passport_strength_score": 3.284,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Dream Deal",
+          "rp_uid": "3767116",
+          "trainer": "Tim Easterby",
+          "passport_strength_score": 3.2348,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "One Of Our Own",
+          "rp_uid": "4336809",
+          "trainer": "Rebecca Menzies",
+          "passport_strength_score": 3.2282,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Fircombe Hall",
+        "rp_uid": "3096581",
+        "trainer": "Philip Kirby",
+        "passport_strength_score": 3.284,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T14:05:00+01:00",
+      "race_id": "918968",
+      "race_title": "Wyvis Roofing EBF Maiden Stakes (Hamilton Park 2yo Series Qualifier) (GBB Race)",
+      "runner_count": 13,
+      "passport_coverage": 5,
+      "champion_feature_coverage": 5,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Flight Signal",
+          "rp_uid": "9263856",
+          "trainer": "Archie Watson",
+          "passport_strength_score": 4.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Or Another",
+          "rp_uid": "9115835",
+          "trainer": "K R Burke",
+          "passport_strength_score": 3.4,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "North Star Kodi",
+          "rp_uid": "9222241",
+          "trainer": "Richard & Peter Fahey",
+          "passport_strength_score": 2.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Flight Signal",
+        "rp_uid": "9263856",
+        "trainer": "Archie Watson",
+        "passport_strength_score": 4.55,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "8 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Sale Shark",
+          "rp_uid": "9115859",
+          "trainer": "Hugo Palmer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Yorkshire Dream",
+          "rp_uid": "9231649",
+          "trainer": "Ben Haslam",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Virtuous Star",
+          "rp_uid": "9258990",
+          "trainer": "Richard & Peter Fahey",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Cornish Pol",
+          "rp_uid": "9263858",
+          "trainer": "Ivan Furtado",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carrow Road",
+          "rp_uid": "9290860",
+          "trainer": "Chelsea Banham",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T14:35:00+01:00",
+      "race_id": "918967",
+      "race_title": "One Stop Roofing Supplies Ltd Restricted Novice Stakes (Bands C And D) (GBB Race)",
+      "runner_count": 15,
+      "passport_coverage": 12,
+      "champion_feature_coverage": 12,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Rogue Defence",
+          "rp_uid": "9153303",
+          "trainer": "Jack Jones",
+          "passport_strength_score": 2.35,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Bearish",
+          "rp_uid": "8290514",
+          "trainer": "Ed Dunlop",
+          "passport_strength_score": 2.1,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Spiritoftheblues",
+          "rp_uid": "7739790",
+          "trainer": "David O'Meara",
+          "passport_strength_score": 2.0665,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Rogue Defence",
+        "rp_uid": "9153303",
+        "trainer": "Jack Jones",
+        "passport_strength_score": 2.35,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "3 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Lavatera",
+          "rp_uid": "7020513",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Moon Zabeel",
+          "rp_uid": "9286451",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Togeather Forever",
+          "rp_uid": "9295561",
+          "trainer": "Jim Goldie",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T15:05:00+01:00",
+      "race_id": "918971",
+      "race_title": "ICB (Water Proofing) Handicap",
+      "runner_count": 15,
+      "passport_coverage": 15,
+      "champion_feature_coverage": 15,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Confide In Me",
+          "rp_uid": "9009958",
+          "trainer": "Jack Jones",
+          "passport_strength_score": 3.6,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Velvet Rhythm",
+          "rp_uid": "7947736",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": 3.2,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Red Spells Danger",
+          "rp_uid": "7436366",
+          "trainer": "Tim Easterby",
+          "passport_strength_score": 3.025,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Confide In Me",
+        "rp_uid": "9009958",
+        "trainer": "Jack Jones",
+        "passport_strength_score": 3.6,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T15:35:00+01:00",
+      "race_id": "918969",
+      "race_title": "Cupa Slates Handicap (GBBPlus Race)",
+      "runner_count": 11,
+      "passport_coverage": 11,
+      "champion_feature_coverage": 11,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Gentle Warrior",
+          "rp_uid": "6229375",
+          "trainer": "K R Burke",
+          "passport_strength_score": 3.0812,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Ludo's Landing",
+          "rp_uid": "4315424",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": 2.8853,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Trojan Sun",
+          "rp_uid": "5920271",
+          "trainer": "Jim Goldie",
+          "passport_strength_score": 2.7662,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Gentle Warrior",
+        "rp_uid": "6229375",
+        "trainer": "K R Burke",
+        "passport_strength_score": 3.0812,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T16:05:00+01:00",
+      "race_id": "918970",
+      "race_title": "David Hardie Engineering Ltd Handicap",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "champion_feature_coverage": 12,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Harb",
+          "rp_uid": "3505929",
+          "trainer": "Tristan Davidson",
+          "passport_strength_score": 3.1567,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Oriental Prince",
+          "rp_uid": "5743692",
+          "trainer": "Jim Goldie",
+          "passport_strength_score": 2.976,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "South Parade",
+          "rp_uid": "5123492",
+          "trainer": "Richard & Peter Fahey",
+          "passport_strength_score": 2.9055,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Harb",
+        "rp_uid": "3505929",
+        "trainer": "Tristan Davidson",
+        "passport_strength_score": 3.1567,
+        "reason_codes": [
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T16:35:00+01:00",
+      "race_id": "918973",
+      "race_title": "Fixing Point Cladding Fasteners Handicap",
+      "runner_count": 15,
+      "passport_coverage": 15,
+      "champion_feature_coverage": 15,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Welbury",
+          "rp_uid": "7657429",
+          "trainer": "Edward Bethell",
+          "passport_strength_score": 3.4,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Bearin Up",
+          "rp_uid": "7922023",
+          "trainer": "Tim Easterby",
+          "passport_strength_score": 2.25,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Saxophonist",
+          "rp_uid": "7882515",
+          "trainer": "David O'Meara",
+          "passport_strength_score": 2.2,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Welbury",
+        "rp_uid": "7657429",
+        "trainer": "Edward Bethell",
+        "passport_strength_score": 3.4,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-27",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T17:05:00+01:00",
+      "race_id": "918972",
+      "race_title": "Compass Roofing Handicap",
+      "runner_count": 10,
+      "passport_coverage": 10,
+      "champion_feature_coverage": 10,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Yaaser",
+          "rp_uid": "3205693",
+          "trainer": "Jim Goldie",
+          "passport_strength_score": 3.081,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Union Island",
+          "rp_uid": "5193441",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": 3.0226,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Military Leader",
+          "rp_uid": "5320933",
+          "trainer": "Phillip Makin",
+          "passport_strength_score": 2.6,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Yaaser",
+        "rp_uid": "3205693",
+        "trainer": "Jim Goldie",
+        "passport_strength_score": 3.081,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "SETUP_RUN_CANDIDATE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T14:12:00+01:00",
+      "race_id": "921535",
+      "race_title": "Royal County Optional Claiming Race",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "champion_feature_coverage": 12,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Profit Surge",
+          "rp_uid": "6350096",
+          "trainer": "Gerard Keane",
+          "passport_strength_score": 2.2,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Tawaazon",
+          "rp_uid": "3701271",
+          "trainer": "John Andrew Kinsella",
+          "passport_strength_score": 1.85,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Gloriously Glam",
+          "rp_uid": "5884456",
+          "trainer": "Adrian McGuinness",
+          "passport_strength_score": 1.45,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Profit Surge",
+        "rp_uid": "6350096",
+        "trainer": "Gerard Keane",
+        "passport_strength_score": 2.2,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T14:42:00+01:00",
+      "race_id": "921536",
+      "race_title": "Fiver Fridays At Fairyhouse June 5th And 12th Handicap",
+      "runner_count": 18,
+      "passport_coverage": 18,
+      "champion_feature_coverage": 18,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Stone Bear",
+          "rp_uid": "7735705",
+          "trainer": "Ross O'Sullivan",
+          "passport_strength_score": 3.05,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Baiana",
+          "rp_uid": "8214879",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": 2.2333,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Kc Bear",
+          "rp_uid": "7499452",
+          "trainer": "Noel Meade",
+          "passport_strength_score": 2.0,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Stone Bear",
+        "rp_uid": "7735705",
+        "trainer": "Ross O'Sullivan",
+        "passport_strength_score": 3.05,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T15:17:00+01:00",
+      "race_id": "921537",
+      "race_title": "Irish EBF Median Sires Series Race (IRE Incentive Race)",
+      "runner_count": 16,
+      "passport_coverage": 12,
+      "champion_feature_coverage": 12,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Tatianna",
+          "rp_uid": "9263830",
+          "trainer": "Josh Halley",
+          "passport_strength_score": 2.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Green Empress",
+          "rp_uid": "9286489",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": 2.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Lars Soldier",
+          "rp_uid": "8940434",
+          "trainer": "Michael Mulvany",
+          "passport_strength_score": 1.8165,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Tatianna",
+        "rp_uid": "9263830",
+        "trainer": "Josh Halley",
+        "passport_strength_score": 2.05,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Citrus Springs",
+          "rp_uid": "9286486",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Magical Moonlight",
+          "rp_uid": "9295550",
+          "trainer": "J P Murtagh",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Pisiffik Ginger",
+          "rp_uid": "9295551",
+          "trainer": "Mrs John Harrington",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Three Ring Nation",
+          "rp_uid": "9295552",
+          "trainer": "Donnacha Aidan O'Brien",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T15:47:00+01:00",
+      "race_id": "921538",
+      "race_title": "5 Euro General Admission Next Friday Handicap",
+      "runner_count": 24,
+      "passport_coverage": 24,
+      "champion_feature_coverage": 24,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Happy Henry",
+          "rp_uid": "5668374",
+          "trainer": "W McCreery",
+          "passport_strength_score": 2.2,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Jazzy Dancer",
+          "rp_uid": "3839270",
+          "trainer": "W J Martin",
+          "passport_strength_score": 2.1,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Jackandthefox",
+          "rp_uid": "4650595",
+          "trainer": "Miss Jennifer Anne Lynch",
+          "passport_strength_score": 1.95,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Happy Henry",
+        "rp_uid": "5668374",
+        "trainer": "W McCreery",
+        "passport_strength_score": 2.2,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T16:17:00+01:00",
+      "race_id": "921539",
+      "race_title": "Book Your Hospitality At Fairyhouse.ie Handicap",
+      "runner_count": 29,
+      "passport_coverage": 29,
+      "champion_feature_coverage": 29,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Royal County Glory",
+          "rp_uid": "7926357",
+          "trainer": "Kevin Michael Smith",
+          "passport_strength_score": 2.75,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Kc Bear",
+          "rp_uid": "7499452",
+          "trainer": "Noel Meade",
+          "passport_strength_score": 2.0,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Mo Anam Chara",
+          "rp_uid": "8120550",
+          "trainer": "Mark Fahey",
+          "passport_strength_score": 1.85,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Royal County Glory",
+        "rp_uid": "7926357",
+        "trainer": "Kevin Michael Smith",
+        "passport_strength_score": 2.75,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T16:52:00+01:00",
+      "race_id": "921540",
+      "race_title": "Racing Again Next Friday Apprentice Handicap",
+      "runner_count": 30,
+      "passport_coverage": 30,
+      "champion_feature_coverage": 30,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Tero d'Rosa",
+          "rp_uid": "7657452",
+          "trainer": "Ross O'Sullivan",
+          "passport_strength_score": 2.75,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Harana",
+          "rp_uid": "6111567",
+          "trainer": "D K Weld",
+          "passport_strength_score": 2.6,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Doctor Grace",
+          "rp_uid": "4455458",
+          "trainer": "Adrian McGuinness",
+          "passport_strength_score": 1.6,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Tero d'Rosa",
+        "rp_uid": "7657452",
+        "trainer": "Ross O'Sullivan",
+        "passport_strength_score": 2.75,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-28",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T17:27:00+01:00",
+      "race_id": "921541",
+      "race_title": "Irish Stallion Farms EBF Fillies Maiden",
+      "runner_count": 21,
+      "passport_coverage": 17,
+      "champion_feature_coverage": 17,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Vauntingly",
+          "rp_uid": "8418732",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": 3.6,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Arrietty",
+          "rp_uid": "8214876",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": 3.1,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Mathoura",
+          "rp_uid": "7757798",
+          "trainer": "Mrs John Harrington",
+          "passport_strength_score": 2.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Vauntingly",
+        "rp_uid": "8418732",
+        "trainer": "Joseph Patrick O'Brien",
+        "passport_strength_score": 3.6,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Mandara Mist",
+          "rp_uid": "8187998",
+          "trainer": "P Twomey",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Ventriloquist",
+          "rp_uid": "9024489",
+          "trainer": "John C McConnell",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "My Girl Grace",
+          "rp_uid": "9295553",
+          "trainer": "G M Lyons",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Solas Na Gealai",
+          "rp_uid": "9295554",
+          "trainer": "J S Bolger",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T14:00:00+01:00",
+      "race_id": "919010",
+      "race_title": "DragonBet Proud Sponsors Of Chepstow Racecourse Apprentice Handicap",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "champion_feature_coverage": 12,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Beaune",
+          "rp_uid": "6824841",
+          "trainer": "Bernard Llewellyn",
+          "passport_strength_score": 3.2,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Oasis Sunrise",
+          "rp_uid": "5991241",
+          "trainer": "Grace Harris",
+          "passport_strength_score": 2.9,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Sea Of Charm",
+          "rp_uid": "3189698",
+          "trainer": "Georgina Nicholls",
+          "passport_strength_score": 2.8691,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Beaune",
+        "rp_uid": "6824841",
+        "trainer": "Bernard Llewellyn",
+        "passport_strength_score": 3.2,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T14:30:00+01:00",
+      "race_id": "919012",
+      "race_title": "DragonBet - Oncourse And Online Handicap",
+      "runner_count": 22,
+      "passport_coverage": 22,
+      "champion_feature_coverage": 22,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Mohmentous",
+          "rp_uid": "8335415",
+          "trainer": "Ollie Sangster",
+          "passport_strength_score": 1.9,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Time To Sparkle",
+          "rp_uid": "8137386",
+          "trainer": "James Keane",
+          "passport_strength_score": 1.35,
+          "reason_codes": [
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Worlington",
+          "rp_uid": "8251207",
+          "trainer": "George Boughey",
+          "passport_strength_score": 1.3,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Mohmentous",
+        "rp_uid": "8335415",
+        "trainer": "Ollie Sangster",
+        "passport_strength_score": 1.9,
+        "reason_codes": [
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T15:00:00+01:00",
+      "race_id": "919007",
+      "race_title": "Pricing By Real Bookmakers At DragonBet Novice Stakes (GBB/GBBPlus Race)",
+      "runner_count": 19,
+      "passport_coverage": 15,
+      "champion_feature_coverage": 15,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "El Nay",
+          "rp_uid": "8290517",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 3.15,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Glory Road",
+          "rp_uid": "8188065",
+          "trainer": "Ralph Beckett",
+          "passport_strength_score": 3.1,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Gone By",
+          "rp_uid": "8227216",
+          "trainer": "Ralph Beckett",
+          "passport_strength_score": 2.85,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "El Nay",
+        "rp_uid": "8290517",
+        "trainer": "Richard Hannon",
+        "passport_strength_score": 3.15,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Green Area",
+          "rp_uid": "9060384",
+          "trainer": "Charlie Johnston",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Indhaar",
+          "rp_uid": "9115629",
+          "trainer": "William Haggas",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Kinetic Impact",
+          "rp_uid": "9212579",
+          "trainer": "Charles Hills",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Madame Dragon",
+          "rp_uid": "9276853",
+          "trainer": "Polly Gundry",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T15:30:00+01:00",
+      "race_id": "919009",
+      "race_title": "DragonBet Born From The Betting Ring Handicap",
+      "runner_count": 9,
+      "passport_coverage": 9,
+      "champion_feature_coverage": 9,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Tuscan Point",
+          "rp_uid": "5859153",
+          "trainer": "Adam Kirby",
+          "passport_strength_score": 3.4,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "On Edge",
+          "rp_uid": "3225238",
+          "trainer": "Christopher Mason",
+          "passport_strength_score": 3.15,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Cayman Tai",
+          "rp_uid": "5598785",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 2.9,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Tuscan Point",
+        "rp_uid": "5859153",
+        "trainer": "Adam Kirby",
+        "passport_strength_score": 3.4,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T16:05:00+01:00",
+      "race_id": "919013",
+      "race_title": "Best Odds Guaranteed On dragonbet.co.uk Handicap (Chepstow Mile Series Qualifier)",
+      "runner_count": 17,
+      "passport_coverage": 17,
+      "champion_feature_coverage": 17,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Thanos",
+          "rp_uid": "7865992",
+          "trainer": "Harry Charlton",
+          "passport_strength_score": 2.4,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Mohmentous",
+          "rp_uid": "8335415",
+          "trainer": "Ollie Sangster",
+          "passport_strength_score": 1.9,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Alice's Influence",
+          "rp_uid": "7861444",
+          "trainer": "David Evans",
+          "passport_strength_score": 1.6,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Thanos",
+        "rp_uid": "7865992",
+        "trainer": "Harry Charlton",
+        "passport_strength_score": 2.4,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T16:40:00+01:00",
+      "race_id": "919008",
+      "race_title": "DragonBet: Supporting British Racing Maiden Stakes (GBB Race)",
+      "runner_count": 17,
+      "passport_coverage": 13,
+      "champion_feature_coverage": 13,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Erudition",
+          "rp_uid": "9083757",
+          "trainer": "George Boughey",
+          "passport_strength_score": 2.6,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Distant Moon",
+          "rp_uid": "9175076",
+          "trainer": "Saeed bin Suroor",
+          "passport_strength_score": 2.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Law Court",
+          "rp_uid": "7784899",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 2.45,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Erudition",
+        "rp_uid": "9083757",
+        "trainer": "George Boughey",
+        "passport_strength_score": 2.6,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Ingemar",
+          "rp_uid": "8144060",
+          "trainer": "Brian Meehan",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Deadline",
+          "rp_uid": "8188074",
+          "trainer": "Warren Greatrex",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Burning Impact",
+          "rp_uid": "8236218",
+          "trainer": "Ralph Beckett",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Cosmic Girl",
+          "rp_uid": "9227219",
+          "trainer": "Andrew Balding",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-05-29",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T17:10:00+01:00",
+      "race_id": "919011",
+      "race_title": "DragonBet, Top Prices On Top Markets Handicap",
+      "runner_count": 13,
+      "passport_coverage": 13,
+      "champion_feature_coverage": 13,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Vape",
+          "rp_uid": "2957566",
+          "trainer": "John & Rhys Flint",
+          "passport_strength_score": 3.45,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Kaleidoscope Eyes",
+          "rp_uid": "5942591",
+          "trainer": "Bernard Llewellyn",
+          "passport_strength_score": 1.6,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "King Of The Dance",
+          "rp_uid": "3437792",
+          "trainer": "Bernard Llewellyn",
+          "passport_strength_score": 1.55,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Vape",
+        "rp_uid": "2957566",
+        "trainer": "John & Rhys Flint",
+        "passport_strength_score": 3.45,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-01",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T15:09:00+01:00",
+      "race_id": "915716",
+      "race_title": "Irish Stallion Farms EBF Gowran Classic",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Handshake",
+          "rp_uid": "8031226",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": 4.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Dark Lucinda",
+          "rp_uid": "7561583",
+          "trainer": "P Twomey",
+          "passport_strength_score": 4.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Hardy Warrior",
+          "rp_uid": "7551787",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": 3.9,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Handshake",
+        "rp_uid": "8031226",
+        "trainer": "Joseph Patrick O'Brien",
+        "passport_strength_score": 4.55,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "LAYOFF_PATTERN",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-05",
+      "course": "Epsom",
+      "off_time": "2026-06-05T16:00:00+01:00",
+      "race_id": "915536",
+      "race_title": "Betfred Oaks (Group 1) (Fillies)",
+      "runner_count": 16,
+      "passport_coverage": 16,
+      "champion_feature_coverage": 16,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Precise",
+          "rp_uid": "7601611",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 3.8,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Amelia Earhart",
+          "rp_uid": "7627173",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 3.7,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Emmeleia",
+          "rp_uid": "8170205",
+          "trainer": "Donnacha Aidan O'Brien",
+          "passport_strength_score": 3.65,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Precise",
+        "rp_uid": "7601611",
+        "trainer": "A P O'Brien",
+        "passport_strength_score": 3.8,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-06",
+      "course": "Epsom",
+      "off_time": "2026-06-06T16:00:00+01:00",
+      "race_id": "912530",
+      "race_title": "Betfred Derby (Group 1) (No Geldings)",
+      "runner_count": 22,
+      "passport_coverage": 22,
+      "champion_feature_coverage": 22,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Item",
+          "rp_uid": "8058110",
+          "trainer": "Andrew Balding",
+          "passport_strength_score": 4.9,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Maltese Cross",
+          "rp_uid": "8062544",
+          "trainer": "William Haggas",
+          "passport_strength_score": 4.825,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Saxon Street",
+          "rp_uid": "8534593",
+          "trainer": "John & Thady Gosden",
+          "passport_strength_score": 4.75,
+          "reason_codes": [
+            "CASH_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Item",
+        "rp_uid": "8058110",
+        "trainer": "Andrew Balding",
+        "passport_strength_score": 4.9,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-11",
+      "course": "Leopardstown",
+      "off_time": "2026-06-11T19:00:00+01:00",
+      "race_id": "921565",
+      "race_title": "Ballycorus Stakes (Group 3)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Catalina Delcarpio",
+          "rp_uid": "6710726",
+          "trainer": "P Twomey",
+          "passport_strength_score": 3.95,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Forty Years On",
+          "rp_uid": "7183159",
+          "trainer": "George Scott",
+          "passport_strength_score": 3.9,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Native Warrior",
+          "rp_uid": "5325152",
+          "trainer": "K R Burke",
+          "passport_strength_score": 3.55,
+          "reason_codes": [
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Catalina Delcarpio",
+        "rp_uid": "6710726",
+        "trainer": "P Twomey",
+        "passport_strength_score": 3.95,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-14",
+      "course": "Cork",
+      "off_time": "2026-06-14T16:48:00+01:00",
+      "race_id": "921566",
+      "race_title": "Darley Munster Oaks Stakes (Group 3) (Fillies & Mares)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Moody",
+          "rp_uid": "7722777",
+          "trainer": "P Twomey",
+          "passport_strength_score": 4.1,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Dark Lucinda",
+          "rp_uid": "7561583",
+          "trainer": "P Twomey",
+          "passport_strength_score": 4.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Catalina Delcarpio",
+          "rp_uid": "6710726",
+          "trainer": "P Twomey",
+          "passport_strength_score": 3.95,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Moody",
+        "rp_uid": "7722777",
+        "trainer": "P Twomey",
+        "passport_strength_score": 4.1,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-16",
+      "course": "Ascot",
+      "off_time": "2026-06-16T14:30:00+01:00",
+      "race_id": "917807",
+      "race_title": "Queen Anne Stakes (Group 1)",
+      "runner_count": 30,
+      "passport_coverage": 30,
+      "champion_feature_coverage": 30,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Opera Ballo",
+          "rp_uid": "7055588",
+          "trainer": "Charlie Appleby",
+          "passport_strength_score": 4.95,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Notable Speech",
+          "rp_uid": "5608567",
+          "trainer": "Charlie Appleby",
+          "passport_strength_score": 4.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Minnie Hauk",
+          "rp_uid": "6238183",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.3334,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Opera Ballo",
+        "rp_uid": "7055588",
+        "trainer": "Charlie Appleby",
+        "passport_strength_score": 4.95,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-16",
+      "course": "Ascot",
+      "off_time": "2026-06-16T15:40:00+01:00",
+      "race_id": "917809",
+      "race_title": "King Charles III Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Shareholder",
+          "rp_uid": "6000761",
+          "trainer": "K R Burke",
+          "passport_strength_score": 4.6,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Almeraq",
+          "rp_uid": "6456207",
+          "trainer": "William Haggas",
+          "passport_strength_score": 4.0,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Rosy Affair",
+          "rp_uid": "5172505",
+          "trainer": "George Boughey",
+          "passport_strength_score": 3.45,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Shareholder",
+        "rp_uid": "6000761",
+        "trainer": "K R Burke",
+        "passport_strength_score": 4.6,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-16",
+      "course": "Ascot",
+      "off_time": "2026-06-16T16:20:00+01:00",
+      "race_id": "917808",
+      "race_title": "St James's Palace Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 37,
+      "champion_feature_coverage": 37,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Bow Echo",
+          "rp_uid": "7947753",
+          "trainer": "George Boughey",
+          "passport_strength_score": 5.2,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Extremely Zain",
+          "rp_uid": "8589413",
+          "trainer": "William Haggas",
+          "passport_strength_score": 4.85,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Time To Turn",
+          "rp_uid": "7547279",
+          "trainer": "Charlie Appleby",
+          "passport_strength_score": 4.825,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Bow Echo",
+        "rp_uid": "7947753",
+        "trainer": "George Boughey",
+        "passport_strength_score": 5.2,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "3 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Rayif",
+          "rp_uid": "7789319",
+          "trainer": "F-H Graffard",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Lyneham",
+          "rp_uid": "8259449",
+          "trainer": "C Ferland",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Lord Clover",
+          "rp_uid": "8812062",
+          "trainer": "F-H Graffard",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-06-17",
+      "course": "Ascot",
+      "off_time": "2026-06-17T16:20:00+01:00",
+      "race_id": "917810",
+      "race_title": "Prince Of Wales's Stakes (Group 1)",
+      "runner_count": 24,
+      "passport_coverage": 24,
+      "champion_feature_coverage": 24,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Calandagan",
+          "rp_uid": "5218337",
+          "trainer": "F-H Graffard",
+          "passport_strength_score": 4.9,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Saddadd",
+          "rp_uid": "6528827",
+          "trainer": "Roger Varian",
+          "passport_strength_score": 4.65,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Kalpana",
+          "rp_uid": "5507022",
+          "trainer": "Andrew Balding",
+          "passport_strength_score": 4.45,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Calandagan",
+        "rp_uid": "5218337",
+        "trainer": "F-H Graffard",
+        "passport_strength_score": 4.9,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-17",
+      "course": "Ascot",
+      "off_time": "2026-06-17T17:00:00+01:00",
+      "race_id": "919069",
+      "race_title": "Royal Hunt Cup (Heritage Handicap)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Skipper",
+          "rp_uid": "5176358",
+          "trainer": "Hamad Al Jehani",
+          "passport_strength_score": 2.8857,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Lir Speciale",
+          "rp_uid": "3662423",
+          "trainer": "Brian Ellison",
+          "passport_strength_score": 2.7,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Classic",
+          "rp_uid": "4001875",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 2.7,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Skipper",
+        "rp_uid": "5176358",
+        "trainer": "Hamad Al Jehani",
+        "passport_strength_score": 2.8857,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-18",
+      "course": "Ascot",
+      "off_time": "2026-06-18T16:15:00+01:00",
+      "race_id": "917811",
+      "race_title": "Gold Cup (Group 1)",
+      "runner_count": 25,
+      "passport_coverage": 25,
+      "champion_feature_coverage": 25,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Trawlerman",
+          "rp_uid": "3257953",
+          "trainer": "John & Thady Gosden",
+          "passport_strength_score": 4.95,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Scandinavia",
+          "rp_uid": "6102190",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.75,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Sweet William",
+          "rp_uid": "4475419",
+          "trainer": "John & Thady Gosden",
+          "passport_strength_score": 4.35,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Trawlerman",
+        "rp_uid": "3257953",
+        "trainer": "John & Thady Gosden",
+        "passport_strength_score": 4.95,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-19",
+      "course": "Ascot",
+      "off_time": "2026-06-19T15:05:00+01:00",
+      "race_id": "917813",
+      "race_title": "Commonwealth Cup (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 39,
+      "champion_feature_coverage": 39,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Charles Darwin",
+          "rp_uid": "7400082",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.9,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Zanthos",
+          "rp_uid": "7830200",
+          "trainer": "Simon & Ed Crisford",
+          "passport_strength_score": 4.6501,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Lifeplan",
+          "rp_uid": "7830202",
+          "trainer": "Declan Carroll",
+          "passport_strength_score": 4.6,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Charles Darwin",
+        "rp_uid": "7400082",
+        "trainer": "A P O'Brien",
+        "passport_strength_score": 4.9,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "CASH_RUN_CANDIDATE",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Moojeed",
+          "rp_uid": "7374075",
+          "trainer": "F-H Graffard",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-06-19",
+      "course": "Ascot",
+      "off_time": "2026-06-19T16:20:00+01:00",
+      "race_id": "917812",
+      "race_title": "Coronation Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Zanthos",
+          "rp_uid": "7830200",
+          "trainer": "Simon & Ed Crisford",
+          "passport_strength_score": 4.6501,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "True Love",
+          "rp_uid": "7466846",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.575,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Diamond Necklace",
+          "rp_uid": "7601609",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.35,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Zanthos",
+        "rp_uid": "7830200",
+        "trainer": "Simon & Ed Crisford",
+        "passport_strength_score": 4.6501,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-20",
+      "course": "Ascot",
+      "off_time": "2026-06-20T15:40:00+01:00",
+      "race_id": "917814",
+      "race_title": "Queen Elizabeth II Jubilee Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Shareholder",
+          "rp_uid": "6000761",
+          "trainer": "K R Burke",
+          "passport_strength_score": 4.6,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Double Rush",
+          "rp_uid": "6345362",
+          "trainer": "Andrew Balding",
+          "passport_strength_score": 3.7,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Rosy Affair",
+          "rp_uid": "5172505",
+          "trainer": "George Boughey",
+          "passport_strength_score": 3.45,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Shareholder",
+        "rp_uid": "6000761",
+        "trainer": "K R Burke",
+        "passport_strength_score": 4.6,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-20",
+      "course": "Ascot",
+      "off_time": "2026-06-20T17:00:00+01:00",
+      "race_id": "919070",
+      "race_title": "Wokingham Stakes",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Trefor",
+          "rp_uid": "5216546",
+          "trainer": "Charles Hills",
+          "passport_strength_score": 3.1211,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Desert Falcon",
+          "rp_uid": "4601476",
+          "trainer": "Julie Camacho",
+          "passport_strength_score": 2.7,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "WIND_SURGERY_FLAG",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Pocklington",
+          "rp_uid": "5172515",
+          "trainer": "Geoff Oldroyd",
+          "passport_strength_score": 2.5,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "WIND_SURGERY_FLAG",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Trefor",
+        "rp_uid": "5216546",
+        "trainer": "Charles Hills",
+        "passport_strength_score": 3.1211,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "off_time": "2026-06-27T14:15:00+01:00",
+      "race_id": "921567",
+      "race_title": "Airlie Stud Stakes (Group 2) (Fillies)",
+      "runner_count": 40,
+      "passport_coverage": 24,
+      "champion_feature_coverage": 24,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Victorious",
+          "rp_uid": "9051033",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 5.1,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Wild Blossom",
+          "rp_uid": "9254357",
+          "trainer": "K R Burke",
+          "passport_strength_score": 4.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Velozee",
+          "rp_uid": "9046195",
+          "trainer": "P Twomey",
+          "passport_strength_score": 4.3334,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Victorious",
+        "rp_uid": "9051033",
+        "trainer": "A P O'Brien",
+        "passport_strength_score": 5.1,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "16 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Tosca No Candis",
+          "rp_uid": "9222249",
+          "trainer": "Robson De Aguiar",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Wateera",
+          "rp_uid": "9254355",
+          "trainer": "K R Burke",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Back To The Lodge",
+          "rp_uid": "9263833",
+          "trainer": "Daniel McLoughlin",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Etonnante",
+          "rp_uid": "9276857",
+          "trainer": "K R Burke",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Citrus Springs",
+          "rp_uid": "9286486",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-06-27",
+      "course": "Curragh",
+      "off_time": "2026-06-27T15:20:00+01:00",
+      "race_id": "919190",
+      "race_title": "Paddy Power Pretty Polly Stakes (Group 1) (Fillies & Mares)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Estrange",
+          "rp_uid": "6079191",
+          "trainer": "David O'Meara",
+          "passport_strength_score": 4.65,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "True Love",
+          "rp_uid": "7466846",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.575,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Kalpana",
+          "rp_uid": "5507022",
+          "trainer": "Andrew Balding",
+          "passport_strength_score": 4.45,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Estrange",
+        "rp_uid": "6079191",
+        "trainer": "David O'Meara",
+        "passport_strength_score": 4.65,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-06-28",
+      "course": "Curragh",
+      "off_time": "2026-06-28T16:35:00+01:00",
+      "race_id": "908061",
+      "race_title": "Dubai Duty Free Irish Derby (Group 1) (No Geldings)",
+      "runner_count": 40,
+      "passport_coverage": 39,
+      "champion_feature_coverage": 39,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Constitution River",
+          "rp_uid": "7748955",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.575,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Handshake",
+          "rp_uid": "8031226",
+          "trainer": "Joseph Patrick O'Brien",
+          "passport_strength_score": 4.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Causeway",
+          "rp_uid": "8144075",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.55,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Constitution River",
+        "rp_uid": "7748955",
+        "trainer": "A P O'Brien",
+        "passport_strength_score": 4.575,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Stpaul'scathedral",
+          "rp_uid": "7780529",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-07-04",
+      "course": "Sandown",
+      "off_time": "2026-07-04T15:35:00+01:00",
+      "race_id": "917815",
+      "race_title": "Coral-Eclipse (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Opera Ballo",
+          "rp_uid": "7055588",
+          "trainer": "Charlie Appleby",
+          "passport_strength_score": 4.95,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Calandagan",
+          "rp_uid": "5218337",
+          "trainer": "F-H Graffard",
+          "passport_strength_score": 4.9,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Gethin",
+          "rp_uid": "6555395",
+          "trainer": "Owen Burrows",
+          "passport_strength_score": 4.825,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Opera Ballo",
+        "rp_uid": "7055588",
+        "trainer": "Charlie Appleby",
+        "passport_strength_score": 4.95,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-07-11",
+      "course": "Newmarket (July)",
+      "off_time": "2026-07-11T16:35:00+01:00",
+      "race_id": "919071",
+      "race_title": "Al Basti Equiworld, Dubai July Cup Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Charles Darwin",
+          "rp_uid": "7400082",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.9,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Almeraq",
+          "rp_uid": "6456207",
+          "trainer": "William Haggas",
+          "passport_strength_score": 4.0,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Albert Einstein",
+          "rp_uid": "7400087",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 3.95,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Charles Darwin",
+        "rp_uid": "7400082",
+        "trainer": "A P O'Brien",
+        "passport_strength_score": 4.9,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "CASH_RUN_CANDIDATE",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Curragh",
+      "off_time": "2026-07-18T00:10:00+01:00",
+      "race_id": "908062",
+      "race_title": "Juddmonte Irish Oaks (Group 1) (Fillies)",
+      "runner_count": 40,
+      "passport_coverage": 39,
+      "champion_feature_coverage": 39,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Blanc De Blanc",
+          "rp_uid": "8187989",
+          "trainer": "Robson De Aguiar",
+          "passport_strength_score": 5.1,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Diamond Necklace",
+          "rp_uid": "7601609",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 4.35,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Precise",
+          "rp_uid": "7601611",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": 3.8,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Blanc De Blanc",
+        "rp_uid": "8187989",
+        "trainer": "Robson De Aguiar",
+        "passport_strength_score": 5.1,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Proudly",
+          "rp_uid": "7601612",
+          "trainer": "A P O'Brien",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-07-18",
+      "course": "Newbury",
+      "off_time": "2026-07-18T15:30:00+01:00",
+      "race_id": "912528",
+      "race_title": "Weatherbys Super Sprint Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 16,
+      "champion_feature_coverage": 16,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Wait Geordie",
+          "rp_uid": "8688678",
+          "trainer": "Hugo Palmer",
+          "passport_strength_score": 3.6,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Niewiadoma",
+          "rp_uid": "8688605",
+          "trainer": "Archie Watson",
+          "passport_strength_score": 2.85,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Vollering",
+          "rp_uid": "8688636",
+          "trainer": "Archie Watson",
+          "passport_strength_score": 2.35,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Wait Geordie",
+        "rp_uid": "8688678",
+        "trainer": "Hugo Palmer",
+        "passport_strength_score": 3.6,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "24 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Chief Minister",
+          "rp_uid": "8688449",
+          "trainer": "Eve Johnson Houghton",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Chianti",
+          "rp_uid": "8688496",
+          "trainer": "Archie Watson",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Mojito Madness",
+          "rp_uid": "8688498",
+          "trainer": null,
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Water Angel",
+          "rp_uid": "8688504",
+          "trainer": null,
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Cymbolism",
+          "rp_uid": "8688595",
+          "trainer": null,
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-08-20",
+      "course": "York",
+      "off_time": "2026-08-20T14:25:00+01:00",
+      "race_id": "910568",
+      "race_title": "Harry's Half Million By Goffs (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 11,
+      "champion_feature_coverage": 11,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Where Love Lives",
+          "rp_uid": "8688704",
+          "trainer": "Kevin Ryan",
+          "passport_strength_score": 4.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Wait Geordie",
+          "rp_uid": "8688678",
+          "trainer": "Hugo Palmer",
+          "passport_strength_score": 3.6,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Innichen",
+          "rp_uid": "8688524",
+          "trainer": "Jack Channon",
+          "passport_strength_score": 3.4833,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Where Love Lives",
+        "rp_uid": "8688704",
+        "trainer": "Kevin Ryan",
+        "passport_strength_score": 4.55,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "LAYOFF_PATTERN",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "29 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Wherewecanboogie",
+          "rp_uid": "8688523",
+          "trainer": "Kevin Ryan",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Battle Fever",
+          "rp_uid": "8688529",
+          "trainer": "Kevin Ryan",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "00ohsosecret",
+          "rp_uid": "8688563",
+          "trainer": "Clive Cox",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "00jumeirah Street",
+          "rp_uid": "8688571",
+          "trainer": "Unknown",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Herbert Hall",
+          "rp_uid": "8688577",
+          "trainer": "Brian Meehan",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-08-22",
+      "course": "Newmarket (July)",
+      "off_time": "2026-08-22T15:10:00+01:00",
+      "race_id": "910566",
+      "race_title": "£200,000 Tattersalls Somerville Auction Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 11,
+      "champion_feature_coverage": 11,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "A Bear Affair",
+          "rp_uid": "8688442",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 3.6,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Capilano",
+          "rp_uid": "8688447",
+          "trainer": "Michael Dods",
+          "passport_strength_score": 2.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Agitator",
+          "rp_uid": "8688475",
+          "trainer": "Oliver Cole",
+          "passport_strength_score": 2.1,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "A Bear Affair",
+        "rp_uid": "8688442",
+        "trainer": "Richard Hannon",
+        "passport_strength_score": 3.6,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "29 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Baddaddan",
+          "rp_uid": "8688443",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Bollengo Boy",
+          "rp_uid": "8688445",
+          "trainer": "Eve Johnson Houghton",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Can't Stop",
+          "rp_uid": "8688446",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carbine Country",
+          "rp_uid": "8688448",
+          "trainer": "William Haggas",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Chief Minister",
+          "rp_uid": "8688449",
+          "trainer": "Eve Johnson Houghton",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-09-10",
+      "course": "Doncaster",
+      "off_time": "2026-09-10T13:50:00+01:00",
+      "race_id": "912529",
+      "race_title": "Weatherbys Scientific £300,000 2-Y-O Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 9,
+      "champion_feature_coverage": 9,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "A Bear Affair",
+          "rp_uid": "8688442",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 3.6,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Green Sovereign",
+          "rp_uid": "8688657",
+          "trainer": "Harry Eustace",
+          "passport_strength_score": 2.35,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Rollthedicebaby",
+          "rp_uid": "8688643",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 2.05,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "A Bear Affair",
+        "rp_uid": "8688442",
+        "trainer": "Richard Hannon",
+        "passport_strength_score": 3.6,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "31 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Baddaddan",
+          "rp_uid": "8688443",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Can't Stop",
+          "rp_uid": "8688446",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carbine Country",
+          "rp_uid": "8688448",
+          "trainer": "William Haggas",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Great Balls O'Fire",
+          "rp_uid": "8688451",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Supermassive",
+          "rp_uid": "8688453",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-10-03",
+      "course": "Newmarket",
+      "off_time": "2026-10-03T14:05:00+01:00",
+      "race_id": "910567",
+      "race_title": "£200,000 Tattersalls October Auction Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 10,
+      "champion_feature_coverage": 10,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "A Bear Affair",
+          "rp_uid": "8688442",
+          "trainer": "Richard Hannon",
+          "passport_strength_score": 3.6,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Capilano",
+          "rp_uid": "8688447",
+          "trainer": "Michael Dods",
+          "passport_strength_score": 2.55,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Agitator",
+          "rp_uid": "8688475",
+          "trainer": "Oliver Cole",
+          "passport_strength_score": 2.1,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "A Bear Affair",
+        "rp_uid": "8688442",
+        "trainer": "Richard Hannon",
+        "passport_strength_score": 3.6,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "30 missing/unraced passport rows",
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Baddaddan",
+          "rp_uid": "8688443",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Bollengo Boy",
+          "rp_uid": "8688445",
+          "trainer": "Eve Johnson Houghton",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Can't Stop",
+          "rp_uid": "8688446",
+          "trainer": "Richard Spencer",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carbine Country",
+          "rp_uid": "8688448",
+          "trainer": "William Haggas",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Clear Code",
+          "rp_uid": "8688450",
+          "trainer": "Andrew Balding",
+          "passport_strength_score": -1.0,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_date": "2026-10-04",
+      "course": "Longchamp",
+      "off_time": "2026-10-04T15:05:00+01:00",
+      "race_id": "921493",
+      "race_title": "Qatar Prix de l'Arc de Triomphe (Group 1) (3yo+ No Geldings) (Grande Course) (Turf)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "champion_feature_coverage": 40,
+      "intent_feature_coverage": 0,
+      "top_3_by_champion_read_availability": [
+        {
+          "horse": "Gethin",
+          "rp_uid": "6555395",
+          "trainer": "Owen Burrows",
+          "passport_strength_score": 4.825,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Estrange",
+          "rp_uid": "6079191",
+          "trainer": "David O'Meara",
+          "passport_strength_score": 4.65,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        },
+        {
+          "horse": "Santorini Star",
+          "rp_uid": "6143216",
+          "trainer": "William Haggas",
+          "passport_strength_score": 4.65,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ],
+          "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Gethin",
+        "rp_uid": "6555395",
+        "trainer": "Owen Burrows",
+        "passport_strength_score": 4.825,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "No current-race intent feature rows available"
+      ],
+      "unraced_new_horse_warnings": []
+    }
+  ],
+  "rules": {
+    "new_build_only": true,
+    "no_training": true,
+    "no_live_engine": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_betting": true,
+    "no_telegram": true,
+    "rpr_archive_only": true
+  }
+}
