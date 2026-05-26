@@ -1,0 +1,50 @@
+{
+  "generated_at": "2026-05-26T06:14:28.429682Z",
+  "feature_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\features\\rp_profile_passport_features_latest.parquet",
+  "passports_converted": 987,
+  "feature_coverage": {
+    "pp_career_runs": 100.0,
+    "pp_win_rate": 100.0,
+    "pp_place_rate": 100.0,
+    "pp_days_since_last": 97.16,
+    "pp_layoff": 97.16,
+    "pp_avg_sp_last5": 97.16,
+    "pp_jockey_continuity": 100.0,
+    "pp_course_seen": 0.0,
+    "pp_or_change_3": 86.22,
+    "pp_class_moved_up": 68.9,
+    "pp_class_moved_down": 68.9
+  },
+  "missing_fields": [
+    "pp_course_seen"
+  ],
+  "schema_match_vs_historical_passport_features": {
+    "historical_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\training\\passport_features.parquet",
+    "historical_columns_present": true,
+    "model_feature_columns_present": [
+      "pp_career_runs",
+      "pp_win_rate",
+      "pp_place_rate",
+      "pp_days_since_last",
+      "pp_layoff",
+      "pp_avg_sp_last5",
+      "pp_jockey_continuity",
+      "pp_course_seen",
+      "pp_or_change_3",
+      "pp_class_moved_up",
+      "pp_class_moved_down"
+    ],
+    "missing_historical_model_features": [],
+    "profile_level_not_race_level": true,
+    "race_id_join_key_available": false
+  },
+  "current_card_usability": {
+    "active_racecard_horses": 1139,
+    "active_racecard_horses_with_profile_features": 987,
+    "coverage_pct": 86.65
+  },
+  "duplicate_passport_uids": 0,
+  "rpr_violations": 0,
+  "rpr_violation_keys": [],
+  "classification": "PASSPORT_FEATURE_BRIDGE_READY"
+}
