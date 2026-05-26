@@ -1,33 +1,43 @@
 # Horse Passport V1
-Generated: 2026-05-25T21:40:36.242247+00:00
+Generated: 2026-05-26T02:07:53.119203+00:00
 
 ## Summary
-- **Total passports**: 189
+- **Total passports**: 987
+- **Existing before run**: 987
+- **Newly appended**: 0
+- **Source horses found in form history**: 987
 - **Build failures**: 0
-- **Cash-run candidates**: 4
-- **Setup-run candidates**: 66
-- **Jockey anomaly candidates** (well_fancied_failure_rate ≥ 50%): 91
+- **Existing duplicate rows skipped**: 0
+- **Cash-run candidates**: 21
+- **Setup-run candidates**: 258
+- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 306
 
 ## Field Coverage
 | Field | Coverage |
 |---|---|
-| days_since_last_run | 100.0% |
-| avg_days_between_runs | 90.5% |
-| sp_trajectory | 73.0% |
-| avg_sp_last5 | 100.0% |
-| going_preference | 43.9% |
-| course_affinity | 33.3% |
+| days_since_last_run | 97.2% |
+| avg_days_between_runs | 87.6% |
+| sp_trajectory | 66.6% |
+| avg_sp_last5 | 97.2% |
+| going_preference | 18.6% |
+| course_affinity | 11.8% |
 | margin_trend | 0.0% |
-| or_trajectory | 76.7% |
-| current_or | 99.5% |
+| or_trajectory | 72.3% |
+| current_or | 96.5% |
 
 ## Top 10 Cash-Run Candidates
 | Horse | SP | WF Rate | WF Fail Rate | Last Run DaysAgo |
 |---|---|---|---|---|
 | Freedom Flame | 2.75 | 100% | 100% | 17d |
 | Or Another | 2.0 | 100% | 100% | 26d |
-| Gaelic Approach | 10.85 | 50% | 67% | 10d |
-| Doralee | 11.95 | 5% | 100% | 25d |
+| Charles Darwin | 1.56 | 100% | 20% | 8d |
+| Dreamlover | 2.62 | 100% | 100% | 18d |
+| Ipanema Queen | 2.66 | 100% | 80% | 22d |
+| Maho Bay | 2.1 | 100% | 33% | 16d |
+| Minnie Hauk | 1.62 | 100% | 33% | 1d |
+| Saxon Street | 2.27 | 100% | 33% | 2d |
+| Almeric | 6.25 | 80% | 25% | 31d |
+| Al Riffa | 4.81 | 67% | 50% | 58d |
 
 ## Top 10 Setup-Run Candidates
 | Horse | Avg Beaten Margin | OR Change | Days Since Run |

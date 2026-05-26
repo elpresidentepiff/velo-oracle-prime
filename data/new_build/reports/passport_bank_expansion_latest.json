@@ -1,0 +1,117 @@
+{
+  "generated_at": "2026-05-26T02:08:05.224792Z",
+  "status": "PASS",
+  "queue_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\rp_scrape_queue\\passport_queue_latest.jsonl",
+  "next_batch_url_list": "C:\\Users\\puror\\velo-oracle-prime\\data\\racing_post_url_lists\\passport_bank_next_batch_latest.txt",
+  "queued_horses": 3595,
+  "queued_for_capture": 0,
+  "next_batch_limit": 500,
+  "next_batch_count": 0,
+  "captured_profiles": 1139,
+  "parsed_passports": 987,
+  "total_passports_after_run": 987,
+  "duplicates": 0,
+  "failures": 0,
+  "no_form_history_horses": 152,
+  "upcoming_race_coverage": 1091,
+  "big_race_entries_coverage": 698,
+  "rpr_violations": 0,
+  "status_counts": {
+    "CAPTURED_NEEDS_FORM_HISTORY_OR_NO_RUNS": 152,
+    "PASSPORT_EXISTS": 987,
+    "NEEDS_SOURCE_REVIEW": 2456
+  },
+  "source_counts": {
+    "upcoming_racecard": 1091,
+    "current_racecard": 44,
+    "big_race_entries": 4,
+    "raw_profile_link_review": 2456
+  },
+  "source_member_counts": {
+    "upcoming_racecard": 1091,
+    "big_race_entries": 698,
+    "raw_profile_link_review": 3595,
+    "recent_profile_capture": 77,
+    "current_racecard": 59
+  },
+  "priority_counts": {
+    "10": 1091,
+    "20": 44,
+    "30": 4,
+    "80": 2456
+  },
+  "top_reasons": {
+    "RAW_PROFILE_LINK_NEEDS_RUNNER_SOURCE_REVIEW": 2456,
+    "UPCOMING_RACECARD_PROFILE": 681,
+    "UPCOMING_RACECARD_RUNNER": 410,
+    "CURRENT_RACECARD_RUNNER": 44,
+    "BIG_RACE_ENTRIES_RUNNER": 4
+  },
+  "next_batch_sample": [],
+  "capture_batches": [
+    {
+      "batch": "passport-bank-batch-001-2026-05-25",
+      "html_files": 500,
+      "sidecar_json_files": 500,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-batch-002-2026-05-25",
+      "html_files": 283,
+      "sidecar_json_files": 283,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-big-race-entries-2026-05-25",
+      "html_files": 28,
+      "sidecar_json_files": 28,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-sources-2026-05-25",
+      "html_files": 4,
+      "sidecar_json_files": 4,
+      "manifest_present": true
+    }
+  ],
+  "parsed_batches": [
+    {
+      "batch": "passport-bank-batch-001-2026-05-25",
+      "horse_profiles": 500,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-batch-002-2026-05-25",
+      "horse_profiles": 283,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-big-race-entries-2026-05-25",
+      "horse_profiles": 0,
+      "races": 28,
+      "runners": 1008
+    },
+    {
+      "batch": "passport-bank-sources-2026-05-25",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    }
+  ],
+  "continuation_commands": [
+    "python scripts/ops/build_rp_passport_bank_queue.py --execute",
+    "python scripts/ops/racing_post_account_collector.py capture --date passport-bank-YYYY-MM-DD-N --url-list data/racing_post_url_lists/passport_bank_next_batch_latest.txt --delay-seconds 1.5 --execute",
+    "python scripts/ops/parse_racing_post_account_capture.py --date passport-bank-YYYY-MM-DD-N --execute",
+    "python scripts/ops/parse_rp_form_history.py --date passport-bank-YYYY-MM-DD-N",
+    "python scripts/ops/new_build_horse_passports.py"
+  ],
+  "rules": {
+    "append_only": true,
+    "no_duplicates": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "rpr_archive_only": true
+  }
+}
