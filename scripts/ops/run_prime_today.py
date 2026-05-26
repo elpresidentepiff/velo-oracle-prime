@@ -213,6 +213,9 @@ def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None
     }
     _SB_URL = resolve_supabase_url()
     _SB_KEY = resolve_supabase_service_key()
+    if not _SB_URL or not _SB_KEY:
+        print("  ⚠ Supabase credentials missing. Persistent truth will be SKIPPED.")
+        print("  ⚠ Fallback: Use the Supabase Dashboard directly to verify historical records or run with --dry-run.")
     _SB_HDRS = {
         "apikey": _SB_KEY,
         "Authorization": f"Bearer {_SB_KEY}",
@@ -1139,6 +1142,8 @@ def sb_get(path: str) -> list[dict]:
 def _fetch_race_rpdc(race_id: str) -> dict[str, dict]:
     """Fetch RPDC data for all runners in a race."""
     rows = sb_get(f"/runner_release_candidates?race_id=eq.{race_id}")
+    if not rows:
+        log.warning("RPDC zero-runner warning: No candidates found for race_id=%s", race_id)
     return {r["horse_id"]: r for r in rows}
 
 
@@ -1270,6 +1275,25 @@ def main():
 
     print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
     _timer.mark("racecard_load", races=len(raw_races))
+
+    # ── RACECARD CACHE COMPLETENESS GATE ─────────────────────────────────────
+    # Hard pre-scoring gate. If the loaded card is incomplete (stale cache,
+    # wrong date, suspiciously low races/runners) the engine must not proceed.
+    from src.velo.racecard_cache_gate import validate_racecard, print_gate_result
+    _gate_result = validate_racecard(
+        raw_races=raw_races,
+        date_str=date_str,
+        racecard_source=racecard_source,
+        sb_url=_SB_URL,
+        sb_key=_SB_KEY,
+    )
+    print_gate_result(_gate_result)
+    if not _gate_result.passed:
+        print("BAD_RACECARD_CACHE_BLOCKED — engine halted before scoring.")
+        print("Fix: delete or replace the stale cache file and re-run.")
+        print(f"  Cache: data/racecards_{date_tag}_standard.json")
+        sys.exit(1)
+    # ── END GATE ──────────────────────────────────────────────────────────────
 
     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
     print("\nSTEP 2: Normalize (canonical schema — no raw payloads to workers)")
@@ -2089,7 +2113,18 @@ def main():
         _close_pipeline_run(db, run_id, "PASS", persist_ok, total_runners)
         if persistence_enabled:
             _emit_daily_truth_packet(date_str, repair_local_archive=True)
+        
+        # ── Supabase Write-Proof Report ──────────────────────────────────────
         print(f"\nPASS — {persist_ok}/{len(normalized)} races in velo_verdicts")
+        if persist_ok > 0:
+            print(f"  SUPABASE WRITE-PROOF REPORT — {TODAY_DISPLAY}")
+            print(f"  {'-' * 45}")
+            for rid, ok in persist_map.items():
+                if ok:
+                    print(f"  ✓ {rid}")
+            print(f"  {'-' * 45}")
+            print(f"  Total verified writes: {persist_ok}")
+        
         return RunPrimeResult(
             status="PASS",
             exit_code=0,
