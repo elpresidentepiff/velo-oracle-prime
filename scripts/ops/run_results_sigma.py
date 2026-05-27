@@ -385,6 +385,24 @@ def main():
 
     print(f"  Results indexed: {len(results_by_id)} races")
 
+    # Secondary index by (course_lower, bst_time) — used when SL-format race IDs
+    # don't match Racing API numeric IDs on the predictions side.
+    def _to_bst_hhmm(utc_hhmm: str) -> str:
+        try:
+            h, m = map(int, utc_hhmm.replace(".", ":").split(":"))
+            bst_h = h + 1
+            if bst_h >= 13:
+                bst_h -= 12
+            return f"{bst_h}.{m:02d}"
+        except Exception:
+            return utc_hhmm
+
+    results_by_course_time: dict = {}
+    for _rd in results_by_id.values():
+        _ck = (_rd["course"].lower().strip(), _rd["off"])
+        if _ck not in results_by_course_time:
+            results_by_course_time[_ck] = _rd
+
     # ── STEP 3: Reconcile ─────────────────────────────────────────────────────
     print("\nSTEP 3: Reconcile predictions vs actuals")
 
@@ -404,6 +422,17 @@ def main():
         predicted_horse_id = pred.get("top_rank_horse_id", "")
         vpp = pred.get("velo_prime_prob", 0)
 
+        via_course_time = False
+        if not result:
+            # Fallback: match by course + off_time for SL-scraped results
+            fb = local_backup.get(race_id, {})
+            fb_course = fb.get("course", "").lower().strip()
+            fb_off = fb.get("off_time", "")
+            if fb_course and fb_off:
+                bst_off = _to_bst_hhmm(fb_off)
+                result = results_by_course_time.get((fb_course, bst_off))
+                if result:
+                    via_course_time = True
         if not result:
             no_result.append(race_id)
             continue
@@ -424,19 +453,26 @@ def main():
             continue
 
         # ── Non-runner gate: predicted horse did not start/finish ─────────────
-        full_runners = result.get("full_runners", [])
-        for runner in full_runners:
-            if runner.get("horse_id") == predicted_horse_id:
-                pos = str(runner.get("position", "")).strip().upper()
-                if pos in DNF_POSITIONS:
-                    non_runners.append(race_id)
-                    print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded from stats")
-                break
-        if race_id in non_runners:
-            continue
+        # Skip for course-time matched results (SL top_horses only — full field unavailable)
+        if not via_course_time:
+            full_runners = result.get("full_runners", [])
+            for runner in full_runners:
+                if runner.get("horse_id") == predicted_horse_id:
+                    pos = str(runner.get("position", "")).strip().upper()
+                    if pos in DNF_POSITIONS:
+                        non_runners.append(race_id)
+                        print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded from stats")
+                    break
+            if race_id in non_runners:
+                continue
 
-        is_hit = predicted_horse_id == result["winner_id"]
-        is_frame = predicted_horse_id in result["top3_ids"]
+        if via_course_time:
+            _pick_norm = info.get("horse", "").lower().strip()
+            is_hit = bool(_pick_norm and _pick_norm == result["winner_horse"].lower().strip())
+            is_frame = bool(_pick_norm and _pick_norm in [n.lower().strip() for n in result.get("top3_names", [])])
+        else:
+            is_hit = predicted_horse_id == result["winner_id"]
+            is_frame = predicted_horse_id in result["top3_ids"]
         miss_class = "n/a"
 
         if is_hit:
@@ -507,6 +543,79 @@ def main():
         if r["outcome"] == "MISS":
             mc = r["miss_class"]
             miss_classes[mc] = miss_classes.get(mc, 0) + 1
+
+    # ── COMPLETENESS GATE ─────────────────────────────────────────────────────
+    # Sigma must have >= 95% result coverage before any learning or final reporting.
+    # Below threshold: write DIAGNOSTIC artifact only. NO sigma_audits. NO learning.
+    # NO Telegram final. NO Council/Mission Control finalization.
+    COMPLETENESS_THRESHOLD = 0.95
+    expected_races = len(predictions)
+    coverage_ratio = total_matched / expected_races if expected_races else 0
+    is_incomplete = coverage_ratio < COMPLETENESS_THRESHOLD
+
+    if is_incomplete:
+        _needed = int(expected_races * COMPLETENESS_THRESHOLD) + 1
+        _coverage_pct = f"{coverage_ratio:.1%}"
+        print(f"\n{'=' * 60}")
+        print("COMPLETENESS GATE — BLOCKED")
+        print(f"  Expected races:  {expected_races}")
+        print(f"  Matched:         {total_matched} ({_coverage_pct})")
+        print(f"  Threshold:       {COMPLETENESS_THRESHOLD:.0%} (need ≥{_needed})")
+        print(f"  Status:          SIGMA_RESULTS_INCOMPLETE_BLOCKED")
+        print(f"  Learning:        BLOCKED")
+        print(f"  Final reports:   BLOCKED")
+        print(f"  Action:          Obtain full result source for all {expected_races} races, then rerun.")
+
+        _gate_msg = (
+            f"SIGMA_RESULTS_INCOMPLETE_BLOCKED — {TODAY_DISPLAY}\n"
+            f"Expected: {expected_races} races scored\n"
+            f"Matched:  {total_matched} ({_coverage_pct}) — need ≥{_needed} ({COMPLETENESS_THRESHOLD:.0%})\n"
+            f"Unmatched: {no_result_ct} races have no result\n"
+            f"\nClassification: PARTIAL_RESULTS_DIAGNOSTIC_ONLY\n"
+            f"Learning: BLOCKED\n"
+            f"Final reports: BLOCKED\n"
+            f"\nAction: Full result source required covering all {expected_races} races.\n"
+            f"Rerun Sigma when complete coverage is available."
+        )
+        tg(_gate_msg)
+
+        _sigma_dir = ROOT / "data" / "sigma_results"
+        _sigma_dir.mkdir(parents=True, exist_ok=True)
+        _diag = {
+            "date": race_date,
+            "generated_at": utc_now_iso(),
+            "sigma_status": "PARTIAL_RESULTS_DIAGNOSTIC_ONLY",
+            "completeness_gate": "BLOCKED",
+            "expected_predictions": expected_races,
+            "result_races_available": len(results_by_id),
+            "matched": total_matched,
+            "coverage_ratio": round(coverage_ratio, 4),
+            "threshold": COMPLETENESS_THRESHOLD,
+            "no_result_count": no_result_ct,
+            "learning_blocked": True,
+            "telegram_final_blocked": True,
+            "sigma_audits_written": 0,
+            "learned_patterns": 0,
+            "miss_classes": miss_classes,
+            "diagnostic_rows": [
+                {
+                    "race_id": r["race_id"],
+                    "course": r["course"],
+                    "off": r["off"],
+                    "predicted": r["predicted"],
+                    "outcome": r["outcome"],
+                    "velo_prime_prob": r["velo_prime_prob"],
+                    "miss_class": r.get("miss_class"),
+                }
+                for r in all_matched
+            ],
+        }
+        _dated_path = _sigma_dir / f"sigma_results_{race_date.replace('-', '_')}.json"
+        _dated_path.write_text(json.dumps(_diag, indent=2))
+        print(f"\nDiagnostic artifact: {_dated_path}")
+        print(f"{'=' * 60}")
+        _close_sigma_run(run_id, status="FAIL", error="SIGMA_RESULTS_INCOMPLETE_BLOCKED")
+        sys.exit(2)
 
     # ── STEP 4: runner_results note ───────────────────────────────────────────
     # runner_results has FK constraints to races + horse_profiles tables.
