@@ -269,7 +269,16 @@ def validate_racecard(
     """
     Run all completeness checks and return a CacheGateResult.
     Does not raise or exit — caller decides what to do with result.
+
+    VELO_FORCE_CARD=1: operator asserts card is complete as-is (e.g. genuine
+    small-card day with a single UK meeting). All checks still run and are
+    reported, but blocking failures are downgraded to warnings so the gate
+    passes. Use only when Racing API is unavailable and you have manually
+    confirmed the card is complete.
     """
+    import os as _os
+    force_card = _os.getenv("VELO_FORCE_CARD", "").strip() in ("1", "true", "yes")
+
     uk_ire = _collect_uk_ire_races(raw_races)
     courses = sorted({r.get("course", "") for r in uk_ire if r.get("course")})
     total_runners = sum(len(r.get("runners", [])) for r in uk_ire)
@@ -283,6 +292,13 @@ def validate_racecard(
         _check_rpr_live_leak(uk_ire),
         _check_sidecar_date_match(uk_ire, date_str, sb_url, sb_key),
     ]
+
+    if force_card:
+        # Downgrade all blocking failures to warn-only — operator asserts card complete
+        for c in checks:
+            if not c.passed and c.blocking:
+                c.blocking = False
+                c.message = f"[FORCE_CARD_OVERRIDE] {c.message}"
 
     passed = all(c.passed for c in checks if c.blocking)
 
@@ -301,7 +317,11 @@ def validate_racecard(
 
 
 def print_gate_result(result: CacheGateResult) -> None:
+    import os as _os
+    force_card = _os.getenv("VELO_FORCE_CARD", "").strip() in ("1", "true", "yes")
     verdict = "PASS" if result.passed else "BAD_RACECARD_CACHE_BLOCKED"
+    if force_card and result.passed:
+        verdict = "PASS (FORCE_CARD_OVERRIDE)"
     print(f"\n{'=' * 60}")
     print(f"  RACECARD CACHE GATE — {verdict}")
     print(f"  date: {result.date_str}  source: {result.racecard_source}")
