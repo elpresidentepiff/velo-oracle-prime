@@ -58,11 +58,13 @@ async def predict_full(request: PredictRequest, api_key: str = Header(None, alia
     """
     validate_api_key(api_key)
 
-    try:
-        # Load UMA
-        from app.engine.uma import UMA
+    # UMA QUARANTINED — Forensic Containment Active
+    logger.critical("API ACCESS BLOCKED: /full endpoint attempted. UMA is QUARANTINED.")
+    raise HTTPException(status_code=503, detail="UMA Brain is QUARANTINED for forensic containment. Use /quick or /ensemble.")
 
-        uma = UMA()
+    try:
+        # Load UMA (REMOVED - QUARANTINED)
+        # from app.engine.uma import UMA
         uma.load_models()
     except ImportError as e:
         logger.error("Full prediction: model dependency missing — %s", e)

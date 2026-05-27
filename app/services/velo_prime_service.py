@@ -1028,42 +1028,17 @@ def persist_race_predictions(
             msg = str(exc)
             return any(col in msg for col in cols)
 
-        _schema_drift = False
-        _stripped: set[str] = set()
         try:
             sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
         except Exception as _upsert_err:
-            if not _is_schema_error(_upsert_err):
-                raise
-            # Schema error — find and strip the offending column group, retry once per group
-            for _grp_name, _grp_cols, _grp_hint in _optional_col_groups:
-                if _grp_name in _stripped:
-                    continue
-                if _error_names_group(_upsert_err, _grp_cols):
-                    _schema_drift = True
-                    log.critical(
-                        "SCHEMA_DRIFT: velo_verdicts upsert stripping %s columns — "
-                        "data is being SILENTLY LOST. Fix: %s | race=%s",
-                        _grp_name,
-                        _grp_hint,
-                        race.get("race_id"),
-                    )
-                    for _col in _grp_cols:
-                        row.pop(_col, None)
-                    _stripped.add(_grp_name)
-                    try:
-                        sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
-                        break
-                    except Exception as _retry_err:
-                        _upsert_err = _retry_err
-                        if not _is_schema_error(_retry_err):
-                            raise
-                        continue
-            else:
-                raise _upsert_err
+            if _is_schema_error(_upsert_err):
+                log.critical(
+                    "SCHEMA_DRIFT DETECTED: Hard block on persist. Truth integrity compromised. | race=%s",
+                    race.get("race_id"),
+                )
+                raise RuntimeError(f"SCHEMA_DRIFT on velo_verdicts: {_upsert_err}") from _upsert_err
+            raise _upsert_err
 
-        if _schema_drift:
-            return False
         log.info(
             "Persisted verdict for race %s — top: %s (%.4f)",
             race.get("race_id"),

@@ -130,25 +130,9 @@ def _racing_headers() -> dict[str, str]:
 
 
 def _legacy_tg(text: str) -> bool:
-    if not TOKEN or not CHAT_ID:
-        print(f"  [TG SKIP — no token/chat]: {text[:80]}")
-        return False
-    try:
-        body = json.dumps({"chat_id": CHAT_ID, "text": text[:4096]}).encode()
-        req = urllib.request.Request(
-            f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=body, headers={"Content-Type": "application/json"}
-        )
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            if resp.status != 200:
-                print(f"  [TG FAIL — HTTP {resp.status}]: {text[:60]}")
-                return False
-        return True
-    except urllib.error.HTTPError as e:
-        print(f"  [TG FAIL — HTTP {e.code} {e.reason}]: {text[:60]}")
-        return False
-    except Exception as e:
-        print(f"  [TG FAIL]: {e}")
-        return False
+    """Disable Telegram for containment."""
+    print(f"[CONTAINMENT NO-OP] TG: {text[:60]}")
+    return False
 
 
 def tg(text: str, label: str = "generic") -> bool:
