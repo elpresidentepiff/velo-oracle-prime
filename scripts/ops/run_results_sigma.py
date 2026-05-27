@@ -383,7 +383,37 @@ def main():
             "full_runners": runners,
         }
 
-    print(f"  Results indexed: {len(results_by_id)} races")
+    print(f"  Results indexed: {len(results_by_id)} races (SL/API source)")
+
+    # ── RP results overlay: real race IDs, full field, authoritative truth ───
+    # parse_rp_results_capture.py writes this file. When present it is the
+    # primary source. Its race IDs match VELO verdict IDs directly (no fallback
+    # needed). It overwrites any SL entry for the same race_id.
+    rp_results_path = ROOT / "data" / "results" / f"rp_results_{race_date.replace('-', '_')}.json"
+    rp_loaded = 0
+    if rp_results_path.exists():
+        try:
+            rp_data = json.loads(rp_results_path.read_text())
+            for rr in rp_data.get("results", []):
+                rid = str(rr.get("race_id", ""))
+                if not rid or not rr.get("winner_horse"):
+                    continue
+                results_by_id[rid] = {
+                    "course": rr.get("course", ""),
+                    "off": rr.get("off", ""),
+                    "race_name": (rr.get("race_name") or "")[:40],
+                    "winner_horse": rr["winner_horse"],
+                    "winner_id": rr.get("winner_id", ""),
+                    "winner_sp": rr.get("winner_sp", 0),
+                    "top3_ids": rr.get("top3_ids", []),
+                    "top3_names": rr.get("top3_names", []),
+                    "full_runners": rr.get("runners", []),
+                    "source": "racing_post",
+                }
+                rp_loaded += 1
+            print(f"  RP results loaded: {rp_loaded} races (merged — now {len(results_by_id)} total)")
+        except Exception as _e:
+            print(f"  [WARN] RP results load failed: {_e}")
 
     # Secondary index by (course_lower, bst_time) — used when SL-format race IDs
     # don't match Racing API numeric IDs on the predictions side.
@@ -397,9 +427,31 @@ def main():
         except Exception:
             return utc_hhmm
 
+    def _norm_course(name: str) -> str:
+        """Normalise course name: lowercase, strip parenthetical suffixes like (AW)."""
+        import re as _re
+        return _re.sub(r"\s*\([^)]*\)", "", (name or "")).lower().strip()
+
+    def _candidate_bst_times(utc_hhmm: str, tolerance_min: int = 10) -> list[str]:
+        """Return BST H.MM candidates within ±tolerance_min of the UTC input."""
+        try:
+            h, m = map(int, utc_hhmm.replace(".", ":").split(":"))
+        except Exception:
+            return [utc_hhmm]
+        candidates = []
+        total_utc_min = h * 60 + m
+        for delta in range(-tolerance_min, tolerance_min + 1):
+            cand_total = total_utc_min + delta + 60  # +60 = UTC→BST
+            cand_h = (cand_total // 60) % 24
+            cand_m = cand_total % 60
+            bst_h = cand_h - 12 if cand_h >= 13 else cand_h
+            if bst_h > 0:
+                candidates.append(f"{bst_h}.{cand_m:02d}")
+        return candidates
+
     results_by_course_time: dict = {}
     for _rd in results_by_id.values():
-        _ck = (_rd["course"].lower().strip(), _rd["off"])
+        _ck = (_norm_course(_rd["course"]), _rd["off"])
         if _ck not in results_by_course_time:
             results_by_course_time[_ck] = _rd
 
@@ -424,15 +476,17 @@ def main():
 
         via_course_time = False
         if not result:
-            # Fallback: match by course + off_time for SL-scraped results
+            # Fallback: match by course + off_time for SL-scraped results.
+            # Uses normalised course name (strips "(AW)" etc.) and ±3 min tolerance.
             fb = local_backup.get(race_id, {})
-            fb_course = fb.get("course", "").lower().strip()
+            fb_course = _norm_course(fb.get("course", ""))
             fb_off = fb.get("off_time", "")
             if fb_course and fb_off:
-                bst_off = _to_bst_hhmm(fb_off)
-                result = results_by_course_time.get((fb_course, bst_off))
-                if result:
-                    via_course_time = True
+                for bst_cand in _candidate_bst_times(fb_off):
+                    result = results_by_course_time.get((fb_course, bst_cand))
+                    if result:
+                        via_course_time = True
+                        break
         if not result:
             no_result.append(race_id)
             continue
