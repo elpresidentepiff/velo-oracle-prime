@@ -1305,9 +1305,9 @@ def main():
             feature_health="BLOCKED",
             active_formula="BLOCKED_BEFORE_SCORING",
             excluded_live_components=[],
-            rpdc_coverage=0.0,
-            ratings_source_status="BLOCKED",
-            supabase_write_proof=False,
+            race_scoring_coverage_pct=0.0,
+            persistence_status="BLOCKED",
+            supabase_write_attempt_success=False,
             decision_tier_status="BLOCKED",
             learning_gate="BLOCKED_SOURCE_UNKNOWN",
             next_safe_command="python scripts/ops/velo_session_start_check.py",
@@ -2085,9 +2085,9 @@ def main():
                 feature_health=_fh,
                 active_formula=f"sqpe_v17 | {_canonical_source}",
                 excluded_live_components=[],
-                rpdc_coverage=float(len(scored)) / max(len(normalized), 1) * 100,
-                ratings_source_status="OK" if persist_ok > 0 else "FAIL",
-                supabase_write_proof=(persist_ok > 0 and persistence_enabled),
+                race_scoring_coverage_pct=float(len(scored)) / max(len(normalized), 1) * 100,
+                persistence_status="OK" if persist_ok > 0 else "FAIL",
+                supabase_write_attempt_success=(persist_ok > 0 and persistence_enabled),
                 decision_tier_status=final_status,
                 learning_gate=_learning_gate,
                 next_safe_command="python scripts/ops/velo_session_start_check.py",
@@ -2206,6 +2206,38 @@ if __name__ == "__main__":
     except SystemExit:
         raise
     except Exception as exc:
+        # ── HARNESS: best-effort observability on unhandled exception ─────────
+        # This is an UNCONTROLLED exit path. We attempt to write an observability
+        # packet but cannot guarantee it — the exception may have occurred before
+        # date_str or commit_sha were resolved.
+        # Classification: OBSERVABILITY_MANDATORY_ON_CONTROLLED_EXIT_PATHS
+        # Controlled paths: PASS / FAIL / DEGRADED / BLOCKED
+        # Uncontrolled path (here): best-effort only, no guarantee.
+        try:
+            from datetime import date as _exc_date
+            _exc_date_str = _exc_date.today().isoformat()
+            _exc_sha = (os.getenv("RAILWAY_GIT_COMMIT_SHA") or os.getenv("GIT_COMMIT_SHA") or "unknown")[:40]
+            _obs_exc = _build_obs_packet(
+                date_str=_exc_date_str,
+                source_truth="SOURCE_UNKNOWN_BLOCK",
+                feature_health="BLOCKED",
+                active_formula="UNHANDLED_EXCEPTION",
+                excluded_live_components=[],
+                race_scoring_coverage_pct=0.0,
+                persistence_status="FAIL",
+                supabase_write_attempt_success=False,
+                decision_tier_status="EXCEPTION",
+                learning_gate="BLOCKED_EXCEPTION",
+                next_safe_command="python scripts/ops/velo_session_start_check.py",
+                warnings=[f"UNHANDLED_EXCEPTION: {type(exc).__name__}: {str(exc)[:200]}"],
+                gate_fires={"gate_source_unknown_block": False},
+                extra={"git_commit_sha": _exc_sha, "exception_type": type(exc).__name__},
+            )
+            _write_obs_packet(_obs_exc)
+        except Exception as _obs_exc_err:
+            # Observability write itself failed — print only, do not mask original
+            print(f"  [HARNESS WARN] Exception-path observability write failed: {_obs_exc_err}")
+        # ─────────────────────────────────────────────────────────────────────
         _sb_url = resolve_supabase_url()
         _sb_key = resolve_supabase_service_key()
         active_run_id = (os.getenv("_ACTIVE_PIPELINE_RUN_ID") or "").strip()

@@ -13,6 +13,17 @@ Hard constraints:
   - No model changes
   - No live-state mutation
 
+Field naming — semantic accuracy:
+  race_scoring_coverage_pct  : percentage of normalised races that were scored
+                               (NOT RPDC coverage — renamed from rpdc_coverage)
+  persistence_status         : local write attempt status — "OK", "FAIL", "BLOCKED"
+                               (NOT ratings source status — renamed from ratings_source_status)
+  supabase_write_attempt_success : True if the local persist call reported success.
+                               This is NOT independent Supabase readback verification.
+                               Future readback proof must use a separate field:
+                               supabase_readback_verified (not yet implemented)
+                               (renamed from supabase_write_proof)
+
 Usage:
     # Called programmatically from run_prime_today.py:
     from write_velo_run_observability import write_observability_packet
@@ -47,7 +58,7 @@ SOURCE_LABELS = frozenset({
 })
 
 # ── Schema version ────────────────────────────────────────────────────────────
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"  # bumped: field renames for semantic accuracy
 
 
 def _get_commit_sha() -> str:
@@ -82,9 +93,11 @@ def build_observability_packet(
     feature_health: str,
     active_formula: str,
     excluded_live_components: list[str],
-    rpdc_coverage: float,
-    ratings_source_status: str,
-    supabase_write_proof: bool,
+    # ── Renamed fields (semantic accuracy patch) ──────────────────────────────
+    race_scoring_coverage_pct: float,          # was: rpdc_coverage
+    persistence_status: str,                   # was: ratings_source_status
+    supabase_write_attempt_success: bool,      # was: supabase_write_proof
+    # ── Unchanged fields ──────────────────────────────────────────────────────
     decision_tier_status: str,
     learning_gate: str,
     next_safe_command: str,
@@ -93,13 +106,48 @@ def build_observability_packet(
     warnings: list[str] | None = None,
     gate_fires: dict[str, bool] | None = None,
     extra: dict[str, Any] | None = None,
+    # ── Deprecated aliases (accepted but not stored — raise on use) ───────────
+    rpdc_coverage: float | None = None,
+    ratings_source_status: str | None = None,
+    supabase_write_proof: bool | None = None,
 ) -> dict[str, Any]:
     """
     Build the canonical observability packet dict.
 
     All 11 mandatory fields from VELO_OBSERVABILITY_CONTRACT_V1 are required.
     Returns a dict ready for JSON serialisation.
+
+    Field semantics (v1.1.0):
+      race_scoring_coverage_pct
+          Percentage of normalised races that were scored by SQPE.
+          This is NOT RPDC (Racing Post Data Coverage). Renamed to prevent
+          overclaiming about external data source coverage.
+
+      persistence_status
+          Status of the Supabase persist attempt: "OK", "FAIL", or "BLOCKED".
+          This is NOT the ratings source status. Renamed to reflect what it
+          actually measures.
+
+      supabase_write_attempt_success
+          True if the local persist call reported success.
+          This is NOT independent Supabase readback verification.
+          Future independent readback proof must use:
+            supabase_readback_verified  (not yet implemented)
     """
+    # ── Deprecated alias guard ────────────────────────────────────────────────
+    if rpdc_coverage is not None:
+        raise TypeError(
+            "rpdc_coverage is deprecated. Use race_scoring_coverage_pct instead."
+        )
+    if ratings_source_status is not None:
+        raise TypeError(
+            "ratings_source_status is deprecated. Use persistence_status instead."
+        )
+    if supabase_write_proof is not None:
+        raise TypeError(
+            "supabase_write_proof is deprecated. Use supabase_write_attempt_success instead."
+        )
+
     if source_truth not in SOURCE_LABELS:
         raise ValueError(
             f"source_truth '{source_truth}' is not a valid source label. "
@@ -123,9 +171,14 @@ def build_observability_packet(
         "feature_health": feature_health,
         "active_formula": active_formula,
         "excluded_live_components": excluded_live_components,
-        "rpdc_coverage": rpdc_coverage,
-        "ratings_source_status": ratings_source_status,
-        "supabase_write_proof": supabase_write_proof,
+        # Renamed fields (v1.1.0 semantic accuracy patch):
+        "race_scoring_coverage_pct": race_scoring_coverage_pct,
+        "persistence_status": persistence_status,
+        "supabase_write_attempt_success": supabase_write_attempt_success,
+        # NOTE: supabase_write_attempt_success is the local write attempt result.
+        # It is NOT independent Supabase readback verification.
+        # Future readback proof must be a separate field: supabase_readback_verified
+        "supabase_readback_verified": None,  # placeholder — not yet implemented
         "decision_tier_status": decision_tier_status,
         "learning_gate": learning_gate,
         "next_safe_command": next_safe_command,
@@ -190,15 +243,18 @@ def validate_packet_schema(packet: dict[str, Any]) -> list[str]:
     """
     Validate that a packet contains all 11 mandatory observability fields.
     Returns a list of missing/invalid field names (empty = valid).
+
+    Uses v1.1.0 field names. Old field names (rpdc_coverage, ratings_source_status,
+    supabase_write_proof) are treated as schema errors.
     """
     required_fields = [
         "source_truth",
         "feature_health",
         "active_formula",
         "excluded_live_components",
-        "rpdc_coverage",
-        "ratings_source_status",
-        "supabase_write_proof",
+        "race_scoring_coverage_pct",       # was: rpdc_coverage
+        "persistence_status",              # was: ratings_source_status
+        "supabase_write_attempt_success",  # was: supabase_write_proof
         "decision_tier_status",
         "git_commit_sha",
         "learning_gate",
@@ -207,14 +263,30 @@ def validate_packet_schema(packet: dict[str, Any]) -> list[str]:
     missing = [f for f in required_fields if f not in packet]
     errors = list(missing)
 
+    # Detect old field names — treat as schema errors
+    old_fields = {
+        "rpdc_coverage": "race_scoring_coverage_pct",
+        "ratings_source_status": "persistence_status",
+        "supabase_write_proof": "supabase_write_attempt_success",
+    }
+    for old, new in old_fields.items():
+        if old in packet:
+            errors.append(f"deprecated field '{old}' found — rename to '{new}'")
+
     # Type checks
     if "source_truth" in packet and packet["source_truth"] not in SOURCE_LABELS:
         errors.append(f"source_truth '{packet['source_truth']}' not in SOURCE_LABELS")
-    if "rpdc_coverage" in packet and not isinstance(packet["rpdc_coverage"], (int, float)):
-        errors.append("rpdc_coverage must be numeric")
-    if "supabase_write_proof" in packet and not isinstance(packet["supabase_write_proof"], bool):
-        errors.append("supabase_write_proof must be boolean")
-    if "excluded_live_components" in packet and not isinstance(packet["excluded_live_components"], list):
+    if "race_scoring_coverage_pct" in packet and not isinstance(
+        packet["race_scoring_coverage_pct"], (int, float)
+    ):
+        errors.append("race_scoring_coverage_pct must be numeric")
+    if "supabase_write_attempt_success" in packet and not isinstance(
+        packet["supabase_write_attempt_success"], bool
+    ):
+        errors.append("supabase_write_attempt_success must be boolean")
+    if "excluded_live_components" in packet and not isinstance(
+        packet["excluded_live_components"], list
+    ):
         errors.append("excluded_live_components must be a list")
 
     return errors
@@ -254,9 +326,9 @@ def main() -> int:
         feature_health="UNKNOWN",
         active_formula="UNKNOWN — run via run_prime_today.py",
         excluded_live_components=[],
-        rpdc_coverage=0.0,
-        ratings_source_status="UNKNOWN",
-        supabase_write_proof=False,
+        race_scoring_coverage_pct=0.0,
+        persistence_status="UNKNOWN",
+        supabase_write_attempt_success=False,
         decision_tier_status="UNKNOWN",
         learning_gate="BLOCKED_NO_RUN",
         next_safe_command="python scripts/ops/velo_session_start_check.py",

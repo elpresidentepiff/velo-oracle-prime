@@ -112,9 +112,9 @@ class TestObservabilityArtifact:
             feature_health="HEALTHY",
             active_formula="VELO_PRIME_V10_1",
             excluded_live_components=[],
-            rpdc_coverage=100.0,
-            ratings_source_status="OK",
-            supabase_write_proof=True,
+            race_scoring_coverage_pct=100.0,       # was: rpdc_coverage
+            persistence_status="OK",               # was: ratings_source_status
+            supabase_write_attempt_success=True,   # was: supabase_write_proof
             decision_tier_status="PASS",
             learning_gate="ELIGIBLE",
             next_safe_command="python scripts/ops/run_prime_today.py --dry-run",
@@ -164,12 +164,38 @@ class TestObservabilityArtifact:
         errors = validate_packet_schema(packet)
         assert "learning_gate" in errors
 
-    def test_validate_rejects_wrong_type_for_supabase_write_proof(self):
-        """supabase_write_proof must be boolean."""
+    def test_validate_rejects_wrong_type_for_supabase_write_attempt_success(self):
+        """supabase_write_attempt_success must be boolean."""
         packet = build_observability_packet(**self._valid_packet_kwargs())
-        packet["supabase_write_proof"] = "yes"
+        packet["supabase_write_attempt_success"] = "yes"
         errors = validate_packet_schema(packet)
-        assert any("supabase_write_proof" in e for e in errors)
+        assert any("supabase_write_attempt_success" in e for e in errors)
+
+    def test_deprecated_old_field_names_raise_type_error(self):
+        """Using old field names (rpdc_coverage, ratings_source_status, supabase_write_proof) must raise TypeError."""
+        kwargs = self._valid_packet_kwargs()
+        with pytest.raises(TypeError, match="rpdc_coverage is deprecated"):
+            build_observability_packet(**{**kwargs, "rpdc_coverage": 100.0})
+        with pytest.raises(TypeError, match="ratings_source_status is deprecated"):
+            build_observability_packet(**{**kwargs, "ratings_source_status": "OK"})
+        with pytest.raises(TypeError, match="supabase_write_proof is deprecated"):
+            build_observability_packet(**{**kwargs, "supabase_write_proof": True})
+
+    def test_validate_detects_old_field_names_as_schema_errors(self):
+        """validate_packet_schema must flag old field names as schema errors."""
+        packet = build_observability_packet(**self._valid_packet_kwargs())
+        # Manually inject old field names to simulate a stale packet
+        packet["rpdc_coverage"] = 100.0
+        errors = validate_packet_schema(packet)
+        assert any("rpdc_coverage" in e for e in errors)
+
+    def test_supabase_readback_verified_placeholder_present(self):
+        """supabase_readback_verified must be present as None (not yet implemented)."""
+        packet = build_observability_packet(**self._valid_packet_kwargs())
+        assert "supabase_readback_verified" in packet
+        assert packet["supabase_readback_verified"] is None, (
+            "supabase_readback_verified must be None until independent readback is implemented"
+        )
 
     def test_dry_run_does_not_create_file(self, tmp_path, monkeypatch):
         """Dry-run mode must not write any file to disk."""
