@@ -159,6 +159,17 @@ if os.getenv("VELO_EXECUTION_MODE") == "LIVE":
 
 Full audit: `data/evidence_vault/velo_unified_evidence_audit_v1.json`
 
+Doctrine scorecard generator:
+
+```bash
+PYTHONPATH=. python scripts/audit/build_doctrine_market_scorecard.py \
+  --input data/your_reconciled_export.csv
+```
+
+Outputs:
+- `data/doctrine_market_scorecard_latest.json`
+- `data/doctrine_market_scorecard_latest.md`
+
 ---
 
 ## Legacy History

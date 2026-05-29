@@ -213,6 +213,16 @@ from src.velo.racecard_loader import (
     load_racecards as _racecard_load,
     load_rp_merged_as_racecards as _load_rp_merged_as_racecards,
 )
+# ── HARNESS: source truth enforcement + observability writer (Phase 2) ─────────
+from src.velo.source_truth_enforcer import (
+    SourceTruthBlockError as _SourceTruthBlockError,
+    SourceTruthDegradedWarning as _SourceTruthDegradedWarning,
+    enforce_source_truth as _enforce_source_truth,
+)
+from write_velo_run_observability import (
+    build_observability_packet as _build_obs_packet,
+    write_observability_packet as _write_obs_packet,
+)
 
 
 def load_racecards(date_tag: str, date_str: str, source: str | None = None) -> tuple[list, str]:
@@ -1257,6 +1267,60 @@ def main():
         notify_enabled = False
         _TG_NOTIFY_ENABLED = False
 
+    # ── HARNESS GATE: Source Truth Enforcement ─────────────────────────────────
+    # Translates loader label to canonical harness label.
+    # SOURCE_UNKNOWN_BLOCK raises immediately — execution cannot continue.
+    # RP_MERGED_DEGRADED continues with warning and records in observability.
+    # This runs BEFORE normalization and BEFORE scoring. No scoring logic touched.
+    print("\n  HARNESS: Source truth enforcement")
+    import warnings as _warnings
+    _source_truth_warnings: list[str] = []
+    try:
+        with _warnings.catch_warnings(record=True) as _caught_warnings:
+            _warnings.simplefilter("always")
+            _source_truth_result = _enforce_source_truth(
+                racecard_source, races=raw_races, raise_on_block=True
+            )
+        for _w in _caught_warnings:
+            if issubclass(_w.category, _SourceTruthDegradedWarning):
+                _source_truth_warnings.append(str(_w.message))
+                print(f"  [HARNESS WARN] {_w.message}")
+    except _SourceTruthBlockError as _block_err:
+        # Hard stop — write observability packet recording the block, then exit
+        print(f"\n  [HARNESS BLOCK] SOURCE_UNKNOWN_BLOCK: {_block_err}")
+        _obs_block = _build_obs_packet(
+            date_str=date_str,
+            source_truth="SOURCE_UNKNOWN_BLOCK",
+            feature_health="BLOCKED",
+            active_formula="BLOCKED_BEFORE_SCORING",
+            excluded_live_components=[],
+            race_scoring_coverage_pct=0.0,
+            persistence_status="BLOCKED",
+            supabase_write_attempt_success=False,
+            decision_tier_status="BLOCKED",
+            learning_gate="BLOCKED_SOURCE_UNKNOWN",
+            next_safe_command="python scripts/ops/velo_session_start_check.py",
+            races_processed=0,
+            runners_processed=0,
+            warnings=[str(_block_err)],
+            gate_fires={"gate_source_unknown_block": True},
+            extra={"git_commit_sha": commit_sha, "racecard_source_raw": racecard_source},
+        )
+        _write_obs_packet(_obs_block)
+        return RunPrimeResult(
+            status="BLOCKED",
+            exit_code=1,
+            date_str=date_str,
+            racecard_source=racecard_source,
+            notifications_enabled=notify_enabled,
+            persistence_enabled=persistence_enabled,
+        )
+    _canonical_source = _source_truth_result.canonical_label
+    print(f"  source_truth_canonical : {_canonical_source}")
+    if _source_truth_result.degraded:
+        print("  [HARNESS WARN] RP_MERGED_DEGRADED — feature degradation active, learning will be blocked")
+    # ─────────────────────────────────────────────────────────────────────
+
     print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
     _timer.mark("racecard_load", races=len(raw_races))
 
@@ -2031,12 +2095,76 @@ def main():
 
     total_runners = sum(len(race.get("runners") or []) for race, _, _t, _r in scored)
 
+    # ── HARNESS: Observability packet builder (shared across all exit paths) ───────
+    # Derives feature health from flatline summary. Writes on PASS, FAIL, and DEGRADED.
+    # No scoring logic. No Supabase writes. Local artifact only.
+    def _build_and_write_obs(final_status: str) -> None:
+        """Build and write the observability packet for this run. Never raises."""
+        try:
+            _fl = _flatline_summary if "_flatline_summary" in dir() else {}
+            _fl_pct = _fl.get("flatline_pct", 0.0) if _fl else 0.0
+            if _fl_pct > 0.5:
+                _fh = "DEGRADED_FLATLINE"
+            elif _fl_pct > 0.2:
+                _fh = "PARTIAL_FLATLINE"
+            elif _source_truth_result.degraded:
+                _fh = "DEGRADED_RP_MERGED"
+            else:
+                _fh = "HEALTHY"
+            _obs_warnings = list(_source_truth_warnings)
+            if _fl_pct > 0.2:
+                _obs_warnings.append(
+                    f"RP_FEATURE_FLATLINE: {_fl.get('flatline_count', 0)}/{_fl.get('total_races', 0)} races "
+                    f"({_fl_pct:.1%}) — {_fl.get('fully_uniform_count', 0)} fully uniform"
+                )
+            if score_errors:
+                _obs_warnings.append(f"{len(score_errors)} score error(s) in this run")
+            _learning_gate = (
+                "BLOCKED_DEGRADED_SOURCE" if _source_truth_result.degraded
+                else ("BLOCKED_FAIL" if final_status == "FAIL" else "ELIGIBLE")
+            )
+            _obs = _build_obs_packet(
+                date_str=date_str,
+                source_truth=_canonical_source,
+                feature_health=_fh,
+                active_formula=f"sqpe_v17 | {_canonical_source}",
+                excluded_live_components=[],
+                race_scoring_coverage_pct=float(len(scored)) / max(len(normalized), 1) * 100,
+                persistence_status="OK" if persist_ok > 0 else "FAIL",
+                supabase_write_attempt_success=(persist_ok > 0 and persistence_enabled),
+                decision_tier_status=final_status,
+                learning_gate=_learning_gate,
+                next_safe_command="python scripts/ops/velo_session_start_check.py",
+                races_processed=len(scored),
+                runners_processed=total_runners,
+                warnings=_obs_warnings,
+                gate_fires={
+                    "gate_2_flatline_fires": _fl_pct > 0.5,
+                    "gate_5_rpdc_warn_fires": len(scored) < len(normalized),
+                    "gate_6_learning_blocked": _source_truth_result.degraded or final_status == "FAIL",
+                    "gate_source_unknown_block": False,
+                },
+                extra={
+                    "git_commit_sha": commit_sha,
+                    "racecard_source_raw": racecard_source,
+                    "persist_ok": persist_ok,
+                    "persist_fail": persist_fail,
+                    "score_errors": len(score_errors),
+                    "flatline_summary": _fl,
+                },
+            )
+            _write_obs_packet(_obs)
+        except Exception as _obs_exc:
+            print(f"  [HARNESS WARN] Observability packet write failed: {_obs_exc}")
+    # ─────────────────────────────────────────────────────────────────────
+
     if persist_fail > 0 and persist_ok == 0:
         # Total failure — nothing persisted
         err_summary = f"{persist_fail} persist failures, {len(score_errors)} score errors"
         _close_pipeline_run(db, run_id, "FAIL", persist_ok, total_runners, err_summary)
         if persistence_enabled:
             _emit_daily_truth_packet(date_str, repair_local_archive=True)
+        _build_and_write_obs("FAIL")  # HARNESS: mandatory observability on FAIL
         print(f"\nFAIL — 0/{len(normalized)} races in velo_verdicts")
         tg(
             f"VELO ALERT — FAIL — {TODAY_DISPLAY}\n"
@@ -2068,6 +2196,7 @@ def main():
         _close_pipeline_run(db, run_id, "DEGRADED", persist_ok, total_runners, err_summary)
         if persistence_enabled:
             _emit_daily_truth_packet(date_str, repair_local_archive=True)
+        _build_and_write_obs("DEGRADED")  # HARNESS: mandatory observability on DEGRADED
         print(f"\nDEGRADED — {persist_ok}/{len(normalized)} races in velo_verdicts ({persist_fail} failed)")
         tg(
             f"VELO ALERT — DEGRADED — {TODAY_DISPLAY}\n"
@@ -2097,7 +2226,7 @@ def main():
         _close_pipeline_run(db, run_id, "PASS", persist_ok, total_runners)
         if persistence_enabled:
             _emit_daily_truth_packet(date_str, repair_local_archive=True)
-        
+        _build_and_write_obs("PASS")  # HARNESS: mandatory observability on PASS
         # ── Supabase Write-Proof Report ──────────────────────────────────────
         print(f"\nPASS — {persist_ok}/{len(normalized)} races in velo_verdicts")
         if persist_ok > 0:
@@ -2131,6 +2260,38 @@ if __name__ == "__main__":
     except SystemExit:
         raise
     except Exception as exc:
+        # ── HARNESS: best-effort observability on unhandled exception ─────────
+        # This is an UNCONTROLLED exit path. We attempt to write an observability
+        # packet but cannot guarantee it — the exception may have occurred before
+        # date_str or commit_sha were resolved.
+        # Classification: OBSERVABILITY_MANDATORY_ON_CONTROLLED_EXIT_PATHS
+        # Controlled paths: PASS / FAIL / DEGRADED / BLOCKED
+        # Uncontrolled path (here): best-effort only, no guarantee.
+        try:
+            from datetime import date as _exc_date
+            _exc_date_str = _exc_date.today().isoformat()
+            _exc_sha = (os.getenv("RAILWAY_GIT_COMMIT_SHA") or os.getenv("GIT_COMMIT_SHA") or "unknown")[:40]
+            _obs_exc = _build_obs_packet(
+                date_str=_exc_date_str,
+                source_truth="SOURCE_UNKNOWN_BLOCK",
+                feature_health="BLOCKED",
+                active_formula="UNHANDLED_EXCEPTION",
+                excluded_live_components=[],
+                race_scoring_coverage_pct=0.0,
+                persistence_status="FAIL",
+                supabase_write_attempt_success=False,
+                decision_tier_status="EXCEPTION",
+                learning_gate="BLOCKED_EXCEPTION",
+                next_safe_command="python scripts/ops/velo_session_start_check.py",
+                warnings=[f"UNHANDLED_EXCEPTION: {type(exc).__name__}: {str(exc)[:200]}"],
+                gate_fires={"gate_source_unknown_block": False},
+                extra={"git_commit_sha": _exc_sha, "exception_type": type(exc).__name__},
+            )
+            _write_obs_packet(_obs_exc)
+        except Exception as _obs_exc_err:
+            # Observability write itself failed — print only, do not mask original
+            print(f"  [HARNESS WARN] Exception-path observability write failed: {_obs_exc_err}")
+        # ─────────────────────────────────────────────────────────────────────
         _sb_url = resolve_supabase_url()
         _sb_key = resolve_supabase_service_key()
         active_run_id = (os.getenv("_ACTIVE_PIPELINE_RUN_ID") or "").strip()
