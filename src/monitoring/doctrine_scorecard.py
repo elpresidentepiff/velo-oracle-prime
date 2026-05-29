@@ -58,7 +58,13 @@ def compute_gate_progress(df: pd.DataFrame, target: int = 100) -> GateProgress:
     if df.empty:
         return GateProgress(target, 0, 0, 0, 0)
 
-    flags = pd.DataFrame({col: df.get(col, False).map(_to_bool) for col in FLAG_COLUMNS})
+    flag_map = {}
+    for col in FLAG_COLUMNS:
+        if col in df.columns:
+            flag_map[col] = df[col].map(_to_bool)
+        else:
+            flag_map[col] = pd.Series(False, index=df.index)
+    flags = pd.DataFrame(flag_map)
     flagged = flags.any(axis=1)
     return GateProgress(
         target=target,
@@ -88,8 +94,10 @@ def compute_tier_a_strike(df: pd.DataFrame) -> dict[str, Any]:
 def compute_decoy_interception_rate(df: pd.DataFrame, mds_threshold: float = 0.5) -> dict[str, Any]:
     if df.empty:
         return {"sample_size": 0, "interceptions": 0, "interception_rate_pct": 0.0, "threshold": mds_threshold}
+    if "market_deception_score" not in df.columns:
+        return {"sample_size": 0, "interceptions": 0, "interception_rate_pct": 0.0, "threshold": mds_threshold}
 
-    mds = pd.to_numeric(df.get("market_deception_score"), errors="coerce")
+    mds = pd.to_numeric(df["market_deception_score"], errors="coerce")
     decoy_sample = df[mds >= mds_threshold].copy()
     if decoy_sample.empty:
         return {"sample_size": 0, "interceptions": 0, "interception_rate_pct": 0.0, "threshold": mds_threshold}
