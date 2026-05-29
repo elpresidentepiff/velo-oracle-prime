@@ -25,6 +25,7 @@ def _load_input(path: Path) -> pd.DataFrame:
             return pd.DataFrame(data)
         if isinstance(data, dict) and "rows" in data:
             return pd.DataFrame(data["rows"])
+        raise ValueError(f"Unexpected JSON structure in {path}")
     raise ValueError(f"Unsupported input format: {suffix}")
 
 

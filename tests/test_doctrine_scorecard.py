@@ -63,3 +63,19 @@ def test_build_scorecard_without_market_columns_sets_note():
     scorecard = build_scorecard(df)
     assert scorecard["doctrine_vs_market"]["market_win_rate_pct"] is None
     assert "note" in scorecard["doctrine_vs_market"]
+    assert scorecard["confidence_reliability"]["bands"]
+    assert scorecard["confidence_reliability"]["mean_abs_error_pct_points"] is not None
+
+
+def test_build_scorecard_calculates_nonzero_doctrine_market_edge():
+    df = pd.DataFrame(
+        [
+            {"decision_tier": "A", "outcome": "WIN", "market_top_pick_won": False},
+            {"decision_tier": "A", "outcome": "WIN", "market_top_pick_won": False},
+            {"decision_tier": "B", "outcome": "MISS", "market_top_pick_won": True},
+        ]
+    )
+    scorecard = build_scorecard(df)
+    assert scorecard["doctrine_vs_market"]["doctrine_win_rate_pct"] == 66.7
+    assert scorecard["doctrine_vs_market"]["market_win_rate_pct"] == 33.3
+    assert scorecard["doctrine_vs_market"]["edge_pct_points"] == 33.4

@@ -78,8 +78,10 @@ def compute_gate_progress(df: pd.DataFrame, target: int = 100) -> GateProgress:
 def compute_tier_a_strike(df: pd.DataFrame) -> dict[str, Any]:
     if df.empty:
         return {"sample_size": 0, "wins": 0, "strike_rate_pct": 0.0}
+    if "decision_tier" not in df.columns or "outcome" not in df.columns:
+        return {"sample_size": 0, "wins": 0, "strike_rate_pct": 0.0}
 
-    tier_a = df[df.get("decision_tier", "").map(_tier) == "A-STRIKE"].copy()
+    tier_a = df[df["decision_tier"].map(_tier) == "A-STRIKE"].copy()
     if tier_a.empty:
         return {"sample_size": 0, "wins": 0, "strike_rate_pct": 0.0}
 
@@ -113,7 +115,7 @@ def compute_decoy_interception_rate(df: pd.DataFrame, mds_threshold: float = 0.5
 
 def compute_doctrine_vs_market_edge(df: pd.DataFrame) -> dict[str, Any]:
     doctrine_win_rate = 0.0
-    if not df.empty:
+    if not df.empty and "outcome" in df.columns:
         doctrine_wins = df["outcome"].map(_outcome).isin(WIN_OUTCOMES).sum()
         doctrine_win_rate = round((doctrine_wins / len(df)) * 100, 1)
 
@@ -142,10 +144,11 @@ def compute_doctrine_vs_market_edge(df: pd.DataFrame) -> dict[str, Any]:
 
 
 def compute_confidence_reliability(df: pd.DataFrame) -> dict[str, Any]:
+    # Expected band anchors come from the current doctrine subgroup baseline audit.
     expected = {"HIGH": 0.31, "MEDIUM": 0.30, "LOW": 0.20}
-    conf = df.get("confidence_level")
-    if conf is None or df.empty:
+    if df.empty or "confidence_level" not in df.columns or "outcome" not in df.columns:
         return {"bands": [], "mean_abs_error_pct_points": None}
+    conf = df["confidence_level"]
 
     bands: list[dict[str, Any]] = []
     errors: list[float] = []
