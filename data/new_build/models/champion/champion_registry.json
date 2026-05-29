@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-05-25T22:38:32.401164Z",
-  "champion_name": "core_v0_or_passport",
-  "champion_version": "Core_V0_OR_Passport_V1",
-  "promoted_at": "2026-05-25T22:38:32.401164Z",
+  "generated_at": "2026-05-29T03:22:29.908570Z",
+  "champion_name": "core_v0_or_passport_intent",
+  "champion_version": "Challenger_V1",
+  "promoted_at": "2026-05-29T03:22:29.908570Z",
   "promoted_from": "challenger",
-  "dethroned_champion": "core_v0_or",
-  "promotion_reason": "PASSPORT_SIGNAL_CONFIRMED \u2014 4/4 unseen 2025 gates passed",
+  "dethroned_champion": "Core_V0_OR_Passport_V1",
+  "promotion_reason": "CHALLENGER_V1_PROMOTED — held-out 2025 test: AUC +0.0047 / SR +0.0086 / Frame +0.0094 over champion",
   "classification": [
-    "PASSPORT_SIGNAL_CONFIRMED",
-    "V0_OR_PASSPORT_BEATS_CHAMPION_ON_UNSEEN_2025",
+    "INTENT_SIGNAL_CONFIRMED",
+    "CHALLENGER_V1_BEATS_CHAMPION_ON_UNSEEN_2025",
     "PROMOTE_TO_NEW_BUILD_CHAMPION",
-    "HORSE_FIRST_STRATEGY_VALIDATED"
+    "CORE_PASSPORT_INTENT_45_FEATURES"
   ],
   "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
   "velo_scoring_allowed": false,
   "rpr_violation": false,
   "sp_violation": false,
-  "model_pkl": "data/new_build/models/core_v0_or_passport/core_v0_or_passport_model.pkl",
+  "model_pkl": "data/new_build/models/core_v0_or_passport_intent/model.pkl",
   "features_frozen": [
     "dist_f",
     "going_code",
@@ -47,7 +47,22 @@
     "pp_course_seen",
     "pp_or_change_3",
     "pp_class_moved_up",
-    "pp_class_moved_down"
+    "pp_class_moved_down",
+    "mark_compression_score",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "odds_resilience_score",
+    "intent_trip_match",
+    "intent_course_win_history",
+    "intent_going_match",
+    "intent_class_drop_vs_best",
+    "intent_run_after_break",
+    "intent_sp_shortening",
+    "intent_wins_last10",
+    "intent_top3_last6"
   ],
   "feature_groups": {
     "core_v0": [
@@ -67,7 +82,9 @@
       "trainer_timing_score",
       "jockey_switch_intent",
       "setup_run_flag",
-      "cash_run_flag"
+      "cash_run_flag",
+      "official_rating",
+      "is_rated"
     ],
     "or_layer": [
       "official_rating",
@@ -85,189 +102,48 @@
       "pp_or_change_3",
       "pp_class_moved_up",
       "pp_class_moved_down"
+    ],
+    "intent_layer": [
+      "mark_compression_score",
+      "curr_or_minus_last_win_or",
+      "curr_or_minus_best_or",
+      "runs_since_win",
+      "runs_since_place",
+      "runs_since_mkt_support",
+      "odds_resilience_score",
+      "intent_trip_match",
+      "intent_course_win_history",
+      "intent_going_match",
+      "intent_class_drop_vs_best",
+      "intent_run_after_break",
+      "intent_sp_shortening",
+      "intent_wins_last10",
+      "intent_top3_last6"
     ]
   },
   "metrics_2025_unseen": {
-    "variant": "V0_OR+Passport",
+    "auc": 0.6969,
+    "brier": 0.0855,
+    "sr": 0.2502,
+    "frame": 0.5498,
+    "races": 5775,
+    "runners": 57221,
+    "note": "held-out 2025 test set"
+  },
+  "prior_champion_metrics_2025_unseen": {
     "auc": 0.6922,
     "brier": 0.0862,
     "sr": 0.2416,
-    "frame": 0.5404,
-    "races": 5775,
-    "runners": 57221
-  },
-  "prior_champion_metrics_2025_unseen": {
-    "variant": "V0_OR",
-    "auc": 0.6788,
-    "brier": 0.0869,
-    "sr": 0.2222,
-    "frame": 0.5148,
-    "races": 5775,
-    "runners": 57221
+    "frame": 0.5404
   },
   "deltas_2025_unseen": {
-    "auc": 0.0134,
+    "auc": 0.0047,
     "brier": -0.0007,
-    "sr": 0.0194,
-    "frame": 0.0256
+    "sr": 0.0086,
+    "frame": 0.0094
   },
-  "promotion_gates_2025_unseen": {
-    "auc": true,
-    "brier": true,
-    "sr": true,
-    "frame": true
-  },
-  "feature_importance": [
-    {
-      "feature": "or_vs_field",
-      "importance": 1442.0,
-      "importance_pct": 9.36
-    },
-    {
-      "feature": "pp_days_since_last",
-      "importance": 1375.0,
-      "importance_pct": 8.93
-    },
-    {
-      "feature": "pp_avg_sp_last5",
-      "importance": 1364.0,
-      "importance_pct": 8.85
-    },
-    {
-      "feature": "official_rating",
-      "importance": 1322.0,
-      "importance_pct": 8.58
-    },
-    {
-      "feature": "wgt_lbs",
-      "importance": 974.0,
-      "importance_pct": 6.32
-    },
-    {
-      "feature": "pp_career_runs",
-      "importance": 967.0,
-      "importance_pct": 6.28
-    },
-    {
-      "feature": "field_size",
-      "importance": 939.0,
-      "importance_pct": 6.1
-    },
-    {
-      "feature": "pp_place_rate",
-      "importance": 686.0,
-      "importance_pct": 4.45
-    },
-    {
-      "feature": "draw_pct",
-      "importance": 665.0,
-      "importance_pct": 4.32
-    },
-    {
-      "feature": "trainer_timing_score",
-      "importance": 624.0,
-      "importance_pct": 4.05
-    },
-    {
-      "feature": "age_num",
-      "importance": 605.0,
-      "importance_pct": 3.93
-    },
-    {
-      "feature": "distance_fit_score",
-      "importance": 600.0,
-      "importance_pct": 3.89
-    },
-    {
-      "feature": "going_fit_score",
-      "importance": 593.0,
-      "importance_pct": 3.85
-    },
-    {
-      "feature": "pp_or_change_3",
-      "importance": 507.0,
-      "importance_pct": 3.29
-    },
-    {
-      "feature": "quiet_run_score",
-      "importance": 471.0,
-      "importance_pct": 3.06
-    },
-    {
-      "feature": "draw_num",
-      "importance": 416.0,
-      "importance_pct": 2.7
-    },
-    {
-      "feature": "dist_f",
-      "importance": 406.0,
-      "importance_pct": 2.64
-    },
-    {
-      "feature": "going_code",
-      "importance": 246.0,
-      "importance_pct": 1.6
-    },
-    {
-      "feature": "release_window_score",
-      "importance": 208.0,
-      "importance_pct": 1.35
-    },
-    {
-      "feature": "pp_class_moved_down",
-      "importance": 156.0,
-      "importance_pct": 1.01
-    },
-    {
-      "feature": "is_aw",
-      "importance": 146.0,
-      "importance_pct": 0.95
-    },
-    {
-      "feature": "pp_course_seen",
-      "importance": 126.0,
-      "importance_pct": 0.82
-    },
-    {
-      "feature": "pp_win_rate",
-      "importance": 121.0,
-      "importance_pct": 0.79
-    },
-    {
-      "feature": "pp_class_moved_up",
-      "importance": 106.0,
-      "importance_pct": 0.69
-    },
-    {
-      "feature": "cash_run_flag",
-      "importance": 89.0,
-      "importance_pct": 0.58
-    },
-    {
-      "feature": "jockey_switch_intent",
-      "importance": 79.0,
-      "importance_pct": 0.51
-    },
-    {
-      "feature": "pp_jockey_continuity",
-      "importance": 67.0,
-      "importance_pct": 0.43
-    },
-    {
-      "feature": "is_rated",
-      "importance": 49.0,
-      "importance_pct": 0.32
-    },
-    {
-      "feature": "pp_layoff",
-      "importance": 32.0,
-      "importance_pct": 0.21
-    },
-    {
-      "feature": "setup_run_flag",
-      "importance": 24.0,
-      "importance_pct": 0.16
-    }
-  ],
-  "passport_importance_total_pct": 35.75
+  "intent_current_card_note": "Intent features (15) are filled from training medians for current-card rows. Model will score on Core+Passport signals primarily. Intent median-fill is expected behavior.",
+  "paper_only": true,
+  "live_velo_impact": false,
+  "shadow_velo_impact": false
 }
