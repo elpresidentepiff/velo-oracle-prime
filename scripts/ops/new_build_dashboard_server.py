@@ -241,6 +241,25 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     return JSONResponse(result)
 
 
+@app.get("/api/doctrine-scorecard")
+async def doctrine_scorecard():
+    path = ROOT / "data" / "doctrine_scorecard_latest.json"
+    data = _load_json(path)
+    if data is None:
+        return JSONResponse(
+            {
+                "status": "NOT_FOUND",
+                "message": "doctrine_scorecard_latest.json not found — run build_doctrine_market_scorecard.py first",
+                "generated_at": _utc_now(),
+                "no_scoring": True,
+                "no_model_calls": True,
+                "no_live_writes": True,
+            },
+            status_code=404,
+        )
+    return JSONResponse(data)
+
+
 @app.get("/api/health")
 async def health():
     return JSONResponse({
