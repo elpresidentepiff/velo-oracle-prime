@@ -1036,7 +1036,9 @@ async def upload_spotlight_pdf(
     Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
     """
     trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
-    if trigger_secret and not _secrets_match(x_trigger_secret, trigger_secret):
+    if not trigger_secret:
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if not _secrets_match(x_trigger_secret, trigger_secret):
         raise HTTPException(status_code=401, detail="Invalid trigger secret")
 
     if not file.filename or not file.filename.endswith(".pdf"):
@@ -1654,6 +1656,168 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     }
 
 
+@app.get("/api/dashboard-truth")
+async def dashboard_truth():
+    """
+    Read-only structured truth report for dashboard panels.
+
+    Sources:
+      A — Supabase:        pipeline_runs latest + velo_verdicts count today
+      B — Local harness:   velo_run_observability_{date}.json
+      C — Doctrine:        data/doctrine_scorecard_latest.json
+      D — New Build:       data/new_build/sidecar_feed/new_build_signal_{date}.jsonl
+
+    No scoring. No model calls. No writes.
+    Every panel carries its source label so the UI can show
+    SUPABASE / LOCAL_ARTIFACT / UNAVAILABLE — never ghost-green.
+    """
+    import json as _json
+    import urllib.error
+    import urllib.request
+
+    root = pathlib.Path(__file__).parent.parent
+    today = utc_now().strftime("%Y-%m-%d")
+    date_tag = today.replace("-", "_")
+    sb_url = os.getenv("SUPABASE_URL", "")
+    sb_key = os.getenv("SUPABASE_KEY", "")
+
+    # ── A. Supabase truth ─────────────────────────────────────────────────────
+    sb_truth: dict = {
+        "source": "SUPABASE",
+        "status": "UNKNOWN",
+        "latest_pipeline_run": None,
+        "verdict_count_today": None,
+        "run_status": None,
+        "run_started_at": None,
+        "error": None,
+    }
+    if not sb_url or not sb_key:
+        sb_truth["status"] = "SUPABASE_UNAVAILABLE"
+        sb_truth["error"] = "SUPABASE_URL or SUPABASE_KEY not configured"
+    else:
+        _hdrs = {
+            "apikey": sb_key,
+            "Authorization": f"Bearer {sb_key}",
+            "Accept": "application/json",
+        }
+        try:
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/pipeline_runs"
+                f"?select=id,status,started_at,completed_at,source_date,run_type,error_message"
+                f"&order=started_at.desc&limit=1",
+                headers=_hdrs,
+            )
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                rows = _json.loads(resp.read().decode())
+            sb_truth["status"] = "CONNECTED"
+            if rows:
+                r = rows[0]
+                sb_truth["latest_pipeline_run"] = r
+                sb_truth["run_status"] = r.get("status")
+                sb_truth["run_started_at"] = r.get("started_at")
+        except Exception as exc:
+            sb_truth["status"] = "SUPABASE_UNAVAILABLE"
+            sb_truth["error"] = str(exc)
+
+        if sb_truth["status"] == "CONNECTED":
+            try:
+                req = urllib.request.Request(
+                    f"{sb_url}/rest/v1/velo_verdicts?select=id&date=eq.{today}",
+                    headers={**_hdrs, "Prefer": "count=exact", "Range-Unit": "items", "Range": "0-0"},
+                )
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    cr = resp.headers.get("content-range", "")
+                    total_str = cr.split("/")[-1] if "/" in cr else ""
+                    sb_truth["verdict_count_today"] = int(total_str) if total_str.isdigit() else None
+            except Exception:
+                pass
+
+    # ── B. Local harness truth ────────────────────────────────────────────────
+    obs_path = root / "data" / f"velo_run_observability_{date_tag}.json"
+    if not obs_path.exists():
+        candidates = sorted((root / "data").glob("velo_run_observability_*.json"), reverse=True)
+        obs_path = candidates[0] if candidates else None
+
+    harness_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
+    if obs_path and obs_path.exists():
+        try:
+            obs = _json.loads(obs_path.read_text(encoding="utf-8"))
+            harness_truth["status"] = "FOUND"
+            harness_truth["file"] = obs_path.name
+            harness_truth["data"] = {
+                "final_status": obs.get("final_status"),
+                "source_label": obs.get("source_label"),
+                "feature_health": obs.get("feature_health"),
+                "warnings": obs.get("warnings", []),
+                "generated_at": obs.get("generated_at"),
+            }
+        except Exception as exc:
+            harness_truth["status"] = "READ_ERROR"
+            harness_truth["error"] = str(exc)
+
+    # ── C. Doctrine scorecard ─────────────────────────────────────────────────
+    sc_path = root / "data" / "doctrine_scorecard_latest.json"
+    sc_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
+    if sc_path.exists():
+        try:
+            sc = _json.loads(sc_path.read_text(encoding="utf-8"))
+            sc_truth["status"] = "FOUND"
+            sc_truth["data"] = {
+                "gate_progress": sc.get("gate_progress"),
+                "tier_a": sc.get("tier_a"),
+                "doctrine_vs_market": sc.get("doctrine_vs_market"),
+                "generated_at": (sc.get("meta") or {}).get("generated_at"),
+            }
+        except Exception as exc:
+            sc_truth["status"] = "READ_ERROR"
+            sc_truth["error"] = str(exc)
+
+    # ── D. New Build sidecar ──────────────────────────────────────────────────
+    nb_root = root / "data" / "new_build" / "sidecar_feed"
+    sidecar_today = nb_root / f"new_build_signal_{date_tag}.jsonl"
+    sidecar_latest = nb_root / "new_build_signal_latest.jsonl"
+    sidecar_path = sidecar_today if sidecar_today.exists() else (sidecar_latest if sidecar_latest.exists() else None)
+
+    nb_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
+    if sidecar_path:
+        try:
+            lines = [ln for ln in sidecar_path.read_text(encoding="utf-8").splitlines() if ln.strip()]
+            records = [_json.loads(ln) for ln in lines]
+            dates_in_feed = sorted({r.get("race_date", "")[:10] for r in records if r.get("race_date")})
+            nb_truth["status"] = "FOUND"
+            nb_truth["file"] = sidecar_path.name
+            nb_truth["data"] = {
+                "record_count": len(records),
+                "dates_in_feed": dates_in_feed,
+                "date_matches_today": today in dates_in_feed,
+                "paper_only": all(r.get("paper_only") for r in records),
+                "rpr_violations": sum(1 for r in records if r.get("rpr_violation_flag")),
+            }
+        except Exception as exc:
+            nb_truth["status"] = "READ_ERROR"
+            nb_truth["error"] = str(exc)
+
+    return {
+        "a_supabase": sb_truth,
+        "b_local_harness": harness_truth,
+        "c_doctrine_scorecard": sc_truth,
+        "d_new_build_sidecar": nb_truth,
+        "meta": {
+            "date": today,
+            "generated_at": utc_now_iso(),
+            "no_scoring": True,
+            "no_model_calls": True,
+            "no_live_writes": True,
+            "source_key": {
+                "SUPABASE": "Live Supabase REST query — reflects production DB state",
+                "LOCAL_ARTIFACT": "Local file on this server — may lag Railway deploys",
+                "UNAVAILABLE": "Source unreachable or not configured",
+                "NOT_FOUND": "File expected but absent — run the relevant generator script",
+            },
+        },
+    }
+
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -1775,7 +1939,18 @@ async def predict_race(race_data: dict, persist: bool = False, authorized: bool 
         predictions = score_race_velo_prime(norm_race, sentient_state=_sentient_state)
 
         if persist:
-            persist_race_predictions(norm_race, predictions)
+            # Resolve tier for top pick for persistence truth
+            tier = "D"
+            if predictions:
+                from scripts.ops.run_prime_today import synthesize_decision
+                top = predictions[0]
+                second = predictions[1] if len(predictions) > 1 else {}
+                sec_prob = float(second.get("velo_prime_prob") or 0)
+                tier, _ = synthesize_decision(top, sec_prob, field_size=len(predictions))
+            
+            from scripts.ops.runtime_truth_support import get_commit_sha
+            commit_sha = get_commit_sha()
+            persist_race_predictions(norm_race, predictions, decision_tier=tier, commit_sha=commit_sha)
 
         return {
             "race_id": norm_race.get("race_id"),
