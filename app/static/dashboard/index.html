@@ -2215,6 +2215,245 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
 })();
 </script>
 
+<!-- System Truth Panel -->
+<style>
+#stt-wrap {
+  position: relative; z-index: 1;
+  margin: 0 0 2px;
+  border-bottom: 1px solid var(--border-dim);
+  background: rgba(4,10,22,0.95);
+}
+#stt-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 20px;
+  cursor: pointer; user-select: none;
+  border-top: 1px solid var(--border-dim);
+}
+#stt-header:hover { background: var(--bg-hover); }
+.stt-title {
+  font-family: var(--font-hud); font-size: 0.6rem;
+  font-weight: 700; letter-spacing: 0.14em;
+  color: var(--amber); text-transform: uppercase;
+}
+.stt-readonly {
+  font-family: var(--font-mono); font-size: 0.53rem;
+  color: var(--fg-muted); border: 1px solid var(--border-dim);
+  padding: 1px 6px; border-radius: 2px;
+}
+.stt-updated { font-size: 0.52rem; color: var(--fg-muted); margin-left: auto; }
+.stt-toggle  { font-size: 0.55rem; color: var(--amber); margin-left: 8px; }
+#stt-body { display: none; padding: 10px 20px 12px; }
+#stt-body.open { display: block; }
+.stt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+.stt-card {
+  background: var(--bg-card); border: 1px solid var(--border-dim);
+  border-radius: 3px; padding: 8px 10px;
+}
+.stt-card-title {
+  font-family: var(--font-hud); font-size: 0.52rem;
+  letter-spacing: 0.12em; color: var(--fg-secondary);
+  margin-bottom: 4px; display: flex; align-items: center; gap: 6px;
+}
+.stt-source-badge {
+  font-family: var(--font-mono); font-size: 0.48rem;
+  padding: 1px 5px; border-radius: 2px;
+  border: 1px solid var(--border-dim); color: var(--fg-muted);
+}
+.stt-status { font-family: var(--font-hud); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 2px; }
+.stt-status.ok   { color: var(--green); }
+.stt-status.warn { color: var(--amber); }
+.stt-status.err  { color: var(--red); }
+.stt-status.off  { color: var(--fg-muted); }
+.stt-row { font-family: var(--font-mono); font-size: 0.56rem; color: var(--fg-secondary); margin-top: 2px; display: flex; gap: 6px; }
+.stt-row .k { color: var(--fg-muted); }
+.stt-row .v { color: var(--fg-primary); }
+.stt-err { font-family: var(--font-mono); font-size: 0.52rem; color: var(--red); margin-top: 3px; word-break: break-all; }
+.stt-meta { margin-top: 8px; font-family: var(--font-mono); font-size: 0.52rem; color: var(--fg-muted); display: flex; gap: 12px; flex-wrap: wrap; }
+</style>
+
+<div id="stt-wrap">
+  <div id="stt-header" onclick="sttToggle()">
+    <span class="stt-title">SYSTEM TRUTH — LIVE SOURCES</span>
+    <span class="stt-readonly">READ-ONLY</span>
+    <span class="stt-updated" id="stt-ts">—</span>
+    <span class="stt-toggle" id="stt-btn">[EXPAND]</span>
+  </div>
+  <div id="stt-body">
+    <div class="stt-grid">
+      <div class="stt-card">
+        <div class="stt-card-title">
+          <span>A · SUPABASE</span>
+          <span class="stt-source-badge">SUPABASE</span>
+        </div>
+        <div class="stt-status off" id="stt-a-status">—</div>
+        <div class="stt-row"><span class="k">pipeline run:</span><span class="v" id="stt-a-run">—</span></div>
+        <div class="stt-row"><span class="k">run status:</span><span class="v" id="stt-a-runst">—</span></div>
+        <div class="stt-row"><span class="k">verdicts today:</span><span class="v" id="stt-a-verdicts">—</span></div>
+        <div class="stt-err" id="stt-a-err" style="display:none"></div>
+      </div>
+      <div class="stt-card">
+        <div class="stt-card-title">
+          <span>B · LOCAL HARNESS</span>
+          <span class="stt-source-badge">LOCAL_ARTIFACT</span>
+        </div>
+        <div class="stt-status off" id="stt-b-status">—</div>
+        <div class="stt-row"><span class="k">file:</span><span class="v" id="stt-b-file">—</span></div>
+        <div class="stt-row"><span class="k">final status:</span><span class="v" id="stt-b-fstatus">—</span></div>
+        <div class="stt-row"><span class="k">feature health:</span><span class="v" id="stt-b-fh">—</span></div>
+        <div class="stt-err" id="stt-b-err" style="display:none"></div>
+      </div>
+      <div class="stt-card">
+        <div class="stt-card-title">
+          <span>C · DOCTRINE</span>
+          <span class="stt-source-badge">LOCAL_ARTIFACT</span>
+        </div>
+        <div class="stt-status off" id="stt-c-status">—</div>
+        <div class="stt-row"><span class="k">gate progress:</span><span class="v" id="stt-c-gate">—</span></div>
+        <div class="stt-row"><span class="k">Tier A SR:</span><span class="v" id="stt-c-sr">—</span></div>
+        <div class="stt-row"><span class="k">generated:</span><span class="v" id="stt-c-gen">—</span></div>
+        <div class="stt-err" id="stt-c-err" style="display:none"></div>
+      </div>
+      <div class="stt-card">
+        <div class="stt-card-title">
+          <span>D · NEW BUILD</span>
+          <span class="stt-source-badge">LOCAL_ARTIFACT · PAPER</span>
+        </div>
+        <div class="stt-status off" id="stt-d-status">—</div>
+        <div class="stt-row"><span class="k">file:</span><span class="v" id="stt-d-file">—</span></div>
+        <div class="stt-row"><span class="k">records:</span><span class="v" id="stt-d-count">—</span></div>
+        <div class="stt-row"><span class="k">today's data:</span><span class="v" id="stt-d-today">—</span></div>
+        <div class="stt-row"><span class="k">RPR violations:</span><span class="v" id="stt-d-rpr">—</span></div>
+        <div class="stt-err" id="stt-d-err" style="display:none"></div>
+      </div>
+    </div>
+    <div class="stt-meta" id="stt-meta">
+      <span>no_scoring: —</span>
+      <span>no_live_writes: —</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  function _statusClass(s) {
+    if (s === 'CONNECTED' || s === 'FOUND') return 'ok';
+    if (s === 'READ_ERROR') return 'err';
+    if (s === 'SUPABASE_UNAVAILABLE') return 'warn';
+    return 'off';
+  }
+  function _setStatus(id, s) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = s || '—';
+    el.className = 'stt-status ' + _statusClass(s);
+  }
+  function _setErr(id, msg) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (msg) { el.textContent = msg; el.style.display = ''; }
+    else el.style.display = 'none';
+  }
+  function _setText(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val != null ? String(val) : '—';
+  }
+
+  async function _loadSTT() {
+    var ts = document.getElementById('stt-ts');
+    var d;
+    try {
+      var res = await fetch('/api/dashboard-truth');
+      if (!res.ok) { ts.textContent = 'LOAD ERROR ' + res.status; return; }
+      d = await res.json();
+    } catch(e) { ts.textContent = 'FETCH ERROR'; return; }
+
+    var A = d.a_supabase || {};
+    var B = d.b_local_harness || {};
+    var C = d.c_doctrine_scorecard || {};
+    var D = d.d_new_build_sidecar || {};
+    var M = d.meta || {};
+
+    // A: Supabase
+    _setStatus('stt-a-status', A.status);
+    if (A.status === 'CONNECTED') {
+      var pr = A.latest_pipeline_run || {};
+      _setText('stt-a-run', pr.started_at ? pr.started_at.slice(0,16).replace('T',' ')+'Z' : 'none');
+      _setText('stt-a-runst', A.run_status || 'none');
+      _setText('stt-a-verdicts', A.verdict_count_today != null ? A.verdict_count_today : '—');
+    } else {
+      _setText('stt-a-run', '—'); _setText('stt-a-runst', '—'); _setText('stt-a-verdicts', '—');
+      _setErr('stt-a-err', A.error || null);
+    }
+
+    // B: Local Harness
+    _setStatus('stt-b-status', B.status);
+    _setText('stt-b-file', B.file || 'none');
+    if (B.status === 'FOUND' && B.data) {
+      _setText('stt-b-fstatus', B.data.final_status || '—');
+      _setText('stt-b-fh', B.data.feature_health || '—');
+    } else {
+      _setText('stt-b-fstatus', '—'); _setText('stt-b-fh', '—');
+      _setErr('stt-b-err', B.error || null);
+    }
+
+    // C: Doctrine
+    _setStatus('stt-c-status', C.status);
+    if (C.status === 'FOUND' && C.data) {
+      var gp = C.data.gate_progress || {};
+      _setText('stt-c-gate', (gp.flagged_races || 0) + ' / ' + (gp.target || 100));
+      var ta = C.data.tier_a || {};
+      _setText('stt-c-sr', ta.strike_rate_pct != null ? ta.strike_rate_pct + '%' : '—');
+      _setText('stt-c-gen', C.data.generated_at ? C.data.generated_at.slice(0,16).replace('T',' ')+'Z' : '—');
+    } else {
+      _setText('stt-c-gate', '—'); _setText('stt-c-sr', '—'); _setText('stt-c-gen', '—');
+      _setErr('stt-c-err', C.error || null);
+    }
+
+    // D: New Build
+    _setStatus('stt-d-status', D.status);
+    _setText('stt-d-file', D.file || 'none');
+    if (D.status === 'FOUND' && D.data) {
+      _setText('stt-d-count', D.data.record_count);
+      _setText('stt-d-today', D.data.date_matches_today ? 'YES' : 'NO');
+      var rpr = D.data.rpr_violations || 0;
+      var rEl = document.getElementById('stt-d-rpr');
+      if (rEl) { rEl.textContent = String(rpr); rEl.style.color = rpr > 0 ? 'var(--red)' : ''; }
+    } else {
+      _setText('stt-d-count', '—'); _setText('stt-d-today', '—'); _setText('stt-d-rpr', '—');
+      _setErr('stt-d-err', D.error || null);
+    }
+
+    // Meta strip
+    var metaEl = document.getElementById('stt-meta');
+    if (metaEl) {
+      var g = function(v) { return '<span style="color:var(--green)">' + v + '</span>'; };
+      metaEl.innerHTML =
+        '<span>no_scoring: ' + g(M.no_scoring ? 'true' : 'false') + '</span>' +
+        '<span>no_live_writes: ' + g(M.no_live_writes ? 'true' : 'false') + '</span>' +
+        '<span>date: ' + (M.date || '—') + '</span>';
+    }
+
+    ts.textContent = M.generated_at
+      ? 'UPDATED ' + M.generated_at.slice(0,16).replace('T',' ') + 'Z'
+      : 'LOADED';
+  }
+
+  window.sttToggle = function() {
+    var body = document.getElementById('stt-body');
+    var btn  = document.getElementById('stt-btn');
+    var open = body.classList.toggle('open');
+    btn.textContent = open ? '[COLLAPSE]' : '[EXPAND]';
+  };
+
+  // Fire immediately so status is cached — visible on first expand
+  _loadSTT();
+})();
+</script>
+
 <!-- Filter Bar -->
 <div id="filters">
   <span class="filter-label">PRODUCT</span>
