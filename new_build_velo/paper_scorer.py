@@ -29,6 +29,9 @@ REPORT_ROOT = NEW_BUILD_ROOT / "reports"
 PAPER_JSONL_PATH = PAPER_ROOT / "new_build_paper_predictions_latest.jsonl"
 PAPER_REPORT_JSON_PATH = REPORT_ROOT / "new_build_paper_predictions_latest.json"
 PAPER_REPORT_MD_PATH = REPORT_ROOT / "new_build_paper_predictions_latest.md"
+FINAL_CARD_PAPER_JSONL_PATH = PAPER_ROOT / "new_build_paper_predictions_final_card_latest.jsonl"
+FINAL_CARD_PAPER_REPORT_JSON_PATH = REPORT_ROOT / "new_build_paper_predictions_final_card_latest.json"
+FINAL_CARD_PAPER_REPORT_MD_PATH = REPORT_ROOT / "new_build_paper_predictions_final_card_latest.md"
 CHAMPION_REGISTRY_PATH = NEW_BUILD_ROOT / "models" / "champion" / "champion_registry.json"
 INTENT_FEATURE_PATH = NEW_BUILD_ROOT / "training" / "intent_features.parquet"
 
@@ -135,9 +138,15 @@ def _going_code(value: Any, default: float) -> float:
 
 def _actual_feature_map(row: dict[str, Any], medians: dict[str, float]) -> dict[str, float]:
     passport = row.get("passport_summary") or {}
+    live_pp = row.get("passport_live_features") or {}
     field_size = _to_float(row.get("field_size"), None)
     draw = _to_float(row.get("draw"), None)
     official_rating = _to_float(row.get("official_rating"), None)
+
+    def _pp(live_key: str, fallback: float | None) -> float | None:
+        v = live_pp.get(live_key)
+        return float(v) if v is not None else fallback
+
     feature_values = {
         "dist_f": _to_float(row.get("distance_furlongs"), None),
         "going_code": _going_code(row.get("going") or row.get("going_code_raw"), medians.get("going_code", 0.0)),
@@ -150,21 +159,23 @@ def _actual_feature_map(row: dict[str, Any], medians: dict[str, float]) -> dict[
         "or_vs_field": 0.0,
         "official_rating": official_rating,
         "is_rated": 1.0 if official_rating is not None else 0.0,
-        "pp_career_runs": _to_float(passport.get("career_runs"), None),
-        "pp_win_rate": _to_float(passport.get("win_rate"), None),
-        "pp_place_rate": _to_float(passport.get("place_rate"), None),
-        "pp_days_since_last": _to_float(passport.get("days_since_last_run"), None),
-        "pp_layoff": None,
-        "pp_avg_sp_last5": _to_float(passport.get("avg_sp_last5"), None),
-        "pp_jockey_continuity": 1.0 if passport.get("jockey_continuity") else 0.0,
-        "pp_course_seen": medians.get("pp_course_seen", 0.0),
-        "pp_or_change_3": _to_float(passport.get("or_change_last3"), None),
-        "pp_class_moved_up": 1.0 if str(passport.get("class_movement") or "").upper() == "UP" else 0.0,
-        "pp_class_moved_down": 1.0 if str(passport.get("class_movement") or "").upper() == "DOWN" else 0.0,
+        "pp_career_runs": _pp("pp_career_runs", _to_float(passport.get("career_runs"), None)),
+        "pp_win_rate": _pp("pp_win_rate", _to_float(passport.get("win_rate"), None)),
+        "pp_place_rate": _pp("pp_place_rate", _to_float(passport.get("place_rate"), None)),
+        "pp_days_since_last": _pp("pp_days_since_last", _to_float(passport.get("days_since_last_run"), None)),
+        "pp_layoff": _pp("pp_layoff", None),
+        "pp_avg_sp_last5": _pp("pp_avg_sp_last5", _to_float(passport.get("avg_sp_last5"), None)),
+        "pp_jockey_continuity": _pp("pp_jockey_continuity", 1.0 if passport.get("jockey_continuity") else 0.0),
+        "pp_course_seen": _pp("pp_course_seen", medians.get("pp_course_seen", 0.0)),
+        "pp_or_change_3": _pp("pp_or_change_3", _to_float(passport.get("or_change_last3"), None)),
+        "pp_class_moved_up": _pp("pp_class_moved_up", 1.0 if str(passport.get("class_movement") or "").upper() == "UP" else 0.0),
+        "pp_class_moved_down": _pp("pp_class_moved_down", 1.0 if str(passport.get("class_movement") or "").upper() == "DOWN" else 0.0),
     }
-    layoff = str(passport.get("layoff_flag") or "").upper()
-    if layoff:
-        feature_values["pp_layoff"] = 0.0 if layoff == "ACTIVE" else 1.0
+    # Fallback: reconstruct layoff from stored string flag when live_pp has no value
+    if feature_values["pp_layoff"] is None:
+        layoff = str(passport.get("layoff_flag") or "").upper()
+        if layoff:
+            feature_values["pp_layoff"] = 0.0 if layoff == "ACTIVE" else 1.0
     return feature_values
 
 
@@ -257,9 +268,24 @@ def _compact(row: dict[str, Any] | None) -> dict[str, Any] | None:
     }
 
 
-def build_paper_predictions(*, execute: bool = False, refresh_feed: bool = True) -> dict[str, Any]:
+def _load_official_race_ids(path: Path | None) -> set[str]:
+    if not path or not path.exists():
+        return set()
+    data = _read_json(path, [])
+    rows = data if isinstance(data, list) else data.get("verdicts") or data.get("races") or []
+    return {str(row.get("race_id")) for row in rows if row.get("race_id") not in (None, "")}
+
+
+def build_paper_predictions(
+    *,
+    execute: bool = False,
+    refresh_feed: bool = True,
+    racecard_path: Path | None = None,
+    official_verdict_path: Path | None = None,
+    final_card: bool = False,
+) -> dict[str, Any]:
     if refresh_feed:
-        feed_report = build_current_card_feed(execute=True)
+        feed_report = build_current_card_feed(execute=True, racecard_path=racecard_path)
     else:
         feed_report = _read_json(CURRENT_FEED_REPORT_JSON, {})
     feed_rows = _read_jsonl(FEED_JSONL_PATH)
@@ -323,6 +349,21 @@ def build_paper_predictions(*, execute: bool = False, refresh_feed: bool = True)
     classification = "NEW_BUILD_PRE_RUN_BLOCKED" if bad_keys else "NEW_BUILD_PAPER_READY_NO_INTENT"
     if not bad_keys and intent_count:
         classification = "NEW_BUILD_PAPER_READY"
+    official_race_ids = _load_official_race_ids(official_verdict_path)
+    paper_race_ids = {str(row["race_id"]) for row in paper_rows}
+    race_id_match = None
+    missing_from_paper: list[str] = []
+    extra_in_paper: list[str] = []
+    if official_race_ids:
+        missing_from_paper = sorted(official_race_ids - paper_race_ids)
+        extra_in_paper = sorted(paper_race_ids - official_race_ids)
+        race_id_match = not missing_from_paper and not extra_in_paper
+        if final_card and not race_id_match:
+            classification = "NEW_BUILD_FINAL_CARD_MISMATCH"
+        elif final_card and feed_report.get("passport_coverage", {}).get("coverage_pct", 0.0) < 50.0:
+            classification = "NEW_BUILD_FINAL_CARD_BRIDGE_LOW_COVERAGE"
+        elif final_card and not bad_keys:
+            classification = "NEW_BUILD_FINAL_CARD_PAPER_READY_BRIDGED"
     payload = {
         "generated_at": utc_now(),
         "classification": classification,
@@ -340,6 +381,16 @@ def build_paper_predictions(*, execute: bool = False, refresh_feed: bool = True)
         "paper_predictions_created": bool(paper_rows),
         "prediction_rows": len(paper_rows),
         "race_count": len({row["race_id"] for row in paper_rows}),
+        "official_card_alignment": {
+            "final_card_mode": final_card,
+            "racecard_path": str(racecard_path) if racecard_path else None,
+            "official_verdict_path": str(official_verdict_path) if official_verdict_path else None,
+            "official_race_count": len(official_race_ids) if official_race_ids else None,
+            "paper_race_count": len(paper_race_ids),
+            "race_id_match": race_id_match,
+            "missing_from_paper": missing_from_paper,
+            "extra_in_paper": extra_in_paper,
+        },
         "intent_current_card_coverage": {
             "found": intent_count,
             "total": len(paper_rows),
@@ -363,10 +414,13 @@ def build_paper_predictions(*, execute: bool = False, refresh_feed: bool = True)
         },
     }
     if execute:
-        _write_jsonl(PAPER_JSONL_PATH, paper_rows)
-        _write_json(PAPER_REPORT_JSON_PATH, payload)
-        PAPER_REPORT_MD_PATH.parent.mkdir(parents=True, exist_ok=True)
-        PAPER_REPORT_MD_PATH.write_text(_markdown(payload), encoding="utf-8")
+        jsonl_path = FINAL_CARD_PAPER_JSONL_PATH if final_card else PAPER_JSONL_PATH
+        report_json_path = FINAL_CARD_PAPER_REPORT_JSON_PATH if final_card else PAPER_REPORT_JSON_PATH
+        report_md_path = FINAL_CARD_PAPER_REPORT_MD_PATH if final_card else PAPER_REPORT_MD_PATH
+        _write_jsonl(jsonl_path, paper_rows)
+        _write_json(report_json_path, payload)
+        report_md_path.parent.mkdir(parents=True, exist_ok=True)
+        report_md_path.write_text(_markdown(payload), encoding="utf-8")
     return payload
 
 
@@ -387,6 +441,7 @@ def _markdown(payload: dict[str, Any]) -> str:
         f"- **Missing/unraced horses**: {feed.get('missing_horse_count')}",
         f"- **Intent current-card coverage**: {intent['found']} / {intent['total']} ({intent['coverage_pct']}%) - `{intent['status']}`",
         f"- **RPR violations**: {payload['rpr_violations']}",
+        f"- **Official race-id match**: `{payload.get('official_card_alignment', {}).get('race_id_match')}`",
         "",
         "## Median-Filled Champion Features",
         "| Feature | Runner rows filled |",

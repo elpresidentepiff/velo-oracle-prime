@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +16,7 @@ import pandas as pd
 
 from new_build_velo.passport_bank import PASSPORT_FEATURE_COLS, _date_from_text, _rpr_violations
 from new_build_velo.spine import NEW_BUILD_ROOT, PARSED_ROOT, TRUST_POLICY, norm, stable_id
+from new_build_velo import passport_lookup as _plu
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -157,6 +158,65 @@ def _iter_current_racecards() -> list[tuple[Path, dict[str, Any], str]]:
     return cards
 
 
+def _iter_standard_cache_racecard(path: Path) -> list[tuple[Path, dict[str, Any], str]]:
+    """Load the exact standard racecard cache used by Live VELO.
+
+    This is for paper-only alignment after the official day has run. It avoids
+    the broad upcoming-card archive scan, so New Build compares against the
+    same final race/runner set as Live VELO.
+    """
+    data = _load_json(path, {})
+    races = data.get("races") or []
+    if races and any("race_time" in race for race in races):
+        return [(path, data, "official_final_card")]
+
+    races = data.get("racecards") or data.get("races") or []
+    return [
+        (
+            path,
+            {
+                "capture_date": data.get("date") or data.get("publish_date") or data.get("meta", {}).get("date"),
+                "races": [
+                    {
+                        "race_id": race.get("race_id"),
+                        "course": race.get("course"),
+                        "race_time": f"{race.get('date')}T{race.get('off_time')}:00" if race.get("date") and race.get("off_time") else race.get("off_time"),
+                        "race_title": race.get("race_name") or race.get("race_title"),
+                        "race_class": race.get("race_class"),
+                        "race_type": race.get("type") or race.get("race_type"),
+                        "distance_furlongs": race.get("distance_f") or race.get("distance_furlongs"),
+                        "distance_yards": race.get("distance_yards"),
+                        "going": race.get("going"),
+                        "going_code": race.get("going_code"),
+                        "surface": race.get("surface"),
+                        "number_of_runners": len(race.get("runners", [])),
+                        "declared_runners": race.get("field_size") or len(race.get("runners", [])),
+                        "runners": [
+                            {
+                                "horse_id": runner.get("horse_id"),
+                                "horse": runner.get("horse") or runner.get("horse_name"),
+                                "trainer": runner.get("trainer"),
+                                "jockey": runner.get("jockey"),
+                                "draw": runner.get("draw"),
+                                "age": runner.get("age"),
+                                "weight_lbs": runner.get("lbs") or runner.get("weight_lbs"),
+                                "official_rating": runner.get("official_rating") or runner.get("ofr"),
+                                "forecast_odds": runner.get("odds") or runner.get("forecast_odds"),
+                                "headgear_first_time": runner.get("headgear_first_time"),
+                                "wind_surgery": runner.get("wind_surgery"),
+                                "non_runner": runner.get("non_runner", False),
+                            }
+                            for runner in race.get("runners", [])
+                        ],
+                    }
+                    for race in races
+                ],
+            },
+            "official_final_card",
+        )
+    ]
+
+
 def _missing_reason(
     *,
     passport_found: bool,
@@ -278,7 +338,8 @@ def _current_card_feature_check() -> dict[str, Any]:
     }
 
 
-def build_current_card_feed(*, execute: bool = False) -> dict[str, Any]:
+def build_current_card_feed(*, execute: bool = False, racecard_path: Path | None = None) -> dict[str, Any]:
+    _plu.load_index()
     passports = _load_passports()
     passport_features = _load_passport_features()
     champion_passport_features = _load_champion_passport_features()
@@ -288,20 +349,54 @@ def build_current_card_feed(*, execute: bool = False) -> dict[str, Any]:
     race_groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
     races_seen: set[str] = set()
 
-    for source_file, card, source in _iter_current_racecards():
+    card_sources = _iter_standard_cache_racecard(racecard_path) if racecard_path else _iter_current_racecards()
+    for source_file, card, source in card_sources:
         for race in card.get("races", []):
             race_date = _date_from_text(race.get("race_time")) or _date_from_text(card.get("capture_date")) or card.get("capture_date")
             race_id = str(race.get("race_id") or stable_id(source_file, race.get("race_time"), race.get("course"), race.get("race_title")))
             race_key = stable_id(race_date, race_id, race.get("course"), race.get("race_time"))
             races_seen.add(race_key)
+            race_date_obj: date | None = None
+            try:
+                if race_date:
+                    race_date_obj = date.fromisoformat(str(race_date)[:10])
+            except (ValueError, TypeError):
+                pass
+            race_dist_f: float | None = None
+            try:
+                if race.get("distance_furlongs") is not None:
+                    race_dist_f = float(race["distance_furlongs"])
+            except (ValueError, TypeError):
+                pass
             for runner in race.get("runners", []):
+                if runner.get("non_runner"):
+                    continue
                 uid = str(runner.get("horse_id")) if runner.get("horse_id") not in (None, "") else None
+                try:
+                    uid_int: int | None = int(uid) if uid else None
+                except (ValueError, TypeError):
+                    uid_int = None
+                live_pp = _plu.lookup_passport_features(
+                    horse_rp_uid=uid_int,
+                    horse_name=runner.get("horse"),
+                    as_of_date=race_date_obj,
+                    target_course=race.get("course"),
+                    target_dist_f=race_dist_f,
+                )
                 passport = passports.get(uid or "")
                 feature = passport_features.get(uid or "")
                 passport_found = passport is not None
                 champion_available = bool(feature) and all(col in feature for col in champion_passport_features)
                 intent_available = (race_id, norm(runner.get("horse"))) in intent_keys
                 feed_row_id = stable_id(race_key, uid, runner.get("horse"))
+                # Task 3 — race-day output labels
+                _pp_career_runs = (live_pp or {}).get("pp_career_runs")
+                _passport_available = _pp_career_runs is not None
+                _passport_feature_source = "LIVE_PASSPORT" if _passport_available else "MEDIAN_FILLED"
+                _weak_profile_runner = bool(_passport_available and _pp_career_runs is not None and int(_pp_career_runs) <= 2)
+                _passport_last_run_date = passport.get("last_run_date") if passport else None
+                _pp_days_since_last_label = (live_pp or {}).get("pp_days_since_last")
+
                 row = {
                     "feed_row_id": feed_row_id,
                     "source": "new_build_current_card_feed_v1",
@@ -340,6 +435,7 @@ def build_current_card_feed(*, execute: bool = False) -> dict[str, Any]:
                         runner=runner,
                     ),
                     "passport_summary": _passport_summary(passport),
+                    "passport_live_features": live_pp,
                     "passport_strength_score": _passport_strength(passport),
                     "reason_codes": _reason_codes(
                         passport=passport,
@@ -347,6 +443,12 @@ def build_current_card_feed(*, execute: bool = False) -> dict[str, Any]:
                         runner=runner,
                         intent_features_available=intent_available,
                     ),
+                    # Task 3 labels
+                    "passport_available": _passport_available,
+                    "passport_feature_source": _passport_feature_source,
+                    "weak_profile_runner": _weak_profile_runner,
+                    "passport_last_run_date": _passport_last_run_date,
+                    "pp_days_since_last_label": _pp_days_since_last_label,
                     "trust_policy": TRUST_POLICY,
                     "velo_scoring_allowed": False,
                     "live_velo_impact": False,
@@ -365,6 +467,42 @@ def build_current_card_feed(*, execute: bool = False) -> dict[str, Any]:
         race_groups[race_key].append(row)
     rpr_violations = _rpr_violations(feed_rows)
     runner_count = len(feed_rows)
+    live_pp_hits = sum(
+        1 for row in feed_rows
+        if (row.get("passport_live_features") or {}).get("pp_career_runs") is not None
+    )
+    live_pp_misses = runner_count - live_pp_hits
+    # Task 2 — expanded coverage report
+    weak_profile_count = sum(
+        1 for row in feed_rows
+        if (row.get("passport_live_features") or {}).get("pp_career_runs") is not None
+        and int((row.get("passport_live_features") or {}).get("pp_career_runs")) <= 2
+    )
+    missing_rp_uids: list[str] = []
+    for row in feed_rows:
+        if (row.get("passport_live_features") or {}).get("pp_career_runs") is None:
+            uid_val = row.get("rp_uid")
+            if uid_val not in (None, ""):
+                if str(uid_val) not in missing_rp_uids and len(missing_rp_uids) < 50:
+                    missing_rp_uids.append(str(uid_val))
+    coverage_summary = {
+        "generated_at": utc_now(),
+        "total_runners": runner_count,
+        "passport_hits": live_pp_hits,
+        "passport_misses": live_pp_misses,
+        "coverage_pct": round(live_pp_hits / runner_count * 100, 1) if runner_count else 0.0,
+        "median_filled_count": live_pp_misses,
+        "weak_profile_count": weak_profile_count,
+        "missing_rp_uids": missing_rp_uids,
+        "source_passport_bank_path": str(PASSPORT_PATH.resolve()),
+        "generated_at": utc_now(),
+    }
+    try:
+        (REPORT_ROOT / "passport_coverage_latest.json").write_text(
+            json.dumps(coverage_summary, indent=2), encoding="utf-8"
+        )
+    except Exception:
+        pass
     passport_count = sum(1 for row in feed_rows if row["passport_found"])
     champion_count = sum(1 for row in feed_rows if row["champion_features_available"])
     intent_count = sum(1 for row in feed_rows if row["intent_features_available"])
@@ -411,6 +549,8 @@ def build_current_card_feed(*, execute: bool = False) -> dict[str, Any]:
         "race_reports": race_reports,
         "rules": {
             "new_build_only": True,
+            "official_final_card_only": racecard_path is not None,
+            "official_final_card_path": str(racecard_path) if racecard_path else None,
             "no_training": True,
             "no_live_engine": True,
             "old_live_velo_untouched": True,
