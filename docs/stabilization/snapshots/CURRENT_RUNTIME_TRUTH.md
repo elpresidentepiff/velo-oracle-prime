@@ -24,8 +24,7 @@ scripts/ops/build_rp_runner_profile.py
     │  Outputs: data/features/rp_runner_profile_latest.parquet
     │
     ▼
-app/pipelines/score_daily_runner.py   ← LIVE_RUNTIME entry point (via /api/trigger/score-daily)
-    │  (wraps scripts/ops/run_prime_today.py)
+scripts/ops/run_prime_today.py   ← LIVE_RUNTIME entry point
     │
     ├─ load_model: models/sqpe_v17/sqpe_v17.pkl  (SQPE v17, primary probability model)
     ├─ load_specialist: models/specialist/*       (7 specialist models)
@@ -71,10 +70,10 @@ After results close:
     scripts/ops/scrape_results_atr.py --date YYYY-MM-DD
         │  Outputs: data/results_YYYY_MM_DD.json
         ▼
-    app/pipelines/sigma_runner.py --date YYYY-MM-DD --notify-telegram
+    scripts/ops/run_results_sigma.py --date YYYY-MM-DD --notify-telegram
         │  Writes: sigma_audits (Supabase), Telegram sigma report
         ▼
-    app/pipelines/results_ingest_runner.py --date YYYY-MM-DD
+    scripts/ops/ingest_results_to_horse_runs.py --date YYYY-MM-DD
         │  Writes: racing_horse_runs (Supabase) — feeds tomorrow's RPDC
         ▼
     scripts/ops/build_innovation_protocol.py --date YYYY-MM-DD

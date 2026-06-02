@@ -469,31 +469,15 @@ async def lifespan(app: FastAPI):
         )
     logger.info("[startup] G shadow mode: %s (safe)", _g_mode)
 
-    # ── Phase 1: Truth Reconciliation Path Guards ─────────────────────────────
-    _root = pathlib.Path(__file__).parent.parent
-    _canonical_paths = {
-        "score_daily": _root / "app" / "pipelines" / "score_daily_runner.py",
-        "sigma": _root / "app" / "pipelines" / "sigma_runner.py",
-        "ingest": _root / "app" / "pipelines" / "results_ingest_runner.py",
-    }
-    _missing = [name for name, p in _canonical_paths.items() if not p.exists()]
-    if _missing:
-        raise RuntimeError(f"[startup] BLOCKED: Missing canonical pipeline wrappers: {', '.join(_missing)}")
-    
-    logger.info(
-        "[startup] Truth Fingerprint: SCORE=%s SIGMA=%s G_MODE=%s EXEC_MODE=%s",
-        "score_daily_runner.py",
-        "sigma_runner.py",
-        _g_mode,
-        os.getenv("VELO_EXECUTION_MODE", "PAPER"),
-    )
-
     # ── Fix 1.2: Migration / schema verification ──────────────────────────────
     # Fail fast if required columns or tables are absent.
     # Missing columns → truth loop writes incomplete rows → learning corrupted.
     await _verify_schema_at_startup()
 
-    logger.info("Models load deferred to runtime or handled by sqpe_v17_service")
+    from app.services.model_manager import get_model_manager
+
+    mm = get_model_manager()
+    logger.info(f"Models initialised at startup: {mm.model_versions}")
 
     # Sentient bridge — Phase 1 (audit only, no scoring change)
     try:
@@ -753,25 +737,6 @@ async def health_check():
     return details
 
 
-@app.get("/api/runtime-truth")
-async def runtime_truth():
-    """
-    Phase 1 Runtime Truth Fingerprint.
-    Exposes canonical paths, active ensemble profile, execution modes, and git commit.
-    """
-    from app.core.runtime_env import get_commit_sha
-    
-    return {
-        "scoring_path": "app/pipelines/score_daily_runner.py",
-        "sigma_path": "app/pipelines/sigma_runner.py",
-        "g_shadow_mode": os.getenv("VELO_G_SHADOW_MODE", "shadow"),
-        "execution_mode": os.getenv("VELO_EXECUTION_MODE", "PAPER"),
-        "betfair_mode": os.getenv("BETFAIR_MODE", "PAPER"),
-        "ensemble_profile": "core_v0_or_passport + sqpe_v17", # Hardcoded active profiles
-        "git_commit": get_commit_sha()
-    }
-
-
 # ── Scoring trigger — called by GitHub Actions scheduler ─────────────────────
 @app.post("/api/trigger/score-daily", status_code=202)
 async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(None)):
@@ -800,7 +765,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    script_path = pathlib.Path(__file__).parent.parent / "app" / "pipelines" / "score_daily_runner.py"
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "ops" / "run_prime_today.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
 
@@ -896,7 +861,7 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    script_path = pathlib.Path(__file__).parent.parent / "app" / "pipelines" / "sigma_runner.py"
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
 
@@ -990,9 +955,7 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    raise HTTPException(status_code=501, detail="sigma-daily script (close_sigma_loops.py) is archived/disabled.")
-    
-    script_path = pathlib.Path(__file__).parent.parent / "archive" / "dead_scripts" / "close_sigma_loops.py"
+    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "close_sigma_loops.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
 
