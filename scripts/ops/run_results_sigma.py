@@ -1,10 +1,3 @@
-
-def _norm_course(value: str) -> str:
-    """Canonical normalized course name."""
-    import re as _re
-    v = str(value or "").strip().lower()
-    v = v.replace("(aw)", "").replace("aw", "").strip()
-    return _re.sub(r"[^a-z]", "", v)
 """
 VELO Results Reconciliation + Sigma Loop
 ==========================================
@@ -35,6 +28,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
+
+
+def _norm_course(value: str) -> str:
+    """Canonical normalized course name."""
+    import re as _re
+    v = str(value or "").strip().lower()
+    v = v.replace("(aw)", "").replace("aw", "").strip()
+    return _re.sub(r"[^a-z]", "", v)
 
 from app.core.runtime_env import load_optional_env_file, utc_now_iso  # noqa: E402
 

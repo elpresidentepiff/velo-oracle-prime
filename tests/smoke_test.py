@@ -33,34 +33,44 @@ def test_runtime_truth_api_healthy():
         data = response.json()
         assert "safety" in data
         assert "learning_governance" in data
-        assert data["modes"]["execution_mode"] in ("PAPER", "ARCHIVE", "LIVE")
+        # Modes check
+        modes = data["modes"]
+        assert modes["execution_mode"] in ("PAPER", "ARCHIVE", "LIVE")
+        assert modes["betfair_mode"] in ("PAPER", "ARCHIVE", "LIVE")
 
-def test_safety_guards_enforced():
-    """Verify that startup fails if forbidden modes are active."""
+def test_execution_mode_live_blocks_startup(monkeypatch):
+    """Verify that startup fails if VELO_EXECUTION_MODE=LIVE is active."""
     from app.main import lifespan
     from fastapi import FastAPI
     import asyncio
     
     app = FastAPI(lifespan=lifespan)
-    
-    # Force an unsafe mode in a subprocess-like environment (mocking env)
-    os.environ["VELO_EXECUTION_MODE"] = "LIVE"
+    monkeypatch.setenv("VELO_EXECUTION_MODE", "LIVE")
     
     with pytest.raises(RuntimeError, match="BLOCKED: VELO_EXECUTION_MODE=LIVE"):
         asyncio.run(lifespan(app).__aenter__())
-        
-    # Restore safe mode
-    os.environ["VELO_EXECUTION_MODE"] = "PAPER"
+
+def test_betfair_mode_live_blocks_startup(monkeypatch):
+    """Verify that startup fails if BETFAIR_MODE=LIVE is active."""
+    from app.main import lifespan
+    from fastapi import FastAPI
+    import asyncio
+    
+    app = FastAPI(lifespan=lifespan)
+    monkeypatch.setenv("BETFAIR_MODE", "LIVE")
+    
+    with pytest.raises(RuntimeError, match="BLOCKED: BETFAIR_MODE=LIVE"):
+        asyncio.run(lifespan(app).__aenter__())
 
 def test_pipeline_wrappers_resolve():
     """Verify that canonical pipeline wrappers exist and are loadable."""
     wrappers = [
-        ROOT / "app" / "pipelines" / "score_daily_runner.py",
-        ROOT / "app" / "pipelines" / "sigma_runner.py",
-        ROOT / "app" / "pipelines" / "results_ingest_runner.py"
+        ("Daily Scoring", ROOT / "app" / "pipelines" / "score_daily_runner.py"),
+        ("Sigma Reconciliation", ROOT / "app" / "pipelines" / "sigma_runner.py"),
+        ("Results Ingestion", ROOT / "app" / "pipelines" / "results_ingest_runner.py")
     ]
-    for w in wrappers:
-        assert w.exists(), f"Missing canonical wrapper: {w.name}"
+    for name, path in wrappers:
+        assert path.exists(), f"Missing canonical wrapper for {name}: {path.name}"
 
 def test_forbidden_import_guard():
     """Verify that the safety_guards utility correctly identifies forbidden imports."""

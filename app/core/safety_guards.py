@@ -1,5 +1,9 @@
 """
 Safety utility to scan for forbidden imports in the live scoring path.
+
+LIMITATION: This performs a shallow AST scan of DIRECT imports in a 
+specified set of critical files. It does NOT currently perform an 
+exhaustive trace of the entire import graph or deep child imports.
 """
 import ast
 import sys

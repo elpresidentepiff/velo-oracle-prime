@@ -1,7 +1,10 @@
-# BASELINE STATE: 2026-06-02
+# PRE-HARDENING HISTORICAL BASELINE: 2026-06-02
 
-## Environment & Run Details
-*   **Active Branch:** `stabilization/prime-hardening-v1`
+**STATUS: ARCHIVED BASELINE**
+*This document captures the system state BEFORE the stabilization and hardening work began.*
+
+## Environment & Run Details (Pre-Snapshot)
+*   **Active Branch:** `stabilization/prime-hardening-v1` (Initial)
 *   **Target Date Configured:** 2026-06-02
 *   **Execution Mode (`VELO_EXECUTION_MODE`):** Not globally enforced (assumed PAPER/ARCHIVE based on script runs)
 *   **G Shadow Mode (`VELO_G_SHADOW_MODE`):** assumed offline/shadow
