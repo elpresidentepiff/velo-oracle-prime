@@ -178,16 +178,42 @@ def main():
     print(f"\nAdded {len(all_entries)} entries to {LEDGER_PATH}")
     
     df = pd.DataFrame(all_entries)
-    if not df.empty:
-        print("\n--- Batch Summary ---")
-        summary = df.groupby('lane')['outcome'].value_counts().unstack(fill_value=0)
-        for col in ["WIN", "PLACE", "MISS", "NR"]:
-            if col not in summary.columns: summary[col] = 0
+    # 5. Summary Report
+    if not LEDGER_PATH.exists(): return
+    all_rows = [json.loads(l) for l in LEDGER_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
+    full_df = pd.DataFrame(all_rows)
+    
+    if not full_df.empty:
+        print("\n" + "=" * 60)
+        print("NEW BUILD DECISION POLICY LEDGER - GLOBAL SUMMARY")
+        print("=" * 60)
+        
+        # Segment by Confidence
+        print("\n[Outcome Confidence Segmentation]")
+        conf_summary = full_df.groupby('outcome_confidence').size()
+        print(conf_summary.to_string())
+        
+        # Lane Performance
+        print("\n[Lane Performance - Valid Outcomes Only]")
+        # We exclude NR and only look at high/medium confidence
+        valid = full_df[
+            (full_df['outcome'] != 'NR') & 
+            (full_df['outcome_confidence'].isin(['HIGH', 'MEDIUM_ABSENCE']))
+        ].copy()
+        
+        if not valid.empty:
+            summary = valid.groupby('lane')['outcome'].value_counts().unstack(fill_value=0)
+            for col in ["WIN", "PLACE", "MISS"]:
+                if col not in summary.columns: summary[col] = 0
             
-        summary['Total'] = summary['WIN'] + summary['PLACE'] + summary['MISS']
-        summary['SR%'] = (summary['WIN'] / summary.Total.replace(0, 1) * 100).round(1)
-        summary['Frame%'] = ((summary['WIN'] + summary['PLACE']) / summary.Total.replace(0, 1) * 100).round(1)
-        print(summary[['Total', 'WIN', 'PLACE', 'SR%', 'Frame%']])
+            summary['Total'] = summary['WIN'] + summary['PLACE'] + summary['MISS']
+            summary['SR%'] = (summary['WIN'] / summary.Total.replace(0, 1) * 100).round(1)
+            summary['Frame%'] = ((summary['WIN'] + summary['PLACE']) / summary.Total.replace(0, 1) * 100).round(1)
+            print(summary[['Total', 'WIN', 'PLACE', 'SR%', 'Frame%']])
+            print(f"\nProgress to n=150: {len(valid)} / 150 ({len(valid)/150:.1%})")
+        else:
+            print("No valid outcomes to report.")
+        print("=" * 60)
 
 if __name__ == "__main__":
     main()
