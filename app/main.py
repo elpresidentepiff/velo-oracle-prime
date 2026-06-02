@@ -790,6 +790,22 @@ async def runtime_truth():
             "forbidden_import_check": "PASS" if run_safety_scan() else "FAIL",
             "live_execution_blocked": True,
         },
+        "learning_governance": {
+            "loop_status": {
+                "scoring": "ACTIVE_LIVE",
+                "reconciliation": "ACTIVE_LIVE",
+                "evidence_accumulation": "ACTIVE_SHADOW",
+                "autonomous_learning": "DISABLED_MANUAL_ONLY",
+            },
+            "components": {
+                "sqpe_v17": "LIVE_WEIGHTED",
+                "improvement": "LIVE_WEIGHTED",
+                "market_deception": "LIVE_WEIGHTED",
+                "place_prob": "LIVE_VISIBLE_ONLY",
+                "playbook_g": "SHADOW_ONLY",
+                "no_vp_composite": "SHADOW_ONLY",
+            }
+        },
         "ensemble_profile": "core_v0_or_passport + sqpe_v17", # Hardcoded active profiles
         "git_commit": get_commit_sha()
     }

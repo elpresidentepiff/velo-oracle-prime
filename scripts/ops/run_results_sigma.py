@@ -1,3 +1,10 @@
+
+def _norm_course(value: str) -> str:
+    """Canonical normalized course name."""
+    import re as _re
+    v = str(value or "").strip().lower()
+    v = v.replace("(aw)", "").replace("aw", "").strip()
+    return _re.sub(r"[^a-z]", "", v)
 """
 VELO Results Reconciliation + Sigma Loop
 ==========================================
@@ -61,6 +68,20 @@ SB_HEADERS = {
     "Content-Type": "application/json",
     "Prefer": "return=minimal",
 }
+
+
+def _candidate_bst_times(off_time: str) -> list[str]:
+    """Generate ±3-minute candidate BST time strings (HH.MM) for course-time fallback matching."""
+    try:
+        h, m = map(int, off_time.replace(":", ".").split("."))
+        total = h * 60 + m
+        cands = []
+        for delta in range(-3, 4):
+            t = total + delta
+            cands.append(f"{t // 60:02d}.{t % 60:02d}")
+        return cands
+    except Exception:
+        return [off_time]
 
 SIGMA_SERVICE = "velo-results-sigma"
 SIGMA_RUN_TYPE = "results_reconciliation_light"
@@ -203,7 +224,10 @@ def sb_upsert(path: str, data: dict | list, on_conflict: str) -> bool:
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--source", default="api")
     parser.add_argument("--date", default=None)
+    parser.add_argument("--min-coverage", type=float, default=None,
+                        help="Override completeness gate threshold (0-1). Use when Irish/blocked venues are known to be inaccessible.")
     args = parser.parse_args()
     race_date = args.date or TODAY
     run_id = _open_sigma_run(race_date)
@@ -227,11 +251,35 @@ def main():
         f"&generated_at=lt.{race_date}T23:59:59"
         f"&order=generated_at"
     )
+    if not verdicts_raw:
+        # Scoring runs past midnight UTC land on race_date+1 — widen by 12h and
+        # filter by race_id prefix so we don't pull in the wrong day's verdicts.
+        from datetime import timedelta
+        race_date_obj = datetime.strptime(race_date, "%Y-%m-%d").date()
+        next_day = (race_date_obj + timedelta(days=1)).strftime("%Y-%m-%d")
+        date_tag = race_date.replace("-", "")  # e.g. "20260529"
+        extended = sb_get(
+            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis"
+            f"&generated_at=gte.{next_day}T00:00:00"
+            f"&generated_at=lt.{next_day}T12:00:00"
+            f"&order=generated_at"
+        )
+        verdicts_raw = [v for v in (extended or []) if date_tag in v.get("race_id", "")]
+        if verdicts_raw:
+            print(f"  [INFO] Found {len(verdicts_raw)} verdicts via overnight window (generated_at={next_day})")
     print(f"  Predictions loaded: {len(verdicts_raw)}")
     if not verdicts_raw:
         print("  ABORT: no predictions found for this date")
         tg(f"VELO SIGMA ABORT — {race_date}\nNo predictions found in velo_verdicts.")
         sys.exit(1)
+
+    # Filter: only keep verdicts whose race_id contains today's date (YYYYMMDD).
+    # Verdicts for prior days can appear if generated_at falls on today (overnight runs).
+    _date_tag = race_date.replace("-", "")  # e.g. "20260530"
+    _pre_filter = len(verdicts_raw)
+    verdicts_raw = [v for v in verdicts_raw if _date_tag in str(v.get("race_id", ""))]
+    if len(verdicts_raw) < _pre_filter:
+        print(f"  [INFO] Filtered {_pre_filter - len(verdicts_raw)} verdicts with wrong date in race_id")
 
     # Build lookup: race_id -> verdict row (keep latest generated_at if duplicates exist)
     predictions: dict = {}
@@ -338,14 +386,50 @@ def main():
                 }
             else:
                 horse_names[rid] = {"horse": "?", "course": "?", "off_time": "?", "from_db": False}
-
-    # ── STEP 2: Fetch results from Racing API ─────────────────────────────────
-    print("\nSTEP 2: Fetch results from Racing API")
-    cached = ROOT / "data" / f"results_{race_date.replace('-', '_')}.json"
-    if cached.exists() and cached.stat().st_size > 100:
-        d = json.loads(cached.read_text())
-        results_list = d.get("results", [])
-        print(f"  Using cached results: {len(results_list)} races")
+    # ── STEP 2: Load results ─────────────────────────────────
+    print("\nSTEP 2: Load results")
+    source = "api"
+    for i, arg in enumerate(sys.argv):
+        if arg == "--source" and i+1 < len(sys.argv): source = sys.argv[i+1]
+    
+    if source == "cache":
+        results_path = ROOT / "data" / "results" / f"rp_results_{race_date.replace('-', '_')}.json"
+        print(f"  Loading from cache: {results_path}")
+        if not results_path.exists():
+             print(f"  FAILED: local results not found at {results_path}")
+             sys.exit(1)
+        import json as _json
+        _raw = _json.loads(results_path.read_text())
+        # Handle SL scraper format: {"results": [...]} wrapper
+        results_list = _raw if isinstance(_raw, list) else _raw.get("results", [])
+        # Normalise SL-format results: derive winner/top3/off_time if missing
+        for _r in results_list:
+            if "winner_id" not in _r and "runners" in _r:
+                _DNF = {"NR","WD","PU","F","BD","UR","SU","RO","REF","DSQ",""}
+                def _pos(x):
+                    p = str(x.get("position","")).strip()
+                    return int(p) if p.isdigit() else 999
+                _sorted = sorted(_r["runners"], key=_pos)
+                _top3 = [x for x in _sorted if str(x.get("position","")).strip() in ("1","2","3")]
+                _w = _top3[0] if _top3 else {}
+                _r["winner_id"]    = _w.get("horse_id","")
+                _r["winner_name"]  = _w.get("horse","")
+                _r["winner_horse"] = _w.get("horse","")
+                _r["winner_sp"]    = _w.get("sp_dec", 0)
+                _r["top3_ids"]     = [x.get("horse_id","") for x in _top3]
+                _r["top3_names"]   = [x.get("horse","") for x in _top3]
+                _r["full_runners"] = _r["runners"]
+            # Ensure 24h off_time for course-time fallback (SL uses H.MM 12h)
+            if "off_time" not in _r:
+                _off = str(_r.get("off",""))
+                try:
+                    _h, _m = map(int, _off.split("."))
+                    if _h < 11:
+                        _h += 12
+                    _r["off_time"] = f"{_h:02d}.{_m:02d}"
+                except Exception:
+                    _r["off_time"] = _off
+        print(f"  Results loaded: {len(results_list)}")
     else:
         print("  Fetching from API...")
         results_list = []
@@ -353,110 +437,33 @@ def main():
         page_size = 50
         while True:
             d = racing_get(f"/results?start_date={race_date}&end_date={race_date}&limit={page_size}&skip={skip}")
-            page = d.get("results", [])
+            page = d if isinstance(d, list) else d.get("results", [])
             results_list.extend(page)
-            if len(page) < page_size:
-                break
+            if len(page) < page_size: break
             skip += page_size
-        cached.write_text(json.dumps({"results": results_list}, indent=2))
-        print(f"  Fetched and cached: {len(results_list)} races")
-
-    # Build result lookup: race_id -> {winner_horse, winner_id, top3_ids}
-    results_by_id = {}
-    for race in results_list:
-        rid = race.get("race_id") or race.get("id", "")
-        runners = race.get("runners", [])
-        sorted_runners = sorted(
-            [r for r in runners if r.get("position", "").isdigit()], key=lambda r: int(r["position"])
-        )
-        winner = sorted_runners[0] if sorted_runners else {}
-        top3 = sorted_runners[:3]
-        results_by_id[rid] = {
-            "course": race.get("course", "?"),
-            "off": race.get("off", "?"),
-            "race_name": race.get("race_name", race.get("name", "?"))[:40],
-            "winner_horse": winner.get("horse", "?"),
-            "winner_id": winner.get("horse_id", ""),
-            "winner_sp": winner.get("sp_dec", 0),
-            "top3_ids": [r.get("horse_id", "") for r in top3],
-            "top3_names": [r.get("horse", "?") for r in top3],
-            "full_runners": runners,
-        }
-
-    print(f"  Results indexed: {len(results_by_id)} races (SL/API source)")
-
-    # ── RP results overlay: real race IDs, full field, authoritative truth ───
-    # parse_rp_results_capture.py writes this file. When present it is the
-    # primary source. Its race IDs match VELO verdict IDs directly (no fallback
-    # needed). It overwrites any SL entry for the same race_id.
-    rp_results_path = ROOT / "data" / "results" / f"rp_results_{race_date.replace('-', '_')}.json"
-    rp_loaded = 0
-    if rp_results_path.exists():
-        try:
-            rp_data = json.loads(rp_results_path.read_text())
-            for rr in rp_data.get("results", []):
-                rid = str(rr.get("race_id", ""))
-                if not rid or not rr.get("winner_horse"):
-                    continue
-                results_by_id[rid] = {
-                    "course": rr.get("course", ""),
-                    "off": rr.get("off", ""),
-                    "race_name": (rr.get("race_name") or "")[:40],
-                    "winner_horse": rr["winner_horse"],
-                    "winner_id": rr.get("winner_id", ""),
-                    "winner_sp": rr.get("winner_sp", 0),
-                    "top3_ids": rr.get("top3_ids", []),
-                    "top3_names": rr.get("top3_names", []),
-                    "full_runners": rr.get("runners", []),
-                    "source": "racing_post",
-                }
-                rp_loaded += 1
-            print(f"  RP results loaded: {rp_loaded} races (merged — now {len(results_by_id)} total)")
-        except Exception as _e:
-            print(f"  [WARN] RP results load failed: {_e}")
-
-    # Secondary index by (course_lower, bst_time) — used when SL-format race IDs
-    # don't match Racing API numeric IDs on the predictions side.
-    def _to_bst_hhmm(utc_hhmm: str) -> str:
-        try:
-            h, m = map(int, utc_hhmm.replace(".", ":").split(":"))
-            bst_h = h + 1
-            if bst_h >= 13:
-                bst_h -= 12
-            return f"{bst_h}.{m:02d}"
-        except Exception:
-            return utc_hhmm
-
-    def _norm_course(name: str) -> str:
-        """Normalise course name: lowercase, strip parenthetical suffixes like (AW)."""
-        import re as _re
-        return _re.sub(r"\s*\([^)]*\)", "", (name or "")).lower().strip()
-
-    def _candidate_bst_times(utc_hhmm: str, tolerance_min: int = 10) -> list[str]:
-        """Return BST H.MM candidates within ±tolerance_min of the UTC input."""
-        try:
-            h, m = map(int, utc_hhmm.replace(".", ":").split(":"))
-        except Exception:
-            return [utc_hhmm]
-        candidates = []
-        total_utc_min = h * 60 + m
-        for delta in range(-tolerance_min, tolerance_min + 1):
-            cand_total = total_utc_min + delta + 60  # +60 = UTC→BST
-            cand_h = (cand_total // 60) % 24
-            cand_m = cand_total % 60
-            bst_h = cand_h - 12 if cand_h >= 13 else cand_h
-            if bst_h > 0:
-                candidates.append(f"{bst_h}.{cand_m:02d}")
-        return candidates
-
-    results_by_course_time: dict = {}
-    for _rd in results_by_id.values():
-        _ck = (_norm_course(_rd["course"]), _rd["off"])
-        if _ck not in results_by_course_time:
-            results_by_course_time[_ck] = _rd
-
     # ── STEP 3: Reconcile ─────────────────────────────────────────────────────
     print("\nSTEP 3: Reconcile predictions vs actuals")
+    results_by_id = {str(r.get("race_id")): r for r in results_list if r.get("race_id")}
+    # Also index by normalised 24h-underscore race_id so SL 12h-period IDs match VELO prediction IDs.
+    # e.g. rp_CAR_20260530_1.30 → rp_CAR_20260530_13_30
+    import re as _re_id
+    for _r in results_list:
+        _rid = str(_r.get("race_id",""))
+        _m = _re_id.match(r"(rp_[A-Z]+_\d{8})_(\d+)\.(\d{2})$", _rid)
+        if _m:
+            _h, _mn = int(_m.group(2)), int(_m.group(3))
+            if _h < 11: _h += 12
+            _norm_rid = f"{_m.group(1)}_{_h:02d}_{_mn:02d}"
+            if _norm_rid not in results_by_id:
+                results_by_id[_norm_rid] = _r
+
+    # Secondary index keyed by (norm_course, off_time) for course-time fallback.
+    results_by_course_time: dict = {}
+    for r in results_list:
+        c = _norm_course(r.get("course", "") or r.get("course_name", ""))
+        ot = r.get("off_time", "")
+        if c and ot:
+            results_by_course_time[(c, ot)] = r
 
     hits = []  # top pick won
     frames = []  # top pick placed top 3
@@ -469,15 +476,19 @@ def main():
     DNF_POSITIONS = {"NR", "WD", "PU", "F", "BD", "UR", "SU", "RO", "REF", "DSQ", ""}
 
     for race_id, pred in predictions.items():
-        result = results_by_id.get(race_id)
-        info = horse_names.get(race_id, {})
-        predicted_horse_id = pred.get("top_rank_horse_id", "")
+        predicted_horse_id = str(pred.get("top_rank_horse_id", "") or "")
         vpp = pred.get("velo_prime_prob", 0)
-
+        info = horse_names.get(race_id, {})
+        
+        # ── Step 3.1: Race Reconciliation (ID-First) ──────────────────────────
+        result = results_by_id.get(race_id)
+        provenance = "UNRESOLVED"
         via_course_time = False
-        if not result:
-            # Fallback: match by course + off_time for SL-scraped results.
-            # Uses normalised course name (strips "(AW)" etc.) and ±3 min tolerance.
+
+        if result:
+            provenance = "MATCH_EXACT_ID"
+        else:
+            # Fallback: match by course + off_time
             fb = local_backup.get(race_id, {})
             fb_course = _norm_course(fb.get("course", ""))
             fb_off = fb.get("off_time", "")
@@ -485,50 +496,58 @@ def main():
                 for bst_cand in _candidate_bst_times(fb_off):
                     result = results_by_course_time.get((fb_course, bst_cand))
                     if result:
+                        provenance = "MATCH_COURSE_TIME"
                         via_course_time = True
                         break
+        
         if not result:
             no_result.append(race_id)
             continue
 
-        # ── Integrity gate: reject unresolvable predictions ───────────────────
-        # Gate 1: no horse ID → cannot score, never force-MISS
-        if not predicted_horse_id:
-            print(f"  [SKIP] {race_id}: predicted_horse_id empty — no_result (unresolvable)")
+        # ── Step 3.2: Integrity Gate ──────────────────────────────────────────
+        if not predicted_horse_id and not info.get("horse"):
+            print(f"  [SKIP] {race_id}: no horse_id and no name — unresolvable")
             no_result.append(race_id)
             continue
 
-        # Gate 2: name display only — scoring uses horse_id (above), so fallback
-        #         names are safe. Only block if we have neither id nor name.
-        pick_from_db = info.get("from_db", False)
-        if not pick_from_db and not predicted_horse_id:
-            print(f"  [SKIP] {race_id}: no horse_id and no fallback name — unresolvable")
-            no_result.append(race_id)
-            continue
-
-        # ── Non-runner gate: predicted horse did not start/finish ─────────────
-        # Skip for course-time matched results (SL top_horses only — full field unavailable)
-        if not via_course_time:
-            full_runners = result.get("full_runners", [])
-            for runner in full_runners:
-                if runner.get("horse_id") == predicted_horse_id:
-                    pos = str(runner.get("position", "")).strip().upper()
-                    if pos in DNF_POSITIONS:
-                        non_runners.append(race_id)
-                        print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded from stats")
+        # ── Step 3.3: Horse Reconciliation (ID-First) ─────────────────────────
+        horse_result = None
+        
+        # 1. Match by exact horse_id
+        if predicted_horse_id:
+            for runner in result.get("full_runners", result.get("runners", [])):
+                if str(runner.get("horse_id")) == predicted_horse_id:
+                    horse_result = runner
+                    provenance += "_HID"
                     break
-            if race_id in non_runners:
-                continue
+        
+        # 2. Fallback to name match
+        if not horse_result and info.get("horse"):
+            pred_name_norm = _norm_course(info["horse"]) # reuse course norm for basic string cleaning
+            for runner in result.get("full_runners", result.get("runners", [])):
+                if _norm_course(runner.get("horse", "")) == pred_name_norm:
+                    horse_result = runner
+                    provenance += "_NAME"
+                    break
+        
+        if not horse_result:
+            print(f"  [WARN] {race_id}: race matched ({provenance}) but horse {predicted_horse_id}/{info.get('horse')} not found")
+            no_result.append(race_id)
+            continue
 
-        if via_course_time:
-            _pick_norm = info.get("horse", "").lower().strip()
-            is_hit = bool(_pick_norm and _pick_norm == result["winner_horse"].lower().strip())
-            is_frame = bool(_pick_norm and _pick_norm in [n.lower().strip() for n in result.get("top3_names", [])])
-        else:
-            is_hit = predicted_horse_id == result["winner_id"]
-            is_frame = predicted_horse_id in result["top3_ids"]
+        # ── Step 3.4: Non-runner check ────────────────────────────────────────
+        pos = str(horse_result.get("position", "")).strip().upper()
+        if pos in DNF_POSITIONS:
+            non_runners.append(race_id)
+            print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded")
+            continue
+
+        # ── Step 3.5: Outcomes ────────────────────────────────────────────────
+        # Use horse_result to determine WIN/PLACE status
+        is_hit = pos == "1"
+        is_frame = pos in ("1", "2", "3")
+        
         miss_class = "n/a"
-
         if is_hit:
             hits.append(race_id)
             outcome = "WIN"
@@ -537,43 +556,32 @@ def main():
             outcome = "PLACED"
         else:
             outcome = "MISS"
-            # Classify miss
             winner_sp = float(result.get("winner_sp") or 0)
-            if winner_sp > 0 and winner_sp <= 3.0:
-                miss_class = "short_fav_won"
-            elif winner_sp > 10.0:
-                miss_class = "outsider_won"
-            else:
-                miss_class = "mid_priced_won"
+            if winner_sp > 0 and winner_sp <= 3.0: miss_class = "short_fav_won"
+            elif winner_sp > 10.0: miss_class = "outsider_won"
+            else: miss_class = "mid_priced_won"
             misses.append(race_id)
-
-        raw_horse_name = info.get("horse", "?")
-        pick_display = raw_horse_name  # pick_from_db is guaranteed True by gate above
 
         all_matched.append(
             {
                 "race_id": race_id,
                 "course": result["course"],
                 "off": result["off"],
-                "predicted": pick_display,
-                "predicted_raw": raw_horse_name,
+                "predicted": info.get("horse", "?"),
                 "predicted_id": predicted_horse_id,
-                "pick_from_db": pick_from_db,
-                "actual_winner": result["winner_id"],
-                "actual_name": result["winner_name"] if "winner_name" in result else result["winner_horse"],
-                "winner_sp": result["winner_sp"],
+                "reconciliation_provenance": provenance,
+                "actual_winner": result.get("winner_id", "?"),
+                "winner_sp": result.get("winner_sp", 0),
                 "velo_prime_prob": vpp,
                 "outcome": outcome,
                 "miss_class": miss_class,
-                "top3": result["top3_names"],
+                "top3": result.get("top3_names", []),
             }
         )
 
         symbol = "WIN" if is_hit else ("PLACED" if is_frame else f"MISS({miss_class})")
-        print(
-            f"  {symbol:<25} {result['course']:<22} {result['off']}  "
-            f"pred={pick_display:<30} actual={result['winner_horse']}"
-        )
+        print(f"  {symbol:<25} {result['course']:<22} {result['off']}  pred={info.get('horse','?'):<30} [{provenance}]")
+
 
     total_matched = len(all_matched)
     total_hits = len(hits)
@@ -602,7 +610,7 @@ def main():
     # Sigma must have >= 95% result coverage before any learning or final reporting.
     # Below threshold: write DIAGNOSTIC artifact only. NO sigma_audits. NO learning.
     # NO Telegram final. NO Council/Mission Control finalization.
-    COMPLETENESS_THRESHOLD = 0.95
+    COMPLETENESS_THRESHOLD = args.min_coverage if args.min_coverage is not None else 0.95
     expected_races = len(predictions)
     coverage_ratio = total_matched / expected_races if expected_races else 0
     is_incomplete = coverage_ratio < COMPLETENESS_THRESHOLD
