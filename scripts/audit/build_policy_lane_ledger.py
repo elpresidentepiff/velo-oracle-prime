@@ -47,11 +47,9 @@ def build_ledger_for_date(target_date: str, force: bool = False):
     results_path = RESULTS_DIR / f"results_{date_und}.json"
     
     if not report_path.exists():
-        print(f"  [SKIP] Readiness report not found: {report_path}")
-        return []
+        return [], f"Readiness report not found: {report_path}"
     if not results_path.exists():
-        print(f"  [SKIP] Results not found: {results_path}")
-        return []
+        return [], f"Results not found: {results_path}"
         
     print(f"Processing {target_date}...")
     report = json.loads(report_path.read_text(encoding="utf-8"))
@@ -62,8 +60,7 @@ def build_ledger_for_date(target_date: str, force: bool = False):
     if results_list and not force:
         avg_runners = sum(len(r.get("runners", [])) for r in results_list) / len(results_list)
         if avg_runners < 3.0:
-            print(f"  [STOP] Result source for {target_date} appears incomplete (avg runners: {avg_runners:.1f}). Skipping.")
-            return []
+            return [], f"Result source incomplete (avg runners: {avg_runners:.1f})"
 
     # 1. Index results by race_id and (course, min_time)
     results_by_id = {str(r.get("race_id")): r for r in results_list}
@@ -187,25 +184,30 @@ def main():
     parser.add_argument("--force", action="store_true", help="Ignore source completeness check")
     args = parser.parse_args()
     
+    skip_reason = None
+    all_entries = []
+    
     if not args.report_only:
-        all_entries = []
         if args.backfill:
             files = sorted(list(REPORT_DIR.glob("two_lane_readiness_20*.json")))
             for f in files:
                 dt = f.name.replace("two_lane_readiness_", "").replace(".json", "").replace("_", "-")
-                all_entries.extend(build_ledger_for_date(dt, force=args.force))
+                entries, reason = build_ledger_for_date(dt, force=args.force)
+                all_entries.extend(entries)
+                if reason and not entries:
+                    print(f"  [SKIP] {dt}: {reason}")
         elif args.date:
-            all_entries.extend(build_ledger_for_date(args.date, force=args.force))
+            all_entries, skip_reason = build_ledger_for_date(args.date, force=args.force)
         else:
-            all_entries.extend(build_ledger_for_date(datetime.now(UTC).strftime("%Y-%m-%d"), force=args.force))
+            all_entries, skip_reason = build_ledger_for_date(datetime.now(UTC).strftime("%Y-%m-%d"), force=args.force)
             
         if all_entries:
-            # Deduplicate before appending
             existing_ids = set()
             if LEDGER_PATH.exists():
                 for line in LEDGER_PATH.read_text(encoding="utf-8").splitlines():
                     if line.strip():
-                        existing_ids.add((json.loads(line)["race_id"], json.loads(line)["horse"]))
+                        row = json.loads(line)
+                        existing_ids.add((row["race_id"], row["horse"]))
             
             new_rows = []
             for e in all_entries:
@@ -217,15 +219,22 @@ def main():
                     for e in new_rows:
                         f.write(json.dumps(e) + "\n")
                 print(f"\nAdded {len(new_rows)} new entries to {LEDGER_PATH}")
-                # Print daily summary for the new rows
                 print_summary(pd.DataFrame(new_rows), "DAILY BATCH")
             else:
                 print("All processed entries already in ledger.")
+                if not args.backfill:
+                    skip_reason = "All entries already in ledger"
+        elif skip_reason:
+            print(f"\n[SKIPPED] {skip_reason}")
 
     # Always print global summary
     if LEDGER_PATH.exists():
         all_rows = [json.loads(l) for l in LEDGER_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
         print_summary(pd.DataFrame(all_rows), "GLOBAL CUMULATIVE")
+
+    if not all_entries and skip_reason:
+        sys.exit(2) # SKIPPED
+    sys.exit(0) # PASS
 
 if __name__ == "__main__":
     main()

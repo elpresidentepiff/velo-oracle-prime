@@ -29,19 +29,10 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
     
     proc = subprocess.run(cmd, env=env, cwd=str(ROOT), check=False)
     
-    # Batch 3: Write Summary Artifact
-    from app.pipelines.pipeline_support import write_summary
-    artifact_dir = ROOT / "data" / "new_build" / "summaries"
-    safe_date = (target_date or "today").replace("-", "_")
-    
-    write_summary(
-        pipeline_type="sigma",
-        target_date=target_date or "today",
-        status="PASS" if proc.returncode == 0 else "FAIL",
-        artifact_path=artifact_dir / f"sigma_{safe_date}.json"
-    )
-    
     # ── NEW: Decision Policy Lane Ledger ─────────────────────────────────────
+    ledger_status = "NOT_RUN"
+    ledger_skip_reason = None
+    
     if proc.returncode == 0:
         print("\nUpdating Decision Policy Lane Ledger...")
         ledger_script = ROOT / "scripts" / "audit" / "build_policy_lane_ledger.py"
@@ -49,10 +40,47 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
             ledger_cmd = [sys.executable, str(ledger_script)]
             if target_date:
                 ledger_cmd.extend(["--date", target_date])
-            subprocess.run(ledger_cmd, env=env, cwd=str(ROOT))
+            
+            # Capture output to find skip reason if it exits with 2
+            res = subprocess.run(ledger_cmd, env=env, cwd=str(ROOT), capture_output=True, text=True)
+            
+            if res.returncode == 0:
+                ledger_status = "PASS"
+            elif res.returncode == 2:
+                ledger_status = "SKIPPED"
+                # Extract reason from stdout (look for [SKIPPED] line)
+                import re
+                m = re.search(r"\[SKIPPED\] (.*)", res.stdout)
+                ledger_skip_reason = m.group(1) if m else "Completeness check or duplicate"
+            else:
+                ledger_status = "FAIL"
+                
+            # Print ledger output for transparency
+            print(res.stdout)
+            if res.stderr: print(res.stderr, file=sys.stderr)
         else:
             print(f"  [WARN] Ledger script not found: {ledger_script}")
+            ledger_status = "SCRIPT_MISSING"
 
+    # ── Write Summary Artifact ───────────────────────────────────────────────
+    from app.pipelines.pipeline_support import write_summary
+    artifact_dir = ROOT / "data" / "new_build" / "summaries"
+    safe_date = (target_date or "today").replace("-", "_")
+    
+    counts = {
+        "lane_ledger_status": ledger_status
+    }
+    if ledger_skip_reason:
+        counts["lane_ledger_skip_reason"] = ledger_skip_reason
+
+    write_summary(
+        pipeline_type="sigma",
+        target_date=target_date or "today",
+        status="PASS" if proc.returncode == 0 else "FAIL",
+        counts=counts,
+        artifact_path=artifact_dir / f"sigma_{safe_date}.json"
+    )
+    
     sys.exit(proc.returncode)
 
 if __name__ == "__main__":
