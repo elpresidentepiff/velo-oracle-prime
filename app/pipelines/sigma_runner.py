@@ -41,6 +41,18 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
         artifact_path=artifact_dir / f"sigma_{safe_date}.json"
     )
     
+    # ── NEW: Decision Policy Lane Ledger ─────────────────────────────────────
+    if proc.returncode == 0:
+        print("\nUpdating Decision Policy Lane Ledger...")
+        ledger_script = ROOT / "scripts" / "audit" / "build_policy_lane_ledger.py"
+        if ledger_script.exists():
+            ledger_cmd = [sys.executable, str(ledger_script)]
+            if target_date:
+                ledger_cmd.extend(["--date", target_date])
+            subprocess.run(ledger_cmd, env=env, cwd=str(ROOT))
+        else:
+            print(f"  [WARN] Ledger script not found: {ledger_script}")
+
     sys.exit(proc.returncode)
 
 if __name__ == "__main__":

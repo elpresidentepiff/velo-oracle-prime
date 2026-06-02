@@ -6,7 +6,10 @@ This document outlines the strict criteria and procedures for promoting componen
 
 | Metric | Minimum Requirement | Verification Source |
 | :--- | :--- | :--- |
-| **Sample Size** | n ≥ 300 races (or n ≥ 500 runners). | `sigma_audits` (Supabase) |
+| **Sample Size (General)** | n ≥ 300 races (or n ≥ 500 runners). | `sigma_audits` (Supabase) |
+| **Sample Size (Policy)** | n ≥ 150 top-pick lane decisions. | `policy_lane_ledger.jsonl` |
+| **Sample Quality (Policy)** | n ≥ 50 HIGH confidence outcomes. | `policy_lane_ledger.jsonl` |
+| **Lane Specifics** | WIN_TRUST / FRAME_TRUST must show statistically significant lift. | `policy_lane_ledger.jsonl` |
 | **Edge Stability** | No `RuntimeError` or `NaN` in 30 days of shadow. | `error_logs` |
 | **AUC Improvement** | Challenger AUC > Champion AUC + 0.02. | `challenger_v1_promotion_review` |
 | **Calibration** | Predicted vs Empirical SR within 5%. | `sigma_calibration_report` |

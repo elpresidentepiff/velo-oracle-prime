@@ -28,7 +28,6 @@ def _norm(s):
 def _nb_to_min(t):
     if not t: return -1
     if "T" in str(t):
-        # Extract HH:MM from ISO
         import re
         m = re.search(r"T(\d{2}):(\d{2})", str(t))
         if m: return int(m.group(1)) * 60 + int(m.group(2))
@@ -42,7 +41,7 @@ def _sl_to_min(t):
     if 1 <= h <= 9: h += 12
     return h * 60 + m
 
-def build_ledger_for_date(target_date: str):
+def build_ledger_for_date(target_date: str, force: bool = False):
     date_und = target_date.replace("-", "_")
     report_path = REPORT_DIR / f"two_lane_readiness_{date_und}.json"
     results_path = RESULTS_DIR / f"results_{date_und}.json"
@@ -59,6 +58,13 @@ def build_ledger_for_date(target_date: str):
     raw_results = json.loads(results_path.read_text(encoding="utf-8"))
     results_list = raw_results.get("results", []) if isinstance(raw_results, dict) else raw_results
     
+    # ── Source Completeness Check ──────────────────────────────────────────
+    if results_list and not force:
+        avg_runners = sum(len(r.get("runners", [])) for r in results_list) / len(results_list)
+        if avg_runners < 3.0:
+            print(f"  [STOP] Result source for {target_date} appears incomplete (avg runners: {avg_runners:.1f}). Skipping.")
+            return []
+
     # 1. Index results by race_id and (course, min_time)
     results_by_id = {str(r.get("race_id")): r for r in results_list}
     results_by_ct = {(_norm(r.get("course")), _sl_to_min(r.get("off"))): r for r in results_list}
@@ -73,35 +79,26 @@ def build_ledger_for_date(target_date: str):
         off_time_iso = sc.get("off_time")
         min_time = _nb_to_min(off_time_iso)
         
-        # Determine Top Pick (Lane B is our anchor for policy)
         if not sc.get("lane_b_top3"): continue
         top_pick = sc["lane_b_top3"][0]
         horse_name = top_pick["horse"]
         lane = sc.get("top_pick_lane", "NO_EDGE")
         
-        # 2. Reconcile race
         res = results_by_id.get(race_id)
         if not res:
             res = results_by_ct.get((_norm(course), min_time))
-            
         if not res:
-            # Try +/- 1-2 mins for slight variations
             for offset in [-2, -1, 1, 2]:
                 res = results_by_ct.get((_norm(course), min_time + offset))
                 if res: break
-                
         if not res:
             print(f"    [WARN] No result for {course} @ {min_time} min ({race_id})")
             continue
             
-        # 3. Reconcile horse
         runners = res.get("full_runners", res.get("runners", []))
         horse_res = None
         for r in runners:
-            # Match by name normalized
-            res_name_norm = _norm(r.get("horse"))
-            pred_name_norm = _norm(horse_name)
-            if res_name_norm == pred_name_norm:
+            if _norm(r.get("horse")) == _norm(horse_name):
                 horse_res = r
                 break
                 
@@ -122,12 +119,10 @@ def build_ledger_for_date(target_date: str):
             sp = horse_res.get("sp_dec", horse_res.get("sp"))
             confidence = "HIGH"
         else:
-            # If race found but horse not in (likely lightweight) finishers
             positions = [str(r.get("position")) for r in runners]
             if "1" in positions and "2" in positions:
                 outcome = "MISS"
                 confidence = "MEDIUM_ABSENCE"
-                print(f"    [INFO] Horse {horse_name} absent from finishers for {course} -> assumed MISS")
             else:
                 print(f"    [WARN] Horse {horse_name} not found and results incomplete for {course}")
                 continue
@@ -149,71 +144,88 @@ def build_ledger_for_date(target_date: str):
         
     return entries
 
+def print_summary(df, label):
+    if df.empty:
+        print(f"\n--- {label}: No Data ---")
+        return
+        
+    print("\n" + "=" * 60)
+    print(f"{label} SUMMARY")
+    print("=" * 60)
+    
+    print("\n[Outcome Confidence Segmentation]")
+    print(df.groupby('outcome_confidence').size().to_string())
+    
+    print("\n[Lane Performance - Valid Outcomes Only]")
+    valid = df[
+        (df['outcome'] != 'NR') & 
+        (df['outcome_confidence'].isin(['HIGH', 'MEDIUM_ABSENCE']))
+    ].copy()
+    
+    if not valid.empty:
+        summary = valid.groupby('lane')['outcome'].value_counts().unstack(fill_value=0)
+        for col in ["WIN", "PLACE", "MISS"]:
+            if col not in summary.columns: summary[col] = 0
+        
+        summary['Total'] = summary['WIN'] + summary['PLACE'] + summary['MISS']
+        summary['SR%'] = (summary['WIN'] / summary.Total.replace(0, 1) * 100).round(1)
+        summary['Frame%'] = ((summary['WIN'] + summary['PLACE']) / summary.Total.replace(0, 1) * 100).round(1)
+        print(summary[['Total', 'WIN', 'PLACE', 'SR%', 'Frame%']])
+        
+        if "GLOBAL" in label:
+            print(f"\nProgress to n=150: {len(valid)} / 150 ({len(valid)/150:.1%})")
+            print(f"Progress to HIGH n=50: {len(df[df['outcome_confidence'] == 'HIGH'])} / 50")
+    else:
+        print("No valid outcomes to report.")
+    print("=" * 60)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", help="YYYY-MM-DD")
     parser.add_argument("--backfill", action="store_true", help="Scan all reports")
+    parser.add_argument("--report-only", action="store_true", help="Don't add new entries")
+    parser.add_argument("--force", action="store_true", help="Ignore source completeness check")
     args = parser.parse_args()
     
-    all_entries = []
-    
-    if args.backfill:
-        files = sorted(list(REPORT_DIR.glob("two_lane_readiness_20*.json")))
-        for f in files:
-            dt = f.name.replace("two_lane_readiness_", "").replace(".json", "").replace("_", "-")
-            all_entries.extend(build_ledger_for_date(dt))
-    elif args.date:
-        all_entries.extend(build_ledger_for_date(args.date))
-    else:
-        all_entries.extend(build_ledger_for_date("2026-06-02"))
-        
-    if not all_entries:
-        print("No new ledger entries found.")
-        return
-        
-    with LEDGER_PATH.open("a", encoding="utf-8") as f:
-        for e in all_entries:
-            f.write(json.dumps(e) + "\n")
-            
-    print(f"\nAdded {len(all_entries)} entries to {LEDGER_PATH}")
-    
-    df = pd.DataFrame(all_entries)
-    # 5. Summary Report
-    if not LEDGER_PATH.exists(): return
-    all_rows = [json.loads(l) for l in LEDGER_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
-    full_df = pd.DataFrame(all_rows)
-    
-    if not full_df.empty:
-        print("\n" + "=" * 60)
-        print("NEW BUILD DECISION POLICY LEDGER - GLOBAL SUMMARY")
-        print("=" * 60)
-        
-        # Segment by Confidence
-        print("\n[Outcome Confidence Segmentation]")
-        conf_summary = full_df.groupby('outcome_confidence').size()
-        print(conf_summary.to_string())
-        
-        # Lane Performance
-        print("\n[Lane Performance - Valid Outcomes Only]")
-        # We exclude NR and only look at high/medium confidence
-        valid = full_df[
-            (full_df['outcome'] != 'NR') & 
-            (full_df['outcome_confidence'].isin(['HIGH', 'MEDIUM_ABSENCE']))
-        ].copy()
-        
-        if not valid.empty:
-            summary = valid.groupby('lane')['outcome'].value_counts().unstack(fill_value=0)
-            for col in ["WIN", "PLACE", "MISS"]:
-                if col not in summary.columns: summary[col] = 0
-            
-            summary['Total'] = summary['WIN'] + summary['PLACE'] + summary['MISS']
-            summary['SR%'] = (summary['WIN'] / summary.Total.replace(0, 1) * 100).round(1)
-            summary['Frame%'] = ((summary['WIN'] + summary['PLACE']) / summary.Total.replace(0, 1) * 100).round(1)
-            print(summary[['Total', 'WIN', 'PLACE', 'SR%', 'Frame%']])
-            print(f"\nProgress to n=150: {len(valid)} / 150 ({len(valid)/150:.1%})")
+    if not args.report_only:
+        all_entries = []
+        if args.backfill:
+            files = sorted(list(REPORT_DIR.glob("two_lane_readiness_20*.json")))
+            for f in files:
+                dt = f.name.replace("two_lane_readiness_", "").replace(".json", "").replace("_", "-")
+                all_entries.extend(build_ledger_for_date(dt, force=args.force))
+        elif args.date:
+            all_entries.extend(build_ledger_for_date(args.date, force=args.force))
         else:
-            print("No valid outcomes to report.")
-        print("=" * 60)
+            all_entries.extend(build_ledger_for_date(datetime.now(UTC).strftime("%Y-%m-%d"), force=args.force))
+            
+        if all_entries:
+            # Deduplicate before appending
+            existing_ids = set()
+            if LEDGER_PATH.exists():
+                for line in LEDGER_PATH.read_text(encoding="utf-8").splitlines():
+                    if line.strip():
+                        existing_ids.add((json.loads(line)["race_id"], json.loads(line)["horse"]))
+            
+            new_rows = []
+            for e in all_entries:
+                if (e["race_id"], e["horse"]) not in existing_ids:
+                    new_rows.append(e)
+            
+            if new_rows:
+                with LEDGER_PATH.open("a", encoding="utf-8") as f:
+                    for e in new_rows:
+                        f.write(json.dumps(e) + "\n")
+                print(f"\nAdded {len(new_rows)} new entries to {LEDGER_PATH}")
+                # Print daily summary for the new rows
+                print_summary(pd.DataFrame(new_rows), "DAILY BATCH")
+            else:
+                print("All processed entries already in ledger.")
+
+    # Always print global summary
+    if LEDGER_PATH.exists():
+        all_rows = [json.loads(l) for l in LEDGER_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
+        print_summary(pd.DataFrame(all_rows), "GLOBAL CUMULATIVE")
 
 if __name__ == "__main__":
     main()
