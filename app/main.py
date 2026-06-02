@@ -480,12 +480,27 @@ async def lifespan(app: FastAPI):
     if _missing:
         raise RuntimeError(f"[startup] BLOCKED: Missing canonical pipeline wrappers: {', '.join(_missing)}")
     
+    # ── Batch 3: Safety Enforcement & Import Guards ──────────────────────────
+    from app.core.safety_guards import run_safety_scan
+    if not run_safety_scan():
+        raise RuntimeError("[startup] BLOCKED: Safety violation detected in live path (forbidden imports)")
+
+    # Strict Mode Assertions
+    _exec_mode = os.getenv("VELO_EXECUTION_MODE", "PAPER").upper()
+    _bf_mode = os.getenv("BETFAIR_MODE", "PAPER").upper()
+    
+    if _exec_mode == "LIVE":
+        raise RuntimeError("[startup] BLOCKED: VELO_EXECUTION_MODE=LIVE is forbidden in this environment.")
+    if _bf_mode == "LIVE":
+        raise RuntimeError("[startup] BLOCKED: BETFAIR_MODE=LIVE is forbidden in this environment.")
+    
     logger.info(
-        "[startup] Truth Fingerprint: SCORE=%s SIGMA=%s G_MODE=%s EXEC_MODE=%s",
+        "[startup] Truth Fingerprint: SCORE=%s SIGMA=%s G_MODE=%s EXEC_MODE=%s BF_MODE=%s",
         "score_daily_runner.py",
         "sigma_runner.py",
         _g_mode,
-        os.getenv("VELO_EXECUTION_MODE", "PAPER"),
+        _exec_mode,
+        _bf_mode
     )
 
     # ── Fix 1.2: Migration / schema verification ──────────────────────────────
@@ -760,13 +775,21 @@ async def runtime_truth():
     Exposes canonical paths, active ensemble profile, execution modes, and git commit.
     """
     from app.core.runtime_env import get_commit_sha
+    from app.core.safety_guards import run_safety_scan
     
     return {
         "scoring_path": "app/pipelines/score_daily_runner.py",
         "sigma_path": "app/pipelines/sigma_runner.py",
-        "g_shadow_mode": os.getenv("VELO_G_SHADOW_MODE", "shadow"),
-        "execution_mode": os.getenv("VELO_EXECUTION_MODE", "PAPER"),
-        "betfair_mode": os.getenv("BETFAIR_MODE", "PAPER"),
+        "ingest_path": "app/pipelines/results_ingest_runner.py",
+        "modes": {
+            "g_shadow_mode": os.getenv("VELO_G_SHADOW_MODE", "shadow"),
+            "execution_mode": os.getenv("VELO_EXECUTION_MODE", "PAPER"),
+            "betfair_mode": os.getenv("BETFAIR_MODE", "PAPER"),
+        },
+        "safety": {
+            "forbidden_import_check": "PASS" if run_safety_scan() else "FAIL",
+            "live_execution_blocked": True,
+        },
         "ensemble_profile": "core_v0_or_passport + sqpe_v17", # Hardcoded active profiles
         "git_commit": get_commit_sha()
     }

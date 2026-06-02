@@ -28,6 +28,19 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
     print(f"Running pipeline: sigma_runner (Target: {target_date or 'today'})")
     
     proc = subprocess.run(cmd, env=env, cwd=str(ROOT), check=False)
+    
+    # Batch 3: Write Summary Artifact
+    from app.pipelines.pipeline_support import write_summary
+    artifact_dir = ROOT / "data" / "new_build" / "summaries"
+    safe_date = (target_date or "today").replace("-", "_")
+    
+    write_summary(
+        pipeline_type="sigma",
+        target_date=target_date or "today",
+        status="PASS" if proc.returncode == 0 else "FAIL",
+        artifact_path=artifact_dir / f"sigma_{safe_date}.json"
+    )
+    
     sys.exit(proc.returncode)
 
 if __name__ == "__main__":
