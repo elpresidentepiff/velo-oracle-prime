@@ -260,6 +260,14 @@ def score_date(target_date: str, execute: bool = False) -> dict:
     _rank_within_race(rows_a, probs_a, "lane_a_prob", "lane_a_rank")
     _rank_within_race(rows_b, probs_b, "lane_b_prob", "lane_b_rank")
 
+    # ── NEW: Apply Decision Policy V1 ─────────────────────────────────────────
+    from new_build_velo.policy_v1 import apply_policy_v1
+    for r_a, r_b in zip(rows_a, rows_b):
+        # We use Lane B (Full Challenger V1) as the decision anchor
+        policy = apply_policy_v1(r_b)
+        r_b.update(policy)
+        r_a.update(policy)
+
     # Intent coverage check (same for both — intent is in feed row flags)
     intent_count = sum(1 for r in target_rows if r.get("intent_features_available"))
     intent_pct = round(intent_count / len(target_rows) * 100, 2)
@@ -305,6 +313,8 @@ def score_date(target_date: str, execute: bool = False) -> dict:
             "lane_a_rank": row_a.get("lane_a_rank"),
             "lane_b_prob": row_b.get("lane_b_prob"),
             "lane_b_rank": row_b.get("lane_b_rank"),
+            "nb_decision_lane": row_a.get("nb_decision_lane"),
+            "nb_policy_reasons": row_a.get("nb_policy_reasons"),
         })
 
     scorecards = []
@@ -326,6 +336,7 @@ def score_date(target_date: str, execute: bool = False) -> dict:
                              for r in runners if r.get("lane_b_rank", 99) <= 3],
             "lane_b_note": "PAPER_ONLY_NO_INTENT" if intent_pct < INTENT_COVERAGE_GATE else "LIVE",
             "weak_data": pp_found < len(runners),
+            "top_pick_lane": runners[0].get("nb_decision_lane") if runners else None,
         })
 
     payload = {
@@ -470,9 +481,10 @@ def _markdown(p: dict) -> str:
         b_top3 = ", ".join(f"{r['horse']} ({r['prob']:.3f})" for r in sc.get("lane_b_top3", []))
         b_flag = " ⚠ PAPER_ONLY_NO_INTENT" if sc.get("lane_b_note") == "PAPER_ONLY_NO_INTENT" else ""
         weak = " ⚠ WEAK_DATA" if sc.get("weak_data") else ""
+        lane = f" **[{sc.get('top_pick_lane', 'NO_EDGE')}]**"
         lines += [
             "",
-            f"### {_fmt_time(sc.get('off_time'))} {sc.get('course')} — {(sc.get('race_title') or '')[:50]}",
+            f"### {_fmt_time(sc.get('off_time'))} {sc.get('course')} — {(sc.get('race_title') or '')[:50]}{lane}",
             f"- Runners: {sc['runner_count']} | Passport: {sc['passport_coverage']}{weak}",
             f"- **Lane A (operational):** {a_top3}",
             f"- **Lane B (paper):** {b_top3}{b_flag}",
