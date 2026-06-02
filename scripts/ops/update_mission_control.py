@@ -26,11 +26,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-MC_DIR = ROOT / "data" / "mission_control"
+from app.core.mission_control_config import MC_CONFIG
 
-CONTAMINATED_RUN_IDS = {"32cc27f9", "847964a6"}
-FIX_COMMIT = "a33c5bd84aa600a98bd9e1bfdc381750f20f23a4"
-FIX_DATE = "2026-05-21"
+MC_DIR = ROOT / "data" / "mission_control"
 
 
 def _load_snapshots(date_str: str) -> list[dict]:
@@ -81,7 +79,7 @@ def _detect_flatlines(rows: list[dict]) -> dict:
     fully_uniform_set: set[str] = set()
     majority_tied_set: set[str] = set()
     for sha, races in by_run.items():
-        if sha in CONTAMINATED_RUN_IDS:
+        if sha in MC_CONFIG.CONTAMINATED_RUN_IDS:
             for rid, vps in races.items():
                 if len(vps) == 1:
                     fully_uniform_set.add(rid)
@@ -107,7 +105,7 @@ def _detect_source_truth(rows: list[dict], date_str: str) -> str:
     if not rows:
         return "UNKNOWN"
     run_ids = {_extract_sha8(r.get("run_id", "")) for r in rows if r.get("run_id")}
-    contaminated = run_ids & CONTAMINATED_RUN_IDS
+    contaminated = run_ids & MC_CONFIG.CONTAMINATED_RUN_IDS
     if contaminated:
         return "RP_MERGED_CONTAMINATED"
     verdicts_path = ROOT / "data" / f"velo_prime_verdicts_{date_str.replace('-', '_')}.json"
@@ -128,18 +126,26 @@ def _detect_source_truth(rows: list[dict], date_str: str) -> str:
     return "RP_MERGED_CLEAN"
 
 
-def _gate_status(flatline_count: int, identity_failure_count: int, source_truth: str) -> tuple[str, str]:
-    if source_truth == "RP_MERGED_CONTAMINATED" or flatline_count > 0:
-        learning_gate = "BLOCKED"
-    else:
-        learning_gate = "OPEN"
+def _gate_status(flatline_count: int, identity_failure_count: int, source_truth: str) -> tuple[str, str, list[str]]:
+    reasons = []
+    learning_gate = MC_CONFIG.LEARNING_GATE_OPEN
+    promotion_gate = MC_CONFIG.PROMOTION_GATE_OPEN
 
-    if source_truth == "RP_MERGED_CONTAMINATED" or flatline_count > 0 or identity_failure_count > 0:
-        promotion_gate = "BLOCKED"
-    else:
-        promotion_gate = "OPEN"
+    if source_truth == "RP_MERGED_CONTAMINATED":
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reasons.append("GATE_SOURCE_CONTAMINATED")
+    
+    if flatline_count > 0:
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reasons.append(f"GATE_FLATLINE_DETECTED: {flatline_count} races")
 
-    return learning_gate, promotion_gate
+    if identity_failure_count > 0:
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reasons.append(f"GATE_IDENTITY_FAILURE: {identity_failure_count} races")
+
+    return learning_gate, promotion_gate, reasons
 
 
 def _gate_v2_status() -> dict:
@@ -154,14 +160,14 @@ def _gate_v2_status() -> dict:
                 "runner_calibration_gate": {
                     "runner_count": rcg.get("runner_count", 0),
                     "status": rcg.get("status", "UNKNOWN"),
-                    "threshold": rcg.get("threshold", 300),
+                    "threshold": MC_CONFIG.RUNNER_CALIBRATION_THRESHOLD,
                     "review_threshold_met": rcg.get("review_threshold_met", False),
                 },
                 "decision_policy_gate": {
                     "top_pick_decisions": dpg.get("top_pick_decisions", 0),
                     "status": dpg.get("status", "NEEDS_MORE_DAYS"),
                     "next_review": dpg.get("next_review", ""),
-                    "threshold_1": dpg.get("threshold_1", 150),
+                    "threshold_1": MC_CONFIG.DECISION_POLICY_GATE_1,
                     "threshold_1_met": dpg.get("threshold_1_met", False),
                 },
                 "live_promotion_allowed": False,
@@ -455,7 +461,7 @@ def build_mission_control(date_str: str) -> dict:
     flatline_data = _detect_flatlines(rows)
     source_truth = _detect_source_truth(rows, date_str)
     run_ids = sorted({_extract_sha8(r.get("run_id", "")) for r in rows if r.get("run_id")})
-    learning_gate, promotion_gate = _gate_status(
+    learning_gate, promotion_gate, reason_codes = _gate_status(
         flatline_data["flatline_count"],
         flatline_data["identity_failure_count"],
         source_truth,
@@ -488,6 +494,7 @@ def build_mission_control(date_str: str) -> dict:
         "council_verdict": council_verdict,
         "learning_gate_status": learning_gate,
         "promotion_gate_status": promotion_gate,
+        "gate_reasons": reason_codes,
         "sigma_artifact": sigma_artifact,
         "council_artifact_visibility": council_artifacts,
         "runner_calibration_gate_status": rcg.get("status", "UNKNOWN"),
