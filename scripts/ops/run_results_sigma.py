@@ -572,6 +572,7 @@ def main():
                 "predicted_id": predicted_horse_id,
                 "reconciliation_provenance": provenance,
                 "actual_winner": result.get("winner_id", "?"),
+                "actual_name": result.get("winner_name") or result.get("winner_horse", "?"),
                 "winner_sp": result.get("winner_sp", 0),
                 "velo_prime_prob": vpp,
                 "outcome": outcome,

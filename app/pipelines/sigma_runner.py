@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 
-def run(target_date: str | None = None, trigger_source: str = "manual", run_id: str | None = None):
+def run(target_date: str | None = None, trigger_source: str = "manual", run_id: str | None = None, source: str = "auto", min_coverage: str | None = None):
     script_path = ROOT / "scripts" / "ops" / "run_results_sigma.py"
     if not script_path.exists():
         raise FileNotFoundError(f"Sigma script not found: {script_path}")
@@ -24,8 +24,12 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
     cmd = [sys.executable, str(script_path)]
     if target_date:
         cmd.extend(["--date", target_date])
+    if source:
+        cmd.extend(["--source", source])
+    if min_coverage is not None:
+        cmd.extend(["--min-coverage", str(min_coverage)])
 
-    print(f"Running pipeline: sigma_runner (Target: {target_date or 'today'})")
+    print(f"Running pipeline: sigma_runner (Target: {target_date or 'today'}, Source: {source}, Min Coverage: {min_coverage or 'default'})")
     
     proc = subprocess.run(cmd, env=env, cwd=str(ROOT), check=False)
     
@@ -88,6 +92,14 @@ if __name__ == "__main__":
     parser.add_argument("--date", type=str, help="YYYY-MM-DD")
     parser.add_argument("--trigger-source", type=str, default="manual")
     parser.add_argument("--run-id", type=str, default=None)
+    parser.add_argument("--source", type=str, default="auto")
+    parser.add_argument("--min-coverage", type=str, default=None)
     args = parser.parse_args()
     
-    run(target_date=args.date, trigger_source=args.trigger_source, run_id=args.run_id)
+    run(
+        target_date=args.date, 
+        trigger_source=args.trigger_source, 
+        run_id=args.run_id, 
+        source=args.source,
+        min_coverage=args.min_coverage
+    )
