@@ -27,18 +27,21 @@ BANNED_SUBSTRINGS = [
     "result", "pos", "won", "finish"
 ]
 
-def check_feature(f):
+OLD_VELO_RPR_EXCEPTION = {"rpr_num", "rpr_vs_field"}
+
+def check_feature(f, model_type="new_build"):
     violations = []
     f_lower = f.lower()
     for sub in BANNED_SUBSTRINGS:
-        # Avoid false positives like "position_trend" if we are strict, but the prompt says "pos" in name.
-        # Actually "pos_num" is bad, "position" is bad, but "positive" is fine.
-        # Let's just check raw substring as requested: "Any feature with 'result', 'pos', 'won', 'finish' in the name"
-        # However, "pp_avg_sp_last5" contains "sp", but it's historical, not same-race.
-        # The prompt says: SP-derived features in morning models (sp_dec, log_sp, implied_prob).
+        if sub == "rpr" and model_type == "old_velo" and f_lower in OLD_VELO_RPR_EXCEPTION:
+            continue # Authorized carve-out
+            
         if sub in f_lower:
             # Exempt historical SP
             if sub == "sp" and "last" in f_lower:
+                continue
+            # Exempt 'position_trend' as it's historical passport
+            if sub == "pos" and ("position_trend" in f_lower):
                 continue
             violations.append(sub)
             
@@ -62,16 +65,17 @@ def run_audit():
     total_violations = 0
 
     for f in ov_features:
-        vs = check_feature(f)
+        vs = check_feature(f, model_type="old_velo")
         status = "FAIL" if vs else "PASS"
         if vs: total_violations += 1
         report["models"]["Old VELO (SQPE v17)"][f] = {"status": status, "violations": vs}
 
     for f in nb_features:
-        vs = check_feature(f)
+        vs = check_feature(f, model_type="new_build")
         status = "FAIL" if vs else "PASS"
         if vs: total_violations += 1
         report["models"]["New Build (Challenger V2/Lane B)"][f] = {"status": status, "violations": vs}
+
 
     if total_violations > 0:
         report["summary"] = "VIOLATIONS"

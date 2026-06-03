@@ -17,7 +17,8 @@ This document establishes the permanent banned feature list for all morning mode
 
 ### C. Third-Party Proprietary Leakage
 **Banned Substrings:** `rpr`
-**Reason:** Racing Post Ratings (RPR) are strictly prohibited from acting as model inputs per project policy. While authorized for "badge-only" specialist models, they must never directly influence the `velo_prime_prob` weighted ensemble. Allowing RPR into the features creates intellectual property contamination and prevents the model from discovering its own independent edge.
+**Reason:** Racing Post Ratings (RPR) are generally prohibited from acting as model inputs to prevent intellectual property contamination and to force the model to discover independent edges.
+**Old VÉLØ Exception:** `rpr_num` and `rpr_vs_field` are permitted in Old VÉLØ SQPE v17 under the `RPR_ACCEPTED` policy enacted 2026-06-03. This is a deliberate operator decision. These features remain strictly banned from New Build Challenger models.
 
 ## 2. Governance Enforcement
 
