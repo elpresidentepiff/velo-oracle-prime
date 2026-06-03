@@ -18,7 +18,7 @@ Defines the core horse racing states and their associated evidence signatures.
 
 ## 2. Transition Rules
 
-Governs the valid sequence of latent states across a horse's campaign.
+governs the valid sequence of latent states across a horse's campaign.
 
 *   **SETUP_RUN → CASH_RUN:** Valid. Primary intent sequence.
 *   **CASH_RUN → CASH_RUN:** Suspicious. Typically indicates a failure in the previous intent run or a "second string" attempt.

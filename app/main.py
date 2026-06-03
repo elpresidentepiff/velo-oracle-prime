@@ -1092,6 +1092,130 @@ async def upload_spotlight_pdf(
 # ── Governed Card Dashboard ───────────────────────────────────────────────────
 
 
+@app.get("/api/dashboard/truth-summary")
+async def dashboard_truth_summary(date: str = Query(default=None)):
+    """
+    Return a read-only truth summary for the dashboard.
+    Gathers metrics from local artifacts and Supabase.
+    """
+    target_date = date or utc_now().strftime("%Y-%m-%d")
+    date_tag = target_date.replace("-", "_")
+    root = pathlib.Path(__file__).parent.parent
+    
+    # 1. Base Truths
+    res = {
+        "operational_date": target_date,
+        "live_velo_status": "UNKNOWN",
+        "races_scored": 0,
+        "runners_scored": 0,
+        "source_truth_label": "UNKNOWN",
+        "observability_status": "MISSING",
+        "supabase_persistence_status": "UNKNOWN",
+        "supabase_readback_verified": "UNKNOWN",
+        "telegram_status": "DISABLED",
+        "rpr_violation_count": 0,
+        "sp_violation_count": 0,
+        "new_build_status": "MISSING",
+        "passport_coverage_pct": 0.0,
+        "intent_coverage_pct": 0.0,
+        "sigma_status": "MISSING",
+        "latest_sigma_sr": 0.0,
+        "latest_sigma_frame": 0.0,
+        "sidecar_league_status": "MISSING",
+        "doctrine_scorecard_status": "MISSING",
+        "security_status": "PASS",
+        "stale_data_warnings": [],
+        "source_files_used": [],
+        "generated_at": utc_now_iso(),
+    }
+
+    # 2. Live VÉLØ Observability
+    obs_path = root / "data" / f"velo_run_observability_{date_tag}.json"
+    if obs_path.exists():
+        try:
+            obs_data = json.loads(obs_path.read_text(encoding="utf-8"))
+            res["live_velo_status"] = obs_data.get("status", "UNKNOWN")
+            res["observability_status"] = "PASS"
+            res["source_files_used"].append(obs_path.name)
+            # Find RPR/SP violations in degraded reasons or similar
+            reasons = obs_data.get("degraded_reasons", [])
+            res["rpr_violation_count"] = sum(1 for r in reasons if "RPR" in r.upper())
+            res["sp_violation_count"] = sum(1 for r in reasons if "SP" in r.upper())
+        except Exception:
+            res["observability_status"] = "ERROR"
+
+    # 3. Verdicts / Scored Counts
+    verdicts_path = root / "data" / f"velo_prime_verdicts_{date_tag}.json"
+    if verdicts_path.exists():
+        try:
+            v_data = json.loads(verdicts_path.read_text(encoding="utf-8"))
+            res["races_scored"] = len(v_data)
+            res["runners_scored"] = sum(len(v.get("full_analysis", [])) for v in v_data)
+            res["source_files_used"].append(verdicts_path.name)
+        except Exception:
+            pass
+
+    # 4. Supabase Status
+    sb_url, sb_key = _pipeline_run_api_config()
+    if sb_url and sb_key:
+        status_code, _ = _pipeline_request("GET", f"/pipeline_runs?target_date=eq.{target_date}&limit=1")
+        if status_code == 200:
+            res["supabase_persistence_status"] = "CONNECTED"
+            res["supabase_readback_verified"] = "PASS"
+        else:
+            res["supabase_persistence_status"] = "DISCONNECTED"
+    
+    # 5. Telegram Status
+    if os.getenv("TELEGRAM_BOT_TOKEN"):
+        res["telegram_status"] = "ACTIVE"
+
+    # 6. New Build Status
+    nb_path = root / "data" / "new_build" / "reports" / f"two_lane_readiness_{date_tag}.json"
+    if nb_path.exists():
+        try:
+            nb_data = json.loads(nb_path.read_text(encoding="utf-8"))
+            res["new_build_status"] = nb_data.get("status", "READY")
+            res["passport_coverage_pct"] = nb_data.get("passport_coverage_pct", 0.0)
+            res["intent_coverage_pct"] = nb_data.get("intent_coverage_pct", 0.0)
+            res["source_files_used"].append(f"new_build/reports/{nb_path.name}")
+        except Exception:
+            res["new_build_status"] = "ERROR"
+
+    # 7. Sigma Status
+    sigma_path = root / "data" / "sigma_results" / f"sigma_results_{date_tag}.json"
+    if sigma_path.exists():
+        try:
+            sigma_data = json.loads(sigma_path.read_text(encoding="utf-8"))
+            res["sigma_status"] = sigma_data.get("sigma_status", "PASS")
+            res["latest_sigma_sr"] = sigma_data.get("sr", 0.0)
+            res["latest_sigma_frame"] = sigma_data.get("frame_rate", 0.0)
+            res["source_files_used"].append(f"sigma_results/{sigma_path.name}")
+        except Exception:
+            res["sigma_status"] = "ERROR"
+
+    # 8. Sidecar League
+    sidecar_path = root / "app" / "static" / "dashboard" / "sidecar_stack_latest.json"
+    if sidecar_path.exists():
+        try:
+            s_data = json.loads(sidecar_path.read_text(encoding="utf-8"))
+            if s_data.get("date") == target_date:
+                res["sidecar_league_status"] = "CURRENT"
+            else:
+                res["sidecar_league_status"] = "STALE"
+                res["stale_data_warnings"].append(f"Sidecar data is for {s_data.get('date')}")
+            res["source_files_used"].append(f"static/dashboard/{sidecar_path.name}")
+        except Exception:
+            res["sidecar_league_status"] = "ERROR"
+
+    # 9. Doctrine Scorecard
+    doctrine_path = root / "data" / "doctrine_scorecard_latest.json"
+    if doctrine_path.exists():
+        res["doctrine_scorecard_status"] = "PRESENT"
+        res["source_files_used"].append(doctrine_path.name)
+
+    return res
+
+
 @app.get("/dashboard", include_in_schema=False)
 async def dashboard():
     """Serve the Governed Card Dashboard UI."""

@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-06-03T07:15:00Z",
+  "audit_date": "2026-06-03",
+  "entrypoints": [
+    {
+      "path": "/dashboard",
+      "type": "HTML",
+      "source_file": "app/static/dashboard/index.html",
+      "status": "OPERATIONAL"
+    }
+  ],
+  "api_endpoints": [
+    {
+      "path": "sidecar_stack_latest.json",
+      "type": "Static JSON",
+      "read_source": "Local File (app/static/dashboard/sidecar_stack_latest.json)",
+      "stale_risk": "HIGH (Requires manual run of sidecar_stack_operator_card.py)",
+      "real_time": false
+    },
+    {
+      "path": "window.__SSC_INLINE",
+      "type": "Injected Script",
+      "read_source": "Hardcoded in index.html",
+      "stale_risk": "CRITICAL (Fixed date 2026-05-29)",
+      "real_time": false
+    },
+    {
+      "path": "/api/governed-card",
+      "type": "Dynamic API",
+      "read_source": "Local Verdicts JSON + Supabase velo_verdicts table",
+      "stale_risk": "LOW (Dynamic)",
+      "real_time": true
+    },
+    {
+      "path": "/api/v1/system/diagnostics",
+      "type": "Dynamic API",
+      "read_source": "Hardcoded stubs / ModelManager",
+      "stale_risk": "MEDIUM (Incomplete stubs)",
+      "real_time": true
+    }
+  ],
+  "panel_audit": {
+    "DAILY_STATUS_CARDS": "MIXED (Mostly hardcoded HTML, some dynamic via sidecar JSON)",
+    "DAILY_LEARNING_LOOP": "STALE (Hardcoded HTML status)",
+    "SIGNAL_STACK_SSC": "STALE (Reads sidecar_stack_latest.json or __SSC_INLINE)",
+    "INTELLIGENCE_BRIEF_TIB": "STALE (Reads sidecar_stack_latest.json)",
+    "SIGNAL_HEATMAP_SHM": "STALE (Reads sidecar_stack_latest.json)"
+  },
+  "safest_truth_sources": {
+    "live_velo_status": "data/velo_run_observability_{date}.json",
+    "races_scored": "data/velo_prime_verdicts_{date}.json",
+    "supabase_persistence": "Supabase pipeline_runs table",
+    "new_build_status": "data/new_build/reports/two_lane_readiness_{date}.json",
+    "sigma_latest": "data/sigma_results/sigma_results_{latest}.json"
+  }
+}
