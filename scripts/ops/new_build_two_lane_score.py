@@ -127,6 +127,8 @@ def _feature_map(row: dict, medians: dict) -> dict:
         "pp_or_change_3": _to_float(pp.get("or_change_last3")),
         "pp_class_moved_up": 1.0 if str(pp.get("class_movement") or "").upper() == "UP" else 0.0,
         "pp_class_moved_down": 1.0 if str(pp.get("class_movement") or "").upper() == "DOWN" else 0.0,
+        "pp_best_ts_last6": _to_float(pp.get("pp_best_ts_last6")),
+        "pp_ts_trajectory": _to_float(pp.get("pp_ts_trajectory")),
     }
 
 
@@ -330,9 +332,9 @@ def score_date(target_date: str, execute: bool = False) -> dict:
             "runner_count": len(runners),
             "passport_coverage": f"{pp_found}/{len(runners)}",
             "passport_coverage_pct": round(pp_found / len(runners) * 100, 1) if runners else 0.0,
-            "lane_a_top3": [{"rank": r["lane_a_rank"], "horse": r["horse"], "prob": r["lane_a_prob"]}
+            "lane_a_top3": [{"rank": r["lane_a_rank"], "horse": r["horse"], "prob": r["lane_a_prob"], "nb_decision_lane": r.get("nb_decision_lane")}
                              for r in runners if r.get("lane_a_rank", 99) <= 3],
-            "lane_b_top3": [{"rank": r["lane_b_rank"], "horse": r["horse"], "prob": r["lane_b_prob"]}
+            "lane_b_top3": [{"rank": r["lane_b_rank"], "horse": r["horse"], "prob": r["lane_b_prob"], "nb_decision_lane": r.get("nb_decision_lane")}
                              for r in runners if r.get("lane_b_rank", 99) <= 3],
             "lane_b_note": "PAPER_ONLY_NO_INTENT" if intent_pct < INTENT_COVERAGE_GATE else "LIVE",
             "weak_data": pp_found < len(runners),

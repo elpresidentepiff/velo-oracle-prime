@@ -166,16 +166,19 @@ def _iter_standard_cache_racecard(path: Path) -> list[tuple[Path, dict[str, Any]
     same final race/runner set as Live VELO.
     """
     data = _load_json(path, {})
-    races = data.get("races") or []
+    if isinstance(data, list):
+        races = data
+    else:
+        races = data.get("racecards", data.get("races", []))
+        
     if races and any("race_time" in race for race in races):
-        return [(path, data, "official_final_card")]
+        return [(path, {"races": races}, "official_final_card")]
 
-    races = data.get("racecards") or data.get("races") or []
     return [
         (
             path,
             {
-                "capture_date": data.get("date") or data.get("publish_date") or data.get("meta", {}).get("date"),
+                "capture_date": data.get("date") or data.get("publish_date") or data.get("meta", {}).get("date") if isinstance(data, dict) else None,
                 "races": [
                     {
                         "race_id": race.get("race_id"),
@@ -251,6 +254,8 @@ def _passport_summary(passport: dict[str, Any] | None) -> dict[str, Any]:
         "class_movement": passport.get("class_movement"),
         "cash_run_candidate": passport.get("cash_run_candidate"),
         "setup_run_candidate": passport.get("setup_run_candidate"),
+        "pp_best_ts_last6": passport.get("pp_best_ts_last6"),
+        "pp_ts_trajectory": passport.get("pp_ts_trajectory"),
     }
 
 

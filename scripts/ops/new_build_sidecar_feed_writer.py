@@ -101,6 +101,8 @@ def build_sidecar(date_str: str, execute: bool = False) -> dict:
             for k, v in row.items()
         )
 
+        pp_sum = row.get("passport_summary") or {}
+
         records.append({
             "generated_at": _utc_now(),
             "target_date": date_str,
@@ -113,6 +115,8 @@ def build_sidecar(date_str: str, execute: bool = False) -> dict:
             "champion_probability": float(row.get("champion_probability") or 0.0),
             "passport_found": bool(row.get("passport_found")),
             "passport_strength_score": row.get("passport_strength_score"),
+            "pp_best_ts_last6": pp_sum.get("pp_best_ts_last6"),
+            "pp_ts_trajectory": pp_sum.get("pp_ts_trajectory"),
             "passport_coverage_flag": "STRONG" if pp_pct >= 0.80 else ("WEAK" if pp_pct < 0.50 else "MODERATE"),
             "intent_coverage_flag": "GATE_PASSED" if intent_gate_passed else "BELOW_GATE_MEDIAN_FILLED",
             "intent_score": row.get("intent_score"),
