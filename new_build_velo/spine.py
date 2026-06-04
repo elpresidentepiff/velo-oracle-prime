@@ -75,6 +75,15 @@ class RunnerRecord:
     non_runner: bool
     reserve: bool
     profile_url: str | None
+    rp_morning_price: float | None = None
+    badge_D: bool = False
+    badge_CD: bool = False
+    badge_BF: bool = False
+    badge_C: bool = False
+    badge_Hc1: bool = False
+    jockey_first_time: bool = False
+    new_trainer_races: int | None = None
+    trainer_rtf: int | None = None
     trust_policy: str = TRUST_POLICY
     velo_scoring_allowed: bool = SCORING_ALLOWED
     rpr_policy: str = RPR_POLICY
@@ -162,6 +171,15 @@ def ingest_date(source_date: str, *, execute: bool = False) -> dict[str, Any]:
                     non_runner=bool(runner.get("non_runner")),
                     reserve=bool(runner.get("irish_reserve")),
                     profile_url=runner.get("horse_url"),
+                    rp_morning_price=runner.get("rp_morning_price"),
+                    badge_D="D" in {b.get("code") for b in (runner.get("badges") or [])},
+                    badge_CD="CD" in {b.get("code") for b in (runner.get("badges") or [])},
+                    badge_BF="BF" in {b.get("code") for b in (runner.get("badges") or [])},
+                    badge_C="C" in {b.get("code") for b in (runner.get("badges") or [])},
+                    badge_Hc1="Hc1" in {b.get("code") for b in (runner.get("badges") or [])},
+                    jockey_first_time=bool(runner.get("jockey_first_time")),
+                    new_trainer_races=runner.get("new_trainer_races"),
+                    trainer_rtf=runner.get("trainer_rtf"),
                 )
             )
 
@@ -190,6 +208,19 @@ def _context_flags(row: dict[str, Any], race_tip_totals: dict[str, int]) -> list
         flags.append("FIRST_TIME_GELDING")
     if row.get("wind_surgery"):
         flags.append("WIND_SURGERY_SIGNAL")
+    if row.get("badge_D"):
+        flags.append("RP_SPOTLIGHT_PICK")
+    if row.get("badge_CD"):
+        flags.append("COURSE_DISTANCE_WINNER")
+    if row.get("badge_BF"):
+        flags.append("BEATEN_FAVOURITE")
+    if row.get("badge_C"):
+        flags.append("COURSE_WINNER")
+    if row.get("jockey_first_time"):
+        flags.append("JOCKEY_FIRST_TIME_FOR_TRAINER")
+    ntc = _to_int(row.get("new_trainer_races"), -1)
+    if 0 <= ntc <= 5:
+        flags.append("NEW_TRAINER_SIGNAL")
     if _to_int(row.get("days_since_run")) >= 180:
         flags.append("LAYOFF_WARNING")
     if row.get("newspaper_tip_count", 0) >= 6:

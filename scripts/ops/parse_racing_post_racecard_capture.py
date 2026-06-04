@@ -62,10 +62,11 @@ def _get_race_page_data(next_data: dict[str, Any]) -> dict[str, Any] | None:
     )
 
 
-def _normalise_runner(runner: dict[str, Any]) -> dict[str, Any]:
+def _normalise_runner(runner: dict[str, Any], forecast_map: dict[int, float] | None = None) -> dict[str, Any]:
     form_figures = "".join(str(item.get("figure", "")) for item in runner.get("formFiguresData") or [])
+    horse_id = runner.get("horseId")
     return {
-        "horse_id": runner.get("horseId"),
+        "horse_id": horse_id,
         "horse": runner.get("horseName"),
         "horse_url": runner.get("horseUrl"),
         "start_number": runner.get("startNumber"),
@@ -81,11 +82,14 @@ def _normalise_runner(runner: dict[str, Any]) -> dict[str, Any]:
         "rp_rpr_archive_only": runner.get("rpPostmark"),
         "rp_rpr_velo_allowed": False,
         "forecast_odds": runner.get("forecastOddsValue"),
+        "rp_morning_price": forecast_map.get(horse_id) if (forecast_map and horse_id) else None,
         "jockey_id": runner.get("jockeyId"),
         "jockey": runner.get("jockeyName"),
+        "jockey_first_time": runner.get("jockeyFirstTime", False),
         "trainer_id": runner.get("trainerId"),
         "trainer": runner.get("trainerName"),
         "trainer_rtf": runner.get("trainerRtf"),
+        "new_trainer_races": runner.get("newTrainerRacesCount"),
         "owner": runner.get("ownerName"),
         "sire": runner.get("sireName"),
         "dam": runner.get("damName"),
@@ -126,6 +130,16 @@ def _normalise_race(html_path: Path, capture: dict[str, Any] | None = None) -> d
     race = race_page["race"]
     runners = race_page.get("runners") or []
     tabs = race_page.get("tabsContent") or {}
+    
+    bf = (race_page.get("raceDetails") or {}).get("bettingForecast") or []
+    forecast_map: dict[int, float] = {}
+    for entry in bf:
+        odds_val = entry.get("oddsValue")
+        for h in entry.get("horses") or []:
+            hid = h.get("horseId")
+            if hid and odds_val is not None:
+                forecast_map[hid] = float(odds_val)
+
     top_tips = sorted(
         [
             {
@@ -184,7 +198,7 @@ def _normalise_race(html_path: Path, capture: dict[str, Any] | None = None) -> d
             "quotes": bool(tabs.get("quotes")),
         },
         "top_newspaper_tips": top_tips[:5],
-        "runners": [_normalise_runner(runner) for runner in runners],
+        "runners": [_normalise_runner(runner, forecast_map) for runner in runners],
     }
 
 
@@ -273,10 +287,8 @@ def _injection_runner_to_standard(run: dict[str, Any]) -> dict[str, Any]:
         "jockey_id": str(run["jockey_id"]) if run.get("jockey_id") is not None else None,
         "ofr": _clean_rating(run.get("official_rating")),
         "official_rating": _clean_rating(run.get("official_rating")),
-        "rpr": None,
         "rp_rpr_archive_only": run.get("rp_rpr_archive_only"),
         "rp_rpr_velo_allowed": False,
-        "ts": None,
         "form": run.get("form_figures") or "",
         "last_run": run.get("days_since_last_run"),
         "odds": run.get("forecast_odds"),
@@ -383,9 +395,12 @@ def parse_capture_day(
     if execute:
         output_dir.mkdir(parents=True, exist_ok=True)
         out_path = output_dir / "racecard_injection.json"
-        out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        
         payload["status"] = "PASS"
+        payload["execute_required"] = False
         payload["output_path"] = str(out_path)
+        
+        out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
         if write_standard_cache:
             standard_races = [_injection_race_to_standard(r, capture_date) for r in races]
