@@ -20,13 +20,13 @@ import argparse
 import glob
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.core.mission_control_config import MC_CONFIG
+from app.core.mission_control_config import MC_CONFIG  # noqa: E402
 
 MC_DIR = ROOT / "data" / "mission_control"
 
@@ -85,7 +85,7 @@ def _detect_flatlines(rows: list[dict]) -> dict:
                     fully_uniform_set.add(rid)
 
     all_races: dict[str, set] = {}
-    for sha, races in by_run.items():
+    for _sha, races in by_run.items():
         for rid, vps in races.items():
             if rid not in all_races:
                 all_races[rid] = set()
@@ -135,7 +135,7 @@ def _gate_status(flatline_count: int, identity_failure_count: int, source_truth:
         learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
         reasons.append("GATE_SOURCE_CONTAMINATED")
-    
+
     if flatline_count > 0:
         learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
@@ -240,6 +240,36 @@ def _council_artifact_status(date_str: str) -> dict:
         "council_run": "PRESENT" if run_path.exists() else "MISSING",
         "council_packet": "PRESENT" if packet_path.exists() else "MISSING",
         "council_report": "PRESENT" if report_path.exists() else "MISSING",
+    }
+
+
+def _run_truth_status(date_str: str) -> dict:
+    date_und = date_str.replace("-", "_")
+    path = ROOT / "data" / f"velo_daily_run_truth_{date_und}.json"
+    if not path.exists():
+        return {
+            "status": "MISSING",
+            "path": None,
+            "alert_required": True,
+            "issues": ["DAILY_RUN_TRUTH_MISSING"],
+        }
+    try:
+        report = json.loads(path.read_text())
+    except Exception as exc:
+        return {
+            "status": "INVALID",
+            "path": str(path.relative_to(ROOT)),
+            "alert_required": True,
+            "issues": [f"DAILY_RUN_TRUTH_INVALID: {exc}"],
+        }
+    return {
+        "status": report.get("status", "UNKNOWN"),
+        "path": str(path.relative_to(ROOT)),
+        "alert_required": report.get("alert_required", True),
+        "issues": report.get("issues", []),
+        "cron_truth_status": report.get("cron_truth_status"),
+        "deploy_truth_status": report.get("deploy_truth_status"),
+        "pipeline_run_count": report.get("pipeline_run_count"),
     }
 
 
@@ -478,6 +508,7 @@ def build_mission_control(date_str: str) -> dict:
     gate_v2 = _gate_v2_status()
     sigma_artifact = _sigma_artifact_status(date_str)
     council_artifacts = _council_artifact_status(date_str)
+    run_truth = _run_truth_status(date_str)
     learning_admission = _learning_admission_status(date_str)
     race_shape = _race_shape_status()
     corpus_governance = _corpus_governance_status()
@@ -498,9 +529,14 @@ def build_mission_control(date_str: str) -> dict:
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
         reason_codes.append(f"GATE_COUNCIL_{council_verdict}")
 
+    if run_truth["status"] != "AUTOMATED_RUN_OK":
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reason_codes.append(f"GATE_PIPELINE_TRUTH_{run_truth['status']}")
+
     mc = {
         "date": date_str,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "source_truth": source_truth,
         "run_ids_seen": run_ids,
         "flatline_count": flatline_data["flatline_count"],
@@ -514,6 +550,7 @@ def build_mission_control(date_str: str) -> dict:
         "promotion_gate_status": promotion_gate,
         "gate_reasons": reason_codes,
         "sigma_artifact": sigma_artifact,
+        "run_truth": run_truth,
         "council_artifact_visibility": council_artifacts,
         "runner_calibration_gate_status": rcg.get("status", "UNKNOWN"),
         "runner_calibration_gate_runners": rcg.get("runner_count", 0),

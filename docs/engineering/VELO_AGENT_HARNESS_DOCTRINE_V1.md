@@ -35,8 +35,9 @@ No racecard or runner data may enter the scoring pipeline unless its source trut
 * **Source Integrity Labels:**
   * `RP_MERGED_CLEAN`: Synthesized from a complete set of 7 Racing Post PDFs, with full per-runner feature coverage.
   * `RP_MERGED_DEGRADED`: Synthesized from incomplete RP PDFs (e.g., missing Topspeed or Postdata), with feature degradation warnings active.
-  * `API_CLEAN`: Sourced directly from a fully authenticated Racing API response.
-  * `LOCAL_JSON_FALLBACK`: Loaded from verified local standard caches (`racecards_{date}_standard.json`).
+  * `RP_SCRAPER_CLEAN`: Sourced from Racing Post scraper pipeline with full integrity.
+  * `RP_SCRAPER_DEGRADED`: Sourced from scraper but with partial data or errors.
+  * `LOCAL_VERIFIED_ARTIFACT`: Loaded from verified local standard caches (`racecards_{date}_standard.json`).
   * `SOURCE_UNKNOWN_BLOCK`: Assigned when inputs do not match any known signature. Execution is strictly blocked.
 * **Mapping:** Implemented in `src/velo/racecard_loader.py` and `workers/ingestion_spine/`.
 

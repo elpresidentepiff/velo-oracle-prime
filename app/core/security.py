@@ -9,6 +9,8 @@ import os
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from app.core.config import settings
+
 security = HTTPBearer(auto_error=False)
 
 
