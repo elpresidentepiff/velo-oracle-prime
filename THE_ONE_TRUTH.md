@@ -71,7 +71,7 @@ python scripts/ops/racing_post_account_collector.py capture
   --execute
 ```
 
-Run with `--batch-size 15` to avoid tool timeouts. Run it again for the next 15. Keep going until all races are done. If you re-run on the same day add a suffix: base → -refresh → -refresh2. The button always picks the most specific label automatically.
+Run with `--batch-size 15` to avoid tool timeouts. Run it again for the next 15. Keep going until all races are done. If you re-run on the same day add a suffix: base → -refresh → -refresh2. Record the exact final capture label and pass that same label/path to every downstream step.
 
 **What lands on disk:**
 `data/racing_post_account_raw/live-full-racepages-YYYY-MM-DD/` — one HTML file per race, one JSON metadata file per race.
@@ -118,7 +118,13 @@ Zero races with a null `off_time`. Every race has a time in HH:MM format (e.g. "
 - At least 3 distinct courses present (fewer means partial capture)
 - Every single race has an `off_time` — zero nulls allowed
 
-**This runs automatically inside the button. You do not run it separately.**
+**Command:**
+```
+python scripts/ops/validate_rp_injection.py
+  --injection-path data/racing_post_account_parsed/FINAL_CAPTURE_LABEL/racecard_injection.json
+```
+
+This is a hard gate. If it exits non-zero, stop. Do not run New Build, RPDC, Old VELO, Council, or learning.
 
 If it blocks, it tells you exactly why. Fix the data and re-run.
 
@@ -201,11 +207,13 @@ Every race has `off`, `course`, `name`, `distance` populated. Every runner has `
 
 **Why:** RPDC stands for Release Candidate Detector and Context. It reads the run history of every horse running today, computes release signals — how many runs since last win, whether the horse is at or below its last winning mark, whether it is returning to a course it has won at, whether the stable is warm — and writes tags to Supabase for the scorer to attach. If RPDC does not run before scoring, every horse goes into the model blind with no release context.
 
-**Source:** The injection JSON from Step 4. This is the correct pre-scoring source — it has real Racing Post horse IDs and real trainer IDs from the HTML parse. Do NOT use runner_snapshots as the source (those are post-scoring). The script finds the injection JSON automatically by date.
+**Source:** The exact injection JSON that passed Step 5. This is the correct pre-scoring source — it has real Racing Post horse IDs and real trainer IDs from the HTML parse. Do NOT use runner_snapshots as the source (those are post-scoring). Never allow RPDC to independently select a capture by date.
 
 **Command:**
 ```
-PYTHONPATH=. python scripts/ops/build_rpdc_daily.py --date YYYY-MM-DD
+PYTHONPATH=. python scripts/ops/build_rpdc_daily.py
+  --date YYYY-MM-DD
+  --injection-path data/racing_post_account_parsed/FINAL_CAPTURE_LABEL/racecard_injection.json
 ```
 
 **What it does:**
@@ -347,25 +355,11 @@ Evidence accumulation only — no scoring weight. Track ACCELERATING/PROGRESSIVE
 
 ---
 
-## THE BUTTON — ONE COMMAND THAT DOES STEPS 4 TO 9
+## NO RACE-DAY BUTTON
 
-When race pages are captured (Steps 1–3 done), one command runs everything:
+Do not use `velo_race_day_button.py` as the operational authority. The morning chain is run as explicit numbered steps when requested.
 
-```
-python scripts/ops/velo_race_day_button.py --date YYYY-MM-DD
-```
-
-It runs in this exact order:
-1. Parse every race HTML → injection JSON + standard cache (Step 4)
-2. Preflight gate — blocks if injection data is bad (Step 5)
-3. Build Old VELO RP files — 1 per track, 5 components per race (Step 8)
-4. Build RPDC release candidate tags (Step 8.5)
-5. Score with Old VELO — SQPE ensemble (Step 9)
-6. Refresh New Build passport feed (Step 6)
-7. Score with New Build — two-lane passport scorer (Step 7)
-8. Writes the race day report
-
-The button automatically picks the best capture label. refresh2 beats refresh beats base.
+One capture label becomes the daily truth at Step 4. The exact injection path from that label must be passed to Step 5, Step 8, and Step 8.5. No downstream script may independently choose a different capture. Stop immediately on any non-zero exit or race-identity mismatch.
 
 ---
 

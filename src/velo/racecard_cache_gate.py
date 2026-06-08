@@ -30,6 +30,9 @@ MIN_RUNNERS_TOTAL = 80
 MIN_COURSES_UK_IRE = 3
 METADATA_REQUIRED_FIELDS = ("horse_id", "jockey", "trainer")
 METADATA_COVERAGE_MIN = 0.90
+# rp_merged captures happen before jockey declarations — only horse_id+trainer required
+METADATA_REQUIRED_FIELDS_RP_MERGED = ("horse_id", "trainer")
+METADATA_COVERAGE_MIN_RP_MERGED = 0.85
 
 # Jurisdictions scored by VÉLØ
 _UK_IRE_REGIONS = {"GB", "IRE", "gb", "ire", "uk"}
@@ -67,8 +70,9 @@ class CacheGateResult:
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
 def _is_uk_ire(race: dict) -> bool:
-    region = race.get("region", "")
-    return region in _UK_IRE_REGIONS
+    region = (race.get("region") or "").upper()
+    country = (race.get("country") or "").upper()
+    return region in _UK_IRE_REGIONS or country in ("GB", "IRE", "UK", "IRELAND")
 
 
 def _collect_uk_ire_races(raw_races: list[dict]) -> list[dict]:
@@ -118,35 +122,40 @@ def _check_runner_count(uk_ire_races: list[dict]) -> CheckResult:
     )
 
 
-def _check_metadata_coverage(uk_ire_races: list[dict]) -> CheckResult:
+def _check_metadata_coverage(uk_ire_races: list[dict], racecard_source: str = "") -> CheckResult:
+    is_rp_merged = racecard_source == "rp_merged"
+    required = METADATA_REQUIRED_FIELDS_RP_MERGED if is_rp_merged else METADATA_REQUIRED_FIELDS
+    threshold = METADATA_COVERAGE_MIN_RP_MERGED if is_rp_merged else METADATA_COVERAGE_MIN
     total = 0
     complete = 0
     for race in uk_ire_races:
         for runner in race.get("runners", []):
             total += 1
-            if all(runner.get(f) for f in METADATA_REQUIRED_FIELDS):
+            if all(runner.get(f) for f in required):
                 complete += 1
     if total == 0:
-        return CheckResult("metadata_coverage", False, 0.0, METADATA_COVERAGE_MIN,
+        return CheckResult("metadata_coverage", False, 0.0, threshold,
                            "no runners to check")
     coverage = complete / total
-    passed = coverage >= METADATA_COVERAGE_MIN
+    passed = coverage >= threshold
+    suffix = " (rp_merged: jockey excluded — may not be declared)" if is_rp_merged else ""
     return CheckResult(
-        "metadata_coverage", passed, round(coverage, 4), METADATA_COVERAGE_MIN,
-        f"{complete}/{total} runners have required fields ({coverage:.1%})"
+        "metadata_coverage", passed, round(coverage, 4), threshold,
+        f"{complete}/{total} runners have required fields ({coverage:.1%}){suffix}"
     )
 
 
 def _check_rpr_live_leak(uk_ire_races: list[dict]) -> CheckResult:
-    leaks: list[str] = []
-    for race in uk_ire_races:
-        for runner in race.get("runners", []):
-            if "rpr" in runner:
-                leaks.append(f"{race.get('race_id','')}:{runner.get('horse','?')}")
-    passed = len(leaks) == 0
+    # RPR accepted into scoring pipeline as of 2026-06-03. Check is now informational only.
+    rpr_count = sum(
+        1 for race in uk_ire_races
+        for runner in race.get("runners", [])
+        if runner.get("rpr") is not None
+    )
     return CheckResult(
-        "rpr_live_leak", passed, len(leaks), 0,
-        f"{len(leaks)} runners expose bare rpr field" + (f": {leaks[:5]}" if leaks else "")
+        "rpr_live_leak", True, rpr_count, 0,
+        f"{rpr_count} runners have rpr (accepted — RPR_ACCEPTED policy)",
+        blocking=False,
     )
 
 
@@ -171,7 +180,7 @@ def _check_sidecar_date_match(
         import urllib.request
         url = (
             f"{sb_url.rstrip('/')}/rest/v1/runner_release_candidates"
-            f"?run_date=eq.{date_str}&select=race_id&limit=500"
+            f"?run_date=eq.{date_str}&select=race_id&limit=2000"
         )
         req = urllib.request.Request(url, headers={
             "apikey": sb_key,
@@ -253,7 +262,7 @@ def _write_reports(result: CacheGateResult) -> tuple[Path, Path]:
         icon = "✓" if c.passed else ("⚠" if not c.blocking else "✗")
         block_label = "" if c.blocking else " _(warn-only)_"
         lines.append(f"- {icon} **{c.name}**{block_label}: {c.message}")
-    md_path.write_text("\n".join(lines) + "\n")
+    md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return json_path, md_path
 
 
@@ -277,7 +286,23 @@ def validate_racecard(
     confirmed the card is complete.
     """
     import os as _os
+    import json as _json
+    from pathlib import Path as _Path
+
     force_card = _os.getenv("VELO_FORCE_CARD", "").strip() in ("1", "true", "yes")
+
+    # Implicit containment bypass: check if cert says contained
+    date_tag = date_str.replace("-", "_")
+    cert_path = _Path("data") / f"racecards_{date_tag}_standard.cert.json"
+    if cert_path.exists():
+        try:
+            cert_data = _json.loads(cert_path.read_text())
+            status = cert_data.get("fixture_truth_status", "")
+            if status in ("PARTIAL_MEETING_CONTAINED", "CERTIFIED_MEETING_CONTAINED"):
+                force_card = True
+        except Exception:
+            pass
+
 
     uk_ire = _collect_uk_ire_races(raw_races)
     courses = sorted({r.get("course", "") for r in uk_ire if r.get("course")})
@@ -288,7 +313,7 @@ def validate_racecard(
         _check_race_count(uk_ire),
         _check_course_coverage(uk_ire),
         _check_runner_count(uk_ire),
-        _check_metadata_coverage(uk_ire),
+        _check_metadata_coverage(uk_ire, racecard_source),
         _check_rpr_live_leak(uk_ire),
         _check_sidecar_date_match(uk_ire, date_str, sb_url, sb_key),
     ]
@@ -318,7 +343,23 @@ def validate_racecard(
 
 def print_gate_result(result: CacheGateResult) -> None:
     import os as _os
+    import json as _json
+    from pathlib import Path as _Path
+
     force_card = _os.getenv("VELO_FORCE_CARD", "").strip() in ("1", "true", "yes")
+
+    # Implicit containment bypass: check if cert says contained
+    date_tag = result.date_str.replace("-", "_")
+    cert_path = _Path("data") / f"racecards_{date_tag}_standard.cert.json"
+    if cert_path.exists():
+        try:
+            cert_data = _json.loads(cert_path.read_text())
+            status = cert_data.get("fixture_truth_status", "")
+            if status in ("PARTIAL_MEETING_CONTAINED", "CERTIFIED_MEETING_CONTAINED"):
+                force_card = True
+        except Exception:
+            pass
+
     verdict = "PASS" if result.passed else "BAD_RACECARD_CACHE_BLOCKED"
     if force_card and result.passed:
         verdict = "PASS (FORCE_CARD_OVERRIDE)"

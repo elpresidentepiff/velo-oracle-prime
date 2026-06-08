@@ -124,15 +124,15 @@ def test_missing_course_fails():
     assert "course_coverage" in failed_names, "course_coverage check must fire on single-course card"
 
 
-def test_rpr_live_leak_fails():
-    """A card where runners expose bare 'rpr' field must be blocked."""
+def test_rpr_is_accepted_by_current_policy():
+    """Current policy accepts and audits Racing Post RPR."""
     races = _full_card()
     # Inject a live RPR leak into the first runner of the first race
     races[0]["runners"][0]["rpr"] = 105
     result = validate_racecard(races, DATE, racecard_source="api")
-    assert not result.passed
-    failed_names = {c.name for c in result.failed_blocking()}
-    assert "rpr_live_leak" in failed_names
+    assert result.passed
+    rpr_check = next(c for c in result.checks if c.name == "rpr_live_leak")
+    assert rpr_check.passed
 
 
 def test_low_runner_count_fails():

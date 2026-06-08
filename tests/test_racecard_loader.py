@@ -139,6 +139,16 @@ def test_rp_merged_synthesises_runners(tmp_path):
     assert runners_total == 3  # 2 + 1 from sample
 
 
+def test_rp_merged_preserves_real_racing_post_race_id(tmp_path):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    content["races"]["14:00"]["race_id"] = 920114
+    _make_rp_file(tmp_path, content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert races[0]["race_id"] == "920114"
+
+
 def test_rp_merged_empty_when_no_files(tmp_path):
     races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
     assert races == []
@@ -265,8 +275,8 @@ _CACHE_WITH_RPR = [
 ]
 
 
-def test_cache_source_sanitizes_rpr(tmp_path):
-    """Cache-sourced runners must have rpr nulled and archived."""
+def test_cache_source_preserves_and_archives_rpr(tmp_path):
+    """Accepted RPR remains available while an audit copy is preserved."""
     cache_races = [
         {**r, "runners": [dict(run) for run in r["runners"]]}
         for r in _CACHE_WITH_RPR
@@ -277,9 +287,9 @@ def test_cache_source_sanitizes_rpr(tmp_path):
     races, src = _loader(tmp_path, source="cache")
     assert src == "cache"
     runner = races[0]["runners"][0]
-    assert runner["rpr"] is None, "rpr must be nulled after sanitization"
-    assert runner["rp_rpr_archive_only"] == 105, "live rpr must be archived"
-    assert runner["rp_rpr_velo_allowed"] is False
+    assert runner["rpr"] == 105
+    assert runner["rp_rpr_archive_only"] == 105
+    assert runner["rp_rpr_velo_allowed"] is True
 
 
 def test_rp_merged_source_not_sanitized(tmp_path):
@@ -294,14 +304,14 @@ def test_rp_merged_source_not_sanitized(tmp_path):
 
 
 def test_sanitize_api_rpr_direct():
-    """_sanitize_api_rpr moves live rpr to archive, nulls scoring field."""
+    """_sanitize_api_rpr preserves accepted RPR and creates an audit copy."""
     import copy
     races = copy.deepcopy(_CACHE_WITH_RPR)
     result = _sanitize_api_rpr(races)
     r0, r1, r2 = result[0]["runners"]
-    assert r0["rpr"] is None
+    assert r0["rpr"] == 105
     assert r0["rp_rpr_archive_only"] == 105
-    assert r0["rp_rpr_velo_allowed"] is False
+    assert r0["rp_rpr_velo_allowed"] is True
     assert r1["rp_rpr_archive_only"] == 98
     assert r2["rpr"] is None  # was already None — must stay None
 
