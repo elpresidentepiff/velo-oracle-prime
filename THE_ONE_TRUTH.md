@@ -11,6 +11,43 @@ This is exactly what happens. Every step. Every file. Every check.
 
 ---
 
+## COMPLETE EXECUTABLE CONTRACT — STEPS 1 TO 20
+
+Every path in this table is committed to Git. Another agent must be able to
+clone the branch and run the same contract. `FINAL_CAPTURE_LABEL` is selected
+once after Step 3 and reused everywhere; downstream steps must not rediscover it.
+
+| Step | Committed entrypoint | Status | Required input | Required proof/output |
+|---|---|---|---|---|
+| 1 | `scripts/ops/racing_post_account_collector.py manual-capture` | READY | Logged-in RP session | Index HTML over 100KB |
+| 2 | `scripts/ops/build_racing_post_racecard_url_list.py` | READY | Index capture | UK/IRE-only deduplicated racecard URL list |
+| 3 | `scripts/ops/racing_post_account_collector.py capture` | READY | Racecard URL list | Final race-page capture manifest and one HTML per race |
+| 4 | `scripts/ops/parse_racing_post_racecard_capture.py` | READY | `FINAL_CAPTURE_LABEL` | Injection JSON and standard cache |
+| 5 | `scripts/ops/validate_rp_injection.py` | READY | Exact injection from Step 4 | Unique race IDs, no null off-times, full card gate PASS |
+| 6 | `scripts/ops/new_build_current_card_feed.py` | READY | Standard cache | Current-card passport feed |
+| 7 | `scripts/ops/new_build_two_lane_score.py` | READY | Passport feed | Two-lane readiness report |
+| 8 | `scripts/ops/build_racecard_merged_from_injection.py` | READY | Exact injection from Step 4 | One Old VELO RP file per venue preserving real RP IDs |
+| 8.5 | `scripts/ops/build_rpdc_daily.py` | READY | Exact injection from Step 4 | Current-day RPDC rows with 100% race-ID coverage |
+| 9 | `scripts/ops/run_prime_today.py` | READY | RP merged files and RPDC | 100% races scored/persisted and real `pipeline_runs` truth |
+| 10A | `scripts/ops/build_rp_results_url_list.py` | READY | `FINAL_CAPTURE_LABEL` manifest | Deduplicated RP results URL list |
+| 10B | `scripts/ops/racing_post_account_collector.py capture` | READY | Results URL list | Final results-page capture |
+| 11 | `scripts/ops/parse_rp_results_capture.py` | READY | Final results capture | Canonical RP results JSON with numeric IDs and SP truth |
+| 12 | `scripts/ops/run_results_sigma.py` | READY | Verdicts and canonical results | Sigma results including wins, frames, SR and frame rate |
+| 13 | `scripts/ops/ingest_results_to_horse_runs.py` | READY | Canonical RP results | Supabase `racing_horse_runs` history |
+| 14 | `scripts/ops/build_sigma_retrieval_corpus.py` | READY / FRESHNESS-GATED | Sigma audit dump | Retrieval corpus; `date_max` must include latest completed Sigma date |
+| 15 | `scripts/ops/update_mission_control.py` | READY | Daily artifacts | Mission Control gate report |
+| 16A | `scripts/audit/vp30_operator_card.py` | READY | Daily artifacts | VP30 operator card |
+| 16B | `scripts/audit/run_velo_council.py` | READY | Council evidence packet | Council READY and `PASS_TO_LEARNING` |
+| 17 | `scripts/ops/run_execution_bridge_shadow.py` | READY / SIM ONLY | Verdict/result truth | SIM-only paper ledger and outcome audit |
+| 18 | `scripts/ops/build_innovation_protocol.py` | READY | Verdict/result truth | Deduplicated router evidence dataset |
+| 19 | `scripts/ops/router_shadow_audit.py` | READY | Router evidence dataset | Lane audit, freeze state and ledger |
+| 20 | `scripts/ops/nightly_eod_learning_runner.py` | READY / SHADOW ONLY | All prior gates PASS | Shadow-only learning artifacts and idempotency proof |
+
+**Hard stop:** if any required script is absent from Git, any command exits
+non-zero, or any required proof is missing, stop and announce the obstacle.
+
+---
+
 ## STEP 1 — GET THE INDEX
 
 **Why:** The agent does not know what races are on today. Racing Post has one page that lists every race. That is the starting point.
@@ -407,7 +444,15 @@ PYTHONPATH=. python scripts/ops/nightly_eod_learning_runner.py --date YYYY-MM-DD
 
 **Why:** Now that races have run, you go back to Racing Post and download the results pages. These pages show who won, finishing positions, starting prices.
 
-**Command:**
+**Command — first build the result URLs from the exact final morning capture:**
+```
+python scripts/ops/build_rp_results_url_list.py
+  --date YYYY-MM-DD
+  --capture-label FINAL_CAPTURE_LABEL
+  --execute
+```
+
+**Then capture them:**
 ```
 python scripts/ops/racing_post_account_collector.py capture
   --url-list data/racing_post_url_lists/rp_results_YYYY-MM-DD.txt
@@ -484,7 +529,7 @@ python scripts/ops/ingest_results_to_horse_runs.py --date YYYY-MM-DD
 
 **Command:**
 ```
-python scripts/ops/build_sigma_retrieval_corpus.py
+python scripts/ops/build_sigma_retrieval_corpus.py --require-through-date YYYY-MM-DD
 ```
 
 ---
@@ -598,11 +643,12 @@ Run from the canonical repository root with `PYTHONPATH=.` and
 `PYTHONIOENCODING=utf-8`.
 
 ```text
-Step 10  python scripts/ops/racing_post_account_collector.py capture --url-list data/racing_post_url_lists/rp_results_YYYY-MM-DD.txt --date rp-results-YYYY-MM-DD-final --execute
+Step 10A python scripts/ops/build_rp_results_url_list.py --date YYYY-MM-DD --capture-label FINAL_CAPTURE_LABEL --execute
+Step 10B python scripts/ops/racing_post_account_collector.py capture --url-list data/racing_post_url_lists/rp_results_YYYY-MM-DD.txt --date rp-results-YYYY-MM-DD-final --execute
 Step 11  python scripts/ops/parse_rp_results_capture.py --date YYYY-MM-DD --capture-date rp-results-YYYY-MM-DD-final --execute
 Step 12  python scripts/ops/run_results_sigma.py --date YYYY-MM-DD --source cache
 Step 13  python scripts/ops/ingest_results_to_horse_runs.py --date YYYY-MM-DD
-Step 14  python scripts/ops/build_sigma_retrieval_corpus.py
+Step 14  python scripts/ops/build_sigma_retrieval_corpus.py --require-through-date YYYY-MM-DD
 Step 15  python scripts/ops/update_mission_control.py --date YYYY-MM-DD
 Step 16a python scripts/audit/vp30_operator_card.py --date YYYY-MM-DD > data/vp30_operator_card_YYYY-MM-DD.md
 Step 16b python scripts/audit/run_velo_council.py --date YYYY-MM-DD

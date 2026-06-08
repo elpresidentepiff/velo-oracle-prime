@@ -211,7 +211,7 @@ class TestParseRunner:
         r = _parse_runner(raw, "LEI")
         assert r["horse"] == "Harlequin Breeze"
         assert r["position"] == "1"
-        assert r["horse_id"] == "rp_LEI_harlequin_breeze"
+        assert r["horse_id"] == "4001"
         assert r["sp_dec"] == pytest.approx(4.5)
         assert r["non_runner"] is False
 
@@ -225,7 +225,7 @@ class TestParseRunner:
         raw = _make_result_runner("Some Horse", 1, "3/1")
         r = _parse_runner(raw, "")
         assert r["horse"] == "Some Horse"
-        assert r["horse_id"] == ""
+        assert r["horse_id"] == "123456"
 
     def test_rpr_not_in_output(self):
         raw = _make_result_runner("X", 1, "2/1")
@@ -269,7 +269,7 @@ class TestParseResults:
         race = result["results"][0]
         assert race["race_id"] == "918927"
         assert race["winner_horse"] == "Harlequin Breeze"
-        assert race["winner_id"] == "rp_LEI_harlequin_breeze"
+        assert race["winner_id"] == "4001"
         assert len(race["top3_names"]) == 3
         assert race["top3_names"][0] == "Harlequin Breeze"
 
@@ -375,6 +375,31 @@ class TestBuildResultsUrlList:
             result = build_results_url_list(date="2026-05-26", execute=False)
 
         assert result["status"] == "FAIL"
+
+    def test_explicit_capture_label_is_authoritative(self, tmp_path):
+        raw_root = tmp_path / "racing_post_account_raw"
+        base = raw_root / "live-full-racepages-2026-05-26"
+        refresh = raw_root / "live-full-racepages-2026-05-26-refresh"
+        base.mkdir(parents=True)
+        refresh.mkdir(parents=True)
+        (base / "manifest.json").write_text(json.dumps({"captures": [
+            {"source_url": "https://www.racingpost.com/racecards/30/leicester/2026-05-26/111111/"}
+        ]}))
+        (refresh / "manifest.json").write_text(json.dumps({"captures": [
+            {"source_url": "https://www.racingpost.com/racecards/30/leicester/2026-05-26/222222/"}
+        ]}))
+
+        with patch("scripts.ops.build_rp_results_url_list.RAW_ROOT", raw_root):
+            result = build_results_url_list(
+                date="2026-05-26",
+                capture_label=refresh.name,
+                execute=False,
+            )
+
+        assert result["capture_label"] == refresh.name
+        assert result["urls"] == [
+            "https://www.racingpost.com/results/30/leicester/2026-05-26/222222/"
+        ]
 
     def test_execute_writes_file(self, tmp_path):
         raw_root = tmp_path / "racing_post_account_raw"
