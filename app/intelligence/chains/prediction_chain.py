@@ -90,7 +90,6 @@ async def run_prediction_chain(race: dict[str, Any], runners: list[dict[str, Any
 async def load_models() -> dict[str, Any]:
     """Load all required models"""
     from app.services.model_manager import get_model_manager
-
     model_manager = get_model_manager()
 
     return {
@@ -140,7 +139,6 @@ async def run_model_predictions(
 ) -> dict[str, Any]:
     """Run all model predictions for a runner"""
     from app.services.model_manager import get_model_manager
-
     mm = get_model_manager()
 
     # SQPE v17 — pass raw runner+race so model_manager builds the correct 37-feature vector

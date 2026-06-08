@@ -1,0 +1,380 @@
+{
+  "date": "2026-05-31",
+  "generated_at": "2026-06-05T23:39:05.052679+00:00",
+  "allow_partial": true,
+  "prepared": {
+    "date": "2026-05-31",
+    "verdicts_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\velo_prime_verdicts_2026_05_31_supported.json",
+    "results_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\results_2026_05_31_supported.json",
+    "supported_predictions": 23,
+    "supported_results": 23,
+    "excluded": 14,
+    "missing": [
+      {
+        "race_id": "918770",
+        "course": "Fakenham",
+        "off_time": "15:35"
+      },
+      {
+        "race_id": "919067",
+        "course": "Thirsk",
+        "off_time": "16:15"
+      },
+      {
+        "race_id": "919057",
+        "course": "Nottingham",
+        "off_time": "16:25"
+      },
+      {
+        "race_id": "919057",
+        "course": "Nottingham",
+        "off_time": "16:25"
+      },
+      {
+        "race_id": "919057",
+        "course": "Nottingham",
+        "off_time": "16:25"
+      },
+      {
+        "race_id": "918767",
+        "course": "Fakenham",
+        "off_time": "16:37"
+      },
+      {
+        "race_id": "919066",
+        "course": "Thirsk",
+        "off_time": "18:45"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "cmd": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/run_supported_rp_sigma.py",
+        "--date",
+        "2026-05-31",
+        "--verdicts-file",
+        "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\velo_prime_verdicts_2026_05_31_supported.json",
+        "--results-file",
+        "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\results_2026_05_31_supported.json"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "Written C:\\Users\\puror\\velo-oracle-prime\\data\\sigma_results\\sigma_results_2026_05_31.json\nSR=9.5% Frame=66.7% n=21\n",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/audit/run_velo_council.py",
+        "--date",
+        "2026-05-31"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "Repo Root: C:\\Users\\puror\\velo-oracle-prime\n--- V\u00c9L\u00d8 LLM Council Run: 2026-05-31 ---\nStep 1: Loading evidence packet...\nStep 2: Running council members...\n  -> DATA AUDITOR is deliberating...\n  -> FLATLINE GATE is deliberating...\n  -> SIGMA COVERAGE is deliberating...\n  -> CONTAMINATION DETECTOR is deliberating...\n  -> MIDPRICE SUMMARY is deliberating...\n  -> PRIME CHAIR is deliberating...\nStep 3: Synthesizing final report...\nStep 4: Council run complete. Status: EVIDENCE_INCOMPLETE\n\nCouncil Verdict: QUARANTINE_DAY\nSummary: QUARANTINE_DAY \u2014 2026-05-31. Learning blocked. Shadow consume blocked. Promotion evidence blocked. sigma_audits truth records are preserved. Blocking: SIGMA COVERAGE: SR_BELOW_HALF_BASELINE\n\nGovernance note: sigma_audits truth writes are never blocked by council.\nBlocked when verdict != PASS_TO_LEARNING: learning consume, shadow promote, promotion evidence.\n",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/run_sigma_memory_distillation.py",
+        "--date",
+        "2026-05-31",
+        "--verdicts-file",
+        "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\velo_prime_verdicts_2026_05_31_supported.json",
+        "--results-file",
+        "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\results_2026_05_31_supported.json"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "Loaded 23 races from results and 15 races from verdicts.\nSample verdicts keys: [('nottingham', '14.20'), ('fakenham', '14.35'), ('nottingham', '14.50'), ('fakenham', '15.05'), ('nottingham', '15.20')]\nWritten 23 records to sigma_memory_2026_05_31.jsonl\nUpdated memory summary: sigma_memory_summary.json\n",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/nightly_eod_learning_runner.py",
+        "--date",
+        "2026-05-31",
+        "--state",
+        "data/sentient_state_shadow_daily.json",
+        "--fail-on-data-error-rate",
+        "0.001",
+        "--pred-file",
+        "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\velo_prime_verdicts_2026_05_31_supported.json",
+        "--result-file",
+        "C:\\Users\\puror\\velo-oracle-prime\\data\\learning_inputs\\results_2026_05_31_supported.json"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "",
+      "stderr_tail": "INFO:nightly_runner:Starting Nightly EOD Runner for 2026-05-31 [Run: acd00cd4-fdb5-4fbc-b85b-381682ab34b8]\nINFO:shadow_adapter:Starting Shadow Adapter Audit: C:\\Users\\puror\\velo-oracle-prime\\data\\nightly_eod_learning_events_2026_05_31.jsonl\nINFO:shadow_adapter:Audit complete. Verdict: PASS_EVOLVED\nINFO:shadow_adapter:Starting Shadow Adapter Audit: C:\\Users\\puror\\velo-oracle-prime\\data\\nightly_eod_learning_events_2026_05_31.jsonl\nINFO:shadow_adapter:Audit complete. Verdict: PASS_IDEMPOTENT\nINFO:nightly_runner:Nightly Run Finalized: PASS\nINFO:study_layer:Starting Hardened Study Layer for 2026-05-31\nINFO:study_layer:Running Hardened Sigma Study...\nINFO:study_layer:Running Hardened Playbook G Critique...\nINFO:study_layer:Study Layer Complete: PASS_WITH_WARNINGS\nINFO:nightly_runner:Intelligence study layer complete\n"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/audit/eod_result_study_layer.py",
+        "--date",
+        "2026-05-31"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "",
+      "stderr_tail": "2026-06-05 16:39:04,584 [INFO] Starting Hardened Study Layer for 2026-05-31\n2026-06-05 16:39:04,586 [INFO] Running Hardened Sigma Study...\n2026-06-05 16:39:04,586 [INFO] Running Hardened Playbook G Critique...\n2026-06-05 16:39:04,588 [INFO] Study Layer Complete: PASS_WITH_WARNINGS\n"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/update_mission_control.py",
+        "--date",
+        "2026-05-31"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "stdout_tail": "Building Mission Control for 2026-05-31...\n  source_truth: RP_MERGED_CLEAN\n  flatline_count: 0\n  fully_uniform_count: 0\n  majority_tied_count: 0\n  identity_failure_count: 0\n  learning_gate: BLOCKED\n  promotion_gate: BLOCKED\n  council_verdict: QUARANTINE_DAY\n  sigma_artifact: PRESENT (sr=0.0952, wins=2, n=21)\n  council_artifacts: run=PRESENT packet=PRESENT report=PRESENT\n  runner_calibration_gate: REVIEW_THRESHOLD_MET (n=786)\n  decision_policy_gate:    NEEDS_MORE_DAYS (top_picks=87)\n  race_shape_model_v1: DESIGN_PENDING\n  midprice_hunter_v2:  RESEARCH_PENDING\n  learning_admission:  eligibility=NOT_RUN eligible=0 events_written=? recommendation=PENDING\n  race_shape_features: FEATURES_BUILT (n=36 races)\n  midprice_overlap:    visible=92.6% ranked2nd3rd=48.1% fav_vuln_misses=17\n  corpus_governance:   status=REBUILT rows=1018 may20_rows=0 may20_check=PASS\n  idempotency:         status=VERIFIED consumed_shadow=80 consumed_live=0 shadow_v2_races=2055\n  precision_audit:     status=RUN actionable=['MIDPRICE_TRAP', 'FAV_VULN_ULTRA_COMPRESSED'] fav_vuln_ultra_sr=0.1875\n  evidence_action:     ACCUMULATE_EVIDENCE | race_shape=36/150/300 | cpu=87/150/300 | production=NOT_APPROVED\n  cpu_tracker:         status=RUN decisions=87 SR=0.275 to_150=63 verdict=NEEDS_MORE_DAYS\n  next: Source truth contaminated \u2014 do not consume for learning. Run council audit first.\n  Written: C:\\Users\\puror\\velo-oracle-prime\\data\\mission_control\\2026-05-31_mission_control.json\n  Written: C:\\Users\\puror\\velo-oracle-prime\\data\\mission_control\\latest.json\n",
+      "stderr_tail": ""
+    }
+  ],
+  "audit": [
+    {
+      "date": "2026-05-18",
+      "sigma_status": "MISSING",
+      "sigma_sr": null,
+      "sigma_evaluated": null,
+      "sigma_no_result": null,
+      "council_verdict": "MISSING",
+      "mission_learning_gate": "MISSING",
+      "nightly_verdict": "MISSING",
+      "nightly_events": null,
+      "nightly_updates": null,
+      "duplicate_updates": null,
+      "data_error_rate": null,
+      "live_touched": null,
+      "hfs_used": null,
+      "memory_rows": 0
+    },
+    {
+      "date": "2026-05-19",
+      "sigma_status": "MISSING",
+      "sigma_sr": null,
+      "sigma_evaluated": null,
+      "sigma_no_result": null,
+      "council_verdict": "MISSING",
+      "mission_learning_gate": "MISSING",
+      "nightly_verdict": "MISSING",
+      "nightly_events": null,
+      "nightly_updates": null,
+      "duplicate_updates": null,
+      "data_error_rate": null,
+      "live_touched": null,
+      "hfs_used": null,
+      "memory_rows": 0
+    },
+    {
+      "date": "2026-05-20",
+      "sigma_status": "MISSING",
+      "sigma_sr": null,
+      "sigma_evaluated": null,
+      "sigma_no_result": null,
+      "council_verdict": "QUARANTINE_DAY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "MISSING",
+      "nightly_events": null,
+      "nightly_updates": null,
+      "duplicate_updates": null,
+      "data_error_rate": null,
+      "live_touched": null,
+      "hfs_used": null,
+      "memory_rows": 0
+    },
+    {
+      "date": "2026-05-21",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.2955,
+      "sigma_evaluated": 44,
+      "sigma_no_result": 0,
+      "council_verdict": "PASS_TO_LEARNING",
+      "mission_learning_gate": "OPEN",
+      "nightly_verdict": "MISSING",
+      "nightly_events": null,
+      "nightly_updates": null,
+      "duplicate_updates": null,
+      "data_error_rate": null,
+      "live_touched": null,
+      "hfs_used": null,
+      "memory_rows": 0
+    },
+    {
+      "date": "2026-05-22",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.25,
+      "sigma_evaluated": 36,
+      "sigma_no_result": 7,
+      "council_verdict": "PASS_TO_LEARNING",
+      "mission_learning_gate": "OPEN",
+      "nightly_verdict": "MISSING",
+      "nightly_events": null,
+      "nightly_updates": null,
+      "duplicate_updates": null,
+      "data_error_rate": null,
+      "live_touched": null,
+      "hfs_used": null,
+      "memory_rows": 0
+    },
+    {
+      "date": "2026-05-23",
+      "sigma_status": "PARTIAL_RESULTS_DIAGNOSTIC_ONLY",
+      "sigma_sr": 0.2889,
+      "sigma_evaluated": 45,
+      "sigma_no_result": 2,
+      "council_verdict": "WATCH_ONLY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "PASS",
+      "nightly_events": 47,
+      "nightly_updates": 47,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 47
+    },
+    {
+      "date": "2026-05-24",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.2857,
+      "sigma_evaluated": 14,
+      "sigma_no_result": 0,
+      "council_verdict": "WATCH_ONLY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "PASS",
+      "nightly_events": 14,
+      "nightly_updates": 14,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 14
+    },
+    {
+      "date": "2026-05-25",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.2059,
+      "sigma_evaluated": 34,
+      "sigma_no_result": 0,
+      "council_verdict": "PASS_TO_LEARNING",
+      "mission_learning_gate": "OPEN",
+      "nightly_verdict": "PASS",
+      "nightly_events": 34,
+      "nightly_updates": 34,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 34
+    },
+    {
+      "date": "2026-05-26",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.1818,
+      "sigma_evaluated": 33,
+      "sigma_no_result": 0,
+      "council_verdict": "WATCH_ONLY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "PASS",
+      "nightly_events": 33,
+      "nightly_updates": 33,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 33
+    },
+    {
+      "date": "2026-05-27",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.3125,
+      "sigma_evaluated": 32,
+      "sigma_no_result": 0,
+      "council_verdict": "QUARANTINE_DAY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "PASS",
+      "nightly_events": 32,
+      "nightly_updates": 0,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 32
+    },
+    {
+      "date": "2026-05-28",
+      "sigma_status": "MISSING",
+      "sigma_sr": null,
+      "sigma_evaluated": null,
+      "sigma_no_result": null,
+      "council_verdict": "MISSING",
+      "mission_learning_gate": "MISSING",
+      "nightly_verdict": "MISSING",
+      "nightly_events": null,
+      "nightly_updates": null,
+      "duplicate_updates": null,
+      "data_error_rate": null,
+      "live_touched": null,
+      "hfs_used": null,
+      "memory_rows": 0
+    },
+    {
+      "date": "2026-05-29",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.2222,
+      "sigma_evaluated": 27,
+      "sigma_no_result": 0,
+      "council_verdict": "WATCH_ONLY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "PASS",
+      "nightly_events": 27,
+      "nightly_updates": 0,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 27
+    },
+    {
+      "date": "2026-05-30",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.1143,
+      "sigma_evaluated": 35,
+      "sigma_no_result": 0,
+      "council_verdict": "WATCH_ONLY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "PASS",
+      "nightly_events": 35,
+      "nightly_updates": 0,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 35
+    },
+    {
+      "date": "2026-05-31",
+      "sigma_status": "PARTIAL_RESULTS_DIAGNOSTIC_ONLY",
+      "sigma_sr": 0.0952,
+      "sigma_evaluated": 21,
+      "sigma_no_result": 1,
+      "council_verdict": "QUARANTINE_DAY",
+      "mission_learning_gate": "BLOCKED",
+      "nightly_verdict": "PASS",
+      "nightly_events": 23,
+      "nightly_updates": 15,
+      "duplicate_updates": 0,
+      "data_error_rate": 0.0,
+      "live_touched": false,
+      "hfs_used": false,
+      "memory_rows": 23
+    }
+  ]
+}

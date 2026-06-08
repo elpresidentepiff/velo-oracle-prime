@@ -1,0 +1,104 @@
+{
+  "date": "2026-06-05",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "sigma": {
+    "races_studied": 40,
+    "predictions_matched": 40,
+    "results_matched": 40,
+    "winners_found": 11,
+    "strike_rate": 0.275,
+    "top_1_accuracy": 0.275,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.18187468575000004,
+    "calibration_error": 0.16680250000000002,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 19,
+    "calibration_error_count": 10,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "rp_DON_20260605_5.45",
+        "horse": "My Mate Roger",
+        "prob": 0.6391,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "rp_DON_20260605_6.20",
+        "horse": "Ruler Of Time",
+        "prob": 0.553,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "rp_DON_20260605_8.40",
+        "horse": "Faeberon",
+        "prob": 0.5081,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "rp_BAT_20260605_5.35",
+        "horse": "Bill The Bull",
+        "prob": 0.5712,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rp_GOO_20260605_5.55",
+        "horse": "Matilda Joslyngage",
+        "prob": 0.5583,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rp_THI_20260605_1.40",
+        "horse": "Eagle Bay",
+        "prob": 0.5324,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "WEAK_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 40 races today",
+    "shadow_state_after_summary": "Evolved to 43 races",
+    "events_studied": 40,
+    "updates_applied": 0,
+    "duplicates_skipped": 40,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 19,
+      "NONE": 11,
+      "CALIBRATION_ERROR": 10
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

@@ -191,6 +191,7 @@ class HorsePassport:
     # TS Enrichment
     pp_best_ts_last6: Optional[float] = None
     pp_ts_trajectory: Optional[float] = None
+    ts_last6_array: List[float] = field(default_factory=list)
 
     trust_policy: str = "ARCHIVE_CONTEXT_ONLY_NOT_SCORING"
     velo_scoring_allowed: bool = False
@@ -594,5 +595,6 @@ class HorsePassportBuilder:
             career_win_rate_9f_plus=career_win_rate_9f_plus,
             pp_best_ts_last6=pp_best_ts_last6,
             pp_ts_trajectory=pp_ts_trajectory,
+            ts_last6_array=[v for v in ts_values if v is not None],
             built_at=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         )

@@ -1,0 +1,46 @@
+# RP Horse Dossiers - 2026-05-28
+
+- Dossiers: `146`
+- Profile matched: `0`
+- Scoring impact: `NONE`
+
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Verhoyen**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Tawaazon**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Mehmar**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Venetian**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Spirit Of Eagles**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Nezeeh**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Rappell**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Lismacbryan**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Gloriously Glam**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Profit Surge**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **North Ocean**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:12:00+01:00 Fairyhouse - **Three Sixteen**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Kc Bear**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **All Hail**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Reimagined**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **One Cool Bear**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Stone Bear**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Real Encounter**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Shadow Run**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Star Of Beauty**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Treasured Royal**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Girl Bear**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Goofy Gander**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Jackie Jump Up**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Jampa Ling**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Baiana**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Sovereign Cry**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Gonna Be Golden**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Fate's Gambit**: INSUFFICIENT_PROFILE
+- 2026-05-28T14:42:00+01:00 Fairyhouse - **Absoluteassignment**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **Granite Mountain**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **Lars Soldier**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **Eighteenth Smiles**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **Lady Patrona**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **High King**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **Otherworldly**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **Joga Bonito**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **Tatianna**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **I Ready**: INSUFFICIENT_PROFILE
+- 2026-05-28T15:17:00+01:00 Fairyhouse - **South Dakota**: INSUFFICIENT_PROFILE

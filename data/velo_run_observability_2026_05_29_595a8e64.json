@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "595a8e64-245d-4737-8cff-cb29b8dd4240",
+  "date": "2026-05-29",
+  "timestamp": "2026-05-30T01:05:28.968539+00:00",
+  "git_commit_sha": "51343ed459ca178865a75df168a4466ad593757d",
+  "git_branch": "codex/rp-archive-rpr-boundary",
+  "source_truth": "SOURCE_UNKNOWN_BLOCK",
+  "feature_health": "BLOCKED",
+  "active_formula": "UNHANDLED_EXCEPTION",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 0.0,
+  "persistence_status": "FAIL",
+  "supabase_write_attempt_success": false,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "EXCEPTION",
+  "learning_gate": "BLOCKED_EXCEPTION",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 0,
+    "runners_processed": 0
+  },
+  "gates": {
+    "gate_source_unknown_block": false
+  },
+  "warnings": [
+    "UNHANDLED_EXCEPTION: RuntimeError: No racecard source available for 2026-05-28.\n  Tried: cache (racecards_2026_05_28_standard.json) \u2192 RP merged \u2192 Racing API\n  API error: Racing API returned 401 \u2014 subscription/credentials issue.\n  VELO_"
+  ],
+  "extra": {
+    "git_commit_sha": "unknown",
+    "exception_type": "RuntimeError"
+  }
+}

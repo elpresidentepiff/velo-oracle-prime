@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "2ee3a79e-c78a-4024-bd29-3a7960e8df4f",
+  "date": "2026-05-29",
+  "timestamp": "2026-05-30T01:06:38.108415+00:00",
+  "git_commit_sha": "51343ed459ca178865a75df168a4466ad593757d",
+  "git_branch": "codex/rp-archive-rpr-boundary",
+  "source_truth": "SOURCE_UNKNOWN_BLOCK",
+  "feature_health": "BLOCKED",
+  "active_formula": "UNHANDLED_EXCEPTION",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 0.0,
+  "persistence_status": "FAIL",
+  "supabase_write_attempt_success": false,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "EXCEPTION",
+  "learning_gate": "BLOCKED_EXCEPTION",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 0,
+    "runners_processed": 0
+  },
+  "gates": {
+    "gate_source_unknown_block": false
+  },
+  "warnings": [
+    "UNHANDLED_EXCEPTION: RuntimeError: VELO_DISABLE_RACING_API=1: no cache and no RP merged files for 2026-05-28.\n  Cache expected:    C:\\Users\\puror\\velo-oracle-prime\\data\\racecards_2026_05_28_standard.json\n  RP merged expected: C:\\Users\\"
+  ],
+  "extra": {
+    "git_commit_sha": "unknown",
+    "exception_type": "RuntimeError"
+  }
+}

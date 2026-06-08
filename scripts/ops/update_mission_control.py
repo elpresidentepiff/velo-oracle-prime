@@ -218,6 +218,14 @@ def _sigma_artifact_status(date_str: str) -> dict:
                     "sr": d.get("sr"),
                     "wins": d.get("wins"),
                     "evaluated_count": d.get("evaluated_count"),
+                    "sigma_status": d.get("sigma_status"),
+                    "completeness_gate": d.get("completeness_gate"),
+                    "learning_blocked": d.get("learning_blocked"),
+                    "expected_predictions": d.get("expected_predictions"),
+                    "result_races_available": d.get("result_races_available"),
+                    "matched": d.get("matched"),
+                    "coverage_ratio": d.get("coverage_ratio"),
+                    "no_result_count": d.get("no_result_count"),
                 }
             except Exception:
                 pass
@@ -479,6 +487,16 @@ def build_mission_control(date_str: str) -> dict:
 
     rcg = gate_v2.get("runner_calibration_gate", {})
     dpg = gate_v2.get("decision_policy_gate", {})
+
+    if sigma_artifact.get("learning_blocked") or sigma_artifact.get("completeness_gate") == "BLOCKED":
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reason_codes.append("GATE_SIGMA_INCOMPLETE")
+
+    if council_verdict not in ("PASS_TO_LEARNING",):
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reason_codes.append(f"GATE_COUNCIL_{council_verdict}")
 
     mc = {
         "date": date_str,

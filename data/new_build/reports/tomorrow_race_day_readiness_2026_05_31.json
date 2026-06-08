@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-05-31T13:12:46.466625Z",
+  "target_date": "2026-05-31",
+  "overall_status": "READY",
+  "model": {
+    "champion_version": "Challenger_V1",
+    "classification": "NEW_BUILD_PAPER_READY_NO_INTENT",
+    "rpr_violations": 0,
+    "intent_coverage_pct": 0.0,
+    "intent_note": "Expected 0% for current-card. Intent features filled from training medians."
+  },
+  "quality_gates": {
+    "rpr_violations": true,
+    "sp_in_features": true,
+    "champion_registered": true,
+    "paper_predictions_present": true,
+    "passport_coverage_above_50pct": true
+  },
+  "gates_pass": true,
+  "date_capture_status": {
+    "2026-05-30": {
+      "date": "2026-05-30",
+      "raw_captured": true,
+      "injection_exists": true,
+      "races_count": 35,
+      "runners_count": 288,
+      "status": "READY",
+      "action_required": null
+    },
+    "2026-05-31": {
+      "date": "2026-05-31",
+      "raw_captured": true,
+      "injection_exists": true,
+      "races_count": 64,
+      "runners_count": 665,
+      "status": "READY",
+      "action_required": null
+    },
+    "2026-06-01": {
+      "date": "2026-06-01",
+      "raw_captured": false,
+      "injection_exists": false,
+      "races_count": 0,
+      "runners_count": 0,
+      "status": "NOT_CAPTURED",
+      "action_required": "Capture RP racecard HTML pages for this date"
+    },
+    "2026-06-02": {
+      "date": "2026-06-02",
+      "raw_captured": false,
+      "injection_exists": false,
+      "races_count": 0,
+      "runners_count": 0,
+      "status": "NOT_CAPTURED",
+      "action_required": "Capture RP racecard HTML pages for this date"
+    }
+  },
+  "scoring_summary": {
+    "2026-05-29_chepstow": {
+      "races_scored": 0,
+      "runners_scored": 0,
+      "passport_coverage_pct": 0.0,
+      "status": "NO_DATA"
+    }
+  },
+  "race_day_scorecards_2026_05_29": [],
+  "data_capture_actions": [
+    "Capture RP racecard HTML pages for this date",
+    "Capture RP racecard HTML pages for this date"
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_engine": true,
+    "no_telegram": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_staking": true,
+    "rpr_archive_only": true
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-05-22T00:00:00+00:00",
+  "audit_scope": "3-day enforcement test: May 20 (contaminated), May 21 (first clean), May 22 (second clean)",
+  "verdicts": {
+    "2026-05-20": {
+      "council_verdict": "QUARANTINE_DAY",
+      "learning_gate": "BLOCKED",
+      "blocking_reasons": [
+        "DATA AUDITOR: SOURCE_CONTAMINATED",
+        "FLATLINE GATE: FLATLINE_BLOCK (6 fully-uniform races)"
+      ],
+      "sigma_audits_preserved": true,
+      "contaminated_run_ids": ["32cc27f9", "847964a6"],
+      "flatline_count": 6,
+      "correct_verdict": true,
+      "note": "Model scored blind on 6 races. Scoring flatline contamination confirmed. Correctly quarantined."
+    },
+    "2026-05-21": {
+      "council_verdict": "WATCH_ONLY",
+      "learning_gate": "WATCH",
+      "watch_reasons": [
+        "DATA AUDITOR: SOURCE_UNKNOWN (no verdict JSON source field)",
+        "SIGMA COVERAGE: SIGMA_MISSING (sigma_results file not in expected path)"
+      ],
+      "sigma_audits_preserved": true,
+      "contaminated_run_ids": [],
+      "flatline_count": 0,
+      "correct_verdict": true,
+      "note": "Clean day. WATCH_ONLY is correct — sigma_results JSON file naming mismatch triggers SIGMA_MISSING. Sigma truth was written to DB. Fix sigma file path for PASS_TO_LEARNING."
+    },
+    "2026-05-22": {
+      "council_verdict": "WATCH_ONLY",
+      "learning_gate": "WATCH",
+      "watch_reasons": [
+        "SIGMA COVERAGE: SIGMA_MISSING (sigma_results file not in expected path)",
+        "MIDPRICE SUMMARY: MIDPRICE_NOT_BUILT (delta JSON built but council sees stub)"
+      ],
+      "sigma_audits_preserved": true,
+      "contaminated_run_ids": [],
+      "flatline_count": 0,
+      "correct_verdict": true,
+      "note": "Clean day. WATCH_ONLY is correct given sigma file path issue. No contamination. Source_truth=RP_MERGED_CLEAN."
+    }
+  },
+  "enforcement_checks": {
+    "contaminated_day_quarantined": true,
+    "clean_days_not_quarantined": true,
+    "sigma_truth_never_blocked": true,
+    "learning_blocked_on_contaminated": true,
+    "learning_allowed_on_clean": false,
+    "learning_allowed_on_clean_note": "WATCH_ONLY due to sigma file path issue — see fix below",
+    "blocking_mechanism_works": true,
+    "isolation_of_quarantine_to_contaminated_day_only": true
+  },
+  "known_gap": {
+    "issue": "SIGMA_MISSING trigger on clean days",
+    "cause": "Council reads data/sigma_results_{date_und}.json but sigma outputs to Supabase (sigma_audits table), not this file path. No local sigma_results JSON exists for May 21/22.",
+    "impact": "Clean days score WATCH_ONLY instead of PASS_TO_LEARNING. Not a false quarantine — sigma truth is preserved in DB. Learning is conservatively blocked pending file path fix.",
+    "fix_required": "Wire run_results_sigma.py to write a local sigma_results_{date_und}.json after sigma close, OR update SigmaCoverageAgent to query sigma_audits DB instead of local file."
+  },
+  "council_missing_enforcement": {
+    "rule": "If council verdict missing for a date, Mission Control marks COUNCIL_MISSING / LEARNING_BLOCKED",
+    "status": "WIRED — council_verdict field in Mission Control reads latest council run. If NOT_RUN or STALE_OR_STUB, gates default to BLOCKED.",
+    "implementation": "update_mission_control.py _load_last_council_verdict() falls back to NOT_RUN when no council file exists"
+  },
+  "overall_verdict": "ENFORCEMENT_WORKING",
+  "note": "The tribunal correctly isolates contaminated evidence without touching clean days or sigma truth. WATCH_ONLY on clean days is a known conservative state due to sigma file path gap, not a false positive."
+}

@@ -1,0 +1,54 @@
+name: VELO Nightly EOD Learning
+
+on:
+  schedule:
+    - cron: "15 23 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Target date (YYYY-MM-DD)"
+        required: false
+
+jobs:
+  learn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run daily learning enforcer
+        run: |
+          DATE_ARG=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.date }}" ]; then
+            DATE_ARG="--date ${{ github.event.inputs.date }}"
+          fi
+          PYTHONPATH=. python scripts/ops/ensure_daily_learning.py $DATE_ARG
+
+      - name: Upload learning artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: velo-nightly-learning-artifacts
+          path: |
+            data/learning_inputs/*_supported.json
+            data/nightly_eod_learning_status_*.json
+            data/nightly_eod_learning_failures_*.json
+            data/nightly_eod_learning_council_audit_*.json
+            data/nightly_eod_learning_events_*.jsonl
+            data/playbook_g_nightly_audit_*.json
+            data/sigma_memory/sigma_memory_*.jsonl
+            data/sigma_memory/sigma_memory_summary.json
+            data/council_runs/council_run_*.json
+            data/council_packets/council_packet_*.json
+            data/council_reports/velo_council_report_*.md
+            data/mission_control/*_mission_control.json
+            data/reports/daily_learning_enforcer_*.json
+            data/reports/daily_learning_audit_last_*.json

@@ -13,6 +13,7 @@ This document provides a one-page navigation guide to the VÉLØ Oracle Prime re
 | **Data Layer** | `data/` | Feature matrices, snapshots, and prediction logs. | **LIVE** |
 | **Audit & Sigma** | `scripts/ops/` | Reconciliation loops and performance analysis. | **LIVE** |
 | **Playbook G** | `app/playbooks/` | Sentient loopback and tactical multipliers. | **SHADOW** |
+| **Human Intent Vault** | `data/evidence_vault/human_intent_intelligence/` | Raw racing-human intelligence: jockey, trainer, bloodstock, market, corruption, and betting-process mechanisms. | **CANDIDATE_ONLY** |
 | **Benchmark** | `benchmark/` | Regression protection system (Target: 2k races). | **INACTIVE** |
 
 ## 2. Authoritative Documents (Read These First)
@@ -22,6 +23,8 @@ This document provides a one-page navigation guide to the VÉLØ Oracle Prime re
 3.  **`docs/operations/NEW_ENGINEER_BOOTSTRAP.md`** — Quick-start guide for onboarding.
 4.  **`docs/operations/SCORING_RUNBOOK.md`** — How to run and verify daily scoring.
 
+5.  **`docs/evidence/HUMAN_INTENT_INTELLIGENCE_VAULT.md`** - Raw human/market intent intelligence index. Collection only; not model fuel.
+
 ## 3. Directory Classification
 
 *   **`app/`**: Production FastAPI application and core engine logic.
@@ -29,6 +32,7 @@ This document provides a one-page navigation guide to the VÉLØ Oracle Prime re
 *   **`src/`**: Shared libraries, feature engineering, and model logic.
 *   **`docs/`**: Structured documentation (Architecture, Operations, Safety).
 *   **`data/`**: Runtime storage (Local backups and structured artifacts).
+*   **`data/evidence_vault/human_intent_intelligence/`**: Human Intent Intelligence Vault. Raw transcript-derived mechanisms only; CANDIDATE_ONLY.
 *   **`archive/`**: Retired scripts and superseded documentation.
 *   **`research/`**: Experimental notebooks and non-production analysis.
 

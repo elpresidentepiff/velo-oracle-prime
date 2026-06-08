@@ -39,19 +39,6 @@ class EvidencePacket:
             required=True
         )
 
-        # Racing API Enrichment
-        self._find_evidence(
-            "racing_api_enrichment",
-            [
-                f"data/racing_api_enrichment_operator_card_{self.date_str}.md",
-                f"data/racing_api_enrichment_operator_card_{self.alt_date_str}.md",
-                f"data/racing_api_enrichment_miss_audit_{self.date_str}.md",
-                f"data/racing_api_enrichment_miss_audit_{self.alt_date_str}.md"
-            ],
-            repo_root,
-            required=True
-        )
-
         # Cashrun
         self._find_evidence(
             "cashrun_report",

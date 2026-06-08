@@ -1,0 +1,658 @@
+{
+  "run_ts": "2026-05-17 13:44 UTC",
+  "date": "2026-05-17",
+  "results": [
+    {
+      "lane": "MDS_HIGH_LANE",
+      "n": 39,
+      "sr": 69.2,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": false,
+            "value": 39,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": false,
+            "value": 39,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": true,
+            "value": 69.2,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": true,
+            "value": 92.3,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": false,
+            "value": -7.2,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": true,
+            "value": 7.7,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": true,
+            "value": 0,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 4,
+        "gates_total": 7,
+        "verdict": "INSUFFICIENT_N",
+        "next_step": "Accumulate +11 more results to n=50",
+        "subgroup": {
+          "collapses": [],
+          "subgroups": []
+        }
+      }
+    },
+    {
+      "lane": "IMPROVER_LANE",
+      "n": 38,
+      "sr": 42.1,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": false,
+            "value": 38,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": false,
+            "value": 38,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": true,
+            "value": 42.1,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": true,
+            "value": 76.3,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": false,
+            "value": -36.3,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": true,
+            "value": 21.1,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": true,
+            "value": 0,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 4,
+        "gates_total": 7,
+        "verdict": "INSUFFICIENT_N",
+        "next_step": "Accumulate +12 more results to n=50",
+        "subgroup": {
+          "collapses": [],
+          "subgroups": []
+        }
+      }
+    },
+    {
+      "lane": "VP40_TIER_A_LANE",
+      "n": 132,
+      "sr": 44.7,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": true,
+            "value": 132,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": true,
+            "value": 132,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": true,
+            "value": 44.7,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": true,
+            "value": 80.3,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": true,
+            "value": 9.4,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": true,
+            "value": 5.3,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": false,
+            "value": 1,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 6,
+        "gates_total": 7,
+        "verdict": "GATE_BLOCKED",
+        "next_step": "Blocked by: Gate 7: No subgroup collapse",
+        "subgroup": {
+          "collapses": [
+            {
+              "group": "Class 4",
+              "n": 22,
+              "sr": 22.7,
+              "gap_pp": 22.0
+            }
+          ],
+          "subgroups": [
+            {
+              "group": "Class 4",
+              "n": 22,
+              "sr": 22.7
+            }
+          ]
+        }
+      }
+    },
+    {
+      "lane": "VP40_LANE",
+      "n": 150,
+      "sr": 45.3,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": true,
+            "value": 150,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": true,
+            "value": 150,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": true,
+            "value": 45.3,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": true,
+            "value": 80.7,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": true,
+            "value": 8.2,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": true,
+            "value": 5.3,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": true,
+            "value": 0,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 7,
+        "gates_total": 7,
+        "verdict": "SHADOW_POLICY_CANDIDATE",
+        "next_step": "All gates passed \u2014 operator promotion discussion required",
+        "subgroup": {
+          "collapses": [],
+          "subgroups": [
+            {
+              "group": "Class 4",
+              "n": 30,
+              "sr": 36.7
+            }
+          ]
+        }
+      }
+    },
+    {
+      "lane": "SHORTFAV_VP30",
+      "n": 186,
+      "sr": 52.2,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": true,
+            "value": 186,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": true,
+            "value": 186,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": true,
+            "value": 52.2,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": true,
+            "value": 84.9,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": false,
+            "value": -9.5,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": true,
+            "value": 3.8,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": true,
+            "value": 0,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 6,
+        "gates_total": 7,
+        "verdict": "GATE_BLOCKED",
+        "next_step": "Blocked by: Gate 5: ROI not negative",
+        "subgroup": {
+          "collapses": [],
+          "subgroups": [
+            {
+              "group": "Class 4",
+              "n": 31,
+              "sr": 54.8
+            }
+          ]
+        }
+      }
+    },
+    {
+      "lane": "MIDPRICE_ROUTER_QUAL",
+      "n": 18,
+      "sr": 33.3,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": false,
+            "value": 18,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": false,
+            "value": 18,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": false,
+            "value": 33.3,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": true,
+            "value": 72.2,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": true,
+            "value": 12.5,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": false,
+            "value": 38.9,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": true,
+            "value": 0,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 3,
+        "gates_total": 7,
+        "verdict": "INSUFFICIENT_N",
+        "next_step": "Accumulate +32 more results to n=50",
+        "subgroup": {
+          "collapses": [],
+          "subgroups": []
+        }
+      }
+    },
+    {
+      "lane": "MIDPRICE_SUPPRESS",
+      "n": 545,
+      "sr": 16.0,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": true,
+            "value": 545,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": true,
+            "value": 545,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": false,
+            "value": 16.0,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": false,
+            "value": 52.1,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": false,
+            "value": -23.1,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": true,
+            "value": 6.8,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": true,
+            "value": 0,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 4,
+        "gates_total": 7,
+        "verdict": "GATE_BLOCKED",
+        "next_step": "Blocked by: Gate 3: SR lift \u226515.0pp over 20.0% baseline; Gate 4: Frame rate \u226570.0%; Gate 5: ROI not negative",
+        "subgroup": {
+          "collapses": [],
+          "subgroups": [
+            {
+              "group": "Class 4",
+              "n": 75,
+              "sr": 13.3
+            },
+            {
+              "group": "Ayr",
+              "n": 13,
+              "sr": 7.7
+            },
+            {
+              "group": "Bath",
+              "n": 23,
+              "sr": 13.0
+            },
+            {
+              "group": "Beverley",
+              "n": 10,
+              "sr": 0.0
+            },
+            {
+              "group": "Hereford",
+              "n": 13,
+              "sr": 7.7
+            },
+            {
+              "group": "Hexham",
+              "n": 10,
+              "sr": 10.0
+            },
+            {
+              "group": "Lingfield (AW)",
+              "n": 16,
+              "sr": 0.0
+            },
+            {
+              "group": "Newbury",
+              "n": 16,
+              "sr": 25.0
+            },
+            {
+              "group": "Newcastle (AW)",
+              "n": 12,
+              "sr": 16.7
+            },
+            {
+              "group": "Newmarket",
+              "n": 18,
+              "sr": 27.8
+            },
+            {
+              "group": "Punchestown",
+              "n": 14,
+              "sr": 7.1
+            },
+            {
+              "group": "Redcar",
+              "n": 10,
+              "sr": 20.0
+            },
+            {
+              "group": "Southwell (AW)",
+              "n": 27,
+              "sr": 22.2
+            },
+            {
+              "group": "Warwick",
+              "n": 13,
+              "sr": 15.4
+            },
+            {
+              "group": "Wexford",
+              "n": 10,
+              "sr": 10.0
+            },
+            {
+              "group": "Wolverhampton (AW)",
+              "n": 30,
+              "sr": 10.0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "lane": "LONGSHOT_SUPPRESS",
+      "n": 413,
+      "sr": 6.3,
+      "gate_analysis": {
+        "gates": {
+          "gate_1_n50": {
+            "pass": true,
+            "value": 413,
+            "required": 50,
+            "label": "Min evidence n\u226550"
+          },
+          "gate_2_n100": {
+            "pass": true,
+            "value": 413,
+            "required": 100,
+            "label": "Serious review n\u2265100"
+          },
+          "gate_3_sr_lift": {
+            "pass": false,
+            "value": 6.3,
+            "required": 35.0,
+            "label": "SR lift \u226515.0pp over 20.0% baseline"
+          },
+          "gate_4_frame": {
+            "pass": false,
+            "value": 24.5,
+            "required": 70.0,
+            "label": "Frame rate \u226570.0%"
+          },
+          "gate_5_roi": {
+            "pass": false,
+            "value": -11.7,
+            "required": 0.0,
+            "label": "ROI not negative"
+          },
+          "gate_6_llr": {
+            "pass": true,
+            "value": 15.7,
+            "required": 25.0,
+            "label": "LLR \u226425% of n"
+          },
+          "gate_7_subgroup": {
+            "pass": true,
+            "value": 0,
+            "required": 0,
+            "label": "No subgroup collapse"
+          }
+        },
+        "gates_passed": 4,
+        "gates_total": 7,
+        "verdict": "GATE_BLOCKED",
+        "next_step": "Blocked by: Gate 3: SR lift \u226515.0pp over 20.0% baseline; Gate 4: Frame rate \u226570.0%; Gate 5: ROI not negative",
+        "subgroup": {
+          "collapses": [],
+          "subgroups": [
+            {
+              "group": "Class 4",
+              "n": 49,
+              "sr": 8.2
+            },
+            {
+              "group": "Bath",
+              "n": 10,
+              "sr": 0.0
+            },
+            {
+              "group": "Doncaster",
+              "n": 13,
+              "sr": 7.7
+            },
+            {
+              "group": "Dundalk (AW)",
+              "n": 11,
+              "sr": 0.0
+            },
+            {
+              "group": "Lingfield (AW)",
+              "n": 18,
+              "sr": 5.6
+            },
+            {
+              "group": "Newbury",
+              "n": 13,
+              "sr": 7.7
+            },
+            {
+              "group": "Newcastle (AW)",
+              "n": 11,
+              "sr": 9.1
+            },
+            {
+              "group": "Newmarket",
+              "n": 10,
+              "sr": 10.0
+            },
+            {
+              "group": "Perth",
+              "n": 14,
+              "sr": 0.0
+            },
+            {
+              "group": "Ripon",
+              "n": 12,
+              "sr": 8.3
+            },
+            {
+              "group": "Southwell (AW)",
+              "n": 23,
+              "sr": 4.3
+            },
+            {
+              "group": "Thirsk",
+              "n": 11,
+              "sr": 0.0
+            },
+            {
+              "group": "Wolverhampton (AW)",
+              "n": 10,
+              "sr": 10.0
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "router_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "ADVISORY_TRACKING_ONLY"
+  }
+}

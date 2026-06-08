@@ -30,7 +30,15 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("nightly_runner")
 
 class NightlyEODRunner:
-    def __init__(self, date_str: str, state_path: str, dry_run: bool = False, data_error_threshold: float = 0.1):
+    def __init__(
+        self,
+        date_str: str,
+        state_path: str,
+        dry_run: bool = False,
+        data_error_threshold: float = 0.1,
+        pred_file: str | None = None,
+        result_file: str | None = None,
+    ):
         self.date_str = date_str
         self.date_tag = date_str.replace("-", "_")
         self.state_path = Path(state_path)
@@ -38,8 +46,11 @@ class NightlyEODRunner:
         self.data_error_threshold = data_error_threshold
         
         self.live_state_path = ROOT / "data" / "sentient_state.json"
-        self.pred_file = ROOT / "data" / f"velo_prime_verdicts_{self.date_tag}.json"
-        self.res_file = ROOT / "data" / f"results_{self.date_tag}.json"
+        self.pred_file = Path(pred_file) if pred_file else ROOT / "data" / f"velo_prime_verdicts_{self.date_tag}.json"
+        # Canonical path from parse_rp_results_capture.py; legacy fallback for older runs
+        _res_canonical = ROOT / "data" / "results" / f"rp_results_{self.date_tag}.json"
+        _res_legacy = ROOT / "data" / f"results_{self.date_tag}.json"
+        self.res_file = Path(result_file) if result_file else (_res_canonical if _res_canonical.exists() else _res_legacy)
         
         self.status_path = ROOT / "data" / f"nightly_eod_learning_status_{self.date_tag}.json"
         self.failures_path = ROOT / "data" / f"nightly_eod_learning_failures_{self.date_tag}.json"
@@ -70,15 +81,22 @@ class NightlyEODRunner:
         if not prediction or not result: return "DATA_ERROR"
         top_pick = prediction.get("top", {})
         if not top_pick: return "DATA_ERROR"
-        
+
+        top_horse_id = (top_pick.get("horse_id") or "")
+        top_horse_name = (top_pick.get("horse") or top_pick.get("horse_name") or "").strip().lower()
+
         runners = result.get("runners", [])
-        winner_id = None
-        sorted_runners = sorted([r for r in runners if str(r.get("position", "")).isdigit()], 
+        winner_id = ""
+        winner_name = ""
+        sorted_runners = sorted([r for r in runners if str(r.get("position", "")).isdigit()],
                              key=lambda r: int(r["position"]))
         if sorted_runners:
-            winner_id = sorted_runners[0].get("horse_id")
-            
-        outcome = "WIN" if top_pick.get("horse_id") == winner_id else "LOSS"
+            winner_id = sorted_runners[0].get("horse_id") or ""
+            winner_name = (sorted_runners[0].get("horse") or "").strip().lower()
+
+        id_match = bool(top_horse_id and winner_id and top_horse_id == winner_id)
+        name_match = bool(top_horse_name and winner_name and top_horse_name == winner_name)
+        outcome = "WIN" if (id_match or name_match) else "LOSS"
         if outcome == "WIN": return "NONE"
         
         prob = float(top_pick.get("velo_prime_prob") or 0)
@@ -107,38 +125,74 @@ class NightlyEODRunner:
         preds = json.loads(self.pred_file.read_text())
         results_raw = json.loads(self.res_file.read_text())
         results_list = results_raw.get("results", []) if isinstance(results_raw, dict) else results_raw
+
+        # Primary index: RP numeric race_id (e.g. "919896")
         results_map = {r.get("race_id") or r.get("id"): r for r in results_list}
-        
+
+        # Secondary index: venue+off (e.g. "CHP_5.10") for VELO race_ids (rp_CHP_20260606_5.10)
+        venue_aliases = {"PAT": "PUN"}
+
+        def _normalise_venue(value: str) -> str:
+            venue = (value or "").upper()
+            return venue_aliases.get(venue, venue)
+
+        def _venue_off_key(r: dict) -> str | None:
+            v = _normalise_venue(r.get("venue") or "")
+            o = (r.get("off") or "").strip()
+            return f"{v}_{o}" if v and o else None
+
+        results_venue_off = {_venue_off_key(r): r for r in results_list if _venue_off_key(r)}
+
+        def _lookup_result(velo_race_id: str) -> dict | None:
+            if velo_race_id in results_map:
+                return results_map[velo_race_id]
+            # Parse rp_{VENUE}_{DATE}_{TIME} → venue + time for secondary lookup
+            parts = velo_race_id.split("_")
+            if len(parts) >= 4 and parts[0] == "rp":
+                venue = _normalise_venue(parts[1])
+                time = parts[3]
+                key = f"{venue}_{time}"
+                return results_venue_off.get(key)
+            return None
+
         self.stats["prediction_count"] = len(preds)
         self.stats["result_count"] = len(results_list)
-        
+
         if self.events_path.exists(): self.events_path.unlink()
-        
+
         for p_race in preds:
             rid = p_race.get("race_id")
             if not rid:
                 self.failures.append({"type": "BAD_RACE_ID", "prediction": p_race})
                 continue
-                
-            if rid not in results_map:
+
+            r_race = _lookup_result(rid)
+            if r_race is None:
                 self.stats["data_error_count"] += 1
                 self.stats["loss_count_by_type"]["DATA_ERROR"] += 1
                 self.failures.append({"type": "MISSING_RESULT", "race_id": rid})
                 continue
-            
-            r_race = results_map[rid]
             self.stats["matched_races"] += 1
             
             top_pick = p_race.get("top", {})
-            winner_id = None
+            top_horse_id = (top_pick.get("horse_id") or "")
+            # "horse" is the canonical name field in VELO verdicts (not "horse_name")
+            top_horse_name = (top_pick.get("horse") or top_pick.get("horse_name") or "").strip().lower()
+
+            winner_id = ""
+            winner_name = ""
             runners = r_race.get("runners", [])
-            sorted_runners = sorted([r for r in runners if str(r.get("position", "")).isdigit()], 
+            sorted_runners = sorted([r for r in runners if str(r.get("position", "")).isdigit()],
                                  key=lambda r: int(r["position"]))
-            if sorted_runners: winner_id = sorted_runners[0].get("horse_id")
+            if sorted_runners:
+                winner_id = sorted_runners[0].get("horse_id") or ""
+                winner_name = (sorted_runners[0].get("horse") or "").strip().lower()
 
             outcome = "UNKNOWN"
-            if top_pick and winner_id:
-                outcome = "WIN" if top_pick.get("horse_id") == winner_id else "LOSS"
+            if top_pick and (winner_id or winner_name):
+                id_match = bool(top_horse_id and winner_id and top_horse_id == winner_id)
+                name_match = bool(top_horse_name and winner_name and top_horse_name == winner_name)
+                outcome = "WIN" if (id_match or name_match) else "LOSS"
             
             loss_type = self._classify_loss(p_race, r_race)
             
@@ -230,7 +284,10 @@ class NightlyEODRunner:
         # 5. Trigger Study Layer
         if verdict == "PASS":
             try:
-                from scripts.eod_result_study_layer import EODStudyLayer
+                try:
+                    from scripts.eod_result_study_layer import EODStudyLayer
+                except ModuleNotFoundError:
+                    from scripts.audit.eod_result_study_layer import EODStudyLayer
                 study = EODStudyLayer(self.date_str)
                 study.run()
                 logger.info("Intelligence study layer complete")
@@ -299,6 +356,8 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--fail-on-data-error-rate", type=float, default=0.1)
     parser.add_argument("--state", default="data/sentient_state_shadow.json")
+    parser.add_argument("--pred-file", default=None)
+    parser.add_argument("--result-file", default=None)
     args = parser.parse_args()
     
     target_date = args.date
@@ -306,5 +365,12 @@ if __name__ == "__main__":
         # Default to yesterday
         target_date = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
         
-    runner = NightlyEODRunner(target_date, args.state, args.dry_run, args.fail_on_data_error_rate)
+    runner = NightlyEODRunner(
+        target_date,
+        args.state,
+        args.dry_run,
+        args.fail_on_data_error_rate,
+        pred_file=args.pred_file,
+        result_file=args.result_file,
+    )
     runner.run()

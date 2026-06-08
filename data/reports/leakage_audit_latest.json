@@ -1,6 +1,6 @@
 {
   "summary": "VIOLATIONS",
-  "violations": 7,
+  "violations": 5,
   "models": {
     "Old VELO (SQPE v17)": {
       "sp_dec": {
@@ -49,10 +49,8 @@
         "violations": []
       },
       "rpr_num": {
-        "status": "FAIL",
-        "violations": [
-          "rpr"
-        ]
+        "status": "PASS",
+        "violations": []
       },
       "ts_num": {
         "status": "PASS",
@@ -63,10 +61,8 @@
         "violations": []
       },
       "rpr_vs_field": {
-        "status": "FAIL",
-        "violations": [
-          "rpr"
-        ]
+        "status": "PASS",
+        "violations": []
       },
       "field_size": {
         "status": "PASS",
@@ -87,8 +83,8 @@
       "sp_rank": {
         "status": "FAIL",
         "violations": [
-          "sp_derived",
-          "sp_rank"
+          "sp_rank",
+          "sp_derived"
         ]
       },
       "is_fav": {

@@ -1,0 +1,47 @@
+{
+  "gate_progress": {
+    "target": 100,
+    "flagged_races": 0,
+    "cash_run_races": 0,
+    "setup_run_races": 0,
+    "decoy_support_races": 0,
+    "completion_pct": 0.0,
+    "remaining": 100
+  },
+  "tier_a": {
+    "sample_size": 163,
+    "wins": 91,
+    "strike_rate_pct": 55.8
+  },
+  "decoy_interception": {
+    "sample_size": 0,
+    "interceptions": 0,
+    "interception_rate_pct": 0.0,
+    "threshold": 0.5
+  },
+  "doctrine_vs_market": {
+    "sample_size": 1059,
+    "doctrine_win_rate_pct": 50.0,
+    "market_win_rate_pct": null,
+    "edge_pct_points": null,
+    "note": "market_top_pick_won or market_top_pick_outcome not present"
+  },
+  "confidence_reliability": {
+    "bands": [
+      {
+        "label": "LOW",
+        "sample_size": 715,
+        "expected_win_rate_pct": 20.0,
+        "actual_win_rate_pct": 58.0,
+        "absolute_error_pct_points": 38.0
+      }
+    ],
+    "mean_abs_error_pct_points": 38.0
+  },
+  "meta": {
+    "input_path": "data\\velo_innovation_protocol_1k_deduped.csv",
+    "rows": 1059,
+    "generated_at": "2026-05-29T19:47:19.775401Z",
+    "gate_flags_live_coverage": "0%_EXPECTED \u2014 cash/setup/decoy flags not yet in live corpus"
+  }
+}

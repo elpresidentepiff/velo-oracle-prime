@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "date": "2026-05-23",
+    "alt_date": "2026_05_23",
+    "generated_at": "2026-06-05T16:29:59.527216",
+    "status": "INCOMPLETE",
+    "council_status": "EVIDENCE_INCOMPLETE"
+  },
+  "evidence_sources": {
+    "vp30_operator_card": {
+      "source_name": "vp30_operator_card",
+      "status": "MISSING",
+      "path": null,
+      "date_matched": null,
+      "required_for_release": true,
+      "label": "SHADOW",
+      "content": null
+    },
+    "racing_api_enrichment": {
+      "source_name": "racing_api_enrichment",
+      "status": "MISSING",
+      "path": null,
+      "date_matched": null,
+      "required_for_release": true,
+      "label": "SHADOW",
+      "content": null
+    },
+    "cashrun_report": {
+      "source_name": "cashrun_report",
+      "status": "MISSING",
+      "path": null,
+      "date_matched": null,
+      "required_for_release": false,
+      "label": "SHADOW",
+      "content": null
+    },
+    "live_sidecar_audit": {
+      "source_name": "live_sidecar_audit",
+      "status": "FOUND",
+      "path": "data/live_sidecar_ablation_audit_latest.md",
+      "date_matched": "2026-05-23",
+      "required_for_release": false,
+      "label": "SHADOW",
+      "content": "# Live Sidecar Ablation Audit\n\n- Generated at: `2026-05-15T01:29:53.152969Z`\n- Latest verdicts: `1785`\n- Matched races: `1238`\n- Baseline matched top selections: `1105`\n- Baseline SR / Frame / ROI: `0.2317 / 0.5312 / -0.0656`\n\n| Component | Weight | Non-null | Avg contrib | Max contrib | VP>0.005 | VP>0.01 | Top changes | VP30 changes | High n | Matched high n | SR high | Frame high | ROI high | Avg SP high | Classification | Action |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|\n| SQPE baseline anchor | 0.45 | 1238 | -0.0970 | 0.5279 | 1180 | 1146 | 307 | 396 | 311 | 261 | 0.2261 | 0.5594 | 0.1905 | 8.7810 | HELPS_FRAME | KEEP_LIVE_BUT_MONITOR |\n| improvement_score | 0.12 | 1216 | 0.0130 | 0.1951 | 906 | 742 | 194 | 69 | 305 | 274 | 0.3285 | 0.6496 | -0.1757 | 6.2984 | OVERBET_RISK | BLOCK_CHANGE_PENDING_AUDIT |\n| release_day_prob / release_window_score | 0.00 | 1216 | 0.0000 | 0.0000 | 0 | 0 | 0 | 0 | 1216 | 1087 | 0.2300 | 0.5299 | -0.0711 | 9.5314 | HOLD | BLOCK_CHANGE_PENDING_AUDIT |\n| MDS | 0.10 | 1216 | 0.0190 | 0.3188 | 690 | 521 | 161 | 76 | 305 | 284 | 0.4120 | 0.7606 | -0.1001 | 3.6782 | OVERBET_RISK | BLOCK_CHANGE_PENDING_AUDIT |\n| place_prob | 0.08 | 1216 | 0.0000 | 0.0000 | 0 | 0 | 0 | 0 | 305 | 286 | 0.3706 | 0.7587 | -0.0606 | 4.8382 | OVERBET_RISK | BLOCK_CHANGE_PENDING_AUDIT |\n| comment_intel_score | 0.00 | 1216 | 0.0000 | 0.0000 | 0 | 0 | 0 | 0 | 1216 | 1087 | 0.2300 | 0.5299 | -0.0711 | 9.5314 | HOLD | BLOCK_CHANGE_PENDING_AUDIT |\n| longshot_score | 0.07 | 1216 | 0.0000 | 0.0000 | 0 | 0 | 0 | 0 | 305 | 278 | 0.3237 | 0.6547 | -0.1514 | 6.6106 | OVERBET_RISK | BLOCK_CHANGE_PENDING_AUDIT |\n"
+    },
+    "signal_promotion_board": {
+      "source_name": "signal_promotion_board",
+      "status": "FOUND",
+      "path": "data/signal_promotion_board_latest.md",
+      "date_matched": "2026-05-23",
+      "required_for_release": false,
+      "label": "SHADOW",
+      "content": "# V\u00c3\u2030L\u00c3\u02dc Signal Promotion Board\n\nGenerated: 2026-05-15\n\n## Summary\n\n- This board ranks candidate signals by current role, evidence, and promotion readiness.\n- It reads the unified evidence corpus only.\n- It does **not** change live scoring, router logic, or staking.\n\n## Board\n\n| Signal | Status | Weight | n | matched n | SR | Frame | ROI | Recommendation | Reason |\n|---|---|---:|---:|---:|---:|---:|---:|---|---|\n| improvement_score / IMPROVE_HIGH | STORED_ONLY |  | 33 | 29 | 41.38 | 82.76 | -34.07 | HOLD | Unified corpus still shows a live-truth gap; hold pending corpus stabilization and ablation. |\n| market_deception_score / MDS_HIGH | LIVE_WEIGHTED | 0.10 | 23 | 22 | 63.64 | 95.45 | -6.23 | KEEP_LIVE | Best live sidecar with clean evidence in the unified corpus. |\n| place_prob / PLACE_PROB_HIGH | LIVE_WEIGHTED | 0.08 | 254 | 235 | 28.94 | 62.98 | -29.90 | KEEP_LIVE | Supportive live sidecar; useful for stability and frame support. |\n| longshot_score | LIVE_WEIGHTED | 0.07_gated | 9 | 9 | 0.00 | 33.33 | -100.00 | KEEP_LIVE | Gated live component only for genuine longshot context. |\n| router_v2_class4_shadow_pass | CANDIDATE_FOR_LIVE_REVIEW |  | 17 | 17 | 41.18 | 82.35 | 30.18 | PROMOTE_TO_PAPER_TEST | Strong early lane with n below full gate; keep accumulating. |\n| router_v1_shadow_pass | SHADOW_ONLY |  | 27 | 27 | 37.04 | 85.19 | 11.52 | KEEP_SHADOW | Positive lane evidence, but still route-shadow only. |\n| Racing API enrichment shadow score | SHADOW_ONLY |  | 5 | 5 | 40.00 | 60.00 | -13.40 | KEEP_SHADOW | Retrospective strength exists but leakage risk remains active. |\n| B_LOW_VP_SUPPRESS / suppress flags | OPERATOR_VISIBLE |  | 212 | 196 | 14.29 | 37.24 | -12.30 | FREEZE | Confirmed drag zone; suppress overconfidence instead of promoting. |\n| POWER_ANCHOR_MODE paper directives | PAPER_ONLY |  | 2 | 2 | 100.00 | 100.00 | 58.00 | PROMOTE_TO_PAPER_TEST | Paper evidence is positive but still too small for any live discussion. |\n| Playbook G shadow | SHADOW_ONLY |  | 490 | 446 | 20.18 | 50.90 | -14.97 | KEEP_SHADOW | Shadow-only layer with no live probability impact. |\n| Racing API connection shadow score | SHADOW_ONLY |  | 10 | 10 | 50.00 | 70.00 | 25.60 | KEEP_SHADOW | Leakage-flagged retrospective enrichment; no scoring impact allowed. |\n| release_day_prob | STORED_ONLY |  | 0 | 0 |  |  |  | DO_NOT_PROMOTE | Disabled and not a current production driver. |\n| comment_intel_score | STORED_ONLY |  | 0 | 0 |  |  |  | DO_NOT_PROMOTE | Disabled and not proven as a production driver. |\n| router_v6_gold_seam_watchlist | SHADOW_ONLY |  | 5 | 5 | 60.00 | 100.00 | 115.00 | KEEP_SHADOW | Insufficient sample; no promotion path yet. |\n| Racing API course shadow score | SHADOW_ONLY |  | 4 | 4 | 75.00 | 75.00 | 88.75 | KEEP_SHADOW | Retrospective signal, but leakage risk blocks promotion. |\n| Racing API distance shadow score | SHADOW_ONLY |  | 6 | 6 | 33.33 | 33.33 | -27.83 | KEEP_SHADOW | Retrospective signal, but leakage risk blocks promotion. |\n| WATCH_ONLY paper directives | PAPER_ONLY |  | 13 | 13 | 30.77 | 76.92 | -26.08 | KEEP_SHADOW | Watch-only paper directives are evidence context, not probability signals. |"
+    },
+    "router_shadow_audit": {
+      "source_name": "router_shadow_audit",
+      "status": "FOUND",
+      "path": "data/router_shadow_audit_latest.md",
+      "date_matched": "2026-05-23",
+      "required_for_release": false,
+      "label": "SHADOW",
+      "content": "# V\u00c3\u2030L\u00c3\u02dc Execution Router Shadow Audit\nGenerated: 2026-05-30 09:01 UTC\nDataset: 1059 rows | 704 with results\n\n**No live betting. No staking. Shadow annotation only.**\n\n## Summary\n\n| Lane | State | n | SR | Frame | P&L | ROI | DD | LLR | Status |\n|---|---|---|---|---|---|---|---|---|---|\n| V1_BASE | WATCHLIST | 36 | 41.7% | 80.6% | \u00c2\u00a3+9.49 | +26.4% | \u00c2\u00a3-8.52 | 6 | WATCHLIST |\n| V2_CLASS4_ONLY | WATCHLIST | 26 | 46.2% | 76.9% | \u00c2\u00a3+11.51 | +44.3% | \u00c2\u00a3-5.75 | 4 | WATCHLIST |\n| V6_GOLD_SEAM | LANE_ACTIVE | 12 | 50.0% | 75.0% | \u00c2\u00a3+9.25 | +77.1% | \u00c2\u00a3-3.00 | 3 | SHADOW_BUILDING |\n\n## V1_BASE\n\n| Metric | Value |\n|---|---|\n| Lane state | **WATCHLIST** |\n| n (with results) | 36 |\n| Wins | 15 |\n| Strike rate | 41.7% |\n| Frame/placed rate | 80.6% |\n| Flat 1pt P&L | \u00c2\u00a3+9.49 |\n| ROI | +26.4% |\n| Avg SP | 3.04 |\n| Avg VP | 0.391 |\n| Max drawdown | \u00c2\u00a3-8.52 |\n| Longest losing run | 6 |\n| Status | **WATCHLIST** |\n| Freeze active | NO |\n| Next threshold | \u00e2\u2020\u2019 SHADOW_CANDIDATE: needs +14 results |\n\n**Class breakdown:**\n\n| Class | n | SR | P&L |\n|---|---|---|---|\n| CL3 | 10 | 30% | \u00c2\u00a3-2.02 |\n| CL4 | 26 | 46% | \u00c2\u00a3+11.51 |\n\n**Field size breakdown:**\n\n| FS | n | SR | P&L |\n|---|---|---|---|\n| 2-5 | 10 | 50% | \u00c2\u00a3+5.23 |\n| 6-8 | 16 | 44% | \u00c2\u00a3+5.01 |\n| 9-12 | 10 | 30% | \u00c2\u00a3-0.75 |\n\n**Winners:**\n\n| Horse | Date | SP | VP | Class | FS |\n|---|---|---|---|---|---|\n| The Wise Traveller | 2026-05-25 | 3.8 | 0.359 | CL4 | 5 |\n| Thundering On | nan | 3.8 | 0.381 | CL4 | 7 |\n| Proposal | nan | 3.8 | 0.371 | CL4 | 11 |\n| Applicationofcash | 2026-05-22 | 3.8 | 0.357 | CL4 | 4 |\n| Pep Talking | nan | 3.5 | 0.330 | CL4 | 6 |\n| Generic | nan | 3.2 | 0.374 | CL4 | 12 |\n| Plaid | 2026-05-17 | 3.0 | 0.448 | CL4 | 8 |\n| Naga | nan | 3.0 | 0.430 | CL3 | 7 |\n| The Boola Boss | nan | 2.9 | 0.311 | CL4 | 8 |\n| Blakefell | 2026-05-21 | 2.9 | 0.346 | CL4 | 5 |\n| Inflexible | nan | 2.9 | 0.319 | CL3 | 6 |\n| Limestone | nan | 2.8 | 0.318 | CL4 | 4 |\n| Gouken | nan | 2.2 | 0.468 | CL4 | 9 |\n| Mr Colonel | nan | 2.1 | 0.671 | CL3 | 4 |\n| Saccary | 2026-05-22 | 2.0 | 0.301 | CL4 | 7 |\n\n**Top losers (by VP):**\n\n| Horse | Date | Pos | SP | VP | Class | FS |\n|---|---|---|---|---|---|---|\n| Cawthorne Cracker | 2026-05-17 | 5 | 4.0 | 0.554 | CL4 | 5 |\n| Time To Take Off | nan | 2 | 2.4 | 0.532 | CL4 | 8 |\n| Lightsoutandaway | 2026-05-17 | 4 | 3.5 | 0.522 | CL4 | 6 |\n| Lisnamurrican | nan | 2 | 2.2 | 0.520 | CL4 | 7 |\n| Blue In The West | nan | 2 | 3.1 | 0.468 | CL4 | 6 |\n| Tryst | nan | 2 | 2.0 | 0.427 | CL3 | 5 |\n| Park Princess | nan | 2 | 2.5 | 0.406 | CL3 | 5 |\n| I'M Dan Dare | 2026-05-17 | 5 | 3.2 | 0.393 | CL4 | 9 |\n| Celtic Alliance | nan | 3 | 2.8 | 0.388 | CL4 | 9 |\n| Sailor Song | nan | 2 | 2.8 | 0.383 | CL3 | 7 |\n| Ride The Thunder | 2026-05-17 | 3 | 3.5 | 0.382 | CL4 | 12 |\n| As Fast As Wind | nan | 3 | 3.5 | 0.368 | CL4 | 6 |\n\n## V2_CLASS4_ONLY\n\n| Metric | Value |\n|---|---|\n| Lane state | **WATCHLIST** |\n| n (with results) | 26  *** LOW SAMPLE *** |\n| Wins | 12 |\n| Strike rate | 46.2% |\n| Frame/placed rate | 76.9% |\n| Flat 1pt P&L | \u00c2\u00a3+11.51 |\n| ROI | +44.3% |\n| Avg SP | 3.13 |\n| Avg VP | 0.389 |\n| Max drawdown | \u00c2\u00a3-5.75 |\n| Longest losing run | 4 |\n| Status | **WATCHLIST** |\n| Freeze active | NO |\n| Next threshold | \u00e2\u2020\u2019 SHADOW_CANDIDATE: needs +4 results |\n\n**Class breakdown:**\n\n| Class | n | SR | P&L |\n|---|---|---|---|\n| CL4 | 26 | 46% | \u00c2\u00a3+11.51 |\n\n**Field size breakdown:**\n\n| FS | n | SR | P&L |\n|---|---|---|---|\n| 2-5 | 5 | 80% | \u00c2\u00a3+8.13 |\n| 6-8 | 12 | 42% | \u00c2\u00a3+3.13 |\n| 9-12 | 9 | 33% | \u00c2\u00a3+0.25 |\n\n**Winners:**\n\n| Horse | Date | SP | VP | Class | FS |\n|---|---|---|---|---|---|\n| Applicationofcash | 2026-05-22 | 3.8 | 0.357 | CL4 | 4 |\n| The Wise Traveller | 2026-05-25 | 3.8 | 0.359 | CL4 | 5 |\n| Thundering On | nan | 3.8 | 0.381 | CL4 | 7 |\n| Proposal | nan | 3.8 | 0.371 | CL4 | 11 |\n| Pep Talking | nan | 3.5 | 0.330 | CL4 | 6 |\n| Generic | nan | 3.2 | 0.374 | CL4 | 12 |\n| Plaid | 2026-05-17 | 3.0 | 0.448 | CL4 | 8 |\n| The Boola Boss | nan | 2.9 | 0.311 | CL4 | 8 |\n| Blakefell | 2026-05-21 | 2.9 | 0.346 | CL4 | 5 |\n| Limestone | nan | 2.8 | 0.318 | CL4 | 4 |\n| Gouken | nan | 2.2 | 0.468 | CL4 | 9 |\n| Saccary | 2026-05-22 | 2.0 | 0.301 | CL4 | 7 |\n\n**Top losers (by VP):**\n\n| Horse | Date | Pos | SP | VP | Class | FS |\n|---|---|---|---|---|---|---|\n| Cawthorne Cracker | 2026-05-17 | 5 | 4.0 | 0.554 | CL4 | 5 |\n| Time To Take Off | nan | 2 | 2.4 | 0.532 | CL4 | 8 |\n| Lightsoutandaway | 2026-05-17 | 4 | 3.5 | 0.522 | CL4 | 6 |\n| Lisnamurrican | nan | 2 | 2.2 | 0.520 | CL4 | 7 |\n| Blue In The West | nan | 2 | 3.1 | 0.468 | CL4 | 6 |\n| I'M Dan Dare | 2026-05-17 | 5 | 3.2 | 0.393 | CL4 | 9 |\n| Celtic Alliance | nan | 3 | 2.8 | 0.388 | CL4 | 9 |\n| Ride The Thunder | 2026-05-17 | 3 | 3.5 | 0.382 | CL4 | 12 |\n| As Fast As Wind | nan | 3 | 3.5 | 0.368 | CL4 | 6 |\n| Changemyluck | nan | 5 | 3.0 | 0.344 | CL4 | 10 |\n| Hen Party | nan | 4 | 4.0 | 0.323 | CL4 | 10 |\n| Off The Jury | nan | 2 | 3.0 | 0.320 | CL4 | 10 |\n\n## V6_GOLD_SEAM\n\n| Metric | Value |\n|---|---|\n| Lane state | **LANE_ACTIVE** |\n| n (with results) | 12  *** LOW SAMPLE *** |\n| Wins | 6 |\n| Strike rate | 50.0% |\n| Frame/placed rate | 75.0% |\n| Flat 1pt P&L | \u00c2\u00a3+9.25 |\n| ROI | +77.1% |\n| Avg SP | 3.51 |\n| Avg VP | 0.415 |\n| Max drawdown | \u00c2\u00a3-3.00 |\n| Longest losing run | 3 |\n| Status | **SHADOW_BUILDING** |\n| Freeze active | NO |\n| Next threshold | \u00e2\u2020\u2019 SHADOW_CANDIDATE: needs +8 results |\n\n**Class breakdown:**\n\n| Class | n | SR | P&L |\n|---|---|---|---|\n| CL4 | 12 | 50% | \u00c2\u00a3+9.25 |\n\n**Field size breakdown:**\n\n| FS | n | SR | P&L |\n|---|---|---|---|\n| 2-5 | 3 | 67% | \u00c2\u00a3+4.50 |\n| 6-8 | 5 | 40% | \u00c2\u00a3+1.75 |\n| 9-12 | 4 | 50% | \u00c2\u00a3+3.00 |\n\n**Winners:**\n\n| Horse | Date | SP | VP | Class | FS |\n|---|---|---|---|---|---|\n| Proposal | nan | 3.8 | 0.371 | CL4 | 11 |\n| Thundering On | nan | 3.8 | 0.381 | CL4 | 7 |\n| The Wise Traveller | 2026-05-25 | 3.8 | 0.359 | CL4 | 5 |\n| Applicationofcash | 2026-05-22 | 3.8 | 0.357 | CL4 | 4 |\n| Generic | nan | 3.2 | 0.374 | CL4 | 12 |\n| Plaid | 2026-05-17 | 3.0 | 0.448 | CL4 | 8 |\n\n**Top losers (by VP):**\n\n| Horse | Date | Pos | SP | VP | Class | FS |\n|---|---|---|---|---|---|---|\n| Cawthorne Cracker | 2026-05-17 | 5 | 4.0 | 0.554 | CL4 | 5 |\n| Lightsoutandaway | 2026-05-17 | 4 | 3.5 | 0.522 | CL4 | 6 |\n| Blue In The West | nan | 2 | 3.1 | 0.468 | CL4 | 6 |\n| I'M Dan Dare | 2026-05-17 | 5 | 3.2 | 0.393 | CL4 | 9 |\n| Ride The Thunder | 2026-05-17 | 3 | 3.5 | 0.382 | CL4 | 12 |\n| As Fast As Wind | nan | 3 | 3.5 | 0.368 | CL4 | 6 |\n\n## Promotion Gates\n\n| Lane | Gate | Needs n | Current n | Remaining | ROI gate | Frame gate |\n|---|---|---|---|---|---|---|\n| V1_BASE | WATCHLIST | 27 | 36 | REACHED | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a575% |\n| V1_BASE | SHADOW_CANDIDATE | 50 | 36 | 14 | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a575% |\n| V1_BASE | PAPER_EXECUTION | 100 | 36 | 64 | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a575% |\n| V2_CLASS4_ONLY | WATCHLIST | 20 | 26 | REACHED | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a50% |\n| V2_CLASS4_ONLY | SHADOW_CANDIDATE | 30 | 26 | 4 | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a575% |\n| V2_CLASS4_ONLY | PAPER_EXECUTION | 60 | 26 | 34 | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a575% |\n| V2_CLASS4_ONLY | LIVE_DISCUSSION | 100 | 26 | 74 | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a575% |\n| V6_GOLD_SEAM | SHADOW_CANDIDATE | 20 | 12 | 8 | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a50% |\n| V6_GOLD_SEAM | PAPER_EXECUTION | 50 | 12 | 38 | \u00e2\u2030\u00a50% | \u00e2\u2030\u00a575% |\n\n## Freeze Rules (always active)\n\n- **roi_negative_after_n20**: n\u00e2\u2030\u00a520 and ROI < 0 \u00e2\u2020\u2019 LANE_FROZEN\n- **frame_below_70_after_n20**: n\u00e2\u2030\u00a520 and frame rate < 70% \u00e2\u2020\u2019 LANE_FROZEN\n- **duplicate_contamination**: dedup key collision rate >5% \u00e2\u2020\u2019 STOP AND FIX\n- **unexpected_n_drop**: n decreases between runs \u00e2\u2020\u2019 STOP AND INVESTIGATE\n\n---\n*No live betting. No staking. Shadow annotation only.*\n*Safety: SQPE untouched | Playbook E untouched | model_probability read-only*"
+    },
+    "execution_bridge_ledger": {
+      "source_name": "execution_bridge_ledger",
+      "status": "FOUND",
+      "path": "data/velo_execution_bridge_paper_ledger.csv",
+      "date_matched": "2026-05-23",
+      "required_for_release": false,
+      "label": "SHADOW",
+      "content": "BINARY_OR_CSV_PRESENT: .csv"
+    },
+    "one_truth_file": {
+      "source_name": "one_truth_file",
+      "status": "FOUND",
+      "path": "docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md",
+      "date_matched": "2026-05-23",
+      "required_for_release": true,
+      "label": "SHADOW",
+      "content": "UNREADABLE"
+    }
+  },
+  "verdicts": []
+}

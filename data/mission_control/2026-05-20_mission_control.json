@@ -1,0 +1,50 @@
+{
+  "date": "2026-05-20",
+  "generated_at": "2026-05-23T01:19:15.283084+00:00",
+  "source_truth": "RP_MERGED_CONTAMINATED",
+  "run_ids_seen": [
+    "32cc27f9",
+    "847964a6"
+  ],
+  "flatline_count": 6,
+  "fully_uniform_count": 6,
+  "fully_uniform_races": [
+    "rp_AYR_20260520_1.42",
+    "rp_AYR_20260520_2.42",
+    "rp_AYR_20260520_3.42",
+    "rp_AYR_20260520_4.42",
+    "rp_AYR_20260520_5.15",
+    "rp_GOW_20260520_7.20"
+  ],
+  "majority_tied_count": 0,
+  "identity_failure_count": 0,
+  "runners_snapshotted": 807,
+  "council_verdict": "STALE_OR_STUB",
+  "learning_gate_status": "BLOCKED",
+  "promotion_gate_status": "BLOCKED",
+  "cpu_shadow_gate_v1": {
+    "status": "GATE_V1_AUDIT_ONLY",
+    "contaminated": true,
+    "reason": "Contains pre-a33c5bd RP_MERGED rows \u2014 do not use for promotion"
+  },
+  "cpu_shadow_gate_v2": {
+    "gate_id": "GATE_V2_POST_FLATLINE_FIX",
+    "start_date": "2026-05-21",
+    "fix_commit": "a33c5bd8",
+    "gate_v1_status": "GATE_V1_AUDIT_ONLY",
+    "gate_v1_contamination": "CONFIRMED \u2014 pre-a33c5bd RP_MERGED rows included",
+    "gate_v2_runner_count": 786,
+    "gate_v2_qualified_days": 2,
+    "promotion_threshold": 300,
+    "promotion_eligible": false,
+    "note": "Operator decision required before any promotion action"
+  },
+  "gate_rules": [
+    "sigma_audits truth writes: NEVER blocked \u2014 raw result ledger always recorded",
+    "scoring pipeline: NEVER blocked by mission control gates",
+    "learning eligibility: BLOCKED if flatline_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
+    "promotion eligibility: BLOCKED if flatline_count > 0 OR identity_failure_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
+    "shadow consume: BLOCKED if council_verdict not PASS_TO_LEARNING"
+  ],
+  "next_safe_command": "INVESTIGATE scoring flatline: 6 uniform races. Check RP_MERGED hydration. Do not train or promote."
+}

@@ -1,0 +1,19 @@
+{
+  "incident_id": "international_rpr_timestamp_risk",
+  "title": "Incident C: International RPR Leakage Risk",
+  "timestamp": "2026-06-06T10:46:24.508065Z",
+  "severity": "CRITICAL",
+  "affected_features": [
+    "leakage_status"
+  ],
+  "mathematical_proof": "- TEMPORAL_LEAKAGE: Detected 50 records with RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK.",
+  "safe_to_score": false,
+  "safe_to_learn": false,
+  "recommended_action": "BLOCK_LEARNING / OPERATOR_REVIEW",
+  "operator_recovery_commands": [
+    "python scripts/ops/verify_ts_coverage.py --audit-rpr"
+  ],
+  "evidence_paths": {
+    "json": "hackathon\\amd_harnessguard\\reports\\cards\\international_rpr_timestamp_risk_card.json"
+  }
+}

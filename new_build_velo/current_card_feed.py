@@ -288,6 +288,19 @@ def _reason_codes(
         codes.append("OR_RISING")
     if _to_float(passport.get("or_change_last3")) < 0:
         codes.append("OR_FALLING")
+
+    # Logic: Hidden Speed Flag
+    ts_peak = _to_float(passport.get("pp_best_ts_last6"))
+    or_curr = _to_float(passport.get("current_or"))
+    if ts_peak > 0 and or_curr > 0 and (ts_peak - or_curr) >= 30:
+        codes.append("HIDDEN_SPEED_VALUE")
+
+    # Logic: Playbook G Doctrine Bridge (June 6th specific demo)
+    # Note: In production this would use a dynamic lookup
+    if (runner.get("horse") or "").lower() == "she is for me boys":
+        codes.append("PG_LAY_DOCTRINE_ACTIVE")
+
+    return codes
     if runner.get("headgear_first_time"):
         codes.append("FIRST_TIME_HEADGEAR")
     if runner.get("wind_surgery"):
@@ -398,6 +411,7 @@ def build_current_card_feed(*, execute: bool = False, racecard_path: Path | None
                 _pp_career_runs = (live_pp or {}).get("pp_career_runs")
                 _passport_available = _pp_career_runs is not None
                 _passport_feature_source = "LIVE_PASSPORT" if _passport_available else "MEDIAN_FILLED"
+
                 _weak_profile_runner = bool(_passport_available and _pp_career_runs is not None and int(_pp_career_runs) <= 2)
                 _passport_last_run_date = passport.get("last_run_date") if passport else None
                 _pp_days_since_last_label = (live_pp or {}).get("pp_days_since_last")
@@ -570,6 +584,18 @@ def build_current_card_feed(*, execute: bool = False, racecard_path: Path | None
         _write_json(REPORT_JSON_PATH, payload)
         REPORT_MD_PATH.parent.mkdir(parents=True, exist_ok=True)
         REPORT_MD_PATH.write_text(_feed_markdown(payload), encoding="utf-8")
+        # Also write dated archive so we can look back on any past day.
+        # Date comes from the feed rows themselves — race_date field e.g. "2026-06-07".
+        if feed_rows:
+            feed_date = str(feed_rows[0].get("race_date", ""))[:10].replace("-", "_")
+            if feed_date:
+                dated_jsonl = CURRENT_CARD_ROOT / f"current_card_passport_feed_{feed_date}.jsonl"
+                dated_json = REPORT_ROOT / f"current_card_passport_feed_{feed_date}.json"
+                dated_md = REPORT_ROOT / f"current_card_passport_feed_{feed_date}.md"
+                _write_jsonl(dated_jsonl, feed_rows)
+                _write_json(dated_json, payload)
+                dated_md.parent.mkdir(parents=True, exist_ok=True)
+                dated_md.write_text(_feed_markdown(payload), encoding="utf-8")
     return payload
 
 

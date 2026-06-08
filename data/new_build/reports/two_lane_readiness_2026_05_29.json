@@ -1,0 +1,402 @@
+{
+  "generated_at": "2026-05-29T03:51:20.032303Z",
+  "target_date": "2026-05-29",
+  "overall_status": "READY",
+  "capture_status": {
+    "date": "2026-05-29",
+    "status": "READY",
+    "races": 7,
+    "runners": 109
+  },
+  "races_scored": 7,
+  "runners_scored": 109,
+  "rpr_violations": 0,
+  "sp_violations": 0,
+  "quality_gates": {
+    "rpr_clean": true,
+    "sp_clean": true,
+    "passport_coverage_above_50pct": true,
+    "no_leakage_violations": true
+  },
+  "intent_coverage": {
+    "found": 0,
+    "total": 109,
+    "coverage_pct": 0.0,
+    "gate": 80.0,
+    "status": "UNAVAILABLE_BELOW_GATE",
+    "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+  },
+  "operational_lane": "LANE_A_CORE_PASSPORT",
+  "operational_note": "Intent coverage 0.0% < 80.0% gate. Lane B is PAPER_ONLY_NO_INTENT. Lane A (Core+Passport) is operational read.",
+  "lane_a": {
+    "label": "Core_V0_OR_Passport (30 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport\\core_v0_or_passport_model.pkl",
+    "feature_count": 30,
+    "median_fill_counts": {
+      "draw_num": 109,
+      "draw_pct": 109,
+      "release_window_score": 109,
+      "going_fit_score": 109,
+      "distance_fit_score": 109,
+      "quiet_run_score": 109,
+      "trainer_timing_score": 109,
+      "jockey_switch_intent": 109,
+      "setup_run_flag": 109,
+      "cash_run_flag": 109
+    }
+  },
+  "lane_b": {
+    "label": "Challenger_V1 Core+Passport+Intent (45 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport_intent\\model.pkl",
+    "feature_count": 45,
+    "intent_coverage_pct": 0.0,
+    "status": "PAPER_ONLY_NO_INTENT",
+    "median_fill_counts": {
+      "draw_num": 109,
+      "draw_pct": 109,
+      "release_window_score": 109,
+      "going_fit_score": 109,
+      "distance_fit_score": 109,
+      "quiet_run_score": 109,
+      "trainer_timing_score": 109,
+      "jockey_switch_intent": 109,
+      "setup_run_flag": 109,
+      "cash_run_flag": 109
+    }
+  },
+  "race_day_scorecards": [
+    {
+      "race_id": "919010",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T14:00:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet Proud Sponsors Of Chepstow Racecourse Apprentice Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Oasis Sunrise",
+          "prob": 0.190542
+        },
+        {
+          "rank": 2,
+          "horse": "Beaune",
+          "prob": 0.164953
+        },
+        {
+          "rank": 3,
+          "horse": "Electric Bass",
+          "prob": 0.151883
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Oasis Sunrise",
+          "prob": 0.10714
+        },
+        {
+          "rank": 1,
+          "horse": "Beaune",
+          "prob": 0.133783
+        },
+        {
+          "rank": 2,
+          "horse": "Electric Bass",
+          "prob": 0.115742
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919012",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T14:30:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet - Oncourse And Online Handicap",
+      "runner_count": 22,
+      "passport_coverage": "22/22",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Worlington",
+          "prob": 0.085945
+        },
+        {
+          "rank": 2,
+          "horse": "Thomas Picton",
+          "prob": 0.071619
+        },
+        {
+          "rank": 3,
+          "horse": "Action Reaction",
+          "prob": 0.070635
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Shirakawa",
+          "prob": 0.064665
+        },
+        {
+          "rank": 2,
+          "horse": "Heart Sign",
+          "prob": 0.059687
+        },
+        {
+          "rank": 3,
+          "horse": "Bumaan",
+          "prob": 0.052246
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919007",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T15:00:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "Pricing By Real Bookmakers At DragonBet Novice Stakes (GBB/GBBPlus Race)",
+      "runner_count": 19,
+      "passport_coverage": "15/19",
+      "passport_coverage_pct": 78.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Glory Road",
+          "prob": 0.129613
+        },
+        {
+          "rank": 2,
+          "horse": "Gone By",
+          "prob": 0.10061
+        },
+        {
+          "rank": 3,
+          "horse": "El Nay",
+          "prob": 0.096658
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Glory Road",
+          "prob": 0.084637
+        },
+        {
+          "rank": 2,
+          "horse": "Gone By",
+          "prob": 0.08997
+        },
+        {
+          "rank": 1,
+          "horse": "El Nay",
+          "prob": 0.090204
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "919009",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T15:30:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet Born From The Betting Ring Handicap",
+      "runner_count": 9,
+      "passport_coverage": "9/9",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "So Smart",
+          "prob": 0.21319
+        },
+        {
+          "rank": 2,
+          "horse": "Cayman Tai",
+          "prob": 0.199223
+        },
+        {
+          "rank": 3,
+          "horse": "Tuscan Point",
+          "prob": 0.187677
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "So Smart",
+          "prob": 0.138295
+        },
+        {
+          "rank": 2,
+          "horse": "Cayman Tai",
+          "prob": 0.143139
+        },
+        {
+          "rank": 1,
+          "horse": "In The City",
+          "prob": 0.155007
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919013",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T16:05:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "Best Odds Guaranteed On dragonbet.co.uk Handicap (Chepstow Mile Series Qualifier)",
+      "runner_count": 17,
+      "passport_coverage": "17/17",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Thanos",
+          "prob": 0.121471
+        },
+        {
+          "rank": 2,
+          "horse": "Smoker Bellamy",
+          "prob": 0.088689
+        },
+        {
+          "rank": 3,
+          "horse": "Mooj",
+          "prob": 0.086436
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Thanos",
+          "prob": 0.069199
+        },
+        {
+          "rank": 3,
+          "horse": "Smoker Bellamy",
+          "prob": 0.068571
+        },
+        {
+          "rank": 1,
+          "horse": "Mooj",
+          "prob": 0.073026
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919008",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T16:40:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet: Supporting British Racing Maiden Stakes (GBB Race)",
+      "runner_count": 17,
+      "passport_coverage": "13/17",
+      "passport_coverage_pct": 76.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Erudition",
+          "prob": 0.140113
+        },
+        {
+          "rank": 2,
+          "horse": "Distant Moon",
+          "prob": 0.132894
+        },
+        {
+          "rank": 3,
+          "horse": "Law Court",
+          "prob": 0.084542
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Erudition",
+          "prob": 0.088164
+        },
+        {
+          "rank": 2,
+          "horse": "Distant Moon",
+          "prob": 0.08813
+        },
+        {
+          "rank": 3,
+          "horse": "Watercraft",
+          "prob": 0.070187
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "919011",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T17:10:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet, Top Prices On Top Markets Handicap",
+      "runner_count": 13,
+      "passport_coverage": "13/13",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Too Much Trevor",
+          "prob": 0.152225
+        },
+        {
+          "rank": 2,
+          "horse": "Romanovich",
+          "prob": 0.150259
+        },
+        {
+          "rank": 3,
+          "horse": "Sub Thirteen",
+          "prob": 0.119182
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Too Much Trevor",
+          "prob": 0.110009
+        },
+        {
+          "rank": 2,
+          "horse": "Romanovich",
+          "prob": 0.10732
+        },
+        {
+          "rank": 3,
+          "horse": "Sub Thirteen",
+          "prob": 0.096318
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_engine": true,
+    "no_telegram": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_staking": true,
+    "rpr_archive_only": true,
+    "no_market_lane_morning": true,
+    "no_jtcd_alltime": true
+  }
+}

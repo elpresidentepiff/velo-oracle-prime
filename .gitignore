@@ -76,16 +76,23 @@ training_data/
 .gitnexus
 
 # Large data files — never commit these
-data/*.parquet
-data/*.csv
-data/*.pkl
-data/*.txt
+data/**/*.parquet
+data/**/*.csv
+data/**/*.pkl
+data/**/*.txt
+data/new_build/
 data/raw_*/
 data/racecard_merged/
 data/racecards_*_standard.json
 data/incoming_pdfs/
 data/spotlight_parsed/
 data/racing_api_raw/
+data/browser_profiles/
+data/racing_post_account_raw/
+data/racing_post_account_pastes/
+data/racing_post_account_parsed/
+data/racing_post_url_lists/
+data/scrapegraph_outputs/
 data/raceform_*.parquet
 data/backtest_*.csv
 data/train_*.csv
@@ -127,3 +134,9 @@ tmp/
 .claude/
 .env
 **/settings.local.json
+
+# Local agent config
+.agents/
+
+# Transient logs
+data/runner_snapshots_*.jsonl

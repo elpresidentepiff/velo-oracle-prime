@@ -125,11 +125,11 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
     is_fav = 1.0 if sp_rank == 1 else 0.0
 
     # Race-level
-    from app.services.model_manager import ModelManager
+    from app.services.sqpe_v17_service import _parse_dist, _parse_going, _parse_class
 
-    dist_f = ModelManager._parse_dist(race.get("distance_f") or race.get("distance"))
-    going_code, is_aw = ModelManager._parse_going(race.get("going"))
-    class_num = ModelManager._parse_class(race.get("race_class"))
+    dist_f = _parse_dist(race.get("distance_f") or race.get("distance"))
+    going_code, is_aw = _parse_going(race.get("going"))
+    class_num = _parse_class(race.get("race_class"))
     draw_num = _safe(runner.get("draw"))
     draw_pct = draw_num / field_size
 
@@ -270,12 +270,11 @@ def score_race_velo_prime(
     -------
     list[dict]  sorted by velo_prime_prob desc
     """
-    from app.services.model_manager import get_model_manager
+    from app.services.sqpe_v17_service import predict_sqpe_v17, build_v17_feature_vector
     from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
     from src.intelligence.specialist_models.loader import score_runner
     from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble
 
-    mm = get_model_manager()
     ensemble = VeloPrimeEnsemble()
     runners = race.get("runners", [])
     race_id = race.get("race_id", "unknown")
@@ -284,7 +283,6 @@ def score_race_velo_prime(
         return []
 
     # Pre-compute field OR/RPR arrays for relative features.
-    # official_rating and rpr are Optional[float] from the normalizer.
     # Only include runners with a real rating — exclude None and any stray zeros.
     def _to_float(v):
         try:
@@ -298,6 +296,16 @@ def score_race_velo_prime(
         if r.get("official_rating") is not None and _to_float(r["official_rating"]) > 0
     ]
     field_rpr = [_to_float(r["rpr"]) for r in runners if r.get("rpr") is not None and _to_float(r["rpr"]) > 0]
+
+    # Pre-inject rpr_vs_field so build_v17_feature_vector picks up the relative value.
+    # build_v17_feature_vector reads runner.get("rpr_vs_field", 0.0) — inject before the loop.
+    avg_rpr = sum(field_rpr) / len(field_rpr) if field_rpr else 0.0
+    for r in runners:
+        rpr_val = _to_float(r.get("rpr") or 0)
+        if rpr_val > 0 and avg_rpr > 0:
+            r["rpr_vs_field"] = round(rpr_val - avg_rpr, 1)
+        else:
+            r.setdefault("rpr_vs_field", 0.0)
 
     # Macro context — current year, race type
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")
@@ -320,14 +328,14 @@ def score_race_velo_prime(
 
     # Score each runner
     ensemble_inputs = []
-    _feats_by_horse: dict[str, dict] = {}  # captured for Horse State Brain below
+    _feats_by_horse: dict[str, dict] = {}
     for runner in runners:
         horse_name = runner.get("horse_name", "Unknown")
-        feats = _build_live_features(runner, race, field_or, field_rpr)
+        
+        # Build features using clean service
+        feats = build_v17_feature_vector(runner, race)
         _feats_by_horse[horse_name] = feats
-
-        # SQPE v17 — features={} triggers the runner/race path internally
-        sqpe_prob = mm.predict_sqpe(features={}, runner=runner, race=race)
+        sqpe_prob = predict_sqpe_v17(feats)
 
         # Specialist scores — graceful on missing features
         try:

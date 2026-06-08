@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-06-05T00:58:59.287653+00:00",
+  "target_date": "2026-06-05",
+  "classification": "RACE_DAY_BUTTON_PARTIAL",
+  "old_velo": {
+    "attempted": true,
+    "status": "BLOCKED",
+    "reason": "metadata_coverage: 369/1110 runners have required fields (33.2%)",
+    "telegram_suppressed": true
+  },
+  "new_build": {
+    "attempted": true,
+    "status": "READY",
+    "races_scored": 56,
+    "runners_scored": 1110,
+    "operational_lane": "LANE_A_CORE_PASSPORT",
+    "rpr_violations": 0,
+    "sp_violations": 0,
+    "intent_coverage": {
+      "found": 0,
+      "total": 1110,
+      "coverage_pct": 0.0,
+      "gate": 80.0,
+      "status": "UNAVAILABLE_BELOW_GATE",
+      "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+    },
+    "paper_only": true
+  },
+  "steps": [
+    {
+      "name": "build_rp_merged",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/build_racecard_merged_from_injection.py",
+        "--date",
+        "2026-06-05",
+        "--injection-path",
+        "data/racing_post_account_parsed/2026-06-05/racecard_injection.json"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-05T00:57:58.575453+00:00",
+      "finished_at": "2026-06-05T00:57:58.700917+00:00",
+      "output_tail": "  BAT: 7 races -> racecard_BAT_2026-06-05.json\n  CLO: 6 races -> racecard_CLO_2026-06-05.json\n  DON: 7 races -> racecard_DON_2026-06-05.json\n  EPS: 8 races -> racecard_EPS_2026-06-05.json\n  FAI: 7 races -> racecard_FAI_2026-06-05.json\n  GOO: 6 races -> racecard_GOO_2026-06-05.json\n  MUS: 6 races -> racecard_MUS_2026-06-05.json\n  SARATOGA: 3 races -> racecard_SARATOGA_2026-06-05.json\n  THI: 6 races -> racecard_THI_2026-06-05.json\n\nWrote 9 racecard_merged files for 2026-06-05"
+    },
+    {
+      "name": "old_velo_engine",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/run_prime_today.py",
+        "--date",
+        "2026-06-05",
+        "--source",
+        "rp",
+        "--no-notify"
+      ],
+      "exit_code": 1,
+      "status": "FAIL",
+      "started_at": "2026-06-05T00:57:58.700959+00:00",
+      "finished_at": "2026-06-05T00:58:52.468295+00:00",
+      "output_tail": "\nVELO PRIME RACE-DAY EXECUTION — 2026-06-05\n============================================================\n\nPREFLIGHT\n----------------------------------------\n  [PASS] env_vars: 5 vars present\n  [PASS] canonical_constants: imported OK\n  [PASS] supabase: reachable\n  [PASS] sqpe_model: models\\sqpe_v17\\sqpe_v17.pkl\n  [PASS] racing_api: reachable\n  [PASS] specialist_models: 7 model files present\n  [PASS] supabase_schema: horse_state + archetype columns present\n  Status: PASS\n----------------------------------------\n  pipeline_run: 25f65915-b495-4ff9-b8dc-4a8ebb889a90\n\nSTEP 1: Load racecards\n  source: RP_MERGED (56 races synthesised from local PDF data, 1110 runners)\n\n============================================================\n  SOURCE TRUTH HEADER\n  requested_date : 2026-06-05\n  loaded_date(s) : 2026-06-05\n  source         : RP_MERGED (rp_merged)\n  commit_sha     : 1ba64550289b3c14227adfeaacaf9e302d95eac2\n  router_version : ProductRouter v1 (live-safe)\n  ℹ Source = CACHE. Card date matches request.\n============================================================\n\n\n  HARNESS: Source truth enforcement\n  [HARNESS WARN] VÉLØ source truth is RP_MERGED_DEGRADED. Scoring will proceed with degraded features.\n  source_truth_canonical : RP_MERGED_DEGRADED\n  [HARNESS WARN] RP_MERGED_DEGRADED — feature degradation active, learning will be blocked\n  Source: rp_merged  races: 56  with runners: 56\n\n============================================================\n  RACECARD CACHE GATE — BAD_RACECARD_CACHE_BLOCKED\n  date: 2026-06-05  source: rp_merged\n  races: 56  runners: 1110  courses: 9\n────────────────────────────────────────────────────────────\n  [PASS] date_match: date confirmed: 2026-06-05\n  [PASS] race_count: 56 UK/IRE races with runners (min 15)\n  [PASS] course_coverage: 9 unique courses: ['Bath', 'Clonmel', 'Doncaster', 'Epsom', 'Fairyhouse', 'Goodwood', 'Musselburgh', 'Saratoga', 'Thirsk'] (min 3)\n  [PASS] runner_count: 1110 total runners (min 80)\n  [FAIL] metadata_coverage: 369/1110 runners have required fields (33.2%)\n  [PASS] rpr_live_leak: 1023 runners have rpr (accepted — RPR_ACCEPTED policy)\n  [WARN] sidecar_date_match: RPDC covers 0/56 racecard races (0%)\n============================================================\n\n  DIAGNOSTIC REPORT WRITTEN:\n    data/reports/racecard_cache_gate_latest.json\n    data/reports/racecard_cache_gate_latest.md\n\nBAD_RACECARD_CACHE_BLOCKED — engine halted before scoring.\nFix: delete or replace the stale cache file and re-run.\n  Cache: data/racecards_2026_06_05_standard.json"
+    },
+    {
+      "name": "new_build_feed",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/new_build_current_card_feed.py",
+        "--racecard-path",
+        "data/racecards_2026_06_05_standard.json",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-05T00:58:52.468344+00:00",
+      "finished_at": "2026-06-05T00:58:57.806776+00:00",
+      "output_tail": "    {\n      \"race_date\": \"2026-06-05\",\n      \"course\": \"Saratoga\",\n      \"off_time\": \"2026-06-05T23:25:00\",\n      \"race_id\": \"921986\",\n      \"race_title\": \"Ogden Phipps Stakes Presented By Ford (Grade 1) (Fillies & Mares) (Dirt)\",\n      \"runner_count\": 6,\n      \"passport_coverage\": 6,\n      \"champion_feature_coverage\": 6,\n      \"intent_feature_coverage\": 0,\n      \"top_3_by_champion_read_availability\": [\n        {\n          \"horse\": \"Alpine Princess\",\n          \"rp_uid\": \"5287612\",\n          \"trainer\": \"Brad H Cox\",\n          \"passport_strength_score\": 0.0,\n          \"reason_codes\": [\n            \"UNEXPOSED_PROFILE\",\n            \"COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE\",\n            \"NO_INTENT_SCORE_FOR_CURRENT_RACE\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        },\n        {\n          \"horse\": \"Regaled\",\n          \"rp_uid\": \"6161679\",\n          \"trainer\": \"D Whitworth Beckman\",\n          \"passport_strength_score\": 0.0,\n          \"reason_codes\": [\n            \"UNEXPOSED_PROFILE\",\n            \"COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE\",\n            \"NO_INTENT_SCORE_FOR_CURRENT_RACE\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        },\n        {\n          \"horse\": \"Nitrogen\",\n          \"rp_uid\": \"6460816\",\n          \"trainer\": \"Mark Casse\",\n          \"passport_strength_score\": 0.0,\n          \"reason_codes\": [\n            \"UNEXPOSED_PROFILE\",\n            \"COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE\",\n            \"NO_INTENT_SCORE_FOR_CURRENT_RACE\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        }\n      ],\n      \"strongest_passport_horse\": {\n        \"horse\": \"Alpine Princess\",\n        \"rp_uid\": \"5287612\",\n        \"trainer\": \"Brad H Cox\",\n        \"passport_strength_score\": 0.0,\n        \"reason_codes\": [\n          \"UNEXPOSED_PROFILE\",\n          \"COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE\",\n          \"NO_INTENT_SCORE_FOR_CURRENT_RACE\"\n        ],\n        \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n      },\n      \"strongest_intent_candidate\": null,\n      \"missing_data_warnings\": [\n        \"No current-race intent feature rows available\"\n      ],\n      \"unraced_new_horse_warnings\": []\n    }\n  ],\n  \"rules\": {\n    \"new_build_only\": true,\n    \"official_final_card_only\": true,\n    \"official_final_card_path\": \"data\\\\racecards_2026_06_05_standard.json\",\n    \"no_training\": true,\n    \"no_live_engine\": true,\n    \"old_live_velo_untouched\": true,\n    \"shadow_velo_untouched\": true,\n    \"no_betting\": true,\n    \"no_telegram\": true,\n    \"rpr_archive_only\": true\n  }\n}"
+    },
+    {
+      "name": "new_build_score",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/new_build_two_lane_score.py",
+        "--date",
+        "2026-06-05",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-05T00:58:57.806823+00:00",
+      "finished_at": "2026-06-05T00:58:59.286306+00:00",
+      "output_tail": "Written: C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\reports\\two_lane_readiness_2026_06_05.json\nWritten: C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\reports\\two_lane_readiness_2026_06_05.md\n\nOverall status: READY\nRaces scored: 56\nRunners scored: 1110\nOperational lane: LANE_A_CORE_PASSPORT"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-23T21:45:39.628571+00:00",
+  "total_rows": 1702741,
+  "total_cols": 32,
+  "lagged_feature_coverage": {
+    "prev_rpr_num": 0.812,
+    "max_rpr_num_last3": 0.8665,
+    "avg_rpr_num_last3": 0.8665,
+    "prev_or_num": 0.5493,
+    "max_or_num_last3": 0.5697,
+    "avg_or_num_last3": 0.5697,
+    "prev_ts_num": 0.6113,
+    "max_ts_num_last3": 0.7207,
+    "avg_ts_num_last3": 0.7207,
+    "days_since_last_run": 0.8855,
+    "starts_last_90": 0.7352,
+    "course_prior_runs": 0.4634,
+    "course_prior_wr": 0.1516,
+    "dist_prior_runs": 0.7808,
+    "dist_prior_wr": 0.3844
+  },
+  "method": "For each horse sorted by date, lagged features use only races 0..N-1. Current-race RPR/OR/TS excluded. Static race attributes passed through."
+}

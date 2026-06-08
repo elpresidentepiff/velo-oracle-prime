@@ -1,0 +1,241 @@
+{
+  "metadata": {
+    "date": "2026-05-29",
+    "run_at": "2026-06-05T16:26:02.921779",
+    "orchestrator_version": "v0.2-real-tribunal"
+  },
+  "evidence_packet": {
+    "metadata": {
+      "date": "2026-05-29",
+      "alt_date": "2026_05_29",
+      "generated_at": "2026-06-05T16:26:02.921755",
+      "status": "INCOMPLETE",
+      "council_status": "EVIDENCE_INCOMPLETE"
+    },
+    "evidence_sources": {
+      "vp30_operator_card": {
+        "source_name": "vp30_operator_card",
+        "status": "MISSING",
+        "path": null,
+        "date_matched": null,
+        "required_for_release": true,
+        "label": "SHADOW",
+        "content": null
+      },
+      "racing_api_enrichment": {
+        "source_name": "racing_api_enrichment",
+        "status": "MISSING",
+        "path": null,
+        "date_matched": null,
+        "required_for_release": true,
+        "label": "SHADOW",
+        "content": null
+      },
+      "cashrun_report": {
+        "source_name": "cashrun_report",
+        "status": "MISSING",
+        "path": null,
+        "date_matched": null,
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": null
+      },
+      "live_sidecar_audit": {
+        "source_name": "live_sidecar_audit",
+        "status": "FOUND",
+        "path": "data/live_sidecar_ablation_audit_latest.md",
+        "date_matched": "2026-05-29",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "signal_promotion_board": {
+        "source_name": "signal_promotion_board",
+        "status": "FOUND",
+        "path": "data/signal_promotion_board_latest.md",
+        "date_matched": "2026-05-29",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "router_shadow_audit": {
+        "source_name": "router_shadow_audit",
+        "status": "FOUND",
+        "path": "data/router_shadow_audit_latest.md",
+        "date_matched": "2026-05-29",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "execution_bridge_ledger": {
+        "source_name": "execution_bridge_ledger",
+        "status": "FOUND",
+        "path": "data/velo_execution_bridge_paper_ledger.csv",
+        "date_matched": "2026-05-29",
+        "required_for_release": false,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      },
+      "one_truth_file": {
+        "source_name": "one_truth_file",
+        "status": "FOUND",
+        "path": "docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md",
+        "date_matched": "2026-05-29",
+        "required_for_release": true,
+        "label": "SHADOW",
+        "content": "[CONTENT_OMITTED_FOR_LOG]"
+      }
+    },
+    "verdicts": []
+  },
+  "agent_responses": [
+    {
+      "agent": "DATA AUDITOR",
+      "role": "Data Quality Verification",
+      "response": "Data audit PASS \u2014 source=RP_MERGED_CLEAN, snapshots=1, flatlines=0",
+      "labels": [
+        "DATA_CLEAN"
+      ],
+      "data": {
+        "flatline_count": 0,
+        "contaminated_run_ids": [],
+        "snapshot_files": [
+          "runner_snapshots_2026_05_29_2026_05_29_51343ed4_1780106220856.jsonl"
+        ],
+        "source_truth": "RP_MERGED_CLEAN"
+      }
+    },
+    {
+      "agent": "FLATLINE GATE",
+      "role": "Scoring Integrity Check",
+      "response": "Flatline gate PASS \u2014 no uniform races detected. source=RP_MERGED_CLEAN",
+      "labels": [
+        "FLATLINE_PASS"
+      ],
+      "data": {
+        "flatline_count": 0
+      }
+    },
+    {
+      "agent": "SIGMA COVERAGE",
+      "role": "Result Coverage Check",
+      "response": "SR=19.4% \u2014 below baseline 20%. Watchlist day.",
+      "labels": [
+        "SR_BELOW_BASELINE"
+      ],
+      "data": {
+        "sigma_rows": 0,
+        "wins": 6,
+        "total_reviewed": 31,
+        "sr": 0.1935
+      }
+    },
+    {
+      "agent": "CONTAMINATION DETECTOR",
+      "role": "Run ID Contamination Check",
+      "response": "No contaminated run_ids. Clean runs: ['05']",
+      "labels": [
+        "CONTAMINATION_CLEAR"
+      ],
+      "data": {
+        "contaminated": [],
+        "clean": [
+          "05"
+        ]
+      }
+    },
+    {
+      "agent": "MIDPRICE SUMMARY",
+      "role": "Mid-Price Leak Summary",
+      "response": "Mid-price delta: 36 races, 2 rescuable by sidecar (5.6%). Shadow audit only.",
+      "labels": [
+        "MIDPRICE_AUDITED"
+      ],
+      "data": {
+        "generated_at": "2026-05-23T02:29:53.566233+00:00",
+        "total_races": 36,
+        "total_misses": 27,
+        "midprice_zone_misses": 17,
+        "winner_visible_in_snapshots": 25,
+        "rescued_by_sidecar": 2,
+        "suppressed_top_picks": 0,
+        "rescue_rate_pct": 7.4,
+        "midprice_miss_rate_pct": 63.0,
+        "note": "READ-ONLY audit. No scoring changes. No routing changes. No execution changes."
+      }
+    },
+    {
+      "agent": "PRIME CHAIR",
+      "role": "Final Synthesis and Governance",
+      "response": "WATCH_ONLY \u2014 2026-05-29. Evidence accumulation continues. Do not consume for learning yet. Watch: SIGMA COVERAGE: SR_BELOW_BASELINE",
+      "labels": [
+        "SHADOW",
+        "OPERATOR_ONLY"
+      ],
+      "council_verdict": "WATCH_ONLY",
+      "blocking_reasons": [],
+      "watch_reasons": [
+        "SIGMA COVERAGE: SR_BELOW_BASELINE"
+      ]
+    }
+  ],
+  "verifications": [
+    {
+      "agent": "DATA AUDITOR",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "FLATLINE GATE",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "SIGMA COVERAGE",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "CONTAMINATION DETECTOR",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "MIDPRICE SUMMARY",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    },
+    {
+      "agent": "PRIME CHAIR",
+      "verification_status": "PENDING_MANUAL",
+      "evidence_supported": true,
+      "contradictions_found": false,
+      "missing_evidence_noted": false,
+      "allowed_to_affect_staking": false,
+      "allowed_to_affect_weights": false
+    }
+  ],
+  "final_report": "# V\u00c9L\u00d8 LLM Council Operator Report - 2026-05-29\n\n**Run Date:** 2026-06-05T16:26:02.932755\n**Council Status:** EVIDENCE_INCOMPLETE\n**Status:** SHADOW / OPERATOR ONLY\n\n## 1. Executive Summary (Prime Chair)\nWATCH_ONLY \u2014 2026-05-29. Evidence accumulation continues. Do not consume for learning yet. Watch: SIGMA COVERAGE: SR_BELOW_BASELINE\n\n## 2. Agent Deliberations\n### DATA AUDITOR\n**Role:** Data Quality Verification\n**Labels:** DATA_CLEAN\n**Read:** Data audit PASS \u2014 source=RP_MERGED_CLEAN, snapshots=1, flatlines=0\n\n### FLATLINE GATE\n**Role:** Scoring Integrity Check\n**Labels:** FLATLINE_PASS\n**Read:** Flatline gate PASS \u2014 no uniform races detected. source=RP_MERGED_CLEAN\n\n### SIGMA COVERAGE\n**Role:** Result Coverage Check\n**Labels:** SR_BELOW_BASELINE\n**Read:** SR=19.4% \u2014 below baseline 20%. Watchlist day.\n\n### CONTAMINATION DETECTOR\n**Role:** Run ID Contamination Check\n**Labels:** CONTAMINATION_CLEAR\n**Read:** No contaminated run_ids. Clean runs: ['05']\n\n### MIDPRICE SUMMARY\n**Role:** Mid-Price Leak Summary\n**Labels:** MIDPRICE_AUDITED\n**Read:** Mid-price delta: 36 races, 2 rescuable by sidecar (5.6%). Shadow audit only.\n\n## 3. Evidence Status\n- **vp30_operator_card**: MISSING [REQUIRED]\n- **racing_api_enrichment**: MISSING [REQUIRED]\n- **cashrun_report**: MISSING \n- **live_sidecar_audit**: FOUND \n  - Path: `data/live_sidecar_ablation_audit_latest.md`\n- **signal_promotion_board**: FOUND \n  - Path: `data/signal_promotion_board_latest.md`\n- **router_shadow_audit**: FOUND \n  - Path: `data/router_shadow_audit_latest.md`\n- **execution_bridge_ledger**: FOUND \n  - Path: `data/velo_execution_bridge_paper_ledger.csv`\n- **one_truth_file**: FOUND [REQUIRED]\n  - Path: `docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md`\n\n## 4. Safety Audit\n- NO staking impact confirmed: YES\n- NO weight change impact confirmed: YES\n- NO live Betfair impact confirmed: YES\n",
+  "council_status": "EVIDENCE_INCOMPLETE",
+  "council_verdict": "WATCH_ONLY"
+}

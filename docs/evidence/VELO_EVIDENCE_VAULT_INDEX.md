@@ -30,6 +30,24 @@ It is committed to Git and never overwritten — new versions are added alongsid
 | `docs/evidence/VELO_COMPANY_EVIDENCE_BRIEF_V1.md` | Investor/partner-facing evidence summary |
 | `docs/evidence/VELO_EVIDENCE_ARCHIVE_PROTOCOL.md` | How evidence is archived and versioned |
 | `docs/evidence/VELO_SPECIAL_DAY_REPORTS_INDEX.md` | Index of all special day reports |
+| `docs/evidence/HUMAN_INTENT_INTELLIGENCE_VAULT.md` | Human Intent Intelligence Vault landing page; raw jockey/trainer/bloodstock/market/corruption/process intelligence |
+
+### Human Intent Intelligence Vault
+
+**Location:** `data/evidence_vault/human_intent_intelligence/`  
+**Authority:** CANDIDATE_ONLY  
+**Use:** Raw transcript-derived mechanisms for later classification. Not model fuel, not Passport fuel, not staking guidance.
+
+| Entry | Primary Mechanism | Status |
+|---|---|---|
+| `INDEX.md` | Local vault index and intake rules | RAW_INTELLIGENCE_COLLECTION |
+| `2026-06-04_daryl_jacob_jump_jockey_profile.md` | Retained-owner jump jockey incentives, yard switching, recovery arcs | RAW_EXTRACTED |
+| `2026-06-04_john_gosden_campaigning_profile.md` | Elite trainer placement, ground/trip management, horse temperament | RAW_EXTRACTED |
+| `2026-06-04_tattersalls_book_one_bloodstock_market.md` | Auction psychology, pedigree economics, vendor/buyer behavior | RAW_EXTRACTED |
+| `2026-06-04_panorama_racing_corruption_regulatory_failure.md` | Insider access, bookmaker/trainer/jockey relationships, regulatory gaps | RAW_EXTRACTED |
+| `2026-06-04_bill_benter_hong_kong_quant_model.md` | Pari-mutuel modelling, crowd inefficiency, value betting at scale | RAW_EXTRACTED |
+| `2026-06-04_modern_punter_market_microstructure.md` | Copycat pricing, liquidity decay, bookmaker restrictions, execution limits | RAW_EXTRACTED |
+| `2026-06-04_betting_discipline_process_mistakes.md` | ROI discipline, selectivity, variance, tilt, sportsbook psychology | RAW_EXTRACTED |
 
 ### Special Day Reports
 

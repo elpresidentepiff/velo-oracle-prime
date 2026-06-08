@@ -1,0 +1,84 @@
+{
+  "date": "2026-05-30",
+  "overall_verdict": "PASS",
+  "sigma": {
+    "races_studied": 35,
+    "predictions_matched": 35,
+    "results_matched": 35,
+    "winners_found": 4,
+    "strike_rate": 0.11428571428571428,
+    "top_1_accuracy": 0.11428571428571428,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.08955698085714284,
+    "calibration_error": 0.11256857142857142,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 31,
+    "calibration_error_count": 0,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "rp_BEV_20260530_15_25",
+        "horse": "Who's Lope",
+        "prob": 0.4324,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rp_BEV_20260530_16_32",
+        "horse": "Vietnorm",
+        "prob": 0.2657,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rp_STR_20260530_19_50",
+        "horse": "Rocks Up Late",
+        "prob": 0.2284,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "ACCEPTABLE_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 35 races today",
+    "shadow_state_after_summary": "Evolved to 43 races",
+    "events_studied": 35,
+    "updates_applied": 0,
+    "duplicates_skipped": 35,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 31,
+      "NONE": 4
+    },
+    "recurring_failure_patterns": [
+      "None detected"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Low"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Continue normal observation"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Continue normal observation"
+  ]
+}

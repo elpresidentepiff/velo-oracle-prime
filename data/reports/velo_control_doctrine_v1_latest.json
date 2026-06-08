@@ -1,0 +1,180 @@
+{
+  "doctrine": "VELO_CONTROL_DOCTRINE_V1",
+  "status": "ACTIVE_CONTROL_REGISTER",
+  "generated_at": "2026-06-04T22:24:14-07:00",
+  "created_from_existing_governance": true,
+  "live_changes_authorized": false,
+  "scoring_changes_made": false,
+  "authority_states": {
+    "LIVE_AUTHORITY": "May affect official production verdicts or official operator-facing live outputs with source truth, evidence basis, rollback path, and operator approval.",
+    "LIVE_CONTEXT": "May appear in live context or explanation, but may not independently override official verdicts.",
+    "PAPER_ONLY": "May produce current-day reads or paper ledgers. No live staking, Betfair orders, or unapproved production mutation.",
+    "SHADOW_ONLY": "May run beside production and write to shadow/evidence ledgers only. No live effect.",
+    "CANDIDATE_ONLY": "Research or mined pattern requiring forward evidence and human review before escalation.",
+    "BLOCKED": "Must not be used until blockers are resolved and operator approval is recorded."
+  },
+  "non_negotiable_rules": [
+    "No hidden auto-promotion.",
+    "No self-editing scoring policy.",
+    "No model replaces the operator.",
+    "No single score without rail/source breakdown.",
+    "No dashboard panel without source truth.",
+    "No AI output without an evidence trace.",
+    "No same-race SP, BSP, final position, result, finish, won, or future-known field in morning models.",
+    "No New Build model input from RPR unless future operator policy explicitly allows it.",
+    "No Newspaper Form, tips, comments, or industry selections blended into Passport/core model features.",
+    "No Telegram betting language, staking directive, or Betfair execution without explicit operator approval.",
+    "No live learning/state mutation from Playbook G or sentient loops.",
+    "No scoring-code change without approved audit and rollback plan."
+  ],
+  "rails": [
+    {
+      "rail": "Old VELO SQPE / active production ensemble",
+      "authority": "LIVE_AUTHORITY",
+      "live_impact": true,
+      "control_verdict": "Existing official lane. Keep under leakage debt watch because old docs flag legacy SP/RPR exposure."
+    },
+    {
+      "rail": "Market Deception Score (MDS)",
+      "authority": "LIVE_CONTEXT",
+      "live_impact": "possible_if_current_profile_weights_it",
+      "control_verdict": "Strong live-context/sidecar signal, not a sovereign override. Any weight change requires prospective evidence and operator approval."
+    },
+    {
+      "rail": "Improvement Score",
+      "authority": "LIVE_CONTEXT_IF_RUNTIME_ACTIVE_ELSE_SHADOW_ONLY",
+      "live_impact": "possible_if_current_profile_weights_it",
+      "control_verdict": "Conflicting older/current docs exist. No new promotion from this doctrine."
+    },
+    {
+      "rail": "Place Probability",
+      "authority": "LIVE_CONTEXT",
+      "live_impact": "possible_if_current_profile_weights_it",
+      "control_verdict": "Support/frame context only unless active ensemble already weights it. No independent authority."
+    },
+    {
+      "rail": "Longshot Score",
+      "authority": "LIVE_CONTEXT_IF_RUNTIME_ACTIVE_ELSE_BLOCKED_FOR_NEW_WEIGHT",
+      "live_impact": "possible_if_current_profile_weights_it",
+      "control_verdict": "Gated/situational only. No expansion until ROI/evidence review is complete."
+    },
+    {
+      "rail": "New Build Core / Passport lane",
+      "authority": "PAPER_ONLY",
+      "live_impact": false,
+      "control_verdict": "Safe current-day read lane. No live verdict replacement and no production promotion."
+    },
+    {
+      "rail": "New Build Intent / Challenger lane",
+      "authority": "PAPER_ONLY_BLOCKED_FOR_LIVE",
+      "live_impact": false,
+      "control_verdict": "May report paper reads. Live promotion blocked until current-card coverage, leakage audit, and forward validation clear."
+    },
+    {
+      "rail": "New Build Decision Policy V1",
+      "authority": "PAPER_ONLY",
+      "live_impact": false,
+      "control_verdict": "Tactical lane labels may be reported for evidence; not live staking authority."
+    },
+    {
+      "rail": "Sigma / results reconciliation",
+      "authority": "LIVE_AUTHORITY_FOR_TRUTH_RECONCILIATION",
+      "live_impact": true,
+      "control_verdict": "Official outcome honesty layer. Does not mutate scoring weights by itself."
+    },
+    {
+      "rail": "Sigma KNN / Bayesian / explanation overlays",
+      "authority": "SHADOW_ONLY",
+      "live_impact": false,
+      "control_verdict": "Evidence and explanation only. No live weighting."
+    },
+    {
+      "rail": "Doctrine Miner / pattern miner",
+      "authority": "CANDIDATE_ONLY",
+      "live_impact": false,
+      "control_verdict": "Generates hypotheses only. Requires human review and forward validation before shadow/paper escalation."
+    },
+    {
+      "rail": "Newspaper / industry selection league",
+      "authority": "SHADOW_ONLY",
+      "live_impact": false,
+      "control_verdict": "Comparison and market-intent study only. Must not feed Passport/core features."
+    },
+    {
+      "rail": "Acca rail",
+      "authority": "SHADOW_ONLY",
+      "live_impact": false,
+      "control_verdict": "No staking authority. May track portfolio logic only in shadow/paper evidence."
+    },
+    {
+      "rail": "Handicap plot rail",
+      "authority": "CANDIDATE_ONLY",
+      "live_impact": false,
+      "control_verdict": "Candidate intelligence layer until a clean evidence ledger exists."
+    },
+    {
+      "rail": "AW Tier A forward watch",
+      "authority": "CANDIDATE_ONLY",
+      "live_impact": false,
+      "control_verdict": "Watchlist/research only until prospective sample and audit pass."
+    },
+    {
+      "rail": "Racing API enrichment",
+      "authority": "SHADOW_ONLY",
+      "live_impact": false,
+      "control_verdict": "Read-only enrichment and forward ledger. Leakage risk remains a promotion blocker."
+    },
+    {
+      "rail": "Playbook G / sentient loop",
+      "authority": "SHADOW_ONLY",
+      "live_impact": false,
+      "control_verdict": "No live mutation. Shadow state only."
+    },
+    {
+      "rail": "Shadow VELO / analog / council loops",
+      "authority": "SHADOW_ONLY",
+      "live_impact": false,
+      "control_verdict": "Critics propose; operator decides. No auto-apply."
+    },
+    {
+      "rail": "Betfair execution",
+      "authority": "BLOCKED",
+      "live_impact": false,
+      "control_verdict": "Live mode remains hard-gated unless operator explicitly unlocks it with risk controls."
+    },
+    {
+      "rail": "Telegram betting directives",
+      "authority": "BLOCKED",
+      "live_impact": false,
+      "control_verdict": "Informational summaries only unless operator explicitly approves betting language and delivery rules."
+    },
+    {
+      "rail": "Staking / execution bridge live mode",
+      "authority": "BLOCKED",
+      "live_impact": false,
+      "control_verdict": "Paper-only until operator approval, evidence gate, and bankroll/risk policy exist."
+    }
+  ],
+  "promotion_gates": {
+    "general_min_races": 300,
+    "general_min_runners": 500,
+    "policy_min_top_pick_lane_decisions": 150,
+    "policy_min_high_confidence_outcomes": 50,
+    "clean_operation_days": 30,
+    "rollback_minutes": 15,
+    "operator_approval_required": true
+  },
+  "source_documents": [
+    "docs/architecture/PHASE_3_GOVERNANCE_PIPELINE.md",
+    "docs/stabilization/MODEL_PROMOTION_GOVERNANCE.md",
+    "docs/engineering/VELO_SYSTEM_FREEZE_V1.md",
+    "docs/engineering/VELO_LEAKAGE_GOVERNANCE_V1.md",
+    "docs/engineering/VELO_PROCESS_CONTROL.md",
+    "docs/engineering/VELO_CONNECTION_TRUTH_PAPER_V1.md",
+    "docs/stabilization/LEARNING_AND_PROMOTION_MAP.md",
+    "docs/evidence/VELO_OPERATING_TRUTH_BOARD_V1.md",
+    "docs/live_state/MASTER_STATE.md",
+    "docs/runtime/DECISION_POLICY_V1.md"
+  ],
+  "interpretation_rule": "When documents conflict, use the stricter authority state until runtime evidence and operator approval settle the conflict."
+}

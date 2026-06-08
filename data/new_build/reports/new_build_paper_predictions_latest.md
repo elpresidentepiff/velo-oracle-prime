@@ -1,431 +1,395 @@
 # New Build Paper Predictions
-Generated: 2026-05-26T08:13:04.087244Z
+Generated: 2026-06-06T03:04:44.228708Z
 
 ## Summary
 - **Classification**: `NEW_BUILD_PAPER_READY_NO_INTENT`
-- **Champion**: `Core_V0_OR_Passport_V1`
+- **Champion**: `Challenger_V1`
 - **Paper predictions created**: `True`
-- **Races**: 56
-- **Runner predictions**: 1417
-- **Passport coverage**: 1210 / 1417 (85.39%)
-- **Missing/unraced horses**: 207
-- **Intent current-card coverage**: 0 / 1417 (0.0%) - `UNAVAILABLE_TODAY`
+- **Races**: 49
+- **Runner predictions**: 826
+- **Passport coverage**: 826 / 826 (100.0%)
+- **Missing/unraced horses**: 0
+- **Intent current-card coverage**: 0 / 826 (0.0%) - `UNAVAILABLE_TODAY`
 - **RPR violations**: 0
+- **Official race-id match**: `False`
 
 ## Median-Filled Champion Features
 | Feature | Runner rows filled |
 |---|---:|
-| `cash_run_flag` | 1417 |
-| `distance_fit_score` | 1417 |
-| `draw_num` | 1347 |
-| `draw_pct` | 1347 |
-| `going_fit_score` | 1417 |
-| `jockey_switch_intent` | 1417 |
-| `official_rating` | 707 |
-| `pp_avg_sp_last5` | 242 |
-| `pp_career_runs` | 207 |
-| `pp_days_since_last` | 242 |
-| `pp_layoff` | 242 |
-| `pp_or_change_3` | 375 |
-| `pp_place_rate` | 207 |
-| `pp_win_rate` | 207 |
-| `quiet_run_score` | 1417 |
-| `release_window_score` | 1417 |
-| `setup_run_flag` | 1417 |
-| `trainer_timing_score` | 1417 |
-| `wgt_lbs` | 81 |
+| `cash_run_flag` | 826 |
+| `curr_or_minus_best_or` | 826 |
+| `curr_or_minus_last_win_or` | 826 |
+| `distance_fit_score` | 826 |
+| `draw_num` | 826 |
+| `draw_pct` | 826 |
+| `going_fit_score` | 826 |
+| `intent_class_drop_vs_best` | 826 |
+| `intent_course_win_history` | 826 |
+| `intent_going_match` | 826 |
+| `intent_run_after_break` | 826 |
+| `intent_sp_shortening` | 826 |
+| `intent_top3_last6` | 826 |
+| `intent_trip_match` | 826 |
+| `intent_wins_last10` | 826 |
+| `jockey_switch_intent` | 826 |
+| `mark_compression_score` | 826 |
+| `odds_resilience_score` | 826 |
+| `official_rating` | 180 |
+| `pp_avg_sp_last5` | 58 |
+| `pp_days_since_last` | 57 |
+| `pp_layoff` | 57 |
+| `pp_or_change_3` | 105 |
+| `quiet_run_score` | 826 |
+| `release_window_score` | 826 |
+| `runs_since_mkt_support` | 826 |
+| `runs_since_place` | 826 |
+| `runs_since_win` | 826 |
+| `setup_run_flag` | 826 |
+| `trainer_timing_score` | 826 |
+| `wgt_lbs` | 801 |
 
 ## Race Analyst Packet
 
-### 2026-05-26 Leicester 2026-05-26T14:10:00+01:00
-- **Race**: British EBF Maiden Stakes (GBB/IRE Incentive Race)
-- **Top 3 paper**: Victory Gold (0.237), Captaincy (0.094), Rattenbury (0.093)
-- **Strongest passport horse**: Victory Gold
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 9 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-26 Redcar 2026-05-26T14:20:00+01:00
-- **Race**: racingtv.com EBF Restricted Maiden Fillies' Stakes (Bands B, C And D) (EBF Qualifier) (GBB Race)
-- **Top 3 paper**: Bella Lucia (0.208), Freedom Flame (0.185), Nour (0.107)
-- **Strongest passport horse**: Bella Lucia
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 5 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-26 Redcar 2026-05-26T14:50:00+01:00
-- **Race**: Watch Irish Racing On Racing TV Restricted Maiden Stakes (Bands A, B, C and D) (GBB Race)
-- **Top 3 paper**: Hoseki (0.258), Cape Fear (0.207), Champion Lawman (0.198)
-- **Strongest passport horse**: Cape Fear
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 1 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-26 Redcar 2026-05-26T15:20:00+01:00
-- **Race**: Celebrate The Life Of Joe Newton Handicap
-- **Top 3 paper**: Gaelic Approach (0.348), Fairydale (0.308), Wicksey (0.300)
-- **Strongest passport horse**: Gaelic Approach
+### 2026-06-06 Doncaster 2026-06-06T13:20:00+01:00
+- **Race**: Apres Village Christmas At Doncaster Handicap
+- **Top 3 paper**: Moonhall Lass (0.052), Candy Warhol (0.051), Mu Mu Land (0.044)
+- **Strongest passport horse**: Instant Bond
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-26 Redcar 2026-05-26T15:50:00+01:00
-- **Race**: Join Racing TV Now Handicap
-- **Top 3 paper**: Desert Shadow (0.208), Classic Encounter (0.188), Nyman (0.170)
-- **Strongest passport horse**: Cosmos Raj
+### 2026-06-06 Epsom 2026-06-06T13:30:00+01:00
+- **Race**: Betfred Tattenham Corner Stakes (Group 3) (Formerly The John Of Gaunt Stakes)
+- **Top 3 paper**: Alcantor (0.111), Copacabana Sands (0.087), Never So Brave (0.079)
+- **Strongest passport horse**: Never So Brave
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-26 Redcar 2026-05-26T16:20:00+01:00
-- **Race**: Racing TV Profits Returned To Racing Handicap
-- **Top 3 paper**: Territorial Star (0.114), Long Shot (0.097), Resdev Time (0.092)
-- **Strongest passport horse**: Territorial Star
+### 2026-06-06 Musselburgh 2026-06-06T13:40:00+01:00
+- **Race**: Edinburgh Gin Rhubarb And Ginger Handicap
+- **Top 3 paper**: Classy Clarets (0.108), Fear And Fast (0.105), Wee Mary (0.098)
+- **Strongest passport horse**: Classy Clarets
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-26 Redcar 2026-05-26T16:50:00+01:00
-- **Race**: Watch Racing TV In Stunning HD Fillies' Handicap
-- **Top 3 paper**: Auntie Jo (0.125), Doralee (0.114), Jeany May (0.107)
-- **Strongest passport horse**: Lady Bouquet
+### 2026-06-06 Worcester 2026-06-06T13:45:00+01:00
+- **Race**: Storm Windows Celebrating 25 Years Handicap Chase (Arc Summer Chase Series Qualifier)
+- **Top 3 paper**: Henry Box Brown (0.084), Les's Destiny Star (0.055), Redbridge Rambler (0.050)
+- **Strongest passport horse**: The Flying Poet
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-26 Redcar 2026-05-26T17:23:00+01:00
-- **Race**: Watch Race Replays On Racing TV Amateur Jockeys' Handicap
-- **Top 3 paper**: Soul Seeker (0.138), Andalprofit (0.129), Dream Deal (0.118)
-- **Strongest passport horse**: Fircombe Hall
+### 2026-06-06 Doncaster 2026-06-06T13:55:00+01:00
+- **Race**: British Stallion Studs EBF Maiden Fillies' Stakes (GBB Race)
+- **Top 3 paper**: Rhodes Runner (0.112), Jazz Queen (0.103), Cash Cove (0.078)
+- **Strongest passport horse**: Heldobeldo
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-27 Hamilton 2026-05-27T14:05:00+01:00
-- **Race**: Wyvis Roofing EBF Maiden Stakes (Hamilton Park 2yo Series Qualifier) (GBB Race)
-- **Top 3 paper**: Flight Signal (0.241), Or Another (0.231), North Star Kodi (0.136)
-- **Strongest passport horse**: Flight Signal
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 8 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-27 Hamilton 2026-05-27T14:35:00+01:00
-- **Race**: One Stop Roofing Supplies Ltd Restricted Novice Stakes (Bands C And D) (GBB Race)
-- **Top 3 paper**: Rogue Defence (0.180), Lady Magu (0.142), Spiritoftheblues (0.132)
-- **Strongest passport horse**: Rogue Defence
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 3 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-27 Hamilton 2026-05-27T15:05:00+01:00
-- **Race**: ICB (Water Proofing) Handicap
-- **Top 3 paper**: Firewalker (0.142), Velvet Rhythm (0.122), Return Of The Gods (0.109)
-- **Strongest passport horse**: Confide In Me
+### 2026-06-06 Epsom 2026-06-06T14:05:00+01:00
+- **Race**: Princess Elizabeth Stakes (Group 3)
+- **Top 3 paper**: Breckenbrough (0.083), Alobayyah (0.081), Princess Child (0.076)
+- **Strongest passport horse**: Pina Sonata
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-27 Hamilton 2026-05-27T15:35:00+01:00
-- **Race**: Cupa Slates Handicap (GBBPlus Race)
-- **Top 3 paper**: Gentle Warrior (0.133), Velvet Whisper (0.114), Raulin (0.105)
-- **Strongest passport horse**: Gentle Warrior
+### 2026-06-06 Musselburgh 2026-06-06T14:15:00+01:00
+- **Race**: Edinburgh Gin Hugo Spritz Selling Stakes
+- **Top 3 paper**: Needin' U (0.106), Havana Gift (0.099), Tree Wizard (0.095)
+- **Strongest passport horse**: Lairy Mary
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-27 Hamilton 2026-05-27T16:05:00+01:00
-- **Race**: David Hardie Engineering Ltd Handicap
-- **Top 3 paper**: Reigning Profit (0.144), Binadham (0.100), Harb (0.090)
-- **Strongest passport horse**: Harb
+### 2026-06-06 Worcester 2026-06-06T14:20:00+01:00
+- **Race**: FBC Manby Bowdler Handicap Chase (Arc Summer Chase Series Qualifier)
+- **Top 3 paper**: Culligran (0.086), La Quarite (0.067), Noble Recall (0.060)
+- **Strongest passport horse**: Culligran
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-27 Hamilton 2026-05-27T16:35:00+01:00
-- **Race**: Fixing Point Cladding Fasteners Handicap
-- **Top 3 paper**: Blue Mantle (0.170), Welbury (0.130), Saxophonist (0.107)
-- **Strongest passport horse**: Welbury
+### 2026-06-06 Doncaster 2026-06-06T14:30:00+01:00
+- **Race**: Dysons And TPI Taping And Jointing Ltd Handicap
+- **Top 3 paper**: Pixie Diva (0.062), Michaela's Boy (0.057), Rose Of Honour (0.051)
+- **Strongest passport horse**: Rose Of Honour
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-05-27 Hamilton 2026-05-27T17:05:00+01:00
-- **Race**: Compass Roofing Handicap
-- **Top 3 paper**: Military Leader (0.141), Starliner (0.134), Donna Nook (0.109)
-- **Strongest passport horse**: Yaaser
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-28 Fairyhouse 2026-05-28T14:12:00+01:00
-- **Race**: Royal County Optional Claiming Race
-- **Top 3 paper**: Profit Surge (0.158), North Ocean (0.154), Gloriously Glam (0.125)
-- **Strongest passport horse**: Profit Surge
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-28 Fairyhouse 2026-05-28T14:42:00+01:00
-- **Race**: Fiver Fridays At Fairyhouse June 5th And 12th Handicap
-- **Top 3 paper**: Fate's Gambit (0.085), Real Encounter (0.083), Gonna Be Golden (0.080)
-- **Strongest passport horse**: Stone Bear
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-28 Fairyhouse 2026-05-28T15:17:00+01:00
-- **Race**: Irish EBF Median Sires Series Race (IRE Incentive Race)
-- **Top 3 paper**: Lady Patrona (0.139), Otherworldly (0.137), South Dakota (0.121)
-- **Strongest passport horse**: Tatianna
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 4 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-28 Fairyhouse 2026-05-28T15:47:00+01:00
-- **Race**: 5 Euro General Admission Next Friday Handicap
-- **Top 3 paper**: I'm Spartacus (0.089), Oxford Circus (0.082), Whatswrongnow (0.069)
-- **Strongest passport horse**: Happy Henry
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-28 Fairyhouse 2026-05-28T16:17:00+01:00
-- **Race**: Book Your Hospitality At Fairyhouse.ie Handicap
-- **Top 3 paper**: Coincidental Glory (0.069), Elly Bay (0.063), Beau Army (0.055)
-- **Strongest passport horse**: Royal County Glory
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-28 Fairyhouse 2026-05-28T16:52:00+01:00
-- **Race**: Racing Again Next Friday Apprentice Handicap
-- **Top 3 paper**: Harana (0.105), Lauderdale King (0.072), Tero d'Rosa (0.060)
-- **Strongest passport horse**: Tero d'Rosa
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-28 Fairyhouse 2026-05-28T17:27:00+01:00
-- **Race**: Irish Stallion Farms EBF Fillies Maiden
-- **Top 3 paper**: Vauntingly (0.146), Guardian Of Realm (0.108), Mai Dahlia (0.106)
-- **Strongest passport horse**: Vauntingly
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 4 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-29 Chepstow 2026-05-29T14:00:00+01:00
-- **Race**: DragonBet Proud Sponsors Of Chepstow Racecourse Apprentice Handicap
-- **Top 3 paper**: Oasis Sunrise (0.191), Beaune (0.165), Electric Bass (0.152)
-- **Strongest passport horse**: Beaune
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-29 Chepstow 2026-05-29T14:30:00+01:00
-- **Race**: DragonBet - Oncourse And Online Handicap
-- **Top 3 paper**: Worlington (0.086), Thomas Picton (0.072), Action Reaction (0.071)
-- **Strongest passport horse**: Mohmentous
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-29 Chepstow 2026-05-29T15:00:00+01:00
-- **Race**: Pricing By Real Bookmakers At DragonBet Novice Stakes (GBB/GBBPlus Race)
-- **Top 3 paper**: Glory Road (0.130), Gone By (0.101), El Nay (0.097)
-- **Strongest passport horse**: El Nay
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 4 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-29 Chepstow 2026-05-29T15:30:00+01:00
-- **Race**: DragonBet Born From The Betting Ring Handicap
-- **Top 3 paper**: So Smart (0.213), Cayman Tai (0.199), Tuscan Point (0.188)
-- **Strongest passport horse**: Tuscan Point
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-29 Chepstow 2026-05-29T16:05:00+01:00
-- **Race**: Best Odds Guaranteed On dragonbet.co.uk Handicap (Chepstow Mile Series Qualifier)
-- **Top 3 paper**: Thanos (0.121), Smoker Bellamy (0.089), Mooj (0.086)
-- **Strongest passport horse**: Thanos
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-05-29 Chepstow 2026-05-29T16:40:00+01:00
-- **Race**: DragonBet: Supporting British Racing Maiden Stakes (GBB Race)
-- **Top 3 paper**: Erudition (0.140), Distant Moon (0.133), Law Court (0.085)
-- **Strongest passport horse**: Erudition
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 4 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-05-29 Chepstow 2026-05-29T17:10:00+01:00
-- **Race**: DragonBet, Top Prices On Top Markets Handicap
-- **Top 3 paper**: Too Much Trevor (0.152), Romanovich (0.150), Sub Thirteen (0.119)
-- **Strongest passport horse**: Vape
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-01 Gowran Park 2026-06-01T15:09:00+01:00
-- **Race**: Irish Stallion Farms EBF Gowran Classic
-- **Top 3 paper**: Handshake (0.155), Green Citation (0.098), Dark Lucinda (0.085)
-- **Strongest passport horse**: Handshake
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-05 Epsom 2026-06-05T16:00:00+01:00
-- **Race**: Betfred Oaks (Group 1) (Fillies)
-- **Top 3 paper**: Drop Dead Gorgeous (0.197), Precise (0.184), Earth Shot (0.172)
-- **Strongest passport horse**: Precise
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-06 Epsom 2026-06-06T16:00:00+01:00
-- **Race**: Betfred Derby (Group 1) (No Geldings)
-- **Top 3 paper**: Saxon Street (0.139), Pierre Bonnard (0.105), Benvenuto Cellini (0.104)
-- **Strongest passport horse**: Item
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-11 Leopardstown 2026-06-11T19:00:00+01:00
-- **Race**: Ballycorus Stakes (Group 3)
-- **Top 3 paper**: Copacabana Sands (0.096), Forty Years On (0.095), Poet Master (0.091)
-- **Strongest passport horse**: Catalina Delcarpio
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-14 Cork 2026-06-14T16:48:00+01:00
-- **Race**: Darley Munster Oaks Stakes (Group 3) (Fillies & Mares)
-- **Top 3 paper**: Finalise (0.162), Time Loop (0.112), Revoir (0.105)
-- **Strongest passport horse**: Moody
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-16 Ascot 2026-06-16T14:30:00+01:00
-- **Race**: Queen Anne Stakes (Group 1)
-- **Top 3 paper**: Minnie Hauk (0.131), Notable Speech (0.078), Alcantor (0.073)
-- **Strongest passport horse**: Opera Ballo
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-16 Ascot 2026-06-16T15:40:00+01:00
-- **Race**: King Charles III Stakes (Group 1)
-- **Top 3 paper**: Almeraq (0.104), Shareholder (0.092), Shagraan (0.075)
-- **Strongest passport horse**: Shareholder
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: Intent unavailable for current-card rows
-
-### 2026-06-16 Ascot 2026-06-16T16:20:00+01:00
-- **Race**: St James's Palace Stakes (Group 1)
-- **Top 3 paper**: Extremely Zain (0.169), Gstaad (0.134), Constitution River (0.103)
-- **Strongest passport horse**: Bow Echo
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 3 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-06-17 Ascot 2026-06-17T16:20:00+01:00
-- **Race**: Prince Of Wales's Stakes (Group 1)
-- **Top 3 paper**: Calandagan (0.207), Minnie Hauk (0.157), Forever Young (0.138)
+### 2026-06-06 Epsom 2026-06-06T14:40:00+01:00
+- **Race**: Coolmore Coronation Cup (Group 1)
+- **Top 3 paper**: Calandagan (0.248), Jan Brueghel (0.219), Illinois (0.201)
 - **Strongest passport horse**: Calandagan
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-06-17 Ascot 2026-06-17T17:00:00+01:00
-- **Race**: Royal Hunt Cup (Heritage Handicap)
-- **Top 3 paper**: Skipper (0.061), English Oak (0.047), Mythical Guest (0.047)
-- **Strongest passport horse**: Skipper
+### 2026-06-06 Musselburgh 2026-06-06T14:50:00+01:00
+- **Race**: Edinburgh Gin Classic Handicap
+- **Top 3 paper**: Inspired (0.080), Son (0.073), Modern Times (0.071)
+- **Strongest passport horse**: Zubaru
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-06-18 Ascot 2026-06-18T16:15:00+01:00
-- **Race**: Gold Cup (Group 1)
-- **Top 3 paper**: Scandinavia (0.182), Jan Brueghel (0.120), Columbus (0.115)
-- **Strongest passport horse**: Trawlerman
+### 2026-06-06 Worcester 2026-06-06T14:55:00+01:00
+- **Race**: Manby Not Mandy Mares' Handicap Chase (Arc Summer Chase Series Qualifier) (GBB Race)
+- **Top 3 paper**: Culligran (0.167), Laffer Curve (0.131), A Little Something (0.103)
+- **Strongest passport horse**: She Is For Me Boys
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-06-19 Ascot 2026-06-19T15:05:00+01:00
-- **Race**: Commonwealth Cup (Group 1)
-- **Top 3 paper**: Charles Darwin (0.143), True Love (0.136), Gstaad (0.132)
-- **Strongest passport horse**: Charles Darwin
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 1 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-06-19 Ascot 2026-06-19T16:20:00+01:00
-- **Race**: Coronation Stakes (Group 1)
-- **Top 3 paper**: True Love (0.141), Drop Dead Gorgeous (0.139), Precise (0.125)
-- **Strongest passport horse**: Zanthos
+### 2026-06-06 Doncaster 2026-06-06T15:05:00+01:00
+- **Race**: Solar Xpress Handicap (GBBPlus Race)
+- **Top 3 paper**: Hell Yeah He Did (0.113), Siam Ruby (0.108), Lopeo (0.105)
+- **Strongest passport horse**: Study Of Words
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-06-20 Ascot 2026-06-20T15:40:00+01:00
-- **Race**: Queen Elizabeth II Jubilee Stakes (Group 1)
-- **Top 3 paper**: Lazzat (0.094), Soldier's Tree (0.072), Shareholder (0.072)
-- **Strongest passport horse**: Shareholder
+### 2026-06-06 Epsom 2026-06-06T15:15:00+01:00
+- **Race**: Betfred 'Dash' Handicap (Heritage Handicap)
+- **Top 3 paper**: Arklow Lad (0.057), Michaela's Boy (0.055), Kinswoman (0.053)
+- **Strongest passport horse**: Kinswoman
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-06-20 Ascot 2026-06-20T17:00:00+01:00
-- **Race**: Wokingham Stakes
-- **Top 3 paper**: Fort Vega (0.081), The Highway Rat (0.072), City House (0.062)
-- **Strongest passport horse**: Trefor
+### 2026-06-06 Musselburgh 2026-06-06T15:28:00+01:00
+- **Race**: Edinburgh Gin Queen Of Scots British EBF Fillies' Stakes (Listed Race)
+- **Top 3 paper**: Copacabana Sands (0.077), Maeva (0.066), La Brodeuse (0.066)
+- **Strongest passport horse**: Secret Of Life
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-06-27 Curragh 2026-06-27T14:15:00+01:00
-- **Race**: Airlie Stud Stakes (Group 2) (Fillies)
-- **Top 3 paper**: Minzelle (0.175), Big Negotiator (0.166), Wild Blossom (0.155)
-- **Strongest passport horse**: Victorious
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 16 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-06-27 Curragh 2026-06-27T15:20:00+01:00
-- **Race**: Paddy Power Pretty Polly Stakes (Group 1) (Fillies & Mares)
-- **Top 3 paper**: Friendly Soul (0.150), Kalpana (0.123), Estrange (0.122)
-- **Strongest passport horse**: Estrange
+### 2026-06-06 Worcester 2026-06-06T15:33:00+01:00
+- **Race**: Law Done Differently Open National Hunt Flat Race (Category 1 Elimination) (GBB Race)
+- **Top 3 paper**: C'Est Pour Moi (0.094), Giant's Way (0.077), Storm Dudley (0.077)
+- **Strongest passport horse**: C'Est Pour Moi
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-06-28 Curragh 2026-06-28T16:35:00+01:00
-- **Race**: Dubai Duty Free Irish Derby (Group 1) (No Geldings)
-- **Top 3 paper**: Handshake (0.156), Action (0.102), Montreal (0.102)
-- **Strongest passport horse**: Constitution River
-- **Strongest intent candidate**: unavailable today
-- **Warnings**: 1 missing/unraced passport rows; Intent unavailable for current-card rows
-
-### 2026-07-04 Sandown 2026-07-04T15:35:00+01:00
-- **Race**: Coral-Eclipse (Group 1)
-- **Top 3 paper**: Calandagan (0.202), Minnie Hauk (0.156), Friendly Soul (0.130)
-- **Strongest passport horse**: Opera Ballo
+### 2026-06-06 Doncaster 2026-06-06T15:45:00+01:00
+- **Race**: British Stallion Studs EBF Novice Stakes (GBB Race)
+- **Top 3 paper**: Quadrillion (0.110), Shipbourne (0.091), Quartermaster (0.070)
+- **Strongest passport horse**: Shipbourne
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-07-11 Newmarket (July) 2026-07-11T16:35:00+01:00
-- **Race**: Al Basti Equiworld, Dubai July Cup Stakes (Group 1)
-- **Top 3 paper**: Charles Darwin (0.143), Almeraq (0.104), Double Rush (0.104)
-- **Strongest passport horse**: Charles Darwin
+### 2026-06-06 Epsom 2026-06-06T16:00:00+01:00
+- **Race**: Betfred Derby (Group 1)
+- **Top 3 paper**: Pierre Bonnard (0.098), Action (0.097), Causeway (0.081)
+- **Strongest passport horse**: Item
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 
-### 2026-07-18 Curragh 2026-07-18T00:10:00+01:00
-- **Race**: Juddmonte Irish Oaks (Group 1) (Fillies)
-- **Top 3 paper**: Drop Dead Gorgeous (0.140), Blanc De Blanc (0.092), On Message (0.089)
-- **Strongest passport horse**: Blanc De Blanc
+### 2026-06-06 Musselburgh 2026-06-06T16:10:00+01:00
+- **Race**: Edinburgh Cup Handicap
+- **Top 3 paper**: Pandemonium (0.128), Strength Of Spirit (0.113), Morven (0.109)
+- **Strongest passport horse**: Haayimm
 - **Strongest intent candidate**: unavailable today
-- **Warnings**: 1 missing/unraced passport rows; Intent unavailable for current-card rows
+- **Warnings**: Intent unavailable for current-card rows
 
-### 2026-07-18 Newbury 2026-07-18T15:30:00+01:00
-- **Race**: Weatherbys Super Sprint Stakes (GBB Race)
-- **Top 3 paper**: Dreamlover (0.103), Wait Geordie (0.082), Niewiadoma (0.063)
-- **Strongest passport horse**: Wait Geordie
+### 2026-06-06 Worcester 2026-06-06T16:15:00+01:00
+- **Race**: ~Bepartofit Novices' Hurdle (Arc Summer Novices' Brush Hurdle Series Qualifier) (GBB Race)
+- **Top 3 paper**: Starshine Legend (0.081), Little Lady Rock (0.061), Pioneer Pete (0.056)
+- **Strongest passport horse**: Fiskardo
 - **Strongest intent candidate**: unavailable today
-- **Warnings**: 24 missing/unraced passport rows; Intent unavailable for current-card rows
+- **Warnings**: Intent unavailable for current-card rows
 
-### 2026-08-20 York 2026-08-20T14:25:00+01:00
-- **Race**: Harry's Half Million By Goffs (GBB Race)
-- **Top 3 paper**: Where Love Lives (0.145), Green Titan (0.112), Wait Geordie (0.082)
-- **Strongest passport horse**: Where Love Lives
+### 2026-06-06 Doncaster 2026-06-06T16:25:00+01:00
+- **Race**: Summer Saturday Series At Doncaster Racecourse Handicap
+- **Top 3 paper**: Golden Redemption (0.080), Apotheosis (0.068), Akkadian Thunder (0.065)
+- **Strongest passport horse**: Forty Years On
 - **Strongest intent candidate**: unavailable today
-- **Warnings**: 29 missing/unraced passport rows; Intent unavailable for current-card rows
+- **Warnings**: Intent unavailable for current-card rows
 
-### 2026-08-22 Newmarket (July) 2026-08-22T15:10:00+01:00
-- **Race**: £200,000 Tattersalls Somerville Auction Stakes (GBB Race)
-- **Top 3 paper**: A Bear Affair (0.130), Dreamlover (0.097), Capilano (0.088)
-- **Strongest passport horse**: A Bear Affair
+### 2026-06-06 Hexham 2026-06-06T16:30:00+01:00
+- **Race**: Marjorie Thompsett Auntie Marj Memorial Amateur Jockeys' Handicap Hurdle
+- **Top 3 paper**: Traveling Soldier (0.091), Wakey Wakey Man (0.075), My My My Delilah (0.063)
+- **Strongest passport horse**: Traveling Soldier
 - **Strongest intent candidate**: unavailable today
-- **Warnings**: 29 missing/unraced passport rows; Intent unavailable for current-card rows
+- **Warnings**: Intent unavailable for current-card rows
 
-### 2026-09-10 Doncaster 2026-09-10T13:50:00+01:00
-- **Race**: Weatherbys Scientific £300,000 2-Y-O Stakes (GBB Race)
-- **Top 3 paper**: Dreamlover (0.098), A Bear Affair (0.092), Blue Skies Above (0.068)
-- **Strongest passport horse**: A Bear Affair
+### 2026-06-06 Epsom 2026-06-06T16:40:00+01:00
+- **Race**: Cherryfield (Croydon) Lester Piggott Handicap (GBBPlus Race)
+- **Top 3 paper**: Be The Standard (0.122), York Tower (0.110), Silver State (0.107)
+- **Strongest passport horse**: Hell Yeah He Did
 - **Strongest intent candidate**: unavailable today
-- **Warnings**: 31 missing/unraced passport rows; Intent unavailable for current-card rows
+- **Warnings**: Intent unavailable for current-card rows
 
-### 2026-10-03 Newmarket 2026-10-03T14:05:00+01:00
-- **Race**: £200,000 Tattersalls October Auction Stakes (GBB Race)
-- **Top 3 paper**: A Bear Affair (0.116), Dreamlover (0.095), Capilano (0.085)
-- **Strongest passport horse**: A Bear Affair
+### 2026-06-06 Musselburgh 2026-06-06T16:45:00+01:00
+- **Race**: Edinburgh Gin Seaside Holyrood Handicap
+- **Top 3 paper**: Dandy Breeze (0.124), Mighty Magnus (0.118), Major Neigh Sayer (0.112)
+- **Strongest passport horse**: Kind Touch
 - **Strongest intent candidate**: unavailable today
-- **Warnings**: 30 missing/unraced passport rows; Intent unavailable for current-card rows
+- **Warnings**: Intent unavailable for current-card rows
 
-### 2026-10-04 Longchamp 2026-10-04T15:05:00+01:00
-- **Race**: Qatar Prix de l'Arc de Triomphe (Group 1) (3yo+ No Geldings) (Grande Course) (Turf)
-- **Top 3 paper**: Forever Young (0.148), Minnie Hauk (0.132), Saddadd (0.117)
-- **Strongest passport horse**: Gethin
+### 2026-06-06 Worcester 2026-06-06T16:50:00+01:00
+- **Race**: Law Without The Horsing Around Handicap Hurdle
+- **Top 3 paper**: Dream Diamond (0.075), Castle Ivers (0.069), Continuance (0.065)
+- **Strongest passport horse**: Trust House
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Doncaster 2026-06-06T17:00:00+01:00
+- **Race**: attheraces.com Handicap
+- **Top 3 paper**: Super Hit (0.069), Volendam (0.063), Imperial Guard (0.059)
+- **Strongest passport horse**: Amelia's Joy
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Hexham 2026-06-06T17:05:00+01:00
+- **Race**: Most Important 3-Year-Old Race Today Juvenile Hurdle (GBB Race)
+- **Top 3 paper**: Sudbury Hill (0.212), Mount Eden (0.135), Tiny Riot (0.100)
+- **Strongest passport horse**: Sudbury Hill
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Musselburgh 2026-06-06T17:15:00+01:00
+- **Race**: Edinburgh Gin Cannonball Handicap
+- **Top 3 paper**: Uncle Liam (0.083), Pebble Dash (0.070), Samra Star (0.069)
+- **Strongest passport horse**: Monhammer
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Epsom 2026-06-06T17:20:00+01:00
+- **Race**: HKJC World Pool Northern Dancer Handicap (GBBPlus Race)
+- **Top 3 paper**: Fierce Fortitude (0.067), Bulletin (0.067), Regal Ulixes (0.066)
+- **Strongest passport horse**: Fierce Fortitude
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Worcester 2026-06-06T17:25:00+01:00
+- **Race**: Give Us A Cheer Handicap Hurdle
+- **Top 3 paper**: Peter's Last Deal (0.067), Fairlawn Skipper (0.064), Havefunontherun (0.059)
+- **Strongest passport horse**: Prince De Juilley
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Lingfield 2026-06-06T17:35:00+01:00
+- **Race**: attheraces.com/marketmovers Handicap
+- **Top 3 paper**: Amancio (0.119), Sansanetti (0.105), A Major Payne (0.098)
+- **Strongest passport horse**: King's Hand
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Hexham 2026-06-06T17:40:00+01:00
+- **Race**: Marrill Group Stamping Futures Handicap Chase
+- **Top 3 paper**: Am Still Here (0.092), Out On Her Own (0.077), Laffer Curve (0.077)
+- **Strongest passport horse**: Am Still Here
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Chepstow 2026-06-06T17:45:00+01:00
+- **Race**: Michael Maine Memorial Cup Handicap
+- **Top 3 paper**: Call Time (0.103), Son Of Astar (0.095), Macarone (0.092)
+- **Strongest passport horse**: So Smart
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Epsom 2026-06-06T17:55:00+01:00
+- **Race**: JRA Tokyo Trophy Handicap
+- **Top 3 paper**: Fine Interview (0.069), Winged Messenger (0.049), Golden Long (0.047)
+- **Strongest passport horse**: Fine Interview
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Lingfield 2026-06-06T18:05:00+01:00
+- **Race**: Buy A Share At daretodreamracing.co.uk Handicap
+- **Top 3 paper**: Armstrong (0.105), Bergamo Gold (0.101), Sovereign Bright (0.095)
+- **Strongest passport horse**: Royal Bodyguard
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Hexham 2026-06-06T18:10:00+01:00
+- **Race**: Hexham Racecourse Holiday Home & Caravan Park Handicap Chase (GBB Race)
+- **Top 3 paper**: Pike Road (0.074), The Flying Poet (0.060), Sir Carnegie (0.055)
+- **Strongest passport horse**: The Flying Poet
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Chepstow 2026-06-06T18:20:00+01:00
+- **Race**: Chepstow Centenary Raceday 9th August / EBF Restricted Maiden Fillies' Stakes (EBF Qualifier) (GBB)
+- **Top 3 paper**: My Maria (0.088), Beautiful Rainbow (0.079), Penny Capri (0.074)
+- **Strongest passport horse**: Resemblance
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Lingfield 2026-06-06T18:35:00+01:00
+- **Race**: Free Bets On attheraces.com Restricted Maiden Stakes (Bands C And D) (GBB Race)
+- **Top 3 paper**: Lady Magu (0.096), Adalo (0.074), Zabeel Small (0.074)
+- **Strongest passport horse**: Cold Fish
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Hexham 2026-06-06T18:43:00+01:00
+- **Race**: ogledigital.co.uk Google Ads Tailed Off Too? Handicap Hurdle
+- **Top 3 paper**: Continuance (0.065), Freddy Robinson (0.062), Trust House (0.059)
+- **Strongest passport horse**: Two Auld Pals
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Chepstow 2026-06-06T18:53:00+01:00
+- **Race**: DragonBet - Oncourse And Online Handicap
+- **Top 3 paper**: You'll Think Of Me (0.086), Aigeas (0.075), Cool Molly (0.061)
+- **Strongest passport horse**: Angel Gabriel
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Lingfield 2026-06-06T19:05:00+01:00
+- **Race**: Free Tips On attheraces.com Restricted Maiden Stakes (Bands C And D) (GBB Race)
+- **Top 3 paper**: Dovecote (0.066), Ma Leila (0.060), Big Shot Veto (0.057)
+- **Strongest passport horse**: Show Me Gold
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Hexham 2026-06-06T19:13:00+01:00
+- **Race**: Tricia Hughes Memorial Handicap Hurdle
+- **Top 3 paper**: Eaton Anne (0.064), Abbey Scope (0.061), Pike Road (0.059)
+- **Strongest passport horse**: Dinons
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Chepstow 2026-06-06T19:25:00+01:00
+- **Race**: 'Secureit Supports Chepstow Racecourse' Handicap
+- **Top 3 paper**: Aspull (0.076), Supreme King (0.066), Kisskodi (0.064)
+- **Strongest passport horse**: Connie's Rose
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Lingfield 2026-06-06T19:40:00+01:00
+- **Race**: Eikon Helping Young People In Surrey Handicap
+- **Top 3 paper**: Em Four (0.093), Charlie Mason (0.076), Change Sings (0.076)
+- **Strongest passport horse**: Zubaru
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Chepstow 2026-06-06T19:55:00+01:00
+- **Race**: DragonBet Born From The Betting Ring Handicap (Chepstow Mile Series Qualifier)
+- **Top 3 paper**: Charencey (0.066), Simba's Gift (0.060), Judge Frank (0.054)
+- **Strongest passport horse**: King Of The Dance
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Lingfield 2026-06-06T20:10:00+01:00
+- **Race**: Sky Sports Racing Virgin 512 Handicap
+- **Top 3 paper**: Maury (0.058), English Lady (0.057), Dayman (0.057)
+- **Strongest passport horse**: No Gain
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Chepstow 2026-06-06T20:25:00+01:00
+- **Race**: Best Odds Guaranteed At dragonbet.co.uk Handicap
+- **Top 3 paper**: Mister McGregor (0.068), Moonhall Lass (0.062), Just Jump (0.058)
+- **Strongest passport horse**: Too Much Trevor
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Lingfield 2026-06-06T20:40:00+01:00
+- **Race**: Free Race Replays On attheraces.com Handicap
+- **Top 3 paper**: Zoustar Dreams (0.192), Mister Moet (0.144), Rosieisme Darling (0.129)
+- **Strongest passport horse**: Mister Moet
+- **Strongest intent candidate**: unavailable today
+- **Warnings**: Intent unavailable for current-card rows
+
+### 2026-06-06 Chepstow 2026-06-06T21:00:00+01:00
+- **Race**: 'SecureIT Security And Fire Protection' Handicap
+- **Top 3 paper**: Electric Bass (0.105), Rosco Rogers (0.100), Nuptown Girl (0.080)
+- **Strongest passport horse**: Electric Bass
 - **Strongest intent candidate**: unavailable today
 - **Warnings**: Intent unavailable for current-card rows
 

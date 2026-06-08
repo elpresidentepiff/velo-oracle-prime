@@ -64,7 +64,7 @@ def q1_service_b(db) -> str:
     """Did Service B run and finish?"""
     try:
         rows = (db.table("pipeline_runs")
-                .select("service_name, status, source_date, races_scored, runners_scored, started_at, completed_at, error_message")
+                .select("service_name, status, source_date, races_processed, runners_processed, started_at, finished_at, error_message")
                 .eq("service_name", "velo-prime-scoring")
                 .gte("started_at", _window())
                 .order("started_at", desc=True)
@@ -75,8 +75,8 @@ def q1_service_b(db) -> str:
         r = rows[0]
         status = r.get("status", "?").upper()
         date = r.get("source_date", "?")
-        races = r.get("races_scored") or "?"
-        runners = r.get("runners_scored") or "?"
+        races = r.get("races_processed") or "?"
+        runners = r.get("runners_processed") or "?"
         err = f" | ⚠ {r['error_message'][:60]}" if r.get("error_message") else ""
         icon = "✓" if status == "COMPLETED" else ("⚠" if status == "PARTIAL" else "✗")
         return f"SERVICE B: {icon} {status} | {date} | {races} races | {runners} runners{err}"
@@ -113,8 +113,8 @@ def q2_verdicts(db) -> str:
 def q3_sigma(db) -> str:
     """What did sigma close?"""
     try:
-        rows = (db.table("velo_post_race_reviews")
-                .select("race_id, outcome, miss_reason, verdict_confidence, decision_tier, review_outcome, created_at")
+        rows = (db.table("sigma_audits")
+                .select("race_id, date, outcome, miss_reason, decision_tier, created_at")
                 .gte("created_at", _window())
                 .order("created_at", desc=True)
                 .limit(60)
@@ -135,8 +135,10 @@ def q3_sigma(db) -> str:
         misses = outcomes.get("MISS", 0)
         total  = sum(outcomes.values())
         top_miss = max(miss_reasons, key=miss_reasons.get) if miss_reasons else "none"
-        return (f"SIGMA: {total} reviewed (48h)\n"
-                f"  {wins}W / {placed}PL / {misses}M\n"
+        dates_seen = sorted({r.get("date","?") for r in rows if r.get("date")})
+        date_range = f"{dates_seen[-1]}" if dates_seen else "?"
+        return (f"SIGMA: {total} reviewed (48h) | Latest: {date_range}\n"
+                f"  {wins}W / {placed}PL / {misses}M  SR={100*wins//total if total else 0}%\n"
                 f"  Top miss: {top_miss}")
     except Exception as e:
         return f"SIGMA: query failed ({e})"

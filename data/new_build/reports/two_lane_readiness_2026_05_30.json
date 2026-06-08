@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-05-29T03:50:58.708017Z",
+  "target_date": "2026-05-30",
+  "overall_status": "BLOCKED_NO_DATA",
+  "capture_status": {
+    "date": "2026-05-30",
+    "status": "CAPTURED_BUT_EMPTY",
+    "races": 0,
+    "runners": 0,
+    "skipped": 7,
+    "note": "Runners not declared at capture time. Recapture required."
+  },
+  "races_found": 0,
+  "runners_found": 0,
+  "action_required": "No runners found for this date. Run: python scripts/ops/racing_post_account_collector.py --date 2026-05-30\n     python scripts/ops/parse_racing_post_racecard_capture.py --date 2026-05-30 --execute\n     python scripts/ops/new_build_current_card_feed.py --execute\n     python scripts/ops/new_build_two_lane_score.py --date 2026-05-30 --execute",
+  "lane_a": null,
+  "lane_b": null,
+  "operational_lane": null
+}

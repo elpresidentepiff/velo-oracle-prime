@@ -1,0 +1,66 @@
+{
+  "gate_id": "GATE_V2_POST_FLATLINE_FIX",
+  "generated_at": "2026-05-23T08:07:33.412118+00:00",
+  "start_date": "2026-05-21",
+  "fix_commit": "a33c5bd8",
+  "fix_commit_full": "a33c5bd84aa600a98bd9e1bfdc381750f20f23a4",
+  "gate_v1_status": "GATE_V1_AUDIT_ONLY",
+  "gate_v1_contamination": "CONFIRMED \u2014 pre-a33c5bd RP_MERGED flatline rows included",
+  "gate_v1_contaminated_runners_excluded": 807,
+  "flatline_count": 0,
+  "identity_failures": 0,
+  "by_date": {
+    "2026-05-21": {
+      "date": "2026-05-21",
+      "sha8": "a33c5bd8",
+      "is_post_fix": true,
+      "runner_count": 369,
+      "race_count": 44,
+      "flatline_count": 0
+    },
+    "2026-05-22": {
+      "date": "2026-05-22",
+      "sha8": "a33c5bd8",
+      "is_post_fix": true,
+      "runner_count": 417,
+      "race_count": 43,
+      "flatline_count": 0
+    }
+  },
+  "runner_calibration_gate": {
+    "purpose": "Probability calibration review \u2014 AUC, Brier, VP band alignment",
+    "runner_count": 786,
+    "threshold": 300,
+    "review_threshold_met": true,
+    "qualified_days": [
+      "2026-05-21",
+      "2026-05-22"
+    ],
+    "day_count": 2,
+    "blocking": [],
+    "status": "REVIEW_THRESHOLD_MET"
+  },
+  "decision_policy_gate": {
+    "purpose": "Race-selection policy evidence \u2014 top-pick SR, day stability, subgroup checks",
+    "top_pick_decisions": 87,
+    "top_picks_by_date": {
+      "2026-05-21": 44,
+      "2026-05-22": 43
+    },
+    "threshold_1": 150,
+    "threshold_2": 300,
+    "threshold_1_met": false,
+    "threshold_2_met": false,
+    "rows_to_threshold_1": 63,
+    "rows_to_threshold_2": 213,
+    "blocking": [],
+    "status": "NEEDS_MORE_DAYS",
+    "next_review": "63 more top-pick decisions to first policy gate"
+  },
+  "live_promotion_allowed": false,
+  "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
+  "mission_control_display": {
+    "runner_calibration": "REVIEW_THRESHOLD_MET / NOT APPROVED",
+    "decision_policy": "NEEDS_MORE_DAYS \u2014 63 top-pick decisions to first gate"
+  }
+}

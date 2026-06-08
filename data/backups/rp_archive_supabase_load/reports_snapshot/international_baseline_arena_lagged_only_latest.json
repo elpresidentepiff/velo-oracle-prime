@@ -1,0 +1,344 @@
+{
+  "generated_at": "2026-05-23T21:57:18.753379+00:00",
+  "method": "LAGGED_ONLY \u2014 current-race RPR/OR/TS entirely excluded",
+  "train_period": "2015-2022",
+  "valid_period": "2023",
+  "test_period": "2024-2025",
+  "banned_current_race_features": [
+    "is_fav",
+    "rpr_vs_field",
+    "log_sp",
+    "sp_rank",
+    "mark_compression_score",
+    "implied_prob",
+    "odds_contraction_score",
+    "trainer_timing_score",
+    "sp_dec",
+    "or_num",
+    "going_fit_score",
+    "rpr_num",
+    "ts_num",
+    "odds_resilience_score",
+    "distance_fit_score",
+    "or_vs_field",
+    "course_fit_score"
+  ],
+  "packs": [
+    {
+      "pack": "HK_SHA_TIN_V1",
+      "courses": [
+        "Sha Tin (HK)"
+      ],
+      "n_total": 50976,
+      "n_with_prior": 47725,
+      "n_train": 34702,
+      "n_test": 9766,
+      "lagged_features": [
+        "prev_rpr_num",
+        "max_rpr_num_last3",
+        "avg_rpr_num_last3",
+        "prev_or_num",
+        "max_or_num_last3",
+        "avg_or_num_last3",
+        "days_since_last_run",
+        "course_prior_runs",
+        "course_prior_wr",
+        "dist_prior_runs",
+        "dist_prior_wr",
+        "draw_num",
+        "draw_pct",
+        "field_size",
+        "dist_f",
+        "going_code",
+        "wgt_lbs",
+        "age_num",
+        "is_aw"
+      ],
+      "n_features": 19,
+      "baselines": {
+        "favourite_sr": 0.3425,
+        "favourite_n": 800,
+        "prev_rpr_sr": 0.1747,
+        "prev_rpr_n": 830
+      },
+      "models": {
+        "logistic_regression": {
+          "auc": 0.6708,
+          "top_pick_sr": 0.2181,
+          "brier": 0.0719,
+          "n_races": 830,
+          "beats_fav": false,
+          "beats_prev_rpr": true
+        },
+        "lightgbm": {
+          "auc": 0.7005,
+          "top_pick_sr": 0.2289,
+          "brier": 0.0708,
+          "n_races": 830,
+          "beats_fav": false,
+          "beats_prev_rpr": true,
+          "top3_features": [
+            "prev_rpr_num",
+            "avg_rpr_num_last3",
+            "avg_or_num_last3"
+          ]
+        }
+      },
+      "best_auc": 0.7005,
+      "best_sr": 0.2289,
+      "beats_fav": false,
+      "beats_prev_rpr": true,
+      "verdict": "NEEDS_FEATURE_ENGINEERING"
+    },
+    {
+      "pack": "HK_HAPPY_VALLEY_V1",
+      "courses": [
+        "Happy Valley (HK)"
+      ],
+      "n_total": 30557,
+      "n_with_prior": 29421,
+      "n_train": 21231,
+      "n_test": 5832,
+      "lagged_features": [
+        "prev_rpr_num",
+        "max_rpr_num_last3",
+        "avg_rpr_num_last3",
+        "prev_or_num",
+        "max_or_num_last3",
+        "avg_or_num_last3",
+        "days_since_last_run",
+        "course_prior_runs",
+        "course_prior_wr",
+        "dist_prior_runs",
+        "dist_prior_wr",
+        "draw_num",
+        "draw_pct",
+        "field_size",
+        "dist_f",
+        "going_code",
+        "wgt_lbs",
+        "age_num"
+      ],
+      "n_features": 18,
+      "baselines": {
+        "favourite_sr": 0.2665,
+        "favourite_n": 514,
+        "prev_rpr_sr": 0.1574,
+        "prev_rpr_n": 521
+      },
+      "models": {
+        "logistic_regression": {
+          "auc": 0.6575,
+          "top_pick_sr": 0.19,
+          "brier": 0.0781,
+          "n_races": 521,
+          "beats_fav": false,
+          "beats_prev_rpr": true
+        },
+        "lightgbm": {
+          "auc": 0.6619,
+          "top_pick_sr": 0.2035,
+          "brier": 0.0782,
+          "n_races": 521,
+          "beats_fav": false,
+          "beats_prev_rpr": true,
+          "top3_features": [
+            "prev_rpr_num",
+            "avg_or_num_last3",
+            "avg_rpr_num_last3"
+          ]
+        }
+      },
+      "best_auc": 0.6619,
+      "best_sr": 0.2035,
+      "beats_fav": false,
+      "beats_prev_rpr": true,
+      "verdict": "NEEDS_FEATURE_ENGINEERING"
+    },
+    {
+      "pack": "FR_CHANTILLY_V1",
+      "courses": [
+        "Chantilly (FR)"
+      ],
+      "n_total": 47568,
+      "n_with_prior": 40135,
+      "n_train": 28905,
+      "n_test": 6875,
+      "lagged_features": [
+        "prev_rpr_num",
+        "max_rpr_num_last3",
+        "avg_rpr_num_last3",
+        "prev_ts_num",
+        "max_ts_num_last3",
+        "avg_ts_num_last3",
+        "days_since_last_run",
+        "starts_last_90",
+        "draw_num",
+        "draw_pct",
+        "field_size",
+        "dist_f",
+        "going_code",
+        "wgt_lbs",
+        "age_num",
+        "is_aw"
+      ],
+      "n_features": 16,
+      "baselines": {
+        "favourite_sr": 0.292,
+        "favourite_n": 589,
+        "prev_rpr_sr": 0.2,
+        "prev_rpr_n": 640
+      },
+      "models": {
+        "logistic_regression": {
+          "auc": 0.6449,
+          "top_pick_sr": 0.175,
+          "brier": 0.0758,
+          "n_races": 640,
+          "beats_fav": false,
+          "beats_prev_rpr": false
+        },
+        "lightgbm": {
+          "auc": 0.6435,
+          "top_pick_sr": 0.1781,
+          "brier": 0.0759,
+          "n_races": 640,
+          "beats_fav": false,
+          "beats_prev_rpr": false,
+          "top3_features": [
+            "wgt_lbs",
+            "days_since_last_run",
+            "avg_rpr_num_last3"
+          ]
+        }
+      },
+      "best_auc": 0.6449,
+      "best_sr": 0.1781,
+      "beats_fav": false,
+      "beats_prev_rpr": false,
+      "verdict": "NEEDS_FEATURE_ENGINEERING"
+    },
+    {
+      "pack": "FR_FLAT_CORE",
+      "courses": [
+        "Chantilly (FR)",
+        "Deauville (FR)",
+        "Longchamp (FR)",
+        "Saint-Cloud (FR)"
+      ],
+      "n_total": 142352,
+      "n_with_prior": 118833,
+      "n_train": 86909,
+      "n_test": 19661,
+      "lagged_features": [
+        "prev_rpr_num",
+        "max_rpr_num_last3",
+        "avg_rpr_num_last3",
+        "prev_ts_num",
+        "max_ts_num_last3",
+        "avg_ts_num_last3",
+        "days_since_last_run",
+        "starts_last_90",
+        "draw_num",
+        "draw_pct",
+        "field_size",
+        "dist_f",
+        "going_code",
+        "wgt_lbs",
+        "age_num",
+        "is_aw"
+      ],
+      "n_features": 16,
+      "baselines": {
+        "favourite_sr": 0.2919,
+        "favourite_n": 1754,
+        "prev_rpr_sr": 0.1859,
+        "prev_rpr_n": 1910
+      },
+      "models": {
+        "logistic_regression": {
+          "auc": 0.6382,
+          "top_pick_sr": 0.1827,
+          "brier": 0.0779,
+          "n_races": 1910,
+          "beats_fav": false,
+          "beats_prev_rpr": false
+        },
+        "lightgbm": {
+          "auc": 0.6457,
+          "top_pick_sr": 0.1848,
+          "brier": 0.0777,
+          "n_races": 1910,
+          "beats_fav": false,
+          "beats_prev_rpr": false,
+          "top3_features": [
+            "days_since_last_run",
+            "wgt_lbs",
+            "prev_rpr_num"
+          ]
+        }
+      },
+      "best_auc": 0.6457,
+      "best_sr": 0.1848,
+      "beats_fav": false,
+      "beats_prev_rpr": false,
+      "verdict": "NEEDS_FEATURE_ENGINEERING"
+    },
+    {
+      "pack": "FR_AUTEUIL_JUMPS_V1",
+      "courses": [
+        "Auteuil (FR)"
+      ],
+      "n_total": 31977,
+      "n_with_prior": 25571,
+      "n_train": 19209,
+      "n_test": 3927,
+      "lagged_features": [
+        "prev_rpr_num",
+        "max_rpr_num_last3",
+        "avg_rpr_num_last3",
+        "days_since_last_run",
+        "field_size",
+        "dist_f",
+        "going_code",
+        "wgt_lbs",
+        "age_num"
+      ],
+      "n_features": 9,
+      "baselines": {
+        "favourite_sr": 0.2959,
+        "favourite_n": 392,
+        "prev_rpr_sr": 0.1849,
+        "prev_rpr_n": 438
+      },
+      "models": {
+        "logistic_regression": {
+          "auc": 0.6399,
+          "top_pick_sr": 0.2123,
+          "brier": 0.0855,
+          "n_races": 438,
+          "beats_fav": false,
+          "beats_prev_rpr": true
+        },
+        "lightgbm": {
+          "auc": 0.6214,
+          "top_pick_sr": 0.1895,
+          "brier": 0.0859,
+          "n_races": 438,
+          "beats_fav": false,
+          "beats_prev_rpr": true,
+          "top3_features": [
+            "field_size",
+            "avg_rpr_num_last3",
+            "days_since_last_run"
+          ]
+        }
+      },
+      "best_auc": 0.6399,
+      "best_sr": 0.2123,
+      "beats_fav": false,
+      "beats_prev_rpr": true,
+      "verdict": "NEEDS_FEATURE_ENGINEERING"
+    }
+  ]
+}

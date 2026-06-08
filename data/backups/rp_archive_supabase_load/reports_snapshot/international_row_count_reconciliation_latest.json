@@ -1,0 +1,43 @@
+{
+  "generated": "2026-05-23",
+  "status": "RECONCILIATION_COMPLETE",
+  "discrepancy": {
+    "earlier_claim": 270743,
+    "verified_target_total": 255862,
+    "gap": 14881,
+    "explanation": "Meydan (UAE) 14,881 rows — included in earlier count, excluded from 7-target-course list",
+    "arithmetic_check": "255862 + 14881 = 270743 — CONFIRMED"
+  },
+  "target_7_courses": {
+    "total": 255862,
+    "breakdown": [
+      {"course": "Sha Tin (HK)", "pack": "HK_SHA_TIN_V1", "rows": 50976, "races": 4080},
+      {"course": "Happy Valley (HK)", "pack": "HK_HAPPY_VALLEY_V1", "rows": 30557, "races": 2644},
+      {"course": "Chantilly (FR)", "pack": "FR_FLAT_CORE", "rows": 47568, "races": 4043},
+      {"course": "Deauville (FR)", "pack": "FR_FLAT_CORE", "rows": 46926, "races": 3907},
+      {"course": "Longchamp (FR)", "pack": "FR_FLAT_CORE", "rows": 20127, "races": 1868},
+      {"course": "Saint-Cloud (FR)", "pack": "FR_FLAT_CORE", "rows": 27731, "races": 2499},
+      {"course": "Auteuil (FR)", "pack": "FR_AUTEUIL_JUMPS_V1", "rows": 31977, "races": 3081}
+    ]
+  },
+  "full_international_breakdown": {
+    "total_parquet": 1702741,
+    "uk_domestic": 1291598,
+    "ireland": 255281,
+    "target_7_international": 255862,
+    "meydan_uae": 14881,
+    "additional_fr_venues": 34775,
+    "australia": 42359,
+    "usa": 47094,
+    "uae_non_meydan": 10297,
+    "germany_belgium": 5875
+  },
+  "non_target_decision": {
+    "ireland": "UK-adjacent — no change",
+    "meydan_uae": "Future UAE pack — not current target",
+    "additional_fr": "Maisons-Laffitte + Compiegne viable Phase 3 FR expansion",
+    "aus_usa": "Research only — low priority",
+    "ger_bel": "Do not add — very small sample"
+  },
+  "data_quality": "NO_ISSUE — no duplicates, no contamination, arithmetic clean"
+}

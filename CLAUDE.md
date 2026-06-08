@@ -200,6 +200,60 @@ Load SQPE with: `SQPEEngine.load(Path("models/v1_real/sqpe/"))`
 
 ---
 
+## ONE TRUTH — Data Sources and Daily Pipeline
+
+**CANONICAL DATA SOURCE: Racing Post only. No Racing API. No Sporting Life. Ever.**
+
+### Results source (sigma EOD)
+- Source: `racing_post_account_collector.py` captures RP results pages post-race
+- Results file: `data/results/rp_results_{YYYY_MM_DD}.json`
+- The capture MUST run AFTER all races finish (~21:00 BST). Morning captures return empty pages.
+- Sigma reads with `--source cache`. Never `--source api`.
+
+### Sigma EOD sequence (run in order, every racing day after 21:00 BST)
+```bash
+# 1. Re-capture RP results pages (now that races are done)
+PYTHONPATH=. python3 scripts/ops/racing_post_account_collector.py capture \
+  --url-list data/racing_post_url_lists/rp_results_{YYYY-MM-DD}.txt \
+  --date rp-results-{YYYY-MM-DD}-final --execute
+
+# 2. Parse captured HTML into rp_results JSON
+PYTHONPATH=. python3 scripts/ops/parse_rp_results_capture.py \
+  --date {YYYY-MM-DD} --capture-date rp-results-{YYYY-MM-DD}-final --execute
+
+# 3. Run sigma reconciliation
+PYTHONPATH=. python3 scripts/ops/run_results_sigma.py --date {YYYY-MM-DD} --source cache
+
+# 4. Ingest results into horse_runs
+PYTHONPATH=. python3 scripts/ops/ingest_results_to_horse_runs.py --date {YYYY-MM-DD}
+
+# 5. Build innovation protocol
+PYTHONPATH=. python3 scripts/ops/build_innovation_protocol.py --date {YYYY-MM-DD}
+
+# 6. Rebuild sigma retrieval corpus
+PYTHONPATH=. python3 scripts/ops/build_sigma_retrieval_corpus.py
+```
+
+### If RP capture gets Angular pages (session expired)
+The browser profile needs re-authentication. Run interactively (opens Chromium window):
+```bash
+PYTHONPATH=. python3 scripts/ops/racing_post_account_collector.py init-login \
+  --profile-dir data/browser_profiles/racing_post_account --execute
+```
+Log in manually in the opened browser, press Enter to save profile. Then re-run captures.
+
+### Racecard pipeline (morning, pre-race)
+- Source: `racing_post_account_collector.py` captures RP racecard pages
+- Parsed by: `parse_racing_post_racecard_capture.py`
+- Output: `data/racing_post_account_parsed/{YYYY-MM-DD}/racecard_injection.json`
+
+### What is RETIRED
+- Racing API (`--source api`): RETIRED. Never use for new data.
+- Sporting Life scraper (`scrape_results_sl.py`): RETIRED. Emergency fallback only, incomplete.
+- `new_build_capture_results.py`: uses Racing API internally — do not use.
+
+---
+
 ## Key File Locations
 
 ```

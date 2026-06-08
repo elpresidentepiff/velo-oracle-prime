@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-05-23T00:00:00+00:00",
+  "corpus_file": "data/velo_innovation_protocol_1k_deduped.csv",
+  "rebuild_type": "INCREMENTAL_APPEND",
+  "dates_added": ["2026-05-21", "2026-05-22"],
+  "dates_excluded": ["2026-05-20"],
+  "exclusion_reason": "SCORING_FLATLINE_CONTAMINATED",
+  "may21": {
+    "verdict_rows_built": 44,
+    "dedup_removed": 0,
+    "net_added": 44
+  },
+  "may22": {
+    "verdict_rows_built": 43,
+    "dedup_removed": 0,
+    "net_added": 43,
+    "note": "43 verdict rows built; 7 DPT races have no results (won/placed=null) — not contamination, data gap"
+  },
+  "corpus_totals": {
+    "rows_before": 931,
+    "rows_after": 1018,
+    "net_added": 87,
+    "total_dates": 7
+  },
+  "dates_in_corpus": {
+    "2026-05-02": 55,
+    "2026-05-03": 36,
+    "2026-05-04": 59,
+    "2026-05-17": 30,
+    "2026-05-19": 38,
+    "2026-05-21": 44,
+    "2026-05-22": 43
+  },
+  "may_20_rows": 0,
+  "may_20_check": "PASS",
+  "router_summary": {
+    "rows_with_results": 699,
+    "V1_BASE_SHADOW": {"n": 10, "wins": 3, "roi_pct": -20.2},
+    "V2_CLASS4_SHADOW": {"n": 14, "wins": 6, "roi_pct": 16.1},
+    "V6_GOLD_SEAM_WATCHLIST": {"n": 11, "wins": 5, "roi_pct": 59.1}
+  },
+  "governance": {
+    "may_20_contamination_excluded": true,
+    "consumed_live": false,
+    "scoring_changes": false,
+    "model_changes": false
+  }
+}

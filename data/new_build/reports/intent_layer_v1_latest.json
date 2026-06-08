@@ -1,0 +1,299 @@
+{
+  "generated_at": "2026-05-26T00:46:10.700802Z",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "test_set": {
+    "date_range": "2025-01-01 \u2192 2025-07-05",
+    "races": 5775,
+    "runners": 57221
+  },
+  "champion": "Core_V0_OR_Passport_V1",
+  "variants": [
+    {
+      "variant": "Champion",
+      "auc": 0.6922,
+      "brier": 0.0862,
+      "sr": 0.2416,
+      "frame": 0.5404,
+      "races": 5775
+    },
+    {
+      "variant": "Intent-only",
+      "auc": 0.6546,
+      "brier": 0.0878,
+      "sr": 0.2362,
+      "frame": 0.5259,
+      "races": 5775
+    },
+    {
+      "variant": "Champion+Intent",
+      "auc": 0.6992,
+      "brier": 0.0858,
+      "sr": 0.2552,
+      "frame": 0.5562,
+      "races": 5775
+    }
+  ],
+  "deltas": {
+    "auc": 0.007,
+    "brier": -0.0004,
+    "sr": 0.0136,
+    "frame": 0.0158
+  },
+  "promotion_gates": {
+    "auc": true,
+    "brier": true,
+    "sr": true,
+    "frame": true
+  },
+  "n_gates_passed": 4,
+  "verdict": "INTENT_ADDS_SIGNAL",
+  "intent_features_used": [
+    "mark_compression_score",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "odds_resilience_score",
+    "intent_trip_match",
+    "intent_course_win_history",
+    "intent_going_match",
+    "intent_class_drop_vs_best",
+    "intent_run_after_break",
+    "intent_sp_shortening",
+    "intent_wins_last10",
+    "intent_top3_last6"
+  ],
+  "intent_features_coverage_pct": 56.48,
+  "intent_importance_in_combo_pct": 24.11,
+  "combo_feature_importance": [
+    {
+      "feature": "or_vs_field",
+      "importance": 1292.0,
+      "importance_pct": 8.48
+    },
+    {
+      "feature": "pp_avg_sp_last5",
+      "importance": 1130.0,
+      "importance_pct": 7.41
+    },
+    {
+      "feature": "official_rating",
+      "importance": 1045.0,
+      "importance_pct": 6.86
+    },
+    {
+      "feature": "pp_days_since_last",
+      "importance": 1026.0,
+      "importance_pct": 6.73
+    },
+    {
+      "feature": "wgt_lbs",
+      "importance": 834.0,
+      "importance_pct": 5.47
+    },
+    {
+      "feature": "field_size",
+      "importance": 767.0,
+      "importance_pct": 5.03
+    },
+    {
+      "feature": "odds_resilience_score",
+      "importance": 675.0,
+      "importance_pct": 4.43
+    },
+    {
+      "feature": "pp_career_runs",
+      "importance": 572.0,
+      "importance_pct": 3.75
+    },
+    {
+      "feature": "mark_compression_score",
+      "importance": 515.0,
+      "importance_pct": 3.38
+    },
+    {
+      "feature": "draw_pct",
+      "importance": 512.0,
+      "importance_pct": 3.36
+    },
+    {
+      "feature": "age_num",
+      "importance": 499.0,
+      "importance_pct": 3.27
+    },
+    {
+      "feature": "pp_place_rate",
+      "importance": 458.0,
+      "importance_pct": 3.0
+    },
+    {
+      "feature": "going_fit_score",
+      "importance": 422.0,
+      "importance_pct": 2.77
+    },
+    {
+      "feature": "distance_fit_score",
+      "importance": 405.0,
+      "importance_pct": 2.66
+    },
+    {
+      "feature": "quiet_run_score",
+      "importance": 402.0,
+      "importance_pct": 2.64
+    },
+    {
+      "feature": "trainer_timing_score",
+      "importance": 377.0,
+      "importance_pct": 2.47
+    },
+    {
+      "feature": "draw_num",
+      "importance": 340.0,
+      "importance_pct": 2.23
+    },
+    {
+      "feature": "curr_or_minus_last_win_or",
+      "importance": 338.0,
+      "importance_pct": 2.22
+    },
+    {
+      "feature": "pp_or_change_3",
+      "importance": 296.0,
+      "importance_pct": 1.94
+    },
+    {
+      "feature": "runs_since_place",
+      "importance": 295.0,
+      "importance_pct": 1.94
+    },
+    {
+      "feature": "dist_f",
+      "importance": 286.0,
+      "importance_pct": 1.88
+    },
+    {
+      "feature": "intent_run_after_break",
+      "importance": 276.0,
+      "importance_pct": 1.81
+    },
+    {
+      "feature": "curr_or_minus_best_or",
+      "importance": 258.0,
+      "importance_pct": 1.69
+    },
+    {
+      "feature": "runs_since_win",
+      "importance": 241.0,
+      "importance_pct": 1.58
+    },
+    {
+      "feature": "runs_since_mkt_support",
+      "importance": 233.0,
+      "importance_pct": 1.53
+    },
+    {
+      "feature": "intent_wins_last10",
+      "importance": 196.0,
+      "importance_pct": 1.29
+    },
+    {
+      "feature": "going_code",
+      "importance": 174.0,
+      "importance_pct": 1.14
+    },
+    {
+      "feature": "intent_course_win_history",
+      "importance": 172.0,
+      "importance_pct": 1.13
+    },
+    {
+      "feature": "intent_class_drop_vs_best",
+      "importance": 143.0,
+      "importance_pct": 0.94
+    },
+    {
+      "feature": "intent_top3_last6",
+      "importance": 131.0,
+      "importance_pct": 0.86
+    }
+  ],
+  "intent_only_feature_importance": [
+    {
+      "feature": "odds_resilience_score",
+      "importance": 1076.0,
+      "importance_pct": 14.89
+    },
+    {
+      "feature": "mark_compression_score",
+      "importance": 1037.0,
+      "importance_pct": 14.35
+    },
+    {
+      "feature": "intent_run_after_break",
+      "importance": 757.0,
+      "importance_pct": 10.48
+    },
+    {
+      "feature": "runs_since_mkt_support",
+      "importance": 581.0,
+      "importance_pct": 8.04
+    },
+    {
+      "feature": "intent_class_drop_vs_best",
+      "importance": 563.0,
+      "importance_pct": 7.79
+    },
+    {
+      "feature": "curr_or_minus_last_win_or",
+      "importance": 504.0,
+      "importance_pct": 6.97
+    },
+    {
+      "feature": "curr_or_minus_best_or",
+      "importance": 497.0,
+      "importance_pct": 6.88
+    },
+    {
+      "feature": "runs_since_win",
+      "importance": 434.0,
+      "importance_pct": 6.01
+    },
+    {
+      "feature": "intent_wins_last10",
+      "importance": 403.0,
+      "importance_pct": 5.58
+    },
+    {
+      "feature": "runs_since_place",
+      "importance": 337.0,
+      "importance_pct": 4.66
+    },
+    {
+      "feature": "intent_top3_last6",
+      "importance": 318.0,
+      "importance_pct": 4.4
+    },
+    {
+      "feature": "intent_course_win_history",
+      "importance": 296.0,
+      "importance_pct": 4.1
+    },
+    {
+      "feature": "intent_sp_shortening",
+      "importance": 193.0,
+      "importance_pct": 2.67
+    },
+    {
+      "feature": "intent_trip_match",
+      "importance": 121.0,
+      "importance_pct": 1.67
+    },
+    {
+      "feature": "intent_going_match",
+      "importance": 109.0,
+      "importance_pct": 1.51
+    }
+  ]
+}

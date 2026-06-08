@@ -20,7 +20,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
 log = logging.getLogger("velo.ingest_horse_runs")
@@ -91,7 +91,11 @@ def _class_int(v) -> int | None:
 
 def ingest_results(date_str: str) -> None:
     date_tag = date_str.replace("-", "_")
-    results_path = ROOT / "data" / f"results_{date_tag}.json"
+    # Canonical path from parse_rp_results_capture.py output
+    results_path = ROOT / "data" / "results" / f"rp_results_{date_tag}.json"
+    if not results_path.exists():
+        # Legacy fallback path
+        results_path = ROOT / "data" / f"results_{date_tag}.json"
     if not results_path.exists():
         log.error("Results file not found: %s", results_path)
         return

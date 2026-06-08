@@ -285,7 +285,7 @@ def build_form_history_for_date(capture_date: str) -> dict:
     if not profiles_path.exists():
         raise FileNotFoundError(f"No parsed profiles for {capture_date}: {profiles_path}")
 
-    profiles_data = json.loads(profiles_path.read_text())
+    profiles_data = json.loads(profiles_path.read_text(encoding="utf-8"))
     profiles = profiles_data.get("horse_profiles", [])
 
     all_runs: list[dict] = []

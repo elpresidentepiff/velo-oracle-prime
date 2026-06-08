@@ -1,0 +1,19 @@
+{
+  "incident_id": "supabase_decision_tier_null",
+  "title": "Incident B: Supabase Persistence Gap",
+  "timestamp": "2026-06-06T10:46:24.495870Z",
+  "severity": "CRITICAL",
+  "affected_features": [
+    "assigned_product"
+  ],
+  "mathematical_proof": "- TOTAL_NULL_COLUMN: Column 'assigned_product' is 100% NULL in current dataset.",
+  "safe_to_score": false,
+  "safe_to_learn": false,
+  "recommended_action": "BLOCK_LEARNING / OPERATOR_REVIEW",
+  "operator_recovery_commands": [
+    "python scripts/ops/verify_rp_supabase_archive_load.py"
+  ],
+  "evidence_paths": {
+    "json": "hackathon\\amd_harnessguard\\reports\\cards\\supabase_decision_tier_null_card.json"
+  }
+}

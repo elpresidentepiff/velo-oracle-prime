@@ -28,7 +28,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
 from dotenv import load_dotenv
@@ -185,6 +185,8 @@ def classify_runner(v: dict, meta) -> dict:
     off_time  = meta.off_time  if meta and meta.off_time  else (top.get("off_time") or "—")
     race_name = meta.race_name if meta and meta.race_name else (top.get("race_name") or "")
 
+    metadata_complete = bool(course and course != "—" and off_time and off_time != "—")
+
     # candidate_execution_allowed: use execution_allowed from verdict as proxy
     exec_allowed = bool(v.get("execution_allowed"))
 
@@ -195,6 +197,8 @@ def classify_runner(v: dict, meta) -> dict:
         "course":                 course,
         "off_time":               off_time,
         "race_name":              race_name,
+        "metadata_complete":      metadata_complete,
+        "missing_metadata":       not metadata_complete,
         "tier":                   tier,
         "velo_prime_prob":        round(vp, 4),
         "market_deception_score": round(mds, 4),
@@ -205,6 +209,32 @@ def classify_runner(v: dict, meta) -> dict:
         "candidate_execution_allowed": exec_allowed,
         "status": "OPERATOR_VISIBILITY_ONLY",
     }
+
+
+def _dedupe_alias_runners(runners: list[dict]) -> list[dict]:
+    """Collapse duplicate race identities while preferring resolved RP metadata."""
+    deduped: dict[tuple[str, str], dict] = {}
+    for runner in runners:
+        horse_key = str(runner.get("horse_id") or runner.get("horse") or "").strip().upper()
+        date_key = str(runner.get("date") or "")
+        key = (date_key, horse_key)
+        if not horse_key:
+            key = (date_key, str(runner.get("race_id") or ""))
+
+        current = deduped.get(key)
+        if current is None:
+            deduped[key] = runner
+            continue
+
+        def _metadata_score(row: dict) -> int:
+            return sum(
+                bool(row.get(field) and row.get(field) != "—")
+                for field in ("course", "off_time", "race_name")
+            )
+
+        if _metadata_score(runner) > _metadata_score(current):
+            deduped[key] = runner
+    return list(deduped.values())
 
 
 def build_card(date_str: str) -> dict:
@@ -223,8 +253,18 @@ def build_card(date_str: str) -> dict:
         meta = resolver.resolve(v.get("race_id", ""))
         runner = classify_runner(v, meta)
         runners.append(runner)
+    runners = _dedupe_alias_runners(runners)
 
-    # ── Sort each stack by VP desc ─────────────────────────────────────
+    # ── Sort each stack by off_time (chronological) ───────────────────
+    def _to_minutes(t_str: str) -> int:
+        if not t_str or t_str == "—": return 9999
+        try:
+            # Handle HH:MM
+            p = t_str.split(":")
+            return int(p[0]) * 60 + int(p[1])
+        except Exception:
+            return 9999
+
     stacks: dict[str, list[dict]] = {k: [] for k in STACK_ORDER}
     for runner in runners:
         for stack in runner["stacks"]:
@@ -232,12 +272,17 @@ def build_card(date_str: str) -> dict:
                 stacks[stack].append(runner)
 
     for stack in STACK_ORDER:
-        stacks[stack].sort(key=lambda r: -r["velo_prime_prob"])
+        stacks[stack].sort(key=lambda r: (_to_minutes(r["off_time"]), r["course"], -r["velo_prime_prob"]))
 
     # ── Counts ─────────────────────────────────────────────────────────
     vp30_count = sum(1 for r in runners if "VP30" in r["stack_badges"])
+    metadata_complete_count = sum(1 for r in runners if r["metadata_complete"])
+    metadata_coverage = metadata_complete_count / len(runners) if runners else 0.0
     counts = {
         "total_races": len(runners),
+        "metadata_complete_count": metadata_complete_count,
+        "metadata_missing_count": len(runners) - metadata_complete_count,
+        "metadata_coverage": metadata_coverage,
         "vp30_count": vp30_count,
         "elite_stack_count":       len(stacks["ELITE_STACK"]),
         "strong_stack_plus_count": len(stacks["STRONG_STACK_PLUS"]),
@@ -259,6 +304,11 @@ def build_card(date_str: str) -> dict:
         "threshold_source": "place_signal_classifier.py",
         "stacks": stacks,
         "counts": counts,
+        "metadata_audit": {
+            "metadata_coverage": metadata_coverage,
+            "metadata_complete_count": metadata_complete_count,
+            "metadata_missing_count": len(runners) - metadata_complete_count,
+        },
         "disclaimer": DISCLAIMER,
     }
     return card

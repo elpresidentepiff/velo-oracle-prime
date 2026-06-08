@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-06-07T05:00:40.184306+00:00",
+  "target_date": "2026-06-07",
+  "classification": "RACE_DAY_BUTTON_READY",
+  "old_velo": {
+    "attempted": true,
+    "status": "PASS",
+    "reason": null,
+    "telegram_suppressed": true
+  },
+  "new_build": {
+    "attempted": true,
+    "status": "READY",
+    "races_scored": 30,
+    "runners_scored": 320,
+    "operational_lane": "LANE_A_CORE_PASSPORT",
+    "rpr_violations": 0,
+    "sp_violations": 0,
+    "intent_coverage": {
+      "found": 0,
+      "total": 320,
+      "coverage_pct": 0.0,
+      "gate": 80.0,
+      "status": "UNAVAILABLE_BELOW_GATE",
+      "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+    },
+    "paper_only": true
+  },
+  "steps": [
+    {
+      "name": "parse_rp_card",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/parse_racing_post_racecard_capture.py",
+        "--date",
+        "2026-06-07",
+        "--capture-label",
+        "live-full-racepages-2026-06-07-ONE-TRUTH",
+        "--write-standard-cache",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-07T04:58:00.091215+00:00",
+      "finished_at": "2026-06-07T04:58:00.649217+00:00",
+      "output_tail": "          \"jockey_id\": 88471,\n          \"jockey\": \"Derek Fox\",\n          \"jockey_first_time\": false,\n          \"trainer_id\": 26274,\n          \"trainer\": \"Leonard Kerr\",\n          \"trainer_rtf\": null,\n          \"new_trainer_races\": null,\n          \"owner\": \"A Kerr L Kerr\",\n          \"sire\": \"Soldier Of Fortune\",\n          \"dam\": \"Golden Firth\",\n          \"damsire\": \"Flemensfirth\",\n          \"headgear\": \"p\",\n          \"headgear_first_time\": false,\n          \"gelding_first_time\": false,\n          \"wind_surgery\": null,\n          \"days_since_last_run\": \"15\",\n          \"form_figures\": \"PPP4-P\",\n          \"badges\": [],\n          \"compact_badges\": [],\n          \"spotlight_comment\": \"Partial revival on chase debut here (3m, good) in April but she did not shine at Cartmel one month later; has plenty of form to make this look an attractive mark but there are doubts on this return to hurdling.\",\n          \"diomed_comment\": \"Plenty of form makes this look an attractive mark, but doubts on this return to hurdling\",\n          \"newspaper_tip_count\": null,\n          \"non_runner\": false,\n          \"irish_reserve\": false\n        },\n        {\n          \"horse_id\": 7466743,\n          \"horse\": \"Breaking Ground\",\n          \"horse_url\": \"/profile/horse/7466743/breaking-ground#race-id=919908\",\n          \"start_number\": 11,\n          \"draw\": null,\n          \"age\": 5,\n          \"country\": \"IRE\",\n          \"sex_colour\": \"b m\",\n          \"weight_lbs\": 149,\n          \"weight_stones\": 10,\n          \"weight_pounds\": 9,\n          \"official_rating\": 81,\n          \"topspeed\": 68,\n          \"rp_rpr_archive_only\": 98,\n          \"rp_rpr_velo_allowed\": false,\n          \"forecast_odds\": 40,\n          \"rp_morning_price\": 40.0,\n          \"jockey_id\": 100082,\n          \"jockey\": \"Toby Wynne\",\n          \"jockey_first_time\": false,\n          \"trainer_id\": 10241,\n          \"trainer\": \"R Mike Smith\",\n          \"trainer_rtf\": 11,\n          \"new_trainer_races\": null,\n          \"owner\": \"R Michael Smith\",\n          \"sire\": \"Berkshire\",\n          \"dam\": \"Peace And The City\",\n          \"damsire\": \"Elusive City\",\n          \"headgear\": \"ht\",\n          \"headgear_first_time\": true,\n          \"gelding_first_time\": false,\n          \"wind_surgery\": null,\n          \"days_since_last_run\": \"24\",\n          \"form_figures\": \"0P50-0\",\n          \"badges\": [],\n          \"compact_badges\": [],\n          \"spotlight_comment\": \"This is her handicap debut and a major step up in trip, but there have been signs of only a little ability; tongue tied on latest start and a hood (tried four starts back, pulled up) is reinstated.\",\n          \"diomed_comment\": \"This is her handicap debut and a major step up in trip, but signs of only a little ability\",\n          \"newspaper_tip_count\": null,\n          \"non_runner\": false,\n          \"irish_reserve\": false\n        }\n      ]\n    }\n  ],\n  \"skipped_count\": 0,\n  \"skipped\": [],\n  \"status\": \"PASS\",\n  \"execute_required\": false,\n  \"output_path\": \"C:\\\\Users\\\\puror\\\\velo-oracle-prime\\\\data\\\\racing_post_account_parsed\\\\live-full-racepages-2026-06-07-ONE-TRUTH\\\\racecard_injection.json\",\n  \"standard_cache_path\": \"C:\\\\Users\\\\puror\\\\velo-oracle-prime\\\\data\\\\racecards_2026_06_07_standard.json\",\n  \"standard_cache_races\": 30,\n  \"standard_cache_runners\": 320\n}"
+    },
+    {
+      "name": "build_rp_merged",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/build_racecard_merged_from_injection.py",
+        "--date",
+        "2026-06-07",
+        "--injection-path",
+        "data\\racing_post_account_parsed\\live-full-racepages-2026-06-07-ONE-TRUTH\\racecard_injection.json"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-07T04:58:00.660975+00:00",
+      "finished_at": "2026-06-07T04:58:00.900635+00:00",
+      "output_tail": "  GOO: 7 races -> racecard_GOO_2026-06-07.json\n  NAV: 8 races -> racecard_NAV_2026-06-07.json\n  PER: 7 races -> racecard_PER_2026-06-07.json\n  PUN: 8 races -> racecard_PUN_2026-06-07.json\n\nWrote 4 racecard_merged files for 2026-06-07"
+    },
+    {
+      "name": "build_rpdc",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/build_rpdc_daily.py",
+        "--date",
+        "2026-06-07"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-07T04:58:00.900700+00:00",
+      "finished_at": "2026-06-07T04:58:34.108742+00:00",
+      "output_tail": "INFO Loading runners from injection JSON (RP source): live-full-racepages-2026-06-07-ONE-TRUTH\nINFO Loaded 320 runners from injection JSON\nINFO Pre-fetching stats for 179 trainers\n\nBUILD RPDC DAILY — 2026-06-07\n============================================================\n  Runners to score: 320\n  Scored: 320 OK / 0 FAIL\n  runner_release_candidates: 320 rows written\n\n  Tag frequencies:\n    PLACE_FORM: 318\n    CYCLE_RUN_1: 2\n\n  Cash window (score>=3.0): 0\n  Trap flagged: 0\n\nRPDC DAILY COMPLETE — 2026-06-07"
+    },
+    {
+      "name": "old_velo_engine",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/run_prime_today.py",
+        "--date",
+        "2026-06-07",
+        "--source",
+        "rp",
+        "--no-notify"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-07T04:58:34.108828+00:00",
+      "finished_at": "2026-06-07T05:00:28.366755+00:00",
+      "output_tail": "  Sent: C-WATCH list (10 races)\n[CONTAINMENT NO-OP] TG: PLACE SIGNALS — 06 Jun 2026\nLIVE OPERATOR VISIBILITY ONLY\n──\n  Sent: PLACE SIGNALS — LIVE OPERATOR VISIBILITY\n[CONTAINMENT NO-OP] TG: D/X PASS LIST — 06 Jun 2026\n────────────────────────────────\n  Sent: D/X pass list (6 races)\n[CONTAINMENT NO-OP] TG: VELO PERSISTENCE REPORT — 06 Jun 2026\nRaces fetched:   30\nRa\n  Sent: persistence report (PASS)\n[CONTAINMENT NO-OP] TG: VELO FINAL REPORT — 06 Jun 2026\nTotal races:     30\nScored b\n  Sent: final report (PASS)\n\nLocal backup: velo_prime_verdicts_2026_06_07.json (NOT system of record)\n\nRUNNER SNAPSHOTS: 320 rows → runner_snapshots_2026_06_07_2026_06_07_1ba64550_1780808376504.jsonl\n\nTIMING AUDIT: runtime_timing_audit_2026_06_07.json\n  total_runtime_sec       : 56.770s\n  spotlight_runners_parsed: 281\n  pdf_intel_attached      : 320\n  preflight             :    3.828s  races=0  runners=0\n  racecard_load         :    2.003s  races=30  runners=0\n  normalize             :    0.134s  races=30  runners=320\n  pdf_intel_preload     :    0.022s  races=4  runners=0  [4/4 courses with PDF data]\n  persist               :   50.040s  races=30  runners=320\n  telegram              :    0.026s  races=0  runners=0\n  local_backup          :    0.003s  races=0  runners=0\n  runner_snapshots      :    0.714s  races=30  runners=320\n\nSTEP 7: Count verification\n  Races fetched:    30\n  With runners:     30\n  Normalized:       30\n  Scored by PRIME:  30\n  Persisted (OK):   30\n  Persisted (FAIL): 0\n  Score errors:     0\n  Daily truth packet skipped: No module named 'sync_verdicts_from_supabase'\n[OK] Observability packet written: C:\\Users\\puror\\velo-oracle-prime\\data\\velo_run_observability_2026_06_07_94f35c2f.json\n\nPASS — 30/30 races in velo_verdicts\n  SUPABASE WRITE-PROOF REPORT — 06 Jun 2026\n  ---------------------------------------------\n  ✓ rp_GOO_20260607_1.50\n  ✓ rp_GOO_20260607_2.25\n  ✓ rp_GOO_20260607_3.00\n  ✓ rp_GOO_20260607_3.35\n  ✓ rp_GOO_20260607_4.10\n  ✓ rp_GOO_20260607_4.45\n  ✓ rp_GOO_20260607_5.20\n  ✓ rp_NAV_20260607_1.07\n  ✓ rp_NAV_20260607_1.42\n  ✓ rp_NAV_20260607_2.17\n  ✓ rp_NAV_20260607_2.52\n  ✓ rp_NAV_20260607_3.27\n  ✓ rp_NAV_20260607_4.02\n  ✓ rp_NAV_20260607_4.37\n  ✓ rp_NAV_20260607_5.12\n  ✓ rp_PER_20260607_2.07\n  ✓ rp_PER_20260607_2.42\n  ✓ rp_PER_20260607_3.17\n  ✓ rp_PER_20260607_3.52\n  ✓ rp_PER_20260607_4.27\n  ✓ rp_PER_20260607_5.02\n  ✓ rp_PER_20260607_5.37\n  ✓ rp_PUN_20260607_1.22\n  ✓ rp_PUN_20260607_1.57\n  ✓ rp_PUN_20260607_2.32\n  ✓ rp_PUN_20260607_3.07\n  ✓ rp_PUN_20260607_3.42\n  ✓ rp_PUN_20260607_4.17\n  ✓ rp_PUN_20260607_4.52\n  ✓ rp_PUN_20260607_5.27\n  ---------------------------------------------\n  Total verified writes: 30"
+    },
+    {
+      "name": "new_build_feed",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/new_build_current_card_feed.py",
+        "--racecard-path",
+        "data/racecards_2026_06_07_standard.json",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-07T05:00:28.366830+00:00",
+      "finished_at": "2026-06-07T05:00:37.432691+00:00",
+      "output_tail": "        }\n      ]\n    },\n    {\n      \"race_date\": \"2026-06-07\",\n      \"course\": \"Perth\",\n      \"off_time\": \"2026-06-07T17:37:00\",\n      \"race_id\": \"919908\",\n      \"race_title\": \"IM Group Handicap Hurdle\",\n      \"runner_count\": 14,\n      \"passport_coverage\": 14,\n      \"champion_feature_coverage\": 14,\n      \"intent_feature_coverage\": 0,\n      \"top_3_by_champion_read_availability\": [\n        {\n          \"horse\": \"Leader Wing\",\n          \"rp_uid\": \"5798857\",\n          \"trainer\": \"Dan Skelton\",\n          \"passport_strength_score\": 2.45,\n          \"reason_codes\": [\n            \"JOCKEY_CONTINUITY\",\n            \"STRONG_PLACE_PROFILE\",\n            \"OR_RISING\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        },\n        {\n          \"horse\": \"Maillot Blanc\",\n          \"rp_uid\": \"4187581\",\n          \"trainer\": \"N W Alexander\",\n          \"passport_strength_score\": 2.15,\n          \"reason_codes\": [\n            \"STRONG_PLACE_PROFILE\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        },\n        {\n          \"horse\": \"Burgundy Man\",\n          \"rp_uid\": \"3118050\",\n          \"trainer\": \"R Mike Smith\",\n          \"passport_strength_score\": 2.1,\n          \"reason_codes\": [\n            \"SETUP_RUN_CANDIDATE\",\n            \"OR_FALLING\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        }\n      ],\n      \"strongest_passport_horse\": {\n        \"horse\": \"Leader Wing\",\n        \"rp_uid\": \"5798857\",\n        \"trainer\": \"Dan Skelton\",\n        \"passport_strength_score\": 2.45,\n        \"reason_codes\": [\n          \"JOCKEY_CONTINUITY\",\n          \"STRONG_PLACE_PROFILE\",\n          \"OR_RISING\"\n        ],\n        \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n      },\n      \"strongest_intent_candidate\": null,\n      \"missing_data_warnings\": [\n        \"No current-race intent feature rows available\"\n      ],\n      \"unraced_new_horse_warnings\": []\n    }\n  ],\n  \"rules\": {\n    \"new_build_only\": true,\n    \"official_final_card_only\": true,\n    \"official_final_card_path\": \"data\\\\racecards_2026_06_07_standard.json\",\n    \"no_training\": true,\n    \"no_live_engine\": true,\n    \"old_live_velo_untouched\": true,\n    \"shadow_velo_untouched\": true,\n    \"no_betting\": true,\n    \"no_telegram\": true,\n    \"rpr_archive_only\": true\n  }\n}"
+    },
+    {
+      "name": "new_build_score",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/new_build_two_lane_score.py",
+        "--date",
+        "2026-06-07",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-07T05:00:37.432784+00:00",
+      "finished_at": "2026-06-07T05:00:40.181680+00:00",
+      "output_tail": "Written: C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\reports\\two_lane_readiness_2026_06_07.json\nWritten: C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\reports\\two_lane_readiness_2026_06_07.md\n\nOverall status: READY\nRaces scored: 30\nRunners scored: 320\nOperational lane: LANE_A_CORE_PASSPORT"
+    }
+  ]
+}

@@ -17,6 +17,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 from datetime import datetime, timezone
@@ -86,6 +87,470 @@ def _find_predictions_for_date(date_str: str) -> list[dict]:
     return []
 
 
+def _find_live_runner_snapshots_for_date(date_str: str) -> list[dict]:
+    """Read the latest full-field runner snapshot for the requested date."""
+    date_tag = date_str.replace("-", "_")
+    candidates = sorted(
+        (ROOT / "data").glob(f"runner_snapshots_{date_tag}_*.jsonl"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    for path in candidates:
+        rows = _read_jsonl(path)
+        rows = [r for r in rows if str(r.get("race_date") or "")[:10] == date_str]
+        if rows:
+            return rows
+    return []
+
+
+def _find_current_card_feed_for_date(date_str: str) -> list[dict]:
+    path = NEW_BUILD_ROOT / "current_cards" / "current_card_passport_feed_latest.jsonl"
+    rows = _read_jsonl(path)
+    return [r for r in rows if str(r.get("race_date") or "")[:10] == date_str]
+
+
+def _latest_file(pattern: str) -> Path | None:
+    candidates = sorted(
+        ROOT.glob(pattern),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    return candidates[0] if candidates else None
+
+
+def _latest_observability(date_str: str) -> tuple[dict, Path | None]:
+    date_tag = date_str.replace("-", "_")
+    candidates = sorted(
+        ROOT.glob(f"data/velo_run_observability_{date_tag}_*.json"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    loaded = [(_load_json(path, {}) or {}, path) for path in candidates]
+    for data, path in loaded:
+        if data.get("persistence_status") == "OK" and data.get("race_scoring_coverage_pct") == 100.0:
+            return data, path
+    return loaded[0] if loaded else ({}, None)
+
+
+def _load_new_build_readiness(date_str: str) -> tuple[dict, Path]:
+    date_tag = date_str.replace("-", "_")
+    path = REPORT_DIR / f"two_lane_readiness_{date_tag}.json"
+    return (_load_json(path, {}) or {}, path)
+
+
+def _load_rp_time_changes(date_str: str) -> dict[str, dict[str, str]]:
+    """Compare the first RP card capture with the final refresh by race ID."""
+    parsed_root = ROOT / "data" / "racing_post_account_parsed"
+    initial = _load_json(parsed_root / f"live-full-racepages-{date_str}" / "racecard_injection.json", {}) or {}
+    refresh = _load_json(parsed_root / f"live-full-racepages-{date_str}-refresh" / "racecard_injection.json", {}) or {}
+
+    def _times(payload: dict) -> dict[str, str]:
+        result = {}
+        for race in payload.get("races") or []:
+            race_id = str(race.get("race_id") or "")
+            off_time = _fmt_time(race.get("off_time") or race.get("race_time"))
+            if race_id and off_time:
+                result[race_id] = off_time
+        return result
+
+    initial_times = _times(initial)
+    refresh_times = _times(refresh)
+    return {
+        race_id: {"previous_off_time": initial_times[race_id], "off_time": off_time}
+        for race_id, off_time in refresh_times.items()
+        if race_id in initial_times and initial_times[race_id] != off_time
+    }
+
+
+def _passport_coverage_from_readiness(report: dict) -> float:
+    scorecards = report.get("race_day_scorecards") or []
+    found = 0
+    total = 0
+    for card in scorecards:
+        raw = str(card.get("passport_coverage") or "")
+        match = re.match(r"^\s*(\d+)\s*/\s*(\d+)\s*$", raw)
+        if match:
+            found += int(match.group(1))
+            total += int(match.group(2))
+            continue
+        runner_count = int(card.get("runner_count") or 0)
+        pct = card.get("passport_coverage_pct")
+        if runner_count and pct is not None:
+            found += round(runner_count * (float(pct) / 100.0))
+            total += runner_count
+    return (found / total) if total else 0.0
+
+
+def _build_truth_summary(date_str: str) -> dict:
+    obs, obs_path = _latest_observability(date_str)
+    nb, nb_path = _load_new_build_readiness(date_str)
+    sigma_summary = _load_json(ROOT / "data" / "sigma_memory" / "sigma_memory_summary.json", {}) or {}
+    truth_packet = _load_json(
+        ROOT / "data" / f"velo_daily_run_truth_{date_str.replace('-', '_')}.json",
+        {},
+    ) or {}
+    shadow_lanes: dict[str, dict] = {}
+    shadow_path = ROOT / "data" / "router_shadow_audit_latest.csv"
+    if shadow_path.exists():
+        try:
+            with shadow_path.open("r", encoding="utf-8-sig") as handle:
+                for row in csv.DictReader(handle):
+                    lane = row.get("label")
+                    if lane:
+                        shadow_lanes[lane] = {
+                            "n": int(float(row.get("n") or 0)),
+                            "strike_rate": float(row.get("sr") or 0),
+                            "frame_rate": float(row.get("fr") or 0),
+                            "roi": float(row.get("roi") or 0),
+                            "state": row.get("lane_state") or row.get("status") or "UNKNOWN",
+                        }
+        except Exception:
+            shadow_lanes = {}
+
+    metrics = obs.get("metrics") or {}
+    races_scored = int(metrics.get("races_processed") or nb.get("races_scored") or 0)
+    runners_scored = int(metrics.get("runners_processed") or nb.get("runners_scored") or 0)
+    persistence_status = obs.get("persistence_status") or "UNKNOWN"
+    live_ready = bool(obs) and obs.get("race_scoring_coverage_pct") == 100.0 and persistence_status == "OK"
+    nb_status = nb.get("overall_status") or "UNKNOWN"
+
+    warnings = list(obs.get("warnings") or [])
+    if obs and str(obs.get("date"))[:10] != date_str:
+        warnings.append(f"Observability date mismatch: requested {date_str}, loaded {obs.get('date')}")
+    if not obs:
+        warnings.append(f"No Live VÉLØ observability artifact found for {date_str}")
+    if not nb:
+        warnings.append(f"No New Build readiness artifact found for {date_str}")
+    if truth_packet.get("alert_required"):
+        warnings.append(f"Truth packet alert: {truth_packet.get('status', 'UNKNOWN')}")
+
+    sigma_status = "PASS" if sigma_summary else "UNKNOWN"
+    if sigma_summary and not (ROOT / "data" / "sigma_memory" / f"sigma_memory_{date_str.replace('-', '_')}.jsonl").exists():
+        sigma_status = "PENDING"
+
+    return {
+        "schema_version": "dashboard_truth_summary_v1",
+        "generated_at": _utc_now(),
+        "operational_date": date_str,
+        "live_velo_status": "READY" if live_ready else ("UNKNOWN" if not obs else "CHECK"),
+        "source_truth_label": obs.get("source_truth") or "UNKNOWN",
+        "feature_health": obs.get("feature_health") or "UNKNOWN",
+        "supabase_persistence_status": persistence_status,
+        "supabase_readback_verified": "PASS" if persistence_status == "OK" and obs.get("supabase_write_attempt_success") else "UNKNOWN",
+        "new_build_status": nb_status,
+        "truth_packet_status": truth_packet.get("status", "MISSING"),
+        "truth_packet_alert_required": truth_packet.get("alert_required"),
+        "passport_coverage_pct": round(_passport_coverage_from_readiness(nb) * 100.0, 2),
+        "intent_coverage_pct": float((nb.get("intent_coverage") or {}).get("coverage_pct") or 0.0),
+        "sigma_status": sigma_status,
+        "latest_sigma_sr": float(sigma_summary.get("global_sr") or 0.0),
+        "shadow_lanes_status": "CURRENT_CUMULATIVE" if shadow_lanes else "MISSING",
+        "shadow_lanes": shadow_lanes,
+        "races_scored": races_scored,
+        "runners_scored": runners_scored,
+        "observability_file": str(obs_path.relative_to(ROOT)) if obs_path else None,
+        "new_build_file": str(nb_path.relative_to(ROOT)),
+        "stale_data_warnings": warnings,
+        "guards": {
+            "no_telegram_from_new_build": True,
+            "new_build_paper_only": True,
+            "no_staking": True,
+            "rpr_archive_only": True,
+        },
+    }
+
+
+def _build_dashboard_truth_panel(date_str: str) -> dict:
+    summary = _build_truth_summary(date_str)
+    obs, obs_path = _latest_observability(date_str)
+    governed = _build_governed_card(date_str)
+    meta = governed.get("meta") or {}
+    doctrine = _load_json(ROOT / "data" / "doctrine_scorecard_latest.json", None)
+    sidecar = _load_json(STATIC_DIR / "sidecar_stack_latest.json", None)
+    return {
+        "generated_at": _utc_now(),
+        "a_supabase": {
+            "status": "CONNECTED" if summary["supabase_persistence_status"] == "OK" else "UNKNOWN",
+            "run_status": summary["supabase_persistence_status"],
+            "verdict_count_today": summary["races_scored"],
+            "latest_pipeline_run": {"started_at": obs.get("timestamp")},
+            "error": None if summary["supabase_persistence_status"] == "OK" else "No OK persistence artifact for requested date",
+        },
+        "b_local_harness": {
+            "status": "FOUND" if obs_path else "MISSING",
+            "file": str(obs_path.relative_to(ROOT)) if obs_path else None,
+            "data": {
+                "final_status": summary["live_velo_status"],
+                "feature_health": summary["feature_health"],
+            } if obs_path else None,
+            "error": None if obs_path else f"No observability artifact found for {date_str}",
+        },
+        "c_doctrine_scorecard": {
+            "status": "FOUND" if doctrine else "MISSING",
+            "data": doctrine,
+            "error": None if doctrine else "doctrine_scorecard_latest.json not found",
+        },
+        "d_new_build_sidecar": {
+            "status": "FOUND" if sidecar else "MISSING",
+            "file": "app/static/dashboard/sidecar_stack_latest.json" if sidecar else None,
+            "data": {
+                "record_count": meta.get("record_count", 0),
+                "date_matches_today": meta.get("requested_date") == date_str,
+                "rpr_violations": meta.get("rpr_violations", 0),
+            } if sidecar else None,
+            "error": None if sidecar else "sidecar_stack_latest.json not found",
+        },
+        "meta": {
+            "target_date": date_str,
+            "no_scoring": True,
+            "no_live_writes": True,
+            "no_telegram": True,
+            "no_staking": True,
+            "truth_summary": summary,
+        },
+    }
+
+
+def _build_governed_card_from_two_lane_readiness(date_str: str) -> dict | None:
+    """Build dashboard rows from New Build two-lane readiness artifacts.
+
+    The two-lane scorer writes race-level top-3 scorecards rather than a full
+    prediction JSONL. This adapter joins those top-3 scores back onto the
+    current-card feed so the UI can show real New Build reads plus full runner
+    counts without falling through to Old VÉLØ snapshots.
+    """
+    report, report_path = _load_new_build_readiness(date_str)
+    scorecards = report.get("race_day_scorecards") or []
+    feed_rows = _find_current_card_feed_for_date(date_str)
+    if not scorecards or not feed_rows:
+        return None
+
+    score_by_race_horse: dict[tuple[str, str], dict] = {}
+    race_meta: dict[str, dict] = {}
+    time_changes = _load_rp_time_changes(date_str)
+    for card in scorecards:
+        race_id = str(card.get("race_id") or "")
+        race_meta[race_id] = card
+        for pick in card.get("lane_a_top3") or []:
+            horse_key = str(pick.get("horse") or "").strip().lower()
+            if horse_key:
+                score_by_race_horse[(race_id, horse_key)] = pick
+
+    verdicts = []
+    for row in feed_rows:
+        race_id = str(row.get("race_id") or "")
+        horse = str(row.get("horse") or "")
+        pick = score_by_race_horse.get((race_id, horse.strip().lower()), {})
+        card = race_meta.get(race_id, {})
+        prob = float(pick.get("prob") or 0.0)
+        rank = int(pick.get("rank") or 99)
+        passport_found = bool(row.get("passport_found"))
+        reason_codes = list(row.get("reason_codes") or [])
+        if row.get("missing_reason"):
+            reason_codes.append(str(row.get("missing_reason")))
+        verdicts.append({
+            "race_id": race_id,
+            "horse": horse,
+            "horse_id": str(row.get("rp_uid") or ""),
+            "course": row.get("course") or "",
+            "off_time": row.get("off_time"),
+            "previous_off_time": (time_changes.get(race_id) or {}).get("previous_off_time"),
+            "time_changed": race_id in time_changes,
+            "race_name": row.get("race_title") or card.get("race_title") or "",
+            "date": date_str,
+            "rank": rank,
+            "champion_rank": rank,
+            "champion_probability": prob,
+            "velo_prime_prob": prob,
+            "market_deception_score": 0.0,
+            "improvement_score": 0.0,
+            "place_prob": 0.0,
+            "assigned_product": "NEW_BUILD_PAPER_ONLY",
+            "router_reasons": ["PAPER_ONLY", "NO_STAKING", "NO_TELEGRAM", "NO_LIVE_WRITE"],
+            "execution_allowed": False,
+            "candidate_execution_allowed": False,
+            "passport_found": passport_found,
+            "new_build_lane": report.get("operational_lane") or "LANE_A_CORE_PASSPORT",
+            "nb_decision_lane": pick.get("nb_decision_lane") or card.get("top_pick_lane"),
+            "reason_codes": reason_codes,
+            "stack_badges": ["NEW_BUILD_PAPER", "CORE_PASSPORT"] + (["PASSPORT"] if passport_found else []),
+            "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO",
+            "rp_rpr_velo_allowed": False,
+            "missing_metadata": not (row.get("course") and row.get("off_time") and horse),
+            "metadata_complete": bool(row.get("course") and row.get("off_time") and horse),
+            "paper_only": True,
+        })
+
+    verdicts.sort(key=lambda x: (x.get("off_time") or "", x.get("course") or "", x.get("rank") or 99))
+    meta_complete = sum(1 for v in verdicts if v["metadata_complete"])
+    return {
+        "meta": {
+            "status": "NEW_BUILD_TWO_LANE_READY",
+            "requested_date": date_str,
+            "loaded_date": date_str,
+            "source": "new_build_two_lane_readiness",
+            "message": "New Build paper-only two-lane readiness joined to current-card feed.",
+            "allow_fallback": False,
+            "date_match": True,
+            "stale_data_blocked": False,
+            "governed_card_loaded_date": date_str,
+            "governed_card_status": "NEW_BUILD_PAPER_READY",
+            "sidecar_loaded_date": date_str,
+            "sidecar_status": "NEW_BUILD_TWO_LANE",
+            "sidecar_date_match": True,
+            "cashrun_loaded_date": None,
+            "cashrun_status": "UNAVAILABLE_NEW_BUILD_PAPER",
+            "cashrun_counts": {},
+            "metadata_coverage": round(meta_complete / len(verdicts), 4) if verdicts else 0.0,
+            "commit_sha": "new_build_two_lane",
+            "router_version": "New Build Two-Lane Paper Router v1",
+            "record_count": len(verdicts),
+            "date_mismatch": False,
+            "gov_overlay": False,
+            "exact_date_file_present": True,
+            "new_build_paper_only": True,
+            "champion_version": "Core_V0_OR_Passport",
+            "classification": report.get("overall_status", "NEW_BUILD_PAPER_READY"),
+            "rpr_violations": report.get("rpr_violations", 0),
+            "passport_coverage_pct": _passport_coverage_from_readiness(report),
+            "intent_coverage": report.get("intent_coverage", {}),
+            "races": report.get("races_scored", len({v["race_id"] for v in verdicts})),
+            "runners": report.get("runners_scored", len(verdicts)),
+            "readiness_file": str(report_path.relative_to(ROOT)),
+            "time_changes": time_changes,
+        },
+        "cashrun": {
+            "status": "UNAVAILABLE_NEW_BUILD_PAPER",
+            "loaded_date": None,
+            "counts": {},
+            "rows": [],
+        },
+        "verdicts": verdicts,
+    }
+
+
+def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
+    """Serve the official local Live VÉLØ runner snapshot in dashboard shape.
+
+    Read-only bridge for the dashboard UI. Does not score, persist, notify,
+    stake, or mutate Live VÉLØ.
+    """
+    rows = _find_live_runner_snapshots_for_date(date_str)
+    if not rows:
+        return None
+
+    verdicts = []
+    for row in rows:
+        prob = float(row.get("velo_prime_prob") or 0.0)
+        mds = float(row.get("market_deception_score") or 0.0)
+        improvement = float(row.get("improvement_score") or 0.0)
+        place_prob = float(row.get("place_prob") or 0.0)
+        assigned_product = row.get("assigned_product") or "PASS"
+        tier = row.get("tier") or ""
+        off_time = _fmt_time(row.get("off_time"))
+        metadata_complete = bool(row.get("course") and off_time and row.get("horse"))
+        badges = []
+        if tier == "A":
+            badges.append("TIER_A")
+        if prob >= 0.30:
+            badges.append("VP30")
+        if mds >= 0.50:
+            badges.append("MDS_HIGH")
+        if improvement >= 0.40:
+            badges.append("IMPROVE_HIGH")
+        if place_prob >= 0.80:
+            badges.append("PLACE_PROB_HIGH")
+
+        verdicts.append({
+            "race_id": str(row.get("race_id") or ""),
+            "horse": row.get("horse") or "",
+            "horse_id": str(row.get("horse_id") or ""),
+            "course": row.get("course") or "",
+            "off_time": off_time,
+            "race_name": "",
+            "date": date_str,
+            "rank": row.get("rank"),
+            "top_pick_name": row.get("top_pick_name"),
+            "top_pick_vp": row.get("top_pick_vp"),
+            "velo_prime_prob": prob,
+            "sqpe_v17_prob": row.get("sqpe_v17_prob"),
+            "place_prob": place_prob,
+            "market_deception_score": mds,
+            "improvement_score": improvement,
+            "longshot_prob": row.get("longshot_prob"),
+            "release_day_prob": row.get("release_day_prob"),
+            "comment_intel_score": row.get("comment_intel_score"),
+            "archetype_label": row.get("race_archetype") or "",
+            "archetype_confidence": row.get("archetype_confidence") or "",
+            "assigned_product": assigned_product,
+            "router_reasons": row.get("router_reasons") or [],
+            "execution_allowed": bool(row.get("execution_allowed")),
+            "candidate_execution_allowed": False,
+            "passport_found": None,
+            "new_build_lane": None,
+            "reason_codes": row.get("rpd_evidence_codes") or [],
+            "stack_badges": badges,
+            "rpr_policy": "LIVE_LEGACY_ACCEPTED_POLICY",
+            "rp_rpr_velo_allowed": False,
+            "missing_metadata": not metadata_complete,
+            "metadata_complete": metadata_complete,
+            "vp30": prob >= 0.30,
+            "mds_high": mds >= 0.50,
+            "improve_high": improvement >= 0.40,
+            "cash_run_flag": bool(row.get("cash_run_flag")),
+            "setup_run_flag": bool(row.get("setup_run_flag")),
+            "operator_read_profile": "LIVE_VELO_LOCAL_SNAPSHOT",
+            "operator_skepticism_flags": [],
+            "signal_stack": row.get("active_components") or [],
+            "rp_flatline_warning": False,
+            "trust_policy": "LIVE_VERDICT_READ_ONLY_DASHBOARD",
+            "paper_only": False,
+        })
+
+    verdicts.sort(key=lambda x: (x.get("off_time") or "", x.get("course") or "", x.get("rank") or 99))
+    meta_complete = sum(1 for v in verdicts if v["metadata_complete"])
+    race_count = len({v["race_id"] for v in verdicts})
+    return {
+        "meta": {
+            "status": "LIVE_LOCAL_SNAPSHOT_READY",
+            "requested_date": date_str,
+            "loaded_date": date_str,
+            "source": "local_json_exact",
+            "message": "Official Live VÉLØ local runner snapshot. Read-only dashboard bridge.",
+            "allow_fallback": False,
+            "date_match": True,
+            "stale_data_blocked": False,
+            "governed_card_loaded_date": date_str,
+            "governed_card_status": "PASS_EXACT_DATE",
+            "sidecar_loaded_date": date_str,
+            "sidecar_status": "LIVE_LOCAL_SNAPSHOT",
+            "sidecar_date_match": True,
+            "cashrun_loaded_date": None,
+            "cashrun_status": "UNAVAILABLE_DASHBOARD_READ_ONLY",
+            "cashrun_counts": {},
+            "metadata_coverage": round(meta_complete / len(verdicts), 4) if verdicts else 0.0,
+            "commit_sha": rows[0].get("run_id", "local_snapshot"),
+            "router_version": "ProductRouter v1",
+            "record_count": len(verdicts),
+            "date_mismatch": False,
+            "gov_overlay": False,
+            "exact_date_file_present": True,
+            "new_build_paper_only": False,
+            "classification": "LIVE_LOCAL_SNAPSHOT_DASHBOARD_READY",
+            "rpr_violations": 0,
+            "races": race_count,
+            "runners": len(verdicts),
+        },
+        "cashrun": {
+            "status": "UNAVAILABLE_DASHBOARD_READ_ONLY",
+            "loaded_date": None,
+            "counts": {},
+            "rows": [],
+        },
+        "verdicts": verdicts,
+    }
+
+
 def _build_governed_card(date_str: str) -> dict:
     """Build governed-card API response from New Build artifacts only."""
     preds = _find_predictions_for_date(date_str)
@@ -96,6 +561,12 @@ def _build_governed_card(date_str: str) -> dict:
     feed = report.get("current_card_feed", {}) if report else {}
 
     if not preds:
+        two_lane = _build_governed_card_from_two_lane_readiness(date_str)
+        if two_lane:
+            return two_lane
+        live_snapshot = _build_governed_card_from_live_snapshots(date_str)
+        if live_snapshot:
+            return live_snapshot
         return {
             "meta": {
                 "status": "NO_DATA",
@@ -241,6 +712,18 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     return JSONResponse(result)
 
 
+@app.get("/api/dashboard/truth-summary")
+async def dashboard_truth_summary(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return JSONResponse(_build_truth_summary(target))
+
+
+@app.get("/api/dashboard-truth")
+async def dashboard_truth(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return JSONResponse(_build_dashboard_truth_panel(target))
+
+
 @app.get("/api/doctrine-scorecard")
 async def doctrine_scorecard():
     path = ROOT / "data" / "doctrine_scorecard_latest.json"
@@ -258,6 +741,49 @@ async def doctrine_scorecard():
             status_code=404,
         )
     return JSONResponse(data)
+
+
+def _find_old_velo_verdicts_for_date(date_str: str) -> list[dict]:
+    """Read velo_prime_verdicts_{date_tag}.json and return flat list."""
+    date_tag = date_str.replace("-", "_")
+    path = ROOT / "data" / f"velo_prime_verdicts_{date_tag}.json"
+    if not path.exists():
+        return []
+    raw = _load_json(path, [])
+    if not isinstance(raw, list):
+        return []
+    result = []
+    for verdict in raw:
+        top = verdict.get("top") or {}
+        result.append({
+            "race_id": verdict.get("race_id") or "",
+            "course": verdict.get("course") or "",
+            "off_time": verdict.get("off_time") or "",
+            "race_name": verdict.get("race_name") or "",
+            "tier": verdict.get("tier") or "",
+            "horse": top.get("horse") or "",
+            "velo_prime_prob": float(top.get("velo_prime_prob") or 0),
+            "market_deception_score": float(top.get("market_deception_score") or 0),
+            "improvement_score": float(top.get("improvement_score") or 0),
+            "place_prob": float(top.get("place_prob") or 0),
+            "prob_gap": float(top.get("prob_gap") or 0),
+            "confidence_level": top.get("confidence_level") or "low",
+            "assigned_product": verdict.get("product") or "",
+            "router_reasons": top.get("reasons") or [],
+        })
+    return result
+
+
+@app.get("/api/old-velo-verdicts")
+async def old_velo_verdicts(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rows = _find_old_velo_verdicts_for_date(target)
+    return JSONResponse({
+        "date": target,
+        "source": "velo_prime_verdicts_local",
+        "count": len(rows),
+        "verdicts": rows,
+    })
 
 
 @app.get("/api/health")

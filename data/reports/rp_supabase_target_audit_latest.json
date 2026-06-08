@@ -1,0 +1,178 @@
+{
+  "generated_at": "2026-05-25T02:36:10.436759Z",
+  "project_ref": "ltbsxbvfsxtnharjvqcm",
+  "tables": {
+    "raw_payload_archive": {
+      "exists": true,
+      "columns": [
+        "id",
+        "pipeline_run_id",
+        "endpoint",
+        "request_params",
+        "race_date",
+        "pulled_at",
+        "payload_json",
+        "checksum",
+        "parse_status",
+        "parser_version"
+      ],
+      "required_fields_missing": [],
+      "safe_to_insert": true
+    },
+    "rp_entity_aliases": {
+      "exists": true,
+      "columns": [
+        "id",
+        "entity_type",
+        "rp_id",
+        "alias_type",
+        "alias_value",
+        "match_score",
+        "verified",
+        "created_at"
+      ],
+      "required_fields_missing": [],
+      "safe_to_insert": true
+    },
+    "rp_ingestion_runs": {
+      "exists": true,
+      "columns": [
+        "id",
+        "run_type",
+        "target_id",
+        "target_name",
+        "started_at",
+        "finished_at",
+        "records_fetched",
+        "records_written",
+        "status",
+        "error_note"
+      ],
+      "required_fields_missing": [],
+      "safe_to_insert": true
+    },
+    "rp_meetings": {
+      "exists": true,
+      "columns": [
+        "bundle_key",
+        "created_at",
+        "updated_at",
+        "source_date",
+        "venue_code",
+        "course_name",
+        "parser_version",
+        "parse_success",
+        "races_count",
+        "runners_count",
+        "input_files",
+        "warnings",
+        "errors",
+        "raw_report"
+      ],
+      "required_fields_missing": [],
+      "safe_to_insert": true
+    },
+    "rp_racecards": {
+      "exists": true,
+      "columns": [
+        "race_key",
+        "bundle_key",
+        "source_date",
+        "venue_code",
+        "course_name",
+        "off_time",
+        "race_name",
+        "race_number",
+        "race_type",
+        "distance_text",
+        "distance_yards",
+        "distance_furlongs",
+        "distance_meters",
+        "class_band",
+        "going",
+        "prize",
+        "runners_count",
+        "raw_bundle"
+      ],
+      "required_fields_missing": [],
+      "safe_to_insert": true
+    },
+    "rp_runner_profiles": {
+      "exists": true,
+      "columns": [
+        "race_key",
+        "runner_number",
+        "horse_name",
+        "cloth_no",
+        "age",
+        "sex",
+        "weight",
+        "days_since_run",
+        "trainer_name",
+        "jockey_name",
+        "owner_name",
+        "draw",
+        "headgear",
+        "form_figures",
+        "or_current",
+        "rpr_current",
+        "ts_current",
+        "raw_runner_bundle"
+      ],
+      "required_fields_missing": [],
+      "safe_to_insert": true
+    },
+    "rp_runner_signals": {
+      "exists": true,
+      "columns": [
+        "race_key",
+        "runner_number",
+        "horse_name",
+        "recent_finish_positions",
+        "true_run_count",
+        "has_recent_win",
+        "has_recent_place",
+        "days_since_run",
+        "ts_improving_flag",
+        "or_drop_streak",
+        "or_compression_score",
+        "release_window_flag",
+        "cash_run_flag",
+        "trainer_positive_flag",
+        "spotlight_present_flag",
+        "comment_present_flag",
+        "signal_summary",
+        "signal_version",
+        "raw_signal_payload"
+      ],
+      "required_fields_missing": [],
+      "safe_to_insert": true
+    }
+  },
+  "all_required_safe": true,
+  "recommended_targets": {
+    "racecard_injection.json": [
+      "rp_meetings",
+      "rp_racecards",
+      "rp_runner_profiles",
+      "rp_runner_signals",
+      "raw_payload_archive"
+    ],
+    "horse_dossiers.json": [
+      "rp_runner_profiles",
+      "rp_entity_aliases",
+      "raw_payload_archive"
+    ],
+    "race_dossiers.json": [
+      "rp_racecards",
+      "raw_payload_archive"
+    ],
+    "horse_identity_bridge.json": [
+      "rp_entity_aliases",
+      "raw_payload_archive"
+    ],
+    "rp_archive_outcome_bridge.json": [
+      "raw_payload_archive"
+    ]
+  }
+}

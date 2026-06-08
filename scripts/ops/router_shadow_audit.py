@@ -535,14 +535,14 @@ def main():
 
     # 1. Latest (overwritten each run)
     audit_df.to_csv(AUDIT_CSV, index=False)
-    AUDIT_MD.write_text(md)
+    AUDIT_MD.write_text(md, encoding="utf-8")
 
     # 2. Timestamped snapshot (immutable)
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     snap_csv = RUNS_DIR / f"router_shadow_audit_{ts_tag}.csv"
     snap_md  = RUNS_DIR / f"router_shadow_audit_{ts_tag}.md"
     audit_df.to_csv(snap_csv, index=False)
-    snap_md.write_text(md)
+    snap_md.write_text(md, encoding="utf-8")
 
     # 3. Append-only ledger
     ledger_rows = append_ledger(results, run_ts, total_rows, total_results)

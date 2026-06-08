@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-05-23T00:00:00+00:00",
+  "verification_type": "POST_CONSUME_IDEMPOTENCY",
+  "dates_verified": ["2026-05-21", "2026-05-22"],
+  "consumed_live": 0,
+  "consumed_live_check": "PASS",
+  "live_state_hash": "1016d89dceb28da5",
+  "live_state_unchanged": true,
+  "live_state_check": "PASS",
+  "shadow_train_v2": {
+    "total_races_observed": 2055,
+    "hash": "570f6210adb56191"
+  },
+  "per_date": {
+    "2026-05-21": {
+      "total_rows": 44,
+      "consumed_shadow": 44,
+      "consumed_live": 0,
+      "unconsumed": 0,
+      "unconsumed_check": "PASS",
+      "consumed_live_check": "PASS"
+    },
+    "2026-05-22": {
+      "total_rows": 36,
+      "consumed_shadow": 36,
+      "consumed_live": 0,
+      "unconsumed": 0,
+      "unconsumed_check": "PASS",
+      "consumed_live_check": "PASS"
+    }
+  },
+  "totals": {
+    "total_rows": 80,
+    "consumed_shadow": 80,
+    "consumed_live": 0
+  },
+  "all_checks_pass": true,
+  "governance": {
+    "scoring_changes": false,
+    "model_promotion": false,
+    "playbook_g_promoted": false,
+    "live_state_mutation": false,
+    "consumed_live_any_row": false
+  }
+}

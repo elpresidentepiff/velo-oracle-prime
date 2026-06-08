@@ -1,0 +1,2359 @@
+{
+  "generated_at": "2026-06-04T21:51:39.687535Z",
+  "target_date": "2026-06-04",
+  "overall_status": "READY",
+  "capture_status": {
+    "date": "2026-06-04",
+    "status": "READY",
+    "races": 43,
+    "runners": 395
+  },
+  "races_scored": 43,
+  "runners_scored": 391,
+  "rpr_violations": 0,
+  "sp_violations": 0,
+  "quality_gates": {
+    "rpr_clean": true,
+    "sp_clean": true,
+    "passport_coverage_above_50pct": true,
+    "no_leakage_violations": true
+  },
+  "intent_coverage": {
+    "found": 0,
+    "total": 391,
+    "coverage_pct": 0.0,
+    "gate": 80.0,
+    "status": "UNAVAILABLE_BELOW_GATE",
+    "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+  },
+  "operational_lane": "LANE_A_CORE_PASSPORT",
+  "operational_note": "Intent coverage 0.0% < 80.0% gate. Lane B is PAPER_ONLY_NO_INTENT. Lane A (Core+Passport) is operational read.",
+  "lane_a": {
+    "label": "Core_V0_OR_Passport (30 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport\\core_v0_or_passport_model.pkl",
+    "feature_count": 30,
+    "median_fill_counts": {
+      "release_window_score": 391,
+      "going_fit_score": 391,
+      "distance_fit_score": 391,
+      "quiet_run_score": 391,
+      "trainer_timing_score": 391,
+      "jockey_switch_intent": 391,
+      "setup_run_flag": 391,
+      "cash_run_flag": 391,
+      "pp_days_since_last": 391,
+      "pp_layoff": 391
+    }
+  },
+  "lane_b": {
+    "label": "Challenger_V1 Core+Passport+Intent (45 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport_intent\\model.pkl",
+    "feature_count": 45,
+    "intent_coverage_pct": 0.0,
+    "status": "PAPER_ONLY_NO_INTENT",
+    "median_fill_counts": {
+      "release_window_score": 391,
+      "going_fit_score": 391,
+      "distance_fit_score": 391,
+      "quiet_run_score": 391,
+      "trainer_timing_score": 391,
+      "jockey_switch_intent": 391,
+      "setup_run_flag": 391,
+      "cash_run_flag": 391,
+      "pp_days_since_last": 391,
+      "pp_layoff": 391
+    }
+  },
+  "race_day_scorecards": [
+    {
+      "race_id": "919889",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-04T14:00:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Racing To School Reaches 25 Years Novices' Hurdle (GBB Race)",
+      "runner_count": 5,
+      "passport_coverage": "5/5",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Starshine Legend",
+          "prob": 0.295594,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "White Riot",
+          "prob": 0.291615,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Biggles",
+          "prob": 0.257021,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Starshine Legend",
+          "prob": 0.266489,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "White Riot",
+          "prob": 0.240396,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Loriko",
+          "prob": 0.208784,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "920007",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T14:12:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Vauxhall Knaresborough Britsh EBF Fillies' Restricted Novice Stakes (B/C/D) (Qual') (GBB) (Div I)",
+      "runner_count": 8,
+      "passport_coverage": "7/8",
+      "passport_coverage_pct": 87.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Ziggy Starshine",
+          "prob": 0.260564,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Birkacre Brow",
+          "prob": 0.130755,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Wateera",
+          "prob": 0.109461,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Ziggy Starshine",
+          "prob": 0.176474,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Birkacre Brow",
+          "prob": 0.122406,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Wateera",
+          "prob": 0.110587,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "919998",
+      "course": "Hamilton",
+      "off_time": "2026-06-04T14:21:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Sodexo Live! 2yo Series EBF Maiden Fillies' Stakes (Hamilton Park 2yo Series Qualifier) (GBB Race)",
+      "runner_count": 4,
+      "passport_coverage": "4/4",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Jazz Queen",
+          "prob": 0.355787,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Meennaa",
+          "prob": 0.347898,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Angels Passing",
+          "prob": 0.189209,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Jazz Queen",
+          "prob": 0.309732,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Meennaa",
+          "prob": 0.248409,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Angels Passing",
+          "prob": 0.197597,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "919883",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-04T14:30:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "JAL Roofing Novices' Hurdle (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": "5/6",
+      "passport_coverage_pct": 83.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Presentandcorrect",
+          "prob": 0.15055,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Millena Agent",
+          "prob": 0.131374,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Executive Producer",
+          "prob": 0.106604,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Presentandcorrect",
+          "prob": 0.132123,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Millena Agent",
+          "prob": 0.13512,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Coumeenoole",
+          "prob": 0.094955,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "922033",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T14:42:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Vauxhall Knaresborough Britsh EBF Fillies' Restricted Novice Stakes (B/C/D) (Qual') (GBB) (Div II)",
+      "runner_count": 9,
+      "passport_coverage": "8/9",
+      "passport_coverage_pct": 88.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Mardy Bum",
+          "prob": 0.137208,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Beautiful Rainbow",
+          "prob": 0.12708,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Someone To Love",
+          "prob": 0.103765,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Mardy Bum",
+          "prob": 0.144371,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Beautiful Rainbow",
+          "prob": 0.110521,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Angel Steps",
+          "prob": 0.098995,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "920001",
+      "course": "Hamilton",
+      "off_time": "2026-06-04T14:51:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Morton Fraser Macroberts LLP Handicap",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Thunderstorm Katie",
+          "prob": 0.108125,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Wish This",
+          "prob": 0.101488,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Kelpie Grey",
+          "prob": 0.099347,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Thunderstorm Katie",
+          "prob": 0.098492,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Wish This",
+          "prob": 0.095232,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Kelpie Grey",
+          "prob": 0.089252,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "919886",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-04T15:00:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Nourkrin Handicap Hurdle",
+      "runner_count": 8,
+      "passport_coverage": "8/8",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Tiger Orchid",
+          "prob": 0.130261,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Breezethroughlife",
+          "prob": 0.114123,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Noble Birth",
+          "prob": 0.110328,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Breezethroughlife",
+          "prob": 0.1128,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Noble Birth",
+          "prob": 0.12968,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Secret Trix",
+          "prob": 0.106317,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "920005",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T15:12:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Amstel Fillies' Novice Stakes (GBB Race)",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Black Orchid",
+          "prob": 0.276089,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Overbudget",
+          "prob": 0.218241,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Reigning Queen",
+          "prob": 0.202574,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Black Orchid",
+          "prob": 0.183792,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Overbudget",
+          "prob": 0.229741,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Viviana",
+          "prob": 0.174385,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919999",
+      "course": "Hamilton",
+      "off_time": "2026-06-04T15:21:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Weatherbys Global Stallions Handicap",
+      "runner_count": 9,
+      "passport_coverage": "9/9",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Obito",
+          "prob": 0.148033,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Tee Aitch Aye",
+          "prob": 0.129948,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Zowal",
+          "prob": 0.123256,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Obito",
+          "prob": 0.158125,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Tee Aitch Aye",
+          "prob": 0.132587,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Highland Olly",
+          "prob": 0.112123,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919884",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-04T15:30:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "JMI Planning 10 Years In Business Mares' Handicap Chase (ARC Summer Chase Qualifier) (GBB Race)",
+      "runner_count": 4,
+      "passport_coverage": "4/4",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "That's Nice",
+          "prob": 0.260812,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Regal Renaissance",
+          "prob": 0.241958,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Queens Wish",
+          "prob": 0.239108,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "That's Nice",
+          "prob": 0.273814,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Regal Renaissance",
+          "prob": 0.205038,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Queens Wish",
+          "prob": 0.238054,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "920006",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T15:42:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Heineken 0.0 Fillies' Handicap",
+      "runner_count": 14,
+      "passport_coverage": "14/14",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Seeing Stars",
+          "prob": 0.125234,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Volendam",
+          "prob": 0.11513,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Nanoscience",
+          "prob": 0.112257,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Volendam",
+          "prob": 0.090433,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Magic Box",
+          "prob": 0.090629,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Dream Illusion",
+          "prob": 0.096451,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "919997",
+      "course": "Hamilton",
+      "off_time": "2026-06-04T15:51:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Weatherbys Digital Solutions Clyde Handicap",
+      "runner_count": 7,
+      "passport_coverage": "6/7",
+      "passport_coverage_pct": 85.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Altareq",
+          "prob": 0.160034,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Eternal Force",
+          "prob": 0.159852,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Two B Tanned",
+          "prob": 0.134253,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Altareq",
+          "prob": 0.133143,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Eternal Force",
+          "prob": 0.144967,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Botanical",
+          "prob": 0.138728,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919887",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-04T16:00:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Litholexal Handicap Hurdle",
+      "runner_count": 9,
+      "passport_coverage": "9/9",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Brionywells",
+          "prob": 0.110598,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Bells Of Ufford",
+          "prob": 0.107265,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "The Best Way",
+          "prob": 0.106174,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Bells Of Ufford",
+          "prob": 0.089421,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Hillsin",
+          "prob": 0.114543,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Pepite De Saphir",
+          "prob": 0.096759,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "920009",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T16:12:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Malvern Castle And Compass Hospitality Handicap",
+      "runner_count": 9,
+      "passport_coverage": "9/9",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sovereign Bright",
+          "prob": 0.155834,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Ciao Capo",
+          "prob": 0.124051,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Stepanov",
+          "prob": 0.117922,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sovereign Bright",
+          "prob": 0.157911,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Ciao Capo",
+          "prob": 0.10053,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Stepanov",
+          "prob": 0.11765,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "920002",
+      "course": "Hamilton",
+      "off_time": "2026-06-04T16:21:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Aspire Cleaning & Facilities Ltd Handicap",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Parisiac",
+          "prob": 0.159018,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Call To Action",
+          "prob": 0.153224,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Water Of Leith",
+          "prob": 0.14334,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Call To Action",
+          "prob": 0.12347,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Water Of Leith",
+          "prob": 0.127374,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Hi Lord",
+          "prob": 0.125434,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919885",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-04T16:30:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Turf Services Handicap Chase (ARC Summer Chase Series Qualifier) (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Karnaval Point",
+          "prob": 0.181923,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Wheresmemoneygone",
+          "prob": 0.181405,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Immortal Fame",
+          "prob": 0.146559,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Karnaval Point",
+          "prob": 0.179336,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Wheresmemoneygone",
+          "prob": 0.127959,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Immortal Fame",
+          "prob": 0.1501,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "920004",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T16:42:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Book Your Autumn Hospitality Packages Now Handicap",
+      "runner_count": 16,
+      "passport_coverage": "16/16",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Inspired",
+          "prob": 0.101675,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Stratocracy",
+          "prob": 0.081421,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Catalyse",
+          "prob": 0.081145,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Inspired",
+          "prob": 0.089622,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Catalyse",
+          "prob": 0.078745,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Lady Mariko",
+          "prob": 0.075594,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "920000",
+      "course": "Hamilton",
+      "off_time": "2026-06-04T16:51:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Sodexo Live! Events Handicap",
+      "runner_count": 8,
+      "passport_coverage": "7/8",
+      "passport_coverage_pct": 87.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Jujubella",
+          "prob": 0.141096,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Clansman",
+          "prob": 0.132542,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Sure And Stedfast",
+          "prob": 0.123858,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Jujubella",
+          "prob": 0.123569,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Clansman",
+          "prob": 0.103781,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Sure And Stedfast",
+          "prob": 0.102799,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919888",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-04T17:03:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Quinnbet Handicap Hurdle",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Calibos",
+          "prob": 0.112037,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Genbu",
+          "prob": 0.089385,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Clever Relation",
+          "prob": 0.081166,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Lively Citizen",
+          "prob": 0.092397,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Zucayan",
+          "prob": 0.065019,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Ask A Sainte",
+          "prob": 0.066888,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "920417",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T17:10:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Sky Sports Racing Virgin 512 Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Francisco",
+          "prob": 0.115483,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Dashing Donkey",
+          "prob": 0.108091,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Fort Augustus",
+          "prob": 0.10732,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Francisco",
+          "prob": 0.107859,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Dashing Donkey",
+          "prob": 0.103786,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Fort Augustus",
+          "prob": 0.091533,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "920008",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T17:15:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Live Streams On Racing TV Extra Handicap",
+      "runner_count": 10,
+      "passport_coverage": "8/10",
+      "passport_coverage_pct": 80.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Dragon God",
+          "prob": 0.124242,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Eldeyaar",
+          "prob": 0.101945,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Mrs Trump",
+          "prob": 0.097413,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Dragon God",
+          "prob": 0.112627,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Amerjeet",
+          "prob": 0.089584,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "He's An Angel",
+          "prob": 0.090068,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "920003",
+      "course": "Hamilton",
+      "off_time": "2026-06-04T17:22:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Hampton By Hilton Hamilton Park Handicap",
+      "runner_count": 11,
+      "passport_coverage": "10/11",
+      "passport_coverage_pct": 90.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Uncle Liam",
+          "prob": 0.134626,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Ravenswell",
+          "prob": 0.128251,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Recobella",
+          "prob": 0.090631,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Uncle Liam",
+          "prob": 0.111754,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Ravenswell",
+          "prob": 0.120439,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Recobella",
+          "prob": 0.084928,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921873",
+      "course": "Leopardstown",
+      "off_time": "2026-06-04T17:30:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Irish Stallion Farms EBF Fillies Maiden (IRE Incentive Race)",
+      "runner_count": 11,
+      "passport_coverage": "10/11",
+      "passport_coverage_pct": 90.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Honey Deuce",
+          "prob": 0.08606,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Blonde Over Blue",
+          "prob": 0.085762,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Margot Mae",
+          "prob": 0.08573,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Honey Deuce",
+          "prob": 0.086121,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Blonde Over Blue",
+          "prob": 0.08788,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Alpha",
+          "prob": 0.086639,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "920422",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T17:40:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "attheraces.com/marketmovers Handicap",
+      "runner_count": 7,
+      "passport_coverage": "6/7",
+      "passport_coverage_pct": 85.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Peregrine Falcon",
+          "prob": 0.173688,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Shalaa Asker",
+          "prob": 0.157583,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Desdemona",
+          "prob": 0.156726,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Peregrine Falcon",
+          "prob": 0.161879,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Desdemona",
+          "prob": 0.146112,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Style King",
+          "prob": 0.149065,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "920010",
+      "course": "Wetherby",
+      "off_time": "2026-06-04T17:50:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Book Tickets Online At wetherbyracing.co.uk Handicap",
+      "runner_count": 9,
+      "passport_coverage": "8/9",
+      "passport_coverage_pct": 88.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Surgeon Commander",
+          "prob": 0.157684,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Data Fata Secutus",
+          "prob": 0.13719,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Dabbling",
+          "prob": 0.114415,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Surgeon Commander",
+          "prob": 0.120969,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Data Fata Secutus",
+          "prob": 0.116655,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Dabbling",
+          "prob": 0.113701,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921874",
+      "course": "Leopardstown",
+      "off_time": "2026-06-04T18:00:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "BOYLE Sports Apprentice Handicap",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Playin Cool",
+          "prob": 0.136503,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Mehman",
+          "prob": 0.11373,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Eddie G",
+          "prob": 0.110574,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Playin Cool",
+          "prob": 0.119642,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Mehman",
+          "prob": 0.083157,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Eddie G",
+          "prob": 0.106399,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "920418",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T18:10:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Sky Sports Racing Sky 415 'Confined' EBF Fillies' Novice Stakes (2 Runs Or Less) (GBB/GBBPlus Race)",
+      "runner_count": 13,
+      "passport_coverage": "12/13",
+      "passport_coverage_pct": 92.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sunshine Star",
+          "prob": 0.144864,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Kenkelly",
+          "prob": 0.101639,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Lightning Glory",
+          "prob": 0.097911,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sunshine Star",
+          "prob": 0.132502,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Kenkelly",
+          "prob": 0.094945,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Musical Accord",
+          "prob": 0.085664,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919995",
+      "course": "Ffos Las",
+      "off_time": "2026-06-04T18:20:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Simply Safe Care Group Handicap",
+      "runner_count": 8,
+      "passport_coverage": "7/8",
+      "passport_coverage_pct": 87.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Arishka's Dream",
+          "prob": 0.255131,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "La Belle Forest",
+          "prob": 0.20621,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Arctic Wind",
+          "prob": 0.147668,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Arishka's Dream",
+          "prob": 0.20242,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "La Belle Forest",
+          "prob": 0.193815,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Arctic Wind",
+          "prob": 0.112363,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "921875",
+      "course": "Leopardstown",
+      "off_time": "2026-06-04T18:30:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "King George V Cup (Listed Race)",
+      "runner_count": 4,
+      "passport_coverage": "4/4",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Endorsement",
+          "prob": 0.278603,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Amadeus Mozart",
+          "prob": 0.253595,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Yousaynothingatall",
+          "prob": 0.24845,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Endorsement",
+          "prob": 0.207396,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Amadeus Mozart",
+          "prob": 0.19731,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Yousaynothingatall",
+          "prob": 0.195518,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "920419",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T18:40:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Free Bets On attheraces.com Handicap",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Kaori",
+          "prob": 0.211831,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Extraterrestrial",
+          "prob": 0.205084,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Lexington Express",
+          "prob": 0.149681,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Kaori",
+          "prob": 0.186612,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Extraterrestrial",
+          "prob": 0.187999,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Lexington Express",
+          "prob": 0.154341,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919991",
+      "course": "Ffos Las",
+      "off_time": "2026-06-04T18:50:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Llanelli Mind Novice Stakes (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Persian Land",
+          "prob": 0.19655,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Real Trouble",
+          "prob": 0.188479,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Galipi",
+          "prob": 0.143264,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Persian Land",
+          "prob": 0.145549,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Real Trouble",
+          "prob": 0.184025,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Another Encore",
+          "prob": 0.142691,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921877",
+      "course": "Leopardstown",
+      "off_time": "2026-06-04T19:00:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Irish Stallion Farms EBF Median Auction Fillies Maiden",
+      "runner_count": 14,
+      "passport_coverage": "14/14",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fleur De Provence",
+          "prob": 0.109805,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Bang Bang",
+          "prob": 0.102854,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Shanala",
+          "prob": 0.09024,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Fleur De Provence",
+          "prob": 0.086176,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Bang Bang",
+          "prob": 0.088645,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Shanala",
+          "prob": 0.089316,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "920420",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T19:10:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Free Tips On attheraces.com Fillies' Handicap",
+      "runner_count": 9,
+      "passport_coverage": "8/9",
+      "passport_coverage_pct": 88.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Polka Blue",
+          "prob": 0.168922,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Doodling",
+          "prob": 0.145464,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Ritaal",
+          "prob": 0.137799,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Doodling",
+          "prob": 0.159677,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Ritaal",
+          "prob": 0.138482,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Pretty Danielle",
+          "prob": 0.149509,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "919993",
+      "course": "Ffos Las",
+      "off_time": "2026-06-04T19:20:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Pro Panther Handicap",
+      "runner_count": 13,
+      "passport_coverage": "12/13",
+      "passport_coverage_pct": 92.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Orchard",
+          "prob": 0.112655,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Opening Bat",
+          "prob": 0.105089,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Grey Soul",
+          "prob": 0.093549,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Orchard",
+          "prob": 0.101866,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Opening Bat",
+          "prob": 0.104452,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Auburn Avenue",
+          "prob": 0.078725,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921876",
+      "course": "Leopardstown",
+      "off_time": "2026-06-04T19:30:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "BOYLE Sports 'Home Of The Early Payout' Handicap",
+      "runner_count": 8,
+      "passport_coverage": "7/8",
+      "passport_coverage_pct": 87.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Johnny Soda",
+          "prob": 0.158178,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Monvoe",
+          "prob": 0.146195,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Red Autumn",
+          "prob": 0.119323,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Johnny Soda",
+          "prob": 0.152213,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Monvoe",
+          "prob": 0.103737,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Red Autumn",
+          "prob": 0.105546,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "920421",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T19:40:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Download The At The Races App EBF Restricted Maiden Fillies' Stakes (Band D) (Qual') (GBB) (Div I)",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fire Thunder",
+          "prob": 0.127471,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Doha Rd",
+          "prob": 0.107654,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "It'sbeenemotional",
+          "prob": 0.104723,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Doha Rd",
+          "prob": 0.108861,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "It'sbeenemotional",
+          "prob": 0.099226,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Defiant Dream",
+          "prob": 0.093166,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "919994",
+      "course": "Ffos Las",
+      "off_time": "2026-06-04T19:50:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "New Thomas Arms Handicap",
+      "runner_count": 9,
+      "passport_coverage": "7/9",
+      "passport_coverage_pct": 77.8,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Reem Rak",
+          "prob": 0.183456,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Al's River",
+          "prob": 0.110442,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Salkadan",
+          "prob": 0.107991,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Reem Rak",
+          "prob": 0.180357,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Al's River",
+          "prob": 0.098901,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Kelly Burn",
+          "prob": 0.09463,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "921878",
+      "course": "Leopardstown",
+      "off_time": "2026-06-04T20:00:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "BOYLE Sports Best Odds From 8am Handicap",
+      "runner_count": 16,
+      "passport_coverage": "16/16",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Harana",
+          "prob": 0.118366,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Molto Amichi",
+          "prob": 0.088423,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Daler",
+          "prob": 0.088263,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Harana",
+          "prob": 0.095969,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Molto Amichi",
+          "prob": 0.084043,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Daler",
+          "prob": 0.086577,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "922032",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T20:10:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Download The At The Races App EBF Restricted Maiden Fillies' Stakes (Band D) (Qual') (GBB) (Div II)",
+      "runner_count": 10,
+      "passport_coverage": "9/10",
+      "passport_coverage_pct": 90.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Forest Berry",
+          "prob": 0.116271,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Potters Margot",
+          "prob": 0.101108,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Happy Humpo",
+          "prob": 0.099443,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Happy Humpo",
+          "prob": 0.094926,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Clear Horizon",
+          "prob": 0.092946,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Ron's Angel",
+          "prob": 0.093166,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "919996",
+      "course": "Ffos Las",
+      "off_time": "2026-06-04T20:20:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Go Maintenance Classified Stakes",
+      "runner_count": 8,
+      "passport_coverage": "7/8",
+      "passport_coverage_pct": 87.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Belle Amie",
+          "prob": 0.177519,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Hedonista",
+          "prob": 0.115058,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Highland Harvey",
+          "prob": 0.114927,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Belle Amie",
+          "prob": 0.133719,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Hedonista",
+          "prob": 0.103683,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Buck Barrow",
+          "prob": 0.097083,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921879",
+      "course": "Leopardstown",
+      "off_time": "2026-06-04T20:30:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Leopardstown Premier Lounge Handicap",
+      "runner_count": 17,
+      "passport_coverage": "17/17",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Down The Glen",
+          "prob": 0.080296,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Bear Right",
+          "prob": 0.067382,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Cosmic Funk",
+          "prob": 0.067167,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Down The Glen",
+          "prob": 0.070813,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Love Orchid",
+          "prob": 0.064502,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Glamazon",
+          "prob": 0.06528,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "920423",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-04T20:40:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "Follow @attheraces On X Handicap",
+      "runner_count": 11,
+      "passport_coverage": "10/11",
+      "passport_coverage_pct": 90.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sail On Sailor",
+          "prob": 0.11767,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Beryl's Girl",
+          "prob": 0.10305,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Lordsbridge Bay",
+          "prob": 0.0993,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Beryl's Girl",
+          "prob": 0.084288,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Lordsbridge Bay",
+          "prob": 0.088339,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Angel Summer",
+          "prob": 0.080879,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "919992",
+      "course": "Ffos Las",
+      "off_time": "2026-06-04T20:50:00+01:00",
+      "race_date": "2026-06-04",
+      "race_title": "New Thomas Arms Handicap",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Premier",
+          "prob": 0.23068,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Ghost Story",
+          "prob": 0.188951,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Crackergee",
+          "prob": 0.143749,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Premier",
+          "prob": 0.231097,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Ghost Story",
+          "prob": 0.174913,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Crackergee",
+          "prob": 0.149021,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "WIN_TRUST"
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_engine": true,
+    "no_telegram": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_staking": true,
+    "rpr_archive_only": true,
+    "no_market_lane_morning": true,
+    "no_jtcd_alltime": true
+  }
+}

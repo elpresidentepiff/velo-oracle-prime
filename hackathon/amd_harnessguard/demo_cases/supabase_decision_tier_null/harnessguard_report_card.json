@@ -1,0 +1,22 @@
+{
+  "incident_id": "supabase_decision_tier_null",
+  "detection_time": "2026-06-05T20:20:41.385183Z",
+  "severity": "HIGH",
+  "evidence_source": "hackathon\\amd_harnessguard\\demo_cases\\supabase_decision_tier_null\\evidently_report.json",
+  "policy_evaluation": {
+    "learning_eligibility": "BLOCK_LEARNING",
+    "violations": [
+      "POLICY_PERSISTENCE_GAP"
+    ]
+  },
+  "recovery_plan": {
+    "recommended_action": "VERIFY_SUPABASE_PERSISTENCE_PATH",
+    "operator_message": "HIGH: A persistence gap was detected. The 'assigned_product' column is totally NULL. Check Supabase connection and schema sync.",
+    "safe_next_command": "PYTHONPATH=. python scripts/ops/verify_rp_supabase_archive_load.py"
+  },
+  "amd_benchmark": {
+    "inference_device": "MOCKED_CPU_BASELINE",
+    "latency_ms": 142.5,
+    "throughput_signals_per_sec": 7.01
+  }
+}

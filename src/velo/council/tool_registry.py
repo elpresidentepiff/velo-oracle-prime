@@ -3,7 +3,6 @@
 
 WHITELISTED_TOOLS = {
     "vp30_operator_card": "scripts/place_signal_operator_card.py",
-    "racing_api_enrichment_operator_card": "scripts/racing_api_enrichment_operator_card.py",
     "cashrun_detector": "scripts/cashrun_detector.py",
     "signal_promotion_board": "scripts/signal_promotion_board.py",
     "router_shadow_audit": "scripts/router_shadow_audit.py",

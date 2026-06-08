@@ -1,0 +1,35 @@
+{
+  "audit_date": "2026-06-07",
+  "steps": [
+    {
+      "step": "5",
+      "finding": "Parsed 26 races across 5 venues (Navan, Punchestown, Goodwood, etc). Jockeys verified present in Navan 1.07.",
+      "status": "PASS",
+      "timestamp": "2026-06-06T18:46:08.450168+00:00"
+    },
+    {
+      "step": "6",
+      "finding": "Injection verified: 26 races, 0 null off_time. All venues (Navan, Punchestown, etc) present.",
+      "status": "PASS",
+      "timestamp": "2026-06-06T18:46:15.561183+00:00"
+    },
+    {
+      "step": "4",
+      "finding": "Injection verified: 30 UK/IRE races, 0 null off_times. Venues: Goodwood, Navan, Perth, Punchestown.",
+      "status": "PASS",
+      "timestamp": "2026-06-06T19:16:50.243996+00:00"
+    },
+    {
+      "step": "5",
+      "finding": "Standard cache verified: 30 UK/IRE races, 0 null off_times. Matches injection exactly.",
+      "status": "PASS",
+      "timestamp": "2026-06-06T19:17:15.431222+00:00"
+    },
+    {
+      "step": "1",
+      "finding": "FAIL: refresh2 capture missing. Available folders do not contain the target label.",
+      "status": "FAIL",
+      "timestamp": "2026-06-06T19:26:19.805439+00:00"
+    }
+  ]
+}

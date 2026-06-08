@@ -282,7 +282,7 @@ def normalize_race(raw: dict) -> dict:
         "prize":       _safe_str(raw.get("prize")),
         "field_size":  _safe_int(raw.get("field_size")),
         "region":      _safe_str(raw.get("region")),        # raw API value, e.g. "GB"
-        "jurisdiction": _resolve_jurisdiction(raw.get("region")),  # canonical: "uk"|"ire"|"other"|"unknown"
+        "jurisdiction": _resolve_jurisdiction(raw.get("region") or raw.get("country")),  # canonical: "uk"|"ire"|"other"|"unknown"
         "jumps":       raw.get("jumps"),
         "runners":     normalized_runners,
         "_raw":        raw,

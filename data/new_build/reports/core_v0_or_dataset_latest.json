@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-05-25T21:57:46.938118Z",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "rpr_violation": false,
+  "sp_violation": false,
+  "leakage_check": "PASS",
+  "or_diagnosis": "or_rating='\u2013' for unrated horses (maidens/novices). official_rating=numeric OR, is_rated=0/1 flag. or_vs_field retained (100% coverage).",
+  "official_rating_coverage_flat": 0.5905,
+  "features": [
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "wgt_lbs",
+    "or_vs_field",
+    "release_window_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "setup_run_flag",
+    "cash_run_flag",
+    "official_rating",
+    "is_rated"
+  ],
+  "or_features_added": [
+    "official_rating",
+    "is_rated"
+  ],
+  "train_rows": 987511,
+  "val_rows": 117299,
+  "test_rows": 57221
+}
