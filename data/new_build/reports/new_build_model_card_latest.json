@@ -1,0 +1,310 @@
+{
+  "generated_at": "2026-05-25T22:38:32.401164Z",
+  "model": "Core_V0_OR_Passport_V1",
+  "status": "NEW_BUILD_CHAMPION",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "features_frozen": [
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "wgt_lbs",
+    "or_vs_field",
+    "release_window_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "setup_run_flag",
+    "cash_run_flag",
+    "official_rating",
+    "is_rated",
+    "pp_career_runs",
+    "pp_win_rate",
+    "pp_place_rate",
+    "pp_days_since_last",
+    "pp_layoff",
+    "pp_avg_sp_last5",
+    "pp_jockey_continuity",
+    "pp_course_seen",
+    "pp_or_change_3",
+    "pp_class_moved_up",
+    "pp_class_moved_down"
+  ],
+  "feature_groups": {
+    "core_v0": [
+      "dist_f",
+      "going_code",
+      "is_aw",
+      "field_size",
+      "draw_num",
+      "draw_pct",
+      "age_num",
+      "wgt_lbs",
+      "or_vs_field",
+      "release_window_score",
+      "going_fit_score",
+      "distance_fit_score",
+      "quiet_run_score",
+      "trainer_timing_score",
+      "jockey_switch_intent",
+      "setup_run_flag",
+      "cash_run_flag"
+    ],
+    "or_layer": [
+      "official_rating",
+      "is_rated"
+    ],
+    "passport_layer": [
+      "pp_career_runs",
+      "pp_win_rate",
+      "pp_place_rate",
+      "pp_days_since_last",
+      "pp_layoff",
+      "pp_avg_sp_last5",
+      "pp_jockey_continuity",
+      "pp_course_seen",
+      "pp_or_change_3",
+      "pp_class_moved_up",
+      "pp_class_moved_down"
+    ]
+  },
+  "metrics_2025_unseen": {
+    "variant": "V0_OR+Passport",
+    "auc": 0.6922,
+    "brier": 0.0862,
+    "sr": 0.2416,
+    "frame": 0.5404,
+    "races": 5775,
+    "runners": 57221
+  },
+  "deltas": {
+    "auc": 0.0134,
+    "brier": -0.0007,
+    "sr": 0.0194,
+    "frame": 0.0256
+  },
+  "promotion_gates": {
+    "auc": true,
+    "brier": true,
+    "sr": true,
+    "frame": true
+  },
+  "feature_importance": [
+    {
+      "feature": "or_vs_field",
+      "importance": 1442.0,
+      "importance_pct": 9.36
+    },
+    {
+      "feature": "pp_days_since_last",
+      "importance": 1375.0,
+      "importance_pct": 8.93
+    },
+    {
+      "feature": "pp_avg_sp_last5",
+      "importance": 1364.0,
+      "importance_pct": 8.85
+    },
+    {
+      "feature": "official_rating",
+      "importance": 1322.0,
+      "importance_pct": 8.58
+    },
+    {
+      "feature": "wgt_lbs",
+      "importance": 974.0,
+      "importance_pct": 6.32
+    },
+    {
+      "feature": "pp_career_runs",
+      "importance": 967.0,
+      "importance_pct": 6.28
+    },
+    {
+      "feature": "field_size",
+      "importance": 939.0,
+      "importance_pct": 6.1
+    },
+    {
+      "feature": "pp_place_rate",
+      "importance": 686.0,
+      "importance_pct": 4.45
+    },
+    {
+      "feature": "draw_pct",
+      "importance": 665.0,
+      "importance_pct": 4.32
+    },
+    {
+      "feature": "trainer_timing_score",
+      "importance": 624.0,
+      "importance_pct": 4.05
+    },
+    {
+      "feature": "age_num",
+      "importance": 605.0,
+      "importance_pct": 3.93
+    },
+    {
+      "feature": "distance_fit_score",
+      "importance": 600.0,
+      "importance_pct": 3.89
+    },
+    {
+      "feature": "going_fit_score",
+      "importance": 593.0,
+      "importance_pct": 3.85
+    },
+    {
+      "feature": "pp_or_change_3",
+      "importance": 507.0,
+      "importance_pct": 3.29
+    },
+    {
+      "feature": "quiet_run_score",
+      "importance": 471.0,
+      "importance_pct": 3.06
+    },
+    {
+      "feature": "draw_num",
+      "importance": 416.0,
+      "importance_pct": 2.7
+    },
+    {
+      "feature": "dist_f",
+      "importance": 406.0,
+      "importance_pct": 2.64
+    },
+    {
+      "feature": "going_code",
+      "importance": 246.0,
+      "importance_pct": 1.6
+    },
+    {
+      "feature": "release_window_score",
+      "importance": 208.0,
+      "importance_pct": 1.35
+    },
+    {
+      "feature": "pp_class_moved_down",
+      "importance": 156.0,
+      "importance_pct": 1.01
+    },
+    {
+      "feature": "is_aw",
+      "importance": 146.0,
+      "importance_pct": 0.95
+    },
+    {
+      "feature": "pp_course_seen",
+      "importance": 126.0,
+      "importance_pct": 0.82
+    },
+    {
+      "feature": "pp_win_rate",
+      "importance": 121.0,
+      "importance_pct": 0.79
+    },
+    {
+      "feature": "pp_class_moved_up",
+      "importance": 106.0,
+      "importance_pct": 0.69
+    },
+    {
+      "feature": "cash_run_flag",
+      "importance": 89.0,
+      "importance_pct": 0.58
+    },
+    {
+      "feature": "jockey_switch_intent",
+      "importance": 79.0,
+      "importance_pct": 0.51
+    },
+    {
+      "feature": "pp_jockey_continuity",
+      "importance": 67.0,
+      "importance_pct": 0.43
+    },
+    {
+      "feature": "is_rated",
+      "importance": 49.0,
+      "importance_pct": 0.32
+    },
+    {
+      "feature": "pp_layoff",
+      "importance": 32.0,
+      "importance_pct": 0.21
+    },
+    {
+      "feature": "setup_run_flag",
+      "importance": 24.0,
+      "importance_pct": 0.16
+    }
+  ],
+  "passport_importance_total_pct": 35.75,
+  "calibration_2025": [
+    {
+      "band": "0.00\u20130.05",
+      "n": 10467,
+      "pred_prob": 0.0328,
+      "actual_wr": 0.0315,
+      "over_under": -0.0013
+    },
+    {
+      "band": "0.05\u20130.10",
+      "n": 23735,
+      "pred_prob": 0.0743,
+      "actual_wr": 0.0719,
+      "over_under": -0.0024
+    },
+    {
+      "band": "0.10\u20130.15",
+      "n": 13416,
+      "pred_prob": 0.122,
+      "actual_wr": 0.123,
+      "over_under": 0.001
+    },
+    {
+      "band": "0.15\u20130.20",
+      "n": 5610,
+      "pred_prob": 0.1714,
+      "actual_wr": 0.1761,
+      "over_under": 0.0047
+    },
+    {
+      "band": "0.20\u20130.25",
+      "n": 2232,
+      "pred_prob": 0.2214,
+      "actual_wr": 0.2249,
+      "over_under": 0.0035
+    },
+    {
+      "band": "0.25\u20130.30",
+      "n": 874,
+      "pred_prob": 0.2717,
+      "actual_wr": 0.3009,
+      "over_under": 0.0292
+    },
+    {
+      "band": "0.30\u20130.40",
+      "n": 629,
+      "pred_prob": 0.3375,
+      "actual_wr": 0.3482,
+      "over_under": 0.0107
+    },
+    {
+      "band": "0.40\u20131.01",
+      "n": 258,
+      "pred_prob": 0.4766,
+      "actual_wr": 0.4845,
+      "over_under": 0.0079
+    }
+  ],
+  "next_layer": "Intent_Layer_V1"
+}

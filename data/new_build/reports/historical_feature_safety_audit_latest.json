@@ -1,0 +1,398 @@
+{
+  "generated_at": "2026-05-25T21:36:59.997700Z",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "total_columns_audited": 76,
+  "summary": {
+    "IDENTITY": 18,
+    "KEEP_CORE_V0": 36,
+    "TARGET": 4,
+    "MARKET_ONLY": 10,
+    "ARCHIVE_ONLY": 4,
+    "TIMESTAMP_UNKNOWN": 2,
+    "DROP_LEAKAGE": 2
+  },
+  "unclassified": [],
+  "columns": [
+    {
+      "column": "race_id",
+      "classification": "IDENTITY",
+      "reason": "race key"
+    },
+    {
+      "column": "date",
+      "classification": "IDENTITY",
+      "reason": "race date"
+    },
+    {
+      "column": "date_parsed",
+      "classification": "IDENTITY",
+      "reason": "parsed date"
+    },
+    {
+      "column": "course",
+      "classification": "IDENTITY",
+      "reason": "course name"
+    },
+    {
+      "column": "horse",
+      "classification": "IDENTITY",
+      "reason": "horse name"
+    },
+    {
+      "column": "jockey",
+      "classification": "IDENTITY",
+      "reason": "jockey name"
+    },
+    {
+      "column": "trainer",
+      "classification": "IDENTITY",
+      "reason": "trainer name"
+    },
+    {
+      "column": "type",
+      "classification": "KEEP_CORE_V0",
+      "reason": "race type: Flat/Hurdle/Chase/NHF"
+    },
+    {
+      "column": "pos",
+      "classification": "TARGET",
+      "reason": "finishing position \u2014 outcome label only"
+    },
+    {
+      "column": "target",
+      "classification": "TARGET",
+      "reason": "pre-derived target flag"
+    },
+    {
+      "column": "sp_dec",
+      "classification": "MARKET_ONLY",
+      "reason": "SP decimal \u2014 final odds"
+    },
+    {
+      "column": "log_sp",
+      "classification": "MARKET_ONLY",
+      "reason": "log SP \u2014 SP derived"
+    },
+    {
+      "column": "implied_prob",
+      "classification": "MARKET_ONLY",
+      "reason": "market implied probability \u2014 SP derived"
+    },
+    {
+      "column": "dist_f",
+      "classification": "KEEP_CORE_V0",
+      "reason": "distance in furlongs"
+    },
+    {
+      "column": "going_code",
+      "classification": "KEEP_CORE_V0",
+      "reason": "going numeric code"
+    },
+    {
+      "column": "is_aw",
+      "classification": "KEEP_CORE_V0",
+      "reason": "all-weather flag"
+    },
+    {
+      "column": "class_num",
+      "classification": "KEEP_CORE_V0",
+      "reason": "class numeric"
+    },
+    {
+      "column": "wgt_lbs",
+      "classification": "KEEP_CORE_V0",
+      "reason": "weight in lbs"
+    },
+    {
+      "column": "or_num",
+      "classification": "KEEP_CORE_V0",
+      "reason": "OR numeric \u2014 pre-race handicap mark"
+    },
+    {
+      "column": "rpr_num",
+      "classification": "ARCHIVE_ONLY",
+      "reason": "RPR numeric: archive-only boundary"
+    },
+    {
+      "column": "ts_num",
+      "classification": "TIMESTAMP_UNKNOWN",
+      "reason": "TS numeric: requires race time \u2014 post-race leakage risk"
+    },
+    {
+      "column": "or_vs_field",
+      "classification": "KEEP_CORE_V0",
+      "reason": "OR vs field mean \u2014 pre-race relative mark"
+    },
+    {
+      "column": "rpr_vs_field",
+      "classification": "ARCHIVE_ONLY",
+      "reason": "RPR vs field: archive-only boundary"
+    },
+    {
+      "column": "field_size",
+      "classification": "KEEP_CORE_V0",
+      "reason": "field size derived"
+    },
+    {
+      "column": "draw_num",
+      "classification": "KEEP_CORE_V0",
+      "reason": "draw numeric"
+    },
+    {
+      "column": "draw_pct",
+      "classification": "KEEP_CORE_V0",
+      "reason": "draw percentile in race"
+    },
+    {
+      "column": "age_num",
+      "classification": "KEEP_CORE_V0",
+      "reason": "age numeric"
+    },
+    {
+      "column": "sp_rank",
+      "classification": "MARKET_ONLY",
+      "reason": "SP rank within race \u2014 requires all SPs"
+    },
+    {
+      "column": "is_fav",
+      "classification": "MARKET_ONLY",
+      "reason": "favourite flag \u2014 market derived"
+    },
+    {
+      "column": "runs_since_win",
+      "classification": "KEEP_CORE_V0",
+      "reason": "runs since last win"
+    },
+    {
+      "column": "runs_since_place",
+      "classification": "KEEP_CORE_V0",
+      "reason": "runs since last place"
+    },
+    {
+      "column": "runs_since_mkt_support",
+      "classification": "MARKET_ONLY",
+      "reason": "runs since last market support \u2014 requires SP history"
+    },
+    {
+      "column": "curr_or_minus_last_win_or",
+      "classification": "KEEP_CORE_V0",
+      "reason": "OR drop since last win \u2014 handicap plot signal"
+    },
+    {
+      "column": "curr_or_minus_best_or",
+      "classification": "KEEP_CORE_V0",
+      "reason": "OR vs career best \u2014 mark compression"
+    },
+    {
+      "column": "mark_compression_score",
+      "classification": "KEEP_CORE_V0",
+      "reason": "mark compression score"
+    },
+    {
+      "column": "release_window_score",
+      "classification": "KEEP_CORE_V0",
+      "reason": "release window / handicap drop signal"
+    },
+    {
+      "column": "course_fit_score",
+      "classification": "KEEP_CORE_V0",
+      "reason": "course specialist fit score"
+    },
+    {
+      "column": "going_fit_score",
+      "classification": "KEEP_CORE_V0",
+      "reason": "going preference fit score"
+    },
+    {
+      "column": "distance_fit_score",
+      "classification": "KEEP_CORE_V0",
+      "reason": "distance fit score"
+    },
+    {
+      "column": "quiet_run_score",
+      "classification": "KEEP_CORE_V0",
+      "reason": "quiet/prep run indicator"
+    },
+    {
+      "column": "trainer_timing_score",
+      "classification": "KEEP_CORE_V0",
+      "reason": "trainer intent timing signal"
+    },
+    {
+      "column": "jockey_switch_intent",
+      "classification": "KEEP_CORE_V0",
+      "reason": "jockey change intent signal"
+    },
+    {
+      "column": "odds_resilience_score",
+      "classification": "MARKET_ONLY",
+      "reason": "odds resilience \u2014 SP movement derived"
+    },
+    {
+      "column": "odds_contraction_score",
+      "classification": "MARKET_ONLY",
+      "reason": "odds contraction \u2014 SP movement derived"
+    },
+    {
+      "column": "decoy_support_flag",
+      "classification": "MARKET_ONLY",
+      "reason": "decoy support \u2014 SP pattern derived"
+    },
+    {
+      "column": "setup_run_flag",
+      "classification": "KEEP_CORE_V0",
+      "reason": "setup run flag"
+    },
+    {
+      "column": "cash_run_flag",
+      "classification": "KEEP_CORE_V0",
+      "reason": "cash run flag"
+    },
+    {
+      "column": "off",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: race off time"
+    },
+    {
+      "column": "race_name",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: race name"
+    },
+    {
+      "column": "class_raw",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: raw class string"
+    },
+    {
+      "column": "pattern",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: race pattern grade"
+    },
+    {
+      "column": "rating_band",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: rating band string"
+    },
+    {
+      "column": "age_band",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: age restriction string"
+    },
+    {
+      "column": "sex_rest",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: sex restriction string"
+    },
+    {
+      "column": "dist",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: distance string"
+    },
+    {
+      "column": "going",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: going string"
+    },
+    {
+      "column": "ran",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: field size from racecard"
+    },
+    {
+      "column": "num",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: cloth number"
+    },
+    {
+      "column": "draw",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: draw position"
+    },
+    {
+      "column": "ovr_btn",
+      "classification": "TARGET",
+      "reason": "raceform_clean only: total lengths beaten \u2014 post-race"
+    },
+    {
+      "column": "btn",
+      "classification": "TARGET",
+      "reason": "raceform_clean only: lengths beaten by winner \u2014 post-race"
+    },
+    {
+      "column": "age",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: age string"
+    },
+    {
+      "column": "sex",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: sex code"
+    },
+    {
+      "column": "wgt",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: weight string"
+    },
+    {
+      "column": "hg",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: headgear code"
+    },
+    {
+      "column": "time",
+      "classification": "DROP_LEAKAGE",
+      "reason": "raceform_clean only: race time in seconds \u2014 post-race result"
+    },
+    {
+      "column": "sp",
+      "classification": "MARKET_ONLY",
+      "reason": "raceform_clean only: final SP \u2014 not available before race closes"
+    },
+    {
+      "column": "prize",
+      "classification": "ARCHIVE_ONLY",
+      "reason": "raceform_clean only: race prize money \u2014 race context, not horse feature"
+    },
+    {
+      "column": "or_rating",
+      "classification": "KEEP_CORE_V0",
+      "reason": "raceform_clean only: Official Rating \u2014 pre-race handicap mark"
+    },
+    {
+      "column": "rpr",
+      "classification": "ARCHIVE_ONLY",
+      "reason": "raceform_clean only: RPR: archive-only boundary, never a model feature"
+    },
+    {
+      "column": "ts",
+      "classification": "TIMESTAMP_UNKNOWN",
+      "reason": "raceform_clean only: TS rating: requires race time to compute \u2014 post-race leakage risk"
+    },
+    {
+      "column": "sire",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: sire name"
+    },
+    {
+      "column": "dam",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: dam name"
+    },
+    {
+      "column": "damsire",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: damsire name"
+    },
+    {
+      "column": "owner",
+      "classification": "IDENTITY",
+      "reason": "raceform_clean only: owner name"
+    },
+    {
+      "column": "comment",
+      "classification": "DROP_LEAKAGE",
+      "reason": "raceform_clean only: post-race comment text \u2014 never available pre-race"
+    }
+  ]
+}

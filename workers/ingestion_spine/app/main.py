@@ -3,6 +3,7 @@ VÉLØ Racing Post Parser API
 Minimal FastAPI worker for PDF parsing.
 """
 
+import hmac
 import os
 import sys
 
@@ -15,7 +16,17 @@ from complete_pdf_parser import extract_metadata_from_filename, parse_batch_comp
 
 app = FastAPI(title="VÉLØ RP Parser", version="1.0.0")
 
-SECRET = os.getenv("PARSER_SHARED_SECRET", "")
+_PARSER_SECRET = os.getenv("PARSER_SHARED_SECRET", "")
+
+
+def _check_parser_auth(x_velo_secret: str | None) -> None:
+    """Fail-closed auth. Bypass allowed only when VELO_DEV_AUTH_BYPASS=1."""
+    if os.getenv("VELO_DEV_AUTH_BYPASS", "").strip() == "1":
+        return
+    if not _PARSER_SECRET:
+        raise HTTPException(status_code=503, detail="PARSER_SHARED_SECRET not configured on this server")
+    if not x_velo_secret or not hmac.compare_digest(x_velo_secret, _PARSER_SECRET):
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 @app.get("/health")
@@ -34,9 +45,7 @@ async def parse_racingpost(
 
     Returns races and runners in canonical format.
     """
-    # Auth check
-    if SECRET and x_velo_secret != SECRET:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    _check_parser_auth(x_velo_secret)
 
     # Read PDF bytes
     pdf_bytes = await file.read()

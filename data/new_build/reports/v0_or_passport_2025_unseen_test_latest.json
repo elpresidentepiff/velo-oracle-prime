@@ -1,0 +1,262 @@
+{
+  "generated_at": "2026-05-25T22:23:28.720266Z",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "test_set": {
+    "date_range": "2025-01-01 \u2192 2025-07-05",
+    "races": 5775,
+    "runners": 57221
+  },
+  "leakage_checks": {
+    "V0": "PASS",
+    "V0_OR": "PASS",
+    "Passport-only": "PASS",
+    "V0_OR+Passport": "PASS"
+  },
+  "rpr_violations": 0,
+  "variants": [
+    {
+      "variant": "V0",
+      "auc": 0.6745,
+      "brier": 0.0871,
+      "sr": 0.2203,
+      "frame": 0.512,
+      "races": 5775,
+      "runners": 57221
+    },
+    {
+      "variant": "V0_OR",
+      "auc": 0.6788,
+      "brier": 0.0869,
+      "sr": 0.2222,
+      "frame": 0.5148,
+      "races": 5775,
+      "runners": 57221
+    },
+    {
+      "variant": "Passport-only",
+      "auc": 0.6457,
+      "brier": 0.0881,
+      "sr": 0.2305,
+      "frame": 0.5129,
+      "races": 5775,
+      "runners": 57221
+    },
+    {
+      "variant": "V0_OR+Passport",
+      "auc": 0.6922,
+      "brier": 0.0862,
+      "sr": 0.2416,
+      "frame": 0.5404,
+      "races": 5775,
+      "runners": 57221
+    }
+  ],
+  "champion": "V0_OR",
+  "challenger": "V0_OR+Passport",
+  "deltas": {
+    "auc": 0.0134,
+    "brier": -0.0007,
+    "sr": 0.0194,
+    "frame": 0.0256
+  },
+  "promotion_gates": {
+    "auc": true,
+    "brier": true,
+    "sr": true,
+    "frame": true
+  },
+  "n_gates_passed": 4,
+  "classification": "PASSPORT_CHALLENGER_PROMOTE",
+  "calibration_champion": [
+    {
+      "band": "0.00\u20130.05",
+      "n": 8465,
+      "pred_prob": 0.036,
+      "actual_wr": 0.0333,
+      "over_under": -0.0026
+    },
+    {
+      "band": "0.05\u20130.10",
+      "n": 24900,
+      "pred_prob": 0.0747,
+      "actual_wr": 0.0707,
+      "over_under": -0.004
+    },
+    {
+      "band": "0.10\u20130.15",
+      "n": 14207,
+      "pred_prob": 0.1217,
+      "actual_wr": 0.1206,
+      "over_under": -0.0011
+    },
+    {
+      "band": "0.15\u20130.20",
+      "n": 5860,
+      "pred_prob": 0.1711,
+      "actual_wr": 0.1768,
+      "over_under": 0.0057
+    },
+    {
+      "band": "0.20\u20130.25",
+      "n": 2221,
+      "pred_prob": 0.2213,
+      "actual_wr": 0.2238,
+      "over_under": 0.0025
+    },
+    {
+      "band": "0.25\u20130.30",
+      "n": 856,
+      "pred_prob": 0.2704,
+      "actual_wr": 0.2593,
+      "over_under": -0.011
+    },
+    {
+      "band": "0.30\u20130.40",
+      "n": 561,
+      "pred_prob": 0.3385,
+      "actual_wr": 0.3476,
+      "over_under": 0.0091
+    },
+    {
+      "band": "0.40\u20131.01",
+      "n": 151,
+      "pred_prob": 0.4806,
+      "actual_wr": 0.5099,
+      "over_under": 0.0294
+    }
+  ],
+  "calibration_challenger": [
+    {
+      "band": "0.00\u20130.05",
+      "n": 10467,
+      "pred_prob": 0.0328,
+      "actual_wr": 0.0315,
+      "over_under": -0.0013
+    },
+    {
+      "band": "0.05\u20130.10",
+      "n": 23735,
+      "pred_prob": 0.0743,
+      "actual_wr": 0.0719,
+      "over_under": -0.0024
+    },
+    {
+      "band": "0.10\u20130.15",
+      "n": 13416,
+      "pred_prob": 0.122,
+      "actual_wr": 0.123,
+      "over_under": 0.001
+    },
+    {
+      "band": "0.15\u20130.20",
+      "n": 5610,
+      "pred_prob": 0.1714,
+      "actual_wr": 0.1761,
+      "over_under": 0.0047
+    },
+    {
+      "band": "0.20\u20130.25",
+      "n": 2232,
+      "pred_prob": 0.2214,
+      "actual_wr": 0.2249,
+      "over_under": 0.0035
+    },
+    {
+      "band": "0.25\u20130.30",
+      "n": 874,
+      "pred_prob": 0.2717,
+      "actual_wr": 0.3009,
+      "over_under": 0.0292
+    },
+    {
+      "band": "0.30\u20130.40",
+      "n": 629,
+      "pred_prob": 0.3375,
+      "actual_wr": 0.3482,
+      "over_under": 0.0107
+    },
+    {
+      "band": "0.40\u20131.01",
+      "n": 258,
+      "pred_prob": 0.4766,
+      "actual_wr": 0.4845,
+      "over_under": 0.0079
+    }
+  ],
+  "subgroups": {
+    "field_size": [
+      {
+        "group": "8-11 runners",
+        "auc": 0.6541,
+        "brier": 0.0933,
+        "sr": 0.2116,
+        "frame": 0.5099,
+        "races": 2467,
+        "runners": 22950
+      },
+      {
+        "group": "<=7 runners",
+        "auc": 0.6529,
+        "brier": 0.1325,
+        "sr": 0.3045,
+        "frame": 0.6705,
+        "races": 1478,
+        "runners": 8840
+      },
+      {
+        "group": "12-15 runners",
+        "auc": 0.6473,
+        "brier": 0.0689,
+        "sr": 0.1814,
+        "frame": 0.4211,
+        "races": 1477,
+        "runners": 19348
+      },
+      {
+        "group": "16+ runners",
+        "auc": 0.6179,
+        "brier": 0.0541,
+        "sr": 0.1218,
+        "frame": 0.289,
+        "races": 353,
+        "runners": 6083
+      }
+    ],
+    "class": [],
+    "going": [
+      {
+        "group": "Firm",
+        "auc": 0.6775,
+        "brier": 0.0859,
+        "sr": 0.2254,
+        "frame": 0.5118,
+        "races": 4601,
+        "runners": 46187
+      },
+      {
+        "group": "Good",
+        "auc": 0.6829,
+        "brier": 0.0909,
+        "sr": 0.2095,
+        "frame": 0.5264,
+        "races": 1174,
+        "runners": 11034
+      }
+    ]
+  },
+  "passport_features_tested": [
+    "pp_career_runs",
+    "pp_win_rate",
+    "pp_place_rate",
+    "pp_days_since_last",
+    "pp_layoff",
+    "pp_avg_sp_last5",
+    "pp_jockey_continuity",
+    "pp_course_seen",
+    "pp_or_change_3",
+    "pp_class_moved_up",
+    "pp_class_moved_down"
+  ],
+  "passport_coverage_test_pct": 100.0
+}

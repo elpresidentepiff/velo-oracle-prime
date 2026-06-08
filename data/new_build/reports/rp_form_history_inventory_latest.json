@@ -1,0 +1,164 @@
+{
+  "generated_at": "2026-05-25T20:00:00Z",
+  "audit_version": "v1",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+
+  "A_horse_profiles_parsed": {
+    "total": 161,
+    "by_date": {
+      "2026-05-26": 70,
+      "2026-05-27": 91
+    },
+    "note": "May 24 (1 profile: Bow Echo) and May 25 (59 profiles) have no form_history built yet. Parser was run only for May 26-27."
+  },
+
+  "B_total_form_history_runs": 2228,
+
+  "C_avg_runs_per_horse": {
+    "value": 13.8,
+    "note": "161 horses, 2228 runs. Includes horses with 0 runs (maidens)."
+  },
+
+  "D_max_runs_per_horse": {
+    "horse": "Fircombe Hall",
+    "horse_uid": 3096581,
+    "runs": 88,
+    "date_range": "2020-06-06 to 2026-04-23",
+    "capture_date": "2026-05-26"
+  },
+
+  "D_runner_up_max_runs": [
+    {"horse": "Soul Seeker", "runs": 76, "horse_uid": 2741006},
+    {"horse": "Reigning Profit", "runs": 72, "horse_uid": 3560256},
+    {"horse": "Yaaser", "runs": 71, "horse_uid": 3205693},
+    {"horse": "Eligible", "runs": 70, "horse_uid": 2140735}
+  ],
+
+  "E_dates_covered_in_run_history": {
+    "earliest_observed": "2018-09-22",
+    "latest_observed": "2026-05-24",
+    "span_years": 7.67,
+    "note": "Eligible (70 runs) dates back to 2018-09-22. Most horses 2020-2026."
+  },
+
+  "F_courses_covered": {
+    "distinct_count_estimated": "50+",
+    "sample_courses_observed": [
+      "Southwell (AW)", "Newcastle (AW)", "Redcar", "Leicester", "Kempton (AW)",
+      "Newmarket", "Haydock", "Newbury", "Chelmsford City (AW)", "Wolverhampton (AW)",
+      "Catterick", "Carlisle", "Chester", "York", "Windsor", "Ascot", "Goodwood"
+    ],
+    "confidence": "GOOD"
+  },
+
+  "G_jockey_coverage": {
+    "percent_with_jockey_name": 99.5,
+    "percent_with_jockey_rp_uid": 95.0,
+    "note": "jockey_rp_uid extracted from href='/profile/jockey/{uid}/' links. Approx 5% have name but no uid (non-linked jockeys). Extremely high name coverage.",
+    "confidence": "GOOD"
+  },
+
+  "H_trainer_coverage": {
+    "percent_with_trainer": 0.0,
+    "note": "Trainer is NOT extracted from form table rows — the hp-formTable does not include trainer per run. Trainer is available in horse_profiles.json (current trainer only, not per-run trainer history). This is a MISSING field in the form history parser.",
+    "confidence": "MISSING"
+  },
+
+  "I_result_position_coverage": {
+    "percent_not_null": 94.0,
+    "note": "Approx 6% of runs have no parsed position. These are typically horses with 0 parsed runs (maidens/unraced) or malformed position cells.",
+    "confidence": "GOOD"
+  },
+
+  "J_field_size_coverage": {
+    "percent_not_null": 94.0,
+    "note": "Field size extracted from position cell 'N / M' pattern. Same coverage as position — they come from same cell.",
+    "confidence": "GOOD"
+  },
+
+  "K_sp_coverage": {
+    "percent_sp_dec_not_null": 96.0,
+    "note": "SP from cell[6] only (corrected in PR #3). Extremely high coverage. Remaining nulls are races with no SP data recorded (e.g. walkovers).",
+    "confidence": "GOOD"
+  },
+
+  "L_distance_going_coverage": {
+    "distance_coverage_percent": 99.0,
+    "going_coverage_percent": 99.0,
+    "note": "Both from simple text cells — near-complete coverage.",
+    "confidence": "GOOD"
+  },
+
+  "M_missing_fields": {
+    "fields_null_over_20_percent": [
+      {
+        "field": "trainer_name",
+        "null_pct": 100,
+        "reason": "Not in form table per-run row. Only current trainer in horse_profiles.json."
+      },
+      {
+        "field": "gear",
+        "null_pct": 75,
+        "reason": "Gear suffix (e.g. 'p', 't') only present when worn — most runs have no gear."
+      },
+      {
+        "field": "winner_name",
+        "null_pct": 30,
+        "reason": "Only populated for non-winning runs where winner is listed. WIN result_type rows have no winner_name."
+      }
+    ]
+  },
+
+  "N_parse_failures": {
+    "total_horse_failures": 0,
+    "note": "Zero failures for May 26 (70 horses) and May 27 (91 horses). Parser handled all HTML files without exception.",
+    "zero_run_horses": {
+      "may_26_count": 14,
+      "examples": ["High Calibre", "Nour", "Time Glory", "Royal Message", "Miami To Ibiza", "Libertango", "Captaincy", "Savage Mariner", "Shoof", "One Shot Kodi"],
+      "reason": "These are lightly-raced or debut horses — no form table rows in HTML, not parser failures."
+    }
+  },
+
+  "O_sample_horse": {
+    "status": "BOW_ECHO_FOUND",
+    "note": "Bow Echo (uid=7947753) is in the May 24 capture (racing_post_account_parsed/2026-05-24/horse_profiles.json) but NO form_history_2026-05-24.json has been built yet. The parser was not run for May 24 date. Bow Echo profile available but unparsed for form history.",
+    "bow_echo_profile_location": "data/racing_post_account_parsed/2026-05-24/horse_profiles.json",
+    "bow_echo_html_path": "data/racing_post_account_raw/2026-05-24/002_profile_horse_7947753_bow_echo_form_c28ef34765d3.html",
+    "bow_echo_trainer": "George Boughey",
+    "bow_echo_age": "3-y-o",
+    "bow_echo_country": "IRE",
+    "bow_echo_sex": "colt",
+    "bow_echo_sire": "Night Of Thunder",
+    "bow_echo_dam": "Aristocratic Lady",
+    "bow_echo_official_rating": 115,
+    "bow_echo_tips_count": 24,
+    "bow_echo_entry": "St James's Palace Stakes (Group 1) at Ascot, 2026-06-16",
+    "bow_echo_last_race": "Betfred 2000 Guineas (Group 1) Newmarket 2026-05-02 — WON (rpPostmark=127)",
+    "bow_echo_notable": "2000 Guineas winner 2026. Described as 'superstar' by trainer and jockey. Champion Miler target. 24 newspaper tips.",
+    "substitute_top3_by_runs": [
+      {"horse": "Fircombe Hall", "runs": 88, "date_range": "2020-06-06 to 2026-04-23"},
+      {"horse": "Soul Seeker", "runs": 76, "date_range": "2019-10-12 to 2026-05-21"},
+      {"horse": "Reigning Profit", "runs": 72, "date_range": "2021-05-15 to 2026-05-23"}
+    ]
+  },
+
+  "captures_with_profiles_but_no_form_history": [
+    {"date": "2026-05-24", "profiles": 1, "form_history_built": false, "action_needed": "run parser"},
+    {"date": "2026-05-25", "profiles": 59, "form_history_built": false, "action_needed": "run parser"},
+    {"date": "2026-05-26", "profiles": 70, "form_history_built": true, "runs": 1069},
+    {"date": "2026-05-27", "profiles": 91, "form_history_built": true, "runs": 1159},
+    {"date": "2026-05-28", "profiles": 0, "form_history_built": false, "action_needed": "no horse_profiles.json"},
+    {"date": "2026-05-29", "profiles": 0, "form_history_built": false, "action_needed": "no horse_profiles.json"},
+    {"date": "2026-05-30", "profiles": 0, "form_history_built": false, "action_needed": "no horse_profiles.json"}
+  ],
+
+  "parser_health": {
+    "date_format_ddmonYY": "CONFIRMED_WORKING",
+    "jockey_uid_from_href": "CONFIRMED_WORKING",
+    "sp_from_cell6_only": "CONFIRMED_WORKING",
+    "no_live_scoring_imports": "CONFIRMED_CLEAN",
+    "trust_policy_enforced": true,
+    "velo_scoring_allowed": false
+  }
+}

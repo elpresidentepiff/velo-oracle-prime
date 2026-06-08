@@ -84,3 +84,8 @@ def resolve_build_fingerprint() -> dict[str, str | bool]:
         "timestamp": utc_now_iso(),
         "is_hardcoded": commit == "unknown",
     }
+
+
+def get_commit_sha() -> str:
+    """Convenience helper to get just the commit SHA."""
+    return str(resolve_build_fingerprint()["commit"])

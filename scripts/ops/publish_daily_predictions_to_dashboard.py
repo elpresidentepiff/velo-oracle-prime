@@ -470,6 +470,19 @@ def publish(date_str: str) -> dict:
     runner_count    = len(all_rows)
     source_used     = "supabase+local_json" if sb_data else "local_json_top_only"
 
+    # ── SUPABASE_PUBLISH_FALLBACK_WARN ────────────────────────────────────────
+    _supabase_fallback = not sb_data
+    if _supabase_fallback:
+        _fallback_warn = (
+            f"\n⚠ SUPABASE_PUBLISH_FALLBACK_WARN — {publish_date}\n"
+            f"  reason         = {sb_source}\n"
+            f"  dashboard_source = local_json_top_only\n"
+            f"  Dashboard will publish top-pick only (1 runner per race, not full field).\n"
+            f"  To fix: ensure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are in environment.\n"
+            f"  Rerun after scoring completes: python scripts/ops/publish_daily_predictions_to_dashboard.py --date {publish_date}"
+        )
+        print(_fallback_warn)
+
     # ── Write staging JSON ────────────────────────────────────────────────────
     out_path = ROOT / "data" / f"dashboard_daily_predictions_{date_tag}.json"
     out_payload = {
@@ -514,6 +527,8 @@ def publish(date_str: str) -> dict:
         "staking_changed":           False,
         "playbook_e_touched":        False,
         "errors":                    errors,
+        "supabase_fallback_warn":    _supabase_fallback,
+        "supabase_fallback_reason":  sb_source if _supabase_fallback else None,
     }
     AUDIT_PATH.write_text(json.dumps(audit, indent=2, default=str))
 
@@ -529,6 +544,8 @@ def publish(date_str: str) -> dict:
     print(f"  DASHBOARD DEST:     {out_path.name}")
     print(f"  AUDIT FILE:         {AUDIT_PATH.name}")
     print(f"  SOURCE USED:        {source_used}")
+    if _supabase_fallback:
+        print(f"  ⚠ FALLBACK WARN:   {sb_source} — top-pick only, not full field")
     print(f"  SCORING CHANGED:    NO")
     print(f"  MODEL CHANGED:      NO")
     print(f"  ROUTER CHANGED:     NO")

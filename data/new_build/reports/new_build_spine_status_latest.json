@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-05-25T15:19:57.218473Z",
+  "classification": "NEW_BUILD_SPINE_STATUS_READY",
+  "source_files_found": {
+    "racing_api_racecards": 36,
+    "racing_api_results": 62,
+    "runner_snapshots": 9,
+    "sigma_results": 4
+  },
+  "races_ingested": 1559,
+  "runners_ingested": 17464,
+  "horses_normalized": 29529,
+  "results_linked": 25938,
+  "identity_bridge_count": 473,
+  "outcome_bridge_count": 473,
+  "rp_context_count": 479,
+  "rpdc_memory_count": 18554,
+  "unmatched_horses": 333,
+  "missing_outcomes": 90,
+  "rpr_boundary_status": "PASS_RPR_ARCHIVE_ONLY",
+  "test_result": "run python -m pytest tests/test_new_build_*",
+  "tables": {
+    "races": 1559,
+    "runners": 17464,
+    "horses": 29529,
+    "trainers": 1699,
+    "jockeys": 1758,
+    "owners": 8225,
+    "sires": 1055,
+    "dams": 10343,
+    "race_results": 2742,
+    "runner_results": 25938,
+    "rp_context_flags": 479,
+    "rpdc_memory": 18554,
+    "identity_bridge": 473,
+    "outcome_bridge": 473
+  },
+  "live_velo_touched": false,
+  "shadow_velo_touched": false
+}

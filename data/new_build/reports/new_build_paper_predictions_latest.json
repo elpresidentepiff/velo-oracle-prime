@@ -1,0 +1,4955 @@
+{
+  "generated_at": "2026-05-26T08:13:04.087244Z",
+  "classification": "NEW_BUILD_PAPER_READY_NO_INTENT",
+  "champion_name": "core_v0_or_passport",
+  "champion_version": "Core_V0_OR_Passport_V1",
+  "current_card_feed": {
+    "classification": "CURRENT_CARD_FEED_READY",
+    "races_processed": 56,
+    "runners_processed": 1417,
+    "passport_coverage": {
+      "found": 1210,
+      "total": 1417,
+      "coverage_pct": 85.39
+    },
+    "missing_horse_count": 207,
+    "unraced_new_horse_count": 207,
+    "rpr_violations": 0
+  },
+  "paper_predictions_created": true,
+  "prediction_rows": 1417,
+  "race_count": 56,
+  "intent_current_card_coverage": {
+    "found": 0,
+    "total": 1417,
+    "coverage_pct": 0.0,
+    "status": "UNAVAILABLE_TODAY"
+  },
+  "feature_median_fill_counts": {
+    "release_window_score": 1417,
+    "going_fit_score": 1417,
+    "distance_fit_score": 1417,
+    "quiet_run_score": 1417,
+    "trainer_timing_score": 1417,
+    "jockey_switch_intent": 1417,
+    "setup_run_flag": 1417,
+    "cash_run_flag": 1417,
+    "official_rating": 707,
+    "pp_or_change_3": 375,
+    "pp_career_runs": 207,
+    "pp_win_rate": 207,
+    "pp_place_rate": 207,
+    "pp_days_since_last": 242,
+    "pp_layoff": 242,
+    "pp_avg_sp_last5": 242,
+    "draw_num": 1347,
+    "draw_pct": 1347,
+    "wgt_lbs": 81
+  },
+  "rpr_violations": 0,
+  "rpr_violation_keys": [],
+  "race_reports": [
+    {
+      "race_id": "918928",
+      "course": "Leicester",
+      "off_time": "2026-05-26T14:10:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "British EBF Maiden Stakes (GBB/IRE Incentive Race)",
+      "runner_count": 11,
+      "passport_coverage": 2,
+      "top_3": [
+        {
+          "horse": "Victory Gold",
+          "rp_uid": "9212567",
+          "champion_probability": 0.23725,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Captaincy",
+          "rp_uid": "9290858",
+          "champion_probability": 0.09356,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ]
+        },
+        {
+          "horse": "Rattenbury",
+          "rp_uid": "9198392",
+          "champion_probability": 0.093334,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Victory Gold",
+        "rp_uid": "9212567",
+        "champion_probability": 0.23725,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "9 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Libertango",
+          "rp_uid": "9263892",
+          "champion_probability": 0.080906,
+          "champion_rank": 10,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Miami To Ibiza",
+          "rp_uid": "9258994",
+          "champion_probability": 0.090633,
+          "champion_rank": 5,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Shoof",
+          "rp_uid": "9290867",
+          "champion_probability": 0.089339,
+          "champion_rank": 6,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Captaincy",
+          "rp_uid": "9290858",
+          "champion_probability": 0.09356,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Savage Mariner",
+          "rp_uid": "9290859",
+          "champion_probability": 0.08594,
+          "champion_rank": 8,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "918943",
+      "course": "Redcar",
+      "off_time": "2026-05-26T14:20:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "racingtv.com EBF Restricted Maiden Fillies' Stakes (Bands B, C And D) (EBF Qualifier) (GBB Race)",
+      "runner_count": 9,
+      "passport_coverage": 4,
+      "top_3": [
+        {
+          "horse": "Bella Lucia",
+          "rp_uid": "9184992",
+          "champion_probability": 0.208382,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Freedom Flame",
+          "rp_uid": "9166853",
+          "champion_probability": 0.184741,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Nour",
+          "rp_uid": "8881438",
+          "champion_probability": 0.10654,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Bella Lucia",
+        "rp_uid": "9184992",
+        "champion_probability": 0.208382,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "5 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Nour",
+          "rp_uid": "8881438",
+          "champion_probability": 0.10654,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Time Glory",
+          "rp_uid": "9115737",
+          "champion_probability": 0.103719,
+          "champion_rank": 4,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Khazamh",
+          "rp_uid": "9290872",
+          "champion_probability": 0.100261,
+          "champion_rank": 6,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "One Shot Kodi",
+          "rp_uid": "9290871",
+          "champion_probability": 0.09779,
+          "champion_rank": 8,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Liveadream",
+          "rp_uid": "9290877",
+          "champion_probability": 0.100455,
+          "champion_rank": 5,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "918942",
+      "course": "Redcar",
+      "off_time": "2026-05-26T14:50:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "Watch Irish Racing On Racing TV Restricted Maiden Stakes (Bands A, B, C and D) (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": 5,
+      "top_3": [
+        {
+          "horse": "Hoseki",
+          "rp_uid": "8295085",
+          "champion_probability": 0.25801,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Cape Fear",
+          "rp_uid": "8245527",
+          "champion_probability": 0.206848,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Champion Lawman",
+          "rp_uid": "7462311",
+          "champion_probability": 0.197672,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Cape Fear",
+        "rp_uid": "8245527",
+        "champion_probability": 0.206848,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Talitha Rouge",
+          "rp_uid": "9290876",
+          "champion_probability": 0.148617,
+          "champion_rank": 5,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "918944",
+      "course": "Redcar",
+      "off_time": "2026-05-26T15:20:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "Celebrate The Life Of Joe Newton Handicap",
+      "runner_count": 3,
+      "passport_coverage": 3,
+      "top_3": [
+        {
+          "horse": "Gaelic Approach",
+          "rp_uid": "7529955",
+          "champion_probability": 0.347804,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "CASH_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Fairydale",
+          "rp_uid": "7793622",
+          "champion_probability": 0.308013,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Wicksey",
+          "rp_uid": "7205021",
+          "champion_probability": 0.299824,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Gaelic Approach",
+        "rp_uid": "7529955",
+        "champion_probability": 0.347804,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "CASH_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918941",
+      "course": "Redcar",
+      "off_time": "2026-05-26T15:50:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "Join Racing TV Now Handicap",
+      "runner_count": 6,
+      "passport_coverage": 6,
+      "top_3": [
+        {
+          "horse": "Desert Shadow",
+          "rp_uid": "6952473",
+          "champion_probability": 0.207586,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "FIRST_TIME_HEADGEAR",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Classic Encounter",
+          "rp_uid": "5234275",
+          "champion_probability": 0.188094,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Nyman",
+          "rp_uid": "6037324",
+          "champion_probability": 0.16996,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Cosmos Raj",
+        "rp_uid": "3423161",
+        "champion_probability": 0.115463,
+        "champion_rank": 6,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918947",
+      "course": "Redcar",
+      "off_time": "2026-05-26T16:20:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "Racing TV Profits Returned To Racing Handicap",
+      "runner_count": 13,
+      "passport_coverage": 13,
+      "top_3": [
+        {
+          "horse": "Territorial Star",
+          "rp_uid": "7020383",
+          "champion_probability": 0.114242,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Long Shot",
+          "rp_uid": "8013552",
+          "champion_probability": 0.096849,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "OR_RISING",
+            "FIRST_TIME_HEADGEAR",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Resdev Time",
+          "rp_uid": "7882530",
+          "champion_probability": 0.092351,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_FALLING",
+            "FIRST_TIME_HEADGEAR",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Territorial Star",
+        "rp_uid": "7020383",
+        "champion_probability": 0.114242,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918946",
+      "course": "Redcar",
+      "off_time": "2026-05-26T16:50:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "Watch Racing TV In Stunning HD Fillies' Handicap",
+      "runner_count": 10,
+      "passport_coverage": 10,
+      "top_3": [
+        {
+          "horse": "Auntie Jo",
+          "rp_uid": "5982525",
+          "champion_probability": 0.125163,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Doralee",
+          "rp_uid": "5740905",
+          "champion_probability": 0.113824,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Jeany May",
+          "rp_uid": "5920413",
+          "champion_probability": 0.107042,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "FIRST_TIME_HEADGEAR",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Lady Bouquet",
+        "rp_uid": "5073251",
+        "champion_probability": 0.101106,
+        "champion_rank": 4,
+        "intent_score": null,
+        "reason_codes": [
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918945",
+      "course": "Redcar",
+      "off_time": "2026-05-26T17:23:00+01:00",
+      "race_date": "2026-05-26",
+      "race_title": "Watch Race Replays On Racing TV Amateur Jockeys' Handicap",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "top_3": [
+        {
+          "horse": "Soul Seeker",
+          "rp_uid": "2741006",
+          "champion_probability": 0.137814,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Andalprofit",
+          "rp_uid": "6032309",
+          "champion_probability": 0.129117,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Dream Deal",
+          "rp_uid": "3767116",
+          "champion_probability": 0.118266,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Fircombe Hall",
+        "rp_uid": "3096581",
+        "champion_probability": 0.081463,
+        "champion_rank": 10,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918968",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T14:05:00+01:00",
+      "race_date": "2026-05-27",
+      "race_title": "Wyvis Roofing EBF Maiden Stakes (Hamilton Park 2yo Series Qualifier) (GBB Race)",
+      "runner_count": 13,
+      "passport_coverage": 5,
+      "top_3": [
+        {
+          "horse": "Flight Signal",
+          "rp_uid": "9263856",
+          "champion_probability": 0.240847,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Or Another",
+          "rp_uid": "9115835",
+          "champion_probability": 0.231044,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "North Star Kodi",
+          "rp_uid": "9222241",
+          "champion_probability": 0.136109,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Flight Signal",
+        "rp_uid": "9263856",
+        "champion_probability": 0.240847,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "8 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Sale Shark",
+          "rp_uid": "9115859",
+          "champion_probability": 0.078673,
+          "champion_rank": 6,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Yorkshire Dream",
+          "rp_uid": "9231649",
+          "champion_probability": 0.078673,
+          "champion_rank": 7,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Virtuous Star",
+          "rp_uid": "9258990",
+          "champion_probability": 0.078673,
+          "champion_rank": 8,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Cornish Pol",
+          "rp_uid": "9263858",
+          "champion_probability": 0.07495,
+          "champion_rank": 13,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carrow Road",
+          "rp_uid": "9290860",
+          "champion_probability": 0.078673,
+          "champion_rank": 9,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "918967",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T14:35:00+01:00",
+      "race_date": "2026-05-27",
+      "race_title": "One Stop Roofing Supplies Ltd Restricted Novice Stakes (Bands C And D) (GBB Race)",
+      "runner_count": 15,
+      "passport_coverage": 12,
+      "top_3": [
+        {
+          "horse": "Rogue Defence",
+          "rp_uid": "9153303",
+          "champion_probability": 0.179515,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Lady Magu",
+          "rp_uid": "7529961",
+          "champion_probability": 0.141852,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Spiritoftheblues",
+          "rp_uid": "7739790",
+          "champion_probability": 0.132231,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Rogue Defence",
+        "rp_uid": "9153303",
+        "champion_probability": 0.179515,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "3 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Lavatera",
+          "rp_uid": "7020513",
+          "champion_probability": 0.062094,
+          "champion_rank": 10,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Moon Zabeel",
+          "rp_uid": "9286451",
+          "champion_probability": 0.071245,
+          "champion_rank": 7,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Togeather Forever",
+          "rp_uid": "9295561",
+          "champion_probability": 0.072105,
+          "champion_rank": 6,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "918971",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T15:05:00+01:00",
+      "race_date": "2026-05-27",
+      "race_title": "ICB (Water Proofing) Handicap",
+      "runner_count": 15,
+      "passport_coverage": 15,
+      "top_3": [
+        {
+          "horse": "Firewalker",
+          "rp_uid": "8187983",
+          "champion_probability": 0.142449,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Velvet Rhythm",
+          "rp_uid": "7947736",
+          "champion_probability": 0.122436,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Return Of The Gods",
+          "rp_uid": "7020589",
+          "champion_probability": 0.109248,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Confide In Me",
+        "rp_uid": "9009958",
+        "champion_probability": 0.106303,
+        "champion_rank": 4,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918969",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T15:35:00+01:00",
+      "race_date": "2026-05-27",
+      "race_title": "Cupa Slates Handicap (GBBPlus Race)",
+      "runner_count": 11,
+      "passport_coverage": 11,
+      "top_3": [
+        {
+          "horse": "Gentle Warrior",
+          "rp_uid": "6229375",
+          "champion_probability": 0.133242,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Velvet Whisper",
+          "rp_uid": "6560232",
+          "champion_probability": 0.114251,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Raulin",
+          "rp_uid": "6340640",
+          "champion_probability": 0.105221,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Gentle Warrior",
+        "rp_uid": "6229375",
+        "champion_probability": 0.133242,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918970",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T16:05:00+01:00",
+      "race_date": "2026-05-27",
+      "race_title": "David Hardie Engineering Ltd Handicap",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "top_3": [
+        {
+          "horse": "Reigning Profit",
+          "rp_uid": "3560256",
+          "champion_probability": 0.144352,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Binadham",
+          "rp_uid": "5845550",
+          "champion_probability": 0.100388,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Harb",
+          "rp_uid": "3505929",
+          "champion_probability": 0.090313,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Harb",
+        "rp_uid": "3505929",
+        "champion_probability": 0.090313,
+        "champion_rank": 3,
+        "intent_score": null,
+        "reason_codes": [
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918973",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T16:35:00+01:00",
+      "race_date": "2026-05-27",
+      "race_title": "Fixing Point Cladding Fasteners Handicap",
+      "runner_count": 15,
+      "passport_coverage": 15,
+      "top_3": [
+        {
+          "horse": "Blue Mantle",
+          "rp_uid": "7547276",
+          "champion_probability": 0.169836,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Welbury",
+          "rp_uid": "7657429",
+          "champion_probability": 0.129688,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Saxophonist",
+          "rp_uid": "7882515",
+          "champion_probability": 0.106623,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Welbury",
+        "rp_uid": "7657429",
+        "champion_probability": 0.129688,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "918972",
+      "course": "Hamilton",
+      "off_time": "2026-05-27T17:05:00+01:00",
+      "race_date": "2026-05-27",
+      "race_title": "Compass Roofing Handicap",
+      "runner_count": 10,
+      "passport_coverage": 10,
+      "top_3": [
+        {
+          "horse": "Military Leader",
+          "rp_uid": "5320933",
+          "champion_probability": 0.140643,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Starliner",
+          "rp_uid": "5104236",
+          "champion_probability": 0.134017,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Donna Nook",
+          "rp_uid": "6087987",
+          "champion_probability": 0.109147,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Yaaser",
+        "rp_uid": "3205693",
+        "champion_probability": 0.077575,
+        "champion_rank": 9,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "SETUP_RUN_CANDIDATE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921535",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T14:12:00+01:00",
+      "race_date": "2026-05-28",
+      "race_title": "Royal County Optional Claiming Race",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "top_3": [
+        {
+          "horse": "Profit Surge",
+          "rp_uid": "6350096",
+          "champion_probability": 0.157916,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "North Ocean",
+          "rp_uid": "6692972",
+          "champion_probability": 0.153935,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Gloriously Glam",
+          "rp_uid": "5884456",
+          "champion_probability": 0.125031,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Profit Surge",
+        "rp_uid": "6350096",
+        "champion_probability": 0.157916,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921536",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T14:42:00+01:00",
+      "race_date": "2026-05-28",
+      "race_title": "Fiver Fridays At Fairyhouse June 5th And 12th Handicap",
+      "runner_count": 18,
+      "passport_coverage": 18,
+      "top_3": [
+        {
+          "horse": "Fate's Gambit",
+          "rp_uid": "8711041",
+          "champion_probability": 0.084917,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Real Encounter",
+          "rp_uid": "7757799",
+          "champion_probability": 0.082983,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Gonna Be Golden",
+          "rp_uid": "8432181",
+          "champion_probability": 0.080155,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Stone Bear",
+        "rp_uid": "7735705",
+        "champion_probability": 0.070423,
+        "champion_rank": 7,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921537",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T15:17:00+01:00",
+      "race_date": "2026-05-28",
+      "race_title": "Irish EBF Median Sires Series Race (IRE Incentive Race)",
+      "runner_count": 16,
+      "passport_coverage": 12,
+      "top_3": [
+        {
+          "horse": "Lady Patrona",
+          "rp_uid": "9157488",
+          "champion_probability": 0.139117,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Otherworldly",
+          "rp_uid": "9189380",
+          "champion_probability": 0.136919,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "South Dakota",
+          "rp_uid": "9286477",
+          "champion_probability": 0.121051,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Tatianna",
+        "rp_uid": "9263830",
+        "champion_probability": 0.090516,
+        "champion_rank": 8,
+        "intent_score": null,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Citrus Springs",
+          "rp_uid": "9286486",
+          "champion_probability": 0.068705,
+          "champion_rank": 12,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Magical Moonlight",
+          "rp_uid": "9295550",
+          "champion_probability": 0.059547,
+          "champion_rank": 14,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Pisiffik Ginger",
+          "rp_uid": "9295551",
+          "champion_probability": 0.060445,
+          "champion_rank": 13,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Three Ring Nation",
+          "rp_uid": "9295552",
+          "champion_probability": 0.069031,
+          "champion_rank": 11,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "921538",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T15:47:00+01:00",
+      "race_date": "2026-05-28",
+      "race_title": "5 Euro General Admission Next Friday Handicap",
+      "runner_count": 24,
+      "passport_coverage": 24,
+      "top_3": [
+        {
+          "horse": "I'm Spartacus",
+          "rp_uid": "5132223",
+          "champion_probability": 0.088847,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Oxford Circus",
+          "rp_uid": "6582576",
+          "champion_probability": 0.082364,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Whatswrongnow",
+          "rp_uid": "5608559",
+          "champion_probability": 0.069223,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Happy Henry",
+        "rp_uid": "5668374",
+        "champion_probability": 0.065857,
+        "champion_rank": 5,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921539",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T16:17:00+01:00",
+      "race_date": "2026-05-28",
+      "race_title": "Book Your Hospitality At Fairyhouse.ie Handicap",
+      "runner_count": 29,
+      "passport_coverage": 29,
+      "top_3": [
+        {
+          "horse": "Coincidental Glory",
+          "rp_uid": "7834643",
+          "champion_probability": 0.069494,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Elly Bay",
+          "rp_uid": "7657457",
+          "champion_probability": 0.063071,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Beau Army",
+          "rp_uid": "7935083",
+          "champion_probability": 0.055255,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Royal County Glory",
+        "rp_uid": "7926357",
+        "champion_probability": 0.044266,
+        "champion_rank": 19,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921540",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T16:52:00+01:00",
+      "race_date": "2026-05-28",
+      "race_title": "Racing Again Next Friday Apprentice Handicap",
+      "runner_count": 30,
+      "passport_coverage": 30,
+      "top_3": [
+        {
+          "horse": "Harana",
+          "rp_uid": "6111567",
+          "champion_probability": 0.10546,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Lauderdale King",
+          "rp_uid": "7551801",
+          "champion_probability": 0.071995,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Tero d'Rosa",
+          "rp_uid": "7657452",
+          "champion_probability": 0.059625,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Tero d'Rosa",
+        "rp_uid": "7657452",
+        "champion_probability": 0.059625,
+        "champion_rank": 3,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921541",
+      "course": "Fairyhouse",
+      "off_time": "2026-05-28T17:27:00+01:00",
+      "race_date": "2026-05-28",
+      "race_title": "Irish Stallion Farms EBF Fillies Maiden",
+      "runner_count": 21,
+      "passport_coverage": 17,
+      "top_3": [
+        {
+          "horse": "Vauntingly",
+          "rp_uid": "8418732",
+          "champion_probability": 0.145839,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Guardian Of Realm",
+          "rp_uid": "8268296",
+          "champion_probability": 0.107523,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Mai Dahlia",
+          "rp_uid": "9254434",
+          "champion_probability": 0.10627,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Vauntingly",
+        "rp_uid": "8418732",
+        "champion_probability": 0.145839,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Mandara Mist",
+          "rp_uid": "8187998",
+          "champion_probability": 0.054786,
+          "champion_rank": 11,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Ventriloquist",
+          "rp_uid": "9024489",
+          "champion_probability": 0.054786,
+          "champion_rank": 12,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "My Girl Grace",
+          "rp_uid": "9295553",
+          "champion_probability": 0.054786,
+          "champion_rank": 13,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Solas Na Gealai",
+          "rp_uid": "9295554",
+          "champion_probability": 0.054786,
+          "champion_rank": 14,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "919010",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T14:00:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet Proud Sponsors Of Chepstow Racecourse Apprentice Handicap",
+      "runner_count": 12,
+      "passport_coverage": 12,
+      "top_3": [
+        {
+          "horse": "Oasis Sunrise",
+          "rp_uid": "5991241",
+          "champion_probability": 0.190542,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Beaune",
+          "rp_uid": "6824841",
+          "champion_probability": 0.164953,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Electric Bass",
+          "rp_uid": "6838438",
+          "champion_probability": 0.151883,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Beaune",
+        "rp_uid": "6824841",
+        "champion_probability": 0.164953,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "919012",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T14:30:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet - Oncourse And Online Handicap",
+      "runner_count": 22,
+      "passport_coverage": 22,
+      "top_3": [
+        {
+          "horse": "Worlington",
+          "rp_uid": "8251207",
+          "champion_probability": 0.085945,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Thomas Picton",
+          "rp_uid": "9115631",
+          "champion_probability": 0.071619,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Action Reaction",
+          "rp_uid": "7529960",
+          "champion_probability": 0.070635,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Mohmentous",
+        "rp_uid": "8335415",
+        "champion_probability": 0.060012,
+        "champion_rank": 8,
+        "intent_score": null,
+        "reason_codes": [
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "919007",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T15:00:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "Pricing By Real Bookmakers At DragonBet Novice Stakes (GBB/GBBPlus Race)",
+      "runner_count": 19,
+      "passport_coverage": 15,
+      "top_3": [
+        {
+          "horse": "Glory Road",
+          "rp_uid": "8188065",
+          "champion_probability": 0.129613,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Gone By",
+          "rp_uid": "8227216",
+          "champion_probability": 0.10061,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "El Nay",
+          "rp_uid": "8290517",
+          "champion_probability": 0.096658,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "El Nay",
+        "rp_uid": "8290517",
+        "champion_probability": 0.096658,
+        "champion_rank": 3,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Green Area",
+          "rp_uid": "9060384",
+          "champion_probability": 0.054736,
+          "champion_rank": 14,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Indhaar",
+          "rp_uid": "9115629",
+          "champion_probability": 0.059372,
+          "champion_rank": 10,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Kinetic Impact",
+          "rp_uid": "9212579",
+          "champion_probability": 0.059372,
+          "champion_rank": 11,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Madame Dragon",
+          "rp_uid": "9276853",
+          "champion_probability": 0.061421,
+          "champion_rank": 9,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "919009",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T15:30:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet Born From The Betting Ring Handicap",
+      "runner_count": 9,
+      "passport_coverage": 9,
+      "top_3": [
+        {
+          "horse": "So Smart",
+          "rp_uid": "3505924",
+          "champion_probability": 0.21319,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Cayman Tai",
+          "rp_uid": "5598785",
+          "champion_probability": 0.199223,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Tuscan Point",
+          "rp_uid": "5859153",
+          "champion_probability": 0.187677,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Tuscan Point",
+        "rp_uid": "5859153",
+        "champion_probability": 0.187677,
+        "champion_rank": 3,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "919013",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T16:05:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "Best Odds Guaranteed On dragonbet.co.uk Handicap (Chepstow Mile Series Qualifier)",
+      "runner_count": 17,
+      "passport_coverage": 17,
+      "top_3": [
+        {
+          "horse": "Thanos",
+          "rp_uid": "7865992",
+          "champion_probability": 0.121471,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Smoker Bellamy",
+          "rp_uid": "7475608",
+          "champion_probability": 0.088689,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Mooj",
+          "rp_uid": "8240993",
+          "champion_probability": 0.086436,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Thanos",
+        "rp_uid": "7865992",
+        "champion_probability": 0.121471,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "919008",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T16:40:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet: Supporting British Racing Maiden Stakes (GBB Race)",
+      "runner_count": 17,
+      "passport_coverage": 13,
+      "top_3": [
+        {
+          "horse": "Erudition",
+          "rp_uid": "9083757",
+          "champion_probability": 0.140113,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Distant Moon",
+          "rp_uid": "9175076",
+          "champion_probability": 0.132894,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Law Court",
+          "rp_uid": "7784899",
+          "champion_probability": 0.084542,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Erudition",
+        "rp_uid": "9083757",
+        "champion_probability": 0.140113,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "4 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Ingemar",
+          "rp_uid": "8144060",
+          "champion_probability": 0.07029,
+          "champion_rank": 7,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Deadline",
+          "rp_uid": "8188074",
+          "champion_probability": 0.07029,
+          "champion_rank": 8,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Burning Impact",
+          "rp_uid": "8236218",
+          "champion_probability": 0.07029,
+          "champion_rank": 9,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Cosmic Girl",
+          "rp_uid": "9227219",
+          "champion_probability": 0.063676,
+          "champion_rank": 12,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "919011",
+      "course": "Chepstow",
+      "off_time": "2026-05-29T17:10:00+01:00",
+      "race_date": "2026-05-29",
+      "race_title": "DragonBet, Top Prices On Top Markets Handicap",
+      "runner_count": 13,
+      "passport_coverage": 13,
+      "top_3": [
+        {
+          "horse": "Too Much Trevor",
+          "rp_uid": "4827085",
+          "champion_probability": 0.152225,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Romanovich",
+          "rp_uid": "4334972",
+          "champion_probability": 0.150259,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Sub Thirteen",
+          "rp_uid": "5230707",
+          "champion_probability": 0.119182,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Vape",
+        "rp_uid": "2957566",
+        "champion_probability": 0.09661,
+        "champion_rank": 7,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "915716",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T15:09:00+01:00",
+      "race_date": "2026-06-01",
+      "race_title": "Irish Stallion Farms EBF Gowran Classic",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Handshake",
+          "rp_uid": "8031226",
+          "champion_probability": 0.15451,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Green Citation",
+          "rp_uid": "8075055",
+          "champion_probability": 0.098294,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Dark Lucinda",
+          "rp_uid": "7561583",
+          "champion_probability": 0.08508,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Handshake",
+        "rp_uid": "8031226",
+        "champion_probability": 0.15451,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "LAYOFF_PATTERN",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "915536",
+      "course": "Epsom",
+      "off_time": "2026-06-05T16:00:00+01:00",
+      "race_date": "2026-06-05",
+      "race_title": "Betfred Oaks (Group 1) (Fillies)",
+      "runner_count": 16,
+      "passport_coverage": 16,
+      "top_3": [
+        {
+          "horse": "Drop Dead Gorgeous",
+          "rp_uid": "8187994",
+          "champion_probability": 0.197462,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Precise",
+          "rp_uid": "7601611",
+          "champion_probability": 0.18355,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Earth Shot",
+          "rp_uid": "8295086",
+          "champion_probability": 0.172196,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Precise",
+        "rp_uid": "7601611",
+        "champion_probability": 0.18355,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "912530",
+      "course": "Epsom",
+      "off_time": "2026-06-06T16:00:00+01:00",
+      "race_date": "2026-06-06",
+      "race_title": "Betfred Derby (Group 1) (No Geldings)",
+      "runner_count": 22,
+      "passport_coverage": 22,
+      "top_3": [
+        {
+          "horse": "Saxon Street",
+          "rp_uid": "8534593",
+          "champion_probability": 0.138951,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "CASH_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Pierre Bonnard",
+          "rp_uid": "7627156",
+          "champion_probability": 0.1046,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Benvenuto Cellini",
+          "rp_uid": "7643439",
+          "champion_probability": 0.103828,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Item",
+        "rp_uid": "8058110",
+        "champion_probability": 0.061538,
+        "champion_rank": 13,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921565",
+      "course": "Leopardstown",
+      "off_time": "2026-06-11T19:00:00+01:00",
+      "race_date": "2026-06-11",
+      "race_title": "Ballycorus Stakes (Group 3)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Copacabana Sands",
+          "rp_uid": "6064580",
+          "champion_probability": 0.095631,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Forty Years On",
+          "rp_uid": "7183159",
+          "champion_probability": 0.094641,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Poet Master",
+          "rp_uid": "5116180",
+          "champion_probability": 0.090822,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Catalina Delcarpio",
+        "rp_uid": "6710726",
+        "champion_probability": 0.049723,
+        "champion_rank": 18,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921566",
+      "course": "Cork",
+      "off_time": "2026-06-14T16:48:00+01:00",
+      "race_date": "2026-06-14",
+      "race_title": "Darley Munster Oaks Stakes (Group 3) (Fillies & Mares)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Finalise",
+          "rp_uid": "7748966",
+          "champion_probability": 0.162109,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Time Loop",
+          "rp_uid": "5374003",
+          "champion_probability": 0.111612,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Revoir",
+          "rp_uid": "6560235",
+          "champion_probability": 0.104747,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Moody",
+        "rp_uid": "7722777",
+        "champion_probability": 0.088899,
+        "champion_rank": 8,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "917807",
+      "course": "Ascot",
+      "off_time": "2026-06-16T14:30:00+01:00",
+      "race_date": "2026-06-16",
+      "race_title": "Queen Anne Stakes (Group 1)",
+      "runner_count": 30,
+      "passport_coverage": 30,
+      "top_3": [
+        {
+          "horse": "Minnie Hauk",
+          "rp_uid": "6238183",
+          "champion_probability": 0.131137,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Notable Speech",
+          "rp_uid": "5608567",
+          "champion_probability": 0.078164,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Alcantor",
+          "rp_uid": "5089280",
+          "champion_probability": 0.072607,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Opera Ballo",
+        "rp_uid": "7055588",
+        "champion_probability": 0.065259,
+        "champion_rank": 5,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "917809",
+      "course": "Ascot",
+      "off_time": "2026-06-16T15:40:00+01:00",
+      "race_date": "2026-06-16",
+      "race_title": "King Charles III Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Almeraq",
+          "rp_uid": "6456207",
+          "champion_probability": 0.104127,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Shareholder",
+          "rp_uid": "6000761",
+          "champion_probability": 0.091742,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Shagraan",
+          "rp_uid": "5079227",
+          "champion_probability": 0.074721,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Shareholder",
+        "rp_uid": "6000761",
+        "champion_probability": 0.091742,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "917808",
+      "course": "Ascot",
+      "off_time": "2026-06-16T16:20:00+01:00",
+      "race_date": "2026-06-16",
+      "race_title": "St James's Palace Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 37,
+      "top_3": [
+        {
+          "horse": "Extremely Zain",
+          "rp_uid": "8589413",
+          "champion_probability": 0.169365,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Gstaad",
+          "rp_uid": "7395230",
+          "champion_probability": 0.133677,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Constitution River",
+          "rp_uid": "7748955",
+          "champion_probability": 0.10345,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Bow Echo",
+        "rp_uid": "7947753",
+        "champion_probability": 0.047722,
+        "champion_rank": 22,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "3 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Rayif",
+          "rp_uid": "7789319",
+          "champion_probability": 0.042486,
+          "champion_rank": 28,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Lyneham",
+          "rp_uid": "8259449",
+          "champion_probability": 0.042486,
+          "champion_rank": 29,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Lord Clover",
+          "rp_uid": "8812062",
+          "champion_probability": 0.042486,
+          "champion_rank": 30,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "917810",
+      "course": "Ascot",
+      "off_time": "2026-06-17T16:20:00+01:00",
+      "race_date": "2026-06-17",
+      "race_title": "Prince Of Wales's Stakes (Group 1)",
+      "runner_count": 24,
+      "passport_coverage": 24,
+      "top_3": [
+        {
+          "horse": "Calandagan",
+          "rp_uid": "5218337",
+          "champion_probability": 0.206932,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Minnie Hauk",
+          "rp_uid": "6238183",
+          "champion_probability": 0.157112,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Forever Young",
+          "rp_uid": "5432869",
+          "champion_probability": 0.138308,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Calandagan",
+        "rp_uid": "5218337",
+        "champion_probability": 0.206932,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "919069",
+      "course": "Ascot",
+      "off_time": "2026-06-17T17:00:00+01:00",
+      "race_date": "2026-06-17",
+      "race_title": "Royal Hunt Cup (Heritage Handicap)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Skipper",
+          "rp_uid": "5176358",
+          "champion_probability": 0.061188,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "English Oak",
+          "rp_uid": "5038529",
+          "champion_probability": 0.047387,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Mythical Guest",
+          "rp_uid": "5011619",
+          "champion_probability": 0.046614,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "SETUP_RUN_CANDIDATE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Skipper",
+        "rp_uid": "5176358",
+        "champion_probability": 0.061188,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "917811",
+      "course": "Ascot",
+      "off_time": "2026-06-18T16:15:00+01:00",
+      "race_date": "2026-06-18",
+      "race_title": "Gold Cup (Group 1)",
+      "runner_count": 25,
+      "passport_coverage": 25,
+      "top_3": [
+        {
+          "horse": "Scandinavia",
+          "rp_uid": "6102190",
+          "champion_probability": 0.181804,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Jan Brueghel",
+          "rp_uid": "5147951",
+          "champion_probability": 0.120214,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Columbus",
+          "rp_uid": "5422800",
+          "champion_probability": 0.11466,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Trawlerman",
+        "rp_uid": "3257953",
+        "champion_probability": 0.066288,
+        "champion_rank": 8,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "917813",
+      "course": "Ascot",
+      "off_time": "2026-06-19T15:05:00+01:00",
+      "race_date": "2026-06-19",
+      "race_title": "Commonwealth Cup (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 39,
+      "top_3": [
+        {
+          "horse": "Charles Darwin",
+          "rp_uid": "7400082",
+          "champion_probability": 0.142962,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "True Love",
+          "rp_uid": "7466846",
+          "champion_probability": 0.135629,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Gstaad",
+          "rp_uid": "7395230",
+          "champion_probability": 0.131582,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Charles Darwin",
+        "rp_uid": "7400082",
+        "champion_probability": 0.142962,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "CASH_RUN_CANDIDATE",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Moojeed",
+          "rp_uid": "7374075",
+          "champion_probability": 0.04183,
+          "champion_rank": 21,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "917812",
+      "course": "Ascot",
+      "off_time": "2026-06-19T16:20:00+01:00",
+      "race_date": "2026-06-19",
+      "race_title": "Coronation Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "True Love",
+          "rp_uid": "7466846",
+          "champion_probability": 0.141452,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Drop Dead Gorgeous",
+          "rp_uid": "8187994",
+          "champion_probability": 0.139486,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Precise",
+          "rp_uid": "7601611",
+          "champion_probability": 0.125103,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Zanthos",
+        "rp_uid": "7830200",
+        "champion_probability": 0.047712,
+        "champion_rank": 20,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "917814",
+      "course": "Ascot",
+      "off_time": "2026-06-20T15:40:00+01:00",
+      "race_date": "2026-06-20",
+      "race_title": "Queen Elizabeth II Jubilee Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Lazzat",
+          "rp_uid": "5702809",
+          "champion_probability": 0.093766,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Soldier's Tree",
+          "rp_uid": "5859137",
+          "champion_probability": 0.072128,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Shareholder",
+          "rp_uid": "6000761",
+          "champion_probability": 0.071552,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Shareholder",
+        "rp_uid": "6000761",
+        "champion_probability": 0.071552,
+        "champion_rank": 3,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "919070",
+      "course": "Ascot",
+      "off_time": "2026-06-20T17:00:00+01:00",
+      "race_date": "2026-06-20",
+      "race_title": "Wokingham Stakes",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Fort Vega",
+          "rp_uid": "4601328",
+          "champion_probability": 0.080525,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "The Highway Rat",
+          "rp_uid": "3332129",
+          "champion_probability": 0.071516,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "City House",
+          "rp_uid": "5127944",
+          "champion_probability": 0.061764,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Trefor",
+        "rp_uid": "5216546",
+        "champion_probability": 0.040851,
+        "champion_rank": 8,
+        "intent_score": null,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "921567",
+      "course": "Curragh",
+      "off_time": "2026-06-27T14:15:00+01:00",
+      "race_date": "2026-06-27",
+      "race_title": "Airlie Stud Stakes (Group 2) (Fillies)",
+      "runner_count": 40,
+      "passport_coverage": 24,
+      "top_3": [
+        {
+          "horse": "Minzelle",
+          "rp_uid": "9254249",
+          "champion_probability": 0.1752,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Big Negotiator",
+          "rp_uid": "9254401",
+          "champion_probability": 0.165716,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Wild Blossom",
+          "rp_uid": "9254357",
+          "champion_probability": 0.154702,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Victorious",
+        "rp_uid": "9051033",
+        "champion_probability": 0.085124,
+        "champion_rank": 7,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "16 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Tosca No Candis",
+          "rp_uid": "9222249",
+          "champion_probability": 0.04183,
+          "champion_rank": 22,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Wateera",
+          "rp_uid": "9254355",
+          "champion_probability": 0.04183,
+          "champion_rank": 23,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Back To The Lodge",
+          "rp_uid": "9263833",
+          "champion_probability": 0.04183,
+          "champion_rank": 24,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Etonnante",
+          "rp_uid": "9276857",
+          "champion_probability": 0.04183,
+          "champion_rank": 25,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Citrus Springs",
+          "rp_uid": "9286486",
+          "champion_probability": 0.04183,
+          "champion_rank": 26,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "919190",
+      "course": "Curragh",
+      "off_time": "2026-06-27T15:20:00+01:00",
+      "race_date": "2026-06-27",
+      "race_title": "Paddy Power Pretty Polly Stakes (Group 1) (Fillies & Mares)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Friendly Soul",
+          "rp_uid": "5476939",
+          "champion_probability": 0.149945,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Kalpana",
+          "rp_uid": "5507022",
+          "champion_probability": 0.122659,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Estrange",
+          "rp_uid": "6079191",
+          "champion_probability": 0.122221,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Estrange",
+        "rp_uid": "6079191",
+        "champion_probability": 0.122221,
+        "champion_rank": 3,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "908061",
+      "course": "Curragh",
+      "off_time": "2026-06-28T16:35:00+01:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dubai Duty Free Irish Derby (Group 1) (No Geldings)",
+      "runner_count": 40,
+      "passport_coverage": 39,
+      "top_3": [
+        {
+          "horse": "Handshake",
+          "rp_uid": "8031226",
+          "champion_probability": 0.15596,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Action",
+          "rp_uid": "7780572",
+          "champion_probability": 0.10233,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Montreal",
+          "rp_uid": "7830208",
+          "champion_probability": 0.102008,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Constitution River",
+        "rp_uid": "7748955",
+        "champion_probability": 0.053415,
+        "champion_rank": 15,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Stpaul'scathedral",
+          "rp_uid": "7780529",
+          "champion_probability": 0.042092,
+          "champion_rank": 27,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "917815",
+      "course": "Sandown",
+      "off_time": "2026-07-04T15:35:00+01:00",
+      "race_date": "2026-07-04",
+      "race_title": "Coral-Eclipse (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Calandagan",
+          "rp_uid": "5218337",
+          "champion_probability": 0.202351,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Minnie Hauk",
+          "rp_uid": "6238183",
+          "champion_probability": 0.156018,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Friendly Soul",
+          "rp_uid": "5476939",
+          "champion_probability": 0.130089,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Opera Ballo",
+        "rp_uid": "7055588",
+        "champion_probability": 0.092479,
+        "champion_rank": 14,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "919071",
+      "course": "Newmarket (July)",
+      "off_time": "2026-07-11T16:35:00+01:00",
+      "race_date": "2026-07-11",
+      "race_title": "Al Basti Equiworld, Dubai July Cup Stakes (Group 1)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Charles Darwin",
+          "rp_uid": "7400082",
+          "champion_probability": 0.142962,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Almeraq",
+          "rp_uid": "6456207",
+          "champion_probability": 0.104023,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Double Rush",
+          "rp_uid": "6345362",
+          "champion_probability": 0.103669,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Charles Darwin",
+        "rp_uid": "7400082",
+        "champion_probability": 0.142962,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "CASH_RUN_CANDIDATE",
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    },
+    {
+      "race_id": "908062",
+      "course": "Curragh",
+      "off_time": "2026-07-18T00:10:00+01:00",
+      "race_date": "2026-07-18",
+      "race_title": "Juddmonte Irish Oaks (Group 1) (Fillies)",
+      "runner_count": 40,
+      "passport_coverage": 39,
+      "top_3": [
+        {
+          "horse": "Drop Dead Gorgeous",
+          "rp_uid": "8187994",
+          "champion_probability": 0.139942,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Blanc De Blanc",
+          "rp_uid": "8187989",
+          "champion_probability": 0.092272,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "LAYOFF_PATTERN",
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "On Message",
+          "rp_uid": "7983196",
+          "champion_probability": 0.089357,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Blanc De Blanc",
+        "rp_uid": "8187989",
+        "champion_probability": 0.092272,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "1 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Proudly",
+          "rp_uid": "7601612",
+          "champion_probability": 0.042092,
+          "champion_rank": 29,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "912528",
+      "course": "Newbury",
+      "off_time": "2026-07-18T15:30:00+01:00",
+      "race_date": "2026-07-18",
+      "race_title": "Weatherbys Super Sprint Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 16,
+      "top_3": [
+        {
+          "horse": "Dreamlover",
+          "rp_uid": "8688479",
+          "champion_probability": 0.10326,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Wait Geordie",
+          "rp_uid": "8688678",
+          "champion_probability": 0.081922,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Niewiadoma",
+          "rp_uid": "8688605",
+          "champion_probability": 0.062769,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Wait Geordie",
+        "rp_uid": "8688678",
+        "champion_probability": 0.081922,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "24 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Chief Minister",
+          "rp_uid": "8688449",
+          "champion_probability": 0.041962,
+          "champion_rank": 13,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Chianti",
+          "rp_uid": "8688496",
+          "champion_probability": 0.038429,
+          "champion_rank": 22,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Mojito Madness",
+          "rp_uid": "8688498",
+          "champion_probability": 0.038292,
+          "champion_rank": 23,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Water Angel",
+          "rp_uid": "8688504",
+          "champion_probability": 0.038292,
+          "champion_rank": 24,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Cymbolism",
+          "rp_uid": "8688595",
+          "champion_probability": 0.038292,
+          "champion_rank": 25,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "910568",
+      "course": "York",
+      "off_time": "2026-08-20T14:25:00+01:00",
+      "race_date": "2026-08-20",
+      "race_title": "Harry's Half Million By Goffs (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 11,
+      "top_3": [
+        {
+          "horse": "Where Love Lives",
+          "rp_uid": "8688704",
+          "champion_probability": 0.144746,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Green Titan",
+          "rp_uid": "8688745",
+          "champion_probability": 0.112479,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Wait Geordie",
+          "rp_uid": "8688678",
+          "champion_probability": 0.081922,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "STRONG_PLACE_PROFILE",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Where Love Lives",
+        "rp_uid": "8688704",
+        "champion_probability": 0.144746,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "LAYOFF_PATTERN",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "29 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Wherewecanboogie",
+          "rp_uid": "8688523",
+          "champion_probability": 0.04183,
+          "champion_rank": 11,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Battle Fever",
+          "rp_uid": "8688529",
+          "champion_probability": 0.04183,
+          "champion_rank": 12,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "00ohsosecret",
+          "rp_uid": "8688563",
+          "champion_probability": 0.04183,
+          "champion_rank": 13,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "00jumeirah Street",
+          "rp_uid": "8688571",
+          "champion_probability": 0.04183,
+          "champion_rank": 14,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Herbert Hall",
+          "rp_uid": "8688577",
+          "champion_probability": 0.04183,
+          "champion_rank": 15,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "910566",
+      "course": "Newmarket (July)",
+      "off_time": "2026-08-22T15:10:00+01:00",
+      "race_date": "2026-08-22",
+      "race_title": "£200,000 Tattersalls Somerville Auction Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 11,
+      "top_3": [
+        {
+          "horse": "A Bear Affair",
+          "rp_uid": "8688442",
+          "champion_probability": 0.129788,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Dreamlover",
+          "rp_uid": "8688479",
+          "champion_probability": 0.096765,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Capilano",
+          "rp_uid": "8688447",
+          "champion_probability": 0.087784,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "A Bear Affair",
+        "rp_uid": "8688442",
+        "champion_probability": 0.129788,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "29 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Baddaddan",
+          "rp_uid": "8688443",
+          "champion_probability": 0.04183,
+          "champion_rank": 11,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Bollengo Boy",
+          "rp_uid": "8688445",
+          "champion_probability": 0.04183,
+          "champion_rank": 12,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Can't Stop",
+          "rp_uid": "8688446",
+          "champion_probability": 0.04183,
+          "champion_rank": 13,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carbine Country",
+          "rp_uid": "8688448",
+          "champion_probability": 0.04183,
+          "champion_rank": 14,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Chief Minister",
+          "rp_uid": "8688449",
+          "champion_probability": 0.04183,
+          "champion_rank": 15,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "912529",
+      "course": "Doncaster",
+      "off_time": "2026-09-10T13:50:00+01:00",
+      "race_date": "2026-09-10",
+      "race_title": "Weatherbys Scientific £300,000 2-Y-O Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 9,
+      "top_3": [
+        {
+          "horse": "Dreamlover",
+          "rp_uid": "8688479",
+          "champion_probability": 0.097744,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "A Bear Affair",
+          "rp_uid": "8688442",
+          "champion_probability": 0.091568,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Blue Skies Above",
+          "rp_uid": "8688444",
+          "champion_probability": 0.067685,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "A Bear Affair",
+        "rp_uid": "8688442",
+        "champion_probability": 0.091568,
+        "champion_rank": 2,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "31 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Baddaddan",
+          "rp_uid": "8688443",
+          "champion_probability": 0.041962,
+          "champion_rank": 10,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Can't Stop",
+          "rp_uid": "8688446",
+          "champion_probability": 0.038429,
+          "champion_rank": 23,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carbine Country",
+          "rp_uid": "8688448",
+          "champion_probability": 0.038429,
+          "champion_rank": 24,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Great Balls O'Fire",
+          "rp_uid": "8688451",
+          "champion_probability": 0.041962,
+          "champion_rank": 11,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Supermassive",
+          "rp_uid": "8688453",
+          "champion_probability": 0.041962,
+          "champion_rank": 12,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "910567",
+      "course": "Newmarket",
+      "off_time": "2026-10-03T14:05:00+01:00",
+      "race_date": "2026-10-03",
+      "race_title": "£200,000 Tattersalls October Auction Stakes (GBB Race)",
+      "runner_count": 40,
+      "passport_coverage": 10,
+      "top_3": [
+        {
+          "horse": "A Bear Affair",
+          "rp_uid": "8688442",
+          "champion_probability": 0.116002,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Dreamlover",
+          "rp_uid": "8688479",
+          "champion_probability": 0.095248,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "CASH_RUN_CANDIDATE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Capilano",
+          "rp_uid": "8688447",
+          "champion_probability": 0.084545,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "STRONG_PLACE_PROFILE",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "A Bear Affair",
+        "rp_uid": "8688442",
+        "champion_probability": 0.116002,
+        "champion_rank": 1,
+        "intent_score": null,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "30 missing/unraced passport rows",
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": [
+        {
+          "horse": "Baddaddan",
+          "rp_uid": "8688443",
+          "champion_probability": 0.039975,
+          "champion_rank": 11,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Bollengo Boy",
+          "rp_uid": "8688445",
+          "champion_probability": 0.039975,
+          "champion_rank": 12,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Can't Stop",
+          "rp_uid": "8688446",
+          "champion_probability": 0.039975,
+          "champion_rank": 13,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Carbine Country",
+          "rp_uid": "8688448",
+          "champion_probability": 0.039975,
+          "champion_rank": 14,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        },
+        {
+          "horse": "Clear Code",
+          "rp_uid": "8688450",
+          "champion_probability": 0.039975,
+          "champion_rank": 15,
+          "intent_score": null,
+          "reason_codes": [
+            "MISSING_PASSPORT"
+          ],
+          "missing_reason": "UNRACED_OR_NO_FORM_HISTORY_OR_NOT_IN_PASSPORT_BANK"
+        }
+      ]
+    },
+    {
+      "race_id": "921493",
+      "course": "Longchamp",
+      "off_time": "2026-10-04T15:05:00+01:00",
+      "race_date": "2026-10-04",
+      "race_title": "Qatar Prix de l'Arc de Triomphe (Group 1) (3yo+ No Geldings) (Grande Course) (Turf)",
+      "runner_count": 40,
+      "passport_coverage": 40,
+      "top_3": [
+        {
+          "horse": "Forever Young",
+          "rp_uid": "5432869",
+          "champion_probability": 0.147609,
+          "champion_rank": 1,
+          "intent_score": null,
+          "reason_codes": [
+            "UNEXPOSED_PROFILE",
+            "LAYOFF_PATTERN",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Minnie Hauk",
+          "rp_uid": "6238183",
+          "champion_probability": 0.131871,
+          "champion_rank": 2,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "CASH_RUN_CANDIDATE",
+            "SETUP_RUN_CANDIDATE",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_FALLING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        },
+        {
+          "horse": "Saddadd",
+          "rp_uid": "6528827",
+          "champion_probability": 0.117418,
+          "champion_rank": 3,
+          "intent_score": null,
+          "reason_codes": [
+            "JOCKEY_CONTINUITY",
+            "STRONG_PLACE_PROFILE",
+            "HISTORICAL_MARKET_RESPECT",
+            "OR_RISING",
+            "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+            "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+          ]
+        }
+      ],
+      "strongest_passport_horse": {
+        "horse": "Gethin",
+        "rp_uid": "6555395",
+        "champion_probability": 0.092821,
+        "champion_rank": 8,
+        "intent_score": null,
+        "reason_codes": [
+          "LAYOFF_PATTERN",
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING",
+          "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE",
+          "NO_INTENT_SCORE_FOR_CURRENT_RACE"
+        ],
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "strongest_intent_candidate": null,
+      "missing_data_warnings": [
+        "Intent unavailable for current-card rows"
+      ],
+      "unraced_new_horse_warnings": []
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_training": true,
+    "no_live_engine": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_telegram": true,
+    "no_staking": true,
+    "no_live_table_writes": true,
+    "rpr_archive_only": true
+  }
+}

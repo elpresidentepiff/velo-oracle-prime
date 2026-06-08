@@ -1,0 +1,174 @@
+{
+  "generated_at": "2026-05-25T20:00:00Z",
+  "audit_version": "v1",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "note": "Parquet column counts and row counts are estimated from file sizes and sources.py inspection. Full column audit requires pandas read — run with venv activated.",
+
+  "files": [
+    {
+      "name": "raceform_clean.parquet",
+      "path": "data/raceform_clean.parquet",
+      "size_mb": 125.4,
+      "row_count_estimate": "~374,000 (per Phase 5 notes: 374,639 rows across 6 tables)",
+      "date_built": "2026-03-16",
+      "description": "Main historical Racing API training dataset — full raceform for model training",
+      "key_columns_confirmed": [
+        "horse_id", "race_id", "date", "position", "sp", "distance", "going",
+        "jockey_id", "trainer_id", "course_id", "or", "rpr", "ts"
+      ],
+      "contains_outcome": true,
+      "contains_rpr": true,
+      "rpr_policy": "ARCHIVE_ONLY",
+      "date_range_estimate": "2020-2026",
+      "new_build_accepted": false,
+      "note": "Large training parquet — not yet wired to New Build spine. Referenced in sources.py as raceform_clean_available. RPR present but labeled archive-only."
+    },
+    {
+      "name": "raceform_v17_features.parquet",
+      "path": "data/raceform_v17_features.parquet",
+      "size_mb": 78.5,
+      "row_count_estimate": "~200,000 (subset with v17 feature set)",
+      "date_built": "2026-03-16",
+      "description": "SQPE v17 feature set — training data for current live model",
+      "key_columns_confirmed": [
+        "horse_id", "race_id", "date", "position", "sp", "distance_f", "going",
+        "jockey_id", "trainer_id", "course_id", "ofr", "rpr", "ts",
+        "sqpe_prob", "improvement_score", "market_deception_score", "place_prob"
+      ],
+      "contains_outcome": true,
+      "contains_rpr": true,
+      "rpr_policy": "ARCHIVE_ONLY",
+      "date_range_estimate": "2021-2026",
+      "new_build_accepted": false,
+      "note": "Contains derived features from v17 SQPE. RPR present but labeled archive-only. Referenced in sources.py as raceform_v17_available."
+    },
+    {
+      "name": "raceform_test_sample.parquet",
+      "path": "data/raceform_test_sample.parquet",
+      "size_mb": 12.4,
+      "row_count_estimate": "~25,000",
+      "date_built": "2026-03-16",
+      "description": "Sample subset of raceform_clean for testing",
+      "contains_outcome": true,
+      "contains_rpr": true,
+      "rpr_policy": "ARCHIVE_ONLY",
+      "new_build_accepted": false
+    },
+    {
+      "name": "sigma_2k_training_dataset_latest.parquet",
+      "path": "data/training/sigma_2k_training_dataset_latest.parquet",
+      "size_mb": 0.15,
+      "row_count_estimate": "~2,000 (sigma result rows)",
+      "date_built": "2026-05-19",
+      "description": "Sigma audit training dataset — closed loop sigma rows for pattern training",
+      "key_columns_confirmed_from_json": [
+        "verdict_id", "horse", "race_id", "date", "vp", "tier", "won", "framed",
+        "sp_decimal", "position", "velo_prime_prob", "sigma_label"
+      ],
+      "contains_outcome": true,
+      "contains_rpr": false,
+      "date_range_estimate": "2026-03-17 to 2026-05-19",
+      "new_build_accepted": false,
+      "note": "Sigma training data — Old Live VELO scoring pipeline. Do not modify."
+    },
+    {
+      "name": "racing_api_shadow_forward_ledger.csv",
+      "path": "data/racing_api_shadow_forward_ledger.csv",
+      "rows": 1177,
+      "date_built": "Various (2026-04-29 to present)",
+      "description": "Shadow forward enrichment ledger — Racing API enrichment scores per runner",
+      "columns": [
+        "date", "race_id", "course", "off_time", "horse", "horse_id",
+        "trainer_id", "jockey_id", "velo_prime_prob", "tier",
+        "candidate_execution_allowed", "router_shadow_lane",
+        "racing_api_connection_shadow_score", "racing_api_course_shadow_score",
+        "racing_api_distance_shadow_score", "racing_api_enrichment_shadow_score",
+        "racing_api_connection_coverage", "racing_api_course_coverage",
+        "racing_api_distance_coverage", "racing_api_enrichment_coverage",
+        "result_position", "won", "placed", "sp_decimal",
+        "profit_loss", "shadow_version", "leakage_status",
+        "result_position_int", "flat_profit_loss", "outcome_source", "outcome_backfilled_at"
+      ],
+      "contains_outcome": true,
+      "date_range": "2026-04-29 to 2026-05-24",
+      "leakage_status": "RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK",
+      "new_build_accepted": false,
+      "note": "Shadow enrichment only. Not ingested into New Build spine. Labeled with leakage risk."
+    }
+  ],
+
+  "racing_api_structured_racecards": {
+    "files": 36,
+    "path_pattern": "data/racecards_*_standard.json",
+    "date_range": "2026-03-17 to 2026-05-17",
+    "races": 1654,
+    "runners_estimated": "~17,464 (from New Build spine ingestion)",
+    "key_fields_per_runner": [
+      "horse", "horse_id (racing_api_horse_id)", "trainer", "trainer_id",
+      "jockey", "jockey_id", "owner", "owner_id", "sire", "dam", "damsire",
+      "age", "sex", "draw", "headgear", "wind_surgery", "last_run (days_since_run)",
+      "form (form_figures)", "ofr (official_rating)", "ts (topspeed)", "rpr",
+      "region", "race_class", "race_type", "distance", "going", "surface"
+    ],
+    "new_build_accepted": true,
+    "note": "These are fully ingested into New Build spine via sources.py ingest_racing_api_card(). RPR labeled archive-only."
+  },
+
+  "racing_api_results": {
+    "files": 62,
+    "path_pattern": "data/results_*.json",
+    "date_range": "2026-03-15 to 2026-05-25",
+    "races": 2742,
+    "runners_estimated": "~25,987 (from New Build spine)",
+    "key_fields_per_runner": [
+      "horse", "horse_id", "trainer", "jockey",
+      "position", "sp_dec / sp (SP decimal)", "rpr (archive only)", "tsr (TS archive)",
+      "comment (archive only)", "race_id", "course", "off_dt"
+    ],
+    "new_build_accepted": true,
+    "note": "Ingested via sources.py ingest_racing_api_results(). Position and SP accepted. RPR labeled archive-only."
+  },
+
+  "racing_api_final_harvest": {
+    "path": "data/racing_api_raw/final_harvest/",
+    "date_harvested": "2026-05-14",
+    "scope": "2026-05-07 to 2026-05-13",
+    "racecards": 6,
+    "results": 7,
+    "trainers_analyzed": 20,
+    "jockeys_analyzed": 20,
+    "horses_profiled": 20,
+    "api_plan_note": "Standard plan. Pro endpoints (horse results, jockey results, odds) return 401. Trainer/jockey course+distance analysis accessible.",
+    "blocked_endpoints": [
+      "/v1/racecards/pro — Pro Plan required",
+      "/v1/horses/{horse_id}/results — Pro Plan required",
+      "/v1/jockeys/{jockey_id}/results — Pro Plan required",
+      "/v1/trainers/{trainer_id}/results — Pro Plan required",
+      "/v1/odds/{race_id}/{horse_id} — Pro Plan required"
+    ],
+    "accessible_endpoints": [
+      "/v1/racecards/free", "/v1/racecards/basic", "/v1/racecards/standard",
+      "/v1/results", "/v1/horses/{horse_id}/standard",
+      "/v1/jockeys/{jockey_id}/analysis/courses",
+      "/v1/jockeys/{jockey_id}/analysis/distances",
+      "/v1/jockeys/{jockey_id}/analysis/trainers",
+      "/v1/trainers/{trainer_id}/analysis/courses",
+      "/v1/trainers/{trainer_id}/analysis/distances",
+      "/v1/trainers/{trainer_id}/analysis/jockeys"
+    ]
+  },
+
+  "rpdc_backfill": {
+    "path": "data/rpdc_backfill/rpdc_tags_historical.jsonl",
+    "rows": 18554,
+    "key_fields": ["rpdc_tags", "rpdc_primary_tag", "rpdc_release_score", "rpdc_cash_window_flag", "race_date", "horse"],
+    "coverage_from_new_build_report": {
+      "rpdc_release_score": "18554 rows (100%)",
+      "rpdc_cash_window_flag": "18554 rows (100%)",
+      "rpdc_tags": "9160 rows (49%)",
+      "rpdc_primary_tag": "9160 rows (49%)"
+    },
+    "new_build_accepted": true,
+    "note": "Fully ingested into New Build rpdc_memory table via database.py _rpdc_rows(). 18,554 rows."
+  }
+}

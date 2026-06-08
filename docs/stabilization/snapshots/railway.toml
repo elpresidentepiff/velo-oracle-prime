@@ -1,0 +1,22 @@
+[build]
+builder = "NIXPACKS"
+# deploy: 2026-04-17T19:35Z
+buildCommand = "pip install -r requirements_production.txt"
+
+[deploy]
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"
+restartPolicyType = "ON_FAILURE"
+
+[healthcheck]
+path = "/health"
+timeout = 30
+interval = 60
+
+# ── Scoring cron ──────────────────────────────────────────────────────────────
+# This documents the intended schedule. Railway stores service config server-side.
+# If the cron is lost after a redeploy, re-register via Railway dashboard or API:
+#   serviceInstanceUpdate(serviceId, environmentId, { cronSchedule: "0 9 * * 1-6" })
+# Service: velo-prime-scoring
+# Schedule: 09:00 UTC Mon-Sat (covers UK flat/NH season)
+# Command: python scripts/ops/run_prime_today.py
+# cronSchedule = "0 9 * * 1-6"

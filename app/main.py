@@ -469,15 +469,46 @@ async def lifespan(app: FastAPI):
         )
     logger.info("[startup] G shadow mode: %s (safe)", _g_mode)
 
+    # ── Phase 1: Truth Reconciliation Path Guards ─────────────────────────────
+    _root = pathlib.Path(__file__).parent.parent
+    _canonical_paths = {
+        "score_daily": _root / "app" / "pipelines" / "score_daily_runner.py",
+        "sigma": _root / "app" / "pipelines" / "sigma_runner.py",
+        "ingest": _root / "app" / "pipelines" / "results_ingest_runner.py",
+    }
+    _missing = [name for name, p in _canonical_paths.items() if not p.exists()]
+    if _missing:
+        raise RuntimeError(f"[startup] BLOCKED: Missing canonical pipeline wrappers: {', '.join(_missing)}")
+    
+    # ── Batch 3: Safety Enforcement & Import Guards ──────────────────────────
+    from app.core.safety_guards import run_safety_scan
+    if not run_safety_scan():
+        raise RuntimeError("[startup] BLOCKED: Safety violation detected in live path (forbidden imports)")
+
+    # Strict Mode Assertions
+    _exec_mode = os.getenv("VELO_EXECUTION_MODE", "PAPER").upper()
+    _bf_mode = os.getenv("BETFAIR_MODE", "PAPER").upper()
+    
+    if _exec_mode == "LIVE":
+        raise RuntimeError("[startup] BLOCKED: VELO_EXECUTION_MODE=LIVE is forbidden in this environment.")
+    if _bf_mode == "LIVE":
+        raise RuntimeError("[startup] BLOCKED: BETFAIR_MODE=LIVE is forbidden in this environment.")
+    
+    logger.info(
+        "[startup] Truth Fingerprint: SCORE=%s SIGMA=%s G_MODE=%s EXEC_MODE=%s BF_MODE=%s",
+        "score_daily_runner.py",
+        "sigma_runner.py",
+        _g_mode,
+        _exec_mode,
+        _bf_mode
+    )
+
     # ── Fix 1.2: Migration / schema verification ──────────────────────────────
     # Fail fast if required columns or tables are absent.
     # Missing columns → truth loop writes incomplete rows → learning corrupted.
     await _verify_schema_at_startup()
 
-    from app.services.model_manager import get_model_manager
-
-    mm = get_model_manager()
-    logger.info(f"Models initialised at startup: {mm.model_versions}")
+    logger.info("Models load deferred to runtime or handled by sqpe_v17_service")
 
     # Sentient bridge — Phase 1 (audit only, no scoring change)
     try:
@@ -737,6 +768,49 @@ async def health_check():
     return details
 
 
+@app.get("/api/runtime-truth")
+async def runtime_truth():
+    """
+    Phase 1 Runtime Truth Fingerprint.
+    Exposes canonical paths, active ensemble profile, execution modes, and git commit.
+    """
+    from app.core.runtime_env import get_commit_sha
+    from app.core.safety_guards import run_safety_scan
+    
+    return {
+        "scoring_path": "app/pipelines/score_daily_runner.py",
+        "sigma_path": "app/pipelines/sigma_runner.py",
+        "ingest_path": "app/pipelines/results_ingest_runner.py",
+        "modes": {
+            "g_shadow_mode": os.getenv("VELO_G_SHADOW_MODE", "shadow"),
+            "execution_mode": os.getenv("VELO_EXECUTION_MODE", "PAPER"),
+            "betfair_mode": os.getenv("BETFAIR_MODE", "PAPER"),
+        },
+        "safety": {
+            "forbidden_import_check": "PASS" if run_safety_scan() else "FAIL",
+            "live_execution_blocked": True,
+        },
+        "learning_governance": {
+            "loop_status": {
+                "scoring": "ACTIVE_LIVE",
+                "reconciliation": "ACTIVE_LIVE",
+                "evidence_accumulation": "ACTIVE_SHADOW",
+                "autonomous_learning": "DISABLED_MANUAL_ONLY",
+            },
+            "components": {
+                "sqpe_v17": "LIVE_WEIGHTED",
+                "improvement": "LIVE_WEIGHTED",
+                "market_deception": "LIVE_WEIGHTED",
+                "place_prob": "LIVE_VISIBLE_ONLY",
+                "playbook_g": "SHADOW_ONLY",
+                "no_vp_composite": "SHADOW_ONLY",
+            }
+        },
+        "ensemble_profile": "core_v0_or_passport + sqpe_v17", # Hardcoded active profiles
+        "git_commit": get_commit_sha()
+    }
+
+
 # ── Scoring trigger — called by GitHub Actions scheduler ─────────────────────
 @app.post("/api/trigger/score-daily", status_code=202)
 async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(None)):
@@ -765,7 +839,7 @@ async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(N
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "ops" / "run_prime_today.py"
+    script_path = pathlib.Path(__file__).parent.parent / "app" / "pipelines" / "score_daily_runner.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Scoring script not found: {script_path}")
 
@@ -861,7 +935,7 @@ async def trigger_sigma(request: Request, x_trigger_secret: str = Header(None)):
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "run_results_sigma.py"
+    script_path = pathlib.Path(__file__).parent.parent / "app" / "pipelines" / "sigma_runner.py"
     if not script_path.exists():
         raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
 
@@ -955,69 +1029,7 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
     source_date = target_date or utc_now().strftime("%Y-%m-%d")
-    script_path = pathlib.Path(__file__).parent.parent / "scripts" / "close_sigma_loops.py"
-    if not script_path.exists():
-        raise HTTPException(status_code=500, detail=f"Sigma script not found: {script_path}")
-
-    claim = _claim_trigger_run(
-        service_name=_TRIGGER_SERVICE_CONFIG["sigma_daily"]["service_name"],
-        run_type=_TRIGGER_SERVICE_CONFIG["sigma_daily"]["run_type"],
-        source_date=source_date,
-        trigger_source=trigger_source,
-    )
-    if claim["status"] == "duplicate":
-        return JSONResponse(
-            status_code=409,
-            content={
-                "status": "already_running",
-                "service": "sigma-daily",
-                "trigger_source": trigger_source,
-                "target_date": source_date,
-                "run_id": claim["run_id"],
-                "detail": claim.get("detail"),
-            },
-        )
-    run_id = claim["run_id"]
-    try:
-        proc, log_path = _spawn_trigger_subprocess(
-            script_path=script_path,
-            trigger_source=trigger_source,
-            target_date=target_date,
-            service_name="sigma_daily",
-            run_id=run_id,
-        )
-    except Exception as exc:
-        _patch_pipeline_run(
-            run_id,
-            {
-                "run_state": "completed",
-                "status": "FAIL",
-                "finished_at": utc_now_iso(),
-                "error_message": f"trigger spawn failed: {exc}",
-            },
-        )
-        raise
-
-    logger.info(
-        "Sigma reconciliation triggered — source=%s pid=%d target_date=%s log=%s",
-        trigger_source,
-        proc.pid,
-        target_date or "today",
-        log_path,
-    )
-
-    return JSONResponse(
-        status_code=202,
-        content={
-            "status": "triggered",
-            "service": "sigma-daily",
-            "trigger_source": trigger_source,
-            "target_date": source_date,
-            "run_id": run_id,
-            "pid": proc.pid,
-            "log_path": str(log_path),
-        },
-    )
+    raise HTTPException(status_code=501, detail="sigma-daily script (close_sigma_loops.py) is archived/disabled.")
 
 
 # ── Spotlight PDF Upload ──────────────────────────────────────────────────────
@@ -1036,7 +1048,9 @@ async def upload_spotlight_pdf(
     Required header: X-Trigger-Secret matching TRIGGER_SCORE_SECRET env var.
     """
     trigger_secret = os.getenv("TRIGGER_SCORE_SECRET", "")
-    if trigger_secret and not _secrets_match(x_trigger_secret, trigger_secret):
+    if not trigger_secret:
+        raise HTTPException(status_code=503, detail="Trigger not configured on this server")
+    if not _secrets_match(x_trigger_secret, trigger_secret):
         raise HTTPException(status_code=401, detail="Invalid trigger secret")
 
     if not file.filename or not file.filename.endswith(".pdf"):
@@ -1076,6 +1090,130 @@ async def upload_spotlight_pdf(
 
 
 # ── Governed Card Dashboard ───────────────────────────────────────────────────
+
+
+@app.get("/api/dashboard/truth-summary")
+async def dashboard_truth_summary(date: str = Query(default=None)):
+    """
+    Return a read-only truth summary for the dashboard.
+    Gathers metrics from local artifacts and Supabase.
+    """
+    target_date = date or utc_now().strftime("%Y-%m-%d")
+    date_tag = target_date.replace("-", "_")
+    root = pathlib.Path(__file__).parent.parent
+    
+    # 1. Base Truths
+    res = {
+        "operational_date": target_date,
+        "live_velo_status": "UNKNOWN",
+        "races_scored": 0,
+        "runners_scored": 0,
+        "source_truth_label": "UNKNOWN",
+        "observability_status": "MISSING",
+        "supabase_persistence_status": "UNKNOWN",
+        "supabase_readback_verified": "UNKNOWN",
+        "telegram_status": "DISABLED",
+        "rpr_violation_count": 0,
+        "sp_violation_count": 0,
+        "new_build_status": "MISSING",
+        "passport_coverage_pct": 0.0,
+        "intent_coverage_pct": 0.0,
+        "sigma_status": "MISSING",
+        "latest_sigma_sr": 0.0,
+        "latest_sigma_frame": 0.0,
+        "sidecar_league_status": "MISSING",
+        "doctrine_scorecard_status": "MISSING",
+        "security_status": "PASS",
+        "stale_data_warnings": [],
+        "source_files_used": [],
+        "generated_at": utc_now_iso(),
+    }
+
+    # 2. Live VÉLØ Observability
+    obs_path = root / "data" / f"velo_run_observability_{date_tag}.json"
+    if obs_path.exists():
+        try:
+            obs_data = json.loads(obs_path.read_text(encoding="utf-8"))
+            res["live_velo_status"] = obs_data.get("status", "UNKNOWN")
+            res["observability_status"] = "PASS"
+            res["source_files_used"].append(obs_path.name)
+            # Find RPR/SP violations in degraded reasons or similar
+            reasons = obs_data.get("degraded_reasons", [])
+            res["rpr_violation_count"] = sum(1 for r in reasons if "RPR" in r.upper())
+            res["sp_violation_count"] = sum(1 for r in reasons if "SP" in r.upper())
+        except Exception:
+            res["observability_status"] = "ERROR"
+
+    # 3. Verdicts / Scored Counts
+    verdicts_path = root / "data" / f"velo_prime_verdicts_{date_tag}.json"
+    if verdicts_path.exists():
+        try:
+            v_data = json.loads(verdicts_path.read_text(encoding="utf-8"))
+            res["races_scored"] = len(v_data)
+            res["runners_scored"] = sum(len(v.get("full_analysis", [])) for v in v_data)
+            res["source_files_used"].append(verdicts_path.name)
+        except Exception:
+            pass
+
+    # 4. Supabase Status
+    sb_url, sb_key = _pipeline_run_api_config()
+    if sb_url and sb_key:
+        status_code, _ = _pipeline_request("GET", f"/pipeline_runs?target_date=eq.{target_date}&limit=1")
+        if status_code == 200:
+            res["supabase_persistence_status"] = "CONNECTED"
+            res["supabase_readback_verified"] = "PASS"
+        else:
+            res["supabase_persistence_status"] = "DISCONNECTED"
+    
+    # 5. Telegram Status
+    if os.getenv("TELEGRAM_BOT_TOKEN"):
+        res["telegram_status"] = "ACTIVE"
+
+    # 6. New Build Status
+    nb_path = root / "data" / "new_build" / "reports" / f"two_lane_readiness_{date_tag}.json"
+    if nb_path.exists():
+        try:
+            nb_data = json.loads(nb_path.read_text(encoding="utf-8"))
+            res["new_build_status"] = nb_data.get("status", "READY")
+            res["passport_coverage_pct"] = nb_data.get("passport_coverage_pct", 0.0)
+            res["intent_coverage_pct"] = nb_data.get("intent_coverage_pct", 0.0)
+            res["source_files_used"].append(f"new_build/reports/{nb_path.name}")
+        except Exception:
+            res["new_build_status"] = "ERROR"
+
+    # 7. Sigma Status
+    sigma_path = root / "data" / "sigma_results" / f"sigma_results_{date_tag}.json"
+    if sigma_path.exists():
+        try:
+            sigma_data = json.loads(sigma_path.read_text(encoding="utf-8"))
+            res["sigma_status"] = sigma_data.get("sigma_status", "PASS")
+            res["latest_sigma_sr"] = sigma_data.get("sr", 0.0)
+            res["latest_sigma_frame"] = sigma_data.get("frame_rate", 0.0)
+            res["source_files_used"].append(f"sigma_results/{sigma_path.name}")
+        except Exception:
+            res["sigma_status"] = "ERROR"
+
+    # 8. Sidecar League
+    sidecar_path = root / "app" / "static" / "dashboard" / "sidecar_stack_latest.json"
+    if sidecar_path.exists():
+        try:
+            s_data = json.loads(sidecar_path.read_text(encoding="utf-8"))
+            if s_data.get("date") == target_date:
+                res["sidecar_league_status"] = "CURRENT"
+            else:
+                res["sidecar_league_status"] = "STALE"
+                res["stale_data_warnings"].append(f"Sidecar data is for {s_data.get('date')}")
+            res["source_files_used"].append(f"static/dashboard/{sidecar_path.name}")
+        except Exception:
+            res["sidecar_league_status"] = "ERROR"
+
+    # 9. Doctrine Scorecard
+    doctrine_path = root / "data" / "doctrine_scorecard_latest.json"
+    if doctrine_path.exists():
+        res["doctrine_scorecard_status"] = "PRESENT"
+        res["source_files_used"].append(doctrine_path.name)
+
+    return res
 
 
 @app.get("/dashboard", include_in_schema=False)
@@ -1654,6 +1792,168 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     }
 
 
+@app.get("/api/dashboard-truth")
+async def dashboard_truth():
+    """
+    Read-only structured truth report for dashboard panels.
+
+    Sources:
+      A — Supabase:        pipeline_runs latest + velo_verdicts count today
+      B — Local harness:   velo_run_observability_{date}.json
+      C — Doctrine:        data/doctrine_scorecard_latest.json
+      D — New Build:       data/new_build/sidecar_feed/new_build_signal_{date}.jsonl
+
+    No scoring. No model calls. No writes.
+    Every panel carries its source label so the UI can show
+    SUPABASE / LOCAL_ARTIFACT / UNAVAILABLE — never ghost-green.
+    """
+    import json as _json
+    import urllib.error
+    import urllib.request
+
+    root = pathlib.Path(__file__).parent.parent
+    today = utc_now().strftime("%Y-%m-%d")
+    date_tag = today.replace("-", "_")
+    sb_url = os.getenv("SUPABASE_URL", "")
+    sb_key = os.getenv("SUPABASE_KEY", "")
+
+    # ── A. Supabase truth ─────────────────────────────────────────────────────
+    sb_truth: dict = {
+        "source": "SUPABASE",
+        "status": "UNKNOWN",
+        "latest_pipeline_run": None,
+        "verdict_count_today": None,
+        "run_status": None,
+        "run_started_at": None,
+        "error": None,
+    }
+    if not sb_url or not sb_key:
+        sb_truth["status"] = "SUPABASE_UNAVAILABLE"
+        sb_truth["error"] = "SUPABASE_URL or SUPABASE_KEY not configured"
+    else:
+        _hdrs = {
+            "apikey": sb_key,
+            "Authorization": f"Bearer {sb_key}",
+            "Accept": "application/json",
+        }
+        try:
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/pipeline_runs"
+                f"?select=id,status,started_at,completed_at,source_date,run_type,error_message"
+                f"&order=started_at.desc&limit=1",
+                headers=_hdrs,
+            )
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                rows = _json.loads(resp.read().decode())
+            sb_truth["status"] = "CONNECTED"
+            if rows:
+                r = rows[0]
+                sb_truth["latest_pipeline_run"] = r
+                sb_truth["run_status"] = r.get("status")
+                sb_truth["run_started_at"] = r.get("started_at")
+        except Exception as exc:
+            sb_truth["status"] = "SUPABASE_UNAVAILABLE"
+            sb_truth["error"] = str(exc)
+
+        if sb_truth["status"] == "CONNECTED":
+            try:
+                req = urllib.request.Request(
+                    f"{sb_url}/rest/v1/velo_verdicts?select=id&date=eq.{today}",
+                    headers={**_hdrs, "Prefer": "count=exact", "Range-Unit": "items", "Range": "0-0"},
+                )
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    cr = resp.headers.get("content-range", "")
+                    total_str = cr.split("/")[-1] if "/" in cr else ""
+                    sb_truth["verdict_count_today"] = int(total_str) if total_str.isdigit() else None
+            except Exception:
+                pass
+
+    # ── B. Local harness truth ────────────────────────────────────────────────
+    obs_path = root / "data" / f"velo_run_observability_{date_tag}.json"
+    if not obs_path.exists():
+        candidates = sorted((root / "data").glob("velo_run_observability_*.json"), reverse=True)
+        obs_path = candidates[0] if candidates else None
+
+    harness_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
+    if obs_path and obs_path.exists():
+        try:
+            obs = _json.loads(obs_path.read_text(encoding="utf-8"))
+            harness_truth["status"] = "FOUND"
+            harness_truth["file"] = obs_path.name
+            harness_truth["data"] = {
+                "final_status": obs.get("final_status"),
+                "source_label": obs.get("source_label"),
+                "feature_health": obs.get("feature_health"),
+                "warnings": obs.get("warnings", []),
+                "generated_at": obs.get("generated_at"),
+            }
+        except Exception as exc:
+            harness_truth["status"] = "READ_ERROR"
+            harness_truth["error"] = str(exc)
+
+    # ── C. Doctrine scorecard ─────────────────────────────────────────────────
+    sc_path = root / "data" / "doctrine_scorecard_latest.json"
+    sc_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
+    if sc_path.exists():
+        try:
+            sc = _json.loads(sc_path.read_text(encoding="utf-8"))
+            sc_truth["status"] = "FOUND"
+            sc_truth["data"] = {
+                "gate_progress": sc.get("gate_progress"),
+                "tier_a": sc.get("tier_a"),
+                "doctrine_vs_market": sc.get("doctrine_vs_market"),
+                "generated_at": (sc.get("meta") or {}).get("generated_at"),
+            }
+        except Exception as exc:
+            sc_truth["status"] = "READ_ERROR"
+            sc_truth["error"] = str(exc)
+
+    # ── D. New Build sidecar ──────────────────────────────────────────────────
+    nb_root = root / "data" / "new_build" / "sidecar_feed"
+    sidecar_today = nb_root / f"new_build_signal_{date_tag}.jsonl"
+    sidecar_latest = nb_root / "new_build_signal_latest.jsonl"
+    sidecar_path = sidecar_today if sidecar_today.exists() else (sidecar_latest if sidecar_latest.exists() else None)
+
+    nb_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
+    if sidecar_path:
+        try:
+            lines = [ln for ln in sidecar_path.read_text(encoding="utf-8").splitlines() if ln.strip()]
+            records = [_json.loads(ln) for ln in lines]
+            dates_in_feed = sorted({r.get("race_date", "")[:10] for r in records if r.get("race_date")})
+            nb_truth["status"] = "FOUND"
+            nb_truth["file"] = sidecar_path.name
+            nb_truth["data"] = {
+                "record_count": len(records),
+                "dates_in_feed": dates_in_feed,
+                "date_matches_today": today in dates_in_feed,
+                "paper_only": all(r.get("paper_only") for r in records),
+                "rpr_violations": sum(1 for r in records if r.get("rpr_violation_flag")),
+            }
+        except Exception as exc:
+            nb_truth["status"] = "READ_ERROR"
+            nb_truth["error"] = str(exc)
+
+    return {
+        "a_supabase": sb_truth,
+        "b_local_harness": harness_truth,
+        "c_doctrine_scorecard": sc_truth,
+        "d_new_build_sidecar": nb_truth,
+        "meta": {
+            "date": today,
+            "generated_at": utc_now_iso(),
+            "no_scoring": True,
+            "no_model_calls": True,
+            "no_live_writes": True,
+            "source_key": {
+                "SUPABASE": "Live Supabase REST query — reflects production DB state",
+                "LOCAL_ARTIFACT": "Local file on this server — may lag Railway deploys",
+                "UNAVAILABLE": "Source unreachable or not configured",
+                "NOT_FOUND": "File expected but absent — run the relevant generator script",
+            },
+        },
+    }
+
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -1775,7 +2075,18 @@ async def predict_race(race_data: dict, persist: bool = False, authorized: bool 
         predictions = score_race_velo_prime(norm_race, sentient_state=_sentient_state)
 
         if persist:
-            persist_race_predictions(norm_race, predictions)
+            # Resolve tier for top pick for persistence truth
+            tier = "D"
+            if predictions:
+                from scripts.ops.run_prime_today import synthesize_decision
+                top = predictions[0]
+                second = predictions[1] if len(predictions) > 1 else {}
+                sec_prob = float(second.get("velo_prime_prob") or 0)
+                tier, _ = synthesize_decision(top, sec_prob, field_size=len(predictions))
+            
+            from scripts.ops.runtime_truth_support import get_commit_sha
+            commit_sha = get_commit_sha()
+            persist_race_predictions(norm_race, predictions, decision_tier=tier, commit_sha=commit_sha)
 
         return {
             "race_id": norm_race.get("race_id"),

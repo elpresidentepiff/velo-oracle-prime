@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-05-22T00:00:00+00:00",
+  "trigger": "Sigma local artifact gap fixed (STEP 9 added to run_results_sigma.py)",
+  "recheck_dates": ["2026-05-20", "2026-05-21", "2026-05-22"],
+  "before": {
+    "2026-05-20": "QUARANTINE_DAY",
+    "2026-05-21": "WATCH_ONLY (SOURCE_UNKNOWN + SIGMA_MISSING)",
+    "2026-05-22": "WATCH_ONLY (SIGMA_MISSING)"
+  },
+  "after": {
+    "2026-05-20": "QUARANTINE_DAY",
+    "2026-05-21": "PASS_TO_LEARNING",
+    "2026-05-22": "PASS_TO_LEARNING"
+  },
+  "verdicts": {
+    "2026-05-20": {
+      "verdict": "QUARANTINE_DAY",
+      "unchanged": true,
+      "reason": "Contamination unchanged — run_ids 32cc27f9/847964a6, 6 flatline races",
+      "sigma_audits_preserved": true,
+      "learning_blocked": true
+    },
+    "2026-05-21": {
+      "verdict": "PASS_TO_LEARNING",
+      "changed_from": "WATCH_ONLY",
+      "fix_applied": "sigma_results_2026_05_21.json written + mission_control_2026-05-21.json created",
+      "sr": 0.295,
+      "sigma_status": "PASS",
+      "learning_gate": "OPEN",
+      "sigma_audits_preserved": true,
+      "note": "Operator approval still required before consuming"
+    },
+    "2026-05-22": {
+      "verdict": "PASS_TO_LEARNING",
+      "changed_from": "WATCH_ONLY",
+      "fix_applied": "sigma_results_2026_05_22.json written",
+      "sr": 0.25,
+      "sigma_status": "PASS",
+      "learning_gate": "OPEN",
+      "sigma_audits_preserved": true,
+      "note": "Operator approval still required before consuming"
+    }
+  },
+  "enforcement_result": {
+    "contaminated_day_still_quarantined": true,
+    "clean_days_now_pass_to_learning": true,
+    "sigma_truth_never_blocked": true,
+    "gap_closed": true,
+    "gap_description": "Sigma artifact gap: sigma now writes data/sigma_results/sigma_results_{date}.json after close"
+  },
+  "governance_note": "PASS_TO_LEARNING means learning consume is permitted — it does not mean it is automatic. Operator decision required at each gate."
+}

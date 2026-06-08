@@ -10,12 +10,13 @@ Date: 2026-01-04
 """
 
 import asyncio
+import hmac
 import logging
 import os
 from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta
 
-from fastapi import FastAPI, Header, HTTPException, status
+from fastapi import Depends, FastAPI, Header, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import our modules
@@ -127,14 +128,35 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware
+# CORS middleware — credentials=False required when allow_origins="*"
+_CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",") if os.getenv("CORS_ORIGINS") else ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Tighten in production
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=_CORS_ORIGINS,
+    allow_credentials=False,  # must be False when allow_origins includes "*"
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+# ── Write-endpoint auth ───────────────────────────────────────────────────────
+
+_INGESTION_SECRET = os.getenv("INGESTION_SPINE_SECRET", "")
+
+
+def _require_write_auth(x_ingestion_secret: str | None = Header(default=None)) -> None:
+    """Fail-closed auth on all write/parse endpoints.
+    Bypass allowed only when VELO_DEV_AUTH_BYPASS=1 (never set in production).
+    """
+    if os.getenv("VELO_DEV_AUTH_BYPASS", "").strip() == "1":
+        return
+    if not _INGESTION_SECRET:
+        raise HTTPException(
+            status_code=503,
+            detail="INGESTION_SPINE_SECRET not configured — write endpoints disabled",
+        )
+    if not x_ingestion_secret or not hmac.compare_digest(x_ingestion_secret, _INGESTION_SECRET):
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 # ============================================================================
 # tRPC COMPATIBILITY LAYER
@@ -178,7 +200,7 @@ async def health_check():
 
 
 @app.post("/imports/batch", response_model=CreateBatchResponse, status_code=status.HTTP_201_CREATED)
-async def create_batch(request: CreateBatchRequest):
+async def create_batch(request: CreateBatchRequest, _: None = Depends(_require_write_auth)):
     """
     Create a new import batch for a given date.
 
@@ -230,7 +252,7 @@ async def create_batch(request: CreateBatchRequest):
 
 
 @app.post("/imports/{batch_id}/files", response_model=RegisterFilesResponse)
-async def register_files(batch_id: str, request: RegisterFilesRequest):
+async def register_files(batch_id: str, request: RegisterFilesRequest, _: None = Depends(_require_write_auth)):
     """
     Register file metadata for a batch.
 
@@ -312,7 +334,7 @@ async def register_files(batch_id: str, request: RegisterFilesRequest):
 
 
 @app.post("/imports/{batch_id}/parse", response_model=ParseBatchResponse)
-async def parse_batch(batch_id: str):
+async def parse_batch(batch_id: str, _: None = Depends(_require_write_auth)):
     """
     Parse all files in a batch and insert into canonical tables.
 
@@ -557,7 +579,7 @@ async def parse_batch(batch_id: str):
 
 
 @app.post("/imports/{batch_id}/validate")
-async def validate_batch(batch_id: str):
+async def validate_batch(batch_id: str, _: None = Depends(_require_write_auth)):
     """
     Run RIC+ validation + Great Expectations on a parsed batch
 

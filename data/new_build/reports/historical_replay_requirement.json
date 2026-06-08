@@ -1,0 +1,241 @@
+{
+  "generated_at": "2026-05-29T13:34:15.256867Z",
+  "classification": "PARTIAL_OVERLAP_NB_REPLAY_REQUIRED",
+  "auc_comparison_status": "OLD_VELO_AUC_NOT_COMPARABLE_UNTIL_REPLAY",
+  "auc_note": "AUC comparison requires identical race/runner/target populations, same chronological split, and both model probabilities on the same rows. Single-day strike rate is indicative only.",
+  "artifact_audit": {
+    "old_velo_verdict_files": 50,
+    "old_velo_dates": [
+      "2026-03-17",
+      "2026-03-18",
+      "2026-03-20",
+      "2026-03-21",
+      "2026-03-23",
+      "2026-03-24",
+      "2026-03-26",
+      "2026-03-27",
+      "2026-04-11",
+      "2026-04-16",
+      "2026-04-17",
+      "2026-04-18",
+      "2026-04-19",
+      "2026-04-20",
+      "2026-04-21",
+      "2026-04-22",
+      "2026-04-23",
+      "2026-04-24",
+      "2026-04-25",
+      "2026-04-27",
+      "2026-04-28",
+      "2026-04-29",
+      "2026-04-30",
+      "2026-05-01",
+      "2026-05-02",
+      "2026-05-03",
+      "2026-05-04",
+      "2026-05-05",
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08",
+      "2026-05-09",
+      "2026-05-10",
+      "2026-05-11",
+      "2026-05-12",
+      "2026-05-13",
+      "2026-05-14",
+      "2026-05-15",
+      "2026-05-16",
+      "2026-05-17",
+      "2026-05-18",
+      "2026-05-19",
+      "2026-05-20",
+      "2026-05-21",
+      "2026-05-22",
+      "2026-05-23",
+      "2026-05-24",
+      "2026-05-25",
+      "2026-05-26",
+      "2026-05-27"
+    ],
+    "sigma_result_files": 7,
+    "sigma_dates": [
+      "2026-05-21",
+      "2026-05-22",
+      "2026-05-23",
+      "2026-05-24",
+      "2026-05-25",
+      "2026-05-26",
+      "2026-05-27"
+    ],
+    "nb_prediction_files": 1,
+    "nb_prediction_dates": [
+      "2026-05-29"
+    ],
+    "champion_registry_present": true,
+    "champion_version": "Challenger_V1",
+    "overlap_dates_both_velo_and_sigma": [
+      "2026-05-21",
+      "2026-05-22",
+      "2026-05-23",
+      "2026-05-24",
+      "2026-05-25",
+      "2026-05-26",
+      "2026-05-27"
+    ],
+    "velo_only_dates_no_nb_predictions": [
+      "2026-03-17",
+      "2026-03-18",
+      "2026-03-20",
+      "2026-03-21",
+      "2026-03-23",
+      "2026-03-24",
+      "2026-03-26",
+      "2026-03-27",
+      "2026-04-11",
+      "2026-04-16",
+      "2026-04-17",
+      "2026-04-18",
+      "2026-04-19",
+      "2026-04-20",
+      "2026-04-21",
+      "2026-04-22",
+      "2026-04-23",
+      "2026-04-24",
+      "2026-04-25",
+      "2026-04-27",
+      "2026-04-28",
+      "2026-04-29",
+      "2026-04-30",
+      "2026-05-01",
+      "2026-05-02",
+      "2026-05-03",
+      "2026-05-04",
+      "2026-05-05",
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08",
+      "2026-05-09",
+      "2026-05-10",
+      "2026-05-11",
+      "2026-05-12",
+      "2026-05-13",
+      "2026-05-14",
+      "2026-05-15",
+      "2026-05-16",
+      "2026-05-17",
+      "2026-05-18",
+      "2026-05-19",
+      "2026-05-20",
+      "2026-05-21",
+      "2026-05-22",
+      "2026-05-23",
+      "2026-05-24",
+      "2026-05-25",
+      "2026-05-26",
+      "2026-05-27"
+    ]
+  },
+  "requirements": {
+    "required_for_valid_auc_comparison": [
+      {
+        "id": "REQ-1",
+        "name": "Same race population",
+        "description": "Both models must be evaluated on exactly the same set of race_ids. Old VELO may cover different races than New Build if one system missed certain fixture types (e.g., AW vs turf filtering differences).",
+        "status": "PARTIAL"
+      },
+      {
+        "id": "REQ-2",
+        "name": "Same runner population",
+        "description": "Both models must include the same horses per race. If Old VELO excluded non-runners post-declaration while New Build included them at capture time, the populations differ.",
+        "status": "NOT_VERIFIED"
+      },
+      {
+        "id": "REQ-3",
+        "name": "Old VELO probability extraction",
+        "description": "Old VELO top-pick probabilities (velo_prime_prob from velo_prime_verdicts) are available for each runner, not just the top pick. Currently only top pick is stored — full runner-level distribution needed.",
+        "status": "PARTIAL_TOP_PICK_ONLY",
+        "blocker": "Old VELO stores only top.horse and top.velo_prime_prob per race. Full runner-level probability distribution not captured in verdict files. AUC requires probability per runner, not just the winner pick."
+      },
+      {
+        "id": "REQ-4",
+        "name": "New Build historical re-score",
+        "description": "New Build must be re-scored on historical race populations using the same champion model (Challenger_V1) with training data cutoff respected. Cannot use current-card feed scores for historical races — model must not have seen the outcome when scoring.",
+        "status": "NOT_STARTED",
+        "action": "Run new_build_two_lane_score.py --date HISTORICAL_DATE for each overlap date"
+      },
+      {
+        "id": "REQ-5",
+        "name": "Identical target variable",
+        "description": "Both models must be evaluated against the same binary target: did the top-ranked horse win the race? (win=1, otherwise=0). Sigma results must be matched by race_id and horse name.",
+        "status": "SIGMA_FORMAT_COMPATIBLE"
+      },
+      {
+        "id": "REQ-6",
+        "name": "Chronological split respected",
+        "description": "Replay must use only dates AFTER the model training cutoff (2025 test split). New Build Challenger_V1 trained on <= 2023, validated 2024, tested 2025. Replay on 2026 live dates is valid. Replay on 2024/2025 risks train-test contamination for Old VELO if it was trained on overlapping data.",
+        "status": "2026_DATES_ARE_SAFE"
+      },
+      {
+        "id": "REQ-7",
+        "name": "Sufficient sample size",
+        "description": "Minimum n=200 closed races for statistically meaningful AUC comparison (95% CI). Single-day or small-n comparisons are indicative only.",
+        "status": "INSUFFICIENT_N_7_OVERLAP_DATES",
+        "current_overlap_dates": 7,
+        "target": "30+ race days (approx 200+ races)"
+      }
+    ],
+    "critical_blocker": "REQ-3: Old VELO runner-level probability distribution is not captured. Only the top pick probability exists in verdict files. AUC requires P(win) for every runner in every race. Until Old VELO produces runner-level scores, true AUC comparison is impossible.",
+    "feasible_comparison_today": [
+      "Top-1 strike rate comparison (Old VELO top pick vs New Build rank-1 pick) — indicative only",
+      "Alignment rate (is Old VELO top pick inside New Build top-3?)",
+      "OR baseline comparison (highest official_rating pick as naive baseline)",
+      "Outcome evaluation when sigma results are available"
+    ]
+  },
+  "action_plan": [
+    {
+      "step": 1,
+      "action": "Accumulate sigma results for May-June 2026 race days",
+      "command": "python scripts/run_results_sigma.py --date YYYY-MM-DD",
+      "gates": "Need 30+ race days with closed outcomes"
+    },
+    {
+      "step": 2,
+      "action": "Re-run New Build scorer on each historical date with sigma results",
+      "command": "python scripts/ops/new_build_two_lane_score.py --date YYYY-MM-DD --execute",
+      "gates": "Must use same Challenger_V1 champion (registry version matches)"
+    },
+    {
+      "step": 3,
+      "action": "Assess Old VELO runner-level probability availability",
+      "description": "Check if velo_prime_verdicts files contain per-runner probs or only top pick. If only top pick: AUC is not computable. SR comparison remains the primary metric.",
+      "current_status": "PARTIAL_TOP_PICK_ONLY"
+    },
+    {
+      "step": 4,
+      "action": "Run comparison evaluator across accumulated dates",
+      "command": "python scripts/ops/new_build_old_velo_comparison.py --date YYYY-MM-DD --execute",
+      "gates": "Run for each date with both Old VELO verdict AND sigma results"
+    },
+    {
+      "step": 5,
+      "action": "Aggregate multi-date SR/alignment statistics",
+      "description": "Compute rolling SR for Old VELO vs New Build vs OR baseline across all evaluated dates",
+      "gates": "n >= 200 races before drawing promotion conclusions"
+    }
+  ],
+  "promotion_gate": {
+    "description": "New Build is not promoted to Old VELO scoring until ALL of the following are met:",
+    "gates": [
+      "n >= 200 closed races evaluated",
+      "New Build SR statistically above OR baseline (p < 0.05)",
+      "New Build SR >= Old VELO SR on identical race population (or Old VELO absent)",
+      "RPR violations = 0 confirmed across all evaluated dates",
+      "JTC-D sidecar rebuilt with rolling date-bounded lookback (no leakage)",
+      "Intent coverage gate (>= 80%) achieved on at least 5 consecutive race days",
+      "Operator explicit promotion decision — no automatic promotion"
+    ],
+    "current_status": "NOT_READY",
+    "estimated_earliest": "After 30+ live race days with closed outcomes (approx July 2026)"
+  }
+}

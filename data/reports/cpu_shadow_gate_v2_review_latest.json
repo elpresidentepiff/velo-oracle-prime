@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-05-22T00:00:00+00:00",
+  "gate_id": "GATE_V2_POST_FLATLINE_FIX",
+  "start_date": "2026-05-21",
+  "fix_commit": "a33c5bd8",
+  "review_verdict": "NEEDS_MORE_DAYS",
+  "review_threshold_met": true,
+  "live_promotion_allowed": false,
+  "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
+  "runners": {
+    "total_clean": 786,
+    "qualifying_days": ["2026-05-21", "2026-05-22"],
+    "day_count": 2,
+    "contaminated_excluded": 807,
+    "top_picks": 87,
+    "top_picks_correct": 22
+  },
+  "performance": {
+    "auc": 0.6827,
+    "brier_score": 0.0867,
+    "top_pick_sr": 0.253,
+    "top_pick_sr_dpt_adjusted": 0.275,
+    "top_pick_sr_pct": 25.3,
+    "baseline_sr": 0.20,
+    "above_baseline": true,
+    "frame_rate_top3": 0.586,
+    "frame_rate_pct": 58.6
+  },
+  "day_by_day": {
+    "2026-05-21": {"top_picks": 44, "wins": 13, "sr": 0.295},
+    "2026-05-22": {"top_picks": 43, "wins": 9, "sr": 0.209}
+  },
+  "calibration": {
+    "low_vp_0_0_1": {"pred": 0.054, "actual": 0.053, "gap": -0.001, "n": 395, "status": "WELL_CALIBRATED"},
+    "low_vp_0_1_0_2": {"pred": 0.142, "actual": 0.123, "gap": -0.020, "n": 318, "status": "SLIGHT_OVERCONFIDENCE"},
+    "mid_vp_0_2_0_3": {"pred": 0.231, "actual": 0.250, "gap": 0.019, "n": 48, "status": "SLIGHT_UNDERCONFIDENCE"},
+    "high_vp_0_3_0_4": {"pred": 0.338, "actual": 0.211, "gap": -0.127, "n": 19, "status": "OVERCONFIDENT_FLAG"},
+    "high_vp_0_4_plus": {"pred": 0.480, "actual": 0.333, "gap": -0.147, "n": 6, "status": "OVERCONFIDENT_TOO_SMALL"}
+  },
+  "tier_breakdown": {
+    "A": {"all_n": 81, "all_sr": 0.136, "top_n": 12, "top_sr": 0.250},
+    "B": {"all_n": 307, "all_sr": 0.121, "top_n": 39, "top_sr": 0.333},
+    "C": {"all_n": 226, "all_sr": 0.093, "top_n": 23, "top_sr": 0.261},
+    "X": {"all_n": 172, "all_sr": 0.052, "top_n": 13, "top_sr": 0.000}
+  },
+  "sidecar_signals": {
+    "mds_above_0_5": {"fired": 0, "status": "DID_NOT_FIRE_IN_WINDOW"},
+    "improvement_above_0_40": {"fired": 0, "status": "DID_NOT_FIRE_IN_WINDOW"},
+    "validation_status": "UNVALIDATED_INSUFFICIENT_FIRES"
+  },
+  "course_highlights": {
+    "best_mus": {"top_n": 7, "sr": 0.857},
+    "best_cat": {"top_n": 7, "sr": 0.429},
+    "worst_chp": {"top_n": 7, "sr": 0.000, "flag": "INVESTIGATE"},
+    "data_gap_dpt": {"top_n": 7, "sr": 0.000, "note": "No SL results available — not a model failure"}
+  },
+  "leakage": {
+    "status": "CLEAN",
+    "run_ids_present": ["a33c5bd8"],
+    "contaminated_run_ids_absent": true
+  },
+  "statistical_note": "95% CI for SR with n=87: ~16%-36%. Cannot reject baseline at current sample size. Recommend 150+ top picks for statistical confidence.",
+  "gate_v1_status": "GATE_V1_AUDIT_ONLY",
+  "gate_v1_contamination": "CONFIRMED",
+  "next_review_trigger": "150 clean top picks (est. 10-15 more qualifying days)",
+  "blocking_factors": [
+    "n=87 top picks below statistical power threshold",
+    "Only 2 qualifying days — day-by-day stability unproven",
+    "MDS>0.5 and Improvement>0.40 did not fire — sidecar calibration unvalidated",
+    "CHP 0% SR requires investigation",
+    "High-VP overconfidence flag (n=25, VP>=0.30)"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-06-03T07:25:00Z",
+  "status": "PHASE1_READY",
+  "files_changed": [
+    "docs/engineering/VELO_PROBABILITY_AND_STATE_ENGINE_V1.md",
+    "app/main.py",
+    "app/static/dashboard/index.html"
+  ],
+  "endpoints_added": [
+    "GET /api/dashboard/truth-summary"
+  ],
+  "panels_added": [
+    "VÉLØ TRUTH COCKPIT"
+  ],
+  "data_sources_used": [
+    "data/velo_run_observability_{date}.json",
+    "data/velo_prime_verdicts_{date}.json",
+    "data/new_build/reports/two_lane_readiness_{date}.json",
+    "data/sigma_results/sigma_results_{date}.json",
+    "app/static/dashboard/sidecar_stack_latest.json",
+    "Supabase pipeline_runs table"
+  ],
+  "stale_ghost_sources": [
+    "window.__SSC_INLINE in index.html (Hardcoded 2026-05-29)",
+    "sidecar_stack_latest.json (Stale if manual script not run)"
+  ],
+  "tests_passed": 7,
+  "risks": "Dashboard still contains legacy panels reading stale JSON/hardcoded data. Truth Cockpit provides the parallel 'operational truth' to detect these discrepancies.",
+  "mutations_confirmation": "NO SCORING, MODEL, OR LIVE DATA MUTATIONS PERFORMED. ALL ENDPOINTS READ-ONLY."
+}

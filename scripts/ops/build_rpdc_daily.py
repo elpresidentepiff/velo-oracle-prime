@@ -22,7 +22,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent.parent
 load_dotenv(ROOT / ".env")
 
 log = logging.getLogger("velo.build_rpdc_daily")
@@ -335,8 +335,38 @@ def build_rpdc_for_date(date_str: str) -> None:
     print(f"\nBUILD RPDC DAILY — {date_str}")
     print("=" * 60)
 
-    # Load today's racecards from results or from velo_verdicts
-    # Use results file if available (has full field), else fall back to verdicts
+    # ── Gate 5: RPDC_COVERAGE_WARN ────────────────────────────────────────────
+    _latest_rrc = _sb_get(
+        "/runner_release_candidates?order=run_date.desc&limit=1&select=run_date"
+    )
+    if _latest_rrc:
+        _latest_rrc_date = _latest_rrc[0].get("run_date", "")
+        try:
+            _staleness = (date.fromisoformat(date_str) - date.fromisoformat(_latest_rrc_date)).days
+        except (ValueError, TypeError):
+            _staleness = None
+        if _staleness is not None and _staleness > 1:
+            print(
+                f"\n⚠ RPDC_COVERAGE_WARN\n"
+                f"  runner_release_candidates last updated: {_latest_rrc_date} ({_staleness} days stale)\n"
+                f"  RPDC context will be absent from scoring if chain not repaired.\n"
+                f"  Repair: ingest_results_to_horse_runs.py --date "
+                f"{(date.fromisoformat(date_str) - timedelta(days=1)).isoformat()}"
+            )
+            log.warning(
+                "RPDC_COVERAGE_WARN: runner_release_candidates is %d days stale (last: %s)",
+                _staleness, _latest_rrc_date,
+            )
+    else:
+        print(
+            "\n⚠ RPDC_COVERAGE_WARN\n"
+            "  runner_release_candidates has NO rows. RPDC has never been built.\n"
+            "  Run the full ingest + build chain before scoring."
+        )
+        log.warning("RPDC_COVERAGE_WARN: runner_release_candidates is empty")
+
+    # Load today's racecards from results file or runner_snapshots JSONL
+    # (results file available after races close; snapshots available same day after scoring)
     date_tag = date_str.replace("-", "_")
     results_path = ROOT / "data" / f"results_{date_tag}.json"
 
@@ -361,25 +391,53 @@ def build_rpdc_for_date(date_str: str) -> None:
                     })
         log.info("Loaded %d runners from results file", len(runners_to_score))
     else:
-        # Fall back to velo_verdicts top picks for the date
-        verdicts = _sb_get(
-            f"/velo_verdicts?generated_at=gte.{date_str}T00:00:00"
-            f"&select=race_id,top_rank_horse_id"
+        # No results file — try runner_snapshots JSONL (written by run_prime_today on scoring day)
+        import glob as _glob
+        _snap_files = sorted(
+            _glob.glob(str(ROOT / "data" / f"runner_snapshots_{date_tag}_*.jsonl"))
         )
-        for v in verdicts:
-            hid = v.get("top_rank_horse_id")
-            if hid:
-                runners_to_score.append({
-                    "horse_id": hid,
-                    "horse": "",
-                    "race_id": v.get("race_id", ""),
-                    "trainer_id": "",
-                    "trainer": "",
-                    "current_or": None,
-                    "course_id": "",
-                    "dist_f": None,
-                })
-        log.info("Loaded %d top picks from velo_verdicts", len(runners_to_score))
+        if _snap_files:
+            _snap_path = _snap_files[-1]  # most recent snapshot for this date
+            log.info("Loading runners from runner_snapshots: %s", Path(_snap_path).name)
+            _seen_runners: dict[str, dict] = {}
+            with open(_snap_path) as _f:
+                for _line in _f:
+                    _line = _line.strip()
+                    if not _line:
+                        continue
+                    try:
+                        _r = json.loads(_line)
+                        _hid = _r.get("horse_id")
+                        _rid = _r.get("race_id")
+                        if _hid and _rid:
+                            _key = f"{_hid}:{_rid}"
+                            if _key not in _seen_runners:
+                                _seen_runners[_key] = {
+                                    "horse_id": _hid,
+                                    "horse": _r.get("horse", ""),
+                                    "race_id": _rid,
+                                    "trainer_id": _r.get("trainer_id") or "",
+                                    "trainer": _r.get("trainer") or "",
+                                    "current_or": None,
+                                    "course_id": "",
+                                    "dist_f": None,
+                                }
+                    except (json.JSONDecodeError, KeyError):
+                        continue
+            runners_to_score = list(_seen_runners.values())
+            log.info("Loaded %d runners from runner_snapshots", len(runners_to_score))
+        else:
+            # No results file and no runner_snapshots — cannot determine today's runners
+            print(
+                f"\n⚠ RPDC_SOURCE_UNAVAILABLE — {date_str}\n"
+                f"  No results file and no runner_snapshots found for this date.\n"
+                f"  Expected one of:\n"
+                f"    data/results_{date_tag}.json\n"
+                f"    data/runner_snapshots_{date_tag}_*.jsonl\n"
+                f"  RPDC cannot be built. Run scoring first, then re-run build_rpdc_daily."
+            )
+            log.error("RPDC_SOURCE_UNAVAILABLE: no source for runners on %s", date_str)
+            return
 
     if not runners_to_score:
         print("  No runners to score.")

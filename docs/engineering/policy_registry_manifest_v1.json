@@ -1,0 +1,339 @@
+{
+  "registry_version": "1.1",
+  "generated_at": "2026-05-23",
+  "authority": "El Presidente",
+  "note": "Read-only design manifest. All changes require operator approval. No runtime changes are authorised by this document. Schema upgraded to V14 governance standard 2026-05-23.",
+  "policies": [
+    {
+      "policy_id": "SCORING_POLICY_LIVE",
+      "policy_type": "scoring",
+      "scope": "Live scoring ensemble — SQPE_IMPROVEMENT_MDS_V1 profile, all UK runners",
+      "conditions": "VELO_ENSEMBLE_PROFILE=SQPE_IMPROVEMENT_MDS_V1 (default since 2026-05-08)",
+      "actions": "Scores runners using VP = (0.45 * sqpe_v17 + 0.12 * improvement_score + 0.10 * MDS) / 0.67. Excludes place_prob, longshot_score, release_window_score, comment_intel_score from VP numerator.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "Live Scoring Policy — SQPE_IMPROVEMENT_MDS_V1",
+      "status": "LIVE_ACTIVE",
+      "active_since": "2026-05-08",
+      "commit": "b7e4e0c",
+      "source_file": "src/intelligence/velo_prime_ensemble.py",
+      "policy_object": "SQPE_IMPROVEMENT_MDS_V1",
+      "reconciled_at": "2026-05-23",
+      "reconciliation_source": "docs/engineering/LIVE_SCORING_TRUTH_AUDIT_2026_05_23.md",
+      "live_weighted": {
+        "sqpe_v17": 0.45,
+        "improvement_score": 0.12,
+        "market_deception_score": 0.10
+      },
+      "effective_vp_formula": "VP = (0.45 * sqpe_v17 + 0.12 * improvement_score + 0.10 * MDS) / 0.67",
+      "badge_only": {
+        "place_prob": "BADGE_ONLY — calculated, stored, displayed as badge; excluded from VP in SQPE_IMPROVEMENT_MDS_V1"
+      },
+      "frozen_not_weighted": {
+        "longshot_score": "FROZEN — FREEZE_CANDIDATE (ROI=-0.065); calculated, stored, excluded from VP; SP>=10 gate still used for tier X classification"
+      },
+      "stored_only": {
+        "release_window_score": "STORED_ONLY — weight 0.00, in disabled set for both profiles; calculated, stored, not weighted",
+        "comment_intel_score": "STORED_ONLY — weight 0.00, in disabled set for both profiles; calculated, stored, not weighted"
+      },
+      "rollback": "VELO_ENSEMBLE_PROFILE=LEGACY_FULL_ENSEMBLE",
+      "evidence": "sqpe_alone_control_audit n=338-342: LEGACY ROI=-3.1%, NEW ROI=+13.5%",
+      "prior_errors_corrected": [
+        "release_day_prob: wrong field name — field is release_window_score; weight was 0.10 in registry but 0.00 in code",
+        "place_prob: listed as live-weighted 0.08 — actually BADGE_ONLY in current profile",
+        "comment_intel_score: listed as live-weighted 0.08 — actually STORED_ONLY (weight 0.00)",
+        "longshot_score: listed as gated_weights — actually FROZEN in current profile"
+      ]
+    },
+    {
+      "policy_id": "SCORING_POLICY_SHADOW_SAFE_V2",
+      "policy_type": "shadow_consume",
+      "scope": "Shadow-only scoring policy — SHADOW_SAFE_V2 weight profile",
+      "conditions": "Applied in shadow scoring context only; not promoted to live ensemble",
+      "actions": "Scores runners with high SQPE anchor (0.80). Dangerous/red-flag sidecars removed. Evidence accumulation only — no VP composite contribution.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": false,
+      "name": "Shadow Safe V2 Policy",
+      "status": "SHADOW_ONLY",
+      "source_file": "src/velo/weight_policy_registry.py",
+      "policy_object": "SHADOW_SAFE_V2",
+      "weights": {
+        "sqpe_v17": 0.80,
+        "market_deception_score": 0.08,
+        "place_prob": 0.06,
+        "improvement_score": 0.04
+      },
+      "notes": "High SQPE anchor. Dangerous/red-flag sidecars removed. Not yet promoted."
+    },
+    {
+      "policy_id": "VP_GATE_POLICY",
+      "policy_type": "scoring",
+      "scope": "VP band signal gate — all scored UK runners",
+      "conditions": "Applied to every scored runner after VP composite is computed",
+      "actions": "Classifies runners into SUPPRESS / NOISY / PROMISING / PROVEN bands. Primary live gate: VP >= 0.30. Proven gate: VP >= 0.30 AND Tier A.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "VP Band Signal Gate",
+      "status": "LIVE_ACTIVE",
+      "thresholds": {
+        "SUPPRESS": "VP < 0.20",
+        "NOISY": "VP 0.20-0.30",
+        "PROMISING": "VP 0.30-0.40",
+        "PROVEN": "VP >= 0.40"
+      },
+      "primary_live_gate": "VP >= 0.30",
+      "primary_proven_gate": "VP >= 0.30 AND Tier A",
+      "evidence": {
+        "VP_ge_0.30_SR": "32.2%",
+        "VP_ge_0.30_TierA_SR": "40.1%",
+        "n": 345
+      }
+    },
+    {
+      "policy_id": "TIER_CLASSIFICATION_POLICY",
+      "policy_type": "scoring",
+      "scope": "Tier classification (A/B/C/D/X) — all scored UK runners",
+      "conditions": "Applied after VP composite is computed; tier assigned per VP + sidecar signal combination",
+      "actions": "Assigns tier label A/B/C/D/X. Tier A = PROVEN signal gate. B-tier split applied: B_VP>=0.30 = WATCHLIST, B_VP<0.30 = SUPPRESS. Tier X = excluded from main audit.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "Tier Classification (A/B/C/D/X)",
+      "status": "LIVE_ACTIVE",
+      "tiers": {
+        "A": "PROVEN — SR=40.1%, Frame=77.2%, avg_VP=0.425",
+        "B": "NOISY — SR=21.1%, Frame=50.0%, avg_VP=0.277",
+        "C": "SUPPRESS — SR=15.8%, Frame=42.2%, avg_VP=0.212",
+        "D": "SUPPRESS — SR=13.4%, Frame=33.9%, avg_VP=0.164",
+        "X": "EXCLUDED — 142 X-tier excluded from main audit"
+      },
+      "b_tier_split": {
+        "B_VP_ge_0.30": "WATCHLIST — SR=30.0%, n=130",
+        "B_VP_lt_0.30": "SUPPRESS — SR=16.9%, n=272"
+      }
+    },
+    {
+      "policy_id": "VP40_WATCH_POLICY",
+      "policy_type": "scoring",
+      "scope": "VP40, VP40_TIER_A, and VP40_TIER_A_SHORTPRICE lanes",
+      "conditions": "Applied when VP >= 0.40 threshold triggers. SP_2X and Shortprice sub-lanes tracked separately.",
+      "actions": "All lanes remain WATCH_ONLY until evidence gates passed. No staking. SP_2X gate: n >= 50 required. Shortprice gate: n >= 150 required.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "VP40 / VP40_TIER_A Watch Policy",
+      "status": "WATCH_ONLY",
+      "lanes": {
+        "VP40": "WATCH_ONLY",
+        "VP40_TIER_A": "WATCH_ONLY",
+        "VP40_TIER_A_SHORTPRICE": "UNDER_REVIEW"
+      },
+      "next_gates": {
+        "SP_2X": "n >= 50 required for review",
+        "Shortprice": "n >= 150 required for review"
+      }
+    },
+    {
+      "policy_id": "EXECUTION_BRIDGE_POLICY",
+      "policy_type": "mission_control",
+      "scope": "VeloExecutionBridge — paper execution ledger, directive routing",
+      "conditions": "Applied on every scored verdict passing through execution_bridge.py. Hard runtime guards enforce simulation_only=True always.",
+      "actions": "Routes verdicts to directive tiers: BLOCKED / CHAOS_CONTAINMENT_MODE / POWER_ANCHOR_MODE / FAVOURITE_LIABILITY_MODE / MULTI_THREAT_ZONE_MODE / WATCH_ONLY. No live staking at any threshold — operator decision required at every promotion gate.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "VeloExecutionBridge Safety Policy",
+      "status": "PAPER_EXECUTION",
+      "source_file": "src/velo/execution_bridge.py",
+      "hard_guards": [
+        "VELO_EXECUTION_MODE=LIVE -> RuntimeError",
+        "BETFAIR_MODE=LIVE -> RuntimeError",
+        "suggested_stake=None always",
+        "max_liability=None always",
+        "simulation_only=True always"
+      ],
+      "directive_priority": [
+        "BLOCKED",
+        "CHAOS_CONTAINMENT_MODE",
+        "POWER_ANCHOR_MODE",
+        "FAVOURITE_LIABILITY_MODE",
+        "MULTI_THREAT_ZONE_MODE",
+        "WATCH_ONLY"
+      ],
+      "power_anchor_promotion_gates": {
+        "n_ge_20": "first review (earliest possible)",
+        "n_ge_60": "paper execution candidate discussion",
+        "n_ge_100": "live discussion",
+        "note": "No automatic promotion at any threshold — operator decision required"
+      }
+    },
+    {
+      "policy_id": "ROUTER_LANE_POLICY",
+      "policy_type": "shadow_consume",
+      "scope": "Router shadow lane evidence accumulation — V1_BASE, V2_CLASS4_ONLY, V6_GOLD_SEAM lanes",
+      "conditions": "Applied to every verdict passing through router shadow audit. Evidence accumulation only — no staking, no router rule changes.",
+      "actions": "Classifies verdicts into lanes. Tracks n, SR, ROI per lane. Applies freeze rule: ROI < 0 at n >= 20 OR Frame < 70% at n >= 20. Promotion gates require operator approval.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": false,
+      "name": "Router Shadow Lane Evidence Policy",
+      "status": "ACCUMULATION_ONLY",
+      "source_file": "scripts/app/router_shadow_audit.py",
+      "lane_promotion_gates": {
+        "WATCHLIST": "n >= 20 AND ROI positive",
+        "SHADOW_CANDIDATE": "n >= 30 AND ROI positive AND Frame > 75%",
+        "LIVE_DISCUSSION": "n >= 100 AND multi-week evidence",
+        "FREEZE": "ROI < 0 at n >= 20 OR Frame < 70% at n >= 20"
+      },
+      "current_lanes": {
+        "V1_BASE": "WATCHLIST (n=27, SR=37.0%, ROI=+11.5%)",
+        "V2_CLASS4_ONLY": "LANE_ACTIVE (n=17, SR=41.2%, ROI=+30.2%)",
+        "V6_GOLD_SEAM": "LOW_SAMPLE (n=5, SR=60.0%, ROI=+115.0%)"
+      },
+      "hard_rule": "No router rule changes. Evidence accumulation only."
+    },
+    {
+      "policy_id": "SIGMA_PROCESS_POLICY",
+      "policy_type": "council_handling",
+      "scope": "Daily sigma audit process — all race days",
+      "conditions": "Applied after every race day results close",
+      "actions": "Run scripts/app/run_results_sigma.py --date YYYY-MM-DD only. Telegram format locked — never change. Use of close_sigma_loops.py is permanently banned.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": false,
+      "name": "Daily Sigma Audit Process",
+      "status": "LIVE_ACTIVE",
+      "canonical_script": "scripts/app/run_results_sigma.py --date YYYY-MM-DD",
+      "banned_script": "close_sigma_loops.py",
+      "telegram_format": "LOCKED — never change",
+      "enforcement": "HARD — must never use alternative sigma scripts"
+    },
+    {
+      "policy_id": "TRAINING_BLACKOUT_POLICY",
+      "policy_type": "learning",
+      "scope": "Training data blackout dates — all model training and promotion pipelines",
+      "conditions": "Applies when any training run, promotion evidence set, or audit dataset is assembled",
+      "actions": "Exclude all blackout dates from training data, promotion evidence, and audit inputs. 2026-05-20 = SCORING_FLATLINE_CONTAMINATED must never enter any training or promotion evidence set.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "Training Data Blackout Dates",
+      "status": "PERMANENT",
+      "blackout_dates": [
+        {
+          "date": "2026-05-20",
+          "reason": "SCORING_FLATLINE_CONTAMINATED",
+          "rule": "Must never enter training or promotion evidence"
+        }
+      ]
+    },
+    {
+      "policy_id": "INTERNATIONAL_PROVENANCE_GATE",
+      "policy_type": "provenance_gate",
+      "scope": "International (HK + FR) feature families — HK_PRERACE_V1/V2, FR_PRERACE_V1/V2, INTL_LAGGED_RATINGS, HK_MORNING_ODDS, FR_MORNING_ODDS",
+      "conditions": "Active until at least one international pack satisfies: AUC >= 0.75 AND SR > FavSR (Arena V1 gate), AND El Presidente explicit sign-off",
+      "actions": "Blocks: migration (intl_schemas_v1.sql not applied), HKJC/PMU ingest workers (not built), international model training, international model promotion. Three-Arena requirement per pack: V1 (form-only) → V2 (closing-market) → V3 (morning odds) before deployment discussion.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "International Rating Provenance Gate",
+      "status": "ACTIVE_BLOCKING",
+      "locked_at": "589b428",
+      "gate_question": "Can VELO beat the favourite baseline using only information that existed before the race started?",
+      "current_answer": "NO — all 5 packs FAILS_FAVOURITE_BASELINE (Arena V1)",
+      "gate_close_criteria": {
+        "minimum": "At least one pack: AUC >= 0.75 AND SR > FavSR",
+        "then": "El Presidente sign-off required",
+        "then_next": "Migration applied (intl_schemas_v1.sql)",
+        "then_next_next": "Worker activation"
+      },
+      "blocked_actions": [
+        "Migration (intl_schemas_v1.sql) — NOT APPLIED",
+        "HKJC/PMU ingest workers — NOT BUILT",
+        "International model training/promotion — BLOCKED",
+        "No worker activation until Phase 1B (migration applied)"
+      ],
+      "arena_v2_status": "COMPLETE — all 5 packs GATE_REOPENED_SAFE_SHADOW_CANDIDATE. SP-based features = CLOSING_MARKET_ONLY. Arena V3 (morning odds) required before deployment. See ARENA_V2_MARKET_PROVENANCE_AUDIT.md."
+    },
+    {
+      "policy_id": "CREDENTIALS_POLICY",
+      "policy_type": "council_handling",
+      "scope": "All credentials and secrets across the entire system",
+      "conditions": "Applies to every code change, commit, and runtime configuration",
+      "actions": "All credentials in .env — never hardcode, never commit. Read with os.getenv() only. fr_research and hk_research schemas NOT YET CREATED in Supabase. UK pipeline UNCHANGED throughout all international work.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": false,
+      "name": "Credentials and Security Policy",
+      "status": "PERMANENT",
+      "rules": [
+        "All credentials in .env — never hardcode, never commit",
+        "Read with os.getenv() only",
+        "fr_research and hk_research schemas NOT YET CREATED in Supabase",
+        "UK pipeline UNCHANGED throughout all international work"
+      ]
+    },
+    {
+      "policy_id": "SQPE_V18_CLASSIFICATION",
+      "policy_type": "research_status",
+      "scope": "SQPE V18 model — models/sqpe_v18/sqpe_v18.pkl",
+      "conditions": "Applies until operator archive approval received",
+      "actions": "Classified LAB_EXPERIMENT_COMPLETED_NO_LIFT. pkl remains in place — do not delete without operator sign-off. Do not wire to any runtime. Do not promote without evidence gate (n >= 100 + operator sign-off).",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "SQPE V18 Classification — LAB_EXPERIMENT_COMPLETED_NO_LIFT",
+      "status": "CLASSIFIED",
+      "file": "models/sqpe_v18/sqpe_v18.pkl",
+      "discovery": "2026-05-23 (V14 truth map pass)",
+      "classification": "LAB_EXPERIMENT_COMPLETED_NO_LIFT",
+      "evidence": "AUC delta -0.0003, top-1 delta -0.0012. V17 outperforms on all metrics (AUC 0.9400 vs 0.9372). Git commit 032793f.",
+      "hard_rules": [
+        "Do NOT wire sqpe_v18.pkl to any runtime",
+        "Do NOT promote without evidence gate",
+        "Do NOT delete pkl directory without operator sign-off"
+      ]
+    },
+    {
+      "policy_id": "PLAYBOOK_G_POLICY",
+      "policy_type": "promotion",
+      "scope": "Playbook G — doctrine multiplier and shadow mode",
+      "conditions": "Applies at all times. VELO_G_SHADOW_MODE=shadow is default — multiplier computed but NOT applied to VP.",
+      "actions": "No Playbook G promotion without El Presidente explicit sign-off. Shadow mode enforced. Promotion to live requires operator decision — no automatic promotion at any threshold.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "Playbook G Training Policy",
+      "status": "TRAINING_READY",
+      "training_completed": "2026-05-02",
+      "training_races": 2997,
+      "sr": 0.592,
+      "directive_firing_threshold": 0.14,
+      "promotion_status": "BLOCKED — No Playbook G promotion without operator sign-off",
+      "hard_rule": "No Playbook G promotion changes without El Presidente approval"
+    },
+    {
+      "policy_id": "SHADOW_MODEL_V1_POLICY",
+      "policy_type": "shadow_consume",
+      "scope": "Shadow Model V1 — forward shadow lane (models/shadow/model_arena/)",
+      "conditions": "Applied to every scored runner in the forward shadow lane since 2026-05-18. Promotion gates defined — not yet reached.",
+      "actions": "Accumulates evidence in forward shadow lane. No VP composite contribution. Promotion requires: 300+ runners AND 75+ top-decile AND operator decision. No automatic promotion.",
+      "owner": "El Presidente",
+      "version": "2026-05-23",
+      "operator_approval_required": true,
+      "name": "Shadow Model V1 Forward Lane Policy",
+      "status": "SHADOW_ACTIVE",
+      "forward_lane_active_since": "2026-05-18",
+      "model_path": "models/shadow/model_arena/",
+      "promotion_gates": {
+        "runner_count": "300+ runners",
+        "top_decile_count": "75+ top-decile",
+        "decision": "operator decision required"
+      },
+      "current_evidence": "Model C Ensemble PASS_QUARANTINE. Top-decile ROI +11.86% vs VP +4.67% without SP."
+    }
+  ]
+}

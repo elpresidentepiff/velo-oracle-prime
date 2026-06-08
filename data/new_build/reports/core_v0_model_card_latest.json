@@ -1,0 +1,334 @@
+{
+  "generated_at": "2026-05-25T21:59:30.127425Z",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "model": "Core V0",
+  "model_type": "LightGBM",
+  "approval_status": "CORE_V0_VALIDATED_WITH_WEAKNESSES",
+  "A_dataset": {
+    "total_rows": 1162031,
+    "total_races": 116111,
+    "total_horses": 148741,
+    "date_range": {
+      "min": "2015-01-01",
+      "max": "2025-07-05"
+    },
+    "race_type": "Flat only"
+  },
+  "B_features_used": [
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "wgt_lbs",
+    "or_vs_field",
+    "release_window_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "B_feature_count": 17,
+  "C_banned_features": [
+    "rpr",
+    "rpr_num",
+    "rpr_vs_field",
+    "sp",
+    "sp_dec",
+    "log_sp",
+    "is_fav",
+    "implied_prob",
+    "sp_rank",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "runs_since_mkt_support",
+    "pos",
+    "pos_num",
+    "ovr_btn",
+    "btn",
+    "comment",
+    "time",
+    "ts",
+    "ts_num"
+  ],
+  "D_splits": {
+    "train": {
+      "rows": 987511,
+      "period": "2020-2023 approx"
+    },
+    "val": {
+      "rows": 117299,
+      "period": "2024"
+    },
+    "test": {
+      "rows": 57221,
+      "period": "2025"
+    }
+  },
+  "E_metrics": {
+    "train": {
+      "auc": 0.6894,
+      "brier": 0.0858,
+      "sr": 0.2366,
+      "frame": 0.5337,
+      "races": 98684,
+      "runners": 987511,
+      "note": "IN-SAMPLE \u2014 inflated, not the real signal"
+    },
+    "val": {
+      "auc": 0.6735,
+      "brier": 0.0861,
+      "sr": 0.2183,
+      "frame": 0.5033,
+      "races": 11650,
+      "runners": 117299
+    },
+    "test": {
+      "auc": 0.6745,
+      "brier": 0.0871,
+      "sr": 0.2203,
+      "frame": 0.512,
+      "races": 5775,
+      "runners": 57221
+    }
+  },
+  "E_baselines_val": {
+    "random": {
+      "sr": 0.0993,
+      "frame": 0.298,
+      "auc": "N/A"
+    },
+    "or_rank": {
+      "sr": 0.1492,
+      "frame": 0.4009,
+      "auc": "N/A"
+    },
+    "fav": {
+      "sr": "N/A",
+      "frame": "N/A",
+      "auc": "N/A",
+      "note": "is_fav absent (MARKET_ONLY banned)"
+    },
+    "core_v0": {
+      "sr": 0.2183,
+      "frame": 0.5033,
+      "auc": 0.6735
+    }
+  },
+  "F_year_stability": [
+    {
+      "year": 2024,
+      "auc": 0.6735,
+      "brier": 0.0861,
+      "sr": 0.2183,
+      "frame": 0.5033,
+      "races": 11650,
+      "runners": 117299,
+      "flags": []
+    },
+    {
+      "year": 2025,
+      "auc": 0.6745,
+      "brier": 0.0871,
+      "sr": 0.2203,
+      "frame": 0.512,
+      "races": 5775,
+      "runners": 57221,
+      "flags": []
+    }
+  ],
+  "G_known_weaknesses": [
+    "field_band band=13-16: FRAME_BELOW_40PCT (SR=16.0%, Races=2,206)",
+    "field_band band=17+: SR_BELOW_15PCT,FRAME_BELOW_40PCT (SR=11.5%, Races=364)",
+    "Train-set metrics (AUC, SR, Frame) are in-sample and inflated \u2014 test set is the real signal",
+    "release_window_score: SAFE_IF_LAGGED \u2014 must confirm OR trajectory uses only prior-race ORs in production"
+  ],
+  "H_feature_provenance": [
+    {
+      "feature": "dist_f",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "distance in furlongs \u2014 racecard field"
+    },
+    {
+      "feature": "going_code",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "going numeric code \u2014 racecard field"
+    },
+    {
+      "feature": "is_aw",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "all-weather flag derived from course/going"
+    },
+    {
+      "feature": "field_size",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "field size \u2014 from racecard ran/field_size col"
+    },
+    {
+      "feature": "draw_num",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "draw position \u2014 racecard field"
+    },
+    {
+      "feature": "draw_pct",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "draw percentile within race \u2014 computed at racecard time"
+    },
+    {
+      "feature": "age_num",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "horse age \u2014 racecard field"
+    },
+    {
+      "feature": "wgt_lbs",
+      "source": "racecard",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "weight in lbs \u2014 racecard field"
+    },
+    {
+      "feature": "or_vs_field",
+      "source": "racecard/OR",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "OR vs field mean \u2014 all ORs published pre-race"
+    },
+    {
+      "feature": "release_window_score",
+      "source": "OR_history",
+      "pre_race_safe": true,
+      "timestamp_risk": "requires lagged OR trajectory \u2014 must use prior-race OR only",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE_IF_LAGGED",
+      "allowed": true,
+      "note": "OR trajectory score. Needs verification: built from historical OR changes, not current-race OR delta"
+    },
+    {
+      "feature": "going_fit_score",
+      "source": "historical_results",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "win% by going code from all prior runs \u2014 historical lookup"
+    },
+    {
+      "feature": "distance_fit_score",
+      "source": "historical_results",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "win% by distance band from all prior runs"
+    },
+    {
+      "feature": "quiet_run_score",
+      "source": "form_history",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "score from prior-race pattern \u2014 based on previous runs only"
+    },
+    {
+      "feature": "trainer_timing_score",
+      "source": "trainer_history",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "trainer win-rate pattern from historical runner_results"
+    },
+    {
+      "feature": "jockey_switch_intent",
+      "source": "form_history",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "jockey change vs prior run \u2014 prior run known pre-race"
+    },
+    {
+      "feature": "setup_run_flag",
+      "source": "form_history",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "setup run flag from prior-race form \u2014 prior runs only"
+    },
+    {
+      "feature": "cash_run_flag",
+      "source": "form_history",
+      "pre_race_safe": true,
+      "timestamp_risk": "none",
+      "null_rate_train_pct": 0.0,
+      "leakage_verdict": "SAFE",
+      "allowed": true,
+      "note": "cash run flag from prior-race pattern \u2014 prior runs only"
+    }
+  ],
+  "H_leakage_flags": [],
+  "H_leakage_verdict": "CLEAN",
+  "I_approval_status": "CORE_V0_VALIDATED_WITH_WEAKNESSES",
+  "I_approval_criteria": {
+    "test_sr_vs_or_baseline": "22.0% vs 14.9%",
+    "test_sr_above_baseline": true,
+    "leakage_clean": true,
+    "weak_cells_n200_plus": 2
+  }
+}

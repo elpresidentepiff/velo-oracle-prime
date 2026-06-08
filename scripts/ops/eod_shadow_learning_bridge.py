@@ -33,6 +33,93 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
+# ─── Learning eligibility constants ───────────────────────────────────────────
+# Components that must be active for a day to be eligible for shadow learning.
+# If any is excluded by zero-variance kill switch, VP formula was degraded.
+_LIVE_WEIGHTED_COMPONENTS = frozenset({"improvement_score", "market_deception_score"})
+# Minimum races needed to make a constant-detection judgment
+_MIN_RACES_FOR_CONSTANT_CHECK = 3
+
+
+class LearningBlockedError(RuntimeError):
+    """Raised when a date's scoring run is ineligible for shadow learning."""
+    pass
+
+
+def _check_learning_eligibility(predictions_raw: list, date_str: str) -> tuple[bool, str, dict]:
+    """
+    Inspect a day's prediction file for VP formula degradation.
+
+    Returns (blocked: bool, block_reason: str | None, details: dict).
+
+    BLOCKS when:
+    - improvement_score is constant across all top picks (zero-variance signal — was excluded)
+    - Any live-weighted component missing from active_components on >80% of races
+    - SQPE-only day detected (multiple components excluded)
+    """
+    if not predictions_raw:
+        return False, None, {"date": date_str, "races_checked": 0}
+
+    top_picks = [r.get("top", {}) for r in predictions_raw if r.get("top")]
+    if not top_picks:
+        return False, None, {"date": date_str, "races_checked": 0, "note": "no_top_dicts_found"}
+
+    n = len(top_picks)
+
+    # ── Check 1: improvement_score constant ──────────────────────────────────
+    imp_vals = {t.get("improvement_score") for t in top_picks if t.get("improvement_score") is not None}
+    imp_constant = (len(imp_vals) == 1 and n >= _MIN_RACES_FOR_CONSTANT_CHECK)
+
+    # ── Check 2: live-weighted component excluded from active_components ──────
+    tracked = [t for t in top_picks if t.get("active_components") is not None]
+    n_tracked = len(tracked)
+    exclusion_pcts: dict[str, float] = {}
+    if n_tracked > 0:
+        for comp in _LIVE_WEIGHTED_COMPONENTS:
+            excl = sum(1 for t in tracked if comp not in (t.get("active_components") or []))
+            exclusion_pcts[comp] = round(excl / n_tracked, 3)
+
+    improvement_excluded = exclusion_pcts.get("improvement_score", 0.0) > 0.80
+    mds_excluded = exclusion_pcts.get("market_deception_score", 0.0) > 0.80
+    sqpe_only = improvement_excluded and mds_excluded
+
+    # ── Check 3: Any individual race fired SQPE-only (partial contamination) ──
+    # A race is SQPE-only if both live-weighted components are absent from its
+    # active_components. Even if only a minority of races hit this pattern, the
+    # day is contaminated — those races used a degraded VP formula.
+    sqpe_only_race_count = 0
+    if n_tracked > 0:
+        sqpe_only_race_count = sum(
+            1 for t in tracked
+            if all(comp not in (t.get("active_components") or []) for comp in _LIVE_WEIGHTED_COMPONENTS)
+        )
+    has_sqpe_only_anomaly = sqpe_only_race_count > 0 and not sqpe_only
+
+    details = {
+        "date": date_str,
+        "races_checked": n,
+        "improvement_score_unique_values": sorted(str(v) for v in imp_vals),
+        "improvement_score_constant": imp_constant,
+        "has_active_component_tracking": n_tracked > 0,
+        "exclusion_pcts": exclusion_pcts,
+        "sqpe_only_day": sqpe_only,
+        "sqpe_only_race_count": sqpe_only_race_count,
+        "sqpe_only_anomaly": has_sqpe_only_anomaly,
+    }
+
+    if sqpe_only:
+        return True, "SQPE_ONLY_DAY_MULTIPLE_LIVE_COMPONENTS_EXCLUDED", details
+    if has_sqpe_only_anomaly:
+        return True, "SQPE_ONLY_ANOMALY_PARTIAL_DAY", details
+    if imp_constant and improvement_excluded:
+        return True, "IMPROVEMENT_SCORE_CONSTANT_AND_EXCLUDED", details
+    if imp_constant:
+        return True, "IMPROVEMENT_SCORE_CONSTANT", details
+    if improvement_excluded:
+        return True, "LIVE_WEIGHTED_FEATURE_EXCLUDED", details
+
+    return False, None, details
+
 from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine
 
 # ─── Configuration ────────────────────────────────────────────────────────────
@@ -247,8 +334,9 @@ class ShadowLearningBridge:
 
     TARGET_STATE_ID = str(SHADOW_SENTIENT_STATE)
 
-    def __init__(self, date_str: str = None):
+    def __init__(self, date_str: str = None, force_consume: bool = False):
         self.date_str       = date_str or datetime.now().strftime("%Y-%m-%d")
+        self.force_consume  = force_consume
         self.prediction_file = ROOT / "data" / f"velo_prime_verdicts_{self.date_str.replace('-', '_')}.json"
         self.result_file     = ROOT / "data" / f"results_{self.date_str.replace('-', '_')}.json"
 
@@ -377,6 +465,40 @@ class ShadowLearningBridge:
             return
 
         predictions_raw = json.loads(self.prediction_file.read_text())
+
+        # ── Gate 6: LEARNING_ELIGIBILITY_BLOCK ───────────────────────────────
+        blocked, block_reason, elig_details = _check_learning_eligibility(
+            predictions_raw, self.date_str
+        )
+        if blocked and not self.force_consume:
+            audit_tag = self.date_str.replace("-", "_")
+            block_record = {
+                "date": self.date_str,
+                "status": "LEARNING_BLOCKED",
+                "block_reason": block_reason,
+                "eligibility_details": elig_details,
+                "bridge_version": "v2_patched_2026_05_08",
+                "force_consume_used": False,
+            }
+            audit_path = ROOT / "data" / f"eod_flags_shadow_{audit_tag}.json"
+            audit_path.parent.mkdir(parents=True, exist_ok=True)
+            audit_path.write_text(json.dumps(block_record, indent=2))
+            logger.error(
+                "[bridge_v2] LEARNING_BLOCKED — %s: %s\n"
+                "  VP formula was degraded on this date. Shadow learning consumption blocked.\n"
+                "  Details: %s\n"
+                "  Operator: inspect %s\n"
+                "  To override with explicit approval: --force-consume",
+                self.date_str, block_reason, elig_details, audit_path.name,
+            )
+            return
+        elif blocked and self.force_consume:
+            logger.warning(
+                "[bridge_v2] LEARNING_BLOCK OVERRIDDEN by --force-consume — %s: %s. "
+                "Operator has explicitly approved consumption from degraded run window.",
+                self.date_str, block_reason,
+            )
+
         results_raw     = json.loads(self.result_file.read_text())
         results_list    = results_raw.get("results", []) if isinstance(results_raw, dict) else results_raw
         results_map     = {r.get("race_id") or r.get("id"): r for r in results_list}
@@ -521,7 +643,16 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="VÉLØ EOD Shadow Learning Bridge v2")
     parser.add_argument("--date", help="Date YYYY-MM-DD (default: today)")
+    parser.add_argument(
+        "--force-consume",
+        action="store_true",
+        default=False,
+        help=(
+            "Override LEARNING_ELIGIBILITY_BLOCK with explicit operator approval. "
+            "Only use when operator has reviewed degraded run and approved consumption."
+        ),
+    )
     args = parser.parse_args()
 
-    bridge = ShadowLearningBridge(date_str=args.date)
+    bridge = ShadowLearningBridge(date_str=args.date, force_consume=args.force_consume)
     bridge.run()

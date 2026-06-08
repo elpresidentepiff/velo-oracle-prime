@@ -1,0 +1,962 @@
+{
+  "generated_at": "2026-05-23T22:53:27.578077+00:00",
+  "hk_features_audited": 29,
+  "fr_features_audited": 26,
+  "verdict_counts": {
+    "PRE_RACE_SAFE": 49,
+    "DROP": 2,
+    "REVIEW_REQUIRED": 1,
+    "FUTURE_ENRICHMENT": 3
+  },
+  "features": [
+    {
+      "feature": "prev_rpr_num",
+      "pack": "HK",
+      "source_col": "rpr_num",
+      "lag_rule": "shift(1) within horse",
+      "uses_current_race": false,
+      "null_rate": 0.0759,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9241,
+        "total_races": 6325,
+        "winner_max_pct": 0.1828,
+        "zero_var_race_pct": 0.008,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=18.28% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "last3_rpr_avg",
+      "pack": "HK",
+      "source_col": "rpr_num",
+      "lag_rule": "shift(1).rolling(3).mean()",
+      "uses_current_race": false,
+      "null_rate": 0.0661,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9339,
+        "total_races": 6363,
+        "winner_max_pct": 0.1528,
+        "zero_var_race_pct": 0.0079,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=15.28% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prev_or_num",
+      "pack": "HK",
+      "source_col": "or_num",
+      "lag_rule": "shift(1) within horse",
+      "uses_current_race": false,
+      "null_rate": 0.0785,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9215,
+        "total_races": 6247,
+        "winner_max_pct": 0.1024,
+        "zero_var_race_pct": 0.0177,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=10.24% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "last3_or_avg",
+      "pack": "HK",
+      "source_col": "or_num",
+      "lag_rule": "shift(1).rolling(3).mean()",
+      "uses_current_race": false,
+      "null_rate": 0.073,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.927,
+        "total_races": 6297,
+        "winner_max_pct": 0.0791,
+        "zero_var_race_pct": 0.0167,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=7.91% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prev_finish_pos",
+      "pack": "HK",
+      "source_col": "pos",
+      "lag_rule": "shift(1) within horse \u2014 prior run pos_num",
+      "uses_current_race": false,
+      "null_rate": 0.0648,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9352,
+        "total_races": 6369,
+        "winner_max_pct": 0.0416,
+        "zero_var_race_pct": 0.0062,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=4.16% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "last3_finish_avg",
+      "pack": "HK",
+      "source_col": "pos",
+      "lag_rule": "shift(1).rolling(3).mean()",
+      "uses_current_race": false,
+      "null_rate": 0.0641,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9359,
+        "total_races": 6373,
+        "winner_max_pct": 0.0246,
+        "zero_var_race_pct": 0.0062,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=2.46% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "days_since_last_run",
+      "pack": "HK",
+      "source_col": "date_parsed",
+      "lag_rule": "days to prior run date",
+      "uses_current_race": false,
+      "null_rate": 0.064,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.936,
+        "total_races": 6374,
+        "winner_max_pct": 0.1065,
+        "zero_var_race_pct": 0.0125,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=10.65% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "starts_last_90",
+      "pack": "HK",
+      "source_col": "date_parsed",
+      "lag_rule": "count prior runs in 90-day window",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.1383,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.2027,
+        "zero_var_race_pct": 0.0146,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=20.27% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "course_prior_runs",
+      "pack": "HK",
+      "source_col": "course+target",
+      "lag_rule": "running count of prior runs at course",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.1106,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.0921,
+        "zero_var_race_pct": 0.0058,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=9.21% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "course_prior_wr",
+      "pack": "HK",
+      "source_col": "course+target",
+      "lag_rule": "running win rate at course (prior runs)",
+      "uses_current_race": false,
+      "null_rate": 0.1106,
+      "zero_rate": 0.4631,
+      "dominance": {
+        "coverage": 0.8894,
+        "total_races": 6162,
+        "winner_max_pct": 0.2171,
+        "zero_var_race_pct": 0.0291,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=21.71% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "distance_prior_runs",
+      "pack": "HK",
+      "source_col": "dist_f+target",
+      "lag_rule": "running count at distance band",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.1337,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.0967,
+        "zero_var_race_pct": 0.0074,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=9.67% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "distance_prior_wr",
+      "pack": "HK",
+      "source_col": "dist_f+target",
+      "lag_rule": "running win rate at distance band",
+      "uses_current_race": false,
+      "null_rate": 0.1337,
+      "zero_rate": 0.4425,
+      "dominance": {
+        "coverage": 0.8663,
+        "total_races": 6006,
+        "winner_max_pct": 0.2088,
+        "zero_var_race_pct": 0.0329,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=20.88% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prev_class_num",
+      "pack": "HK",
+      "source_col": "class_num",
+      "lag_rule": "shift(1) within horse",
+      "uses_current_race": false,
+      "null_rate": 0.1071,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.8929,
+        "total_races": 6032,
+        "winner_max_pct": 0.7064,
+        "zero_var_race_pct": 0.3618,
+        "verdict": "DROP",
+        "reason": "winner_max=70.64% > 70% \u2014 leakage suspected (36% of races have zero within-race variance)"
+      },
+      "verdict": "DROP"
+    },
+    {
+      "feature": "class_move_direction",
+      "pack": "HK",
+      "source_col": "class_num",
+      "lag_rule": "class_num - prev_class_num",
+      "uses_current_race": false,
+      "null_rate": 0.1221,
+      "zero_rate": 0.7794,
+      "dominance": {
+        "coverage": 0.8779,
+        "total_races": 5923,
+        "winner_max_pct": 0.5418,
+        "zero_var_race_pct": 0.3785,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=54.18% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "class_drop_flag",
+      "pack": "HK",
+      "source_col": "class_num",
+      "lag_rule": "class_move_direction > 0 (easier class)",
+      "uses_current_race": false,
+      "null_rate": 0.1071,
+      "zero_rate": 0.8356,
+      "dominance": {
+        "coverage": 0.8929,
+        "total_races": 6032,
+        "winner_max_pct": 0.6044,
+        "zero_var_race_pct": 0.5758,
+        "verdict": "REVIEW_REQUIRED",
+        "reason": "winner_max=60.44% \u2014 timestamp uncertain (58% of races have zero within-race variance)"
+      },
+      "verdict": "REVIEW_REQUIRED"
+    },
+    {
+      "feature": "class_rise_flag",
+      "pack": "HK",
+      "source_col": "class_num",
+      "lag_rule": "class_move_direction < 0 (harder class)",
+      "uses_current_race": false,
+      "null_rate": 0.1071,
+      "zero_rate": 0.8515,
+      "dominance": {
+        "coverage": 0.8929,
+        "total_races": 6032,
+        "winner_max_pct": 0.7558,
+        "zero_var_race_pct": 0.6968,
+        "verdict": "DROP",
+        "reason": "winner_max=75.58% > 70% \u2014 leakage suspected (70% of races have zero within-race variance)"
+      },
+      "verdict": "DROP"
+    },
+    {
+      "feature": "prior_class_win_rate",
+      "pack": "HK",
+      "source_col": "class_num+target",
+      "lag_rule": "running win rate at current class (prior)",
+      "uses_current_race": false,
+      "null_rate": 0.1616,
+      "zero_rate": 0.4958,
+      "dominance": {
+        "coverage": 0.8384,
+        "total_races": 5508,
+        "winner_max_pct": 0.1816,
+        "zero_var_race_pct": 0.0919,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=18.16% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prior_class_place_rate",
+      "pack": "HK",
+      "source_col": "class_num+pos",
+      "lag_rule": "running place rate at current class (prior)",
+      "uses_current_race": false,
+      "null_rate": 0.1616,
+      "zero_rate": 0.2683,
+      "dominance": {
+        "coverage": 0.8384,
+        "total_races": 5508,
+        "winner_max_pct": 0.2173,
+        "zero_var_race_pct": 0.0681,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=21.73% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "draw_inside_flag",
+      "pack": "HK",
+      "source_col": "draw_pct",
+      "lag_rule": "draw_pct <= 0.33 (static race attr)",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.7323,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.3398,
+        "zero_var_race_pct": 0.0,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=33.98% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "draw_outside_flag",
+      "pack": "HK",
+      "source_col": "draw_pct",
+      "lag_rule": "draw_pct >= 0.67 (static race attr)",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.6464,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.2866,
+        "zero_var_race_pct": 0.0,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=28.66% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "draw_win_rate_lagged",
+      "pack": "HK",
+      "source_col": "draw_bucket+course+dist_band+target",
+      "lag_rule": "cumsum up to prior dates only",
+      "uses_current_race": false,
+      "null_rate": 0.0042,
+      "zero_rate": 0.0009,
+      "dominance": {
+        "coverage": 0.9958,
+        "total_races": 6678,
+        "winner_max_pct": 0.3527,
+        "zero_var_race_pct": 0.3959,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=35.27% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "draw_place_rate_lagged",
+      "pack": "HK",
+      "source_col": "draw_bucket+course+dist_band+pos",
+      "lag_rule": "cumsum up to prior dates only",
+      "uses_current_race": false,
+      "null_rate": 0.0042,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9958,
+        "total_races": 6678,
+        "winner_max_pct": 0.3501,
+        "zero_var_race_pct": 0.0065,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=35.01% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "field_avg_prev_rpr",
+      "pack": "HK",
+      "source_col": "prev_rpr_num",
+      "lag_rule": "mean prev_rpr across race field",
+      "uses_current_race": false,
+      "null_rate": 0.0052,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9948,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "field_std_prev_rpr",
+      "pack": "HK",
+      "source_col": "prev_rpr_num",
+      "lag_rule": "std prev_rpr across race field",
+      "uses_current_race": false,
+      "null_rate": 0.007,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.993,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "field_avg_prev_or",
+      "pack": "HK",
+      "source_col": "prev_or_num",
+      "lag_rule": "mean prev_or across race field",
+      "uses_current_race": false,
+      "null_rate": 0.013,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.987,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "rpr_rank_lagged",
+      "pack": "HK",
+      "source_col": "prev_rpr_num",
+      "lag_rule": "rank within race by prior RPR",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.0739,
+        "zero_var_race_pct": 0.0062,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=7.39% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "or_rank_lagged",
+      "pack": "HK",
+      "source_col": "prev_or_num",
+      "lag_rule": "rank within race by prior OR",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.1374,
+        "zero_var_race_pct": 0.0153,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=13.74% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "rating_consensus_lagged",
+      "pack": "HK",
+      "source_col": "prev_rpr_num+prev_or_num",
+      "lag_rule": "-(rpr_rank+or_rank)/2",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 6709,
+        "winner_max_pct": 0.151,
+        "zero_var_race_pct": 0.0062,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=15.10% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "race_competitiveness_pre",
+      "pack": "HK",
+      "source_col": "prev_or_num",
+      "lag_rule": "field_avg_prev_or / 10",
+      "uses_current_race": false,
+      "null_rate": 0.013,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.987,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "lagged_rpr_last1",
+      "pack": "FR",
+      "source_col": "rpr_num",
+      "lag_rule": "shift(1) within horse \u2014 prior run RPR",
+      "uses_current_race": false,
+      "null_rate": 0.2736,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.7264,
+        "total_races": 11519,
+        "winner_max_pct": 0.2598,
+        "zero_var_race_pct": 0.0689,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=25.98% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "lagged_rpr_last3_avg",
+      "pack": "FR",
+      "source_col": "rpr_num",
+      "lag_rule": "shift(1).rolling(3).mean()",
+      "uses_current_race": false,
+      "null_rate": 0.2184,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.7816,
+        "total_races": 12233,
+        "winner_max_pct": 0.2305,
+        "zero_var_race_pct": 0.0646,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=23.05% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "lagged_rpr_last3_max",
+      "pack": "FR",
+      "source_col": "rpr_num",
+      "lag_rule": "shift(1).rolling(3).max()",
+      "uses_current_race": false,
+      "null_rate": 0.2184,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.7816,
+        "total_races": 12233,
+        "winner_max_pct": 0.2324,
+        "zero_var_race_pct": 0.0648,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=23.24% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "lagged_ts_last1",
+      "pack": "FR",
+      "source_col": "ts_num",
+      "lag_rule": "shift(1) within horse \u2014 prior run TS",
+      "uses_current_race": false,
+      "null_rate": 0.5117,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.4883,
+        "total_races": 7830,
+        "winner_max_pct": 0.2337,
+        "zero_var_race_pct": 0.2722,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=23.37% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "lagged_ts_last3_avg",
+      "pack": "FR",
+      "source_col": "ts_num",
+      "lag_rule": "shift(1).rolling(3).mean()",
+      "uses_current_race": false,
+      "null_rate": 0.4031,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.5969,
+        "total_races": 9178,
+        "winner_max_pct": 0.1958,
+        "zero_var_race_pct": 0.2429,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=19.58% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prev_finish_pos",
+      "pack": "FR",
+      "source_col": "pos",
+      "lag_rule": "shift(1) within horse \u2014 prior run pos_num",
+      "uses_current_race": false,
+      "null_rate": 0.226,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.774,
+        "total_races": 12083,
+        "winner_max_pct": 0.0929,
+        "zero_var_race_pct": 0.0685,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=9.29% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "last3_finish_avg",
+      "pack": "FR",
+      "source_col": "pos",
+      "lag_rule": "shift(1).rolling(3).mean()",
+      "uses_current_race": false,
+      "null_rate": 0.2094,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.7906,
+        "total_races": 12323,
+        "winner_max_pct": 0.0792,
+        "zero_var_race_pct": 0.0655,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=7.92% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "days_since_last_run",
+      "pack": "FR",
+      "source_col": "date_parsed",
+      "lag_rule": "days to prior run date",
+      "uses_current_race": false,
+      "null_rate": 0.2029,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.7971,
+        "total_races": 12387,
+        "winner_max_pct": 0.1178,
+        "zero_var_race_pct": 0.0687,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=11.78% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "starts_last_90",
+      "pack": "FR",
+      "source_col": "date_parsed",
+      "lag_rule": "count prior runs in 90-day window",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.4223,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 15376,
+        "winner_max_pct": 0.2754,
+        "zero_var_race_pct": 0.0791,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=27.54% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prior_course_runs",
+      "pack": "FR",
+      "source_col": "UNKNOWN",
+      "lag_rule": "UNKNOWN",
+      "uses_current_race": null,
+      "null_rate": 0.0,
+      "zero_rate": 0.3863,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 15376,
+        "winner_max_pct": 0.2411,
+        "zero_var_race_pct": 0.0919,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=24.11% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prior_course_win_rate",
+      "pack": "FR",
+      "source_col": "UNKNOWN",
+      "lag_rule": "UNKNOWN",
+      "uses_current_race": null,
+      "null_rate": 0.3863,
+      "zero_rate": 0.423,
+      "dominance": {
+        "coverage": 0.6137,
+        "total_races": 9549,
+        "winner_max_pct": 0.3747,
+        "zero_var_race_pct": 0.37,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=37.47% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prior_distance_runs",
+      "pack": "FR",
+      "source_col": "UNKNOWN",
+      "lag_rule": "UNKNOWN",
+      "uses_current_race": null,
+      "null_rate": 0.0,
+      "zero_rate": 0.3427,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 15376,
+        "winner_max_pct": 0.2296,
+        "zero_var_race_pct": 0.0873,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=22.96% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "prior_distance_win_rate",
+      "pack": "FR",
+      "source_col": "UNKNOWN",
+      "lag_rule": "UNKNOWN",
+      "uses_current_race": null,
+      "null_rate": 0.3427,
+      "zero_rate": 0.4221,
+      "dominance": {
+        "coverage": 0.6573,
+        "total_races": 10224,
+        "winner_max_pct": 0.3504,
+        "zero_var_race_pct": 0.3234,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=35.04% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "going_is_fast",
+      "pack": "FR",
+      "source_col": "going_code",
+      "lag_rule": "going_code <= 0 (pre-race going assessment)",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.6116,
+      "dominance": {
+        "coverage": 1.0,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "going_is_good",
+      "pack": "FR",
+      "source_col": "going_code",
+      "lag_rule": "going_code == 1",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.3931,
+      "dominance": {
+        "coverage": 1.0,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "going_is_soft",
+      "pack": "FR",
+      "source_col": "going_code",
+      "lag_rule": "going_code >= 2",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.9954,
+      "dominance": {
+        "coverage": 1.0,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "is_hurdle",
+      "pack": "FR",
+      "source_col": "type",
+      "lag_rule": "race type = Hurdle (pre-race)",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.8808,
+      "dominance": {
+        "coverage": 1.0,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "is_chase",
+      "pack": "FR",
+      "source_col": "type",
+      "lag_rule": "race type = Chase (pre-race)",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.9358,
+      "dominance": {
+        "coverage": 1.0,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "is_flat_code",
+      "pack": "FR",
+      "source_col": "type",
+      "lag_rule": "race type = Flat/NH Flat (pre-race)",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.1833,
+      "dominance": {
+        "coverage": 1.0,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "penetrometer_available",
+      "pack": "FR",
+      "source_col": "N/A",
+      "lag_rule": "PLACEHOLDER \u2014 PMU future enrichment",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 1.0,
+      "dominance": {
+        "status": "PLACEHOLDER"
+      },
+      "verdict": "FUTURE_ENRICHMENT"
+    },
+    {
+      "feature": "quintet_plus_available",
+      "pack": "FR",
+      "source_col": "N/A",
+      "lag_rule": "PLACEHOLDER \u2014 PMU future enrichment",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 1.0,
+      "dominance": {
+        "status": "PLACEHOLDER"
+      },
+      "verdict": "FUTURE_ENRICHMENT"
+    },
+    {
+      "feature": "class_proxy_available",
+      "pack": "FR",
+      "source_col": "N/A",
+      "lag_rule": "PLACEHOLDER \u2014 France Galop future enrichment",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 1.0,
+      "dominance": {
+        "status": "PLACEHOLDER"
+      },
+      "verdict": "FUTURE_ENRICHMENT"
+    },
+    {
+      "feature": "field_avg_prev_rpr",
+      "pack": "FR",
+      "source_col": "prev_rpr_num",
+      "lag_rule": "mean prev_rpr across race field",
+      "uses_current_race": false,
+      "null_rate": 0.0494,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9506,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "field_std_prev_rpr",
+      "pack": "FR",
+      "source_col": "prev_rpr_num",
+      "lag_rule": "std prev_rpr across race field",
+      "uses_current_race": false,
+      "null_rate": 0.0602,
+      "zero_rate": 0.0005,
+      "dominance": {
+        "coverage": 0.9398,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "rpr_rank_lagged",
+      "pack": "FR",
+      "source_col": "prev_rpr_num",
+      "lag_rule": "rank within race by prior RPR",
+      "uses_current_race": false,
+      "null_rate": 0.0,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 1.0,
+        "total_races": 15376,
+        "winner_max_pct": 0.2587,
+        "zero_var_race_pct": 0.0546,
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "winner_max=25.87% \u2014 consistent with pre-race signal"
+      },
+      "verdict": "PRE_RACE_SAFE"
+    },
+    {
+      "feature": "race_competitiveness_pre",
+      "pack": "FR",
+      "source_col": "prev_or_num",
+      "lag_rule": "field_avg_prev_or / 10",
+      "uses_current_race": false,
+      "null_rate": 0.0494,
+      "zero_rate": 0.0,
+      "dominance": {
+        "coverage": 0.9506,
+        "status": "RACE_LEVEL_CONSTANT",
+        "verdict": "PRE_RACE_SAFE",
+        "reason": "Feature is constant within each race \u2014 dominance test N/A. Verify source is pre-race. Flagged safe if derived from race attributes or lagged values."
+      },
+      "verdict": "PRE_RACE_SAFE"
+    }
+  ]
+}

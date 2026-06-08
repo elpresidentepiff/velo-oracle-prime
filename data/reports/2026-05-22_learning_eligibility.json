@@ -1,0 +1,427 @@
+{
+  "date": "2026-05-22",
+  "generated_at": "2026-05-23T02:28:21.484892+00:00",
+  "target_state": "shadow_full_train_v2",
+  "audit_status": "ELIGIBLE",
+  "hard_stops": [],
+  "gate_checks": {
+    "flatline_count": 0,
+    "identity_failures": 0,
+    "source_truth": "RP_MERGED_CLEAN",
+    "learning_gate": "OPEN",
+    "council_verdict": "PASS_TO_LEARNING"
+  },
+  "verdict_races_total": 43,
+  "eligible_count": 36,
+  "excluded_count": 7,
+  "unresolved_count": 0,
+  "sigma_audits_rows": 36,
+  "sigma_artifact_sr": 0.25,
+  "sigma_artifact_wins": 9,
+  "sigma_artifact_evaluated": 36,
+  "existing_learning_events": 0,
+  "consumed_shadow_before": 0,
+  "consumed_live_before": 0,
+  "live_state_hash_before": "a1637542f7646aa9",
+  "eligible_by_outcome": {
+    "WIN": 9,
+    "MISS": 19,
+    "OTHER_PLACED_ETC": 8
+  },
+  "eligible_by_tier": {
+    "C": 12,
+    "A": 5,
+    "B": 12,
+    "X": 7
+  },
+  "excluded_by_reason": {
+    "NO_RESULT_DPT_DATA_GAP": 7
+  },
+  "dpt_tier_a_excluded": [
+    "rp_DPT_20260522_7.30"
+  ],
+  "eligible_races": [
+    {
+      "race_id": "rp_BAT_20260522_2.08",
+      "course": "BAT",
+      "tier": "C",
+      "vp": 0.1165,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_BAT_20260522_2.43",
+      "course": "BAT",
+      "tier": "A",
+      "vp": 0.5084,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_BAT_20260522_3.18",
+      "course": "BAT",
+      "tier": "A",
+      "vp": 0.5352,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_BAT_20260522_3.53",
+      "course": "BAT",
+      "tier": "B",
+      "vp": 0.267,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_BAT_20260522_4.28",
+      "course": "BAT",
+      "tier": "C",
+      "vp": 0.1294,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_BAT_20260522_5.03",
+      "course": "BAT",
+      "tier": "C",
+      "vp": 0.1999,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_BAT_20260522_5.40",
+      "course": "BAT",
+      "tier": "X",
+      "vp": 0.059,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_BAT_20260522_6.15",
+      "course": "BAT",
+      "tier": "X",
+      "vp": 0.1244,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_GOO_20260522_1.57",
+      "course": "GOO",
+      "tier": "B",
+      "vp": 0.3662,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_GOO_20260522_2.32",
+      "course": "GOO",
+      "tier": "A",
+      "vp": 0.3551,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_GOO_20260522_3.07",
+      "course": "GOO",
+      "tier": "B",
+      "vp": 0.2196,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_GOO_20260522_3.42",
+      "course": "GOO",
+      "tier": "B",
+      "vp": 0.1388,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_GOO_20260522_4.17",
+      "course": "GOO",
+      "tier": "C",
+      "vp": 0.1388,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_GOO_20260522_4.52",
+      "course": "GOO",
+      "tier": "X",
+      "vp": 0.1074,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_GOO_20260522_5.27",
+      "course": "GOO",
+      "tier": "C",
+      "vp": 0.1043,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_HAY_20260522_1.45",
+      "course": "HAY",
+      "tier": "B",
+      "vp": 0.2464,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_HAY_20260522_2.20",
+      "course": "HAY",
+      "tier": "B",
+      "vp": 0.1938,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_HAY_20260522_2.55",
+      "course": "HAY",
+      "tier": "B",
+      "vp": 0.1532,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_HAY_20260522_3.30",
+      "course": "HAY",
+      "tier": "A",
+      "vp": 0.3542,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_HAY_20260522_4.05",
+      "course": "HAY",
+      "tier": "X",
+      "vp": 0.1617,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_HAY_20260522_4.40",
+      "course": "HAY",
+      "tier": "C",
+      "vp": 0.1385,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_HAY_20260522_5.15",
+      "course": "HAY",
+      "tier": "X",
+      "vp": 0.1603,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_PON_20260522_6.20",
+      "course": "PON",
+      "tier": "A",
+      "vp": 0.4058,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_PON_20260522_6.52",
+      "course": "PON",
+      "tier": "C",
+      "vp": 0.2388,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_PON_20260522_7.22",
+      "course": "PON",
+      "tier": "C",
+      "vp": 0.1041,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_PON_20260522_7.52",
+      "course": "PON",
+      "tier": "B",
+      "vp": 0.1615,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_PON_20260522_8.22",
+      "course": "PON",
+      "tier": "B",
+      "vp": 0.1842,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_PON_20260522_8.52",
+      "course": "PON",
+      "tier": "X",
+      "vp": 0.1775,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_4.57",
+      "course": "WOR",
+      "tier": "B",
+      "vp": 0.3575,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_5.32",
+      "course": "WOR",
+      "tier": "C",
+      "vp": 0.163,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_6.06",
+      "course": "WOR",
+      "tier": "C",
+      "vp": 0.315,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_6.41",
+      "course": "WOR",
+      "tier": "C",
+      "vp": 0.1829,
+      "sigma_outcome": "PLACED",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_7.11",
+      "course": "WOR",
+      "tier": "X",
+      "vp": 0.1537,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_7.41",
+      "course": "WOR",
+      "tier": "C",
+      "vp": 0.1357,
+      "sigma_outcome": "MISS",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_8.11",
+      "course": "WOR",
+      "tier": "B",
+      "vp": 0.1189,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    },
+    {
+      "race_id": "rp_WOR_20260522_8.41",
+      "course": "WOR",
+      "tier": "B",
+      "vp": 0.3014,
+      "sigma_outcome": "WIN",
+      "has_result": true,
+      "has_sigma": true
+    }
+  ],
+  "excluded_races": [
+    {
+      "race_id": "rp_DPT_20260522_5.20",
+      "course": "DPT",
+      "tier": "X",
+      "vp": 0.0847,
+      "reason": "NO_RESULT_DPT_DATA_GAP",
+      "has_sigma": false
+    },
+    {
+      "race_id": "rp_DPT_20260522_5.52",
+      "course": "DPT",
+      "tier": "C",
+      "vp": 0.1098,
+      "reason": "NO_RESULT_DPT_DATA_GAP",
+      "has_sigma": false
+    },
+    {
+      "race_id": "rp_DPT_20260522_6.29",
+      "course": "DPT",
+      "tier": "X",
+      "vp": 0.0851,
+      "reason": "NO_RESULT_DPT_DATA_GAP",
+      "has_sigma": false
+    },
+    {
+      "race_id": "rp_DPT_20260522_7.00",
+      "course": "DPT",
+      "tier": "X",
+      "vp": 0.1584,
+      "reason": "NO_RESULT_DPT_DATA_GAP",
+      "has_sigma": false
+    },
+    {
+      "race_id": "rp_DPT_20260522_7.30",
+      "course": "DPT",
+      "tier": "A",
+      "vp": 0.47,
+      "reason": "NO_RESULT_DPT_DATA_GAP",
+      "has_sigma": false
+    },
+    {
+      "race_id": "rp_DPT_20260522_8.00",
+      "course": "DPT",
+      "tier": "B",
+      "vp": 0.2297,
+      "reason": "NO_RESULT_DPT_DATA_GAP",
+      "has_sigma": false
+    },
+    {
+      "race_id": "rp_DPT_20260522_8.30",
+      "course": "DPT",
+      "tier": "B",
+      "vp": 0.3504,
+      "reason": "NO_RESULT_DPT_DATA_GAP",
+      "has_sigma": false
+    }
+  ]
+}

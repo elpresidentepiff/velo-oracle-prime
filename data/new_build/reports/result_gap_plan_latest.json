@@ -1,0 +1,83 @@
+{
+  "generated_at": "2026-05-25T17:16:59.466910Z",
+  "classification": "NEW_BUILD_RESULT_GAP_PLAN_READY",
+  "mode": "EXECUTE",
+  "bridge_dates": [
+    "2026-05-24",
+    "2026-05-25",
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28",
+    "2026-05-29"
+  ],
+  "result_date_min": "2026-03-15",
+  "result_date_max": "2026-05-25",
+  "missing_result_dates": [
+    "2026-05-26",
+    "2026-05-27",
+    "2026-05-28",
+    "2026-05-29"
+  ],
+  "missing_result_count": 4,
+  "gaps": [
+    {
+      "date": "2026-05-24",
+      "result_available": true,
+      "raw_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\results_2026_05_24.json",
+      "raw_result_file_exists": true,
+      "normalized_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\normalized\\racing_api_results\\2026-05-24\\results.json",
+      "normalized_result_file_exists": true,
+      "next_command_after_raw_exists": "python scripts/ops/new_build_sources.py ingest-results --date 2026-05-24 --execute"
+    },
+    {
+      "date": "2026-05-25",
+      "result_available": true,
+      "raw_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\results_2026_05_25.json",
+      "raw_result_file_exists": true,
+      "normalized_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\normalized\\racing_api_results\\2026-05-25\\results.json",
+      "normalized_result_file_exists": true,
+      "next_command_after_raw_exists": "python scripts/ops/new_build_sources.py ingest-results --date 2026-05-25 --execute"
+    },
+    {
+      "date": "2026-05-26",
+      "result_available": false,
+      "raw_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\results_2026_05_26.json",
+      "raw_result_file_exists": false,
+      "normalized_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\normalized\\racing_api_results\\2026-05-26\\results.json",
+      "normalized_result_file_exists": false,
+      "next_command_after_raw_exists": "python scripts/ops/new_build_sources.py ingest-results --date 2026-05-26 --execute"
+    },
+    {
+      "date": "2026-05-27",
+      "result_available": false,
+      "raw_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\results_2026_05_27.json",
+      "raw_result_file_exists": false,
+      "normalized_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\normalized\\racing_api_results\\2026-05-27\\results.json",
+      "normalized_result_file_exists": false,
+      "next_command_after_raw_exists": "python scripts/ops/new_build_sources.py ingest-results --date 2026-05-27 --execute"
+    },
+    {
+      "date": "2026-05-28",
+      "result_available": false,
+      "raw_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\results_2026_05_28.json",
+      "raw_result_file_exists": false,
+      "normalized_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\normalized\\racing_api_results\\2026-05-28\\results.json",
+      "normalized_result_file_exists": false,
+      "next_command_after_raw_exists": "python scripts/ops/new_build_sources.py ingest-results --date 2026-05-28 --execute"
+    },
+    {
+      "date": "2026-05-29",
+      "result_available": false,
+      "raw_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\results_2026_05_29.json",
+      "raw_result_file_exists": false,
+      "normalized_result_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\normalized\\racing_api_results\\2026-05-29\\results.json",
+      "normalized_result_file_exists": false,
+      "next_command_after_raw_exists": "python scripts/ops/new_build_sources.py ingest-results --date 2026-05-29 --execute"
+    }
+  ],
+  "recommended_next_step": "CAPTURE_OR_IMPORT_MISSING_RESULT_FILES",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "rpr_policy": "RPR_ARCHIVE_ONLY",
+  "live_velo_touched": false,
+  "shadow_velo_touched": false
+}

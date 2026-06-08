@@ -183,14 +183,18 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                 runners.append({
                     "horse": name,
                     "horse_id": f"rp_{venue_code}_{name.lower().replace(' ', '_')}",
-                    "age": None,
+                    "age": h.get("age") or None,
                     "sex": None,
                     "lbs": None,
                     "draw": None,
                     "trainer": None,
                     "jockey": None,
-                    "ofr": None,
+                    "ofr": h.get("current_or") or None,
+                    # RP-derived RPR is archive/context only. Do not expose it as
+                    # live runner["rpr"], because downstream scoring consumes that key.
                     "rpr": None,
+                    "rp_rpr_archive_only": h.get("rpr_master") or None,
+                    "rp_rpr_velo_allowed": False,
                     "ts": ts_val,
                     "ts_master": h.get("ts_master"),
                     "form": None,
@@ -295,6 +299,36 @@ def fetch_api_racecards(
     return races, "api"
 
 
+def _sanitize_api_rpr(races: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    Sanitize bare live RPR from Racing API / cache runner payloads.
+
+    Racing API racecards carry a live 'rpr' field on each runner.
+    VÉLØ scoring policy: rpr_policy = RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO.
+    Live RPR must never enter the scoring formula.
+
+    This function:
+      - Moves runner['rpr'] → runner['rp_rpr_archive_only'] (preserves the value for audit)
+      - Sets runner['rpr'] = None (scoring treats it as missing)
+      - Sets runner['rp_rpr_velo_allowed'] = False (explicit scoring block)
+
+    Skipped when VELO_ALLOW_API_RPR=1 (archive / test mode only).
+    RP-merged races never pass through this function — they are already sanitized.
+    """
+    if os.getenv("VELO_ALLOW_API_RPR", "").strip() in ("1", "true", "yes"):
+        return races
+
+    for race in races:
+        race.setdefault("rpr_policy", "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO")
+        for runner in race.get("runners") or []:
+            live_rpr = runner.get("rpr")
+            if live_rpr is not None:
+                runner.setdefault("rp_rpr_archive_only", live_rpr)
+                runner["rpr"] = None
+            runner["rp_rpr_velo_allowed"] = False
+    return races
+
+
 def load_racecards(
     date_tag: str,
     date_str: str,
@@ -312,9 +346,14 @@ def load_racecards(
       2. data/racecard_merged/racecard_*_{date_str}.json  → 'rp_merged'
       3. Racing API  → 'api'
 
+    RPR sanitization: cache and api sources are always sanitized via
+    _sanitize_api_rpr() before return. rp_merged is already clean.
+    Override: VELO_ALLOW_API_RPR=1 disables sanitization (archive/test only).
+
     Env overrides:
       VELO_RACECARD_SOURCE=cache|rp|api|auto
       VELO_DISABLE_RACING_API=1
+      VELO_ALLOW_API_RPR=1
 
     source labels returned: 'cache' | 'rp_merged' | 'api'
     """
@@ -326,7 +365,8 @@ def load_racecards(
         if not cache_path.exists():
             raise RuntimeError(f"--source cache specified but {cache_path} not found")
         raw = json.loads(cache_path.read_text())
-        return raw if isinstance(raw, list) else raw.get("racecards", []), "cache"
+        races = raw if isinstance(raw, list) else raw.get("racecards", [])
+        return _sanitize_api_rpr(races), "cache"
 
     if _source == "rp":
         races = load_rp_merged_as_racecards(date_str, data_root)
@@ -335,21 +375,23 @@ def load_racecards(
                 f"--source rp specified but no RP merged files found for {date_str}\n"
                 f"  Expected: {data_root}/racecard_merged/racecard_*_{date_str}.json"
             )
-        return races, "rp_merged"
+        return races, "rp_merged"  # already sanitized — no _sanitize_api_rpr needed
 
     if _source == "api":
         if _disable_api:
             raise RuntimeError("--source api requested but VELO_DISABLE_RACING_API=1")
-        return fetch_api_racecards(date_str, date_tag, data_root, racing_base, racing_user, racing_pass)
+        races, src = fetch_api_racecards(date_str, date_tag, data_root, racing_base, racing_user, racing_pass)
+        return _sanitize_api_rpr(races), src
 
     # ── Auto: cache → rp_merged → api ─────────────────────────────────────────
     if cache_path.exists():
         raw = json.loads(cache_path.read_text())
-        return raw if isinstance(raw, list) else raw.get("racecards", []), "cache"
+        races = raw if isinstance(raw, list) else raw.get("racecards", [])
+        return _sanitize_api_rpr(races), "cache"
 
     rp_races = load_rp_merged_as_racecards(date_str, data_root)
     if rp_races:
-        return rp_races, "rp_merged"
+        return rp_races, "rp_merged"  # already sanitized
 
     if _disable_api:
         raise RuntimeError(
@@ -359,7 +401,8 @@ def load_racecards(
         )
 
     try:
-        return fetch_api_racecards(date_str, date_tag, data_root, racing_base, racing_user, racing_pass)
+        races, src = fetch_api_racecards(date_str, date_tag, data_root, racing_base, racing_user, racing_pass)
+        return _sanitize_api_rpr(races), src
     except RuntimeError as exc:
         raise RuntimeError(
             f"No racecard source available for {date_str}.\n"

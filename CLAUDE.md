@@ -165,11 +165,13 @@ Supabase (predictions, results, plot_memory_spine)
 | Model | File | Status |
 |---|---|---|
 | SQPE v1_real | `models/v1_real/sqpe/sqpe_model.pkl` | REAL — trained, loadable |
-| SQPE v14 | `models/sqpe_v14/sqpe_v14.pkl` | EXISTS on disk |
-| SQPE v15 | `models/sqpe_v15/sqpe_v15.pkl` | EXISTS on disk |
+| SQPE v14 | `models/sqpe_v14/` | METADATA_ONLY — pkl absent, not loadable |
+| SQPE v15 | `models/sqpe_v15/` | MISSING — directory does not exist |
+| SQPE v17 | `models/sqpe_v17/sqpe_v17.pkl` | LIVE MODEL — trained 2026-03-16, AUC=0.94 |
+| SQPE v18 | `models/sqpe_v18/sqpe_v18.pkl` | UNCLASSIFIED LAB MODEL — NO LIFT verdict, not wired |
 | TIE v9 | `models/tie_v9/tie_v9.pkl` | EXISTS on disk |
-| Longshot v6 | `models/longshot_v6/longshot_v6.pkl` | EXISTS on disk |
-| Overlay v5 | `models/overlay_v5/overlay_v5.pkl` | EXISTS on disk |
+| Longshot v6 | `models/longshot_v6/` | METADATA_ONLY — pkl absent, not loadable |
+| Overlay v5 | `models/overlay_v5/` | METADATA_ONLY — pkl absent, not loadable |
 
 Load SQPE with: `SQPEEngine.load(Path("models/v1_real/sqpe/"))`
 
