@@ -1329,11 +1329,10 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
             "environment": env_str,
             "commit_sha": get_commit_sha(),
         }
-        # resp = db.table("pipeline_runs").insert(row).execute()
-        # if resp.data:
-        #    return PipelineRunOpenResult(run_id=resp.data[0]["id"])
-        # return PipelineRunOpenResult(error="pipeline_runs insert returned no data")
-        return PipelineRunOpenResult(run_id=row["id"])
+        resp = db.table("pipeline_runs").insert(row).execute()
+        if resp.data:
+            return PipelineRunOpenResult(run_id=resp.data[0]["id"])
+        return PipelineRunOpenResult(error="pipeline_runs insert returned no data")
     except Exception as e:
         detail = str(e)
         print(f"  [pipeline_runs] open failed: {detail}")
