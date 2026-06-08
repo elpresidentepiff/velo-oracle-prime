@@ -74,6 +74,56 @@ def _to_int(v) -> int | None:
         return None
 
 
+def _resolve_injection_path(date_str: str, injection_path: str | Path | None = None) -> Path | None:
+    """Resolve exactly one injection source for the RPDC build."""
+    if injection_path:
+        path = Path(injection_path)
+        if not path.is_absolute():
+            path = ROOT / path
+        return path.resolve()
+
+    candidates = list(
+        (ROOT / "data" / "racing_post_account_parsed").glob(
+            f"*{date_str}*/racecard_injection.json"
+        )
+    )
+    if not candidates:
+        return None
+    # File recency is authoritative. Lexicographic path order is unsafe on Windows.
+    return max(candidates, key=lambda path: (path.stat().st_mtime_ns, path.parent.name))
+
+
+def _load_injection_runners(injection_path: Path) -> tuple[list[dict], set[str]]:
+    """Load active runners and their race identities from an RP injection."""
+    injection = json.loads(injection_path.read_text(encoding="utf-8"))
+    runners: list[dict] = []
+    race_ids: set[str] = set()
+    for race in injection.get("races") or []:
+        race_id = str(race.get("race_id") or "").strip()
+        if not race_id:
+            continue
+        race_ids.add(race_id)
+        course_id = str(race.get("course_id") or "")
+        dist_f = _to_float(race.get("distance_furlongs"))
+        for runner in race.get("runners") or []:
+            if runner.get("non_runner"):
+                continue
+            horse_id = str(runner.get("horse_id") or "").strip()
+            if not horse_id:
+                continue
+            runners.append({
+                "horse_id": horse_id,
+                "horse": runner.get("horse", ""),
+                "race_id": race_id,
+                "trainer_id": str(runner.get("trainer_id") or ""),
+                "trainer": runner.get("trainer", ""),
+                "current_or": _to_int(runner.get("official_rating")),
+                "course_id": course_id,
+                "dist_f": dist_f,
+            })
+    return runners, race_ids
+
+
 def _sb_get(path: str) -> list[dict]:
     if not SB_URL or not SB_KEY:
         return []
@@ -104,6 +154,20 @@ def _sb_upsert(path: str, rows: list[dict], conflict: str) -> int:
     except Exception as e:
         log.warning("sb_upsert failed (%d rows): %s", len(rows), e)
         return 0
+
+
+def _sb_delete(path: str) -> bool:
+    if not SB_URL or not SB_KEY:
+        return False
+    url = f"{SB_URL}/rest/v1{path}"
+    headers = {**SB_HEADERS, "Prefer": "return=minimal"}
+    req = urllib.request.Request(url, headers=headers, method="DELETE")
+    try:
+        urllib.request.urlopen(req, timeout=30)
+        return True
+    except Exception as exc:
+        log.error("sb_delete failed for %s: %s", path, exc)
+        return False
 
 
 def _fetch_horse_history(horse_id: str) -> list[dict]:
@@ -331,7 +395,7 @@ def compute_rpdc(
     }
 
 
-def build_rpdc_for_date(date_str: str) -> None:
+def build_rpdc_for_date(date_str: str, injection_path: str | Path | None = None) -> bool:
     print(f"\nBUILD RPDC DAILY — {date_str}")
     print("=" * 60)
 
@@ -365,25 +429,50 @@ def build_rpdc_for_date(date_str: str) -> None:
         )
         log.warning("RPDC_COVERAGE_WARN: runner_release_candidates is empty")
 
-    # Load today's racecards from results file or runner_snapshots JSONL
-    # (results file available after races close; snapshots available same day after scoring)
+    # Load today's racecards — source priority:
+    #   1. results_YYYY_MM_DD.json          — post-race, has positions and SPs (most complete)
+    #   2. racecard_injection.json          — pre-scoring RP source (Step 8.5: run BEFORE scoring)
+    #                                         Has real RP horse_ids and trainer_ids from the HTML parse.
+    #   3. runner_snapshots_YYYY_MM_DD.jsonl — post-scoring fallback (real IDs since loader fix)
+    #   4. None found → error
+    import glob as _glob
     date_tag = date_str.replace("-", "_")
     results_path = ROOT / "data" / f"results_{date_tag}.json"
 
     runners_to_score: list[dict] = []
+    expected_race_ids: set[str] = set()
+    selected_injection = _resolve_injection_path(date_str, injection_path)
 
-    if results_path.exists():
+    if injection_path:
+        if not selected_injection or not selected_injection.exists():
+            log.error("RPDC explicit injection does not exist: %s", selected_injection)
+            return False
+        log.info("Loading runners from explicit injection JSON: %s", selected_injection)
+        try:
+            runners_to_score, expected_race_ids = _load_injection_runners(selected_injection)
+        except Exception as exc:
+            log.error("Failed to load explicit injection JSON %s: %s", selected_injection, exc)
+            return False
+        log.info(
+            "Loaded %d runners across %d races from explicit injection JSON",
+            len(runners_to_score),
+            len(expected_race_ids),
+        )
+    elif results_path.exists():
         with open(results_path) as f:
             data = json.load(f)
         races_list = data if isinstance(data, list) else (data.get("results") or [])
         for race in races_list:
+            race_id = str(race.get("race_id", ""))
+            if race_id:
+                expected_race_ids.add(race_id)
             for runner in race.get("runners") or []:
                 if runner.get("horse_id"):
                     runners_to_score.append({
-                        "horse_id": runner["horse_id"],
+                        "horse_id": str(runner["horse_id"]),
                         "horse": runner.get("horse", ""),
-                        "race_id": race.get("race_id", ""),
-                        "trainer_id": runner.get("trainer_id", ""),
+                        "race_id": race_id,
+                        "trainer_id": str(runner.get("trainer_id") or ""),
                         "trainer": runner.get("trainer", ""),
                         "current_or": _to_int(runner.get("or")),
                         "course_id": str(race.get("course_id", "")),
@@ -391,57 +480,71 @@ def build_rpdc_for_date(date_str: str) -> None:
                     })
         log.info("Loaded %d runners from results file", len(runners_to_score))
     else:
-        # No results file — try runner_snapshots JSONL (written by run_prime_today on scoring day)
-        import glob as _glob
-        _snap_files = sorted(
-            _glob.glob(str(ROOT / "data" / f"runner_snapshots_{date_tag}_*.jsonl"))
-        )
-        if _snap_files:
-            _snap_path = _snap_files[-1]  # most recent snapshot for this date
-            log.info("Loading runners from runner_snapshots: %s", Path(_snap_path).name)
-            _seen_runners: dict[str, dict] = {}
-            with open(_snap_path) as _f:
-                for _line in _f:
-                    _line = _line.strip()
-                    if not _line:
-                        continue
-                    try:
-                        _r = json.loads(_line)
-                        _hid = _r.get("horse_id")
-                        _rid = _r.get("race_id")
-                        if _hid and _rid:
-                            _key = f"{_hid}:{_rid}"
-                            if _key not in _seen_runners:
-                                _seen_runners[_key] = {
-                                    "horse_id": _hid,
-                                    "horse": _r.get("horse", ""),
-                                    "race_id": _rid,
-                                    "trainer_id": _r.get("trainer_id") or "",
-                                    "trainer": _r.get("trainer") or "",
-                                    "current_or": None,
-                                    "course_id": "",
-                                    "dist_f": None,
-                                }
-                    except (json.JSONDecodeError, KeyError):
-                        continue
-            runners_to_score = list(_seen_runners.values())
-            log.info("Loaded %d runners from runner_snapshots", len(runners_to_score))
-        else:
-            # No results file and no runner_snapshots — cannot determine today's runners
+        # No results file — try injection JSON (primary pre-scoring RP source)
+        # Glob for any capture label containing the date: live-full-racepages-YYYY-MM-DD*
+        if selected_injection:
+            log.info("Loading runners from injection JSON (RP source): %s", selected_injection.parent.name)
+            try:
+                runners_to_score, expected_race_ids = _load_injection_runners(selected_injection)
+                log.info(
+                    "Loaded %d runners across %d races from injection JSON",
+                    len(runners_to_score),
+                    len(expected_race_ids),
+                )
+            except Exception as _e:
+                log.warning("Failed to load injection JSON %s: %s", selected_injection, _e)
+
+        if not runners_to_score:
+            # Injection not available or failed — try runner_snapshots (post-scoring fallback)
+            _snap_files = sorted(
+                _glob.glob(str(ROOT / "data" / f"runner_snapshots_{date_tag}_*.jsonl"))
+            )
+            if _snap_files:
+                _snap_path = _snap_files[-1]
+                log.info("Loading runners from runner_snapshots (fallback): %s", Path(_snap_path).name)
+                _seen_runners: dict[str, dict] = {}
+                with open(_snap_path) as _f:
+                    for _line in _f:
+                        _line = _line.strip()
+                        if not _line:
+                            continue
+                        try:
+                            _r = json.loads(_line)
+                            _hid = _r.get("horse_id")
+                            _rid = _r.get("race_id")
+                            if _hid and _rid:
+                                _key = f"{_hid}:{_rid}"
+                                if _key not in _seen_runners:
+                                    _seen_runners[_key] = {
+                                        "horse_id": str(_hid),
+                                        "horse": _r.get("horse", ""),
+                                        "race_id": str(_rid),
+                                        "trainer_id": str(_r.get("trainer_id") or ""),
+                                        "trainer": _r.get("trainer") or "",
+                                        "current_or": None,
+                                        "course_id": "",
+                                        "dist_f": None,
+                                    }
+                        except (json.JSONDecodeError, KeyError):
+                            continue
+                runners_to_score = list(_seen_runners.values())
+                log.info("Loaded %d runners from runner_snapshots", len(runners_to_score))
+
+        if not runners_to_score:
             print(
                 f"\n⚠ RPDC_SOURCE_UNAVAILABLE — {date_str}\n"
-                f"  No results file and no runner_snapshots found for this date.\n"
-                f"  Expected one of:\n"
+                f"  No source found for runners. Checked (in order):\n"
                 f"    data/results_{date_tag}.json\n"
+                f"    data/racing_post_account_parsed/*{date_str}*/racecard_injection.json\n"
                 f"    data/runner_snapshots_{date_tag}_*.jsonl\n"
-                f"  RPDC cannot be built. Run scoring first, then re-run build_rpdc_daily."
+                f"  Run Step 4 (parse HTML) to create the injection JSON, then re-run RPDC."
             )
             log.error("RPDC_SOURCE_UNAVAILABLE: no source for runners on %s", date_str)
-            return
+            return False
 
     if not runners_to_score:
         print("  No runners to score.")
-        return
+        return False
 
     # Deduplicate by horse_id (keep last — same horse may run multiple times today)
     seen_horses: dict[str, dict] = {}
@@ -488,8 +591,12 @@ def build_rpdc_for_date(date_str: str) -> None:
 
     print(f"  Scored: {ok} OK / {fail} FAIL")
 
-    # Delete today's existing entries then write fresh
-    # (use upsert with run_date+race_id+horse_id conflict)
+    # Replace the day. Keeping stale rows from an earlier capture corrupts
+    # coverage checks and can attach context to runners no longer on the card.
+    if not _sb_delete(f"/runner_release_candidates?run_date=eq.{date_str}"):
+        log.error("RPDC_REPLACE_FAILED: could not clear existing rows for %s", date_str)
+        return False
+
     written = 0
     for i in range(0, len(candidates), 100):
         batch = candidates[i:i + 100]
@@ -497,6 +604,27 @@ def build_rpdc_for_date(date_str: str) -> None:
         written += n
 
     print(f"  runner_release_candidates: {written} rows written")
+    if written != len(candidates):
+        log.error(
+            "RPDC_WRITE_INCOMPLETE: wrote %d/%d candidates; downstream scoring blocked",
+            written,
+            len(candidates),
+        )
+        return False
+
+    persisted = _sb_get(
+        f"/runner_release_candidates?run_date=eq.{date_str}&select=race_id&limit=2000"
+    )
+    persisted_race_ids = {str(row.get("race_id") or "") for row in persisted}
+    missing_race_ids = expected_race_ids - persisted_race_ids
+    if expected_race_ids and missing_race_ids:
+        log.error(
+            "RPDC_IDENTITY_MISMATCH: persisted coverage %d/%d races; missing=%s",
+            len(expected_race_ids) - len(missing_race_ids),
+            len(expected_race_ids),
+            sorted(missing_race_ids),
+        )
+        return False
 
     # Summary of tags fired
     all_tags: list[str] = []
@@ -513,14 +641,21 @@ def build_rpdc_for_date(date_str: str) -> None:
     print(f"\n  Cash window (score>={CASH_WINDOW_THRESHOLD}): {cash_window}")
     print(f"  Trap flagged: {trap_flag}")
     print(f"\nRPDC DAILY COMPLETE — {date_str}")
+    return True
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None, help="YYYY-MM-DD")
+    parser.add_argument(
+        "--injection-path",
+        default=None,
+        help="Exact racecard_injection.json selected by the One Truth pipeline.",
+    )
     args = parser.parse_args()
     date_str = args.date or TODAY
-    build_rpdc_for_date(date_str)
+    if not build_rpdc_for_date(date_str, injection_path=args.injection_path):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

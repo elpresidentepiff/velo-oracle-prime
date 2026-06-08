@@ -214,6 +214,13 @@ def _write_report(summary: dict[str, Any]) -> None:
 
 
 def main() -> int:
+    print(
+        "RACE_DAY_BUTTON_DISABLED: run the explicit numbered commands in "
+        "THE_ONE_TRUTH.md and pass one exact injection path downstream."
+    )
+    return 2
+
+    # Retained temporarily as migration reference; intentionally unreachable.
     parser = argparse.ArgumentParser(description="Run the VÉLØ race-day button sequence.")
     parser.add_argument("--date", required=True, help="Race date YYYY-MM-DD")
     parser.add_argument(

@@ -98,8 +98,6 @@ def _check_env_vars() -> PreflightCheck:
     """Critical env vars must all be present."""
     required = [
         "SUPABASE_URL",
-        "RACING_API_USERNAME",
-        "RACING_API_PASSWORD",
         "TELEGRAM_BOT_TOKEN",
         "TELEGRAM_CHAT_ID",
     ]
@@ -337,7 +335,6 @@ def preflight() -> PreflightResult:
     result.add(_check_canonical_constants())
     result.add(_check_supabase())
     result.add(_check_sqpe_model())
-    result.add(_check_racing_api())
     result.add(_check_specialist_models())
     result.add(_check_supabase_schema())
 

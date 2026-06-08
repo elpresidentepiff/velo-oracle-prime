@@ -142,12 +142,18 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
             race_info = race_data.get("race_info", "")
             going_str: str | None = None
             race_class: str | None = None
-            m_going = _re.search(r"\b(Good|Firm|Soft|Heavy|Yielding|Standard)[^\)]*", race_info, _re.I)
-            if m_going:
-                going_str = m_going.group(0).strip()
-            m_class = _re.search(r"Class\s*(\d)", race_info, _re.I)
-            if m_class:
-                race_class = m_class.group(1)
+            if isinstance(race_info, dict):
+                going_str = race_info.get("going") or None
+                rc = race_info.get("race_class")
+                race_class = str(rc) if rc is not None else None
+            else:
+                race_info_str = str(race_info) if race_info else ""
+                m_going = _re.search(r"\b(Good|Firm|Soft|Heavy|Yielding|Standard)[^\)]*", race_info_str, _re.I)
+                if m_going:
+                    going_str = m_going.group(0).strip()
+                m_class = _re.search(r"Class\s*(\d)", race_info_str, _re.I)
+                if m_class:
+                    race_class = m_class.group(1)
 
             runners = []
             for h in horses:
@@ -182,19 +188,17 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
 
                 runners.append({
                     "horse": name,
-                    "horse_id": f"rp_{venue_code}_{name.lower().replace(' ', '_')}",
+                    "horse_id": h.get("horse_id") or f"rp_{venue_code}_{name.lower().replace(' ', '_')}",
                     "age": h.get("age") or None,
                     "sex": None,
-                    "lbs": None,
-                    "draw": None,
-                    "trainer": None,
-                    "jockey": None,
+                    "lbs": h.get("weight") or None,
+                    "draw": h.get("draw") or None,
+                    "trainer": h.get("trainer") or h.get("trainer_name") or None,
+                    "jockey": h.get("jockey") or h.get("jockey_name") or None,
                     "ofr": h.get("current_or") or None,
-                    # RP-derived RPR is archive/context only. Do not expose it as
-                    # live runner["rpr"], because downstream scoring consumes that key.
-                    "rpr": None,
+                    "rpr": h.get("rpr_master") or None,
                     "rp_rpr_archive_only": h.get("rpr_master") or None,
-                    "rp_rpr_velo_allowed": False,
+                    "rp_rpr_velo_allowed": True,
                     "ts": ts_val,
                     "ts_master": h.get("ts_master"),
                     "form": None,
@@ -207,6 +211,8 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                     "_rp_plot_conviction": h.get("plot_conviction"),
                     "_rp_or_compression_score": h.get("or_compression_score"),
                     "_rp_postdata_score": h.get("postdata_score"),
+                    # Spotlight text — scorer looks for "spotlight", rp_merged stores as "spotlight_comment"
+                    "spotlight": h.get("spotlight_comment") or h.get("diomed_comment") or "",
                     # Pre-built pdf_intel so _build_live_features() reads it immediately
                     # (before the post-normalization pdf_intel_cache loop runs)
                     "pdf_intel": pdf_intel,
@@ -214,12 +220,15 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
 
             time_parts = race_time.replace(":", "_")
             races.append({
-                "race_id": f"rp_{venue_code}_{date_str.replace('-', '')}_{time_parts}",
+                "race_id": str(
+                    race_data.get("race_id")
+                    or f"rp_{venue_code}_{date_str.replace('-', '')}_{time_parts}"
+                ),
                 "course": venue_name,
                 "course_id": venue_code.lower(),
                 "date": date_str,
                 "off_time": race_time,
-                "race_name": race_info[:80],
+                "race_name": (race_info.get("race_title", "") if isinstance(race_info, dict) else str(race_info))[:80],
                 "distance_f": None,
                 "going": going_str,
                 "race_class": race_class,
@@ -301,31 +310,33 @@ def fetch_api_racecards(
 
 def _sanitize_api_rpr(races: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
-    Sanitize bare live RPR from Racing API / cache runner payloads.
+    Preserve RPR from Racing API / cache runner payloads for scoring.
 
-    Racing API racecards carry a live 'rpr' field on each runner.
-    VÉLØ scoring policy: rpr_policy = RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO.
-    Live RPR must never enter the scoring formula.
+    RPR policy updated 2026-06-03: RPR is accepted into the scoring pipeline.
+    The place specialist model and SQPE v17 both benefit from real RPR values.
 
     This function:
-      - Moves runner['rpr'] → runner['rp_rpr_archive_only'] (preserves the value for audit)
-      - Sets runner['rpr'] = None (scoring treats it as missing)
-      - Sets runner['rp_rpr_velo_allowed'] = False (explicit scoring block)
+      - Copies runner['rpr'] → runner['rp_rpr_archive_only'] (audit copy)
+      - Sets runner['rp_rpr_velo_allowed'] = True
+      - Does NOT null out runner['rpr']
 
-    Skipped when VELO_ALLOW_API_RPR=1 (archive / test mode only).
-    RP-merged races never pass through this function — they are already sanitized.
+    RP-merged races never pass through this function — they set rpr directly.
     """
-    if os.getenv("VELO_ALLOW_API_RPR", "").strip() in ("1", "true", "yes"):
-        return races
-
     for race in races:
-        race.setdefault("rpr_policy", "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO")
+        race["rpr_policy"] = "RPR_ACCEPTED"
         for runner in race.get("runners") or []:
             live_rpr = runner.get("rpr")
             if live_rpr is not None:
                 runner.setdefault("rp_rpr_archive_only", live_rpr)
-                runner["rpr"] = None
-            runner["rp_rpr_velo_allowed"] = False
+            elif runner.get("rp_rpr_archive_only") is not None:
+                # Cache was written under old policy — promote archive value to rpr
+                try:
+                    val = float(runner["rp_rpr_archive_only"])
+                    if val > 0:
+                        runner["rpr"] = val
+                except (TypeError, ValueError):
+                    pass
+            runner["rp_rpr_velo_allowed"] = True
     return races
 
 
