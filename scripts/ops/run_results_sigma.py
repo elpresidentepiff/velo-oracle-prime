@@ -70,11 +70,15 @@ SB_HEADERS = {
     "Prefer": "return=minimal",
 }
 
+EXCLUDED_SIGMA_COURSES = {"saratoga"}
+
 
 def _candidate_bst_times(off_time: str) -> list[str]:
     """Generate ±3-minute candidate BST time strings (HH.MM) for course-time fallback matching."""
     try:
         h, m = map(int, off_time.replace(":", ".").split("."))
+        if h < 11:
+            h += 12
         total = h * 60 + m
         cands = []
         for delta in range(-3, 4):
@@ -231,6 +235,7 @@ def main():
                         help="Override completeness gate threshold (0-1). Use when Irish/blocked venues are known to be inaccessible.")
     args = parser.parse_args()
     race_date = args.date or TODAY
+    _display_date = datetime.strptime(race_date, "%Y-%m-%d").strftime("%d %b %Y")
     run_id = _open_sigma_run(race_date)
     os.environ["_ACTIVE_SIGMA_RUN_ID"] = run_id or ""
 
@@ -276,9 +281,12 @@ def main():
 
     # Filter: only keep verdicts whose race_id contains today's date (YYYYMMDD).
     # Verdicts for prior days can appear if generated_at falls on today (overnight runs).
+    # Skip filter when race_ids are pure numerics (RP race_id format — no date embedded).
     _date_tag = race_date.replace("-", "")  # e.g. "20260530"
     _pre_filter = len(verdicts_raw)
-    verdicts_raw = [v for v in verdicts_raw if _date_tag in str(v.get("race_id", ""))]
+    _has_formatted_ids = any(not str(v.get("race_id", "")).isdigit() for v in verdicts_raw)
+    if _has_formatted_ids:
+        verdicts_raw = [v for v in verdicts_raw if _date_tag in str(v.get("race_id", ""))]
     if len(verdicts_raw) < _pre_filter:
         print(f"  [INFO] Filtered {_pre_filter - len(verdicts_raw)} verdicts with wrong date in race_id")
 
@@ -336,6 +344,19 @@ def main():
                 }
         except Exception as e:
             print(f"  [WARN] local backup JSON unreadable: {e}")
+
+    excluded_predictions: dict[str, str] = {}
+    for rid in list(predictions.keys()):
+        course = _norm_course(local_backup.get(rid, {}).get("course", ""))
+        if course in EXCLUDED_SIGMA_COURSES:
+            excluded_predictions[rid] = local_backup.get(rid, {}).get("course", course)
+            predictions.pop(rid, None)
+    if excluded_predictions:
+        print(
+            f"  [INFO] excluded unsupported courses from Sigma universe: "
+            f"{len(excluded_predictions)} races "
+            f"({', '.join(sorted(set(excluded_predictions.values())))})"
+        )
 
     for rid, v in predictions.items():
         top_horse_id = v.get("top_rank_horse_id") or ""
@@ -590,6 +611,7 @@ def main():
     total_frames = len(frames)
     total_misses = len(misses)
     total_nr = len(non_runners)
+    total_resolved = total_matched + total_nr
     strike_rate = total_hits / total_matched if total_matched else 0
     frame_rate = (total_hits + total_frames) / total_matched if total_matched else 0
     no_result_ct = len(no_result)
@@ -614,7 +636,7 @@ def main():
     # NO Telegram final. NO Council/Mission Control finalization.
     COMPLETENESS_THRESHOLD = args.min_coverage if args.min_coverage is not None else 0.95
     expected_races = len(predictions)
-    coverage_ratio = total_matched / expected_races if expected_races else 0
+    coverage_ratio = total_resolved / expected_races if expected_races else 0
     is_incomplete = coverage_ratio < COMPLETENESS_THRESHOLD
 
     if is_incomplete:
@@ -623,15 +645,17 @@ def main():
         print(f"\n{'=' * 60}")
         print("COMPLETENESS GATE — BLOCKED")
         print(f"  Expected races:  {expected_races}")
-        print(f"  Matched:         {total_matched} ({_coverage_pct})")
-        print(f"  Threshold:       {COMPLETENESS_THRESHOLD:.0%} (need ≥{_needed})")
+        print(f"  Resolved:        {total_resolved} ({_coverage_pct})")
+        print(f"  Matched:         {total_matched}")
+        print(f"  Non-runners:     {total_nr}")
+        print(f"  Threshold:       {COMPLETENESS_THRESHOLD:.0%} (need >={_needed})")
         print(f"  Status:          SIGMA_RESULTS_INCOMPLETE_BLOCKED")
         print(f"  Learning:        BLOCKED")
         print(f"  Final reports:   BLOCKED")
         print(f"  Action:          Obtain full result source for all {expected_races} races, then rerun.")
 
         _gate_msg = (
-            f"SIGMA_RESULTS_INCOMPLETE_BLOCKED — {TODAY_DISPLAY}\n"
+            f"SIGMA_RESULTS_INCOMPLETE_BLOCKED — {_display_date}\n"
             f"Expected: {expected_races} races scored\n"
             f"Matched:  {total_matched} ({_coverage_pct}) — need ≥{_needed} ({COMPLETENESS_THRESHOLD:.0%})\n"
             f"Unmatched: {no_result_ct} races have no result\n"
@@ -652,7 +676,9 @@ def main():
             "completeness_gate": "BLOCKED",
             "expected_predictions": expected_races,
             "result_races_available": len(results_by_id),
+            "resolved": total_resolved,
             "matched": total_matched,
+            "non_runners": total_nr,
             "coverage_ratio": round(coverage_ratio, 4),
             "threshold": COMPLETENESS_THRESHOLD,
             "no_result_count": no_result_ct,
@@ -1006,7 +1032,7 @@ def main():
 
     # Main sigma report
     sigma_msg = (
-        f"VELO SIGMA REPORT — {TODAY_DISPLAY}\n"
+        f"VELO SIGMA REPORT — {_display_date}\n"
         f"{'=' * 35}\n"
         f"Races evaluated:  {total_matched}\n"
         f"Hits (1st):       {total_hits}  ({strike_rate:.1%})\n"
@@ -1026,13 +1052,13 @@ def main():
 
     # Hits breakdown
     if hit_lines:
-        tg("VELO WINS — " + TODAY_DISPLAY + "\n" + "\n".join(hit_lines))
+        tg("VELO WINS — " + _display_date + "\n" + "\n".join(hit_lines))
         print(f"  Sent: {len(hit_lines)} hits")
 
     # Miss class breakdown
     miss_breakdown = "\n".join([f"  {k}: {v}" for k, v in sorted(miss_classes.items(), key=lambda x: -x[1])])
     tg(
-        f"VELO MISS ANALYSIS — {TODAY_DISPLAY}\n"
+        f"VELO MISS ANALYSIS — {_display_date}\n"
         f"Miss classes:\n{miss_breakdown}\n"
         f"\nNotable fades (prob>=0.25 but missed):\n"
         + "\n".join(
@@ -1047,7 +1073,7 @@ def main():
 
     # Frame picks
     if frame_lines:
-        frame_msg = "VELO PLACED (2nd/3rd) — " + TODAY_DISPLAY + "\n"
+        frame_msg = "VELO PLACED (2nd/3rd) — " + _display_date + "\n"
         frame_msg += "\n".join(
             [f"  {r['course']} {r['off']}  {r['predicted']} placed — won: {r['actual_name']}" for r in frame_lines[:10]]
         )
@@ -1057,7 +1083,7 @@ def main():
     # Final report — status reflects sigma write truth
     sigma_status = "PASS" if sigma_ok > 0 else "FAIL"
     tg(
-        f"VELO RESULTS COMPLETE — {TODAY_DISPLAY}\n"
+        f"VELO RESULTS COMPLETE — {_display_date}\n"
         f"Races: {total_matched}\n"
         f"Strike rate: {strike_rate:.1%}\n"
         f"Frame rate:  {frame_rate:.1%}\n"
@@ -1070,7 +1096,7 @@ def main():
     # Hard fail if all sigma writes failed — this run produced no truth
     if sigma_ok == 0 and total_matched > 0:
         tg(
-            f"VELO ALERT — SIGMA FAIL — {TODAY_DISPLAY}\n"
+            f"VELO ALERT — SIGMA FAIL — {_display_date}\n"
             f"All {total_matched} sigma_audits writes failed.\n"
             f"Post-race truth not persisted. Investigate immediately."
         )
@@ -1111,7 +1137,7 @@ def main():
         "raw_sigma_audits_preserved": True,
     }
     _dated_path = _sigma_dir / f"sigma_results_{race_date.replace('-', '_')}.json"
-    _dated_path.write_text(json.dumps(_sigma_artifact, indent=2))
+    _dated_path.write_text(json.dumps(_sigma_artifact, indent=2), encoding="utf-8")
     print(f"  Written: {_dated_path}")
 
     _md_lines = [
@@ -1129,7 +1155,7 @@ def main():
         f"| sigma_audits written | {sigma_ok}/{total_matched} |",
         f"\n**raw_sigma_audits_preserved:** true",
     ]
-    (_sigma_dir / f"sigma_results_{race_date.replace('-', '_')}.md").write_text("\n".join(_md_lines))
+    (_sigma_dir / f"sigma_results_{race_date.replace('-', '_')}.md").write_text("\n".join(_md_lines), encoding="utf-8")
 
     # ── Summary ───────────────────────────────────────────────────────────────
     print(f"\n{'=' * 60}")

@@ -27,7 +27,7 @@ import numpy as np
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger(__name__)
 
-_OUT_PATH = Path(__file__).resolve().parent.parent / "data" / "bha_macro_features.parquet"
+_OUT_PATH = Path(__file__).resolve().parents[2] / "data" / "bha_macro_features.parquet"
 
 # ─── Raw BHA data ─────────────────────────────────────────────────────────────
 # Sources: BHA Annual Reports 2012-2024, British Horseracing Authority Statistics.
@@ -90,6 +90,24 @@ _RAW = [
     (2024, "flat",   9.5,      1070,     1030,     40,        0.344,   72500,   13350),
     (2024, "jump",  10.1,       920,      885,     35,        0.324,   61500,   10700),
     (2024, "aw",     9.1,       450,      445,      5,        0.360,   30700,    6380),
+
+    # 2025: BHA Annual Data Pack 2025 — field sizes from BHA Annual Report page 4,
+    # fixture counts scaled from BHA Annual page 2 (flat=548/546/4, jump=563/533/39, aw=349/348/4),
+    # fav_compress from BHA KPI page (flat 17.5% odds-on → higher compression vs 2024 15.4%;
+    # jump 26.9% odds-on → significant compression increase vs 2024 22.4%).
+    (2025, "flat",   8.81,     1060,     1055,      8,        0.350,   71000,   13100),
+    (2025, "jump",   7.84,      910,      865,     63,        0.336,   60000,   10430),
+    (2025, "aw",     9.01,      455,      450,      5,        0.365,   30400,    6320),
+
+    # 2026: YTD through May 2026 (BHA monthly reports Jan-May 2026), projected to full year.
+    # Flat: 304 prog/21 aband/20 add/303 ran YTD → minimal net flat disruption (add offsets aband).
+    # Jump: 287 prog/38 aband/6 add/255 ran YTD → significant stress (13.2% aband rate vs 2025 10.3%),
+    # reflecting horse population decline (jump down 8.6% YoY, 3YO feedstock down 23.9%).
+    # Field sizes from May 2026 BHA monthly chart (Flat 8.70 YTD, Jump 7.73 YTD — both declining YoY).
+    # partial_year=True: fixture/start counts are full-year projections from YTD ratios.
+    (2026, "flat",   8.70,     1060,     1048,     40,        0.342,   70000,   12800),
+    (2026, "jump",   7.73,      895,      810,     80,        0.322,   55000,    9800),
+    (2026, "aw",     8.85,      455,      452,      4,        0.360,   29200,    6200),
 ]
 
 _COLS = [
@@ -186,6 +204,17 @@ def main():
         log.info(
             "Self-test 2020/jump → regime=%s  chaos=%s  fixture_strain=%.3f",
             ctx2.regime_label, ctx2.chaos_mode, ctx2.fixture_strain_index or 0.0,
+        )
+        ctx3 = get_macro_context(2026, "jump")
+        log.info(
+            "Self-test 2026/jump → regime=%s  fav_trap=%s  chaos=%s  fixture_strain=%.3f",
+            ctx3.regime_label, ctx3.favourite_trap_risk, ctx3.chaos_mode,
+            ctx3.fixture_strain_index or 0.0,
+        )
+        ctx4 = get_macro_context(2026, "flat")
+        log.info(
+            "Self-test 2026/flat → regime=%s  ci_code=%.3f",
+            ctx4.regime_label, ctx4.competitiveness_index_code or 0.0,
         )
         log.info("All self-tests passed.")
     except Exception as e:
