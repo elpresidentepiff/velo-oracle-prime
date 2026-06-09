@@ -515,6 +515,9 @@ def score_race_velo_prime(
             row["tie_gate_signal_count"] = 0
             row["tie_gate_signals"] = []
 
+    if results:
+        results[0]["verdict_explanation"] = generate_decision_explanation(results[0], race)
+
     return results
 
 
@@ -776,11 +779,10 @@ def _enrich_full_analysis_from_warehouse(
             pred["hdta_ae"] = _sf(hdta["ae"]) if hdta else None
             pred["hdta_win_pct"] = _sf(hdta["win_pct"]) if hdta else None
 
-        return predictions
-
     except Exception as e:
         log.warning("warehouse enrichment failed — full_analysis untouched: %s", e)
-        return predictions
+
+    return predictions
 
 
 # def _enrich_full_analysis_with_track_context(
