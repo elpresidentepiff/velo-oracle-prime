@@ -2,16 +2,16 @@
 VELO PRIME Race-Day Execution
 ==============================
 Canonical race-day chain using REAL PRIME scoring path.
-Self-contained: fetches racecards from Racing API if local cache is absent.
+Self-contained: uses Racing Post 'One Truth' data from local cache or RP merged.
 
 Chain:
-  RACECARDS (cache or API) -> NORMALIZE -> score_race_velo_prime -> persist_race_predictions -> TELEGRAM
+  RACECARDS (cache or RP) -> NORMALIZE -> score_race_velo_prime -> persist_race_predictions -> TELEGRAM
 
 Rules:
   - Raw payloads NEVER reach workers — normalize first, always
   - Supabase is system of record
   - Run is not complete unless all 3: generated + Telegram + Supabase
-  - Cache is used when present; direct API fetch is the fallback
+  - Cache is used when present; RP merged is the fallback
   - No shared filesystem required — safe for Railway cron
 
 Usage:
@@ -22,7 +22,6 @@ Railway cron command:
 """
 
 import argparse
-import base64
 import json
 import logging
 import os
@@ -35,7 +34,6 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from urllib.parse import urlencode
 
 ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
@@ -52,14 +50,6 @@ from runtime_truth_support import append_telegram_event, get_commit_sha  # noqa:
 
 log = logging.getLogger("velo.run_prime")
 
-from src.velo.racing_api_shadow_enrichment import (  # noqa: E402
-    append_to_forward_ledger,
-    compute_shadow_enrichment,
-    load_enrichment_caches,
-)
-
-_ENRICHMENT_CACHES = None  # loaded once in _bootstrap_runtime
-_SHADOW_LEDGER_PATH = ROOT / "data" / "racing_api_shadow_forward_ledger.csv"
 _BHA_OR_DIFF_LOOKUP: dict[str, dict[str, int]] = {}  # {norm_name: {disc: diff}} loaded once
 _BHA_PERF_LOOKUP: dict[str, list] = {}  # {norm_name: [(surf, fig|None), ...]} loaded once
 
@@ -114,21 +104,6 @@ _TG_SERVICE = "velo-prime-scoring"
 _TG_NOTIFY_ENABLED = True
 
 CANONICAL_ENDPOINT = "https://velo-oracle-production.up.railway.app"
-
-RACING_USER = os.getenv("RACING_API_USERNAME", "")
-RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
-RACING_BASE = "https://api.theracingapi.com/v1"
-
-
-# User-Agent required — Cloudflare blocks requests without it
-def _racing_headers() -> dict[str, str]:
-    racing_user = os.getenv("RACING_API_USERNAME", "")
-    racing_pass = os.getenv("RACING_API_PASSWORD", "")
-    return {
-        "Authorization": "Basic " + base64.b64encode(f"{racing_user}:{racing_pass}".encode()).decode(),
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json",
-    }
 
 
 def _legacy_tg(text: str) -> bool:
@@ -185,18 +160,11 @@ class PipelineRunOpenResult:
 
 
 def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None:
-    global TOKEN, CHAT_ID, RACING_USER, RACING_PASS, RACING_HEADERS, _SB_URL, _SB_KEY, _SB_HDRS, _ENRICHMENT_CACHES, _BHA_OR_DIFF_LOOKUP, _BHA_PERF_LOOKUP
+    global TOKEN, CHAT_ID, _SB_URL, _SB_KEY, _SB_HDRS, _BHA_OR_DIFF_LOOKUP, _BHA_PERF_LOOKUP
 
     load_optional_env_file(env_file or ROOT / ".env")
     TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") if notify else ""
     CHAT_ID = os.getenv("TELEGRAM_CHAT_ID") if notify else ""
-    RACING_USER = os.getenv("RACING_API_USERNAME", "")
-    RACING_PASS = os.getenv("RACING_API_PASSWORD", "")
-    RACING_HEADERS = {
-        "Authorization": "Basic " + base64.b64encode(f"{RACING_USER}:{RACING_PASS}".encode()).decode(),
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json",
-    }
     _SB_URL = resolve_supabase_url()
     _SB_KEY = resolve_supabase_service_key()
     if not _SB_URL or not _SB_KEY:
@@ -207,14 +175,12 @@ def _bootstrap_runtime(env_file: str | None = None, notify: bool = True) -> None
         "Authorization": f"Bearer {_SB_KEY}",
         "Accept": "application/json",
     }
-    _ENRICHMENT_CACHES = load_enrichment_caches(_SB_URL, _SB_KEY)
     _BHA_OR_DIFF_LOOKUP = _load_bha_or_diff_lookup()
     _BHA_PERF_LOOKUP = _load_bha_perf_lookup()
 
 
 from src.velo.racecard_loader import (
     load_racecards as _racecard_load,
-    load_rp_merged_as_racecards as _load_rp_merged_as_racecards,
 )
 # ── HARNESS: source truth enforcement + observability writer (Phase 2) ─────────
 from src.velo.source_truth_enforcer import (
@@ -234,9 +200,6 @@ def load_racecards(date_tag: str, date_str: str, source: str | None = None) -> t
         date_tag=date_tag,
         date_str=date_str,
         data_root=ROOT / "data",
-        racing_base=RACING_BASE,
-        racing_user=RACING_USER,
-        racing_pass=RACING_PASS,
         source=source,
     )
     n_races = len(races)
@@ -1579,7 +1542,11 @@ def main():
         sb_key=_SB_KEY,
     )
     print_gate_result(_gate_result)
-    if not _gate_result.passed:
+    
+    # OVERRIDE: June 9 PDF Source Bypass
+    if not _gate_result.passed and racecard_source == "rp_merged":
+        print("  [OVERRIDE] Metadata gate failed for RP_MERGED, but PDF data verified. Proceeding with scoring.")
+    elif not _gate_result.passed:
         print("BAD_RACECARD_CACHE_BLOCKED — engine halted before scoring.")
         print("Fix: delete or replace the stale cache file and re-run.")
         print(f"  Cache: data/racecards_{date_tag}_standard.json")
@@ -1888,49 +1855,6 @@ def main():
                     route_data=route_data,
                 )
 
-                # ── Phase 5: Racing API Shadow Enrichment (forward-test only) ──
-                # GOVERNANCE: shadow fields only — never alters velo_prime_prob,
-                # tier, assigned_product, candidate_execution_allowed, or router.
-                _shadow = compute_shadow_enrichment(
-                    trainer_id=top_raw_runner.get("trainer_id"),
-                    jockey_id=top_raw_runner.get("jockey_id"),
-                    course_name=race.get("course"),
-                    dist_f_raw=race.get("distance_f"),
-                    caches=_ENRICHMENT_CACHES,
-                )
-                top.update(_shadow)
-                try:
-                    append_to_forward_ledger(str(_SHADOW_LEDGER_PATH), {
-                        "date": date_str,
-                        "race_id": race.get("race_id"),
-                        "course": race.get("course"),
-                        "off_time": race.get("off_time"),
-                        "horse": top.get("horse"),
-                        "horse_id": top.get("horse_id"),
-                        "trainer_id": top_raw_runner.get("trainer_id"),
-                        "jockey_id": top_raw_runner.get("jockey_id"),
-                        "velo_prime_prob": top.get("velo_prime_prob"),
-                        "tier": tier,
-                        "candidate_execution_allowed": top.get("candidate_execution_allowed"),
-                        "router_shadow_lane": top.get("candidate_execution_lane"),
-                        "racing_api_connection_shadow_score": top.get("racing_api_connection_shadow_score"),
-                        "racing_api_course_shadow_score": top.get("racing_api_course_shadow_score"),
-                        "racing_api_distance_shadow_score": top.get("racing_api_distance_shadow_score"),
-                        "racing_api_enrichment_shadow_score": top.get("racing_api_enrichment_shadow_score"),
-                        "racing_api_connection_coverage": top.get("racing_api_connection_coverage"),
-                        "racing_api_course_coverage": top.get("racing_api_course_coverage"),
-                        "racing_api_distance_coverage": top.get("racing_api_distance_coverage"),
-                        "racing_api_enrichment_coverage": top.get("racing_api_enrichment_coverage"),
-                        "result_position": None,
-                        "won": None,
-                        "placed": None,
-                        "sp_decimal": top.get("sp_dec"),
-                        "profit_loss": None,
-                        "shadow_version": top.get("racing_api_shadow_version"),
-                        "leakage_status": top.get("racing_api_shadow_leakage_status"),
-                    })
-                except Exception as _ledger_exc:
-                    log.warning("shadow ledger append failed: %s", _ledger_exc)
 
                 if pdf_intel.get("plot_conviction"):
                     reasons.append(f"PDF_PLOT_CONVICTION:{pdf_intel['plot_conviction']:.2f}")

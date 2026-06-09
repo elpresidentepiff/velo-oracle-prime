@@ -286,44 +286,13 @@ def main():
     _pre_filter = len(verdicts_raw)
     _has_formatted_ids = any(not str(v.get("race_id", "")).isdigit() for v in verdicts_raw)
     if _has_formatted_ids:
-        verdicts_raw = [v for v in verdicts_raw if _date_tag in str(v.get("race_id", ""))]
+        # Keep if it has the date tag OR if it's a pure numeric ID (likely primary run)
+        verdicts_raw = [
+            v for v in verdicts_raw 
+            if _date_tag in str(v.get("race_id", "")) or str(v.get("race_id", "")).isdigit()
+        ]
     if len(verdicts_raw) < _pre_filter:
         print(f"  [INFO] Filtered {_pre_filter - len(verdicts_raw)} verdicts with wrong date in race_id")
-
-    # Build lookup: race_id -> verdict row (keep latest generated_at if duplicates exist)
-    predictions: dict = {}
-    degraded_count = 0
-    for v in verdicts_raw:
-        # ── Learning Block Detection ──────────────────────────────────────────
-        # Check if the run was feature-degraded (>80% of core features missing)
-        try:
-            full = v.get("full_analysis") or {}
-            preds_list = full.get("predictions") or []
-            if preds_list:
-                excluded = preds_list[0].get("excluded_from_ensemble") or []
-                if "improvement_score" in excluded or "market_deception_score" in excluded:
-                    degraded_count += 1
-        except Exception:
-            pass
-
-        rid = v["race_id"]
-        if rid not in predictions:
-            predictions[rid] = v
-        else:
-            # Keep the row with the latest generated_at
-            existing_ts = predictions[rid].get("generated_at") or ""
-            new_ts = v.get("generated_at") or ""
-            if new_ts > existing_ts:
-                if (predictions[rid].get("top_rank_horse_id") or "") != (v.get("top_rank_horse_id") or ""):
-                    print(f"  [WARN] multiple conflicting verdicts for {rid}, using latest generated_at")
-                predictions[rid] = v
-    
-    is_degraded_day = (degraded_count / len(verdicts_raw)) > 0.80 if verdicts_raw else False
-    if is_degraded_day:
-        print(f"  ⚠ LEARNING BLOCK: {degraded_count}/{len(verdicts_raw)} verdicts are FEATURE_DEGRADED.")
-        print("  ⚠ Sigma will reconcile results but will NOT update learned_patterns.")
-    else:
-        print(f"  Feature integrity: OK ({len(verdicts_raw) - degraded_count}/{len(verdicts_raw)} full features)")
 
     # ── Gap 2: resolve pick horse names from velo_verdicts.selections ─────────
     # Primary source: Supabase velo_verdicts.selections JSON array.
@@ -344,6 +313,50 @@ def main():
                 }
         except Exception as e:
             print(f"  [WARN] local backup JSON unreadable: {e}")
+
+    # Build lookup: race_id -> verdict row (keep latest generated_at if duplicates exist)
+    predictions: dict = {}
+    degraded_count = 0
+    
+    # Authoritative list of race IDs for today comes from local backup
+    today_race_ids = set(local_backup.keys()) if local_backup else set()
+
+    for v in verdicts_raw:
+        rid = str(v["race_id"])
+        # If we have a local backup, only process IDs that are in it.
+        # This filters out shadow runs (formatted IDs) and prior day's numeric IDs.
+        if today_race_ids and rid not in today_race_ids:
+            continue
+            
+        # ── Learning Block Detection ──────────────────────────────────────────
+        # Check if the run was feature-degraded (>80% of core features missing)
+        try:
+            full = v.get("full_analysis") or {}
+            preds_list = full.get("predictions") or []
+            if preds_list:
+                excluded = preds_list[0].get("excluded_from_ensemble") or []
+                if "improvement_score" in excluded or "market_deception_score" in excluded:
+                    degraded_count += 1
+        except Exception:
+            pass
+
+        if rid not in predictions:
+            predictions[rid] = v
+        else:
+            # Keep the row with the latest generated_at
+            existing_ts = predictions[rid].get("generated_at") or ""
+            new_ts = v.get("generated_at") or ""
+            if new_ts > existing_ts:
+                if (predictions[rid].get("top_rank_horse_id") or "") != (v.get("top_rank_horse_id") or ""):
+                    print(f"  [WARN] multiple conflicting verdicts for {rid}, using latest generated_at")
+                predictions[rid] = v
+    
+    is_degraded_day = (degraded_count / len(predictions)) > 0.80 if predictions else False
+    if is_degraded_day:
+        print(f"  ⚠ LEARNING BLOCK: {degraded_count}/{len(predictions)} verdicts are FEATURE_DEGRADED.")
+        print("  ⚠ Sigma will reconcile results but will NOT update learned_patterns.")
+    else:
+        print(f"  Feature integrity: OK ({len(predictions) - degraded_count}/{len(predictions)} full features)")
 
     excluded_predictions: dict[str, str] = {}
     for rid in list(predictions.keys()):
@@ -465,6 +478,7 @@ def main():
             skip += page_size
     # ── STEP 3: Reconcile ─────────────────────────────────────────────────────
     print("\nSTEP 3: Reconcile predictions vs actuals")
+    results_by_id = {str(r.get("race_id")): r for r in results_list if r.get("race_id")}
     results_by_id = {str(r.get("race_id")): r for r in results_list if r.get("race_id")}
     # Also index by normalised 24h-underscore race_id so SL 12h-period IDs match VELO prediction IDs.
     # e.g. rp_CAR_20260530_1.30 → rp_CAR_20260530_13_30
