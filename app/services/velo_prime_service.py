@@ -27,6 +27,8 @@ import os
 import re
 from datetime import UTC, datetime, timedelta
 
+from src.intelligence.explanation_generator import generate_decision_explanation
+
 # from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
 
 log = logging.getLogger("velo.prime_service")
@@ -250,6 +252,57 @@ def _apply_sentient_modifiers(results: list[dict], sentient_state: dict | None) 
     return results
 
 
+_POPULATION_STATS: dict = {}
+
+
+def _load_population_stats() -> None:
+    """Load the BHA 2026 population report extracts for the Decline-Curve heuristic."""
+    global _POPULATION_STATS
+    path = ROOT / "data" / "bha_population_stats_2026.json"
+    if path.exists():
+        try:
+            with open(path) as f:
+                _POPULATION_STATS = json.load(f)
+        except Exception as e:
+            log.warning("[BHA] Population stats load failed: %s", e)
+
+
+def _apply_bha_intelligence(prob: float, runner: dict, race_code: str) -> tuple[float, list[str]]:
+    """
+    Apply BHA Intelligence penalties (Collateral & Decline-Curve).
+    
+    1. Collateral Flag: -15% if BHA themselves are uncertain of the rating.
+    2. Decline-Curve: -10% if horse is past peak age and trajectory is declining.
+    """
+    reasons = []
+    final_prob = prob
+
+    # 1. Collateral Rating Penalty
+    if runner.get("is_collateral") or runner.get("pdf_intel", {}).get("_rp_raw", {}).get("is_collateral"):
+        final_prob *= 0.85
+        reasons.append("BHA_COLLATERAL_PENALTY(-15%)")
+
+    # 2. Decline-Curve Penalty
+    age = runner.get("age")
+    try:
+        age_num = int(age) if age else 0
+        is_flat = race_code == "flat"
+        
+        # Thresholds from 2026 Population Report: Flat 5+, Jump 8+
+        threshold = 5 if is_flat else 8
+        if age_num >= threshold:
+            # Check trajectory from BHA perf figures (attached in run_prime_today)
+            # or from raw RP data if present
+            traj = runner.get("surf_traj_flag") or "UNKNOWN"
+            if traj in ("DECLINING", "REGRESSING"):
+                final_prob *= 0.90
+                reasons.append(f"DECLINE_CURVE_PENALTY({traj}:-10%)")
+    except (ValueError, TypeError):
+        pass
+
+    return round(final_prob, 4), reasons
+
+
 def score_race_velo_prime(
     race: dict,
     sentient_state: dict | None = None,
@@ -335,7 +388,14 @@ def score_race_velo_prime(
         # Build features using clean service
         feats = build_v17_feature_vector(runner, race)
         _feats_by_horse[horse_name] = feats
-        sqpe_prob = predict_sqpe_v17(feats)
+        sqpe_prob_raw = predict_sqpe_v17(feats)
+
+        # Apply BHA Intelligence (Collateral & Decline-Curve)
+        sqpe_prob, bha_reasons = _apply_bha_intelligence(sqpe_prob_raw, runner, code)
+        if bha_reasons:
+            log.info("  [BHA] %s: %s (%.4f -> %.4f)", horse_name, ", ".join(bha_reasons), sqpe_prob_raw, sqpe_prob)
+            # Add reasons to runner for later retrieval if needed
+            runner.setdefault("bha_intelligence_reasons", []).extend(bha_reasons)
 
         # Specialist scores — graceful on missing features
         try:
@@ -883,6 +943,7 @@ def persist_race_predictions(
                 "ts_peak": top.get("ts_master"),
                 "signals": top.get("intent_signals", []),
                 "reasons": top.get("router_reasons", []),
+                "verdict_explanation": generate_decision_explanation(top, race),
             },
             # Ensemble observability — queryable without reading source code.
             # active_components: what actually entered the weighted average this race.
