@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-06-10T23:05Z",
+  "railway_api": "TOKEN_DEAD_403",
+  "services_from_env_topology": [
+    "velo-oracle (502 dead)",
+    "velo-prime-scoring (dormant)",
+    "ingestion-spine (legacy)",
+    "hermes-agent (unknown, service-role)",
+    "enchanting-exploration (duplicate)"
+  ],
+  "gh_schedules_active_on_main": {
+    "score-daily": "0 9,21 * * 1-6 FAILING",
+    "smoke-prod": "*/30 FAILING x48/day"
+  },
+  "endpoint_probe": {
+    "velo-oracle-production.up.railway.app": "502"
+  },
+  "secret_files": {
+    "tracked": false,
+    "in_history": false,
+    "gitignored": true,
+    "rotation_recommended": true
+  }
+}
