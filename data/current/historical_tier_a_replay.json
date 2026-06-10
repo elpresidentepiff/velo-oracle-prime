@@ -1,0 +1,498 @@
+{
+  "generated_at": "2026-06-10T22:33:21.177067+00:00",
+  "read_only_confirmed": true,
+  "asset_profile": {
+    "rows_total": 1692214,
+    "date_range": [
+      "2015-01-01",
+      "2025-07-05"
+    ],
+    "races": 172949,
+    "years": [
+      "2015",
+      "2016",
+      "2017",
+      "2018",
+      "2019",
+      "2020",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025"
+    ],
+    "target_definition": "target==1 means won (per v17 training build)",
+    "sp_provenance": "historical official SP (raceform archive) \u2014 settlement price, safe for ROI",
+    "implied_prob_available": true
+  },
+  "leakage_assessment": {
+    "exact_replay": "BLOCKED_LEAKAGE",
+    "reasons": [
+      "IN_SAMPLE: sqpe_v17 metadata source=raceform_clean.parquet, train_rows=1,447,607 (~85% of this file)",
+      "MARKET_INPUT: model features include sp_dec/log_sp/implied_prob/sp_rank/is_fav \u2014 final SP is a model input; edge-vs-SP is circular",
+      "TRAIN_SERVE_SKEW: live scoring fills sp fields from morning forecast odds, training used realized SP"
+    ],
+    "excluded_columns_post_race": [
+      "pos",
+      "target",
+      "sp_dec*, log_sp*, implied_prob*, sp_rank*, is_fav* (*known only at the off)"
+    ],
+    "legitimate_path": "walk-forward retrain harness with pre-race-only features (requires operator approval to train)"
+  },
+  "exact_replay": {
+    "status": "BLOCKED_LEAKAGE \u2014 see leakage_assessment"
+  },
+  "proxy_replay": {
+    "definition": "Market-structure baselines. P2 \u2260 VELO Tier A \u2014 it bounds what Tier A must beat and shows the decade's structure.",
+    "overall": {
+      "P0_all_runners": {
+        "n": 1692214,
+        "wins": 173013,
+        "strike_rate": 0.1022,
+        "avg_sp": 24.54,
+        "median_sp": 12.0,
+        "flat_1pt_pl": -435400.9,
+        "roi_pct": -25.73
+      },
+      "P1_favourite": {
+        "n": 183388,
+        "wins": 60371,
+        "strike_rate": 0.3292,
+        "avg_sp": 3.19,
+        "median_sp": 3.0,
+        "flat_1pt_pl": -17006.2,
+        "roi_pct": -9.27
+      },
+      "P2_favourite_with_ratings_edge": {
+        "n": 78428,
+        "wins": 29319,
+        "strike_rate": 0.3738,
+        "avg_sp": 3.19,
+        "median_sp": 3.0,
+        "flat_1pt_pl": 3750.2,
+        "roi_pct": 4.78
+      }
+    },
+    "yearly": {
+      "2015": {
+        "P1_favourite": {
+          "n": 17573,
+          "wins": 5749,
+          "strike_rate": 0.3271,
+          "avg_sp": 3.21,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1666.3,
+          "roi_pct": -9.48
+        },
+        "P2_fav_ratings_edge": {
+          "n": 7201,
+          "wins": 2712,
+          "strike_rate": 0.3766,
+          "avg_sp": 3.26,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 583.8,
+          "roi_pct": 8.11
+        }
+      },
+      "2016": {
+        "P1_favourite": {
+          "n": 17211,
+          "wins": 5658,
+          "strike_rate": 0.3287,
+          "avg_sp": 3.28,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1207.1,
+          "roi_pct": -7.01
+        },
+        "P2_fav_ratings_edge": {
+          "n": 7367,
+          "wins": 2799,
+          "strike_rate": 0.3799,
+          "avg_sp": 3.29,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 692.4,
+          "roi_pct": 9.4
+        }
+      },
+      "2017": {
+        "P1_favourite": {
+          "n": 18129,
+          "wins": 5882,
+          "strike_rate": 0.3245,
+          "avg_sp": 3.23,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1863.7,
+          "roi_pct": -10.28
+        },
+        "P2_fav_ratings_edge": {
+          "n": 8048,
+          "wins": 3020,
+          "strike_rate": 0.3752,
+          "avg_sp": 3.23,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 446.2,
+          "roi_pct": 5.54
+        }
+      },
+      "2018": {
+        "P1_favourite": {
+          "n": 18643,
+          "wins": 6155,
+          "strike_rate": 0.3302,
+          "avg_sp": 3.24,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1438.5,
+          "roi_pct": -7.72
+        },
+        "P2_fav_ratings_edge": {
+          "n": 8104,
+          "wins": 3088,
+          "strike_rate": 0.381,
+          "avg_sp": 3.22,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 625.2,
+          "roi_pct": 7.72
+        }
+      },
+      "2019": {
+        "P1_favourite": {
+          "n": 18182,
+          "wins": 6102,
+          "strike_rate": 0.3356,
+          "avg_sp": 3.17,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1487.6,
+          "roi_pct": -8.18
+        },
+        "P2_fav_ratings_edge": {
+          "n": 7825,
+          "wins": 2967,
+          "strike_rate": 0.3792,
+          "avg_sp": 3.16,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 400.2,
+          "roi_pct": 5.11
+        }
+      },
+      "2020": {
+        "P1_favourite": {
+          "n": 12514,
+          "wins": 4039,
+          "strike_rate": 0.3228,
+          "avg_sp": 3.18,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1287.0,
+          "roi_pct": -10.28
+        },
+        "P2_fav_ratings_edge": {
+          "n": 5165,
+          "wins": 1886,
+          "strike_rate": 0.3652,
+          "avg_sp": 3.2,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 185.2,
+          "roi_pct": 3.59
+        }
+      },
+      "2021": {
+        "P1_favourite": {
+          "n": 18698,
+          "wins": 6164,
+          "strike_rate": 0.3297,
+          "avg_sp": 3.17,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1688.4,
+          "roi_pct": -9.03
+        },
+        "P2_fav_ratings_edge": {
+          "n": 7916,
+          "wins": 2920,
+          "strike_rate": 0.3689,
+          "avg_sp": 3.17,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 268.8,
+          "roi_pct": 3.4
+        }
+      },
+      "2022": {
+        "P1_favourite": {
+          "n": 18232,
+          "wins": 6080,
+          "strike_rate": 0.3335,
+          "avg_sp": 3.1,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1779.2,
+          "roi_pct": -9.76
+        },
+        "P2_fav_ratings_edge": {
+          "n": 7730,
+          "wins": 2919,
+          "strike_rate": 0.3776,
+          "avg_sp": 3.07,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 166.4,
+          "roi_pct": 2.15
+        }
+      },
+      "2023": {
+        "P1_favourite": {
+          "n": 17045,
+          "wins": 5555,
+          "strike_rate": 0.3259,
+          "avg_sp": 3.18,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1773.9,
+          "roi_pct": -10.41
+        },
+        "P2_fav_ratings_edge": {
+          "n": 7401,
+          "wins": 2675,
+          "strike_rate": 0.3614,
+          "avg_sp": 3.18,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 76.4,
+          "roi_pct": 1.03
+        }
+      },
+      "2024": {
+        "P1_favourite": {
+          "n": 18014,
+          "wins": 5870,
+          "strike_rate": 0.3259,
+          "avg_sp": 3.18,
+          "median_sp": 3.0,
+          "flat_1pt_pl": -1943.0,
+          "roi_pct": -10.79
+        },
+        "P2_fav_ratings_edge": {
+          "n": 7777,
+          "wins": 2845,
+          "strike_rate": 0.3658,
+          "avg_sp": 3.18,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 228.9,
+          "roi_pct": 2.94
+        }
+      },
+      "2025": {
+        "P1_favourite": {
+          "n": 9147,
+          "wins": 3117,
+          "strike_rate": 0.3408,
+          "avg_sp": 3.06,
+          "median_sp": 2.9,
+          "flat_1pt_pl": -871.5,
+          "roi_pct": -9.53
+        },
+        "P2_fav_ratings_edge": {
+          "n": 3894,
+          "wins": 1488,
+          "strike_rate": 0.3821,
+          "avg_sp": 3.0,
+          "median_sp": 2.88,
+          "flat_1pt_pl": 76.7,
+          "roi_pct": 1.97
+        }
+      }
+    },
+    "p2_slices": {
+      "by_class": {
+        "1.0": {
+          "n": 3456,
+          "wins": 1453,
+          "strike_rate": 0.4204,
+          "avg_sp": 2.99,
+          "median_sp": 2.75,
+          "flat_1pt_pl": 334.0,
+          "roi_pct": 9.66
+        },
+        "2.0": {
+          "n": 4028,
+          "wins": 1370,
+          "strike_rate": 0.3401,
+          "avg_sp": 3.57,
+          "median_sp": 3.5,
+          "flat_1pt_pl": 248.4,
+          "roi_pct": 6.17
+        },
+        "3.0": {
+          "n": 7756,
+          "wins": 2999,
+          "strike_rate": 0.3867,
+          "avg_sp": 3.09,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 485.9,
+          "roi_pct": 6.26
+        },
+        "4.0": {
+          "n": 17954,
+          "wins": 7254,
+          "strike_rate": 0.404,
+          "avg_sp": 2.97,
+          "median_sp": 2.88,
+          "flat_1pt_pl": 1228.7,
+          "roi_pct": 6.84
+        },
+        "5.0": {
+          "n": 17335,
+          "wins": 6666,
+          "strike_rate": 0.3845,
+          "avg_sp": 3.1,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 1089.6,
+          "roi_pct": 6.29
+        },
+        "6.0": {
+          "n": 12391,
+          "wins": 4239,
+          "strike_rate": 0.3421,
+          "avg_sp": 3.33,
+          "median_sp": 3.25,
+          "flat_1pt_pl": 383.0,
+          "roi_pct": 3.09
+        },
+        "7.0": {
+          "n": 131,
+          "wins": 49,
+          "strike_rate": 0.374,
+          "avg_sp": 3.73,
+          "median_sp": 3.5,
+          "flat_1pt_pl": 36.4,
+          "roi_pct": 27.76
+        }
+      },
+      "by_surface": {
+        "AW": {
+          "n": 20984,
+          "wins": 7619,
+          "strike_rate": 0.3631,
+          "avg_sp": 3.15,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 571.4,
+          "roi_pct": 2.72
+        },
+        "Turf": {
+          "n": 57444,
+          "wins": 21700,
+          "strike_rate": 0.3778,
+          "avg_sp": 3.2,
+          "median_sp": 3.0,
+          "flat_1pt_pl": 3178.8,
+          "roi_pct": 5.53
+        }
+      },
+      "by_odds_band": {
+        "<2": {
+          "n": 13595,
+          "wins": 8200,
+          "strike_rate": 0.6032,
+          "avg_sp": 1.69,
+          "median_sp": 1.73,
+          "flat_1pt_pl": -105.8,
+          "roi_pct": -0.78
+        },
+        "2-3": {
+          "n": 27407,
+          "wins": 11122,
+          "strike_rate": 0.4058,
+          "avg_sp": 2.6,
+          "median_sp": 2.62,
+          "flat_1pt_pl": 1208.2,
+          "roi_pct": 4.41
+        },
+        "3-5": {
+          "n": 33398,
+          "wins": 9272,
+          "strike_rate": 0.2776,
+          "avg_sp": 3.93,
+          "median_sp": 3.75,
+          "flat_1pt_pl": 2327.3,
+          "roi_pct": 6.97
+        },
+        "5-8": {
+          "n": 3915,
+          "wins": 707,
+          "strike_rate": 0.1806,
+          "avg_sp": 5.97,
+          "median_sp": 5.7,
+          "flat_1pt_pl": 267.5,
+          "roi_pct": 6.83
+        },
+        "8+": {
+          "n": 113,
+          "wins": 18,
+          "strike_rate": 0.1593,
+          "avg_sp": 9.15,
+          "median_sp": 9.0,
+          "flat_1pt_pl": 53.0,
+          "roi_pct": 46.9
+        }
+      },
+      "by_field_size": {
+        "<=7": {
+          "n": 24592,
+          "wins": 11764,
+          "strike_rate": 0.4784,
+          "avg_sp": 2.48,
+          "median_sp": 2.38,
+          "flat_1pt_pl": 2182.5,
+          "roi_pct": 8.87
+        },
+        "8-11": {
+          "n": 31370,
+          "wins": 11036,
+          "strike_rate": 0.3518,
+          "avg_sp": 3.26,
+          "median_sp": 3.25,
+          "flat_1pt_pl": 1469.4,
+          "roi_pct": 4.68
+        },
+        "12-16": {
+          "n": 20062,
+          "wins": 5971,
+          "strike_rate": 0.2976,
+          "avg_sp": 3.75,
+          "median_sp": 3.75,
+          "flat_1pt_pl": 161.9,
+          "roi_pct": 0.81
+        },
+        "17+": {
+          "n": 2404,
+          "wins": 548,
+          "strike_rate": 0.228,
+          "avg_sp": 4.83,
+          "median_sp": 5.0,
+          "flat_1pt_pl": -63.7,
+          "roi_pct": -2.65
+        }
+      }
+    },
+    "stability": {
+      "p2_yearly_roi": {
+        "2015": 8.11,
+        "2016": 9.4,
+        "2017": 5.54,
+        "2018": 7.72,
+        "2019": 5.11,
+        "2020": 3.59,
+        "2021": 3.4,
+        "2022": 2.15,
+        "2023": 1.03,
+        "2024": 2.94,
+        "2025": 1.97
+      },
+      "best_year": "2016",
+      "worst_year": "2023",
+      "positive_years": 11,
+      "total_years": 11
+    }
+  },
+  "live_tier_a_reference": {
+    "source": "data/current/sigma_roi_clv.json layer A by_tier",
+    "n": 365,
+    "sr": 0.3836,
+    "roi_pct": 4.27,
+    "note": "live realized economics, NOT replayed here"
+  },
+  "conclusion": "The decade replay CANNOT validate Tier A with the current model (leakage). It CAN and does establish the baselines Tier A must beat, by year/class/surface/odds-band. The walk-forward harness is the path to real validation."
+}
