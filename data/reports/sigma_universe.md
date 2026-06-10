@@ -1,0 +1,47 @@
+# Sigma Universe — reconciled
+
+Generated 2026-06-10T19:31:54.926892+00:00 · READ-ONLY
+
+## supabase_sigma_audits
+- classification: RACE_SIGMA (canonical per-race conclusions)
+- raw_rows: 2528
+- deduplicated: 2528
+- date_range: ['2026-01-09', '2026-06-09']
+- outcomes: {'None': 37, 'WIN': 551, 'MISS': 1263, 'PLACED': 677}
+- event_types: {'None': 37, 'post_race_review': 363, 'sigma_reconciliation': 2128}
+
+## local_sigma_results
+- classification: DAY_SIGMA (summaries — derived from race sigma)
+- files: 19
+- wins: 155
+- evaluated: 595
+
+## innovation_protocol
+- classification: TOP_PICK_SIGMA / DERIVED (verdict+result join with pick SP, model prob, edge)
+- raw_rows: 1248
+- rows_with_result: 769
+- date_range: ['2026-05-02', '2026-06-09']
+
+## paper_ledger
+- classification: SHADOW_ROUTER_SIGMA — EVIDENCE_INTEGRITY_SUSPECT (synthetic IDs block closure)
+- raw_rows: 569
+- rows_closed: 268
+
+## retrieval_corpus
+- classification: DERIVED_DUPLICATE (memory representation of race sigma)
+- raw_rows: 2528
+
+## unified_evidence_audit_v1
+- classification: DERIVED summary (2026-04-28 snapshot: 49 days / 1,391 sigma rows)
+- present: True
+
+## router_shadow_ledger
+- classification: SHADOW_ROUTER_SIGMA aggregate snapshots
+- raw_rows: 60
+
+## Reconciliation
+- **canonical_source**: supabase.sigma_audits
+- **canonical_race_conclusions**: 2528
+- **near_2000_figure_explained**: The ~2,000 figure is supabase.sigma_audits: 2528 race-level conclusion rows (['2026-01-09', '2026-06-09']), one row per (date, race_id). All other sources are day summaries, derived joins, shadow ledgers, or memory duplicates of this canonical set.
+- **runner_level_sigma**: NOT_FOUND — sigma concludes at race level (top pick vs result); no per-runner sigma universe exists
+- **layers**: {'RACE_SIGMA': 2528, 'DAY_SIGMA': 19, 'TOP_PICK_SIGMA_DERIVED': 1248, 'SHADOW_ROUTER_SIGMA': 569, 'DERIVED_DUPLICATE': 2528}
