@@ -101,29 +101,45 @@ def _detect_flatlines(rows: list[dict]) -> dict:
     }
 
 
-def _detect_source_truth(rows: list[dict], date_str: str) -> str:
-    if not rows:
-        return "UNKNOWN"
+# Labels the observability packet may legitimately report. Anything else is UNKNOWN.
+_KNOWN_SOURCE_LABELS = frozenset({
+    "RP_MERGED_CLEAN",
+    "RP_MERGED_DEGRADED",
+    "API_CLEAN",
+    "LOCAL_JSON_FALLBACK",
+    "SOURCE_UNKNOWN_BLOCK",
+})
+
+
+def _read_observability_source_truth(date_str: str, data_dir: Path | None = None) -> str:
+    """Source truth comes from the run observability packet — never inferred.
+
+    Reads the newest data/velo_run_observability_{date}_*.json for the date
+    (multiple packets exist when the day had retries; the final run wins).
+    Returns UNKNOWN when no packet exists or the packet is malformed.
+    """
+    base = data_dir if data_dir is not None else (ROOT / "data")
+    date_und = date_str.replace("-", "_")
+    paths = sorted(glob.glob(str(base / f"velo_run_observability_{date_und}_*.json")))
+    best_label, best_ts = "", ""
+    for path in paths:
+        try:
+            packet = json.loads(Path(path).read_text())
+            label = packet.get("source_truth", "")
+            ts = packet.get("timestamp", "")
+        except Exception:
+            continue
+        if label in _KNOWN_SOURCE_LABELS and ts >= best_ts:
+            best_label, best_ts = label, ts
+    return best_label or "UNKNOWN"
+
+
+def _detect_source_truth(rows: list[dict], date_str: str, data_dir: Path | None = None) -> str:
     run_ids = {_extract_sha8(r.get("run_id", "")) for r in rows if r.get("run_id")}
     contaminated = run_ids & MC_CONFIG.CONTAMINATED_RUN_IDS
     if contaminated:
         return "RP_MERGED_CONTAMINATED"
-    verdicts_path = ROOT / "data" / f"velo_prime_verdicts_{date_str.replace('-', '_')}.json"
-    if verdicts_path.exists():
-        try:
-            vd = json.loads(verdicts_path.read_text())
-            races = vd.get("races", [])
-            if races:
-                src = races[0].get("source", "")
-                if src == "RP_MERGED":
-                    return "RP_MERGED_CLEAN"
-                elif src == "API":
-                    return "API"
-                elif src == "CACHE":
-                    return "CACHE"
-        except Exception:
-            pass
-    return "RP_MERGED_CLEAN"
+    return _read_observability_source_truth(date_str, data_dir)
 
 
 def _gate_status(flatline_count: int, identity_failure_count: int, source_truth: str) -> tuple[str, str, list[str]]:
@@ -135,6 +151,16 @@ def _gate_status(flatline_count: int, identity_failure_count: int, source_truth:
         learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
         reasons.append("GATE_SOURCE_CONTAMINATED")
+
+    if source_truth == "RP_MERGED_DEGRADED":
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reasons.append("GATE_SOURCE_DEGRADED")
+
+    if source_truth in ("UNKNOWN", "SOURCE_UNKNOWN_BLOCK"):
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reasons.append("GATE_SOURCE_UNKNOWN")
 
     if flatline_count > 0:
         learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
