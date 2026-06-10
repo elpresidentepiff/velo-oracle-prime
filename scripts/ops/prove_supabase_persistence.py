@@ -184,6 +184,10 @@ def write_reports(proof: dict) -> Path:
     date_str = proof["date"]
     json_path = out_dir / f"supabase_persistence_proof_{date_str}.json"
     json_path.write_text(json.dumps(proof, indent=2))
+    # Loop 4 status artifact — consumed by check_loop_health.py (loop registry L4)
+    current_dir = ROOT / "data" / "current"
+    current_dir.mkdir(parents=True, exist_ok=True)
+    (current_dir / "persistence_proof_latest.json").write_text(json.dumps(proof, indent=2))
     c = proof["checks"]
     md = [
         f"# Supabase Persistence Proof — {date_str}",
