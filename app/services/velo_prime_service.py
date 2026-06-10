@@ -930,13 +930,17 @@ def persist_race_predictions(
             "release_day_prob": top.get("release_day_prob"),
             "place_prob": top.get("place_prob"),
             "longshot_prob": top.get("longshot_prob"),
-            # PDF Intelligence Deep-Wiring (rpdc column mapping)
-            "rpdc_release_score": float(top.get("plot_conviction", 0.0)),
-            "rpdc_cash_window_flag": bool(top.get("plot_conviction", 0.0) >= 0.7),
-            "rpdc_primary_tag": "PDF_PLOT" if top.get("plot_conviction", 0.0) >= 0.7 else None,
-            "rpdc_tags": top.get("intent_signals", [])
-            + ([f"PLOT:{top.get('plot_conviction')}"] if top.get("plot_conviction") else []),
-            "rpdc_tag_count": len(top.get("intent_signals", [])),
+            # Genuine RPDC fields — attached upstream from runner_release_candidates.
+            # PDF plot/intent intelligence is a SEPARATE feature and lives in
+            # full_analysis["pdf_plot"]; it must never overwrite RPDC columns
+            # (hijack regression fda78d4, fixed 2026-06-10 by operator mandate).
+            "rpdc_release_score": float(top.get("rpdc_release_score") or 0.0),
+            "rpdc_cash_window_flag": bool(top.get("rpdc_cash_window_flag", False)),
+            "rpdc_primary_tag": top.get("rpdc_primary_tag"),
+            "rpdc_tags": top.get("rpdc_tags") or [],
+            "rpdc_tag_count": int(top.get("rpdc_tag_count") or 0),
+            # NOTE: this inline dict is replaced below by full_analysis_data before
+            # upsert; PDF plot intelligence is preserved there under "plot_intel".
             "full_analysis": {
                 "top_horse": top.get("horse"),
                 "plot_conviction": top.get("plot_conviction"),
@@ -1000,6 +1004,9 @@ def persist_race_predictions(
             "predictions": predictions,
             "plot_intel": {
                 "plot_conviction": top.get("plot_conviction"),
+                # pdf_plot_flag preserves the signal the old (hijacked) rpdc_primary_tag
+                # column encoded as "PDF_PLOT" — kept here, never in rpdc_* columns.
+                "pdf_plot_flag": bool((top.get("plot_conviction") or 0.0) >= 0.7),
                 "or_delta": top.get("or_delta_to_best_win"),
                 "postdata_score": top.get("postdata_score"),
                 "ts_peak": top.get("ts_master"),
