@@ -1346,6 +1346,28 @@ def _fetch_race_rpdc(race_id: str) -> dict[str, dict]:
     return {r["horse_id"]: r for r in rows}
 
 
+# Day-level RPDC name-fallback map — loaded once per run, only when an exact
+# race_id join comes back empty (the June 9 synthetic-ID bypass pattern).
+# Deterministic unique-name matching only; ambiguity attaches nothing.
+_DAY_RPDC_NAME_MAP: dict | None = None
+
+
+def _get_day_rpdc_name_map(date_str: str) -> dict:
+    global _DAY_RPDC_NAME_MAP
+    if _DAY_RPDC_NAME_MAP is None:
+        from src.velo.rpdc_attach import build_name_map
+
+        rows = sb_get(f"/runner_release_candidates?run_date=eq.{date_str}&select=*")
+        _DAY_RPDC_NAME_MAP = build_name_map(rows or [])
+        log.warning(
+            "RPDC name-fallback map loaded for %s: %d unique names "
+            "(exact race_id join returned nothing — synthetic-ID card suspected)",
+            date_str,
+            len(_DAY_RPDC_NAME_MAP),
+        )
+    return _DAY_RPDC_NAME_MAP
+
+
 def main():
     global _TG_DATE, _TG_NOTIFY_ENABLED
     parser = argparse.ArgumentParser()
@@ -1708,6 +1730,11 @@ def main():
             if preds:
                 # Load RPDC data for this race to inform RPD-C tags
                 race_rpdc = _fetch_race_rpdc(race.get("race_id", ""))
+                # Deterministic fallback (June 9 pattern): exact race_id join
+                # empty -> resolve by run_date + unique normalized horse name.
+                from src.velo.rpdc_attach import resolve_runner_rpdc
+
+                _rpdc_name_map = _get_day_rpdc_name_map(date_str) if not race_rpdc else None
 
                 # RPD-C tagging — passive metadata only, no score/rank mutation
                 runner_map = {r.get("horse_name", ""): r for r in race.get("runners", [])}
@@ -1715,7 +1742,10 @@ def main():
                 for pred in preds:
                     raw_runner = runner_map.get(pred.get("horse", ""), {})
                     horse_id = raw_runner.get("horse_id")
-                    runner_rpdc = race_rpdc.get(horse_id, {})
+                    runner_rpdc, _runner_attach_method = resolve_runner_rpdc(
+                        race_rpdc, _rpdc_name_map, horse_id, pred.get("horse", "")
+                    )
+                    runner_rpdc = runner_rpdc or {}
 
                     # Spotlight Parsing — NOTE: happens AFTER score_race_velo_prime,
                     # so spotlight_score cannot affect velo_prime_prob or rank order.
@@ -1780,8 +1810,15 @@ def main():
                 tier, reasons = _apply_tie_v3_gate(top, tier, reasons, preds)
                 _apply_archetype(top, preds, tier, sec_prob)
                 _add_secondary_signals(top, reasons)
-                # Attach RPDC data to top pick (from pre-fetched race_rpdc)
-                _attach_rpdc_from_row(top, race_rpdc.get(top.get("horse_id")))
+                # Attach RPDC data to top pick — exact race_id first, then the
+                # deterministic name fallback; ambiguity attaches nothing.
+                _top_row, _top_attach_method = resolve_runner_rpdc(
+                    race_rpdc, _rpdc_name_map, top.get("horse_id"), top.get("horse")
+                )
+                _attach_rpdc_from_row(top, _top_row)
+                top["rpdc_attach_method"] = _top_attach_method
+                if _top_attach_method == "ambiguous_blocked":
+                    top["rpdc_lookup_status"] = "ambiguous_blocked"
                 # Attach BHA OR diff badge (evidence only — no scoring weight)
                 _attach_bha_or_diff(top, race.get("type") or race.get("race_type") or "")
                 # Attach BHA surface trajectory badge (evidence only — no scoring weight)
