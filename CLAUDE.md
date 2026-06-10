@@ -1,5 +1,10 @@
 # VÉLØ PRIME — Claude Code Permanent Context
 
+> **READ FIRST: `docs/current/ONE_TRUTH.md` is the operational law and wins
+> any conflict with this file.** Much of the state below is historical
+> (March–April 2026). Racing API is DECOMMISSIONED for live use (2026-05-14;
+> ONE_TRUTH law 2026-06-10) — sidecar/reference/archive only.
+
 ## Identity
 - **Project**: VÉLØ Oracle Prime — horse racing prediction and betting intelligence system
 - **Repo**: `elpresidentepiff/velo-oracle-prime` (PUBLIC on GitHub)
@@ -18,9 +23,9 @@
 | Supabase | CONNECTED | `ltbsxbvfsxtnharjvqcm.supabase.co`, eu-west-2, 54 tables |
 | Railway | CONNECTED | Project `sincere-empathy`, service `velo-oracle` |
 | GitHub | CONNECTED | `elpresidentepiff/velo-oracle-prime`, default branch `main` |
-| The Racing API | CONNECTED | Basic Auth + MCP active |
+| The Racing API | **DECOMMISSIONED (live)** | Not a live source since 2026-05-14. Sidecar/reference only — see ONE_TRUTH law |
 | Supabase MCP | CONNECTED | `mcp.supabase.com` — live |
-| Racing API MCP | CONNECTED | `mcp.theracingapi.com` — live |
+| Racing API MCP | **REMOVED** | Not live truth — do not use for race-day data |
 | Claude API | MISSING KEY | Add `ANTHROPIC_API_KEY` to `.env` |
 
 All credentials live in `.env` — never hardcode, never commit. Read with `os.getenv()`.

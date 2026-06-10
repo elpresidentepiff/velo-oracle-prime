@@ -229,7 +229,9 @@ def sb_upsert(path: str, data: dict | list, on_conflict: str) -> bool:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source", default="api")
+    # Racing API is decommissioned for live use (ONE_TRUTH law, 2026-06-10).
+    # cache = data/results/rp_results_{date}.json from parse_rp_results_capture.
+    parser.add_argument("--source", default="cache")
     parser.add_argument("--date", default=None)
     parser.add_argument("--min-coverage", type=float, default=None,
                         help="Override completeness gate threshold (0-1). Use when Irish/blocked venues are known to be inaccessible.")
@@ -423,9 +425,11 @@ def main():
                 horse_names[rid] = {"horse": "?", "course": "?", "off_time": "?", "from_db": False}
     # ── STEP 2: Load results ─────────────────────────────────
     print("\nSTEP 2: Load results")
-    source = "api"
+    source = "cache"  # Racing API not live — api only when explicitly requested
     for i, arg in enumerate(sys.argv):
         if arg == "--source" and i+1 < len(sys.argv): source = sys.argv[i+1]
+    if source == "api":
+        print("  WARNING: --source api uses the DECOMMISSIONED Racing API (ONE_TRUTH law 2026-06-10).")
     
     if source == "cache":
         results_path = ROOT / "data" / "results" / f"rp_results_{race_date.replace('-', '_')}.json"
@@ -567,8 +571,26 @@ def main():
                     break
         
         if not horse_result:
-            print(f"  [WARN] {race_id}: race matched ({provenance}) but horse {predicted_horse_id}/{info.get('horse')} not found")
-            no_result.append(race_id)
+            result_winner = result.get("winner_horse") or ""
+            if result_winner:
+                # Horse absent from result but race resolved → MISS (NR or data error)
+                winner_sp = float(result.get("winner_sp") or 0)
+                if winner_sp > 0 and winner_sp <= 3.0: mc = "short_fav_won"
+                elif winner_sp > 10.0: mc = "outsider_won"
+                else: mc = "mid_priced_won"
+                misses.append(race_id)
+                all_matched.append({
+                    "race_id": race_id, "course": result.get("course",""), "off": result.get("off",""),
+                    "predicted": info.get("horse","?"), "predicted_id": predicted_horse_id,
+                    "reconciliation_provenance": provenance + "_HORSE_ABSENT",
+                    "actual_winner": result.get("winner_id","?"), "actual_name": result_winner,
+                    "winner_sp": winner_sp, "velo_prime_prob": vpp,
+                    "outcome": "MISS", "miss_class": mc, "top3": result.get("top3_names",[]),
+                })
+                print(f"  MISS({mc})             {result.get('course',''):<22} {result.get('off','')}  pred={info.get('horse','?'):<30} [HORSE_ABSENT→MISS]")
+            else:
+                print(f"  [WARN] {race_id}: race matched ({provenance}) but horse {predicted_horse_id}/{info.get('horse')} not found")
+                no_result.append(race_id)
             continue
 
         # ── Step 3.4: Non-runner check ────────────────────────────────────────
