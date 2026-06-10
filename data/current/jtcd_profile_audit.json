@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-06-10T22:39:02.218204+00:00",
+  "read_only_confirmed": true,
+  "sidecar_only": true,
+  "tables": {
+    "jockey_course_profile": {
+      "rows": 75113,
+      "cols": [
+        "jockey",
+        "course",
+        "wins",
+        "runs",
+        "raw_sr",
+        "adj_sr",
+        "confidence",
+        "jtc_signal"
+      ]
+    },
+    "jockey_dist_profile": {
+      "rows": 67500,
+      "cols": [
+        "jockey",
+        "dist_band",
+        "wins",
+        "runs",
+        "raw_sr",
+        "adj_sr",
+        "confidence",
+        "jtc_signal"
+      ]
+    },
+    "trainer_course_profile": {
+      "rows": 82392,
+      "cols": [
+        "trainer",
+        "course",
+        "wins",
+        "runs",
+        "raw_sr",
+        "adj_sr",
+        "confidence",
+        "jtc_signal"
+      ]
+    },
+    "trainer_dist_profile": {
+      "rows": 90927,
+      "cols": [
+        "trainer",
+        "dist_band",
+        "wins",
+        "runs",
+        "raw_sr",
+        "adj_sr",
+        "confidence",
+        "jtc_signal"
+      ]
+    },
+    "trainer_jockey_profile": {
+      "rows": 178608,
+      "cols": [
+        "trainer",
+        "jockey",
+        "wins",
+        "runs",
+        "raw_sr",
+        "adj_sr",
+        "confidence",
+        "jtc_signal"
+      ]
+    }
+  },
+  "total_rows": 494540,
+  "card_join_coverage": {
+    "card_date": "2026-06-10",
+    "trainers": "183/204",
+    "jockeys": "148/164",
+    "courses": "5/5",
+    "trainer_jockey_pairs": "202/281",
+    "unmatched_courses": []
+  },
+  "blockers": {
+    "course_id_mapping": "MOOT \u2014 profiles key on names, not IDs; '(AW)' suffix handled by normalizer",
+    "dist_f_format": "dist_band strings in profiles; map card dist_f to bands at attach time",
+    "leakage": "lifetime aggregates; per-date rebuild must lag by one day (guard documented)",
+    "min_sample": "use confidence column (already computed) \u2014 suppress n<10 joins"
+  },
+  "status": "JTC_D_PARTIAL"
+}
