@@ -357,12 +357,18 @@ class TestCronVerificationReport:
         assert "AUTOMATION_BROKEN" in report["critical_flags"]
 
     def test_data_gap_detected_on_live_repo(self):
-        """Live repo has a 10-day data gap — must be flagged DATA_GAP_ACTIVE."""
+        """STALE_POINT_IN_TIME (quarantined 2026-06-10): this test asserted the
+        live repo HAD a 10-day data gap — true during the April incident, false
+        once daily runs resumed. A unit test must not require an incident state.
+        Kept for the detector contract: status must be a known label either way."""
         from velo_cron_verification_report import build_report
         report = build_report()
         dg = report["sections"]["data_gap"]
-        assert dg["status"] == "DATA_GAP_ACTIVE"
-        assert "DATA_GAP_ACTIVE" in report["critical_flags"]
+        assert dg["status"] in ("DATA_GAP_ACTIVE", "OK", "NO_GAP", "DATA_CURRENT"), (
+            f"unknown data_gap status label: {dg['status']}"
+        )
+        if dg["status"] == "DATA_GAP_ACTIVE":
+            assert "DATA_GAP_ACTIVE" in report["critical_flags"]
 
     def test_report_is_json_serialisable(self):
         """Report dict must be fully JSON-serialisable."""

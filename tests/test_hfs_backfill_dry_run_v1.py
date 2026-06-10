@@ -1,3 +1,16 @@
+# STALE_LIVE_PATH QUARANTINE (2026-06-10):
+# This is an HFS-era backfill SIMULATOR (zero test functions), not a test —
+# it imports app.services.model_manager.get_model_manager, which no longer
+# exists on the live path. Quarantined, not deleted; promote to scripts/ or
+# delete in the approved archive sweep.
+import pytest
+
+pytest.skip(
+    "STALE_LIVE_PATH: HFS-era backfill simulator, not a test "
+    "(get_model_manager import no longer on live path)",
+    allow_module_level=True,
+)
+
 import json
 import uuid
 import logging
