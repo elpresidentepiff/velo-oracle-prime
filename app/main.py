@@ -1297,6 +1297,46 @@ async def dashboard():
     return FileResponse(str(html_path), media_type="text/html")
 
 
+@app.get("/api/old-velo-verdicts")
+async def old_velo_verdicts(date: str = Query(default=None)):
+    """Old VELO lane for the dashboard: top pick per race from the day's
+    local verdict backup. Frontend contract = MOCK_DATA shape in index.html
+    (route was missing — frontend shipped 2026-06-08 ahead of backend)."""
+    import datetime as _dt
+
+    d = date or _dt.date.today().isoformat()
+    path = pathlib.Path(__file__).parent.parent / "data" / f"velo_prime_verdicts_{d.replace('-', '_')}.json"
+    if not path.exists():
+        return {"meta": {"requested_date": d, "record_count": 0, "source": "missing"}, "verdicts": []}
+    races = json.loads(path.read_text())
+    races = races if isinstance(races, list) else races.get("races", [])
+    verdicts = []
+    for r in races:
+        top = r.get("top") or {}
+        verdicts.append({
+            "race_id": str(r.get("race_id", "")),
+            "course": r.get("course", ""),
+            "off_time": r.get("off_time", ""),
+            "horse": top.get("horse", ""),
+            "tier": r.get("tier", ""),
+            "decision_tier": r.get("tier", ""),
+            "confidence_level": top.get("confidence_level") or "low",
+            "velo_prime_prob": top.get("velo_prime_prob"),
+            "prob_gap": top.get("prob_gap") or 0.0,
+            "market_deception_score": top.get("market_deception_score"),
+            "assigned_product": top.get("assigned_product"),
+            "router_reasons": top.get("router_reasons") or [],
+            "execution_allowed": top.get("execution_allowed"),
+            "place_prob": top.get("place_prob"),
+            "archetype_label": top.get("race_archetype") or "",
+        })
+    return {
+        "meta": {"requested_date": d, "loaded_date": d, "source": "local_json",
+                 "record_count": len(verdicts), "date_mismatch": False},
+        "verdicts": verdicts,
+    }
+
+
 @app.get("/api/governed-card")
 async def governed_card(date: str = Query(default=None), allow_fallback: bool = Query(default=False)):
     """
