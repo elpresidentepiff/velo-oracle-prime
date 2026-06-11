@@ -1,0 +1,637 @@
+{
+  "generated_at": "2026-06-11T01:13:59.250145+00:00",
+  "date": "2026-06-09",
+  "pdf_dir": "incoming/2026-06-09-pdfs",
+  "docs": 29,
+  "ground_truth_courses": {
+    "salisbury": 147,
+    "sligo": 174,
+    "southwell": 100,
+    "carlisle": 101,
+    "brighton": 91
+  },
+  "summary": {
+    "current": {
+      "docs": 29,
+      "parse_ok": 29,
+      "runtime_total": 17.014,
+      "pages": 105,
+      "names_expected": 3577,
+      "names_found": 1926,
+      "race_times_found": 162,
+      "failures": [],
+      "parse_success_rate": 1.0,
+      "avg_runtime_sec": 0.59,
+      "name_recall": 0.5384
+    },
+    "liteparse": {
+      "docs": 29,
+      "parse_ok": 29,
+      "runtime_total": 121.33599999999998,
+      "pages": 105,
+      "names_expected": 3577,
+      "names_found": 1926,
+      "race_times_found": 162,
+      "failures": [],
+      "parse_success_rate": 1.0,
+      "avg_runtime_sec": 4.18,
+      "name_recall": 0.5384
+    },
+    "null": {
+      "docs": 29,
+      "parse_ok": 0,
+      "runtime_total": 0.0,
+      "pages": 0,
+      "names_expected": 3577,
+      "names_found": 0,
+      "race_times_found": 0,
+      "failures": [],
+      "parse_success_rate": 0.0,
+      "avg_runtime_sec": 0.0,
+      "name_recall": 0.0
+    }
+  },
+  "per_doc": [
+    {
+      "file": "BRI_20260609_00_00_F_0010_XX_Brighton.pdf",
+      "course": "brighton",
+      "expected_names": 91,
+      "current": {
+        "ok": true,
+        "runtime": 0.088,
+        "name_recall": "35/91"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 2.095,
+        "name_recall": "35/91"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/91"
+      }
+    },
+    {
+      "file": "BRI_20260609_00_00_F_0011_XX_Brighton.pdf",
+      "course": "brighton",
+      "expected_names": 91,
+      "current": {
+        "ok": true,
+        "runtime": 0.244,
+        "name_recall": "61/91"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 4.065,
+        "name_recall": "61/91"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/91"
+      }
+    },
+    {
+      "file": "BRI_20260609_00_00_F_0012_XX_Brighton.pdf",
+      "course": "brighton",
+      "expected_names": 91,
+      "current": {
+        "ok": true,
+        "runtime": 0.624,
+        "name_recall": "62/91"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 3.434,
+        "name_recall": "62/91"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/91"
+      }
+    },
+    {
+      "file": "BRI_20260609_00_00_F_0015_OR_Brighton.pdf",
+      "course": "brighton",
+      "expected_names": 91,
+      "current": {
+        "ok": true,
+        "runtime": 0.53,
+        "name_recall": "61/91"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.353,
+        "name_recall": "61/91"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/91"
+      }
+    },
+    {
+      "file": "BRI_20260609_00_00_F_0016_XX_Brighton.pdf",
+      "course": "brighton",
+      "expected_names": 91,
+      "current": {
+        "ok": true,
+        "runtime": 0.649,
+        "name_recall": "61/91"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 3.488,
+        "name_recall": "61/91"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/91"
+      }
+    },
+    {
+      "file": "BRI_20260609_00_00_F_0032_TS_Brighton.pdf",
+      "course": "brighton",
+      "expected_names": 91,
+      "current": {
+        "ok": true,
+        "runtime": 0.311,
+        "name_recall": "61/91"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.564,
+        "name_recall": "61/91"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/91"
+      }
+    },
+    {
+      "file": "CRL_20260609_00_00_F_0010_XX_Carlisle.pdf",
+      "course": "carlisle",
+      "expected_names": 101,
+      "current": {
+        "ok": true,
+        "runtime": 0.062,
+        "name_recall": "25/101"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.145,
+        "name_recall": "25/101"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/101"
+      }
+    },
+    {
+      "file": "CRL_20260609_00_00_F_0012_XX_Carlisle.pdf",
+      "course": "carlisle",
+      "expected_names": 101,
+      "current": {
+        "ok": true,
+        "runtime": 0.566,
+        "name_recall": "63/101"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 3.493,
+        "name_recall": "63/101"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/101"
+      }
+    },
+    {
+      "file": "CRL_20260609_00_00_F_0015_OR_Carlisle.pdf",
+      "course": "carlisle",
+      "expected_names": 101,
+      "current": {
+        "ok": true,
+        "runtime": 0.396,
+        "name_recall": "63/101"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.458,
+        "name_recall": "63/101"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/101"
+      }
+    },
+    {
+      "file": "CRL_20260609_00_00_F_0016_XX_Carlisle.pdf",
+      "course": "carlisle",
+      "expected_names": 101,
+      "current": {
+        "ok": true,
+        "runtime": 0.698,
+        "name_recall": "63/101"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 2.975,
+        "name_recall": "63/101"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/101"
+      }
+    },
+    {
+      "file": "CRL_20260609_00_00_F_0032_TS_Carlisle.pdf",
+      "course": "carlisle",
+      "expected_names": 101,
+      "current": {
+        "ok": true,
+        "runtime": 0.312,
+        "name_recall": "63/101"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.735,
+        "name_recall": "63/101"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/101"
+      }
+    },
+    {
+      "file": "SAL_20260609_00_00_F_0010_XX_Salisbury.pdf",
+      "course": "salisbury",
+      "expected_names": 147,
+      "current": {
+        "ok": true,
+        "runtime": 0.053,
+        "name_recall": "40/147"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.614,
+        "name_recall": "40/147"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/147"
+      }
+    },
+    {
+      "file": "SAL_20260609_00_00_F_0011_XX_Salisbury.pdf",
+      "course": "salisbury",
+      "expected_names": 147,
+      "current": {
+        "ok": true,
+        "runtime": 0.201,
+        "name_recall": "75/147"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 5.852,
+        "name_recall": "75/147"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/147"
+      }
+    },
+    {
+      "file": "SAL_20260609_00_00_F_0012_XX_Salisbury.pdf",
+      "course": "salisbury",
+      "expected_names": 147,
+      "current": {
+        "ok": true,
+        "runtime": 0.777,
+        "name_recall": "76/147"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.974,
+        "name_recall": "76/147"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/147"
+      }
+    },
+    {
+      "file": "SAL_20260609_00_00_F_0015_OR_Salisbury.pdf",
+      "course": "salisbury",
+      "expected_names": 147,
+      "current": {
+        "ok": true,
+        "runtime": 0.423,
+        "name_recall": "75/147"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 14.154,
+        "name_recall": "75/147"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/147"
+      }
+    },
+    {
+      "file": "SAL_20260609_00_00_F_0016_XX_Salisbury.pdf",
+      "course": "salisbury",
+      "expected_names": 147,
+      "current": {
+        "ok": true,
+        "runtime": 1.256,
+        "name_recall": "75/147"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.27,
+        "name_recall": "75/147"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/147"
+      }
+    },
+    {
+      "file": "SAL_20260609_00_00_F_0032_TS_Salisbury.pdf",
+      "course": "salisbury",
+      "expected_names": 147,
+      "current": {
+        "ok": true,
+        "runtime": 0.621,
+        "name_recall": "75/147"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 11.594,
+        "name_recall": "75/147"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/147"
+      }
+    },
+    {
+      "file": "SLI_20260609_00_00_F_0010_XX_Sligo.pdf",
+      "course": "sligo",
+      "expected_names": 174,
+      "current": {
+        "ok": true,
+        "runtime": 0.076,
+        "name_recall": "23/174"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 1.371,
+        "name_recall": "23/174"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/174"
+      }
+    },
+    {
+      "file": "SLI_20260609_00_00_F_0011_XX_Sligo.pdf",
+      "course": "sligo",
+      "expected_names": 174,
+      "current": {
+        "ok": true,
+        "runtime": 0.373,
+        "name_recall": "106/174"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 0.947,
+        "name_recall": "106/174"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/174"
+      }
+    },
+    {
+      "file": "SLI_20260609_00_00_F_0012_XX_Sligo.pdf",
+      "course": "sligo",
+      "expected_names": 174,
+      "current": {
+        "ok": true,
+        "runtime": 1.533,
+        "name_recall": "106/174"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 3.764,
+        "name_recall": "106/174"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/174"
+      }
+    },
+    {
+      "file": "SLI_20260609_00_00_F_0015_OR_Sligo.pdf",
+      "course": "sligo",
+      "expected_names": 174,
+      "current": {
+        "ok": true,
+        "runtime": 1.107,
+        "name_recall": "106/174"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 12.982,
+        "name_recall": "106/174"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/174"
+      }
+    },
+    {
+      "file": "SLI_20260609_00_00_F_0016_XX_Sligo.pdf",
+      "course": "sligo",
+      "expected_names": 174,
+      "current": {
+        "ok": true,
+        "runtime": 1.54,
+        "name_recall": "107/174"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 4.67,
+        "name_recall": "107/174"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/174"
+      }
+    },
+    {
+      "file": "SLI_20260609_00_00_F_0032_TS_Sligo.pdf",
+      "course": "sligo",
+      "expected_names": 174,
+      "current": {
+        "ok": true,
+        "runtime": 0.847,
+        "name_recall": "106/174"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 11.341,
+        "name_recall": "106/174"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/174"
+      }
+    },
+    {
+      "file": "STH_20260609_00_00_F_0010_XX_Southwell.pdf",
+      "course": "southwell",
+      "expected_names": 100,
+      "current": {
+        "ok": true,
+        "runtime": 0.088,
+        "name_recall": "33/100"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 2.442,
+        "name_recall": "33/100"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/100"
+      }
+    },
+    {
+      "file": "STH_20260609_00_00_F_0011_XX_Southwell.pdf",
+      "course": "southwell",
+      "expected_names": 100,
+      "current": {
+        "ok": true,
+        "runtime": 0.272,
+        "name_recall": "61/100"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 4.764,
+        "name_recall": "61/100"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/100"
+      }
+    },
+    {
+      "file": "STH_20260609_00_00_F_0012_XX_Southwell.pdf",
+      "course": "southwell",
+      "expected_names": 100,
+      "current": {
+        "ok": true,
+        "runtime": 0.993,
+        "name_recall": "61/100"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 5.127,
+        "name_recall": "61/100"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/100"
+      }
+    },
+    {
+      "file": "STH_20260609_00_00_F_0015_OR_Southwell.pdf",
+      "course": "southwell",
+      "expected_names": 100,
+      "current": {
+        "ok": true,
+        "runtime": 0.7,
+        "name_recall": "61/100"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 3.433,
+        "name_recall": "61/100"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/100"
+      }
+    },
+    {
+      "file": "STH_20260609_00_00_F_0016_XX_Southwell.pdf",
+      "course": "southwell",
+      "expected_names": 100,
+      "current": {
+        "ok": true,
+        "runtime": 0.975,
+        "name_recall": "61/100"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 4.97,
+        "name_recall": "61/100"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/100"
+      }
+    },
+    {
+      "file": "STH_20260609_00_00_F_0032_TS_Southwell.pdf",
+      "course": "southwell",
+      "expected_names": 100,
+      "current": {
+        "ok": true,
+        "runtime": 0.699,
+        "name_recall": "61/100"
+      },
+      "liteparse": {
+        "ok": true,
+        "runtime": 2.262,
+        "name_recall": "61/100"
+      },
+      "null": {
+        "ok": false,
+        "runtime": 0.0,
+        "name_recall": "0/100"
+      }
+    }
+  ],
+  "read_only_confirmed": true
+}
