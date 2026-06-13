@@ -111,7 +111,14 @@ jobs:
             echo "ACTION_REQUIRED=true" >> $GITHUB_ENV
           else
             echo "✅ Baseline found"
-            echo "ACTION_REQUIRED=false" >> $GITHUB_ENV
+            # Skip regression if all shards were no-ops (no Supabase in CI)
+            races=$(python -c "import json; d=json.load(open('/tmp/merged.json')); print(d.get('races_processed', 0))")
+            if [ "$races" -eq 0 ]; then
+              echo "⚠️  All shards skipped (no Supabase credentials) — skipping regression check"
+              echo "ACTION_REQUIRED=true" >> $GITHUB_ENV
+            else
+              echo "ACTION_REQUIRED=false" >> $GITHUB_ENV
+            fi
           fi
       
       - name: Generate report
