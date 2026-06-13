@@ -51,12 +51,13 @@ International prerace arenas (`scripts/audit_international_*`) · HK/FR feature 
 ## What must happen BEFORE scoring
 1. **Governed Task Runner mandatory:** All session commands must run via `python scripts/ops/governed_task_runner.py`.
 2. Hardening log verification (`python scripts/ops/verify_hardening_state.py`) passes.
-3. `worktree_safety_runner.py` (chained) passes.
-3. `task_contract_runner.py` (chained) preflight passes.
-4. `side_effect_sentinel.py` (chained) audit passes.
-5. `python scripts/ops/velo_session_start_check.py` passes.
-3. RP index + race pages captured; injection parsed; `validate_rp_injection.py` exits 0.
-3. `build_racecard_merged_from_injection.py` and `build_rpdc_daily.py` run from the SAME injection path (`FINAL_CAPTURE_LABEL` chosen once at Step 4).
+3. Branch protection readiness verification (`python scripts/ops/verify_branch_protection_readiness.py`) passes.
+4. `worktree_safety_runner.py` (chained) passes.
+5. `task_contract_runner.py` (chained) preflight passes.
+6. `side_effect_sentinel.py` (chained) audit passes.
+7. `python scripts/ops/velo_session_start_check.py` passes.
+8. RP index + race pages captured; injection parsed; `validate_rp_injection.py` exits 0.
+9. `build_racecard_merged_from_injection.py` and `build_rpdc_daily.py` run from the SAME injection path (`FINAL_CAPTURE_LABEL` chosen once at Step 4).
 
 ## What must happen AFTER results (~21:00 BST)
 Steps 10–20 in order (see RACE_DAY_RUNBOOK.md). `DAY COMPLETE` only when all pass plus final Council + Mission Control refresh.
