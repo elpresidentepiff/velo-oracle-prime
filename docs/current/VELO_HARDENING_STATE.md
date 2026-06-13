@@ -222,7 +222,7 @@ Governed Smoke Test (`SMOKE-TEST`) passed on real repository state.
 
 **Status:** COMPLETE
 **Branch:** "stabilization/prime-hardening-v1"
-**Commit:** "PENDING"
+**Commit:** "b49ef00"
 
 ### Purpose
 
