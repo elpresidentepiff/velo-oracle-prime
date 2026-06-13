@@ -2,9 +2,9 @@ name: Governed Safety Perimeter Audit
 
 on:
   push:
-    branches: [ stabilization/prime-hardening-v1 ]
+    branches: [ main, stabilization/prime-hardening-v1 ]
   pull_request:
-    branches: [ stabilization/prime-hardening-v1 ]
+    branches: [ main, stabilization/prime-hardening-v1 ]
 
 jobs:
   safety-audit:
