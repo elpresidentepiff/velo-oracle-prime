@@ -28,6 +28,7 @@ Silent failures are strictly forbidden. The system must report one of the follow
 - `CAPTURE_LOGIN_UNKNOWN`: Page reached but login indicators not detected.
 - `CAPTURE_DOM_EMPTY`: Page reached but returned no content.
 - `CAPTURE_SCREENSHOT_FAILED`: HTML captured but visual proof failed.
+- `CAPTURE_DOWNLOAD_MISSING`: Manifest expected a file (HTML/PNG) that is missing from disk.
 - `CAPTURE_TIMEOUT`: Browser timed out during navigation.
 - `CAPTURE_BLOCKED`: Bot detection or IP block detected.
 - `CAPTURE_UNKNOWN_ERROR`: Catch-all for unexpected exceptions.

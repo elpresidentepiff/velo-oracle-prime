@@ -102,15 +102,24 @@ class CaptureProof:
         finished_at = _utc_now()
         
         # Determine final status string
-        final_status = self.status
-        if self.status == "OK" or self.status == "PASS":
-            final_status = "PASS"
-        elif not self.errors and self.pages_reached > 0:
-            final_status = "PASS"
-        elif self.errors and self.pages_reached > 0:
-            final_status = "PARTIAL"
-        elif self.errors:
-            final_status = "FAIL"
+        # Default logic: 
+        # 1. If errors exist and no pages reached -> FAIL
+        # 2. If errors exist and some pages reached -> PARTIAL
+        # 3. If no errors and all pages reached -> PASS
+        # 4. If no errors and some pages reached -> PARTIAL
+        
+        if self.errors:
+            if self.pages_reached > 0:
+                final_status = "PARTIAL"
+            else:
+                final_status = "FAIL"
+        else:
+            if self.status in ["OK", "PASS"] or (self.pages_reached == self.url_count and self.url_count > 0):
+                final_status = "PASS"
+            elif self.pages_reached > 0:
+                final_status = "PARTIAL"
+            else:
+                final_status = "FAIL"
             
         data = {
             "date": self.date,
@@ -199,10 +208,24 @@ def audit_manifest(date_str: str, manifest_path: Path):
             label = cap.get("title") or cap.get("source_url")
             if cap.get("status") == "PASS":
                 proof.pages_reached += 1
-                if cap.get("screenshot_path"):
-                    proof.add_artifact(Path(cap["screenshot_path"]), f"capture_screenshot_{label}")
-                if cap.get("html_path"):
-                    proof.add_artifact(Path(cap["html_path"]), f"capture_html_{label}")
+                
+                # Check for expected files
+                screenshot_file = cap.get("screenshot_path")
+                html_file = cap.get("html_path")
+                
+                if screenshot_file:
+                    sp = Path(screenshot_file)
+                    if sp.exists():
+                        proof.add_artifact(sp, f"capture_screenshot_{label}")
+                    else:
+                        proof.add_error(CAPTURE_DOWNLOAD_MISSING, f"Screenshot missing: {screenshot_file}")
+                
+                if html_file:
+                    hp = Path(html_file)
+                    if hp.exists():
+                        proof.add_artifact(hp, f"capture_html_{label}")
+                    else:
+                        proof.add_error(CAPTURE_DOWNLOAD_MISSING, f"HTML file missing: {html_file}")
             else:
                 proof.add_error(CAPTURE_PARTIAL, f"Failed URL: {cap.get('source_url')} - {cap.get('error')}")
                 

@@ -2,7 +2,7 @@ import pytest
 import json
 import os
 from pathlib import Path
-from scripts.ops.capture_proof import CaptureProof, CAPTURE_UNKNOWN_ERROR
+from scripts.ops.capture_proof import CaptureProof, CAPTURE_UNKNOWN_ERROR, CAPTURE_DOWNLOAD_MISSING, audit_manifest
 
 def test_capture_proof_schema():
     """1. JSON schema/required fields."""
@@ -69,3 +69,46 @@ def test_import_without_browser():
     """6. Script can be imported without launching browser."""
     # If it imported in this test file, it passed.
     assert CaptureProof is not None
+
+def test_missing_download_detection(tmp_path):
+    """1. missing expected download/file produces CAPTURE_DOWNLOAD_MISSING
+       2. missing expected download/file does not produce CAPTURE_OK"""
+    manifest_data = {
+        "url_count": 1,
+        "captures": [
+            {
+                "source_url": "https://example.com",
+                "status": "PASS",
+                "html_path": str(tmp_path / "non_existent.html")
+            }
+        ]
+    }
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest_data))
+    
+    result = audit_manifest("2026-06-11", manifest_path)
+    
+    assert result["status"] in ["FAIL", "PARTIAL"]
+    assert result["status"] != "PASS"
+    assert any(err["code"] == CAPTURE_DOWNLOAD_MISSING for err in result["errors"])
+
+def test_empty_expected_downloads_valid(tmp_path):
+    """3. no expected downloads remains valid if manifest declares zero expected downloads"""
+    manifest_data = {
+        "url_count": 1,
+        "captures": [
+            {
+                "source_url": "https://example.com",
+                "status": "PASS"
+                # No html_path or screenshot_path
+            }
+        ]
+    }
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest_data))
+    
+    result = audit_manifest("2026-06-11", manifest_path)
+    
+    assert result["status"] == "PASS"
+    assert result["errors"] == []
+
