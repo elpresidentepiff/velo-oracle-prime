@@ -98,7 +98,7 @@ python scripts/ops/governed_task_runner.py \
 
 **Status:** COMPLETE
 **Branch:** "stabilization/prime-hardening-v1"
-**Commit:** "PENDING"
+**Commit:** "6a47fdc"
 
 ### Purpose
 
