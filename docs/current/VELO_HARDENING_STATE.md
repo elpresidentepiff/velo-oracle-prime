@@ -218,6 +218,39 @@ Governed Smoke Test (`SMOKE-TEST`) passed on real repository state.
 - NO_MODEL_PROMOTION
 - NO_TELEGRAM_SEND
 
+## P2-0 — Production Transition Readiness Audit
+
+**Status:** COMPLETE
+**Branch:** "stabilization/prime-hardening-v1"
+**Commit:** "PENDING"
+
+### Purpose
+
+P2-0 verifies that the governance branch is fully prepared for transition to production. It audits policy alignment, CI stability, and risk isolation, providing a formal sign-off on the safety perimeter's readiness for merge into `main`.
+
+### Behavior Verified
+
+1. **Readiness Audit:** Confirmed all P0 and P1 control layers are active and documented.
+2. **Transition Protocol:** Established the definitive merge path from hardening to `main`.
+3. **Risk Management:** Documented a formal rollback plan and post-merge verification checklist.
+4. **Environment Hygiene:** Proved that runtime artifacts are properly quarantined and do not contaminate safety checks.
+
+### Final Proof
+
+Production Transition Readiness Audit (`P2-0`) passed with 100% compliance across checklist items.
+
+### Final Classification
+
+- PRODUCTION_TRANSITION_READINESS_ACTIVE
+- GOVERNANCE_PERIMETER_PROVEN
+- MERGE_PATH_DOCUMENTED
+- ROLLBACK_PLAN_DOCUMENTED
+- POST_MERGE_CHECKS_DOCUMENTED
+- NO_LIVE_SCORING_CHANGE
+- NO_SUPABASE_WRITES
+- NO_MODEL_PROMOTION
+- NO_TELEGRAM_SEND
+
 ## Hardening Summary
 
 The VÉLØ safety perimeter now covers:
