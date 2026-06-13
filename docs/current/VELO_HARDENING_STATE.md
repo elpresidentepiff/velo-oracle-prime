@@ -189,7 +189,7 @@ Governed safety checks are documented as required for all merges to protected br
 
 **Status:** COMPLETE
 **Branch:** "stabilization/prime-hardening-v1"
-**Commit:** "PENDING"
+**Commit:** "58617fe"
 
 ### Purpose
 
