@@ -1,0 +1,28 @@
+{
+  "task_id": "P1-1",
+  "allowed_paths": [
+    "scripts/ops/governed_task_runner.py",
+    "tests/test_governed_task_runner.py",
+    "docs/current/GOVERNED_TASK_RUNNER.md",
+    "ops/task_contracts/P1-1.json",
+    "docs/current/ONE_TRUTH.md"
+  ],
+  "forbidden_paths": [
+    "src/velo/scoring/",
+    "src/velo/models/",
+    "src/velo/supabase/",
+    "src/velo/telegram/"
+  ],
+  "forbidden_keywords": [
+    "score_race",
+    "supabase",
+    "telegram",
+    "model_promotion"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND"
+  ]
+}

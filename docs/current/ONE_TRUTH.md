@@ -49,10 +49,11 @@ International prerace arenas (`scripts/audit_international_*`) · HK/FR feature 
 - **Local test suite:** cannot run — pytest 6.2.5 incompatible with pytest-asyncio 1.3.0; 3 test modules have import drift.
 
 ## What must happen BEFORE scoring
-1. `python scripts/ops/worktree_safety_runner.py --mode audit --expected-branch stabilization/prime-hardening-v1` passes.
-2. Task Contract preflight (`scripts/ops/task_contract_runner.py --mode preflight`) passes for the session mission.
-3. Side-Effect Sentinel audit (`scripts/ops/side_effect_sentinel.py --mode audit`) passes for the intended command.
-4. `python scripts/ops/velo_session_start_check.py` passes.
+1. **Governed Task Runner mandatory:** All session commands must run via `python scripts/ops/governed_task_runner.py`.
+2. `worktree_safety_runner.py` (chained) passes.
+3. `task_contract_runner.py` (chained) preflight passes.
+4. `side_effect_sentinel.py` (chained) audit passes.
+5. `python scripts/ops/velo_session_start_check.py` passes.
 3. RP index + race pages captured; injection parsed; `validate_rp_injection.py` exits 0.
 3. `build_racecard_merged_from_injection.py` and `build_rpdc_daily.py` run from the SAME injection path (`FINAL_CAPTURE_LABEL` chosen once at Step 4).
 
