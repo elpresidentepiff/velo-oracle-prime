@@ -4,8 +4,8 @@ Utility to generate and save pipeline run summary artifacts.
 import json
 import os
 import pathlib
-import time
-from datetime import datetime, UTC
+from datetime import UTC, datetime
+
 
 def write_summary(
     *,
@@ -19,7 +19,7 @@ def write_summary(
     artifact_path: pathlib.Path | None = None
 ):
     from app.core.runtime_env import get_commit_sha
-    
+
     summary = {
         "pipeline": pipeline_type,
         "target_date": target_date,
@@ -35,10 +35,10 @@ def write_summary(
         "degraded_reasons": degraded_reasons or [],
         "error": error
     }
-    
+
     if artifact_path:
         artifact_path.parent.mkdir(parents=True, exist_ok=True)
         artifact_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
         print(f"Pipeline summary written to: {artifact_path}")
-    
+
     return summary

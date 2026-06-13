@@ -479,7 +479,7 @@ async def lifespan(app: FastAPI):
     _missing = [name for name, p in _canonical_paths.items() if not p.exists()]
     if _missing:
         raise RuntimeError(f"[startup] BLOCKED: Missing canonical pipeline wrappers: {', '.join(_missing)}")
-    
+
     # ── Batch 3: Safety Enforcement & Import Guards ──────────────────────────
     from app.core.safety_guards import run_safety_scan
     if not run_safety_scan():
@@ -488,12 +488,12 @@ async def lifespan(app: FastAPI):
     # Strict Mode Assertions
     _exec_mode = os.getenv("VELO_EXECUTION_MODE", "PAPER").upper()
     _bf_mode = os.getenv("BETFAIR_MODE", "PAPER").upper()
-    
+
     if _exec_mode == "LIVE":
         raise RuntimeError("[startup] BLOCKED: VELO_EXECUTION_MODE=LIVE is forbidden in this environment.")
     if _bf_mode == "LIVE":
         raise RuntimeError("[startup] BLOCKED: BETFAIR_MODE=LIVE is forbidden in this environment.")
-    
+
     logger.info(
         "[startup] Truth Fingerprint: SCORE=%s SIGMA=%s G_MODE=%s EXEC_MODE=%s BF_MODE=%s",
         "score_daily_runner.py",
@@ -776,7 +776,7 @@ async def runtime_truth():
     """
     from app.core.runtime_env import get_commit_sha
     from app.core.safety_guards import run_safety_scan
-    
+
     return {
         "scoring_path": "app/pipelines/score_daily_runner.py",
         "sigma_path": "app/pipelines/sigma_runner.py",
@@ -1025,10 +1025,10 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     except Exception:
         pass
 
-    trigger_source = body.get("trigger_source") or "api_manual"
+    body.get("trigger_source") or "api_manual"
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
-    source_date = target_date or utc_now().strftime("%Y-%m-%d")
+    target_date or utc_now().strftime("%Y-%m-%d")
     raise HTTPException(status_code=501, detail="sigma-daily script (close_sigma_loops.py) is archived/disabled.")
 
 
@@ -1101,7 +1101,7 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     target_date = date or utc_now().strftime("%Y-%m-%d")
     date_tag = target_date.replace("-", "_")
     root = pathlib.Path(__file__).parent.parent
-    
+
     # 1. Base Truths
     res = {
         "operational_date": target_date,
@@ -1203,7 +1203,7 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
             res["supabase_readback_verified"] = "PASS"
         else:
             res["supabase_persistence_status"] = "DISCONNECTED"
-    
+
     # 5. Telegram Status
     if os.getenv("TELEGRAM_BOT_TOKEN"):
         res["telegram_status"] = "ACTIVE"
@@ -2250,7 +2250,7 @@ async def predict_race(race_data: dict, persist: bool = False, authorized: bool 
                 second = predictions[1] if len(predictions) > 1 else {}
                 sec_prob = float(second.get("velo_prime_prob") or 0)
                 tier, _ = synthesize_decision(top, sec_prob, field_size=len(predictions))
-            
+
             from scripts.ops.runtime_truth_support import get_commit_sha
             commit_sha = get_commit_sha()
             persist_race_predictions(norm_race, predictions, decision_tier=tier, commit_sha=commit_sha)
@@ -2286,8 +2286,9 @@ async def predict_full(race_data: dict, authorized: bool = Depends(verify_api_ke
 async def get_narrative(race_id: str, authorized: bool = Depends(verify_api_key)):
     """Get narrative intelligence for race"""
     try:
-        from app.intelligence.chains.narrative_chain import run_narrative_chain
         from workers.racing_api_fetcher import RacingAPIFetcher
+
+        from app.intelligence.chains.narrative_chain import run_narrative_chain
 
         fetcher = RacingAPIFetcher()
         race = fetcher.get_race(race_id)
@@ -2302,8 +2303,9 @@ async def get_narrative(race_id: str, authorized: bool = Depends(verify_api_key)
 async def get_market_intel(race_id: str, authorized: bool = Depends(verify_api_key)):
     """Get market manipulation intelligence"""
     try:
-        from app.intelligence.chains.market_chain import run_market_chain
         from workers.racing_api_fetcher import RacingAPIFetcher
+
+        from app.intelligence.chains.market_chain import run_market_chain
 
         fetcher = RacingAPIFetcher()
         race = fetcher.get_race(race_id)

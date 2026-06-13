@@ -3,14 +3,14 @@ SQPE v17 Service — Clean Loader
 Loads and executes the canonical SQPE v17 model.
 Replaces the quarantined model_manager for production scoring.
 """
-import math
 import logging
-import joblib
+import math
 import re
+from pathlib import Path
+
+import joblib
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -38,38 +38,47 @@ def _load_model():
     global _model
     if _model is not None:
         return _model
-    
+
     path = MODEL_PATH
     if not path.exists():
         path = V16_MODEL_PATH
-    
+
     if not path.exists():
         logger.error(f"SQPE model not found at {MODEL_PATH} or {V16_MODEL_PATH}")
         return None
-    
+
     _model = joblib.load(path)
     logger.info(f"SQPE model loaded from {path}")
     return _model
 
 def _parse_sp(sp_str) -> float:
-    if not sp_str: return 10.0
+    if not sp_str:
+        return 10.0
     s = str(sp_str).strip().upper()
-    if s in ("EVENS", "EVS"): return 2.0
+    if s in ("EVENS", "EVS"):
+        return 2.0
     m = re.match(r"^(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)$", s)
-    if m: return float(m.group(1)) / float(m.group(2)) + 1.0
-    try: return float(s) + 1.0
-    except ValueError: return 10.0
+    if m:
+        return float(m.group(1)) / float(m.group(2)) + 1.0
+    try:
+        return float(s) + 1.0
+    except ValueError:
+        return 10.0
 
 def _parse_dist(dist_str) -> float:
-    if not dist_str: return 16.0
+    if not dist_str:
+        return 16.0
     s = str(dist_str).strip().lower()
     total = 0.0
     m_miles = re.search(r"(\d+(?:\.\d+)?)m", s)
     m_fur = re.search(r"(\d+(?:\.\d+)?)f", s)
     m_yds = re.search(r"(\d+)y", s)
-    if m_miles: total += float(m_miles.group(1)) * 8
-    if m_fur: total += float(m_fur.group(1))
-    if m_yds: total += float(m_yds.group(1)) / 220
+    if m_miles:
+        total += float(m_miles.group(1)) * 8
+    if m_fur:
+        total += float(m_fur.group(1))
+    if m_yds:
+        total += float(m_yds.group(1)) / 220
     return total if total > 0 else 16.0
 
 def _parse_going(going_str):
@@ -80,37 +89,46 @@ def _parse_going(going_str):
         "SOFT": 0.0, "HEAVY": -1.0, "YIELDING": 0.3, "STANDARD": 1.0,
     }
     for key, val in codes.items():
-        if key in g: return val, aw
+        if key in g:
+            return val, aw
     return 0.5, aw
 
 def _parse_class(class_str) -> float:
     s = str(class_str or "").strip().upper()
     m = re.search(r"CLASS\s*(\d)", s)
-    if m: return float(m.group(1))
-    if "GROUP 1" in s or "GRADE 1" in s: return 1.0
-    if "GROUP 2" in s or "GRADE 2" in s: return 2.0
-    if "LISTED" in s: return 2.5
+    if m:
+        return float(m.group(1))
+    if "GROUP 1" in s or "GRADE 1" in s:
+        return 1.0
+    if "GROUP 2" in s or "GRADE 2" in s:
+        return 2.0
+    if "LISTED" in s:
+        return 2.5
     return 4.0
 
 def _parse_wgt(wgt_str) -> float:
     s = str(wgt_str or "").strip()
     m = re.match(r"(\d+)-(\d+)", s)
-    if m: return float(m.group(1)) * 14 + float(m.group(2))
-    try: return float(s)
-    except ValueError: return 126.0
+    if m:
+        return float(m.group(1)) * 14 + float(m.group(2))
+    try:
+        return float(s)
+    except ValueError:
+        return 126.0
 
 def _parse_num(val) -> float:
     try:
         v = float(str(val).strip())
         return v if not math.isnan(v) else 0.0
-    except (ValueError, TypeError): return 0.0
+    except (ValueError, TypeError):
+        return 0.0
 
 def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     """Build feature dictionary from raw runner+race dicts."""
     sp_dec = _parse_sp(runner.get("sp") or runner.get("odds") or runner.get("best_odds_decimal"))
     dist_f = _parse_dist(race.get("dist") or race.get("distance_f") or race.get("distance"))
     going_code, is_aw = _parse_going(race.get("going"))
-    
+
     feats = {
         "sp_dec": sp_dec,
         "log_sp": math.log(max(sp_dec, 1.01)),
@@ -132,7 +150,7 @@ def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     }
     feats["draw_pct"] = feats["draw_num"] / max(feats["field_size"], 1)
     feats["is_fav"] = 1.0 if feats["sp_rank"] == 1.0 else 0.0
-    
+
     # Missing flags for observability
     feats["or_missing"] = 1.0 if runner.get("official_rating") is None else 0.0
     feats["rpr_missing"] = 1.0 if runner.get("rpr") is None else 0.0
@@ -142,14 +160,15 @@ def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     for f in EXPECTED_FEATURES:
         if f not in feats:
             feats[f] = float(runner.get(f, DEFAULTS.get(f, 0.0)))
-    
+
     return feats
 
 def predict_sqpe_v17(runner_features: dict) -> float:
     """Predict win probability for a runner using SQPE v17."""
     model = _load_model()
-    if model is None: return 0.5
-    
+    if model is None:
+        return 0.5
+
     vec = [float(runner_features.get(f, 0.0)) for f in EXPECTED_FEATURES]
     X = np.array([vec])
     try:

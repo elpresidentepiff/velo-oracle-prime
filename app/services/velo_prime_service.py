@@ -21,13 +21,17 @@ Returns:
 
 from __future__ import annotations
 
+import json
 import logging
 import math
 import os
+import pathlib
 import re
 from datetime import UTC, datetime, timedelta
 
 from src.intelligence.explanation_generator import generate_decision_explanation
+
+ROOT = pathlib.Path(__file__).parent.parent.parent
 
 # from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
 
@@ -127,7 +131,7 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
     is_fav = 1.0 if sp_rank == 1 else 0.0
 
     # Race-level
-    from app.services.sqpe_v17_service import _parse_dist, _parse_going, _parse_class
+    from app.services.sqpe_v17_service import _parse_class, _parse_dist, _parse_going
 
     dist_f = _parse_dist(race.get("distance_f") or race.get("distance"))
     going_code, is_aw = _parse_going(race.get("going"))
@@ -270,7 +274,7 @@ def _load_population_stats() -> None:
 def _apply_bha_intelligence(prob: float, runner: dict, race_code: str) -> tuple[float, list[str]]:
     """
     Apply BHA Intelligence penalties (Collateral & Decline-Curve).
-    
+
     1. Collateral Flag: -15% if BHA themselves are uncertain of the rating.
     2. Decline-Curve: -10% if horse is past peak age and trajectory is declining.
     """
@@ -287,7 +291,7 @@ def _apply_bha_intelligence(prob: float, runner: dict, race_code: str) -> tuple[
     try:
         age_num = int(age) if age else 0
         is_flat = race_code == "flat"
-        
+
         # Thresholds from 2026 Population Report: Flat 5+, Jump 8+
         threshold = 5 if is_flat else 8
         if age_num >= threshold:
@@ -323,7 +327,7 @@ def score_race_velo_prime(
     -------
     list[dict]  sorted by velo_prime_prob desc
     """
-    from app.services.sqpe_v17_service import predict_sqpe_v17, build_v17_feature_vector
+    from app.services.sqpe_v17_service import build_v17_feature_vector, predict_sqpe_v17
     from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
     from src.intelligence.specialist_models.loader import score_runner
     from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble
@@ -343,7 +347,7 @@ def score_race_velo_prime(
         except (TypeError, ValueError):
             return 0.0
 
-    field_or = [
+    [
         _to_float(r["official_rating"])
         for r in runners
         if r.get("official_rating") is not None and _to_float(r["official_rating"]) > 0
@@ -384,7 +388,7 @@ def score_race_velo_prime(
     _feats_by_horse: dict[str, dict] = {}
     for runner in runners:
         horse_name = runner.get("horse_name", "Unknown")
-        
+
         # Build features using clean service
         feats = build_v17_feature_vector(runner, race)
         _feats_by_horse[horse_name] = feats
