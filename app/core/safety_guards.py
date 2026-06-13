@@ -1,10 +1,11 @@
 """
 Safety utility to scan for forbidden imports in the live scoring path.
 
-LIMITATION: This performs a shallow AST scan of DIRECT imports in a 
-specified set of critical files. It does NOT currently perform an 
+LIMITATION: This performs a shallow AST scan of DIRECT imports in a
+specified set of critical files. It does NOT currently perform an
 exhaustive trace of the entire import graph or deep child imports.
 """
+
 import ast
 import sys
 from pathlib import Path
@@ -19,15 +20,17 @@ FORBIDDEN_MODULES = {
     "app.agents.betfair_execution_agent",
     "app.agents.betfair_trading_agents",
     "betfair_execution_agent",
-    "betfair_trading_agents"
+    "betfair_trading_agents",
 }
+
 
 def check_imports(root_dir: Path, target_paths: list[Path]) -> list[str]:
     violations = []
-    
+
     for path in target_paths:
-        if not path.exists(): continue
-        
+        if not path.exists():
+            continue
+
         try:
             tree = ast.parse(path.read_text(encoding="utf-8"))
             for node in ast.walk(tree):
@@ -38,11 +41,12 @@ def check_imports(root_dir: Path, target_paths: list[Path]) -> list[str]:
                 elif isinstance(node, ast.ImportFrom):
                     if node.module and any(node.module.startswith(m) for m in FORBIDDEN_MODULES):
                         violations.append(f"{path.name}: forbidden from-import '{node.module}'")
-        except Exception as e:
+        except Exception:
             # Skip parse errors (likely not python files or invalid syntax)
             continue
-            
+
     return violations
+
 
 def run_safety_scan():
     root = Path(__file__).resolve().parent.parent.parent
@@ -50,17 +54,18 @@ def run_safety_scan():
     targets = [
         root / "app" / "main.py",
         root / "scripts" / "ops" / "run_prime_today.py",
-        root / "src" / "intelligence" / "velo_prime_ensemble.py"
+        root / "src" / "intelligence" / "velo_prime_ensemble.py",
     ]
-    
+
     violations = check_imports(root, targets)
     if violations:
         print("SAFETY VIOLATION: Forbidden imports detected in live path!")
         for v in violations:
             print(f"  - {v}")
         return False
-    
+
     return True
+
 
 if __name__ == "__main__":
     if not run_safety_scan():
