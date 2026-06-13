@@ -141,6 +141,50 @@ PRs cannot merge unless the `Governed Safety Perimeter Audit` workflow passes.
 - NO_MODEL_PROMOTION
 - NO_TELEGRAM_SEND
 
+## P1-3 — Branch Protection Readiness
+
+**Status:** COMPLETE
+**Branch:** "stabilization/prime-hardening-v1"
+**Commit:** "PENDING"
+
+### Purpose
+
+P1-3 prepares the repository for formal branch protection by documenting mandatory status checks, direct push prohibitions, and override protocols. It ensures that the safety perimeter is recognized at the repository control level.
+
+### Files Added
+
+- "docs/current/BRANCH_PROTECTION_POLICY.md"
+- "ops/task_contracts/P1-3.json"
+- "scripts/ops/verify_branch_protection_readiness.py"
+- "tests/test_verify_branch_protection_readiness.py"
+
+### Behavior Added
+
+1. **Policy Formalization:** Established `BRANCH_PROTECTION_POLICY.md` declaring `governed-safety` as a mandatory status check for `main` and hardening branches.
+2. **Readiness Verifier:** Built a script to audit the repository for policy compliance, CI workflow existence, and required safety classifications.
+3. **Override Protocol:** Defined a strict emergency override process requiring documented justification and safety sign-off.
+
+### Enforcement Rule
+
+Governed safety checks are documented as required for all merges to protected branches. Direct pushes are prohibited.
+
+### Tests
+
+`pytest tests/test_verify_branch_protection_readiness.py`
+
+**Result:** 4 passed
+
+### Final Classification
+
+- BRANCH_PROTECTION_READINESS_ACTIVE
+- GOVERNED_SAFETY_REQUIRED_CHECK_DOCUMENTED
+- DIRECT_PUSH_POLICY_DOCUMENTED
+- OVERRIDE_POLICY_DOCUMENTED
+- NO_LIVE_SCORING_CHANGE
+- NO_SUPABASE_WRITES
+- NO_MODEL_PROMOTION
+- NO_TELEGRAM_SEND
+
 ## Hardening Summary
 
 The VÉLØ safety perimeter now covers:
