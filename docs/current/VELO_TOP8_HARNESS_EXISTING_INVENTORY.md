@@ -22,14 +22,14 @@ The VÉLØ ORACLE PRIME repository contains a significant amount of "harness" an
 
 Upgrade| Existing status| Evidence files| Current strength| Current weakness| Action
 ---|---|---|---|---|---
-1. Self-Harness / RHO | EXISTS_PARTIAL | `docs/current/VELO_RHO_PROTOCOL.md`, `hackathon/amd_harnessguard/` | Strong theoretical framework | Not wired to live failure events | Consolidate RHO mining into `sigma_results`
+1. Self-Harness / RHO | EXISTS_PARTIAL | `docs/current/VELO_RHO_PROTOCOL.md` | Strong theoretical framework | Not wired to live failure events | Consolidate RHO mining into `sigma_results`
 2. Autonomous Coding Loop | MISSING | — | `TaskContract` supports it | No runner exists | Build isolated worktree runner
-3. Design the loop, not prompt | EXISTS_PARTIAL | `scripts/ops/velo_daily_harness.py`, `TaskContract` | Multi-stage script orchestration | Fragments across scripts/docs | Unified `loop_registry.json` migration
+3. Design the loop, not prompt | EXISTS_LIVE | `scripts/ops/governed_task_runner.py` | Governed orchestration active | Early adoption phase | Migrate all tasks to Governor
 4. Closed loops vs open loops | EXISTS_LIVE | `scripts/ops/run_velo_closed_loop_daily.py` | Order of execution enforced | Manual trigger only | Wire to Railway healthz
-5. Six agent reliability techniques | EXISTS_PARTIAL | `src/velo/harness/sentinel.py`, `tests/test_agent_harness.py` | `Sentinel` hard rules | `Reflection` is doc-only | Implement on-runner reflection gate
-6. Playwright capture hardening | EXISTS_PARTIAL | `scripts/ops/racing_post_account_collector.py` | Bypasses anti-bot | No automated visual proof | Add screenshot/DOM artifact write
-7. Worktree safety standard | EXISTS_LIVE | `scripts/ops/assert_canonical_worktree.py`, `docs/engineering/VELO_NEXUS_WORKTREE_REGISTRY.md` | Strict canonical enforcement | No rollback automation | Add "Worktree Cleanup" script
-8. ML production hygiene | EXISTS_PARTIAL | `new_build_velo/evaluator.py`, `data/new_build/` | Clean train/val/test splits | sqpe_v17 has high leakage risk | Deprecate v17 for Core_V0
+5. Six agent reliability techniques | EXISTS_LIVE | `scripts/ops/task_contract_runner.py` | Scope enforcement active | `Reflection` still doc-only | Implement on-runner reflection gate
+6. Playwright capture hardening | EXISTS_LIVE | `scripts/ops/capture_proof.py` | Verifiable evidence created | Not fully automated yet | Add visual proof to morning run
+7. Worktree safety standard | EXISTS_LIVE | `scripts/ops/worktree_safety_runner.py` | Mandatory state audit | Needs PR gate integration | P1-2: CI Gate Integration
+8. ML production hygiene | EXISTS_PARTIAL | `new_build_velo/evaluator.py` | Clean train/val/test splits | sqpe_v17 has high leakage risk | Deprecate v17 for Core_V0
 
 ## 3. Existing Assets Found
 
