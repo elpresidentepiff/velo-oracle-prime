@@ -57,6 +57,7 @@ class GovernedTaskRunner:
         wt_args = ["--mode", "audit"]
         if self.args.expected_branch: wt_args.extend(["--expected-branch", self.args.expected_branch])
         if self.args.expected_head: wt_args.extend(["--expected-head", self.args.expected_head])
+        if self.args.allow_untracked: wt_args.append("--allow-untracked")
         
         rc, out = _run_script("worktree_safety_runner.py", wt_args)
         self.results["worktree"] = self._parse_json(out)
@@ -149,6 +150,7 @@ def main():
     parser = argparse.ArgumentParser(description="VÉLØ Governed Task Runner")
     parser.add_argument("--expected-branch", help="Expected git branch")
     parser.add_argument("--expected-head", help="Expected HEAD commit")
+    parser.add_argument("--allow-untracked", action="store_true", help="Allow untracked files in safety check")
     parser.add_argument("--contract", required=True, help="Path to P0-3 task contract")
     parser.add_argument("--base-ref", help="Base ref for final contract audit (defaults to staged/unstaged)")
     parser.add_argument("--classification-file", help="Path to classification file")

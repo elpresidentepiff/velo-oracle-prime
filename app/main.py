@@ -1297,6 +1297,15 @@ async def dashboard():
     return FileResponse(str(html_path), media_type="text/html")
 
 
+@app.get("/sidecar_stack_latest.json", include_in_schema=False)
+async def dashboard_sidecar_stack():
+    """Serve the generated sidecar stack consumed by dashboard panels A-D."""
+    sidecar_path = pathlib.Path(__file__).parent / "static" / "dashboard" / "sidecar_stack_latest.json"
+    if not sidecar_path.exists():
+        raise HTTPException(status_code=404, detail="Dashboard sidecar stack not found")
+    return FileResponse(str(sidecar_path), media_type="application/json")
+
+
 @app.get("/api/old-velo-verdicts")
 async def old_velo_verdicts(date: str = Query(default=None)):
     """Old VELO lane for the dashboard: top pick per race from the day's
@@ -1553,6 +1562,20 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     sidecar_status = "MISSING"
     sidecar_date_match = False
     sidecar_metadata_coverage = 0.0
+    new_build_by_race: dict[str, dict] = {}
+    new_build_path = root / "data" / "new_build" / "reports" / f"two_lane_readiness_{date_tag}.json"
+    if new_build_path.exists():
+        try:
+            new_build_payload = _json.loads(new_build_path.read_text(encoding="utf-8"))
+            if new_build_payload.get("overall_status") == "READY":
+                new_build_by_race = {
+                    str(card.get("race_id")): card
+                    for card in new_build_payload.get("race_day_scorecards") or []
+                    if card.get("race_id")
+                }
+        except Exception as e:
+            logger.warning("Could not read New Build readiness file %s: %s", new_build_path, e)
+
     sidecar_path = root / "app" / "static" / "dashboard" / "sidecar_stack_latest.json"
     if sidecar_path.exists():
         try:
@@ -1811,6 +1834,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             (v.get("full_analysis") or {}).get("governance", {}) if isinstance(v.get("full_analysis"), dict) else {}
         )
         _flatline_warning = _fa_gov.get("rp_flatline_warning") or top.get("rp_flatline_warning") or None
+        _new_build = new_build_by_race.get(str(race_id), {})
 
         verdicts.append(
             {
@@ -1845,8 +1869,37 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "operator_skepticism_flags": skepticism_flags,
                 "signal_stack": _signal_stack,
                 "rp_flatline_warning": _flatline_warning,
+                "new_build_top3": _new_build.get("lane_a_top3") or [],
+                "new_build_runner_count": _new_build.get("runner_count"),
+                "new_build_passport_coverage": _new_build.get("passport_coverage"),
+                "new_build_passport_coverage_pct": _new_build.get("passport_coverage_pct"),
+                "new_build_weak_data": _new_build.get("weak_data"),
+                "new_build_top_pick_lane": _new_build.get("top_pick_lane"),
             }
         )
+
+    # Old VELO can contain venue-code aliases alongside the real RP-ID race.
+    # Never show those as extra races when the exact New Build card identifies
+    # the canonical course/time row.
+    course_aliases = {
+        "NBY": "NEWBURY",
+    }
+    canonical_new_build_keys = {
+        (course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
+         _norm_time(row.get("off_time", "")))
+        for row in verdicts
+        if row.get("new_build_top3")
+    }
+    verdicts = [
+        row
+        for row in verdicts
+        if row.get("new_build_top3")
+        or (
+            course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
+            _norm_time(row.get("off_time", "")),
+        )
+        not in canonical_new_build_keys
+    ]
 
     # Sort by off_time
     verdicts.sort(key=lambda x: x.get("off_time") or "")
@@ -1895,6 +1948,8 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             "date_mismatch": date_mismatch,
             "gov_overlay": len(gov_by_race) > 0,
             "exact_date_file_present": verdict_path.exists(),
+            "new_build_loaded": bool(new_build_by_race),
+            "new_build_race_count": len(new_build_by_race),
         },
         "cashrun": {
             "status": cashrun_status,

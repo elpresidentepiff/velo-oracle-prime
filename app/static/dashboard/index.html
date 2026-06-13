@@ -3357,12 +3357,23 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
 
   sortedRaces.forEach(([rid, runners], raceIdx) => {
     const r0 = runners[0];
+    const scoredTop3 = Array.isArray(r0.new_build_top3) ? r0.new_build_top3 : [];
+    const nbRunners = scoredTop3.length
+      ? scoredTop3.map(pick => ({
+          ...r0,
+          horse: pick.horse,
+          champion_rank: pick.rank,
+          champion_probability: pick.prob,
+          nb_decision_lane: pick.nb_decision_lane,
+          passport_found: null,
+        }))
+      : runners;
     const timeStr  = fmtTime(r0.off_time);
     const course   = esc(r0.course || '');
     const raceName = esc(r0.race_name || r0.race_title || '');
-    const runnerCount = runners.length;
+    const runnerCount = parseInt(r0.new_build_runner_count) || runners.length;
     const previousOffTime = r0.previous_off_time || '';
-    const maxProb = Math.max(...runners.map(r => parseFloat(r.champion_probability || r.velo_prime_prob || 0)));
+    const maxProb = Math.max(...nbRunners.map(r => parseFloat(r.champion_probability || 0)));
 
     // Find matching Old VELO verdict
     const nbMin = nbTimeKey(r0.off_time);
@@ -3370,10 +3381,11 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
     const ov = ovMap.get(ovKey) || null;
 
     // Check agreement (both models pick same horse, case-insensitive)
-    const nbTop = runners[0];
+    const nbTop = nbRunners[0];
     const nbTopHorse = (nbTop.horse || '').toLowerCase().trim();
     const ovTopHorse = ov ? (ov.horse || '').toLowerCase().trim() : '';
-    const agree = ov && nbTopHorse && ovTopHorse && nbTopHorse === ovTopHorse;
+    const nbHasData = nbTop && parseFloat(nbTop.champion_probability || 0) > 0;
+    const agree = nbHasData && ov && nbTopHorse && ovTopHorse && nbTopHorse === ovTopHorse;
 
     const block = document.createElement('div');
     block.className = 'rc-block' + (agree ? ' tl-agree-race' : '');
@@ -3393,23 +3405,32 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
 
     // ── NEW BUILD lane ─────────────────────────────────────────────
     html += '<div class="tl-lane">';
-    html += '<div class="tl-lane-header"><span class="tl-lane-label-nb">NEW BUILD · TOP 3</span><span class="rc-full-field-note">FULL FIELD BELOW</span></div>';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-nb">NEW BUILD · TOP 3</span><span class="rc-full-field-note">LANE A PAPER SCORECARD</span></div>';
 
-    const nbProb = parseFloat(nbTop.champion_probability || nbTop.velo_prime_prob || 0);
+    const nbProb = parseFloat(nbTop.champion_probability || 0);
     const nbPct  = maxProb > 0 ? Math.round((nbProb / maxProb) * 100) : 0;
     const pp     = nbTop.passport_found;
+    const ppLabel = pp === null || typeof pp === 'undefined' ? 'PP ?' : (pp ? 'PP' : 'NO PP');
+    const ppClass = pp === null || typeof pp === 'undefined' ? 'tl-mds' : (pp ? 'tl-pp-yes' : 'tl-pp-no');
     const horseClass = agree ? 'tl-horse tl-agree' : 'tl-horse tl-top1-nb';
 
-    html += `<div class="${horseClass}">${esc(nbTop.horse || '—')}</div>`;
-    html += `<div class="tl-stat-row">
-      <span class="tl-prob">${(nbProb*100).toFixed(1)}%</span>
-      <div class="tl-prob-bar-wrap"><div class="tl-prob-bar" style="width:${nbPct}%"></div></div>
-      <span class="${pp ? 'tl-pp-yes' : 'tl-pp-no'}">${pp ? 'PP' : 'NO PP'}</span>
-    </div>`;
+    if (nbProb > 0) {
+      html += `<div class="${horseClass}">${esc(nbTop.horse || '—')}</div>`;
+      html += `<div class="tl-stat-row">
+        <span class="tl-prob">${(nbProb*100).toFixed(1)}%</span>
+        <div class="tl-prob-bar-wrap"><div class="tl-prob-bar" style="width:${nbPct}%"></div></div>
+        <span class="${ppClass}">${ppLabel}</span>
+      </div>`;
+    } else {
+      // Truth rule: no genuine New Build prediction => say so. Never borrow
+      // Old VELO numbers (fake-agreement incident, 2026-06-11).
+      html += `<div style="font-size:11px;color:var(--fg-secondary);padding:6px 0">No New Build data for this date</div>`;
+    }
 
     // Show rank 2 & 3 lightly
-    runners.slice(1, 3).forEach(r => {
-      const rp = parseFloat(r.champion_probability || r.velo_prime_prob || 0);
+    nbRunners.slice(1, 3).forEach(r => {
+      const rp = parseFloat(r.champion_probability || 0);
+      if (rp <= 0) return;  // truth rule: no fabricated 0.0% rows
       const rPct = maxProb > 0 ? Math.round((rp / maxProb) * 100) : 0;
       html += `<div class="rc-runner" style="margin-top:4px">
         <span class="rc-rank" style="font-size:9px">#${r.champion_rank||'?'}</span>
@@ -3453,7 +3474,7 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
         <summary>SHOW ALL ${runners.length} RUNNERS · ${esc(r0.course || '')} ${timeStr}</summary>
         <div class="rc-full-field-list">`;
       runners.forEach((r, index) => {
-        const rp = parseFloat(r.champion_probability || r.velo_prime_prob || 0);
+        const rp = parseFloat(r.champion_probability || 0);
         const rPct = maxProb > 0 ? Math.round((rp / maxProb) * 100) : 0;
         const rank = parseInt(r.champion_rank || r.rank || 99);
         const rankLabel = rank >= 99 ? '—' : `#${rank}`;

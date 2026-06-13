@@ -11,6 +11,8 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from scripts.ops.run_results_sigma import _duplicate_alias_race_ids
+
 # Mock the required globals and helpers from run_results_sigma
 # Note: In a real scenario we'd refactor the script to be more testable,
 # but for this hardening phase we simulate the logic.
@@ -125,6 +127,17 @@ def test_name_fallback_matching():
     matches = reconcile_logic(predictions, results, horse_names)
     assert len(matches) == 1
     assert matches[0]["provenance"] == "MATCH_EXACT_ID_NAME"
+
+
+def test_duplicate_alias_is_excluded_only_with_numeric_canonical_race():
+    backup = {
+        "rp_NBY_20260611_2.20": {"course": "NBY", "off_time": "2.20"},
+        "920165": {"course": "Newbury", "off_time": "14:20"},
+        "rp_CAR_20260611_2.45": {"course": "Carlisle", "off_time": "2.45"},
+    }
+
+    assert _duplicate_alias_race_ids(backup) == {"rp_NBY_20260611_2.20"}
+
 
 if __name__ == "__main__":
     pytest.main([__file__])

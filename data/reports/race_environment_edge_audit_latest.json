@@ -1,0 +1,3769 @@
+{
+  "generated_at": "2026-06-11T21:20:45.439490+00:00",
+  "status": "RESEARCH_ONLY_FORWARD_PAPER_REQUIRED",
+  "rules": {
+    "tier_used": false,
+    "final_sp_used_as_permission_feature": false,
+    "chronological_holdout_required": true,
+    "roi_candidate_minimums": {
+      "total": 30,
+      "train": 18,
+      "test": 8
+    },
+    "sigma_stability_minimums": {
+      "total": 50,
+      "train": 30,
+      "test": 15
+    }
+  },
+  "baselines": {
+    "sigma_history": {
+      "n": 2502,
+      "wins": 568,
+      "frames": 1240,
+      "sr": 0.227,
+      "frame_rate": 0.4956,
+      "sr_wilson_lower_90": 0.2135
+    },
+    "sp_enriched_roi_history": {
+      "n": 224,
+      "wins": 73,
+      "frames": 134,
+      "sr": 0.3259,
+      "frame_rate": 0.5982,
+      "sr_wilson_lower_90": 0.2767,
+      "returns": 245.94,
+      "pl": 21.94,
+      "roi": 0.0979,
+      "max_drawdown": -23.55
+    }
+  },
+  "bet_permission_candidates": [
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "country=GB AND vp_bucket=VP_20_30",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 46,
+        "wins": 18,
+        "frames": 26,
+        "sr": 0.3913,
+        "frame_rate": 0.5652,
+        "sr_wilson_lower_90": 0.2821,
+        "returns": 76.72,
+        "pl": 30.72,
+        "roi": 0.6678,
+        "max_drawdown": -6.33
+      },
+      "train": {
+        "n": 23,
+        "wins": 11,
+        "frames": 14,
+        "sr": 0.4783,
+        "frame_rate": 0.6087,
+        "sr_wilson_lower_90": 0.3185,
+        "returns": 39.47,
+        "pl": 16.47,
+        "roi": 0.7161,
+        "max_drawdown": -6.33
+      },
+      "test": {
+        "n": 23,
+        "wins": 7,
+        "frames": 12,
+        "sr": 0.3043,
+        "frame_rate": 0.5217,
+        "sr_wilson_lower_90": 0.1742,
+        "returns": 37.25,
+        "pl": 14.25,
+        "roi": 0.6196,
+        "max_drawdown": -4.5
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "surface",
+        "field_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "field_bucket": "FIELD_7_9"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND field_bucket=FIELD_7_9",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 70,
+        "wins": 28,
+        "frames": 48,
+        "sr": 0.4,
+        "frame_rate": 0.6857,
+        "sr_wilson_lower_90": 0.3091,
+        "returns": 110.48,
+        "pl": 40.48,
+        "roi": 0.5783,
+        "max_drawdown": -10.53
+      },
+      "train": {
+        "n": 44,
+        "wins": 18,
+        "frames": 28,
+        "sr": 0.4091,
+        "frame_rate": 0.6364,
+        "sr_wilson_lower_90": 0.2959,
+        "returns": 71.99,
+        "pl": 27.99,
+        "roi": 0.6361,
+        "max_drawdown": -10.53
+      },
+      "test": {
+        "n": 26,
+        "wins": 10,
+        "frames": 20,
+        "sr": 0.3846,
+        "frame_rate": 0.7692,
+        "sr_wilson_lower_90": 0.2457,
+        "returns": 38.49,
+        "pl": 12.49,
+        "roi": 0.4804,
+        "max_drawdown": -4.76
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "country",
+        "field_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "field_bucket": "FIELD_7_9"
+      },
+      "rule": "country=GB AND field_bucket=FIELD_7_9",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 62,
+        "wins": 25,
+        "frames": 43,
+        "sr": 0.4032,
+        "frame_rate": 0.6935,
+        "sr_wilson_lower_90": 0.3069,
+        "returns": 101.88,
+        "pl": 39.88,
+        "roi": 0.6432,
+        "max_drawdown": -9.53
+      },
+      "train": {
+        "n": 37,
+        "wins": 17,
+        "frames": 26,
+        "sr": 0.4595,
+        "frame_rate": 0.7027,
+        "sr_wilson_lower_90": 0.3321,
+        "returns": 67.99,
+        "pl": 30.99,
+        "roi": 0.8376,
+        "max_drawdown": -9.53
+      },
+      "test": {
+        "n": 25,
+        "wins": 8,
+        "frames": 17,
+        "sr": 0.32,
+        "frame_rate": 0.68,
+        "sr_wilson_lower_90": 0.1907,
+        "returns": 33.89,
+        "pl": 8.89,
+        "roi": 0.3556,
+        "max_drawdown": -6.0
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "going_bucket"
+      ],
+      "values": {
+        "going_bucket": "GOOD"
+      },
+      "rule": "going_bucket=GOOD",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 65,
+        "wins": 26,
+        "frames": 45,
+        "sr": 0.4,
+        "frame_rate": 0.6923,
+        "sr_wilson_lower_90": 0.306,
+        "returns": 81.46,
+        "pl": 16.46,
+        "roi": 0.2532,
+        "max_drawdown": -16.71
+      },
+      "train": {
+        "n": 30,
+        "wins": 12,
+        "frames": 21,
+        "sr": 0.4,
+        "frame_rate": 0.7,
+        "sr_wilson_lower_90": 0.2671,
+        "returns": 35.78,
+        "pl": 5.78,
+        "roi": 0.1927,
+        "max_drawdown": -13.0
+      },
+      "test": {
+        "n": 35,
+        "wins": 14,
+        "frames": 24,
+        "sr": 0.4,
+        "frame_rate": 0.6857,
+        "sr_wilson_lower_90": 0.2757,
+        "returns": 45.68,
+        "pl": 10.68,
+        "roi": 0.3051,
+        "max_drawdown": -7.8
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "field_bucket"
+      ],
+      "values": {
+        "field_bucket": "FIELD_7_9"
+      },
+      "rule": "field_bucket=FIELD_7_9",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 74,
+        "wins": 28,
+        "frames": 50,
+        "sr": 0.3784,
+        "frame_rate": 0.6757,
+        "sr_wilson_lower_90": 0.2915,
+        "returns": 110.48,
+        "pl": 36.48,
+        "roi": 0.493,
+        "max_drawdown": -10.53
+      },
+      "train": {
+        "n": 44,
+        "wins": 18,
+        "frames": 28,
+        "sr": 0.4091,
+        "frame_rate": 0.6364,
+        "sr_wilson_lower_90": 0.2959,
+        "returns": 71.99,
+        "pl": 27.99,
+        "roi": 0.6361,
+        "max_drawdown": -10.53
+      },
+      "test": {
+        "n": 30,
+        "wins": 10,
+        "frames": 22,
+        "sr": 0.3333,
+        "frame_rate": 0.7333,
+        "sr_wilson_lower_90": 0.2108,
+        "returns": 38.49,
+        "pl": 8.49,
+        "roi": 0.283,
+        "max_drawdown": -6.0
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "country"
+      ],
+      "values": {
+        "country": "GB"
+      },
+      "rule": "country=GB",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 173,
+        "wins": 62,
+        "frames": 108,
+        "sr": 0.3584,
+        "frame_rate": 0.6243,
+        "sr_wilson_lower_90": 0.301,
+        "returns": 209.9,
+        "pl": 36.9,
+        "roi": 0.2133,
+        "max_drawdown": -24.55
+      },
+      "train": {
+        "n": 96,
+        "wins": 38,
+        "frames": 60,
+        "sr": 0.3958,
+        "frame_rate": 0.625,
+        "sr_wilson_lower_90": 0.3177,
+        "returns": 125.21,
+        "pl": 29.21,
+        "roi": 0.3043,
+        "max_drawdown": -24.55
+      },
+      "test": {
+        "n": 77,
+        "wins": 24,
+        "frames": 48,
+        "sr": 0.3117,
+        "frame_rate": 0.6234,
+        "sr_wilson_lower_90": 0.2325,
+        "returns": 84.69,
+        "pl": 7.69,
+        "roi": 0.0999,
+        "max_drawdown": -14.8
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "country",
+        "field_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "field_bucket": "FIELD_2_6"
+      },
+      "rule": "country=GB AND field_bucket=FIELD_2_6",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 34,
+        "wins": 17,
+        "frames": 26,
+        "sr": 0.5,
+        "frame_rate": 0.7647,
+        "sr_wilson_lower_90": 0.3642,
+        "returns": 41.87,
+        "pl": 7.87,
+        "roi": 0.2315,
+        "max_drawdown": -4.66
+      },
+      "train": {
+        "n": 19,
+        "wins": 11,
+        "frames": 13,
+        "sr": 0.5789,
+        "frame_rate": 0.6842,
+        "sr_wilson_lower_90": 0.3945,
+        "returns": 25.38,
+        "pl": 6.38,
+        "roi": 0.3358,
+        "max_drawdown": -3.38
+      },
+      "test": {
+        "n": 15,
+        "wins": 6,
+        "frames": 13,
+        "sr": 0.4,
+        "frame_rate": 0.8667,
+        "sr_wilson_lower_90": 0.2232,
+        "returns": 16.49,
+        "pl": 1.49,
+        "roi": 0.0993,
+        "max_drawdown": -4.0
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "field_bucket"
+      ],
+      "values": {
+        "field_bucket": "FIELD_2_6"
+      },
+      "rule": "field_bucket=FIELD_2_6",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 40,
+        "wins": 19,
+        "frames": 31,
+        "sr": 0.475,
+        "frame_rate": 0.775,
+        "sr_wilson_lower_90": 0.3509,
+        "returns": 49.78,
+        "pl": 9.78,
+        "roi": 0.2445,
+        "max_drawdown": -7.66
+      },
+      "train": {
+        "n": 24,
+        "wins": 13,
+        "frames": 17,
+        "sr": 0.5417,
+        "frame_rate": 0.7083,
+        "sr_wilson_lower_90": 0.3788,
+        "returns": 33.29,
+        "pl": 9.29,
+        "roi": 0.3871,
+        "max_drawdown": -3.0
+      },
+      "test": {
+        "n": 16,
+        "wins": 6,
+        "frames": 14,
+        "sr": 0.375,
+        "frame_rate": 0.875,
+        "sr_wilson_lower_90": 0.2081,
+        "returns": 16.49,
+        "pl": 0.49,
+        "roi": 0.0306,
+        "max_drawdown": -4.66
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "surface",
+        "field_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "field_bucket": "FIELD_2_6"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND field_bucket=FIELD_2_6",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 40,
+        "wins": 19,
+        "frames": 31,
+        "sr": 0.475,
+        "frame_rate": 0.775,
+        "sr_wilson_lower_90": 0.3509,
+        "returns": 49.78,
+        "pl": 9.78,
+        "roi": 0.2445,
+        "max_drawdown": -7.66
+      },
+      "train": {
+        "n": 24,
+        "wins": 13,
+        "frames": 17,
+        "sr": 0.5417,
+        "frame_rate": 0.7083,
+        "sr_wilson_lower_90": 0.3788,
+        "returns": 33.29,
+        "pl": 9.29,
+        "roi": 0.3871,
+        "max_drawdown": -3.0
+      },
+      "test": {
+        "n": 16,
+        "wins": 6,
+        "frames": 14,
+        "sr": 0.375,
+        "frame_rate": 0.875,
+        "sr_wilson_lower_90": 0.2081,
+        "returns": 16.49,
+        "pl": 0.49,
+        "roi": 0.0306,
+        "max_drawdown": -4.66
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "surface"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS"
+      },
+      "rule": "surface=TURF_OR_JUMPS",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 218,
+        "wins": 73,
+        "frames": 132,
+        "sr": 0.3349,
+        "frame_rate": 0.6055,
+        "sr_wilson_lower_90": 0.2846,
+        "returns": 245.94,
+        "pl": 27.94,
+        "roi": 0.1282,
+        "max_drawdown": -23.55
+      },
+      "train": {
+        "n": 125,
+        "wins": 44,
+        "frames": 74,
+        "sr": 0.352,
+        "frame_rate": 0.592,
+        "sr_wilson_lower_90": 0.2855,
+        "returns": 151.33,
+        "pl": 26.33,
+        "roi": 0.2106,
+        "max_drawdown": -23.55
+      },
+      "test": {
+        "n": 93,
+        "wins": 29,
+        "frames": 58,
+        "sr": 0.3118,
+        "frame_rate": 0.6237,
+        "sr_wilson_lower_90": 0.2391,
+        "returns": 94.61,
+        "pl": 1.61,
+        "roi": 0.0173,
+        "max_drawdown": -14.6
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    }
+  ],
+  "stable_sigma_environments": [
+    {
+      "dimensions": [
+        "off_bucket"
+      ],
+      "values": {
+        "off_bucket": "BEFORE_14"
+      },
+      "rule": "off_bucket=BEFORE_14",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 151,
+        "wins": 52,
+        "frames": 95,
+        "sr": 0.3444,
+        "frame_rate": 0.6291,
+        "sr_wilson_lower_90": 0.284
+      },
+      "train": {
+        "n": 113,
+        "wins": 37,
+        "frames": 73,
+        "sr": 0.3274,
+        "frame_rate": 0.646,
+        "sr_wilson_lower_90": 0.2596
+      },
+      "test": {
+        "n": 38,
+        "wins": 15,
+        "frames": 22,
+        "sr": 0.3947,
+        "frame_rate": 0.5789,
+        "sr_wilson_lower_90": 0.2755
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "off_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "off_bucket": "BEFORE_14"
+      },
+      "rule": "country=GB AND off_bucket=BEFORE_14",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 116,
+        "wins": 37,
+        "frames": 69,
+        "sr": 0.319,
+        "frame_rate": 0.5948,
+        "sr_wilson_lower_90": 0.2526
+      },
+      "train": {
+        "n": 88,
+        "wins": 26,
+        "frames": 54,
+        "sr": 0.2955,
+        "frame_rate": 0.6136,
+        "sr_wilson_lower_90": 0.2225
+      },
+      "test": {
+        "n": 28,
+        "wins": 11,
+        "frames": 15,
+        "sr": 0.3929,
+        "frame_rate": 0.5357,
+        "sr_wilson_lower_90": 0.257
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 917,
+        "wins": 254,
+        "frames": 523,
+        "sr": 0.277,
+        "frame_rate": 0.5703,
+        "sr_wilson_lower_90": 0.2534
+      },
+      "train": {
+        "n": 682,
+        "wins": 174,
+        "frames": 368,
+        "sr": 0.2551,
+        "frame_rate": 0.5396,
+        "sr_wilson_lower_90": 0.2287
+      },
+      "test": {
+        "n": 235,
+        "wins": 80,
+        "frames": 155,
+        "sr": 0.3404,
+        "frame_rate": 0.6596,
+        "sr_wilson_lower_90": 0.2917
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "country=GB AND vp_bucket=VP_30_40",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 285,
+        "wins": 75,
+        "frames": 167,
+        "sr": 0.2632,
+        "frame_rate": 0.586,
+        "sr_wilson_lower_90": 0.2226
+      },
+      "train": {
+        "n": 162,
+        "wins": 34,
+        "frames": 98,
+        "sr": 0.2099,
+        "frame_rate": 0.6049,
+        "sr_wilson_lower_90": 0.1622
+      },
+      "test": {
+        "n": 123,
+        "wins": 41,
+        "frames": 69,
+        "sr": 0.3333,
+        "frame_rate": 0.561,
+        "sr_wilson_lower_90": 0.2677
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 1127,
+        "wins": 301,
+        "frames": 616,
+        "sr": 0.2671,
+        "frame_rate": 0.5466,
+        "sr_wilson_lower_90": 0.246
+      },
+      "train": {
+        "n": 882,
+        "wins": 221,
+        "frames": 457,
+        "sr": 0.2506,
+        "frame_rate": 0.5181,
+        "sr_wilson_lower_90": 0.2274
+      },
+      "test": {
+        "n": 245,
+        "wins": 80,
+        "frames": 159,
+        "sr": 0.3265,
+        "frame_rate": 0.649,
+        "sr_wilson_lower_90": 0.2794
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_30_40",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 304,
+        "wins": 81,
+        "frames": 179,
+        "sr": 0.2664,
+        "frame_rate": 0.5888,
+        "sr_wilson_lower_90": 0.2269
+      },
+      "train": {
+        "n": 167,
+        "wins": 37,
+        "frames": 99,
+        "sr": 0.2216,
+        "frame_rate": 0.5928,
+        "sr_wilson_lower_90": 0.1734
+      },
+      "test": {
+        "n": 137,
+        "wins": 44,
+        "frames": 80,
+        "sr": 0.3212,
+        "frame_rate": 0.5839,
+        "sr_wilson_lower_90": 0.2596
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "country=GB AND vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 902,
+        "wins": 243,
+        "frames": 495,
+        "sr": 0.2694,
+        "frame_rate": 0.5488,
+        "sr_wilson_lower_90": 0.2458
+      },
+      "train": {
+        "n": 713,
+        "wins": 183,
+        "frames": 373,
+        "sr": 0.2567,
+        "frame_rate": 0.5231,
+        "sr_wilson_lower_90": 0.2307
+      },
+      "test": {
+        "n": 189,
+        "wins": 60,
+        "frames": 122,
+        "sr": 0.3175,
+        "frame_rate": 0.6455,
+        "sr_wilson_lower_90": 0.2647
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "vp_bucket=VP_30_40",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 343,
+        "wins": 89,
+        "frames": 200,
+        "sr": 0.2595,
+        "frame_rate": 0.5831,
+        "sr_wilson_lower_90": 0.2225
+      },
+      "train": {
+        "n": 201,
+        "wins": 45,
+        "frames": 120,
+        "sr": 0.2239,
+        "frame_rate": 0.597,
+        "sr_wilson_lower_90": 0.1794
+      },
+      "test": {
+        "n": 142,
+        "wins": 44,
+        "frames": 80,
+        "sr": 0.3099,
+        "frame_rate": 0.5634,
+        "sr_wilson_lower_90": 0.2501
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "off_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "off_bucket": "14_TO_17"
+      },
+      "rule": "country=GB AND off_bucket=14_TO_17",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 1033,
+        "wins": 238,
+        "frames": 526,
+        "sr": 0.2304,
+        "frame_rate": 0.5092,
+        "sr_wilson_lower_90": 0.2096
+      },
+      "train": {
+        "n": 741,
+        "wins": 157,
+        "frames": 371,
+        "sr": 0.2119,
+        "frame_rate": 0.5007,
+        "sr_wilson_lower_90": 0.1883
+      },
+      "test": {
+        "n": 292,
+        "wins": 81,
+        "frames": 155,
+        "sr": 0.2774,
+        "frame_rate": 0.5308,
+        "sr_wilson_lower_90": 0.2365
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    }
+  ],
+  "proposed_forward_paper_policy": {
+    "status": "FORWARD_PAPER_ONLY_NOT_LIVE",
+    "core_rule": "GB AND TURF_OR_JUMPS AND FIELD_7_9 AND NOT WEAK_EXCLUDE_TRACK",
+    "baseline_n": 224,
+    "bet_reduction_pct": 0.7768,
+    "core_metrics": {
+      "total": {
+        "n": 50,
+        "wins": 22,
+        "frames": 36,
+        "sr": 0.44,
+        "frame_rate": 0.72,
+        "sr_wilson_lower_90": 0.3306,
+        "returns": 90.03,
+        "pl": 40.03,
+        "roi": 0.8006,
+        "max_drawdown": -9.03
+      },
+      "train": {
+        "n": 33,
+        "wins": 16,
+        "frames": 24,
+        "sr": 0.4848,
+        "frame_rate": 0.7273,
+        "sr_wilson_lower_90": 0.3484,
+        "returns": 65.74,
+        "pl": 32.74,
+        "roi": 0.9921,
+        "max_drawdown": -9.03
+      },
+      "test": {
+        "n": 17,
+        "wins": 6,
+        "frames": 12,
+        "sr": 0.3529,
+        "frame_rate": 0.7059,
+        "sr_wilson_lower_90": 0.1949,
+        "returns": 24.29,
+        "pl": 7.29,
+        "roi": 0.4288,
+        "max_drawdown": -4.0
+      },
+      "cut_date": "2026-06-08"
+    },
+    "hard_no_bet_gates": [
+      "IRE races: broad Sigma underperforms GB and dated ROI is negative.",
+      "Fields of 10 or more: both 10-12 and 13+ buckets are negative in chronological holdout.",
+      "VP below 0.20: negative overall and zero holdout wins in the dated sample.",
+      "WEAK_EXCLUDE tracks: objective full-Sigma rule of n>=30 and SR<15% or frame<40%."
+    ],
+    "freeze_rule": "Freeze after 20 forward-paper bets if ROI < 0% or frame rate < 60%; no live promotion before 50 forward-paper bets."
+  },
+  "track_evidence": {
+    "strong": [
+      {
+        "course": "Musselburgh",
+        "classification": "STRONG_SUPPORT",
+        "n": 39,
+        "wins": 16,
+        "frames": 24,
+        "sr": 0.4103,
+        "frame_rate": 0.6154,
+        "sr_wilson_lower_90": 0.2907
+      },
+      {
+        "course": "Newbury",
+        "classification": "STRONG_SUPPORT",
+        "n": 43,
+        "wins": 14,
+        "frames": 22,
+        "sr": 0.3256,
+        "frame_rate": 0.5116,
+        "sr_wilson_lower_90": 0.2214
+      }
+    ],
+    "weak": [
+      {
+        "course": "Beverley",
+        "classification": "WEAK_EXCLUDE",
+        "n": 37,
+        "wins": 1,
+        "frames": 13,
+        "sr": 0.027,
+        "frame_rate": 0.3514,
+        "sr_wilson_lower_90": 0.0061
+      },
+      {
+        "course": "Perth",
+        "classification": "WEAK_EXCLUDE",
+        "n": 39,
+        "wins": 2,
+        "frames": 16,
+        "sr": 0.0513,
+        "frame_rate": 0.4103,
+        "sr_wilson_lower_90": 0.0171
+      },
+      {
+        "course": "Nottingham",
+        "classification": "WEAK_EXCLUDE",
+        "n": 30,
+        "wins": 3,
+        "frames": 12,
+        "sr": 0.1,
+        "frame_rate": 0.4,
+        "sr_wilson_lower_90": 0.0407
+      },
+      {
+        "course": "Thirsk",
+        "classification": "WEAK_EXCLUDE",
+        "n": 33,
+        "wins": 4,
+        "frames": 14,
+        "sr": 0.1212,
+        "frame_rate": 0.4242,
+        "sr_wilson_lower_90": 0.0556
+      },
+      {
+        "course": "Warwick",
+        "classification": "WEAK_EXCLUDE",
+        "n": 35,
+        "wins": 5,
+        "frames": 21,
+        "sr": 0.1429,
+        "frame_rate": 0.6,
+        "sr_wilson_lower_90": 0.0713
+      },
+      {
+        "course": "Southwell (AW)",
+        "classification": "WEAK_EXCLUDE",
+        "n": 100,
+        "wins": 17,
+        "frames": 38,
+        "sr": 0.17,
+        "frame_rate": 0.38,
+        "sr_wilson_lower_90": 0.1171
+      },
+      {
+        "course": "Cork (IRE)",
+        "classification": "WEAK_EXCLUDE",
+        "n": 34,
+        "wins": 6,
+        "frames": 12,
+        "sr": 0.1765,
+        "frame_rate": 0.3529,
+        "sr_wilson_lower_90": 0.0941
+      },
+      {
+        "course": "Leicester",
+        "classification": "WEAK_EXCLUDE",
+        "n": 34,
+        "wins": 7,
+        "frames": 13,
+        "sr": 0.2059,
+        "frame_rate": 0.3824,
+        "sr_wilson_lower_90": 0.1157
+      },
+      {
+        "course": "Kempton (AW)",
+        "classification": "WEAK_EXCLUDE",
+        "n": 71,
+        "wins": 15,
+        "frames": 28,
+        "sr": 0.2113,
+        "frame_rate": 0.3944,
+        "sr_wilson_lower_90": 0.1429
+      },
+      {
+        "course": "Goodwood",
+        "classification": "WEAK_EXCLUDE",
+        "n": 30,
+        "wins": 7,
+        "frames": 11,
+        "sr": 0.2333,
+        "frame_rate": 0.3667,
+        "sr_wilson_lower_90": 0.1318
+      }
+    ],
+    "all_n30": [
+      {
+        "course": "Bath",
+        "classification": "NEUTRAL",
+        "n": 58,
+        "wins": 14,
+        "frames": 30,
+        "sr": 0.2414,
+        "frame_rate": 0.5172,
+        "sr_wilson_lower_90": 0.1618
+      },
+      {
+        "course": "Beverley",
+        "classification": "WEAK_EXCLUDE",
+        "n": 37,
+        "wins": 1,
+        "frames": 13,
+        "sr": 0.027,
+        "frame_rate": 0.3514,
+        "sr_wilson_lower_90": 0.0061
+      },
+      {
+        "course": "Catterick",
+        "classification": "NEUTRAL",
+        "n": 30,
+        "wins": 10,
+        "frames": 14,
+        "sr": 0.3333,
+        "frame_rate": 0.4667,
+        "sr_wilson_lower_90": 0.2108
+      },
+      {
+        "course": "Chepstow",
+        "classification": "NEUTRAL",
+        "n": 47,
+        "wins": 10,
+        "frames": 23,
+        "sr": 0.2128,
+        "frame_rate": 0.4894,
+        "sr_wilson_lower_90": 0.1316
+      },
+      {
+        "course": "Cork (IRE)",
+        "classification": "WEAK_EXCLUDE",
+        "n": 34,
+        "wins": 6,
+        "frames": 12,
+        "sr": 0.1765,
+        "frame_rate": 0.3529,
+        "sr_wilson_lower_90": 0.0941
+      },
+      {
+        "course": "Doncaster",
+        "classification": "NEUTRAL",
+        "n": 53,
+        "wins": 11,
+        "frames": 26,
+        "sr": 0.2075,
+        "frame_rate": 0.4906,
+        "sr_wilson_lower_90": 0.1312
+      },
+      {
+        "course": "Fontwell",
+        "classification": "NEUTRAL",
+        "n": 35,
+        "wins": 8,
+        "frames": 20,
+        "sr": 0.2286,
+        "frame_rate": 0.5714,
+        "sr_wilson_lower_90": 0.1339
+      },
+      {
+        "course": "Goodwood",
+        "classification": "WEAK_EXCLUDE",
+        "n": 30,
+        "wins": 7,
+        "frames": 11,
+        "sr": 0.2333,
+        "frame_rate": 0.3667,
+        "sr_wilson_lower_90": 0.1318
+      },
+      {
+        "course": "Hamilton",
+        "classification": "NEUTRAL",
+        "n": 33,
+        "wins": 8,
+        "frames": 17,
+        "sr": 0.2424,
+        "frame_rate": 0.5152,
+        "sr_wilson_lower_90": 0.1424
+      },
+      {
+        "course": "Haydock",
+        "classification": "NEUTRAL",
+        "n": 42,
+        "wins": 10,
+        "frames": 21,
+        "sr": 0.2381,
+        "frame_rate": 0.5,
+        "sr_wilson_lower_90": 0.148
+      },
+      {
+        "course": "Hereford",
+        "classification": "NEUTRAL",
+        "n": 36,
+        "wins": 10,
+        "frames": 23,
+        "sr": 0.2778,
+        "frame_rate": 0.6389,
+        "sr_wilson_lower_90": 0.1739
+      },
+      {
+        "course": "Hexham",
+        "classification": "NEUTRAL",
+        "n": 34,
+        "wins": 8,
+        "frames": 17,
+        "sr": 0.2353,
+        "frame_rate": 0.5,
+        "sr_wilson_lower_90": 0.138
+      },
+      {
+        "course": "Kelso",
+        "classification": "NEUTRAL",
+        "n": 35,
+        "wins": 8,
+        "frames": 21,
+        "sr": 0.2286,
+        "frame_rate": 0.6,
+        "sr_wilson_lower_90": 0.1339
+      },
+      {
+        "course": "Kempton (AW)",
+        "classification": "WEAK_EXCLUDE",
+        "n": 71,
+        "wins": 15,
+        "frames": 28,
+        "sr": 0.2113,
+        "frame_rate": 0.3944,
+        "sr_wilson_lower_90": 0.1429
+      },
+      {
+        "course": "Leicester",
+        "classification": "WEAK_EXCLUDE",
+        "n": 34,
+        "wins": 7,
+        "frames": 13,
+        "sr": 0.2059,
+        "frame_rate": 0.3824,
+        "sr_wilson_lower_90": 0.1157
+      },
+      {
+        "course": "Lingfield (AW)",
+        "classification": "NEUTRAL",
+        "n": 64,
+        "wins": 10,
+        "frames": 29,
+        "sr": 0.1562,
+        "frame_rate": 0.4531,
+        "sr_wilson_lower_90": 0.0957
+      },
+      {
+        "course": "Musselburgh",
+        "classification": "STRONG_SUPPORT",
+        "n": 39,
+        "wins": 16,
+        "frames": 24,
+        "sr": 0.4103,
+        "frame_rate": 0.6154,
+        "sr_wilson_lower_90": 0.2907
+      },
+      {
+        "course": "Newbury",
+        "classification": "STRONG_SUPPORT",
+        "n": 43,
+        "wins": 14,
+        "frames": 22,
+        "sr": 0.3256,
+        "frame_rate": 0.5116,
+        "sr_wilson_lower_90": 0.2214
+      },
+      {
+        "course": "Newcastle (AW)",
+        "classification": "NEUTRAL",
+        "n": 52,
+        "wins": 10,
+        "frames": 21,
+        "sr": 0.1923,
+        "frame_rate": 0.4038,
+        "sr_wilson_lower_90": 0.1186
+      },
+      {
+        "course": "Newmarket",
+        "classification": "NEUTRAL",
+        "n": 52,
+        "wins": 13,
+        "frames": 23,
+        "sr": 0.25,
+        "frame_rate": 0.4423,
+        "sr_wilson_lower_90": 0.1653
+      },
+      {
+        "course": "Nottingham",
+        "classification": "WEAK_EXCLUDE",
+        "n": 30,
+        "wins": 3,
+        "frames": 12,
+        "sr": 0.1,
+        "frame_rate": 0.4,
+        "sr_wilson_lower_90": 0.0407
+      },
+      {
+        "course": "Perth",
+        "classification": "WEAK_EXCLUDE",
+        "n": 39,
+        "wins": 2,
+        "frames": 16,
+        "sr": 0.0513,
+        "frame_rate": 0.4103,
+        "sr_wilson_lower_90": 0.0171
+      },
+      {
+        "course": "Pontefract",
+        "classification": "NEUTRAL",
+        "n": 35,
+        "wins": 10,
+        "frames": 17,
+        "sr": 0.2857,
+        "frame_rate": 0.4857,
+        "sr_wilson_lower_90": 0.1791
+      },
+      {
+        "course": "Southwell (AW)",
+        "classification": "WEAK_EXCLUDE",
+        "n": 100,
+        "wins": 17,
+        "frames": 38,
+        "sr": 0.17,
+        "frame_rate": 0.38,
+        "sr_wilson_lower_90": 0.1171
+      },
+      {
+        "course": "Thirsk",
+        "classification": "WEAK_EXCLUDE",
+        "n": 33,
+        "wins": 4,
+        "frames": 14,
+        "sr": 0.1212,
+        "frame_rate": 0.4242,
+        "sr_wilson_lower_90": 0.0556
+      },
+      {
+        "course": "Warwick",
+        "classification": "WEAK_EXCLUDE",
+        "n": 35,
+        "wins": 5,
+        "frames": 21,
+        "sr": 0.1429,
+        "frame_rate": 0.6,
+        "sr_wilson_lower_90": 0.0713
+      },
+      {
+        "course": "Wolverhampton (AW)",
+        "classification": "NEUTRAL",
+        "n": 96,
+        "wins": 24,
+        "frames": 58,
+        "sr": 0.25,
+        "frame_rate": 0.6042,
+        "sr_wilson_lower_90": 0.1848
+      },
+      {
+        "course": "Yarmouth",
+        "classification": "NEUTRAL",
+        "n": 48,
+        "wins": 12,
+        "frames": 31,
+        "sr": 0.25,
+        "frame_rate": 0.6458,
+        "sr_wilson_lower_90": 0.1624
+      }
+    ]
+  },
+  "all_roi_segments": [
+    {
+      "dimensions": [
+        "country"
+      ],
+      "values": {
+        "country": "GB"
+      },
+      "rule": "country=GB",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 173,
+        "wins": 62,
+        "frames": 108,
+        "sr": 0.3584,
+        "frame_rate": 0.6243,
+        "sr_wilson_lower_90": 0.301,
+        "returns": 209.9,
+        "pl": 36.9,
+        "roi": 0.2133,
+        "max_drawdown": -24.55
+      },
+      "train": {
+        "n": 96,
+        "wins": 38,
+        "frames": 60,
+        "sr": 0.3958,
+        "frame_rate": 0.625,
+        "sr_wilson_lower_90": 0.3177,
+        "returns": 125.21,
+        "pl": 29.21,
+        "roi": 0.3043,
+        "max_drawdown": -24.55
+      },
+      "test": {
+        "n": 77,
+        "wins": 24,
+        "frames": 48,
+        "sr": 0.3117,
+        "frame_rate": 0.6234,
+        "sr_wilson_lower_90": 0.2325,
+        "returns": 84.69,
+        "pl": 7.69,
+        "roi": 0.0999,
+        "max_drawdown": -14.8
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "country"
+      ],
+      "values": {
+        "country": "IRE"
+      },
+      "rule": "country=IRE",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 51,
+        "wins": 11,
+        "frames": 26,
+        "sr": 0.2157,
+        "frame_rate": 0.5098,
+        "sr_wilson_lower_90": 0.1366,
+        "returns": 36.04,
+        "pl": -14.96,
+        "roi": -0.2933,
+        "max_drawdown": -17.96
+      },
+      "train": {
+        "n": 29,
+        "wins": 6,
+        "frames": 14,
+        "sr": 0.2069,
+        "frame_rate": 0.4828,
+        "sr_wilson_lower_90": 0.111,
+        "returns": 26.12,
+        "pl": -2.88,
+        "roi": -0.0993,
+        "max_drawdown": -11.71
+      },
+      "test": {
+        "n": 22,
+        "wins": 5,
+        "frames": 12,
+        "sr": 0.2273,
+        "frame_rate": 0.5455,
+        "sr_wilson_lower_90": 0.1153,
+        "returns": 9.92,
+        "pl": -12.08,
+        "roi": -0.5491,
+        "max_drawdown": -13.7
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS"
+      },
+      "rule": "surface=TURF_OR_JUMPS",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 218,
+        "wins": 73,
+        "frames": 132,
+        "sr": 0.3349,
+        "frame_rate": 0.6055,
+        "sr_wilson_lower_90": 0.2846,
+        "returns": 245.94,
+        "pl": 27.94,
+        "roi": 0.1282,
+        "max_drawdown": -23.55
+      },
+      "train": {
+        "n": 125,
+        "wins": 44,
+        "frames": 74,
+        "sr": 0.352,
+        "frame_rate": 0.592,
+        "sr_wilson_lower_90": 0.2855,
+        "returns": 151.33,
+        "pl": 26.33,
+        "roi": 0.2106,
+        "max_drawdown": -23.55
+      },
+      "test": {
+        "n": 93,
+        "wins": 29,
+        "frames": 58,
+        "sr": 0.3118,
+        "frame_rate": 0.6237,
+        "sr_wilson_lower_90": 0.2391,
+        "returns": 94.61,
+        "pl": 1.61,
+        "roi": 0.0173,
+        "max_drawdown": -14.6
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "field_bucket"
+      ],
+      "values": {
+        "field_bucket": "FIELD_10_12"
+      },
+      "rule": "field_bucket=FIELD_10_12",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 62,
+        "wins": 15,
+        "frames": 31,
+        "sr": 0.2419,
+        "frame_rate": 0.5,
+        "sr_wilson_lower_90": 0.1645,
+        "returns": 44.49,
+        "pl": -17.51,
+        "roi": -0.2824,
+        "max_drawdown": -17.74
+      },
+      "train": {
+        "n": 32,
+        "wins": 8,
+        "frames": 18,
+        "sr": 0.25,
+        "frame_rate": 0.5625,
+        "sr_wilson_lower_90": 0.147,
+        "returns": 22.88,
+        "pl": -9.12,
+        "roi": -0.285,
+        "max_drawdown": -13.0
+      },
+      "test": {
+        "n": 30,
+        "wins": 7,
+        "frames": 13,
+        "sr": 0.2333,
+        "frame_rate": 0.4333,
+        "sr_wilson_lower_90": 0.1318,
+        "returns": 21.61,
+        "pl": -8.39,
+        "roi": -0.2797,
+        "max_drawdown": -11.75
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "field_bucket"
+      ],
+      "values": {
+        "field_bucket": "FIELD_13_PLUS"
+      },
+      "rule": "field_bucket=FIELD_13_PLUS",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 48,
+        "wins": 11,
+        "frames": 22,
+        "sr": 0.2292,
+        "frame_rate": 0.4583,
+        "sr_wilson_lower_90": 0.1455,
+        "returns": 41.19,
+        "pl": -6.81,
+        "roi": -0.1419,
+        "max_drawdown": -12.1
+      },
+      "train": {
+        "n": 25,
+        "wins": 5,
+        "frames": 11,
+        "sr": 0.2,
+        "frame_rate": 0.44,
+        "sr_wilson_lower_90": 0.1009,
+        "returns": 23.17,
+        "pl": -1.83,
+        "roi": -0.0732,
+        "max_drawdown": -9.27
+      },
+      "test": {
+        "n": 23,
+        "wins": 6,
+        "frames": 11,
+        "sr": 0.2609,
+        "frame_rate": 0.4783,
+        "sr_wilson_lower_90": 0.1414,
+        "returns": 18.02,
+        "pl": -4.98,
+        "roi": -0.2165,
+        "max_drawdown": -12.1
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "field_bucket"
+      ],
+      "values": {
+        "field_bucket": "FIELD_2_6"
+      },
+      "rule": "field_bucket=FIELD_2_6",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 40,
+        "wins": 19,
+        "frames": 31,
+        "sr": 0.475,
+        "frame_rate": 0.775,
+        "sr_wilson_lower_90": 0.3509,
+        "returns": 49.78,
+        "pl": 9.78,
+        "roi": 0.2445,
+        "max_drawdown": -7.66
+      },
+      "train": {
+        "n": 24,
+        "wins": 13,
+        "frames": 17,
+        "sr": 0.5417,
+        "frame_rate": 0.7083,
+        "sr_wilson_lower_90": 0.3788,
+        "returns": 33.29,
+        "pl": 9.29,
+        "roi": 0.3871,
+        "max_drawdown": -3.0
+      },
+      "test": {
+        "n": 16,
+        "wins": 6,
+        "frames": 14,
+        "sr": 0.375,
+        "frame_rate": 0.875,
+        "sr_wilson_lower_90": 0.2081,
+        "returns": 16.49,
+        "pl": 0.49,
+        "roi": 0.0306,
+        "max_drawdown": -4.66
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "field_bucket"
+      ],
+      "values": {
+        "field_bucket": "FIELD_7_9"
+      },
+      "rule": "field_bucket=FIELD_7_9",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 74,
+        "wins": 28,
+        "frames": 50,
+        "sr": 0.3784,
+        "frame_rate": 0.6757,
+        "sr_wilson_lower_90": 0.2915,
+        "returns": 110.48,
+        "pl": 36.48,
+        "roi": 0.493,
+        "max_drawdown": -10.53
+      },
+      "train": {
+        "n": 44,
+        "wins": 18,
+        "frames": 28,
+        "sr": 0.4091,
+        "frame_rate": 0.6364,
+        "sr_wilson_lower_90": 0.2959,
+        "returns": 71.99,
+        "pl": 27.99,
+        "roi": 0.6361,
+        "max_drawdown": -10.53
+      },
+      "test": {
+        "n": 30,
+        "wins": 10,
+        "frames": 22,
+        "sr": 0.3333,
+        "frame_rate": 0.7333,
+        "sr_wilson_lower_90": 0.2108,
+        "returns": 38.49,
+        "pl": 8.49,
+        "roi": 0.283,
+        "max_drawdown": -6.0
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "class_bucket"
+      ],
+      "values": {
+        "class_bucket": "CLASS_4"
+      },
+      "rule": "class_bucket=CLASS_4",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 224,
+        "wins": 73,
+        "frames": 134,
+        "sr": 0.3259,
+        "frame_rate": 0.5982,
+        "sr_wilson_lower_90": 0.2767,
+        "returns": 245.94,
+        "pl": 21.94,
+        "roi": 0.0979,
+        "max_drawdown": -23.55
+      },
+      "train": {
+        "n": 125,
+        "wins": 44,
+        "frames": 74,
+        "sr": 0.352,
+        "frame_rate": 0.592,
+        "sr_wilson_lower_90": 0.2855,
+        "returns": 151.33,
+        "pl": 26.33,
+        "roi": 0.2106,
+        "max_drawdown": -23.55
+      },
+      "test": {
+        "n": 99,
+        "wins": 29,
+        "frames": 60,
+        "sr": 0.2929,
+        "frame_rate": 0.6061,
+        "sr_wilson_lower_90": 0.224,
+        "returns": 94.61,
+        "pl": -4.39,
+        "roi": -0.0443,
+        "max_drawdown": -20.6
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "going_bucket"
+      ],
+      "values": {
+        "going_bucket": "GOOD"
+      },
+      "rule": "going_bucket=GOOD",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 65,
+        "wins": 26,
+        "frames": 45,
+        "sr": 0.4,
+        "frame_rate": 0.6923,
+        "sr_wilson_lower_90": 0.306,
+        "returns": 81.46,
+        "pl": 16.46,
+        "roi": 0.2532,
+        "max_drawdown": -16.71
+      },
+      "train": {
+        "n": 30,
+        "wins": 12,
+        "frames": 21,
+        "sr": 0.4,
+        "frame_rate": 0.7,
+        "sr_wilson_lower_90": 0.2671,
+        "returns": 35.78,
+        "pl": 5.78,
+        "roi": 0.1927,
+        "max_drawdown": -13.0
+      },
+      "test": {
+        "n": 35,
+        "wins": 14,
+        "frames": 24,
+        "sr": 0.4,
+        "frame_rate": 0.6857,
+        "sr_wilson_lower_90": 0.2757,
+        "returns": 45.68,
+        "pl": 10.68,
+        "roi": 0.3051,
+        "max_drawdown": -7.8
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "going_bucket"
+      ],
+      "values": {
+        "going_bucket": "SOFT_OR_YIELDING"
+      },
+      "rule": "going_bucket=SOFT_OR_YIELDING",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 78,
+        "wins": 25,
+        "frames": 51,
+        "sr": 0.3205,
+        "frame_rate": 0.6538,
+        "sr_wilson_lower_90": 0.2409,
+        "returns": 74.67,
+        "pl": -3.33,
+        "roi": -0.0427,
+        "max_drawdown": -18.22
+      },
+      "train": {
+        "n": 26,
+        "wins": 13,
+        "frames": 21,
+        "sr": 0.5,
+        "frame_rate": 0.8077,
+        "sr_wilson_lower_90": 0.3465,
+        "returns": 37.72,
+        "pl": 11.72,
+        "roi": 0.4508,
+        "max_drawdown": -4.0
+      },
+      "test": {
+        "n": 52,
+        "wins": 12,
+        "frames": 30,
+        "sr": 0.2308,
+        "frame_rate": 0.5769,
+        "sr_wilson_lower_90": 0.1494,
+        "returns": 36.95,
+        "pl": -15.05,
+        "roi": -0.2894,
+        "max_drawdown": -16.27
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "off_bucket"
+      ],
+      "values": {
+        "off_bucket": "14_TO_17"
+      },
+      "rule": "off_bucket=14_TO_17",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 103,
+        "wins": 33,
+        "frames": 58,
+        "sr": 0.3204,
+        "frame_rate": 0.5631,
+        "sr_wilson_lower_90": 0.2502,
+        "returns": 114.9,
+        "pl": 11.9,
+        "roi": 0.1155,
+        "max_drawdown": -12.66
+      },
+      "train": {
+        "n": 68,
+        "wins": 24,
+        "frames": 38,
+        "sr": 0.3529,
+        "frame_rate": 0.5588,
+        "sr_wilson_lower_90": 0.2649,
+        "returns": 84.94,
+        "pl": 16.94,
+        "roi": 0.2491,
+        "max_drawdown": -10.0
+      },
+      "test": {
+        "n": 35,
+        "wins": 9,
+        "frames": 20,
+        "sr": 0.2571,
+        "frame_rate": 0.5714,
+        "sr_wilson_lower_90": 0.1562,
+        "returns": 29.96,
+        "pl": -5.04,
+        "roi": -0.144,
+        "max_drawdown": -9.0
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "off_bucket"
+      ],
+      "values": {
+        "off_bucket": "AFTER_17"
+      },
+      "rule": "off_bucket=AFTER_17",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 112,
+        "wins": 34,
+        "frames": 68,
+        "sr": 0.3036,
+        "frame_rate": 0.6071,
+        "sr_wilson_lower_90": 0.2374,
+        "returns": 114.94,
+        "pl": 2.94,
+        "roi": 0.0262,
+        "max_drawdown": -19.6
+      },
+      "train": {
+        "n": 49,
+        "wins": 15,
+        "frames": 29,
+        "sr": 0.3061,
+        "frame_rate": 0.5918,
+        "sr_wilson_lower_90": 0.2103,
+        "returns": 52.39,
+        "pl": 3.39,
+        "roi": 0.0692,
+        "max_drawdown": -17.03
+      },
+      "test": {
+        "n": 63,
+        "wins": 19,
+        "frames": 39,
+        "sr": 0.3016,
+        "frame_rate": 0.619,
+        "sr_wilson_lower_90": 0.2163,
+        "returns": 62.55,
+        "pl": -0.45,
+        "roi": -0.0071,
+        "max_drawdown": -19.6
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "vp_bucket=VP_20_30",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 65,
+        "wins": 21,
+        "frames": 33,
+        "sr": 0.3231,
+        "frame_rate": 0.5077,
+        "sr_wilson_lower_90": 0.2364,
+        "returns": 92.63,
+        "pl": 27.63,
+        "roi": 0.4251,
+        "max_drawdown": -10.42
+      },
+      "train": {
+        "n": 36,
+        "wins": 14,
+        "frames": 20,
+        "sr": 0.3889,
+        "frame_rate": 0.5556,
+        "sr_wilson_lower_90": 0.2675,
+        "returns": 55.38,
+        "pl": 19.38,
+        "roi": 0.5383,
+        "max_drawdown": -10.42
+      },
+      "test": {
+        "n": 29,
+        "wins": 7,
+        "frames": 13,
+        "sr": 0.2414,
+        "frame_rate": 0.4483,
+        "sr_wilson_lower_90": 0.1365,
+        "returns": 37.25,
+        "pl": 8.25,
+        "roi": 0.2845,
+        "max_drawdown": -6.5
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "vp_bucket=VP_30_40",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 49,
+        "wins": 15,
+        "frames": 29,
+        "sr": 0.3061,
+        "frame_rate": 0.5918,
+        "sr_wilson_lower_90": 0.2103,
+        "returns": 51.52,
+        "pl": 2.52,
+        "roi": 0.0514,
+        "max_drawdown": -11.12
+      },
+      "train": {
+        "n": 24,
+        "wins": 8,
+        "frames": 13,
+        "sr": 0.3333,
+        "frame_rate": 0.5417,
+        "sr_wilson_lower_90": 0.1992,
+        "returns": 29.61,
+        "pl": 5.61,
+        "roi": 0.2337,
+        "max_drawdown": -6.0
+      },
+      "test": {
+        "n": 25,
+        "wins": 7,
+        "frames": 16,
+        "sr": 0.28,
+        "frame_rate": 0.64,
+        "sr_wilson_lower_90": 0.1595,
+        "returns": 21.91,
+        "pl": -3.09,
+        "roi": -0.1236,
+        "max_drawdown": -9.95
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 60,
+        "wins": 25,
+        "frames": 45,
+        "sr": 0.4167,
+        "frame_rate": 0.75,
+        "sr_wilson_lower_90": 0.3178,
+        "returns": 61.3,
+        "pl": 1.3,
+        "roi": 0.0217,
+        "max_drawdown": -14.34
+      },
+      "train": {
+        "n": 22,
+        "wins": 10,
+        "frames": 16,
+        "sr": 0.4545,
+        "frame_rate": 0.7273,
+        "sr_wilson_lower_90": 0.2947,
+        "returns": 25.85,
+        "pl": 3.85,
+        "roi": 0.175,
+        "max_drawdown": -6.0
+      },
+      "test": {
+        "n": 38,
+        "wins": 15,
+        "frames": 29,
+        "sr": 0.3947,
+        "frame_rate": 0.7632,
+        "sr_wilson_lower_90": 0.2755,
+        "returns": 35.45,
+        "pl": -2.55,
+        "roi": -0.0671,
+        "max_drawdown": -14.34
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "field_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "field_bucket": "FIELD_10_12"
+      },
+      "rule": "country=GB AND field_bucket=FIELD_10_12",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 50,
+        "wins": 13,
+        "frames": 25,
+        "sr": 0.26,
+        "frame_rate": 0.5,
+        "sr_wilson_lower_90": 0.1722,
+        "returns": 40.28,
+        "pl": -9.72,
+        "roi": -0.1944,
+        "max_drawdown": -11.0
+      },
+      "train": {
+        "n": 24,
+        "wins": 6,
+        "frames": 14,
+        "sr": 0.25,
+        "frame_rate": 0.5833,
+        "sr_wilson_lower_90": 0.1352,
+        "returns": 18.67,
+        "pl": -5.33,
+        "roi": -0.2221,
+        "max_drawdown": -11.0
+      },
+      "test": {
+        "n": 26,
+        "wins": 7,
+        "frames": 11,
+        "sr": 0.2692,
+        "frame_rate": 0.4231,
+        "sr_wilson_lower_90": 0.1531,
+        "returns": 21.61,
+        "pl": -4.39,
+        "roi": -0.1688,
+        "max_drawdown": -8.75
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "field_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "field_bucket": "FIELD_2_6"
+      },
+      "rule": "country=GB AND field_bucket=FIELD_2_6",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 34,
+        "wins": 17,
+        "frames": 26,
+        "sr": 0.5,
+        "frame_rate": 0.7647,
+        "sr_wilson_lower_90": 0.3642,
+        "returns": 41.87,
+        "pl": 7.87,
+        "roi": 0.2315,
+        "max_drawdown": -4.66
+      },
+      "train": {
+        "n": 19,
+        "wins": 11,
+        "frames": 13,
+        "sr": 0.5789,
+        "frame_rate": 0.6842,
+        "sr_wilson_lower_90": 0.3945,
+        "returns": 25.38,
+        "pl": 6.38,
+        "roi": 0.3358,
+        "max_drawdown": -3.38
+      },
+      "test": {
+        "n": 15,
+        "wins": 6,
+        "frames": 13,
+        "sr": 0.4,
+        "frame_rate": 0.8667,
+        "sr_wilson_lower_90": 0.2232,
+        "returns": 16.49,
+        "pl": 1.49,
+        "roi": 0.0993,
+        "max_drawdown": -4.0
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "country",
+        "field_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "field_bucket": "FIELD_7_9"
+      },
+      "rule": "country=GB AND field_bucket=FIELD_7_9",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 62,
+        "wins": 25,
+        "frames": 43,
+        "sr": 0.4032,
+        "frame_rate": 0.6935,
+        "sr_wilson_lower_90": 0.3069,
+        "returns": 101.88,
+        "pl": 39.88,
+        "roi": 0.6432,
+        "max_drawdown": -9.53
+      },
+      "train": {
+        "n": 37,
+        "wins": 17,
+        "frames": 26,
+        "sr": 0.4595,
+        "frame_rate": 0.7027,
+        "sr_wilson_lower_90": 0.3321,
+        "returns": 67.99,
+        "pl": 30.99,
+        "roi": 0.8376,
+        "max_drawdown": -9.53
+      },
+      "test": {
+        "n": 25,
+        "wins": 8,
+        "frames": 17,
+        "sr": 0.32,
+        "frame_rate": 0.68,
+        "sr_wilson_lower_90": 0.1907,
+        "returns": 33.89,
+        "pl": 8.89,
+        "roi": 0.3556,
+        "max_drawdown": -6.0
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "surface",
+        "field_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "field_bucket": "FIELD_10_12"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND field_bucket=FIELD_10_12",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 61,
+        "wins": 15,
+        "frames": 31,
+        "sr": 0.2459,
+        "frame_rate": 0.5082,
+        "sr_wilson_lower_90": 0.1673,
+        "returns": 44.49,
+        "pl": -16.51,
+        "roi": -0.2707,
+        "max_drawdown": -16.74
+      },
+      "train": {
+        "n": 32,
+        "wins": 8,
+        "frames": 18,
+        "sr": 0.25,
+        "frame_rate": 0.5625,
+        "sr_wilson_lower_90": 0.147,
+        "returns": 22.88,
+        "pl": -9.12,
+        "roi": -0.285,
+        "max_drawdown": -13.0
+      },
+      "test": {
+        "n": 29,
+        "wins": 7,
+        "frames": 13,
+        "sr": 0.2414,
+        "frame_rate": 0.4483,
+        "sr_wilson_lower_90": 0.1365,
+        "returns": 21.61,
+        "pl": -7.39,
+        "roi": -0.2548,
+        "max_drawdown": -10.75
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "field_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "field_bucket": "FIELD_13_PLUS"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND field_bucket=FIELD_13_PLUS",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 47,
+        "wins": 11,
+        "frames": 22,
+        "sr": 0.234,
+        "frame_rate": 0.4681,
+        "sr_wilson_lower_90": 0.1487,
+        "returns": 41.19,
+        "pl": -5.81,
+        "roi": -0.1236,
+        "max_drawdown": -11.1
+      },
+      "train": {
+        "n": 25,
+        "wins": 5,
+        "frames": 11,
+        "sr": 0.2,
+        "frame_rate": 0.44,
+        "sr_wilson_lower_90": 0.1009,
+        "returns": 23.17,
+        "pl": -1.83,
+        "roi": -0.0732,
+        "max_drawdown": -9.27
+      },
+      "test": {
+        "n": 22,
+        "wins": 6,
+        "frames": 11,
+        "sr": 0.2727,
+        "frame_rate": 0.5,
+        "sr_wilson_lower_90": 0.1481,
+        "returns": 18.02,
+        "pl": -3.98,
+        "roi": -0.1809,
+        "max_drawdown": -11.1
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "field_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "field_bucket": "FIELD_2_6"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND field_bucket=FIELD_2_6",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 40,
+        "wins": 19,
+        "frames": 31,
+        "sr": 0.475,
+        "frame_rate": 0.775,
+        "sr_wilson_lower_90": 0.3509,
+        "returns": 49.78,
+        "pl": 9.78,
+        "roi": 0.2445,
+        "max_drawdown": -7.66
+      },
+      "train": {
+        "n": 24,
+        "wins": 13,
+        "frames": 17,
+        "sr": 0.5417,
+        "frame_rate": 0.7083,
+        "sr_wilson_lower_90": 0.3788,
+        "returns": 33.29,
+        "pl": 9.29,
+        "roi": 0.3871,
+        "max_drawdown": -3.0
+      },
+      "test": {
+        "n": 16,
+        "wins": 6,
+        "frames": 14,
+        "sr": 0.375,
+        "frame_rate": 0.875,
+        "sr_wilson_lower_90": 0.2081,
+        "returns": 16.49,
+        "pl": 0.49,
+        "roi": 0.0306,
+        "max_drawdown": -4.66
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "surface",
+        "field_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "field_bucket": "FIELD_7_9"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND field_bucket=FIELD_7_9",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 70,
+        "wins": 28,
+        "frames": 48,
+        "sr": 0.4,
+        "frame_rate": 0.6857,
+        "sr_wilson_lower_90": 0.3091,
+        "returns": 110.48,
+        "pl": 40.48,
+        "roi": 0.5783,
+        "max_drawdown": -10.53
+      },
+      "train": {
+        "n": 44,
+        "wins": 18,
+        "frames": 28,
+        "sr": 0.4091,
+        "frame_rate": 0.6364,
+        "sr_wilson_lower_90": 0.2959,
+        "returns": 71.99,
+        "pl": 27.99,
+        "roi": 0.6361,
+        "max_drawdown": -10.53
+      },
+      "test": {
+        "n": 26,
+        "wins": 10,
+        "frames": 20,
+        "sr": 0.3846,
+        "frame_rate": 0.7692,
+        "sr_wilson_lower_90": 0.2457,
+        "returns": 38.49,
+        "pl": 12.49,
+        "roi": 0.4804,
+        "max_drawdown": -4.76
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "country=GB AND vp_bucket=VP_20_30",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 46,
+        "wins": 18,
+        "frames": 26,
+        "sr": 0.3913,
+        "frame_rate": 0.5652,
+        "sr_wilson_lower_90": 0.2821,
+        "returns": 76.72,
+        "pl": 30.72,
+        "roi": 0.6678,
+        "max_drawdown": -6.33
+      },
+      "train": {
+        "n": 23,
+        "wins": 11,
+        "frames": 14,
+        "sr": 0.4783,
+        "frame_rate": 0.6087,
+        "sr_wilson_lower_90": 0.3185,
+        "returns": 39.47,
+        "pl": 16.47,
+        "roi": 0.7161,
+        "max_drawdown": -6.33
+      },
+      "test": {
+        "n": 23,
+        "wins": 7,
+        "frames": 12,
+        "sr": 0.3043,
+        "frame_rate": 0.5217,
+        "sr_wilson_lower_90": 0.1742,
+        "returns": 37.25,
+        "pl": 14.25,
+        "roi": 0.6196,
+        "max_drawdown": -4.5
+      },
+      "stable_performance": true,
+      "profitable_both_periods": true
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "country=GB AND vp_bucket=VP_30_40",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 45,
+        "wins": 14,
+        "frames": 27,
+        "sr": 0.3111,
+        "frame_rate": 0.6,
+        "sr_wilson_lower_90": 0.211,
+        "returns": 49.69,
+        "pl": 4.69,
+        "roi": 0.1042,
+        "max_drawdown": -9.95
+      },
+      "train": {
+        "n": 21,
+        "wins": 7,
+        "frames": 12,
+        "sr": 0.3333,
+        "frame_rate": 0.5714,
+        "sr_wilson_lower_90": 0.192,
+        "returns": 27.78,
+        "pl": 6.78,
+        "roi": 0.3229,
+        "max_drawdown": -5.7
+      },
+      "test": {
+        "n": 24,
+        "wins": 7,
+        "frames": 15,
+        "sr": 0.2917,
+        "frame_rate": 0.625,
+        "sr_wilson_lower_90": 0.1666,
+        "returns": 21.91,
+        "pl": -2.09,
+        "roi": -0.0871,
+        "max_drawdown": -8.95
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_20_30",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 64,
+        "wins": 21,
+        "frames": 33,
+        "sr": 0.3281,
+        "frame_rate": 0.5156,
+        "sr_wilson_lower_90": 0.2403,
+        "returns": 92.63,
+        "pl": 28.63,
+        "roi": 0.4473,
+        "max_drawdown": -10.42
+      },
+      "train": {
+        "n": 36,
+        "wins": 14,
+        "frames": 20,
+        "sr": 0.3889,
+        "frame_rate": 0.5556,
+        "sr_wilson_lower_90": 0.2675,
+        "returns": 55.38,
+        "pl": 19.38,
+        "roi": 0.5383,
+        "max_drawdown": -10.42
+      },
+      "test": {
+        "n": 28,
+        "wins": 7,
+        "frames": 13,
+        "sr": 0.25,
+        "frame_rate": 0.4643,
+        "sr_wilson_lower_90": 0.1416,
+        "returns": 37.25,
+        "pl": 9.25,
+        "roi": 0.3304,
+        "max_drawdown": -6.5
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_30_40",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 46,
+        "wins": 15,
+        "frames": 29,
+        "sr": 0.3261,
+        "frame_rate": 0.6304,
+        "sr_wilson_lower_90": 0.2248,
+        "returns": 51.52,
+        "pl": 5.52,
+        "roi": 0.12,
+        "max_drawdown": -8.12
+      },
+      "train": {
+        "n": 24,
+        "wins": 8,
+        "frames": 13,
+        "sr": 0.3333,
+        "frame_rate": 0.5417,
+        "sr_wilson_lower_90": 0.1992,
+        "returns": 29.61,
+        "pl": 5.61,
+        "roi": 0.2337,
+        "max_drawdown": -6.0
+      },
+      "test": {
+        "n": 22,
+        "wins": 7,
+        "frames": 16,
+        "sr": 0.3182,
+        "frame_rate": 0.7273,
+        "sr_wilson_lower_90": 0.1827,
+        "returns": 21.91,
+        "pl": -0.09,
+        "roi": -0.0041,
+        "max_drawdown": -6.95
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-06-08",
+      "total": {
+        "n": 58,
+        "wins": 25,
+        "frames": 43,
+        "sr": 0.431,
+        "frame_rate": 0.7414,
+        "sr_wilson_lower_90": 0.3295,
+        "returns": 61.3,
+        "pl": 3.3,
+        "roi": 0.0569,
+        "max_drawdown": -12.34
+      },
+      "train": {
+        "n": 22,
+        "wins": 10,
+        "frames": 16,
+        "sr": 0.4545,
+        "frame_rate": 0.7273,
+        "sr_wilson_lower_90": 0.2947,
+        "returns": 25.85,
+        "pl": 3.85,
+        "roi": 0.175,
+        "max_drawdown": -6.0
+      },
+      "test": {
+        "n": 36,
+        "wins": 15,
+        "frames": 27,
+        "sr": 0.4167,
+        "frame_rate": 0.75,
+        "sr_wilson_lower_90": 0.292,
+        "returns": 35.45,
+        "pl": -0.55,
+        "roi": -0.0153,
+        "max_drawdown": -12.34
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    }
+  ],
+  "all_sigma_segments": [
+    {
+      "dimensions": [
+        "country"
+      ],
+      "values": {
+        "country": "GB"
+      },
+      "rule": "country=GB",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 2034,
+        "wins": 467,
+        "frames": 1020,
+        "sr": 0.2296,
+        "frame_rate": 0.5015,
+        "sr_wilson_lower_90": 0.2146
+      },
+      "train": {
+        "n": 1413,
+        "wins": 300,
+        "frames": 698,
+        "sr": 0.2123,
+        "frame_rate": 0.494,
+        "sr_wilson_lower_90": 0.195
+      },
+      "test": {
+        "n": 621,
+        "wins": 167,
+        "frames": 322,
+        "sr": 0.2689,
+        "frame_rate": 0.5185,
+        "sr_wilson_lower_90": 0.2407
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country"
+      ],
+      "values": {
+        "country": "IRE"
+      },
+      "rule": "country=IRE",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 468,
+        "wins": 101,
+        "frames": 220,
+        "sr": 0.2158,
+        "frame_rate": 0.4701,
+        "sr_wilson_lower_90": 0.1862
+      },
+      "train": {
+        "n": 317,
+        "wins": 69,
+        "frames": 148,
+        "sr": 0.2177,
+        "frame_rate": 0.4669,
+        "sr_wilson_lower_90": 0.182
+      },
+      "test": {
+        "n": 151,
+        "wins": 32,
+        "frames": 72,
+        "sr": 0.2119,
+        "frame_rate": 0.4768,
+        "sr_wilson_lower_90": 0.1625
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "course"
+      ],
+      "values": {
+        "course": "Bath"
+      },
+      "rule": "course=Bath",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 58,
+        "wins": 14,
+        "frames": 30,
+        "sr": 0.2414,
+        "frame_rate": 0.5172,
+        "sr_wilson_lower_90": 0.1618
+      },
+      "train": {
+        "n": 30,
+        "wins": 5,
+        "frames": 14,
+        "sr": 0.1667,
+        "frame_rate": 0.4667,
+        "sr_wilson_lower_90": 0.0836
+      },
+      "test": {
+        "n": 28,
+        "wins": 9,
+        "frames": 16,
+        "sr": 0.3214,
+        "frame_rate": 0.5714,
+        "sr_wilson_lower_90": 0.1976
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "course"
+      ],
+      "values": {
+        "course": "Doncaster"
+      },
+      "rule": "course=Doncaster",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 53,
+        "wins": 11,
+        "frames": 26,
+        "sr": 0.2075,
+        "frame_rate": 0.4906,
+        "sr_wilson_lower_90": 0.1312
+      },
+      "train": {
+        "n": 35,
+        "wins": 5,
+        "frames": 13,
+        "sr": 0.1429,
+        "frame_rate": 0.3714,
+        "sr_wilson_lower_90": 0.0713
+      },
+      "test": {
+        "n": 18,
+        "wins": 6,
+        "frames": 13,
+        "sr": 0.3333,
+        "frame_rate": 0.7222,
+        "sr_wilson_lower_90": 0.1833
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface"
+      ],
+      "values": {
+        "surface": "AW"
+      },
+      "rule": "surface=AW",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 418,
+        "wins": 83,
+        "frames": 189,
+        "sr": 0.1986,
+        "frame_rate": 0.4522,
+        "sr_wilson_lower_90": 0.1685
+      },
+      "train": {
+        "n": 399,
+        "wins": 83,
+        "frames": 185,
+        "sr": 0.208,
+        "frame_rate": 0.4637,
+        "sr_wilson_lower_90": 0.1766
+      },
+      "test": {
+        "n": 19,
+        "wins": 0,
+        "frames": 4,
+        "sr": 0.0,
+        "frame_rate": 0.2105,
+        "sr_wilson_lower_90": 0.0
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS"
+      },
+      "rule": "surface=TURF_OR_JUMPS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 2084,
+        "wins": 485,
+        "frames": 1051,
+        "sr": 0.2327,
+        "frame_rate": 0.5043,
+        "sr_wilson_lower_90": 0.2179
+      },
+      "train": {
+        "n": 1331,
+        "wins": 286,
+        "frames": 661,
+        "sr": 0.2149,
+        "frame_rate": 0.4966,
+        "sr_wilson_lower_90": 0.1969
+      },
+      "test": {
+        "n": 753,
+        "wins": 199,
+        "frames": 390,
+        "sr": 0.2643,
+        "frame_rate": 0.5179,
+        "sr_wilson_lower_90": 0.2387
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "off_bucket"
+      ],
+      "values": {
+        "off_bucket": "14_TO_17"
+      },
+      "rule": "off_bucket=14_TO_17",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 1224,
+        "wins": 274,
+        "frames": 612,
+        "sr": 0.2239,
+        "frame_rate": 0.5,
+        "sr_wilson_lower_90": 0.2049
+      },
+      "train": {
+        "n": 886,
+        "wins": 185,
+        "frames": 439,
+        "sr": 0.2088,
+        "frame_rate": 0.4955,
+        "sr_wilson_lower_90": 0.1872
+      },
+      "test": {
+        "n": 338,
+        "wins": 89,
+        "frames": 173,
+        "sr": 0.2633,
+        "frame_rate": 0.5118,
+        "sr_wilson_lower_90": 0.2259
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "off_bucket"
+      ],
+      "values": {
+        "off_bucket": "AFTER_17"
+      },
+      "rule": "off_bucket=AFTER_17",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 1001,
+        "wins": 209,
+        "frames": 485,
+        "sr": 0.2088,
+        "frame_rate": 0.4845,
+        "sr_wilson_lower_90": 0.1885
+      },
+      "train": {
+        "n": 638,
+        "wins": 114,
+        "frames": 286,
+        "sr": 0.1787,
+        "frame_rate": 0.4483,
+        "sr_wilson_lower_90": 0.1551
+      },
+      "test": {
+        "n": 363,
+        "wins": 95,
+        "frames": 199,
+        "sr": 0.2617,
+        "frame_rate": 0.5482,
+        "sr_wilson_lower_90": 0.2256
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "off_bucket"
+      ],
+      "values": {
+        "off_bucket": "BEFORE_14"
+      },
+      "rule": "off_bucket=BEFORE_14",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 151,
+        "wins": 52,
+        "frames": 95,
+        "sr": 0.3444,
+        "frame_rate": 0.6291,
+        "sr_wilson_lower_90": 0.284
+      },
+      "train": {
+        "n": 113,
+        "wins": 37,
+        "frames": 73,
+        "sr": 0.3274,
+        "frame_rate": 0.646,
+        "sr_wilson_lower_90": 0.2596
+      },
+      "test": {
+        "n": 38,
+        "wins": 15,
+        "frames": 22,
+        "sr": 0.3947,
+        "frame_rate": 0.5789,
+        "sr_wilson_lower_90": 0.2755
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "vp_bucket=VP_20_30",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 553,
+        "wins": 96,
+        "frames": 243,
+        "sr": 0.1736,
+        "frame_rate": 0.4394,
+        "sr_wilson_lower_90": 0.1487
+      },
+      "train": {
+        "n": 349,
+        "wins": 59,
+        "frames": 158,
+        "sr": 0.1691,
+        "frame_rate": 0.4527,
+        "sr_wilson_lower_90": 0.1386
+      },
+      "test": {
+        "n": 204,
+        "wins": 37,
+        "frames": 85,
+        "sr": 0.1814,
+        "frame_rate": 0.4167,
+        "sr_wilson_lower_90": 0.1413
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "vp_bucket=VP_30_40",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 343,
+        "wins": 89,
+        "frames": 200,
+        "sr": 0.2595,
+        "frame_rate": 0.5831,
+        "sr_wilson_lower_90": 0.2225
+      },
+      "train": {
+        "n": 201,
+        "wins": 45,
+        "frames": 120,
+        "sr": 0.2239,
+        "frame_rate": 0.597,
+        "sr_wilson_lower_90": 0.1794
+      },
+      "test": {
+        "n": 142,
+        "wins": 44,
+        "frames": 80,
+        "sr": 0.3099,
+        "frame_rate": 0.5634,
+        "sr_wilson_lower_90": 0.2501
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 1127,
+        "wins": 301,
+        "frames": 616,
+        "sr": 0.2671,
+        "frame_rate": 0.5466,
+        "sr_wilson_lower_90": 0.246
+      },
+      "train": {
+        "n": 882,
+        "wins": 221,
+        "frames": 457,
+        "sr": 0.2506,
+        "frame_rate": 0.5181,
+        "sr_wilson_lower_90": 0.2274
+      },
+      "test": {
+        "n": 245,
+        "wins": 80,
+        "frames": 159,
+        "sr": 0.3265,
+        "frame_rate": 0.649,
+        "sr_wilson_lower_90": 0.2794
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "vp_bucket"
+      ],
+      "values": {
+        "vp_bucket": "VP_LT_20"
+      },
+      "rule": "vp_bucket=VP_LT_20",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 479,
+        "wins": 82,
+        "frames": 181,
+        "sr": 0.1712,
+        "frame_rate": 0.3779,
+        "sr_wilson_lower_90": 0.1447
+      },
+      "train": {
+        "n": 298,
+        "wins": 44,
+        "frames": 111,
+        "sr": 0.1477,
+        "frame_rate": 0.3725,
+        "sr_wilson_lower_90": 0.117
+      },
+      "test": {
+        "n": 181,
+        "wins": 38,
+        "frames": 70,
+        "sr": 0.2099,
+        "frame_rate": 0.3867,
+        "sr_wilson_lower_90": 0.1646
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "country=GB AND vp_bucket=VP_20_30",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 462,
+        "wins": 82,
+        "frames": 208,
+        "sr": 0.1775,
+        "frame_rate": 0.4502,
+        "sr_wilson_lower_90": 0.1502
+      },
+      "train": {
+        "n": 299,
+        "wins": 49,
+        "frames": 136,
+        "sr": 0.1639,
+        "frame_rate": 0.4548,
+        "sr_wilson_lower_90": 0.1317
+      },
+      "test": {
+        "n": 163,
+        "wins": 33,
+        "frames": 72,
+        "sr": 0.2025,
+        "frame_rate": 0.4417,
+        "sr_wilson_lower_90": 0.1557
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "country=GB AND vp_bucket=VP_30_40",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 285,
+        "wins": 75,
+        "frames": 167,
+        "sr": 0.2632,
+        "frame_rate": 0.586,
+        "sr_wilson_lower_90": 0.2226
+      },
+      "train": {
+        "n": 162,
+        "wins": 34,
+        "frames": 98,
+        "sr": 0.2099,
+        "frame_rate": 0.6049,
+        "sr_wilson_lower_90": 0.1622
+      },
+      "test": {
+        "n": 123,
+        "wins": 41,
+        "frames": 69,
+        "sr": 0.3333,
+        "frame_rate": 0.561,
+        "sr_wilson_lower_90": 0.2677
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "country=GB AND vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 902,
+        "wins": 243,
+        "frames": 495,
+        "sr": 0.2694,
+        "frame_rate": 0.5488,
+        "sr_wilson_lower_90": 0.2458
+      },
+      "train": {
+        "n": 713,
+        "wins": 183,
+        "frames": 373,
+        "sr": 0.2567,
+        "frame_rate": 0.5231,
+        "sr_wilson_lower_90": 0.2307
+      },
+      "test": {
+        "n": 189,
+        "wins": 60,
+        "frames": 122,
+        "sr": 0.3175,
+        "frame_rate": 0.6455,
+        "sr_wilson_lower_90": 0.2647
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "vp_bucket": "VP_LT_20"
+      },
+      "rule": "country=GB AND vp_bucket=VP_LT_20",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 385,
+        "wins": 67,
+        "frames": 150,
+        "sr": 0.174,
+        "frame_rate": 0.3896,
+        "sr_wilson_lower_90": 0.1445
+      },
+      "train": {
+        "n": 239,
+        "wins": 34,
+        "frames": 91,
+        "sr": 0.1423,
+        "frame_rate": 0.3808,
+        "sr_wilson_lower_90": 0.1091
+      },
+      "test": {
+        "n": 146,
+        "wins": 33,
+        "frames": 59,
+        "sr": 0.226,
+        "frame_rate": 0.4041,
+        "sr_wilson_lower_90": 0.1744
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "IRE",
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "country=IRE AND vp_bucket=VP_20_30",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 91,
+        "wins": 14,
+        "frames": 35,
+        "sr": 0.1538,
+        "frame_rate": 0.3846,
+        "sr_wilson_lower_90": 0.1017
+      },
+      "train": {
+        "n": 50,
+        "wins": 10,
+        "frames": 22,
+        "sr": 0.2,
+        "frame_rate": 0.44,
+        "sr_wilson_lower_90": 0.1235
+      },
+      "test": {
+        "n": 41,
+        "wins": 4,
+        "frames": 13,
+        "sr": 0.0976,
+        "frame_rate": 0.3171,
+        "sr_wilson_lower_90": 0.0446
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "IRE",
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "country=IRE AND vp_bucket=VP_30_40",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 58,
+        "wins": 14,
+        "frames": 33,
+        "sr": 0.2414,
+        "frame_rate": 0.569,
+        "sr_wilson_lower_90": 0.1618
+      },
+      "train": {
+        "n": 39,
+        "wins": 11,
+        "frames": 22,
+        "sr": 0.2821,
+        "frame_rate": 0.5641,
+        "sr_wilson_lower_90": 0.1807
+      },
+      "test": {
+        "n": 19,
+        "wins": 3,
+        "frames": 11,
+        "sr": 0.1579,
+        "frame_rate": 0.5789,
+        "sr_wilson_lower_90": 0.0649
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "IRE",
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "country=IRE AND vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 225,
+        "wins": 58,
+        "frames": 121,
+        "sr": 0.2578,
+        "frame_rate": 0.5378,
+        "sr_wilson_lower_90": 0.2129
+      },
+      "train": {
+        "n": 169,
+        "wins": 38,
+        "frames": 84,
+        "sr": 0.2249,
+        "frame_rate": 0.497,
+        "sr_wilson_lower_90": 0.1766
+      },
+      "test": {
+        "n": 56,
+        "wins": 20,
+        "frames": 37,
+        "sr": 0.3571,
+        "frame_rate": 0.6607,
+        "sr_wilson_lower_90": 0.2606
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "vp_bucket"
+      ],
+      "values": {
+        "country": "IRE",
+        "vp_bucket": "VP_LT_20"
+      },
+      "rule": "country=IRE AND vp_bucket=VP_LT_20",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 94,
+        "wins": 15,
+        "frames": 31,
+        "sr": 0.1596,
+        "frame_rate": 0.3298,
+        "sr_wilson_lower_90": 0.1071
+      },
+      "train": {
+        "n": 59,
+        "wins": 10,
+        "frames": 20,
+        "sr": 0.1695,
+        "frame_rate": 0.339,
+        "sr_wilson_lower_90": 0.1041
+      },
+      "test": {
+        "n": 35,
+        "wins": 5,
+        "frames": 11,
+        "sr": 0.1429,
+        "frame_rate": 0.3143,
+        "sr_wilson_lower_90": 0.0713
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_20_30"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_20_30",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 464,
+        "wins": 80,
+        "frames": 197,
+        "sr": 0.1724,
+        "frame_rate": 0.4246,
+        "sr_wilson_lower_90": 0.1455
+      },
+      "train": {
+        "n": 263,
+        "wins": 43,
+        "frames": 112,
+        "sr": 0.1635,
+        "frame_rate": 0.4259,
+        "sr_wilson_lower_90": 0.1294
+      },
+      "test": {
+        "n": 201,
+        "wins": 37,
+        "frames": 85,
+        "sr": 0.1841,
+        "frame_rate": 0.4229,
+        "sr_wilson_lower_90": 0.1434
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_30_40"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_30_40",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 304,
+        "wins": 81,
+        "frames": 179,
+        "sr": 0.2664,
+        "frame_rate": 0.5888,
+        "sr_wilson_lower_90": 0.2269
+      },
+      "train": {
+        "n": 167,
+        "wins": 37,
+        "frames": 99,
+        "sr": 0.2216,
+        "frame_rate": 0.5928,
+        "sr_wilson_lower_90": 0.1734
+      },
+      "test": {
+        "n": 137,
+        "wins": 44,
+        "frames": 80,
+        "sr": 0.3212,
+        "frame_rate": 0.5839,
+        "sr_wilson_lower_90": 0.2596
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_40_PLUS"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_40_PLUS",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 917,
+        "wins": 254,
+        "frames": 523,
+        "sr": 0.277,
+        "frame_rate": 0.5703,
+        "sr_wilson_lower_90": 0.2534
+      },
+      "train": {
+        "n": 682,
+        "wins": 174,
+        "frames": 368,
+        "sr": 0.2551,
+        "frame_rate": 0.5396,
+        "sr_wilson_lower_90": 0.2287
+      },
+      "test": {
+        "n": 235,
+        "wins": 80,
+        "frames": 155,
+        "sr": 0.3404,
+        "frame_rate": 0.6596,
+        "sr_wilson_lower_90": 0.2917
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "surface",
+        "vp_bucket"
+      ],
+      "values": {
+        "surface": "TURF_OR_JUMPS",
+        "vp_bucket": "VP_LT_20"
+      },
+      "rule": "surface=TURF_OR_JUMPS AND vp_bucket=VP_LT_20",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 399,
+        "wins": 70,
+        "frames": 152,
+        "sr": 0.1754,
+        "frame_rate": 0.381,
+        "sr_wilson_lower_90": 0.1463
+      },
+      "train": {
+        "n": 219,
+        "wins": 32,
+        "frames": 82,
+        "sr": 0.1461,
+        "frame_rate": 0.3744,
+        "sr_wilson_lower_90": 0.1112
+      },
+      "test": {
+        "n": 180,
+        "wins": 38,
+        "frames": 70,
+        "sr": 0.2111,
+        "frame_rate": 0.3889,
+        "sr_wilson_lower_90": 0.1655
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "off_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "off_bucket": "14_TO_17"
+      },
+      "rule": "country=GB AND off_bucket=14_TO_17",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 1033,
+        "wins": 238,
+        "frames": 526,
+        "sr": 0.2304,
+        "frame_rate": 0.5092,
+        "sr_wilson_lower_90": 0.2096
+      },
+      "train": {
+        "n": 741,
+        "wins": 157,
+        "frames": 371,
+        "sr": 0.2119,
+        "frame_rate": 0.5007,
+        "sr_wilson_lower_90": 0.1883
+      },
+      "test": {
+        "n": 292,
+        "wins": 81,
+        "frames": 155,
+        "sr": 0.2774,
+        "frame_rate": 0.5308,
+        "sr_wilson_lower_90": 0.2365
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "off_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "off_bucket": "AFTER_17"
+      },
+      "rule": "country=GB AND off_bucket=AFTER_17",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 772,
+        "wins": 161,
+        "frames": 379,
+        "sr": 0.2085,
+        "frame_rate": 0.4909,
+        "sr_wilson_lower_90": 0.1855
+      },
+      "train": {
+        "n": 498,
+        "wins": 86,
+        "frames": 227,
+        "sr": 0.1727,
+        "frame_rate": 0.4558,
+        "sr_wilson_lower_90": 0.1466
+      },
+      "test": {
+        "n": 274,
+        "wins": 75,
+        "frames": 152,
+        "sr": 0.2737,
+        "frame_rate": 0.5547,
+        "sr_wilson_lower_90": 0.2318
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "off_bucket"
+      ],
+      "values": {
+        "country": "GB",
+        "off_bucket": "BEFORE_14"
+      },
+      "rule": "country=GB AND off_bucket=BEFORE_14",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 116,
+        "wins": 37,
+        "frames": 69,
+        "sr": 0.319,
+        "frame_rate": 0.5948,
+        "sr_wilson_lower_90": 0.2526
+      },
+      "train": {
+        "n": 88,
+        "wins": 26,
+        "frames": 54,
+        "sr": 0.2955,
+        "frame_rate": 0.6136,
+        "sr_wilson_lower_90": 0.2225
+      },
+      "test": {
+        "n": 28,
+        "wins": 11,
+        "frames": 15,
+        "sr": 0.3929,
+        "frame_rate": 0.5357,
+        "sr_wilson_lower_90": 0.257
+      },
+      "stable_performance": true,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "off_bucket"
+      ],
+      "values": {
+        "country": "IRE",
+        "off_bucket": "14_TO_17"
+      },
+      "rule": "country=IRE AND off_bucket=14_TO_17",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 191,
+        "wins": 36,
+        "frames": 86,
+        "sr": 0.1885,
+        "frame_rate": 0.4503,
+        "sr_wilson_lower_90": 0.1464
+      },
+      "train": {
+        "n": 145,
+        "wins": 28,
+        "frames": 68,
+        "sr": 0.1931,
+        "frame_rate": 0.469,
+        "sr_wilson_lower_90": 0.145
+      },
+      "test": {
+        "n": 46,
+        "wins": 8,
+        "frames": 18,
+        "sr": 0.1739,
+        "frame_rate": 0.3913,
+        "sr_wilson_lower_90": 0.1009
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    },
+    {
+      "dimensions": [
+        "country",
+        "off_bucket"
+      ],
+      "values": {
+        "country": "IRE",
+        "off_bucket": "AFTER_17"
+      },
+      "rule": "country=IRE AND off_bucket=AFTER_17",
+      "cut_date": "2026-05-10",
+      "total": {
+        "n": 229,
+        "wins": 48,
+        "frames": 106,
+        "sr": 0.2096,
+        "frame_rate": 0.4629,
+        "sr_wilson_lower_90": 0.1689
+      },
+      "train": {
+        "n": 140,
+        "wins": 28,
+        "frames": 59,
+        "sr": 0.2,
+        "frame_rate": 0.4214,
+        "sr_wilson_lower_90": 0.1503
+      },
+      "test": {
+        "n": 89,
+        "wins": 20,
+        "frames": 47,
+        "sr": 0.2247,
+        "frame_rate": 0.5281,
+        "sr_wilson_lower_90": 0.1607
+      },
+      "stable_performance": false,
+      "profitable_both_periods": false
+    }
+  ]
+}

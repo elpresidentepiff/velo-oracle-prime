@@ -1,27 +1,36 @@
 {
-  "total_records": 1461,
-  "retrieval_eligible_records": 1374,
+  "total_records": 2632,
+  "retrieval_eligible_records": 2545,
   "outcome_counts": {
-    "FRAME": 401,
-    "MISS": 754,
-    "WIN": 306
+    "FRAME": 708,
+    "MISS": 1317,
+    "WIN": 607
   },
   "regime_confidence_counts": {
-    "LOW_REGIME_INFERRED": 1461
+    "HIGH": 338,
+    "LOW_REGIME_INFERRED": 2294
   },
   "retrieval_blocker_counts": {
-    "NONE": 1374,
+    "NONE": 2545,
     "OUTCOME_OR_DATE_MISSING": 87
   },
-  "regime_count": 8,
+  "regime_count": 19,
   "top_regimes": [
     [
       "e895f31903a5",
-      801
+      976
+    ],
+    [
+      "cfea4e2dd1c9",
+      578
     ],
     [
       "87024d85a8e7",
-      442
+      522
+    ],
+    [
+      "99eaf1ff8596",
+      109
     ],
     [
       "4112ba030758",
@@ -32,36 +41,36 @@
       59
     ],
     [
+      "56be3daffaaf",
+      43
+    ],
+    [
+      "3d79339ca913",
+      35
+    ],
+    [
       "c57a82ac38e6",
       30
     ],
     [
-      "ef59752259ad",
-      20
-    ],
-    [
-      "f5524ac6a63e",
-      18
-    ],
-    [
-      "d59caf50bec9",
-      9
+      "04137de56956",
+      29
     ]
   ],
   "date_min": "2026-01-09",
-  "date_max": "2026-04-30",
-  "date_count": 52,
+  "date_max": "2026-06-12",
+  "date_count": 89,
   "rpr_violations": 0,
   "forbidden_model_field_violations": 0,
   "classification": "SIGMA_RETRIEVAL_CORPUS_READY_SHADOW_ONLY",
-  "generated_at": "2026-06-08T01:18:42.747978+00:00",
+  "generated_at": "2026-06-12T23:34:33.594226+00:00",
   "schema_version": "sigma_retrieval_corpus_v1",
   "input_sigma_dump": "data\\sigma_audits_dump.json",
   "output_jsonl": "data\\sigma_memory\\sigma_retrieval_corpus_v1.jsonl",
   "shadow_only": true,
   "live_velo_impact": false,
-  "sp_enrichment_applied": 563,
+  "sp_enrichment_applied": 1038,
   "sp_enrichment_source": "data\\velo_innovation_protocol_1k_deduped.csv",
-  "required_through_date": "2026-06-08",
-  "freshness_gate_passed": false
+  "required_through_date": "2026-06-12",
+  "freshness_gate_passed": true
 }

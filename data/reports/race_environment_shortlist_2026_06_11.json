@@ -1,0 +1,820 @@
+{
+  "date": "2026-06-11",
+  "status": "FORWARD_PAPER_ONLY_NOT_LIVE",
+  "policy": {
+    "status": "FORWARD_PAPER_ONLY_NOT_LIVE",
+    "core_rule": "GB AND TURF_OR_JUMPS AND FIELD_7_9 AND NOT WEAK_EXCLUDE_TRACK",
+    "baseline_n": 224,
+    "bet_reduction_pct": 0.7768,
+    "core_metrics": {
+      "total": {
+        "n": 50,
+        "wins": 22,
+        "frames": 36,
+        "sr": 0.44,
+        "frame_rate": 0.72,
+        "sr_wilson_lower_90": 0.3306,
+        "returns": 90.03,
+        "pl": 40.03,
+        "roi": 0.8006,
+        "max_drawdown": -9.03
+      },
+      "train": {
+        "n": 33,
+        "wins": 16,
+        "frames": 24,
+        "sr": 0.4848,
+        "frame_rate": 0.7273,
+        "sr_wilson_lower_90": 0.3484,
+        "returns": 65.74,
+        "pl": 32.74,
+        "roi": 0.9921,
+        "max_drawdown": -9.03
+      },
+      "test": {
+        "n": 17,
+        "wins": 6,
+        "frames": 12,
+        "sr": 0.3529,
+        "frame_rate": 0.7059,
+        "sr_wilson_lower_90": 0.1949,
+        "returns": 24.29,
+        "pl": 7.29,
+        "roi": 0.4288,
+        "max_drawdown": -4.0
+      },
+      "cut_date": "2026-06-08"
+    },
+    "hard_no_bet_gates": [
+      "IRE races: broad Sigma underperforms GB and dated ROI is negative.",
+      "Fields of 10 or more: both 10-12 and 13+ buckets are negative in chronological holdout.",
+      "VP below 0.20: negative overall and zero holdout wins in the dated sample.",
+      "WEAK_EXCLUDE tracks: objective full-Sigma rule of n>=30 and SR<15% or frame<40%."
+    ],
+    "freeze_rule": "Freeze after 20 forward-paper bets if ROI < 0% or frame rate < 60%; no live promotion before 50 forward-paper bets."
+  },
+  "summary": {
+    "PAPER_BET": 10,
+    "WATCH_CHALLENGER": 3,
+    "WATCH": 1,
+    "NO_BET": 26
+  },
+  "rows": [
+    {
+      "date": "2026-06-11",
+      "race_id": "920151",
+      "course": "Yarmouth",
+      "off_time": "14:10",
+      "race_name": "QuinnBet Second To The Favourite \"Hands And Heels\" Apprentice Handicap (Part Of Racing Excellence)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 7,
+      "going": "Soft",
+      "horse": "Heretic",
+      "velo_prime_prob": 0.6639,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920152",
+      "course": "Yarmouth",
+      "off_time": "15:53",
+      "race_name": "QuinnBet Best Odds Guaranteed Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Soft",
+      "horse": "Prefer The Sister",
+      "velo_prime_prob": 0.322,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920162",
+      "course": "Newbury",
+      "off_time": "16:05",
+      "race_name": "Tonight's Super Boost Live At BetVictor Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good To Soft",
+      "horse": "Hockney",
+      "velo_prime_prob": 0.2838,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920148",
+      "course": "Yarmouth",
+      "off_time": "16:28",
+      "race_name": "QuinnBet Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Soft",
+      "horse": "Yokohama",
+      "velo_prime_prob": 0.3899,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920163",
+      "course": "Newbury",
+      "off_time": "17:15",
+      "race_name": "White Horse International Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Good To Soft",
+      "horse": "Mythical Bay",
+      "velo_prime_prob": 0.3209,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920153",
+      "course": "Yarmouth",
+      "off_time": "17:35",
+      "race_name": "quinnbet.com Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Soft",
+      "horse": "Darkest Red",
+      "velo_prime_prob": 0.6326,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920157",
+      "course": "Catterick",
+      "off_time": "18:52",
+      "race_name": "Bowel Cancer Screening Programme Saves Lives Novice Stakes (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Good",
+      "horse": "Lady Gormire",
+      "velo_prime_prob": 0.6788,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "922668",
+      "course": "Worcester",
+      "off_time": "19:10",
+      "race_name": "CopyBet Support Safer Gambling Maiden Hurdle (ARC Summer Novices' Hurdle Qualifier) (GBB) (Div II)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good",
+      "horse": "Kernie d'Airy",
+      "velo_prime_prob": 0.3083,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920160",
+      "course": "Catterick",
+      "off_time": "19:22",
+      "race_name": "racingtv.com/freetrial Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Good",
+      "horse": "Powernap",
+      "velo_prime_prob": 0.3842,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920159",
+      "course": "Catterick",
+      "off_time": "19:52",
+      "race_name": "Download The Raceday Ready App Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 7,
+      "going": "Good",
+      "horse": "Winchurch",
+      "velo_prime_prob": 0.2343,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920155",
+      "course": "Catterick",
+      "off_time": "18:22",
+      "race_name": "British EBF Maiden Stakes (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 5,
+      "going": "Good",
+      "horse": "Wilbur",
+      "velo_prime_prob": 0.584,
+      "status": "WATCH_CHALLENGER",
+      "reasons": [
+        "GB_GOOD_GOING_CHALLENGER"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "919924",
+      "course": "Worcester",
+      "off_time": "19:42",
+      "race_name": "CopyBet For Your Daily Profit Boost Handicap Hurdle",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 5,
+      "going": "Good",
+      "horse": "Sunray Shadow",
+      "velo_prime_prob": 0.4283,
+      "status": "WATCH_CHALLENGER",
+      "reasons": [
+        "GB_GOOD_GOING_CHALLENGER"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920156",
+      "course": "Catterick",
+      "off_time": "20:23",
+      "race_name": "Try Racing TV For Free Now Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 6,
+      "going": "Good",
+      "horse": "Lightning Tiger",
+      "velo_prime_prob": 0.3553,
+      "status": "WATCH_CHALLENGER",
+      "reasons": [
+        "GB_GOOD_GOING_CHALLENGER"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920150",
+      "course": "Yarmouth",
+      "off_time": "15:20",
+      "race_name": "Winning Experience With Moulton Racing Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 5,
+      "going": "Soft",
+      "horse": "Neyva's Angel",
+      "velo_prime_prob": 0.364,
+      "status": "WATCH",
+      "reasons": [
+        "GB_SMALL_FIELD_WATCH"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920165",
+      "course": "Newbury",
+      "off_time": "14:20",
+      "race_name": "KBIS British Equestrian Insurance EBF Novice Stakes (GBB Race) (IRE Incentive Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 14,
+      "going": "Good To Soft",
+      "horse": "Sole Ambition",
+      "velo_prime_prob": 0.194,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920169",
+      "course": "Nottingham",
+      "off_time": "14:35",
+      "race_name": "EBF Restricted Novice Stakes (For Horses In Bands B, C & D) (EBF Restricted Qualifier) (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Moriarty Moon",
+      "velo_prime_prob": 0.4786,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920149",
+      "course": "Yarmouth",
+      "off_time": "14:45",
+      "race_name": "Paul Corrigan Memorial Novice Stakes (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Soft",
+      "horse": "Nevasca Cinza",
+      "velo_prime_prob": 0.3941,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920166",
+      "course": "Newbury",
+      "off_time": "14:55",
+      "race_name": "Eddie Keogh Memorial Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 11,
+      "going": "Good To Soft",
+      "horse": "Suggy",
+      "velo_prime_prob": 0.238,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920168",
+      "course": "Nottingham",
+      "off_time": "15:08",
+      "race_name": "\u00c2\u00a39 Racedays At Nottingham Racecourse Novice Stakes (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 4,
+      "going": "Good",
+      "horse": "Fractional",
+      "velo_prime_prob": 0.6452,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920161",
+      "course": "Newbury",
+      "off_time": "15:30",
+      "race_name": "Ardonagh Group Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 16,
+      "going": "Good To Soft",
+      "horse": "Brian",
+      "velo_prime_prob": 0.2036,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920167",
+      "course": "Nottingham",
+      "off_time": "15:42",
+      "race_name": "Wildwest Beer Festival 4th July Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good",
+      "horse": "Wondrous Light",
+      "velo_prime_prob": 0.2429,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920170",
+      "course": "Nottingham",
+      "off_time": "16:17",
+      "race_name": "Watch On Racing TV Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Good",
+      "horse": "Caraway",
+      "velo_prime_prob": 0.5743,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920164",
+      "course": "Newbury",
+      "off_time": "16:40",
+      "race_name": "HMC Horse Boxes EBF Fillies' Novice Stakes (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 11,
+      "going": "Good To Soft",
+      "horse": "Shady Dame",
+      "velo_prime_prob": 0.4143,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920171",
+      "course": "Nottingham",
+      "off_time": "16:52",
+      "race_name": "Events At Nottingham Racecourse Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 6,
+      "going": "Good",
+      "horse": "Toptime",
+      "velo_prime_prob": 0.3096,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920154",
+      "course": "Yarmouth",
+      "off_time": "17:03",
+      "race_name": "Download The QuinnBet App Classified Stakes",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 11,
+      "going": "Soft",
+      "horse": "Wrist Art",
+      "velo_prime_prob": 0.4812,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "919927",
+      "course": "Worcester",
+      "off_time": "17:08",
+      "race_name": "CopyBet And Worcester Here All Year Novices' Handicap Chase",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Beorma",
+      "velo_prime_prob": 0.6229,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920172",
+      "course": "Nottingham",
+      "off_time": "17:22",
+      "race_name": "Dine In Sherwoods Restaurant Classified Stakes",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 13,
+      "going": "Good",
+      "horse": "South Shore Island",
+      "velo_prime_prob": 0.465,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "922574",
+      "course": "Leopardstown",
+      "off_time": "17:30",
+      "race_name": "Irish EBF Median Sires Series Fillies Maiden (IRE Incentive Race)",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Soft",
+      "horse": "Cashel Queen",
+      "velo_prime_prob": 0.25,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "919923",
+      "course": "Worcester",
+      "off_time": "17:40",
+      "race_name": "CopyBet Proudly Backs UK Horse Racing Handicap Chase (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Grand Clermont",
+      "velo_prime_prob": 0.3646,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "922575",
+      "course": "Leopardstown",
+      "off_time": "18:00",
+      "race_name": "Irish Stallion Farms EBF Fillies Maiden",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 15,
+      "going": "Soft",
+      "horse": "Cromac Quay",
+      "velo_prime_prob": 0.5766,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "919929",
+      "course": "Worcester",
+      "off_time": "18:10",
+      "race_name": "CopyBet Royal Ascot Bog From Sunday Mares' NH Flat Race (Conditional/Amateurs) Cat 1 Elim) (GBB)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 16,
+      "going": "Good",
+      "horse": "Unflappable",
+      "velo_prime_prob": 0.1536,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "922576",
+      "course": "Leopardstown",
+      "off_time": "18:30",
+      "race_name": "GAIN The Advantage Series Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 16,
+      "going": "Soft",
+      "horse": "Only One Scobie",
+      "velo_prime_prob": 0.5135,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "919925",
+      "course": "Worcester",
+      "off_time": "18:40",
+      "race_name": "CopyBet Support Safer Gambling Maiden Hurdle (ARC Summer Novices' Hurdle Qualifier) (GBB) (Div I)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Shamsat",
+      "velo_prime_prob": 0.2796,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "921565",
+      "course": "Leopardstown",
+      "off_time": "19:00",
+      "race_name": "Ballycorus Stakes (Group 3)",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Soft",
+      "horse": "Native Warrior",
+      "velo_prime_prob": 0.5624,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "922577",
+      "course": "Leopardstown",
+      "off_time": "19:30",
+      "race_name": "Bulmers Live Apprentice Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Soft",
+      "horse": "Coeur d'Or",
+      "velo_prime_prob": 0.5595,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "922578",
+      "course": "Leopardstown",
+      "off_time": "20:00",
+      "race_name": "Irish Stallion Farms EBF Fillies Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 14,
+      "going": "Soft",
+      "horse": "Spanish Temptress",
+      "velo_prime_prob": 0.2932,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "919928",
+      "course": "Worcester",
+      "off_time": "20:17",
+      "race_name": "Step Into Luxury With Purple Granite Handicap Hurdle",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 12,
+      "going": "Good",
+      "horse": "Raffles Nobu",
+      "velo_prime_prob": 0.2517,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "922579",
+      "course": "Leopardstown",
+      "off_time": "20:30",
+      "race_name": "Sandyford Business District Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 22,
+      "going": "Soft",
+      "horse": "Nibras Rainbow",
+      "velo_prime_prob": 0.1936,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "919926",
+      "course": "Worcester",
+      "off_time": "20:53",
+      "race_name": "CopyBet For Overnight Best Odds Guaranteed Mares' Handicap Hurdle",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "October Hill",
+      "velo_prime_prob": 0.2669,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-11",
+      "race_id": "920158",
+      "course": "Catterick",
+      "off_time": "20:59",
+      "race_name": "Racing Again 22nd June Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Uppercase",
+      "velo_prime_prob": 0.2488,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    }
+  ]
+}

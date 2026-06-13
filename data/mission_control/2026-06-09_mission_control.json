@@ -1,0 +1,196 @@
+{
+  "date": "2026-06-09",
+  "generated_at": "2026-06-10T02:59:13.488523+00:00",
+  "source_truth": "RP_MERGED_CLEAN",
+  "run_ids_seen": [
+    "85687813",
+    "a0221b64",
+    "a8866992"
+  ],
+  "flatline_count": 0,
+  "fully_uniform_count": 0,
+  "fully_uniform_races": [],
+  "majority_tied_count": 0,
+  "identity_failure_count": 0,
+  "runners_snapshotted": 2064,
+  "council_verdict": "WATCH_ONLY",
+  "learning_gate_status": "BLOCKED",
+  "promotion_gate_status": "BLOCKED",
+  "gate_reasons": [
+    "GATE_COUNCIL_WATCH_ONLY",
+    "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
+  ],
+  "sigma_artifact": {
+    "status": "PRESENT",
+    "path": "data/sigma_results/sigma_results_2026_06_09.json",
+    "sr": 0.1379,
+    "wins": 4,
+    "evaluated_count": 29,
+    "sigma_status": "PASS",
+    "completeness_gate": null,
+    "learning_blocked": null,
+    "expected_predictions": 33,
+    "result_races_available": null,
+    "matched": null,
+    "coverage_ratio": null,
+    "no_result_count": 0
+  },
+  "run_truth": {
+    "status": "MANUAL_RECOVERY_ONLY",
+    "path": "data/velo_daily_run_truth_2026_06_09.json",
+    "alert_required": true,
+    "issues": [
+      "MANUAL_RUN_ONLY"
+    ],
+    "cron_truth_status": "FAIL_OR_UNPROVEN",
+    "deploy_truth_status": "UNKNOWN_UNLESS_RAILWAY_COMMIT_EXPOSED",
+    "pipeline_run_count": 2
+  },
+  "council_artifact_visibility": {
+    "council_run": "PRESENT",
+    "council_packet": "PRESENT",
+    "council_report": "PRESENT"
+  },
+  "runner_calibration_gate_status": "REVIEW_THRESHOLD_MET",
+  "runner_calibration_gate_runners": 786,
+  "decision_policy_gate_status": "NEEDS_MORE_DAYS",
+  "decision_policy_gate_top_picks": 87,
+  "learning_admission": {
+    "eligibility_status": "NOT_RUN",
+    "eligible_rows": 0,
+    "excluded_rows": 0,
+    "consumed_shadow_before": 0,
+    "consumed_live_before": 0,
+    "live_state_hash": "UNKNOWN",
+    "build_events_result": {},
+    "admission_packet": "PRESENT",
+    "recommendation": "PENDING"
+  },
+  "race_shape_v1": {
+    "race_shape_model_v1": "DESIGN_PENDING",
+    "features_built": {
+      "status": "FEATURES_BUILT",
+      "date": "2026-05-22",
+      "race_count": 36
+    },
+    "midprice_overlap": {
+      "status": "OVERLAP_RUN",
+      "date": "2026-05-22",
+      "winner_visible_pct": 92.6,
+      "winner_ranked_2nd_3rd_pct": 48.1,
+      "fav_vulnerable_misses": 17,
+      "compressed_misses": 2,
+      "shadow_candidates": 24
+    }
+  },
+  "corpus_governance": {
+    "status": "REBUILT",
+    "rows_after": 1018,
+    "dates_added": [
+      "2026-05-21",
+      "2026-05-22"
+    ],
+    "dates_excluded": [
+      "2026-05-20"
+    ],
+    "exclusion_reason": "SCORING_FLATLINE_CONTAMINATED",
+    "may_20_rows": 0,
+    "may_20_check": "PASS"
+  },
+  "shadow_consume_idempotency": {
+    "status": "VERIFIED",
+    "all_checks_pass": true,
+    "consumed_shadow": 80,
+    "consumed_live": 0,
+    "live_state_unchanged": true,
+    "shadow_train_v2_race_count": 2055
+  },
+  "race_shape_precision_audit": {
+    "status": "RUN",
+    "date": "2026-05-22",
+    "ledger_rows": 36,
+    "ledger_rows_to_gate_150": 114,
+    "ledger_rows_to_gate_300": 264,
+    "actionable_candidates": [
+      "MIDPRICE_TRAP",
+      "FAV_VULN_ULTRA_COMPRESSED"
+    ],
+    "fav_vuln_ultra_compressed_n": 16,
+    "fav_vuln_ultra_compressed_sr": 0.1875,
+    "fav_vuln_ultra_compressed_verdict": "ACTIONABLE_RISK_FLAG",
+    "tracker": {
+      "fav_vuln_ultra_compressed": {
+        "n": 16,
+        "sr": 0.1875,
+        "to_150": 134,
+        "verdict": "PROVISIONAL_RISK_FLAG"
+      },
+      "midprice_trap": {
+        "n": 5,
+        "sr": 0.2,
+        "to_150": 145,
+        "verdict": "PROVISIONAL_RISK_FLAG"
+      }
+    }
+  },
+  "cpu_decision_policy_tracker": {
+    "status": "RUN",
+    "decisions_made": 87,
+    "decisions_with_outcomes": 80,
+    "needed_to_150": 63,
+    "needed_to_300": 213,
+    "sr": 0.275,
+    "brier": 0.2091,
+    "top_decile_sr": 0.375,
+    "verdict": "NEEDS_MORE_DAYS"
+  },
+  "evidence_accumulation": {
+    "action": "ACCUMULATE_EVIDENCE",
+    "race_shape_rows": 36,
+    "race_shape_to_150": 114,
+    "race_shape_to_300": 264,
+    "cpu_decisions_made": 87,
+    "cpu_to_150": 63,
+    "cpu_to_300": 213,
+    "production_status": "NOT_APPROVED"
+  },
+  "research_status": {
+    "race_shape_model_v1": "DESIGN_PENDING",
+    "midprice_hunter_v2": "RESEARCH_PENDING"
+  },
+  "cpu_shadow_gate_v1": {
+    "status": "GATE_V1_AUDIT_ONLY",
+    "contaminated": true,
+    "reason": "Contains pre-a33c5bd RP_MERGED rows \u2014 do not use for promotion"
+  },
+  "cpu_shadow_gate_v2": {
+    "gate_v1_status": "GATE_V1_AUDIT_ONLY",
+    "runner_calibration_gate": {
+      "runner_count": 786,
+      "status": "REVIEW_THRESHOLD_MET",
+      "threshold": 300,
+      "review_threshold_met": true
+    },
+    "decision_policy_gate": {
+      "top_pick_decisions": 87,
+      "status": "NEEDS_MORE_DAYS",
+      "next_review": "63 more top-pick decisions to first policy gate",
+      "threshold_1": 150,
+      "threshold_1_met": false
+    },
+    "live_promotion_allowed": false,
+    "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
+    "mission_control_display": {
+      "runner_calibration": "REVIEW_THRESHOLD_MET / NOT APPROVED",
+      "decision_policy": "NEEDS_MORE_DAYS \u2014 63 top-pick decisions to first gate"
+    }
+  },
+  "gate_rules": [
+    "sigma_audits truth writes: NEVER blocked \u2014 raw result ledger always recorded",
+    "scoring pipeline: NEVER blocked by mission control gates",
+    "learning eligibility: BLOCKED if flatline_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
+    "promotion eligibility: BLOCKED if flatline_count > 0 OR identity_failure_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
+    "shadow consume: BLOCKED if council_verdict not PASS_TO_LEARNING"
+  ],
+  "next_safe_command": "Source truth contaminated \u2014 do not consume for learning. Run council audit first."
+}

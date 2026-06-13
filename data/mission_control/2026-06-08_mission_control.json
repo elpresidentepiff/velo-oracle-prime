@@ -1,6 +1,6 @@
 {
   "date": "2026-06-08",
-  "generated_at": "2026-06-08T22:58:47.124022+00:00",
+  "generated_at": "2026-06-09T22:49:33.740725+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
     "5a851856",
@@ -14,18 +14,41 @@
   "identity_failure_count": 0,
   "runners_snapshotted": 2214,
   "council_verdict": "PASS_TO_LEARNING",
-  "learning_gate_status": "OPEN",
-  "promotion_gate_status": "OPEN",
-  "gate_reasons": [],
+  "learning_gate_status": "BLOCKED",
+  "promotion_gate_status": "BLOCKED",
+  "gate_reasons": [
+    "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
+  ],
   "sigma_artifact": {
-    "status": "MISSING",
-    "path": null,
-    "sr": null
+    "status": "PRESENT",
+    "path": "data/sigma_results/sigma_results_2026_06_08.json",
+    "sr": 0.3871,
+    "wins": 12,
+    "evaluated_count": 31,
+    "sigma_status": "PASS",
+    "completeness_gate": null,
+    "learning_blocked": null,
+    "expected_predictions": 35,
+    "result_races_available": null,
+    "matched": null,
+    "coverage_ratio": null,
+    "no_result_count": 0
+  },
+  "run_truth": {
+    "status": "MANUAL_RECOVERY_ONLY",
+    "path": "data/velo_daily_run_truth_2026_06_08.json",
+    "alert_required": true,
+    "issues": [
+      "MANUAL_RUN_ONLY"
+    ],
+    "cron_truth_status": "FAIL_OR_UNPROVEN",
+    "deploy_truth_status": "UNKNOWN_UNLESS_RAILWAY_COMMIT_EXPOSED",
+    "pipeline_run_count": 2
   },
   "council_artifact_visibility": {
-    "council_run": "MISSING",
-    "council_packet": "MISSING",
-    "council_report": "MISSING"
+    "council_run": "PRESENT",
+    "council_packet": "PRESENT",
+    "council_report": "PRESENT"
   },
   "runner_calibration_gate_status": "REVIEW_THRESHOLD_MET",
   "runner_calibration_gate_runners": 786,
@@ -168,5 +191,5 @@
     "promotion eligibility: BLOCKED if flatline_count > 0 OR identity_failure_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
     "shadow consume: BLOCKED if council_verdict not PASS_TO_LEARNING"
   ],
-  "next_safe_command": "Green \u2014 safe to proceed with daily evidence accumulation."
+  "next_safe_command": "Source truth contaminated \u2014 do not consume for learning. Run council audit first."
 }

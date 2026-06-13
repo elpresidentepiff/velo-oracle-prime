@@ -205,7 +205,7 @@ def load_racecards(date_tag: str, date_str: str, source: str | None = None) -> t
     n_races = len(races)
     n_runners = sum(len(r.get("runners", [])) for r in races)
     if src_label == "rp_merged":
-        print(f"  source: RP_MERGED ({n_races} races synthesised from local PDF data, {n_runners} runners)")
+        print(f"  source: RP_MERGED ({n_races} races built from Racing Post HTML files, {n_runners} runners)")
     elif src_label == "cache":
         print(f"  source: CACHE ({n_races} races)")
     return races, src_label
@@ -1637,7 +1637,7 @@ def main():
     rpd_engine = RPDv2Engine(db_path=_rpd_db)
     print(f"  RPD-C engine: ready (db={_rpd_db})")
 
-    # Pre-load all available PDF intelligence for today's tracks
+    # Pre-load all available RP-merged intelligence for today's tracks.
     pdf_intel_cache = {}
     for race in normalized:
         course_name = (race.get("course") or "").upper().replace(" ", "_")
@@ -1669,7 +1669,7 @@ def main():
             pdf_intel_cache[cc] = None
 
     _pdf_courses_loaded = sum(1 for v in pdf_intel_cache.values() if v is not None)
-    _timer.mark("pdf_intel_preload", races=_pdf_courses_loaded, notes=f"{_pdf_courses_loaded}/{len(pdf_intel_cache)} courses with PDF data")
+    _timer.mark("pdf_intel_preload", races=_pdf_courses_loaded, notes=f"{_pdf_courses_loaded}/{len(pdf_intel_cache)} courses with RP-merged data")
 
     scored = []
     score_errors = []
@@ -1680,7 +1680,7 @@ def main():
     for race in normalized:
         cid = f"{race.get('course')} {race.get('off_time', '?')}"
 
-        # Attach PDF Intel to normalized runners before scoring
+        # Attach RP-merged intelligence to normalized runners before scoring.
         course_code = (race.get("course_id") or race.get("course", "")[:3]).upper()
         cc = course_code[:3]
         merged_data = pdf_intel_cache.get(cc)
@@ -2091,7 +2091,7 @@ def main():
         tg("\n".join(lines))
         print(f"  Sent: CASH RUNS ({len(cash_runs)} horses)")
     else:
-        print("  Cash runs: none detected from PDF data (check PDFs ingested for today)")
+        print("  Cash runs: none detected from RP-merged data")
 
     # B. Decision Synthesis Layer — bucket already computed in STEP 3
     buckets: dict = {"A": [], "B": [], "C": [], "D": [], "X": []}

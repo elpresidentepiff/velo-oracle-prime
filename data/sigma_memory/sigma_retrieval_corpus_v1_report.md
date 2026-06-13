@@ -4,38 +4,41 @@ Shadow-only standardised memory for future KNN/Bayesian evidence retrieval.
 
 ## Summary
 
-- Total records: 1461
-- Retrieval eligible records: 1374
-- Date range: 2026-01-09 to 2026-04-30
-- Regime count: 8
+- Total records: 2632
+- Retrieval eligible records: 2545
+- Date range: 2026-01-09 to 2026-06-12
+- Regime count: 19
 - RPR violations: 0
 - Live VÉLØ impact: False
 
 ## Outcome Counts
 
-- FRAME: 401
-- MISS: 754
-- WIN: 306
+- FRAME: 708
+- MISS: 1317
+- WIN: 607
 
 ## Regime Confidence
 
-- LOW_REGIME_INFERRED: 1461
+- HIGH: 338
+- LOW_REGIME_INFERRED: 2294
 
 ## Retrieval Blockers
 
-- NONE: 1374
+- NONE: 2545
 - OUTCOME_OR_DATE_MISSING: 87
 
 ## Top Regimes
 
-- e895f31903a5: 801
-- 87024d85a8e7: 442
+- e895f31903a5: 976
+- cfea4e2dd1c9: 578
+- 87024d85a8e7: 522
+- 99eaf1ff8596: 109
 - 4112ba030758: 82
 - a56148362a70: 59
+- 56be3daffaaf: 43
+- 3d79339ca913: 35
 - c57a82ac38e6: 30
-- ef59752259ad: 20
-- f5524ac6a63e: 18
-- d59caf50bec9: 9
+- 04137de56956: 29
 
 ## Guardrails
 

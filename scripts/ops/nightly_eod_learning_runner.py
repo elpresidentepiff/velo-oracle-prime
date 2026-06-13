@@ -123,6 +123,22 @@ class NightlyEODRunner:
 
         # 2. Reconcile
         preds = json.loads(self.pred_file.read_text())
+        from scripts.ops.run_results_sigma import _duplicate_alias_race_ids
+
+        pred_identity = {
+            str(row.get("race_id", "")): {
+                "course": row.get("course", ""),
+                "off_time": row.get("off_time", ""),
+            }
+            for row in preds
+        }
+        duplicate_alias_ids = _duplicate_alias_race_ids(pred_identity)
+        if duplicate_alias_ids:
+            logger.info(
+                "Excluding %d synthetic aliases shadowed by canonical RP races",
+                len(duplicate_alias_ids),
+            )
+            preds = [row for row in preds if str(row.get("race_id", "")) not in duplicate_alias_ids]
         results_raw = json.loads(self.res_file.read_text())
         results_list = results_raw.get("results", []) if isinstance(results_raw, dict) else results_raw
 

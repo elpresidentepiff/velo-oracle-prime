@@ -169,9 +169,10 @@ def _sp_dec(sp_str: str) -> float:
         return 0.0
     try:
         raw = str(sp_str).strip().lower()
-        if raw in {"evens", "evs", "even"}:
+        normalized = re.sub(r"(?:jf|f)$", "", raw).strip()
+        if normalized in {"evens", "evs", "even"}:
             return 2.0
-        cleaned = re.sub(r"[^0-9./]", "", raw)
+        cleaned = re.sub(r"[^0-9./]", "", normalized)
         if "/" in cleaned:
             num, den = cleaned.split("/", 1)
             return round(int(num) / int(den) + 1, 2)
@@ -253,6 +254,138 @@ def _get_venue(course_slug: str, course_name: str) -> str:
         if v:
             return v
     return ""
+
+
+def _load_injection_index(date: str) -> dict[str, dict[str, Any]]:
+    """Fallback index from injection JSON: race_id → {course, venue_code, race_time_raw}.
+    Used when racecard_merged has race_id=None (no direct lookup possible).
+    Also mines the morning racecard URL list + racecard_merged to cover race_ids
+    that the injection parser may have skipped (e.g. late-added races).
+    """
+    idx: dict[str, dict[str, Any]] = {}
+    parsed_root = ROOT / "data" / "racing_post_account_parsed"
+    if parsed_root.exists():
+        for label_dir in sorted(parsed_root.iterdir()):
+            if date not in label_dir.name:
+                continue
+            injection_path = label_dir / "racecard_injection.json"
+            if not injection_path.exists():
+                continue
+            try:
+                data = json.loads(injection_path.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            races = data if isinstance(data, list) else data.get("races", data.get("racecards", []))
+            for race in races:
+                if not isinstance(race, dict):
+                    continue
+                race_id = str(race.get("race_id") or "")
+                if not race_id or race_id in idx:
+                    continue
+                course = race.get("course") or ""
+                slug = _slug_from_url(race.get("source_url") or "")
+                venue_code = _get_venue(slug, course) or ""
+                idx[race_id] = {
+                    "course": course,
+                    "venue_code": venue_code,
+                    "race_time_raw": race.get("race_time") or "",
+                }
+
+    # Supplement: mine morning racecard URL list for race_ids not in injection.
+    # Cross-reference with racecard_merged to resolve off_time for those races.
+    url_list = ROOT / "data" / "racing_post_url_lists" / f"rp_racecards_{date}.txt"
+    merged_dir = ROOT / "data" / "racecard_merged"
+    if url_list.exists() and merged_dir.exists():
+        # Build slug→{off_time: True} map from racecard_merged (keyed by off_time).
+        # Also build a per-venue off_times list for cross-reference.
+        venue_off_map: dict[str, list[str]] = {}  # venue_code → sorted off_times in merged
+        venue_slug_to_name: dict[str, str] = {}
+        date_tag = date.replace("-", "_")
+        # Try both date format patterns in merged filenames
+        for pattern in [f"racecard_*_{date}.json", f"racecard_*_{date_tag}.json"]:
+            for path in sorted(merged_dir.glob(pattern)):
+                try:
+                    mdata = json.loads(path.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+                venue_code = mdata.get("venue_code") or ""
+                course_name = mdata.get("venue") or mdata.get("course") or ""
+                slug_key = path.stem.split("_")[1].lower() if "_" in path.stem else ""
+                races_m = mdata.get("races") or {}
+                off_list = sorted(races_m.keys()) if isinstance(races_m, dict) else []
+                if venue_code:
+                    venue_off_map[venue_code] = off_list
+                    venue_slug_to_name[slug_key] = (venue_code, course_name)
+
+        # Parse morning URL list to find race_ids not yet in idx
+        import re as _re
+        url_re = _re.compile(r'/racecards/(\d+)/([^/]+)/[^/]+/(\d+)')
+        known_race_ids_by_venue: dict[str, list[str]] = {}
+        extra_race_ids: list[tuple[str, str, str]] = []  # (race_id, course_slug, course_id_str)
+        for line in url_list.read_text(encoding="utf-8").splitlines():
+            m = url_re.search(line.strip())
+            if not m:
+                continue
+            _course_id, course_slug, race_id = m.group(1), m.group(2), m.group(3)
+            v_code = _get_venue(course_slug, "")
+            known_race_ids_by_venue.setdefault(v_code, []).append(race_id)
+            if race_id not in idx:
+                extra_race_ids.append((race_id, course_slug, _course_id))
+
+        # For each extra race_id, resolve off_time by comparing against known race_ids
+        # already resolved in idx for the same venue, then assigning remaining off_times.
+        for race_id, course_slug, _course_id in extra_race_ids:
+            if race_id in idx:
+                continue
+            v_code = _get_venue(course_slug, "")
+            course_name = ""
+            for slug_key, (vc, cn) in venue_slug_to_name.items():
+                if slug_key == course_slug.lower() or vc == v_code:
+                    course_name = cn
+                    break
+            all_off_times = venue_off_map.get(v_code, [])
+            # Find off_times already assigned to this venue
+            assigned = {
+                v["race_time_raw"]
+                for rid, v in idx.items()
+                if v.get("venue_code") == v_code
+            }
+            all_known_rids = known_race_ids_by_venue.get(v_code, [])
+            already_indexed = [r for r in all_known_rids if r in idx]
+            unindexed_rids = [r for r in all_known_rids if r not in idx]
+            # off_times not yet used by known indexed race_ids → map to unindexed
+            # Use dot-time format to match racecard_merged keys
+            def _dot_time(off: str) -> str:
+                """Convert 'H.MM' to ISO-like for sorting; keep as-is for now."""
+                return off
+            used_off_times: set[str] = set()
+            for rid in already_indexed:
+                rt = idx[rid].get("race_time_raw", "")
+                # Convert ISO race_time to dot_time (H.MM BST)
+                try:
+                    from datetime import datetime, timezone, timedelta
+                    dt = datetime.fromisoformat(rt)
+                    dt_bst = dt.astimezone(timezone(timedelta(hours=1)))
+                    h12 = dt_bst.hour - 12 if dt_bst.hour > 12 else dt_bst.hour
+                    used_off_times.add(f"{h12}.{dt_bst.minute:02d}")
+                except Exception:
+                    pass
+            free_off_times = [o for o in all_off_times if o not in used_off_times]
+            if len(unindexed_rids) == 1 and len(free_off_times) == 1:
+                # Unambiguous assignment
+                off = free_off_times[0]
+                # Build synthetic ISO time from dot-time + date for race_time_raw
+                try:
+                    h, m2 = off.split(".")
+                    race_time_raw = f"{date}T{int(h):02d}:{int(m2):02d}:00+01:00"
+                except Exception:
+                    race_time_raw = ""
+                idx[race_id] = {
+                    "course": course_name,
+                    "venue_code": v_code,
+                    "race_time_raw": race_time_raw,
+                }
+    return idx
 
 
 def _load_racecard_index(date: str) -> dict[str, dict[str, Any]]:
@@ -455,6 +588,7 @@ def _parse_result_page(
     source_url: str,
     racecard_index: dict[str, dict[str, Any]],
     readiness_index: dict[str, dict[str, Any]],
+    injection_index: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any] | None:
     source_url = source_url or _canonical_url(html_path)
     next_data = _load_next_data(html_path)
@@ -511,6 +645,7 @@ def _parse_result_page(
 
     card_meta = racecard_index.get(race_id, {})
     ready_meta = readiness_index.get(race_id, {})
+    inj_meta = (injection_index or {}).get(race_id, {})
     race_info = card_meta.get("race_info") or {}
     # Field-level merge: card_meta is the base (rich pre-race data),
     # table_lookup overlays live results values (SP, final jockey/trainer).
@@ -532,11 +667,12 @@ def _parse_result_page(
         or race.get("courseName")
         or ready_meta.get("course")
         or card_meta.get("venue")
+        or inj_meta.get("course")
         or ""
     )
     course_id = str(race.get("courseId") or "")
     course_slug = _slug_from_url(source_url)
-    venue = _get_venue(course_slug, course_name) or card_meta.get("venue_code") or ""
+    venue = _get_venue(course_slug, course_name) or card_meta.get("venue_code") or inj_meta.get("venue_code") or ""
 
     # Race time → BST H.MM
     race_time_raw = (
@@ -544,6 +680,7 @@ def _parse_result_page(
         or race.get("startTime")
         or ready_meta.get("off_time")
         or card_meta.get("off")
+        or inj_meta.get("race_time_raw")
         or ""
     )
     off_bst = _bst_hhmm(race_time_raw) if race_time_raw else ""
@@ -661,10 +798,11 @@ def parse_results(
     parse_errors: list[dict] = []
     racecard_index = _load_racecard_index(date)
     readiness_index = _load_readiness_index(date)
+    injection_index = _load_injection_index(date)
 
     for html_path in html_files:
         source_url = url_by_html.get(str(html_path), "")
-        parsed = _parse_result_page(html_path, source_url, racecard_index, readiness_index)
+        parsed = _parse_result_page(html_path, source_url, racecard_index, readiness_index, injection_index)
         if parsed:
             if not parsed.get("winner_horse"):
                 parse_errors.append({

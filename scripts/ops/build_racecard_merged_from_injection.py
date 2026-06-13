@@ -15,7 +15,43 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+import csv
+import re
+
 ROOT = Path(__file__).resolve().parents[2]
+
+_BHA_COLLATERAL_LOOKUP: set[str] = set()
+
+
+def _load_bha_collateral_lookup() -> None:
+    """Load horses with the 'collateral' flag from bha_or_diff_latest.csv."""
+    global _BHA_COLLATERAL_LOOKUP
+    path = ROOT / "data" / "bha_or_diff_latest.csv"
+    if not path.exists():
+        return
+
+    _suffix_re = re.compile(r"\s*\([A-Z]{2,4}\)\s*$")
+    try:
+        with open(path, encoding="utf-8-sig", errors="replace") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                # Check for "collateral" in any discipline
+                is_coll = any("collateral" in str(row.get(c, "")).lower() for c in 
+                            ["Flat Clltrl", "AWT Clltrl", "Chase Clltrl", "Hurdle Clltrl"])
+                if is_coll:
+                    raw_name = (row.get("Name") or "").strip()
+                    norm = _suffix_re.sub("", raw_name).lower().strip()
+                    if norm:
+                        _BHA_COLLATERAL_LOOKUP.add(norm)
+    except Exception as e:
+        print(f"  [WARN] BHA collateral load failed: {e}")
+
+
+def is_collateral_horse(name: str) -> bool:
+    """Check if normalized name is in the collateral set."""
+    _suffix_re = re.compile(r"\s*\([A-Z]{2,4}\)\s*$")
+    norm = _suffix_re.sub("", name or "").lower().strip()
+    return norm in _BHA_COLLATERAL_LOOKUP
 
 VENUE_CODE_MAP: dict[str, str] = {
     "gowran park": "GOW",
@@ -43,6 +79,7 @@ VENUE_CODE_MAP: dict[str, str] = {
     "musselburgh": "MUS",
     "bath": "BAT",
     "brighton": "BRI",
+    "fontwell": "FLK",
     "yarmouth": "YAR",
     "salisbury": "SAL",
     "chepstow": "CHP",
@@ -170,12 +207,13 @@ def runner_to_horse(r: dict) -> dict:
         pounds = total_lbs % 14
         weight_str = f"{stones}-{pounds}"
 
+    name = r.get("horse") or ""
     or_val = safe_numeric(r.get("official_rating"))
     ts_val = safe_numeric(r.get("topspeed"))
     rpr_val = safe_numeric(r.get("rp_rpr_archive_only"))
 
     return {
-        "horse_name": r.get("horse") or "",
+        "horse_name": name,
         "horse_id": r.get("horse_id"),
         "age": r.get("age"),
         "weight": weight_str,
@@ -196,6 +234,8 @@ def runner_to_horse(r: dict) -> dict:
         "spotlight_comment": r.get("spotlight_comment"),
         "diomed_comment": r.get("diomed_comment"),
         "newspaper_tip_count": r.get("newspaper_tip_count"),
+        # BHA Intelligence
+        "is_collateral": is_collateral_horse(name),
         # Scoring fields absent from RP data
         "postdata_score": 0.0,
         "or_compression_score": 0.0,
@@ -228,6 +268,7 @@ def pick_topspeed_horse(runners: list[dict]) -> str:
 
 
 def main() -> None:
+    _load_bha_collateral_lookup()
     parser = argparse.ArgumentParser(description="Build racecard_merged files from injection JSON.")
     parser.add_argument("--date", default="2026-06-01")
     parser.add_argument("--injection-path", default=None, help="Override injection JSON path")

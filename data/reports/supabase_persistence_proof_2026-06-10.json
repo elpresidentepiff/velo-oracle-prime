@@ -1,0 +1,82 @@
+{
+  "date": "2026-06-10",
+  "generated_at": "2026-06-10T22:14:29.751803+00:00",
+  "read_only_confirmed": true,
+  "checks": {
+    "verdict_count": 34,
+    "null_decision_tier": 0,
+    "null_git_commit_sha": 0,
+    "rpdc_primary_tag_present": 0,
+    "active_components_present": 34,
+    "rpdc_candidates_for_date": 381,
+    "latest_verdict": {
+      "generated_at": "2026-06-10T04:26:06.944851+00:00",
+      "git_commit_sha": "e04647dbb96568363b2b0b6ef865eaead308cd5b",
+      "engine_version": "velo_prime_v1"
+    },
+    "sample": [
+      {
+        "race_id": "920147",
+        "decision_tier": "B",
+        "active_components": [
+          "improvement_score",
+          "market_deception_score",
+          "sqpe_v17"
+        ],
+        "excluded_from_ensemble": [
+          "comment_intel_score",
+          "longshot_score",
+          "place_prob",
+          "release_window_score"
+        ],
+        "rpdc_primary_tag": null,
+        "rpdc_tag_count": 0
+      },
+      {
+        "race_id": "920142",
+        "decision_tier": "C",
+        "active_components": [
+          "improvement_score",
+          "market_deception_score",
+          "sqpe_v17"
+        ],
+        "excluded_from_ensemble": [
+          "comment_intel_score",
+          "longshot_score",
+          "place_prob",
+          "release_window_score"
+        ],
+        "rpdc_primary_tag": null,
+        "rpdc_tag_count": 0
+      },
+      {
+        "race_id": "920144",
+        "decision_tier": "C",
+        "active_components": [
+          "improvement_score",
+          "market_deception_score",
+          "sqpe_v17"
+        ],
+        "excluded_from_ensemble": [
+          "comment_intel_score",
+          "longshot_score",
+          "place_prob",
+          "release_window_score"
+        ],
+        "rpdc_primary_tag": null,
+        "rpdc_tag_count": 0
+      }
+    ],
+    "schema_missing_columns": [
+      "source_truth",
+      "feature_degraded"
+    ],
+    "expected_race_count_local_backup": 34,
+    "local_backup_rpdc_attached": 34
+  },
+  "gaps": [
+    "RPDC_PERSIST_GAP local_attached=34 supabase_tagged=0",
+    "SCHEMA_MISSING=source_truth,feature_degraded (migration pending)"
+  ],
+  "status": "FAIL"
+}

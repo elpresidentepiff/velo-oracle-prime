@@ -216,6 +216,8 @@ def _lookup_result(result_lookup, date, course, race_time, horse):
 # ── Verdict loader ────────────────────────────────────────────────────────────
 
 def load_verdict_rows(verdict_files: list[Path], result_lookup: dict) -> list[dict]:
+    from scripts.ops.run_results_sigma import _duplicate_alias_race_ids
+
     router = ProductRouter()
     rows = []
 
@@ -226,6 +228,17 @@ def load_verdict_rows(verdict_files: list[Path], result_lookup: dict) -> list[di
         except Exception as e:
             log.warning(f"  Skip {vf.name}: {e}")
             continue
+        backup = {
+            str(row.get("race_id", "")): {
+                "course": row.get("course", ""),
+                "off_time": row.get("off_time", ""),
+            }
+            for row in verdicts
+        }
+        duplicate_alias_ids = _duplicate_alias_race_ids(backup)
+        if duplicate_alias_ids:
+            log.info(f"  Excluding {len(duplicate_alias_ids)} synthetic aliases from {vf.name}")
+            verdicts = [row for row in verdicts if str(row.get("race_id", "")) not in duplicate_alias_ids]
 
         for v in verdicts:
             race_id = v.get("race_id", "")
@@ -487,6 +500,10 @@ def main():
         date_tag = args.date.replace("-", "_")
         verdict_files = [f for f in all_verdict_files if date_tag in f.name]
         new_dates = {args.date}
+        # A targeted date run replaces that date's evidence instead of retaining
+        # stale rows from an earlier, potentially contaminated build.
+        if not base_df.empty:
+            base_df = base_df[base_df["date"].astype(str) != args.date].copy()
     elif args.rebuild:
         verdict_files = all_verdict_files
         new_dates = {_verdict_date(f.name) for f in verdict_files}

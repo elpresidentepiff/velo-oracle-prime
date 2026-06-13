@@ -6,15 +6,10 @@ Provides load_racecards() with a strict priority order and clear fallback doctri
   Source order (auto):
     1. data/racecards_{date_tag}_standard.json     → 'cache'
     2. data/racecard_merged/racecard_*_{date}.json → 'rp_merged'
-    3. Racing API /racecards/standard               → 'api'
 
   CLI / env overrides:
-    --source cache|rp|api|auto
-    VELO_RACECARD_SOURCE=cache|rp|api|auto
-    VELO_DISABLE_RACING_API=1
-
-  API 401/403: hard-fail — in auto mode the API is only reached when both
-  cache and RP merged are absent, so there is no local source to fall back to.
+    --source cache|rp|auto
+    VELO_RACECARD_SOURCE=cache|rp|auto
 
 Hard constraints:
   No scoring changes. No routing changes. No execution changes.
@@ -22,14 +17,10 @@ Hard constraints:
 
 from __future__ import annotations
 
-import base64
 import json
 import os
-import urllib.error
-import urllib.request
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlencode
 
 # Known Irish venue codes — everything else is treated as GB
 _IRE_VENUE_CODES = frozenset({
@@ -241,112 +232,13 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
     return races
 
 
-def fetch_api_racecards(
-    date_str: str,
-    date_tag: str,
-    data_root: Path,
-    racing_base: str,
-    racing_user: str,
-    racing_pass: str,
-) -> tuple[list[dict[str, Any]], str]:
-    """
-    Fetch racecards from Racing API. Caches response locally. Returns (races, 'api').
-
-    Raises RuntimeError on 401/403 or missing credentials.
-    """
-    cache_path = data_root / f"racecards_{date_tag}_standard.json"
-
-    if not racing_user or not racing_pass:
-        raise RuntimeError(
-            "Racing API credentials not set and no local racecard source found.\n"
-            f"  Expected cache:    {cache_path}\n"
-            f"  Expected RP merged: {data_root}/racecard_merged/racecard_*_{date_str}.json\n"
-            "  Set VELO_DISABLE_RACING_API=1 to suppress this error when running RP-only."
-        )
-
-    from datetime import date as _date
-    _today = str(_date.today())
-    if date_str == _today:
-        qs = urlencode({"day": "today"})
-    elif date_str > _today:
-        qs = ""
-    else:
-        qs = urlencode({"date": date_str})
-    url = f"{racing_base}/racecards/standard" + (f"?{qs}" if qs else "")
-
-    import ssl as _ssl
-    _ctx = _ssl.create_default_context()
-    _ctx.check_hostname = False
-    _ctx.verify_mode = _ssl.CERT_NONE
-    _creds = base64.b64encode(f"{racing_user}:{racing_pass}".encode()).decode()
-    _req = urllib.request.Request(
-        url,
-        headers={
-            "Authorization": f"Basic {_creds}",
-            "Accept": "application/json",
-            "User-Agent": "VeloPrime/1.0",
-        },
-    )
-    try:
-        with urllib.request.urlopen(_req, context=_ctx, timeout=30) as resp:
-            raw = json.loads(resp.read())
-    except urllib.error.HTTPError as exc:
-        if exc.code in (401, 403):
-            raise RuntimeError(
-                f"Racing API returned {exc.code} — subscription/credentials issue.\n"
-                "  VELO_DISABLE_RACING_API=1 suppresses API calls and uses cache/RP source."
-            ) from exc
-        raise
-
-    try:
-        cache_path.parent.mkdir(parents=True, exist_ok=True)
-        cache_path.write_text(json.dumps(raw, indent=2))
-    except Exception:
-        pass
-
-    races = raw if isinstance(raw, list) else raw.get("racecards", [])
-    return races, "api"
-
-
-def _sanitize_api_rpr(races: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """
-    Preserve RPR from Racing API / cache runner payloads for scoring.
-
-    RPR policy updated 2026-06-03: RPR is accepted into the scoring pipeline.
-    The place specialist model and SQPE v17 both benefit from real RPR values.
-
-    This function:
-      - Copies runner['rpr'] → runner['rp_rpr_archive_only'] (audit copy)
-      - Sets runner['rp_rpr_velo_allowed'] = True
-      - Does NOT null out runner['rpr']
-
-    RP-merged races never pass through this function — they set rpr directly.
-    """
-    for race in races:
-        race["rpr_policy"] = "RPR_ACCEPTED"
-        for runner in race.get("runners") or []:
-            live_rpr = runner.get("rpr")
-            if live_rpr is not None:
-                runner.setdefault("rp_rpr_archive_only", live_rpr)
-            elif runner.get("rp_rpr_archive_only") is not None:
-                # Cache was written under old policy — promote archive value to rpr
-                try:
-                    val = float(runner["rp_rpr_archive_only"])
-                    if val > 0:
-                        runner["rpr"] = val
-                except (TypeError, ValueError):
-                    pass
-            runner["rp_rpr_velo_allowed"] = True
-    return races
-
-
 def load_racecards(
     date_tag: str,
     date_str: str,
     data_root: Path,
-    racing_base: str,
-    racing_user: str,
-    racing_pass: str,
+    racing_base: str = "",
+    racing_user: str = "",
+    racing_pass: str = "",
     source: str | None = None,
 ) -> tuple[list[dict[str, Any]], str]:
     """
@@ -355,21 +247,13 @@ def load_racecards(
     Source priority (auto):
       1. data/racecards_{date_tag}_standard.json  → 'cache'
       2. data/racecard_merged/racecard_*_{date_str}.json  → 'rp_merged'
-      3. Racing API  → 'api'
-
-    RPR sanitization: cache and api sources are always sanitized via
-    _sanitize_api_rpr() before return. rp_merged is already clean.
-    Override: VELO_ALLOW_API_RPR=1 disables sanitization (archive/test only).
 
     Env overrides:
-      VELO_RACECARD_SOURCE=cache|rp|api|auto
-      VELO_DISABLE_RACING_API=1
-      VELO_ALLOW_API_RPR=1
+      VELO_RACECARD_SOURCE=cache|rp|auto
 
-    source labels returned: 'cache' | 'rp_merged' | 'api'
+    source labels returned: 'cache' | 'rp_merged'
     """
     _source = (source or os.getenv("VELO_RACECARD_SOURCE", "auto")).lower()
-    _disable_api = os.getenv("VELO_DISABLE_RACING_API", "").strip() in ("1", "true", "yes")
     cache_path = data_root / f"racecards_{date_tag}_standard.json"
 
     if _source == "cache":
@@ -377,7 +261,7 @@ def load_racecards(
             raise RuntimeError(f"--source cache specified but {cache_path} not found")
         raw = json.loads(cache_path.read_text())
         races = raw if isinstance(raw, list) else raw.get("racecards", [])
-        return _sanitize_api_rpr(races), "cache"
+        return races, "cache"
 
     if _source == "rp":
         races = load_rp_merged_as_racecards(date_str, data_root)
@@ -386,38 +270,20 @@ def load_racecards(
                 f"--source rp specified but no RP merged files found for {date_str}\n"
                 f"  Expected: {data_root}/racecard_merged/racecard_*_{date_str}.json"
             )
-        return races, "rp_merged"  # already sanitized — no _sanitize_api_rpr needed
+        return races, "rp_merged"
 
-    if _source == "api":
-        if _disable_api:
-            raise RuntimeError("--source api requested but VELO_DISABLE_RACING_API=1")
-        races, src = fetch_api_racecards(date_str, date_tag, data_root, racing_base, racing_user, racing_pass)
-        return _sanitize_api_rpr(races), src
-
-    # ── Auto: cache → rp_merged → api ─────────────────────────────────────────
+    # ── Auto: cache → rp_merged ─────────────────────────────────────────
     if cache_path.exists():
         raw = json.loads(cache_path.read_text())
         races = raw if isinstance(raw, list) else raw.get("racecards", [])
-        return _sanitize_api_rpr(races), "cache"
+        return races, "cache"
 
     rp_races = load_rp_merged_as_racecards(date_str, data_root)
     if rp_races:
-        return rp_races, "rp_merged"  # already sanitized
+        return rp_races, "rp_merged"
 
-    if _disable_api:
-        raise RuntimeError(
-            f"VELO_DISABLE_RACING_API=1: no cache and no RP merged files for {date_str}.\n"
-            f"  Cache expected:    {cache_path}\n"
-            f"  RP merged expected: {data_root}/racecard_merged/racecard_*_{date_str}.json"
-        )
-
-    try:
-        races, src = fetch_api_racecards(date_str, date_tag, data_root, racing_base, racing_user, racing_pass)
-        return _sanitize_api_rpr(races), src
-    except RuntimeError as exc:
-        raise RuntimeError(
-            f"No racecard source available for {date_str}.\n"
-            f"  Tried: cache ({cache_path.name}) → RP merged → Racing API\n"
-            f"  API error: {exc}\n"
-            "  Fix: supply a cache file, run RP PDF ingestion, or check Racing API credentials."
-        ) from exc
+    raise RuntimeError(
+        f"No racecard source available for {date_str}.\n"
+        f"  Tried: cache ({cache_path.name}) → RP merged\n"
+        "  Fix: supply a cache file or run RP PDF ingestion."
+    )

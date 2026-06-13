@@ -1,5 +1,5 @@
 # Horse Passport V2
-Generated: 2026-06-06T11:29:59.549961+00:00
+Generated: 2026-06-09T03:52:21.469362+00:00
 
 ## Summary
 - **Total passports**: 6168
@@ -95,4 +95,4 @@ Generated: 2026-06-06T11:29:59.549961+00:00
 - **pp_best_ts_last6**: 115.0
 - **pp_ts_trajectory**: None
 - **ts_last6_array**: [115.0, 105.0]
-- **built_at**: 2026-06-06T11:29:57.772276Z
+- **built_at**: 2026-06-09T03:52:19.911432Z

@@ -72,6 +72,51 @@ SB_HEADERS = {
 
 EXCLUDED_SIGMA_COURSES = {"saratoga"}
 
+COURSE_ALIASES = {
+    "ain": "aintree",
+    "clo": "clonmel",
+    "ham": "hamilton",
+    "nby": "newbury",
+    "rip": "ripon",
+    "thi": "thirsk",
+    "yor": "york",
+}
+
+
+def _canonical_course(value: str) -> str:
+    course = _norm_course(value)
+    return COURSE_ALIASES.get(course, course)
+
+
+def _canonical_off_time(value: str) -> str:
+    """Normalize 12h/24h race times to the same H.MM identity key."""
+    try:
+        hour, minute = map(int, str(value or "").strip().replace(":", ".").split(".")[:2])
+        if hour > 12:
+            hour -= 12
+        return f"{hour}.{minute:02d}"
+    except Exception:
+        return str(value or "").strip()
+
+
+def _duplicate_alias_race_ids(local_backup: dict) -> set[str]:
+    """Find synthetic race IDs shadowed by an exact numeric RP course/time race."""
+    canonical_keys = {
+        (_canonical_course(row.get("course", "")), _canonical_off_time(row.get("off_time", "")))
+        for race_id, row in local_backup.items()
+        if str(race_id).isdigit()
+    }
+    return {
+        str(race_id)
+        for race_id, row in local_backup.items()
+        if not str(race_id).isdigit()
+        and (
+            _canonical_course(row.get("course", "")),
+            _canonical_off_time(row.get("off_time", "")),
+        )
+        in canonical_keys
+    }
+
 
 def _candidate_bst_times(off_time: str) -> list[str]:
     """Generate ±3-minute candidate BST time strings (HH.MM) for course-time fallback matching."""
@@ -322,12 +367,20 @@ def main():
     
     # Authoritative list of race IDs for today comes from local backup
     today_race_ids = set(local_backup.keys()) if local_backup else set()
+    duplicate_alias_ids = _duplicate_alias_race_ids(local_backup)
+    if duplicate_alias_ids:
+        print(
+            f"  [INFO] excluded {len(duplicate_alias_ids)} synthetic aliases shadowed by canonical RP races: "
+            f"{', '.join(sorted(duplicate_alias_ids))}"
+        )
 
     for v in verdicts_raw:
         rid = str(v["race_id"])
         # If we have a local backup, only process IDs that are in it.
         # This filters out shadow runs (formatted IDs) and prior day's numeric IDs.
         if today_race_ids and rid not in today_race_ids:
+            continue
+        if rid in duplicate_alias_ids:
             continue
             
         # ── Learning Block Detection ──────────────────────────────────────────
