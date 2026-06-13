@@ -50,7 +50,8 @@ International prerace arenas (`scripts/audit_international_*`) · HK/FR feature 
 
 ## What must happen BEFORE scoring
 1. `python scripts/ops/worktree_safety_runner.py --mode audit --expected-branch stabilization/prime-hardening-v1` passes.
-2. `python scripts/ops/velo_session_start_check.py` passes.
+2. Task Contract preflight (`scripts/ops/task_contract_runner.py --mode preflight`) passes for the session mission.
+3. `python scripts/ops/velo_session_start_check.py` passes.
 3. RP index + race pages captured; injection parsed; `validate_rp_injection.py` exits 0.
 3. `build_racecard_merged_from_injection.py` and `build_rpdc_daily.py` run from the SAME injection path (`FINAL_CAPTURE_LABEL` chosen once at Step 4).
 
