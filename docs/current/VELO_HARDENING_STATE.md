@@ -145,7 +145,7 @@ PRs cannot merge unless the `Governed Safety Perimeter Audit` workflow passes.
 
 **Status:** COMPLETE
 **Branch:** "stabilization/prime-hardening-v1"
-**Commit:** "PENDING"
+**Commit:** "d6c5b25"
 
 ### Purpose
 
