@@ -1,0 +1,15 @@
+{
+  "task_id": "SMOKE-TEST",
+  "allowed_paths": [
+    "data/current/smoke_test_classification.txt",
+    "ops/task_contracts/SMOKE-TEST.json"
+  ],
+  "forbidden_paths": ["src/velo/scoring/"],
+  "forbidden_keywords": ["supabase", "telegram"],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND"
+  ]
+}
