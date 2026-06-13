@@ -482,6 +482,7 @@ async def lifespan(app: FastAPI):
 
     # ── Batch 3: Safety Enforcement & Import Guards ──────────────────────────
     from app.core.safety_guards import run_safety_scan
+
     if not run_safety_scan():
         raise RuntimeError("[startup] BLOCKED: Safety violation detected in live path (forbidden imports)")
 
@@ -500,7 +501,7 @@ async def lifespan(app: FastAPI):
         "sigma_runner.py",
         _g_mode,
         _exec_mode,
-        _bf_mode
+        _bf_mode,
     )
 
     # ── Fix 1.2: Migration / schema verification ──────────────────────────────
@@ -804,10 +805,10 @@ async def runtime_truth():
                 "place_prob": "LIVE_VISIBLE_ONLY",
                 "playbook_g": "SHADOW_ONLY",
                 "no_vp_composite": "SHADOW_ONLY",
-            }
+            },
         },
-        "ensemble_profile": "core_v0_or_passport + sqpe_v17", # Hardcoded active profiles
-        "git_commit": get_commit_sha()
+        "ensemble_profile": "core_v0_or_passport + sqpe_v17",  # Hardcoded active profiles
+        "git_commit": get_commit_sha(),
     }
 
 
@@ -1171,9 +1172,7 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
         try:
             v_data = json.loads(verdicts_path.read_text(encoding="utf-8"))
             res["races_scored"] = len(v_data)
-            res["runners_scored"] = sum(
-                int(v.get("scored") or len(v.get("full_analysis", []))) for v in v_data
-            )
+            res["runners_scored"] = sum(int(v.get("scored") or len(v.get("full_analysis", []))) for v in v_data)
             if res["races_scored"] > 0 and res["live_velo_status"] == "UNKNOWN":
                 res["live_velo_status"] = "PASS"
             res["source_files_used"].append(verdicts_path.name)
@@ -1188,9 +1187,7 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
             res["truth_packet_alert_required"] = truth_data.get("alert_required")
             res["source_files_used"].append(truth_path.name)
             if truth_data.get("alert_required"):
-                res["stale_data_warnings"].append(
-                    f"Truth packet alert: {truth_data.get('status', 'UNKNOWN')}"
-                )
+                res["stale_data_warnings"].append(f"Truth packet alert: {truth_data.get('status', 'UNKNOWN')}")
         except Exception:
             res["truth_packet_status"] = "ERROR"
 
@@ -1217,15 +1214,13 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
             scorecards = nb_data.get("race_day_scorecards") or []
             if scorecards:
                 res["passport_coverage_pct"] = round(
-                    sum(float(row.get("passport_coverage_pct") or 0) for row in scorecards)
-                    / len(scorecards),
+                    sum(float(row.get("passport_coverage_pct") or 0) for row in scorecards) / len(scorecards),
                     2,
                 )
             else:
                 res["passport_coverage_pct"] = nb_data.get("passport_coverage_pct", 0.0)
-            res["intent_coverage_pct"] = (
-                (nb_data.get("intent_coverage") or {}).get("coverage_pct")
-                or nb_data.get("intent_coverage_pct", 0.0)
+            res["intent_coverage_pct"] = (nb_data.get("intent_coverage") or {}).get("coverage_pct") or nb_data.get(
+                "intent_coverage_pct", 0.0
             )
             res["source_files_used"].append(f"new_build/reports/{nb_path.name}")
         except Exception:
@@ -1322,26 +1317,33 @@ async def old_velo_verdicts(date: str = Query(default=None)):
     verdicts = []
     for r in races:
         top = r.get("top") or {}
-        verdicts.append({
-            "race_id": str(r.get("race_id", "")),
-            "course": r.get("course", ""),
-            "off_time": r.get("off_time", ""),
-            "horse": top.get("horse", ""),
-            "tier": r.get("tier", ""),
-            "decision_tier": r.get("tier", ""),
-            "confidence_level": top.get("confidence_level") or "low",
-            "velo_prime_prob": top.get("velo_prime_prob"),
-            "prob_gap": top.get("prob_gap") or 0.0,
-            "market_deception_score": top.get("market_deception_score"),
-            "assigned_product": top.get("assigned_product"),
-            "router_reasons": top.get("router_reasons") or [],
-            "execution_allowed": top.get("execution_allowed"),
-            "place_prob": top.get("place_prob"),
-            "archetype_label": top.get("race_archetype") or "",
-        })
+        verdicts.append(
+            {
+                "race_id": str(r.get("race_id", "")),
+                "course": r.get("course", ""),
+                "off_time": r.get("off_time", ""),
+                "horse": top.get("horse", ""),
+                "tier": r.get("tier", ""),
+                "decision_tier": r.get("tier", ""),
+                "confidence_level": top.get("confidence_level") or "low",
+                "velo_prime_prob": top.get("velo_prime_prob"),
+                "prob_gap": top.get("prob_gap") or 0.0,
+                "market_deception_score": top.get("market_deception_score"),
+                "assigned_product": top.get("assigned_product"),
+                "router_reasons": top.get("router_reasons") or [],
+                "execution_allowed": top.get("execution_allowed"),
+                "place_prob": top.get("place_prob"),
+                "archetype_label": top.get("race_archetype") or "",
+            }
+        )
     return {
-        "meta": {"requested_date": d, "loaded_date": d, "source": "local_json",
-                 "record_count": len(verdicts), "date_mismatch": False},
+        "meta": {
+            "requested_date": d,
+            "loaded_date": d,
+            "source": "local_json",
+            "record_count": len(verdicts),
+            "date_mismatch": False,
+        },
         "verdicts": verdicts,
     }
 
@@ -1885,8 +1887,10 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "NBY": "NEWBURY",
     }
     canonical_new_build_keys = {
-        (course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
-         _norm_time(row.get("off_time", "")))
+        (
+            course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
+            _norm_time(row.get("off_time", "")),
+        )
         for row in verdicts
         if row.get("new_build_top3")
     }
@@ -2246,12 +2250,14 @@ async def predict_race(race_data: dict, persist: bool = False, authorized: bool 
             tier = "D"
             if predictions:
                 from scripts.ops.run_prime_today import synthesize_decision
+
                 top = predictions[0]
                 second = predictions[1] if len(predictions) > 1 else {}
                 sec_prob = float(second.get("velo_prime_prob") or 0)
                 tier, _ = synthesize_decision(top, sec_prob, field_size=len(predictions))
 
             from scripts.ops.runtime_truth_support import get_commit_sha
+
             commit_sha = get_commit_sha()
             persist_race_predictions(norm_race, predictions, decision_tier=tier, commit_sha=commit_sha)
 

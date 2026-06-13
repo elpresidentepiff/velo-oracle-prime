@@ -1,6 +1,7 @@
 """
 Security utilities for API authentication and authorization.
 """
+
 from __future__ import annotations
 
 import hmac

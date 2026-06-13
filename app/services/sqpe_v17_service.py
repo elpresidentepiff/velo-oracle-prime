@@ -3,6 +3,7 @@ SQPE v17 Service — Clean Loader
 Loads and executes the canonical SQPE v17 model.
 Replaces the quarantined model_manager for production scoring.
 """
+
 import logging
 import math
 import re
@@ -20,19 +21,47 @@ V16_MODEL_PATH = ROOT / "models" / "sqpe_v16" / "sqpe_v16.pkl"
 
 # Exact order from model.feature_names_in_
 EXPECTED_FEATURES = [
-    'sp_dec', 'log_sp', 'implied_prob', 'dist_f', 'going_code', 'is_aw',
-    'class_num', 'wgt_lbs', 'or_num', 'rpr_num', 'ts_num', 'or_vs_field',
-    'rpr_vs_field', 'field_size', 'draw_num', 'draw_pct', 'age_num',
-    'sp_rank', 'is_fav', 'runs_since_win', 'runs_since_place',
-    'runs_since_mkt_support', 'curr_or_minus_last_win_or',
-    'curr_or_minus_best_or', 'mark_compression_score', 'release_window_score',
-    'course_fit_score', 'going_fit_score', 'distance_fit_score',
-    'quiet_run_score', 'trainer_timing_score', 'jockey_switch_intent',
-    'odds_resilience_score', 'odds_contraction_score', 'decoy_support_flag',
-    'setup_run_flag', 'cash_run_flag'
+    "sp_dec",
+    "log_sp",
+    "implied_prob",
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "rpr_num",
+    "ts_num",
+    "or_vs_field",
+    "rpr_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "sp_rank",
+    "is_fav",
+    "runs_since_win",
+    "runs_since_place",
+    "runs_since_mkt_support",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "odds_resilience_score",
+    "odds_contraction_score",
+    "decoy_support_flag",
+    "setup_run_flag",
+    "cash_run_flag",
 ]
 
 _model = None
+
 
 def _load_model():
     global _model
@@ -51,6 +80,7 @@ def _load_model():
     logger.info(f"SQPE model loaded from {path}")
     return _model
 
+
 def _parse_sp(sp_str) -> float:
     if not sp_str:
         return 10.0
@@ -64,6 +94,7 @@ def _parse_sp(sp_str) -> float:
         return float(s) + 1.0
     except ValueError:
         return 10.0
+
 
 def _parse_dist(dist_str) -> float:
     if not dist_str:
@@ -81,17 +112,25 @@ def _parse_dist(dist_str) -> float:
         total += float(m_yds.group(1)) / 220
     return total if total > 0 else 16.0
 
+
 def _parse_going(going_str):
     g = str(going_str or "").strip().upper()
     aw = 1 if any(x in g for x in ["STANDARD", "SLOW", "FAST", "TAPETA", "POLYTRACK"]) else 0
     codes = {
-        "FIRM": 2.0, "GOOD TO FIRM": 1.5, "GOOD": 1.0, "GOOD TO SOFT": 0.5,
-        "SOFT": 0.0, "HEAVY": -1.0, "YIELDING": 0.3, "STANDARD": 1.0,
+        "FIRM": 2.0,
+        "GOOD TO FIRM": 1.5,
+        "GOOD": 1.0,
+        "GOOD TO SOFT": 0.5,
+        "SOFT": 0.0,
+        "HEAVY": -1.0,
+        "YIELDING": 0.3,
+        "STANDARD": 1.0,
     }
     for key, val in codes.items():
         if key in g:
             return val, aw
     return 0.5, aw
+
 
 def _parse_class(class_str) -> float:
     s = str(class_str or "").strip().upper()
@@ -106,6 +145,7 @@ def _parse_class(class_str) -> float:
         return 2.5
     return 4.0
 
+
 def _parse_wgt(wgt_str) -> float:
     s = str(wgt_str or "").strip()
     m = re.match(r"(\d+)-(\d+)", s)
@@ -116,12 +156,14 @@ def _parse_wgt(wgt_str) -> float:
     except ValueError:
         return 126.0
 
+
 def _parse_num(val) -> float:
     try:
         v = float(str(val).strip())
         return v if not math.isnan(v) else 0.0
     except (ValueError, TypeError):
         return 0.0
+
 
 def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     """Build feature dictionary from raw runner+race dicts."""
@@ -157,11 +199,13 @@ def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     feats["ts_missing"] = 1.0 if runner.get("ts") is None else 0.0
 
     from app.services.v17_feature_extractor import DEFAULTS
+
     for f in EXPECTED_FEATURES:
         if f not in feats:
             feats[f] = float(runner.get(f, DEFAULTS.get(f, 0.0)))
 
     return feats
+
 
 def predict_sqpe_v17(runner_features: dict) -> float:
     """Predict win probability for a runner using SQPE v17."""

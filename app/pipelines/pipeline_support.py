@@ -1,6 +1,7 @@
 """
 Utility to generate and save pipeline run summary artifacts.
 """
+
 import json
 import os
 import pathlib
@@ -16,7 +17,7 @@ def write_summary(
     counts: dict | None = None,
     degraded_reasons: list[str] | None = None,
     error: str | None = None,
-    artifact_path: pathlib.Path | None = None
+    artifact_path: pathlib.Path | None = None,
 ):
     from app.core.runtime_env import get_commit_sha
 
@@ -33,7 +34,7 @@ def write_summary(
         },
         "counts": counts or {},
         "degraded_reasons": degraded_reasons or [],
-        "error": error
+        "error": error,
     }
 
     if artifact_path:

@@ -62,7 +62,9 @@ async def predict_full(request: PredictRequest, api_key: str = Header(None, alia
 
     # UMA QUARANTINED — Forensic Containment Active
     logger.critical("API ACCESS BLOCKED: /full endpoint attempted. UMA is QUARANTINED.")
-    raise HTTPException(status_code=503, detail="UMA Brain is QUARANTINED for forensic containment. Use /quick or /ensemble.")
+    raise HTTPException(
+        status_code=503, detail="UMA Brain is QUARANTINED for forensic containment. Use /quick or /ensemble."
+    )
 
 
 @router.post("/quick", response_model=PredictResponse)

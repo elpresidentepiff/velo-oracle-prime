@@ -2,6 +2,7 @@
 Canonical pipeline wrapper for Sigma reconciliation.
 Normalizes env, target date, and calls the underlying script.
 """
+
 import argparse
 import os
 import subprocess
@@ -10,7 +11,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 
-def run(target_date: str | None = None, trigger_source: str = "manual", run_id: str | None = None, source: str = "auto", min_coverage: str | None = None):
+
+def run(
+    target_date: str | None = None,
+    trigger_source: str = "manual",
+    run_id: str | None = None,
+    source: str = "auto",
+    min_coverage: str | None = None,
+):
     script_path = ROOT / "scripts" / "ops" / "run_results_sigma.py"
     if not script_path.exists():
         raise FileNotFoundError(f"Sigma script not found: {script_path}")
@@ -29,7 +37,9 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
     if min_coverage is not None:
         cmd.extend(["--min-coverage", str(min_coverage)])
 
-    print(f"Running pipeline: sigma_runner (Target: {target_date or 'today'}, Source: {source}, Min Coverage: {min_coverage or 'default'})")
+    print(
+        f"Running pipeline: sigma_runner (Target: {target_date or 'today'}, Source: {source}, Min Coverage: {min_coverage or 'default'})"
+    )
 
     proc = subprocess.run(cmd, env=env, cwd=str(ROOT), check=False)
 
@@ -54,6 +64,7 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
                 ledger_status = "SKIPPED"
                 # Extract reason from stdout (look for [SKIPPED] line)
                 import re
+
                 m = re.search(r"\[SKIPPED\] (.*)", res.stdout)
                 ledger_skip_reason = m.group(1) if m else "Completeness check or duplicate"
             else:
@@ -69,12 +80,11 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
 
     # ── Write Summary Artifact ───────────────────────────────────────────────
     from app.pipelines.pipeline_support import write_summary
+
     artifact_dir = ROOT / "data" / "new_build" / "summaries"
     safe_date = (target_date or "today").replace("-", "_")
 
-    counts = {
-        "lane_ledger_status": ledger_status
-    }
+    counts = {"lane_ledger_status": ledger_status}
     if ledger_skip_reason:
         counts["lane_ledger_skip_reason"] = ledger_skip_reason
 
@@ -83,10 +93,11 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
         target_date=target_date or "today",
         status="PASS" if proc.returncode == 0 else "FAIL",
         counts=counts,
-        artifact_path=artifact_dir / f"sigma_{safe_date}.json"
+        artifact_path=artifact_dir / f"sigma_{safe_date}.json",
     )
 
     sys.exit(proc.returncode)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -102,5 +113,5 @@ if __name__ == "__main__":
         trigger_source=args.trigger_source,
         run_id=args.run_id,
         source=args.source,
-        min_coverage=args.min_coverage
+        min_coverage=args.min_coverage,
     )

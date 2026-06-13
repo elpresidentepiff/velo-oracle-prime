@@ -2,6 +2,7 @@
 Canonical pipeline wrapper for results ingestion.
 Normalizes env, target date, and calls the underlying script.
 """
+
 import argparse
 import os
 import subprocess
@@ -9,6 +10,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
+
 
 def run(target_date: str | None = None, trigger_source: str = "manual", run_id: str | None = None):
     script_path = ROOT / "scripts" / "ops" / "ingest_results_to_horse_runs.py"
@@ -31,6 +33,7 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
 
     # Batch 3: Write Summary Artifact
     from app.pipelines.pipeline_support import write_summary
+
     artifact_dir = ROOT / "data" / "new_build" / "summaries"
     safe_date = (target_date or "today").replace("-", "_")
 
@@ -38,10 +41,11 @@ def run(target_date: str | None = None, trigger_source: str = "manual", run_id: 
         pipeline_type="results_ingest",
         target_date=target_date or "today",
         status="PASS" if proc.returncode == 0 else "FAIL",
-        artifact_path=artifact_dir / f"results_ingest_{safe_date}.json"
+        artifact_path=artifact_dir / f"results_ingest_{safe_date}.json",
     )
 
     sys.exit(proc.returncode)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

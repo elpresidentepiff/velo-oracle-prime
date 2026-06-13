@@ -24,4 +24,3 @@ class MissionControlConfig:
 
 
 MC_CONFIG = MissionControlConfig()
-

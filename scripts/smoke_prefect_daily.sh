@@ -8,9 +8,9 @@ python -c "import workers.ingestion_spine" 2>/dev/null || echo "[smoke] ingestio
 
 echo "[smoke] Checking key script presence..."
 SCRIPTS=(
-  "scripts/run_prime_today.py"
-  "scripts/run_results_sigma.py"
-  "scripts/build_rpdc_daily.py"
+  "scripts/ops/run_prime_today.py"
+  "scripts/ops/run_results_sigma.py"
+  "scripts/ops/build_rpdc_daily.py"
 )
 for s in "${SCRIPTS[@]}"; do
   if [ -f "$s" ]; then
