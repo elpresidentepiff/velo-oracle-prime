@@ -185,6 +185,39 @@ Governed safety checks are documented as required for all merges to protected br
 - NO_MODEL_PROMOTION
 - NO_TELEGRAM_SEND
 
+## P1-4 — Governance Smoke Test
+
+**Status:** COMPLETE
+**Branch:** "stabilization/prime-hardening-v1"
+**Commit:** "PENDING"
+
+### Purpose
+
+P1-4 provides the final proof of the unified safety perimeter. It executes a simulated safe task through the entire governed chain, verifying repository state, mission scope, and side-effect safety as one living system.
+
+### Behavior Verified
+
+1. **Full Chain Execution:** Successfully chained `worktree_safety_runner`, `task_contract_runner`, and `side_effect_sentinel` via the `governed_task_runner`.
+2. **State Integrity:** Confirmed the system blocks execution on dirty worktrees and wrong branches.
+3. **Scope Integrity:** Verified that tasks stay within declared mission boundaries.
+4. **Side-Effect Defense:** Proved that risky patterns (even inside echo strings) are caught and audited.
+5. **Readiness Alignment:** Verified that the repository state matches hardening logs and branch protection policies.
+
+### Final Proof
+
+Governed Smoke Test (`SMOKE-TEST`) passed on real repository state.
+
+### Final Classification
+
+- GOVERNANCE_E2E_SMOKE_TEST_ACTIVE
+- FULL_GOVERNED_CHAIN_VERIFIED
+- CI_POLICY_ALIGNMENT_VERIFIED
+- BRANCH_PROTECTION_READINESS_VERIFIED
+- NO_LIVE_SCORING_CHANGE
+- NO_SUPABASE_WRITES
+- NO_MODEL_PROMOTION
+- NO_TELEGRAM_SEND
+
 ## Hardening Summary
 
 The VÉLØ safety perimeter now covers:
