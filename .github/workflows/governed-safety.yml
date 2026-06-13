@@ -1,0 +1,53 @@
+name: Governed Safety Perimeter Audit
+
+on:
+  push:
+    branches: [ stabilization/prime-hardening-v1 ]
+  pull_request:
+    branches: [ stabilization/prime-hardening-v1 ]
+
+jobs:
+  safety-audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-mock
+
+    - name: Verify Hardening Log
+      run: python scripts/ops/verify_hardening_state.py
+
+    - name: Run Safety Layer Tests
+      run: |
+        pytest tests/test_capture_proof.py
+        pytest tests/test_worktree_safety_runner.py
+        pytest tests/test_task_contract_runner.py
+        pytest tests/test_side_effect_sentinel.py
+        pytest tests/test_governed_task_runner.py
+        pytest tests/test_verify_hardening_state.py
+
+    - name: Side-Effect Sentinel Self-Audit
+      run: |
+        python scripts/ops/side_effect_sentinel.py --mode audit -- pytest tests/test_capture_proof.py
+
+    - name: Task Contract Verification (P1-2)
+      run: |
+        python scripts/ops/task_contract_runner.py --contract ops/task_contracts/P1-2.json --mode preflight
+
+    - name: Classification Requirement Check
+      run: |
+        # Check if the P1-2 contract itself has the mandatory classifications
+        grep "NO_LIVE_SCORING_CHANGE" ops/task_contracts/P1-2.json
+        grep "NO_SUPABASE_WRITES" ops/task_contracts/P1-2.json
+        grep "NO_MODEL_PROMOTION" ops/task_contracts/P1-2.json
+        grep "NO_TELEGRAM_SEND" ops/task_contracts/P1-2.json

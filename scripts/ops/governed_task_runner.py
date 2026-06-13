@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 # Identify ROOT
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("VELO_GOVERNOR_ROOT", Path(__file__).resolve().parents[2]))
 sys.path.insert(0, str(ROOT))
 
 def _run_script(script_name: str, args: List[str]) -> Tuple[int, str]:
@@ -39,8 +39,7 @@ def _run_script(script_name: str, args: List[str]) -> Tuple[int, str]:
     print(f"[GOVERNOR] Calling: {script_name} {' '.join(args)}")
     
     # We use capture_output to inspect JSON but also let stdout/stderr flow if needed
-    # Actually, for the governor, we want to capture JSON result.
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    result = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT, env=os.environ)
     return result.returncode, result.stdout
 
 class GovernedTaskRunner:
@@ -62,6 +61,7 @@ class GovernedTaskRunner:
         rc, out = _run_script("worktree_safety_runner.py", wt_args)
         self.results["worktree"] = self._parse_json(out)
         if rc != 0:
+             print(f"[GOVERNOR] Worktree check failed: {out}")
              return self.fail("WORKTREE_SAFETY_FAILED")
 
         # 2. Task Contract Preflight

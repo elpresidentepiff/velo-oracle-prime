@@ -50,7 +50,8 @@ International prerace arenas (`scripts/audit_international_*`) · HK/FR feature 
 
 ## What must happen BEFORE scoring
 1. **Governed Task Runner mandatory:** All session commands must run via `python scripts/ops/governed_task_runner.py`.
-2. `worktree_safety_runner.py` (chained) passes.
+2. Hardening log verification (`python scripts/ops/verify_hardening_state.py`) passes.
+3. `worktree_safety_runner.py` (chained) passes.
 3. `task_contract_runner.py` (chained) preflight passes.
 4. `side_effect_sentinel.py` (chained) audit passes.
 5. `python scripts/ops/velo_session_start_check.py` passes.
