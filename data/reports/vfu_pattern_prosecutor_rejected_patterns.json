@@ -1,0 +1,38 @@
+[
+  {
+    "pattern_id": "HORSE_BELIEF_22",
+    "belief": "Horse Passport candidates are useful but not merge-ready",
+    "verdict": "DATA_BLOCKED",
+    "reason": "69 passport candidates created. All blocked: horse_id=None, human_review_required=True. NAME_ONLY_CONFIDENCE: horse_id=None for all 1,263 rows. Name-based matching only.",
+    "blocked_reason": "NAME_ONLY_CONFIDENCE: horse_id=None for all 1,263 rows. Name-based matching only.",
+    "excluded_count": 0,
+    "blocked_from_live_use": true
+  },
+  {
+    "pattern_id": "DATA_BELIEF_24",
+    "belief": "Lack of horse_id blocks Passport automation",
+    "verdict": "DATA_BLOCKED",
+    "reason": "0/1,263 rows have horse_id. Passport automation is impossible without RP uid bridge. NAME_ONLY_CONFIDENCE: horse_id=None for all 1,263 rows. Name-based matching only.",
+    "blocked_reason": "Insufficient evidence or data gap",
+    "excluded_count": 0,
+    "blocked_from_live_use": true
+  },
+  {
+    "pattern_id": "DATA_BELIEF_25",
+    "belief": "Lack of pick_sp blocks ROI claims",
+    "verdict": "DATA_BLOCKED",
+    "reason": "ROI claims are blocked for 1,156 rows without pick_sp. Partial ROI (n=107 TIER_A) allowed with SP_SAMPLE_LIMITED caveat.",
+    "blocked_reason": "Insufficient evidence or data gap",
+    "excluded_count": 0,
+    "blocked_from_live_use": true
+  },
+  {
+    "pattern_id": "DATA_BELIEF_26",
+    "belief": "winner_in_frame unavailable blocks frame-quality prosecution",
+    "verdict": "DATA_BLOCKED",
+    "reason": "winner_in_frame is unavailable \u2014 sigma union has no full-field scoring per race. Frame-quality prosecution deferred.",
+    "blocked_reason": "Insufficient evidence or data gap",
+    "excluded_count": 0,
+    "blocked_from_live_use": true
+  }
+]

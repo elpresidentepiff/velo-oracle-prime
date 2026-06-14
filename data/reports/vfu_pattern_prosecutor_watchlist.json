@@ -1,0 +1,122 @@
+[
+  {
+    "pattern_id": "VP_BELIEF_01",
+    "label": "VP >= 0.40 is a valid opportunity signal",
+    "current_evidence": "n=213, SR=0.432, confidence=HIGH",
+    "why_it_matters": "SR=43.2% vs baseline 26.4%. +16.8pp lift on 213 rows.",
+    "what_would_confirm": "SR>=35% sustained over 14-day dry-run",
+    "what_would_kill_it": "SR falls below 28% for 5+ consecutive days",
+    "minimum_extra_sample": 20,
+    "next_14_day_metric": "Track SR at VP_BELIEF_01 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "VP_BELIEF_02",
+    "label": "VP >= 0.45 improves confidence over 0.40",
+    "current_evidence": "n=154, SR=0.461, confidence=HIGH",
+    "why_it_matters": "SR=46.1% vs VP>=0.40 SR=43.2%. Delta=2.9pp on 154 rows.",
+    "what_would_confirm": "SR remains above VP>=0.40 SR",
+    "what_would_kill_it": "VP>=0.45 converges to VP>=0.40 over 50+ new rows",
+    "minimum_extra_sample": 20,
+    "next_14_day_metric": "Track SR at VP_BELIEF_02 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "GATE_BELIEF_06",
+    "label": "GREEN days (avg VP>=0.35) outperform RED days (VP<0.25)",
+    "current_evidence": "n=306, SR=0.386, confidence=HIGH",
+    "why_it_matters": "High-VP pool SR=38.6% vs Low-VP pool SR=18.2%. Row-level proxy \u2014 day-level gate label not stored in union.",
+    "what_would_confirm": "HIGH-VP pool SR >= 30% day-on-day",
+    "what_would_kill_it": "Multiple GREEN days with 0 wins",
+    "minimum_extra_sample": 20,
+    "next_14_day_metric": "Track SR at GATE_BELIEF_06 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "GATE_BELIEF_09",
+    "label": "Jun 09 remains a known false-GREEN caveat",
+    "current_evidence": "n=0, SR=None, confidence=INSUFFICIENT",
+    "why_it_matters": "Jun 09 2026 is hardcoded as false-GREEN precedent. Every GREEN label must carry FALSE_GREEN_POSSIBLE caveat.",
+    "what_would_confirm": "FALSE_GREEN_POSSIBLE logged on every GREEN label",
+    "what_would_kill_it": "Any GREEN day without caveat",
+    "minimum_extra_sample": 50,
+    "next_14_day_metric": "Track SR at GATE_BELIEF_09 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "PRICE_BELIEF_12",
+    "label": "SP 1.5\u20134.0 with VP>=0.40 is the operating window",
+    "current_evidence": "n=10, SR=0.4, confidence=INSUFFICIENT",
+    "why_it_matters": "TIER_A operating-window rows: n=10, wins=4, SR=40.0%. Above conviction threshold. SP_SAMPLE_LIMITED: pick_sp available for only 107/1,263 rows (TIER_A only).",
+    "what_would_confirm": "SR>=36% on SP 1.5-4.0 + VP>=0.40 with n>=50",
+    "what_would_kill_it": "SR below baseline on 30+ rows",
+    "minimum_extra_sample": 50,
+    "next_14_day_metric": "Track SR at PRICE_BELIEF_12 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "COURSE_BELIEF_13",
+    "label": "Musselburgh is excelling",
+    "current_evidence": "n=20, SR=0.55, confidence=LOW",
+    "why_it_matters": "Musselburgh: n=20, wins=11, SR=55.0% vs baseline 26.4%. Expected tier: EXCELLING.",
+    "what_would_confirm": "SR>=38% on 20+ Musselburgh rows",
+    "what_would_kill_it": "SR falls below baseline on 10+ more rows",
+    "minimum_extra_sample": 50,
+    "next_14_day_metric": "Track SR at COURSE_BELIEF_13 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "COURSE_BELIEF_14",
+    "label": "Worcester is excelling",
+    "current_evidence": "n=21, SR=0.476, confidence=LOW",
+    "why_it_matters": "Worcester: n=21, wins=10, SR=47.6% vs baseline 26.4%. Expected tier: EXCELLING.",
+    "what_would_confirm": "SR>=38% on 20+ Worcester rows",
+    "what_would_kill_it": "SR falls below baseline",
+    "minimum_extra_sample": 50,
+    "next_14_day_metric": "Track SR at COURSE_BELIEF_14 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "COURSE_BELIEF_15",
+    "label": "Uttoxeter is excelling",
+    "current_evidence": "n=27, SR=0.444, confidence=LOW",
+    "why_it_matters": "Uttoxeter: n=27, wins=12, SR=44.4% vs baseline 26.4%. Expected tier: EXCELLING.",
+    "what_would_confirm": "SR>=38% on 20+ Uttoxeter rows",
+    "what_would_kill_it": "SR falls below baseline",
+    "minimum_extra_sample": 50,
+    "next_14_day_metric": "Track SR at COURSE_BELIEF_15 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "COURSE_BELIEF_16",
+    "label": "Yarmouth is a drain",
+    "current_evidence": "n=20, SR=0.1, confidence=LOW",
+    "why_it_matters": "Yarmouth: n=20, wins=2, SR=10.0% vs baseline 26.4%. Expected tier: DRAIN.",
+    "what_would_confirm": "SR<=15% on 20+ Yarmouth rows",
+    "what_would_kill_it": "SR climbs above baseline",
+    "minimum_extra_sample": 50,
+    "next_14_day_metric": "Track SR at COURSE_BELIEF_16 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  },
+  {
+    "pattern_id": "DATA_BELIEF_23",
+    "label": "LOCAL_ONLY rows are useful only for aggregate pattern evidence",
+    "current_evidence": "n=0, SR=None, confidence=INSUFFICIENT",
+    "why_it_matters": "294 LOCAL_ONLY rows (no horse/date). Correctly tiered as TIER_D. They feed aggregate outcome/VP counts only.",
+    "what_would_confirm": "TIER_D stays excluded from named conclusions",
+    "what_would_kill_it": "TIER_D rows incorrectly merged",
+    "minimum_extra_sample": 50,
+    "next_14_day_metric": "Track SR at DATA_BELIEF_23 daily. Minimum 5 new race days.",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  }
+]
