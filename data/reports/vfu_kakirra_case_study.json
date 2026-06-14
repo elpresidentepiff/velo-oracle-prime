@@ -1,0 +1,82 @@
+{
+  "case_study_type": "VFU_07_KAKIRRA_CASE_STUDY",
+  "horse_name": "Kakirra",
+  "horse_rp_uid": 8866972,
+  "horse_id_namespace": "RP_UID",
+  "vfu_appearances": 3,
+  "vfu_wins": 3,
+  "vfu_strike_rate": 1.0,
+  "vp_range": {
+    "min": 0.1747,
+    "max": 0.3434,
+    "avg": 0.2651
+  },
+  "vp_threshold": 0.4,
+  "all_wins_below_vp_threshold": true,
+  "per_run_truth_table": [
+    {
+      "date": "2026-05-13",
+      "course": "Bath",
+      "vp": 0.3434,
+      "vp_above_threshold": false,
+      "outcome": "WIN",
+      "evidence_tier": null,
+      "pick_sp": null,
+      "race_id": "rac_11930256"
+    },
+    {
+      "date": "2026-05-15",
+      "course": "Newbury",
+      "vp": 0.1747,
+      "vp_above_threshold": false,
+      "outcome": "WIN",
+      "evidence_tier": null,
+      "pick_sp": null,
+      "race_id": "rac_11930828"
+    },
+    {
+      "date": "2026-06-02",
+      "course": "Wolverhampton",
+      "vp": 0.2773,
+      "vp_above_threshold": false,
+      "outcome": "WIN",
+      "evidence_tier": null,
+      "pick_sp": null,
+      "race_id": "rp_WOL_20260602_5.24"
+    }
+  ],
+  "canonical_passport": {
+    "career_runs": 5,
+    "wins": 3,
+    "win_rate": 0.6,
+    "sp_trajectory": "SHORTENING",
+    "position_trend": "IMPROVING",
+    "margin_trend": "IMPROVING",
+    "aw_specialist": true,
+    "avg_sp_last5": 59.72,
+    "avg_sp_last3": 7.19,
+    "current_or": 60,
+    "last_run_date": "2026-06-02"
+  },
+  "analysis": {
+    "pattern_type": "VP_UNDERCOUNTING",
+    "description": "Kakirra won all 3 V\u00c9L\u00d8-observed appearances. VP ranged 0.175\u20130.343 at race time, never reaching the 0.40 threshold. Under VP_BELIEF_01 doctrine, none of these wins would be predicted. This is a VP false-negative cluster: the model is systematically blind to this horse.",
+    "possible_causes": [
+      "Missing OR/RPR at race time (or_missing / rpr_missing flags)",
+      "AW specialist on flat going \u2014 model may under-weight surface preference",
+      "SP shortening trajectory not captured in VP ensemble",
+      "Small field size on each occasion \u2014 model may penalise",
+      "Horse winning on trainer angle not captured in SQPE/MDS"
+    ],
+    "vp_threshold_gap": 0.0566,
+    "all_wins_below_threshold": true,
+    "canonical_passport_alignment": "Passport shows win_rate=0.60 (5 runs, 3 wins). SP shortening (SHORTENING trajectory). Improving margins. AW specialist. Passport agrees: this horse is genuinely good and improving. VP does not agree. That is the gap.",
+    "vp_vs_passport_verdict": "PASSPORT_TRUTH_AHEAD_OF_VP",
+    "recommended_action": "Do not promote Kakirra to live staking from this data. Investigate OR/RPR availability at Kakirra's races. Consider whether AW specialist flag should modify VP calculation. Kakirra is the primary evidence for a potential VP blind-spot in AW specialists.",
+    "doctrine_implication": "VP_BELIEF_01 (VP>=0.40 = opportunity signal) is confirmed valid on the population. But Kakirra shows individual horses can win consistently BELOW the threshold. A blanket VP<0.40 exclusion would have missed all 3 Kakirra wins. This does not invalidate VP doctrine \u2014 it adds a case for horse-level modifiers."
+  },
+  "do_not_merge": true,
+  "human_review_required": true,
+  "blocked_from_live_use": true,
+  "review_version": "VFU_PASSPORT_REVIEW_V1"
+}

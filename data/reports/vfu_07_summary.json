@@ -1,0 +1,68 @@
+{
+  "report_type": "VFU_07_IDENTITY_CONFIRMED_PASSPORT_REVIEW",
+  "generated_at": "2026-06-14T21:55:49.404786+00:00",
+  "review_version": "VFU_PASSPORT_REVIEW_V1",
+  "source_scope": "current_era_only_2026_05_08_to_2026_06_13",
+  "phase_a_passport_candidates": {
+    "total": 69,
+    "rp_uid_canonical": 41,
+    "eod_non_canonical": 14,
+    "no_identity": 14,
+    "verdict_counts": {
+      "PROMOTE_TO_PASSPORT_REVIEW": 30,
+      "EOD_ID_NEEDS_RECONCILIATION": 21,
+      "OBSERVE_ONLY": 18
+    },
+    "promote_to_review_count": 30
+  },
+  "phase_b_repeated_clusters": {
+    "total": 20,
+    "identity_resolved": 19,
+    "verdict_counts": {
+      "VP_UNDERCOUNTING": 2,
+      "NOISE": 8,
+      "NEEDS_MORE_RUNS": 4,
+      "LEARNABLE_VP_POSITIVE": 2,
+      "PLACE_SPECIALIST": 3,
+      "IDENTITY_UNRESOLVED": 1
+    },
+    "vp_undercounting_count": 2,
+    "learnable_count": 2,
+    "place_specialist_count": 3,
+    "noise_count": 8
+  },
+  "phase_c_kakirra": {
+    "horse_rp_uid": 8866972,
+    "vfu_sr": 1.0,
+    "avg_vp": 0.265,
+    "all_wins_below_vp_threshold": true,
+    "verdict": "VP_UNDERCOUNTING",
+    "doctrine_implication": "VP_BELIEF_01 valid on population; Kakirra shows horse-level blind spot."
+  },
+  "review_queue_entries": 37,
+  "passport_automation_status": "OPERATOR_GATE_REQUIRED_BEFORE_MERGE",
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "live_scoring_changed": false,
+  "model_promoted": false,
+  "telegram_sent": false,
+  "racing_api_restored": false,
+  "mar_apr_extracted": false,
+  "final_classifications": [
+    "VFU_07_PASSPORT_REVIEW_COMPLETE",
+    "PASSPORT_CANDIDATES_SCORED",
+    "REPEATED_HORSE_TRUTH_TABLES_BUILT",
+    "KAKIRRA_CASE_STUDY_COMPLETE",
+    "VP_UNDERCOUNTING_PATTERN_DOCUMENTED",
+    "LEARNABLE_PATTERNS_IDENTIFIED",
+    "NO_PASSPORT_MERGE_EXECUTED",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_SUPABASE_WRITES",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION",
+    "NO_MAR_APR_EXTRACTION"
+  ]
+}
