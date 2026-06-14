@@ -265,3 +265,60 @@ This establishes the first complete governed execution layer for VÉLØ Prime.
 
 ---
 **NEXT:** P1-2 — CI Gate Integration.
+
+---
+
+## GOVERNED BASELINE LOCKED — PR #91 MERGED TO MAIN
+
+**Status:** COMPLETE  
+**Date:** 2026-06-14T18:46:33Z  
+**Main HEAD:** `2cc135a` (squash merge commit)  
+**Branch merged:** `stabilization/prime-hardening-v1`  
+**Tags:** `governance-v1-hardened`, `vp-gatekeeper-v1`
+
+### What Entered Main
+
+| File | Purpose |
+|---|---|
+| `docs/current/VP_GATEKEEPER_PROMOTION_V1.md` | VP Gatekeeper doctrine — PRIMARY PERMISSION SIGNAL |
+| `tests/test_vp_gatekeeper_promotion.py` | 13 guardrail tests — all passing |
+| `data/reports/current_era_sigma_union_*` | 1,263-row union, May 08–Jun 13 |
+| `data/reports/current_era_course_excellence_table.*` | 93 courses, EXCELLING/DRAIN/OBSERVATION tiers |
+| `data/reports/pre_surgery_sigma_study_plan.*` | Mar–Apr study plan (BLOCKED — operator-gated) |
+| `data/reports/may_jun_supabase_expansion_staging.*` | 6-question staging report |
+| `data/reports/sigma_audits_supabase_schema_probe.*` | 2,715-row Supabase probe |
+| `data/reports/vp_opportunity_panel_2026_06_14.*` | Jun 14 VP panel — GREEN |
+| `scripts/ops/velo_morning_cockpit.py` | VP gate wired LOCAL PRINT ONLY — not in Telegram |
+| `.github/workflows/benchmark.yml` | CI fix: permissions block on benchmark-verdict job |
+
+### Post-Merge Verification
+
+| Check | Result |
+|---|---|
+| PR #91 merged | YES — 2026-06-14T18:46:33Z |
+| Main HEAD confirmed | `2cc135a` |
+| VP Gatekeeper files on main | CONFIRMED |
+| governed-safety on main | SUCCESS |
+| focused VP+Sigma tests | 30/30 PASS |
+| Live scoring changed | NO |
+| Supabase writes | NO |
+| Model promotion | NO |
+| Telegram send | NO |
+| Racing API restoration | NO |
+
+### Final Classifications
+
+- `PR91_MERGED_TO_MAIN`
+- `POST_MERGE_VERIFICATION_PASSED`
+- `GOVERNED_BASELINE_LOCKED`
+- `VP_GATEKEEPER_ENTERED_MAIN`
+- `NO_BENCHMARK_DATA_FOR_THIS_COMMIT`
+- `NO_LIVE_SCORING_CHANGE`
+- `NO_SUPABASE_WRITES`
+- `NO_MODEL_PROMOTION`
+- `NO_TELEGRAM_SEND`
+- `NO_RACING_API_RESTORATION`
+
+### Next Research Mission
+
+Mar–Apr PRE_SURGERY study — BLOCKED until operator approves after current-era dry-run validation (14+ days minimum). Plan at `data/reports/pre_surgery_sigma_study_plan.md`.
