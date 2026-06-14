@@ -1,0 +1,77 @@
+{
+  "report_type": "VFU_02_20_RACE_AUTOPSY_DRY_RUN",
+  "generated": "2026-06-14T19:37:43.384143+00:00",
+  "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/reports/current_era_sigma_union_rows_2026_05_08_to_2026_06_13.json",
+  "total_autopsies": 20,
+  "total_passport_extensions": 20,
+  "outcomes": {
+    "WIN": 7,
+    "MISS": 11,
+    "PLACED": 2
+  },
+  "category_breakdown": {
+    "HIGH_VP_WIN": 4,
+    "HIGH_VP_MISS": 4,
+    "LOW_VP_WIN": 3,
+    "MID_PRICE_WALL": 3,
+    "EXCELLING_COURSE": 2,
+    "DRAIN_COURSE": 2,
+    "REPEATED_HORSE": 2
+  },
+  "failure_classes": {
+    "VP_FALSE_POSITIVE": 4,
+    "VP_FALSE_NEGATIVE": 4,
+    "MID_PRICE_WALL": 2,
+    "INSUFFICIENT_EVIDENCE": 1,
+    "COURSE_DRAIN_CONFIRMED": 2
+  },
+  "data_gaps": {
+    "pick_sp_null \u2014 not stored in sigma union": 20,
+    "horse_id_null \u2014 RP uid not in sigma row": 20,
+    "actual_winner_sp_null": 3,
+    "actual_winner_name_null": 3,
+    "off_time_null": 3
+  },
+  "passport_update_candidates": 2,
+  "pattern_update_candidates": 8,
+  "human_review_required": 4,
+  "confidence_medium": 0,
+  "confidence_low": 20,
+  "vp_analysis": {
+    "win_mean_vp": 0.3724,
+    "miss_mean_vp": 0.3105,
+    "vp_explains_direction": true
+  },
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "dry_run": true,
+  "schema_findings": {
+    "pick_sp_coverage": "0% \u2014 critical gap. Sigma union does not store pick SP.",
+    "actual_winner_sp_coverage": "17/20",
+    "horse_id_coverage": "0/20",
+    "winner_in_frame_coverage": "0% \u2014 union does not store full field. Not derivable."
+  },
+  "recommendations": {
+    "proceed_to_full_pass": false,
+    "schema_revisions_needed": [
+      "pick_sp must be sourced from innovation protocol CSV or velo_verdicts before full pass",
+      "winner_in_frame requires full-field scoring data \u2014 not available in sigma-only union",
+      "horse_id null in most rows \u2014 need RP uid join from racecard data"
+    ],
+    "vfu_03_recommendation": "PROCEED with schema augmentation plan before full 1,263-row pass"
+  },
+  "final_classifications": [
+    "VFU_02_20_RACE_AUTOPSY_DRY_RUN_COMPLETE",
+    "RACE_AUTOPSY_RECORDS_CREATED",
+    "PASSPORT_EXTENSIONS_DRY_RUN_ONLY",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "CURRENT_ERA_ONLY",
+    "NO_FULL_1263_PASS_YET",
+    "NO_MAR_APR_EXTRACTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}
