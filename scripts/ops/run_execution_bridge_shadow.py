@@ -1,9 +1,8 @@
 """
 Run VeloExecutionBridge in shadow/paper mode for a given race date.
 
-Loads VÉLØ verdicts from Supabase, optionally enriches with the Racing API
-shadow ledger, generates ExecutionDirectives, writes the paper ledger, and
-prints a summary.
+Loads VÉLØ verdicts from Supabase, joins Sigma display fields, generates
+ExecutionDirectives, writes the paper ledger, and prints a summary.
 
 GOVERNANCE:
   - Does NOT touch Betfair
@@ -18,7 +17,6 @@ Usage:
     python scripts/run_execution_bridge_shadow.py --date 2026-04-30
     python scripts/run_execution_bridge_shadow.py --date 2026-04-30 --mode PAPER
     python scripts/run_execution_bridge_shadow.py --date 2026-04-30 --audit-results
-    python scripts/run_execution_bridge_shadow.py --date 2026-04-30 --ledger data/racing_api_shadow_forward_ledger.csv
 """
 from __future__ import annotations
 
@@ -44,8 +42,8 @@ import requests
 from src.velo.execution_bridge import (
     DEFAULT_PAPER_LEDGER,
     VeloExecutionBridge,
-    enrich_from_shadow_ledger,
 )
+from scripts.ops.run_results_sigma import _duplicate_alias_race_ids
 
 
 # ── Supabase helpers ──────────────────────────────────────────────────────────
@@ -85,6 +83,20 @@ def load_verdicts(date_str: str) -> list[dict]:
     if isinstance(data, dict):
         raise RuntimeError(f"Supabase error loading verdicts: {data}")
     filtered = [v for v in data if _s(v.get("generated_at")).startswith(date_str)]
+    backup_path = ROOT / "data" / f"velo_prime_verdicts_{date_str.replace('-', '_')}.json"
+    if backup_path.exists():
+        backup_rows = json.loads(backup_path.read_text())
+        backup = {
+            str(row.get("race_id", "")): {
+                "course": row.get("course", ""),
+                "off_time": row.get("off_time", ""),
+            }
+            for row in backup_rows
+        }
+        duplicate_alias_ids = _duplicate_alias_race_ids(backup)
+        if duplicate_alias_ids:
+            filtered = [row for row in filtered if str(row.get("race_id", "")) not in duplicate_alias_ids]
+            print(f"  Excluded {len(duplicate_alias_ids)} synthetic aliases shadowed by canonical RP races.")
     return filtered
 
 
@@ -411,10 +423,6 @@ def main() -> None:
         help="Execution mode (default: SIM). LIVE is not accepted."
     )
     parser.add_argument(
-        "--ledger", default=None,
-        help="Path to Racing API shadow forward ledger CSV (optional)"
-    )
-    parser.add_argument(
         "--paper-ledger", default=str(DEFAULT_PAPER_LEDGER),
         help="Output paper ledger path"
     )
@@ -456,17 +464,12 @@ def main() -> None:
             if not v.get("course"):
                 v["course"] = sig.get("track", "")
 
-    # 3. Enrich from Racing API shadow ledger
-    ledger_path = Path(args.ledger) if args.ledger else None
-    print("Enriching from Racing API shadow ledger ...")
-    verdicts = enrich_from_shadow_ledger(verdicts, ledger_path)
-
-    # 4. Generate directives
+    # 3. Generate directives from canonical verdict and Sigma truth only.
     bridge = VeloExecutionBridge(mode=args.mode)
     directives = bridge.generate_directives(verdicts)
     print(f"  Directives generated: {len(directives)}")
 
-    # 5. Write paper ledger
+    # 4. Write paper ledger
     paper_path = Path(args.paper_ledger)
     rows_before = 0
     if paper_path.exists():
@@ -478,11 +481,11 @@ def main() -> None:
 
     rows_after = rows_before + added
 
-    # 6. Print summary
+    # 5. Print summary
     print_summary(date_str, verdicts, directives, added, skipped, paper_path)
     print(f"Paper ledger rows: {rows_before} → {rows_after}")
 
-    # 7. Optional: audit results
+    # 6. Optional: audit results
     if args.audit_results:
         print("\nRunning outcome audit ...")
         # Reload sigma with SP for P&L

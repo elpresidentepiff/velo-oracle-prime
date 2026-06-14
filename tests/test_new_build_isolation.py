@@ -52,7 +52,8 @@ def test_new_build_learning_payload_has_no_rpr_feature_values() -> None:
     assert "rpr_archive_only_excluded" in encoded
     assert "rp_rpr_archive_only" not in encoded
     assert "rpr_seen_archive_only" not in encoded
-    assert "data\\\\new_build\\\\learning" in encoded
+    state_path = Path(report["state_path"]).resolve()
+    assert LEARNING_ROOT.resolve() in state_path.parents or state_path == LEARNING_ROOT.resolve()
 
 
 def test_runtime_new_build_json_is_untracked() -> None:

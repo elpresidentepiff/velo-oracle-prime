@@ -1,0 +1,16 @@
+{
+  "status": "QUALITY_FAILURE",
+  "severity": "CRITICAL",
+  "failures": [
+    {
+      "detector_name": "constant_feature_detector",
+      "column": "improvement_score",
+      "severity": "CRITICAL",
+      "issue": "CONSTANT_VALUE_FLATLINE",
+      "message": "Continuous column 'improvement_score' has flatlined to constant value: 0.0872"
+    }
+  ],
+  "safe_to_score": false,
+  "safe_to_learn": false,
+  "timestamp": "2026-06-06T03:46:24.482080"
+}

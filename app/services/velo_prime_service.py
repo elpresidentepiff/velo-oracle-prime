@@ -21,11 +21,17 @@ Returns:
 
 from __future__ import annotations
 
+import json
 import logging
 import math
 import os
+import pathlib
 import re
 from datetime import UTC, datetime, timedelta
+
+from src.intelligence.explanation_generator import generate_decision_explanation
+
+ROOT = pathlib.Path(__file__).parent.parent.parent
 
 # from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
 
@@ -125,11 +131,11 @@ def _build_live_features(runner: dict, race: dict, field_or_vals: list[float], f
     is_fav = 1.0 if sp_rank == 1 else 0.0
 
     # Race-level
-    from app.services.model_manager import ModelManager
+    from app.services.sqpe_v17_service import _parse_class, _parse_dist, _parse_going
 
-    dist_f = ModelManager._parse_dist(race.get("distance_f") or race.get("distance"))
-    going_code, is_aw = ModelManager._parse_going(race.get("going"))
-    class_num = ModelManager._parse_class(race.get("race_class"))
+    dist_f = _parse_dist(race.get("distance_f") or race.get("distance"))
+    going_code, is_aw = _parse_going(race.get("going"))
+    class_num = _parse_class(race.get("race_class"))
     draw_num = _safe(runner.get("draw"))
     draw_pct = draw_num / field_size
 
@@ -250,6 +256,57 @@ def _apply_sentient_modifiers(results: list[dict], sentient_state: dict | None) 
     return results
 
 
+_POPULATION_STATS: dict = {}
+
+
+def _load_population_stats() -> None:
+    """Load the BHA 2026 population report extracts for the Decline-Curve heuristic."""
+    global _POPULATION_STATS
+    path = ROOT / "data" / "bha_population_stats_2026.json"
+    if path.exists():
+        try:
+            with open(path) as f:
+                _POPULATION_STATS = json.load(f)
+        except Exception as e:
+            log.warning("[BHA] Population stats load failed: %s", e)
+
+
+def _apply_bha_intelligence(prob: float, runner: dict, race_code: str) -> tuple[float, list[str]]:
+    """
+    Apply BHA Intelligence penalties (Collateral & Decline-Curve).
+
+    1. Collateral Flag: -15% if BHA themselves are uncertain of the rating.
+    2. Decline-Curve: -10% if horse is past peak age and trajectory is declining.
+    """
+    reasons = []
+    final_prob = prob
+
+    # 1. Collateral Rating Penalty
+    if runner.get("is_collateral") or runner.get("pdf_intel", {}).get("_rp_raw", {}).get("is_collateral"):
+        final_prob *= 0.85
+        reasons.append("BHA_COLLATERAL_PENALTY(-15%)")
+
+    # 2. Decline-Curve Penalty
+    age = runner.get("age")
+    try:
+        age_num = int(age) if age else 0
+        is_flat = race_code == "flat"
+
+        # Thresholds from 2026 Population Report: Flat 5+, Jump 8+
+        threshold = 5 if is_flat else 8
+        if age_num >= threshold:
+            # Check trajectory from BHA perf figures (attached in run_prime_today)
+            # or from raw RP data if present
+            traj = runner.get("surf_traj_flag") or "UNKNOWN"
+            if traj in ("DECLINING", "REGRESSING"):
+                final_prob *= 0.90
+                reasons.append(f"DECLINE_CURVE_PENALTY({traj}:-10%)")
+    except (ValueError, TypeError):
+        pass
+
+    return round(final_prob, 4), reasons
+
+
 def score_race_velo_prime(
     race: dict,
     sentient_state: dict | None = None,
@@ -270,12 +327,11 @@ def score_race_velo_prime(
     -------
     list[dict]  sorted by velo_prime_prob desc
     """
-    from app.services.model_manager import get_model_manager
+    from app.services.sqpe_v17_service import build_v17_feature_vector, predict_sqpe_v17
     from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
     from src.intelligence.specialist_models.loader import score_runner
     from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble
 
-    mm = get_model_manager()
     ensemble = VeloPrimeEnsemble()
     runners = race.get("runners", [])
     race_id = race.get("race_id", "unknown")
@@ -284,7 +340,6 @@ def score_race_velo_prime(
         return []
 
     # Pre-compute field OR/RPR arrays for relative features.
-    # official_rating and rpr are Optional[float] from the normalizer.
     # Only include runners with a real rating — exclude None and any stray zeros.
     def _to_float(v):
         try:
@@ -292,12 +347,22 @@ def score_race_velo_prime(
         except (TypeError, ValueError):
             return 0.0
 
-    field_or = [
+    [
         _to_float(r["official_rating"])
         for r in runners
         if r.get("official_rating") is not None and _to_float(r["official_rating"]) > 0
     ]
     field_rpr = [_to_float(r["rpr"]) for r in runners if r.get("rpr") is not None and _to_float(r["rpr"]) > 0]
+
+    # Pre-inject rpr_vs_field so build_v17_feature_vector picks up the relative value.
+    # build_v17_feature_vector reads runner.get("rpr_vs_field", 0.0) — inject before the loop.
+    avg_rpr = sum(field_rpr) / len(field_rpr) if field_rpr else 0.0
+    for r in runners:
+        rpr_val = _to_float(r.get("rpr") or 0)
+        if rpr_val > 0 and avg_rpr > 0:
+            r["rpr_vs_field"] = round(rpr_val - avg_rpr, 1)
+        else:
+            r.setdefault("rpr_vs_field", 0.0)
 
     # Macro context — current year, race type
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")
@@ -320,14 +385,21 @@ def score_race_velo_prime(
 
     # Score each runner
     ensemble_inputs = []
-    _feats_by_horse: dict[str, dict] = {}  # captured for Horse State Brain below
+    _feats_by_horse: dict[str, dict] = {}
     for runner in runners:
         horse_name = runner.get("horse_name", "Unknown")
-        feats = _build_live_features(runner, race, field_or, field_rpr)
-        _feats_by_horse[horse_name] = feats
 
-        # SQPE v17 — features={} triggers the runner/race path internally
-        sqpe_prob = mm.predict_sqpe(features={}, runner=runner, race=race)
+        # Build features using clean service
+        feats = build_v17_feature_vector(runner, race)
+        _feats_by_horse[horse_name] = feats
+        sqpe_prob_raw = predict_sqpe_v17(feats)
+
+        # Apply BHA Intelligence (Collateral & Decline-Curve)
+        sqpe_prob, bha_reasons = _apply_bha_intelligence(sqpe_prob_raw, runner, code)
+        if bha_reasons:
+            log.info("  [BHA] %s: %s (%.4f -> %.4f)", horse_name, ", ".join(bha_reasons), sqpe_prob_raw, sqpe_prob)
+            # Add reasons to runner for later retrieval if needed
+            runner.setdefault("bha_intelligence_reasons", []).extend(bha_reasons)
 
         # Specialist scores — graceful on missing features
         try:
@@ -446,6 +518,9 @@ def score_race_velo_prime(
             log.warning("TIE gate signal computation failed for %s: %s", row.get("horse"), _e)
             row["tie_gate_signal_count"] = 0
             row["tie_gate_signals"] = []
+
+    if results:
+        results[0]["verdict_explanation"] = generate_decision_explanation(results[0], race)
 
     return results
 
@@ -708,11 +783,10 @@ def _enrich_full_analysis_from_warehouse(
             pred["hdta_ae"] = _sf(hdta["ae"]) if hdta else None
             pred["hdta_win_pct"] = _sf(hdta["win_pct"]) if hdta else None
 
-        return predictions
-
     except Exception as e:
         log.warning("warehouse enrichment failed — full_analysis untouched: %s", e)
-        return predictions
+
+    return predictions
 
 
 # def _enrich_full_analysis_with_track_context(
@@ -860,13 +934,17 @@ def persist_race_predictions(
             "release_day_prob": top.get("release_day_prob"),
             "place_prob": top.get("place_prob"),
             "longshot_prob": top.get("longshot_prob"),
-            # PDF Intelligence Deep-Wiring (rpdc column mapping)
-            "rpdc_release_score": float(top.get("plot_conviction", 0.0)),
-            "rpdc_cash_window_flag": bool(top.get("plot_conviction", 0.0) >= 0.7),
-            "rpdc_primary_tag": "PDF_PLOT" if top.get("plot_conviction", 0.0) >= 0.7 else None,
-            "rpdc_tags": top.get("intent_signals", [])
-            + ([f"PLOT:{top.get('plot_conviction')}"] if top.get("plot_conviction") else []),
-            "rpdc_tag_count": len(top.get("intent_signals", [])),
+            # Genuine RPDC fields — attached upstream from runner_release_candidates.
+            # PDF plot/intent intelligence is a SEPARATE feature and lives in
+            # full_analysis["pdf_plot"]; it must never overwrite RPDC columns
+            # (hijack regression fda78d4, fixed 2026-06-10 by operator mandate).
+            "rpdc_release_score": float(top.get("rpdc_release_score") or 0.0),
+            "rpdc_cash_window_flag": bool(top.get("rpdc_cash_window_flag", False)),
+            "rpdc_primary_tag": top.get("rpdc_primary_tag"),
+            "rpdc_tags": top.get("rpdc_tags") or [],
+            "rpdc_tag_count": int(top.get("rpdc_tag_count") or 0),
+            # NOTE: this inline dict is replaced below by full_analysis_data before
+            # upsert; PDF plot intelligence is preserved there under "plot_intel".
             "full_analysis": {
                 "top_horse": top.get("horse"),
                 "plot_conviction": top.get("plot_conviction"),
@@ -875,6 +953,7 @@ def persist_race_predictions(
                 "ts_peak": top.get("ts_master"),
                 "signals": top.get("intent_signals", []),
                 "reasons": top.get("router_reasons", []),
+                "verdict_explanation": generate_decision_explanation(top, race),
             },
             # Ensemble observability — queryable without reading source code.
             # active_components: what actually entered the weighted average this race.
@@ -929,6 +1008,9 @@ def persist_race_predictions(
             "predictions": predictions,
             "plot_intel": {
                 "plot_conviction": top.get("plot_conviction"),
+                # pdf_plot_flag preserves the signal the old (hijacked) rpdc_primary_tag
+                # column encoded as "PDF_PLOT" — kept here, never in rpdc_* columns.
+                "pdf_plot_flag": bool((top.get("plot_conviction") or 0.0) >= 0.7),
                 "or_delta": top.get("or_delta_to_best_win"),
                 "postdata_score": top.get("postdata_score"),
                 "ts_peak": top.get("ts_master"),

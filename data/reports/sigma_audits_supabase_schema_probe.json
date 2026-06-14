@@ -1,0 +1,106 @@
+{
+  "report_type": "SIGMA_AUDITS_SUPABASE_SCHEMA_PROBE",
+  "generated": "2026-06-14",
+  "status": "SCHEMA_PROBE_COMPLETE",
+  "classifications": [
+    "SIGMA_AUDITS_SCHEMA_PROBE_COMPLETE",
+    "VP_COLUMN_PRESENCE_DECLARED",
+    "VP_EXTRACTION_VERIFIED",
+    "NO_SUPABASE_WRITES",
+    "READ_ONLY"
+  ],
+  "table": "public.sigma_audits",
+  "total_rows_current": 2715,
+  "date_range": {
+    "earliest": "2026-01-09",
+    "latest": "2026-06-13",
+    "null_date_rows": 153
+  },
+  "schema_columns": [
+    "id",
+    "race_id",
+    "date",
+    "track",
+    "outcome",
+    "miss_reason",
+    "event_type",
+    "horse_id",
+    "verdict_id",
+    "notes",
+    "confidence_level",
+    "verdict_score",
+    "top_pick_position",
+    "actual_winner_id",
+    "actual_winner_sp",
+    "decision_tier",
+    "off_time",
+    "actual_winner_name",
+    "doctrine_event_id",
+    "created_at"
+  ],
+  "vp_column_presence": {
+    "top_level_velo_prime_prob": false,
+    "location": "notes field (plain string) \u2014 regex extractable via prob=([\\d.]+)",
+    "format_mar_apr": "pred=HorseName prob=0.XXXX AT BASELINE \u2014 ...",
+    "format_may_jun": "{\"summary\": \"pred=HorseName | prob=0.XXXX ABOVE BASELINE ...\"}",
+    "verdict_score_column": true,
+    "verdict_score_note": "Different field from VP \u2014 range 0.067\u20130.684, Mar 19\u2013Apr 23 only (363 rows)"
+  },
+  "vp_extraction_results": {
+    "has_vp_in_notes": 2286,
+    "has_vp_pct": 85.1,
+    "has_verdict_score_only": 363,
+    "has_neither": 37,
+    "vp_range_min": 0.0417,
+    "vp_range_max": 0.923,
+    "vp_mean": 0.2768,
+    "vp_gte_040": 332,
+    "vp_gte_040_pct": 14.5
+  },
+  "era_split": {
+    "Jan_Feb_2026": {
+      "total_rows": 37,
+      "vp_rows": 0,
+      "vp_coverage_pct": 0.0,
+      "notes": "Skeleton era"
+    },
+    "Mar_Apr_2026": {
+      "total_rows": 1271,
+      "vp_rows": 1061,
+      "vp_coverage_pct": 83.5,
+      "notes": "Pre-surgery era"
+    },
+    "May_Jun_2026": {
+      "total_rows": 1225,
+      "vp_rows": 1225,
+      "vp_coverage_pct": 100.0,
+      "notes": "Full coverage, same era as local universe"
+    },
+    "NULL_date": {
+      "total_rows": 153,
+      "vp_rows": 0,
+      "vp_coverage_pct": 0.0,
+      "notes": "Exclude"
+    }
+  },
+  "outcome_vp_signal": {
+    "WIN": {
+      "rows": 527,
+      "mean_vp": 0.3367
+    },
+    "MISS": {
+      "rows": 1141,
+      "mean_vp": 0.2394
+    },
+    "PLACED": {
+      "rows": 618,
+      "mean_vp": 0.2948
+    }
+  },
+  "row_count_history": {
+    "count_2528": "STALE (early project)",
+    "count_2686": "STALE (prev session)",
+    "count_2715": "CURRENT (2026-06-14 Content-Range)"
+  },
+  "probe_method": "REST API httpx GET /rest/v1/sigma_audits \u2014 read-only"
+}

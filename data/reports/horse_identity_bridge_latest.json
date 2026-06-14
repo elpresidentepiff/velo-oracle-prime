@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-06-09T02:48:00.601775Z",
+  "start_date": "2026-06-09",
+  "end_date": "2026-06-09",
+  "horse_count": 1,
+  "classification_counts": {
+    "RP_ONLY": 1
+  },
+  "source_counts": {
+    "RP": 1
+  },
+  "scoring_impact": "NONE",
+  "bridge": [
+    {
+      "rp_horse_id": 7947753,
+      "rp_horse_name": "Bow Echo",
+      "normalized_name": "bowecho",
+      "source_date": "2026-05-24",
+      "racing_api_horse_id": null,
+      "velo_horse_id": null,
+      "rpdc_horse_id": null,
+      "sigma_horse_id": null,
+      "trainer": "George Boughey",
+      "sire": "Night Of Thunder",
+      "age": "3-y-o",
+      "country": "IRE",
+      "matched_sources": [
+        "RP"
+      ],
+      "match_method": {
+        "runner_snapshot": "no_match",
+        "velo": "no_match",
+        "rpdc": "no_match",
+        "sigma": "no_match"
+      },
+      "identity_confidence": 0.0,
+      "classification": "RP_ONLY",
+      "blocker_reason": "NO_LOCAL_VELO_RACING_API_RPDC_SIGMA_MATCH",
+      "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+      "velo_scoring_allowed": false,
+      "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
+    }
+  ]
+}

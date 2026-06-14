@@ -1,6 +1,6 @@
 {
   "shadow_state_delta_summary": "Observed 20 races today",
-  "shadow_state_after_summary": "Evolved to None races",
+  "shadow_state_after_summary": "Evolved to 43 races",
   "events_studied": 10,
   "updates_applied": 20,
   "duplicates_skipped": 0,
@@ -11,7 +11,13 @@
   "recurring_failure_patterns": [
     "High-prob volatility"
   ],
-  "protected_patterns": [],
+  "protected_patterns": [
+    "favourites_protected",
+    "favourites_abandoned",
+    "market_lies_detected",
+    "safe_bets_imploded",
+    "recurring_setups"
+  ],
   "confidence_warnings": [
     "Elevated"
   ],

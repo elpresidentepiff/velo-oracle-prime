@@ -366,17 +366,39 @@ def publish(date_str: str) -> dict:
     print(f"\n  Supabase:  {len(sb_data)} races  [{sb_source}]")
 
     # ── Load local JSON — only used when Supabase has no data for this date ──
-    # Prevents mixing races from different dates when Supabase fallback finds
-    # the most-recent local file (which may be a previous day).
     race_meta: dict = {}
     if sb_data:
         # Supabase has today's races — use its race metadata, ignore local JSON
         race_meta = sb_race_meta
     else:
+        # Try New Build readiness report first (it has everything: UK + Intl)
+        nb_path = ROOT / "data" / "new_build" / "reports" / f"two_lane_readiness_{date_tag}.json"
+        if nb_path.exists():
+            print(f"  [INFO] Found New Build readiness report: {nb_path.name}")
+            try:
+                nb_payload = json.loads(nb_path.read_text(encoding="utf-8"))
+                for sc in nb_payload.get("race_day_scorecards", []):
+                    rid = sc.get("race_id")
+                    if rid:
+                        # Convert New Build scorecard to standard meta shape
+                        top_lane_b = sc.get("lane_b_top3", [{}])[0]
+                        race_meta[rid] = {
+                            "course":    sc.get("course", ""),
+                            "off_time":  sc.get("off_time", ""),
+                            "race_name": sc.get("race_title", ""),
+                            "tier":      "?", # New build doesn't use ABCD tiers
+                            "top":       {"horse": top_lane_b.get("horse"), "velo_prime_prob": top_lane_b.get("prob")},
+                            "scored":    1,
+                            "source":    "new_build_report"
+                        }
+            except Exception as e:
+                print(f"  [WARN] Failed to parse New Build report: {e}")
+
+        # If still empty or to augment, load standard verdicts
         local_races = _load_local_json(date_tag)
         for r in local_races:
             rid = r.get("race_id")
-            if rid:
+            if rid and rid not in race_meta:
                 race_meta[rid] = {
                     "course":    r.get("course", ""),
                     "off_time":  r.get("off_time", ""),
@@ -384,6 +406,7 @@ def publish(date_str: str) -> dict:
                     "tier":      r.get("tier", "?"),
                     "top":       r.get("top", {}),
                     "scored":    r.get("scored", 0),
+                    "source":    "local_verdicts"
                 }
     print(f"  Local JSON: {len(race_meta) if not sb_data else 0} races (skipped — Supabase primary)" if sb_data else f"  Local JSON: {len(race_meta)} races (Supabase unavailable, using fallback)")
 
@@ -474,7 +497,7 @@ def publish(date_str: str) -> dict:
     _supabase_fallback = not sb_data
     if _supabase_fallback:
         _fallback_warn = (
-            f"\n⚠ SUPABASE_PUBLISH_FALLBACK_WARN — {publish_date}\n"
+            f"\n[WARN] SUPABASE_PUBLISH_FALLBACK_WARN — {publish_date}\n"
             f"  reason         = {sb_source}\n"
             f"  dashboard_source = local_json_top_only\n"
             f"  Dashboard will publish top-pick only (1 runner per race, not full field).\n"
@@ -533,7 +556,7 @@ def publish(date_str: str) -> dict:
     AUDIT_PATH.write_text(json.dumps(audit, indent=2, default=str))
 
     # ── Summary ───────────────────────────────────────────────────────────────
-    print(f"\n{'─' * 52}")
+    print(f"\n{'-' * 52}")
     print(f"  RACES FOUND:        {race_count}")
     print(f"  RUNNERS PUBLISHED:  {runner_count}")
     print(f"  TIER A COUNT:       {tier_a_count}")
@@ -545,7 +568,7 @@ def publish(date_str: str) -> dict:
     print(f"  AUDIT FILE:         {AUDIT_PATH.name}")
     print(f"  SOURCE USED:        {source_used}")
     if _supabase_fallback:
-        print(f"  ⚠ FALLBACK WARN:   {sb_source} — top-pick only, not full field")
+        print(f"  [WARN] FALLBACK:   {sb_source} -- top-pick only, not full field")
     print(f"  SCORING CHANGED:    NO")
     print(f"  MODEL CHANGED:      NO")
     print(f"  ROUTER CHANGED:     NO")
@@ -554,7 +577,7 @@ def publish(date_str: str) -> dict:
         print(f"  ERRORS:             {len(errors)}")
         for e in errors[:3]:
             print(f"    {e}")
-    print(f"{'─' * 52}")
+    print(f"{'-' * 52}")
     print(f"\n  Rerun: python scripts/publish_daily_predictions_to_dashboard.py --date {publish_date}")
 
     return audit

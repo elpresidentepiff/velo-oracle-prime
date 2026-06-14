@@ -1,0 +1,347 @@
+{
+  "run_ts": "2026-05-17 13:42 UTC",
+  "date": "2026-05-17",
+  "corpus_rows": 1310,
+  "lanes": [
+    {
+      "lane": "MDS_HIGH_LANE",
+      "action": "PRIORITY_WATCH",
+      "description": "VP>=0.30 AND MDS>0.50 \u2014 crown jewel",
+      "n": 39,
+      "wins": 27,
+      "frames": 36,
+      "misses": 12,
+      "sr": 69.2,
+      "frame_rate": 92.3,
+      "roi": -7.2,
+      "avg_sp": 1.58,
+      "median_sp": 1.44,
+      "biggest_winner": {
+        "horse": "Mr Colonel",
+        "sp": 2.1,
+        "vp": 0.671,
+        "date": "2026-04-19"
+      },
+      "worst_false_positive": {
+        "horse": "Big Ticket",
+        "vp": 0.684,
+        "sp": 1.14,
+        "date": "2026-03-26"
+      },
+      "longest_losing_run": 3,
+      "sample_warning": true,
+      "promotion_gate": "PENDING:SHADOW_LANE_TRACKING (need +11 to n=50)",
+      "collapse_check": {
+        "status": "STABLE",
+        "ref_sr": 69.2,
+        "delta_pp": 0.0
+      }
+    },
+    {
+      "lane": "IMPROVER_LANE",
+      "action": "PRIORITY_WATCH",
+      "description": "VP>=0.30 AND improvement>0.40",
+      "n": 38,
+      "wins": 16,
+      "frames": 29,
+      "misses": 22,
+      "sr": 42.1,
+      "frame_rate": 76.3,
+      "roi": -36.3,
+      "avg_sp": 2.49,
+      "median_sp": 1.92,
+      "biggest_winner": {
+        "horse": "Lady Blanche",
+        "sp": 2.5,
+        "vp": 0.441,
+        "date": "2026-04-29"
+      },
+      "worst_false_positive": {
+        "horse": "Personal Ambition",
+        "vp": 0.622,
+        "sp": 3.75,
+        "date": "2026-05-16"
+      },
+      "longest_losing_run": 8,
+      "sample_warning": true,
+      "promotion_gate": "PENDING:early_review (need +12 to n=50)",
+      "collapse_check": {
+        "status": "STABLE",
+        "ref_sr": 42.1,
+        "delta_pp": 0.0
+      }
+    },
+    {
+      "lane": "VP40_TIER_A_LANE",
+      "action": "PRIORITY_WATCH",
+      "description": "VP>=0.40 AND tier A",
+      "n": 132,
+      "wins": 59,
+      "frames": 106,
+      "misses": 73,
+      "sr": 44.7,
+      "frame_rate": 80.3,
+      "roi": 9.4,
+      "avg_sp": 3.32,
+      "median_sp": 2.0,
+      "biggest_winner": {
+        "horse": "Roysse",
+        "sp": 34.0,
+        "vp": 0.416,
+        "date": "2026-05-16"
+      },
+      "worst_false_positive": {
+        "horse": "Big Ticket",
+        "vp": 0.684,
+        "sp": 1.14,
+        "date": "2026-03-26"
+      },
+      "longest_losing_run": 7,
+      "sample_warning": false,
+      "promotion_gate": "GATE_REACHED:confirmed_proven",
+      "collapse_check": {
+        "status": "STABLE",
+        "ref_sr": 44.7,
+        "delta_pp": 0.0
+      }
+    },
+    {
+      "lane": "VP40_LANE",
+      "action": "WATCH",
+      "description": "VP>=0.40",
+      "n": 150,
+      "wins": 68,
+      "frames": 121,
+      "misses": 82,
+      "sr": 45.3,
+      "frame_rate": 80.7,
+      "roi": 8.2,
+      "avg_sp": 3.45,
+      "median_sp": 2.25,
+      "biggest_winner": {
+        "horse": "Roysse",
+        "sp": 34.0,
+        "vp": 0.416,
+        "date": "2026-05-16"
+      },
+      "worst_false_positive": {
+        "horse": "Big Ticket",
+        "vp": 0.684,
+        "sp": 1.14,
+        "date": "2026-03-26"
+      },
+      "longest_losing_run": 8,
+      "sample_warning": false,
+      "promotion_gate": "PENDING:stability_review (need +50 to n=200)",
+      "collapse_check": {
+        "status": "STABLE",
+        "ref_sr": 45.3,
+        "delta_pp": 0.0
+      }
+    },
+    {
+      "lane": "SHORTFAV_VP30",
+      "action": "WATCH",
+      "description": "SP<3.0 AND VP>=0.30",
+      "n": 186,
+      "wins": 97,
+      "frames": 158,
+      "misses": 89,
+      "sr": 52.2,
+      "frame_rate": 84.9,
+      "roi": -9.5,
+      "avg_sp": 1.89,
+      "median_sp": 1.81,
+      "biggest_winner": {
+        "horse": "The Boola Boss",
+        "sp": 2.88,
+        "vp": 0.311,
+        "date": "2026-04-11"
+      },
+      "worst_false_positive": {
+        "horse": "Big Ticket",
+        "vp": 0.684,
+        "sp": 1.14,
+        "date": "2026-03-26"
+      },
+      "longest_losing_run": 7,
+      "sample_warning": false,
+      "promotion_gate": "PENDING:stability_review (need +14 to n=200)",
+      "collapse_check": {
+        "status": "STABLE",
+        "ref_sr": 52.2,
+        "delta_pp": 0.0
+      }
+    },
+    {
+      "lane": "MIDPRICE_ROUTER_QUAL",
+      "action": "WATCH",
+      "description": "SP 3.0-8.5 AND router qualified",
+      "n": 18,
+      "wins": 6,
+      "frames": 13,
+      "misses": 12,
+      "sr": 33.3,
+      "frame_rate": 72.2,
+      "roi": 12.5,
+      "avg_sp": 3.44,
+      "median_sp": 3.5,
+      "biggest_winner": {
+        "horse": "Thundering On",
+        "sp": 3.75,
+        "vp": 0.381,
+        "date": "2026-04-25"
+      },
+      "worst_false_positive": {
+        "horse": "Cawthorne Cracker",
+        "vp": 0.554,
+        "sp": 4.0,
+        "date": "2026-05-17"
+      },
+      "longest_losing_run": 7,
+      "sample_warning": true,
+      "promotion_gate": "PENDING:advisory_promotion (need +32 to n=50)",
+      "collapse_check": {
+        "status": "INSUFFICIENT_N",
+        "ref_sr": 33.3
+      }
+    },
+    {
+      "lane": "MIDPRICE_SUPPRESS",
+      "action": "SUPPRESS_ADVISORY",
+      "description": "SP 3.0-8.5 AND no router",
+      "n": 545,
+      "wins": 87,
+      "frames": 284,
+      "misses": 458,
+      "sr": 16.0,
+      "frame_rate": 52.1,
+      "roi": -23.1,
+      "avg_sp": 5.21,
+      "median_sp": 5.0,
+      "biggest_winner": {
+        "horse": "Taxus Baccata",
+        "sp": 8.0,
+        "vp": 0.17,
+        "date": "2026-05-15"
+      },
+      "worst_false_positive": {
+        "horse": "Arrycan",
+        "vp": 0.673,
+        "sp": 7.5,
+        "date": "2026-05-17"
+      },
+      "longest_losing_run": 37,
+      "sample_warning": false,
+      "promotion_gate": "PENDING:suppression_review (need +55 to n=600)",
+      "collapse_check": {
+        "status": "STABLE",
+        "ref_sr": 16.0,
+        "delta_pp": 0.0
+      }
+    },
+    {
+      "lane": "LONGSHOT_SUPPRESS",
+      "action": "SUPPRESS_ADVISORY",
+      "description": "SP>8.5",
+      "n": 413,
+      "wins": 26,
+      "frames": 101,
+      "misses": 387,
+      "sr": 6.3,
+      "frame_rate": 24.5,
+      "roi": -11.7,
+      "avg_sp": 20.38,
+      "median_sp": 15.0,
+      "biggest_winner": {
+        "horse": "Call My Bluff",
+        "sp": 41.0,
+        "vp": 0.207,
+        "date": "2026-04-17"
+      },
+      "worst_false_positive": {
+        "horse": "Triple Haych",
+        "vp": 0.573,
+        "sp": 12.0,
+        "date": "2026-05-05"
+      },
+      "longest_losing_run": 65,
+      "sample_warning": false,
+      "promotion_gate": "PENDING:suppression_review (need +87 to n=500)",
+      "collapse_check": {
+        "status": "STABLE",
+        "ref_sr": 6.3,
+        "delta_pp": 0.0
+      }
+    }
+  ],
+  "deltas": {
+    "MDS_HIGH_LANE": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 39
+    },
+    "IMPROVER_LANE": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 38
+    },
+    "VP40_TIER_A_LANE": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 132
+    },
+    "VP40_LANE": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 150
+    },
+    "SHORTFAV_VP30": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 186
+    },
+    "MIDPRICE_ROUTER_QUAL": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 18
+    },
+    "MIDPRICE_SUPPRESS": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 545
+    },
+    "LONGSHOT_SUPPRESS": {
+      "delta_n": 0,
+      "delta_sr": 0.0,
+      "prev_n": 413
+    }
+  },
+  "today_candidates": {
+    "MDS_HIGH_LANE": [],
+    "IMPROVER_LANE": [
+      "Ride The Thunder"
+    ],
+    "VP40_TIER_A_LANE": [],
+    "VP40_LANE": [
+      "Plaid",
+      "Trojan Soldier",
+      "Cawthorne Cracker",
+      "A Little Something",
+      "Arrycan",
+      "Lightsoutandaway"
+    ],
+    "SHORTFAV_VP30": [],
+    "MIDPRICE_ROUTER_QUAL": [],
+    "MIDPRICE_SUPPRESS": [],
+    "LONGSHOT_SUPPRESS": []
+  },
+  "governance": {
+    "scoring_change": false,
+    "model_change": false,
+    "router_change": false,
+    "staking_change": false,
+    "telegram": false,
+    "classification": "ADVISORY_TRACKING_ONLY"
+  }
+}

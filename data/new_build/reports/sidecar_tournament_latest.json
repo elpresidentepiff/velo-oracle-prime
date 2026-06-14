@@ -1,0 +1,244 @@
+{
+  "generated_at": "2026-05-28T19:46:52.283153",
+  "ablation_results": {
+    "A: Challenger V1 (baseline)": {
+      "val": {
+        "AUC": 0.6945,
+        "SR": 0.2363,
+        "Frame": 0.5383,
+        "Brier": 0.0852
+      },
+      "test": {
+        "AUC": 0.6969,
+        "SR": 0.2502,
+        "Frame": 0.5498,
+        "Brier": 0.086
+      },
+      "test_AUC_lift": 0.0,
+      "test_SR_lift": 0.0,
+      "leakage_risk": false,
+      "verdict": "REJECTED_NO_LIFT"
+    },
+    "B: V1 + JTC-D [LEAKAGE_RISK]": {
+      "val": {
+        "AUC": 0.8274,
+        "SR": 0.4067,
+        "Frame": 0.7283,
+        "Brier": 0.0742
+      },
+      "test": {
+        "AUC": 0.8418,
+        "SR": 0.4433,
+        "Frame": 0.7584,
+        "Brier": 0.0722
+      },
+      "test_AUC_lift": 0.1449,
+      "test_SR_lift": 0.1931,
+      "leakage_risk": true,
+      "verdict": "SHADOW_ONLY"
+    },
+    "C: V1 + Intl Lagged": {
+      "val": {
+        "AUC": 0.6946,
+        "SR": 0.2359,
+        "Frame": 0.542,
+        "Brier": 0.0852
+      },
+      "test": {
+        "AUC": 0.6967,
+        "SR": 0.2545,
+        "Frame": 0.5505,
+        "Brier": 0.086
+      },
+      "test_AUC_lift": -0.0002,
+      "test_SR_lift": 0.0043,
+      "leakage_risk": false,
+      "verdict": "REJECTED_NO_LIFT"
+    },
+    "D: V1 + JTC-D + Intl Lagged [LEAK_RISK]": {
+      "val": {
+        "AUC": 0.8277,
+        "SR": 0.4045,
+        "Frame": 0.7314,
+        "Brier": 0.0741
+      },
+      "test": {
+        "AUC": 0.8422,
+        "SR": 0.4438,
+        "Frame": 0.7588,
+        "Brier": 0.0721
+      },
+      "test_AUC_lift": 0.1453,
+      "test_SR_lift": 0.1936,
+      "leakage_risk": true,
+      "verdict": "SHADOW_ONLY"
+    },
+    "G: V1 + Market [MARKET_LANE]": {
+      "val": {
+        "AUC": 0.8,
+        "SR": 0.3391,
+        "Frame": 0.6788,
+        "Brier": 0.0775
+      },
+      "test": {
+        "AUC": 0.8069,
+        "SR": 0.3603,
+        "Frame": 0.6989,
+        "Brier": 0.0772
+      },
+      "test_AUC_lift": 0.11,
+      "test_SR_lift": 0.1101,
+      "leakage_risk": false,
+      "verdict": "MARKET_LANE"
+    },
+    "H: V1 + Intl + Market [MARKET_LANE]": {
+      "val": {
+        "AUC": 0.8001,
+        "SR": 0.3407,
+        "Frame": 0.6818,
+        "Brier": 0.0775
+      },
+      "test": {
+        "AUC": 0.8069,
+        "SR": 0.3614,
+        "Frame": 0.7001,
+        "Brier": 0.0772
+      },
+      "test_AUC_lift": 0.11,
+      "test_SR_lift": 0.1112,
+      "leakage_risk": false,
+      "verdict": "MARKET_LANE"
+    }
+  },
+  "sidecar_inventory": {
+    "jtcd_trainer_jockey": {
+      "rows": 178608,
+      "val_coverage": 0.997,
+      "join_keys": [
+        "trainer",
+        "jockey"
+      ],
+      "leakage_risk": "NO_DATE_BOUNDARY",
+      "lane": "SHADOW_ONLY",
+      "note": "All-time cumulative stats, no cutoff date. Lab experiment only."
+    },
+    "jtcd_trainer_course": {
+      "rows": 82392,
+      "val_coverage": 0.999,
+      "join_keys": [
+        "trainer",
+        "course"
+      ],
+      "leakage_risk": "NO_DATE_BOUNDARY",
+      "lane": "SHADOW_ONLY",
+      "note": "All-time cumulative stats, no cutoff date. Lab experiment only."
+    },
+    "jtcd_jockey_course": {
+      "rows": 75113,
+      "val_coverage": 0.999,
+      "join_keys": [
+        "jockey",
+        "course"
+      ],
+      "leakage_risk": "NO_DATE_BOUNDARY",
+      "lane": "SHADOW_ONLY",
+      "note": "All-time cumulative stats, no cutoff date. Lab experiment only."
+    },
+    "rpdc": {
+      "lane": "ALREADY_IN_MODEL",
+      "cols": [
+        "setup_run_flag",
+        "cash_run_flag",
+        "release_window_score",
+        "quiet_run_score"
+      ]
+    },
+    "intl_lagged": {
+      "rows": 1702741,
+      "val_coverage": 0.567,
+      "safe_cols": [
+        "prev_or_num",
+        "max_or_num_last3",
+        "avg_or_num_last3",
+        "days_since_last_run",
+        "starts_last_90",
+        "course_prior_runs",
+        "course_prior_wr",
+        "dist_prior_runs",
+        "dist_prior_wr"
+      ],
+      "rpr_violation": false,
+      "null_rates": {
+        "prev_or_num": 0.451,
+        "max_or_num_last3": 0.43,
+        "avg_or_num_last3": 0.43,
+        "days_since_last_run": 0.115,
+        "starts_last_90": 0.0,
+        "course_prior_runs": 0.0,
+        "course_prior_wr": 0.0,
+        "dist_prior_runs": 0.0,
+        "dist_prior_wr": 0.0
+      },
+      "lane": "KEEP_MODEL",
+      "note": "Lagged per-race historical OR/course/dist stats. Temporally safe."
+    },
+    "market": {
+      "cols": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav"
+      ],
+      "val_coverage": 0.993,
+      "lane": "MARKET_ONLY",
+      "note": "Same-race morning odds. Not for morning model."
+    },
+    "rp_context": {
+      "available": [
+        "comment (raw text)"
+      ],
+      "lane": "ARCHIVE_ONLY",
+      "note": "No parsed tip/spotlight columns found. Raw comment text only."
+    }
+  },
+  "readiness": {
+    "generated_at": "2026-05-28T19:46:52.283153",
+    "champion": "Core V0_OR (AUC 0.6769, SR 22.32%, Frame 51.13%)",
+    "challenger_v1": "Challenger V1: Core+Passport+Intent (AUC 0.6969, SR 25.02%, Frame 54.98%)",
+    "tomorrow_model": "Challenger V1 (Core V0_OR + Passport + Intent)",
+    "sidecars_tested": [
+      "A: Challenger V1 (baseline)",
+      "B: V1 + JTC-D [LEAKAGE_RISK]",
+      "C: V1 + Intl Lagged",
+      "D: V1 + JTC-D + Intl Lagged [LEAK_RISK]",
+      "G: V1 + Market [MARKET_LANE]",
+      "H: V1 + Intl + Market [MARKET_LANE]"
+    ],
+    "sidecars_accepted": [],
+    "sidecars_rejected": [
+      "A: Challenger V1 (baseline)",
+      "C: V1 + Intl Lagged"
+    ],
+    "sidecars_shadow": [
+      "B: V1 + JTC-D [LEAKAGE_RISK]",
+      "D: V1 + JTC-D + Intl Lagged [LEAK_RISK]"
+    ],
+    "market_lane": [
+      "G: V1 + Market [MARKET_LANE]",
+      "H: V1 + Intl + Market [MARKET_LANE]"
+    ],
+    "race_day_approved": true,
+    "rpr_violation": false,
+    "sp_violation": false,
+    "leakage_flagged": [
+      "B: V1 + JTC-D [LEAKAGE_RISK]",
+      "D: V1 + JTC-D + Intl Lagged [LEAK_RISK]"
+    ],
+    "confidence_caveats": [
+      "JTC-D stats are all-time cumulative (no date boundary) \u2014 shadow only until time-bounded rebuild",
+      "Market lane is a separate product, not morning model",
+      "Challenger V1 remains safe for race-day output"
+    ]
+  }
+}

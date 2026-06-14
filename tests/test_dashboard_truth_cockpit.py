@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 
 # Mock settings if needed, but we can test the live app if we're careful.
 # Since we're in the real environment, we'll import the actual app.
-from app.main import app
+from app.main import app, _resolve_rp_injection_path, _select_observability_artifact
 
 client = TestClient(app)
 
@@ -82,6 +82,45 @@ def test_dashboard_panel_references_endpoint():
     index_path = pathlib.Path("app/static/dashboard/index.html")
     content = index_path.read_text(encoding="utf-8")
     assert "/api/dashboard/truth-summary" in content
+
+
+def test_observability_prefers_success_over_later_exception(tmp_path):
+    """A stray failed command must not replace the day's successful run."""
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    failed = data_dir / "velo_run_observability_2026_06_14_z999.json"
+    failed.write_text(json.dumps({
+        "timestamp": "2026-06-14T13:00:00+00:00",
+        "source_truth": "SOURCE_UNKNOWN_BLOCK",
+        "feature_health": "BLOCKED",
+        "warnings": ["UNHANDLED_EXCEPTION: test"],
+    }), encoding="utf-8")
+    successful = data_dir / "velo_run_observability_2026_06_14_a111.json"
+    successful.write_text(json.dumps({
+        "timestamp": "2026-06-14T12:00:00+00:00",
+        "source_truth": "RP_MERGED_CLEAN",
+        "feature_health": "HEALTHY",
+        "warnings": [],
+    }), encoding="utf-8")
+
+    selected_path, selected_data = _select_observability_artifact(tmp_path, "2026_06_14")
+
+    assert selected_path == successful
+    assert selected_data["source_truth"] == "RP_MERGED_CLEAN"
+
+
+def test_rp_injection_resolves_current_capture_layout(tmp_path):
+    injection = (
+        tmp_path
+        / "data"
+        / "racing_post_account_parsed"
+        / "live-full-racepages-2026-06-14"
+        / "racecard_injection.json"
+    )
+    injection.parent.mkdir(parents=True)
+    injection.write_text('{"races": []}', encoding="utf-8")
+
+    assert _resolve_rp_injection_path(tmp_path, "2026-06-14") == injection
 
 def test_typo_patch_applied():
     """Requirement G: Verify typo patch applied."""

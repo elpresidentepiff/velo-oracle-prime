@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-29",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "sigma": {
+    "races_studied": 27,
+    "predictions_matched": 27,
+    "results_matched": 27,
+    "winners_found": 0,
+    "strike_rate": 0.0,
+    "top_1_accuracy": 0.0,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": null,
+    "calibration_error": null,
+    "calibration_error_status": "UNAVAILABLE_INSUFFICIENT_PROBABILITY_DATA",
+    "wrong_horse_count": 24,
+    "calibration_error_count": 3,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [],
+    "strongest_correct_predictions": [],
+    "sigma_verdict": "WEAK_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 27 races today",
+    "shadow_state_after_summary": "Evolved to 43 races",
+    "events_studied": 27,
+    "updates_applied": 0,
+    "duplicates_skipped": 27,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 24,
+      "CALIBRATION_ERROR": 3
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Low"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

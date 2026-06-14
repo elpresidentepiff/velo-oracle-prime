@@ -1,0 +1,104 @@
+{
+  "date": "2026-06-12",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "sigma": {
+    "races_studied": 51,
+    "predictions_matched": 51,
+    "results_matched": 51,
+    "winners_found": 18,
+    "strike_rate": 0.35294117647058826,
+    "top_1_accuracy": 0.35294117647058826,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.1891978666666667,
+    "calibration_error": 0.16667843137254904,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 19,
+    "calibration_error_count": 14,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "920179",
+        "horse": "Lady Branksome",
+        "prob": 0.5586,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "922657",
+        "horse": "Rayzera",
+        "prob": 0.4932,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "919930",
+        "horse": "Tiny Riot",
+        "prob": 0.4915,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "920173",
+        "horse": "Rollthedicebaby",
+        "prob": 0.7391,
+        "result": "WIN"
+      },
+      {
+        "race_id": "922719",
+        "horse": "Miss Lady Grace",
+        "prob": 0.7277,
+        "result": "WIN"
+      },
+      {
+        "race_id": "922653",
+        "horse": "Folsom Blues",
+        "prob": 0.7027,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "WEAK_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 51 races today",
+    "shadow_state_after_summary": "Evolved to 248 races",
+    "events_studied": 51,
+    "updates_applied": 51,
+    "duplicates_skipped": 51,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 19,
+      "CALIBRATION_ERROR": 14,
+      "NONE": 18
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": true,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

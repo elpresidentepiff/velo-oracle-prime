@@ -1,0 +1,171 @@
+{
+  "generated": "2026-06-14",
+  "corrected_711_universe": "data/sigma_results/ \u2014 711 rows, May 23\u2013Jun 13",
+  "canonical_2k_location": "supabase.sigma_audits \u2014 2528 rows, Jan 09\u2013Jun 09",
+  "universe_gap": "~1817 rows older than May 23 exist in Supabase only",
+  "sources": [
+    {
+      "source": "supabase.sigma_audits",
+      "classification": "CANONICAL_ROW_BEARING",
+      "row_count": 2528,
+      "date_range": "2026-01-09 to 2026-06-09",
+      "outcomes": {
+        "WIN": 551,
+        "MISS": 1263,
+        "PLACED": 677,
+        "None": 37
+      },
+      "has_velo_prime_prob": "UNKNOWN \u2014 requires Supabase schema check",
+      "has_sp": "UNKNOWN",
+      "has_course": "UNKNOWN",
+      "has_outcome": true,
+      "join_key": "race_id + date",
+      "overlap_with_711": "315 rows estimated (2026-05-23 to 2026-06-09)",
+      "unique_older_rows": "~2213 rows (2026-01-09 to 2026-05-22)",
+      "notes": "Canonical per-race sigma conclusions. One row per race_id. Accessible via Supabase MCP only.",
+      "backfill_possible": "YES via Supabase read \u2014 if VP field exists in sigma_audits schema",
+      "risk": "LOW \u2014 read-only query needed"
+    },
+    {
+      "source": "local.sigma_results/",
+      "classification": "CANONICAL_ROW_BEARING",
+      "file_count": 23,
+      "row_count": 711,
+      "date_range": "2026-05-21 to 2026-06-13",
+      "has_velo_prime_prob": true,
+      "has_sp": "winner_sp only (race winner, not pick SP)",
+      "has_course": "PARTIAL \u2014 415/711 have course (296 backfilled from learning events lack course)",
+      "has_outcome": true,
+      "join_key": "race_id",
+      "notes": "Our corrected 711-row universe. May 21-22 excluded (no rows[] format). Backfill provenance: NIGHTLY_EOD_LEARNING_EVENTS or LOCAL_VERDICT_JSON.",
+      "schema_versions": [
+        "racing_post_supported_sigma (has VP in rows)",
+        "sigma_reconciliation pre-fix (no rows)",
+        "sigma_reconciliation post-fix (rows restored)"
+      ]
+    },
+    {
+      "source": "local.sigma_memory/sigma_memory_*.jsonl",
+      "classification": "DERIVED_MEMORY",
+      "file_count": 13,
+      "row_count": 388,
+      "date_range": "May 23 \u2013 Jun 05 (13 files)",
+      "has_velo_prime_prob": "PARTIAL \u2014 velo_pick_vp present, winner_vp_if_scored present",
+      "has_sp": "winner_sp_band (banded, not exact)",
+      "has_course": true,
+      "has_outcome": "miss_type / top_pick_result_position",
+      "join_key": "race_id",
+      "notes": "Memory representation \u2014 has SP bands not exact. Not backfillable to exact VP. Duplicate of sigma_results rows."
+    },
+    {
+      "source": "local.sigma_memory/sigma_retrieval_corpus_v1.jsonl",
+      "classification": "DERIVED_DUPLICATE",
+      "row_count": 2686,
+      "has_velo_prime_prob": "REQUIRES_CHECK",
+      "has_sp": "REQUIRES_CHECK",
+      "has_course": true,
+      "has_outcome": "framed field present",
+      "join_key": "unknown \u2014 check race_id field",
+      "schema_keys_sample": [
+        "active_components",
+        "active_formula",
+        "class_band",
+        "course",
+        "course_type",
+        "distance_bucket",
+        "doctrine_version",
+        "excluded_from_ensemble",
+        "feature_health",
+        "forbidden_model_fields_present",
+        "framed",
+        "g_adjustment_applied",
+        "g_base_prob",
+        "git_commit_sha",
+        "going_code"
+      ],
+      "notes": "Described as derived duplicate of Supabase sigma_audits in sigma_universe.md."
+    },
+    {
+      "source": "local.data/velo_innovation_protocol_1k_deduped.csv",
+      "classification": "TOP_PICK_SIGMA_DERIVED",
+      "row_count": 1431,
+      "date_range": "2026-05-02 to 2026-06-09 (from sigma_universe.md)",
+      "has_velo_prime_prob": "LIKELY \u2014 verdict+result join includes model probs",
+      "has_sp": "YES \u2014 pick SP included in innovation protocol",
+      "has_course": "YES",
+      "has_outcome": "YES \u2014 result join",
+      "join_key": "race_id",
+      "schema_keys_sample": [
+        "race_id",
+        "date",
+        "course",
+        "race_time",
+        "race_type",
+        "class",
+        "class_num",
+        "distance",
+        "going",
+        "field_size",
+        "tier",
+        "horse",
+        "model_probability",
+        "sp_decimal",
+        "implied_probability"
+      ],
+      "notes": "Critical: contains pick SP (not just winner SP). Best source for true ROI calculation."
+    },
+    {
+      "source": "local.data/nightly_eod_learning_events_*.jsonl",
+      "classification": "CANONICAL_ROW_BEARING",
+      "file_count": 26,
+      "row_count": 919,
+      "date_range": "Jun 01 \u2013 Jun 08 (26 files)",
+      "has_velo_prime_prob": true,
+      "has_sp": "winner_sp in result_snapshot",
+      "has_course": "PARTIAL \u2014 race_id only, course via join",
+      "has_outcome": true,
+      "join_key": "race_id",
+      "notes": "Used as primary backfill source for Jun 06-08, 11-13 sigma rows."
+    },
+    {
+      "source": "local.data/eod_sigma_study_*.json",
+      "classification": "LEGACY_UNCLEAR",
+      "file_count": 26,
+      "notes": "Dates Apr 29 \u2013 May 04. Likely early-era sigma snapshots. Requires inspection.",
+      "has_velo_prime_prob": "UNKNOWN"
+    }
+  ],
+  "reconciliation_questions": {
+    "Q1_where_are_2k_rows": "supabase.sigma_audits (2528 rows) \u2014 confirmed by sigma_universe.md",
+    "Q2_row_bearing_or_aggregate": "ROW_BEARING \u2014 one row per race_id with outcome (WIN/MISS/PLACED)",
+    "Q3_has_velo_prime_prob": "UNKNOWN \u2014 must query Supabase schema. sigma_audits columns need inspection.",
+    "Q4_has_sp": "UNKNOWN \u2014 not confirmed in sigma_universe.md",
+    "Q5_has_course": "UNKNOWN \u2014 race_id available, course joinable via results tables",
+    "Q6_has_outcome": "YES \u2014 outcomes confirmed: WIN/MISS/PLACED/None",
+    "Q7_can_join_to_verdicts": "YES \u2014 via race_id + date, if verdict archive exists",
+    "Q8_can_join_to_results": "PARTIAL \u2014 local results files from May 23 onwards only",
+    "Q9_overlap_with_711": "~315 rows estimated (May 23\u2013Jun 09 shared range)",
+    "Q10_unique_older_rows": "~2213 rows (Jan 09\u2013May 22, not in local files)",
+    "Q11_date_range": "2026-01-09 to 2026-06-09",
+    "Q12_schema_versions": "UNKNOWN \u2014 may vary from Jan to Jun as script evolved",
+    "Q13_backfill_possible": "CONDITIONAL \u2014 if VP field exists in sigma_audits schema; requires Supabase MCP read"
+  },
+  "recommended_safe_path": [
+    "1. INSPECT: SELECT column_name FROM information_schema.columns WHERE table_name='sigma_audits' \u2014 via Supabase MCP",
+    "2. SAMPLE: SELECT TOP 5 rows from sigma_audits to see actual field names",
+    "3. COUNT: Check VP coverage: SELECT COUNT(*) WHERE velo_prime_prob IS NOT NULL vs IS NULL",
+    "4. EXPORT: If VP present, export sigma_audits for Jan 09\u2013May 22 (unique older rows)",
+    "5. JOIN: Join to innovation_protocol for pick SP (which has it)",
+    "6. BACKFILL: Only if VP is in sigma_audits \u2014 merge with local 711-row universe",
+    "7. VALIDATE: Dedup on race_id, verify no double-counting with 711-row set"
+  ],
+  "risks": [
+    "sigma_audits may not have velo_prime_prob \u2014 VP was added during ensemble surgery in May 2026",
+    "Jan\u2013Apr rows predate current ensemble \u2014 model weights different, VP not comparable",
+    "Merging old/new eras without era-flagging would corrupt the evidence base",
+    "pick SP not in sigma_audits (based on sigma_universe.md) \u2014 ROI calculation needs innovation_protocol join"
+  ],
+  "innovation_protocol_note": "velo_innovation_protocol_1k_deduped.csv contains pick SP and covers May 02\u2013Jun 09. This is the BEST local source for true ROI calculation. Recommend joining sigma rows to innovation_protocol on race_id to get pick SP before any ROI analysis.",
+  "do_not_backfill_yet": true,
+  "next_action": "Supabase MCP read of sigma_audits schema \u2014 then operator decision on era-flagged merge"
+}

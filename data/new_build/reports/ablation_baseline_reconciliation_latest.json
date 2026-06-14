@@ -1,0 +1,55 @@
+{
+  "status": "BASELINE_REPRODUCTION_PASSED",
+  "reproduction_pass": true,
+  "champion_auc": 0.6777,
+  "champion_sr": 0.22,
+  "champion_frame": 0.512,
+  "baseline_auc": 0.6768,
+  "best_variant": "F: All Combined",
+  "best_variant_auc": 0.6945,
+  "challenger_promotion_earned": true,
+  "rpr_violation": false,
+  "sp_violation": false,
+  "new_build_scoring_allowed": true,
+  "old_live_velo_impact": false,
+  "shadow_impact": false,
+  "metrics": {
+    "A: Core V0_OR (Champion Baseline)": {
+      "AUC": 0.6768,
+      "SR": 0.2173,
+      "Frame": 0.5069,
+      "Brier": 0.0859
+    },
+    "B: Passport-only": {
+      "AUC": 0.6442,
+      "SR": 0.2124,
+      "Frame": 0.5017,
+      "Brier": 0.0873
+    },
+    "C: Intent-only": {
+      "AUC": 0.6329,
+      "SR": 0.2051,
+      "Frame": 0.4928,
+      "Brier": 0.0877
+    },
+    "D: Core + Passport": {
+      "AUC": 0.6895,
+      "SR": 0.2298,
+      "Frame": 0.5283,
+      "Brier": 0.0854
+    },
+    "E: Core + Intent": {
+      "AUC": 0.6864,
+      "SR": 0.2256,
+      "Frame": 0.5228,
+      "Brier": 0.0856
+    },
+    "F: All Combined": {
+      "AUC": 0.6945,
+      "SR": 0.2363,
+      "Frame": 0.5383,
+      "Brier": 0.0852
+    }
+  },
+  "generated_at": "2026-05-28T19:24:26.516647"
+}

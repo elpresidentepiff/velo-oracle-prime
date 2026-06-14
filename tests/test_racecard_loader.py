@@ -84,9 +84,21 @@ def _loader(tmp_path, source=None, disable_api=False):
         )
 
 
-# ── Cache wins before API ─────────────────────────────────────────────────────
+# ── Cache wins before API — STALE_LIVE_PATH QUARANTINE ───────────────────────
+# fetch_api_racecards was removed from racecard_loader with the Racing API
+# live path (ONE_TRUTH law 2026-06-10). These source-fallback tests are
+# quarantined, not deleted — they resume automatically if the symbol returns.
+import pytest as _pytest  # noqa: E402
+import src.velo.racecard_loader as _loader_mod  # noqa: E402
+
+_stale_api_fetch = _pytest.mark.skipif(
+    not hasattr(_loader_mod, "fetch_api_racecards"),
+    reason="STALE_LIVE_PATH: fetch_api_racecards removed with Racing API live path "
+    "(ONE_TRUTH law 2026-06-10) — RP-only source order is covered by rp_merged tests",
+)
 
 
+@_stale_api_fetch
 def test_cache_wins_before_api(tmp_path):
     _make_cache_file(tmp_path)
     # API should NOT be called — cache exists
@@ -184,6 +196,7 @@ def test_rp_runners_have_horse_name(tmp_path):
 # ── VELO_DISABLE_RACING_API ───────────────────────────────────────────────────
 
 
+@_stale_api_fetch
 def test_disable_api_prevents_api_call_when_rp_exists(tmp_path):
     _make_rp_file(tmp_path)
     with patch("src.velo.racecard_loader.fetch_api_racecards") as mock_api:
@@ -192,6 +205,7 @@ def test_disable_api_prevents_api_call_when_rp_exists(tmp_path):
     mock_api.assert_not_called()
 
 
+@_stale_api_fetch
 def test_disable_api_raises_when_no_local_source(tmp_path):
     import pytest
     with pytest.raises(RuntimeError, match="VELO_DISABLE_RACING_API"):
@@ -201,6 +215,7 @@ def test_disable_api_raises_when_no_local_source(tmp_path):
 # ── API 401 handling ──────────────────────────────────────────────────────────
 
 
+@_stale_api_fetch
 def test_api_401_raises_clearly_when_no_local_source(tmp_path):
     import pytest
     http_err = urllib.error.HTTPError(url="", code=401, msg="Unauthorized", hdrs=None, fp=None)
@@ -256,9 +271,25 @@ def test_explicit_source_rp_fails_clearly_when_absent(tmp_path):
         )
 
 
-# ── RPR sanitization ──────────────────────────────────────────────────────────
+# ── RPR sanitization — STALE_LIVE_PATH QUARANTINE ─────────────────────────────
+# _sanitize_api_rpr was added for Racing API / cache RPR inputs (08764d9,
+# 2026-05-26) and removed when the Racing API live path was retired
+# (RP-only law: docs/current/ONE_TRUTH.md, 2026-06-10). The tests below are
+# quarantined, not deleted: if the function returns, they resume automatically.
+import pytest  # noqa: E402
 
-from src.velo.racecard_loader import _sanitize_api_rpr  # noqa: E402
+try:
+    from src.velo.racecard_loader import _sanitize_api_rpr  # noqa: E402
+    _HAS_SANITIZER = True
+except ImportError:
+    _sanitize_api_rpr = None
+    _HAS_SANITIZER = False
+
+_stale_rpr_sanitizer = pytest.mark.skipif(
+    not _HAS_SANITIZER,
+    reason="STALE_LIVE_PATH: _sanitize_api_rpr removed with Racing API live path "
+    "(ONE_TRUTH law 2026-06-10) — live-path coverage is the rp_merged tests above",
+)
 
 _CACHE_WITH_RPR = [
     {
@@ -275,6 +306,7 @@ _CACHE_WITH_RPR = [
 ]
 
 
+@_stale_rpr_sanitizer
 def test_cache_source_preserves_and_archives_rpr(tmp_path):
     """Accepted RPR remains available while an audit copy is preserved."""
     cache_races = [
@@ -303,6 +335,7 @@ def test_rp_merged_source_not_sanitized(tmp_path):
             assert "rpr" not in runner or runner.get("rpr") is None
 
 
+@_stale_rpr_sanitizer
 def test_sanitize_api_rpr_direct():
     """_sanitize_api_rpr preserves accepted RPR and creates an audit copy."""
     import copy
@@ -316,6 +349,7 @@ def test_sanitize_api_rpr_direct():
     assert r2["rpr"] is None  # was already None — must stay None
 
 
+@_stale_rpr_sanitizer
 def test_sanitize_does_not_overwrite_existing_archive_value():
     """If rp_rpr_archive_only is already set, it must not be overwritten."""
     import copy
@@ -325,6 +359,7 @@ def test_sanitize_does_not_overwrite_existing_archive_value():
     assert result[0]["runners"][0]["rp_rpr_archive_only"] == 999
 
 
+@_stale_rpr_sanitizer
 def test_allow_api_rpr_env_skips_sanitization(tmp_path):
     """VELO_ALLOW_API_RPR=1 must bypass RPR sanitization entirely."""
     import copy

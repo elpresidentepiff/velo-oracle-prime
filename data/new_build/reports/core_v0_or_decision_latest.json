@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-05-25T21:59:13.614500Z",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "velo_scoring_allowed": false,
+  "rpr_violation": false,
+  "sp_violation": false,
+  "model_type": "LightGBM",
+  "features": [
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "wgt_lbs",
+    "or_vs_field",
+    "release_window_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "setup_run_flag",
+    "cash_run_flag",
+    "official_rating",
+    "is_rated"
+  ],
+  "or_features_added": [
+    "official_rating",
+    "is_rated"
+  ],
+  "or_diagnosis": "or_rating='\u2013' for unrated horses (41% of Flat). official_rating=0 + is_rated=0 for unrated.",
+  "challenger_metrics": {
+    "auc": 0.6777,
+    "brier": 0.0859,
+    "sr": 0.2186,
+    "frame": 0.508,
+    "races": 11650
+  },
+  "champion_metrics": {
+    "auc": 0.6735,
+    "sr": 0.218,
+    "frame": 0.503,
+    "brier": 0.0861
+  },
+  "or_rank_baseline": {
+    "sr": 0.156,
+    "frame": 0.4093
+  },
+  "auc_delta_vs_champion": 0.0041999999999999815,
+  "sr_delta_vs_champion": 0.0005999999999999894,
+  "decision": "OR_FIX_CONFIRMED_AND_IMPROVES"
+}

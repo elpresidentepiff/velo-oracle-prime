@@ -1,0 +1,2991 @@
+{
+  "generated_at": "2026-05-29T07:36:40.287850Z",
+  "classification": "NEW_BUILD_FINAL_CARD_COMPARISON_READY_BRIDGED",
+  "judgement": "Passport coverage is now strong enough for a serious paper-read comparison; still no live authority or edge claim until outcomes are evaluated.",
+  "inputs": {
+    "live_verdict_path": "data\\velo_prime_verdicts_2026_05_26.json",
+    "paper_path": "data\\new_build\\paper_predictions\\new_build_paper_predictions_final_card_latest.jsonl",
+    "paper_report_path": "data\\new_build\\reports\\new_build_paper_predictions_final_card_latest.json",
+    "racecard_path": "data\\racecards_2026_05_26_standard.json"
+  },
+  "matched": {
+    "race_count_matched": 48,
+    "live_race_count": 48,
+    "paper_race_count": 48,
+    "runner_count_matched": 396,
+    "missing_live_races_in_paper": [],
+    "extra_paper_races": []
+  },
+  "agreement": {
+    "top_pick_agreement_count": 12,
+    "top_pick_agreement_pct": 25.0,
+    "live_top_in_new_build_top3_count": 25,
+    "live_top_in_new_build_top3_pct": 52.08,
+    "avg_top3_overlap_count": 0.52
+  },
+  "coverage": {
+    "passport_found": 395,
+    "passport_total": 396,
+    "passport_coverage_pct": 99.75,
+    "new_build_top_with_passport": 48,
+    "new_build_top_missing_passport": 0
+  },
+  "rpr_violations": 0,
+  "strong_differences": [
+    {
+      "race_id": "918927",
+      "course": "Leicester",
+      "off_time": "15:10",
+      "live_top": {
+        "horse": "Crownright",
+        "horse_id": "8326156",
+        "velo_prime_prob": 0.5301,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Caim",
+        "rp_uid": "8084438",
+        "champion_probability": 0.261002,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Caim",
+        "horse_id": "8084438",
+        "official_rating": 91.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Caim",
+          "rp_uid": "8084438",
+          "champion_probability": 0.261002,
+          "passport_found": true
+        },
+        {
+          "horse": "Crownright",
+          "rp_uid": "8326156",
+          "champion_probability": 0.254351,
+          "passport_found": true
+        },
+        {
+          "horse": "Molo Del Palazzo",
+          "rp_uid": "7992612",
+          "champion_probability": 0.22584,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.269098
+    },
+    {
+      "race_id": "918947",
+      "course": "Redcar",
+      "off_time": "16:20",
+      "live_top": {
+        "horse": "Long Shot",
+        "horse_id": "8013552",
+        "velo_prime_prob": 0.1667,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Positive Thoughts",
+        "rp_uid": "8137383",
+        "champion_probability": 0.085951,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Positive Thoughts",
+        "horse_id": "8137383",
+        "official_rating": 65.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Positive Thoughts",
+          "rp_uid": "8137383",
+          "champion_probability": 0.085951,
+          "passport_found": true
+        },
+        {
+          "horse": "Resdev Time",
+          "rp_uid": "7882530",
+          "champion_probability": 0.08381,
+          "passport_found": true
+        },
+        {
+          "horse": "Territorial Star",
+          "rp_uid": "7020383",
+          "champion_probability": 0.083586,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.080749
+    },
+    {
+      "race_id": "918955",
+      "course": "Lingfield",
+      "off_time": "17:54",
+      "live_top": {
+        "horse": "Russian Rumour",
+        "horse_id": "2456719",
+        "velo_prime_prob": 0.4118,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Macari",
+        "rp_uid": "5383846",
+        "champion_probability": 0.269586,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Synergism",
+        "horse_id": "6550733",
+        "official_rating": 87.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Macari",
+          "rp_uid": "5383846",
+          "champion_probability": 0.269586,
+          "passport_found": true
+        },
+        {
+          "horse": "Synergism",
+          "rp_uid": "6550733",
+          "champion_probability": 0.230086,
+          "passport_found": true
+        },
+        {
+          "horse": "Across Earth",
+          "rp_uid": "5349553",
+          "champion_probability": 0.205747,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.142214
+    },
+    {
+      "race_id": "918956",
+      "course": "Lingfield",
+      "off_time": "19:24",
+      "live_top": {
+        "horse": "Weffaag",
+        "horse_id": "8079884",
+        "velo_prime_prob": 0.3768,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "Ascending Star",
+        "rp_uid": "7436338",
+        "champion_probability": 0.225093,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Ascending Star",
+          "rp_uid": "7436338",
+          "champion_probability": 0.225093,
+          "passport_found": true
+        },
+        {
+          "horse": "Storming Point",
+          "rp_uid": "7204800",
+          "champion_probability": 0.223537,
+          "passport_found": true
+        },
+        {
+          "horse": "Cosmic Girl",
+          "rp_uid": "9227219",
+          "champion_probability": 0.180728,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.151707
+    },
+    {
+      "race_id": "920504",
+      "course": "Bath",
+      "off_time": "14:30",
+      "live_top": {
+        "horse": "Nammos",
+        "horse_id": "4534414",
+        "velo_prime_prob": 0.5498,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "The Dark Baron",
+        "rp_uid": "6087967",
+        "champion_probability": 0.338152,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Bownder",
+        "horse_id": "5781948",
+        "official_rating": 65.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "The Dark Baron",
+          "rp_uid": "6087967",
+          "champion_probability": 0.338152,
+          "passport_found": true
+        },
+        {
+          "horse": "Bownder",
+          "rp_uid": "5781948",
+          "champion_probability": 0.27835,
+          "passport_found": true
+        },
+        {
+          "horse": "Rating",
+          "rp_uid": "5019630",
+          "champion_probability": 0.240228,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.211648
+    },
+    {
+      "race_id": "920505",
+      "course": "Bath",
+      "off_time": "15:00",
+      "live_top": {
+        "horse": "Arabica Queen",
+        "horse_id": "9189211",
+        "velo_prime_prob": 0.3119,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Cydney Sweenie",
+        "rp_uid": "9105990",
+        "champion_probability": 0.199593,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Cydney Sweenie",
+          "rp_uid": "9105990",
+          "champion_probability": 0.199593,
+          "passport_found": true
+        },
+        {
+          "horse": "Acclamation Star",
+          "rp_uid": "9290856",
+          "champion_probability": 0.16218,
+          "passport_found": true
+        },
+        {
+          "horse": "Ennerdale Water",
+          "rp_uid": "9290854",
+          "champion_probability": 0.147085,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.112307
+    },
+    {
+      "race_id": "920507",
+      "course": "Bath",
+      "off_time": "15:30",
+      "live_top": {
+        "horse": "Phoenix Moon",
+        "horse_id": "4827183",
+        "velo_prime_prob": 0.2961,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Strike",
+        "rp_uid": "3701268",
+        "champion_probability": 0.207983,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Obsidian Dream",
+        "horse_id": "6287977",
+        "official_rating": 74.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Strike",
+          "rp_uid": "3701268",
+          "champion_probability": 0.207983,
+          "passport_found": true
+        },
+        {
+          "horse": "Tuscan Point",
+          "rp_uid": "5859153",
+          "champion_probability": 0.195544,
+          "passport_found": true
+        },
+        {
+          "horse": "Early Release",
+          "rp_uid": "5895609",
+          "champion_probability": 0.186417,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.088117
+    },
+    {
+      "race_id": "920508",
+      "course": "Bath",
+      "off_time": "17:02",
+      "live_top": {
+        "horse": "Mohmentous",
+        "horse_id": "8335415",
+        "velo_prime_prob": 0.719,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "Station Bar",
+        "rp_uid": "7966352",
+        "champion_probability": 0.326801,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Station Bar",
+        "horse_id": "7966352",
+        "official_rating": 62.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Station Bar",
+          "rp_uid": "7966352",
+          "champion_probability": 0.326801,
+          "passport_found": true
+        },
+        {
+          "horse": "Phantom Shadow",
+          "rp_uid": "7529969",
+          "champion_probability": 0.232611,
+          "passport_found": true
+        },
+        {
+          "horse": "Mohmentous",
+          "rp_uid": "8335415",
+          "champion_probability": 0.175287,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.392199
+    },
+    {
+      "race_id": "920818",
+      "course": "Plumpton",
+      "off_time": "18:09",
+      "live_top": {
+        "horse": "Motazzen",
+        "horse_id": "3552445",
+        "velo_prime_prob": 0.4303,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Goodwin",
+        "rp_uid": "4676215",
+        "champion_probability": 0.271764,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Goodwin",
+        "horse_id": "4676215",
+        "official_rating": 122.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Goodwin",
+          "rp_uid": "4676215",
+          "champion_probability": 0.271764,
+          "passport_found": true
+        },
+        {
+          "horse": "Motazzen",
+          "rp_uid": "3552445",
+          "champion_probability": 0.238215,
+          "passport_found": true
+        },
+        {
+          "horse": "Diplomatic Ash",
+          "rp_uid": "5455545",
+          "champion_probability": 0.183714,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.158536
+    },
+    {
+      "race_id": "920820",
+      "course": "Plumpton",
+      "off_time": "19:09",
+      "live_top": {
+        "horse": "Cher Monsieur",
+        "horse_id": "5671306",
+        "velo_prime_prob": 0.4612,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "I Shut That d'Or",
+        "rp_uid": "3921698",
+        "champion_probability": 0.29392,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Begin The Luck",
+        "horse_id": "3308182",
+        "official_rating": 105.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "I Shut That d'Or",
+          "rp_uid": "3921698",
+          "champion_probability": 0.29392,
+          "passport_found": true
+        },
+        {
+          "horse": "Begin The Luck",
+          "rp_uid": "3308182",
+          "champion_probability": 0.293299,
+          "passport_found": true
+        },
+        {
+          "horse": "Cher Monsieur",
+          "rp_uid": "5671306",
+          "champion_probability": 0.220626,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.16728
+    },
+    {
+      "race_id": "921522",
+      "course": "Dundalk (AW)",
+      "off_time": "18:48",
+      "live_top": {
+        "horse": "Jered Maddox",
+        "horse_id": "2315209",
+        "velo_prime_prob": 0.2386,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Buddy Batt",
+        "rp_uid": "5160459",
+        "champion_probability": 0.1231,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Sovereign Cry",
+        "horse_id": "8231739",
+        "official_rating": 83.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Buddy Batt",
+          "rp_uid": "5160459",
+          "champion_probability": 0.1231,
+          "passport_found": true
+        },
+        {
+          "horse": "Collective Power",
+          "rp_uid": "3102126",
+          "champion_probability": 0.113536,
+          "passport_found": true
+        },
+        {
+          "horse": "Sporting Hero",
+          "rp_uid": "4459185",
+          "champion_probability": 0.106162,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.1155
+    },
+    {
+      "race_id": "921523",
+      "course": "Dundalk (AW)",
+      "off_time": "19:18",
+      "live_top": {
+        "horse": "Believed",
+        "horse_id": "9024488",
+        "velo_prime_prob": 0.2779,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Minella Rockett",
+        "rp_uid": "7757766",
+        "champion_probability": 0.165888,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Minella Rockett",
+        "horse_id": "7757766",
+        "official_rating": 82.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Minella Rockett",
+          "rp_uid": "7757766",
+          "champion_probability": 0.165888,
+          "passport_found": true
+        },
+        {
+          "horse": "Diligo",
+          "rp_uid": "9060368",
+          "champion_probability": 0.130673,
+          "passport_found": true
+        },
+        {
+          "horse": "Werifesteria",
+          "rp_uid": "9263850",
+          "champion_probability": 0.119701,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.112012
+    },
+    {
+      "race_id": "921552",
+      "course": "Ballinrobe",
+      "off_time": "19:00",
+      "live_top": {
+        "horse": "Astelia",
+        "horse_id": "3862918",
+        "velo_prime_prob": 0.2778,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Kabylia",
+        "rp_uid": "5764671",
+        "champion_probability": 0.096632,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Queenofthelodge",
+        "horse_id": "5743681",
+        "official_rating": 122.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Kabylia",
+          "rp_uid": "5764671",
+          "champion_probability": 0.096632,
+          "passport_found": true
+        },
+        {
+          "horse": "Eye Of A Tiger",
+          "rp_uid": "7441032",
+          "champion_probability": 0.093673,
+          "passport_found": true
+        },
+        {
+          "horse": "Regards To Rose",
+          "rp_uid": "5845764",
+          "champion_probability": 0.077284,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.181168
+    }
+  ],
+  "race_reports": [
+    {
+      "race_id": "918927",
+      "course": "Leicester",
+      "off_time": "15:10",
+      "live_top": {
+        "horse": "Crownright",
+        "horse_id": "8326156",
+        "velo_prime_prob": 0.5301,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Caim",
+        "rp_uid": "8084438",
+        "champion_probability": 0.261002,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Caim",
+        "horse_id": "8084438",
+        "official_rating": 91.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Caim",
+          "rp_uid": "8084438",
+          "champion_probability": 0.261002,
+          "passport_found": true
+        },
+        {
+          "horse": "Crownright",
+          "rp_uid": "8326156",
+          "champion_probability": 0.254351,
+          "passport_found": true
+        },
+        {
+          "horse": "Molo Del Palazzo",
+          "rp_uid": "7992612",
+          "champion_probability": 0.22584,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.269098
+    },
+    {
+      "race_id": "918928",
+      "course": "Leicester",
+      "off_time": "14:10",
+      "live_top": {
+        "horse": "Libertango",
+        "horse_id": "9263892",
+        "velo_prime_prob": 0.2216,
+        "tier": "C"
+      },
+      "new_build_top": {
+        "horse": "Libertango",
+        "rp_uid": "9263892",
+        "champion_probability": 0.184311,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Libertango",
+          "rp_uid": "9263892",
+          "champion_probability": 0.184311,
+          "passport_found": true
+        },
+        {
+          "horse": "Victory Gold",
+          "rp_uid": "9212567",
+          "champion_probability": 0.176617,
+          "passport_found": true
+        },
+        {
+          "horse": "Miami To Ibiza",
+          "rp_uid": "9258994",
+          "champion_probability": 0.176487,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.037289
+    },
+    {
+      "race_id": "918929",
+      "course": "Leicester",
+      "off_time": "17:12",
+      "live_top": {
+        "horse": "Pentonville",
+        "horse_id": "8236346",
+        "velo_prime_prob": 0.3388,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Zipwire",
+        "rp_uid": "7643469",
+        "champion_probability": 0.262249,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Zipwire",
+        "horse_id": "7643469",
+        "official_rating": 70.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Zipwire",
+          "rp_uid": "7643469",
+          "champion_probability": 0.262249,
+          "passport_found": true
+        },
+        {
+          "horse": "Zooter",
+          "rp_uid": "7708589",
+          "champion_probability": 0.201076,
+          "passport_found": true
+        },
+        {
+          "horse": "Pentonville",
+          "rp_uid": "8236346",
+          "champion_probability": 0.171827,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.076551
+    },
+    {
+      "race_id": "918930",
+      "course": "Leicester",
+      "off_time": "16:40",
+      "live_top": {
+        "horse": "Always Perfect",
+        "horse_id": "8009412",
+        "velo_prime_prob": 0.1981,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Filly Foden",
+        "rp_uid": "7339105",
+        "champion_probability": 0.190574,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Frantic",
+        "horse_id": "8304792",
+        "official_rating": 70.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Filly Foden",
+          "rp_uid": "7339105",
+          "champion_probability": 0.190574,
+          "passport_found": true
+        },
+        {
+          "horse": "Blindfold Games",
+          "rp_uid": "7551813",
+          "champion_probability": 0.185122,
+          "passport_found": true
+        },
+        {
+          "horse": "Frantic",
+          "rp_uid": "8304792",
+          "champion_probability": 0.159219,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.007526
+    },
+    {
+      "race_id": "918931",
+      "course": "Leicester",
+      "off_time": "14:40",
+      "live_top": {
+        "horse": "Abrahamsen",
+        "horse_id": "8881295",
+        "velo_prime_prob": 0.3534,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "Abrahamsen",
+        "rp_uid": "8881295",
+        "champion_probability": 0.227359,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Abrahamsen",
+          "rp_uid": "8881295",
+          "champion_probability": 0.227359,
+          "passport_found": true
+        },
+        {
+          "horse": "Bluestone Lady",
+          "rp_uid": "8881486",
+          "champion_probability": 0.205019,
+          "passport_found": true
+        },
+        {
+          "horse": "Jazzy Bay",
+          "rp_uid": "8688517",
+          "champion_probability": 0.188073,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.126041
+    },
+    {
+      "race_id": "918932",
+      "course": "Leicester",
+      "off_time": "16:10",
+      "live_top": {
+        "horse": "Happy Chandler",
+        "horse_id": "5162462",
+        "velo_prime_prob": 0.2086,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Ottoman",
+        "rp_uid": "6042411",
+        "champion_probability": 0.193296,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Study Up",
+        "horse_id": "4827048",
+        "official_rating": 60.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Ottoman",
+          "rp_uid": "6042411",
+          "champion_probability": 0.193296,
+          "passport_found": true
+        },
+        {
+          "horse": "San Francisco Bay",
+          "rp_uid": "3437697",
+          "champion_probability": 0.18493,
+          "passport_found": true
+        },
+        {
+          "horse": "Beauty Generation",
+          "rp_uid": "4827079",
+          "champion_probability": 0.171891,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.015304
+    },
+    {
+      "race_id": "918933",
+      "course": "Leicester",
+      "off_time": "15:40",
+      "live_top": {
+        "horse": "Girls Allowed",
+        "horse_id": "7957277",
+        "velo_prime_prob": 0.1293,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Giles Glory",
+        "rp_uid": "7713433",
+        "champion_probability": 0.164402,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Hatamoto",
+        "horse_id": "7020583",
+        "official_rating": 55.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Giles Glory",
+          "rp_uid": "7713433",
+          "champion_probability": 0.164402,
+          "passport_found": true
+        },
+        {
+          "horse": "Woody Y Fernandez",
+          "rp_uid": "7622792",
+          "champion_probability": 0.149972,
+          "passport_found": true
+        },
+        {
+          "horse": "She's Crafty",
+          "rp_uid": "7789366",
+          "champion_probability": 0.147041,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.035102
+    },
+    {
+      "race_id": "918941",
+      "course": "Redcar",
+      "off_time": "15:50",
+      "live_top": {
+        "horse": "Classic Encounter",
+        "horse_id": "5234275",
+        "velo_prime_prob": 0.2601,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Desert Shadow",
+        "rp_uid": "6952473",
+        "champion_probability": 0.217721,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Classic Encounter",
+        "horse_id": "5234275",
+        "official_rating": 84.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Desert Shadow",
+          "rp_uid": "6952473",
+          "champion_probability": 0.217721,
+          "passport_found": true
+        },
+        {
+          "horse": "Classic Encounter",
+          "rp_uid": "5234275",
+          "champion_probability": 0.158079,
+          "passport_found": true
+        },
+        {
+          "horse": "Nyman",
+          "rp_uid": "6037324",
+          "champion_probability": 0.147228,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.042379
+    },
+    {
+      "race_id": "918942",
+      "course": "Redcar",
+      "off_time": "14:50",
+      "live_top": {
+        "horse": "Cape Fear",
+        "horse_id": "8245527",
+        "velo_prime_prob": 0.2262,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Hoseki",
+        "rp_uid": "8295085",
+        "champion_probability": 0.254622,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Cape Fear",
+        "horse_id": "8245527",
+        "official_rating": 78.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Hoseki",
+          "rp_uid": "8295085",
+          "champion_probability": 0.254622,
+          "passport_found": true
+        },
+        {
+          "horse": "Champion Lawman",
+          "rp_uid": "7462311",
+          "champion_probability": 0.189643,
+          "passport_found": true
+        },
+        {
+          "horse": "Cape Fear",
+          "rp_uid": "8245527",
+          "champion_probability": 0.165426,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.028422
+    },
+    {
+      "race_id": "918943",
+      "course": "Redcar",
+      "off_time": "14:20",
+      "live_top": {
+        "horse": "Nour",
+        "horse_id": "8881438",
+        "velo_prime_prob": 0.2031,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Nour",
+        "rp_uid": "8881438",
+        "champion_probability": 0.177893,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Nour",
+          "rp_uid": "8881438",
+          "champion_probability": 0.177893,
+          "passport_found": true
+        },
+        {
+          "horse": "Time Glory",
+          "rp_uid": "9115737",
+          "champion_probability": 0.153059,
+          "passport_found": true
+        },
+        {
+          "horse": "Bella Lucia",
+          "rp_uid": "9184992",
+          "champion_probability": 0.152201,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.025207
+    },
+    {
+      "race_id": "918944",
+      "course": "Redcar",
+      "off_time": "15:20",
+      "live_top": {
+        "horse": "Fairydale",
+        "horse_id": "7793622",
+        "velo_prime_prob": 0.568,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "Fairydale",
+        "rp_uid": "7793622",
+        "champion_probability": 0.243675,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Gaelic Approach",
+        "horse_id": "7529955",
+        "official_rating": 73.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Fairydale",
+          "rp_uid": "7793622",
+          "champion_probability": 0.243675,
+          "passport_found": true
+        },
+        {
+          "horse": "Gaelic Approach",
+          "rp_uid": "7529955",
+          "champion_probability": 0.23188,
+          "passport_found": true
+        },
+        {
+          "horse": "Wicksey",
+          "rp_uid": "7205021",
+          "champion_probability": 0.185721,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.324325
+    },
+    {
+      "race_id": "918945",
+      "course": "Redcar",
+      "off_time": "17:23",
+      "live_top": {
+        "horse": "Evoluir",
+        "horse_id": "5082960",
+        "velo_prime_prob": 0.1303,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Andalprofit",
+        "rp_uid": "6032309",
+        "champion_probability": 0.105955,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "One Of Our Own",
+        "horse_id": "4336809",
+        "official_rating": 60.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Andalprofit",
+          "rp_uid": "6032309",
+          "champion_probability": 0.105955,
+          "passport_found": true
+        },
+        {
+          "horse": "Dream Deal",
+          "rp_uid": "3767116",
+          "champion_probability": 0.079723,
+          "passport_found": true
+        },
+        {
+          "horse": "One Of Our Own",
+          "rp_uid": "4336809",
+          "champion_probability": 0.079253,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.024345
+    },
+    {
+      "race_id": "918946",
+      "course": "Redcar",
+      "off_time": "16:50",
+      "live_top": {
+        "horse": "Lady Bouquet",
+        "horse_id": "5073251",
+        "velo_prime_prob": 0.1646,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Auntie Jo",
+        "rp_uid": "5982525",
+        "champion_probability": 0.107128,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Kyber Crystal",
+        "horse_id": "3558239",
+        "official_rating": 54.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Auntie Jo",
+          "rp_uid": "5982525",
+          "champion_probability": 0.107128,
+          "passport_found": true
+        },
+        {
+          "horse": "Doralee",
+          "rp_uid": "5740905",
+          "champion_probability": 0.099579,
+          "passport_found": true
+        },
+        {
+          "horse": "Jeany May",
+          "rp_uid": "5920413",
+          "champion_probability": 0.090898,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.057472
+    },
+    {
+      "race_id": "918947",
+      "course": "Redcar",
+      "off_time": "16:20",
+      "live_top": {
+        "horse": "Long Shot",
+        "horse_id": "8013552",
+        "velo_prime_prob": 0.1667,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Positive Thoughts",
+        "rp_uid": "8137383",
+        "champion_probability": 0.085951,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Positive Thoughts",
+        "horse_id": "8137383",
+        "official_rating": 65.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Positive Thoughts",
+          "rp_uid": "8137383",
+          "champion_probability": 0.085951,
+          "passport_found": true
+        },
+        {
+          "horse": "Resdev Time",
+          "rp_uid": "7882530",
+          "champion_probability": 0.08381,
+          "passport_found": true
+        },
+        {
+          "horse": "Territorial Star",
+          "rp_uid": "7020383",
+          "champion_probability": 0.083586,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.080749
+    },
+    {
+      "race_id": "918954",
+      "course": "Lingfield",
+      "off_time": "18:24",
+      "live_top": {
+        "horse": "Asset",
+        "horse_id": "8111191",
+        "velo_prime_prob": 0.3369,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "Green Area",
+        "rp_uid": "9060384",
+        "champion_probability": 0.272319,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Green Area",
+          "rp_uid": "9060384",
+          "champion_probability": 0.272319,
+          "passport_found": true
+        },
+        {
+          "horse": "Asset",
+          "rp_uid": "8111191",
+          "champion_probability": 0.231642,
+          "passport_found": true
+        },
+        {
+          "horse": "Bintknight",
+          "rp_uid": "9208602",
+          "champion_probability": 0.208067,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.064581
+    },
+    {
+      "race_id": "918955",
+      "course": "Lingfield",
+      "off_time": "17:54",
+      "live_top": {
+        "horse": "Russian Rumour",
+        "horse_id": "2456719",
+        "velo_prime_prob": 0.4118,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Macari",
+        "rp_uid": "5383846",
+        "champion_probability": 0.269586,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Synergism",
+        "horse_id": "6550733",
+        "official_rating": 87.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Macari",
+          "rp_uid": "5383846",
+          "champion_probability": 0.269586,
+          "passport_found": true
+        },
+        {
+          "horse": "Synergism",
+          "rp_uid": "6550733",
+          "champion_probability": 0.230086,
+          "passport_found": true
+        },
+        {
+          "horse": "Across Earth",
+          "rp_uid": "5349553",
+          "champion_probability": 0.205747,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.142214
+    },
+    {
+      "race_id": "918956",
+      "course": "Lingfield",
+      "off_time": "19:24",
+      "live_top": {
+        "horse": "Weffaag",
+        "horse_id": "8079884",
+        "velo_prime_prob": 0.3768,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "Ascending Star",
+        "rp_uid": "7436338",
+        "champion_probability": 0.225093,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Ascending Star",
+          "rp_uid": "7436338",
+          "champion_probability": 0.225093,
+          "passport_found": true
+        },
+        {
+          "horse": "Storming Point",
+          "rp_uid": "7204800",
+          "champion_probability": 0.223537,
+          "passport_found": true
+        },
+        {
+          "horse": "Cosmic Girl",
+          "rp_uid": "9227219",
+          "champion_probability": 0.180728,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.151707
+    },
+    {
+      "race_id": "918957",
+      "course": "Lingfield",
+      "off_time": "19:54",
+      "live_top": {
+        "horse": "Eazy On The Eye",
+        "horse_id": "6473556",
+        "velo_prime_prob": 0.2324,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Daisy Roots",
+        "rp_uid": "4564395",
+        "champion_probability": 0.181065,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Hilltop",
+        "horse_id": "5641189",
+        "official_rating": 75.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Daisy Roots",
+          "rp_uid": "4564395",
+          "champion_probability": 0.181065,
+          "passport_found": true
+        },
+        {
+          "horse": "Welljudged",
+          "rp_uid": "8174791",
+          "champion_probability": 0.180232,
+          "passport_found": true
+        },
+        {
+          "horse": "Summer Heat",
+          "rp_uid": "7534579",
+          "champion_probability": 0.171357,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.051335
+    },
+    {
+      "race_id": "918958",
+      "course": "Lingfield",
+      "off_time": "20:24",
+      "live_top": {
+        "horse": "Venetian Romance",
+        "horse_id": "7847683",
+        "velo_prime_prob": 0.2407,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "High Approval",
+        "rp_uid": "7618359",
+        "champion_probability": 0.206119,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Lohoobb",
+        "horse_id": "7547285",
+        "official_rating": 75.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "High Approval",
+          "rp_uid": "7618359",
+          "champion_probability": 0.206119,
+          "passport_found": true
+        },
+        {
+          "horse": "Victor Cee",
+          "rp_uid": "7592690",
+          "champion_probability": 0.1472,
+          "passport_found": true
+        },
+        {
+          "horse": "Luminare",
+          "rp_uid": "7507900",
+          "champion_probability": 0.144448,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.034581
+    },
+    {
+      "race_id": "918959",
+      "course": "Lingfield",
+      "off_time": "18:54",
+      "live_top": {
+        "horse": "Cougar Force",
+        "horse_id": "7992605",
+        "velo_prime_prob": 0.1512,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Saeculamation",
+        "rp_uid": "7547289",
+        "champion_probability": 0.122095,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Miss Magic Dragon",
+        "horse_id": "8227214",
+        "official_rating": 55.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Saeculamation",
+          "rp_uid": "7547289",
+          "champion_probability": 0.122095,
+          "passport_found": true
+        },
+        {
+          "horse": "No Claims Bonus",
+          "rp_uid": "7471058",
+          "champion_probability": 0.103904,
+          "passport_found": true
+        },
+        {
+          "horse": "Creciente",
+          "rp_uid": "7020427",
+          "champion_probability": 0.09828,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.029105
+    },
+    {
+      "race_id": "920504",
+      "course": "Bath",
+      "off_time": "14:30",
+      "live_top": {
+        "horse": "Nammos",
+        "horse_id": "4534414",
+        "velo_prime_prob": 0.5498,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "The Dark Baron",
+        "rp_uid": "6087967",
+        "champion_probability": 0.338152,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Bownder",
+        "horse_id": "5781948",
+        "official_rating": 65.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "The Dark Baron",
+          "rp_uid": "6087967",
+          "champion_probability": 0.338152,
+          "passport_found": true
+        },
+        {
+          "horse": "Bownder",
+          "rp_uid": "5781948",
+          "champion_probability": 0.27835,
+          "passport_found": true
+        },
+        {
+          "horse": "Rating",
+          "rp_uid": "5019630",
+          "champion_probability": 0.240228,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.211648
+    },
+    {
+      "race_id": "920505",
+      "course": "Bath",
+      "off_time": "15:00",
+      "live_top": {
+        "horse": "Arabica Queen",
+        "horse_id": "9189211",
+        "velo_prime_prob": 0.3119,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Cydney Sweenie",
+        "rp_uid": "9105990",
+        "champion_probability": 0.199593,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Cydney Sweenie",
+          "rp_uid": "9105990",
+          "champion_probability": 0.199593,
+          "passport_found": true
+        },
+        {
+          "horse": "Acclamation Star",
+          "rp_uid": "9290856",
+          "champion_probability": 0.16218,
+          "passport_found": true
+        },
+        {
+          "horse": "Ennerdale Water",
+          "rp_uid": "9290854",
+          "champion_probability": 0.147085,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.112307
+    },
+    {
+      "race_id": "920506",
+      "course": "Bath",
+      "off_time": "16:30",
+      "live_top": {
+        "horse": "Baynoona",
+        "horse_id": "5093062",
+        "velo_prime_prob": 0.1623,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Baynoona",
+        "rp_uid": "5093062",
+        "champion_probability": 0.185857,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Show Biz Kid",
+        "horse_id": "4924713",
+        "official_rating": 65.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Baynoona",
+          "rp_uid": "5093062",
+          "champion_probability": 0.185857,
+          "passport_found": true
+        },
+        {
+          "horse": "Jimmy Mark",
+          "rp_uid": "4407204",
+          "champion_probability": 0.165922,
+          "passport_found": true
+        },
+        {
+          "horse": "Show Biz Kid",
+          "rp_uid": "4924713",
+          "champion_probability": 0.1375,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.023557
+    },
+    {
+      "race_id": "920507",
+      "course": "Bath",
+      "off_time": "15:30",
+      "live_top": {
+        "horse": "Phoenix Moon",
+        "horse_id": "4827183",
+        "velo_prime_prob": 0.2961,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Strike",
+        "rp_uid": "3701268",
+        "champion_probability": 0.207983,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Obsidian Dream",
+        "horse_id": "6287977",
+        "official_rating": 74.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Strike",
+          "rp_uid": "3701268",
+          "champion_probability": 0.207983,
+          "passport_found": true
+        },
+        {
+          "horse": "Tuscan Point",
+          "rp_uid": "5859153",
+          "champion_probability": 0.195544,
+          "passport_found": true
+        },
+        {
+          "horse": "Early Release",
+          "rp_uid": "5895609",
+          "champion_probability": 0.186417,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.088117
+    },
+    {
+      "race_id": "920508",
+      "course": "Bath",
+      "off_time": "17:02",
+      "live_top": {
+        "horse": "Mohmentous",
+        "horse_id": "8335415",
+        "velo_prime_prob": 0.719,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "Station Bar",
+        "rp_uid": "7966352",
+        "champion_probability": 0.326801,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Station Bar",
+        "horse_id": "7966352",
+        "official_rating": 62.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Station Bar",
+          "rp_uid": "7966352",
+          "champion_probability": 0.326801,
+          "passport_found": true
+        },
+        {
+          "horse": "Phantom Shadow",
+          "rp_uid": "7529969",
+          "champion_probability": 0.232611,
+          "passport_found": true
+        },
+        {
+          "horse": "Mohmentous",
+          "rp_uid": "8335415",
+          "champion_probability": 0.175287,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.392199
+    },
+    {
+      "race_id": "920509",
+      "course": "Bath",
+      "off_time": "16:00",
+      "live_top": {
+        "horse": "Correspondence",
+        "horse_id": "7631477",
+        "velo_prime_prob": 0.193,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Danger Alert",
+        "rp_uid": "4336793",
+        "champion_probability": 0.216767,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Over Spiced",
+        "horse_id": "5837057",
+        "official_rating": 70.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Danger Alert",
+          "rp_uid": "4336793",
+          "champion_probability": 0.216767,
+          "passport_found": true
+        },
+        {
+          "horse": "Candy Warhol",
+          "rp_uid": "3677979",
+          "champion_probability": 0.187089,
+          "passport_found": true
+        },
+        {
+          "horse": "Correspondence",
+          "rp_uid": "7631477",
+          "champion_probability": 0.16638,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.023767
+    },
+    {
+      "race_id": "920817",
+      "course": "Plumpton",
+      "off_time": "17:37",
+      "live_top": {
+        "horse": "Arfursgal",
+        "horse_id": "6796760",
+        "velo_prime_prob": 0.3945,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Arfursgal",
+        "rp_uid": "6796760",
+        "champion_probability": 0.308521,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Nelson Gate",
+        "horse_id": "6496399",
+        "official_rating": 94.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Arfursgal",
+          "rp_uid": "6796760",
+          "champion_probability": 0.308521,
+          "passport_found": true
+        },
+        {
+          "horse": "Kamille Au Kanada",
+          "rp_uid": "7499337",
+          "champion_probability": 0.291138,
+          "passport_found": true
+        },
+        {
+          "horse": "Nelson Gate",
+          "rp_uid": "6496399",
+          "champion_probability": 0.254023,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.085979
+    },
+    {
+      "race_id": "920818",
+      "course": "Plumpton",
+      "off_time": "18:09",
+      "live_top": {
+        "horse": "Motazzen",
+        "horse_id": "3552445",
+        "velo_prime_prob": 0.4303,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Goodwin",
+        "rp_uid": "4676215",
+        "champion_probability": 0.271764,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Goodwin",
+        "horse_id": "4676215",
+        "official_rating": 122.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Goodwin",
+          "rp_uid": "4676215",
+          "champion_probability": 0.271764,
+          "passport_found": true
+        },
+        {
+          "horse": "Motazzen",
+          "rp_uid": "3552445",
+          "champion_probability": 0.238215,
+          "passport_found": true
+        },
+        {
+          "horse": "Diplomatic Ash",
+          "rp_uid": "5455545",
+          "champion_probability": 0.183714,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.158536
+    },
+    {
+      "race_id": "920819",
+      "course": "Plumpton",
+      "off_time": "18:39",
+      "live_top": {
+        "horse": "Captain Cool",
+        "horse_id": "5746437",
+        "velo_prime_prob": 0.4014,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Seeyouinmydreams",
+        "rp_uid": "4288026",
+        "champion_probability": 0.400211,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Seeyouinmydreams",
+        "horse_id": "4288026",
+        "official_rating": 121.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Seeyouinmydreams",
+          "rp_uid": "4288026",
+          "champion_probability": 0.400211,
+          "passport_found": true
+        },
+        {
+          "horse": "Captain Cool",
+          "rp_uid": "5746437",
+          "champion_probability": 0.217589,
+          "passport_found": true
+        },
+        {
+          "horse": "Frere d'Armes",
+          "rp_uid": "3499156",
+          "champion_probability": 0.183305,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.001189
+    },
+    {
+      "race_id": "920820",
+      "course": "Plumpton",
+      "off_time": "19:09",
+      "live_top": {
+        "horse": "Cher Monsieur",
+        "horse_id": "5671306",
+        "velo_prime_prob": 0.4612,
+        "tier": "A"
+      },
+      "new_build_top": {
+        "horse": "I Shut That d'Or",
+        "rp_uid": "3921698",
+        "champion_probability": 0.29392,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Begin The Luck",
+        "horse_id": "3308182",
+        "official_rating": 105.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "I Shut That d'Or",
+          "rp_uid": "3921698",
+          "champion_probability": 0.29392,
+          "passport_found": true
+        },
+        {
+          "horse": "Begin The Luck",
+          "rp_uid": "3308182",
+          "champion_probability": 0.293299,
+          "passport_found": true
+        },
+        {
+          "horse": "Cher Monsieur",
+          "rp_uid": "5671306",
+          "champion_probability": 0.220626,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.16728
+    },
+    {
+      "race_id": "920821",
+      "course": "Plumpton",
+      "off_time": "19:39",
+      "live_top": {
+        "horse": "Sea Invasion",
+        "horse_id": "4288001",
+        "velo_prime_prob": 0.3509,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Sea Invasion",
+        "rp_uid": "4288001",
+        "champion_probability": 0.205148,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Earth King",
+        "horse_id": "3447052",
+        "official_rating": 120.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Sea Invasion",
+          "rp_uid": "4288001",
+          "champion_probability": 0.205148,
+          "passport_found": true
+        },
+        {
+          "horse": "Escapologist",
+          "rp_uid": "58950447",
+          "champion_probability": 0.202035,
+          "passport_found": true
+        },
+        {
+          "horse": "Earth King",
+          "rp_uid": "3447052",
+          "champion_probability": 0.194877,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.145752
+    },
+    {
+      "race_id": "920822",
+      "course": "Plumpton",
+      "off_time": "20:09",
+      "live_top": {
+        "horse": "Goodwin Face",
+        "horse_id": "5455543",
+        "velo_prime_prob": 0.2952,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Goodwin Face",
+        "rp_uid": "5455543",
+        "champion_probability": 0.159701,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Yasmina",
+        "horse_id": "4701436",
+        "official_rating": 102.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Goodwin Face",
+          "rp_uid": "5455543",
+          "champion_probability": 0.159701,
+          "passport_found": true
+        },
+        {
+          "horse": "Reteti",
+          "rp_uid": "4407210",
+          "champion_probability": 0.133699,
+          "passport_found": true
+        },
+        {
+          "horse": "Alibey",
+          "rp_uid": "7538891",
+          "champion_probability": 0.105179,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.135499
+    },
+    {
+      "race_id": "920823",
+      "course": "Plumpton",
+      "off_time": "20:39",
+      "live_top": {
+        "horse": "Getmyfriend",
+        "horse_id": "8903771",
+        "velo_prime_prob": 0.2507,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Getmyfriend",
+        "rp_uid": "8903771",
+        "champion_probability": 0.246196,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Getmyfriend",
+          "rp_uid": "8903771",
+          "champion_probability": 0.246196,
+          "passport_found": true
+        },
+        {
+          "horse": "Scotto",
+          "rp_uid": "9254257",
+          "champion_probability": 0.224764,
+          "passport_found": true
+        },
+        {
+          "horse": "River Ore",
+          "rp_uid": "9222308",
+          "champion_probability": 0.195635,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.004504
+    },
+    {
+      "race_id": "921519",
+      "course": "Dundalk (AW)",
+      "off_time": "17:07",
+      "live_top": {
+        "horse": "Imperial Fighter",
+        "horse_id": "3715492",
+        "velo_prime_prob": 0.188,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "North Ocean",
+        "rp_uid": "6692972",
+        "champion_probability": 0.14359,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "The Liffey",
+        "horse_id": "5045982",
+        "official_rating": 85.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "North Ocean",
+          "rp_uid": "6692972",
+          "champion_probability": 0.14359,
+          "passport_found": true
+        },
+        {
+          "horse": "The Liffey",
+          "rp_uid": "5045982",
+          "champion_probability": 0.139975,
+          "passport_found": true
+        },
+        {
+          "horse": "Land Of The Giants",
+          "rp_uid": "6465137",
+          "champion_probability": 0.134046,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.04441
+    },
+    {
+      "race_id": "921520",
+      "course": "Dundalk (AW)",
+      "off_time": "17:42",
+      "live_top": {
+        "horse": "Nautic Star",
+        "horse_id": "7957260",
+        "velo_prime_prob": 0.1071,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Nautic Star",
+        "rp_uid": "7957260",
+        "champion_probability": 0.149851,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Jamestown",
+        "horse_id": "8968453",
+        "official_rating": 84.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Nautic Star",
+          "rp_uid": "7957260",
+          "champion_probability": 0.149851,
+          "passport_found": true
+        },
+        {
+          "horse": "Jamestown",
+          "rp_uid": "8968453",
+          "champion_probability": 0.115493,
+          "passport_found": true
+        },
+        {
+          "horse": "Fate's Gambit",
+          "rp_uid": "8711041",
+          "champion_probability": 0.113034,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.042751
+    },
+    {
+      "race_id": "921521",
+      "course": "Dundalk (AW)",
+      "off_time": "18:17",
+      "live_top": {
+        "horse": "Cool Azul",
+        "horse_id": "7583032",
+        "velo_prime_prob": 0.1768,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Sparky Sparky",
+        "rp_uid": "7900538",
+        "champion_probability": 0.224506,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Aughlish",
+        "horse_id": "8871663",
+        "official_rating": 70.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Sparky Sparky",
+          "rp_uid": "7900538",
+          "champion_probability": 0.224506,
+          "passport_found": true
+        },
+        {
+          "horse": "Cool Azul",
+          "rp_uid": "7583032",
+          "champion_probability": 0.197312,
+          "passport_found": true
+        },
+        {
+          "horse": "Reposado",
+          "rp_uid": "5837074",
+          "champion_probability": 0.111599,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.047706
+    },
+    {
+      "race_id": "921522",
+      "course": "Dundalk (AW)",
+      "off_time": "18:48",
+      "live_top": {
+        "horse": "Jered Maddox",
+        "horse_id": "2315209",
+        "velo_prime_prob": 0.2386,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Buddy Batt",
+        "rp_uid": "5160459",
+        "champion_probability": 0.1231,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Sovereign Cry",
+        "horse_id": "8231739",
+        "official_rating": 83.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Buddy Batt",
+          "rp_uid": "5160459",
+          "champion_probability": 0.1231,
+          "passport_found": true
+        },
+        {
+          "horse": "Collective Power",
+          "rp_uid": "3102126",
+          "champion_probability": 0.113536,
+          "passport_found": true
+        },
+        {
+          "horse": "Sporting Hero",
+          "rp_uid": "4459185",
+          "champion_probability": 0.106162,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.1155
+    },
+    {
+      "race_id": "921523",
+      "course": "Dundalk (AW)",
+      "off_time": "19:18",
+      "live_top": {
+        "horse": "Believed",
+        "horse_id": "9024488",
+        "velo_prime_prob": 0.2779,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Minella Rockett",
+        "rp_uid": "7757766",
+        "champion_probability": 0.165888,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Minella Rockett",
+        "horse_id": "7757766",
+        "official_rating": 82.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Minella Rockett",
+          "rp_uid": "7757766",
+          "champion_probability": 0.165888,
+          "passport_found": true
+        },
+        {
+          "horse": "Diligo",
+          "rp_uid": "9060368",
+          "champion_probability": 0.130673,
+          "passport_found": true
+        },
+        {
+          "horse": "Werifesteria",
+          "rp_uid": "9263850",
+          "champion_probability": 0.119701,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.112012
+    },
+    {
+      "race_id": "921524",
+      "course": "Dundalk (AW)",
+      "off_time": "19:48",
+      "live_top": {
+        "horse": "Copper Craft",
+        "horse_id": "7657445",
+        "velo_prime_prob": 0.1409,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Sarmiento Power",
+        "rp_uid": "5172499",
+        "champion_probability": 0.106555,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Jawhary",
+        "horse_id": "3533584",
+        "official_rating": 60.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Sarmiento Power",
+          "rp_uid": "5172499",
+          "champion_probability": 0.106555,
+          "passport_found": true
+        },
+        {
+          "horse": "Skib Gold",
+          "rp_uid": "7339094",
+          "champion_probability": 0.104544,
+          "passport_found": true
+        },
+        {
+          "horse": "Copper Craft",
+          "rp_uid": "7657445",
+          "champion_probability": 0.102163,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.034345
+    },
+    {
+      "race_id": "921525",
+      "course": "Dundalk (AW)",
+      "off_time": "20:18",
+      "live_top": {
+        "horse": "Pedro The Poet",
+        "horse_id": "8335362",
+        "velo_prime_prob": 0.1185,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Therewillbeglory",
+        "rp_uid": "7856875",
+        "champion_probability": 0.164453,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Mano Chicago",
+        "horse_id": "6037323",
+        "official_rating": 82.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Therewillbeglory",
+          "rp_uid": "7856875",
+          "champion_probability": 0.164453,
+          "passport_found": true
+        },
+        {
+          "horse": "Kilcrea Rock",
+          "rp_uid": "6388849",
+          "champion_probability": 0.123796,
+          "passport_found": true
+        },
+        {
+          "horse": "Mano Chicago",
+          "rp_uid": "6037323",
+          "champion_probability": 0.115224,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.045953
+    },
+    {
+      "race_id": "921549",
+      "course": "Ballinrobe",
+      "off_time": "16:55",
+      "live_top": {
+        "horse": "Ismahane",
+        "horse_id": "7727242",
+        "velo_prime_prob": 0.2135,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Witches Familiar",
+        "rp_uid": "9295579",
+        "champion_probability": 0.175546,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Witches Familiar",
+          "rp_uid": "9295579",
+          "champion_probability": 0.175546,
+          "passport_found": true
+        },
+        {
+          "horse": "Ismahane",
+          "rp_uid": "7727242",
+          "champion_probability": 0.172092,
+          "passport_found": true
+        },
+        {
+          "horse": "Cinating",
+          "rp_uid": "8881564",
+          "champion_probability": 0.155663,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.037954
+    },
+    {
+      "race_id": "921550",
+      "course": "Ballinrobe",
+      "off_time": "17:30",
+      "live_top": {
+        "horse": "Porcupine Bank",
+        "horse_id": "9092881",
+        "velo_prime_prob": 0.5394,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Porcupine Bank",
+        "rp_uid": "9092881",
+        "champion_probability": 0.235505,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Kai Lung",
+        "horse_id": "6916222",
+        "official_rating": 127.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Porcupine Bank",
+          "rp_uid": "9092881",
+          "champion_probability": 0.235505,
+          "passport_found": true
+        },
+        {
+          "horse": "Munsif",
+          "rp_uid": "6541707",
+          "champion_probability": 0.170907,
+          "passport_found": true
+        },
+        {
+          "horse": "Madness d'Elle",
+          "rp_uid": "7538829",
+          "champion_probability": 0.147055,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.303895
+    },
+    {
+      "race_id": "921551",
+      "course": "Ballinrobe",
+      "off_time": "18:00",
+      "live_top": {
+        "horse": "Killowen House",
+        "horse_id": "8423306",
+        "velo_prime_prob": 0.1347,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Press The Button",
+        "rp_uid": "6671030",
+        "champion_probability": 0.153976,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Manoir De Mirande",
+        "horse_id": "8344456",
+        "official_rating": 117.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Press The Button",
+          "rp_uid": "6671030",
+          "champion_probability": 0.153976,
+          "passport_found": true
+        },
+        {
+          "horse": "Capri Gear",
+          "rp_uid": "9227227",
+          "champion_probability": 0.127053,
+          "passport_found": true
+        },
+        {
+          "horse": "Manoir De Mirande",
+          "rp_uid": "8344456",
+          "champion_probability": 0.101955,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.019276
+    },
+    {
+      "race_id": "921552",
+      "course": "Ballinrobe",
+      "off_time": "19:00",
+      "live_top": {
+        "horse": "Astelia",
+        "horse_id": "3862918",
+        "velo_prime_prob": 0.2778,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Kabylia",
+        "rp_uid": "5764671",
+        "champion_probability": 0.096632,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Queenofthelodge",
+        "horse_id": "5743681",
+        "official_rating": 122.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Kabylia",
+          "rp_uid": "5764671",
+          "champion_probability": 0.096632,
+          "passport_found": true
+        },
+        {
+          "horse": "Eye Of A Tiger",
+          "rp_uid": "7441032",
+          "champion_probability": 0.093673,
+          "passport_found": true
+        },
+        {
+          "horse": "Regards To Rose",
+          "rp_uid": "5845764",
+          "champion_probability": 0.077284,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.181168
+    },
+    {
+      "race_id": "921553",
+      "course": "Ballinrobe",
+      "off_time": "19:30",
+      "live_top": {
+        "horse": "Kelly's Cosmos",
+        "horse_id": "7139224",
+        "velo_prime_prob": 0.1533,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Wandering Rocks",
+        "rp_uid": "4272400",
+        "champion_probability": 0.087049,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Ned In The Park",
+        "horse_id": "5544173",
+        "official_rating": 110.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Wandering Rocks",
+          "rp_uid": "4272400",
+          "champion_probability": 0.087049,
+          "passport_found": true
+        },
+        {
+          "horse": "Moylussa",
+          "rp_uid": "5689562",
+          "champion_probability": 0.084461,
+          "passport_found": true
+        },
+        {
+          "horse": "Ned In The Park",
+          "rp_uid": "5544173",
+          "champion_probability": 0.080125,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.066251
+    },
+    {
+      "race_id": "921554",
+      "course": "Ballinrobe",
+      "off_time": "20:00",
+      "live_top": {
+        "horse": "Brave Crogha",
+        "horse_id": "5003641",
+        "velo_prime_prob": 0.1283,
+        "tier": "X"
+      },
+      "new_build_top": {
+        "horse": "Lady Bluebird",
+        "rp_uid": "5085178",
+        "champion_probability": 0.101326,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Obey The Order",
+        "horse_id": "58956217",
+        "official_rating": 107.0
+      },
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Lady Bluebird",
+          "rp_uid": "5085178",
+          "champion_probability": 0.101326,
+          "passport_found": true
+        },
+        {
+          "horse": "Jisco Du Brem",
+          "rp_uid": "5403091",
+          "champion_probability": 0.089437,
+          "passport_found": true
+        },
+        {
+          "horse": "Ladiam",
+          "rp_uid": "3803224",
+          "champion_probability": 0.074587,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.026974
+    },
+    {
+      "race_id": "921555",
+      "course": "Ballinrobe",
+      "off_time": "20:30",
+      "live_top": {
+        "horse": "Isabella Johnson",
+        "horse_id": "6949138",
+        "velo_prime_prob": 0.1698,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Brother Walfrid",
+        "rp_uid": "7347744",
+        "champion_probability": 0.227499,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": null,
+      "top_pick_agreement": false,
+      "live_top_in_new_build_top3": false,
+      "top3_overlap_count": 0,
+      "new_build_top3": [
+        {
+          "horse": "Brother Walfrid",
+          "rp_uid": "7347744",
+          "champion_probability": 0.227499,
+          "passport_found": true
+        },
+        {
+          "horse": "Fiveandahalf",
+          "rp_uid": "9024479",
+          "champion_probability": 0.184527,
+          "passport_found": true
+        },
+        {
+          "horse": "Power Steering",
+          "rp_uid": "9295577",
+          "champion_probability": 0.183045,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.057699
+    },
+    {
+      "race_id": "921603",
+      "course": "Ballinrobe",
+      "off_time": "18:30",
+      "live_top": {
+        "horse": "Marco Du Seuil",
+        "horse_id": "9222130",
+        "velo_prime_prob": 0.1639,
+        "tier": "B"
+      },
+      "new_build_top": {
+        "horse": "Marco Du Seuil",
+        "rp_uid": "9222130",
+        "champion_probability": 0.152956,
+        "champion_rank": 1,
+        "passport_found": true,
+        "missing_reason": "INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE"
+      },
+      "or_baseline_top": {
+        "horse": "Jerry From Kerry",
+        "horse_id": "5705878",
+        "official_rating": 110.0
+      },
+      "top_pick_agreement": true,
+      "live_top_in_new_build_top3": true,
+      "top3_overlap_count": 1,
+      "new_build_top3": [
+        {
+          "horse": "Marco Du Seuil",
+          "rp_uid": "9222130",
+          "champion_probability": 0.152956,
+          "passport_found": true
+        },
+        {
+          "horse": "Silken Thomas",
+          "rp_uid": "9281148",
+          "champion_probability": 0.128799,
+          "passport_found": true
+        },
+        {
+          "horse": "Ancient Myth",
+          "rp_uid": "5649690",
+          "champion_probability": 0.092209,
+          "passport_found": true
+        }
+      ],
+      "passport_state": "PASSPORT_EXISTS",
+      "probability_gap_note": 0.010944
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_writes": true,
+    "no_shadow": true,
+    "no_telegram": true,
+    "no_staking": true,
+    "rpr_archive_only": true
+  }
+}

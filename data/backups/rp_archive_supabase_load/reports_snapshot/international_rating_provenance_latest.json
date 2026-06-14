@@ -1,0 +1,646 @@
+{
+  "generated_at": "2026-05-23T21:26:43.112060+00:00",
+  "global_rpr_stability": {
+    "adjacent_pairs": 1277498,
+    "change_rate": 0.9495,
+    "delta_mean": 13.21,
+    "delta_median": 9.0,
+    "delta_p25": 4.0,
+    "delta_p75": 18.0,
+    "interpretation": "95% change rate with mean delta 13 is ambiguous. PRE-RACE: RP updates ratings after each run \u2014 consistent with frequent changes. POST-RACE: performance-based ratings would also change per race. Winner-max-dominance rate is the more decisive test."
+  },
+  "packs": [
+    {
+      "pack": "HK_SHA_TIN_V1",
+      "courses": [
+        "Sha Tin (HK)"
+      ],
+      "n_rows": 50976,
+      "ratings": {
+        "rpr_vs_field": {
+          "coverage": 0.9901,
+          "description": "RPR relative to field",
+          "winner_dominance": {
+            "rating_col": "rpr_vs_field",
+            "total_races": 4040,
+            "skipped_races": 40,
+            "winner_is_max_rating": 1855,
+            "winner_max_pct": 0.4592,
+            "winner_top2_pct": 0.6802,
+            "winner_top3_pct": 0.8124,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max rpr_vs_field in only 45.9% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.4592
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_vs_field",
+            "n_valid": 50876,
+            "corr_with_finish_position": -0.6807,
+            "corr_with_target": 0.3278,
+            "verdict": "POST_RACE_SUSPECTED \u2014 correlation with finish position too strong for pre-race rating",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "rpr_num": {
+          "coverage": 0.9762,
+          "description": "RPR absolute",
+          "winner_dominance": {
+            "rating_col": "rpr_num",
+            "total_races": 4040,
+            "skipped_races": 40,
+            "winner_is_max_rating": 2114,
+            "winner_max_pct": 0.5233,
+            "winner_top2_pct": 0.7205,
+            "winner_top3_pct": 0.8386,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max rpr_num in only 52.3% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.5233
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_num",
+            "n_valid": 49761,
+            "corr_with_finish_position": -0.4689,
+            "corr_with_target": 0.2027,
+            "verdict": "TIMESTAMP_UNKNOWN \u2014 moderate correlation with position",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": {
+            "rating_col": "rpr_num",
+            "adjacent_pairs_analyzed": 44758,
+            "same_race_to_race": 0.0545,
+            "changed_race_to_race": 0.9455,
+            "delta_mean": 9.139,
+            "delta_median": 7.0,
+            "delta_p75": 12.0,
+            "winner_avg_delta": 8.894,
+            "loser_avg_delta": 9.161,
+            "note": "PRE-RACE interpretation: rating is updated by RP after previous run, so changes between races are expected (~5-15 points). POST-RACE interpretation: rating is awarded FOR each race performance, with larger variance. Both interpretations are plausible from change-rate alone."
+          },
+          "overall_verdict": "TIMESTAMP_UNKNOWN"
+        },
+        "or_vs_field": {
+          "coverage": 0.9666,
+          "description": "OR relative to field",
+          "winner_dominance": {
+            "rating_col": "or_vs_field",
+            "total_races": 3927,
+            "skipped_races": 153,
+            "winner_is_max_rating": 577,
+            "winner_max_pct": 0.1469,
+            "winner_top2_pct": 0.2437,
+            "winner_top3_pct": 0.3481,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max or_vs_field in only 14.7% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.1469
+            }
+          },
+          "position_correlation": {
+            "rating_col": "or_vs_field",
+            "n_valid": 50876,
+            "corr_with_finish_position": -0.0844,
+            "corr_with_target": 0.0583,
+            "verdict": "PRE_RACE_CONSISTENT \u2014 correlation with position moderate, consistent with pre-race predictor",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "PRE_RACE_SAFE"
+        },
+        "or_num": {
+          "coverage": 0.9706,
+          "description": "OR absolute",
+          "winner_dominance": {
+            "rating_col": "or_num",
+            "total_races": 3927,
+            "skipped_races": 153,
+            "winner_is_max_rating": 579,
+            "winner_max_pct": 0.1474,
+            "winner_top2_pct": 0.2445,
+            "winner_top3_pct": 0.3486,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max or_num in only 14.7% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.1474
+            }
+          },
+          "position_correlation": {
+            "rating_col": "or_num",
+            "n_valid": 49382,
+            "corr_with_finish_position": -0.0942,
+            "corr_with_target": 0.0349,
+            "verdict": "PRE_RACE_CONSISTENT \u2014 correlation with position moderate, consistent with pre-race predictor",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "PRE_RACE_SAFE"
+        },
+        "ts_num": {
+          "coverage": 0.0,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        }
+      },
+      "pack_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+    },
+    {
+      "pack": "HK_HAPPY_VALLEY_V1",
+      "courses": [
+        "Happy Valley (HK)"
+      ],
+      "n_rows": 30557,
+      "ratings": {
+        "rpr_vs_field": {
+          "coverage": 0.9966,
+          "description": "RPR relative to field",
+          "winner_dominance": {
+            "rating_col": "rpr_vs_field",
+            "total_races": 2635,
+            "skipped_races": 9,
+            "winner_is_max_rating": 1113,
+            "winner_max_pct": 0.4224,
+            "winner_top2_pct": 0.6436,
+            "winner_top3_pct": 0.7803,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max rpr_vs_field in only 42.2% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.4224
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_vs_field",
+            "n_valid": 30508,
+            "corr_with_finish_position": -0.6882,
+            "corr_with_target": 0.3281,
+            "verdict": "POST_RACE_SUSPECTED \u2014 correlation with finish position too strong for pre-race rating",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "rpr_num": {
+          "coverage": 0.9888,
+          "description": "RPR absolute",
+          "winner_dominance": {
+            "rating_col": "rpr_num",
+            "total_races": 2635,
+            "skipped_races": 9,
+            "winner_is_max_rating": 1231,
+            "winner_max_pct": 0.4672,
+            "winner_top2_pct": 0.6683,
+            "winner_top3_pct": 0.7954,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max rpr_num in only 46.7% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.4672
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_num",
+            "n_valid": 30213,
+            "corr_with_finish_position": -0.4681,
+            "corr_with_target": 0.211,
+            "verdict": "TIMESTAMP_UNKNOWN \u2014 moderate correlation with position",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": {
+            "rating_col": "rpr_num",
+            "adjacent_pairs_analyzed": 26316,
+            "same_race_to_race": 0.0611,
+            "changed_race_to_race": 0.9389,
+            "delta_mean": 7.84,
+            "delta_median": 6.0,
+            "delta_p75": 11.0,
+            "winner_avg_delta": 7.837,
+            "loser_avg_delta": 7.841,
+            "note": "PRE-RACE interpretation: rating is updated by RP after previous run, so changes between races are expected (~5-15 points). POST-RACE interpretation: rating is awarded FOR each race performance, with larger variance. Both interpretations are plausible from change-rate alone."
+          },
+          "overall_verdict": "TIMESTAMP_UNKNOWN"
+        },
+        "or_vs_field": {
+          "coverage": 0.9943,
+          "description": "OR relative to field",
+          "winner_dominance": {
+            "rating_col": "or_vs_field",
+            "total_races": 2634,
+            "skipped_races": 10,
+            "winner_is_max_rating": 330,
+            "winner_max_pct": 0.1253,
+            "winner_top2_pct": 0.2221,
+            "winner_top3_pct": 0.3257,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max or_vs_field in only 12.5% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.1253
+            }
+          },
+          "position_correlation": {
+            "rating_col": "or_vs_field",
+            "n_valid": 30508,
+            "corr_with_finish_position": -0.065,
+            "corr_with_target": 0.038,
+            "verdict": "PRE_RACE_CONSISTENT \u2014 correlation with position moderate, consistent with pre-race predictor",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "PRE_RACE_SAFE"
+        },
+        "or_num": {
+          "coverage": 0.9991,
+          "description": "OR absolute",
+          "winner_dominance": {
+            "rating_col": "or_num",
+            "total_races": 2634,
+            "skipped_races": 10,
+            "winner_is_max_rating": 330,
+            "winner_max_pct": 0.1253,
+            "winner_top2_pct": 0.2217,
+            "winner_top3_pct": 0.3257,
+            "provenance_verdict": "PRE_RACE_SAFE",
+            "reason": "Winner has max or_num in only 12.5% of races \u2014 consistent with pre-race rating (expected ~40-50%)",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.1253
+            }
+          },
+          "position_correlation": {
+            "rating_col": "or_num",
+            "n_valid": 30480,
+            "corr_with_finish_position": -0.0456,
+            "corr_with_target": 0.0185,
+            "verdict": "PRE_RACE_CONSISTENT \u2014 correlation with position moderate, consistent with pre-race predictor",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "PRE_RACE_SAFE"
+        },
+        "ts_num": {
+          "coverage": 0.0,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        }
+      },
+      "pack_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+    },
+    {
+      "pack": "FR_CHANTILLY_V1",
+      "courses": [
+        "Chantilly (FR)"
+      ],
+      "n_rows": 47568,
+      "ratings": {
+        "rpr_vs_field": {
+          "coverage": 0.9381,
+          "description": "RPR relative to field",
+          "winner_dominance": {
+            "rating_col": "rpr_vs_field",
+            "total_races": 3821,
+            "skipped_races": 222,
+            "winner_is_max_rating": 2618,
+            "winner_max_pct": 0.6852,
+            "winner_top2_pct": 0.8275,
+            "winner_top3_pct": 0.8987,
+            "provenance_verdict": "TIMESTAMP_UNKNOWN",
+            "reason": "Winner has max rpr_vs_field in 68.5% of races \u2014 ambiguous",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.6852
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_vs_field",
+            "n_valid": 47433,
+            "corr_with_finish_position": -0.6432,
+            "corr_with_target": 0.3284,
+            "verdict": "POST_RACE_SUSPECTED \u2014 correlation with finish position too strong for pre-race rating",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "rpr_num": {
+          "coverage": 0.9214,
+          "description": "RPR absolute",
+          "winner_dominance": {
+            "rating_col": "rpr_num",
+            "total_races": 3821,
+            "skipped_races": 222,
+            "winner_is_max_rating": 2731,
+            "winner_max_pct": 0.7147,
+            "winner_top2_pct": 0.85,
+            "winner_top3_pct": 0.9134,
+            "provenance_verdict": "POST_RACE_LEAKAGE_SUSPECTED",
+            "reason": "Winner has max rpr_num in 71.5% of races \u2014 consistent with post-race performance rating",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.7147
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_num",
+            "n_valid": 43803,
+            "corr_with_finish_position": -0.6242,
+            "corr_with_target": 0.2759,
+            "verdict": "POST_RACE_SUSPECTED \u2014 correlation with finish position too strong for pre-race rating",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": {
+            "rating_col": "rpr_num",
+            "adjacent_pairs_analyzed": 27344,
+            "same_race_to_race": 0.0492,
+            "changed_race_to_race": 0.9508,
+            "delta_mean": 11.641,
+            "delta_median": 8.0,
+            "delta_p75": 16.0,
+            "winner_avg_delta": 10.836,
+            "loser_avg_delta": 11.716,
+            "note": "PRE-RACE interpretation: rating is updated by RP after previous run, so changes between races are expected (~5-15 points). POST-RACE interpretation: rating is awarded FOR each race performance, with larger variance. Both interpretations are plausible from change-rate alone."
+          },
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "or_vs_field": {
+          "coverage": 0.0012,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        },
+        "or_num": {
+          "coverage": 0.0,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        },
+        "ts_num": {
+          "coverage": 0.517,
+          "description": "TS absolute",
+          "winner_dominance": {
+            "rating_col": "ts_num",
+            "total_races": 2437,
+            "skipped_races": 1606,
+            "winner_is_max_rating": 1870,
+            "winner_max_pct": 0.7673,
+            "winner_top2_pct": 0.8958,
+            "winner_top3_pct": 0.9516,
+            "provenance_verdict": "POST_RACE_LEAKAGE_SUSPECTED",
+            "reason": "Winner has max ts_num in 76.7% of races \u2014 consistent with post-race performance rating",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.7673
+            }
+          },
+          "position_correlation": {
+            "rating_col": "ts_num",
+            "n_valid": 24575,
+            "corr_with_finish_position": -0.4175,
+            "corr_with_target": 0.2275,
+            "verdict": "TIMESTAMP_UNKNOWN \u2014 moderate correlation with position",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        }
+      },
+      "pack_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+    },
+    {
+      "pack": "FR_FLAT_CORE",
+      "courses": [
+        "Chantilly (FR)",
+        "Deauville (FR)",
+        "Longchamp (FR)",
+        "Saint-Cloud (FR)"
+      ],
+      "n_rows": 142352,
+      "ratings": {
+        "rpr_vs_field": {
+          "coverage": 0.944,
+          "description": "RPR relative to field",
+          "winner_dominance": {
+            "rating_col": "rpr_vs_field",
+            "total_races": 11700,
+            "skipped_races": 617,
+            "winner_is_max_rating": 8034,
+            "winner_max_pct": 0.6867,
+            "winner_top2_pct": 0.8316,
+            "winner_top3_pct": 0.9029,
+            "provenance_verdict": "TIMESTAMP_UNKNOWN",
+            "reason": "Winner has max rpr_vs_field in 68.7% of races \u2014 ambiguous",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.6867
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_vs_field",
+            "n_valid": 141993,
+            "corr_with_finish_position": -0.638,
+            "corr_with_target": 0.3215,
+            "verdict": "POST_RACE_SUSPECTED \u2014 correlation with finish position too strong for pre-race rating",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "rpr_num": {
+          "coverage": 0.9286,
+          "description": "RPR absolute",
+          "winner_dominance": {
+            "rating_col": "rpr_num",
+            "total_races": 11700,
+            "skipped_races": 617,
+            "winner_is_max_rating": 8352,
+            "winner_max_pct": 0.7138,
+            "winner_top2_pct": 0.8513,
+            "winner_top3_pct": 0.9169,
+            "provenance_verdict": "POST_RACE_LEAKAGE_SUSPECTED",
+            "reason": "Winner has max rpr_num in 71.4% of races \u2014 consistent with post-race performance rating",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.7138
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_num",
+            "n_valid": 132137,
+            "corr_with_finish_position": -0.6025,
+            "corr_with_target": 0.2614,
+            "verdict": "POST_RACE_SUSPECTED \u2014 correlation with finish position too strong for pre-race rating",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": {
+            "rating_col": "rpr_num",
+            "adjacent_pairs_analyzed": 105390,
+            "same_race_to_race": 0.0572,
+            "changed_race_to_race": 0.9428,
+            "delta_mean": 11.224,
+            "delta_median": 8.0,
+            "delta_p75": 15.0,
+            "winner_avg_delta": 10.211,
+            "loser_avg_delta": 11.323,
+            "note": "PRE-RACE interpretation: rating is updated by RP after previous run, so changes between races are expected (~5-15 points). POST-RACE interpretation: rating is awarded FOR each race performance, with larger variance. Both interpretations are plausible from change-rate alone."
+          },
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "or_vs_field": {
+          "coverage": 0.002,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        },
+        "or_num": {
+          "coverage": 0.0,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        },
+        "ts_num": {
+          "coverage": 0.725,
+          "description": "TS absolute",
+          "winner_dominance": {
+            "rating_col": "ts_num",
+            "total_races": 10174,
+            "skipped_races": 2143,
+            "winner_is_max_rating": 7636,
+            "winner_max_pct": 0.7505,
+            "winner_top2_pct": 0.8887,
+            "winner_top3_pct": 0.9475,
+            "provenance_verdict": "POST_RACE_LEAKAGE_SUSPECTED",
+            "reason": "Winner has max ts_num in 75.0% of races \u2014 consistent with post-race performance rating",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.7505
+            }
+          },
+          "position_correlation": {
+            "rating_col": "ts_num",
+            "n_valid": 103156,
+            "corr_with_finish_position": -0.4009,
+            "corr_with_target": 0.2081,
+            "verdict": "TIMESTAMP_UNKNOWN \u2014 moderate correlation with position",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        }
+      },
+      "pack_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+    },
+    {
+      "pack": "FR_AUTEUIL_JUMPS_V1",
+      "courses": [
+        "Auteuil (FR)"
+      ],
+      "n_rows": 31977,
+      "ratings": {
+        "rpr_vs_field": {
+          "coverage": 0.9565,
+          "description": "RPR relative to field",
+          "winner_dominance": {
+            "rating_col": "rpr_vs_field",
+            "total_races": 2954,
+            "skipped_races": 127,
+            "winner_is_max_rating": 2109,
+            "winner_max_pct": 0.7139,
+            "winner_top2_pct": 0.8995,
+            "winner_top3_pct": 0.9601,
+            "provenance_verdict": "POST_RACE_LEAKAGE_SUSPECTED",
+            "reason": "Winner has max rpr_vs_field in 71.4% of races \u2014 consistent with post-race performance rating",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.7139
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_vs_field",
+            "n_valid": 25271,
+            "corr_with_finish_position": -0.6746,
+            "corr_with_target": 0.3982,
+            "verdict": "POST_RACE_SUSPECTED \u2014 correlation with finish position too strong for pre-race rating",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": null,
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "rpr_num": {
+          "coverage": 0.7172,
+          "description": "RPR absolute",
+          "winner_dominance": {
+            "rating_col": "rpr_num",
+            "total_races": 2954,
+            "skipped_races": 127,
+            "winner_is_max_rating": 2109,
+            "winner_max_pct": 0.7139,
+            "winner_top2_pct": 0.8995,
+            "winner_top3_pct": 0.9601,
+            "provenance_verdict": "POST_RACE_LEAKAGE_SUSPECTED",
+            "reason": "Winner has max rpr_num in 71.4% of races \u2014 consistent with post-race performance rating",
+            "interpretation": {
+              "POST_RACE_threshold": "> 0.70 winner-max rate = post-race suspected",
+              "PRE_RACE_expectation": "~0.40-0.50 winner-max rate = consistent with pre-race",
+              "observed": 0.7139
+            }
+          },
+          "position_correlation": {
+            "rating_col": "rpr_num",
+            "n_valid": 22879,
+            "corr_with_finish_position": -0.5537,
+            "corr_with_target": 0.314,
+            "verdict": "TIMESTAMP_UNKNOWN \u2014 moderate correlation with position",
+            "note": "PRE-RACE: corr with position ~ -0.15 to -0.35. POST-RACE (performance rating): corr with position ~ -0.60 to -0.90"
+          },
+          "adjacent_stability": {
+            "rating_col": "rpr_num",
+            "adjacent_pairs_analyzed": 16143,
+            "same_race_to_race": 0.0765,
+            "changed_race_to_race": 0.9235,
+            "delta_mean": 11.379,
+            "delta_median": 9.0,
+            "delta_p75": 16.0,
+            "winner_avg_delta": 11.038,
+            "loser_avg_delta": 11.436,
+            "note": "PRE-RACE interpretation: rating is updated by RP after previous run, so changes between races are expected (~5-15 points). POST-RACE interpretation: rating is awarded FOR each race performance, with larger variance. Both interpretations are plausible from change-rate alone."
+          },
+          "overall_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+        },
+        "or_vs_field": {
+          "coverage": 0.0018,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        },
+        "or_num": {
+          "coverage": 0.0,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        },
+        "ts_num": {
+          "coverage": 0.0,
+          "verdict": "INSUFFICIENT_COVERAGE"
+        }
+      },
+      "pack_verdict": "POST_RACE_LEAKAGE_SUSPECTED"
+    }
+  ],
+  "methodology": {
+    "primary_test": "Winner max-rating dominance rate",
+    "post_race_threshold": "> 70% winner max-rating = post-race suspected",
+    "pre_race_expectation": "~40-50% winner max-rating = pre-race consistent",
+    "secondary_test": "Rating correlation with finishing position",
+    "post_race_corr_threshold": "< -0.60 = post-race suspected",
+    "pre_race_corr_range": "-0.15 to -0.35 = pre-race consistent"
+  }
+}

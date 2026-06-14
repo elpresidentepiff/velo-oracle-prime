@@ -63,7 +63,22 @@ async def run_benchmark(
         shard_idx = shard - 1
         races = [r for i, r in enumerate(races) if i % total_shards == shard_idx]
         print(f"   Processing {len(races)} races in this shard")
-    
+
+    # Handle missing credentials for CI
+    if not os.getenv("SUPABASE_URL") or not (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY")):
+        print("⚠️ Warning: Supabase credentials missing. Skipping benchmark run.")
+        # Create empty results to satisfy downstream merge
+        summary = {
+            "run_id": f"skip-{int(time.time())}",
+            "manifest": manifest_path,
+            "as_of_date": as_of_date,
+            "races_processed": 0,
+            "results": []
+        }
+        with open(output_path, 'w') as f:
+            json.dump(summary, f, indent=2)
+        return summary
+
     db = DatabaseClient()
     results = []
     

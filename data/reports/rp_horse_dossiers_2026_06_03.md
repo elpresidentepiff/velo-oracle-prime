@@ -1,0 +1,46 @@
+# RP Horse Dossiers - 2026-06-03
+
+- Dossiers: `455`
+- Profile matched: `0`
+- Scoring impact: `NONE`
+
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Family Fortune**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Setanta**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Wah May Wai Wai**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Telecom Power**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Prince Alex**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Manythanks Forever**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Zetta Force**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Master Of Humor**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Casa Legend**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Smart Trio**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **The Way We Win**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Happy Buddies**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Harry's Hero**: INSUFFICIENT_PROFILE
+- 2026-06-03T11:40:00+01:00 Happy Valley - **Gold Tack**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Always My Folks**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Chill Master**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Exceed The Wish**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Call To Command**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Majestic Delight**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Lakeshore Hero**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Thousand Cups**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Autumn Vibes**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Sonic Boom**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Runjeet**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Island Breezes**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Tai Victory**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Double Bingo**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:10:00+01:00 Happy Valley - **Superb Guy**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Leading Agility**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Forerunner**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Same To You**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Free Pony**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Young Arrow**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Forza Leader**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Beauty Glory**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Captain Link**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Golden Empire**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Winalot**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Awesome Treasure**: INSUFFICIENT_PROFILE
+- 2026-06-03T12:40:00+01:00 Happy Valley - **Marvel And Gold**: INSUFFICIENT_PROFILE

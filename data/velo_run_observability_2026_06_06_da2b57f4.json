@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "da2b57f4-6547-4e90-b3a3-366c6a4b9c4c",
+  "date": "2026-06-06",
+  "timestamp": "2026-06-06T12:53:59.618135+00:00",
+  "git_commit_sha": "1ba64550289b3c14227adfeaacaf9e302d95eac2",
+  "git_branch": "stabilization/prime-hardening-v1",
+  "source_truth": "SOURCE_UNKNOWN_BLOCK",
+  "feature_health": "BLOCKED",
+  "active_formula": "UNHANDLED_EXCEPTION",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 0.0,
+  "persistence_status": "FAIL",
+  "supabase_write_attempt_success": false,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "EXCEPTION",
+  "learning_gate": "BLOCKED_EXCEPTION",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 0,
+    "runners_processed": 0
+  },
+  "gates": {
+    "gate_source_unknown_block": false
+  },
+  "warnings": [
+    "UNHANDLED_EXCEPTION: RuntimeError: --source rp specified but no RP merged files found for 2026-06-06\n  Expected: C:\\Users\\puror\\velo-oracle-prime\\data/racecard_merged/racecard_*_2026-06-06.json"
+  ],
+  "extra": {
+    "git_commit_sha": "unknown",
+    "exception_type": "RuntimeError"
+  }
+}

@@ -43,12 +43,29 @@ log = logging.getLogger("build_protocol")
 
 import pandas as pd  # noqa: E402
 
-from app.services.model_manager import ModelManager  # noqa: E402
 from src.velo.product_router import ProductRouter  # noqa: E402
+
+
+class ModelManager:
+    @staticmethod
+    def _parse_class(class_str) -> float:
+        import re as _re
+        s = str(class_str or "").strip().upper()
+        m = _re.search(r"CLASS\s*(\d)", s)
+        if m:
+            return float(m.group(1))
+        if "GROUP 1" in s or "GRADE 1" in s:
+            return 1.0
+        if "GROUP 2" in s or "GRADE 2" in s:
+            return 2.0
+        if "LISTED" in s:
+            return 2.5
+        return 4.0
 
 DEDUPED_PATH = ROOT / "data" / "velo_innovation_protocol_1k_deduped.csv"
 VERDICTS_GLOB = "velo_prime_verdicts_*.json"
 RESULTS_GLOB = "results_*.json"
+CANONICAL_RESULTS_GLOB = "rp_results_*.json"
 
 PLACED_POSITIONS = {1, 2, 3}
 
@@ -116,7 +133,9 @@ def load_results(dates: set[str] | None = None) -> dict:
     If dates is provided, only load files for those dates.
     """
     lookup: dict = {}
-    for rf in sorted((ROOT / "data").glob(RESULTS_GLOB)):
+    canonical_results = sorted((ROOT / "data" / "results").glob(CANONICAL_RESULTS_GLOB))
+    legacy_results = sorted((ROOT / "data").glob(RESULTS_GLOB))
+    for rf in canonical_results + legacy_results:
         file_date = _result_date(rf.name)
         if dates and file_date not in dates:
             continue
@@ -197,6 +216,8 @@ def _lookup_result(result_lookup, date, course, race_time, horse):
 # ── Verdict loader ────────────────────────────────────────────────────────────
 
 def load_verdict_rows(verdict_files: list[Path], result_lookup: dict) -> list[dict]:
+    from scripts.ops.run_results_sigma import _duplicate_alias_race_ids
+
     router = ProductRouter()
     rows = []
 
@@ -207,6 +228,17 @@ def load_verdict_rows(verdict_files: list[Path], result_lookup: dict) -> list[di
         except Exception as e:
             log.warning(f"  Skip {vf.name}: {e}")
             continue
+        backup = {
+            str(row.get("race_id", "")): {
+                "course": row.get("course", ""),
+                "off_time": row.get("off_time", ""),
+            }
+            for row in verdicts
+        }
+        duplicate_alias_ids = _duplicate_alias_race_ids(backup)
+        if duplicate_alias_ids:
+            log.info(f"  Excluding {len(duplicate_alias_ids)} synthetic aliases from {vf.name}")
+            verdicts = [row for row in verdicts if str(row.get("race_id", "")) not in duplicate_alias_ids]
 
         for v in verdicts:
             race_id = v.get("race_id", "")
@@ -358,7 +390,9 @@ def load_verdict_rows(verdict_files: list[Path], result_lookup: dict) -> list[di
 def deduplicate(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     before = len(df)
     df["_dk"] = df.apply(lambda r: _dedup_key(str(r["race_id"]), str(r["horse"])), axis=1)
-    df = df.drop_duplicates(subset="_dk", keep="first").drop(columns=["_dk"])
+    # Newly rebuilt rows are appended after the existing dataset and must
+    # supersede stale pre-result copies of the same verdict.
+    df = df.drop_duplicates(subset="_dk", keep="last").drop(columns=["_dk"])
     return df, before - len(df)
 
 
@@ -466,6 +500,10 @@ def main():
         date_tag = args.date.replace("-", "_")
         verdict_files = [f for f in all_verdict_files if date_tag in f.name]
         new_dates = {args.date}
+        # A targeted date run replaces that date's evidence instead of retaining
+        # stale rows from an earlier, potentially contaminated build.
+        if not base_df.empty:
+            base_df = base_df[base_df["date"].astype(str) != args.date].copy()
     elif args.rebuild:
         verdict_files = all_verdict_files
         new_dates = {_verdict_date(f.name) for f in verdict_files}

@@ -1,0 +1,2012 @@
+{
+  "generated_at": "2026-06-02T11:07:14.125682Z",
+  "target_date": "2026-06-01",
+  "overall_status": "READY",
+  "capture_status": {
+    "date": "2026-06-01",
+    "status": "READY",
+    "races": 42,
+    "runners": 461
+  },
+  "races_scored": 42,
+  "runners_scored": 448,
+  "rpr_violations": 0,
+  "sp_violations": 0,
+  "quality_gates": {
+    "rpr_clean": true,
+    "sp_clean": true,
+    "passport_coverage_above_50pct": true,
+    "no_leakage_violations": true
+  },
+  "intent_coverage": {
+    "found": 0,
+    "total": 448,
+    "coverage_pct": 0.0,
+    "gate": 80.0,
+    "status": "UNAVAILABLE_BELOW_GATE",
+    "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+  },
+  "operational_lane": "LANE_A_CORE_PASSPORT",
+  "operational_note": "Intent coverage 0.0% < 80.0% gate. Lane B is PAPER_ONLY_NO_INTENT. Lane A (Core+Passport) is operational read.",
+  "lane_a": {
+    "label": "Core_V0_OR_Passport (30 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport\\core_v0_or_passport_model.pkl",
+    "feature_count": 30,
+    "median_fill_counts": {
+      "release_window_score": 448,
+      "going_fit_score": 448,
+      "distance_fit_score": 448,
+      "quiet_run_score": 448,
+      "trainer_timing_score": 448,
+      "jockey_switch_intent": 448,
+      "setup_run_flag": 448,
+      "cash_run_flag": 448,
+      "pp_days_since_last": 448,
+      "pp_layoff": 448
+    }
+  },
+  "lane_b": {
+    "label": "Challenger_V1 Core+Passport+Intent (45 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport_intent\\model.pkl",
+    "feature_count": 45,
+    "intent_coverage_pct": 0.0,
+    "status": "PAPER_ONLY_NO_INTENT",
+    "median_fill_counts": {
+      "release_window_score": 448,
+      "going_fit_score": 448,
+      "distance_fit_score": 448,
+      "quiet_run_score": 448,
+      "trainer_timing_score": 448,
+      "jockey_switch_intent": 448,
+      "setup_run_flag": 448,
+      "cash_run_flag": 448,
+      "pp_days_since_last": 448,
+      "pp_layoff": 448
+    }
+  },
+  "race_day_scorecards": [
+    {
+      "race_id": "921806",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T13:29:00",
+      "race_date": "2026-06-01",
+      "race_title": "Today's Gate Sponsored By The INPBA Fillies Maiden",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Amenita",
+          "prob": 0.098256
+        },
+        {
+          "rank": 2,
+          "horse": "Flagstone Lady",
+          "prob": 0.086105
+        },
+        {
+          "rank": 3,
+          "horse": "Spring Sprinter",
+          "prob": 0.085448
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Amenita",
+          "prob": 0.090316
+        },
+        {
+          "rank": 3,
+          "horse": "Flagstone Lady",
+          "prob": 0.086118
+        },
+        {
+          "rank": 2,
+          "horse": "Spring Sprinter",
+          "prob": 0.087333
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921814",
+      "course": "Listowel",
+      "off_time": "2026-06-01T13:47:00",
+      "race_date": "2026-06-01",
+      "race_title": "Nora Canty Mares Maiden Hurdle",
+      "runner_count": 14,
+      "passport_coverage": "14/14",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Colugo",
+          "prob": 0.10637
+        },
+        {
+          "rank": 2,
+          "horse": "Wonderful Everyday",
+          "prob": 0.076602
+        },
+        {
+          "rank": 3,
+          "horse": "Poetisa",
+          "prob": 0.076602
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Wonderful Everyday",
+          "prob": 0.076685
+        },
+        {
+          "rank": 2,
+          "horse": "Poetisa",
+          "prob": 0.076685
+        },
+        {
+          "rank": 3,
+          "horse": "Tumbling In",
+          "prob": 0.076685
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921807",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T13:59:00",
+      "race_date": "2026-06-01",
+      "race_title": "KCLR 96FM Apprentice Handicap",
+      "runner_count": 16,
+      "passport_coverage": "16/16",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Royal County Glory",
+          "prob": 0.076336
+        },
+        {
+          "rank": 2,
+          "horse": "Real Petite",
+          "prob": 0.067875
+        },
+        {
+          "rank": 3,
+          "horse": "Queen Aethelflaed",
+          "prob": 0.062835
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Royal County Glory",
+          "prob": 0.070016
+        },
+        {
+          "rank": 2,
+          "horse": "Real Petite",
+          "prob": 0.065797
+        },
+        {
+          "rank": 3,
+          "horse": "Chou Chou",
+          "prob": 0.065384
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920251",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-01T14:07:00",
+      "race_date": "2026-06-01",
+      "race_title": "Free Tips On attheraces.com Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Pitney",
+          "prob": 0.079977
+        },
+        {
+          "rank": 2,
+          "horse": "Dios De La Guerra",
+          "prob": 0.079513
+        },
+        {
+          "rank": 3,
+          "horse": "Volto Di Medusa",
+          "prob": 0.07867
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Volto Di Medusa",
+          "prob": 0.080712
+        },
+        {
+          "rank": 1,
+          "horse": "Virtue Patience",
+          "prob": 0.082754
+        },
+        {
+          "rank": 2,
+          "horse": "Searchingtheblues",
+          "prob": 0.080926
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919964",
+      "course": "Newbury",
+      "off_time": "2026-06-01T14:15:00",
+      "race_date": "2026-06-01",
+      "race_title": "Get 100/1 On England At BetVictor EBF Maiden Fillies' Stakes (GBB/IRE Incentive Race)",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Desert Sands",
+          "prob": 0.081737
+        },
+        {
+          "rank": 2,
+          "horse": "Avalon Queen",
+          "prob": 0.081067
+        },
+        {
+          "rank": 3,
+          "horse": "Please Don't Go",
+          "prob": 0.080885
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Avalon Queen",
+          "prob": 0.078848
+        },
+        {
+          "rank": 1,
+          "horse": "Please Don't Go",
+          "prob": 0.079037
+        },
+        {
+          "rank": 2,
+          "horse": "Bai Tong",
+          "prob": 0.078876
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921815",
+      "course": "Listowel",
+      "off_time": "2026-06-01T14:22:00",
+      "race_date": "2026-06-01",
+      "race_title": "Southern Waste Management Mares Handicap Hurdle",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Mo Ghille Mar",
+          "prob": 0.113414
+        },
+        {
+          "rank": 2,
+          "horse": "Diamond Tipp",
+          "prob": 0.111272
+        },
+        {
+          "rank": 3,
+          "horse": "Cinnabar Moth",
+          "prob": 0.094294
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Mo Ghille Mar",
+          "prob": 0.140784
+        },
+        {
+          "rank": 2,
+          "horse": "Diamond Tipp",
+          "prob": 0.126042
+        },
+        {
+          "rank": 3,
+          "horse": "Cinnabar Moth",
+          "prob": 0.099723
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921808",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T14:34:00",
+      "race_date": "2026-06-01",
+      "race_title": "Sonix Entertainment Handicap",
+      "runner_count": 19,
+      "passport_coverage": "16/19",
+      "passport_coverage_pct": 84.2,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Stellar Quality",
+          "prob": 0.071033
+        },
+        {
+          "rank": 2,
+          "horse": "Obscenity",
+          "prob": 0.059887
+        },
+        {
+          "rank": 3,
+          "horse": "Spanish Rising",
+          "prob": 0.059831
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Obscenity",
+          "prob": 0.063779
+        },
+        {
+          "rank": 3,
+          "horse": "Justenzia",
+          "prob": 0.061365
+        },
+        {
+          "rank": 2,
+          "horse": "Navinsky",
+          "prob": 0.063506
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "920252",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-01T14:42:00",
+      "race_date": "2026-06-01",
+      "race_title": "Download The At The Races App Handicap",
+      "runner_count": 9,
+      "passport_coverage": "9/9",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Southbank",
+          "prob": 0.097327
+        },
+        {
+          "rank": 2,
+          "horse": "Chasing Gold",
+          "prob": 0.096927
+        },
+        {
+          "rank": 3,
+          "horse": "Griselda",
+          "prob": 0.0965
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Southbank",
+          "prob": 0.103605
+        },
+        {
+          "rank": 2,
+          "horse": "Chasing Gold",
+          "prob": 0.10274
+        },
+        {
+          "rank": 3,
+          "horse": "Tomarlo",
+          "prob": 0.101822
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919962",
+      "course": "Newbury",
+      "off_time": "2026-06-01T14:50:00",
+      "race_date": "2026-06-01",
+      "race_title": "BetVictor Backing England To Win Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Jakarta",
+          "prob": 0.083046
+        },
+        {
+          "rank": 2,
+          "horse": "Freddie's Star",
+          "prob": 0.082597
+        },
+        {
+          "rank": 3,
+          "horse": "Knights Gold",
+          "prob": 0.082362
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Jakarta",
+          "prob": 0.084868
+        },
+        {
+          "rank": 1,
+          "horse": "Knights Gold",
+          "prob": 0.087281
+        },
+        {
+          "rank": 2,
+          "horse": "Herculeus",
+          "prob": 0.086135
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921816",
+      "course": "Listowel",
+      "off_time": "2026-06-01T14:57:00",
+      "race_date": "2026-06-01",
+      "race_title": "Join Racing TV With A Free Trial Now Handicap Hurdle",
+      "runner_count": 8,
+      "passport_coverage": "8/8",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Becasse",
+          "prob": 0.132884
+        },
+        {
+          "rank": 2,
+          "horse": "Putapoundinthejar",
+          "prob": 0.126539
+        },
+        {
+          "rank": 3,
+          "horse": "Wholelotofbusiness",
+          "prob": 0.089776
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Becasse",
+          "prob": 0.173451
+        },
+        {
+          "rank": 2,
+          "horse": "Putapoundinthejar",
+          "prob": 0.156631
+        },
+        {
+          "rank": 3,
+          "horse": "Wholelotofbusiness",
+          "prob": 0.093595
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921809",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T15:09:00",
+      "race_date": "2026-06-01",
+      "race_title": "Irish Stallion Farms EBF Fillies Handicap",
+      "runner_count": 8,
+      "passport_coverage": "8/8",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Ob La Di",
+          "prob": 0.116819
+        },
+        {
+          "rank": 2,
+          "horse": "Chica Guerrera",
+          "prob": 0.116691
+        },
+        {
+          "rank": 3,
+          "horse": "Spanish Temptress",
+          "prob": 0.115919
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Ob La Di",
+          "prob": 0.125583
+        },
+        {
+          "rank": 2,
+          "horse": "Chica Guerrera",
+          "prob": 0.121159
+        },
+        {
+          "rank": 3,
+          "horse": "River Ara",
+          "prob": 0.120884
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920250",
+      "course": "Lingfield (AW)",
+      "off_time": "2026-06-01T15:17:00",
+      "race_date": "2026-06-01",
+      "race_title": "Follow @AtTheRaces On X Handicap (GBBPlus Race)",
+      "runner_count": 5,
+      "passport_coverage": "5/5",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Starship Trooper",
+          "prob": 0.176993
+        },
+        {
+          "rank": 2,
+          "horse": "Astrological",
+          "prob": 0.176535
+        },
+        {
+          "rank": 3,
+          "horse": "Wardlaw",
+          "prob": 0.174245
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Astrological",
+          "prob": 0.175813
+        },
+        {
+          "rank": 3,
+          "horse": "Wardlaw",
+          "prob": 0.175448
+        },
+        {
+          "rank": 2,
+          "horse": "Parisian Scholar",
+          "prob": 0.175608
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919963",
+      "course": "Newbury",
+      "off_time": "2026-06-01T15:25:00",
+      "race_date": "2026-06-01",
+      "race_title": "Favourite Things Boosted Daily At BetVictor Maiden Stakes (GBB Race)",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Velvet Goldmine",
+          "prob": 0.123991
+        },
+        {
+          "rank": 2,
+          "horse": "Jellystone Park",
+          "prob": 0.123926
+        },
+        {
+          "rank": 3,
+          "horse": "Sea Cookie",
+          "prob": 0.123093
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Jellystone Park",
+          "prob": 0.127106
+        },
+        {
+          "rank": 2,
+          "horse": "Sea Cookie",
+          "prob": 0.127106
+        },
+        {
+          "rank": 3,
+          "horse": "Bold Shout",
+          "prob": 0.12651
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921817",
+      "course": "Listowel",
+      "off_time": "2026-06-01T15:32:00",
+      "race_date": "2026-06-01",
+      "race_title": "John B. Keane Beginners Chase",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Walk Away Harry",
+          "prob": 0.211824
+        },
+        {
+          "rank": 2,
+          "horse": "Uptaurintop",
+          "prob": 0.202097
+        },
+        {
+          "rank": 3,
+          "horse": "Whispering Willow",
+          "prob": 0.152792
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Walk Away Harry",
+          "prob": 0.214899
+        },
+        {
+          "rank": 1,
+          "horse": "Uptaurintop",
+          "prob": 0.235651
+        },
+        {
+          "rank": 3,
+          "horse": "Brave Endeavour",
+          "prob": 0.179814
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921810",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T15:44:00",
+      "race_date": "2026-06-01",
+      "race_title": "Irish Stallion Farms EBF Gowran Classic (Smullen Series)",
+      "runner_count": 18,
+      "passport_coverage": "16/18",
+      "passport_coverage_pct": 88.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Honouramongthieves",
+          "prob": 0.071784
+        },
+        {
+          "rank": 2,
+          "horse": "Perisher",
+          "prob": 0.069078
+        },
+        {
+          "rank": 3,
+          "horse": "Bunyola Bay",
+          "prob": 0.065875
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Honouramongthieves",
+          "prob": 0.0652
+        },
+        {
+          "rank": 1,
+          "horse": "Karrygrant",
+          "prob": 0.07099
+        },
+        {
+          "rank": 2,
+          "horse": "Mo Mhuirin",
+          "prob": 0.066347
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "919957",
+      "course": "Lingfield",
+      "off_time": "2026-06-01T15:52:00",
+      "race_date": "2026-06-01",
+      "race_title": "British Stallion Studs EBF Novice Stakes (GBB Race)",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Blue Skies Above",
+          "prob": 0.165138
+        },
+        {
+          "rank": 2,
+          "horse": "Mrair",
+          "prob": 0.123926
+        },
+        {
+          "rank": 3,
+          "horse": "Rattenbury",
+          "prob": 0.123093
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Blue Skies Above",
+          "prob": 0.165706
+        },
+        {
+          "rank": 2,
+          "horse": "Mrair",
+          "prob": 0.127106
+        },
+        {
+          "rank": 3,
+          "horse": "Rattenbury",
+          "prob": 0.127106
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919965",
+      "course": "Newbury",
+      "off_time": "2026-06-01T16:00:00",
+      "race_date": "2026-06-01",
+      "race_title": "Pump Technology Jonathan And Natalie Handicap",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Aces Wild",
+          "prob": 0.137689
+        },
+        {
+          "rank": 2,
+          "horse": "The Feminine Urge",
+          "prob": 0.125488
+        },
+        {
+          "rank": 3,
+          "horse": "Merrimack",
+          "prob": 0.120511
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "The Feminine Urge",
+          "prob": 0.1252
+        },
+        {
+          "rank": 1,
+          "horse": "Merrimack",
+          "prob": 0.133413
+        },
+        {
+          "rank": 2,
+          "horse": "Hint Of Humour",
+          "prob": 0.130705
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921818",
+      "course": "Listowel",
+      "off_time": "2026-06-01T16:07:00",
+      "race_date": "2026-06-01",
+      "race_title": "John J. Galvin Chase",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Blood Destiny",
+          "prob": 0.14885
+        },
+        {
+          "rank": 2,
+          "horse": "Itsalladream",
+          "prob": 0.113791
+        },
+        {
+          "rank": 3,
+          "horse": "Eagle Fang",
+          "prob": 0.110721
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Blood Destiny",
+          "prob": 0.195961
+        },
+        {
+          "rank": 3,
+          "horse": "Itsalladream",
+          "prob": 0.12497
+        },
+        {
+          "rank": 2,
+          "horse": "Eagle Fang",
+          "prob": 0.1273
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921811",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T16:19:00",
+      "race_date": "2026-06-01",
+      "race_title": "QuinnBet (C & G) Maiden",
+      "runner_count": 16,
+      "passport_coverage": "16/16",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Jumpingthegun",
+          "prob": 0.068397
+        },
+        {
+          "rank": 2,
+          "horse": "Parish Team",
+          "prob": 0.067517
+        },
+        {
+          "rank": 3,
+          "horse": "Will You Stop",
+          "prob": 0.067472
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Jumpingthegun",
+          "prob": 0.067741
+        },
+        {
+          "rank": 1,
+          "horse": "Parish Team",
+          "prob": 0.067767
+        },
+        {
+          "rank": 3,
+          "horse": "Royal Sapphire",
+          "prob": 0.067454
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919958",
+      "course": "Lingfield",
+      "off_time": "2026-06-01T16:27:00",
+      "race_date": "2026-06-01",
+      "race_title": "Follow @AtTheRaces On Instagram Restricted Novice Stakes (Bands C/D) (GBB Race)",
+      "runner_count": 8,
+      "passport_coverage": "8/8",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Perola",
+          "prob": 0.121161
+        },
+        {
+          "rank": 2,
+          "horse": "Kennington",
+          "prob": 0.110816
+        },
+        {
+          "rank": 3,
+          "horse": "Mythological Star",
+          "prob": 0.109418
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Perola",
+          "prob": 0.129935
+        },
+        {
+          "rank": 2,
+          "horse": "Kennington",
+          "prob": 0.112289
+        },
+        {
+          "rank": 3,
+          "horse": "Mythological Star",
+          "prob": 0.111146
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919960",
+      "course": "Newbury",
+      "off_time": "2026-06-01T16:35:00",
+      "race_date": "2026-06-01",
+      "race_title": "South Downs Water Handicap (GBBPlus Race)",
+      "runner_count": 8,
+      "passport_coverage": "8/8",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Calvert",
+          "prob": 0.120113
+        },
+        {
+          "rank": 2,
+          "horse": "Naval Tribute",
+          "prob": 0.1191
+        },
+        {
+          "rank": 3,
+          "horse": "John Galt",
+          "prob": 0.117139
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Calvert",
+          "prob": 0.114997
+        },
+        {
+          "rank": 2,
+          "horse": "Naval Tribute",
+          "prob": 0.11552
+        },
+        {
+          "rank": 1,
+          "horse": "Personal Best",
+          "prob": 0.11641
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921819",
+      "course": "Listowel",
+      "off_time": "2026-06-01T16:42:00",
+      "race_date": "2026-06-01",
+      "race_title": "Beasley Engineering Hunters Chase",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Solitary Man",
+          "prob": 0.149684
+        },
+        {
+          "rank": 2,
+          "horse": "Asphalt Cowboy",
+          "prob": 0.149684
+        },
+        {
+          "rank": 3,
+          "horse": "Big Interest",
+          "prob": 0.137405
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Solitary Man",
+          "prob": 0.137897
+        },
+        {
+          "rank": 3,
+          "horse": "Asphalt Cowboy",
+          "prob": 0.137897
+        },
+        {
+          "rank": 1,
+          "horse": "Big Interest",
+          "prob": 0.139139
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921812",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T16:54:00",
+      "race_date": "2026-06-01",
+      "race_title": "Ladies Day July 25th Handicap (Div I)",
+      "runner_count": 14,
+      "passport_coverage": "14/14",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Dawson Street",
+          "prob": 0.071761
+        },
+        {
+          "rank": 2,
+          "horse": "Accelereight",
+          "prob": 0.068696
+        },
+        {
+          "rank": 3,
+          "horse": "Sweet Baby Zou",
+          "prob": 0.068617
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Dawson Street",
+          "prob": 0.072544
+        },
+        {
+          "rank": 2,
+          "horse": "Accelereight",
+          "prob": 0.07014
+        },
+        {
+          "rank": 3,
+          "horse": "Pliny",
+          "prob": 0.06911
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919959",
+      "course": "Lingfield",
+      "off_time": "2026-06-01T17:00:00",
+      "race_date": "2026-06-01",
+      "race_title": "Sky Sports Racing Virgin 512 Handicap",
+      "runner_count": 9,
+      "passport_coverage": "9/9",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Tattie Bogle",
+          "prob": 0.101855
+        },
+        {
+          "rank": 2,
+          "horse": "Dandy G Boy",
+          "prob": 0.101534
+        },
+        {
+          "rank": 3,
+          "horse": "Ironist",
+          "prob": 0.100604
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Tattie Bogle",
+          "prob": 0.106991
+        },
+        {
+          "rank": 1,
+          "horse": "Dandy G Boy",
+          "prob": 0.108509
+        },
+        {
+          "rank": 2,
+          "horse": "Rogue Dynasty",
+          "prob": 0.107549
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919967",
+      "course": "Windsor",
+      "off_time": "2026-06-01T17:05:00",
+      "race_date": "2026-06-01",
+      "race_title": "Fenchurch Insurance Brokers Handicap",
+      "runner_count": 8,
+      "passport_coverage": "8/8",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Cressida Wildes",
+          "prob": 0.124467
+        },
+        {
+          "rank": 2,
+          "horse": "Mesaafi",
+          "prob": 0.116923
+        },
+        {
+          "rank": 3,
+          "horse": "Solar Edge",
+          "prob": 0.11481
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Cressida Wildes",
+          "prob": 0.123453
+        },
+        {
+          "rank": 1,
+          "horse": "Solar Edge",
+          "prob": 0.123746
+        },
+        {
+          "rank": 3,
+          "horse": "Wheels Of Fire",
+          "prob": 0.119748
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919961",
+      "course": "Newbury",
+      "off_time": "2026-06-01T17:10:00",
+      "race_date": "2026-06-01",
+      "race_title": "West Court Retreat Supports Heros Charity Handicap (GBBPlus Race)",
+      "runner_count": 9,
+      "passport_coverage": "9/9",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Nanino Niyati",
+          "prob": 0.104786
+        },
+        {
+          "rank": 2,
+          "horse": "Aphrodite Spirit",
+          "prob": 0.103013
+        },
+        {
+          "rank": 3,
+          "horse": "Twisting Physics",
+          "prob": 0.102121
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Nanino Niyati",
+          "prob": 0.11492
+        },
+        {
+          "rank": 2,
+          "horse": "Aphrodite Spirit",
+          "prob": 0.107422
+        },
+        {
+          "rank": 3,
+          "horse": "Twisting Physics",
+          "prob": 0.106846
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921820",
+      "course": "Listowel",
+      "off_time": "2026-06-01T17:17:00",
+      "race_date": "2026-06-01",
+      "race_title": "Bryan MacMahon (Pro/Am) INH Flat Race",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Caman Hill",
+          "prob": 0.168106
+        },
+        {
+          "rank": 2,
+          "horse": "Thelittleballerina",
+          "prob": 0.092657
+        },
+        {
+          "rank": 3,
+          "horse": "Martymill",
+          "prob": 0.092657
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Caman Hill",
+          "prob": 0.172224
+        },
+        {
+          "rank": 2,
+          "horse": "Thelittleballerina",
+          "prob": 0.098169
+        },
+        {
+          "rank": 3,
+          "horse": "Martymill",
+          "prob": 0.098169
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921940",
+      "course": "Gowran Park",
+      "off_time": "2026-06-01T17:29:00",
+      "race_date": "2026-06-01",
+      "race_title": "Ladies Day July 25th Handicap (Div II)",
+      "runner_count": 15,
+      "passport_coverage": "15/15",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Premier Princess",
+          "prob": 0.070324
+        },
+        {
+          "rank": 2,
+          "horse": "Borora Aura",
+          "prob": 0.069192
+        },
+        {
+          "rank": 3,
+          "horse": "Amrum",
+          "prob": 0.068749
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Borora Aura",
+          "prob": 0.070206
+        },
+        {
+          "rank": 3,
+          "horse": "A Pretty Penny",
+          "prob": 0.068764
+        },
+        {
+          "rank": 2,
+          "horse": "Ochtar Againn",
+          "prob": 0.069781
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919970",
+      "course": "Windsor",
+      "off_time": "2026-06-01T17:40:00",
+      "race_date": "2026-06-01",
+      "race_title": "Pourou Garhigh Anniversary EBF Restricted Novice Stakes (Bands C/D) (EBF Qual') (GBB Race) (Div I)",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Chianti",
+          "prob": 0.093744
+        },
+        {
+          "rank": 2,
+          "horse": "Emirates Express",
+          "prob": 0.093557
+        },
+        {
+          "rank": 3,
+          "horse": "My Boo Boo",
+          "prob": 0.091499
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Chianti",
+          "prob": 0.094906
+        },
+        {
+          "rank": 2,
+          "horse": "My Boo Boo",
+          "prob": 0.094685
+        },
+        {
+          "rank": 3,
+          "horse": "Ventura Power",
+          "prob": 0.094289
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920255",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-01T18:00:00",
+      "race_date": "2026-06-01",
+      "race_title": "Get Raceday Ready Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fircombe Hall",
+          "prob": 0.084286
+        },
+        {
+          "rank": 2,
+          "horse": "South Kensington",
+          "prob": 0.077505
+        },
+        {
+          "rank": 3,
+          "horse": "Lessay",
+          "prob": 0.077123
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "South Kensington",
+          "prob": 0.080604
+        },
+        {
+          "rank": 3,
+          "horse": "Rosemary's Rose",
+          "prob": 0.079244
+        },
+        {
+          "rank": 2,
+          "horse": "Fistral Beach",
+          "prob": 0.080342
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921938",
+      "course": "Windsor",
+      "off_time": "2026-06-01T18:15:00",
+      "race_date": "2026-06-01",
+      "race_title": "Pourou Garhigh Anniversary EBF Restricted Novice Stakes (Bands C/D) (EBF Qual') (GBB Race) (Div II)",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Belardo Ace",
+          "prob": 0.093744
+        },
+        {
+          "rank": 2,
+          "horse": "Sovereign Dawn",
+          "prob": 0.093705
+        },
+        {
+          "rank": 3,
+          "horse": "Good Fighter",
+          "prob": 0.093351
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Belardo Ace",
+          "prob": 0.094906
+        },
+        {
+          "rank": 2,
+          "horse": "Sovereign Dawn",
+          "prob": 0.09513
+        },
+        {
+          "rank": 1,
+          "horse": "Good Fighter",
+          "prob": 0.09513
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920257",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-01T18:30:00",
+      "race_date": "2026-06-01",
+      "race_title": "Download The Raceday Ready App Fillies' Handicap",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Silky Lass",
+          "prob": 0.086757
+        },
+        {
+          "rank": 2,
+          "horse": "Alkumatic Jo Jo",
+          "prob": 0.085282
+        },
+        {
+          "rank": 3,
+          "horse": "Romantic Spirit",
+          "prob": 0.081916
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Silky Lass",
+          "prob": 0.090718
+        },
+        {
+          "rank": 1,
+          "horse": "Alkumatic Jo Jo",
+          "prob": 0.091676
+        },
+        {
+          "rank": 2,
+          "horse": "Suhub",
+          "prob": 0.090934
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919968",
+      "course": "Windsor",
+      "off_time": "2026-06-01T18:45:00",
+      "race_date": "2026-06-01",
+      "race_title": "Ravens Roofing Supplies Fillies' Novice Stakes (GBB Race)",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "March Of Time",
+          "prob": 0.09253
+        },
+        {
+          "rank": 2,
+          "horse": "Material Girl",
+          "prob": 0.092355
+        },
+        {
+          "rank": 3,
+          "horse": "Red Legs",
+          "prob": 0.092316
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Material Girl",
+          "prob": 0.092946
+        },
+        {
+          "rank": 2,
+          "horse": "Red Legs",
+          "prob": 0.093166
+        },
+        {
+          "rank": 1,
+          "horse": "Ventana",
+          "prob": 0.093166
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920254",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-01T19:00:00",
+      "race_date": "2026-06-01",
+      "race_title": "Enjoy Summer Racing At Wolverhampton Racecourse Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Hashtagnotions",
+          "prob": 0.079911
+        },
+        {
+          "rank": 2,
+          "horse": "Scenario",
+          "prob": 0.079731
+        },
+        {
+          "rank": 3,
+          "horse": "Asian Journey",
+          "prob": 0.076437
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Hashtagnotions",
+          "prob": 0.079922
+        },
+        {
+          "rank": 1,
+          "horse": "Scenario",
+          "prob": 0.080005
+        },
+        {
+          "rank": 2,
+          "horse": "Age Of Time",
+          "prob": 0.079947
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919966",
+      "course": "Windsor",
+      "off_time": "2026-06-01T19:15:00",
+      "race_date": "2026-06-01",
+      "race_title": "Fitzdares Sprint Series Handicap (Windsor Sprint Series Qualifier)",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sayidah Hard Spun",
+          "prob": 0.090508
+        },
+        {
+          "rank": 2,
+          "horse": "Nuevo Slovo",
+          "prob": 0.090296
+        },
+        {
+          "rank": 3,
+          "horse": "Amorim",
+          "prob": 0.088342
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sayidah Hard Spun",
+          "prob": 0.10273
+        },
+        {
+          "rank": 2,
+          "horse": "Nuevo Slovo",
+          "prob": 0.100979
+        },
+        {
+          "rank": 3,
+          "horse": "Amorim",
+          "prob": 0.099711
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920253",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-01T19:30:00",
+      "race_date": "2026-06-01",
+      "race_title": "Race And Rest At The Holiday Inn Maiden Stakes (GBB Race) (Div I)",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Hungarian",
+          "prob": 0.087344
+        },
+        {
+          "rank": 2,
+          "horse": "Al Qatem",
+          "prob": 0.085681
+        },
+        {
+          "rank": 3,
+          "horse": "Mithridates",
+          "prob": 0.084502
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Hungarian",
+          "prob": 0.095544
+        },
+        {
+          "rank": 3,
+          "horse": "Rua Mor",
+          "prob": 0.087976
+        },
+        {
+          "rank": 2,
+          "horse": "Ramli",
+          "prob": 0.089215
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919971",
+      "course": "Windsor",
+      "off_time": "2026-06-01T19:45:00",
+      "race_date": "2026-06-01",
+      "race_title": "Don & Low Champions Cup 2026 Handicap",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Lynda's Dream",
+          "prob": 0.083183
+        },
+        {
+          "rank": 2,
+          "horse": "Launceston",
+          "prob": 0.082548
+        },
+        {
+          "rank": 3,
+          "horse": "Just Adair",
+          "prob": 0.075795
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Lynda's Dream",
+          "prob": 0.085481
+        },
+        {
+          "rank": 2,
+          "horse": "Launceston",
+          "prob": 0.084625
+        },
+        {
+          "rank": 3,
+          "horse": "Just Adair",
+          "prob": 0.081254
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921939",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-01T20:00:00",
+      "race_date": "2026-06-01",
+      "race_title": "Race And Rest At The Holiday Inn Maiden Stakes (GBB Race) (Div II)",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "King Of Earth",
+          "prob": 0.131447
+        },
+        {
+          "rank": 2,
+          "horse": "Raggaas",
+          "prob": 0.085681
+        },
+        {
+          "rank": 3,
+          "horse": "Be Hopeful",
+          "prob": 0.085448
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "King Of Earth",
+          "prob": 0.13102
+        },
+        {
+          "rank": 3,
+          "horse": "Vino Sauro",
+          "prob": 0.090341
+        },
+        {
+          "rank": 2,
+          "horse": "Cy Twombly",
+          "prob": 0.090722
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919972",
+      "course": "Windsor",
+      "off_time": "2026-06-01T20:15:00",
+      "race_date": "2026-06-01",
+      "race_title": "Marley Solar Roof System \"Confined\" Handicap (For horses Which Have Not Won More Than One Race)",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "African Gib",
+          "prob": 0.095517
+        },
+        {
+          "rank": 2,
+          "horse": "Mohaab",
+          "prob": 0.094283
+        },
+        {
+          "rank": 3,
+          "horse": "Bennyworth",
+          "prob": 0.094108
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "African Gib",
+          "prob": 0.100899
+        },
+        {
+          "rank": 1,
+          "horse": "Mohaab",
+          "prob": 0.10098
+        },
+        {
+          "rank": 2,
+          "horse": "My Champion",
+          "prob": 0.10098
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920258",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-01T20:30:00",
+      "race_date": "2026-06-01",
+      "race_title": "Free Digital Racecard At raceday-ready.com Classified Stakes",
+      "runner_count": 11,
+      "passport_coverage": "11/11",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "She's A Gift",
+          "prob": 0.081598
+        },
+        {
+          "rank": 2,
+          "horse": "Bust A Moon",
+          "prob": 0.080799
+        },
+        {
+          "rank": 3,
+          "horse": "Nad Alshiba Snow",
+          "prob": 0.080533
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "She's A Gift",
+          "prob": 0.087713
+        },
+        {
+          "rank": 3,
+          "horse": "Bust A Moon",
+          "prob": 0.085463
+        },
+        {
+          "rank": 1,
+          "horse": "Nad Alshiba Snow",
+          "prob": 0.089124
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919969",
+      "course": "Windsor",
+      "off_time": "2026-06-01T20:45:00",
+      "race_date": "2026-06-01",
+      "race_title": "Skyline Roofing Centers Handicap",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Saliko",
+          "prob": 0.091969
+        },
+        {
+          "rank": 2,
+          "horse": "Brodie's Boy",
+          "prob": 0.09155
+        },
+        {
+          "rank": 3,
+          "horse": "Galaxy Wonder",
+          "prob": 0.090545
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Saliko",
+          "prob": 0.097107
+        },
+        {
+          "rank": 3,
+          "horse": "Brodie's Boy",
+          "prob": 0.091441
+        },
+        {
+          "rank": 1,
+          "horse": "Galaxy Wonder",
+          "prob": 0.098746
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "920256",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-01T21:00:00",
+      "race_date": "2026-06-01",
+      "race_title": "Get The Inside Track With raceday-ready.com Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Havana Sky",
+          "prob": 0.080093
+        },
+        {
+          "rank": 2,
+          "horse": "Fuji Mountain",
+          "prob": 0.078905
+        },
+        {
+          "rank": 3,
+          "horse": "Beyond Borders",
+          "prob": 0.078616
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Fuji Mountain",
+          "prob": 0.08668
+        },
+        {
+          "rank": 2,
+          "horse": "Beyond Borders",
+          "prob": 0.086129
+        },
+        {
+          "rank": 3,
+          "horse": "Giorgio M",
+          "prob": 0.086115
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_engine": true,
+    "no_telegram": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_staking": true,
+    "rpr_archive_only": true,
+    "no_market_lane_morning": true,
+    "no_jtcd_alltime": true
+  }
+}

@@ -1,71 +1,71 @@
 # Horse Passport V1
-Generated: 2026-05-26T02:07:53.119203+00:00
+Generated: 2026-05-31T09:39:52.667446+00:00
 
 ## Summary
-- **Total passports**: 987
-- **Existing before run**: 987
-- **Newly appended**: 0
-- **Source horses found in form history**: 987
+- **Total passports**: 2139
+- **Existing before run**: 0
+- **Newly appended**: 2139
+- **Source horses found in form history**: 2139
 - **Build failures**: 0
 - **Existing duplicate rows skipped**: 0
-- **Cash-run candidates**: 21
-- **Setup-run candidates**: 258
-- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 306
+- **Cash-run candidates**: 31
+- **Setup-run candidates**: 897
+- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 631
 
 ## Field Coverage
 | Field | Coverage |
 |---|---|
-| days_since_last_run | 97.2% |
-| avg_days_between_runs | 87.6% |
-| sp_trajectory | 66.6% |
-| avg_sp_last5 | 97.2% |
-| going_preference | 18.6% |
-| course_affinity | 11.8% |
-| margin_trend | 0.0% |
-| or_trajectory | 72.3% |
-| current_or | 96.5% |
+| days_since_last_run | 0.0% |
+| avg_days_between_runs | 89.2% |
+| sp_trajectory | 71.8% |
+| avg_sp_last5 | 98.6% |
+| going_preference | 18.0% |
+| course_affinity | 10.7% |
+| margin_trend | 68.7% |
+| or_trajectory | 67.6% |
+| current_or | 96.1% |
 
 ## Top 10 Cash-Run Candidates
 | Horse | SP | WF Rate | WF Fail Rate | Last Run DaysAgo |
 |---|---|---|---|---|
-| Freedom Flame | 2.75 | 100% | 100% | 17d |
-| Or Another | 2.0 | 100% | 100% | 26d |
-| Charles Darwin | 1.56 | 100% | 20% | 8d |
-| Dreamlover | 2.62 | 100% | 100% | 18d |
-| Ipanema Queen | 2.66 | 100% | 80% | 22d |
-| Maho Bay | 2.1 | 100% | 33% | 16d |
-| Minnie Hauk | 1.62 | 100% | 33% | 1d |
-| Saxon Street | 2.27 | 100% | 33% | 2d |
-| Almeric | 6.25 | 80% | 25% | 31d |
-| Al Riffa | 4.81 | 67% | 50% | 58d |
+| Freedom Flame | 2.75 | 100% | 100% | Noned |
+| Or Another | 2.0 | 100% | 100% | Noned |
+| The Dancing Pirate | 2.88 | 100% | 100% | Noned |
+| Usyk | 3.04 | 100% | 100% | Noned |
+| Charles Darwin | 1.56 | 100% | 20% | Noned |
+| Dreamlover | 2.62 | 100% | 100% | Noned |
+| Ipanema Queen | 2.66 | 100% | 80% | Noned |
+| Maho Bay | 2.1 | 100% | 33% | Noned |
+| Minnie Hauk | 1.62 | 100% | 33% | Noned |
+| Saxon Street | 2.27 | 100% | 33% | Noned |
 
 ## Top 10 Setup-Run Candidates
 | Horse | Avg Beaten Margin | OR Change | Days Since Run |
 |---|---|---|---|
-| Sea Of Charm | None | -10 | 14d |
-| Justcallmepete | None | -7 | 30d |
-| Talis Evolvere | None | -11 | 9d |
-| Nikovo | None | -6 | 16d |
-| Auld Toon Loon | None | -9 | 17d |
-| Juggernaut | None | -7 | 1d |
-| Desert Cop | None | -19 | 9d |
-| Kylian | None | -22 | 12d |
-| Skipper | None | -22 | 23d |
-| Trefor | None | -31 | 24d |
+| Baileys Big Image | 178.0 | None | Noned |
+| Creevybeg | 142.0 | None | Noned |
+| Strong Man Tom | 110.67 | 3 | Noned |
+| Ivebeenkewadesert | 104.0 | None | Noned |
+| Giorgia Rose | 93.0 | None | Noned |
+| Inches Away | 86.8 | -24 | Noned |
+| Blinding Light | 81.0 | 4 | Noned |
+| Westin Pimpernel | 80.33 | 14 | Noned |
+| Green Me Granny | 76.67 | 0 | Noned |
+| My Elusive Mate | 68.0 | None | Noned |
 
 ## Top 10 Jockey Anomaly Horses (well-fancied failures)
 | Horse | Well-Fancied Failure Rate | Well-Fancied Runs | Career Runs |
 |---|---|---|---|
-| Sea Of Charm | 100% | 11% of career | 63 |
-| Uncle Don | 100% | 27% of career | 15 |
-| Opera Wave | 100% | 14% of career | 7 |
-| Sunshine And Roses | 100% | 22% of career | 9 |
-| Fans Favourite | 100% | 25% of career | 4 |
-| Beryl's Girl | 100% | 25% of career | 4 |
-| Mertoun | 100% | 33% of career | 3 |
-| Mythical Valentine | 100% | 25% of career | 4 |
-| Paradise Walk | 100% | 50% of career | 4 |
-| Golden Prosperity | 100% | 2% of career | 56 |
+| Apache Star | 100% | 6% of career | 49 |
+| Northcliff | 100% | 11% of career | 53 |
+| Stage Show | 100% | 6% of career | 33 |
+| Calamint | 100% | 6% of career | 18 |
+| Miqdaad | 100% | 5% of career | 22 |
+| V Power | 100% | 5% of career | 20 |
+| Endofastorm | 100% | 2% of career | 43 |
+| Hosanna Power | 100% | 17% of career | 23 |
+| Bright N Shine | 100% | 12% of career | 24 |
+| Too Much Trevor | 100% | 3% of career | 29 |
 
 ## Bow Echo Passport
 - **horse_name**: Bow Echo
@@ -75,9 +75,10 @@ Generated: 2026-05-26T02:07:53.119203+00:00
 - **places**: 4
 - **win_rate**: 1.0
 - **place_rate**: 1.0
-- **days_since_last_run**: 23
+- **last_run_date**: 2026-05-02
+- **days_since_last_run**: None
 - **avg_days_between_runs**: 86.7
-- **layoff_flag**: ACTIVE
+- **layoff_flag**: None
 - **course_repeat**: True
 - **course_switch**: False
 - **unique_courses**: 3
@@ -94,8 +95,8 @@ Generated: 2026-05-26T02:07:53.119203+00:00
 - **avg_sp_last5**: 3.36
 - **well_fancied_rate**: 0.75
 - **well_fancied_failure_rate**: 0.0
-- **avg_beaten_margin**: None
-- **margin_trend**: None
+- **avg_beaten_margin**: 2.31
+- **margin_trend**: STABLE
 - **class_movement**: UP
 - **avg_field_size**: 9
 - **or_trajectory**: RISING
@@ -103,4 +104,21 @@ Generated: 2026-05-26T02:07:53.119203+00:00
 - **or_change_last3**: 27
 - **cash_run_candidate**: False
 - **setup_run_candidate**: False
-- **built_at**: 2026-05-25T21:40:36.214507Z
+- **win_rate_last3**: 1.0
+- **win_rate_last6**: 1.0
+- **win_rate_last12**: 1.0
+- **place_rate_last3**: 1.0
+- **place_rate_last6**: 1.0
+- **avg_beaten_margin_last3**: 1.58
+- **avg_beaten_margin_last6**: 2.31
+- **avg_sp_last3**: 3.48
+- **runs_in_last_90d**: 0
+- **runs_in_last_180d**: 0
+- **beaten_margin_slope**: -0.438
+- **position_trend**: STABLE
+- **career_wins_flat**: 4
+- **career_wins_aw**: 0
+- **career_win_rate_6f_under**: 0.0
+- **career_win_rate_7f_8f**: 1.0
+- **career_win_rate_9f_plus**: 0.0
+- **built_at**: 2026-05-31T09:39:52.403760Z

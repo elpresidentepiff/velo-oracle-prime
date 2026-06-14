@@ -90,31 +90,9 @@ class SourceTruthResult:
 
 _LOADER_TO_CANONICAL: dict[str, str] = {
     "cache": SourceLabel.LOCAL_JSON_FALLBACK,
-    "rp_merged": SourceLabel.RP_MERGED_CLEAN,   # Default; may be downgraded to DEGRADED
+    "rp_merged": SourceLabel.RP_MERGED_CLEAN,
     "api": SourceLabel.API_CLEAN,
 }
-
-
-def _detect_rp_degradation(races: list[dict[str, Any]]) -> bool:
-    """
-    Return True if the RP merged races show signs of feature degradation.
-
-    Degradation is detected when a significant fraction of runners are missing
-    key RP-derived fields (postdata_score, or_compression_score, ts_latest).
-    """
-    if not races:
-        return False
-    total = 0
-    missing = 0
-    for race in races:
-        for runner in race.get("runners", []):
-            total += 1
-            pdf_intel = runner.get("pdf_intel") or {}
-            if not pdf_intel.get("postdata_score") and not pdf_intel.get("or_compression_score"):
-                missing += 1
-    if total == 0:
-        return False
-    return (missing / total) > 0.5  # >50% runners missing RP intel = degraded
 
 
 # ── Main enforcement function ─────────────────────────────────────────────────
@@ -132,7 +110,7 @@ def enforce_source_truth(
     Args:
         loader_label:   The raw label returned by racecard_loader.load_racecards()
                         ('cache', 'rp_merged', 'api', or any unknown string).
-        races:          The loaded races list (used to detect RP degradation).
+        races:          The loaded races list (reserved for source validation).
         raise_on_block: If True (default), raise SourceTruthBlockError when
                         the label is SOURCE_UNKNOWN_BLOCK.
 
@@ -152,15 +130,8 @@ def enforce_source_truth(
             "Execution is blocked until source is declared."
         )
 
-    # Downgrade rp_merged to DEGRADED if feature inspection reveals missing intel
-    if canonical == SourceLabel.RP_MERGED_CLEAN and races:
-        if _detect_rp_degradation(races):
-            canonical = SourceLabel.RP_MERGED_DEGRADED
-            warnings.append(
-                "RP_MERGED_DEGRADED: >50% of runners are missing postdata_score / "
-                "or_compression_score. Feature degradation is active. "
-                "Learning is blocked for this run."
-            )
+    # RP merged truth is built from the validated Racing Post HTML injection.
+    # Legacy PDF-only fields are optional and must not downgrade an HTML-clean day.
 
     execution_allowed = canonical in SourceLabel.ALLOWED
     degraded = canonical in SourceLabel.DEGRADED

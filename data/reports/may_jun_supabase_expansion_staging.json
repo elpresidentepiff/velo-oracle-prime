@@ -1,0 +1,113 @@
+{
+  "report_type": "MAY_JUN_SUPABASE_EXPANSION_STAGING",
+  "generated": "2026-06-14",
+  "status": "READ_ONLY",
+
+  "row_count_reconciliation": {
+    "count_2528": "STALE — early project snapshot, pre Jun 10-13 ingestion",
+    "count_2686": "STALE — yesterday's session snapshot",
+    "count_2715": "CURRENT — confirmed via Content-Range header 2026-06-14",
+    "root_cause": "Table is live and appended to daily. No duplicates. Growth is real ingestion."
+  },
+
+  "dedup_analysis": {
+    "supabase_may_jun_rows": 1254,
+    "local_sigma_rows": 740,
+    "local_unique_race_ids": 732,
+    "overlap": 467,
+    "supabase_only_new_rows": 787,
+    "local_only_not_in_supabase": 265,
+    "combined_universe_if_merged": 1527
+  },
+
+  "supabase_only_rows": {
+    "count": 787,
+    "date_range": "2026-05-01 to 2026-06-05",
+    "main_block": "May 01-22 (749 rows)",
+    "stragglers": "May 24-29, Jun 03-05 (38 rows)",
+    "era_note": "Pre-local sigma era. Real scored races, never in local files."
+  },
+
+  "field_coverage_may_jun_supabase": {
+    "date": "100%",
+    "track": "100%",
+    "outcome": "100%",
+    "race_id": "100%",
+    "actual_winner_sp": "95.0% (1191/1254)",
+    "velo_prime_prob_extracted": "100%"
+  },
+
+  "roi_join_assessment": {
+    "csv_file": "velo_innovation_protocol_1k_deduped.csv",
+    "csv_rows": 1431,
+    "csv_date_range": "2026-05-02 to 2026-06-13",
+    "csv_race_id_format": "rac_XXXXXXXX (string prefix)",
+    "supabase_race_id_formats": {
+      "date_string": 982,
+      "numeric": 272
+    },
+    "direct_join_overlap": 187,
+    "full_join_possible": false,
+    "alternative_join": "date + track + off_time (requires validation)",
+    "sp_column": "sp_decimal",
+    "verdict": "Partial join only. Do not attempt full merge without secondary key validation."
+  },
+
+  "vp_gte_040_holds": {
+    "local_711_row_universe": {"n": 711, "vp40_rows": 181, "sr": "40.9%"},
+    "supabase_only_may_01_22": {"n": 787, "vp40_rows": 95, "sr": "43.2%"},
+    "full_may_jun_supabase": {"n": 1254, "vp40_rows": 256, "sr": "42.2%"},
+    "verdict": "VP>=0.40 gradient confirmed across all three datasets"
+  },
+
+  "outcome_vp_gradient_full_archive": {
+    "WIN_mean_vp": 0.3367,
+    "PLACED_mean_vp": 0.2948,
+    "MISS_mean_vp": 0.2394,
+    "win_minus_miss": 0.0973,
+    "note": "Based on 2,286 VP-extractable rows across full sigma_audits"
+  },
+
+  "local_only_265_rows": {
+    "count": 265,
+    "date_range": "May 23 – Jun 13",
+    "meaning": "Local system scored these races but Supabase was never synced",
+    "implication": "711 local universe is NOT a subset of Supabase — it has unique rows",
+    "action": "Supabase push requires operator decision — no write without approval"
+  },
+
+  "three_sigma_layers": {
+    "L1_local_corrected": {
+      "rows": 740, "vp_coverage": "100%", "era": "May 23 – Jun 14 (post-surgery)", "status": "CLEAN_USE_NOW"
+    },
+    "L2_supabase_may_unique": {
+      "rows": 787, "vp_coverage": "100%", "era": "May 01-22 (straddles surgery May 08)", "status": "EXPAND_NEXT_PENDING_ERA_DECISION"
+    },
+    "L3_supabase_mar_apr": {
+      "rows": 1061, "vp_coverage": "83.5%", "era": "Pre-surgery", "status": "SEPARATE_STUDY_ONLY_ERA_FLAG_REQUIRED"
+    },
+    "EXCLUDED_jan_feb_null": {
+      "rows": 190, "vp_coverage": "0%", "era": "Skeleton", "status": "EXCLUDED"
+    }
+  },
+
+  "era_decision_required": {
+    "surgery_date": "2026-05-08",
+    "l2_rows_pre_surgery": "~245 rows (May 01-07)",
+    "l2_rows_post_surgery": "~542 rows (May 08-22)",
+    "options": {
+      "A": "Era-split on May 08: tag May 01-07 as PRE_SURGERY, use May 08-22 with L1",
+      "B": "Full L2 as one block tagged LAYER_2_MAY_PRE_LOCAL, study separately then decide",
+      "C": "Hold at May 23 clean line — validate L2 VP SR stability before any blend"
+    }
+  },
+
+  "six_questions_summary": {
+    "Q1_count_mismatch": "Both stale — true count is 2,715, table is live",
+    "Q2_duplicates": "467 overlap, 787 unique SB rows, 265 local-only",
+    "Q3_new_rows": "787 from May 01-22, pre-local era, all new",
+    "Q4_fields": "100% coverage on course/outcome/date/race_id. 95% SP.",
+    "Q5_roi_join": "Partial (187 direct). Full merge needs secondary key.",
+    "Q6_vp_gradient": "Yes — 42.2% SR at VP>=0.40 in May-Jun SB. Gradient confirmed."
+  }
+}

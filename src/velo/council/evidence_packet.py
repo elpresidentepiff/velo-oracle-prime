@@ -4,6 +4,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+FORBIDDEN_COUNCIL_EVIDENCE_TERMS = ("racing api",)
+
+
 class EvidencePacket:
     def __init__(self, date_str: str):
         self.date_str = date_str
@@ -39,19 +42,6 @@ class EvidencePacket:
             required=True
         )
 
-        # Racing API Enrichment
-        self._find_evidence(
-            "racing_api_enrichment",
-            [
-                f"data/racing_api_enrichment_operator_card_{self.date_str}.md",
-                f"data/racing_api_enrichment_operator_card_{self.alt_date_str}.md",
-                f"data/racing_api_enrichment_miss_audit_{self.date_str}.md",
-                f"data/racing_api_enrichment_miss_audit_{self.alt_date_str}.md"
-            ],
-            repo_root,
-            required=True
-        )
-
         # Cashrun
         self._find_evidence(
             "cashrun_report",
@@ -68,16 +58,6 @@ class EvidencePacket:
             [
                 "data/live_sidecar_ablation_audit_latest.md",
                 "data/live_sidecar_ablation_audit_latest.json"
-            ],
-            repo_root
-        )
-
-        # Signal Promotion Board
-        self._find_evidence(
-            "signal_promotion_board",
-            [
-                "data/signal_promotion_board_latest.md",
-                "data/signal_promotion_board_latest.csv"
             ],
             repo_root
         )
@@ -116,10 +96,15 @@ class EvidencePacket:
             name for name, info in self.data["evidence_sources"].items()
             if info["required_for_release"] and info["status"] == "MISSING"
         ]
+        forbidden_sources = [
+            name for name, info in self.data["evidence_sources"].items()
+            if any(term in str(info.get("content") or "").lower() for term in FORBIDDEN_COUNCIL_EVIDENCE_TERMS)
+        ]
         
-        if required_missing:
+        if required_missing or forbidden_sources:
             self.data["metadata"]["council_status"] = "EVIDENCE_INCOMPLETE"
             self.data["metadata"]["status"] = "INCOMPLETE"
+            self.data["metadata"]["forbidden_evidence_sources"] = forbidden_sources
         else:
             self.data["metadata"]["council_status"] = "READY"
             self.data["metadata"]["status"] = "LOADED"

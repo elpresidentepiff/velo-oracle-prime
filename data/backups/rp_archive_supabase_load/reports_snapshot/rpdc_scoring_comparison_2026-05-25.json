@@ -1,0 +1,60 @@
+{
+  "audit_date": "2026-05-25",
+  "data_date": "2026-05-24",
+  "is_proxy": true,
+  "run_at": "2026-05-24T18:06:04.618279+00:00",
+  "data_source": "snapshot:runner_snapshots_2026_05_24_2026_05_24_932096b7_1779620153700.jsonl",
+  "runner_count": 241,
+  "card_available": false,
+  "path_a": {
+    "description": "Current scoring pipeline (no RPDC injection)",
+    "improvement_constant": true,
+    "improvement_unique_values": 1,
+    "improvement_value": 0.0872,
+    "kill_switch_fires": true,
+    "active_components": [
+      "market_deception_score",
+      "sqpe_v17"
+    ],
+    "tiers": {
+      "A": 9,
+      "B": 135,
+      "X": 74,
+      "C": 23
+    }
+  },
+  "path_b": {
+    "description": "With RPDC local memory (Option B read-only bridge)",
+    "scoring_changed": false,
+    "improvement_constant": true,
+    "kill_switch_fires": true,
+    "active_components": [
+      "market_deception_score",
+      "sqpe_v17"
+    ],
+    "tiers": {
+      "A": 9,
+      "B": 135,
+      "X": 74,
+      "C": 23
+    },
+    "rpdc_annotation_coverage": {
+      "matched": 151,
+      "match_rate_pct": 62.7,
+      "tagged": 104,
+      "cash_window": 34
+    }
+  },
+  "comparison": {
+    "scoring_identical": true,
+    "tier_changes": 0,
+    "probability_deltas": "NONE \u2014 RPDC Option B is read-only annotation, no scoring formula change",
+    "a_tier_changes": 0,
+    "b_tier_changes": 0,
+    "top_horse_changes": 0
+  },
+  "formula_status": "FEATURE_DEGRADED",
+  "formula_detail": "improvement_score = 0.0872 (constant) \u2192 excluded by zero-variance kill switch. Active components: ['market_deception_score', 'sqpe_v17'].",
+  "may25_classification": "FEATURE_DEGRADED",
+  "may25_classification_reason": "improvement_score excluded (constant). RPDC local memory provides annotation context only. Improvement variance requires pipeline change to inject racecard features (or_vs_field, rpr_vs_field, age_num)."
+}

@@ -1,0 +1,1039 @@
+{
+  "date": "2026-06-12",
+  "status": "FORWARD_PAPER_ONLY_NOT_LIVE",
+  "policy": {
+    "status": "FORWARD_PAPER_ONLY_NOT_LIVE",
+    "core_rule": "GB AND TURF_OR_JUMPS AND FIELD_7_9 AND NOT WEAK_EXCLUDE_TRACK",
+    "baseline_n": 224,
+    "bet_reduction_pct": 0.7768,
+    "core_metrics": {
+      "total": {
+        "n": 50,
+        "wins": 22,
+        "frames": 36,
+        "sr": 0.44,
+        "frame_rate": 0.72,
+        "sr_wilson_lower_90": 0.3306,
+        "returns": 90.03,
+        "pl": 40.03,
+        "roi": 0.8006,
+        "max_drawdown": -9.03
+      },
+      "train": {
+        "n": 33,
+        "wins": 16,
+        "frames": 24,
+        "sr": 0.4848,
+        "frame_rate": 0.7273,
+        "sr_wilson_lower_90": 0.3484,
+        "returns": 65.74,
+        "pl": 32.74,
+        "roi": 0.9921,
+        "max_drawdown": -9.03
+      },
+      "test": {
+        "n": 17,
+        "wins": 6,
+        "frames": 12,
+        "sr": 0.3529,
+        "frame_rate": 0.7059,
+        "sr_wilson_lower_90": 0.1949,
+        "returns": 24.29,
+        "pl": 7.29,
+        "roi": 0.4288,
+        "max_drawdown": -4.0
+      },
+      "cut_date": "2026-06-08"
+    },
+    "hard_no_bet_gates": [
+      "IRE races: broad Sigma underperforms GB and dated ROI is negative.",
+      "Fields of 10 or more: both 10-12 and 13+ buckets are negative in chronological holdout.",
+      "VP below 0.20: negative overall and zero holdout wins in the dated sample.",
+      "WEAK_EXCLUDE tracks: objective full-Sigma rule of n>=30 and SR<15% or frame<40%."
+    ],
+    "freeze_rule": "Freeze after 20 forward-paper bets if ROI < 0% or frame rate < 60%; no live promotion before 50 forward-paper bets."
+  },
+  "summary": {
+    "PAPER_BET": 10,
+    "WATCH_CHALLENGER": 4,
+    "WATCH": 0,
+    "NO_BET": 37
+  },
+  "rows": [
+    {
+      "date": "2026-06-12",
+      "race_id": "922720",
+      "course": "Sandown",
+      "off_time": "14:13",
+      "race_name": "Chris Barnett Memorial Handicap (Div II)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good",
+      "horse": "Marching Mac",
+      "velo_prime_prob": 0.343,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920183",
+      "course": "Chester",
+      "off_time": "14:37",
+      "race_name": "Danny And Harriett Birthday Bash Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good To Soft",
+      "horse": "Morbeh",
+      "velo_prime_prob": 0.4185,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920194",
+      "course": "Sandown",
+      "off_time": "14:48",
+      "race_name": "British Stallion Studs EBF Maiden Stakes (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 7,
+      "going": "Good",
+      "horse": "King's Welcome",
+      "velo_prime_prob": 0.3528,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920184",
+      "course": "Chester",
+      "off_time": "15:12",
+      "race_name": "Allington Hughes Law Handicap (Div I)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good To Soft",
+      "horse": "Crazee Icon",
+      "velo_prime_prob": 0.2471,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922719",
+      "course": "Chester",
+      "off_time": "15:47",
+      "race_name": "Allington Hughes Law Handicap (Div II)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good To Soft",
+      "horse": "Miss Lady Grace",
+      "velo_prime_prob": 0.7277,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920182",
+      "course": "Chester",
+      "off_time": "16:20",
+      "race_name": "Chester Fillies' Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good To Soft",
+      "horse": "Star Cast",
+      "velo_prime_prob": 0.4891,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920185",
+      "course": "Chester",
+      "off_time": "16:55",
+      "race_name": "Allington Hughes 200 Year Anniversary Celebrations Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Good To Soft",
+      "horse": "Dolos Dream",
+      "velo_prime_prob": 0.3298,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "919935",
+      "course": "Market Rasen",
+      "off_time": "18:16",
+      "race_name": "Rase Vets Summer Party Novices' Limited Handicap Hurdle",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Good",
+      "horse": "Jessie Jump Jet",
+      "velo_prime_prob": 0.4232,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "919931",
+      "course": "Market Rasen",
+      "off_time": "19:26",
+      "race_name": "Bob And Babs Handicap Chase (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 7,
+      "going": "Good",
+      "horse": "Maximum Offers",
+      "velo_prime_prob": 0.3881,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "919932",
+      "course": "Market Rasen",
+      "off_time": "20:36",
+      "race_name": "Rase Equine Conditional Jockeys' Handicap Hurdle",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 7,
+      "going": "Good",
+      "horse": "Bunker Bay",
+      "velo_prime_prob": 0.2991,
+      "status": "PAPER_BET",
+      "reasons": [
+        "CORE_GB_TURF_OR_JUMPS_FIELD_7_9"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920198",
+      "course": "Sandown",
+      "off_time": "17:08",
+      "race_name": "Billy Ocean At Sandown Park 29 July Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 5,
+      "going": "Good",
+      "horse": "Wardlaw",
+      "velo_prime_prob": 0.4157,
+      "status": "WATCH_CHALLENGER",
+      "reasons": [
+        "GB_GOOD_GOING_CHALLENGER"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "919930",
+      "course": "Market Rasen",
+      "off_time": "17:41",
+      "race_name": "Hayley Middleton Juvenile Hurdle (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 4,
+      "going": "Good",
+      "horse": "Tiny Riot",
+      "velo_prime_prob": 0.4915,
+      "status": "WATCH_CHALLENGER",
+      "reasons": [
+        "GB_GOOD_GOING_CHALLENGER"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "919934",
+      "course": "Market Rasen",
+      "off_time": "18:51",
+      "race_name": "Rebecca Brooks Handicap Chase",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 6,
+      "going": "Good",
+      "horse": "Get A Superstar",
+      "velo_prime_prob": 0.6327,
+      "status": "WATCH_CHALLENGER",
+      "reasons": [
+        "GB_GOOD_GOING_CHALLENGER"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "919933",
+      "course": "Market Rasen",
+      "off_time": "20:01",
+      "race_name": "Rase Veterinary Summer Party Handicap Hurdle",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 4,
+      "going": "Good",
+      "horse": "Ip Up",
+      "velo_prime_prob": 0.3458,
+      "status": "WATCH_CHALLENGER",
+      "reasons": [
+        "GB_GOOD_GOING_CHALLENGER"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920197",
+      "course": "Sandown",
+      "off_time": "13:08",
+      "race_name": "British EBF Novice Stakes (GBB Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Mysterious Times",
+      "velo_prime_prob": 0.2323,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920181",
+      "course": "Chester",
+      "off_time": "13:30",
+      "race_name": "Allington Hughes Law Bicentenary Amateur Jockeys' Handicap (Special Rider Conditions)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 11,
+      "going": "Good To Soft",
+      "horse": "Kindest Nation",
+      "velo_prime_prob": 0.1787,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920195",
+      "course": "Sandown",
+      "off_time": "13:38",
+      "race_name": "Chris Barnett Memorial Handicap (Div I)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Silver Wraith",
+      "velo_prime_prob": 0.2536,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920211",
+      "course": "York",
+      "off_time": "13:50",
+      "race_name": "Andy Thornton Hospitality Furniture Apprentice Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 21,
+      "going": "Good",
+      "horse": "Jannas Journey",
+      "velo_prime_prob": 0.3949,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920179",
+      "course": "Chester",
+      "off_time": "14:02",
+      "race_name": "Juddmonte EBF Restricted Novice Stakes (Bands B-D) (EBF Restricted Race Qual) (GBB/IRE Incentive)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good To Soft",
+      "horse": "Lady Branksome",
+      "velo_prime_prob": 0.5586,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920213",
+      "course": "York",
+      "off_time": "14:25",
+      "race_name": "Constant Security Keeping York Racegoers Safe Rous Selling Stakes",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 15,
+      "going": "Good",
+      "horse": "Everatease",
+      "velo_prime_prob": 0.3164,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920208",
+      "course": "York",
+      "off_time": "15:00",
+      "race_name": "British EBF Fillies' Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 12,
+      "going": "Good",
+      "horse": "Bintaryana",
+      "velo_prime_prob": 0.4566,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920193",
+      "course": "Sandown",
+      "off_time": "15:23",
+      "race_name": "Molson Coors Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 17,
+      "going": "Good",
+      "horse": "Greek Order",
+      "velo_prime_prob": 0.3497,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920209",
+      "course": "York",
+      "off_time": "15:35",
+      "race_name": "Juddmonte EBF Fillies' Restricted Novice (Bands A-D) (EBF Restricted Race Qual') (GBB/IRE Incentive)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Good",
+      "horse": "Big Negotiator",
+      "velo_prime_prob": 0.563,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920196",
+      "course": "Sandown",
+      "off_time": "15:58",
+      "race_name": "Ministry Of Sound At Sandown Park 24 July Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 13,
+      "going": "Good",
+      "horse": "Dryburgh",
+      "velo_prime_prob": 0.3869,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920207",
+      "course": "York",
+      "off_time": "16:10",
+      "race_name": "Sky Bet The World's Gone Football Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 16,
+      "going": "Good",
+      "horse": "Antipodes",
+      "velo_prime_prob": 0.2211,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922653",
+      "course": "Gowran Park",
+      "off_time": "16:15",
+      "race_name": "Irish Stallion Farms EBF Maiden",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Soft",
+      "horse": "Folsom Blues",
+      "velo_prime_prob": 0.7027,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922646",
+      "course": "Fairyhouse",
+      "off_time": "16:27",
+      "race_name": "Irish EBF Auction Series Maiden (IRE Incentive Race)",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 18,
+      "going": "Good To Yielding",
+      "horse": "Penny Benjamin",
+      "velo_prime_prob": 0.3968,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920199",
+      "course": "Sandown",
+      "off_time": "16:35",
+      "race_name": "Ladies Day At Sandown Park 3 July Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 12,
+      "going": "Good",
+      "horse": "Euphonia",
+      "velo_prime_prob": 0.4534,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920212",
+      "course": "York",
+      "off_time": "16:45",
+      "race_name": "Dawson Williamson Architects Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 15,
+      "going": "Good",
+      "horse": "I'm Dan Dare",
+      "velo_prime_prob": 0.195,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922654",
+      "course": "Gowran Park",
+      "off_time": "16:50",
+      "race_name": "Golf At Gowran Park Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 13,
+      "going": "Soft",
+      "horse": "Sancerre Rock",
+      "velo_prime_prob": 0.2097,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922647",
+      "course": "Fairyhouse",
+      "off_time": "17:02",
+      "race_name": "Winter Festival Early Bird Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 13,
+      "going": "Good To Yielding",
+      "horse": "Joyful Tidings",
+      "velo_prime_prob": 0.1781,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920210",
+      "course": "York",
+      "off_time": "17:18",
+      "race_name": "Event Traffic Control Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 20,
+      "going": "Good",
+      "horse": "Dawn Of Liberation",
+      "velo_prime_prob": 0.313,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922655",
+      "course": "Gowran Park",
+      "off_time": "17:23",
+      "race_name": "Irish Stallion Farms EBF Fillies Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Soft",
+      "horse": "Solana Beach",
+      "velo_prime_prob": 0.2288,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920180",
+      "course": "Chester",
+      "off_time": "17:28",
+      "race_name": "Tom Jones At Chester Racecourse Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 11,
+      "going": "Good To Soft",
+      "horse": "Oman",
+      "velo_prime_prob": 0.2978,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920173",
+      "course": "Goodwood",
+      "off_time": "17:32",
+      "race_name": "Sir Eric Parker Memorial EBF Restricted Maiden Fillies Stakes (EBF Restricted Race Qualifier) (GBB)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Soft",
+      "horse": "Rollthedicebaby",
+      "velo_prime_prob": 0.7391,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922648",
+      "course": "Fairyhouse",
+      "off_time": "17:37",
+      "race_name": "Maher Tractor Sales Handicap (Div I)",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 16,
+      "going": "Good To Yielding",
+      "horse": "Rosato",
+      "velo_prime_prob": 0.1865,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922656",
+      "course": "Gowran Park",
+      "off_time": "17:58",
+      "race_name": "Societies Welcome At Gowran Park Golf Club Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 16,
+      "going": "Soft",
+      "horse": "Rock Etoile",
+      "velo_prime_prob": 0.1878,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920177",
+      "course": "Goodwood",
+      "off_time": "18:04",
+      "race_name": "Fitzdares Telephone & Text Betting Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Soft",
+      "horse": "Lavender Gold",
+      "velo_prime_prob": 0.286,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922717",
+      "course": "Fairyhouse",
+      "off_time": "18:10",
+      "race_name": "Maher Tractor Sales Handicap (Div II)",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 17,
+      "going": "Good To Yielding",
+      "horse": "Reponse Finale",
+      "velo_prime_prob": 0.1448,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922657",
+      "course": "Gowran Park",
+      "off_time": "18:33",
+      "race_name": "Ladies Day July 25th Apprentice Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 6,
+      "going": "Soft",
+      "horse": "Rayzera",
+      "velo_prime_prob": 0.4932,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920174",
+      "course": "Goodwood",
+      "off_time": "18:39",
+      "race_name": "Highclere Castle Gin Handicap (GBBPlus Race)",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Soft",
+      "horse": "Aggagio",
+      "velo_prime_prob": 0.2511,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922649",
+      "course": "Fairyhouse",
+      "off_time": "18:45",
+      "race_name": "Pat's Carpets Race",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 9,
+      "going": "Good To Yielding",
+      "horse": "Cowardofthecounty",
+      "velo_prime_prob": 0.5864,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922658",
+      "course": "Gowran Park",
+      "off_time": "19:08",
+      "race_name": "Irish Stallion Farms EBF Fillies Maiden",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 15,
+      "going": "Soft",
+      "horse": "Sangreal",
+      "velo_prime_prob": 0.3076,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920178",
+      "course": "Goodwood",
+      "off_time": "19:14",
+      "race_name": "Fitzdares Fillies' Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 10,
+      "going": "Soft",
+      "horse": "Double Naughty",
+      "velo_prime_prob": 0.4197,
+      "status": "NO_BET",
+      "reasons": [
+        "FIELD_10_PLUS_NO_BET",
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922650",
+      "course": "Fairyhouse",
+      "off_time": "19:20",
+      "race_name": "Dino Day At Fairyhouse 8th July Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 18,
+      "going": "Good To Yielding",
+      "horse": "Sanctity Of Space",
+      "velo_prime_prob": 0.1245,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "VP_LT_20_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922659",
+      "course": "Gowran Park",
+      "off_time": "19:43",
+      "race_name": "Packages At www.gowranpark.ie Race",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 5,
+      "going": "Soft",
+      "horse": "Trustyourinstinct",
+      "velo_prime_prob": 0.5313,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920176",
+      "course": "Goodwood",
+      "off_time": "19:49",
+      "race_name": "Casamigos Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 5,
+      "going": "Soft",
+      "horse": "Wedonttelllies",
+      "velo_prime_prob": 0.4157,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922651",
+      "course": "Fairyhouse",
+      "off_time": "19:55",
+      "race_name": "Irish Stallion Farms EBF Median Auction Maiden",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 17,
+      "going": "Good To Yielding",
+      "horse": "Now Maybe",
+      "velo_prime_prob": 0.3355,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922693",
+      "course": "Gowran Park",
+      "off_time": "20:18",
+      "race_name": "Gowran Park Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 17,
+      "going": "Soft",
+      "horse": "Zipster",
+      "velo_prime_prob": 0.2867,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "920175",
+      "course": "Goodwood",
+      "off_time": "20:24",
+      "race_name": "Download The Track Radio App Amateur Jockeys' Handicap",
+      "region": "GB",
+      "surface": "TURF",
+      "field_size": 8,
+      "going": "Soft",
+      "horse": "Warning Sign",
+      "velo_prime_prob": 0.2956,
+      "status": "NO_BET",
+      "reasons": [
+        "WEAK_EXCLUDE_TRACK",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    },
+    {
+      "date": "2026-06-12",
+      "race_id": "922652",
+      "course": "Fairyhouse",
+      "off_time": "20:30",
+      "race_name": "Kate O'Sullivan Memorial Handicap",
+      "region": "IRE",
+      "surface": "TURF",
+      "field_size": 18,
+      "going": "Good To Yielding",
+      "horse": "Alto Sax",
+      "velo_prime_prob": 0.4187,
+      "status": "NO_BET",
+      "reasons": [
+        "IRE_NO_BET",
+        "FIELD_10_PLUS_NO_BET",
+        "NO_PERMISSION_RULE"
+      ],
+      "live_bet_allowed": false
+    }
+  ]
+}

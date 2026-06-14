@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "0dcee41a-cac6-4ac6-ad15-831c84faf652",
+  "date": "2026-06-12",
+  "timestamp": "2026-06-12T23:47:54.613490+00:00",
+  "git_commit_sha": "06f5ecdefe3c88cc47c8519fcde1880fcc8b6277",
+  "git_branch": "stabilization/prime-hardening-v1",
+  "source_truth": "RP_MERGED_CLEAN",
+  "feature_health": "CLEAN_RP_HTML_VALIDATED",
+  "active_formula": "sqpe_v17 | RP_MERGED_CLEAN | AUDITED_CLASSIFIER_CORRECTION",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 100.0,
+  "persistence_status": "OK",
+  "supabase_write_attempt_success": true,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "PASS",
+  "learning_gate": "OPEN_MANUAL_SHADOW_ONLY",
+  "next_safe_command": "Run Council and shadow-only evening learning; promotion remains blocked.",
+  "metrics": {
+    "races_processed": 51,
+    "runners_processed": 569
+  },
+  "gates": {
+    "gate_2_flatline_fires": false,
+    "gate_5_rpdc_warn_fires": false,
+    "gate_6_learning_blocked": false,
+    "gate_source_unknown_block": false,
+    "gate_manual_run_promotion_blocked": true
+  },
+  "warnings": [
+    "AUDITED_CORRECTION: original source truth was falsely downgraded by obsolete PDF-only field check."
+  ],
+  "extra": {
+    "correction_type": "AUDITED_SOURCE_TRUTH_CLASSIFIER_CORRECTION",
+    "corrects_packet": "data\\velo_run_observability_2026_06_12_0c5c46f9.json",
+    "proofs": [
+      "data/reports/racecard_cache_gate_latest.json",
+      "data/racing_post_account_parsed/live-full-racepages-2026-06-12/racecard_injection.json",
+      "data/racecards_2026_06_12_standard.json"
+    ],
+    "proof_summary": {
+      "races": 51,
+      "courses": 7,
+      "runners": 569,
+      "metadata_coverage": 1.0,
+      "rpdc_race_coverage": 1.0
+    },
+    "scoring_rerun": false,
+    "post_result_score_change": false,
+    "promotion_allowed": false
+  }
+}

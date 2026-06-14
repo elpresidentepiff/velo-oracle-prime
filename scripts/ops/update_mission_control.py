@@ -20,13 +20,13 @@ import argparse
 import glob
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from app.core.mission_control_config import MC_CONFIG
+from app.core.mission_control_config import MC_CONFIG  # noqa: E402
 
 MC_DIR = ROOT / "data" / "mission_control"
 
@@ -85,7 +85,7 @@ def _detect_flatlines(rows: list[dict]) -> dict:
                     fully_uniform_set.add(rid)
 
     all_races: dict[str, set] = {}
-    for sha, races in by_run.items():
+    for _sha, races in by_run.items():
         for rid, vps in races.items():
             if rid not in all_races:
                 all_races[rid] = set()
@@ -101,29 +101,45 @@ def _detect_flatlines(rows: list[dict]) -> dict:
     }
 
 
-def _detect_source_truth(rows: list[dict], date_str: str) -> str:
-    if not rows:
-        return "UNKNOWN"
+# Labels the observability packet may legitimately report. Anything else is UNKNOWN.
+_KNOWN_SOURCE_LABELS = frozenset({
+    "RP_MERGED_CLEAN",
+    "RP_MERGED_DEGRADED",
+    "API_CLEAN",
+    "LOCAL_JSON_FALLBACK",
+    "SOURCE_UNKNOWN_BLOCK",
+})
+
+
+def _read_observability_source_truth(date_str: str, data_dir: Path | None = None) -> str:
+    """Source truth comes from the run observability packet — never inferred.
+
+    Reads the newest data/velo_run_observability_{date}_*.json for the date
+    (multiple packets exist when the day had retries; the final run wins).
+    Returns UNKNOWN when no packet exists or the packet is malformed.
+    """
+    base = data_dir if data_dir is not None else (ROOT / "data")
+    date_und = date_str.replace("-", "_")
+    paths = sorted(glob.glob(str(base / f"velo_run_observability_{date_und}_*.json")))
+    best_label, best_ts = "", ""
+    for path in paths:
+        try:
+            packet = json.loads(Path(path).read_text())
+            label = packet.get("source_truth", "")
+            ts = packet.get("timestamp", "")
+        except Exception:
+            continue
+        if label in _KNOWN_SOURCE_LABELS and ts >= best_ts:
+            best_label, best_ts = label, ts
+    return best_label or "UNKNOWN"
+
+
+def _detect_source_truth(rows: list[dict], date_str: str, data_dir: Path | None = None) -> str:
     run_ids = {_extract_sha8(r.get("run_id", "")) for r in rows if r.get("run_id")}
     contaminated = run_ids & MC_CONFIG.CONTAMINATED_RUN_IDS
     if contaminated:
         return "RP_MERGED_CONTAMINATED"
-    verdicts_path = ROOT / "data" / f"velo_prime_verdicts_{date_str.replace('-', '_')}.json"
-    if verdicts_path.exists():
-        try:
-            vd = json.loads(verdicts_path.read_text())
-            races = vd.get("races", [])
-            if races:
-                src = races[0].get("source", "")
-                if src == "RP_MERGED":
-                    return "RP_MERGED_CLEAN"
-                elif src == "API":
-                    return "API"
-                elif src == "CACHE":
-                    return "CACHE"
-        except Exception:
-            pass
-    return "RP_MERGED_CLEAN"
+    return _read_observability_source_truth(date_str, data_dir)
 
 
 def _gate_status(flatline_count: int, identity_failure_count: int, source_truth: str) -> tuple[str, str, list[str]]:
@@ -135,7 +151,17 @@ def _gate_status(flatline_count: int, identity_failure_count: int, source_truth:
         learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
         reasons.append("GATE_SOURCE_CONTAMINATED")
-    
+
+    if source_truth == "RP_MERGED_DEGRADED":
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reasons.append("GATE_SOURCE_DEGRADED")
+
+    if source_truth in ("UNKNOWN", "SOURCE_UNKNOWN_BLOCK"):
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reasons.append("GATE_SOURCE_UNKNOWN")
+
     if flatline_count > 0:
         learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
@@ -218,6 +244,14 @@ def _sigma_artifact_status(date_str: str) -> dict:
                     "sr": d.get("sr"),
                     "wins": d.get("wins"),
                     "evaluated_count": d.get("evaluated_count"),
+                    "sigma_status": d.get("sigma_status"),
+                    "completeness_gate": d.get("completeness_gate"),
+                    "learning_blocked": d.get("learning_blocked"),
+                    "expected_predictions": d.get("expected_predictions"),
+                    "result_races_available": d.get("result_races_available"),
+                    "matched": d.get("matched"),
+                    "coverage_ratio": d.get("coverage_ratio"),
+                    "no_result_count": d.get("no_result_count"),
                 }
             except Exception:
                 pass
@@ -235,9 +269,40 @@ def _council_artifact_status(date_str: str) -> dict:
     }
 
 
+def _run_truth_status(date_str: str) -> dict:
+    date_und = date_str.replace("-", "_")
+    path = ROOT / "data" / f"velo_daily_run_truth_{date_und}.json"
+    if not path.exists():
+        return {
+            "status": "MISSING",
+            "path": None,
+            "alert_required": True,
+            "issues": ["DAILY_RUN_TRUTH_MISSING"],
+        }
+    try:
+        report = json.loads(path.read_text())
+    except Exception as exc:
+        return {
+            "status": "INVALID",
+            "path": str(path.relative_to(ROOT)),
+            "alert_required": True,
+            "issues": [f"DAILY_RUN_TRUTH_INVALID: {exc}"],
+        }
+    return {
+        "status": report.get("status", "UNKNOWN"),
+        "path": str(path.relative_to(ROOT)),
+        "alert_required": report.get("alert_required", True),
+        "issues": report.get("issues", []),
+        "cron_truth_status": report.get("cron_truth_status"),
+        "deploy_truth_status": report.get("deploy_truth_status"),
+        "pipeline_run_count": report.get("pipeline_run_count"),
+    }
+
+
 def _learning_admission_status(date_str: str) -> dict:
     elig_path = ROOT / "data" / "reports" / f"{date_str}_learning_eligibility.json"
     packet_path = ROOT / "docs" / "engineering" / "MAY22_SHADOW_LEARNING_ADMISSION_PACKET.md"
+    nightly_path = ROOT / "data" / f"nightly_eod_learning_status_{date_str.replace('-', '_')}.json"
     ops_arts = sorted(glob.glob(str(ROOT / "data" / "ops_worker_dry_run" / f"{date_str}_learn-shadow_*.json")))
     build_result: dict = {}
     if ops_arts:
@@ -276,6 +341,27 @@ def _learning_admission_status(date_str: str) -> dict:
             elig = json.loads(elig_path.read_text())
         except Exception:
             pass
+    if not elig and not build_result and nightly_path.exists():
+        try:
+            nightly = json.loads(nightly_path.read_text())
+            nightly_passed = nightly.get("verdict") == "PASS"
+            elig = {
+                "audit_status": "OUTCOME_ONLY_EOD_REPLAY_PASS" if nightly_passed else "OUTCOME_ONLY_EOD_REPLAY_FAIL",
+                "eligible_count": nightly.get("events_created", 0),
+                "excluded_count": nightly.get("data_error_count", 0),
+            }
+            build_result = {
+                "phase": "OUTCOME_ONLY_EOD_REPLAY",
+                "events_built": nightly.get("events_created", 0),
+                "events_written": nightly.get("engine_updates_applied_first_run", 0),
+                "status": nightly.get("verdict", "UNKNOWN"),
+                "sentient_state_touched": nightly.get("live_sentient_state_touched", False),
+                "shadow_state_touched": nightly.get("shadow_state_touched", False),
+                "duplicates_skipped_second_run": nightly.get("duplicates_skipped_second_run", 0),
+                "consumed_live": False,
+            }
+        except Exception:
+            pass
     return {
         "eligibility_status": elig.get("audit_status", "NOT_RUN"),
         "eligible_rows": elig.get("eligible_count", 0),
@@ -287,6 +373,8 @@ def _learning_admission_status(date_str: str) -> dict:
         "admission_packet": "PRESENT" if packet_path.exists() else "MISSING",
         "recommendation": (
             "CONSUMED_SHADOW_COMPLETE" if build_result.get("phase") == "SHADOW_CONSUMED"
+            else "OUTCOME_ONLY_EOD_REPLAY_COMPLETE"
+            if build_result.get("phase") == "OUTCOME_ONLY_EOD_REPLAY" and build_result.get("status") == "PASS"
             else "APPROVE_SHADOW_CONSUME" if elig.get("audit_status") == "ELIGIBLE" and build_result.get("events_written", 0) > 0
             else "PENDING"
         ),
@@ -470,6 +558,7 @@ def build_mission_control(date_str: str) -> dict:
     gate_v2 = _gate_v2_status()
     sigma_artifact = _sigma_artifact_status(date_str)
     council_artifacts = _council_artifact_status(date_str)
+    run_truth = _run_truth_status(date_str)
     learning_admission = _learning_admission_status(date_str)
     race_shape = _race_shape_status()
     corpus_governance = _corpus_governance_status()
@@ -480,9 +569,27 @@ def build_mission_control(date_str: str) -> dict:
     rcg = gate_v2.get("runner_calibration_gate", {})
     dpg = gate_v2.get("decision_policy_gate", {})
 
+    if sigma_artifact.get("learning_blocked") or sigma_artifact.get("completeness_gate") == "BLOCKED":
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reason_codes.append("GATE_SIGMA_INCOMPLETE")
+
+    if council_verdict not in ("PASS_TO_LEARNING",):
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reason_codes.append(f"GATE_COUNCIL_{council_verdict}")
+
+    if run_truth["status"] == "MANUAL_RECOVERY_ONLY":
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reason_codes.append(f"GATE_PIPELINE_TRUTH_{run_truth['status']}")
+    elif run_truth["status"] != "AUTOMATED_RUN_OK":
+        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+        promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
+        reason_codes.append(f"GATE_PIPELINE_TRUTH_{run_truth['status']}")
+
     mc = {
         "date": date_str,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "source_truth": source_truth,
         "run_ids_seen": run_ids,
         "flatline_count": flatline_data["flatline_count"],
@@ -496,6 +603,7 @@ def build_mission_control(date_str: str) -> dict:
         "promotion_gate_status": promotion_gate,
         "gate_reasons": reason_codes,
         "sigma_artifact": sigma_artifact,
+        "run_truth": run_truth,
         "council_artifact_visibility": council_artifacts,
         "runner_calibration_gate_status": rcg.get("status", "UNKNOWN"),
         "runner_calibration_gate_runners": rcg.get("runner_count", 0),
@@ -525,14 +633,21 @@ def build_mission_control(date_str: str) -> dict:
             "promotion eligibility: BLOCKED if flatline_count > 0 OR identity_failure_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
             "shadow consume: BLOCKED if council_verdict not PASS_TO_LEARNING",
         ],
-        "next_safe_command": _next_safe_command(learning_gate, promotion_gate, flatline_data),
+        "next_safe_command": _next_safe_command(learning_gate, promotion_gate, flatline_data, reason_codes),
     }
     return mc
 
 
-def _next_safe_command(learning_gate: str, promotion_gate: str, flatline_data: dict) -> str:
+def _next_safe_command(
+    learning_gate: str,
+    promotion_gate: str,
+    flatline_data: dict,
+    reason_codes: list[str],
+) -> str:
     if flatline_data["flatline_count"] > 0:
         return f"INVESTIGATE scoring flatline: {flatline_data['flatline_count']} uniform races. Check RP_MERGED hydration. Do not train or promote."
+    if any(reason.startswith("GATE_PIPELINE_TRUTH_") for reason in reason_codes):
+        return "Manual recovery learning is recorded; keep promotion blocked until an automated run proves pipeline truth."
     if learning_gate == "BLOCKED":
         return "Source truth contaminated — do not consume for learning. Run council audit first."
     if promotion_gate == "BLOCKED":

@@ -1,0 +1,2518 @@
+{
+  "generated_at": "2026-05-31T11:11:43.324553Z",
+  "target_date": "2026-05-31",
+  "overall_status": "READY",
+  "capture_status": {
+    "date": "2026-05-31",
+    "status": "READY",
+    "races": 64,
+    "runners": 665
+  },
+  "races_scored": 53,
+  "runners_scored": 571,
+  "rpr_violations": 0,
+  "sp_violations": 0,
+  "quality_gates": {
+    "rpr_clean": true,
+    "sp_clean": true,
+    "passport_coverage_above_50pct": true,
+    "no_leakage_violations": true
+  },
+  "intent_coverage": {
+    "found": 0,
+    "total": 571,
+    "coverage_pct": 0.0,
+    "gate": 80.0,
+    "status": "UNAVAILABLE_BELOW_GATE",
+    "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+  },
+  "operational_lane": "LANE_A_CORE_PASSPORT",
+  "operational_note": "Intent coverage 0.0% < 80.0% gate. Lane B is PAPER_ONLY_NO_INTENT. Lane A (Core+Passport) is operational read.",
+  "lane_a": {
+    "label": "Core_V0_OR_Passport (30 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport\\core_v0_or_passport_model.pkl",
+    "feature_count": 30,
+    "median_fill_counts": {
+      "release_window_score": 571,
+      "going_fit_score": 571,
+      "distance_fit_score": 571,
+      "quiet_run_score": 571,
+      "trainer_timing_score": 571,
+      "jockey_switch_intent": 571,
+      "setup_run_flag": 571,
+      "cash_run_flag": 571,
+      "pp_days_since_last": 571,
+      "pp_layoff": 571
+    }
+  },
+  "lane_b": {
+    "label": "Challenger_V1 Core+Passport+Intent (45 features)",
+    "model_pkl": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\models\\core_v0_or_passport_intent\\model.pkl",
+    "feature_count": 45,
+    "intent_coverage_pct": 0.0,
+    "status": "PAPER_ONLY_NO_INTENT",
+    "median_fill_counts": {
+      "release_window_score": 571,
+      "going_fit_score": 571,
+      "distance_fit_score": 571,
+      "quiet_run_score": 571,
+      "trainer_timing_score": 571,
+      "jockey_switch_intent": 571,
+      "setup_run_flag": 571,
+      "cash_run_flag": 571,
+      "pp_days_since_last": 571,
+      "pp_layoff": 571
+    }
+  },
+  "race_day_scorecards": [
+    {
+      "race_id": "921839",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T05:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Hong Kong Wu Hua General Association Cup Griffin Plate (Course B) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "0/14",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Almighty Warrior",
+          "prob": 0.074332
+        },
+        {
+          "rank": 2,
+          "horse": "Chancheng Sparkle",
+          "prob": 0.072565
+        },
+        {
+          "rank": 3,
+          "horse": "Coogee Bay",
+          "prob": 0.070173
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Almighty Warrior",
+          "prob": 0.066888
+        },
+        {
+          "rank": 1,
+          "horse": "Chancheng Sparkle",
+          "prob": 0.06757
+        },
+        {
+          "rank": 3,
+          "horse": "Coogee Bay",
+          "prob": 0.066412
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921840",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T06:15:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Hong Kong Mei Zhou Association Cup (Class 4) (Course B) (Handicap) (Turf)",
+      "runner_count": 16,
+      "passport_coverage": "0/16",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Quick Money",
+          "prob": 0.075921
+        },
+        {
+          "rank": 2,
+          "horse": "Turf Quest",
+          "prob": 0.075686
+        },
+        {
+          "rank": 3,
+          "horse": "Giant Spirit",
+          "prob": 0.073399
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Turf Quest",
+          "prob": 0.070179
+        },
+        {
+          "rank": 2,
+          "horse": "Giant Spirit",
+          "prob": 0.068775
+        },
+        {
+          "rank": 3,
+          "horse": "King's Arrow",
+          "prob": 0.068069
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921841",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T06:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Federation Of Ass'ns Of Native Hing Ning Residents In HK Cup (Class4) (Handicap) (Course B) (Turf)",
+      "runner_count": 16,
+      "passport_coverage": "0/16",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fun N Fun Together",
+          "prob": 0.076448
+        },
+        {
+          "rank": 2,
+          "horse": "Happy Smile",
+          "prob": 0.074346
+        },
+        {
+          "rank": 3,
+          "horse": "One More",
+          "prob": 0.073548
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Fun N Fun Together",
+          "prob": 0.068913
+        },
+        {
+          "rank": 1,
+          "horse": "Happy Smile",
+          "prob": 0.069667
+        },
+        {
+          "rank": 3,
+          "horse": "One More",
+          "prob": 0.068538
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921842",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T07:15:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Hong Kong Federation Of Guangzhou Associations Cup (Class 4) (Course B) (Handicap) (Turf)",
+      "runner_count": 16,
+      "passport_coverage": "0/16",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "E Ho Ho",
+          "prob": 0.077254
+        },
+        {
+          "rank": 2,
+          "horse": "A Time For Us",
+          "prob": 0.076332
+        },
+        {
+          "rank": 3,
+          "horse": "Oldtown",
+          "prob": 0.074978
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "E Ho Ho",
+          "prob": 0.07212
+        },
+        {
+          "rank": 2,
+          "horse": "A Time For Us",
+          "prob": 0.070244
+        },
+        {
+          "rank": 3,
+          "horse": "Dancing Blaze",
+          "prob": 0.069667
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921868",
+      "course": "Tokyo",
+      "off_time": "2026-05-31T07:40:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Tokyo Yunshun (Japanese Derby) (Grade 1) (3yo) (Turf)",
+      "runner_count": 18,
+      "passport_coverage": "0/18",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Reichsadler",
+          "prob": 0.070523
+        },
+        {
+          "rank": 2,
+          "horse": "Matenro Gale",
+          "prob": 0.063541
+        },
+        {
+          "rank": 3,
+          "horse": "Kenton",
+          "prob": 0.063475
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Reichsadler",
+          "prob": 0.061974
+        },
+        {
+          "rank": 3,
+          "horse": "Matenro Gale",
+          "prob": 0.059631
+        },
+        {
+          "rank": 2,
+          "horse": "Kenton",
+          "prob": 0.059694
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921843",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T08:05:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "The Hakka Cup (Class 3) (Course B) (Handicap) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "0/14",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sovereign Fund",
+          "prob": 0.070473
+        },
+        {
+          "rank": 2,
+          "horse": "Helene Supafeeling",
+          "prob": 0.068479
+        },
+        {
+          "rank": 3,
+          "horse": "Savvy Brilliant",
+          "prob": 0.068032
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Sovereign Fund",
+          "prob": 0.065085
+        },
+        {
+          "rank": 1,
+          "horse": "Helene Supafeeling",
+          "prob": 0.066081
+        },
+        {
+          "rank": 3,
+          "horse": "Savvy Brilliant",
+          "prob": 0.064659
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921844",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T08:35:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Hong Kong Federation Of Huichow Associations Cup (Class 4) (Course B) (Handicap) (Turf)",
+      "runner_count": 16,
+      "passport_coverage": "0/16",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Massive Glory",
+          "prob": 0.074165
+        },
+        {
+          "rank": 2,
+          "horse": "Enthralled",
+          "prob": 0.073543
+        },
+        {
+          "rank": 3,
+          "horse": "Circuit Marshal",
+          "prob": 0.073367
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Massive Glory",
+          "prob": 0.069902
+        },
+        {
+          "rank": 3,
+          "horse": "Circuit Marshal",
+          "prob": 0.06833
+        },
+        {
+          "rank": 2,
+          "horse": "Super Goldendragon",
+          "prob": 0.068339
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921845",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T09:05:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "The Lion Rock Trophy (Group 3) (Course B) (Handicap) (Turf)",
+      "runner_count": 9,
+      "passport_coverage": "0/9",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Stunning Peach",
+          "prob": 0.093084
+        },
+        {
+          "rank": 2,
+          "horse": "Light Years Charm",
+          "prob": 0.090392
+        },
+        {
+          "rank": 3,
+          "horse": "Patch Of Cosmo",
+          "prob": 0.088621
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Stunning Peach",
+          "prob": 0.098564
+        },
+        {
+          "rank": 3,
+          "horse": "Patch Of Cosmo",
+          "prob": 0.091819
+        },
+        {
+          "rank": 2,
+          "horse": "Sky Jewellery",
+          "prob": 0.093645
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921846",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T09:40:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Federation Of Qing Yuan Associations (Hong Kong) Cup (Class 4) (Course B) (Handicap) (Turf)",
+      "runner_count": 16,
+      "passport_coverage": "0/16",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Gallant Design",
+          "prob": 0.074934
+        },
+        {
+          "rank": 2,
+          "horse": "Lucky Man",
+          "prob": 0.07482
+        },
+        {
+          "rank": 3,
+          "horse": "Joyful Joy",
+          "prob": 0.074035
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Gallant Design",
+          "prob": 0.06827
+        },
+        {
+          "rank": 2,
+          "horse": "Lucky Man",
+          "prob": 0.068901
+        },
+        {
+          "rank": 1,
+          "horse": "Joyful Joy",
+          "prob": 0.069012
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921847",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T10:10:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "The Sha Tin Vase (Group 3) (Course B) (Handicap) (Turf)",
+      "runner_count": 10,
+      "passport_coverage": "0/10",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Romantic Son",
+          "prob": 0.089409
+        },
+        {
+          "rank": 2,
+          "horse": "Patch Of Stars",
+          "prob": 0.088023
+        },
+        {
+          "rank": 3,
+          "horse": "Invincible Shield",
+          "prob": 0.079072
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Romantic Son",
+          "prob": 0.086192
+        },
+        {
+          "rank": 2,
+          "horse": "Patch Of Stars",
+          "prob": 0.084011
+        },
+        {
+          "rank": 3,
+          "horse": "Invincible Shield",
+          "prob": 0.08081
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921848",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T10:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "The General Association Of Hong Kong Heyuan Societies Cup (Class 3) (Course B) (Handicap) (Turf)",
+      "runner_count": 16,
+      "passport_coverage": "0/16",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Everyone's Star",
+          "prob": 0.064627
+        },
+        {
+          "rank": 2,
+          "horse": "Voyage Samurai",
+          "prob": 0.064314
+        },
+        {
+          "rank": 3,
+          "horse": "Family Jewel",
+          "prob": 0.064064
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Everyone's Star",
+          "prob": 0.062645
+        },
+        {
+          "rank": 2,
+          "horse": "Amazing Partners",
+          "prob": 0.062384
+        },
+        {
+          "rank": 3,
+          "horse": "Endued",
+          "prob": 0.062384
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921849",
+      "course": "Sha Tin",
+      "off_time": "2026-05-31T11:20:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Hong Kong Ka Ying (Meizhou) General Chamber Of Commerce Cup (Class 3) (Course B) (Handicap) (Turf)",
+      "runner_count": 15,
+      "passport_coverage": "0/15",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Ka Ying Attack",
+          "prob": 0.071098
+        },
+        {
+          "rank": 2,
+          "horse": "Tactical Horizons",
+          "prob": 0.069031
+        },
+        {
+          "rank": 3,
+          "horse": "Crossborderpegasus",
+          "prob": 0.066097
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Ka Ying Attack",
+          "prob": 0.068728
+        },
+        {
+          "rank": 2,
+          "horse": "Crossborderpegasus",
+          "prob": 0.065857
+        },
+        {
+          "rank": 3,
+          "horse": "Smart Golf",
+          "prob": 0.06411
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921895",
+      "course": "Chantilly",
+      "off_time": "2026-05-31T12:30:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Prix La Fleche (Listed Race) (Turf)",
+      "runner_count": 9,
+      "passport_coverage": "1/9",
+      "passport_coverage_pct": 11.1,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Vollering",
+          "prob": 0.174988
+        },
+        {
+          "rank": 2,
+          "horse": "Yuquot",
+          "prob": 0.108257
+        },
+        {
+          "rank": 3,
+          "horse": "Aralia",
+          "prob": 0.103197
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Vollering",
+          "prob": 0.169753
+        },
+        {
+          "rank": 3,
+          "horse": "Aralia",
+          "prob": 0.095947
+        },
+        {
+          "rank": 2,
+          "horse": "Maiakovska",
+          "prob": 0.095947
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921880",
+      "course": "Dusseldorf",
+      "off_time": "2026-05-31T12:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Horn & Company German 1000 Guineas (Group 2) (3yo Fillies) (Turf)",
+      "runner_count": 10,
+      "passport_coverage": "1/10",
+      "passport_coverage_pct": 10.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Indifferente",
+          "prob": 0.100099
+        },
+        {
+          "rank": 2,
+          "horse": "Arborea",
+          "prob": 0.10005
+        },
+        {
+          "rank": 3,
+          "horse": "Timeforshowcasing",
+          "prob": 0.099442
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Indifferente",
+          "prob": 0.090191
+        },
+        {
+          "rank": 2,
+          "horse": "Arborea",
+          "prob": 0.090191
+        },
+        {
+          "rank": 3,
+          "horse": "Sweet Sunshine",
+          "prob": 0.089978
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921896",
+      "course": "Chantilly",
+      "off_time": "2026-05-31T13:05:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Prix De Royaumont (Group 3) (Fillies) (Turf)",
+      "runner_count": 6,
+      "passport_coverage": "0/6",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Zlata",
+          "prob": 0.149043
+        },
+        {
+          "rank": 2,
+          "horse": "Blanche De Medicis",
+          "prob": 0.149043
+        },
+        {
+          "rank": 3,
+          "horse": "Behrayna",
+          "prob": 0.148617
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Zlata",
+          "prob": 0.137641
+        },
+        {
+          "rank": 2,
+          "horse": "Blanche De Medicis",
+          "prob": 0.137641
+        },
+        {
+          "rank": 3,
+          "horse": "Marylene Du Serre",
+          "prob": 0.137191
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921897",
+      "course": "Chantilly",
+      "off_time": "2026-05-31T13:40:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Grand Prix De Chantilly (Group 2) (Turf)",
+      "runner_count": 6,
+      "passport_coverage": "4/6",
+      "passport_coverage_pct": 66.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Goliath",
+          "prob": 0.153837
+        },
+        {
+          "rank": 2,
+          "horse": "Espoir Avenir",
+          "prob": 0.148156
+        },
+        {
+          "rank": 3,
+          "horse": "Oracle",
+          "prob": 0.138272
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Oracle",
+          "prob": 0.139694
+        },
+        {
+          "rank": 1,
+          "horse": "Cualificar",
+          "prob": 0.140409
+        },
+        {
+          "rank": 2,
+          "horse": "Zarraf",
+          "prob": 0.140409
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921710",
+      "course": "Listowel",
+      "off_time": "2026-05-31T14:14:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Irish EBF Median Sires Series Maiden (IRE Incentive Race)",
+      "runner_count": 14,
+      "passport_coverage": "1/14",
+      "passport_coverage_pct": 7.1,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Eighteenth Smiles",
+          "prob": 0.086217
+        },
+        {
+          "rank": 2,
+          "horse": "Ischgl",
+          "prob": 0.085427
+        },
+        {
+          "rank": 3,
+          "horse": "The Scallionator",
+          "prob": 0.085068
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Eighteenth Smiles",
+          "prob": 0.0885
+        },
+        {
+          "rank": 2,
+          "horse": "The Scallionator",
+          "prob": 0.079454
+        },
+        {
+          "rank": 3,
+          "horse": "The Drambling Man",
+          "prob": 0.077969
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "919061",
+      "course": "Nottingham",
+      "off_time": "2026-05-31T14:20:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Bear's Big Birthday EBF Restricted Maiden Stakes (Bands C/D) (EBF Restricted Qualifier) (GBB Race)",
+      "runner_count": 11,
+      "passport_coverage": "1/11",
+      "passport_coverage_pct": 9.1,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Zohar",
+          "prob": 0.093334
+        },
+        {
+          "rank": 2,
+          "horse": "Regal Chita",
+          "prob": 0.093201
+        },
+        {
+          "rank": 3,
+          "horse": "Grayrobin",
+          "prob": 0.090633
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Zohar",
+          "prob": 0.087542
+        },
+        {
+          "rank": 2,
+          "horse": "Regal Chita",
+          "prob": 0.08654
+        },
+        {
+          "rank": 3,
+          "horse": "Grayrobin",
+          "prob": 0.085259
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921720",
+      "course": "Kilbeggan",
+      "off_time": "2026-05-31T14:26:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Adare Manor Opportunity Maiden Hurdle",
+      "runner_count": 15,
+      "passport_coverage": "0/15",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Facile Ocean",
+          "prob": 0.112019
+        },
+        {
+          "rank": 2,
+          "horse": "Allroadsleadtorome",
+          "prob": 0.112019
+        },
+        {
+          "rank": 3,
+          "horse": "L'As de Watt",
+          "prob": 0.112019
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Facile Ocean",
+          "prob": 0.09809
+        },
+        {
+          "rank": 2,
+          "horse": "Allroadsleadtorome",
+          "prob": 0.09809
+        },
+        {
+          "rank": 3,
+          "horse": "L'As de Watt",
+          "prob": 0.09809
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "918771",
+      "course": "Fakenham",
+      "off_time": "2026-05-31T14:35:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "fakenhamdogfield.co.uk Novices' Handicap Hurdle",
+      "runner_count": 5,
+      "passport_coverage": "0/5",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Madajovy",
+          "prob": 0.189476
+        },
+        {
+          "rank": 2,
+          "horse": "Dame In Disguise",
+          "prob": 0.188916
+        },
+        {
+          "rank": 3,
+          "horse": "Popa Rich",
+          "prob": 0.167336
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Madajovy",
+          "prob": 0.193106
+        },
+        {
+          "rank": 2,
+          "horse": "Dame In Disguise",
+          "prob": 0.162831
+        },
+        {
+          "rank": 3,
+          "horse": "Tuba",
+          "prob": 0.153179
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921711",
+      "course": "Listowel",
+      "off_time": "2026-05-31T14:44:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Irish Stallion Farms EBF Fillies Maiden (IRE Incentive Race)",
+      "runner_count": 8,
+      "passport_coverage": "2/8",
+      "passport_coverage_pct": 25.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Big Negotiator",
+          "prob": 0.269004
+        },
+        {
+          "rank": 2,
+          "horse": "Beibhinn",
+          "prob": 0.149805
+        },
+        {
+          "rank": 3,
+          "horse": "Sister Nancy",
+          "prob": 0.118909
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Big Negotiator",
+          "prob": 0.176868
+        },
+        {
+          "rank": 2,
+          "horse": "Beibhinn",
+          "prob": 0.133286
+        },
+        {
+          "rank": 3,
+          "horse": "Citrus Springs",
+          "prob": 0.106832
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "919060",
+      "course": "Nottingham",
+      "off_time": "2026-05-31T14:50:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Construction Day 14th Oct Handicap",
+      "runner_count": 7,
+      "passport_coverage": "6/7",
+      "passport_coverage_pct": 85.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "High Chieftain",
+          "prob": 0.195415
+        },
+        {
+          "rank": 2,
+          "horse": "Spacewoman",
+          "prob": 0.16616
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Celestial",
+          "prob": 0.133276
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "High Chieftain",
+          "prob": 0.209948
+        },
+        {
+          "rank": 2,
+          "horse": "Spacewoman",
+          "prob": 0.148099
+        },
+        {
+          "rank": 3,
+          "horse": "Legacy Rock",
+          "prob": 0.115464
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921899",
+      "course": "Chantilly",
+      "off_time": "2026-05-31T14:53:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Prix Du Gros-Chene - World Pool By PMU (Group 3) (Turf)",
+      "runner_count": 5,
+      "passport_coverage": "1/5",
+      "passport_coverage_pct": 20.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Afjan",
+          "prob": 0.168483
+        },
+        {
+          "rank": 2,
+          "horse": "Moojeed",
+          "prob": 0.164087
+        },
+        {
+          "rank": 3,
+          "horse": "Sajir",
+          "prob": 0.159439
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Afjan",
+          "prob": 0.156573
+        },
+        {
+          "rank": 3,
+          "horse": "Moojeed",
+          "prob": 0.153899
+        },
+        {
+          "rank": 1,
+          "horse": "Sajir",
+          "prob": 0.158856
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921721",
+      "course": "Kilbeggan",
+      "off_time": "2026-05-31T14:56:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Gannon Eco Novice Hurdle",
+      "runner_count": 5,
+      "passport_coverage": "5/5",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Lemmy Caution",
+          "prob": 0.312321
+        },
+        {
+          "rank": 2,
+          "horse": "Master Haku",
+          "prob": 0.235329
+        },
+        {
+          "rank": 3,
+          "horse": "Red Or White",
+          "prob": 0.12875
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Lemmy Caution",
+          "prob": 0.24871
+        },
+        {
+          "rank": 1,
+          "horse": "Master Haku",
+          "prob": 0.281552
+        },
+        {
+          "rank": 3,
+          "horse": "Red Or White",
+          "prob": 0.109267
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "918769",
+      "course": "Fakenham",
+      "off_time": "2026-05-31T15:05:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Bruce Towers & Sons Mechanical Engineers Mares' Maiden Hurdle (GBB Race)",
+      "runner_count": 5,
+      "passport_coverage": "5/5",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Skye Glance",
+          "prob": 0.154647
+        },
+        {
+          "rank": 2,
+          "horse": "Alibey",
+          "prob": 0.148016
+        },
+        {
+          "rank": 3,
+          "horse": "Never Told Me",
+          "prob": 0.139524
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Skye Glance",
+          "prob": 0.109595
+        },
+        {
+          "rank": 3,
+          "horse": "Alibey",
+          "prob": 0.108832
+        },
+        {
+          "rank": 1,
+          "horse": "Never Told Me",
+          "prob": 0.114763
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921712",
+      "course": "Listowel",
+      "off_time": "2026-05-31T15:15:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Croom House Stud Handicap",
+      "runner_count": 16,
+      "passport_coverage": "16/16",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Altimara",
+          "prob": 0.106044
+        },
+        {
+          "rank": 2,
+          "horse": "Amicitia",
+          "prob": 0.102662
+        },
+        {
+          "rank": 3,
+          "horse": "Inishfallen",
+          "prob": 0.0918
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Altimara",
+          "prob": 0.083159
+        },
+        {
+          "rank": 2,
+          "horse": "Amicitia",
+          "prob": 0.08612
+        },
+        {
+          "rank": 1,
+          "horse": "Inishfallen",
+          "prob": 0.096798
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919059",
+      "course": "Nottingham",
+      "off_time": "2026-05-31T15:20:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "When You Wish Upon A Star Restricted Maiden Stakes (Bands B, C And D) (GBB Race)",
+      "runner_count": 7,
+      "passport_coverage": "6/7",
+      "passport_coverage_pct": 85.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Leonardo Blu",
+          "prob": 0.171429
+        },
+        {
+          "rank": 2,
+          "horse": "Lucky Camino",
+          "prob": 0.151525
+        },
+        {
+          "rank": 3,
+          "horse": "Dark Whisper",
+          "prob": 0.148082
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Leonardo Blu",
+          "prob": 0.131923
+        },
+        {
+          "rank": 2,
+          "horse": "Livemore",
+          "prob": 0.122851
+        },
+        {
+          "rank": 3,
+          "horse": "Turton",
+          "prob": 0.122096
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921722",
+      "course": "Kilbeggan",
+      "off_time": "2026-05-31T15:26:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Joe Quinn Transport Longford Handicap Hurdle",
+      "runner_count": 14,
+      "passport_coverage": "13/14",
+      "passport_coverage_pct": 92.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Kalsman",
+          "prob": 0.081421
+        },
+        {
+          "rank": 2,
+          "horse": "Rajjnatin",
+          "prob": 0.07649
+        },
+        {
+          "rank": 3,
+          "horse": "Sheer Raz",
+          "prob": 0.071904
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Kalsman",
+          "prob": 0.075529
+        },
+        {
+          "rank": 3,
+          "horse": "Rajjnatin",
+          "prob": 0.06243
+        },
+        {
+          "rank": 2,
+          "horse": "Westin Pimpernel",
+          "prob": 0.064939
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921867",
+      "course": "Chantilly",
+      "off_time": "2026-05-31T15:30:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Qatar Prix du Jockey Club (Group 1) (No Geldings) (Turf)",
+      "runner_count": 16,
+      "passport_coverage": "7/16",
+      "passport_coverage_pct": 43.8,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Hankelow",
+          "prob": 0.134373
+        },
+        {
+          "rank": 2,
+          "horse": "Montreal",
+          "prob": 0.121799
+        },
+        {
+          "rank": 3,
+          "horse": "Constitution River",
+          "prob": 0.10858
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Hankelow",
+          "prob": 0.111108
+        },
+        {
+          "rank": 2,
+          "horse": "Montreal",
+          "prob": 0.088569
+        },
+        {
+          "rank": 3,
+          "horse": "Constitution River",
+          "prob": 0.087751
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "918770",
+      "course": "Fakenham",
+      "off_time": "2026-05-31T15:35:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Book Your Function @fakenhamracecourse.co.uk Handicap Chase",
+      "runner_count": 4,
+      "passport_coverage": "0/4",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Not For Passin",
+          "prob": 0.225221
+        },
+        {
+          "rank": 2,
+          "horse": "Most Wanted",
+          "prob": 0.199398
+        },
+        {
+          "rank": 3,
+          "horse": "Chateau Du Lys",
+          "prob": 0.177602
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Not For Passin",
+          "prob": 0.238889
+        },
+        {
+          "rank": 2,
+          "horse": "Most Wanted",
+          "prob": 0.175643
+        },
+        {
+          "rank": 3,
+          "horse": "Chateau Du Lys",
+          "prob": 0.164023
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "919068",
+      "course": "Thirsk",
+      "off_time": "2026-05-31T15:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Enter ITV7 For Free Novice Stakes (GBB/IRE Incentive Race)",
+      "runner_count": 10,
+      "passport_coverage": "2/10",
+      "passport_coverage_pct": 20.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sir Sirius",
+          "prob": 0.109856
+        },
+        {
+          "rank": 2,
+          "horse": "Alfred Wallace",
+          "prob": 0.103864
+        },
+        {
+          "rank": 3,
+          "horse": "Fuel The Jet",
+          "prob": 0.103291
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sir Sirius",
+          "prob": 0.105313
+        },
+        {
+          "rank": 2,
+          "horse": "Alfred Wallace",
+          "prob": 0.093965
+        },
+        {
+          "rank": 3,
+          "horse": "Fuel The Jet",
+          "prob": 0.093744
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921713",
+      "course": "Listowel",
+      "off_time": "2026-05-31T15:50:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Coco At The Arcade Race",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Thread Of Gold",
+          "prob": 0.224118
+        },
+        {
+          "rank": 2,
+          "horse": "Satoyama",
+          "prob": 0.206232
+        },
+        {
+          "rank": 3,
+          "horse": "Tim Toe",
+          "prob": 0.18749
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Thread Of Gold",
+          "prob": 0.211686
+        },
+        {
+          "rank": 3,
+          "horse": "Satoyama",
+          "prob": 0.14945
+        },
+        {
+          "rank": 2,
+          "horse": "Tim Toe",
+          "prob": 0.174131
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919056",
+      "course": "Nottingham",
+      "off_time": "2026-05-31T15:55:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Wildwest Beer Festival 4th July Fillies' Handicap",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Time To Take Off",
+          "prob": 0.261305
+        },
+        {
+          "rank": 2,
+          "horse": "Novelette",
+          "prob": 0.238813
+        },
+        {
+          "rank": 3,
+          "horse": "Wateen",
+          "prob": 0.203084
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Time To Take Off",
+          "prob": 0.185066
+        },
+        {
+          "rank": 1,
+          "horse": "Novelette",
+          "prob": 0.234075
+        },
+        {
+          "rank": 3,
+          "horse": "Wateen",
+          "prob": 0.172162
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921723",
+      "course": "Kilbeggan",
+      "off_time": "2026-05-31T16:00:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Midland Veterinary Handicap Hurdle",
+      "runner_count": 13,
+      "passport_coverage": "13/13",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Secret Rock",
+          "prob": 0.106493
+        },
+        {
+          "rank": 2,
+          "horse": "High Notions",
+          "prob": 0.096653
+        },
+        {
+          "rank": 3,
+          "horse": "Premier Rogue",
+          "prob": 0.081163
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Secret Rock",
+          "prob": 0.117878
+        },
+        {
+          "rank": 3,
+          "horse": "High Notions",
+          "prob": 0.081632
+        },
+        {
+          "rank": 2,
+          "horse": "Premier Rogue",
+          "prob": 0.090358
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "918768",
+      "course": "Fakenham",
+      "off_time": "2026-05-31T16:07:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "1st The Queens' Dragoon Guards Handicap Hurdle",
+      "runner_count": 4,
+      "passport_coverage": "4/4",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "An Bradan Feasa",
+          "prob": 0.331395
+        },
+        {
+          "rank": 2,
+          "horse": "Hello Sweety",
+          "prob": 0.303016
+        },
+        {
+          "rank": 3,
+          "horse": "Ambiente Friendly",
+          "prob": 0.238564
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "An Bradan Feasa",
+          "prob": 0.314329
+        },
+        {
+          "rank": 3,
+          "horse": "Hello Sweety",
+          "prob": 0.279592
+        },
+        {
+          "rank": 1,
+          "horse": "Ambiente Friendly",
+          "prob": 0.324106
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919067",
+      "course": "Thirsk",
+      "off_time": "2026-05-31T16:15:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Flutter Proud To Support Young Lives Vs Cancer Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Noble Vow",
+          "prob": 0.142833
+        },
+        {
+          "rank": 2,
+          "horse": "Mighty Magnus",
+          "prob": 0.124235
+        },
+        {
+          "rank": 3,
+          "horse": "Kinnalargy",
+          "prob": 0.117076
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Mighty Magnus",
+          "prob": 0.114899
+        },
+        {
+          "rank": 1,
+          "horse": "Kinnalargy",
+          "prob": 0.120825
+        },
+        {
+          "rank": 3,
+          "horse": "Dazzling Haze",
+          "prob": 0.108634
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921900",
+      "course": "Chantilly",
+      "off_time": "2026-05-31T16:15:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Prix De Sandringham (Group 2) (Fillies) (Turf)",
+      "runner_count": 8,
+      "passport_coverage": "2/8",
+      "passport_coverage_pct": 25.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Green Sense",
+          "prob": 0.166809
+        },
+        {
+          "rank": 2,
+          "horse": "Mubasimah",
+          "prob": 0.148358
+        },
+        {
+          "rank": 3,
+          "horse": "Royal Chapel",
+          "prob": 0.116913
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Green Sense",
+          "prob": 0.118533
+        },
+        {
+          "rank": 1,
+          "horse": "Mubasimah",
+          "prob": 0.132462
+        },
+        {
+          "rank": 3,
+          "horse": "Royal Chapel",
+          "prob": 0.106952
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "921714",
+      "course": "Listowel",
+      "off_time": "2026-05-31T16:20:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "James Collins Memorial Handicap",
+      "runner_count": 18,
+      "passport_coverage": "18/18",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sovereign Banter",
+          "prob": 0.119611
+        },
+        {
+          "rank": 2,
+          "horse": "Exceeding",
+          "prob": 0.103136
+        },
+        {
+          "rank": 3,
+          "horse": "Methgal",
+          "prob": 0.085206
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sovereign Banter",
+          "prob": 0.086185
+        },
+        {
+          "rank": 2,
+          "horse": "Exceeding",
+          "prob": 0.083113
+        },
+        {
+          "rank": 3,
+          "horse": "Methgal",
+          "prob": 0.07537
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919057",
+      "course": "Nottingham",
+      "off_time": "2026-05-31T16:25:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Dine In Sherwoods Restaurant Handicap",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Tupero",
+          "prob": 0.188567
+        },
+        {
+          "rank": 2,
+          "horse": "Two Plus Two",
+          "prob": 0.165832
+        },
+        {
+          "rank": 3,
+          "horse": "In The Post",
+          "prob": 0.135131
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Tupero",
+          "prob": 0.150914
+        },
+        {
+          "rank": 3,
+          "horse": "Two Plus Two",
+          "prob": 0.118132
+        },
+        {
+          "rank": 2,
+          "horse": "In The Post",
+          "prob": 0.125522
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921724",
+      "course": "Kilbeggan",
+      "off_time": "2026-05-31T16:30:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Geoff Scally Centra Summerhill Beginners Chase",
+      "runner_count": 10,
+      "passport_coverage": "10/10",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Apple's Of Bresil",
+          "prob": 0.251654
+        },
+        {
+          "rank": 2,
+          "horse": "Boston Rajj",
+          "prob": 0.192707
+        },
+        {
+          "rank": 3,
+          "horse": "Jackson Lamb",
+          "prob": 0.192448
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Apple's Of Bresil",
+          "prob": 0.196261
+        },
+        {
+          "rank": 3,
+          "horse": "Boston Rajj",
+          "prob": 0.147738
+        },
+        {
+          "rank": 2,
+          "horse": "Chichester Park",
+          "prob": 0.1689
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "918767",
+      "course": "Fakenham",
+      "off_time": "2026-05-31T16:37:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Prince Of Wales Cup Handicap Chase (GBB Race)",
+      "runner_count": 5,
+      "passport_coverage": "5/5",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Nickelforce",
+          "prob": 0.212881
+        },
+        {
+          "rank": 2,
+          "horse": "No But I Will",
+          "prob": 0.208645
+        },
+        {
+          "rank": 3,
+          "horse": "Tommy Cullen",
+          "prob": 0.188798
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Nickelforce",
+          "prob": 0.19599
+        },
+        {
+          "rank": 2,
+          "horse": "No But I Will",
+          "prob": 0.176192
+        },
+        {
+          "rank": 3,
+          "horse": "Tommy Cullen",
+          "prob": 0.168051
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919065",
+      "course": "Thirsk",
+      "off_time": "2026-05-31T16:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Sky Bet Club Handicap",
+      "runner_count": 18,
+      "passport_coverage": "18/18",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Montezuma",
+          "prob": 0.086922
+        },
+        {
+          "rank": 2,
+          "horse": "American Bay",
+          "prob": 0.082277
+        },
+        {
+          "rank": 3,
+          "horse": "Kinetic Force",
+          "prob": 0.079618
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Montezuma",
+          "prob": 0.085211
+        },
+        {
+          "rank": 2,
+          "horse": "American Bay",
+          "prob": 0.073766
+        },
+        {
+          "rank": 3,
+          "horse": "Mon Na Slieve",
+          "prob": 0.071861
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921715",
+      "course": "Listowel",
+      "off_time": "2026-05-31T16:50:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Lane Family Memorial Handicap",
+      "runner_count": 14,
+      "passport_coverage": "14/14",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Baila Conmigo",
+          "prob": 0.090454
+        },
+        {
+          "rank": 2,
+          "horse": "Tassarolo",
+          "prob": 0.074539
+        },
+        {
+          "rank": 3,
+          "horse": "Lagoon Nebula",
+          "prob": 0.07237
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Baila Conmigo",
+          "prob": 0.06719
+        },
+        {
+          "rank": 3,
+          "horse": "Eben Zaabeel",
+          "prob": 0.063001
+        },
+        {
+          "rank": 2,
+          "horse": "Miss Gitana",
+          "prob": 0.066707
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919055",
+      "course": "Nottingham",
+      "off_time": "2026-05-31T16:55:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "British Stallion Studs EBF Fillies' Handicap (GBBPlus Race)",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Lady Dora Mae",
+          "prob": 0.234255
+        },
+        {
+          "rank": 2,
+          "horse": "Dunkeld Dreamer",
+          "prob": 0.177797
+        },
+        {
+          "rank": 3,
+          "horse": "Bearin Up",
+          "prob": 0.167033
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Lady Dora Mae",
+          "prob": 0.165459
+        },
+        {
+          "rank": 2,
+          "horse": "Dunkeld Dreamer",
+          "prob": 0.148034
+        },
+        {
+          "rank": 3,
+          "horse": "Shady Bay",
+          "prob": 0.13215
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921725",
+      "course": "Kilbeggan",
+      "off_time": "2026-05-31T17:00:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "GUY Clothing & KODE Clothing & Footwear Handicap Chase",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Andys Flame",
+          "prob": 0.075446
+        },
+        {
+          "rank": 2,
+          "horse": "No Flies On Him",
+          "prob": 0.075194
+        },
+        {
+          "rank": 3,
+          "horse": "General Clermont",
+          "prob": 0.072509
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "No Flies On Him",
+          "prob": 0.077183
+        },
+        {
+          "rank": 3,
+          "horse": "Iamagetaway",
+          "prob": 0.070359
+        },
+        {
+          "rank": 2,
+          "horse": "Trasna Na Pairce",
+          "prob": 0.075801
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "918772",
+      "course": "Fakenham",
+      "off_time": "2026-05-31T17:07:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Fisher Electrical Contractors Female Jockeys' Handicap Hurdle (Female Pro Jockeys/Amateur Riders')",
+      "runner_count": 4,
+      "passport_coverage": "4/4",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Market House",
+          "prob": 0.316257
+        },
+        {
+          "rank": 2,
+          "horse": "Gone In Sixty",
+          "prob": 0.287563
+        },
+        {
+          "rank": 3,
+          "horse": "Nottodaybobo",
+          "prob": 0.1613
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Market House",
+          "prob": 0.349407
+        },
+        {
+          "rank": 2,
+          "horse": "Gone In Sixty",
+          "prob": 0.242912
+        },
+        {
+          "rank": 3,
+          "horse": "Nottodaybobo",
+          "prob": 0.179861
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919064",
+      "course": "Thirsk",
+      "off_time": "2026-05-31T17:15:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Sky Bet Extra Places Handicap (GBBPlus Race)",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fast Fred",
+          "prob": 0.11205
+        },
+        {
+          "rank": 2,
+          "horse": "Damascus Steel",
+          "prob": 0.112
+        },
+        {
+          "rank": 3,
+          "horse": "Cabrera",
+          "prob": 0.106021
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Fast Fred",
+          "prob": 0.102161
+        },
+        {
+          "rank": 2,
+          "horse": "Cabrera",
+          "prob": 0.098838
+        },
+        {
+          "rank": 3,
+          "horse": "Serenity Blue",
+          "prob": 0.09609
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921716",
+      "course": "Listowel",
+      "off_time": "2026-05-31T17:20:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Acro Fire & Safety (Q.R.) Race",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sky Captain",
+          "prob": 0.205143
+        },
+        {
+          "rank": 2,
+          "horse": "Quinta Do Lago",
+          "prob": 0.160416
+        },
+        {
+          "rank": 3,
+          "horse": "The Mediator",
+          "prob": 0.124256
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sky Captain",
+          "prob": 0.156945
+        },
+        {
+          "rank": 2,
+          "horse": "Quinta Do Lago",
+          "prob": 0.122227
+        },
+        {
+          "rank": 3,
+          "horse": "Act Of God",
+          "prob": 0.096667
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919058",
+      "course": "Nottingham",
+      "off_time": "2026-05-31T17:25:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "£9 Racedays At Nottingham Racecourse Handicap",
+      "runner_count": 7,
+      "passport_coverage": "7/7",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Stardancer",
+          "prob": 0.192992
+        },
+        {
+          "rank": 2,
+          "horse": "Leadenhall",
+          "prob": 0.172527
+        },
+        {
+          "rank": 3,
+          "horse": "Penelope Valentine",
+          "prob": 0.168127
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Stardancer",
+          "prob": 0.180798
+        },
+        {
+          "rank": 2,
+          "horse": "Penelope Valentine",
+          "prob": 0.16697
+        },
+        {
+          "rank": 3,
+          "horse": "The Sweet Escape",
+          "prob": 0.132908
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "921726",
+      "course": "Kilbeggan",
+      "off_time": "2026-05-31T17:30:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Follow Kilbeggan On Instagram (Pro/Am) INH Flat Race",
+      "runner_count": 10,
+      "passport_coverage": "6/10",
+      "passport_coverage_pct": 60.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Pack Ball",
+          "prob": 0.224449
+        },
+        {
+          "rank": 2,
+          "horse": "O'Callaghan Can",
+          "prob": 0.162772
+        },
+        {
+          "rank": 3,
+          "horse": "Rokanako",
+          "prob": 0.134161
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Pack Ball",
+          "prob": 0.207718
+        },
+        {
+          "rank": 2,
+          "horse": "O'Callaghan Can",
+          "prob": 0.158007
+        },
+        {
+          "rank": 3,
+          "horse": "Rokanako",
+          "prob": 0.124831
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true
+    },
+    {
+      "race_id": "919062",
+      "course": "Thirsk",
+      "off_time": "2026-05-31T17:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Sky Bet Price Boosts Handicap",
+      "runner_count": 14,
+      "passport_coverage": "14/14",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fluorescence",
+          "prob": 0.086017
+        },
+        {
+          "rank": 2,
+          "horse": "Yes I'm Mali",
+          "prob": 0.08384
+        },
+        {
+          "rank": 3,
+          "horse": "Annaf",
+          "prob": 0.062745
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Fluorescence",
+          "prob": 0.07093
+        },
+        {
+          "rank": 2,
+          "horse": "Yes I'm Mali",
+          "prob": 0.068774
+        },
+        {
+          "rank": 3,
+          "horse": "Gangsta Man",
+          "prob": 0.062019
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919063",
+      "course": "Thirsk",
+      "off_time": "2026-05-31T18:15:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Sky Bet For The Fans Handicap (GBBPlus Race)",
+      "runner_count": 14,
+      "passport_coverage": "14/14",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "New York Minute",
+          "prob": 0.116285
+        },
+        {
+          "rank": 2,
+          "horse": "St Faz",
+          "prob": 0.095386
+        },
+        {
+          "rank": 3,
+          "horse": "Anniversary",
+          "prob": 0.071248
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "New York Minute",
+          "prob": 0.094687
+        },
+        {
+          "rank": 2,
+          "horse": "Anniversary",
+          "prob": 0.06913
+        },
+        {
+          "rank": 3,
+          "horse": "Artisan Dancer",
+          "prob": 0.065848
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    },
+    {
+      "race_id": "919066",
+      "course": "Thirsk",
+      "off_time": "2026-05-31T18:45:00+01:00",
+      "race_date": "2026-05-31",
+      "race_title": "Sky Bet Build A Bet Fillies' Handicap",
+      "runner_count": 12,
+      "passport_coverage": "12/12",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Bintaziza",
+          "prob": 0.187262
+        },
+        {
+          "rank": 2,
+          "horse": "Krissy",
+          "prob": 0.142832
+        },
+        {
+          "rank": 3,
+          "horse": "Renewal",
+          "prob": 0.130991
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Bintaziza",
+          "prob": 0.127703
+        },
+        {
+          "rank": 3,
+          "horse": "Krissy",
+          "prob": 0.08779
+        },
+        {
+          "rank": 2,
+          "horse": "Thankfully",
+          "prob": 0.111336
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_engine": true,
+    "no_telegram": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_staking": true,
+    "rpr_archive_only": true,
+    "no_market_lane_morning": true,
+    "no_jtcd_alltime": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "incident_id": "may24_rpdc_degraded",
+  "title": "Incident A: RPDC Feature Flatline",
+  "timestamp": "2026-06-06T10:46:24.486018Z",
+  "severity": "CRITICAL",
+  "affected_features": [
+    "improvement_score"
+  ],
+  "mathematical_proof": "- CONSTANT_VALUE_FLATLINE: Continuous column 'improvement_score' has flatlined to constant value: 0.0872",
+  "safe_to_score": false,
+  "safe_to_learn": false,
+  "recommended_action": "BLOCK_LEARNING / OPERATOR_REVIEW",
+  "operator_recovery_commands": [
+    "python scripts/ops/reindex_feature_source.py --feature improvement_score"
+  ],
+  "evidence_paths": {
+    "json": "hackathon\\amd_harnessguard\\reports\\cards\\may24_rpdc_degraded_card.json"
+  }
+}

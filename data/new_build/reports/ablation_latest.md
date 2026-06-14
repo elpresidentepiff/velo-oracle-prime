@@ -1,5 +1,5 @@
 # 4-Way Ablation — V0 / V0_OR / Passport-only / V0_OR+Passport
-Generated: 2026-05-25T22:18:08.669576Z
+Generated: 2026-05-26T00:38:56.512340Z
 
 ## Results
 | Variant | Features | AUC | AUC Δ vs V0_OR | SR | Frame | Races |

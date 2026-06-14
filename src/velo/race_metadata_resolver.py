@@ -186,8 +186,12 @@ class RaceMetadataResolver:
                 try:
                     with open(fpath) as f:
                         data = json.load(f)
-                        # Standard card usually has 'racecards' key
-                        r_list = data.get("racecards", data.get("races", []))
+                        if isinstance(data, list):
+                            r_list = data
+                        else:
+                            # Standard card usually has 'racecards' key
+                            r_list = data.get("racecards", data.get("races", []))
+                        
                         for r in r_list:
                             rid = normalize_rid(r.get("race_id"))
                             if not rid: continue

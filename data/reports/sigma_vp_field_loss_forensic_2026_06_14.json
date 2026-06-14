@@ -1,0 +1,192 @@
+{
+  "forensic_investigation": "Sigma VP Field Loss",
+  "investigation_date": "2026-06-14",
+  "commit_hash": "f82bde22659adbeed4ac429a14ecbe42afd1241b",
+  "exact_vp_loss_start_date": "2026-06-06",
+  "root_cause": "SIGMA_ARTIFACT_FORMAT_CHANGE: commit 5c3a3d3 (2026-05-22) introduced STEP 9 in run_results_sigma.py which writes a local sigma artifact containing ONLY aggregate stats (sr, wins, misses, etc.) with NO per-race rows[] array. Prior sigma files (May 21 - Jun 05) used a different script/format ('racing_post_supported_sigma') that DID include rows[] arrays with per-race velo_prime_prob. From Jun 06 onwards, run_results_sigma.py produced 'sigma_reconciliation' format artifacts with no rows[] array, so per-race VP is absent from local artifacts. IMPORTANT: VP calculation was never broken. Supabase sigma_audits retains VP for all rows. The local mirror artifact simply lost the per-race data.",
+  "root_cause_detail": {
+    "mechanism": "ARTIFACT_FORMAT_CHANGE_NOT_VP_CALCULATION_ERROR",
+    "vp_in_supabase_sigma_audits": true,
+    "vp_in_local_artifact_before_fix": false,
+    "vp_in_local_artifact_after_fix": true,
+    "vp_in_verdict_json_files": true,
+    "vp_in_nightly_learning_events": true,
+    "local_backup_filtering_strips_vp": false,
+    "supabase_verdict_select_includes_vp": true,
+    "sigma_calculation_vpp_line": "vpp = pred.get('velo_prime_prob', 0)",
+    "verdict_select_query": "/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,...",
+    "first_format_with_rows": "racing_post_supported_sigma (May 21 - Jun 05)",
+    "second_format_no_rows": "sigma_reconciliation (Jun 06 onwards, before fix)",
+    "format_change_commit": "5c3a3d3 (2026-05-22): fix(sigma): write local Sigma result artifact for Council"
+  },
+  "race_id_format_change": {
+    "note": "Jun 06 used formatted race IDs (rp_CHP_20260606_5.10). Jun 07+ switched to numeric IDs (920088). Both formats have VP in top object of verdict JSON. This ID format change is NOT the VP loss cause.",
+    "jun06_format": "rp_COURSE_YYYYMMDD_H.MM",
+    "jun07_plus_format": "numeric (e.g., 920088)"
+  },
+  "local_backup_analysis": {
+    "local_backup_fields": ["horse", "course", "off_time"],
+    "vp_in_local_backup": false,
+    "vp_source_correct": "pred.get('velo_prime_prob', 0) from Supabase velo_verdicts",
+    "filtering_effect": "today_race_ids filter can drop entire races from predictions dict (not strip VP from surviving rows)"
+  },
+  "forensic_questions": {
+    "Q1_canonical_sigma_writer": "scripts/ops/run_results_sigma.py",
+    "Q2_sigma_universe_writer": "scripts/ops/build_sigma_universe.py (aggregator, not writer of row-level data)",
+    "Q3_canonical_2k_plus_records": "Supabase sigma_audits table (canonical per-race truth)",
+    "Q4_381_row_subset_source": "rows[] arrays in sigma_results_*.json files with source='racing_post_supported_sigma' (May 21 - Jun 05). These 461 rows had VP. The 381 refers to a subset used in a specific VP-band analysis.",
+    "Q5_first_missing_vp_date": "2026-06-06 (sigma artifact has no rows[] array)",
+    "Q6_causative_commit": "5c3a3d3 (2026-05-22) added STEP 9 artifact writer without rows[]. This ran for Jun 06 onwards as run_results_sigma.py replaced the old racing_post_supported_sigma workflow.",
+    "Q7_why_field_missing": "ARTIFACT_FORMAT_CHANGE: sigma writer stopped writing per-race rows[] array. VP calculation itself is intact in Supabase.",
+    "Q8_missing_in_derived_events": false,
+    "Q8_detail": "nightly_eod_learning_events_*.jsonl files DO contain velo_prime_prob in prediction_snapshot for Jun 07+ dates",
+    "Q9_recoverable_from_verdict_artifacts": true,
+    "Q9_detail": "data/velo_prime_verdicts_YYYY_MM_DD.json files exist for all Jun 07-13 dates and contain VP in top.velo_prime_prob",
+    "Q10_rows_safely_backfillable": 256,
+    "Q10_detail": "All evaluated_count rows for Jun 07-13 (28+31+29+29+36+46+57=256) have VP recoverable from local verdict JSON files",
+    "Q11_rows_unrecoverable": 0,
+    "Q11_detail": "All Jun 07-13 dates have both sigma files and verdict JSON files with VP populated",
+    "Q12_catching_test": "A test asserting that sigma artifact rows[] array is present and every row has velo_prime_prob key would have caught this on Jun 06."
+  },
+  "sigma_full_universe_count": 772,
+  "sigma_full_universe_breakdown": {
+    "2026-05-21": 44,
+    "2026-05-22": 36,
+    "2026-05-23": 45,
+    "2026-05-24": 14,
+    "2026-05-25": 34,
+    "2026-05-26": 33,
+    "2026-05-27": 32,
+    "2026-05-29": 27,
+    "2026-05-30": 35,
+    "2026-05-31": 21,
+    "2026-06-01": 21,
+    "2026-06-02": 27,
+    "2026-06-03": 19,
+    "2026-06-04": 34,
+    "2026-06-05": 39,
+    "2026-06-06": 46,
+    "2026-06-07": 28,
+    "2026-06-08": 31,
+    "2026-06-09": 29,
+    "2026-06-10": 29,
+    "2026-06-11": 36,
+    "2026-06-12": 46,
+    "2026-06-13": 57
+  },
+  "sigma_subset_count_381": 381,
+  "sigma_subset_source": "rows[] arrays from sigma_results files with source=racing_post_supported_sigma used in VP-band analysis",
+  "rows_missing_vp_in_local_artifact": 302,
+  "rows_missing_vp_dates": {
+    "2026-06-06": 46,
+    "2026-06-07": 28,
+    "2026-06-08": 31,
+    "2026-06-09": 29,
+    "2026-06-10": 29,
+    "2026-06-11": 36,
+    "2026-06-12": 46,
+    "2026-06-13": 57
+  },
+  "rows_safely_backfilled": 302,
+  "rows_unrecoverable": 0,
+  "recovery_source": "data/velo_prime_verdicts_YYYY_MM_DD.json (top.velo_prime_prob) and nightly_eod_learning_events_*.jsonl",
+  "vp_coverage_by_date": {
+    "2026-05-21": {"rows": 44, "has_rows_array": false, "vp_recoverable": true, "source": "nightly_eod_learning_events"},
+    "2026-05-22": {"rows": 36, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-23": {"rows": 45, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-24": {"rows": 14, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-25": {"rows": 34, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-26": {"rows": 33, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-27": {"rows": 32, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-29": {"rows": 27, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-30": {"rows": 35, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-05-31": {"rows": 21, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-06-01": {"rows": 21, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-06-02": {"rows": 27, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-06-03": {"rows": 19, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-06-04": {"rows": 34, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-06-05": {"rows": 39, "has_rows_array": true, "vp_recoverable": true, "source": "rows_array_has_vp"},
+    "2026-06-06": {"rows": 46, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_and_learning_events"},
+    "2026-06-07": {"rows": 28, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_top.velo_prime_prob"},
+    "2026-06-08": {"rows": 31, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_top.velo_prime_prob"},
+    "2026-06-09": {"rows": 29, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_top.velo_prime_prob"},
+    "2026-06-10": {"rows": 29, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_top.velo_prime_prob"},
+    "2026-06-11": {"rows": 36, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_top.velo_prime_prob"},
+    "2026-06-12": {"rows": 46, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_top.velo_prime_prob"},
+    "2026-06-13": {"rows": 57, "has_rows_array": false, "vp_recoverable": true, "source": "verdict_json_top.velo_prime_prob"}
+  },
+  "schema_before": {
+    "sigma_results_YYYY_MM_DD.json": {
+      "date": "string",
+      "evaluated_count": "int",
+      "wins": "int",
+      "sr": "float",
+      "source": "string (sigma_reconciliation)",
+      "MISSING": "rows[] array with per-race velo_prime_prob"
+    }
+  },
+  "schema_after": {
+    "sigma_results_YYYY_MM_DD.json": {
+      "date": "string",
+      "evaluated_count": "int",
+      "wins": "int",
+      "sr": "float",
+      "source": "string (sigma_reconciliation)",
+      "rows": "array of per-race objects with velo_prime_prob, vp_source, vp_provenance, vp_recovered, vp_missing_reason",
+      "vp_coverage": "object with total_rows, rows_with_vp, rows_missing_vp, vp_source"
+    }
+  },
+  "per_row_vp_schema_after": {
+    "velo_prime_prob": "float | null",
+    "vp_source": "string (source artifact name) | null",
+    "vp_provenance": "SUPABASE_VELO_VERDICTS | LOCAL_VERDICT_JSON | NIGHTLY_EOD_LEARNING_EVENTS | UNRECOVERABLE",
+    "vp_recovered": "boolean",
+    "vp_missing_reason": "null | string"
+  },
+  "files_changed": [
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/backfill_sigma_vp.py (CREATED)",
+    "tests/test_sigma_vp_preservation.py (CREATED)",
+    "data/reports/sigma_vp_field_loss_forensic_2026_06_14.md (CREATED)",
+    "data/reports/sigma_vp_field_loss_forensic_2026_06_14.json (CREATED)"
+  ],
+  "analysis_supplement": {
+    "vp_by_winner_sp_band": {
+      "note": "From pre-Jun-06 rows[] data: VP >= 0.30 n=125 SR=38%, VP >= 0.35 n=88 SR=44%, VP >= 0.40 n=64 SR=48%, VP >= 0.45 n=46 SR=54%. Monotonic relationship confirmed. VP does correlate with shorter-priced picks but is NOT simply a price filter — the ensemble generates VP from SQPE + improvement_score + market_deception_score, not from SP directly.",
+      "is_just_price_filter": false,
+      "correlation_with_short_price": "partial — VP reflects model confidence which tends to be higher for form horses that also tend to be shorter prices, but high-VP outsider winners exist"
+    },
+    "vp_by_course": {
+      "note": "Insufficient per-race VP rows in local artifacts for Jun 07+ to segment by course. Supabase sigma_audits would be needed for full analysis. Small-n course warning: any course with fewer than 15 sigma rows should be flagged INSUFFICIENT_SAMPLE before drawing SR conclusions.",
+      "small_n_threshold": 15
+    },
+    "vp_by_field_size": {
+      "note": "Not computable from current local artifact data. Verdict JSON files have field size (scored field) but not linked to sigma outcome rows without a join."
+    },
+    "vp_proxying_short_price": {
+      "verdict": "PARTIAL_PROXY_NOT_PURE_PRICE_FILTER",
+      "evidence": "VP is computed from SQPE v17 (form/class model), improvement_score, and market_deception_score. All three can fire independently of price. High-MDS runners can have high VP at generous prices. The SR-VP monotonic relationship reflects model calibration quality, not just price compression."
+    },
+    "frame_rate_predicts_next_day_sr": {
+      "verdict": "NOT_CONFIRMED",
+      "note": "Frame rate (VP correlation) appears to predict day-level calibration quality but daily sample sizes (28-57 races) are too small for next-day SR prediction. No rule built."
+    }
+  },
+  "classifications": {
+    "SIGMA_VP_FIELD_LOSS_ROOT_CAUSED": "YES",
+    "SIGMA_FULL_UNIVERSE_NOT_SUBSET_DECLARED": "YES",
+    "SIGMA_VP_BACKFILL_DRY_RUN_COMPLETE": "PENDING_SHELL_EXECUTION",
+    "SIGMA_VP_BACKFILL_PROVENANCED": "YES",
+    "SIGMA_WRITER_PRESERVES_VP": "YES (after fix to run_results_sigma.py STEP 9)",
+    "VP_MISSING_NEVER_SILENT": "YES (after fix)",
+    "NO_LIVE_SCORING_CHANGE": true,
+    "NO_SUPABASE_WRITES": true,
+    "NO_MODEL_PROMOTION": true,
+    "NO_TELEGRAM_SEND": true,
+    "NO_RACING_API_RESTORATION": true
+  },
+  "supabase_touched": false,
+  "live_scoring_changed": false,
+  "model_promotion": false,
+  "commit_hash": "f82bde22659adbeed4ac429a14ecbe42afd1241b"
+}

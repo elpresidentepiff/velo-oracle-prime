@@ -1,0 +1,856 @@
+{
+  "universe_declaration": {
+    "row_count": 711,
+    "date_range": "2026-05-23 to 2026-06-13",
+    "days": 21,
+    "excluded_files": [
+      "sigma_results_2026_05_21.json",
+      "sigma_results_2026_05_22.json"
+    ],
+    "excluded_reason": "predate_rows_array_format",
+    "vp_coverage": "100%",
+    "older_2k_archive_included": false,
+    "backfill_provenance": "NIGHTLY_EOD_LEARNING_EVENTS or LOCAL_VERDICT_JSON per row"
+  },
+  "vp_ladder": [
+    {
+      "threshold": "ALL",
+      "n": 711,
+      "wins": 181,
+      "sr": 0.2546,
+      "win_sp_avg": 3.42,
+      "win_sp_med": 2.75
+    },
+    {
+      "threshold": ">=0.25",
+      "n": 435,
+      "wins": 134,
+      "sr": 0.308,
+      "win_sp_avg": 2.55,
+      "win_sp_med": 2.38
+    },
+    {
+      "threshold": ">=0.30",
+      "n": 334,
+      "wins": 110,
+      "sr": 0.3293,
+      "win_sp_avg": 2.38,
+      "win_sp_med": 2.1
+    },
+    {
+      "threshold": ">=0.35",
+      "n": 250,
+      "wins": 90,
+      "sr": 0.36,
+      "win_sp_avg": 2.25,
+      "win_sp_med": 2.1
+    },
+    {
+      "threshold": ">=0.40",
+      "n": 181,
+      "wins": 74,
+      "sr": 0.4088,
+      "win_sp_avg": 2.13,
+      "win_sp_med": 1.83
+    },
+    {
+      "threshold": ">=0.45",
+      "n": 130,
+      "wins": 58,
+      "sr": 0.4462,
+      "win_sp_avg": 1.98,
+      "win_sp_med": 1.73
+    },
+    {
+      "threshold": ">=0.50",
+      "n": 91,
+      "wins": 41,
+      "sr": 0.4505,
+      "win_sp_avg": 1.96,
+      "win_sp_med": 1.44
+    },
+    {
+      "threshold": ">=0.55",
+      "n": 62,
+      "wins": 27,
+      "sr": 0.4355,
+      "win_sp_avg": 2.07,
+      "win_sp_med": 1.33
+    }
+  ],
+  "vp_by_odds_band": [
+    {
+      "band": "ODDS-ON 1.0-1.5",
+      "all_n": 15,
+      "all_sr": 0.7333,
+      "vp30_n": 14,
+      "vp30_sr": 0.7857,
+      "vp40_n": 10,
+      "vp40_sr": 0.9,
+      "lift": 0.1667
+    },
+    {
+      "band": "EVS-6/4 1.5-2.5",
+      "all_n": 47,
+      "all_sr": 0.5319,
+      "vp30_n": 25,
+      "vp30_sr": 0.68,
+      "vp40_n": 13,
+      "vp40_sr": 0.7692,
+      "lift": 0.2373
+    },
+    {
+      "band": "2/1-3/1 2.5-4.0",
+      "all_n": 82,
+      "all_sr": 0.3293,
+      "vp30_n": 25,
+      "vp30_sr": 0.36,
+      "vp40_n": 12,
+      "vp40_sr": 0.4167,
+      "lift": 0.0874
+    },
+    {
+      "band": "3/1-5/1 4.0-6.0",
+      "all_n": 88,
+      "all_sr": 0.1477,
+      "vp30_n": 20,
+      "vp30_sr": 0.15,
+      "vp40_n": 10,
+      "vp40_sr": 0.2,
+      "lift": 0.0523
+    },
+    {
+      "band": "5/1-8/1 6.0-9.0",
+      "all_n": 57,
+      "all_sr": 0.1053,
+      "vp30_n": 20,
+      "vp30_sr": 0.1,
+      "vp40_n": 5,
+      "vp40_sr": 0.0,
+      "lift": -0.1053
+    },
+    {
+      "band": "8/1-14/1 9-15",
+      "all_n": 37,
+      "all_sr": 0.0541,
+      "vp30_n": 9,
+      "vp30_sr": 0.0,
+      "vp40_n": 2,
+      "vp40_sr": 0.0,
+      "lift": -0.0541
+    },
+    {
+      "band": "14/1+ 15+",
+      "all_n": 22,
+      "all_sr": 0.0455,
+      "vp30_n": 6,
+      "vp30_sr": 0.0,
+      "vp40_n": 3,
+      "vp40_sr": 0.0,
+      "lift": -0.0455
+    }
+  ],
+  "course_table": [
+    {
+      "course": "Windsor",
+      "n": 23,
+      "wins": 6,
+      "sr": 0.2609,
+      "vp_avg": 0.2153,
+      "vp40": 1,
+      "sample_warning": "MEANINGFUL"
+    },
+    {
+      "course": "Hamilton",
+      "n": 20,
+      "wins": 6,
+      "sr": 0.3,
+      "vp_avg": 0.3448,
+      "vp40": 5,
+      "sample_warning": "MEANINGFUL"
+    },
+    {
+      "course": "Nottingham",
+      "n": 20,
+      "wins": 2,
+      "sr": 0.1,
+      "vp_avg": 0.284,
+      "vp40": 2,
+      "sample_warning": "MEANINGFUL"
+    },
+    {
+      "course": "Lingfield",
+      "n": 19,
+      "wins": 2,
+      "sr": 0.1053,
+      "vp_avg": 0.2402,
+      "vp40": 2,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Cartmel",
+      "n": 18,
+      "wins": 5,
+      "sr": 0.2778,
+      "vp_avg": 0.258,
+      "vp40": 3,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Kempton (AW)",
+      "n": 16,
+      "wins": 2,
+      "sr": 0.125,
+      "vp_avg": 0.2738,
+      "vp40": 2,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Wolverhampton",
+      "n": 15,
+      "wins": 5,
+      "sr": 0.3333,
+      "vp_avg": 0.2109,
+      "vp40": 0,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Leicester",
+      "n": 14,
+      "wins": 4,
+      "sr": 0.2857,
+      "vp_avg": 0.2262,
+      "vp40": 1,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Redcar",
+      "n": 14,
+      "wins": 3,
+      "sr": 0.2143,
+      "vp_avg": 0.2128,
+      "vp40": 1,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Beverley",
+      "n": 14,
+      "wins": 3,
+      "sr": 0.2143,
+      "vp_avg": 0.2345,
+      "vp40": 2,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Uttoxeter",
+      "n": 13,
+      "wins": 6,
+      "sr": 0.4615,
+      "vp_avg": 0.3427,
+      "vp40": 5,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Bath",
+      "n": 13,
+      "wins": 3,
+      "sr": 0.2308,
+      "vp_avg": 0.363,
+      "vp40": 4,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Goodwood",
+      "n": 12,
+      "wins": 1,
+      "sr": 0.0833,
+      "vp_avg": 0.2753,
+      "vp40": 2,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Thirsk",
+      "n": 10,
+      "wins": 2,
+      "sr": 0.2,
+      "vp_avg": 0.2571,
+      "vp40": 2,
+      "sample_warning": "CAUTION"
+    },
+    {
+      "course": "Wetherby",
+      "n": 8,
+      "wins": 2,
+      "sr": 0.25,
+      "vp_avg": 0.3651,
+      "vp40": 1,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Epsom",
+      "n": 8,
+      "wins": 3,
+      "sr": 0.375,
+      "vp_avg": 0.306,
+      "vp40": 3,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Limerick",
+      "n": 8,
+      "wins": 1,
+      "sr": 0.125,
+      "vp_avg": 0.2718,
+      "vp40": 2,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Bangor-on-Dee",
+      "n": 7,
+      "wins": 3,
+      "sr": 0.4286,
+      "vp_avg": 0.2077,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Salisbury",
+      "n": 7,
+      "wins": 2,
+      "sr": 0.2857,
+      "vp_avg": 0.22,
+      "vp40": 1,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Kelso",
+      "n": 7,
+      "wins": 2,
+      "sr": 0.2857,
+      "vp_avg": 0.2361,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Plumpton",
+      "n": 7,
+      "wins": 3,
+      "sr": 0.4286,
+      "vp_avg": 0.3692,
+      "vp40": 3,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Newton Abbot",
+      "n": 7,
+      "wins": 4,
+      "sr": 0.5714,
+      "vp_avg": 0.3362,
+      "vp40": 2,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Brighton",
+      "n": 7,
+      "wins": 1,
+      "sr": 0.1429,
+      "vp_avg": 0.2155,
+      "vp40": 1,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Carlisle",
+      "n": 7,
+      "wins": 2,
+      "sr": 0.2857,
+      "vp_avg": 0.1971,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Chepstow",
+      "n": 7,
+      "wins": 3,
+      "sr": 0.4286,
+      "vp_avg": 0.2014,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Catterick",
+      "n": 7,
+      "wins": 0,
+      "sr": 0.0,
+      "vp_avg": 0.1869,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Chester",
+      "n": 7,
+      "wins": 1,
+      "sr": 0.1429,
+      "vp_avg": 0.1189,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Stratford",
+      "n": 7,
+      "wins": 1,
+      "sr": 0.1429,
+      "vp_avg": 0.1936,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Southwell",
+      "n": 7,
+      "wins": 2,
+      "sr": 0.2857,
+      "vp_avg": 0.3455,
+      "vp40": 1,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Lingfield (AW)",
+      "n": 7,
+      "wins": 2,
+      "sr": 0.2857,
+      "vp_avg": 0.5038,
+      "vp40": 5,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "York",
+      "n": 6,
+      "wins": 2,
+      "sr": 0.3333,
+      "vp_avg": 0.1648,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Huntingdon",
+      "n": 6,
+      "wins": 1,
+      "sr": 0.1667,
+      "vp_avg": 0.312,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Wolverhampton (AW)",
+      "n": 6,
+      "wins": 0,
+      "sr": 0.0,
+      "vp_avg": 0.2047,
+      "vp40": 1,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Newcastle",
+      "n": 6,
+      "wins": 2,
+      "sr": 0.3333,
+      "vp_avg": 0.2191,
+      "vp40": 0,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Pontefract",
+      "n": 6,
+      "wins": 2,
+      "sr": 0.3333,
+      "vp_avg": 0.2702,
+      "vp40": 1,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Ripon",
+      "n": 6,
+      "wins": 1,
+      "sr": 0.1667,
+      "vp_avg": 0.458,
+      "vp40": 2,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Warwick",
+      "n": 6,
+      "wins": 1,
+      "sr": 0.1667,
+      "vp_avg": 0.4583,
+      "vp40": 3,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Ffos Las",
+      "n": 6,
+      "wins": 2,
+      "sr": 0.3333,
+      "vp_avg": 0.4644,
+      "vp40": 4,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Doncaster",
+      "n": 6,
+      "wins": 2,
+      "sr": 0.3333,
+      "vp_avg": 0.3607,
+      "vp40": 2,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Musselburgh",
+      "n": 6,
+      "wins": 2,
+      "sr": 0.3333,
+      "vp_avg": 0.4142,
+      "vp40": 5,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Fontwell",
+      "n": 6,
+      "wins": 3,
+      "sr": 0.5,
+      "vp_avg": 0.4171,
+      "vp40": 3,
+      "sample_warning": "OBSERVATION"
+    },
+    {
+      "course": "Yarmouth",
+      "n": 6,
+      "wins": 1,
+      "sr": 0.1667,
+      "vp_avg": 0.283,
+      "vp40": 1,
+      "sample_warning": "OBSERVATION"
+    }
+  ],
+  "day_table": [
+    {
+      "date": "2026-05-23",
+      "n": 45,
+      "wins": 13,
+      "sr": 0.28888888888888886,
+      "fr": 0.4889,
+      "vp_avg": 0.18813555555555558,
+      "vp40": 2,
+      "vp45": 1,
+      "high_sp_pct": 0.7555555555555555,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-05-24",
+      "n": 14,
+      "wins": 4,
+      "sr": 0.2857142857142857,
+      "fr": 0.4286,
+      "vp_avg": 0.21352142857142858,
+      "vp40": 0,
+      "vp45": 0,
+      "high_sp_pct": 0.6428571428571429,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-05-25",
+      "n": 34,
+      "wins": 7,
+      "sr": 0.20588235294117646,
+      "fr": 0.2059,
+      "vp_avg": 0.23122941176470588,
+      "vp40": 0,
+      "vp45": 0,
+      "high_sp_pct": 0.5294117647058824,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-05-26",
+      "n": 33,
+      "wins": 6,
+      "sr": 0.18181818181818182,
+      "fr": 0.4545,
+      "vp_avg": 0.3110606060606061,
+      "vp40": 8,
+      "vp45": 5,
+      "high_sp_pct": 0.5757575757575758,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-05-27",
+      "n": 32,
+      "wins": 10,
+      "sr": 0.3125,
+      "fr": 0.7812,
+      "vp_avg": 0.28535625,
+      "vp40": 6,
+      "vp45": 2,
+      "high_sp_pct": 0.4375,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-05-29",
+      "n": 27,
+      "wins": 6,
+      "sr": 0.2222222222222222,
+      "fr": 0.6667,
+      "vp_avg": 0.20467037037037036,
+      "vp40": 2,
+      "vp45": 1,
+      "high_sp_pct": 0.0,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-05-30",
+      "n": 35,
+      "wins": 4,
+      "sr": 0.11428571428571428,
+      "fr": 0.3143,
+      "vp_avg": 0.17063714285714285,
+      "vp40": 1,
+      "vp45": 0,
+      "high_sp_pct": 0.45714285714285713,
+      "category": "WEAK"
+    },
+    {
+      "date": "2026-05-31",
+      "n": 21,
+      "wins": 2,
+      "sr": 0.09523809523809523,
+      "fr": 0.6667,
+      "vp_avg": 0.2314142857142857,
+      "vp40": 1,
+      "vp45": 0,
+      "high_sp_pct": 0.6190476190476191,
+      "category": "WEAK"
+    },
+    {
+      "date": "2026-06-01",
+      "n": 21,
+      "wins": 6,
+      "sr": 0.2857142857142857,
+      "fr": 0.5238,
+      "vp_avg": 0.2437904761904762,
+      "vp40": 2,
+      "vp45": 2,
+      "high_sp_pct": 0.5714285714285714,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-06-02",
+      "n": 27,
+      "wins": 10,
+      "sr": 0.37037037037037035,
+      "fr": 0.5556,
+      "vp_avg": 0.26904074074074075,
+      "vp40": 2,
+      "vp45": 2,
+      "high_sp_pct": 0.7037037037037037,
+      "category": "STRONG"
+    },
+    {
+      "date": "2026-06-03",
+      "n": 19,
+      "wins": 5,
+      "sr": 0.2631578947368421,
+      "fr": 0.3684,
+      "vp_avg": 0.44115263157894735,
+      "vp40": 8,
+      "vp45": 6,
+      "high_sp_pct": 0.5263157894736842,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-06-04",
+      "n": 34,
+      "wins": 13,
+      "sr": 0.38235294117647056,
+      "fr": 0.7353,
+      "vp_avg": 0.43957352941176475,
+      "vp40": 16,
+      "vp45": 14,
+      "high_sp_pct": 0.6176470588235294,
+      "category": "STRONG"
+    },
+    {
+      "date": "2026-06-05",
+      "n": 39,
+      "wins": 13,
+      "sr": 0.3333333333333333,
+      "fr": 0.5897,
+      "vp_avg": 0.35159487179487176,
+      "vp40": 16,
+      "vp45": 13,
+      "high_sp_pct": 0.0,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-06-06",
+      "n": 49,
+      "wins": 12,
+      "sr": 0.24489795918367346,
+      "fr": 0.5435,
+      "vp_avg": 0.3855612244897959,
+      "vp40": 20,
+      "vp45": 15,
+      "high_sp_pct": 0.0,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-06-07",
+      "n": 30,
+      "wins": 6,
+      "sr": 0.2,
+      "fr": 0.5,
+      "vp_avg": 0.33681333333333335,
+      "vp40": 9,
+      "vp45": 6,
+      "high_sp_pct": 0.0,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-06-08",
+      "n": 35,
+      "wins": 12,
+      "sr": 0.34285714285714286,
+      "fr": 0.6774,
+      "vp_avg": 0.37464857142857144,
+      "vp40": 14,
+      "vp45": 10,
+      "high_sp_pct": 0.0,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-06-09",
+      "n": 33,
+      "wins": 0,
+      "sr": 0.0,
+      "fr": 0.3793,
+      "vp_avg": 0.3546333333333333,
+      "vp40": 10,
+      "vp45": 7,
+      "high_sp_pct": 0.0,
+      "category": "WEAK"
+    },
+    {
+      "date": "2026-06-10",
+      "n": 34,
+      "wins": 6,
+      "sr": 0.17647058823529413,
+      "fr": 0.4828,
+      "vp_avg": 0.3246058823529412,
+      "vp40": 10,
+      "vp45": 5,
+      "high_sp_pct": 0.5588235294117647,
+      "category": "WEAK"
+    },
+    {
+      "date": "2026-06-11",
+      "n": 40,
+      "wins": 12,
+      "sr": 0.3,
+      "fr": 0.7222,
+      "vp_avg": 0.3932,
+      "vp40": 16,
+      "vp45": 14,
+      "high_sp_pct": 0.0,
+      "category": "NORMAL"
+    },
+    {
+      "date": "2026-06-12",
+      "n": 51,
+      "wins": 18,
+      "sr": 0.35294117647058826,
+      "fr": 0.6304,
+      "vp_avg": 0.3686549019607843,
+      "vp40": 19,
+      "vp45": 13,
+      "high_sp_pct": 0.0,
+      "category": "STRONG"
+    },
+    {
+      "date": "2026-06-13",
+      "n": 58,
+      "wins": 16,
+      "sr": 0.27586206896551724,
+      "fr": 0.5614,
+      "vp_avg": 0.36854655172413797,
+      "vp40": 19,
+      "vp45": 14,
+      "high_sp_pct": 0.0,
+      "category": "NORMAL"
+    }
+  ],
+  "field_size_table": [
+    {
+      "field_size_band": "2-5",
+      "n": 39,
+      "sr": 0.4872,
+      "vp40_n": 25,
+      "vp40_sr": 0.48
+    },
+    {
+      "field_size_band": "6-8",
+      "n": 92,
+      "sr": 0.3478,
+      "vp40_n": 34,
+      "vp40_sr": 0.4706
+    },
+    {
+      "field_size_band": "9-12",
+      "n": 112,
+      "sr": 0.2589,
+      "vp40_n": 35,
+      "vp40_sr": 0.4571
+    },
+    {
+      "field_size_band": "13+",
+      "n": 63,
+      "sr": 0.1587,
+      "vp40_n": 8,
+      "vp40_sr": 0.625
+    }
+  ],
+  "frame_rate_correlation": {
+    "today_fr_tomorrow_sr": 0.0671,
+    "today_vp_tomorrow_sr": 0.3068,
+    "verdict": "MEMORYLESS \u2014 no actionable cross-day signal"
+  },
+  "opportunity_gate_proposal": {
+    "status": "PROPOSAL_ONLY_NOT_ENABLED",
+    "green": {
+      "avg_vp_min": 0.35,
+      "vp40_min": 5,
+      "vp45_min": 2,
+      "expected_sr": "35-40%"
+    },
+    "amber": {
+      "avg_vp_range": "0.25-0.35",
+      "vp40_range": "1-4",
+      "expected_sr": "25-30%"
+    },
+    "red_triggers": [
+      "avg_vp < 0.25",
+      "zero VP40 picks",
+      "card >50% low-SR courses"
+    ],
+    "critical_caveat": "Jun 09 VP_avg=0.355 VP40=10 produced 0 wins \u2014 gate is soft signal only"
+  },
+  "vp_proxy_verdict": "NOT_A_PURE_PROXY \u2014 adds +20pp in 1.5-4.0 zone. Cannot rescue 6.0+ dead zone.",
+  "classifications": {
+    "CORRECTED_SIGMA_PATTERN_ANALYSIS_COMPLETE": true,
+    "SIGMA_711_ROW_UNIVERSE_DECLARED": true,
+    "OLDER_2K_SIGMA_ARCHIVE_NOT_CONFUSED": true,
+    "VP_FILTER_VALIDATED_ON_CORRECTED_ROWS": true,
+    "VP_PROXY_TO_ODDS_TESTED": true,
+    "COURSE_SAMPLE_WARNINGS_ACTIVE": true,
+    "OPPORTUNITY_GATE_PROPOSED_NOT_ENABLED": true,
+    "NO_LIVE_SCORING_CHANGE": true,
+    "NO_SUPABASE_WRITES": true,
+    "NO_MODEL_PROMOTION": true,
+    "NO_TELEGRAM_SEND": true
+  }
+}

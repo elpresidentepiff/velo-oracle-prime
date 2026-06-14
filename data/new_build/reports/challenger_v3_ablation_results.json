@@ -1,0 +1,21 @@
+{
+  "generated_by": "v3_ablation.py",
+  "v1_reproduced_auc": 0.6969,
+  "v1_target_auc": 0.6969,
+  "baseline_check": "PASS",
+  "v3_results": {
+    "auc": 0.698,
+    "delta": 0.001
+  },
+  "gate_passed": false,
+  "feature_count": {
+    "v1": 45,
+    "v3": 48
+  },
+  "v3_new_features": [
+    "win_rate_last3",
+    "place_rate_last3",
+    "win_rate_last6"
+  ],
+  "verdict": "REJECTED"
+}

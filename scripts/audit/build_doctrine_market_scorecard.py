@@ -29,6 +29,55 @@ def _load_input(path: Path) -> pd.DataFrame:
     raise ValueError(f"Unsupported input format: {suffix}")
 
 
+def _normalise_corpus(df: pd.DataFrame) -> pd.DataFrame:
+    """Map innovation protocol corpus columns to scorecard expected schema.
+
+    The velo_innovation_protocol corpus uses different column names than the
+    scorecard primitives expect. This layer translates without dropping data.
+
+    Column mappings:
+      won (bool)       -> outcome ("WIN" / "LOSS")
+      confidence       -> confidence_level
+      model_probability -> velo_prime_prob
+      placed (bool)    -> placed_outcome ("PLACED" / "")
+
+    Missing columns (0% live coverage — documented in investor brief):
+      cash_run_flag, setup_run_flag, decoy_support_flag
+      market_deception_score
+    These remain absent — the scorecard will correctly report 0% gate progress.
+    """
+    df = df.copy()
+
+    # outcome: derived from won/placed boolean columns
+    if "outcome" not in df.columns:
+        if "won" in df.columns:
+            df["outcome"] = df["won"].map(lambda v: "WIN" if bool(v) else "LOSS")
+        elif "result_position" in df.columns:
+            df["outcome"] = df["result_position"].map(
+                lambda v: "WIN" if str(v).strip() == "1" else "LOSS"
+            )
+
+    # confidence_level: map from 'confidence' column
+    if "confidence_level" not in df.columns and "confidence" in df.columns:
+        df["confidence_level"] = df["confidence"].str.strip().str.upper()
+
+    # velo_prime_prob: map from model_probability
+    if "velo_prime_prob" not in df.columns and "model_probability" in df.columns:
+        df["velo_prime_prob"] = pd.to_numeric(df["model_probability"], errors="coerce")
+
+    # decision_tier: alias from tier
+    if "decision_tier" not in df.columns and "tier" in df.columns:
+        df["decision_tier"] = df["tier"]
+
+    # Confidence band expected rates for the innovation corpus
+    # HIGH / MEDIUM / LOW map to known audit baselines from the evidence corpus
+    CONF_EXPECTED = {"HIGH": 30.8, "MEDIUM": 37.5, "LOW": 19.6}
+    if "confidence_expected_win_rate_pct" not in df.columns and "confidence_level" in df.columns:
+        df["confidence_expected_win_rate_pct"] = df["confidence_level"].map(CONF_EXPECTED)
+
+    return df
+
+
 def _as_markdown(scorecard: dict) -> str:
     gate = scorecard["gate_progress"]
     tier_a = scorecard["tier_a"]
@@ -101,7 +150,14 @@ def main() -> int:
         raise FileNotFoundError(f"Input file not found: {input_path}")
 
     df = _load_input(input_path)
+    df = _normalise_corpus(df)
     scorecard = build_scorecard(df, gate_target=args.gate_target, mds_threshold=args.mds_threshold)
+    scorecard["meta"] = {
+        "input_path": str(input_path),
+        "rows": len(df),
+        "generated_at": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+        "gate_flags_live_coverage": "0%_EXPECTED — cash/setup/decoy flags not yet in live corpus",
+    }
 
     output_json = Path(args.output_json)
     output_md = Path(args.output_md)

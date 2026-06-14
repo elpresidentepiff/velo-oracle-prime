@@ -1,5 +1,10 @@
 # VÉLØ PRIME — Claude Code Permanent Context
 
+> **READ FIRST: `docs/current/ONE_TRUTH.md` is the operational law and wins
+> any conflict with this file.** Much of the state below is historical
+> (March–April 2026). Racing API is DECOMMISSIONED for live use (2026-05-14;
+> ONE_TRUTH law 2026-06-10) — sidecar/reference/archive only.
+
 ## Identity
 - **Project**: VÉLØ Oracle Prime — horse racing prediction and betting intelligence system
 - **Repo**: `elpresidentepiff/velo-oracle-prime` (PUBLIC on GitHub)
@@ -18,9 +23,9 @@
 | Supabase | CONNECTED | `ltbsxbvfsxtnharjvqcm.supabase.co`, eu-west-2, 54 tables |
 | Railway | CONNECTED | Project `sincere-empathy`, service `velo-oracle` |
 | GitHub | CONNECTED | `elpresidentepiff/velo-oracle-prime`, default branch `main` |
-| The Racing API | CONNECTED | Basic Auth + MCP active |
+| The Racing API | **DECOMMISSIONED (live)** | Not a live source since 2026-05-14. Sidecar/reference only — see ONE_TRUTH law |
 | Supabase MCP | CONNECTED | `mcp.supabase.com` — live |
-| Racing API MCP | CONNECTED | `mcp.theracingapi.com` — live |
+| Racing API MCP | **REMOVED** | Not live truth — do not use for race-day data |
 | Claude API | MISSING KEY | Add `ANTHROPIC_API_KEY` to `.env` |
 
 All credentials live in `.env` — never hardcode, never commit. Read with `os.getenv()`.
@@ -197,6 +202,60 @@ Load SQPE with: `SQPEEngine.load(Path("models/v1_real/sqpe/"))`
 - **Repo is PUBLIC** on GitHub — credentials visible to anyone
 - `.env` is correctly gitignored (no values ever committed)
 - Recommended action: rotate Racing API password, use env vars only
+
+---
+
+## ONE TRUTH — Data Sources and Daily Pipeline
+
+**CANONICAL DATA SOURCE: Racing Post only. No Racing API. No Sporting Life. Ever.**
+
+### Results source (sigma EOD)
+- Source: `racing_post_account_collector.py` captures RP results pages post-race
+- Results file: `data/results/rp_results_{YYYY_MM_DD}.json`
+- The capture MUST run AFTER all races finish (~21:00 BST). Morning captures return empty pages.
+- Sigma reads with `--source cache`. Never `--source api`.
+
+### Sigma EOD sequence (run in order, every racing day after 21:00 BST)
+```bash
+# 1. Re-capture RP results pages (now that races are done)
+PYTHONPATH=. python3 scripts/ops/racing_post_account_collector.py capture \
+  --url-list data/racing_post_url_lists/rp_results_{YYYY-MM-DD}.txt \
+  --date rp-results-{YYYY-MM-DD}-final --execute
+
+# 2. Parse captured HTML into rp_results JSON
+PYTHONPATH=. python3 scripts/ops/parse_rp_results_capture.py \
+  --date {YYYY-MM-DD} --capture-date rp-results-{YYYY-MM-DD}-final --execute
+
+# 3. Run sigma reconciliation
+PYTHONPATH=. python3 scripts/ops/run_results_sigma.py --date {YYYY-MM-DD} --source cache
+
+# 4. Ingest results into horse_runs
+PYTHONPATH=. python3 scripts/ops/ingest_results_to_horse_runs.py --date {YYYY-MM-DD}
+
+# 5. Build innovation protocol
+PYTHONPATH=. python3 scripts/ops/build_innovation_protocol.py --date {YYYY-MM-DD}
+
+# 6. Rebuild sigma retrieval corpus
+PYTHONPATH=. python3 scripts/ops/build_sigma_retrieval_corpus.py
+```
+
+### If RP capture gets Angular pages (session expired)
+The browser profile needs re-authentication. Run interactively (opens Chromium window):
+```bash
+PYTHONPATH=. python3 scripts/ops/racing_post_account_collector.py init-login \
+  --profile-dir data/browser_profiles/racing_post_account --execute
+```
+Log in manually in the opened browser, press Enter to save profile. Then re-run captures.
+
+### Racecard pipeline (morning, pre-race)
+- Source: `racing_post_account_collector.py` captures RP racecard pages
+- Parsed by: `parse_racing_post_racecard_capture.py`
+- Output: `data/racing_post_account_parsed/{YYYY-MM-DD}/racecard_injection.json`
+
+### What is RETIRED
+- Racing API (`--source api`): RETIRED. Never use for new data.
+- Sporting Life scraper (`scrape_results_sl.py`): RETIRED. Emergency fallback only, incomplete.
+- `new_build_capture_results.py`: uses Racing API internally — do not use.
 
 ---
 

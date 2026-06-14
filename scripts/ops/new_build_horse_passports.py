@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Build Horse Passport V1 from scraped RP form history.
+Build Horse Passport V1 from scraped RP form history and profile metadata.
 
 Default mode is append-only: existing passport rows are preserved and only
 missing horse_rp_uid records are appended. Use --rebuild only for a deliberate
@@ -22,6 +22,7 @@ sys.path.insert(0, str(ROOT))
 from new_build_velo.horse_passport import HorsePassportBuilder
 
 RACE_SHAPE_DIR = ROOT / "data" / "race_shape"
+PARSED_DIR = ROOT / "data" / "racing_post_account_parsed"
 OUT_DIR = ROOT / "data" / "new_build" / "passports"
 RPT_DIR = ROOT / "data" / "new_build" / "reports"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -35,14 +36,15 @@ def _passport_key(row: dict) -> str:
     return f"name:{row.get('horse_name', '').strip().lower()}"
 
 
-def load_all_runs() -> dict[str, list[dict]]:
-    """Load all form history JSON files, grouped by horse_rp_uid."""
+def load_all_horses() -> dict[str, list[dict]]:
+    """Load all form history AND horse profiles, grouped by horse_rp_uid."""
+    # 1. Start with runs from form history
     by_horse: dict[str, list[dict]] = defaultdict(list)
     seen_run_keys: set[tuple[str, str, str, str, str, str]] = set()
+    
     files = sorted(RACE_SHAPE_DIR.glob("form_history_*.json"))
     for f in files:
-        if "latest" in f.name:
-            continue
+        if "latest" in f.name: continue
         data = json.loads(f.read_text(encoding="utf-8"))
         for run in data.get("runs", []):
             uid = run.get("horse_rp_uid")
@@ -55,10 +57,31 @@ def load_all_runs() -> dict[str, list[dict]]:
                 str(run.get("position") or ""),
                 str(run.get("sp_raw") or ""),
             )
-            if run_key in seen_run_keys:
-                continue
+            if run_key in seen_run_keys: continue
             seen_run_keys.add(run_key)
             by_horse[key].append(run)
+
+    # 2. Add horses from horse_profiles.json that might have 0 runs (debutants)
+    profile_files = list(PARSED_DIR.glob("**/horse_profiles.json"))
+    
+    for f in profile_files:
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            profiles = data if isinstance(data, list) else data.get("horse_profiles", [])
+            if not isinstance(profiles, list): continue
+            
+            for p in profiles:
+                uid = p.get("horse_uid")
+                name = p.get("horse_name")
+                key = str(uid) if uid else name
+                if not key: continue
+                
+                if key not in by_horse:
+                    # Create a dummy run entry to ensure the horse gets a passport
+                    by_horse[key] = [{"horse_name": name, "horse_rp_uid": uid}]
+        except Exception:
+            continue
+
     return by_horse
 
 
@@ -124,14 +147,14 @@ def write_reports(
     bow_echo = next((row for row in combined_rows if "bow echo" in (row.get("horse_name") or "").lower()), None)
 
     lines = [
-        "# Horse Passport V1",
+        "# Horse Passport V2",
         f"Generated: {datetime.now(timezone.utc).isoformat()}",
         "",
         "## Summary",
         f"- **Total passports**: {len(combined_rows)}",
         f"- **Existing before run**: {already_present}",
         f"- **Newly appended**: {newly_appended}",
-        f"- **Source horses found in form history**: {source_horses_found}",
+        f"- **Source horses found (history + profiles)**: {source_horses_found}",
         f"- **Build failures**: {len(failures)}",
         f"- **Existing duplicate rows skipped**: {existing_duplicate_count}",
         f"- **Cash-run candidates**: {len(cash_candidates)}",
@@ -141,18 +164,17 @@ def write_reports(
         "## Field Coverage",
         "| Field | Coverage |",
         "|---|---|",
-        f"| days_since_last_run | {_coverage(combined_rows, 'days_since_last_run')}% |",
-        f"| avg_days_between_runs | {_coverage(combined_rows, 'avg_days_between_runs')}% |",
+        f"| last_run_date | {_coverage(combined_rows, 'last_run_date')}% |",
+        f"| win_rate_last3 | {_coverage(combined_rows, 'win_rate_last3')}% |",
+        f"| beaten_margin_slope | {_coverage(combined_rows, 'beaten_margin_slope')}% |",
         f"| sp_trajectory | {_coverage(combined_rows, 'sp_trajectory')}% |",
         f"| avg_sp_last5 | {_coverage(combined_rows, 'avg_sp_last5')}% |",
         f"| going_preference | {_coverage(combined_rows, 'going_preference')}% |",
         f"| course_affinity | {_coverage(combined_rows, 'course_affinity')}% |",
-        f"| margin_trend | {_coverage(combined_rows, 'margin_trend')}% |",
-        f"| or_trajectory | {_coverage(combined_rows, 'or_trajectory')}% |",
         f"| current_or | {_coverage(combined_rows, 'current_or')}% |",
         "",
         "## Top 10 Cash-Run Candidates",
-        "| Horse | SP | WF Rate | WF Fail Rate | Last Run DaysAgo |",
+        "| Horse | SP | WF Rate | WF Fail Rate | Last Run |",
         "|---|---|---|---|---|",
     ]
     for row in cash_candidates[:10]:
@@ -160,31 +182,7 @@ def write_reports(
             f"| {row.get('horse_name')} | {row.get('avg_sp_last5')} | "
             f"{(row.get('well_fancied_rate') or 0):.0%} | "
             f"{(row.get('well_fancied_failure_rate') or 0):.0%} | "
-            f"{row.get('days_since_last_run')}d |"
-        )
-
-    lines += [
-        "",
-        "## Top 10 Setup-Run Candidates",
-        "| Horse | Avg Beaten Margin | OR Change | Days Since Run |",
-        "|---|---|---|---|",
-    ]
-    for row in setup_candidates[:10]:
-        lines.append(
-            f"| {row.get('horse_name')} | {row.get('avg_beaten_margin')} | "
-            f"{row.get('or_change_last3')} | {row.get('days_since_last_run')}d |"
-        )
-
-    lines += [
-        "",
-        "## Top 10 Jockey Anomaly Horses (well-fancied failures)",
-        "| Horse | Well-Fancied Failure Rate | Well-Fancied Runs | Career Runs |",
-        "|---|---|---|---|",
-    ]
-    for row in anomaly_candidates[:10]:
-        lines.append(
-            f"| {row.get('horse_name')} | {(row.get('well_fancied_failure_rate') or 0):.0%} | "
-            f"{(row.get('well_fancied_rate') or 0):.0%} of career | {row.get('career_runs')} |"
+            f"{row.get('last_run_date')} |"
         )
 
     lines += ["", "## Bow Echo Passport"]
@@ -193,9 +191,9 @@ def write_reports(
             if key not in ("trust_policy", "velo_scoring_allowed"):
                 lines.append(f"- **{key}**: {value}")
     else:
-        lines.append("*Not found in current form history captures.*")
+        lines.append("*Not found in current captures.*")
 
-    (RPT_DIR / "horse_passport_v1_latest.md").write_text("\n".join(lines), encoding="utf-8")
+    (RPT_DIR / "horse_passport_v2_latest.md").write_text("\n".join(lines), encoding="utf-8")
 
     report_json = {
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -207,18 +205,14 @@ def write_reports(
         "newly_appended": newly_appended,
         "source_horses_found": source_horses_found,
         "failures": len(failures),
-        "existing_duplicate_rows_skipped": existing_duplicate_count,
-        "cash_run_candidates": len(cash_candidates),
-        "setup_run_candidates": len(setup_candidates),
-        "jockey_anomaly_candidates": len(anomaly_candidates),
-        "bow_echo": bow_echo,
+        "existing_duplicate_count": existing_duplicate_count,
     }
-    (RPT_DIR / "horse_passport_v1_latest.json").write_text(json.dumps(report_json, indent=2), encoding="utf-8")
+    (RPT_DIR / "horse_passport_v2_latest.json").write_text(json.dumps(report_json, indent=2), encoding="utf-8")
 
 
 def run(*, rebuild: bool = False) -> dict:
-    print("Loading form history runs ...")
-    by_horse = load_all_runs()
+    print("Loading form history and profiles ...")
+    by_horse = load_all_horses()
     print(f"  {len(by_horse)} distinct horses found")
 
     builder = HorsePassportBuilder()
@@ -279,7 +273,7 @@ def run(*, rebuild: bool = False) -> dict:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Build Horse Passport V1 append-only by default.")
-    parser.add_argument("--rebuild", action="store_true", help="Overwrite passport JSONL from source form history.")
+    parser = argparse.ArgumentParser(description="Build Horse Passport V2.")
+    parser.add_argument("--rebuild", action="store_true", help="Overwrite passport JSONL.")
     args = parser.parse_args()
     run(rebuild=args.rebuild)

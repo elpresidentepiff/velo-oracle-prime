@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-06-06T16:10:39.181191+00:00",
+  "target_date": "2026-06-06",
+  "classification": "RACE_DAY_BUTTON_READY",
+  "old_velo": {
+    "attempted": true,
+    "status": "PASS",
+    "reason": null,
+    "telegram_suppressed": true
+  },
+  "new_build": {
+    "attempted": true,
+    "status": "READY",
+    "races_scored": 49,
+    "runners_scored": 448,
+    "operational_lane": "LANE_A_CORE_PASSPORT",
+    "rpr_violations": 0,
+    "sp_violations": 0,
+    "intent_coverage": {
+      "found": 0,
+      "total": 448,
+      "coverage_pct": 0.0,
+      "gate": 80.0,
+      "status": "UNAVAILABLE_BELOW_GATE",
+      "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+    },
+    "paper_only": true
+  },
+  "steps": [
+    {
+      "name": "build_rp_merged",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/build_racecard_merged_from_injection.py",
+        "--date",
+        "2026-06-06",
+        "--injection-path",
+        "data\\racing_post_account_parsed\\live-full-racepages-2026-06-06-refresh2\\racecard_injection.json"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-06T16:08:02.892329+00:00",
+      "finished_at": "2026-06-06T16:08:03.089872+00:00",
+      "output_tail": "  CHP: 7 races -> racecard_CHP_2026-06-06.json\n  DON: 7 races -> racecard_DON_2026-06-06.json\n  EPS: 8 races -> racecard_EPS_2026-06-06.json\n  HEX: 6 races -> racecard_HEX_2026-06-06.json\n  LIN: 7 races -> racecard_LIN_2026-06-06.json\n  MUS: 7 races -> racecard_MUS_2026-06-06.json\n  WOR: 7 races -> racecard_WOR_2026-06-06.json\n\nWrote 7 racecard_merged files for 2026-06-06"
+    },
+    {
+      "name": "old_velo_engine",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/run_prime_today.py",
+        "--date",
+        "2026-06-06",
+        "--source",
+        "rp",
+        "--no-notify"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-06T16:08:03.089947+00:00",
+      "finished_at": "2026-06-06T16:10:28.755240+00:00",
+      "output_tail": "RUNNER SNAPSHOTS: 448 rows → runner_snapshots_2026_06_06_2026_06_06_1ba64550_1780762155925.jsonl\n\nTIMING AUDIT: runtime_timing_audit_2026_06_06.json\n  total_runtime_sec       : 79.571s\n  spotlight_runners_parsed: 0\n  pdf_intel_attached      : 448\n  preflight             :    4.718s  races=0  runners=0\n  racecard_load         :    2.837s  races=49  runners=0\n  normalize             :    0.118s  races=49  runners=448\n  pdf_intel_preload     :    0.037s  races=7  runners=0  [7/7 courses with PDF data]\n  persist               :   70.760s  races=49  runners=448\n  telegram              :    0.076s  races=0  runners=0\n  local_backup          :    0.005s  races=0  runners=0\n  runner_snapshots      :    1.019s  races=49  runners=448\n\nSTEP 7: Count verification\n  Races fetched:    49\n  With runners:     49\n  Normalized:       49\n  Scored by PRIME:  49\n  Persisted (OK):   49\n  Persisted (FAIL): 0\n  Score errors:     0\n  Daily truth packet skipped: No module named 'sync_verdicts_from_supabase'\n[OK] Observability packet written: C:\\Users\\puror\\velo-oracle-prime\\data\\velo_run_observability_2026_06_06_9c1e32b2.json\n\nPASS — 49/49 races in velo_verdicts\n  SUPABASE WRITE-PROOF REPORT — 06 Jun 2026\n  ---------------------------------------------\n  ✓ rp_CHP_20260606_5.10\n  ✓ rp_CHP_20260606_5.47\n  ✓ rp_CHP_20260606_6.20\n  ✓ rp_CHP_20260606_6.53\n  ✓ rp_CHP_20260606_7.25\n  ✓ rp_CHP_20260606_8.25\n  ✓ rp_CHP_20260606_9.00\n  ✓ rp_DON_20260606_1.20\n  ✓ rp_DON_20260606_1.55\n  ✓ rp_DON_20260606_2.30\n  ✓ rp_DON_20260606_3.05\n  ✓ rp_DON_20260606_3.45\n  ✓ rp_DON_20260606_4.25\n  ✓ rp_DON_20260606_5.00\n  ✓ rp_EPS_20260606_1.30\n  ✓ rp_EPS_20260606_2.05\n  ✓ rp_EPS_20260606_2.40\n  ✓ rp_EPS_20260606_3.15\n  ✓ rp_EPS_20260606_4.00\n  ✓ rp_EPS_20260606_4.40\n  ✓ rp_EPS_20260606_5.20\n  ✓ rp_EPS_20260606_5.55\n  ✓ rp_HEX_20260606_4.30\n  ✓ rp_HEX_20260606_5.05\n  ✓ rp_HEX_20260606_5.40\n  ✓ rp_HEX_20260606_6.10\n  ✓ rp_HEX_20260606_6.43\n  ✓ rp_HEX_20260606_7.13\n  ✓ rp_LIN_20260606_5.35\n  ✓ rp_LIN_20260606_6.05\n  ✓ rp_LIN_20260606_6.35\n  ✓ rp_LIN_20260606_7.05\n  ✓ rp_LIN_20260606_7.40\n  ✓ rp_LIN_20260606_8.10\n  ✓ rp_LIN_20260606_8.40\n  ✓ rp_MUS_20260606_1.40\n  ✓ rp_MUS_20260606_2.15\n  ✓ rp_MUS_20260606_2.50\n  ✓ rp_MUS_20260606_3.28\n  ✓ rp_MUS_20260606_4.10\n  ✓ rp_MUS_20260606_4.45\n  ✓ rp_MUS_20260606_5.15\n  ✓ rp_WOR_20260606_1.45\n  ✓ rp_WOR_20260606_2.20\n  ✓ rp_WOR_20260606_2.55\n  ✓ rp_WOR_20260606_3.33\n  ✓ rp_WOR_20260606_4.15\n  ✓ rp_WOR_20260606_4.50\n  ✓ rp_WOR_20260606_5.25\n  ---------------------------------------------\n  Total verified writes: 49"
+    },
+    {
+      "name": "new_build_feed",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/new_build_current_card_feed.py",
+        "--racecard-path",
+        "data/racecards_2026_06_06_standard.json",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-06T16:10:28.755322+00:00",
+      "finished_at": "2026-06-06T16:10:36.812582+00:00",
+      "output_tail": "        \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n      },\n      \"strongest_intent_candidate\": null,\n      \"missing_data_warnings\": [\n        \"No current-race intent feature rows available\"\n      ],\n      \"unraced_new_horse_warnings\": []\n    },\n    {\n      \"race_date\": \"2026-06-06\",\n      \"course\": \"Chepstow\",\n      \"off_time\": \"2026-06-06T21:00:00\",\n      \"race_id\": \"920073\",\n      \"race_title\": \"Capital Windscreens Supporting Mental Health Handicap\",\n      \"runner_count\": 9,\n      \"passport_coverage\": 9,\n      \"champion_feature_coverage\": 9,\n      \"intent_feature_coverage\": 0,\n      \"top_3_by_champion_read_availability\": [\n        {\n          \"horse\": \"Electric Bass\",\n          \"rp_uid\": \"6838438\",\n          \"trainer\": \"Roger Teal\",\n          \"passport_strength_score\": 2.6308,\n          \"reason_codes\": [\n            \"JOCKEY_CONTINUITY\",\n            \"STRONG_PLACE_PROFILE\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        },\n        {\n          \"horse\": \"Cloudside Rock\",\n          \"rp_uid\": \"5920415\",\n          \"trainer\": \"David Simcock\",\n          \"passport_strength_score\": 1.9,\n          \"reason_codes\": [\n            \"OR_RISING\"\n          ],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        },\n        {\n          \"horse\": \"Big Win\",\n          \"rp_uid\": \"7789360\",\n          \"trainer\": \"James Owen\",\n          \"passport_strength_score\": 1.05,\n          \"reason_codes\": [],\n          \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n        }\n      ],\n      \"strongest_passport_horse\": {\n        \"horse\": \"Electric Bass\",\n        \"rp_uid\": \"6838438\",\n        \"trainer\": \"Roger Teal\",\n        \"passport_strength_score\": 2.6308,\n        \"reason_codes\": [\n          \"JOCKEY_CONTINUITY\",\n          \"STRONG_PLACE_PROFILE\"\n        ],\n        \"missing_reason\": \"INTENT_FEATURES_NOT_AVAILABLE_FOR_CURRENT_RACE\"\n      },\n      \"strongest_intent_candidate\": null,\n      \"missing_data_warnings\": [\n        \"No current-race intent feature rows available\"\n      ],\n      \"unraced_new_horse_warnings\": []\n    }\n  ],\n  \"rules\": {\n    \"new_build_only\": true,\n    \"official_final_card_only\": true,\n    \"official_final_card_path\": \"data\\\\racecards_2026_06_06_standard.json\",\n    \"no_training\": true,\n    \"no_live_engine\": true,\n    \"old_live_velo_untouched\": true,\n    \"shadow_velo_untouched\": true,\n    \"no_betting\": true,\n    \"no_telegram\": true,\n    \"rpr_archive_only\": true\n  }\n}"
+    },
+    {
+      "name": "new_build_score",
+      "command": [
+        "C:\\Users\\puror\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe",
+        "scripts/ops/new_build_two_lane_score.py",
+        "--date",
+        "2026-06-06",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "status": "PASS",
+      "started_at": "2026-06-06T16:10:36.812658+00:00",
+      "finished_at": "2026-06-06T16:10:39.179573+00:00",
+      "output_tail": "Written: C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\reports\\two_lane_readiness_2026_06_06.json\nWritten: C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\reports\\two_lane_readiness_2026_06_06.md\n\nOverall status: READY\nRaces scored: 49\nRunners scored: 448\nOperational lane: LANE_A_CORE_PASSPORT"
+    }
+  ]
+}

@@ -14,13 +14,14 @@ import argparse
 import json
 import logging
 import os
+import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
 log = logging.getLogger("velo.ingest_horse_runs")
@@ -91,7 +92,11 @@ def _class_int(v) -> int | None:
 
 def ingest_results(date_str: str) -> None:
     date_tag = date_str.replace("-", "_")
-    results_path = ROOT / "data" / f"results_{date_tag}.json"
+    # Canonical path from parse_rp_results_capture.py output
+    results_path = ROOT / "data" / "results" / f"rp_results_{date_tag}.json"
+    if not results_path.exists():
+        # Legacy fallback path
+        results_path = ROOT / "data" / f"results_{date_tag}.json"
     if not results_path.exists():
         log.error("Results file not found: %s", results_path)
         return
@@ -171,19 +176,36 @@ def ingest_results(date_str: str) -> None:
 
     # Filter out rows with no horse_id
     rows = [r for r in rows if r.get("horse_id")]
-    log.info("Built %d runner rows for upsert", len(rows))
+
+    # Dedupe on the upsert conflict key (race_id, horse_id). Duplicate race
+    # entries can reach the results file when a page is captured twice across
+    # batch restarts; Postgres rejects intra-batch conflict-key duplicates
+    # (error 21000), which silently dropped a whole 200-row batch on 2026-06-10.
+    deduped: dict[tuple, dict] = {}
+    for r in rows:
+        deduped[(r["race_id"], r["horse_id"])] = r
+    if len(deduped) != len(rows):
+        log.info("Deduped %d duplicate runner rows (duplicate race captures)", len(rows) - len(deduped))
+    rows = list(deduped.values())
+    log.info("Built %d unique runner rows for upsert", len(rows))
 
     # Upsert in batches of 200
     written = 0
+    failed_batches = 0
     for i in range(0, len(rows), 200):
         batch = rows[i:i + 200]
         n = _sb_upsert_batch(batch)
+        if n == 0 and batch:
+            failed_batches += 1
         written += n
 
     log.info("racing_horse_runs: %d rows written for %s", written, date_str)
-    print(f"\nINGEST COMPLETE — {date_str}")
+    print(f"\nINGEST COMPLETE — {date_str}" if not failed_batches else f"\nINGEST INCOMPLETE — {date_str}")
     print(f"  Races: {len(races)}")
     print(f"  Runners written: {written}")
+    if failed_batches:
+        print(f"  FAILED BATCHES: {failed_batches} — learned history is PARTIAL, do not mark day complete")
+        sys.exit(1)
 
 
 def main():

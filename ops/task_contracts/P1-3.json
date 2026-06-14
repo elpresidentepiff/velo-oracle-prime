@@ -1,0 +1,37 @@
+{
+  "task_id": "P1-3",
+  "allowed_paths": [
+    "docs/current/BRANCH_PROTECTION_POLICY.md",
+    "ops/task_contracts/P1-3.json",
+    "scripts/ops/verify_branch_protection_readiness.py",
+    "tests/test_verify_branch_protection_readiness.py",
+    "docs/current/VELO_HARDENING_STATE.md",
+    "docs/current/ONE_TRUTH.md"
+  ],
+  "forbidden_paths": [
+    "src/velo/scoring/",
+    "src/velo/models/",
+    "src/velo/supabase/",
+    "src/velo/telegram/",
+    "src/velo/orchestrator",
+    "src/velo/prediction"
+  ],
+  "forbidden_keywords": [
+    "score_race",
+    "run_engine_full",
+    "supabase insert",
+    "supabase update",
+    "supabase upsert",
+    "telegram send",
+    "send_telegram",
+    "promote_model",
+    "model_promotion",
+    "live_scoring"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND"
+  ]
+}

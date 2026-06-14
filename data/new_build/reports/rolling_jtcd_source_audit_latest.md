@@ -1,0 +1,110 @@
+# Rolling JTC-D Source Audit
+
+## data/raceform_clean.parquet
+- **Rows:** 1,702,741
+- **Date Range:** 2015-01-01 to 2025-07-05
+- **Presence:**
+  - date: date
+  - race_id: race_id
+  - horse: horse
+  - trainer: trainer
+  - jockey: jockey
+  - course: course
+  - dist_f: None
+  - going_code: None
+  - class: None
+  - won: None
+  - field_size: None
+- **Null Rates:**
+  - trainer: 0.00%
+  - jockey: 0.00%
+  - course: 0.00%
+  - dist_f: 100.00%
+  - going_code: 100.00%
+  - won: 100.00%
+- **Unique Counts:**
+  - trainer: 10,346
+  - jockey: 7,601
+  - course: 392
+
+## data/raceform_v17_features.parquet
+- **Rows:** 1,702,741
+- **Date Range:** 2015-01-01 to 2025-07-05
+- **Presence:**
+  - date: date
+  - race_id: race_id
+  - horse: horse
+  - trainer: trainer
+  - jockey: jockey
+  - course: course
+  - dist_f: dist_f
+  - going_code: going_code
+  - class: class_num
+  - won: None
+  - field_size: field_size
+- **Null Rates:**
+  - trainer: 0.00%
+  - jockey: 0.00%
+  - course: 0.00%
+  - dist_f: 3.37%
+  - going_code: 0.00%
+  - won: 100.00%
+- **Unique Counts:**
+  - trainer: 10,346
+  - jockey: 7,601
+  - course: 392
+
+## data/new_build/training/core_v0_historical_dataset.parquet
+- **Rows:** 1,162,031
+- **Date Range:** 2015-01-01 to 2025-07-05
+- **Presence:**
+  - date: date
+  - race_id: race_id
+  - horse: horse
+  - trainer: trainer
+  - jockey: jockey
+  - course: course
+  - dist_f: dist_f
+  - going_code: going_code
+  - class: None
+  - won: won
+  - field_size: field_size
+- **Null Rates:**
+  - trainer: 0.00%
+  - jockey: 0.00%
+  - course: 0.00%
+  - dist_f: 4.92%
+  - going_code: 0.00%
+  - won: 0.00%
+- **Unique Counts:**
+  - trainer: 9,100
+  - jockey: 6,348
+  - course: 353
+
+## data/new_build/training/core_v0_or_train.parquet
+- **Rows:** 987,511
+- **Date Range:** 2015-01-01 to 2023-12-31
+- **Presence:**
+  - date: date
+  - race_id: race_id
+  - horse: horse
+  - trainer: trainer
+  - jockey: jockey
+  - course: course
+  - dist_f: dist_f
+  - going_code: going_code
+  - class: None
+  - won: won
+  - field_size: field_size
+- **Null Rates:**
+  - trainer: 0.00%
+  - jockey: 0.00%
+  - course: 0.00%
+  - dist_f: 5.05%
+  - going_code: 0.00%
+  - won: 0.00%
+- **Unique Counts:**
+  - trainer: 8,502
+  - jockey: 5,814
+  - course: 350
+

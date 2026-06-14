@@ -254,20 +254,17 @@ class TestSourceTruthEnforcer:
         result = assert_source_known("cache")
         assert result.execution_allowed is True
 
-    def test_degraded_rp_merged_detected(self):
-        """RP_MERGED_DEGRADED must be detected when >50% runners lack pdf_intel."""
+    def test_rp_merged_does_not_depend_on_legacy_pdf_intel(self):
+        """Validated RP HTML remains clean when obsolete PDF-only fields are absent."""
         # Build races where all runners have no pdf_intel
         races = [
             {"runners": [{"name": "Horse A", "pdf_intel": {}}, {"name": "Horse B"}]}
             for _ in range(5)
         ]
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            result = enforce_source_truth("rp_merged", races=races, raise_on_block=False)
-        assert result.canonical_label == SourceLabel.RP_MERGED_DEGRADED
-        assert result.degraded is True
-        assert result.execution_allowed is True  # degraded still allowed, but warned
-        assert any(issubclass(warning.category, SourceTruthDegradedWarning) for warning in w)
+        result = enforce_source_truth("rp_merged", races=races, raise_on_block=False)
+        assert result.canonical_label == SourceLabel.RP_MERGED_CLEAN
+        assert result.degraded is False
+        assert result.execution_allowed is True
 
     def test_healthy_rp_merged_stays_clean(self):
         """RP_MERGED_CLEAN must not be downgraded when pdf_intel is present."""
@@ -357,12 +354,18 @@ class TestCronVerificationReport:
         assert "AUTOMATION_BROKEN" in report["critical_flags"]
 
     def test_data_gap_detected_on_live_repo(self):
-        """Live repo has a 10-day data gap — must be flagged DATA_GAP_ACTIVE."""
+        """STALE_POINT_IN_TIME (quarantined 2026-06-10): this test asserted the
+        live repo HAD a 10-day data gap — true during the April incident, false
+        once daily runs resumed. A unit test must not require an incident state.
+        Kept for the detector contract: status must be a known label either way."""
         from velo_cron_verification_report import build_report
         report = build_report()
         dg = report["sections"]["data_gap"]
-        assert dg["status"] == "DATA_GAP_ACTIVE"
-        assert "DATA_GAP_ACTIVE" in report["critical_flags"]
+        assert dg["status"] in ("DATA_GAP_ACTIVE", "OK", "NO_GAP", "DATA_CURRENT"), (
+            f"unknown data_gap status label: {dg['status']}"
+        )
+        if dg["status"] == "DATA_GAP_ACTIVE":
+            assert "DATA_GAP_ACTIVE" in report["critical_flags"]
 
     def test_report_is_json_serialisable(self):
         """Report dict must be fully JSON-serialisable."""

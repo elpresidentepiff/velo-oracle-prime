@@ -158,6 +158,7 @@ def _require_write_auth(x_ingestion_secret: str | None = Header(default=None)) -
     if not x_ingestion_secret or not hmac.compare_digest(x_ingestion_secret, _INGESTION_SECRET):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
+
 # ============================================================================
 # tRPC COMPATIBILITY LAYER
 # ============================================================================

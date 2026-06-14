@@ -45,19 +45,58 @@ def get_sp_band(sp):
     elif sp <= 8.5: return "MID"
     return "LONG"
 
-def run_distillation(target_date: str):
+def parse_sp_decimal(value):
+    if value is None:
+        return 0.0
+    if isinstance(value, (int, float)):
+        return float(value)
+    text = str(value).strip().lower()
+    if not text:
+        return 0.0
+    if text in {"evens", "evensf", "evs", "evsf", "even", "evenf"}:
+        return 2.0
+    cleaned = re.sub(r"[^0-9./]", "", text)
+    try:
+        if "/" in cleaned:
+            num, den = cleaned.split("/", 1)
+            return round(float(num) / float(den) + 1, 2)
+        return float(cleaned)
+    except Exception:
+        return 0.0
+
+def is_aw_course(course: str | None) -> bool:
+    text = str(course or "").lower()
+    return "(aw)" in text or " aw" in text or "all-weather" in text
+
+def parse_position(value):
+    text = str(value or "").strip().upper()
+    if not text:
+        return None
+    match = re.match(r"^(\d+)", text)
+    if match:
+        return int(match.group(1))
+    return None
+
+def run_distillation(
+    target_date: str,
+    verdicts_path_arg: str | None = None,
+    results_path_arg: str | None = None,
+):
     date_iso = target_date.replace("_", "-")
     date_und = target_date.replace("-", "_")
 
     # Load source files
-    verdicts_path = DATA_DIR / f"velo_prime_verdicts_{date_und}.json"
-    results_path = DATA_DIR / f"results_{date_und}.json"
+    verdicts_path = Path(verdicts_path_arg) if verdicts_path_arg else DATA_DIR / f"velo_prime_verdicts_{date_und}.json"
+    results_path = Path(results_path_arg) if results_path_arg else DATA_DIR / f"results_{date_und}.json"
     sigma_path = SIGMA_RESULTS_DIR / f"sigma_results_{date_und}.json"
     nb_path = NEW_BUILD_DIR / f"two_lane_readiness_{date_und}.json"
 
-    if not verdicts_path.exists() or not results_path.exists() or not sigma_path.exists():
-        print(f"Skipping distillation for {date_iso} - Missing source files (verdicts, results, or sigma).")
+    if not verdicts_path.exists() or not results_path.exists():
+        print(f"Skipping distillation for {date_iso} - Missing source files (verdicts or results).")
         return
+    sigma_available = sigma_path.exists()
+    if not sigma_available:
+        print(f"Sigma artifact missing for {date_iso}; distilling from supported RP verdict/results inputs.")
 
     try:
         verdicts = json.loads(verdicts_path.read_text(encoding="utf-8"))
@@ -77,10 +116,14 @@ def run_distillation(target_date: str):
                     nb_data[rid] = sc["lane_b_top3"][0].get("horse")
         except: pass
 
-    # Index verdicts by course/time
+    # Index verdicts by race ID first, then course/time fallback.
+    verdicts_by_id = {}
     verdicts_map = {}
     for v in verdicts:
-        v_off = str(v.get("off_time", "")).replace(":", ".")
+        rid = str(v.get("race_id") or "")
+        if rid:
+            verdicts_by_id[rid] = v
+        v_off = norm_time(str(v.get("off_time", "")).replace(":", "."))
         verdicts_map[(norm(v.get("course")), v_off)] = v
 
     memory_records = []
@@ -92,17 +135,18 @@ def run_distillation(target_date: str):
         off = norm_time(str(race.get("off", "")))
         race_id = str(race.get("race_id", ""))
 
-        winner_name = ""
-        winner_sp = 0.0
-        for rnr in race.get("runners", []):
+        race_runners = race.get("runners") or race.get("full_runners") or []
+        winner_name = race.get("winner_horse") or race.get("winner_name") or ""
+        winner_sp = parse_sp_decimal(race.get("winner_sp"))
+        for rnr in race_runners:
             if str(rnr.get("position")) == "1":
-                winner_name = rnr.get("horse")
-                winner_sp = float(rnr.get("sp_dec") or rnr.get("sp") or 0)
+                winner_name = rnr.get("horse") or winner_name
+                winner_sp = parse_sp_decimal(rnr.get("sp_dec") or rnr.get("sp") or winner_sp)
                 break
         
         if not winner_name: continue
 
-        v = verdicts_map.get((course_norm, off))
+        v = verdicts_by_id.get(race_id) or verdicts_map.get((course_norm, off))
         if not v:
             # Fallback time matching
             try:
@@ -123,6 +167,13 @@ def run_distillation(target_date: str):
         velo_pick_vp = top_pick.get("velo_prime_prob", 0)
         
         is_win = norm(velo_top_pick_name) == norm(winner_name)
+        top_pick_position = None
+        top_pick_framed = False
+        for rnr in race_runners:
+            if norm(rnr.get("horse")) == norm(velo_top_pick_name):
+                top_pick_position = parse_position(rnr.get("position"))
+                top_pick_framed = bool(top_pick_position and top_pick_position <= 3)
+                break
         
         sp_band = get_sp_band(winner_sp)
         
@@ -170,6 +221,19 @@ def run_distillation(target_date: str):
                 patch_candidate = True
                 patch_reason = "Visible mid-price winner"
 
+        # Top pick sidecar values
+        top_impr = top_pick.get("improvement_score", 0)
+        top_mds = top_pick.get("market_deception_score", 0)
+        top_place = top_pick.get("place_prob", 0)
+        top_nb_agreed = False
+        if nb_top_pick:
+            top_nb_agreed = norm(nb_top_pick) == norm(velo_top_pick_name)
+
+        aw_tier_a_watch = str(v.get("tier") or "").upper() == "A" and is_aw_course(v.get("course"))
+        aw_watch_outcome = None
+        if aw_tier_a_watch:
+            aw_watch_outcome = "WIN" if is_win else "FRAME" if top_pick_framed else "MISS"
+
         record = {
             "race_id": race_id,
             "course": v.get("course"),
@@ -179,13 +243,26 @@ def run_distillation(target_date: str):
             "miss_type": miss_type,
             "velo_top_pick": velo_top_pick_name,
             "velo_pick_vp": velo_pick_vp,
+            "top_pick_result_position": top_pick_position,
+            "top_pick_framed": top_pick_framed,
             "winner_vp_if_scored": w_vp,
             "improvement_score_winner": w_impr,
             "mds_winner": w_mds,
             "place_prob_winner": w_place,
             "new_build_agreed": nb_agreed,
+            "top_pick_improvement_score": top_impr,
+            "top_pick_mds": top_mds,
+            "top_pick_place_prob": top_place,
+            "top_pick_new_build_agreed": top_nb_agreed,
             "doctrine_patch_candidate": patch_candidate,
             "patch_reason": patch_reason,
+            "aw_tier_a_forward_watch": aw_tier_a_watch,
+            "aw_tier_a_watch_pattern": "sidecar_tier=A|course_type=AW" if aw_tier_a_watch else None,
+            "aw_tier_a_watch_status": "DOCTRINE_CANDIDATE_ONLY_FORWARD_VALIDATION" if aw_tier_a_watch else None,
+            "aw_tier_a_watch_outcome": aw_watch_outcome,
+            "aw_tier_a_live_velo_impact": False,
+            "sigma_artifact_available": sigma_available,
+            "distillation_source": "supported_rp_results",
             "generated_at": datetime.now(timezone.utc).isoformat()
         }
         memory_records.append(record)
@@ -221,6 +298,8 @@ def _update_summary():
     
     patch_candidates = [r for r in all_records if r["doctrine_patch_candidate"]]
     patch_reasons = Counter(r["patch_reason"] for r in patch_candidates)
+    aw_watch_rows = [r for r in all_records if r.get("aw_tier_a_forward_watch")]
+    aw_watch_outcomes = Counter(r.get("aw_tier_a_watch_outcome") or "UNKNOWN" for r in aw_watch_rows)
 
     summary = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -229,7 +308,15 @@ def _update_summary():
         "global_sr": round(wins / total_races, 4) if total_races else 0,
         "miss_type_counts": dict(miss_counts),
         "doctrine_patch_candidates_count": len(patch_candidates),
-        "top_patch_reasons": dict(patch_reasons.most_common())
+        "top_patch_reasons": dict(patch_reasons.most_common()),
+        "aw_tier_a_forward_watch": {
+            "candidate_only": True,
+            "live_velo_impact": False,
+            "pattern": "sidecar_tier=A|course_type=AW",
+            "n": len(aw_watch_rows),
+            "outcome_counts": dict(aw_watch_outcomes),
+            "status": "FORWARD_VALIDATION_ACCUMULATING",
+        },
     }
 
     summary_path = MEMORY_DIR / "sigma_memory_summary.json"
@@ -239,8 +326,10 @@ def _update_summary():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
+    parser.add_argument("--verdicts-file", default=None)
+    parser.add_argument("--results-file", default=None)
     args = parser.parse_args()
-    run_distillation(args.date)
+    run_distillation(args.date, args.verdicts_file, args.results_file)
 
 if __name__ == "__main__":
     main()

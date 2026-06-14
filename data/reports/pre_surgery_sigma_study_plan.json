@@ -1,0 +1,29 @@
+{
+  "report_type": "PRE_SURGERY_SIGMA_STUDY_PLAN",
+  "generated": "2026-06-14",
+  "status": "PLAN_ONLY_NOT_EXECUTED",
+  "era": "PRE_SURGERY_ARCHIVE",
+  "target_rows": {
+    "mar_apr_total": 1271,
+    "vp_extractable": 1061,
+    "vp_coverage_pct": 83.5
+  },
+  "era_tag_required": {
+    "era": "PRE_SURGERY_ARCHIVE",
+    "surgery_date": "2026-05-08"
+  },
+  "verdict_criteria": {
+    "ERA_CALIBRATION_COMPATIBLE": "VP>=0.40 SR within \u00b15pp of 41.5%",
+    "ERA_CALIBRATION_MARGINAL": "Diverges 5\u201310pp",
+    "ERA_CALIBRATION_INCOMPATIBLE": "Diverges >10pp"
+  },
+  "trigger_conditions": [
+    "Current-era dry-run validated 14+ days",
+    "Operator explicit approval"
+  ],
+  "hard_rules": [
+    "No PRE_SURGERY row may enter CURRENT_ERA without approval",
+    "No Supabase writes",
+    "No scoring change"
+  ]
+}

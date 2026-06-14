@@ -1,0 +1,42 @@
+{
+  "metrics": {
+    "A: Core Only": {
+      "AUC": 0.6264,
+      "Brier": 0.0898,
+      "SR": 0.1623,
+      "Lift_vs_Core_AUC": 0.0
+    },
+    "B: Passport Only": {
+      "AUC": 0.6345,
+      "Brier": 0.0896,
+      "SR": 0.2132,
+      "Lift_vs_Core_AUC": 0.0081
+    },
+    "C: Intent Only": {
+      "AUC": 0.5443,
+      "Brier": 0.0916,
+      "SR": 0.1449,
+      "Lift_vs_Core_AUC": -0.0821
+    },
+    "D: Core + Passport": {
+      "AUC": 0.67,
+      "Brier": 0.0882,
+      "SR": 0.2159,
+      "Lift_vs_Core_AUC": 0.0436
+    },
+    "E: Core + Intent": {
+      "AUC": 0.6354,
+      "Brier": 0.0895,
+      "SR": 0.1729,
+      "Lift_vs_Core_AUC": 0.009
+    },
+    "F: All Combined": {
+      "AUC": 0.6708,
+      "Brier": 0.0881,
+      "SR": 0.2204,
+      "Lift_vs_Core_AUC": 0.0444
+    }
+  },
+  "decision": "PROMOTE_CHALLENGER_V1",
+  "generated_at": "2026-05-28T17:39:57.091385"
+}

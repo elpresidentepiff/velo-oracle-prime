@@ -1,0 +1,25 @@
+{
+  "task_id": "SIGMA-LOOP-JUN14",
+  "allowed_paths": [
+    "data/velo_closed_loop_daily_2026_06_14.md",
+    "data/current/",
+    "data/reports/",
+    "data/sigma_results/",
+    "ops/task_contracts/SIGMA-LOOP-JUN14.json"
+  ],
+  "forbidden_paths": [
+    "src/velo/scoring/",
+    "src/velo/models/",
+    "src/velo/telegram/",
+    "app/main.py"
+  ],
+  "forbidden_keywords": [
+    "score_race",
+    "promote_model"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND"
+  ]
+}

@@ -30,20 +30,16 @@ K_INCORRECT = -32
 K_MISSED = -8
 
 SIDECARS = {
-    "improvement_score": {"field": "improvement_score_winner", "threshold": 0.30},
-    "market_deception_score": {"field": "mds_winner", "threshold": 0.30},
-    "place_prob": {"field": "place_prob_winner", "threshold": 0.50},
-    "new_build_agreed": {"field": "new_build_agreed", "threshold": True}, # Boolean
+    "improvement_score": {"field": "top_pick_improvement_score", "threshold": 0.30},
+    "market_deception_score": {"field": "top_pick_mds", "threshold": 0.30},
+    "place_prob": {"field": "top_pick_place_prob", "threshold": 0.50},
+    "new_build_agreed": {"field": "top_pick_new_build_agreed", "threshold": True}, # Boolean
 }
 
 def evaluate_sidecar(sidecar_key, config, record):
     """
-    Evaluates if a sidecar 'fired' for the WINNER of the race.
-    Note: The sigma memory currently records these fields for the WINNER, 
-    or the VELO top pick if the winner wasn't scored.
-    We only penalize/reward based on the winner's stats in the memory record.
+    Evaluates if a sidecar 'fired' for the VELO top pick of the race.
     """
-    # Sigma memory captures: improvement_score_winner, mds_winner, place_prob_winner, new_build_agreed
     val = record.get(config["field"])
     
     if val is None:
@@ -72,25 +68,18 @@ def run_elo_tournament():
     stats = {k: {
         "n_fired": 0, 
         "n_correct": 0, 
-        "n_missed": 0, 
+        "n_missed": 0, # Tracks incorrect fires
         "elo": STARTING_ELO
     } for k in SIDECARS}
 
-    # Load existing ledger to avoid double counting if we want this to be re-runnable from scratch
-    # For simplicity and correctness, we will rebuild the stats from the ledger or from memory.
-    # The prompt implies running over all files in data/sigma_memory/ and outputting a ledger.
-    # To be idempotent, we will read all memory files, recalculate from scratch, and overwrite the ledger.
-    
     ledger_records = []
     
-    # Read all memory records in chronological order
     all_records = []
     for f in memory_files:
         for line in f.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 all_records.append(json.loads(line))
                 
-    # Sort by generated_at to simulate chronological tournament
     all_records.sort(key=lambda x: x.get("generated_at", ""))
 
     print(f"Processing {len(all_records)} historical closed races for Elo tournament...")
@@ -103,40 +92,29 @@ def run_elo_tournament():
         is_win = rec.get("miss_type") == "NONE"
         
         for skey, config in SIDECARS.items():
-            # Did the sidecar highlight the winner?
-            fired_on_winner = evaluate_sidecar(skey, config, rec)
+            # Did the sidecar highlight the top pick?
+            fired_on_top_pick = evaluate_sidecar(skey, config, rec)
             
             elo_change = 0
             event_type = ""
             
-            if fired_on_winner:
-                # The sidecar flagged the horse that actually won
+            if fired_on_top_pick:
                 stats[skey]["n_fired"] += 1
-                stats[skey]["n_correct"] += 1
-                elo_change = K_CORRECT
-                event_type = "CORRECT_FIRE"
+                if is_win:
+                    stats[skey]["n_correct"] += 1
+                    elo_change = K_CORRECT
+                    event_type = "CORRECT_FIRE"
+                else:
+                    stats[skey]["n_missed"] += 1
+                    elo_change = K_INCORRECT
+                    event_type = "INCORRECT_FIRE"
             else:
-                # The sidecar did NOT flag the winner.
-                # Did it fire on the loser we picked?
-                # Memory record doesn't currently explicitly isolate the sidecar value of the LOSING top pick 
-                # separately from the winner unless they are the same.
-                # But we can assume: if it didn't fire on the winner, it missed the winner.
-                stats[skey]["n_missed"] += 1
-                elo_change = K_MISSED
-                event_type = "MISSED_WINNER"
-                
-                # If we wanted to penalize INCORRECT fires (firing on a loser), we would need the sidecar values
-                # for all runners in the race, or at least the top pick.
-                # For now, we apply K_MISSED for not finding the winner.
-                # If the user wants K_INCORRECT specifically for firing on the WRONG horse, we approximate:
-                # If VELO lost (is_win==False), and the sidecar fired on VELO's top pick (not recorded in memory directly yet,
-                # but we can infer if we assume the sidecar follows VELO's top pick, which it doesn't always).
-                # For this iteration, we adhere to: +32 correct fire (on winner), -8 no-fire on winner.
-                # We will log it as MISSED_WINNER (-8).
-                
-                # To perfectly capture K_INCORRECT (-32), we'd need to know if the sidecar fired on ANY loser.
-                # Since sigma_memory currently only stores w_impr, w_mds (winner's stats), we only know if it fired on the winner.
-                # We will apply K_MISSED (-8) for failing to flag the winner.
+                if is_win:
+                    elo_change = K_MISSED
+                    event_type = "MISSED_WINNER"
+                else:
+                    elo_change = 0
+                    event_type = "NO_FIRE"
 
             stats[skey]["elo"] += elo_change
             

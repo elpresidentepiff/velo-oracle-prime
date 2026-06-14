@@ -143,6 +143,7 @@ def init_login(profile_dir: Path, login_url: str, *, execute: bool) -> dict:
             user_data_dir=str(profile_dir),
             headless=False,
             viewport={"width": 1400, "height": 1000},
+            args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
         )
         page = browser.new_page()
         page.goto(login_url, wait_until="domcontentloaded", timeout=60000)
@@ -201,17 +202,29 @@ def capture_urls(
             existing_captures = existing.get("captures", []) or []
         except Exception:
             existing_captures = []
+    completed_urls = {
+        item.get("source_url")
+        for item in existing_captures
+        if item.get("status") == "PASS"
+        and item.get("source_url")
+        and item.get("html_path")
+        and Path(item["html_path"]).exists()
+    }
     captures: list[dict] = []
+    batch_captured = 0
 
     with sync_playwright() as p:
         browser = p.chromium.launch_persistent_context(
             user_data_dir=str(profile_dir),
             headless=not headed,
             viewport={"width": 1400, "height": 1000},
+            args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
         )
         page = browser.new_page()
         for idx, url in enumerate(urls, start=1):
-            if batch_size > 0 and idx > batch_size:
+            if url in completed_urls:
+                continue
+            if batch_size > 0 and batch_captured >= batch_size:
                 print(f"\n[BATCH] Reached limit of {batch_size} URLs. Run again with same --date to continue from where this left off.")
                 break
             parsed = urlparse(url)
@@ -265,11 +278,17 @@ def capture_urls(
             }
             meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
             captures.append(meta)
-            if delay_seconds > 0 and idx < len(urls):
+            batch_captured += 1
+            if delay_seconds > 0 and batch_captured < len(urls):
                 time.sleep(delay_seconds)
         browser.close()
 
-    all_captures = existing_captures + captures
+    captures_by_url = {
+        item.get("source_url"): item
+        for item in existing_captures + captures
+        if item.get("source_url")
+    }
+    all_captures = [captures_by_url[url] for url in urls if url in captures_by_url]
     manifest = {
         "capture_date": capture_date,
         "generated_at": _utc_now(),
@@ -292,6 +311,7 @@ def manual_capture(
     allowed_domains: set[str],
     screenshot: bool,
     execute: bool,
+    headless: bool = False,
 ) -> dict:
     _assert_allowed_url(start_url, allowed_domains)
     profile_dir = _assert_repo_path(profile_dir, "profile_dir")
@@ -317,13 +337,17 @@ def manual_capture(
     with sync_playwright() as p:
         browser = p.chromium.launch_persistent_context(
             user_data_dir=str(profile_dir),
-            headless=False,
+            headless=headless,
             viewport={"width": 1400, "height": 1000},
+            args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
         )
         page = browser.new_page()
         response = page.goto(start_url, wait_until="domcontentloaded", timeout=60000)
-        print("Browser opened. Navigate/filter/click to the exact page you want captured.")
-        input("When the Racing Post page is ready, press Enter here to capture the current page...")
+        if not headless:
+            print("Browser opened. Navigate/filter/click to the exact page you want captured.")
+            input("When the Racing Post page is ready, press Enter here to capture the current page...")
+        else:
+            page.wait_for_timeout(5000)
         meta = _write_capture_files(
             page=page,
             day_dir=day_dir,
@@ -384,6 +408,7 @@ def main() -> None:
     manual.add_argument("--output-dir", default=str(DEFAULT_RAW_DIR))
     manual.add_argument("--allow-domain", action="append", default=[])
     manual.add_argument("--screenshot", action="store_true")
+    manual.add_argument("--headless", action="store_true", help="Run headless (no browser UI); auto-captures without user input. Use when display/headed mode is unavailable.")
     manual.add_argument("--execute", action="store_true")
 
     args = parser.parse_args()
@@ -401,6 +426,7 @@ def main() -> None:
             allowed_domains=allowed,
             screenshot=args.screenshot,
             execute=args.execute,
+            headless=args.headless,
         )
     else:
         allowed = set(DEFAULT_ALLOWED_DOMAINS)

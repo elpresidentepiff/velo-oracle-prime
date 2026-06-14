@@ -64,7 +64,7 @@ def q1_service_b(db) -> str:
     """Did Service B run and finish?"""
     try:
         rows = (db.table("pipeline_runs")
-                .select("service_name, status, source_date, races_scored, runners_scored, started_at, completed_at, error_message")
+                .select("service_name, status, source_date, races_processed, runners_processed, started_at, finished_at, error_message")
                 .eq("service_name", "velo-prime-scoring")
                 .gte("started_at", _window())
                 .order("started_at", desc=True)
@@ -75,8 +75,8 @@ def q1_service_b(db) -> str:
         r = rows[0]
         status = r.get("status", "?").upper()
         date = r.get("source_date", "?")
-        races = r.get("races_scored") or "?"
-        runners = r.get("runners_scored") or "?"
+        races = r.get("races_processed") or "?"
+        runners = r.get("runners_processed") or "?"
         err = f" | ⚠ {r['error_message'][:60]}" if r.get("error_message") else ""
         icon = "✓" if status == "COMPLETED" else ("⚠" if status == "PARTIAL" else "✗")
         return f"SERVICE B: {icon} {status} | {date} | {races} races | {runners} runners{err}"
@@ -113,8 +113,8 @@ def q2_verdicts(db) -> str:
 def q3_sigma(db) -> str:
     """What did sigma close?"""
     try:
-        rows = (db.table("velo_post_race_reviews")
-                .select("race_id, outcome, miss_reason, verdict_confidence, decision_tier, review_outcome, created_at")
+        rows = (db.table("sigma_audits")
+                .select("race_id, date, outcome, miss_reason, decision_tier, created_at")
                 .gte("created_at", _window())
                 .order("created_at", desc=True)
                 .limit(60)
@@ -135,8 +135,10 @@ def q3_sigma(db) -> str:
         misses = outcomes.get("MISS", 0)
         total  = sum(outcomes.values())
         top_miss = max(miss_reasons, key=miss_reasons.get) if miss_reasons else "none"
-        return (f"SIGMA: {total} reviewed (48h)\n"
-                f"  {wins}W / {placed}PL / {misses}M\n"
+        dates_seen = sorted({r.get("date","?") for r in rows if r.get("date")})
+        date_range = f"{dates_seen[-1]}" if dates_seen else "?"
+        return (f"SIGMA: {total} reviewed (48h) | Latest: {date_range}\n"
+                f"  {wins}W / {placed}PL / {misses}M  SR={100*wins//total if total else 0}%\n"
                 f"  Top miss: {top_miss}")
     except Exception as e:
         return f"SIGMA: query failed ({e})"
@@ -192,6 +194,31 @@ def q5_doctrine(db) -> str:
         return f"DOCTRINE: query failed ({e})"
 
 
+
+def vp_gate_local() -> str:
+    """Read pre-generated VP opportunity panel — LOCAL PRINT ONLY, not sent to Telegram."""
+    from pathlib import Path
+    panel_file = Path(__file__).parent.parent.parent / "data" / "reports" / "vp_opportunity_panel_latest.json"
+    if not panel_file.exists():
+        return "VP GATE: panel not generated yet — run build_vp_opportunity_panel.py first"
+    try:
+        import json
+        panel = json.loads(panel_file.read_text(encoding="utf-8"))
+        label = panel.get("gate_label", "UNKNOWN")
+        avg_vp = panel.get("avg_vp", 0)
+        vp40 = panel.get("vp40_count", 0)
+        vp45 = panel.get("vp45_count", 0)
+        n = panel.get("total_picks", 0)
+        date = panel.get("date", "?")
+        warn = " [FALSE_GREEN_POSSIBLE]" if label == "GREEN" else ""
+        return (
+            f"VP GATE [{date}]: {label}{warn}\n"
+            f"  avg VP={avg_vp:.3f} | VP>=0.40: {vp40} | VP>=0.45: {vp45} | picks: {n}\n"
+            f"  [REPORT ONLY — does not alter scoring, staking, or Telegram]"
+        )
+    except Exception as e:
+        return f"VP GATE: read error ({e})"
+
 def run():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     header = f"*VÉLØ MORNING BRIEF — {today} (48h window)*\n{'━' * 40}"
@@ -213,7 +240,9 @@ def run():
     body = "\n\n".join(sections)
     message = f"{header}\n\n{body}\n\n{'━' * 40}"
 
+    vp_section = vp_gate_local()
     print(message)
+    print(f"\n{'─' * 40}\n{vp_section}\n{'─' * 40}")
     _tg(message)
 
 

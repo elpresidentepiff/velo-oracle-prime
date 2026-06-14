@@ -1,4 +1,4 @@
-# VÃ‰LÃ˜ EOD Result Study â€” 2026-05-01
+# VÉLØ EOD Result Study — 2026-05-01
 
 ## Overall Verdict: PASS
 
@@ -17,7 +17,7 @@
 
 ### 2. Playbook G Shadow Critique
 - **Updates Applied**: 20
-- **Shadow State Evolution**: Evolved to None races
+- **Shadow State Evolution**: Evolved to 43 races
 - **Recurring Patterns**: High-prob volatility
 - **Watchlist**: Forensic review of high-prob losses
 - **G Verdict**: SHADOW_ONLY_OK

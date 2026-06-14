@@ -86,12 +86,29 @@ def normalize_name(name: str) -> str:
 
 
 def normalize_time(value: str) -> str:
+    """Normalise all time formats to H:MM (12h, no leading zero, BST).
+
+    Handles:
+      "1:42"  (12h colon, PDF selections)
+      "1.42"  (12h dot, SL scraper output)
+      "01:42" (leading-zero 12h)
+      "13:25" (24h BST, Racing API / PDF results)
+    """
     text = str(value or "").strip()
     if not text:
         return ""
-    if re.fullmatch(r"\d:\d{2}", text):
-        return f"0{text}"
-    return text[:5]
+    # Normalise dot separator to colon
+    text = text.replace(".", ":")
+    # Trim to HH:MM or H:MM
+    m = re.fullmatch(r"(\d{1,2}):(\d{2})", text[:5])
+    if not m:
+        return text[:5]
+    h, mins = int(m.group(1)), m.group(2)
+    # Convert 24h → 12h (13→1, 14→2, …, 23→11; 12 stays 12)
+    if h > 12:
+        h -= 12
+    # Strip leading zero: 1:42, not 01:42
+    return f"{h}:{mins}"
 
 
 def _lookup_tipster_bucket(tipsters_data: dict, tipster: str) -> dict:
@@ -181,13 +198,28 @@ COURSE_ALIASES = {
     "MKT": "Market Rasen", "DRO": "Down Royal", "DUN": "Dundalk",
     "FAK": "Fakenham",  "HER": "Hereford",   "WIN": "Windsor",
     "WDR": "Windsor",   "CHT": "Chepstow",
+    # Common AW variants from sigma (lowercase storage)
+    "southwell (aw)": "Southwell (AW)", "kempton (aw)": "Kempton (AW)",
+    "chelmsford (aw)": "Chelmsford (AW)", "lingfield (aw)": "Lingfield",
+    "wolverhampton (aw)": "Wolverhampton",
 }
+
+# Case-insensitive fallback lookup (built once at import)
+_COURSE_ALIASES_LOWER = {k.lower(): v for k, v in COURSE_ALIASES.items()}
 
 
 def _norm_course(name: str) -> str:
     course = str(name or "").strip()
     course = re.sub(r"\s*\((IRE|GB|FR)\)\s*$", "", course, flags=re.I)
-    return COURSE_ALIASES.get(course, course)
+    # Exact match
+    if course in COURSE_ALIASES:
+        return COURSE_ALIASES[course]
+    # Case-insensitive match (handles sigma_audits lowercase track storage)
+    lower = course.lower()
+    if lower in _COURSE_ALIASES_LOWER:
+        return _COURSE_ALIASES_LOWER[lower]
+    # Fallback: title-case normalisation so 'carlisle' → 'Carlisle' matches selections
+    return course.title()
 
 
 def load_results(date_str: str) -> dict:

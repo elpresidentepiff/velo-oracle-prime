@@ -1,54 +1,76 @@
 {
-  "date": "2026-05-22",
-  "generated_at": "2026-05-23T08:28:29.160392+00:00",
+  "date": "2026-06-14",
+  "generated_at": "2026-06-14T17:39:59.416178+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
-    "a33c5bd8"
+    "f82bde22"
   ],
   "flatline_count": 0,
   "fully_uniform_count": 0,
   "fully_uniform_races": [],
   "majority_tied_count": 0,
   "identity_failure_count": 0,
-  "runners_snapshotted": 417,
+  "runners_snapshotted": 314,
   "council_verdict": "PASS_TO_LEARNING",
   "learning_gate_status": "OPEN",
-  "promotion_gate_status": "OPEN",
+  "promotion_gate_status": "BLOCKED",
+  "gate_reasons": [
+    "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
+  ],
   "sigma_artifact": {
     "status": "PRESENT",
-    "path": "data/sigma_results/sigma_results_2026_05_22.json",
-    "sr": 0.25,
-    "wins": 9,
-    "evaluated_count": 36
+    "path": "data/sigma_results/sigma_results_2026_06_14.json",
+    "sr": 0.2759,
+    "wins": 8,
+    "evaluated_count": 29,
+    "sigma_status": "PASS",
+    "completeness_gate": null,
+    "learning_blocked": null,
+    "expected_predictions": 29,
+    "result_races_available": null,
+    "matched": null,
+    "coverage_ratio": null,
+    "no_result_count": 0
+  },
+  "run_truth": {
+    "status": "MANUAL_RECOVERY_ONLY",
+    "path": "data/velo_daily_run_truth_2026_06_14.json",
+    "alert_required": true,
+    "issues": [
+      "MANUAL_RUN_ONLY"
+    ],
+    "cron_truth_status": "FAIL_OR_UNPROVEN",
+    "deploy_truth_status": "UNKNOWN_UNLESS_RAILWAY_COMMIT_EXPOSED",
+    "pipeline_run_count": 1
   },
   "council_artifact_visibility": {
-    "council_run": "PRESENT",
-    "council_packet": "PRESENT",
-    "council_report": "PRESENT"
+    "council_run": "MISSING",
+    "council_packet": "MISSING",
+    "council_report": "MISSING"
   },
   "runner_calibration_gate_status": "REVIEW_THRESHOLD_MET",
   "runner_calibration_gate_runners": 786,
   "decision_policy_gate_status": "NEEDS_MORE_DAYS",
   "decision_policy_gate_top_picks": 87,
   "learning_admission": {
-    "eligibility_status": "ELIGIBLE",
-    "eligible_rows": 36,
-    "excluded_rows": 7,
+    "eligibility_status": "OUTCOME_ONLY_EOD_REPLAY_PASS",
+    "eligible_rows": 29,
+    "excluded_rows": 0,
     "consumed_shadow_before": 0,
     "consumed_live_before": 0,
-    "live_state_hash": "a1637542f7646aa9",
+    "live_state_hash": "UNKNOWN",
     "build_events_result": {
-      "phase": "SHADOW_CONSUMED",
-      "events_built": 36,
-      "events_written": 36,
-      "status": "SHADOW_CONSUMED",
-      "sentient_state_touched": true,
-      "consumed_live": false,
-      "before_race_count": 2019,
-      "after_race_count": 2055
+      "phase": "OUTCOME_ONLY_EOD_REPLAY",
+      "events_built": 29,
+      "events_written": 29,
+      "status": "PASS",
+      "sentient_state_touched": false,
+      "shadow_state_touched": true,
+      "duplicates_skipped_second_run": 29,
+      "consumed_live": false
     },
     "admission_packet": "PRESENT",
-    "recommendation": "CONSUMED_SHADOW_COMPLETE"
+    "recommendation": "OUTCOME_ONLY_EOD_REPLAY_COMPLETE"
   },
   "race_shape_v1": {
     "race_shape_model_v1": "DESIGN_PENDING",
@@ -176,5 +198,5 @@
     "promotion eligibility: BLOCKED if flatline_count > 0 OR identity_failure_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
     "shadow consume: BLOCKED if council_verdict not PASS_TO_LEARNING"
   ],
-  "next_safe_command": "Green \u2014 safe to proceed with daily evidence accumulation."
+  "next_safe_command": "Manual recovery learning is recorded; keep promotion blocked until an automated run proves pipeline truth."
 }

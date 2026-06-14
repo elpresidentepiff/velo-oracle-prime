@@ -1,0 +1,703 @@
+{
+  "date": "2026-05-23",
+  "commit_sha": "00a44ef885f78248ebb418477ba7252166e8dc18",
+  "source": "rp_merged",
+  "total_runtime_sec": 95.011,
+  "spotlight_runners_parsed": 0,
+  "pdf_intel_runners_attached": 624,
+  "stages": [
+    {
+      "stage": "preflight",
+      "duration_sec": 12.131,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "racecard_load",
+      "duration_sec": 6.5021,
+      "races": 59,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "normalize",
+      "duration_sec": 0.0016,
+      "races": 59,
+      "runners": 624,
+      "notes": ""
+    },
+    {
+      "stage": "pdf_intel_preload",
+      "duration_sec": 0.2079,
+      "races": 8,
+      "runners": 0,
+      "notes": "8/8 courses with PDF data"
+    },
+    {
+      "stage": "persist",
+      "duration_sec": 68.1291,
+      "races": 59,
+      "runners": 624,
+      "notes": ""
+    },
+    {
+      "stage": "telegram",
+      "duration_sec": 6.7135,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "local_backup",
+      "duration_sec": 0.0198,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "runner_snapshots",
+      "duration_sec": 1.3059,
+      "races": 59,
+      "runners": 624,
+      "notes": ""
+    }
+  ],
+  "race_timings": [
+    {
+      "race_id": "rp_BAN_20260523_1.50",
+      "course": "BAN",
+      "off_time": "1.50",
+      "runners": 9,
+      "score_race_velo_prime_sec": 1.8284,
+      "per_runner_avg_ms": 203.159,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_BAN_20260523_2.25",
+      "course": "BAN",
+      "off_time": "2.25",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.414,
+      "per_runner_avg_ms": 68.997,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_BAN_20260523_3.00",
+      "course": "BAN",
+      "off_time": "3.00",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6973,
+      "per_runner_avg_ms": 69.726,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_BAN_20260523_3.32",
+      "course": "BAN",
+      "off_time": "3.32",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.4349,
+      "per_runner_avg_ms": 62.126,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_BAN_20260523_4.10",
+      "course": "BAN",
+      "off_time": "4.10",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.4869,
+      "per_runner_avg_ms": 69.558,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_BAN_20260523_4.45",
+      "course": "BAN",
+      "off_time": "4.45",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7728,
+      "per_runner_avg_ms": 77.278,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_BAN_20260523_5.20",
+      "course": "BAN",
+      "off_time": "5.20",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.7856,
+      "per_runner_avg_ms": 71.415,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CRT_20260523_1.35",
+      "course": "CRT",
+      "off_time": "1.35",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.86,
+      "per_runner_avg_ms": 71.667,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CRT_20260523_2.10",
+      "course": "CRT",
+      "off_time": "2.10",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.8012,
+      "per_runner_avg_ms": 80.122,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CRT_20260523_2.43",
+      "course": "CRT",
+      "off_time": "2.43",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.5338,
+      "per_runner_avg_ms": 76.251,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CRT_20260523_3.20",
+      "course": "CRT",
+      "off_time": "3.20",
+      "runners": 3,
+      "score_race_velo_prime_sec": 0.2191,
+      "per_runner_avg_ms": 73.044,
+      "pdf_intel_attached_count": 3,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CRT_20260523_3.55",
+      "course": "CRT",
+      "off_time": "3.55",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.6393,
+      "per_runner_avg_ms": 79.918,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CRT_20260523_4.30",
+      "course": "CRT",
+      "off_time": "4.30",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.8091,
+      "per_runner_avg_ms": 73.559,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CRT_20260523_5.05",
+      "course": "CRT",
+      "off_time": "5.05",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.8326,
+      "per_runner_avg_ms": 75.693,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_1.20",
+      "course": "CUR",
+      "off_time": "1.20",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.6279,
+      "per_runner_avg_ms": 78.487,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_1.55",
+      "course": "CUR",
+      "off_time": "1.55",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7336,
+      "per_runner_avg_ms": 73.364,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_2.30",
+      "course": "CUR",
+      "off_time": "2.30",
+      "runners": 16,
+      "score_race_velo_prime_sec": 1.1875,
+      "per_runner_avg_ms": 74.219,
+      "pdf_intel_attached_count": 16,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_3.05",
+      "course": "CUR",
+      "off_time": "3.05",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.6443,
+      "per_runner_avg_ms": 71.588,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_3.40",
+      "course": "CUR",
+      "off_time": "3.40",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7222,
+      "per_runner_avg_ms": 72.225,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_4.15",
+      "course": "CUR",
+      "off_time": "4.15",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7722,
+      "per_runner_avg_ms": 77.224,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_4.50",
+      "course": "CUR",
+      "off_time": "4.50",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.9591,
+      "per_runner_avg_ms": 79.927,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_5.25",
+      "course": "CUR",
+      "off_time": "5.25",
+      "runners": 16,
+      "score_race_velo_prime_sec": 1.2272,
+      "per_runner_avg_ms": 76.699,
+      "pdf_intel_attached_count": 16,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_CUR_20260523_5.55",
+      "course": "CUR",
+      "off_time": "5.55",
+      "runners": 17,
+      "score_race_velo_prime_sec": 1.2625,
+      "per_runner_avg_ms": 74.264,
+      "pdf_intel_attached_count": 17,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_GOO_20260523_1.25",
+      "course": "GOO",
+      "off_time": "1.25",
+      "runners": 14,
+      "score_race_velo_prime_sec": 1.0247,
+      "per_runner_avg_ms": 73.195,
+      "pdf_intel_attached_count": 14,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_GOO_20260523_2.00",
+      "course": "GOO",
+      "off_time": "2.00",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.3059,
+      "per_runner_avg_ms": 61.187,
+      "pdf_intel_attached_count": 5,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_GOO_20260523_2.35",
+      "course": "GOO",
+      "off_time": "2.35",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5865,
+      "per_runner_avg_ms": 65.165,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_GOO_20260523_3.10",
+      "course": "GOO",
+      "off_time": "3.10",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5181,
+      "per_runner_avg_ms": 64.766,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_GOO_20260523_3.45",
+      "course": "GOO",
+      "off_time": "3.45",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.4834,
+      "per_runner_avg_ms": 60.426,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_GOO_20260523_4.20",
+      "course": "GOO",
+      "off_time": "4.20",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.7292,
+      "per_runner_avg_ms": 66.292,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_GOO_20260523_4.55",
+      "course": "GOO",
+      "off_time": "4.55",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5115,
+      "per_runner_avg_ms": 63.941,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_HAY_20260523_1.45",
+      "course": "HAY",
+      "off_time": "1.45",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.622,
+      "per_runner_avg_ms": 62.2,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_HAY_20260523_2.20",
+      "course": "HAY",
+      "off_time": "2.20",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7134,
+      "per_runner_avg_ms": 71.344,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_HAY_20260523_2.58",
+      "course": "HAY",
+      "off_time": "2.58",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.4587,
+      "per_runner_avg_ms": 65.53,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_HAY_20260523_3.30",
+      "course": "HAY",
+      "off_time": "3.30",
+      "runners": 13,
+      "score_race_velo_prime_sec": 0.8549,
+      "per_runner_avg_ms": 65.759,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_HAY_20260523_4.05",
+      "course": "HAY",
+      "off_time": "4.05",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.8555,
+      "per_runner_avg_ms": 71.295,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_HAY_20260523_4.40",
+      "course": "HAY",
+      "off_time": "4.40",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.351,
+      "per_runner_avg_ms": 58.494,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_HAY_20260523_5.15",
+      "course": "HAY",
+      "off_time": "5.15",
+      "runners": 15,
+      "score_race_velo_prime_sec": 1.0076,
+      "per_runner_avg_ms": 67.174,
+      "pdf_intel_attached_count": 15,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_SAL_20260523_5.45",
+      "course": "SAL",
+      "off_time": "5.45",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6633,
+      "per_runner_avg_ms": 66.331,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_SAL_20260523_6.15",
+      "course": "SAL",
+      "off_time": "6.15",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.682,
+      "per_runner_avg_ms": 68.201,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_SAL_20260523_6.45",
+      "course": "SAL",
+      "off_time": "6.45",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.8082,
+      "per_runner_avg_ms": 67.35,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_SAL_20260523_7.15",
+      "course": "SAL",
+      "off_time": "7.15",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.7132,
+      "per_runner_avg_ms": 64.841,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_SAL_20260523_7.45",
+      "course": "SAL",
+      "off_time": "7.45",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6471,
+      "per_runner_avg_ms": 64.712,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_SAL_20260523_8.15",
+      "course": "SAL",
+      "off_time": "8.15",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.595,
+      "per_runner_avg_ms": 66.109,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_SAL_20260523_8.45",
+      "course": "SAL",
+      "off_time": "8.45",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.6477,
+      "per_runner_avg_ms": 71.964,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_4.57",
+      "course": "WDR",
+      "off_time": "4.57",
+      "runners": 14,
+      "score_race_velo_prime_sec": 1.0464,
+      "per_runner_avg_ms": 74.745,
+      "pdf_intel_attached_count": 14,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_5.30",
+      "course": "WDR",
+      "off_time": "5.30",
+      "runners": 13,
+      "score_race_velo_prime_sec": 1.2569,
+      "per_runner_avg_ms": 96.683,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_6.00",
+      "course": "WDR",
+      "off_time": "6.00",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.9309,
+      "per_runner_avg_ms": 77.576,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_6.30",
+      "course": "WDR",
+      "off_time": "6.30",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.8425,
+      "per_runner_avg_ms": 105.31,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_7.00",
+      "course": "WDR",
+      "off_time": "7.00",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.9033,
+      "per_runner_avg_ms": 82.118,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_7.30",
+      "course": "WDR",
+      "off_time": "7.30",
+      "runners": 15,
+      "score_race_velo_prime_sec": 1.011,
+      "per_runner_avg_ms": 67.399,
+      "pdf_intel_attached_count": 15,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_8.00",
+      "course": "WDR",
+      "off_time": "8.00",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.3536,
+      "per_runner_avg_ms": 58.934,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_WDR_20260523_8.30",
+      "course": "WDR",
+      "off_time": "8.30",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6479,
+      "per_runner_avg_ms": 64.794,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_YOR_20260523_1.30",
+      "course": "YOR",
+      "off_time": "1.30",
+      "runners": 19,
+      "score_race_velo_prime_sec": 1.2375,
+      "per_runner_avg_ms": 65.134,
+      "pdf_intel_attached_count": 19,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_YOR_20260523_2.05",
+      "course": "YOR",
+      "off_time": "2.05",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5431,
+      "per_runner_avg_ms": 67.889,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_YOR_20260523_2.40",
+      "course": "YOR",
+      "off_time": "2.40",
+      "runners": 20,
+      "score_race_velo_prime_sec": 1.3331,
+      "per_runner_avg_ms": 66.654,
+      "pdf_intel_attached_count": 20,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_YOR_20260523_3.15",
+      "course": "YOR",
+      "off_time": "3.15",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.5092,
+      "per_runner_avg_ms": 72.745,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_YOR_20260523_3.50",
+      "course": "YOR",
+      "off_time": "3.50",
+      "runners": 15,
+      "score_race_velo_prime_sec": 1.0723,
+      "per_runner_avg_ms": 71.486,
+      "pdf_intel_attached_count": 15,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_YOR_20260523_4.25",
+      "course": "YOR",
+      "off_time": "4.25",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5472,
+      "per_runner_avg_ms": 68.406,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 0
+    },
+    {
+      "race_id": "rp_YOR_20260523_5.00",
+      "course": "YOR",
+      "off_time": "5.00",
+      "runners": 21,
+      "score_race_velo_prime_sec": 1.4312,
+      "per_runner_avg_ms": 68.152,
+      "pdf_intel_attached_count": 21,
+      "spotlight_parsed_count": 0
+    }
+  ],
+  "flatline_summary": {
+    "flatline_count": 6,
+    "total_races": 59,
+    "flatline_pct": 0.102,
+    "fully_uniform_count": 0,
+    "majority_tied_count": 6,
+    "races": [
+      {
+        "race_id": "rp_GOO_20260523_4.55",
+        "unique_vp_count": 4,
+        "runner_count": 8,
+        "max_tie_pct": 0.625
+      },
+      {
+        "race_id": "rp_HAY_20260523_2.20",
+        "unique_vp_count": 5,
+        "runner_count": 10,
+        "max_tie_pct": 0.6
+      },
+      {
+        "race_id": "rp_WDR_20260523_7.00",
+        "unique_vp_count": 3,
+        "runner_count": 11,
+        "max_tie_pct": 0.818
+      },
+      {
+        "race_id": "rp_WDR_20260523_8.00",
+        "unique_vp_count": 3,
+        "runner_count": 6,
+        "max_tie_pct": 0.667
+      },
+      {
+        "race_id": "rp_YOR_20260523_1.30",
+        "unique_vp_count": 6,
+        "runner_count": 19,
+        "max_tie_pct": 0.737
+      },
+      {
+        "race_id": "rp_YOR_20260523_2.40",
+        "unique_vp_count": 4,
+        "runner_count": 20,
+        "max_tie_pct": 0.85
+      }
+    ]
+  }
+}

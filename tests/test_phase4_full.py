@@ -219,17 +219,13 @@ class TestPhase4Full(unittest.TestCase):
     
     def test_24_api_key_validation(self):
         """Test API key validation"""
+        import os
+        from unittest.mock import patch
+
         from app.api.v1.predict import validate_api_key
-        from fastapi import HTTPException
-        
-        # Valid key should pass
-        try:
-            validate_api_key("test_key_123")
-            valid = True
-        except:
-            valid = False
-        
-        self.assertTrue(valid)
+
+        with patch.dict(os.environ, {"API_KEY": "configured-test-key"}, clear=False):
+            self.assertEqual(validate_api_key("configured-test-key"), "configured-test-key")
     
     def test_25_api_endpoints_exist(self):
         """Test all API endpoints exist"""

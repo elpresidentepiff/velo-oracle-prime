@@ -1,0 +1,66 @@
+# International Pre-Race Arena V1
+
+**Generated:** 2026-05-23T23:30:06.293166+00:00
+**Gate question:** Can VELO beat favourite and RPR baselines using only pre-race information?
+
+---
+
+## Gate Results
+
+| Pack | AUC | SR | Fav SR | RPR-only SR | Beats Fav | Verdict |
+|---|---|---|---|---|---|---|
+| HK_SHA_TIN_V1 | 0.7130 | 24.40% | 34.70% | 14.42% | NO | **FAILS_FAVOURITE_BASELINE** |
+| HK_HAPPY_VALLEY_V1 | 0.6842 | 20.73% | 26.87% | 13.05% | NO | **FAILS_FAVOURITE_BASELINE** |
+| FR_CHANTILLY_V1 | 0.6643 | 18.07% | 29.42% | 15.56% | NO | **FAILS_FAVOURITE_BASELINE** |
+| FR_FLAT_CORE | 0.6631 | 19.71% | 29.69% | 16.42% | NO | **FAILS_FAVOURITE_BASELINE** |
+| FR_AUTEUIL_JUMPS_V1 | 0.6306 | 18.16% | 27.58% | 13.45% | NO | **FAILS_FAVOURITE_BASELINE** |
+
+---
+
+## Sub-Model Breakdown
+
+| Pack | Model | AUC | SR | N Features |
+|---|---|---|---|---|
+| HK_SHA_TIN_V1 | LAGGED_RPR_ONLY | 0.5985 | 14.42% | 1 |
+| HK_SHA_TIN_V1 | FULL_PRERACE_MODEL | 0.7130 | 24.40% | 36 |
+| HK_SHA_TIN_V1 | DRAW_ONLY | 0.5547 | 9.62% | 6 |
+| HK_SHA_TIN_V1 | CLASS_ONLY | 0.6509 | 18.75% | 5 |
+| HK_SHA_TIN_V1 | LAGGED_OR_ONLY | 0.5303 | 9.86% | 1 |
+| HK_HAPPY_VALLEY_V1 | LAGGED_RPR_ONLY | 0.5841 | 13.05% | 1 |
+| HK_HAPPY_VALLEY_V1 | FULL_PRERACE_MODEL | 0.6842 | 20.73% | 36 |
+| HK_HAPPY_VALLEY_V1 | DRAW_ONLY | 0.5757 | 9.40% | 6 |
+| HK_HAPPY_VALLEY_V1 | CLASS_ONLY | 0.5967 | 13.82% | 5 |
+| HK_HAPPY_VALLEY_V1 | LAGGED_OR_ONLY | 0.5215 | 9.02% | 1 |
+| FR_CHANTILLY_V1 | LAGGED_RPR_ONLY | 0.6007 | 15.56% | 1 |
+| FR_CHANTILLY_V1 | FULL_PRERACE_MODEL | 0.6643 | 18.07% | 31 |
+| FR_CHANTILLY_V1 | GOING_ONLY | 0.5109 | 7.26% | 4 |
+| FR_CHANTILLY_V1 | CONTEXT_ONLY | 0.5982 | 12.15% | 8 |
+| FR_FLAT_CORE | LAGGED_RPR_ONLY | 0.5914 | 16.42% | 1 |
+| FR_FLAT_CORE | FULL_PRERACE_MODEL | 0.6631 | 19.71% | 29 |
+| FR_FLAT_CORE | GOING_ONLY | 0.5138 | 8.83% | 4 |
+| FR_FLAT_CORE | CONTEXT_ONLY | 0.5987 | 11.38% | 6 |
+| FR_AUTEUIL_JUMPS_V1 | LAGGED_RPR_ONLY | 0.5516 | 13.45% | 1 |
+| FR_AUTEUIL_JUMPS_V1 | FULL_PRERACE_MODEL | 0.6306 | 18.16% | 28 |
+| FR_AUTEUIL_JUMPS_V1 | GOING_ONLY | 0.5019 | 8.30% | 4 |
+| FR_AUTEUIL_JUMPS_V1 | CONTEXT_ONLY | 0.6079 | 16.37% | 8 |
+
+---
+
+## Gate Criteria
+
+| Verdict | Criteria |
+|---|---|
+| GATE_REOPENED_SAFE_SHADOW_CANDIDATE | AUC ≥ 0.75 AND SR > Favourite SR |
+| NEEDS_FEATURE_ENGINEERING | AUC ≥ 0.65 AND SR > Favourite SR |
+| FAILS_FAVOURITE_BASELINE | SR ≤ Favourite SR |
+| FAILS_RPR_BASELINE | SR ≤ Lagged-RPR-only SR |
+| HOLD | < 100 test races |
+
+---
+
+```
+PRERACE_ARENA_V1_STATUS: COMPLETE
+GATE_QUESTION: Can VELO beat fav/RPR on pre-race info only?
+TRAIN_CUTOFF: 2022-12-31
+VALID_CUTOFF: 2023-12-31
+```

@@ -1,6 +1,7 @@
 """
 Security utilities for API authentication and authorization.
 """
+
 from __future__ import annotations
 
 import hmac
@@ -8,6 +9,8 @@ import os
 
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from app.core.config import settings
 
 security = HTTPBearer(auto_error=False)
 

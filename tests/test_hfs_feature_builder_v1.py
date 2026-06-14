@@ -1,3 +1,16 @@
+# STALE_LIVE_PATH QUARANTINE (2026-06-10):
+# Tests the HFS-training-era API of velo_prime_service —
+# compute_market_intelligence no longer exists and _build_live_features no
+# longer accepts extractor=/is_training= kwargs. Quarantined, not deleted:
+# if the HFS training surface returns, remove this skip and update signatures.
+# Current live-path persistence coverage: tests/test_rpdc_persist_boundary.py.
+import pytest
+
+pytest.skip(
+    "STALE_LIVE_PATH: HFS-era functions removed/re-signatured in velo_prime_service",
+    allow_module_level=True,
+)
+
 import unittest
 import math
 from datetime import datetime, UTC, timedelta

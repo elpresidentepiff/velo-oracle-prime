@@ -1,0 +1,28 @@
+{
+  "task_id": "P2-0",
+  "allowed_paths": [
+    "docs/current/PRODUCTION_TRANSITION_READINESS_AUDIT.md",
+    "ops/task_contracts/P2-0.json",
+    "docs/current/VELO_HARDENING_STATE.md",
+    "docs/current/ONE_TRUTH.md"
+  ],
+  "forbidden_paths": [
+    "src/velo/scoring/",
+    "src/velo/models/",
+    "src/velo/supabase/",
+    "src/velo/telegram/"
+  ],
+  "forbidden_keywords": [
+    "score_race",
+    "run_engine_full",
+    "supabase",
+    "telegram",
+    "model_promotion"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND"
+  ]
+}

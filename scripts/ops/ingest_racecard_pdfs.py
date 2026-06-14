@@ -136,7 +136,7 @@ def parse_or_pdf(path: Path) -> dict:
                     if re.match(r"^\d+\.\d{2}$", first):
                         current_race = first
                         races[current_race] = {
-                            "race_info": (row[1] or "").strip().split("\n")[0] if row[1] else "",
+                            "race_info": (row[1] or "").strip().split("\n")[0] if len(row) > 1 and row[1] else "",
                             "horses": [],
                         }
                         continue
@@ -283,7 +283,7 @@ def parse_ts_pdf(path: Path) -> dict:
                     if re.match(r"^\d+\.\d{2}$", first):
                         current_race = first
                         races[current_race] = {
-                            "race_info": (row[1] or "").strip().split("\n")[0] if row[1] else "",
+                            "race_info": (row[1] or "").strip().split("\n")[0] if len(row) > 1 and row[1] else "",
                             "horses": [],
                         }
                         continue

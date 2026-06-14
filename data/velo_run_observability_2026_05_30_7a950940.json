@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "7a950940-7c69-4e5c-8439-57e89e8b4c20",
+  "date": "2026-05-30",
+  "timestamp": "2026-05-30T10:26:45.868518+00:00",
+  "git_commit_sha": "51343ed459ca178865a75df168a4466ad593757d",
+  "git_branch": "codex/rp-archive-rpr-boundary",
+  "source_truth": "RP_MERGED_DEGRADED",
+  "feature_health": "DEGRADED_RP_MERGED",
+  "active_formula": "sqpe_v17 | RP_MERGED_DEGRADED",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 100.0,
+  "persistence_status": "OK",
+  "supabase_write_attempt_success": false,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "PASS",
+  "learning_gate": "BLOCKED_DEGRADED_SOURCE",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 35,
+    "runners_processed": 274
+  },
+  "gates": {
+    "gate_2_flatline_fires": false,
+    "gate_5_rpdc_warn_fires": false,
+    "gate_6_learning_blocked": true,
+    "gate_source_unknown_block": false
+  },
+  "warnings": [
+    "V\u00c9L\u00d8 source truth is RP_MERGED_DEGRADED. Scoring will proceed with degraded features."
+  ],
+  "extra": {
+    "git_commit_sha": "51343ed459ca178865a75df168a4466ad593757d",
+    "racecard_source_raw": "rp_merged",
+    "persist_ok": 35,
+    "persist_fail": 0,
+    "score_errors": 0,
+    "flatline_summary": {
+      "flatline_count": 5,
+      "total_races": 35,
+      "flatline_pct": 0.143,
+      "fully_uniform_count": 0,
+      "majority_tied_count": 5,
+      "races": [
+        {
+          "race_id": "rp_BEV_20260530_14_48",
+          "unique_vp_count": 3,
+          "runner_count": 10,
+          "max_tie_pct": 0.8
+        },
+        {
+          "race_id": "rp_CAT_20260530_14_58",
+          "unique_vp_count": 3,
+          "runner_count": 6,
+          "max_tie_pct": 0.667
+        },
+        {
+          "race_id": "rp_CHE_20260530_13_15",
+          "unique_vp_count": 4,
+          "runner_count": 11,
+          "max_tie_pct": 0.727
+        },
+        {
+          "race_id": "rp_CHE_20260530_13_50",
+          "unique_vp_count": 4,
+          "runner_count": 12,
+          "max_tie_pct": 0.667
+        },
+        {
+          "race_id": "rp_CHE_20260530_14_20",
+          "unique_vp_count": 4,
+          "runner_count": 12,
+          "max_tie_pct": 0.667
+        }
+      ]
+    }
+  }
+}

@@ -479,28 +479,29 @@ async def lifespan(app: FastAPI):
     _missing = [name for name, p in _canonical_paths.items() if not p.exists()]
     if _missing:
         raise RuntimeError(f"[startup] BLOCKED: Missing canonical pipeline wrappers: {', '.join(_missing)}")
-    
+
     # ── Batch 3: Safety Enforcement & Import Guards ──────────────────────────
     from app.core.safety_guards import run_safety_scan
+
     if not run_safety_scan():
         raise RuntimeError("[startup] BLOCKED: Safety violation detected in live path (forbidden imports)")
 
     # Strict Mode Assertions
     _exec_mode = os.getenv("VELO_EXECUTION_MODE", "PAPER").upper()
     _bf_mode = os.getenv("BETFAIR_MODE", "PAPER").upper()
-    
+
     if _exec_mode == "LIVE":
         raise RuntimeError("[startup] BLOCKED: VELO_EXECUTION_MODE=LIVE is forbidden in this environment.")
     if _bf_mode == "LIVE":
         raise RuntimeError("[startup] BLOCKED: BETFAIR_MODE=LIVE is forbidden in this environment.")
-    
+
     logger.info(
         "[startup] Truth Fingerprint: SCORE=%s SIGMA=%s G_MODE=%s EXEC_MODE=%s BF_MODE=%s",
         "score_daily_runner.py",
         "sigma_runner.py",
         _g_mode,
         _exec_mode,
-        _bf_mode
+        _bf_mode,
     )
 
     # ── Fix 1.2: Migration / schema verification ──────────────────────────────
@@ -776,7 +777,7 @@ async def runtime_truth():
     """
     from app.core.runtime_env import get_commit_sha
     from app.core.safety_guards import run_safety_scan
-    
+
     return {
         "scoring_path": "app/pipelines/score_daily_runner.py",
         "sigma_path": "app/pipelines/sigma_runner.py",
@@ -804,10 +805,10 @@ async def runtime_truth():
                 "place_prob": "LIVE_VISIBLE_ONLY",
                 "playbook_g": "SHADOW_ONLY",
                 "no_vp_composite": "SHADOW_ONLY",
-            }
+            },
         },
-        "ensemble_profile": "core_v0_or_passport + sqpe_v17", # Hardcoded active profiles
-        "git_commit": get_commit_sha()
+        "ensemble_profile": "core_v0_or_passport + sqpe_v17",  # Hardcoded active profiles
+        "git_commit": get_commit_sha(),
     }
 
 
@@ -1025,10 +1026,10 @@ async def trigger_sigma_daily(request: Request, x_trigger_secret: str = Header(N
     except Exception:
         pass
 
-    trigger_source = body.get("trigger_source") or "api_manual"
+    body.get("trigger_source") or "api_manual"
     target_date = _validate_target_date_or_empty(body.get("target_date"))
 
-    source_date = target_date or utc_now().strftime("%Y-%m-%d")
+    target_date or utc_now().strftime("%Y-%m-%d")
     raise HTTPException(status_code=501, detail="sigma-daily script (close_sigma_loops.py) is archived/disabled.")
 
 
@@ -1092,6 +1093,39 @@ async def upload_spotlight_pdf(
 # ── Governed Card Dashboard ───────────────────────────────────────────────────
 
 
+def _select_observability_artifact(root: pathlib.Path, date_tag: str) -> tuple[pathlib.Path | None, dict | None]:
+    """Prefer the newest usable run over later exception/debug artifacts."""
+    ranked: list[tuple[int, str, float, pathlib.Path, dict]] = []
+    for path in (root / "data").glob(f"velo_run_observability_{date_tag}*.json"):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        warnings = " ".join(str(item) for item in payload.get("warnings", []))
+        usable = (
+            payload.get("source_truth") not in {None, "", "SOURCE_UNKNOWN_BLOCK"}
+            and payload.get("feature_health") != "BLOCKED"
+            and "UNHANDLED_EXCEPTION" not in warnings
+        )
+        timestamp = str(payload.get("timestamp") or payload.get("generated_at") or "")
+        ranked.append((int(usable), timestamp, path.stat().st_mtime, path, payload))
+    if not ranked:
+        return None, None
+    _, _, _, path, payload = max(ranked, key=lambda item: item[:3])
+    return path, payload
+
+
+def _resolve_rp_injection_path(root: pathlib.Path, target_date: str) -> pathlib.Path | None:
+    """Resolve the exact-date RP injection across current and legacy layouts."""
+    parsed_root = root / "data" / "racing_post_account_parsed"
+    candidates = [
+        parsed_root / f"live-full-racepages-{target_date}" / "racecard_injection.json",
+        parsed_root / target_date / "racecard_injection.json",
+    ]
+    candidates.extend(sorted(parsed_root.glob(f"*{target_date}*/racecard_injection.json"), reverse=True))
+    return next((path for path in candidates if path.exists()), None)
+
+
 @app.get("/api/dashboard/truth-summary")
 async def dashboard_truth_summary(date: str = Query(default=None)):
     """
@@ -1101,7 +1135,7 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     target_date = date or utc_now().strftime("%Y-%m-%d")
     date_tag = target_date.replace("-", "_")
     root = pathlib.Path(__file__).parent.parent
-    
+
     # 1. Base Truths
     res = {
         "operational_date": target_date,
@@ -1116,13 +1150,18 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
         "rpr_violation_count": 0,
         "sp_violation_count": 0,
         "new_build_status": "MISSING",
+        "truth_packet_status": "MISSING",
+        "truth_packet_alert_required": None,
         "passport_coverage_pct": 0.0,
         "intent_coverage_pct": 0.0,
+        "jockey_coverage_pct": 0.0,
         "sigma_status": "MISSING",
         "latest_sigma_sr": 0.0,
         "latest_sigma_frame": 0.0,
         "sidecar_league_status": "MISSING",
         "doctrine_scorecard_status": "MISSING",
+        "shadow_lanes_status": "MISSING",
+        "shadow_lanes": {},
         "security_status": "PASS",
         "stale_data_warnings": [],
         "source_files_used": [],
@@ -1130,11 +1169,11 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     }
 
     # 2. Live VÉLØ Observability
-    obs_path = root / "data" / f"velo_run_observability_{date_tag}.json"
-    if obs_path.exists():
+    obs_path, obs_data = _select_observability_artifact(root, date_tag)
+    if obs_path and obs_data:
         try:
-            obs_data = json.loads(obs_path.read_text(encoding="utf-8"))
-            res["live_velo_status"] = obs_data.get("status", "UNKNOWN")
+            res["live_velo_status"] = obs_data.get("status") or obs_data.get("decision_tier_status", "UNKNOWN")
+            res["source_truth_label"] = obs_data.get("source_truth", "UNKNOWN")
             res["observability_status"] = "PASS"
             res["source_files_used"].append(obs_path.name)
             # Find RPR/SP violations in degraded reasons or similar
@@ -1144,16 +1183,44 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
         except Exception:
             res["observability_status"] = "ERROR"
 
+    # 2.1 Jockey Coverage Check (Emergency Visibility)
+    inj_path = _resolve_rp_injection_path(root, target_date)
+    if inj_path:
+        try:
+            inj_data = json.loads(inj_path.read_text(encoding="utf-8"))
+            runners = [run for r in inj_data.get("races", []) for run in r.get("runners", [])]
+            if runners:
+                found = sum(1 for r in runners if r.get("jockey"))
+                res["jockey_coverage_pct"] = round((found / len(runners)) * 100, 1)
+                if res["jockey_coverage_pct"] < 50:
+                    res["stale_data_warnings"].append(f"CRITICAL: Jockey coverage only {res['jockey_coverage_pct']}%")
+        except Exception:
+            pass
+
     # 3. Verdicts / Scored Counts
     verdicts_path = root / "data" / f"velo_prime_verdicts_{date_tag}.json"
     if verdicts_path.exists():
         try:
             v_data = json.loads(verdicts_path.read_text(encoding="utf-8"))
             res["races_scored"] = len(v_data)
-            res["runners_scored"] = sum(len(v.get("full_analysis", [])) for v in v_data)
+            res["runners_scored"] = sum(int(v.get("scored") or len(v.get("full_analysis", []))) for v in v_data)
+            if res["races_scored"] > 0 and res["live_velo_status"] == "UNKNOWN":
+                res["live_velo_status"] = "PASS"
             res["source_files_used"].append(verdicts_path.name)
         except Exception:
             pass
+
+    truth_path = root / "data" / f"velo_daily_run_truth_{date_tag}.json"
+    if truth_path.exists():
+        try:
+            truth_data = json.loads(truth_path.read_text(encoding="utf-8"))
+            res["truth_packet_status"] = truth_data.get("status", "UNKNOWN")
+            res["truth_packet_alert_required"] = truth_data.get("alert_required")
+            res["source_files_used"].append(truth_path.name)
+            if truth_data.get("alert_required"):
+                res["stale_data_warnings"].append(f"Truth packet alert: {truth_data.get('status', 'UNKNOWN')}")
+        except Exception:
+            res["truth_packet_status"] = "ERROR"
 
     # 4. Supabase Status
     sb_url, sb_key = _pipeline_run_api_config()
@@ -1164,7 +1231,7 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
             res["supabase_readback_verified"] = "PASS"
         else:
             res["supabase_persistence_status"] = "DISCONNECTED"
-    
+
     # 5. Telegram Status
     if os.getenv("TELEGRAM_BOT_TOKEN"):
         res["telegram_status"] = "ACTIVE"
@@ -1174,9 +1241,18 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     if nb_path.exists():
         try:
             nb_data = json.loads(nb_path.read_text(encoding="utf-8"))
-            res["new_build_status"] = nb_data.get("status", "READY")
-            res["passport_coverage_pct"] = nb_data.get("passport_coverage_pct", 0.0)
-            res["intent_coverage_pct"] = nb_data.get("intent_coverage_pct", 0.0)
+            res["new_build_status"] = nb_data.get("overall_status") or nb_data.get("status", "READY")
+            scorecards = nb_data.get("race_day_scorecards") or []
+            if scorecards:
+                res["passport_coverage_pct"] = round(
+                    sum(float(row.get("passport_coverage_pct") or 0) for row in scorecards) / len(scorecards),
+                    2,
+                )
+            else:
+                res["passport_coverage_pct"] = nb_data.get("passport_coverage_pct", 0.0)
+            res["intent_coverage_pct"] = (nb_data.get("intent_coverage") or {}).get("coverage_pct") or nb_data.get(
+                "intent_coverage_pct", 0.0
+            )
             res["source_files_used"].append(f"new_build/reports/{nb_path.name}")
         except Exception:
             res["new_build_status"] = "ERROR"
@@ -1213,6 +1289,28 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
         res["doctrine_scorecard_status"] = "PRESENT"
         res["source_files_used"].append(doctrine_path.name)
 
+    shadow_path = root / "data" / "router_shadow_audit_latest.csv"
+    if shadow_path.exists():
+        try:
+            import csv
+
+            with shadow_path.open("r", encoding="utf-8-sig") as handle:
+                shadow_rows = list(csv.DictReader(handle))
+            for row in shadow_rows:
+                lane = row.get("label")
+                if lane:
+                    res["shadow_lanes"][lane] = {
+                        "n": int(float(row.get("n") or 0)),
+                        "strike_rate": float(row.get("sr") or 0),
+                        "frame_rate": float(row.get("fr") or 0),
+                        "roi": float(row.get("roi") or 0),
+                        "state": row.get("lane_state") or row.get("status") or "UNKNOWN",
+                    }
+            res["shadow_lanes_status"] = "CURRENT_CUMULATIVE"
+            res["source_files_used"].append(shadow_path.name)
+        except Exception:
+            res["shadow_lanes_status"] = "ERROR"
+
     return res
 
 
@@ -1223,6 +1321,62 @@ async def dashboard():
     if not html_path.exists():
         raise HTTPException(status_code=404, detail="Dashboard not found")
     return FileResponse(str(html_path), media_type="text/html")
+
+
+@app.get("/sidecar_stack_latest.json", include_in_schema=False)
+async def dashboard_sidecar_stack():
+    """Serve the generated sidecar stack consumed by dashboard panels A-D."""
+    sidecar_path = pathlib.Path(__file__).parent / "static" / "dashboard" / "sidecar_stack_latest.json"
+    if not sidecar_path.exists():
+        raise HTTPException(status_code=404, detail="Dashboard sidecar stack not found")
+    return FileResponse(str(sidecar_path), media_type="application/json")
+
+
+@app.get("/api/old-velo-verdicts")
+async def old_velo_verdicts(date: str = Query(default=None)):
+    """Old VELO lane for the dashboard: top pick per race from the day's
+    local verdict backup. Frontend contract = MOCK_DATA shape in index.html
+    (route was missing — frontend shipped 2026-06-08 ahead of backend)."""
+    import datetime as _dt
+
+    d = date or _dt.date.today().isoformat()
+    path = pathlib.Path(__file__).parent.parent / "data" / f"velo_prime_verdicts_{d.replace('-', '_')}.json"
+    if not path.exists():
+        return {"meta": {"requested_date": d, "record_count": 0, "source": "missing"}, "verdicts": []}
+    races = json.loads(path.read_text())
+    races = races if isinstance(races, list) else races.get("races", [])
+    verdicts = []
+    for r in races:
+        top = r.get("top") or {}
+        verdicts.append(
+            {
+                "race_id": str(r.get("race_id", "")),
+                "course": r.get("course", ""),
+                "off_time": r.get("off_time", ""),
+                "horse": top.get("horse", ""),
+                "tier": r.get("tier", ""),
+                "decision_tier": r.get("tier", ""),
+                "confidence_level": top.get("confidence_level") or "low",
+                "velo_prime_prob": top.get("velo_prime_prob"),
+                "prob_gap": top.get("prob_gap") or 0.0,
+                "market_deception_score": top.get("market_deception_score"),
+                "assigned_product": top.get("assigned_product"),
+                "router_reasons": top.get("router_reasons") or [],
+                "execution_allowed": top.get("execution_allowed"),
+                "place_prob": top.get("place_prob"),
+                "archetype_label": top.get("race_archetype") or "",
+            }
+        )
+    return {
+        "meta": {
+            "requested_date": d,
+            "loaded_date": d,
+            "source": "local_json",
+            "record_count": len(verdicts),
+            "date_mismatch": False,
+        },
+        "verdicts": verdicts,
+    }
 
 
 @app.get("/api/governed-card")
@@ -1355,7 +1509,9 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     verdict_path = root / "data" / f"velo_prime_verdicts_{date_tag}.json"
     if not verdict_path.exists():
         try:
-            from sync_verdicts_from_supabase import sync_local_verdict_archive as _sync_local_verdict_archive
+            from scripts.ops.sync_verdicts_from_supabase import (
+                sync_local_verdict_archive as _sync_local_verdict_archive,
+            )
 
             sync_result = _sync_local_verdict_archive(target_date)
             if sync_result.get("status") == "LOCAL_HYDRATED":
@@ -1439,6 +1595,20 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     sidecar_status = "MISSING"
     sidecar_date_match = False
     sidecar_metadata_coverage = 0.0
+    new_build_by_race: dict[str, dict] = {}
+    new_build_path = root / "data" / "new_build" / "reports" / f"two_lane_readiness_{date_tag}.json"
+    if new_build_path.exists():
+        try:
+            new_build_payload = _json.loads(new_build_path.read_text(encoding="utf-8"))
+            if new_build_payload.get("overall_status") == "READY":
+                new_build_by_race = {
+                    str(card.get("race_id")): card
+                    for card in new_build_payload.get("race_day_scorecards") or []
+                    if card.get("race_id")
+                }
+        except Exception as e:
+            logger.warning("Could not read New Build readiness file %s: %s", new_build_path, e)
+
     sidecar_path = root / "app" / "static" / "dashboard" / "sidecar_stack_latest.json"
     if sidecar_path.exists():
         try:
@@ -1697,6 +1867,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             (v.get("full_analysis") or {}).get("governance", {}) if isinstance(v.get("full_analysis"), dict) else {}
         )
         _flatline_warning = _fa_gov.get("rp_flatline_warning") or top.get("rp_flatline_warning") or None
+        _new_build = new_build_by_race.get(str(race_id), {})
 
         verdicts.append(
             {
@@ -1731,8 +1902,39 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "operator_skepticism_flags": skepticism_flags,
                 "signal_stack": _signal_stack,
                 "rp_flatline_warning": _flatline_warning,
+                "new_build_top3": _new_build.get("lane_a_top3") or [],
+                "new_build_runner_count": _new_build.get("runner_count"),
+                "new_build_passport_coverage": _new_build.get("passport_coverage"),
+                "new_build_passport_coverage_pct": _new_build.get("passport_coverage_pct"),
+                "new_build_weak_data": _new_build.get("weak_data"),
+                "new_build_top_pick_lane": _new_build.get("top_pick_lane"),
             }
         )
+
+    # Old VELO can contain venue-code aliases alongside the real RP-ID race.
+    # Never show those as extra races when the exact New Build card identifies
+    # the canonical course/time row.
+    course_aliases = {
+        "NBY": "NEWBURY",
+    }
+    canonical_new_build_keys = {
+        (
+            course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
+            _norm_time(row.get("off_time", "")),
+        )
+        for row in verdicts
+        if row.get("new_build_top3")
+    }
+    verdicts = [
+        row
+        for row in verdicts
+        if row.get("new_build_top3")
+        or (
+            course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
+            _norm_time(row.get("off_time", "")),
+        )
+        not in canonical_new_build_keys
+    ]
 
     # Sort by off_time
     verdicts.sort(key=lambda x: x.get("off_time") or "")
@@ -1781,6 +1983,8 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             "date_mismatch": date_mismatch,
             "gov_overlay": len(gov_by_race) > 0,
             "exact_date_file_present": verdict_path.exists(),
+            "new_build_loaded": bool(new_build_by_race),
+            "new_build_race_count": len(new_build_by_race),
         },
         "cashrun": {
             "status": cashrun_status,
@@ -1793,7 +1997,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
 
 @app.get("/api/dashboard-truth")
-async def dashboard_truth():
+async def dashboard_truth(date: str = Query(default=None)):
     """
     Read-only structured truth report for dashboard panels.
 
@@ -1812,8 +2016,8 @@ async def dashboard_truth():
     import urllib.request
 
     root = pathlib.Path(__file__).parent.parent
-    today = utc_now().strftime("%Y-%m-%d")
-    date_tag = today.replace("-", "_")
+    target_date = date or utc_now().strftime("%Y-%m-%d")
+    date_tag = target_date.replace("-", "_")
     sb_url = os.getenv("SUPABASE_URL", "")
     sb_key = os.getenv("SUPABASE_KEY", "")
 
@@ -1858,7 +2062,7 @@ async def dashboard_truth():
         if sb_truth["status"] == "CONNECTED":
             try:
                 req = urllib.request.Request(
-                    f"{sb_url}/rest/v1/velo_verdicts?select=id&date=eq.{today}",
+                    f"{sb_url}/rest/v1/velo_verdicts?select=id&date=eq.{target_date}",
                     headers={**_hdrs, "Prefer": "count=exact", "Range-Unit": "items", "Range": "0-0"},
                 )
                 with urllib.request.urlopen(req, timeout=6) as resp:
@@ -1869,23 +2073,19 @@ async def dashboard_truth():
                 pass
 
     # ── B. Local harness truth ────────────────────────────────────────────────
-    obs_path = root / "data" / f"velo_run_observability_{date_tag}.json"
-    if not obs_path.exists():
-        candidates = sorted((root / "data").glob("velo_run_observability_*.json"), reverse=True)
-        obs_path = candidates[0] if candidates else None
+    obs_path, obs = _select_observability_artifact(root, date_tag)
 
     harness_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
-    if obs_path and obs_path.exists():
+    if obs_path and obs:
         try:
-            obs = _json.loads(obs_path.read_text(encoding="utf-8"))
             harness_truth["status"] = "FOUND"
             harness_truth["file"] = obs_path.name
             harness_truth["data"] = {
-                "final_status": obs.get("final_status"),
-                "source_label": obs.get("source_label"),
+                "final_status": obs.get("final_status") or obs.get("status") or obs.get("decision_tier_status"),
+                "source_label": obs.get("source_label") or obs.get("source_truth"),
                 "feature_health": obs.get("feature_health"),
                 "warnings": obs.get("warnings", []),
-                "generated_at": obs.get("generated_at"),
+                "generated_at": obs.get("generated_at") or obs.get("timestamp"),
             }
         except Exception as exc:
             harness_truth["status"] = "READ_ERROR"
@@ -1925,7 +2125,7 @@ async def dashboard_truth():
             nb_truth["data"] = {
                 "record_count": len(records),
                 "dates_in_feed": dates_in_feed,
-                "date_matches_today": today in dates_in_feed,
+                "date_matches_today": target_date in dates_in_feed,
                 "paper_only": all(r.get("paper_only") for r in records),
                 "rpr_violations": sum(1 for r in records if r.get("rpr_violation_flag")),
             }
@@ -1939,7 +2139,7 @@ async def dashboard_truth():
         "c_doctrine_scorecard": sc_truth,
         "d_new_build_sidecar": nb_truth,
         "meta": {
-            "date": today,
+            "date": target_date,
             "generated_at": utc_now_iso(),
             "no_scoring": True,
             "no_model_calls": True,
@@ -2079,12 +2279,14 @@ async def predict_race(race_data: dict, persist: bool = False, authorized: bool 
             tier = "D"
             if predictions:
                 from scripts.ops.run_prime_today import synthesize_decision
+
                 top = predictions[0]
                 second = predictions[1] if len(predictions) > 1 else {}
                 sec_prob = float(second.get("velo_prime_prob") or 0)
                 tier, _ = synthesize_decision(top, sec_prob, field_size=len(predictions))
-            
+
             from scripts.ops.runtime_truth_support import get_commit_sha
+
             commit_sha = get_commit_sha()
             persist_race_predictions(norm_race, predictions, decision_tier=tier, commit_sha=commit_sha)
 
@@ -2119,8 +2321,9 @@ async def predict_full(race_data: dict, authorized: bool = Depends(verify_api_ke
 async def get_narrative(race_id: str, authorized: bool = Depends(verify_api_key)):
     """Get narrative intelligence for race"""
     try:
-        from app.intelligence.chains.narrative_chain import run_narrative_chain
         from workers.racing_api_fetcher import RacingAPIFetcher
+
+        from app.intelligence.chains.narrative_chain import run_narrative_chain
 
         fetcher = RacingAPIFetcher()
         race = fetcher.get_race(race_id)
@@ -2135,8 +2338,9 @@ async def get_narrative(race_id: str, authorized: bool = Depends(verify_api_key)
 async def get_market_intel(race_id: str, authorized: bool = Depends(verify_api_key)):
     """Get market manipulation intelligence"""
     try:
-        from app.intelligence.chains.market_chain import run_market_chain
         from workers.racing_api_fetcher import RacingAPIFetcher
+
+        from app.intelligence.chains.market_chain import run_market_chain
 
         fetcher = RacingAPIFetcher()
         race = fetcher.get_race(race_id)

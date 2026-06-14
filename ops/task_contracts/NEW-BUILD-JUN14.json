@@ -1,0 +1,24 @@
+{
+  "task_id": "NEW-BUILD-JUN14",
+  "allowed_paths": [
+    "data/new_build/",
+    "data/racecard_merged_2026-06-14.json",
+    "ops/task_contracts/NEW-BUILD-JUN14.json"
+  ],
+  "forbidden_paths": [
+    "src/velo/scoring/",
+    "src/velo/models/",
+    "src/velo/supabase/",
+    "src/velo/telegram/"
+  ],
+  "forbidden_keywords": [
+    "score_race",
+    "run_engine_full"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND"
+  ]
+}

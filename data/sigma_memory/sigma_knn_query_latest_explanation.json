@@ -1,0 +1,59 @@
+{
+  "schema_version": "sigma_evidence_explanation_v1",
+  "shadow_only": true,
+  "live_velo_impact": false,
+  "classification": "EVIDENCE_EXPLANATION_SHADOW_READY",
+  "summary_line": "10 analogues: 20% win, 60% frame vs 20% prior — HIGH evidence quality",
+  "analogues_n": 10,
+  "evidence_quality": "HIGH",
+  "posterior_win_prob": 0.1969,
+  "posterior_frame_prob": 0.5483,
+  "prior_win_prob": 0.2,
+  "prior_frame_prob": 0.48,
+  "lift_win_pp": -0.3,
+  "lift_frame_pp": 6.8,
+  "outcome_distribution": {
+    "WIN": 2,
+    "FRAME": 4,
+    "MISS": 4
+  },
+  "dominant_miss_type": "MID_PRICED_WON (50% of misses)",
+  "top_matching_dims": [
+    {
+      "dim": "mds_band",
+      "query_value": "P20_30",
+      "match_count": 9,
+      "match_rate": 0.9,
+      "weight": 5.0,
+      "weighted_match_rate": 4.5
+    },
+    {
+      "dim": "vp_band",
+      "query_value": "P30_40",
+      "match_count": 9,
+      "match_rate": 0.9,
+      "weight": 4.0,
+      "weighted_match_rate": 3.6
+    },
+    {
+      "dim": "improvement_band",
+      "query_value": "P20_30",
+      "match_count": 5,
+      "match_rate": 0.5,
+      "weight": 3.0,
+      "weighted_match_rate": 1.5
+    },
+    {
+      "dim": "sp_band",
+      "query_value": "SP_4_8",
+      "match_count": 3,
+      "match_rate": 0.3,
+      "weight": 2.0,
+      "weighted_match_rate": 0.6
+    }
+  ],
+  "date_range": "2026-03-26 to 2026-04-29",
+  "regime_warning": "All analogues LOW_REGIME_INFERRED — doctrine provenance weak, pre-observability era data",
+  "narrative_md": "## Evidence Report — Sigma Bayesian Posterior V1\n\n**Query**: Hamilton | 2026-06-04\n\n**10 analogues found** (2026-03-26 to 2026-04-29)\n\n**Posterior**: Win 19.7% (prior 20%, -0.3pp) | Frame 54.8% (prior 48%, +6.8pp)\n**Evidence quality**: HIGH (n=10, median coverage=0.56)\n\n**Matched on**: mds_band=P20_30 (9/10), vp_band=P30_40 (9/10), improvement_band=P20_30 (5/10), sp_band=SP_4_8 (3/10)\n\n**Outcome distribution**: 2 WIN / 4 FRAME / 4 MISS\n**Dominant miss**: MID_PRICED_WON (50% of misses)\n\n**Regime warning**: All analogues LOW_REGIME_INFERRED — doctrine provenance weak, pre-observability era data\n\n**Boundaries**: Shadow evidence only. Does not modify score, staking, routing, or Telegram.",
+  "rpr_policy": "RPR_NOT_INCLUDED"
+}

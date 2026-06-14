@@ -1,0 +1,45 @@
+{
+  "policies": [
+    {
+      "policy_id": "POLICY_ZERO_VARIANCE_CRITICAL",
+      "description": "Continuous features must show variance. Zero variance indicates data source fallback or flatline.",
+      "trigger": {
+        "metric": "drift_score",
+        "threshold": 0.99,
+        "condition": "greater_than"
+      },
+      "severity": "CRITICAL",
+      "action": "BLOCK_LEARNING",
+      "operator_instruction": "HALT_PIPELINE_AND_REINDEX_SOURCE"
+    },
+    {
+      "policy_id": "POLICY_PERSISTENCE_GAP",
+      "description": "Missing keys in persistence layer detect structural pipeline blindness.",
+      "trigger": {
+        "metric": "null_ratio",
+        "threshold": 0.10,
+        "condition": "greater_than"
+      },
+      "severity": "HIGH",
+      "action": "BLOCK_LEARNING",
+      "operator_instruction": "VERIFY_SUPABASE_PERSISTENCE_PATH"
+    },
+    {
+      "policy_id": "POLICY_TEMPORAL_LEAKAGE",
+      "description": "Detection of retrospective signals in live-scoring artifacts.",
+      "trigger": {
+        "metric": "leakage_status",
+        "value": "RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK",
+        "condition": "equals"
+      },
+      "severity": "CRITICAL",
+      "action": "BLOCK_LEARNING",
+      "operator_instruction": "AUDIT_RPR_PROVENANCE_AND_REPLAY"
+    }
+  ],
+  "default_actions": {
+    "WARNING": "LOG_ONLY",
+    "DEGRADED": "BLOCK_LEARNING",
+    "CRITICAL": "BLOCK_LEARNING"
+  }
+}

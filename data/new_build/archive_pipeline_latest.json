@@ -1,0 +1,320 @@
+{
+  "generated_at": "2026-05-25T19:17:26.382933Z",
+  "classification": "NEW_BUILD_ARCHIVE_PIPELINE_READY",
+  "mode": "RUN",
+  "from_date": "2026-05-26",
+  "to_date": "2026-05-27",
+  "trust_policy": "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+  "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO",
+  "velo_scoring_allowed": false,
+  "live_velo_touched": false,
+  "shadow_velo_touched": false,
+  "forbidden_live_shadow_tokens": [
+    "run_prime_today",
+    "velo_prime_service",
+    "daily-eod",
+    "learn-shadow",
+    "bulk-shadow-consume",
+    "sentient_state.json",
+    "sentient_state_shadow_full_train_v1",
+    "send_telegram",
+    "telegram",
+    "playbook",
+    "staking"
+  ],
+  "counts": [
+    {
+      "archive_date": "2026-05-26",
+      "races": 8,
+      "runners": 70,
+      "horse_profiles": 70,
+      "horse_dossiers": 70,
+      "race_dossiers": 8,
+      "has_racecard": true
+    },
+    {
+      "archive_date": "2026-05-27",
+      "races": 7,
+      "runners": 91,
+      "horse_profiles": 91,
+      "horse_dossiers": 91,
+      "race_dossiers": 7,
+      "has_racecard": true
+    }
+  ],
+  "totals": {
+    "races": 15,
+    "runners": 161,
+    "horse_profiles": 161,
+    "horse_dossiers": 161,
+    "race_dossiers": 15
+  },
+  "steps": [
+    {
+      "name": "horse-dossiers-2026-05-26",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_horse_dossiers.py",
+        "--date",
+        "2026-05-26",
+        "--execute"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "race-dossiers-2026-05-26",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_race_dossiers.py",
+        "--date",
+        "2026-05-26",
+        "--execute"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "horse-dossiers-2026-05-27",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_horse_dossiers.py",
+        "--date",
+        "2026-05-27",
+        "--execute"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "race-dossiers-2026-05-27",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_race_dossiers.py",
+        "--date",
+        "2026-05-27",
+        "--execute"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "identity-bridge",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_horse_identity_bridge.py",
+        "--start-date",
+        "2026-05-26",
+        "--end-date",
+        "2026-05-27",
+        "--execute"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "source-value-matrix",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_source_value_matrix.py",
+        "--all-built",
+        "--execute"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "outcome-bridge",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_archive_outcome_bridge.py",
+        "--execute"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "rpr-boundary-audit",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/audit_rpr_scoring_boundary.py"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    },
+    {
+      "name": "archive-advantage-analysis",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/analysis/analyze_rp_archive_advantage.py",
+        "--from-date",
+        "2026-05-26",
+        "--to-date",
+        "2026-05-27"
+      ],
+      "writes_archive_only": true,
+      "requires_network": false,
+      "enabled": true
+    }
+  ],
+  "step_results": [
+    {
+      "step": "horse-dossiers-2026-05-26",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_horse_dossiers.py",
+        "--date",
+        "2026-05-26",
+        "--execute"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": ",\n          \"courseStyleName\": \"Redcar\",\n          \"courseKey\": \"redcar\",\n          \"raceInstanceTitle\": \"Watch Race Replays On Racing TV Amateur Jockeys' Handicap\",\n          \"raceStatusCode\": \"O\",\n          \"distanceYard\": 1317,\n          \"distanceFurlongRounded\": 6,\n          \"saddleClothNo\": 10,\n          \"officialRatingToday\": 45,\n          \"rpPostmark\": 51,\n          \"labels\": {\n            \"beatenFavourite\": false,\n            \"courseWinner\": false,\n            \"distanceWinner\": false,\n            \"courseAndDistanceWinner\": false\n          },\n          \"runningConditions\": null,\n          \"rpOwnerChoice\": \"f\",\n          \"silkImagePath\": \"f/6/6/46866f\",\n          \"jockeyUid\": 104981,\n          \"jockeyStyleName\": \"Mr Daniel Perrin\",\n          \"jockeyLast14Days\": {\n            \"runs\": 0,\n            \"wins\": 0,\n            \"percent\": null\n          },\n          \"preference\": null\n        }\n      ],\n      \"quotes\": [\n        {\n          \"horseUid\": 2741006,\n          \"horseName\": \"SOUL SEEKER\",\n          \"horseStyleName\": \"Soul Seeker\",\n          \"raceId\": 844240,\n          \"raceDate\": \"2023-07-29T14:05:00+01:00\",\n          \"courseUid\": 107,\n          \"courseName\": \"YORK\",\n          \"courseTypeCode\": \"F\",\n          \"diffusionCourseName\": \"YORK\",\n          \"courseStyleName\": \"York\",\n          \"courseKey\": \"york\",\n          \"distanceYard\": 1100,\n          \"raceTitle\": \"Sky Bet \\\"Jump Jockeys' Nunthorpe\\\" Handicap (To Be Ridden By Professional Jump Jockeys)\",\n          \"goingTypeCode\": \"G\",\n          \"rpPostmark\": 78,\n          \"notes\": \"It's very different. By the time you get to the winning line here, in a chase you'd just be getting your position, but that was fantastic. I thought Soul Seeker had a good each-way chance because he'd won it before, he looked well handicapped on his old form and David had him spot on. I was on a very experienced, streetwise horse. He's a lovely ride and he did everything for me. The other horse put it up to him and he had to put his head down and battle and he did that. He's very genuine - Micheal Nolan, jockey.\",\n          \"distanceFurlong\": 5\n        },\n        {\n          \"horseUid\": 2741006,\n          \"horseName\": \"SOUL SEEKER\",\n          \"horseStyleName\": \"Soul Seeker\",\n          \"raceId\": 788104,\n          \"raceDate\": \"2021-07-24T14:05:00+01:00\",\n          \"courseUid\": 107,\n          \"courseName\": \"YORK\",\n          \"courseTypeCode\": \"F\",\n          \"diffusionCourseName\": \"YORK\",\n          \"courseStyleName\": \"York\",\n          \"courseKey\": \"york\",\n          \"distanceYard\": 1100,\n          \"raceTitle\": \"Sky Bet \\\"Jump Jockeys' Nunthorpe\\\" Handicap (To Be Ridden By Professional Jump Jockeys)\",\n          \"goingTypeCode\": \"GF\",\n          \"rpPostmark\": 90,\n          \"notes\": \"Soul Seeker had soft ground form in Ireland and we thought he wanted 6f, and now he's a 5f horse on fast ground. We learn about these horses as we go along - David O'Meara, trainer.\",\n          \"distanceFurlong\": 5\n        }\n      ],\n      \"stats\": {\n        \"trainer_last_14_runs\": 17,\n        \"trainer_last_14_wins\": 0,\n        \"trainer_last_14_percent\": 0\n      },\n      \"pedigree\": {\n        \"sire\": \"Oasis Dream\",\n        \"dam\": \"Mad About You\",\n        \"dam_sire\": \"Indian Ridge\",\n        \"breeder\": \"Moyglare Stud Farm Ltd\"\n      },\n      \"sales\": [],\n      \"notes\": [],\n      \"rpdc_tags\": [],\n      \"headgear\": \"tb\",\n      \"headgear_first_time\": false,\n      \"wind_surgery\": null,\n      \"days_since_run\": \"5\",\n      \"newspaper_comment\": null,\n      \"spotlight_comment\": null,\n      \"tip_count\": 0,\n      \"official_rating_archive_only\": 46,\n      \"topspeed_archive_only\": 47,\n      \"rp_rpr_archive_only\": 54,\n      \"archive_flags\": [\n        \"TRAINER_INTENT_SIGNAL\",\n        \"PEDIGREE_POSITIVE\"\n      ]\n    }\n  ],\n  \"output_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-05-26/horse_dossiers.json\",\n  \"report_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rp_horse_dossiers_2026_05_26.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "race-dossiers-2026-05-26",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_race_dossiers.py",
+        "--date",
+        "2026-05-26",
+        "--execute"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "OM_VELO\",\n      \"race_id\": 918947,\n      \"course\": \"Redcar\",\n      \"race_time\": \"2026-05-26T16:20:00+01:00\",\n      \"title\": \"Racing TV Profits Returned To Racing Handicap\",\n      \"race_class\": \"6\",\n      \"distance_yards\": 1540,\n      \"going\": \"Good\",\n      \"runner_count\": 13,\n      \"unexposed_horse_count\": 0,\n      \"headgear_wind_count\": 5,\n      \"trainer_concentration\": [\n        [\n          \"Nigel Tinkler\",\n          3\n        ],\n        [\n          \"Tim Easterby\",\n          1\n        ],\n        [\n          \"Adrian Nicholls\",\n          1\n        ]\n      ],\n      \"sire_pedigree_clusters\": [\n        [\n          \"Mattmu\",\n          1\n        ],\n        [\n          \"Galileo Gold\",\n          1\n        ],\n        [\n          \"Time Test\",\n          1\n        ]\n      ],\n      \"forecast_market_concentration\": \"ARCHIVE_PENDING\",\n      \"newspaper_tip_concentration\": {\n        \"total_tips\": 2,\n        \"max_tips\": 1\n      },\n      \"unknown_profile_count\": 0,\n      \"rpdc_memory_coverage\": \"ARCHIVE_PENDING\",\n      \"archive_intelligence_flags\": [\n        \"HYPE_TRAP_RISK\",\n        \"TRAINER_CLUSTER\",\n        \"LOW_CONFIDENCE_ARCHIVE\"\n      ]\n    },\n    {\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\",\n      \"race_id\": 918946,\n      \"course\": \"Redcar\",\n      \"race_time\": \"2026-05-26T16:50:00+01:00\",\n      \"title\": \"Watch Racing TV In Stunning HD Fillies' Handicap\",\n      \"race_class\": \"6\",\n      \"distance_yards\": 1100,\n      \"going\": \"Good\",\n      \"runner_count\": 10,\n      \"unexposed_horse_count\": 0,\n      \"headgear_wind_count\": 4,\n      \"trainer_concentration\": [\n        [\n          \"Philip Kirby\",\n          1\n        ],\n        [\n          \"Rebecca Menzies\",\n          1\n        ],\n        [\n          \"David O'Meara\",\n          1\n        ]\n      ],\n      \"sire_pedigree_clusters\": [\n        [\n          \"Dandy Man\",\n          2\n        ],\n        [\n          \"Land Force\",\n          1\n        ],\n        [\n          \"El Kabeir\",\n          1\n        ]\n      ],\n      \"forecast_market_concentration\": \"ARCHIVE_PENDING\",\n      \"newspaper_tip_concentration\": {\n        \"total_tips\": 2,\n        \"max_tips\": 1\n      },\n      \"unknown_profile_count\": 0,\n      \"rpdc_memory_coverage\": \"ARCHIVE_PENDING\",\n      \"archive_intelligence_flags\": [\n        \"HYPE_TRAP_RISK\",\n        \"PEDIGREE_SIGNAL\",\n        \"LOW_CONFIDENCE_ARCHIVE\"\n      ]\n    },\n    {\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\",\n      \"race_id\": 918945,\n      \"course\": \"Redcar\",\n      \"race_time\": \"2026-05-26T17:23:00+01:00\",\n      \"title\": \"Watch Race Replays On Racing TV Amateur Jockeys' Handicap\",\n      \"race_class\": \"6\",\n      \"distance_yards\": 1317,\n      \"going\": \"Good\",\n      \"runner_count\": 12,\n      \"unexposed_horse_count\": 0,\n      \"headgear_wind_count\": 0,\n      \"trainer_concentration\": [\n        [\n          \"Philip Kirby\",\n          2\n        ],\n        [\n          \"Gemma Tutty\",\n          1\n        ],\n        [\n          \"Rebecca Menzies\",\n          1\n        ]\n      ],\n      \"sire_pedigree_clusters\": [\n        [\n          \"River Boyne\",\n          1\n        ],\n        [\n          \"Charming Thought\",\n          1\n        ],\n        [\n          \"Poet's Word\",\n          1\n        ]\n      ],\n      \"forecast_market_concentration\": \"ARCHIVE_PENDING\",\n      \"newspaper_tip_concentration\": {\n        \"total_tips\": 2,\n        \"max_tips\": 2\n      },\n      \"unknown_profile_count\": 0,\n      \"rpdc_memory_coverage\": \"ARCHIVE_PENDING\",\n      \"archive_intelligence_flags\": [\n        \"HYPE_TRAP_RISK\",\n        \"TRAINER_CLUSTER\",\n        \"LOW_CONFIDENCE_ARCHIVE\"\n      ]\n    }\n  ],\n  \"output_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-05-26/race_dossiers.json\",\n  \"report_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rp_race_dossiers_2026_05_26.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "horse-dossiers-2026-05-27",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_horse_dossiers.py",
+        "--date",
+        "2026-05-27",
+        "--execute"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "e)\",\n          \"goingTypeCode\": \"G\",\n          \"rpPostmark\": 84,\n          \"notes\": \"Eve's Boy is a lovely horse who ran really well first time. You can put a line through his second run because he got a bit anxious in the gate, but he's shown there what we thought he could do. He'll be a nice horse next year, a winter on his back will do him good - Paul Mulrennan, jockey.\",\n          \"distanceFurlong\": 7\n        }\n      ],\n      \"stats\": {\n        \"trainer_last_14_runs\": 44,\n        \"trainer_last_14_wins\": 4,\n        \"trainer_last_14_percent\": 9\n      },\n      \"pedigree\": {\n        \"sire\": \"Expert Eye\",\n        \"dam\": \"Girls Talk\",\n        \"dam_sire\": \"Shamardal\",\n        \"breeder\": \"Petches Farm Ltd\"\n      },\n      \"sales\": [],\n      \"notes\": [],\n      \"rpdc_tags\": [],\n      \"headgear\": null,\n      \"headgear_first_time\": false,\n      \"wind_surgery\": null,\n      \"days_since_run\": \"22\",\n      \"newspaper_comment\": null,\n      \"spotlight_comment\": null,\n      \"tip_count\": 0,\n      \"official_rating_archive_only\": 68,\n      \"topspeed_archive_only\": 66,\n      \"rp_rpr_archive_only\": 84,\n      \"archive_flags\": [\n        \"TRAINER_INTENT_SIGNAL\",\n        \"PEDIGREE_POSITIVE\"\n      ]\n    },\n    {\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\",\n      \"rp_rpr_velo_allowed\": false,\n      \"horse\": \"Donna Nook\",\n      \"rp_horse_id\": 6087987,\n      \"profile_url\": \"/profile/horse/6087987/donna-nook#race-id=918972\",\n      \"course\": \"Hamilton\",\n      \"race_time\": \"2026-05-27T17:05:00+01:00\",\n      \"trainer\": \"David O'Meara\",\n      \"owner\": \"M J Macleod\",\n      \"sire\": \"Bated Breath\",\n      \"dam\": \"Rostova\",\n      \"dam_sire\": \"Arch\",\n      \"age\": 4,\n      \"sex_country\": \"b f\",\n      \"country\": \"GB\",\n      \"recent_form\": \"343329\",\n      \"entries\": [\n        {\n          \"raceInstanceUid\": 918972,\n          \"raceDatetime\": \"2026-05-27T17:05:00+01:00\",\n          \"courseName\": \"HAMILTON\",\n          \"courseTypeCode\": \"F\",\n          \"courseUid\": 22,\n          \"diffusionCourseName\": \"HAMILTON\",\n          \"courseStyleName\": \"Hamilton\",\n          \"courseKey\": \"hamilton\",\n          \"raceInstanceTitle\": \"Compass Roofing Handicap\",\n          \"raceStatusCode\": \"O\",\n          \"distanceYard\": 1828,\n          \"distanceFurlongRounded\": 8.5,\n          \"saddleClothNo\": 1,\n          \"officialRatingToday\": 70,\n          \"rpPostmark\": null,\n          \"labels\": {\n            \"beatenFavourite\": true,\n            \"courseWinner\": false,\n            \"distanceWinner\": false,\n            \"courseAndDistanceWinner\": false\n          },\n          \"runningConditions\": null,\n          \"rpOwnerChoice\": \"a\",\n          \"silkImagePath\": \"0/9/6/221690\",\n          \"jockeyUid\": 14332,\n          \"jockeyStyleName\": \"David Nolan\",\n          \"jockeyLast14Days\": {\n            \"runs\": 25,\n            \"wins\": 2,\n            \"percent\": 8\n          },\n          \"preference\": null\n        }\n      ],\n      \"quotes\": [],\n      \"stats\": {\n        \"trainer_last_14_runs\": 56,\n        \"trainer_last_14_wins\": 1,\n        \"trainer_last_14_percent\": 2\n      },\n      \"pedigree\": {\n        \"sire\": \"Bated Breath\",\n        \"dam\": \"Rostova\",\n        \"dam_sire\": \"Arch\",\n        \"breeder\": \"Juddmonte Farms Ltd\"\n      },\n      \"sales\": [],\n      \"notes\": [],\n      \"rpdc_tags\": [],\n      \"headgear\": null,\n      \"headgear_first_time\": false,\n      \"wind_surgery\": null,\n      \"days_since_run\": \"15\",\n      \"newspaper_comment\": null,\n      \"spotlight_comment\": null,\n      \"tip_count\": 0,\n      \"official_rating_archive_only\": 70,\n      \"topspeed_archive_only\": 72,\n      \"rp_rpr_archive_only\": 82,\n      \"archive_flags\": [\n        \"TRAINER_INTENT_SIGNAL\",\n        \"PEDIGREE_POSITIVE\"\n      ]\n    }\n  ],\n  \"output_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-05-27/horse_dossiers.json\",\n  \"report_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rp_horse_dossiers_2026_05_27.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "race-dossiers-2026-05-27",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_race_dossiers.py",
+        "--date",
+        "2026-05-27",
+        "--execute"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "      \"PEDIGREE_SIGNAL\"\n      ]\n    },\n    {\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\",\n      \"race_id\": 918970,\n      \"course\": \"Hamilton\",\n      \"race_time\": \"2026-05-27T16:05:00+01:00\",\n      \"title\": \"David Hardie Engineering Ltd Handicap\",\n      \"race_class\": \"4\",\n      \"distance_yards\": 1107,\n      \"going\": \"Good To Firm\",\n      \"runner_count\": 12,\n      \"unexposed_horse_count\": 0,\n      \"headgear_wind_count\": 0,\n      \"trainer_concentration\": [\n        [\n          \"Jim Goldie\",\n          2\n        ],\n        [\n          \"Tim Easterby\",\n          1\n        ],\n        [\n          \"Tristan Davidson\",\n          1\n        ]\n      ],\n      \"sire_pedigree_clusters\": [\n        [\n          \"Kodiac\",\n          2\n        ],\n        [\n          \"Mehmas\",\n          2\n        ],\n        [\n          \"Sir Prancealot\",\n          1\n        ]\n      ],\n      \"forecast_market_concentration\": \"ARCHIVE_PENDING\",\n      \"newspaper_tip_concentration\": {\n        \"total_tips\": 0,\n        \"max_tips\": 0\n      },\n      \"unknown_profile_count\": 0,\n      \"rpdc_memory_coverage\": \"ARCHIVE_PENDING\",\n      \"archive_intelligence_flags\": [\n        \"TRAINER_CLUSTER\",\n        \"PEDIGREE_SIGNAL\"\n      ]\n    },\n    {\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\",\n      \"race_id\": 918973,\n      \"course\": \"Hamilton\",\n      \"race_time\": \"2026-05-27T16:35:00+01:00\",\n      \"title\": \"Fixing Point Cladding Fasteners Handicap\",\n      \"race_class\": \"5\",\n      \"distance_yards\": 1828,\n      \"going\": \"Good To Firm\",\n      \"runner_count\": 15,\n      \"unexposed_horse_count\": 0,\n      \"headgear_wind_count\": 0,\n      \"trainer_concentration\": [\n        [\n          \"Edward Bethell\",\n          4\n        ],\n        [\n          \"Charlie Johnston\",\n          2\n        ],\n        [\n          \"Ewan Whillans\",\n          1\n        ]\n      ],\n      \"sire_pedigree_clusters\": [\n        [\n          \"Without Parole\",\n          1\n        ],\n        [\n          \"Iffraaj\",\n          1\n        ],\n        [\n          \"Ardad\",\n          1\n        ]\n      ],\n      \"forecast_market_concentration\": \"ARCHIVE_PENDING\",\n      \"newspaper_tip_concentration\": {\n        \"total_tips\": 0,\n        \"max_tips\": 0\n      },\n      \"unknown_profile_count\": 0,\n      \"rpdc_memory_coverage\": \"ARCHIVE_PENDING\",\n      \"archive_intelligence_flags\": [\n        \"TRAINER_CLUSTER\"\n      ]\n    },\n    {\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\",\n      \"race_id\": 918972,\n      \"course\": \"Hamilton\",\n      \"race_time\": \"2026-05-27T17:05:00+01:00\",\n      \"title\": \"Compass Roofing Handicap\",\n      \"race_class\": \"5\",\n      \"distance_yards\": 1828,\n      \"going\": \"Good To Firm\",\n      \"runner_count\": 10,\n      \"unexposed_horse_count\": 0,\n      \"headgear_wind_count\": 0,\n      \"trainer_concentration\": [\n        [\n          \"Jim Goldie\",\n          2\n        ],\n        [\n          \"Tim Easterby\",\n          1\n        ],\n        [\n          \"Iain Jardine\",\n          1\n        ]\n      ],\n      \"sire_pedigree_clusters\": [\n        [\n          \"Lope De Vega\",\n          1\n        ],\n        [\n          \"Mehmas\",\n          1\n        ],\n        [\n          \"Fulbright\",\n          1\n        ]\n      ],\n      \"forecast_market_concentration\": \"ARCHIVE_PENDING\",\n      \"newspaper_tip_concentration\": {\n        \"total_tips\": 0,\n        \"max_tips\": 0\n      },\n      \"unknown_profile_count\": 0,\n      \"rpdc_memory_coverage\": \"ARCHIVE_PENDING\",\n      \"archive_intelligence_flags\": [\n        \"TRAINER_CLUSTER\"\n      ]\n    }\n  ],\n  \"output_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-05-27/race_dossiers.json\",\n  \"report_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rp_race_dossiers_2026_05_27.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "identity-bridge",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_horse_identity_bridge.py",
+        "--start-date",
+        "2026-05-26",
+        "--end-date",
+        "2026-05-27",
+        "--execute"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "  \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    },\n    {\n      \"rp_horse_id\": 5737974,\n      \"rp_horse_name\": \"Sanafi Zabeel\",\n      \"normalized_name\": \"sanafizabeel\",\n      \"source_date\": \"2026-05-27\",\n      \"racing_api_horse_id\": null,\n      \"velo_horse_id\": null,\n      \"rpdc_horse_id\": \"hrs_40165818\",\n      \"sigma_horse_id\": null,\n      \"trainer\": \"Jim Goldie\",\n      \"sire\": \"Intello\",\n      \"age\": 5,\n      \"country\": \"FR\",\n      \"matched_sources\": [\n        \"RP\",\n        \"RPDC\"\n      ],\n      \"match_method\": {\n        \"runner_snapshot\": \"no_match\",\n        \"velo\": \"no_match\",\n        \"rpdc\": \"normalized_name\",\n        \"sigma\": \"no_match\"\n      },\n      \"identity_confidence\": 0.72,\n      \"classification\": \"NAME_MATCH_ONLY\",\n      \"blocker_reason\": null,\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    },\n    {\n      \"rp_horse_id\": 5951756,\n      \"rp_horse_name\": \"Eve's Boy\",\n      \"normalized_name\": \"evesboy\",\n      \"source_date\": \"2026-05-27\",\n      \"racing_api_horse_id\": null,\n      \"velo_horse_id\": null,\n      \"rpdc_horse_id\": null,\n      \"sigma_horse_id\": null,\n      \"trainer\": \"Michael Dods\",\n      \"sire\": \"Expert Eye\",\n      \"age\": 4,\n      \"country\": \"GB\",\n      \"matched_sources\": [\n        \"RP\"\n      ],\n      \"match_method\": {\n        \"runner_snapshot\": \"no_match\",\n        \"velo\": \"no_match\",\n        \"rpdc\": \"no_match\",\n        \"sigma\": \"no_match\"\n      },\n      \"identity_confidence\": 0.0,\n      \"classification\": \"RP_ONLY\",\n      \"blocker_reason\": \"NO_LOCAL_VELO_RACING_API_RPDC_SIGMA_MATCH\",\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    },\n    {\n      \"rp_horse_id\": 6087987,\n      \"rp_horse_name\": \"Donna Nook\",\n      \"normalized_name\": \"donnanook\",\n      \"source_date\": \"2026-05-27\",\n      \"racing_api_horse_id\": null,\n      \"velo_horse_id\": null,\n      \"rpdc_horse_id\": null,\n      \"sigma_horse_id\": null,\n      \"trainer\": \"David O'Meara\",\n      \"sire\": \"Bated Breath\",\n      \"age\": 4,\n      \"country\": \"GB\",\n      \"matched_sources\": [\n        \"RP\"\n      ],\n      \"match_method\": {\n        \"runner_snapshot\": \"no_match\",\n        \"velo\": \"no_match\",\n        \"rpdc\": \"no_match\",\n        \"sigma\": \"no_match\"\n      },\n      \"identity_confidence\": 0.0,\n      \"classification\": \"RP_ONLY\",\n      \"blocker_reason\": \"NO_LOCAL_VELO_RACING_API_RPDC_SIGMA_MATCH\",\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    },\n    {\n      \"rp_horse_id\": 7947753,\n      \"rp_horse_name\": \"Bow Echo\",\n      \"normalized_name\": \"bowecho\",\n      \"source_date\": \"2026-05-24\",\n      \"racing_api_horse_id\": null,\n      \"velo_horse_id\": null,\n      \"rpdc_horse_id\": null,\n      \"sigma_horse_id\": null,\n      \"trainer\": \"George Boughey\",\n      \"sire\": \"Night Of Thunder\",\n      \"age\": \"3-y-o\",\n      \"country\": \"IRE\",\n      \"matched_sources\": [\n        \"RP\"\n      ],\n      \"match_method\": {\n        \"runner_snapshot\": \"no_match\",\n        \"velo\": \"no_match\",\n        \"rpdc\": \"no_match\",\n        \"sigma\": \"no_match\"\n      },\n      \"identity_confidence\": 0.0,\n      \"classification\": \"RP_ONLY\",\n      \"blocker_reason\": \"NO_LOCAL_VELO_RACING_API_RPDC_SIGMA_MATCH\",\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    }\n  ],\n  \"status\": \"PASS\",\n  \"output_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/horse_identity_bridge.json\",\n  \"json_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/horse_identity_bridge_latest.json\",\n  \"md_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/horse_identity_bridge_latest.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "source-value-matrix",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_source_value_matrix.py",
+        "--all-built",
+        "--execute"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "     \"sex_country\": null,\n      \"country\": \"IRE\",\n      \"entries_count\": 1,\n      \"quotes_count\": 4,\n      \"headgear\": null,\n      \"wind_surgery\": null,\n      \"days_since_run\": null,\n      \"tip_count\": 24,\n      \"rp_comments_available\": false,\n      \"racing_api_fields_available\": [],\n      \"velo_fields_available\": [],\n      \"rpdc_tags\": [],\n      \"sigma_outcome\": null,\n      \"sources_present\": [\n        \"RP\"\n      ],\n      \"field_classifications\": {\n        \"age\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\"\n        ],\n        \"assigned_product\": [\n          \"MISSING\"\n        ],\n        \"country\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\"\n        ],\n        \"dam\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"dam_sire\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"entries\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\"\n        ],\n        \"execution_allowed\": [\n          \"MISSING\"\n        ],\n        \"headgear\": [\n          \"MISSING\"\n        ],\n        \"headgear_first_time\": [\n          \"MISSING\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"horse_course_runs\": [\n          \"MISSING\"\n        ],\n        \"horse_recent_runs_90d\": [\n          \"MISSING\"\n        ],\n        \"improvement_score\": [\n          \"MISSING\"\n        ],\n        \"jockey\": [\n          \"MISSING\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"market_deception_score\": [\n          \"MISSING\"\n        ],\n        \"newspaper_comment\": [\n          \"MISSING\",\n          \"DO_NOT_USE_FOR_SCORING\"\n        ],\n        \"notes\": [\n          \"MISSING\"\n        ],\n        \"owner\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"quotes\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\"\n        ],\n        \"racing_api_connection_shadow_score\": [\n          \"MISSING\"\n        ],\n        \"racing_api_course_shadow_score\": [\n          \"MISSING\"\n        ],\n        \"racing_api_distance_shadow_score\": [\n          \"MISSING\"\n        ],\n        \"racing_api_enrichment_shadow_score\": [\n          \"MISSING\"\n        ],\n        \"rp_rpr_archive_only\": [\n          \"MISSING\",\n          \"DO_NOT_USE_FOR_SCORING\"\n        ],\n        \"rpdc_primary_tag\": [\n          \"MISSING\"\n        ],\n        \"rpdc_tags\": [\n          \"MISSING\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"sales\": [\n          \"MISSING\"\n        ],\n        \"sire\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"spotlight_comment\": [\n          \"MISSING\",\n          \"DO_NOT_USE_FOR_SCORING\"\n        ],\n        \"sqpe_v17_prob\": [\n          \"MISSING\"\n        ],\n        \"tier\": [\n          \"MISSING\"\n        ],\n        \"tip_count\": [\n          \"UNIQUE_TO_RP\",\n          \"DO_NOT_USE_FOR_SCORING\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"topspeed_archive_only\": [\n          \"MISSING\",\n          \"DO_NOT_USE_FOR_SCORING\"\n        ],\n        \"trainer\": [\n          \"UNIQUE_TO_RP\",\n          \"USEFUL_FOR_ARCHIVE\",\n          \"USEFUL_FOR_SHADOW\"\n        ],\n        \"trainer_course_win_pct\": [\n          \"MISSING\"\n        ],\n        \"velo_prime_prob\": [\n          \"MISSING\"\n        ],\n        \"wind_surgery\": [\n          \"MISSING\",\n          \"USEFUL_FOR_SHADOW\"\n        ]\n      },\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    }\n  ],\n  \"json_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/source_value_matrix_latest.json\",\n  \"md_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/source_value_matrix_latest.md\",\n  \"bow_echo_profile_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/bow_echo_source_profile.md\",\n  \"source_uniqueness_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/source_uniqueness_audit_latest.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "outcome-bridge",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rp_archive_outcome_bridge.py",
+        "--execute"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "      \"sigma_outcome\": null,\n      \"finishing_position\": null,\n      \"won\": null,\n      \"framed\": null,\n      \"sp\": null,\n      \"velo_top_pick\": false,\n      \"velo_rank\": null,\n      \"velo_tier\": null,\n      \"velo_probability\": null,\n      \"archive_context_flags\": [\n        \"TRAINER_INTENT_SIGNAL\",\n        \"PEDIGREE_POSITIVE\"\n      ],\n      \"identity_confidence\": 0.72,\n      \"identity_classification\": \"NAME_MATCH_ONLY\",\n      \"outcome_confidence\": 0.0,\n      \"classification\": \"OUTCOME_MISSING\",\n      \"blocker_reason\": \"OUTCOME_MISSING\",\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    },\n    {\n      \"rp_horse_id\": 5951756,\n      \"rp_horse_name\": \"Eve's Boy\",\n      \"normalized_name\": \"evesboy\",\n      \"race_date\": \"2026-05-27\",\n      \"race_id\": null,\n      \"course\": \"Hamilton\",\n      \"off_time\": \"2026-05-27T17:05:00+01:00\",\n      \"velo_horse_id\": null,\n      \"rpdc_horse_id\": null,\n      \"sigma_outcome\": null,\n      \"finishing_position\": null,\n      \"won\": null,\n      \"framed\": null,\n      \"sp\": null,\n      \"velo_top_pick\": false,\n      \"velo_rank\": null,\n      \"velo_tier\": null,\n      \"velo_probability\": null,\n      \"archive_context_flags\": [\n        \"TRAINER_INTENT_SIGNAL\",\n        \"PEDIGREE_POSITIVE\"\n      ],\n      \"identity_confidence\": 0.0,\n      \"identity_classification\": \"RP_ONLY\",\n      \"outcome_confidence\": 0.0,\n      \"classification\": \"RP_ONLY_NO_VELO\",\n      \"blocker_reason\": \"NO_VELO_PREDICTION_OR_RUNNER_SNAPSHOT\",\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    },\n    {\n      \"rp_horse_id\": 6087987,\n      \"rp_horse_name\": \"Donna Nook\",\n      \"normalized_name\": \"donnanook\",\n      \"race_date\": \"2026-05-27\",\n      \"race_id\": null,\n      \"course\": \"Hamilton\",\n      \"off_time\": \"2026-05-27T17:05:00+01:00\",\n      \"velo_horse_id\": null,\n      \"rpdc_horse_id\": null,\n      \"sigma_outcome\": null,\n      \"finishing_position\": null,\n      \"won\": null,\n      \"framed\": null,\n      \"sp\": null,\n      \"velo_top_pick\": false,\n      \"velo_rank\": null,\n      \"velo_tier\": null,\n      \"velo_probability\": null,\n      \"archive_context_flags\": [\n        \"TRAINER_INTENT_SIGNAL\",\n        \"PEDIGREE_POSITIVE\"\n      ],\n      \"identity_confidence\": 0.0,\n      \"identity_classification\": \"RP_ONLY\",\n      \"outcome_confidence\": 0.0,\n      \"classification\": \"RP_ONLY_NO_VELO\",\n      \"blocker_reason\": \"NO_VELO_PREDICTION_OR_RUNNER_SNAPSHOT\",\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    },\n    {\n      \"rp_horse_id\": 7947753,\n      \"rp_horse_name\": \"Bow Echo\",\n      \"normalized_name\": \"bowecho\",\n      \"race_date\": \"2026-05-24\",\n      \"race_id\": null,\n      \"course\": null,\n      \"off_time\": null,\n      \"velo_horse_id\": null,\n      \"rpdc_horse_id\": null,\n      \"sigma_outcome\": null,\n      \"finishing_position\": null,\n      \"won\": null,\n      \"framed\": null,\n      \"sp\": null,\n      \"velo_top_pick\": false,\n      \"velo_rank\": null,\n      \"velo_tier\": null,\n      \"velo_probability\": null,\n      \"archive_context_flags\": [],\n      \"identity_confidence\": 0.0,\n      \"identity_classification\": \"RP_ONLY\",\n      \"outcome_confidence\": 0.0,\n      \"classification\": \"RP_ONLY_NO_VELO\",\n      \"blocker_reason\": \"NO_VELO_PREDICTION_OR_RUNNER_SNAPSHOT\",\n      \"trust_policy\": \"ARCHIVE_CONTEXT_ONLY_NOT_SCORING\",\n      \"velo_scoring_allowed\": false,\n      \"rpr_policy\": \"RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO\"\n    }\n  ],\n  \"status\": \"PASS\",\n  \"output_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/rp_archive_outcome_bridge.json\",\n  \"json_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rp_archive_outcome_bridge_latest.json\",\n  \"md_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rp_archive_outcome_bridge_latest.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "rpr-boundary-audit",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/audit_rpr_scoring_boundary.py"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "{\n  \"generated_at\": \"2026-05-25T19:17:26.159616Z\",\n  \"date_filter\": null,\n  \"verdict\": \"PASS_RPR_ARCHIVE_ONLY\",\n  \"stats\": {\n    \"files_checked\": 6,\n    \"races_checked\": 37,\n    \"runners_checked\": 479,\n    \"archive_rpr_fields\": 479\n  },\n  \"violations\": [],\n  \"scoring_impact\": \"NONE\",\n  \"json_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rpr_scoring_boundary_latest.json\",\n  \"md_path\": \"/mnt/c/Users/puror/velo-oracle-prime/data/reports/rpr_scoring_boundary_latest.md\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "step": "archive-advantage-analysis",
+      "command": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/analysis/analyze_rp_archive_advantage.py",
+        "--from-date",
+        "2026-05-26",
+        "--to-date",
+        "2026-05-27"
+      ],
+      "enabled": true,
+      "writes_archive_only": true,
+      "requires_network": false,
+      "status": "PASS",
+      "returncode": 0,
+      "stdout_tail": "  \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Second Fiddle\",\n      \"trainer\": \"Iain Jardine\",\n      \"sire\": \"Fulbright\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"NAME_MATCH_ONLY\",\n      \"classifications\": [\n        \"EARLY_PROFILE_EDGE_CANDIDATE\",\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Starliner\",\n      \"trainer\": \"Linda Perratt\",\n      \"sire\": \"Showcasing\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"NAME_MATCH_ONLY\",\n      \"classifications\": [\n        \"EARLY_PROFILE_EDGE_CANDIDATE\",\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Union Island\",\n      \"trainer\": \"Charlie Johnston\",\n      \"sire\": \"U S Navy Flag\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"RP_ONLY\",\n      \"classifications\": [\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Military Leader\",\n      \"trainer\": \"Phillip Makin\",\n      \"sire\": \"Dubawi\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"NAME_MATCH_ONLY\",\n      \"classifications\": [\n        \"EARLY_PROFILE_EDGE_CANDIDATE\",\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Condotti\",\n      \"trainer\": \"Hugo Palmer\",\n      \"sire\": \"Soldier's Call\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"RP_ONLY\",\n      \"classifications\": [\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Sanafi Zabeel\",\n      \"trainer\": \"Jim Goldie\",\n      \"sire\": \"Intello\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"NAME_MATCH_ONLY\",\n      \"classifications\": [\n        \"EARLY_PROFILE_EDGE_CANDIDATE\",\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Eve's Boy\",\n      \"trainer\": \"Michael Dods\",\n      \"sire\": \"Expert Eye\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"RP_ONLY\",\n      \"classifications\": [\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    },\n    {\n      \"date\": \"2026-05-27\",\n      \"course\": \"Hamilton\",\n      \"time\": \"2026-05-27T17:05:00+01:00\",\n      \"horse\": \"Donna Nook\",\n      \"trainer\": \"David O'Meara\",\n      \"sire\": \"Bated Breath\",\n      \"tip_count\": 0,\n      \"identity_classification\": \"RP_ONLY\",\n      \"classifications\": [\n        \"LOW_DATA_WARNING\",\n        \"OUTCOME_REQUIRED_BEFORE_PROMOTION\",\n        \"PEDIGREE_CLUSTER_SIGNAL\",\n        \"TRAINER_CLUSTER_SIGNAL\"\n      ]\n    }\n  ],\n  \"scoring_impact\": \"NONE\",\n  \"promotion_status\": \"OUTCOME_REQUIRED_BEFORE_PROMOTION\"\n}\n",
+      "stderr_tail": ""
+    }
+  ]
+}

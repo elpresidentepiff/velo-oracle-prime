@@ -3,7 +3,9 @@ VÉLØ Oracle - Production Prediction API
 Endpoints for real-time predictions
 """
 
+import hmac
 import logging
+import os
 from typing import Any
 
 from fastapi import APIRouter, Header, HTTPException
@@ -34,14 +36,14 @@ class PredictResponse(BaseModel):
 
 # API key validation
 def validate_api_key(x_api_key: str = Header(None)):
-    """Validate API key"""
+    """Validate the configured API key, failing closed."""
     if not x_api_key:
         raise HTTPException(status_code=401, detail="API key required")
 
-    # In production, check against database
-    valid_keys = ["test_key_123", "prod_key_456"]
-
-    if x_api_key not in valid_keys:
+    configured_key = os.getenv("API_KEY", "")
+    if not configured_key:
+        raise HTTPException(status_code=503, detail="API key not configured")
+    if not hmac.compare_digest(x_api_key, configured_key):
         raise HTTPException(status_code=403, detail="Invalid API key")
 
     return x_api_key
@@ -60,40 +62,9 @@ async def predict_full(request: PredictRequest, api_key: str = Header(None, alia
 
     # UMA QUARANTINED — Forensic Containment Active
     logger.critical("API ACCESS BLOCKED: /full endpoint attempted. UMA is QUARANTINED.")
-    raise HTTPException(status_code=503, detail="UMA Brain is QUARANTINED for forensic containment. Use /quick or /ensemble.")
-
-    try:
-        # Load UMA (REMOVED - QUARANTINED)
-        # from app.engine.uma import UMA
-        uma.load_models()
-    except ImportError as e:
-        logger.error("Full prediction: model dependency missing — %s", e)
-        raise HTTPException(status_code=503, detail=f"Model dependency unavailable: {e}") from e
-    except Exception as e:
-        logger.error("Full prediction: model load failed — %s", e)
-        raise HTTPException(status_code=503, detail=f"Model load failed: {e}") from e
-
-    try:
-        # Generate prediction
-        prediction = uma.predict(
-            features=request.features, market_odds=request.market_odds, race_context={"race_id": request.race_id}
-        )
-
-        return PredictResponse(
-            race_id=request.race_id,
-            runner_id=request.runner_id,
-            probability=prediction.probability,
-            edge=prediction.edge,
-            confidence=prediction.confidence,
-            risk_band=prediction.risk_band,
-            signals=prediction.signals,
-        )
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error("Full prediction: inference failed — %s", e)
-        raise HTTPException(status_code=500, detail=f"Prediction inference error: {e}") from e
+    raise HTTPException(
+        status_code=503, detail="UMA Brain is QUARANTINED for forensic containment. Use /quick or /ensemble."
+    )
 
 
 @router.post("/quick", response_model=PredictResponse)

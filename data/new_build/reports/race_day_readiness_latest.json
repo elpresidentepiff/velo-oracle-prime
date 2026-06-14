@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-05-28T19:46:52.283153",
+  "champion": "Core V0_OR (AUC 0.6769, SR 22.32%, Frame 51.13%)",
+  "challenger_v1": "Challenger V1: Core+Passport+Intent (AUC 0.6969, SR 25.02%, Frame 54.98%)",
+  "tomorrow_model": "Challenger V1 (Core V0_OR + Passport + Intent)",
+  "sidecars_tested": [
+    "A: Challenger V1 (baseline)",
+    "B: V1 + JTC-D [LEAKAGE_RISK]",
+    "C: V1 + Intl Lagged",
+    "D: V1 + JTC-D + Intl Lagged [LEAK_RISK]",
+    "G: V1 + Market [MARKET_LANE]",
+    "H: V1 + Intl + Market [MARKET_LANE]"
+  ],
+  "sidecars_accepted": [],
+  "sidecars_rejected": [
+    "A: Challenger V1 (baseline)",
+    "C: V1 + Intl Lagged"
+  ],
+  "sidecars_shadow": [
+    "B: V1 + JTC-D [LEAKAGE_RISK]",
+    "D: V1 + JTC-D + Intl Lagged [LEAK_RISK]"
+  ],
+  "market_lane": [
+    "G: V1 + Market [MARKET_LANE]",
+    "H: V1 + Intl + Market [MARKET_LANE]"
+  ],
+  "race_day_approved": true,
+  "rpr_violation": false,
+  "sp_violation": false,
+  "leakage_flagged": [
+    "B: V1 + JTC-D [LEAKAGE_RISK]",
+    "D: V1 + JTC-D + Intl Lagged [LEAK_RISK]"
+  ],
+  "confidence_caveats": [
+    "JTC-D stats are all-time cumulative (no date boundary) \u2014 shadow only until time-bounded rebuild",
+    "Market lane is a separate product, not morning model",
+    "Challenger V1 remains safe for race-day output"
+  ]
+}

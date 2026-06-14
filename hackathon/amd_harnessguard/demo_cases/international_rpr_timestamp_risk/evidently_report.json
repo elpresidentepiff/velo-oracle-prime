@@ -1,0 +1,16 @@
+{
+  "status": "QUALITY_FAILURE",
+  "severity": "CRITICAL",
+  "failures": [
+    {
+      "detector_name": "leakage_detector",
+      "column": "leakage_status",
+      "severity": "CRITICAL",
+      "issue": "TEMPORAL_LEAKAGE",
+      "message": "Detected 50 records with RETROSPECTIVE_SIGNAL_TEST_WITH_LEAKAGE_RISK."
+    }
+  ],
+  "safe_to_score": false,
+  "safe_to_learn": false,
+  "timestamp": "2026-06-06T03:46:24.507050"
+}

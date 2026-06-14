@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "0fb17ac7-4c0a-4b7f-be77-539d5891c0eb",
+  "date": "2026-06-07",
+  "timestamp": "2026-06-08T21:57:07.137680+00:00",
+  "git_commit_sha": "aaec4deabbec054be1a11fad3a85b205ba0b88cf",
+  "git_branch": "stabilization/prime-hardening-v1",
+  "source_truth": "RP_MERGED_DEGRADED",
+  "feature_health": "DEGRADED_RP_MERGED",
+  "active_formula": "sqpe_v17 | RP_MERGED_DEGRADED",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 100.0,
+  "persistence_status": "OK",
+  "supabase_write_attempt_success": true,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "PASS",
+  "learning_gate": "BLOCKED_DEGRADED_SOURCE",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 30,
+    "runners_processed": 320
+  },
+  "gates": {
+    "gate_2_flatline_fires": false,
+    "gate_5_rpdc_warn_fires": false,
+    "gate_6_learning_blocked": true,
+    "gate_source_unknown_block": false
+  },
+  "warnings": [
+    "V\u00c9L\u00d8 source truth is RP_MERGED_DEGRADED. Scoring will proceed with degraded features."
+  ],
+  "extra": {
+    "git_commit_sha": "aaec4deabbec054be1a11fad3a85b205ba0b88cf",
+    "racecard_source_raw": "rp_merged",
+    "persist_ok": 30,
+    "persist_fail": 0,
+    "score_errors": 0,
+    "flatline_summary": {
+      "flatline_count": 0,
+      "total_races": 30,
+      "flatline_pct": 0.0,
+      "fully_uniform_count": 0,
+      "majority_tied_count": 0,
+      "races": []
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "incident_id": "may24_rpdc_degraded",
+  "detection_time": "2026-06-05T20:16:12.001812Z",
+  "severity": "CRITICAL",
+  "evidence_source": "hackathon\\amd_harnessguard\\demo_cases\\may24_rpdc_degraded\\evidently_report.json",
+  "policy_evaluation": {
+    "learning_eligibility": "BLOCK_LEARNING",
+    "violations": [
+      "POLICY_ZERO_VARIANCE_CRITICAL"
+    ]
+  },
+  "recovery_plan": {
+    "recommended_action": "HALT_PIPELINE_AND_REINDEX_SOURCE",
+    "operator_message": "CRITICAL: 'improvement_score' has flatlined across the field. This indicates a data source failure. Learning has been BLOCKED to protect model integrity.",
+    "safe_next_command": "PYTHONPATH=. python scripts/ops/reindex_feature_source.py --feature improvement_score"
+  },
+  "amd_benchmark": {
+    "inference_device": "MOCKED_CPU_BASELINE",
+    "latency_ms": 142.5,
+    "throughput_signals_per_sec": 7.01
+  }
+}

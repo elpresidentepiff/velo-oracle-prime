@@ -172,6 +172,7 @@ def _normalise_race(html_path: Path, capture: dict[str, Any] | None = None) -> d
         "course_id": race.get("courseId"),
         "country": race.get("countryCode"),
         "race_time": race.get("raceTime"),
+        "off_time": race.get("startTime") or _extract_off_time(race.get("raceTime")),
         "race_title": race.get("raceTitle"),
         "race_class": race.get("raceClass"),
         "race_type": race.get("raceTypeDesc"),

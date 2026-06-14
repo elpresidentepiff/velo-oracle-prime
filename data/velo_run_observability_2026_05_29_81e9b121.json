@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "81e9b121-8c9d-4016-aa52-255a22096e65",
+  "date": "2026-05-29",
+  "timestamp": "2026-05-30T01:15:39.885594+00:00",
+  "git_commit_sha": "51343ed459ca178865a75df168a4466ad593757d",
+  "git_branch": "codex/rp-archive-rpr-boundary",
+  "source_truth": "SOURCE_UNKNOWN_BLOCK",
+  "feature_health": "BLOCKED",
+  "active_formula": "UNHANDLED_EXCEPTION",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 0.0,
+  "persistence_status": "FAIL",
+  "supabase_write_attempt_success": false,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "EXCEPTION",
+  "learning_gate": "BLOCKED_EXCEPTION",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 0,
+    "runners_processed": 0
+  },
+  "gates": {
+    "gate_source_unknown_block": false
+  },
+  "warnings": [
+    "UNHANDLED_EXCEPTION: UnicodeEncodeError: 'charmap' codec can't encode character '\\u2139' in position 2: character maps to <undefined>"
+  ],
+  "extra": {
+    "git_commit_sha": "unknown",
+    "exception_type": "UnicodeEncodeError"
+  }
+}
