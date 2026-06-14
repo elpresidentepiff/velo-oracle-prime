@@ -1,0 +1,104 @@
+{
+  "report_type": "VFU_09_VP_SUPPRESSION_INVESTIGATION",
+  "investigation_version": "VFU_09_VP_SUPPRESSION_INVESTIGATION_V1",
+  "generated_at": "2026-06-14T22:29:41.767600+00:00",
+  "scope": "2026-05-08 to 2026-06-13",
+  "core_doctrine": "VP is valid as a population signal. VP is not valid as a hard individual horse disqualifier. Identity-confirmed Passport evidence may reveal improving horses before VP crosses threshold.",
+  "vp_threshold_unchanged": true,
+  "live_doctrine_promoted": false,
+  "passport_override_status": "DRY_RUN_ONLY",
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "live_scoring_changed": false,
+  "model_promoted": false,
+  "telegram_sent": false,
+  "racing_api_restored": false,
+  "mar_apr_extracted": false,
+  "scale_finding": {
+    "total_wins_with_vp": 307,
+    "wins_below_vp_threshold": 202,
+    "wins_above_vp_threshold": 105,
+    "pct_wins_below_threshold": 0.658,
+    "interpretation": "202/307 (65.8%) of current-era wins had VP < 0.4. VP undercounting is the DOMINANT pattern, not a niche exception."
+  },
+  "cases_investigated": [
+    {
+      "horse_name": "Kakirra",
+      "horse_id": "8866972",
+      "vfu_appearances": 3,
+      "wins": 3,
+      "avg_vp": 0.26513333333333333,
+      "confirmed": true
+    },
+    {
+      "horse_name": "Man Is King",
+      "horse_id": "3839266",
+      "vfu_appearances": 2,
+      "wins": 2,
+      "avg_vp": 0.22955000000000003,
+      "confirmed": true
+    }
+  ],
+  "suppression_taxonomy_observed": {
+    "LOW_FEATURE_COVERAGE_SUPPRESSED_VP": 2,
+    "SOURCE_LAYER_SUPPRESSED_VP": 2,
+    "SP_SHORTENING_UNDERWEIGHTED": 2,
+    "PASSPORT_IMPROVEMENT_AHEAD_OF_VP": 2,
+    "REPEAT_WINNER_UNDERCOUNTED": 2,
+    "AW_SPECIALIST_UNDERCOUNTED": 1,
+    "OR_FALLING_CLASS_DROP_PATTERN": 1
+  },
+  "control_group_key_findings": [
+    "VP_UNDERCOUNTING winners have HIGHER avg win rate (26.7%) than high-VP winners (10.6%). Model systematically misses horses with strong career records.",
+    "VP_UNDERCOUNTING winners show MORE SP shortening (52.9%) than high-VP winners (41.8%). Market is ahead of model on these horses.",
+    "VP_UNDERCOUNTING winners more likely to have improving position trend (53.9% vs 36.4%). Passport improvement signal predates VP recognition.",
+    "Within VP < 0.40 group: winners avg_win_rate=26.7% vs non-winners avg_win_rate=9.5%. Passport win_rate strongly discriminates within low-VP population.",
+    "SP shortening separates VP<0.40 winners (52.9%) from VP<0.40 non-winners (37.7%). Passport SP field is predictive within the low-VP cohort."
+  ],
+  "watchlist_entries": 2,
+  "human_review_queue_entries": 2,
+  "required_answers": {
+    "Q1_why_did_kakirra_beat_vp": "Kakirra is a confirmed AW specialist (Passport: aw_specialist=True) who won 3/3 with VP 0.175\u20130.343. Suppression causes: (1) All 3 races were TIER_B \u2014 no pick_sp, meaning the market signal that tracks SP shortening was absent from VP calculation. (2) The VP ensemble (SQPE_IMPROVEMENT_MDS_V1) does not capture AW surface specialization as a positive discriminator when a horse runs on turf. (3) VP actually FELL from 0.343 to 0.175 as Kakirra kept winning \u2014 the model was not learning from the horse's improving Passport trajectory within the current era. Passport knew: 60% career win rate, SP shortening, improving position and margin. VP missed: market signal (no pick_sp), surface specialization, repeat winner pattern.",
+    "Q2_did_man_is_king_show_same_structure": "Partially. Man is King (RP_UID 3839266) won 2/2 with VP 0.180/0.279, both below threshold. Shared features with Kakirra: SP shortening, improving position, TIER_B tier for first win. Differences: Man is King has OR_FALLING and MARGIN_DECLINING trends which may have actively suppressed VP (model saw declining horse). However, win_rate_last3=66.7% and class_movement=DOWN \u2014 falling class with recent form is a known win trigger. Passport knew: strong recent win rate (67% last 3), SP shortening. VP likely penalised: falling OR, declining margins, course switching, jockey changes.",
+    "Q3_vp_failure_passport_success_or_both": "Both, but asymmetrically. VP is functioning correctly as a population signal \u2014 VP>=0.40 SR=43.2% is valid and holds. The failure is VP as an individual disqualifier for identity-confirmed improving horses. Passport success: career win rate, SP shortening, and position trend all predict VP<0.40 wins better than they predict VP<0.40 non-wins (win_rate: 26.7% vs 9.5%, SP shortening: 52.9% vs 37.7%). VP sees raw race-level features. Passport accumulates career trajectory. These are complementary, not competing signals.",
+    "Q4_which_passport_fields_were_predictive": [
+      "win_rate (VP<0.40 winners: avg 26.7% vs non-winners: 9.5%)",
+      "sp_trajectory=SHORTENING (winners: 52.9% vs non-winners: 37.7%)",
+      "position_trend=IMPROVING (winners: 53.9% vs non-winners: 30.0%)",
+      "win_rate_last3 > 0.40 \u2014 very strong recent form not captured by VP",
+      "For Kakirra specifically: aw_specialist=True (model doesn't weight AW form positively on turf)"
+    ],
+    "Q5_what_vp_likely_missed": [
+      "No pick_sp on TIER_B rows: market signal (SP shortening) absent from VP at score time",
+      "Career win rate: SQPE uses recent form features, not career win rate directly",
+      "AW specialist pattern: model may penalise turf runs for AW specialist or vice versa",
+      "Repeat winner accumulation: VP is race-by-race, not horse-trajectory-aware",
+      "Class drop + falling OR = VP penalises, but it's a winning pattern for some horses",
+      "Setup run candidate: Passport flags this, VP doesn't have this signal"
+    ],
+    "Q6_enough_evidence_for_override_watchlist": "Yes \u2014 sufficient evidence for a DRY-RUN watchlist only. Quantitative case: 202/307 (65.8%) of current-era wins had VP<0.40. Among RP_UID horses with VP<0.40, win_rate discriminates winners from non-winners (26.7% vs 9.5%, delta +17.2pp). SP shortening and position trend also discriminate. Kakirra (3/3 wins, RP_UID confirmed) and Man is King (2/2 wins, RP_UID confirmed) are sufficient for watchlist entry. NOT sufficient for live doctrine.",
+    "Q7_enough_evidence_for_live_doctrine": "No. Current evidence: 2 horses, 5 VFU wins total. Need: minimum 20+ identity-confirmed VP_UNDERCOUNTING winners with RP_UID, prospective validation (not retrospective current-era), and operator gate at each threshold. The 202 VP<0.40 win count includes name-only matches \u2014 not usable for live doctrine without identity confirmation.",
+    "Q8_should_vp_threshold_remain_unchanged": "Yes. VP threshold (0.40) remains valid. The population signal holds: VP>=0.40 SR=43.2% vs baseline 26.4%. Changing the threshold would broaden the gate without improving signal quality. The correct response is a Passport Override layer ABOVE the VP gate, not a threshold change.",
+    "Q9_should_passport_override_remain_dry_run": "Yes, dry-run only. Watchlist has 2 entries (Kakirra, Man is King). Architecture: VP Gatekeeper + Passport Override Watchlist + Course/price/context filter. No live use until: n>=20 identity-confirmed VP_UNDERCOUNTING winners, prospective validation, operator decision at each gate.",
+    "Q10_what_must_vfu10_focus_on": "VFU-10: Expand VP_UNDERCOUNTING population. Identify all 202 VP<0.40 WIN rows with RP_UID, score them against Passport profiles, build a priority ranking of override candidates. Specifically: (1) Which of the 102 RP_UID VP<0.40 wins show the Kakirra/Man-is-King pattern? (2) Is win_rate > 0.25 + SP_SHORTENING a reliable watchlist filter? (3) How many prospective candidates qualify? Do NOT: change live scoring, merge Passports, promote doctrine."
+  },
+  "vfu10_recommendation": "VFU-10: Expand VP_UNDERCOUNTING population. Identify all 202 VP<0.40 WIN rows with RP_UID, score them against Passport profiles, build a priority ranking of override candidates. Specifically: (1) Which of the 102 RP_UID VP<0.40 wins show the Kakirra/Man-is-King pattern? (2) Is win_rate > 0.25 + SP_SHORTENING a reliable watchlist filter? (3) How many prospective candidates qualify? Do NOT: change live scoring, merge Passports, promote doctrine.",
+  "final_classifications": [
+    "VFU_09_VP_SUPPRESSION_INVESTIGATION_COMPLETE",
+    "VFU_08_VERDICT_DISTRIBUTION_RECONCILED",
+    "KAKIRRA_VP_UNDERCOUNTING_CONFIRMED",
+    "MAN_IS_KING_VP_UNDERCOUNTING_REVIEWED",
+    "PASSPORT_OVERRIDE_WATCHLIST_CREATED",
+    "VP_REMAINS_POPULATION_SIGNAL_NOT_HARD_DISQUALIFIER",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "PASSPORT_OVERRIDE_DRY_RUN_ONLY",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_MAR_APR_EXTRACTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}

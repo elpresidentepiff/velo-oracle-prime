@@ -1,0 +1,48 @@
+{
+  "errata_type": "VFU_08_VERBAL_SUMMARY_CORRECTION",
+  "errata_version": "VFU_08_VERDICT_DISTRIBUTION_ERRATA_V1",
+  "filed_at": "2026-06-14",
+  "scope": "candidates_only (data/reports/vfu_passport_review_candidates.jsonl \u2014 69 rows)",
+  "error_source": "Final verbal report mixed cluster counts into candidate distribution",
+  "correct_candidate_distribution": {
+    "NEEDS_IDENTITY_RECONCILIATION": 28,
+    "APPROVE_FOR_PASSPORT_UPDATE_REVIEW": 25,
+    "HOLD_FOR_MORE_EVIDENCE": 16,
+    "TOTAL": 69
+  },
+  "reported_candidate_distribution": {
+    "NEEDS_IDENTITY_RECONCILIATION": 28,
+    "APPROVE_FOR_PASSPORT_UPDATE_REVIEW": 25,
+    "PLACE_EW_PROFILE_ONLY": 3,
+    "VP_UNDERCOUNTING_WATCHLIST": 2,
+    "HOLD_FOR_MORE_EVIDENCE": 7,
+    "REJECT_AS_NOISE": 0,
+    "TOTAL_REPORTED": 65,
+    "TOTAL_ACTUAL": 69,
+    "DISCREPANCY": 4
+  },
+  "cluster_distribution_was_correct": {
+    "VP_UNDERCOUNTING_WATCHLIST": 2,
+    "REJECT_AS_NOISE": 8,
+    "HOLD_FOR_MORE_EVIDENCE": 4,
+    "LEARNABLE_VP_POSITIVE": 2,
+    "PLACE_EW_PROFILE_ONLY": 3,
+    "NEEDS_IDENTITY_RECONCILIATION": 1,
+    "TOTAL": 20
+  },
+  "root_cause": [
+    "PLACE_EW_PROFILE_ONLY (3) incorrectly attributed to candidates \u2014 these are cluster-only (PLACE_SPECIALIST clusters). No PLACED outcomes exist in passport candidate file (all outcomes are WIN or MISS).",
+    "VP_UNDERCOUNTING_WATCHLIST (2) incorrectly attributed to candidates \u2014 Kakirra and Man is King appear in clusters only, not in single-race passport candidates. Kakirra's VP (0.175-0.343) was below the passport candidate selection floor (VP_at_race >= 0.503).",
+    "HOLD_FOR_MORE_EVIDENCE undercounted as 7 instead of 16. The verbal report used summary fields (approve_count, vp_undercounting_count, place_ew_count etc.) not the candidate verdict_distribution field."
+  ],
+  "data_files_status": "CORRECT \u2014 vfu_passport_review_candidates.jsonl, vfu_08_review_summary.json, operator_decision_queue all show correct distributions. Only the verbal final report was wrong.",
+  "code_files_status": "CORRECT \u2014 scripts/ops/vfu_passport_review_queue.py was always computing correctly.",
+  "additional_finding": "Passport candidate selection floor is VP >= 0.503 (only VP_HIGH_WIN and VP_CONFIRMED_FAVOURITE_WIN selected). Kakirra and Man is King (VP 0.175-0.343) could never appear in passport candidates. VFU-09 investigates this blind spot.",
+  "corrections_made": "This errata document only. No code changes needed. No JSON rewriting. No history mutation.",
+  "final_classifications": [
+    "VFU_08_VERDICT_DISTRIBUTION_RECONCILED",
+    "REPORTING_ERROR_ONLY_DATA_WAS_ALWAYS_CORRECT",
+    "NO_CODE_CHANGE_REQUIRED",
+    "NO_DATA_FILE_CHANGE_REQUIRED"
+  ]
+}
