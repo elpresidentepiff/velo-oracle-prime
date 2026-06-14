@@ -1,0 +1,123 @@
+{
+  "report_type": "VFU_01_BUILD_PLAN",
+  "generated": "2026-06-14",
+  "status": "PHASE_1_COMPLETE",
+  "phases": {
+    "phase_1": {
+      "name": "Doctrine + Schema + Inventory",
+      "status": "COMPLETE",
+      "deliverables": [
+        "docs/current/VELO_FORENSICS_UNIT_V1.md",
+        "docs/current/VFU_RACE_AUTOPSY_SCHEMA_V1.md",
+        "docs/current/HORSE_PASSPORT_FORENSIC_EXTENSION_V1.md",
+        "docs/current/PATTERN_PROSECUTOR_SCHEMA_V1.md",
+        "docs/current/VFU_FAILURE_TAXONOMY_V1.md",
+        "data/reports/vfu_01_build_plan.md",
+        "data/reports/vfu_01_build_plan.json"
+      ],
+      "guardrails_confirmed": {
+        "no_autopsy_execution": true,
+        "no_supabase_writes": true,
+        "no_live_scoring_change": true,
+        "no_model_promotion": true,
+        "no_telegram_send": true,
+        "no_racing_api_restoration": true,
+        "no_mar_apr_extraction": true,
+        "horse_passport_canonical": true,
+        "no_duplicate_dossier_system": true
+      }
+    },
+    "phase_2": {
+      "name": "Autopsy Generator Dry-Run (20 races)",
+      "status": "LOCKED",
+      "unlock_condition": "Operator approval after Phase 1 acceptance",
+      "scope": "20 current-era races: 5 WIN / 5 PLACED / 10 MISS. Local files only."
+    },
+    "phase_3": {
+      "name": "Horse Passport Forensic Extension Dry-Run",
+      "status": "LOCKED",
+      "unlock_condition": "Phase 2 complete + operator approval",
+      "scope": "Horses appearing 2+ times in current-era. No base passport mutation."
+    },
+    "phase_4": {
+      "name": "Full Current-Era Autopsy Pass (1,263 rows)",
+      "status": "LOCKED",
+      "unlock_condition": "Phase 3 complete + operator approval",
+      "scope": "Full May 08\u2013Jun 13 union. Failure class distribution. Pattern flags."
+    },
+    "phase_5": {
+      "name": "Pattern Prosecutor Summary Report",
+      "status": "LOCKED",
+      "unlock_condition": "Phase 4 complete + operator approval",
+      "scope": "First prosecution run. n>=20 patterns tested. No doctrine changes."
+    },
+    "phase_6": {
+      "name": "Mar\u2013Apr Pre-Surgery Study",
+      "status": "LOCKED",
+      "unlock_condition": "14-day VP dry-run validation (from 2026-06-14) + operator approval. Separate from VFU phases.",
+      "reference": "data/reports/pre_surgery_sigma_study_plan.md"
+    }
+  },
+  "existing_passport_components": {
+    "EXISTING_PASSPORT_CORE": [
+      "new_build_velo/horse_passport.py",
+      "new_build_velo/passport_bank.py",
+      "new_build_velo/passport_lookup.py",
+      "scripts/ops/new_build_horse_passports.py",
+      "scripts/ops/new_build_horse_passport_spine.py",
+      "data/new_build/passports/horse_passports_v1.jsonl",
+      "tests/test_new_build_horse_passport.py",
+      "tests/test_new_build_passport_bank.py",
+      "tests/test_passport_v2.py"
+    ],
+    "EXISTING_HORSE_IDENTITY_LAYER": [
+      "docs/engineering/HORSE_IDENTITY_BRIDGE_V1.md",
+      "scripts/ops/build_horse_identity_bridge.py",
+      "scripts/ops/new_build_final_card_identity_bridge.py",
+      "archive/dead_scripts/build_horse_identity_2024.py",
+      "archive/dead_scripts/build_horse_identity_2025.py"
+    ],
+    "EXISTING_PROFILE_MEMORY": [
+      "data/race_shape/form_history_*.json",
+      "scripts/ops/parse_rp_form_history.py",
+      "src/agents/velo_archivist.py"
+    ],
+    "LEGACY_OR_ARCHIVE": [
+      "app/oracle/models/oracle_dossier.py",
+      "app/oracle/services/oracle_analyzer.py",
+      "archive/dead_scripts/build_horse_run_history_2024.py",
+      "archive/dead_scripts/build_horse_run_history_2025.py",
+      "archive/dead_scripts/ingest_racing_profiles.py",
+      "archive/dead_scripts/populate_entity_bibles.py"
+    ],
+    "RELATED_BUT_NOT_PASSPORT": [
+      "scripts/ops/build_rp_horse_dossiers.py",
+      "scripts/ops/build_rp_race_dossiers.py",
+      "data/backups/rp_archive_supabase_load/racing_post_account_parsed/*/horse_dossiers.json",
+      "data/rag/rag_dossier_*.json"
+    ]
+  },
+  "canonical_passport_path": "new_build_velo/horse_passport.py + data/new_build/passports/horse_passports_v1.jsonl",
+  "vfu_feeds_passport_via": [
+    "Race Autopsy Ledger (data/reports/vfu_autopsies/)",
+    "Horse Passport Forensic Extension (data/reports/vfu_passport_extensions/)",
+    "Pattern Evidence Ledger (data/reports/vfu_pattern_ledger/)"
+  ],
+  "failure_taxonomy_classes": 22,
+  "final_classifications": [
+    "VFU_01_DOCTRINE_CREATED",
+    "HORSE_PASSPORT_CONFIRMED_AS_CANONICAL_DOSSIER",
+    "VFU_DEFINED_AS_INVESTIGATIVE_FEEDER",
+    "RACE_AUTOPSY_SCHEMA_CREATED",
+    "HORSE_PASSPORT_FORENSIC_EXTENSION_CREATED",
+    "PATTERN_PROSECUTOR_SCHEMA_CREATED",
+    "NO_DUPLICATE_DOSSIER_SYSTEM",
+    "NO_AUTOPSY_EXECUTION_YET",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION",
+    "NO_MAR_APR_EXTRACTION"
+  ]
+}
