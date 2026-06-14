@@ -562,11 +562,12 @@ def main():
     frames = []  # top pick placed top 3
     misses = []  # top pick outside top 3
     no_result = []  # race result not found
-    non_runners = []  # predicted horse did not participate (F/PU/BD/UR/WD/NR)
+    non_runners = []  # predicted horse did not participate (NR/WD only)
     all_matched = []
 
     # Positions that mean "did not finish / was not a runner" — exclude from stats
-    DNF_POSITIONS = {"NR", "WD", "PU", "F", "BD", "UR", "SU", "RO", "REF", "DSQ", ""}
+    # Terminal outcomes such as PU/F/UR are starters and must count as misses.
+    NON_RUNNER_POSITIONS = {"NR", "WD"}
 
     for race_id, pred in predictions.items():
         predicted_horse_id = str(pred.get("top_rank_horse_id", "") or "")
@@ -638,6 +639,7 @@ def main():
                     "reconciliation_provenance": provenance + "_HORSE_ABSENT",
                     "actual_winner": result.get("winner_id","?"), "actual_name": result_winner,
                     "winner_sp": winner_sp, "velo_prime_prob": vpp,
+                    "predicted_position": None, "predicted_sp": 0,
                     "outcome": "MISS", "miss_class": mc, "top3": result.get("top3_names",[]),
                 })
                 print(f"  MISS({mc})             {result.get('course',''):<22} {result.get('off','')}  pred={info.get('horse','?'):<30} [HORSE_ABSENT→MISS]")
@@ -648,9 +650,13 @@ def main():
 
         # ── Step 3.4: Non-runner check ────────────────────────────────────────
         pos = str(horse_result.get("position", "")).strip().upper()
-        if pos in DNF_POSITIONS:
+        if pos in NON_RUNNER_POSITIONS or horse_result.get("non_runner") is True:
             non_runners.append(race_id)
             print(f"  [NR] {race_id}: {info.get('horse','?')} — pos={pos or 'NR'} — excluded")
+            continue
+        if not pos:
+            print(f"  [WARN] {race_id}: matched horse has no finishing position")
+            no_result.append(race_id)
             continue
 
         # ── Step 3.5: Outcomes ────────────────────────────────────────────────
@@ -685,6 +691,8 @@ def main():
                 "actual_name": result.get("winner_name") or result.get("winner_horse", "?"),
                 "winner_sp": result.get("winner_sp", 0),
                 "velo_prime_prob": vpp,
+                "predicted_position": pos,
+                "predicted_sp": horse_result.get("sp_dec", 0),
                 "outcome": outcome,
                 "miss_class": miss_class,
                 "top3": result.get("top3_names", []),
@@ -783,7 +791,11 @@ def main():
                     "off": r["off"],
                     "predicted": r["predicted"],
                     "outcome": r["outcome"],
-                    "velo_prime_prob": r["velo_prime_prob"],
+                    "velo_prime_prob": r["velo_prime_prob"] if r.get("velo_prime_prob") else None,
+                    "vp_source": "supabase_velo_verdicts" if r.get("velo_prime_prob") else None,
+                    "vp_provenance": "SUPABASE_VELO_VERDICTS" if r.get("velo_prime_prob") else "UNRECOVERABLE",
+                    "vp_recovered": False,
+                    "vp_missing_reason": None if r.get("velo_prime_prob") else "vp_not_in_supabase_verdict",
                     "miss_class": r.get("miss_class"),
                 }
                 for r in all_matched
@@ -844,32 +856,17 @@ def main():
 
         miss_reason = row["miss_class"] if row["outcome"] == "MISS" else None
 
-        # Gap 1: fetch actual finishing position from runner_results.
-        # Primary source: runner_results.position (written by close_sigma_loops.py).
-        # runner_race_facts.finishing_position is never populated — do not read it.
-        # If position is NULL or query fails: write None — never manufacture 1/3/99.
+        # Canonical source: the parsed Racing Post result used for reconciliation.
+        # Terminal starter outcomes remain NULL in the numeric position column.
         top_pos = None
         _pos_note = ""
-        try:
-            rr_rows = sb_get(
-                f"/runner_results"
-                f"?select=position"
-                f"&race_id=eq.{row['race_id']}"
-                f"&horse_id=eq.{row['predicted_id']}"
-                f"&limit=1"
-            )
-            if rr_rows and rr_rows[0].get("position") is not None:
-                top_pos = int(rr_rows[0]["position"])
-            else:
-                _pos_note = "finishing_position_null"
-                print(
-                    f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: position not in runner_results — writing NULL"
-                )
-        except Exception as _fp_err:
-            _pos_note = f"finishing_position_error: {_fp_err}"
-            print(
-                f"  [SKIP-POS] {row['race_id']}/{row['predicted_id']}: runner_results fetch failed — writing NULL: {_fp_err}"
-            )
+        _canonical_pos = str(row.get("predicted_position") or "").strip().upper()
+        if _canonical_pos.isdigit():
+            top_pos = int(_canonical_pos)
+        elif _canonical_pos:
+            _pos_note = f"terminal_outcome={_canonical_pos}"
+        else:
+            _pos_note = "finishing_position_null"
 
         # Full-field RPD: read rpd_tag per runner from velo_verdicts.selections
         # Primary source: selections already stored by run_prime_today.py.
@@ -896,7 +893,8 @@ def main():
                         "rpd_evidence": _s.get("rpd_evidence_codes") or _s.get("rpd_evidence"),
                     }
 
-        _full_runners = results_by_id.get(row["race_id"], {}).get("full_runners", [])
+        _result_race = results_by_id.get(row["race_id"], {})
+        _full_runners = _result_race.get("full_runners") or _result_race.get("runners") or []
         _sorted_runners = sorted(
             [_r for _r in _full_runners if str(_r.get("position", "")).isdigit()], key=lambda _r: int(_r["position"])
         )
@@ -1034,12 +1032,13 @@ def main():
             continue
 
         stake = STAKE[tier]
-        # Find predicted horse's SP from full_runners list
-        full_runners = results_by_id.get(rid, {}).get("full_runners", [])
+        # Find predicted horse's SP from the canonical RP runner list.
+        _result_race = results_by_id.get(rid, {})
+        full_runners = _result_race.get("full_runners") or _result_race.get("runners") or []
         pred_sp = None
         horse_in_results = False
         for runner in full_runners:
-            if runner.get("horse_id") == row["predicted_id"]:
+            if str(runner.get("horse_id")) == str(row["predicted_id"]):
                 horse_in_results = True
                 try:
                     pred_sp = float(runner.get("sp_dec") or 0) or None
@@ -1198,6 +1197,33 @@ def main():
     print("\nSTEP 9: Write local sigma artifact")
     _sigma_dir = ROOT / "data" / "sigma_results"
     _sigma_dir.mkdir(parents=True, exist_ok=True)
+    # Build per-race rows with VP provenance for downstream audit consumers.
+    # VP is sourced from Supabase velo_verdicts (via `predictions` dict).
+    # vp_source names the verdict artifact so backfill can trace exact provenance.
+    _verdict_backup_name = f"velo_prime_verdicts_{race_date.replace('-', '_')}.json"
+    _vp_rows = []
+    for _row in all_matched:
+        _rid = _row["race_id"]
+        _pred_vpp = _row.get("velo_prime_prob")
+        _vp_present = _pred_vpp is not None and _pred_vpp != 0
+        _vp_rows.append(
+            {
+                "race_id": _rid,
+                "course": _row.get("course", ""),
+                "off": _row.get("off", ""),
+                "predicted": _row.get("predicted", "?"),
+                "actual_name": _row.get("actual_name", "?"),
+                "winner_sp": _row.get("winner_sp", 0),
+                "velo_prime_prob": _pred_vpp if _vp_present else None,
+                "vp_source": "supabase_velo_verdicts" if _vp_present else None,
+                "vp_provenance": "SUPABASE_VELO_VERDICTS" if _vp_present else "UNRECOVERABLE",
+                "vp_recovered": False,
+                "vp_missing_reason": None if _vp_present else "vp_not_in_supabase_verdict",
+                "outcome": _row.get("outcome", ""),
+                "miss_class": _row.get("miss_class", ""),
+            }
+        )
+
     _sigma_artifact = {
         "date": race_date,
         "generated_at": utc_now_iso(),
@@ -1224,6 +1250,14 @@ def main():
         "learning_candidate_rows": sigma_ok,
         "unresolved_rows": no_result_ct,
         "raw_sigma_audits_preserved": True,
+        # Per-race rows with VP provenance — never omit, always write null + reason if unavailable.
+        "rows": _vp_rows,
+        "vp_coverage": {
+            "total_rows": len(_vp_rows),
+            "rows_with_vp": sum(1 for r in _vp_rows if r["velo_prime_prob"] is not None),
+            "rows_missing_vp": sum(1 for r in _vp_rows if r["velo_prime_prob"] is None),
+            "vp_source": "supabase_velo_verdicts",
+        },
     }
     _dated_path = _sigma_dir / f"sigma_results_{race_date.replace('-', '_')}.json"
     _dated_path.write_text(json.dumps(_sigma_artifact, indent=2), encoding="utf-8")

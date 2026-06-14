@@ -226,7 +226,9 @@ def main() -> int:
     ]
     reports = ROOT / "data/reports"
     reports.mkdir(parents=True, exist_ok=True)
-    (reports / f"rpdc_attach_preflight_{args.date}.md").write_text("\n".join(lines))
+    (reports / f"rpdc_attach_preflight_{args.date}.md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
 
     print(f"RPDC attach preflight [{args.date}]: {result['status']}")
     if result.get("detail"):

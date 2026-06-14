@@ -1093,6 +1093,39 @@ async def upload_spotlight_pdf(
 # ── Governed Card Dashboard ───────────────────────────────────────────────────
 
 
+def _select_observability_artifact(root: pathlib.Path, date_tag: str) -> tuple[pathlib.Path | None, dict | None]:
+    """Prefer the newest usable run over later exception/debug artifacts."""
+    ranked: list[tuple[int, str, float, pathlib.Path, dict]] = []
+    for path in (root / "data").glob(f"velo_run_observability_{date_tag}*.json"):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        warnings = " ".join(str(item) for item in payload.get("warnings", []))
+        usable = (
+            payload.get("source_truth") not in {None, "", "SOURCE_UNKNOWN_BLOCK"}
+            and payload.get("feature_health") != "BLOCKED"
+            and "UNHANDLED_EXCEPTION" not in warnings
+        )
+        timestamp = str(payload.get("timestamp") or payload.get("generated_at") or "")
+        ranked.append((int(usable), timestamp, path.stat().st_mtime, path, payload))
+    if not ranked:
+        return None, None
+    _, _, _, path, payload = max(ranked, key=lambda item: item[:3])
+    return path, payload
+
+
+def _resolve_rp_injection_path(root: pathlib.Path, target_date: str) -> pathlib.Path | None:
+    """Resolve the exact-date RP injection across current and legacy layouts."""
+    parsed_root = root / "data" / "racing_post_account_parsed"
+    candidates = [
+        parsed_root / f"live-full-racepages-{target_date}" / "racecard_injection.json",
+        parsed_root / target_date / "racecard_injection.json",
+    ]
+    candidates.extend(sorted(parsed_root.glob(f"*{target_date}*/racecard_injection.json"), reverse=True))
+    return next((path for path in candidates if path.exists()), None)
+
+
 @app.get("/api/dashboard/truth-summary")
 async def dashboard_truth_summary(date: str = Query(default=None)):
     """
@@ -1136,12 +1169,10 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     }
 
     # 2. Live VÉLØ Observability
-    obs_candidates = sorted((root / "data").glob(f"velo_run_observability_{date_tag}*.json"))
-    obs_path = obs_candidates[-1] if obs_candidates else None
-    if obs_path and obs_path.exists():
+    obs_path, obs_data = _select_observability_artifact(root, date_tag)
+    if obs_path and obs_data:
         try:
-            obs_data = json.loads(obs_path.read_text(encoding="utf-8"))
-            res["live_velo_status"] = obs_data.get("status", "UNKNOWN")
+            res["live_velo_status"] = obs_data.get("status") or obs_data.get("decision_tier_status", "UNKNOWN")
             res["source_truth_label"] = obs_data.get("source_truth", "UNKNOWN")
             res["observability_status"] = "PASS"
             res["source_files_used"].append(obs_path.name)
@@ -1153,8 +1184,8 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
             res["observability_status"] = "ERROR"
 
     # 2.1 Jockey Coverage Check (Emergency Visibility)
-    inj_path = root / "data" / "racing_post_account_parsed" / target_date / "racecard_injection.json"
-    if inj_path.exists():
+    inj_path = _resolve_rp_injection_path(root, target_date)
+    if inj_path:
         try:
             inj_data = json.loads(inj_path.read_text(encoding="utf-8"))
             runners = [run for r in inj_data.get("races", []) for run in r.get("runners", [])]
@@ -2042,21 +2073,19 @@ async def dashboard_truth(date: str = Query(default=None)):
                 pass
 
     # ── B. Local harness truth ────────────────────────────────────────────────
-    candidates = sorted((root / "data").glob(f"velo_run_observability_{date_tag}*.json"), reverse=True)
-    obs_path = candidates[0] if candidates else None
+    obs_path, obs = _select_observability_artifact(root, date_tag)
 
     harness_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
-    if obs_path and obs_path.exists():
+    if obs_path and obs:
         try:
-            obs = _json.loads(obs_path.read_text(encoding="utf-8"))
             harness_truth["status"] = "FOUND"
             harness_truth["file"] = obs_path.name
             harness_truth["data"] = {
-                "final_status": obs.get("final_status"),
-                "source_label": obs.get("source_label"),
+                "final_status": obs.get("final_status") or obs.get("status") or obs.get("decision_tier_status"),
+                "source_label": obs.get("source_label") or obs.get("source_truth"),
                 "feature_health": obs.get("feature_health"),
                 "warnings": obs.get("warnings", []),
-                "generated_at": obs.get("generated_at"),
+                "generated_at": obs.get("generated_at") or obs.get("timestamp"),
             }
         except Exception as exc:
             harness_truth["status"] = "READ_ERROR"

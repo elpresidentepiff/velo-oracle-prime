@@ -1,60 +1,54 @@
 {
-  "date_str": "2026-06-12",
+  "date_str": "2026-06-14",
   "racecard_source": "rp_merged",
   "gate_passed": true,
-  "run_at": "2026-06-12T02:17:42.823992Z",
-  "races_uk_ire": 51,
+  "run_at": "2026-06-14T12:38:38.790589Z",
+  "races_uk_ire": 29,
   "courses": [
-    "Chester",
-    "Fairyhouse",
-    "Goodwood",
-    "Gowran Park",
-    "Market Rasen",
-    "Sandown",
-    "York"
+    "Cork",
+    "Doncaster",
+    "Downpatrick",
+    "Salisbury"
   ],
-  "total_runners": 569,
+  "total_runners": 314,
   "checks": [
     {
       "name": "date_match",
       "passed": true,
       "value": [
-        "2026-06-12"
+        "2026-06-14"
       ],
-      "threshold": "2026-06-12",
-      "message": "date confirmed: 2026-06-12",
+      "threshold": "2026-06-14",
+      "message": "date confirmed: 2026-06-14",
       "blocking": true
     },
     {
       "name": "race_count",
       "passed": true,
-      "value": 51,
+      "value": 29,
       "threshold": 15,
-      "message": "51 UK/IRE races with runners (min 15)",
+      "message": "29 UK/IRE races with runners (min 15)",
       "blocking": true
     },
     {
       "name": "course_coverage",
       "passed": true,
       "value": [
-        "Chester",
-        "Fairyhouse",
-        "Goodwood",
-        "Gowran Park",
-        "Market Rasen",
-        "Sandown",
-        "York"
+        "Cork",
+        "Doncaster",
+        "Downpatrick",
+        "Salisbury"
       ],
       "threshold": 3,
-      "message": "7 unique courses: ['Chester', 'Fairyhouse', 'Goodwood', 'Gowran Park', 'Market Rasen', 'Sandown', 'York'] (min 3)",
+      "message": "4 unique courses: ['Cork', 'Doncaster', 'Downpatrick', 'Salisbury'] (min 3)",
       "blocking": true
     },
     {
       "name": "runner_count",
       "passed": true,
-      "value": 569,
+      "value": 314,
       "threshold": 80,
-      "message": "569 total runners (min 80)",
+      "message": "314 total runners (min 80)",
       "blocking": true
     },
     {
@@ -62,28 +56,28 @@
       "passed": true,
       "value": 1.0,
       "threshold": 0.85,
-      "message": "569/569 runners have required fields (100.0%) (rp_merged: jockey excluded — may not be declared)",
+      "message": "314/314 runners have required fields (100.0%) (rp_merged: jockey excluded — may not be declared)",
       "blocking": true
     },
     {
       "name": "rpr_live_leak",
       "passed": true,
-      "value": 512,
+      "value": 272,
       "threshold": 0,
-      "message": "512 runners have rpr (accepted — RPR_ACCEPTED policy)",
+      "message": "272 runners have rpr (accepted — RPR_ACCEPTED policy)",
       "blocking": false
     },
     {
       "name": "sidecar_date_match",
       "passed": true,
       "value": {
-        "sidecar_races": 51,
-        "racecard_races": 51,
-        "overlap": 51,
+        "sidecar_races": 29,
+        "racecard_races": 29,
+        "overlap": 29,
         "coverage": 1.0
       },
-      "threshold": "2026-06-12",
-      "message": "RPDC covers 51/51 racecard races (100%)",
+      "threshold": "2026-06-14",
+      "message": "RPDC covers 29/29 racecard races (100%)",
       "blocking": false
     }
   ]

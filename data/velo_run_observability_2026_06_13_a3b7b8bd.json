@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "a3b7b8bd-c415-4912-9473-861fe6bfaefa",
+  "date": "2026-06-13",
+  "timestamp": "2026-06-13T12:32:26.535273+00:00",
+  "git_commit_sha": "5b52a35ce1bedb535fffa7545d68666400ae2cb8",
+  "git_branch": "stabilization/prime-hardening-v1",
+  "source_truth": "RP_MERGED_CLEAN",
+  "feature_health": "HEALTHY",
+  "active_formula": "sqpe_v17 | RP_MERGED_CLEAN",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 100.0,
+  "persistence_status": "OK",
+  "supabase_write_attempt_success": true,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "PASS",
+  "learning_gate": "ELIGIBLE",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 58,
+    "runners_processed": 580
+  },
+  "gates": {
+    "gate_2_flatline_fires": false,
+    "gate_5_rpdc_warn_fires": false,
+    "gate_6_learning_blocked": false,
+    "gate_source_unknown_block": false
+  },
+  "warnings": [],
+  "extra": {
+    "git_commit_sha": "5b52a35ce1bedb535fffa7545d68666400ae2cb8",
+    "racecard_source_raw": "rp_merged",
+    "persist_ok": 58,
+    "persist_fail": 0,
+    "score_errors": 0,
+    "flatline_summary": {
+      "flatline_count": 0,
+      "total_races": 58,
+      "flatline_pct": 0.0,
+      "fully_uniform_count": 0,
+      "majority_tied_count": 0,
+      "races": []
+    }
+  }
+}

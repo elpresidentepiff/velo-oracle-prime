@@ -1,0 +1,656 @@
+{
+  "date": "2026-06-13",
+  "commit_sha": "5b52a35ce1bedb535fffa7545d68666400ae2cb8",
+  "source": "rp_merged",
+  "total_runtime_sec": 117.912,
+  "spotlight_runners_parsed": 580,
+  "pdf_intel_runners_attached": 432,
+  "stages": [
+    {
+      "stage": "preflight",
+      "duration_sec": 3.6886,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "racecard_load",
+      "duration_sec": 3.084,
+      "races": 58,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "normalize",
+      "duration_sec": 0.1996,
+      "races": 58,
+      "runners": 580,
+      "notes": ""
+    },
+    {
+      "stage": "pdf_intel_preload",
+      "duration_sec": 0.09,
+      "races": 8,
+      "runners": 0,
+      "notes": "8/8 courses with RP-merged data"
+    },
+    {
+      "stage": "persist",
+      "duration_sec": 109.4278,
+      "races": 58,
+      "runners": 580,
+      "notes": ""
+    },
+    {
+      "stage": "telegram",
+      "duration_sec": 0.0492,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "local_backup",
+      "duration_sec": 0.0074,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "runner_snapshots",
+      "duration_sec": 1.3653,
+      "races": 58,
+      "runners": 580,
+      "notes": ""
+    }
+  ],
+  "race_timings": [
+    {
+      "race_id": "920224",
+      "course": "Bath",
+      "off_time": "1.20",
+      "runners": 8,
+      "score_race_velo_prime_sec": 1.0834,
+      "per_runner_avg_ms": 135.424,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "920221",
+      "course": "Bath",
+      "off_time": "1.55",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.2289,
+      "per_runner_avg_ms": 45.784,
+      "pdf_intel_attached_count": 5,
+      "spotlight_parsed_count": 5
+    },
+    {
+      "race_id": "920226",
+      "course": "Bath",
+      "off_time": "2.30",
+      "runners": 14,
+      "score_race_velo_prime_sec": 1.4462,
+      "per_runner_avg_ms": 103.298,
+      "pdf_intel_attached_count": 14,
+      "spotlight_parsed_count": 14
+    },
+    {
+      "race_id": "920223",
+      "course": "Bath",
+      "off_time": "3.05",
+      "runners": 11,
+      "score_race_velo_prime_sec": 1.1376,
+      "per_runner_avg_ms": 103.414,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "920225",
+      "course": "Bath",
+      "off_time": "3.50",
+      "runners": 13,
+      "score_race_velo_prime_sec": 1.3401,
+      "per_runner_avg_ms": 103.085,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "920227",
+      "course": "Bath",
+      "off_time": "4.27",
+      "runners": 14,
+      "score_race_velo_prime_sec": 1.1752,
+      "per_runner_avg_ms": 83.94,
+      "pdf_intel_attached_count": 14,
+      "spotlight_parsed_count": 14
+    },
+    {
+      "race_id": "920222",
+      "course": "Bath",
+      "off_time": "5.02",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.8435,
+      "per_runner_avg_ms": 76.681,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "922786",
+      "course": "Bath",
+      "off_time": "5.37",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.7115,
+      "per_runner_avg_ms": 79.05,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "920188",
+      "course": "Chester",
+      "off_time": "1.35",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7553,
+      "per_runner_avg_ms": 75.534,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "920186",
+      "course": "Chester",
+      "off_time": "2.10",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.7069,
+      "per_runner_avg_ms": 78.548,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "920190",
+      "course": "Chester",
+      "off_time": "2.47",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.7808,
+      "per_runner_avg_ms": 70.985,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "920187",
+      "course": "Chester",
+      "off_time": "3.23",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7556,
+      "per_runner_avg_ms": 75.559,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "920189",
+      "course": "Chester",
+      "off_time": "4.00",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7082,
+      "per_runner_avg_ms": 70.824,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "920191",
+      "course": "Chester",
+      "off_time": "4.37",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.6971,
+      "per_runner_avg_ms": 63.375,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "920192",
+      "course": "Chester",
+      "off_time": "5.12",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5592,
+      "per_runner_avg_ms": 69.903,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "922677",
+      "course": "Downpatrick",
+      "off_time": "1.25",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7064,
+      "per_runner_avg_ms": 70.645,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "922678",
+      "course": "Downpatrick",
+      "off_time": "2.00",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.7244,
+      "per_runner_avg_ms": 60.366,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 12
+    },
+    {
+      "race_id": "922679",
+      "course": "Downpatrick",
+      "off_time": "2.35",
+      "runners": 15,
+      "score_race_velo_prime_sec": 1.0392,
+      "per_runner_avg_ms": 69.28,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 15
+    },
+    {
+      "race_id": "922785",
+      "course": "Downpatrick",
+      "off_time": "3.10",
+      "runners": 14,
+      "score_race_velo_prime_sec": 1.1237,
+      "per_runner_avg_ms": 80.264,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 14
+    },
+    {
+      "race_id": "922680",
+      "course": "Downpatrick",
+      "off_time": "3.45",
+      "runners": 14,
+      "score_race_velo_prime_sec": 0.899,
+      "per_runner_avg_ms": 64.212,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 14
+    },
+    {
+      "race_id": "922681",
+      "course": "Downpatrick",
+      "off_time": "4.20",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.441,
+      "per_runner_avg_ms": 73.494,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "922682",
+      "course": "Downpatrick",
+      "off_time": "4.55",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.8936,
+      "per_runner_avg_ms": 74.469,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 12
+    },
+    {
+      "race_id": "922683",
+      "course": "Downpatrick",
+      "off_time": "5.30",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5816,
+      "per_runner_avg_ms": 72.699,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "919948",
+      "course": "Hexham",
+      "off_time": "1.42",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.4084,
+      "per_runner_avg_ms": 40.839,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "919944",
+      "course": "Hexham",
+      "off_time": "2.17",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5451,
+      "per_runner_avg_ms": 60.561,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "919947",
+      "course": "Hexham",
+      "off_time": "2.55",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.3805,
+      "per_runner_avg_ms": 63.412,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "919943",
+      "course": "Hexham",
+      "off_time": "3.40",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5798,
+      "per_runner_avg_ms": 72.477,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "919945",
+      "course": "Hexham",
+      "off_time": "4.10",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.8067,
+      "per_runner_avg_ms": 100.838,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "919946",
+      "course": "Hexham",
+      "off_time": "4.42",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.5164,
+      "per_runner_avg_ms": 73.77,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "919949",
+      "course": "Hexham",
+      "off_time": "5.17",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.4961,
+      "per_runner_avg_ms": 62.018,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "920229",
+      "course": "Leicester",
+      "off_time": "6.00",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5679,
+      "per_runner_avg_ms": 63.095,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "922787",
+      "course": "Leicester",
+      "off_time": "6.30",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5493,
+      "per_runner_avg_ms": 68.665,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "920228",
+      "course": "Leicester",
+      "off_time": "7.00",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.4811,
+      "per_runner_avg_ms": 68.73,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "920231",
+      "course": "Leicester",
+      "off_time": "7.30",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5397,
+      "per_runner_avg_ms": 59.972,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "920232",
+      "course": "Leicester",
+      "off_time": "8.00",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5527,
+      "per_runner_avg_ms": 61.407,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "920233",
+      "course": "Leicester",
+      "off_time": "8.30",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.4943,
+      "per_runner_avg_ms": 61.787,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "920230",
+      "course": "Leicester",
+      "off_time": "9.00",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6199,
+      "per_runner_avg_ms": 61.987,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "920203",
+      "course": "Sandown",
+      "off_time": "1.32",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.348,
+      "per_runner_avg_ms": 69.594,
+      "pdf_intel_attached_count": 5,
+      "spotlight_parsed_count": 5
+    },
+    {
+      "race_id": "920206",
+      "course": "Sandown",
+      "off_time": "2.05",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.6519,
+      "per_runner_avg_ms": 59.267,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "920200",
+      "course": "Sandown",
+      "off_time": "2.42",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.459,
+      "per_runner_avg_ms": 57.373,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "920202",
+      "course": "Sandown",
+      "off_time": "3.17",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.3904,
+      "per_runner_avg_ms": 32.531,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 12
+    },
+    {
+      "race_id": "920204",
+      "course": "Sandown",
+      "off_time": "3.55",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.501,
+      "per_runner_avg_ms": 50.1,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "920201",
+      "course": "Sandown",
+      "off_time": "4.32",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.3413,
+      "per_runner_avg_ms": 56.891,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "920205",
+      "course": "Sandown",
+      "off_time": "5.07",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5805,
+      "per_runner_avg_ms": 64.502,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "919950",
+      "course": "Uttoxeter",
+      "off_time": "5.42",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.2677,
+      "per_runner_avg_ms": 53.534,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 5
+    },
+    {
+      "race_id": "919952",
+      "course": "Uttoxeter",
+      "off_time": "6.12",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.3442,
+      "per_runner_avg_ms": 57.369,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "919956",
+      "course": "Uttoxeter",
+      "off_time": "6.42",
+      "runners": 13,
+      "score_race_velo_prime_sec": 0.833,
+      "per_runner_avg_ms": 64.075,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "919954",
+      "course": "Uttoxeter",
+      "off_time": "7.12",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.608,
+      "per_runner_avg_ms": 60.795,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "919951",
+      "course": "Uttoxeter",
+      "off_time": "7.42",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.214,
+      "per_runner_avg_ms": 35.667,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "919955",
+      "course": "Uttoxeter",
+      "off_time": "8.17",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.2174,
+      "per_runner_avg_ms": 31.062,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "919953",
+      "course": "Uttoxeter",
+      "off_time": "8.53",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6068,
+      "per_runner_avg_ms": 60.683,
+      "pdf_intel_attached_count": 0,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "920218",
+      "course": "York",
+      "off_time": "1.50",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5756,
+      "per_runner_avg_ms": 63.955,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "920216",
+      "course": "York",
+      "off_time": "2.25",
+      "runners": 19,
+      "score_race_velo_prime_sec": 0.6249,
+      "per_runner_avg_ms": 32.891,
+      "pdf_intel_attached_count": 19,
+      "spotlight_parsed_count": 19
+    },
+    {
+      "race_id": "920215",
+      "course": "York",
+      "off_time": "3.00",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.319,
+      "per_runner_avg_ms": 53.172,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "920214",
+      "course": "York",
+      "off_time": "3.35",
+      "runners": 22,
+      "score_race_velo_prime_sec": 1.0199,
+      "per_runner_avg_ms": 46.359,
+      "pdf_intel_attached_count": 22,
+      "spotlight_parsed_count": 22
+    },
+    {
+      "race_id": "920220",
+      "course": "York",
+      "off_time": "4.15",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.4689,
+      "per_runner_avg_ms": 66.989,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "920217",
+      "course": "York",
+      "off_time": "4.50",
+      "runners": 17,
+      "score_race_velo_prime_sec": 0.8764,
+      "per_runner_avg_ms": 51.55,
+      "pdf_intel_attached_count": 17,
+      "spotlight_parsed_count": 17
+    },
+    {
+      "race_id": "920219",
+      "course": "York",
+      "off_time": "5.25",
+      "runners": 21,
+      "score_race_velo_prime_sec": 1.2677,
+      "per_runner_avg_ms": 60.368,
+      "pdf_intel_attached_count": 21,
+      "spotlight_parsed_count": 21
+    }
+  ],
+  "flatline_summary": {
+    "flatline_count": 0,
+    "total_races": 58,
+    "flatline_pct": 0.0,
+    "fully_uniform_count": 0,
+    "majority_tied_count": 0,
+    "races": []
+  }
+}

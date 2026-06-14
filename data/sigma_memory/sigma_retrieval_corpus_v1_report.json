@@ -1,20 +1,20 @@
 {
-  "total_records": 2632,
-  "retrieval_eligible_records": 2545,
+  "total_records": 2686,
+  "retrieval_eligible_records": 2599,
   "outcome_counts": {
-    "FRAME": 708,
-    "MISS": 1317,
-    "WIN": 607
+    "FRAME": 724,
+    "MISS": 1340,
+    "WIN": 622
   },
   "regime_confidence_counts": {
-    "HIGH": 338,
+    "HIGH": 392,
     "LOW_REGIME_INFERRED": 2294
   },
   "retrieval_blocker_counts": {
-    "NONE": 2545,
+    "NONE": 2599,
     "OUTCOME_OR_DATE_MISSING": 87
   },
-  "regime_count": 19,
+  "regime_count": 20,
   "top_regimes": [
     [
       "e895f31903a5",
@@ -41,7 +41,11 @@
       59
     ],
     [
-      "56be3daffaaf",
+      "1053c681ede1",
+      54
+    ],
+    [
+      "24a6ac11280b",
       43
     ],
     [
@@ -51,26 +55,22 @@
     [
       "c57a82ac38e6",
       30
-    ],
-    [
-      "04137de56956",
-      29
     ]
   ],
   "date_min": "2026-01-09",
-  "date_max": "2026-06-12",
-  "date_count": 89,
+  "date_max": "2026-06-13",
+  "date_count": 90,
   "rpr_violations": 0,
   "forbidden_model_field_violations": 0,
   "classification": "SIGMA_RETRIEVAL_CORPUS_READY_SHADOW_ONLY",
-  "generated_at": "2026-06-12T23:34:33.594226+00:00",
+  "generated_at": "2026-06-13T20:32:51.901160+00:00",
   "schema_version": "sigma_retrieval_corpus_v1",
   "input_sigma_dump": "data\\sigma_audits_dump.json",
   "output_jsonl": "data\\sigma_memory\\sigma_retrieval_corpus_v1.jsonl",
   "shadow_only": true,
   "live_velo_impact": false,
-  "sp_enrichment_applied": 1038,
+  "sp_enrichment_applied": 1081,
   "sp_enrichment_source": "data\\velo_innovation_protocol_1k_deduped.csv",
-  "required_through_date": "2026-06-12",
+  "required_through_date": "2026-06-13",
   "freshness_gate_passed": true
 }
