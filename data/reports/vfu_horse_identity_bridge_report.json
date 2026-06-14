@@ -1,0 +1,82 @@
+{
+  "report_type": "VFU_06_HORSE_IDENTITY_BRIDGE",
+  "generated_at": "2026-06-14T21:43:55.508882+00:00",
+  "identity_bridge_version": "VFU_HORSE_IDENTITY_BRIDGE_V1",
+  "source_scope": "current_era_only_2026_05_08_to_2026_06_13",
+  "rows_scanned": 1263,
+  "identity_sources": [
+    "horse_passports_v1.jsonl (6168 horses, horse_rp_uid numeric)",
+    "EOD events (930 race+name pairs, 877 distinct names)"
+  ],
+  "coverage_before": {
+    "horse_id_filled": 0,
+    "pct": 0.0
+  },
+  "coverage_after": {
+    "horse_id_filled": 703,
+    "pct": 55.7
+  },
+  "confidence_counts": {
+    "HIGH": 559,
+    "MEDIUM": 124,
+    "LOW": 20,
+    "AMBIGUOUS": 1,
+    "UNMATCHED": 559
+  },
+  "namespace_counts": {
+    "UNKNOWN": 560,
+    "CONSTRUCTED_RP_NAME": 27,
+    "RP_UID": 559,
+    "EOD_NUMERIC": 110,
+    "RACING_API_HRS": 7
+  },
+  "source_counts": {
+    "EOD_NAME_MATCH": 20,
+    "PASSPORT_NORM_MATCH": 559,
+    "EOD_RACE_MATCH": 124
+  },
+  "structurally_unmatchable": 322,
+  "ambiguous_count": 1,
+  "conflict_count": 0,
+  "passport_ambiguous_norm_names": 1,
+  "passport_candidates_gaining_rp_uid": 41,
+  "passport_candidates_gaining_eod_id": 14,
+  "repeated_clusters_found": 20,
+  "repeated_clusters_with_identity": 19,
+  "kakirra": {
+    "horse_name": "Kakirra",
+    "horse_id": "8866972",
+    "namespace": "RP_UID",
+    "source": "PASSPORT_NORM_MATCH",
+    "confidence": "HIGH",
+    "note": "Kakirra: 3 apps, 3 wins (name-only from VFU-04). Identity now resolved via passport if RP_UID, else EOD."
+  },
+  "passport_automation_status": "PARTIALLY_UNBLOCKED_FOR_RP_UID_ROWS",
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "live_scoring_changed": false,
+  "model_promoted": false,
+  "telegram_sent": false,
+  "racing_api_restored": false,
+  "mar_apr_extracted": false,
+  "final_classifications": [
+    "VFU_06_HORSE_IDENTITY_BRIDGE_COMPLETE",
+    "HORSE_ID_COVERAGE_REPORTED",
+    "HORSE_ID_NAMESPACE_PRESERVED",
+    "PASSPORT_RP_UID_CONFIRMED_AS_CANONICAL_WHEN_UNIQUE",
+    "EOD_IDENTITIES_RECORDED_AS_DRY_RUN_NON_CANONICAL_WHEN_NEEDED",
+    "AMBIGUOUS_IDENTITIES_NOT_FILLED",
+    "CONFLICTING_IDENTITIES_NOT_OVERRIDDEN",
+    "UNMATCHED_IDENTITIES_DECLARED",
+    "STRUCTURALLY_UNMATCHABLE_ROWS_DECLARED",
+    "PASSPORT_CANDIDATES_IDENTITY_ENRICHED_DRY_RUN_ONLY",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "REPEATED_HORSE_TRACKER_IDENTITY_REBUILT",
+    "NO_MAR_APR_EXTRACTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}
