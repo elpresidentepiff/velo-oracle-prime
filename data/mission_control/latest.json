@@ -1,16 +1,16 @@
 {
-  "date": "2026-06-13",
-  "generated_at": "2026-06-13T20:34:56.844047+00:00",
+  "date": "2026-06-14",
+  "generated_at": "2026-06-14T17:39:59.416178+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
-    "5b52a35c"
+    "f82bde22"
   ],
   "flatline_count": 0,
   "fully_uniform_count": 0,
   "fully_uniform_races": [],
   "majority_tied_count": 0,
   "identity_failure_count": 0,
-  "runners_snapshotted": 580,
+  "runners_snapshotted": 314,
   "council_verdict": "PASS_TO_LEARNING",
   "learning_gate_status": "OPEN",
   "promotion_gate_status": "BLOCKED",
@@ -19,14 +19,14 @@
   ],
   "sigma_artifact": {
     "status": "PRESENT",
-    "path": "data\\sigma_results\\sigma_results_2026_06_13.json",
-    "sr": 0.2807,
-    "wins": 16,
-    "evaluated_count": 57,
+    "path": "data/sigma_results/sigma_results_2026_06_14.json",
+    "sr": 0.2759,
+    "wins": 8,
+    "evaluated_count": 29,
     "sigma_status": "PASS",
     "completeness_gate": null,
     "learning_blocked": null,
-    "expected_predictions": 58,
+    "expected_predictions": 29,
     "result_races_available": null,
     "matched": null,
     "coverage_ratio": null,
@@ -34,7 +34,7 @@
   },
   "run_truth": {
     "status": "MANUAL_RECOVERY_ONLY",
-    "path": "data\\velo_daily_run_truth_2026_06_13.json",
+    "path": "data/velo_daily_run_truth_2026_06_14.json",
     "alert_required": true,
     "issues": [
       "MANUAL_RUN_ONLY"
@@ -44,9 +44,9 @@
     "pipeline_run_count": 1
   },
   "council_artifact_visibility": {
-    "council_run": "PRESENT",
-    "council_packet": "PRESENT",
-    "council_report": "PRESENT"
+    "council_run": "MISSING",
+    "council_packet": "MISSING",
+    "council_report": "MISSING"
   },
   "runner_calibration_gate_status": "REVIEW_THRESHOLD_MET",
   "runner_calibration_gate_runners": 786,
@@ -54,19 +54,19 @@
   "decision_policy_gate_top_picks": 87,
   "learning_admission": {
     "eligibility_status": "OUTCOME_ONLY_EOD_REPLAY_PASS",
-    "eligible_rows": 58,
+    "eligible_rows": 29,
     "excluded_rows": 0,
     "consumed_shadow_before": 0,
     "consumed_live_before": 0,
     "live_state_hash": "UNKNOWN",
     "build_events_result": {
       "phase": "OUTCOME_ONLY_EOD_REPLAY",
-      "events_built": 58,
-      "events_written": 58,
+      "events_built": 29,
+      "events_written": 29,
       "status": "PASS",
       "sentient_state_touched": false,
       "shadow_state_touched": true,
-      "duplicates_skipped_second_run": 58,
+      "duplicates_skipped_second_run": 29,
       "consumed_live": false
     },
     "admission_packet": "PRESENT",
