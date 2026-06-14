@@ -1,0 +1,665 @@
+{
+  "report_type": "VFU_04_FULL_CURRENT_ERA_AUTOPSY",
+  "generated_at": "2026-06-14T20:39:59.683557+00:00",
+  "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/reports/current_era_sigma_union_rows_enriched_vfu_v1.json",
+  "total_rows_scanned": 1263,
+  "autopsies_created": 1263,
+  "rows_excluded": 0,
+  "tier_counts": {
+    "TIER_B_GOOD_NO_PICK_SP": 800,
+    "TIER_C_LIMITED_IDENTITY": 62,
+    "TIER_A_FULL": 107,
+    "TIER_D_EVENT_ONLY": 294
+  },
+  "field_coverage": {
+    "race_date": {
+      "filled": 969,
+      "total": 1263,
+      "pct": 76.7
+    },
+    "horse_name": {
+      "filled": 969,
+      "total": 1263,
+      "pct": 76.7
+    },
+    "course": {
+      "filled": 1224,
+      "total": 1263,
+      "pct": 96.9
+    },
+    "off_time": {
+      "filled": 969,
+      "total": 1263,
+      "pct": 76.7
+    },
+    "vp": {
+      "filled": 1263,
+      "total": 1263,
+      "pct": 100.0
+    },
+    "outcome": {
+      "filled": 1263,
+      "total": 1263,
+      "pct": 100.0
+    },
+    "pick_sp": {
+      "filled": 107,
+      "total": 1263,
+      "pct": 8.5
+    },
+    "actual_winner_sp": {
+      "filled": 907,
+      "total": 1263,
+      "pct": 71.8
+    },
+    "horse_id": {
+      "filled": 0,
+      "total": 1263,
+      "pct": 0.0
+    },
+    "actual_winner_name": {
+      "filled": 969,
+      "total": 1263,
+      "pct": 76.7
+    }
+  },
+  "statistics": {
+    "failure_classes": {
+      "INSUFFICIENT_EVIDENCE": 390,
+      "VP_FALSE_NEGATIVE": 359,
+      "MID_PRICE_WALL": 75,
+      "LONGSHOT_RELEASE_MISSED": 38,
+      "VP_FALSE_POSITIVE": 77,
+      "COURSE_DRAIN_CONFIRMED": 17
+    },
+    "win_classes": {
+      "VP_FALSE_NEGATIVE_WIN": 98,
+      "VP_LOW_WIN": 37,
+      "VP_HIGH_WIN": 100,
+      "VP_MID_WIN": 67,
+      "VP_CONFIRMED_FAVOURITE_WIN": 5
+    },
+    "data_gap_counts": {
+      "horse_id_null \u2014 RP uid not in sigma row": 1263,
+      "pick_sp_null \u2014 not stored in sigma union": 1156,
+      "actual_winner_sp_null": 356,
+      "actual_winner_name_null": 294,
+      "off_time_null": 294
+    },
+    "sp_odds_bands": {
+      "SP_6.0_PLUS": 38,
+      "SP_1.5_4.0": 54,
+      "SP_4.0_6.0": 15
+    },
+    "passport_by_tier": {
+      "TIER_B_GOOD_NO_PICK_SP": 53,
+      "TIER_C_LIMITED_IDENTITY": 7,
+      "TIER_A_FULL": 9
+    }
+  },
+  "vp_threshold_table": [
+    {
+      "threshold": 0.25,
+      "n": 557,
+      "wins": 181,
+      "sr": 0.325
+    },
+    {
+      "threshold": 0.3,
+      "n": 419,
+      "wins": 150,
+      "sr": 0.358
+    },
+    {
+      "threshold": 0.35,
+      "n": 306,
+      "wins": 118,
+      "sr": 0.386
+    },
+    {
+      "threshold": 0.4,
+      "n": 213,
+      "wins": 92,
+      "sr": 0.432
+    },
+    {
+      "threshold": 0.45,
+      "n": 154,
+      "wins": 71,
+      "sr": 0.461
+    },
+    {
+      "threshold": 0.5,
+      "n": 105,
+      "wins": 51,
+      "sr": 0.486
+    },
+    {
+      "threshold": 0.55,
+      "n": 66,
+      "wins": 32,
+      "sr": 0.485
+    },
+    {
+      "threshold": 0.6,
+      "n": 39,
+      "wins": 21,
+      "sr": 0.538
+    }
+  ],
+  "course_tier_table": {
+    "EXCELLING": {
+      "n": 68,
+      "wins": 33,
+      "sr": 0.485
+    },
+    "DRAIN": {
+      "n": 34,
+      "wins": 3,
+      "sr": 0.088
+    },
+    "NEUTRAL": {
+      "n": 867,
+      "wins": 220,
+      "sr": 0.254
+    }
+  },
+  "passport_candidates_created": 69,
+  "pattern_evidence_created": 207,
+  "repeated_horses_found": 46,
+  "top_repeated_horses": [
+    {
+      "horse_name": "kakirra",
+      "horse_id": null,
+      "appearance_count": 3,
+      "wins": 3,
+      "losses": 0,
+      "placed": 0,
+      "strike_rate": 1.0,
+      "avg_vp": 0.2651,
+      "latest_vp": 0.2773,
+      "vp_trend": "FALLING",
+      "courses_seen": [
+        "Bath",
+        "Wolverhampton",
+        "Newbury"
+      ],
+      "dates": [
+        "2026-05-13",
+        "2026-05-15",
+        "2026-06-02"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "chemistry",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 1,
+      "placed": 1,
+      "strike_rate": 0.0,
+      "avg_vp": 0.1916,
+      "latest_vp": 0.2441,
+      "vp_trend": null,
+      "courses_seen": [
+        "Chester",
+        "Kelso"
+      ],
+      "dates": [
+        "2026-05-08",
+        "2026-05-24"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "hood wink",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 2,
+      "placed": 0,
+      "strike_rate": 0.0,
+      "avg_vp": 0.2511,
+      "latest_vp": 0.17,
+      "vp_trend": null,
+      "courses_seen": [
+        "Catterick",
+        "Ripon"
+      ],
+      "dates": [
+        "2026-05-08",
+        "2026-05-21"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "mereside princess",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 1,
+      "losses": 0,
+      "placed": 1,
+      "strike_rate": 0.5,
+      "avg_vp": 0.1779,
+      "latest_vp": 0.1614,
+      "vp_trend": null,
+      "courses_seen": [
+        "Ripon",
+        "carlisle"
+      ],
+      "dates": [
+        "2026-05-08",
+        "2026-05-18"
+      ],
+      "candidate_label": "HIDDEN",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "jannas journey",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 2,
+      "placed": 0,
+      "strike_rate": 0.0,
+      "avg_vp": 0.2968,
+      "latest_vp": 0.3949,
+      "vp_trend": null,
+      "courses_seen": [
+        "York",
+        "Ascot"
+      ],
+      "dates": [
+        "2026-05-09",
+        "2026-06-12"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "gentle warrior",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 1,
+      "placed": 1,
+      "strike_rate": 0.0,
+      "avg_vp": 0.316,
+      "latest_vp": 0.32,
+      "vp_trend": null,
+      "courses_seen": [
+        "Hamilton",
+        "Nottingham"
+      ],
+      "dates": [
+        "2026-05-09",
+        "2026-05-27"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "tickettothestars",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 2,
+      "placed": 0,
+      "strike_rate": 0.0,
+      "avg_vp": 0.2509,
+      "latest_vp": 0.2408,
+      "vp_trend": null,
+      "courses_seen": [
+        "Bath",
+        "Nottingham"
+      ],
+      "dates": [
+        "2026-05-09",
+        "2026-06-05"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "cromac quay",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 1,
+      "losses": 0,
+      "placed": 1,
+      "strike_rate": 0.5,
+      "avg_vp": 0.4031,
+      "latest_vp": 0.5766,
+      "vp_trend": null,
+      "courses_seen": [
+        "Naas (IRE)",
+        "Leopardstown"
+      ],
+      "dates": [
+        "2026-05-09",
+        "2026-06-11"
+      ],
+      "candidate_label": "IMPROVING",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "amidst the chaos",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 1,
+      "placed": 1,
+      "strike_rate": 0.0,
+      "avg_vp": 0.2697,
+      "latest_vp": 0.409,
+      "vp_trend": null,
+      "courses_seen": [
+        "Beverley",
+        "Musselburgh"
+      ],
+      "dates": [
+        "2026-05-12",
+        "2026-06-05"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "arths gold",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 1,
+      "placed": 1,
+      "strike_rate": 0.0,
+      "avg_vp": 0.1746,
+      "latest_vp": 0.1757,
+      "vp_trend": null,
+      "courses_seen": [
+        "Lingfield (AW)",
+        "Southwell"
+      ],
+      "dates": [
+        "2026-05-12",
+        "2026-05-21"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "navy light",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 0,
+      "placed": 2,
+      "strike_rate": 0.0,
+      "avg_vp": 0.4533,
+      "latest_vp": 0.3311,
+      "vp_trend": null,
+      "courses_seen": [
+        "Beverley",
+        "Chester"
+      ],
+      "dates": [
+        "2026-05-12",
+        "2026-06-13"
+      ],
+      "candidate_label": "UNRELIABLE",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "legacy link",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 1,
+      "losses": 0,
+      "placed": 1,
+      "strike_rate": 0.5,
+      "avg_vp": 0.4162,
+      "latest_vp": 0.451,
+      "vp_trend": null,
+      "courses_seen": [
+        "York",
+        "Epsom"
+      ],
+      "dates": [
+        "2026-05-13",
+        "2026-06-05"
+      ],
+      "candidate_label": "IMPROVING",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "man is king",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 2,
+      "losses": 0,
+      "placed": 0,
+      "strike_rate": 1.0,
+      "avg_vp": 0.2296,
+      "latest_vp": 0.279,
+      "vp_trend": null,
+      "courses_seen": [
+        "Bath"
+      ],
+      "dates": [
+        "2026-05-13",
+        "2026-06-05"
+      ],
+      "candidate_label": "COURSE_DEPENDENT",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "alma latina",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 1,
+      "losses": 0,
+      "placed": 1,
+      "strike_rate": 0.5,
+      "avg_vp": 0.3614,
+      "latest_vp": 0.4717,
+      "vp_trend": null,
+      "courses_seen": [
+        "Salisbury",
+        "Pontefract"
+      ],
+      "dates": [
+        "2026-05-14",
+        "2026-06-02"
+      ],
+      "candidate_label": "IMPROVING",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "springhill warrior",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 0,
+      "placed": 2,
+      "strike_rate": 0.0,
+      "avg_vp": 0.3445,
+      "latest_vp": 0.3922,
+      "vp_trend": null,
+      "courses_seen": [
+        "Kilbeggan",
+        "Clonmel (IRE)"
+      ],
+      "dates": [
+        "2026-05-14",
+        "2026-05-15"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "le diablo",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 2,
+      "placed": 0,
+      "strike_rate": 0.0,
+      "avg_vp": 0.2251,
+      "latest_vp": 0.2522,
+      "vp_trend": null,
+      "courses_seen": [
+        "Clonmel",
+        "Clonmel (IRE)"
+      ],
+      "dates": [
+        "2026-05-14",
+        "2026-06-05"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "eye of a tiger",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 2,
+      "placed": 0,
+      "strike_rate": 0.0,
+      "avg_vp": 0.2228,
+      "latest_vp": 0.2825,
+      "vp_trend": null,
+      "courses_seen": [
+        "Roscommon",
+        "Clonmel (IRE)"
+      ],
+      "dates": [
+        "2026-05-14",
+        "2026-06-08"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "wee mary",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 1,
+      "losses": 1,
+      "placed": 0,
+      "strike_rate": 0.5,
+      "avg_vp": 0.2777,
+      "latest_vp": 0.3888,
+      "vp_trend": null,
+      "courses_seen": [
+        "Hamilton",
+        "Musselburgh"
+      ],
+      "dates": [
+        "2026-05-15",
+        "2026-06-06"
+      ],
+      "candidate_label": "NEEDS_REVIEW",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "gaelic approach",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 0,
+      "placed": 2,
+      "strike_rate": 0.0,
+      "avg_vp": 0.5106,
+      "latest_vp": 0.5711,
+      "vp_trend": null,
+      "courses_seen": [
+        "Doncaster",
+        "Hamilton"
+      ],
+      "dates": [
+        "2026-05-15",
+        "2026-06-06"
+      ],
+      "candidate_label": "UNRELIABLE",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    },
+    {
+      "horse_name": "humble spark",
+      "horse_id": null,
+      "appearance_count": 2,
+      "wins": 0,
+      "losses": 0,
+      "placed": 2,
+      "strike_rate": 0.0,
+      "avg_vp": 0.4357,
+      "latest_vp": 0.525,
+      "vp_trend": null,
+      "courses_seen": [
+        "Hamilton",
+        "York"
+      ],
+      "dates": [
+        "2026-05-15",
+        "2026-06-13"
+      ],
+      "candidate_label": "UNRELIABLE",
+      "do_not_merge": true,
+      "source": "VFU_FULL_CURRENT_ERA_DRY_RUN"
+    }
+  ],
+  "vfu05_recommendation": "PROCEED",
+  "vfu05_rationale": "207 pattern evidence records created from 969 usable autopsies. Repeated horse tracker: 46 horses. Operator review of this summary required before Pattern Prosecutor opens.",
+  "quality_gaps": {
+    "horse_id_null_all_rows": true,
+    "pick_sp_coverage_pct": 8.47,
+    "local_only_rows_no_identity": 294,
+    "rows_excluded_tier_e": 0,
+    "winner_in_frame_unavailable": true,
+    "race_type_surface_class_unavailable": true,
+    "top_missing_reasons": {
+      "UNMATCHED_LOCAL_ONLY": 537,
+      "UNMATCHED_NO_CSV_ENTRY": 465,
+      "MATCHED_SP_ZERO_OR_EMPTY": 154
+    }
+  },
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "final_classifications": [
+    "VFU_04_FULL_CURRENT_ERA_AUTOPSY_COMPLETE",
+    "EVIDENCE_QUALITY_TIERS_ENFORCED",
+    "PASSPORT_CANDIDATES_DRY_RUN_ONLY",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "REPEATED_HORSE_TRACKER_BUILT",
+    "PATTERN_EVIDENCE_CREATED",
+    "ROI_LIMITED_TO_PICK_SP_ROWS",
+    "NO_MAR_APR_EXTRACTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}
