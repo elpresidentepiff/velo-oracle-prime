@@ -194,6 +194,31 @@ def q5_doctrine(db) -> str:
         return f"DOCTRINE: query failed ({e})"
 
 
+
+def vp_gate_local() -> str:
+    """Read pre-generated VP opportunity panel — LOCAL PRINT ONLY, not sent to Telegram."""
+    from pathlib import Path
+    panel_file = Path(__file__).parent.parent.parent / "data" / "reports" / "vp_opportunity_panel_latest.json"
+    if not panel_file.exists():
+        return "VP GATE: panel not generated yet — run build_vp_opportunity_panel.py first"
+    try:
+        import json
+        panel = json.loads(panel_file.read_text(encoding="utf-8"))
+        label = panel.get("gate_label", "UNKNOWN")
+        avg_vp = panel.get("avg_vp", 0)
+        vp40 = panel.get("vp40_count", 0)
+        vp45 = panel.get("vp45_count", 0)
+        n = panel.get("total_picks", 0)
+        date = panel.get("date", "?")
+        warn = " [FALSE_GREEN_POSSIBLE]" if label == "GREEN" else ""
+        return (
+            f"VP GATE [{date}]: {label}{warn}\n"
+            f"  avg VP={avg_vp:.3f} | VP>=0.40: {vp40} | VP>=0.45: {vp45} | picks: {n}\n"
+            f"  [REPORT ONLY — does not alter scoring, staking, or Telegram]"
+        )
+    except Exception as e:
+        return f"VP GATE: read error ({e})"
+
 def run():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     header = f"*VÉLØ MORNING BRIEF — {today} (48h window)*\n{'━' * 40}"
@@ -215,7 +240,9 @@ def run():
     body = "\n\n".join(sections)
     message = f"{header}\n\n{body}\n\n{'━' * 40}"
 
+    vp_section = vp_gate_local()
     print(message)
+    print(f"\n{'─' * 40}\n{vp_section}\n{'─' * 40}")
     _tg(message)
 
 

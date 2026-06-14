@@ -1,0 +1,99 @@
+{
+  "report_type": "CURRENT_ERA_SIGMA_UNION",
+  "generated": "2026-06-14",
+  "era": "CURRENT_ERA",
+  "era_definition": "May 08 2026 (Ensemble Surgery v1) \u2013 Jun 13 2026",
+  "surgery_line": "2026-05-08",
+  "classifications": [
+    "VP_FULL_GATEKEEPER_PROMOTION_COMPLETE",
+    "VP_NOT_PROMOTED_TO_SCORING_FORMULA",
+    "CURRENT_ERA_SIGMA_UNION_BUILT",
+    "MAY08_SURGERY_SPLIT_ENFORCED",
+    "PRE_SURGERY_ROWS_EXCLUDED_FROM_CURRENT_ERA",
+    "COURSE_EXCELLENCE_EXPANDED",
+    "SIGMA_2K_ARCHIVE_STAGED_NOT_MUTATED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ],
+  "row_counts": {
+    "total_union": 1263,
+    "SUPABASE_ONLY": 531,
+    "OVERLAP": 438,
+    "LOCAL_ONLY": 294
+  },
+  "row_count_reconciliation": {
+    "local_total_rows": 740,
+    "local_unique_race_ids": 732,
+    "gap_explanation": "8 duplicate race_ids in sigma_results_2026_05_31.json. Exact duplicates (same outcome/VP). Write error. Deduped by first-occurrence.",
+    "duplicate_race_ids": [
+      "919056 (x3)",
+      "919055 (x3)",
+      "919061 (x2)",
+      "919060 (x2)",
+      "919059 (x2)",
+      "919058 (x2)"
+    ]
+  },
+  "date_range": "2026-05-08 to 2026-06-13",
+  "baseline_sr": 0.2431,
+  "vp_coverage": "100%",
+  "vp_stats": {
+    "mean": 0.2953,
+    "thresholds": {
+      ">=0.25": {
+        "n": 681,
+        "wins": 209,
+        "sr": 0.3069
+      },
+      ">=0.3": {
+        "n": 512,
+        "wins": 172,
+        "sr": 0.3359
+      },
+      ">=0.35": {
+        "n": 372,
+        "wins": 134,
+        "sr": 0.3602
+      },
+      ">=0.4": {
+        "n": 253,
+        "wins": 105,
+        "sr": 0.415
+      },
+      ">=0.45": {
+        "n": 181,
+        "wins": 81,
+        "sr": 0.4475
+      },
+      ">=0.5": {
+        "n": 125,
+        "wins": 57,
+        "sr": 0.456
+      },
+      ">=0.55": {
+        "n": 81,
+        "wins": 37,
+        "sr": 0.4568
+      },
+      ">=0.6": {
+        "n": 50,
+        "wins": 25,
+        "sr": 0.5
+      }
+    }
+  },
+  "false_green_days": [
+    {
+      "date": "2026-06-09",
+      "avg_vp": 0.358,
+      "vp40_count": 9,
+      "sr": 0.138
+    }
+  ],
+  "supabase_touched": false,
+  "live_scoring_changed": false,
+  "model_promoted": false
+}
