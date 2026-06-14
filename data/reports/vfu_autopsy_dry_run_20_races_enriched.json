@@ -1,0 +1,83 @@
+{
+  "report_type": "VFU_03_20_RACE_AUTOPSY_ENRICHED_RERUN",
+  "generated": "2026-06-14T20:14:34.313398+00:00",
+  "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/reports/current_era_sigma_union_rows_enriched_vfu_v1.json",
+  "enrichment_version": "VFU_PICK_SP_ENRICHMENT_V1",
+  "total_autopsies": 20,
+  "outcomes": {
+    "WIN": 7,
+    "MISS": 11,
+    "PLACED": 2
+  },
+  "category_breakdown": {
+    "HIGH_VP_WIN": 4,
+    "HIGH_VP_MISS": 4,
+    "LOW_VP_WIN": 3,
+    "MID_PRICE_WALL": 3,
+    "EXCELLING_COURSE": 2,
+    "DRAIN_COURSE": 2,
+    "REPEATED_HORSE": 2
+  },
+  "failure_classes": {
+    "VP_FALSE_POSITIVE": 4,
+    "VP_FALSE_NEGATIVE": 4,
+    "MID_PRICE_WALL": 2,
+    "INSUFFICIENT_EVIDENCE": 1,
+    "COURSE_DRAIN_CONFIRMED": 2
+  },
+  "comparison": {
+    "pick_sp_in_full_union_before": 0,
+    "pick_sp_in_full_union_after": 107,
+    "pick_sp_coverage_before_pct": 0.0,
+    "pick_sp_coverage_after_pct": 8.47,
+    "pick_sp_null_in_20_sample_before": 20,
+    "pick_sp_null_in_20_sample_after": 19,
+    "odds_band_unknown_in_sample": 19,
+    "sp_improvement_note": "20-race sample: 1/20 rows now have pick_sp. Full union: 107/1263 rows (8.5%)."
+  },
+  "data_gaps": {
+    "pick_sp_null \u2014 not stored in sigma union": 19,
+    "horse_id_null \u2014 RP uid not in sigma row": 20,
+    "actual_winner_sp_null": 3,
+    "actual_winner_name_null": 3,
+    "off_time_null": 3
+  },
+  "vp_analysis": {
+    "win_mean_vp": 0.3724,
+    "miss_mean_vp": 0.3105,
+    "vp_explains_direction": true
+  },
+  "failure_class_improvement": {
+    "sp_classification_now_possible": true,
+    "rows_with_sp_in_sample": 1
+  },
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "dry_run": true,
+  "full_1263_assessment": {
+    "pick_sp_ceiling_from_csv": 107,
+    "coverage_pct": 8.47,
+    "structural_blockers": [
+      "294 LOCAL_ONLY rows have no horse_name/date \u2014 structurally unmatchable from innovation CSV",
+      "465 rows are on dates not in innovation CSV \u2014 need broader SP source",
+      "154 CSV matches had SP=0.0 or empty \u2014 not usable"
+    ],
+    "recommendation": false,
+    "recommendation_note": "Coverage at 8.5% (107/1,263). Autopsy engine handles null pick_sp via data_gaps and null-tolerant failure classification. Operator decision required before full pass launch."
+  },
+  "final_classifications": [
+    "VFU_03_20_RACE_AUTOPSY_ENRICHED_RERUN_COMPLETE",
+    "VFU_PICK_SP_LOCAL_ENRICHMENT_COMPLETE",
+    "VFU_20_RACE_AUTOPSY_ENRICHED_RERUN_COMPLETE",
+    "SUPABASE_STAGING_NOT_CREATED",
+    "EXTERNAL_SUPABASE_MUTATION_NOTE_RECORDED",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_FULL_1263_PASS_YET",
+    "NO_MAR_APR_EXTRACTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}
