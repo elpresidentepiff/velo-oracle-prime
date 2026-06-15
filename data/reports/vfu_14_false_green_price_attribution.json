@@ -1,0 +1,45 @@
+{
+  "vfu_id": "VFU-14",
+  "sp_recovery_version": "VFU_14_SP_DATA_RECOVERY_V1",
+  "vp_threshold": 0.4,
+  "generated_at": "2026-06-15T19:03:21.904271+00:00",
+  "total_fg_cases": 121,
+  "miss_cases": 56,
+  "placed_cases": 65,
+  "sp_recovered_total": 89,
+  "sp_original": 12,
+  "sp_still_missing": 20,
+  "ambiguous_cases": 0,
+  "attribution_label_distribution": {
+    "PLACE_SIGNAL_NOT_WIN_SIGNAL": 65,
+    "HIGH_VP_NO_PICK_SP_REMAINING": 10,
+    "HIGH_VP_DRAIN_COURSE_WARNING": 2,
+    "HIGH_VP_SHORT_PRICE_FAILURE": 18,
+    "HIGH_VP_LONGSHOT_FALSE_CONFIDENCE": 5,
+    "HIGH_VP_MID_PRICE_WALL": 12,
+    "HIGH_VP_DANGER_ZONE_FAILURE": 9
+  },
+  "miss_cases_price_band_distribution": {
+    "UNKNOWN": 10,
+    "MID_PRICE": 13,
+    "SHORT": 16,
+    "LONGSHOT": 5,
+    "ODDS_ON": 3,
+    "DANGER": 9
+  },
+  "placed_label": "PLACE_SIGNAL_NOT_WIN_SIGNAL",
+  "placed_cases_note": "PLACED (2nd-4th) cases are marked PLACE_SIGNAL_NOT_WIN_SIGNAL. They are each-way signals, not total VP failures.",
+  "source_breakdown": {
+    "sp_original (already in VFU-13)": 12,
+    "innovation_csv": 40,
+    "sigma_2k_training": 19,
+    "rp_results_new_format_numeric_rid": 11,
+    "rp_results_new_format_cdo_fallback": 19,
+    "unmatched": 20
+  },
+  "key_finding": "89/109 missing pick_sp cases recovered across 4 local sources. 20 remain UNMATCHED with explicit missing reasons. PLACED cases (65/121) separated as PLACE_SIGNAL_NOT_WIN_SIGNAL. SHORT-priced (<4.0) MISS cases represent the highest-confidence VP false-confidence signal.",
+  "vfu10_law": "No evidence becomes doctrine unless it was knowable before the race.",
+  "blocked_from_live_use": true,
+  "human_approval_required": true,
+  "dry_run_only": true
+}
