@@ -1,0 +1,104 @@
+{
+  "validation_version": "VFU_16_WIN_PLACE_CONVERSION_TRIBUNAL_V1",
+  "generated_at": "2026-06-15T20:11:35.232368Z",
+  "vp_threshold": 0.4,
+  "total_fg_cases": 121,
+  "miss_cases": 56,
+  "placed_cases": 65,
+  "mechanism_split": {
+    "DATA_LINEAGE_REQUIRED": 3,
+    "DRAIN_COURSE_CONTEXT": 3,
+    "INSUFFICIENT_COMPONENT_DATA": 23,
+    "MARKET_AND_VP_JOINT_OVERCONFIDENCE": 16,
+    "PLACE_STRONG_WIN_WEAK": 68,
+    "SOURCE_GAP_NO_SP": 3,
+    "SP_SOURCE_ZERO_BLOCKER": 3,
+    "SQPE_SMALL_FIELD_EXCEPTION": 1,
+    "TRUE_WIN_SIGNAL_FAILED": 1
+  },
+  "key_findings": {
+    "place_strong_win_weak_total": 68,
+    "market_and_vp_joint_overconfidence": 16,
+    "insufficient_component_data": 23,
+    "drain_course_context": 3,
+    "data_lineage_required": 3,
+    "sp_source_zero_blocker": 3,
+    "source_gap_no_sp": 3,
+    "true_win_signal_failed": 1,
+    "sqpe_small_field_exception": 1,
+    "place_prob_dominant_confirmed_count": 19,
+    "watchlist_entries": 89,
+    "guardrail_retrospective_candidates": 4,
+    "human_review_p0": 8,
+    "human_review_p1": 3
+  },
+  "8_questions": {
+    "Q1_place_prob_dominant_miss_count": {
+      "answer": 5,
+      "note": "5 of 7 MISS cases with component data have place_prob >= 0.80",
+      "miss_classified_place_strong_win_weak": 3
+    },
+    "Q2_short_price_joint_overconfidence": {
+      "answer": 16,
+      "note": "16 MISS cases: market AND VP both agreed, both wrong"
+    },
+    "Q3_place_strong_win_weak_count": {
+      "answer": 68,
+      "miss": 3,
+      "placed": 65,
+      "note": "68 total (65 PLACED definitionally + 3 MISS with confirmed place_prob dominance)"
+    },
+    "Q4_data_lineage_repair_count": {
+      "answer": 3,
+      "note": "3 MISS cases require source/identity repair before classification"
+    },
+    "Q5_is_place_prob_too_influential": {
+      "answer": "YES",
+      "evidence": "5/7 MISS cases with component data have place_prob >= 0.80. Avg place_prob in MISS comp cases: 0.836. place_prob is badge-only in SQPE_IMPROVEMENT_MDS_V1 but its high values propagate through the VP formula. Pattern is confirmed."
+    },
+    "Q6_calibration_vs_signal_issue": {
+      "answer": "CALIBRATION_ISSUE",
+      "evidence": "CALIBRATION ISSUE \u2014 not a signal issue. place_prob correctly identifies place-worthy horses (65/121 FG cases literally placed). The problem is that high place_prob drives VP above 0.40 even when win-signal components (sqpe, improvement) are weak. VP needs a win/place separation layer."
+    },
+    "Q7_should_vfu17_focus_guardrail": {
+      "answer": "YES",
+      "evidence": "YES \u2014 PLACE_STRONG_WIN_UNPROVEN guardrail proposed (DRY_RUN_ONLY). 4 cases would have triggered retrospectively. VFU-17 should build the dry-run harness and validate prospectively before any live consideration.",
+      "guardrail_retrospective_trigger_count": 4
+    },
+    "Q8_live_scoring_change_now": {
+      "answer": "NO",
+      "evidence": "NO. Evidence is forensic / retrospective only. VP threshold stays at 0.40. No model changes. No live guardrail. Operator review required before any action on these findings.",
+      "vp_threshold_unchanged": 0.4
+    }
+  },
+  "final_classifications": [
+    "VFU_16_WIN_PLACE_CONVERSION_TRIBUNAL_COMPLETE",
+    "PLACE_PROB_DOMINANT_FAILURE_CONFIRMED",
+    "WIN_PLACE_SEPARATION_REQUIRED",
+    "FALSE_GREEN_MECHANISMS_SPLIT",
+    "FOOD_FOR_THOUGHT_DATA_LINEAGE_RETAINED",
+    "LIGHTSOUTANDAWAY_EXCEPTION_RETAINED",
+    "GUARDRAIL_PROPOSAL_DRY_RUN_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ],
+  "hard_rules": {
+    "vp_threshold_unchanged": true,
+    "no_live_scoring_change": true,
+    "no_passport_mutation": true,
+    "no_supabase_writes": true,
+    "no_doctrine_promotion": true,
+    "no_model_promotion": true,
+    "no_telegram_send": true,
+    "no_racing_api_restoration": true,
+    "guardrail_proposal_status": "DRY_RUN_ONLY",
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  }
+}
