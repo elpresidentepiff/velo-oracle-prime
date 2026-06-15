@@ -1,0 +1,309 @@
+{
+  "ledger_version": "VFU_10_FAILURE_ATTRIBUTION_V1",
+  "timestamp": "2026-06-14",
+  "base_commit": "b5f60a4",
+  "vfu_10_scope_result": "PASS",
+  "vfu_10_targeted_tests": "20/20 PASS",
+  "vfu_vp_governed_suite": "167/167 PASS",
+  "full_repo_suite": "RED",
+  "full_repo_failure_count": 24,
+  "full_repo_failure_cause": "pre-existing unrelated failures only",
+  "vfu_10_related_failures": 0,
+  "touched_path_regressions": 0,
+  "canonical_horse_passport_mutated": false,
+  "supabase_written": false,
+  "live_scoring_changed": false,
+  "model_promoted": false,
+  "telegram_sent": false,
+  "racing_api_restored": false,
+  "mar_apr_extracted": false,
+  "vfu_10_files_added": [
+    "scripts/ops/vfu_time_safe_passport_override_validation.py",
+    "tests/test_vfu_time_safe_passport_override_validation.py",
+    "data/reports/vfu_time_safe_passport_override_validation.json",
+    "data/reports/vfu_time_safe_passport_override_validation.md",
+    "data/reports/vfu_time_safe_passport_override_cases.jsonl",
+    "data/reports/vfu_time_safe_passport_uncovered_cases.json",
+    "data/reports/vfu_time_safe_passport_candidate_watchlist.json"
+  ],
+  "vfu_10_files_modified": [],
+  "pre_existing_failures": [
+    {
+      "test_file": "tests/test_hfs_schema_contract.py",
+      "test_id": "test_hfs_schema_contract",
+      "error": "psycopg2.OperationalError: connection to server at db.ltbsxbvfsxtnharjvqcm.supabase.co failed: Network is unreachable",
+      "classification": "NETWORK_DEPENDENT_SUPABASE",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "9338860"
+    },
+    {
+      "test_file": "tests/test_new_build_current_card_feed.py",
+      "test_id": "test_reason_codes_do_not_emit_rpr_and_mark_passport_strength",
+      "error": "AssertionError: assert 'FIRST_TIME_HEADGEAR' in ['JOCKEY_CONTINUITY', 'SETUP_RUN_CANDIDATE', 'STRONG_PLACE_PROFILE', 'HISTORICAL_MARKET_RESPECT', 'OR_RISING']",
+      "classification": "UNRELATED_LEGACY_ASSERTION",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "89518cf"
+    },
+    {
+      "test_file": "tests/test_new_build_database.py",
+      "test_id": "test_spine_status_report_is_read_only_summary",
+      "error": "psycopg2.OperationalError: connection to server at db.ltbsxbvfsxtnharjvqcm.supabase.co failed: Network is unreachable",
+      "classification": "NETWORK_DEPENDENT_SUPABASE",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "9cc36d5"
+    },
+    {
+      "test_file": "tests/test_new_build_horse_passport.py",
+      "test_id": "test_layoff_flag_active",
+      "error": "AssertionError: assert None == 'ACTIVE'",
+      "classification": "UNRELATED_LEGACY_ASSERTION",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "9338860"
+    },
+    {
+      "test_file": "tests/test_new_build_horse_passport.py",
+      "test_id": "test_layoff_flag_fresh_90",
+      "error": "AssertionError: assert None in ('FRESH_90', 'FRESH_180')",
+      "classification": "UNRELATED_LEGACY_ASSERTION",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "9338860"
+    },
+    {
+      "test_file": "tests/test_new_build_sources.py",
+      "test_id": "test_source_inventory_sees_industry_scale_inputs",
+      "error": "AttributeError: 'list' object has no attribute 'get' in new_build_velo/sources.py:62",
+      "classification": "UNRELATED_LEGACY_ASSERTION",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "7be0d63"
+    },
+    {
+      "test_file": "tests/test_new_build_sources.py",
+      "test_id": "test_bulk_ingest_commands_cover_available_local_sources",
+      "error": "AttributeError: 'list' object has no attribute 'get' in new_build_velo/sources.py:145",
+      "classification": "UNRELATED_LEGACY_ASSERTION",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "7be0d63"
+    },
+    {
+      "test_file": "tests/test_phase25.py",
+      "test_id": "test_predict_stub",
+      "error": "ModuleNotFoundError: No module named 'app.services.model_manager'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "claude_md_reference": "model_manager.py load_sqpe() returns metadata dict, never loads .pkl — documented known bug",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true
+    },
+    {
+      "test_file": "tests/test_phase25.py",
+      "test_id": "test_sqpe_load",
+      "error": "ModuleNotFoundError: No module named 'app.services.model_manager'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true
+    },
+    {
+      "test_file": "tests/test_phase25.py",
+      "test_id": "test_trainer_intent_load",
+      "error": "ModuleNotFoundError: No module named 'app.services.model_manager'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true
+    },
+    {
+      "test_file": "tests/test_phase25.py",
+      "test_id": "test_longshot_load",
+      "error": "ModuleNotFoundError: No module named 'app.services.model_manager'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true
+    },
+    {
+      "test_file": "tests/test_phase25.py",
+      "test_id": "test_benter_overlay",
+      "error": "ModuleNotFoundError: No module named 'app.services.model_manager'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true
+    },
+    {
+      "test_file": "tests/test_phase3_full.py",
+      "test_id": "test_06_model_ops_loader",
+      "error": "ModuleNotFoundError: No module named 'app.ml.model_ops.loader'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "claude_md_reference": "app/ml/model_ops/loader.py — hardcoded Linux path /home/ubuntu/velo-oracle/models — documented known bug",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "f5b02f8"
+    },
+    {
+      "test_file": "tests/test_phase3_full.py",
+      "test_id": "test_07_model_ops_validator",
+      "error": "ModuleNotFoundError: No module named 'app.ml.model_ops.loader'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "f5b02f8"
+    },
+    {
+      "test_file": "tests/test_phase3_full.py",
+      "test_id": "test_08_model_ops_registry",
+      "error": "ModuleNotFoundError: No module named 'app.ml.model_ops.loader'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "f5b02f8"
+    },
+    {
+      "test_file": "tests/test_phase3_full.py",
+      "test_id": "test_20_integration_smoke",
+      "error": "ModuleNotFoundError: No module named 'app.engine.uma'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "f5b02f8"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_01_sqpe_v14_trained",
+      "error": "SQPE v14 pkl absent — METADATA_ONLY per CLAUDE.md",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "claude_md_reference": "SQPE v14: METADATA_ONLY — pkl absent, not loadable",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_03_longshot_v6_trained",
+      "error": "Longshot v6 pkl absent — METADATA_ONLY per CLAUDE.md",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "claude_md_reference": "Longshot v6: METADATA_ONLY — pkl absent, not loadable",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_04_overlay_v5_trained",
+      "error": "Overlay v5 pkl absent — METADATA_ONLY per CLAUDE.md",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "claude_md_reference": "Overlay v5: METADATA_ONLY — pkl absent, not loadable",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_07_backtest_results_exist",
+      "error": "Backtest artifact absent",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_13_uma_prediction",
+      "error": "ModuleNotFoundError: No module named 'app.engine.uma'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_14_uma_edge_calculation",
+      "error": "ModuleNotFoundError: No module named 'app.engine.uma'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_15_uma_risk_classification",
+      "error": "ModuleNotFoundError: No module named 'app.engine.uma'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_37_end_to_end_prediction",
+      "error": "ModuleNotFoundError: No module named 'app.engine.uma'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase4_full.py",
+      "test_id": "TestPhase4Full::test_40_full_system_health",
+      "error": "ModuleNotFoundError: No module named 'app.engine.uma'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "4215b03"
+    },
+    {
+      "test_file": "tests/test_phase5_operational.py",
+      "test_id": "TestPhase5Operational::test_12_uma_loads",
+      "error": "AssertionError: UMA failed: No module named 'app.engine.uma'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "890c849"
+    },
+    {
+      "test_file": "tests/test_phase5_operational.py",
+      "test_id": "TestPhase5Operational::test_14_model_ops_loads",
+      "error": "AssertionError: Model ops failed: No module named 'app.ml.model_ops.loader'",
+      "classification": "KNOWN_CLAUDE_MD_BUG",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "890c849"
+    },
+    {
+      "test_file": "tests/test_production_hardening.py",
+      "test_id": "test_persist_retry_removes_only_proven_bad_group",
+      "error": "AssertionError: assert 1 == 2",
+      "classification": "UNRELATED_LEGACY_ASSERTION",
+      "vfu_10_touched": false,
+      "pre_dates_b5f60a4": true,
+      "evidence_commit": "2cc135a"
+    }
+  ],
+  "failure_class_summary": {
+    "KNOWN_CLAUDE_MD_BUG": 17,
+    "NETWORK_DEPENDENT_SUPABASE": 2,
+    "UNRELATED_LEGACY_ASSERTION": 5,
+    "VFU_10_RELATED": 0
+  },
+  "final_classifications": [
+    "VFU_10_TIME_SAFE_PASSPORT_OVERRIDE_VALIDATION_COMPLETE",
+    "TEMPORAL_CONTAMINATION_AUDITED",
+    "KAKIRRA_PREDICTIVE_PROOF_REJECTED_FOR_NOW",
+    "MAN_IS_KING_PARTIAL_TIME_SAFE_SIGNAL_REVIEWED",
+    "TIME_SAFE_PASSPORT_FEATURES_TESTED",
+    "PASSPORT_OVERRIDE_REMAINS_DRY_RUN_ONLY",
+    "VFU_10_RELATED_FAILURES_ZERO",
+    "FULL_REPO_FAILURES_PRE_EXISTING_UNRELATED",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_MAR_APR_EXTRACTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}
