@@ -1,0 +1,95 @@
+{
+  "validation_version": "VFU_12_SIGMA_PATTERN_TRIBUNAL_V1",
+  "timestamp": "2026-06-15T02:23:27.572256+00:00",
+  "vp_threshold": 0.4,
+  "vp_threshold_unchanged": true,
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "live_scoring_changed": false,
+  "model_promoted": false,
+  "telegram_sent": false,
+  "racing_api_restored": false,
+  "mar_apr_quarantine_only": true,
+  "vfu10_law_enforced": true,
+  "patterns_prosecuted": 7,
+  "verdict_distribution": {
+    "DATA_BLOCKED": 2,
+    "KEEP_QUARANTINED": 1,
+    "NEEDS_TIME_SAFE_VALIDATION": 1,
+    "PROMOTE_TO_DRY_RUN_WATCHLIST": 3
+  },
+  "dry_run_watchlist_count": 3,
+  "data_blocked_count": 2,
+  "quarantine_only_count": 1,
+  "needs_time_safe_validation_count": 1,
+  "rejected_count": 0,
+  "human_review_required_count": 0,
+  "review_queue_entries_read": 200,
+  "top25_generated": true,
+  "priority_band_counts": {
+    "P0_CRITICAL": 41,
+    "P4_ARCHIVE_ONLY": 159
+  },
+  "required_answers": {
+    "Q1_watchlist_patterns": [
+      "PASSPORT_OVERRIDE_CANDIDATE",
+      "SP_SHORTENING_CANDIDATE",
+      "VP_SUPPRESSION_CANDIDATE"
+    ],
+    "Q2_data_blocked_patterns": [
+      "DATA_QUALITY_DEBT_CANDIDATE",
+      "IDENTITY_RESOLUTION_NEEDED"
+    ],
+    "Q3_quarantine_only_patterns": [
+      "ERA_CONTAMINATION_CANDIDATE"
+    ],
+    "Q4_needs_time_safe_validation": [
+      "FALSE_GREEN_CANDIDATE"
+    ],
+    "Q5_rejected_patterns": [],
+    "Q6_top25_generated": true,
+    "Q7_biggest_contamination_risks": [
+      "ERA_CONTAMINATION_CANDIDATE: n=2,165 Mar–Apr rows, zero time-safe (CRITICAL)",
+      "SKELETON_OR_NULL_DATE_EXCLUDED: 331 rows with null/invalid dates — temporal provenance unknown",
+      "DATA_QUALITY_DEBT_CANDIDATE overlap: 159 of 200 review queue entries are archive-quarantine rows"
+    ],
+    "Q8_biggest_data_quality_blockers": [
+      "IDENTITY_RESOLUTION_NEEDED: 2,822 rows without RP_UID (2,112 current-era)",
+      "DATA_QUALITY_DEBT_CANDIDATE: 2,516 rows with 3+ data gaps",
+      "VP_MISSING: 969 current-era rows"
+    ],
+    "Q9_sp_shortening_status": "SP shortening REMAINS the strongest time-safe Passport signal. VFU-10 validated: pre-era SP trajectory is observable before race. Current-era n=316, avg VP=0.3505. Verdict: PROMOTE_TO_DRY_RUN_WATCHLIST — watchlist, not doctrine.",
+    "Q10_vp_threshold_recommendation": "VP threshold remains 0.4. NO CHANGE RECOMMENDED. Evidence from current-era confirms monotonic VP signal strength. FALSE_GREEN pattern (n=258) requires feature attribution before any threshold review.",
+    "Q11_doctrine_promotion_recommendation": "NO DOCTRINE PROMOTION RECOMMENDED. VFU-10 law: no evidence becomes doctrine unless it was knowable before the race. Watchlist patterns require n>=50 RP_UID confirmed + operator review. FALSE_GREEN requires feature attribution. Quarantine patterns (Mar–Apr) permanently excluded from doctrine pathway.",
+    "Q12_vfu13_recommendation": "VFU-13 recommended. Suggested focus (operator decision required): OPTION A — False-GREEN Feature Autopsy: identify which Ensemble component drove VP≥0.40 in 258 current-era losing cases. Requires feature-level ledger from VFU-11 identity-enriched autopsy. OPTION B — SP Shortening Deep Dive: build per-horse SP trajectory from core_v0 for the 316 current-era SP<20 winners (VFU-10 extension). OPTION C — Identity Repair Sprint: resolve 2,112 current-era NAME_ONLY rows to unlock VP_SUPPRESSION and SP_SHORTENING for Passport analysis. Operator to choose one focus area.",
+    "priority_band_counts": {
+      "P0_CRITICAL": 41,
+      "P1_HIGH": 0,
+      "P2_MEDIUM": 0,
+      "P3_LOW": 0,
+      "P4_ARCHIVE_ONLY": 159
+    }
+  },
+  "vfu13_recommended": true,
+  "vfu13_options": [
+    "OPTION_A: False-GREEN Feature Autopsy (258 current-era VP≥0.40 losses)",
+    "OPTION_B: SP Shortening Deep Dive — per-horse trajectory from core_v0 (316 current-era)",
+    "OPTION_C: Identity Repair Sprint — resolve 2,112 current-era NAME_ONLY rows"
+  ],
+  "final_classifications": [
+    "VFU_12_SIGMA_PATTERN_TRIBUNAL_COMPLETE",
+    "PATTERN_VERDICTS_CREATED",
+    "HUMAN_REVIEW_TOP25_CREATED",
+    "MAR_APR_QUARANTINE_MAINTAINED",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "NO_VP_THRESHOLD_CHANGE",
+    "PATTERN_CANDIDATES_DRY_RUN_ONLY",
+    "HUMAN_APPROVAL_REQUIRED_FOR_ALL_PATTERNS",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}

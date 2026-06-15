@@ -1,0 +1,50 @@
+{
+  "total_quarantine_rows": 2636,
+  "archive_quarantine_n": 2165,
+  "may_quarantine_n": 471,
+  "archive_wins_n": 427,
+  "may_wins_n": 106,
+  "top_courses_archive": {
+    "Southwell (AW)": 144,
+    "Wolverhampton (AW)": 130,
+    "Lingfield (AW)": 92,
+    "Newcastle (AW)": 63,
+    "Kempton (AW)": 54,
+    "Chepstow": 49,
+    "Yarmouth": 48,
+    "Bath": 46,
+    "Perth": 46,
+    "Doncaster": 38
+  },
+  "quarantined_patterns": [
+    {
+      "pattern_id": "VFU12_PAT_ERA_CONTAMINATION_CANDIDATE",
+      "pattern_label": "ERA_CONTAMINATION_CANDIDATE",
+      "source_era": "QUARANTINE_ERAS_ONLY",
+      "evidence_count": 2165,
+      "current_era_count": 0,
+      "may_quarantine_count": 0,
+      "archive_quarantine_count": 2165,
+      "usable_count": 0,
+      "blocked_count": 2165,
+      "rp_uid_confirmed_count": 0,
+      "avg_vp_current": null,
+      "avg_sp_current": null,
+      "time_safe_pct": 0.0,
+      "time_safety_status": "TEMPORAL_CONTAMINATION_RISK",
+      "contamination_risk": "CRITICAL — all rows PRE_SURGERY_ARCHIVE_QUARANTINE",
+      "sr_note": null,
+      "sample_size_warning": "n=2165 is large but entirely contaminated — quantity does not overcome contamination.",
+      "verdict": "KEEP_QUARANTINED",
+      "reason": "n=2165 rows, all PRE_SURGERY_ARCHIVE_QUARANTINE (Mar–Apr 2026). n_current=0 — zero time-safe rows in this pattern. Mar–Apr may be inspected as quarantined evidence only. VFU-10 law prohibits any of these becoming doctrine.",
+      "next_required_evidence": "No doctrine pathway for Mar–Apr data. Archive for historical completeness only. Any signal from this era requires prospective validation from 2026-05-08+.",
+      "blocked_from_live_use": true,
+      "human_approval_required": true,
+      "do_not_promote": true,
+      "vfu10_law_enforced": true
+    }
+  ],
+  "quarantine_law": "VFU-10: No evidence becomes doctrine unless it was knowable before the race.",
+  "quarantine_status": "QUARANTINE_ONLY — no doctrine, no Passport mutation, no live scoring",
+  "vfu_13_note": "If VFU-13 investigates pre-surgery data, it must use the VFU-10 time-safe method: build per-race-date Passport snapshot from core_v0_historical_dataset filtered to date < race_date."
+}
