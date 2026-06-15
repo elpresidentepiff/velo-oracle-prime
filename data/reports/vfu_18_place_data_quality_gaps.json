@@ -1,0 +1,17 @@
+{
+  "gap_report_version": "VFU_18_PLACE_DATA_QUALITY_GAPS_V1",
+  "total_rows": 3052,
+  "rows_missing_field_size": 1989,
+  "rows_ew_conclusion_blocked": 1989,
+  "rows_insufficient_place_data": 1694,
+  "rows_event_only_unusable": 28,
+  "field_size_coverage_pct": 34.8,
+  "gap_recommendations": [
+    "Run full RP results capture for dates without rp_results JSON to extend field_size coverage.",
+    "Schema-B files (list top-level) do not carry field_size \u2014 re-parse or skip for EW analysis.",
+    "EVENT_ONLY rows cannot be classified \u2014 identity enrichment required before further use."
+  ],
+  "blocked_from_live_use": true,
+  "dry_run_only": true,
+  "vfu18_validation_version": "VFU_18_PLACE_DATA_ENRICHMENT_V1"
+}

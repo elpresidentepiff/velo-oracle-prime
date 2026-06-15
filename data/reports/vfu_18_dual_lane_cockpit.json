@@ -1,0 +1,59 @@
+{
+  "cockpit_version": "VFU_18_DUAL_LANE_COCKPIT_V1",
+  "total_rows": 3052,
+  "vp_threshold": 0.4,
+  "field_size_coverage": {
+    "rows_with_field_size": 1063,
+    "rows_unknown": 1989,
+    "coverage_pct": 34.8,
+    "rp_races_indexed": 868
+  },
+  "dual_lane_distribution": {
+    "WIN_LANE_CONFIRMED": 186,
+    "PLACE_LANE_CONFIRMED": 170,
+    "EACH_WAY_REVIEW": 30,
+    "WIN_SIGNAL_PLACE_OUTCOME": 44,
+    "PLACE_SIGNAL_WIN_OUTCOME": 251,
+    "FALSE_WIN_SIGNAL": 161,
+    "FALSE_PLACE_SIGNAL": 436,
+    "PLACE_SPECIALIST": 52,
+    "INSUFFICIENT_PLACE_DATA": 1694,
+    "EVENT_ONLY_UNUSABLE": 28
+  },
+  "win_lane_summary": {
+    "total_vp_fires": 447,
+    "win_lane_confirmed": 186,
+    "place_lane_from_vp": 74,
+    "false_win_signals": 161,
+    "win_hit_rate": 41.6,
+    "vp_place_conversion_rate": 58.2
+  },
+  "place_lane_summary": {
+    "place_signal_active_rows": 857,
+    "place_specialist_rows": 52,
+    "place_lane_confirmed": 170,
+    "place_signal_win_outcome": 251,
+    "false_place_signals": 436
+  },
+  "each_way_summary": {
+    "ew_profitable": 234,
+    "ew_place_paid_win_miss": 159,
+    "ew_win_only_paid": 96,
+    "ew_both_miss": 574,
+    "ew_conclusion_blocked": 1989
+  },
+  "key_findings": [
+    "VP >= 0.40 fired on 447 rows.",
+    "WIN_LANE_CONFIRMED: 186 rows (41.6% of VP fires).",
+    "EACH_WAY_REVIEW (placed, field_size>=5): 30 rows.",
+    "WIN_SIGNAL_PLACE_OUTCOME (placed, field unknown/<5): 44 rows.",
+    "FALSE_WIN_SIGNAL (VP fires, MISS/FRAME): 161 rows.",
+    "PLACE_SPECIALIST: 52 rows from 16 horses.",
+    "EACH_WAY profitable (both legs win): 234 rows.",
+    "Field size coverage: 34.8% \u2014 1989 rows EW conclusion blocked."
+  ],
+  "blocked_from_live_use": true,
+  "dry_run_only": true,
+  "human_approval_required": true,
+  "vfu18_validation_version": "VFU_18_PLACE_DATA_ENRICHMENT_V1"
+}

@@ -1,0 +1,139 @@
+{
+  "lineage_version": "VFU_18_LINEAGE_RECONCILIATION_V1",
+  "scope": "VFU-13 through VFU-17",
+  "all_phases_clean": true,
+  "phases": [
+    {
+      "vfu": "VFU-13",
+      "commit": "f5a0ada",
+      "title": "False-GREEN Feature Autopsy",
+      "report_files": [
+        "vfu_13_false_green_feature_autopsy_summary.json",
+        "vfu_13_false_green_feature_autopsy_summary.md",
+        "vfu_13_false_green_cases.jsonl"
+      ],
+      "changed_live_scoring": false,
+      "mutated_passport": false,
+      "wrote_supabase": false,
+      "promoted_doctrine": false,
+      "sent_telegram": false,
+      "touched_racing_api": false,
+      "report_files_present": [
+        "vfu_13_false_green_feature_autopsy_summary.json",
+        "vfu_13_false_green_feature_autopsy_summary.md",
+        "vfu_13_false_green_cases.jsonl"
+      ],
+      "report_files_missing": [],
+      "lineage_clean": true
+    },
+    {
+      "vfu": "VFU-14",
+      "commit": "dcbe13b",
+      "title": "SP Data Recovery + False-GREEN Price Attribution",
+      "report_files": [
+        "vfu_14_false_green_sp_enriched_cases.jsonl",
+        "vfu_14_sp_data_recovery_summary.json",
+        "vfu_14_sp_data_recovery_summary.md"
+      ],
+      "changed_live_scoring": false,
+      "mutated_passport": false,
+      "wrote_supabase": false,
+      "promoted_doctrine": false,
+      "sent_telegram": false,
+      "touched_racing_api": false,
+      "report_files_present": [
+        "vfu_14_false_green_sp_enriched_cases.jsonl",
+        "vfu_14_sp_data_recovery_summary.json",
+        "vfu_14_sp_data_recovery_summary.md"
+      ],
+      "report_files_missing": [],
+      "lineage_clean": true
+    },
+    {
+      "vfu": "VFU-15",
+      "commit": "daa5d7c",
+      "title": "False-GREEN MISS Autopsy \u2014 56 MISS cases separated and classified",
+      "report_files": [
+        "vfu_15_miss_cases.jsonl",
+        "vfu_15_miss_autopsy_summary.json",
+        "vfu_15_miss_autopsy_summary.md"
+      ],
+      "changed_live_scoring": false,
+      "mutated_passport": false,
+      "wrote_supabase": false,
+      "promoted_doctrine": false,
+      "sent_telegram": false,
+      "touched_racing_api": false,
+      "report_files_present": [
+        "vfu_15_miss_cases.jsonl",
+        "vfu_15_miss_autopsy_summary.json",
+        "vfu_15_miss_autopsy_summary.md"
+      ],
+      "report_files_missing": [],
+      "lineage_clean": true
+    },
+    {
+      "vfu": "VFU-16",
+      "commit": "fd7da92",
+      "title": "Win/Place Conversion Tribunal \u2014 mechanism split + guardrail proposal",
+      "report_files": [
+        "vfu_16_false_green_mechanism_split.json",
+        "vfu_16_place_prob_dominant_cases.jsonl",
+        "vfu_16_win_weak_place_strong_watchlist.json",
+        "vfu_16_human_review_queue.json",
+        "vfu_16_win_place_conversion_summary.json",
+        "vfu_16_win_place_conversion_summary.md"
+      ],
+      "changed_live_scoring": false,
+      "mutated_passport": false,
+      "wrote_supabase": false,
+      "promoted_doctrine": false,
+      "sent_telegram": false,
+      "touched_racing_api": false,
+      "report_files_present": [
+        "vfu_16_false_green_mechanism_split.json",
+        "vfu_16_place_prob_dominant_cases.jsonl",
+        "vfu_16_win_weak_place_strong_watchlist.json",
+        "vfu_16_human_review_queue.json",
+        "vfu_16_win_place_conversion_summary.json",
+        "vfu_16_win_place_conversion_summary.md"
+      ],
+      "report_files_missing": [],
+      "lineage_clean": true
+    },
+    {
+      "vfu": "VFU-17",
+      "commit": "296c56b",
+      "title": "Win/Place Position Engine \u2014 dual-lane classification + specialists",
+      "report_files": [
+        "vfu_17_win_place_records.jsonl",
+        "vfu_17_place_specialist_candidates.json",
+        "vfu_17_win_to_place_downgrades.json",
+        "vfu_17_place_to_win_upgrades.json",
+        "vfu_17_human_review_queue.json",
+        "vfu_17_win_place_position_summary.json",
+        "vfu_17_win_place_position_summary.md"
+      ],
+      "changed_live_scoring": false,
+      "mutated_passport": false,
+      "wrote_supabase": false,
+      "promoted_doctrine": false,
+      "sent_telegram": false,
+      "touched_racing_api": false,
+      "report_files_present": [
+        "vfu_17_win_place_records.jsonl",
+        "vfu_17_place_specialist_candidates.json",
+        "vfu_17_win_to_place_downgrades.json",
+        "vfu_17_place_to_win_upgrades.json",
+        "vfu_17_human_review_queue.json",
+        "vfu_17_win_place_position_summary.json",
+        "vfu_17_win_place_position_summary.md"
+      ],
+      "report_files_missing": [],
+      "lineage_clean": true
+    }
+  ],
+  "verdict": "LINEAGE_CLEAN_PROCEED_TO_VFU18",
+  "blocked_from_live_use": true,
+  "dry_run_only": true
+}
