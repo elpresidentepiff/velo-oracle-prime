@@ -1,0 +1,93 @@
+[
+  {
+    "pattern_flag": "DATA_QUALITY_DEBT_CANDIDATE",
+    "n_rows": 2516,
+    "n_current_era": 1265,
+    "n_wins": 576,
+    "sr": 0.2289,
+    "era_scope": "ALL_ERAS",
+    "caveat": "QUARANTINE — do not promote to doctrine without time-safe validation",
+    "next_evidence_requirement": "n >= 50 + operator review before any doctrine consideration",
+    "blocked_from_live_use": true,
+    "human_approval_required": true,
+    "do_not_promote": true
+  },
+  {
+    "pattern_flag": "ERA_CONTAMINATION_CANDIDATE",
+    "n_rows": 2165,
+    "n_current_era": 0,
+    "n_wins": 427,
+    "sr": 0.1972,
+    "era_scope": "QUARANTINE_ERAS_ONLY",
+    "caveat": "QUARANTINE — do not promote to doctrine without time-safe validation",
+    "next_evidence_requirement": "n >= 50 + operator review before any doctrine consideration",
+    "blocked_from_live_use": true,
+    "human_approval_required": true,
+    "do_not_promote": true
+  },
+  {
+    "pattern_flag": "FALSE_GREEN_CANDIDATE",
+    "n_rows": 366,
+    "n_current_era": 258,
+    "n_wins": 0,
+    "sr": 0.0,
+    "era_scope": "ALL_ERAS",
+    "caveat": "QUARANTINE — do not promote to doctrine without time-safe validation",
+    "next_evidence_requirement": "Identify shared feature pattern; confirm with VP>=0.40 sub-population",
+    "blocked_from_live_use": true,
+    "human_approval_required": true,
+    "do_not_promote": true
+  },
+  {
+    "pattern_flag": "IDENTITY_RESOLUTION_NEEDED",
+    "n_rows": 2822,
+    "n_current_era": 2112,
+    "n_wins": 691,
+    "sr": 0.2449,
+    "era_scope": "ALL_ERAS",
+    "caveat": "QUARANTINE — do not promote to doctrine without time-safe validation",
+    "next_evidence_requirement": "n >= 50 + operator review before any doctrine consideration",
+    "blocked_from_live_use": true,
+    "human_approval_required": true,
+    "do_not_promote": true
+  },
+  {
+    "pattern_flag": "PASSPORT_OVERRIDE_CANDIDATE",
+    "n_rows": 258,
+    "n_current_era": 235,
+    "n_wins": 51,
+    "sr": 0.1977,
+    "era_scope": "ALL_ERAS",
+    "caveat": "QUARANTINE — do not promote to doctrine without time-safe validation",
+    "next_evidence_requirement": "n >= 50 + operator review before any doctrine consideration",
+    "blocked_from_live_use": true,
+    "human_approval_required": true,
+    "do_not_promote": true
+  },
+  {
+    "pattern_flag": "SP_SHORTENING_CANDIDATE",
+    "n_rows": 501,
+    "n_current_era": 316,
+    "n_wins": 501,
+    "sr": 1.0,
+    "era_scope": "ALL_ERAS",
+    "caveat": "QUARANTINE — do not promote to doctrine without time-safe validation",
+    "next_evidence_requirement": "Build time-safe pre-era SP trajectory (per VFU-10 method)",
+    "blocked_from_live_use": true,
+    "human_approval_required": true,
+    "do_not_promote": true
+  },
+  {
+    "pattern_flag": "VP_SUPPRESSION_CANDIDATE",
+    "n_rows": 582,
+    "n_current_era": 342,
+    "n_wins": 582,
+    "sr": 1.0,
+    "era_scope": "ALL_ERAS",
+    "caveat": "QUARANTINE — do not promote to doctrine without time-safe validation",
+    "next_evidence_requirement": "Cross-reference with time-safe pre-era Passport snapshot (per VFU-10)",
+    "blocked_from_live_use": true,
+    "human_approval_required": true,
+    "do_not_promote": true
+  }
+]

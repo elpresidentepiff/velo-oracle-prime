@@ -1,0 +1,115 @@
+{
+  "validation_version": "VFU_11_2K_SIGMA_INVESTIGATION_UNIT_V1",
+  "timestamp": "2026-06-15T02:01:04.880452+00:00",
+  "vp_threshold": 0.4,
+  "vp_threshold_unchanged": true,
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "live_scoring_changed": false,
+  "model_promoted": false,
+  "telegram_sent": false,
+  "racing_api_restored": false,
+  "mar_apr_quarantine_only": true,
+  "current_era_not_blended": true,
+  "sources_discovered": {
+    "identity_enriched_autopsy": 1263,
+    "sigma_2k_training": 1310,
+    "sigma_audits_dump": 2686,
+    "sigma_results_eod_rows": 740,
+    "archive_mar_2026": 20
+  },
+  "total_source_rows_discovered": 6019,
+  "total_rows_processed": 6019,
+  "by_era_bucket": {
+    "CURRENT_ERA_VALIDATED": 3052,
+    "PRE_SURGERY_ARCHIVE_QUARANTINE": 2165,
+    "PRE_SURGERY_MAY_QUARANTINE": 471,
+    "SKELETON_OR_NULL_DATE_EXCLUDED": 331
+  },
+  "by_evidence_quality_tier": {
+    "HIGH": 13,
+    "LOW": 1,
+    "MEDIUM": 8,
+    "None": 3175,
+    "TIER_A_FULL": 107,
+    "TIER_B_GOOD_NO_PICK_SP": 800,
+    "TIER_C_LIMITED_IDENTITY": 62,
+    "TIER_D_EVENT_ONLY": 294,
+    "high": 29,
+    "low": 1402,
+    "normal": 128
+  },
+  "by_identity_status": {
+    "AMBIGUOUS": 708,
+    "EOD_NON_CANONICAL": 2307,
+    "EVENT_ONLY_NO_HORSE": 331,
+    "NAME_ONLY": 1977,
+    "RP_UID_CONFIRMED": 559,
+    "UNMATCHED": 137
+  },
+  "by_time_safety_status": {
+    "NOT_APPLICABLE_EVENT_ONLY": 331,
+    "PARTIAL_TIME_SAFE": 471,
+    "TEMPORAL_CONTAMINATION_RISK": 2165,
+    "TIME_SAFE": 3052
+  },
+  "usable_for_vp_analysis": 2298,
+  "usable_for_course_analysis": 2866,
+  "usable_for_price_analysis": 5537,
+  "usable_for_passport_analysis": 940,
+  "usable_for_doctrine": 940,
+  "blocked_from_doctrine": 2967,
+  "excluded_skeleton_null_date": 331,
+  "current_era_findings_valid": true,
+  "pre_surgery_may_study_viable": true,
+  "mar_apr_archive_quarantine_status": "QUARANTINE_INSPECT_ONLY",
+  "skeleton_rows_usable": false,
+  "top_data_quality_debts": [
+    [
+      "SP_MISSING",
+      3074
+    ],
+    [
+      "VP_MISSING",
+      2343
+    ],
+    [
+      "HORSE_ID_MISSING",
+      1748
+    ],
+    [
+      "horse_id_null — RP uid not in sigma row",
+      1263
+    ],
+    [
+      "pick_sp_null — not stored in sigma union",
+      1156
+    ]
+  ],
+  "total_gap_instances": 11808,
+  "temporal_contamination_risk_rows": 2165,
+  "time_safe_rows": 3052,
+  "pattern_candidates_created": 7,
+  "human_review_queue_count": 200,
+  "vfu_12_recommended": true,
+  "vfu_12_focus": "Expand time-safe Passport snapshot coverage to Mar–Apr era horses. Specifically: (1) build per-race-date Passport snapshots from core_v0 for the 721 archive-quarantine horses; (2) investigate SP shortening signal in PRE_SURGERY_MAY_QUARANTINE rows; (3) resolve SKELETON_OR_NULL_DATE rows by Supabase date backfill query.",
+  "final_classifications": [
+    "VFU_11_2K_SIGMA_INVESTIGATION_UNIT_COMPLETE",
+    "SIGMA_MASTER_LEDGER_CREATED",
+    "ERA_BUCKETS_ENFORCED",
+    "MAR_APR_QUARANTINE_ONLY",
+    "CURRENT_ERA_NOT_BLENDED_WITH_PRE_SURGERY",
+    "TIME_SAFETY_STATUS_ASSIGNED",
+    "TEMPORAL_CONTAMINATION_BLOCKS_DOCTRINE",
+    "PATTERN_CANDIDATES_DRY_RUN_ONLY",
+    "HUMAN_REVIEW_QUEUE_CREATED",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "NO_VP_THRESHOLD_CHANGE",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}

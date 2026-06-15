@@ -1,0 +1,39 @@
+{
+  "total_gap_instances": 11808,
+  "gap_type_breakdown": {
+    "SP_MISSING": 3074,
+    "VP_MISSING": 2343,
+    "HORSE_ID_MISSING": 1748,
+    "horse_id_null — RP uid not in sigma row": 1263,
+    "pick_sp_null — not stored in sigma union": 1156,
+    "OFF_TIME_MISSING": 761,
+    "COURSE_MISSING": 462,
+    "actual_winner_sp_null": 356,
+    "actual_winner_name_null": 294,
+    "off_time_null": 294,
+    "OUTCOME_MISSING": 57
+  },
+  "by_source_layer": {
+    "VFU_IDENTITY_ENRICHED_AUTOPSY": {
+      "rows": 1263,
+      "gaps": 3363
+    },
+    "SIGMA_2K_TRAINING": {
+      "rows": 1310,
+      "gaps": 31
+    },
+    "SUPABASE_SIGMA_AUDITS_DUMP": {
+      "rows": 2686,
+      "gaps": 7314
+    },
+    "SIGMA_RESULTS_EOD": {
+      "rows": 740,
+      "gaps": 1020
+    },
+    "ARCHIVE_MAR_2026": {
+      "rows": 20,
+      "gaps": 80
+    }
+  },
+  "top_debt_type": "SP_MISSING"
+}
