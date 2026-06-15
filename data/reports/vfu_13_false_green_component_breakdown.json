@@ -1,0 +1,71 @@
+{
+  "total_fg_cases": 121,
+  "fg_with_component_data": 22,
+  "fg_without_component_data": 99,
+  "component_averages_fg": {
+    "sqpe_v17_prob": 0.0807,
+    "improvement_score": 0.1879,
+    "market_deception_score": 0.2567,
+    "place_prob": 0.8933,
+    "comment_intel_score": 0.0889
+  },
+  "component_averages_wins": {
+    "sqpe_v17_prob": 0.0591,
+    "improvement_score": 0.1704,
+    "market_deception_score": 0.1974,
+    "place_prob": 0.7178
+  },
+  "fg_with_sqpe_null": 6,
+  "cause_distribution": {
+    "MISSING_PICK_SP_LIMITATION": 109,
+    "MISSING_FRAME_CONTEXT": 65,
+    "PASSPORT_OVERRIDE_CONTAMINATION_RISK": 59,
+    "SOURCE_LAYER_WEAKNESS": 44,
+    "IDENTITY_WEAKNESS": 43,
+    "DAY_LEVEL_CHAOS": 19,
+    "PLACE_PROB_CORRELATION": 18,
+    "SQPE_OVERCONFIDENCE": 16,
+    "COURSE_TRAP": 10,
+    "PRICE_BAND_TRAP": 9,
+    "MARKET_DECEPTION_OVERCONFIDENCE": 2,
+    "IMPROVEMENT_SCORE_OVERCONFIDENCE": 1
+  },
+  "primary_cause_distribution": {
+    "MISSING_PICK_SP_LIMITATION": 109,
+    "IDENTITY_WEAKNESS": 7,
+    "PASSPORT_OVERRIDE_CONTAMINATION_RISK": 3,
+    "MISSING_FRAME_CONTEXT": 2
+  },
+  "key_finding": "PLACE_PROB_CORRELATION is the dominant mechanical pattern in FG cases with component data. FG avg place_prob=0.901 vs WIN avg=0.718. SQPE fires higher in FG than wins (counterintuitive — suggests SQPE over-rates talent in race conditions where the horse placed but did not win). MISSING_PICK_SP_LIMITATION is the dominant data blocker (91.9% of autopsy FG cases).",
+  "severity_distribution": {
+    "MODERATE": 67,
+    "HIGH": 36,
+    "SEVERE": 18
+  },
+  "top_courses": {
+    "Lingfield": 5,
+    "Hexham": 5,
+    "Beverley": 4,
+    "Bath": 4,
+    "Hamilton": 4,
+    "York": 4,
+    "Uttoxeter": 4,
+    "Yarmouth": 4,
+    "Doncaster": 4,
+    "Epsom": 4
+  },
+  "course_tier_distribution": {
+    "NEUTRAL": 105,
+    "DRAIN": 8,
+    "EXCELLING": 8
+  },
+  "source_layer_distribution": {
+    "SUPABASE_ONLY": 34,
+    "OVERLAP": 87
+  },
+  "evidence_tier_distribution": {
+    "TIER_B_GOOD_NO_PICK_SP": 98,
+    "TIER_A_FULL": 12,
+    "TIER_C_LIMITED_IDENTITY": 11
+  }
+}

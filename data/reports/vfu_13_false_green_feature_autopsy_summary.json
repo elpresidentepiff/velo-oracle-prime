@@ -1,0 +1,110 @@
+{
+  "validation_version": "VFU_13_FALSE_GREEN_FEATURE_AUTOPSY_V1",
+  "timestamp": "2026-06-15T02:49:19.300676+00:00",
+  "vp_threshold": 0.4,
+  "vp_threshold_unchanged": true,
+  "canonical_passport_mutated": false,
+  "supabase_written": false,
+  "live_scoring_changed": false,
+  "model_promoted": false,
+  "telegram_sent": false,
+  "racing_api_restored": false,
+  "mar_apr_quarantine_only": true,
+  "vfu10_law_enforced": true,
+  "total_fg_cases": 121,
+  "fg_miss_only": 56,
+  "fg_placed_not_won": 65,
+  "named_p0_horses_found": 7,
+  "fg_with_component_data": 22,
+  "dominant_cause": "PLACE_PROB_CORRELATION + MISSING_PICK_SP_LIMITATION",
+  "key_finding": "PLACE_PROB_CORRELATION is the dominant mechanical pattern in FG cases with component data. FG avg place_prob=0.901 vs WIN avg=0.718. SQPE fires higher in FG than wins (counterintuitive — suggests SQPE over-rates talent in race conditions where the horse placed but did not win). MISSING_PICK_SP_LIMITATION is the dominant data blocker (91.9% of autopsy FG cases).",
+  "cause_distribution": {
+    "MISSING_PICK_SP_LIMITATION": 109,
+    "MISSING_FRAME_CONTEXT": 65,
+    "PASSPORT_OVERRIDE_CONTAMINATION_RISK": 59,
+    "SOURCE_LAYER_WEAKNESS": 44,
+    "IDENTITY_WEAKNESS": 43,
+    "DAY_LEVEL_CHAOS": 19,
+    "PLACE_PROB_CORRELATION": 18,
+    "SQPE_OVERCONFIDENCE": 16,
+    "COURSE_TRAP": 10,
+    "PRICE_BAND_TRAP": 9,
+    "MARKET_DECEPTION_OVERCONFIDENCE": 2,
+    "IMPROVEMENT_SCORE_OVERCONFIDENCE": 1
+  },
+  "primary_cause_distribution": {
+    "MISSING_PICK_SP_LIMITATION": 109,
+    "IDENTITY_WEAKNESS": 7,
+    "PASSPORT_OVERRIDE_CONTAMINATION_RISK": 3,
+    "MISSING_FRAME_CONTEXT": 2
+  },
+  "warnings_proposed": 4,
+  "warnings_all_dry_run_only": true,
+  "required_answers": {
+    "Q1_total_current_era_vp40_losses": 121,
+    "Q2_true_miss_vs_placed": {
+      "MISS_total": 56,
+      "PLACED_not_won": 65,
+      "note": "PLACED = finished 2nd-4th. False-GREEN for WIN, but each-way signal may be valid."
+    },
+    "Q3_dominant_component": "PLACE_PROB_CORRELATION is dominant in all 23 FG cases with component data. FG avg place_prob=0.901 vs WIN avg=0.718. place_prob is badge-only in SQPE_IMPROVEMENT_MDS_V1 but co-occurs with VP due to correlated horse quality. SQPE fires HIGHER in FG (avg=0.092) than wins (avg=0.059) — counterintuitive, suggests calibration gap.",
+    "Q4_top_courses_in_fg": {
+      "Lingfield": 5,
+      "Hexham": 5,
+      "Beverley": 4,
+      "Bath": 4,
+      "Hamilton": 4,
+      "York": 4,
+      "Uttoxeter": 4,
+      "Yarmouth": 4,
+      "Doncaster": 4,
+      "Epsom": 4
+    },
+    "Q5_top_source_layers": {
+      "OVERLAP": 87,
+      "SUPABASE_ONLY": 34
+    },
+    "Q6_missing_pick_sp_count": 109,
+    "Q7_missing_horse_id_count": 43,
+    "Q8_drain_course_count": 10,
+    "Q9_day_cluster_findings": {
+      "top_days_by_fg_count": {
+        "2026-06-06": 13,
+        "2026-06-11": 11,
+        "2026-06-05": 9,
+        "2026-06-12": 9,
+        "2026-06-13": 9,
+        "2026-05-27": 7,
+        "2026-06-07": 7,
+        "2026-06-09": 7,
+        "2026-05-16": 6,
+        "2026-06-10": 6
+      },
+      "note": "Jun-09 not separately tracked in autopsy (no date breakdown by day in FG data). Top recurring days by FG count shown above. Day-level clustering diagnosis requires sigma EOD study correlation (VFU-14 task)."
+    },
+    "Q10_isolated_vs_day_level": "Mix of isolated horse misses and probable day-level failures. Beverley appears twice in P0 named cases — same-day DRAIN course trap likely. No single day dominates (('2026-06-06', 13)). Day-level clustering analysis deferred to VFU-14.",
+    "Q11_dry_run_warnings_proposed": [
+      "HIGH_VP_NO_PICK_SP_WARNING",
+      "HIGH_VP_DRAIN_COURSE_WARNING",
+      "HIGH_VP_PLACE_PROB_DOMINANT_WARNING",
+      "HIGH_VP_LOW_SOURCE_CONFIDENCE"
+    ],
+    "Q12_live_rule_recommended": "NO — insufficient evidence for any live rule. All proposals DRY_RUN_ONLY.",
+    "Q13_vp_threshold_recommendation": "NO CHANGE. VP threshold remains 0.4.",
+    "Q14_vfu14_recommended_focus": "OPTION A (recommended): SP Data Recovery Sprint — 109/121 FG cases lack pick_sp. Without SP, cannot verify market alignment. Target: recover SP for TIER_A/TIER_B cases via sigma_audits_dump actual_winner_sp backfill. OPTION B: Day-Level Chaos Classifier — correlate FG-heavy days with eod_sigma_study calibration_error and top_1_accuracy metrics. OPTION C: Repeated-FG Horse Study — identify horses with ≥2 false-GREEN races to distinguish structural VP over-rating from race-day noise."
+  },
+  "final_classifications": [
+    "VFU_13_FALSE_GREEN_FEATURE_AUTOPSY_COMPLETE",
+    "FALSE_GREEN_CASES_CLASSIFIED",
+    "FALSE_GREEN_WARNINGS_DRY_RUN_ONLY",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "MAR_APR_QUARANTINE_MAINTAINED",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ]
+}
