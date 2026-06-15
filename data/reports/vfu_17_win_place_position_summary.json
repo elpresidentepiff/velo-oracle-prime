@@ -1,0 +1,108 @@
+{
+  "validation_version": "VFU_17_WIN_PLACE_POSITION_ENGINE_V1",
+  "generated_at": "2026-06-15T21:56:25.238826Z",
+  "vp_threshold": 0.4,
+  "data_source": "vfu_11_sigma_master_ledger.jsonl (CURRENT_ERA_VALIDATED)",
+  "total_current_era_rows": 3052,
+  "outcome_distribution": {
+    "WIN": 787,
+    "PLACE": 603,
+    "MISS": 1569,
+    "FRAME": 93
+  },
+  "place_specialist_candidates": 16,
+  "win_to_place_downgrades": 75,
+  "place_to_win_upgrades": 5,
+  "human_review_total": 31,
+  "13_questions": {
+    "Q1_usable_win_place_outcome_rows": {
+      "answer": 3052,
+      "note": "3052/3052 current-era rows had usable outcome data"
+    },
+    "Q2_unknown_place_outcome_rows": {
+      "answer": 0,
+      "note": "UNKNOWN_RESULT: 0 rows (outcome=None in sigma)"
+    },
+    "Q3_win_count": {
+      "answer": 787
+    },
+    "Q4_place_frame_count": {
+      "answer": 696
+    },
+    "Q5_miss_count": {
+      "answer": 1569
+    },
+    "Q6_place_specialist_candidates": {
+      "answer": 16
+    },
+    "Q7_win_to_place_downgrades": {
+      "answer": 75
+    },
+    "Q8_place_to_win_upgrades": {
+      "answer": 5
+    },
+    "Q9_vp_win_vs_place": {
+      "win_avg_vp": 0.3601,
+      "place_avg_vp": 0.3083,
+      "miss_avg_vp": 0.271,
+      "win_vp_fired_rate": 0.24,
+      "place_vp_fired_rate": 0.145,
+      "miss_vp_fired_rate": 0.1,
+      "interpretation": "WIN avg VP=0.3601, PLACE avg VP=0.3083, MISS avg VP=0.271. VP fires for wins (rate=0.24) AND places (rate=0.145) \u2014 confirms VP is not win-discriminating enough."
+    },
+    "Q10_sp_shortening_win_vs_place": {
+      "sp_shortening_win_count": 221,
+      "sp_shortening_place_count": 162,
+      "sp_shortening_miss_count": 331,
+      "total_sp_shortening_rows": 714,
+      "interpretation": "SP shortening signal present in 714 rows: 221 WIN, 162 PLACE, 331 MISS."
+    },
+    "Q11_passport_place_specialist_signal": {
+      "specialists_with_passport": 11,
+      "specialists_total": 16,
+      "interpretation": "11/16 place specialists confirmed by passport place_rate. Passport is a reliable place specialist discriminator."
+    },
+    "Q12_human_review_horses": {
+      "answer": "16 place specialists + 75 downgrades + 5 upgrades = 96 horses"
+    },
+    "Q13_vfu18_recommended_focus": {
+      "answer": "PLACE_DATA_ENRICHMENT",
+      "rationale": "VFU-18 should focus on Place Data Enrichment: (1) Resolve PLACE_CUTOFF_UNKNOWN by sourcing field_size for current-era races. (2) Build Win/Place cockpit output using confirmed PLACE_SPECIALIST list. (3) Dry-run the PLACE_STRONG_WIN_UNPROVEN guardrail from VFU-16 on confirmed specialists."
+    }
+  },
+  "named_place_specialists_confirmed": [
+    "Navy Light",
+    "Gaelic Approach",
+    "Humble Spark"
+  ],
+  "final_classifications": [
+    "VFU_17_WIN_PLACE_POSITION_ENGINE_COMPLETE",
+    "WIN_PLACE_OUTCOME_CLASSES_CREATED",
+    "PLACE_SPECIALIST_CANDIDATES_CREATED",
+    "WIN_TO_PLACE_DOWNGRADES_CREATED",
+    "PLACE_TO_WIN_UPGRADES_CREATED",
+    "NO_INVENTED_PLACE_OUTCOMES",
+    "PLACE_LOGIC_DRY_RUN_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_VP_THRESHOLD_CHANGE",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION",
+    "NAVY_LIGHT_GAELIC_APPROACH_HUMBLE_SPARK_CONFIRMED_PLACE_SPECIALISTS"
+  ],
+  "hard_rules": {
+    "vp_threshold_unchanged": true,
+    "no_live_scoring_change": true,
+    "no_passport_mutation": true,
+    "no_supabase_writes": true,
+    "no_doctrine_promotion": true,
+    "no_model_promotion": true,
+    "no_telegram_send": true,
+    "no_racing_api_restoration": true,
+    "all_outputs_dry_run_only": true,
+    "blocked_from_live_use": true,
+    "human_approval_required": true
+  }
+}
