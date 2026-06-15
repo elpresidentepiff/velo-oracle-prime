@@ -1,0 +1,98 @@
+{
+  "total_miss_no_sp": 10,
+  "sp_source_zero_blocker": 3,
+  "other_unmatched": 7,
+  "missing_reason_distribution": {
+    "HORSE_NAME_UNKNOWN": 1,
+    "RAC_PREFIX_NOT_IN_ANY_SOURCE": 1,
+    "NON_STANDARD_RACE_ID_FORMAT": 1,
+    "DATE_NOT_IN_RP_RESULTS_FILES": 3,
+    "RP_PREFIX_RACE_NOT_IN_RESULTS_FILES": 1,
+    "RACE_FOUND_BUT_HORSE_NOT_IN_RUNNERS": 3
+  },
+  "zero_blocker_note": "SP_SOURCE_ZERO_BLOCKER cases: race found in rp_results_2026_06_05.json, runners listed, but sp_dec=0 for all runners. This is a source-quality failure on June 5, not a model failure. These cases are NOT guessed, NOT filled, NOT ignored.",
+  "zero_blocker_cases": [
+    {
+      "horse_name": "Stellar Sunrise",
+      "race_date": "2026-06-05",
+      "course": "Epsom",
+      "race_id": "rp_EPS_20260605_5.15",
+      "vp": 0.4135,
+      "vfu15_sp_classification": "SP_SOURCE_ZERO_BLOCKER"
+    },
+    {
+      "horse_name": "Sandy Craic",
+      "race_date": "2026-06-05",
+      "course": "Musselburgh",
+      "race_id": "rp_MUS_20260605_3.00",
+      "vp": 0.4547,
+      "vfu15_sp_classification": "SP_SOURCE_ZERO_BLOCKER"
+    },
+    {
+      "horse_name": "Wings On Wheels",
+      "race_date": "2026-06-09",
+      "course": "Southwell",
+      "race_id": "rp_SOUTHWELL_20260609_2.30",
+      "vp": 0.5139,
+      "vfu15_sp_classification": "SP_SOURCE_ZERO_BLOCKER"
+    }
+  ],
+  "other_unmatched_cases": [
+    {
+      "horse_name": "?",
+      "race_date": "2026-05-10",
+      "course": "Ludlow",
+      "race_id": "rac_11927461",
+      "vp": 0.5978,
+      "pick_sp_missing_reason": "HORSE_NAME_UNKNOWN"
+    },
+    {
+      "horse_name": "Food For Thought",
+      "race_date": "2026-05-12",
+      "course": "Beverley",
+      "race_id": "rac_11930100",
+      "vp": 0.5035,
+      "pick_sp_missing_reason": "RAC_PREFIX_NOT_IN_ANY_SOURCE"
+    },
+    {
+      "horse_name": "Letmeseethecolts",
+      "race_date": "2026-05-18",
+      "course": "redcar",
+      "race_id": "2026-05-18_Redcar_310",
+      "vp": 0.4299,
+      "pick_sp_missing_reason": "NON_STANDARD_RACE_ID_FORMAT"
+    },
+    {
+      "horse_name": "Kenobi",
+      "race_date": "2026-05-20",
+      "course": "Ffos Las",
+      "race_id": "rp_FFO_20260520_3.20",
+      "vp": 0.5479,
+      "pick_sp_missing_reason": "DATE_NOT_IN_RP_RESULTS_FILES"
+    },
+    {
+      "horse_name": "Tennessee Gold",
+      "race_date": "2026-05-20",
+      "course": "Yarmouth",
+      "race_id": "rp_YAR_20260520_8.10",
+      "vp": 0.4871,
+      "pick_sp_missing_reason": "DATE_NOT_IN_RP_RESULTS_FILES"
+    },
+    {
+      "horse_name": "Affinity Rock",
+      "race_date": "2026-05-21",
+      "course": "Limerick",
+      "race_id": "rp_LIM_20260521_5.18",
+      "vp": 0.4701,
+      "pick_sp_missing_reason": "DATE_NOT_IN_RP_RESULTS_FILES"
+    },
+    {
+      "horse_name": "High Storm",
+      "race_date": "2026-05-29",
+      "course": "Wolverhampton (AW)",
+      "race_id": "rp_WOL_20260529_21.00",
+      "vp": 0.4815,
+      "pick_sp_missing_reason": "RP_PREFIX_RACE_NOT_IN_RESULTS_FILES"
+    }
+  ]
+}

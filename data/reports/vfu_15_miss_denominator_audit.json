@@ -1,0 +1,11 @@
+{
+  "operator_question": "Why does SP recovery denominator = 109 while total false-GREEN = 121?",
+  "answer": "12 of the 121 FG cases already had pick_sp in VFU-13 original data (sp_source=vfu_13_original). These 12 were excluded from SP recovery because they did not require it. VFU-14's recovery target was the remaining 109. Recovered 89, still missing 20.",
+  "total_fg_cases": 121,
+  "already_had_sp_vfu13": 12,
+  "sp_recovery_denominator": 109,
+  "recovered_by_vfu14": 89,
+  "still_missing_after_vfu14": 20,
+  "total_with_sp_now": 101,
+  "total_without_sp": 20
+}

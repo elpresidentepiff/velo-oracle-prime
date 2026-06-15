@@ -1,0 +1,80 @@
+{
+  "p0_named_horses_in_miss_set": 7,
+  "food_for_thought_status": {
+    "found": true,
+    "horse_name": "Food For Thought",
+    "race_id": "rac_11930100",
+    "race_date": "2026-05-12",
+    "course": "Beverley",
+    "vp": 0.5035,
+    "pick_sp": null,
+    "pick_sp_missing_reason": "RAC_PREFIX_NOT_IN_ANY_SOURCE",
+    "evidence_gap_classification": "P0_HUMAN_REVIEW_DATA_LINEAGE",
+    "note": "Food For Thought (rac_11930100, Beverley, 2026-05-12) has no matching entry in innovation CSV, sigma_2k, or rp_results files. This is a named data lineage gap requiring human review. Pick_sp_missing_reason=RAC_PREFIX_NOT_IN_ANY_SOURCE."
+  },
+  "all_p0_in_miss": [
+    {
+      "horse_name": "Saucy Jane",
+      "race_date": "2026-05-12",
+      "course": "Beverley",
+      "vp": 0.4318,
+      "pick_sp": 4.0,
+      "sp_classification": "DRAIN_MISS",
+      "component_driver": "PLACE_PROB_DOMINANT"
+    },
+    {
+      "horse_name": "Food For Thought",
+      "race_date": "2026-05-12",
+      "course": "Beverley",
+      "vp": 0.5035,
+      "pick_sp": null,
+      "sp_classification": "DRAIN_MISS",
+      "component_driver": "COMPONENT_DATA_MISSING"
+    },
+    {
+      "horse_name": "Martymill",
+      "race_date": "2026-05-14",
+      "course": "Clonmel (IRE)",
+      "vp": 0.4187,
+      "pick_sp": 3.75,
+      "sp_classification": "SHORT_PRICE_MISS",
+      "component_driver": "MIXED_SIGNAL"
+    },
+    {
+      "horse_name": "African Spirit",
+      "race_date": "2026-05-16",
+      "course": "Newmarket",
+      "vp": 0.4444,
+      "pick_sp": 13.0,
+      "sp_classification": "LONGSHOT_MISS",
+      "component_driver": "PLACE_PROB_DOMINANT"
+    },
+    {
+      "horse_name": "Letmeseethecolts",
+      "race_date": "2026-05-18",
+      "course": "redcar",
+      "vp": 0.4299,
+      "pick_sp": null,
+      "sp_classification": "SOURCE_GAP_NO_SP",
+      "component_driver": "COMPONENT_DATA_MISSING"
+    },
+    {
+      "horse_name": "Bay Breeze",
+      "race_date": "2026-06-09",
+      "course": "Carlisle",
+      "vp": 0.8759,
+      "pick_sp": 5.0,
+      "sp_classification": "MID_PRICE_MISS",
+      "component_driver": "COMPONENT_DATA_MISSING"
+    },
+    {
+      "horse_name": "Electric Eddy",
+      "race_date": "2026-06-09",
+      "course": "Southwell",
+      "vp": 0.655,
+      "pick_sp": 26.0,
+      "sp_classification": "LONGSHOT_MISS",
+      "component_driver": "COMPONENT_DATA_MISSING"
+    }
+  ]
+}

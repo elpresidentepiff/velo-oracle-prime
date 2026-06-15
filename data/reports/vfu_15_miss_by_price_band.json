@@ -1,0 +1,65 @@
+{
+  "total_miss_cases": 56,
+  "band_distribution": {
+    "ODDS_ON": {
+      "count": 3,
+      "market_agreed": 3,
+      "market_sceptical": 0,
+      "drain_count": 1,
+      "has_sp": 3,
+      "component_data": 0
+    },
+    "SHORT": {
+      "count": 16,
+      "market_agreed": 16,
+      "market_sceptical": 0,
+      "drain_count": 0,
+      "has_sp": 16,
+      "component_data": 3
+    },
+    "MID_PRICE": {
+      "count": 13,
+      "market_agreed": 4,
+      "market_sceptical": 0,
+      "drain_count": 1,
+      "has_sp": 13,
+      "component_data": 2
+    },
+    "DANGER": {
+      "count": 9,
+      "market_agreed": 0,
+      "market_sceptical": 6,
+      "drain_count": 0,
+      "has_sp": 9,
+      "component_data": 0
+    },
+    "LONGSHOT": {
+      "count": 5,
+      "market_agreed": 0,
+      "market_sceptical": 5,
+      "drain_count": 0,
+      "has_sp": 5,
+      "component_data": 2
+    },
+    "UNKNOWN": {
+      "count": 10,
+      "market_agreed": 0,
+      "market_sceptical": 0,
+      "drain_count": 2,
+      "has_sp": 0,
+      "component_data": 0
+    }
+  },
+  "sp_classification_counts": {
+    "SOURCE_GAP_NO_SP": 5,
+    "DRAIN_MISS": 4,
+    "SHORT_PRICE_MISS": 16,
+    "LONGSHOT_MISS": 5,
+    "MID_PRICE_MISS": 12,
+    "ODDS_ON_MISS": 2,
+    "SP_SOURCE_ZERO_BLOCKER": 3,
+    "DANGER_ZONE_MISS": 9
+  },
+  "dominant_failure_mode": "SHORT_PRICE_MISS",
+  "short_price_miss_note": "SHORT_PRICE_MISS (SP 2.0-3.99) is the largest single failure group. These are cases where the market also agreed VP was right but the horse still lost. This indicates genuine VP+market overconfidence, not market disagreement."
+}
