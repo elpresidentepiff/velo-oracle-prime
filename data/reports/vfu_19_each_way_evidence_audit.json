@@ -1,0 +1,23 @@
+{
+  "audit_version": "VFU_19_EACH_WAY_EVIDENCE_AUDIT_V1",
+  "total_rows": 3052,
+  "rows_missing_field_size_total": 1989,
+  "field_size_coverage_pct": 34.8,
+  "ew_audit_label_distribution": {
+    "EW_RESULT_CONFIRMED": 69,
+    "EW_RESULT_POSSIBLE": 25,
+    "EW_BLOCKED_FIELD_SIZE": 809,
+    "EW_BLOCKED_PLACE_TERMS": 110,
+    "EW_BLOCKED_PICK_SP": 121,
+    "EW_BLOCKED_FINISH_POSITION": 144,
+    "EW_BLOCKED_INSUFFICIENT_DATA": 1774
+  },
+  "ew_result_confirmed": 69,
+  "ew_result_possible": 25,
+  "ew_blocked_field_size": 809,
+  "ew_blocked_insufficient_data": 1774,
+  "ew_profitability_verdict": "PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF",
+  "evidence_note": "VFU-18's EW-profitable rows are NOT proof of system-wide EW profitability. field_size is unknown for 1989/3052 rows (65.2%) system-wide. Of rows with an actionable win/place signal, 809 are specifically blocked on missing field_size (EW_BLOCKED_FIELD_SIZE); the remaining field_size-missing rows fall under INSUFFICIENT_PLACE_DATA/PLACE_SPECIALIST/EVENT_ONLY_UNUSABLE and get EW_BLOCKED_INSUFFICIENT_DATA instead.",
+  "blocked_from_live_use": true,
+  "dry_run_only": true
+}

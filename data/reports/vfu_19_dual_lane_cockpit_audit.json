@@ -1,0 +1,89 @@
+{
+  "cockpit_audit_version": "VFU_19_DUAL_LANE_COCKPIT_AUDIT_V1",
+  "label_reconciliation": {
+    "reconciliation_version": "VFU_19_LABEL_RECONCILIATION_V1",
+    "total_rows": 3052,
+    "label_counts_vfu19": {
+      "WIN_LANE_CONFIRMED": 186,
+      "PLACE_LANE_CONFIRMED": 170,
+      "EACH_WAY_REVIEW": 30,
+      "WIN_SIGNAL_PLACE_OUTCOME": 44,
+      "PLACE_SIGNAL_WIN_OUTCOME": 251,
+      "FALSE_WIN_SIGNAL": 161,
+      "FALSE_PLACE_SIGNAL": 436,
+      "PLACE_SPECIALIST": 52,
+      "INSUFFICIENT_PLACE_DATA": 1694,
+      "EVENT_ONLY_UNUSABLE": 28
+    },
+    "label_counts_vfu18": {
+      "WIN_LANE_CONFIRMED": 186,
+      "PLACE_LANE_CONFIRMED": 170,
+      "EACH_WAY_REVIEW": 30,
+      "WIN_SIGNAL_PLACE_OUTCOME": 44,
+      "PLACE_SIGNAL_WIN_OUTCOME": 251,
+      "FALSE_WIN_SIGNAL": 161,
+      "FALSE_PLACE_SIGNAL": 436,
+      "PLACE_SPECIALIST": 52,
+      "INSUFFICIENT_PLACE_DATA": 1694,
+      "EVENT_ONLY_UNUSABLE": 28
+    },
+    "label_reconciliation_matches_vfu18": true,
+    "blocked_from_live_use": true,
+    "dry_run_only": true
+  },
+  "vp_fire_reconciliation": {
+    "reconciliation_version": "VFU_19_VP_FIRE_RECONCILIATION_V1",
+    "vp_threshold": 0.4,
+    "total_vp_fires": 447,
+    "raw_outcome_win_among_vp_fires": 189,
+    "label_win_lane_confirmed": 186,
+    "label_place_specialist_among_vp_win": 0,
+    "specialist_override_count": 3,
+    "win_hit_rate_pct": 41.6,
+    "discrepancy_note": "189 VP-fire rows have outcome_class=WIN, but only 186 carry dual_lane_label=WIN_LANE_CONFIRMED. The 3-row gap is explained by PLACE_SPECIALIST label priority (VFU-18 classify_dual_lane_label checks specialist_set before the VP-fire branch) \u2014 it is a documented label-precedence effect, not a counting error.",
+    "blocked_from_live_use": true,
+    "dry_run_only": true
+  },
+  "each_way_evidence_audit": {
+    "audit_version": "VFU_19_EACH_WAY_EVIDENCE_AUDIT_V1",
+    "total_rows": 3052,
+    "rows_missing_field_size_total": 1989,
+    "field_size_coverage_pct": 34.8,
+    "ew_audit_label_distribution": {
+      "EW_RESULT_CONFIRMED": 69,
+      "EW_RESULT_POSSIBLE": 25,
+      "EW_BLOCKED_FIELD_SIZE": 809,
+      "EW_BLOCKED_PLACE_TERMS": 110,
+      "EW_BLOCKED_PICK_SP": 121,
+      "EW_BLOCKED_FINISH_POSITION": 144,
+      "EW_BLOCKED_INSUFFICIENT_DATA": 1774
+    },
+    "ew_result_confirmed": 69,
+    "ew_result_possible": 25,
+    "ew_blocked_field_size": 809,
+    "ew_blocked_insufficient_data": 1774,
+    "ew_profitability_verdict": "PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF",
+    "evidence_note": "VFU-18's EW-profitable rows are NOT proof of system-wide EW profitability. field_size is unknown for 1989/3052 rows (65.2%) system-wide. Of rows with an actionable win/place signal, 809 are specifically blocked on missing field_size (EW_BLOCKED_FIELD_SIZE); the remaining field_size-missing rows fall under INSUFFICIENT_PLACE_DATA/PLACE_SPECIALIST/EVENT_ONLY_UNUSABLE and get EW_BLOCKED_INSUFFICIENT_DATA instead.",
+    "blocked_from_live_use": true,
+    "dry_run_only": true
+  },
+  "final_classifications": [
+    "VFU_19_DUAL_LANE_ACCOUNTING_COMPLETE",
+    "LABEL_RECONCILIATION_VERIFIED",
+    "VP_FIRE_RECONCILIATION_COMPLETE",
+    "EW_EVIDENCE_AUDIT_COMPLETE",
+    "OPERATOR_BRIEF_ISSUED",
+    "NO_STAKING_INSTRUCTIONS_CREATED",
+    "NO_LIVE_DOCTRINE_PROMOTION",
+    "NO_VP_THRESHOLD_CHANGE",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_SEND",
+    "NO_RACING_API_RESTORATION"
+  ],
+  "blocked_from_live_use": true,
+  "dry_run_only": true,
+  "human_approval_required": true
+}

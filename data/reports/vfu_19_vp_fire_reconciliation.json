@@ -1,0 +1,13 @@
+{
+  "reconciliation_version": "VFU_19_VP_FIRE_RECONCILIATION_V1",
+  "vp_threshold": 0.4,
+  "total_vp_fires": 447,
+  "raw_outcome_win_among_vp_fires": 189,
+  "label_win_lane_confirmed": 186,
+  "label_place_specialist_among_vp_win": 0,
+  "specialist_override_count": 3,
+  "win_hit_rate_pct": 41.6,
+  "discrepancy_note": "189 VP-fire rows have outcome_class=WIN, but only 186 carry dual_lane_label=WIN_LANE_CONFIRMED. The 3-row gap is explained by PLACE_SPECIALIST label priority (VFU-18 classify_dual_lane_label checks specialist_set before the VP-fire branch) \u2014 it is a documented label-precedence effect, not a counting error.",
+  "blocked_from_live_use": true,
+  "dry_run_only": true
+}
