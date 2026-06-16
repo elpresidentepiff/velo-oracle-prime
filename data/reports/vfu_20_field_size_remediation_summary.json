@@ -1,0 +1,416 @@
+{
+  "summary_version": "VFU_20_FIELD_SIZE_REMEDIATION_V1",
+  "recovery_audit": {
+    "audit_version": "VFU_20_FIELD_SIZE_RECOVERY_AUDIT_V1",
+    "starting_rows": 3052,
+    "missing_field_size_before": 1989,
+    "missing_field_size_after": 152,
+    "already_present_before_remediation": 1063,
+    "recovered_deterministic_count": 1336,
+    "recovered_inferred_count": 501,
+    "recovered_total_count": 1837,
+    "unrecoverable_count": 152,
+    "recovery_rate_pct": 92.36,
+    "tier1_ambiguous_key_count": 109,
+    "tier2_ambiguous_key_count": 97,
+    "missing_rows_breakdown_before_repair": {
+      "by_dual_lane_label": {
+        "INSUFFICIENT_PLACE_DATA": 1128,
+        "FALSE_PLACE_SIGNAL": 317,
+        "PLACE_LANE_CONFIRMED": 114,
+        "WIN_LANE_CONFIRMED": 85,
+        "WIN_SIGNAL_PLACE_OUTCOME": 38,
+        "PLACE_SIGNAL_WIN_OUTCOME": 161,
+        "EVENT_ONLY_UNUSABLE": 21,
+        "FALSE_WIN_SIGNAL": 94,
+        "PLACE_SPECIALIST": 31
+      },
+      "by_course_top_20": {
+        "": 112,
+        "Bath": 82,
+        "Lingfield": 52,
+        "York": 52,
+        "Doncaster": 50,
+        "Haydock": 47,
+        "Newbury": 46,
+        "Musselburgh": 46,
+        "Chepstow": 43,
+        "Perth": 42,
+        "Ripon": 41,
+        "Goodwood": 40,
+        "Newmarket": 37,
+        "Hamilton": 36,
+        "Thirsk": 36,
+        "Epsom": 36,
+        "Salisbury": 35,
+        "Ascot": 32,
+        "Chester": 32,
+        "Warwick": 32
+      },
+      "by_race_date_top_20": {
+        "2026-05-09": 172,
+        "2026-05-16": 158,
+        "2026-05-08": 136,
+        "2026-05-15": 136,
+        "2026-06-06": 133,
+        "2026-06-05": 127,
+        "2026-05-12": 112,
+        "2026-05-13": 107,
+        "2026-06-09": 91,
+        "2026-05-14": 88,
+        "2026-05-21": 88,
+        "2026-06-07": 80,
+        "2026-05-22": 72,
+        "2026-05-17": 71,
+        "2026-05-20": 64,
+        "2026-05-10": 62,
+        "2026-05-29": 59,
+        "2026-05-18": 56,
+        "2026-05-30": 51,
+        "2026-05-19": 48
+      },
+      "by_race_id_schema": {
+        "RACING_API_STRING_ID": 813,
+        "OTHER_NUMERIC_OR_UNKNOWN_ID": 405,
+        "RP_STRING_ID": 771
+      }
+    },
+    "expected_starting_rows_reconciled": true,
+    "expected_missing_before_reconciled": true,
+    "expected_already_present_reconciled": true,
+    "blocked_from_live_use": true,
+    "dry_run_only": true,
+    "human_approval_required": true
+  },
+  "label_reconciliation": {
+    "reconciliation_version": "VFU_20_LABEL_RECONCILIATION_AFTER_REPAIR_V1",
+    "label_counts_before_repair": {
+      "WIN_SIGNAL_PLACE_OUTCOME": 44,
+      "PLACE_SIGNAL_WIN_OUTCOME": 251,
+      "FALSE_PLACE_SIGNAL": 436,
+      "INSUFFICIENT_PLACE_DATA": 1694,
+      "EACH_WAY_REVIEW": 30,
+      "WIN_LANE_CONFIRMED": 186,
+      "FALSE_WIN_SIGNAL": 161,
+      "EVENT_ONLY_UNUSABLE": 28,
+      "PLACE_SPECIALIST": 52,
+      "PLACE_LANE_CONFIRMED": 170
+    },
+    "label_counts_after_repair": {
+      "WIN_SIGNAL_PLACE_OUTCOME": 14,
+      "PLACE_SIGNAL_WIN_OUTCOME": 251,
+      "FALSE_PLACE_SIGNAL": 436,
+      "INSUFFICIENT_PLACE_DATA": 1694,
+      "EACH_WAY_REVIEW": 60,
+      "WIN_LANE_CONFIRMED": 186,
+      "FALSE_WIN_SIGNAL": 161,
+      "EVENT_ONLY_UNUSABLE": 28,
+      "PLACE_SPECIALIST": 52,
+      "PLACE_LANE_CONFIRMED": 170
+    },
+    "label_count_delta": {
+      "WIN_SIGNAL_PLACE_OUTCOME": -30,
+      "PLACE_SIGNAL_WIN_OUTCOME": 0,
+      "FALSE_PLACE_SIGNAL": 0,
+      "INSUFFICIENT_PLACE_DATA": 0,
+      "EACH_WAY_REVIEW": 30,
+      "WIN_LANE_CONFIRMED": 0,
+      "FALSE_WIN_SIGNAL": 0,
+      "EVENT_ONLY_UNUSABLE": 0,
+      "PLACE_SPECIALIST": 0,
+      "PLACE_LANE_CONFIRMED": 0
+    },
+    "rows_with_label_changed_by_repair": 30,
+    "changed_rows_detail": [
+      {
+        "ledger_id": "VFU19-00031",
+        "horse_name": "Joulany",
+        "race_date": "2026-05-08",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-00085",
+        "horse_name": "Legend D'Airy",
+        "race_date": "2026-05-09",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 6
+      },
+      {
+        "ledger_id": "VFU19-00253",
+        "horse_name": "Portcullis",
+        "race_date": "2026-05-15",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-00271",
+        "horse_name": "Fallacy",
+        "race_date": "2026-05-16",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 7
+      },
+      {
+        "ledger_id": "VFU19-00272",
+        "horse_name": "West Wind Blows",
+        "race_date": "2026-05-16",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 5
+      },
+      {
+        "ledger_id": "VFU19-00278",
+        "horse_name": "Sharp Romance",
+        "race_date": "2026-05-16",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-00284",
+        "horse_name": "That'S Nice",
+        "race_date": "2026-05-16",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 5
+      },
+      {
+        "ledger_id": "VFU19-00321",
+        "horse_name": "Arrycan",
+        "race_date": "2026-05-17",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-00578",
+        "horse_name": "Terry O",
+        "race_date": "2026-05-29",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 5
+      },
+      {
+        "ledger_id": "VFU19-00653",
+        "horse_name": "My Mate Roger",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 9
+      },
+      {
+        "ledger_id": "VFU19-00654",
+        "horse_name": "Ruler Of Time",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 6
+      },
+      {
+        "ledger_id": "VFU19-00662",
+        "horse_name": "Legacy Link",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 9
+      },
+      {
+        "ledger_id": "VFU19-00669",
+        "horse_name": "Gazelle d'Or",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 7
+      },
+      {
+        "ledger_id": "VFU19-00673",
+        "horse_name": "Asteverdi",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 9
+      },
+      {
+        "ledger_id": "VFU19-00678",
+        "horse_name": "Amidst The Chaos",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-00680",
+        "horse_name": "Lope Y Linda",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 6
+      },
+      {
+        "ledger_id": "VFU19-00686",
+        "horse_name": "Tomarlo",
+        "race_date": "2026-06-06",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 9
+      },
+      {
+        "ledger_id": "VFU19-00703",
+        "horse_name": "Malangen",
+        "race_date": "2026-06-06",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 10
+      },
+      {
+        "ledger_id": "VFU19-00704",
+        "horse_name": "Sudbury Hill",
+        "race_date": "2026-06-06",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 6
+      },
+      {
+        "ledger_id": "VFU19-00713",
+        "horse_name": "No Gain",
+        "race_date": "2026-06-06",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-00741",
+        "horse_name": "Trigg",
+        "race_date": "2026-06-07",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 7
+      },
+      {
+        "ledger_id": "VFU19-00782",
+        "horse_name": "Mister Sandman",
+        "race_date": "2026-06-09",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-00788",
+        "horse_name": "Rock Steady Beat",
+        "race_date": "2026-06-09",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-02471",
+        "horse_name": "Terry O",
+        "race_date": "2026-05-29",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 5
+      },
+      {
+        "ledger_id": "VFU19-02662",
+        "horse_name": "My Mate Roger",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 9
+      },
+      {
+        "ledger_id": "VFU19-02663",
+        "horse_name": "Ruler Of Time",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 6
+      },
+      {
+        "ledger_id": "VFU19-02671",
+        "horse_name": "Legacy Link",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 9
+      },
+      {
+        "ledger_id": "VFU19-02679",
+        "horse_name": "Asteverdi",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 9
+      },
+      {
+        "ledger_id": "VFU19-02684",
+        "horse_name": "Amidst The Chaos",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 8
+      },
+      {
+        "ledger_id": "VFU19-02686",
+        "horse_name": "Lope Y Linda",
+        "race_date": "2026-06-05",
+        "from_label": "WIN_SIGNAL_PLACE_OUTCOME",
+        "to_label": "EACH_WAY_REVIEW",
+        "repaired_field_size": 6
+      }
+    ],
+    "all_rows_still_valid_label": true,
+    "blocked_from_live_use": true,
+    "dry_run_only": true
+  },
+  "ew_evidence_audit": {
+    "audit_version": "VFU_20_EACH_WAY_EVIDENCE_AUDIT_AFTER_REPAIR_V1",
+    "total_rows": 3052,
+    "ew_audit_label_distribution_before_repair": {
+      "EW_RESULT_CONFIRMED": 69,
+      "EW_RESULT_POSSIBLE": 25,
+      "EW_BLOCKED_FIELD_SIZE": 809,
+      "EW_BLOCKED_PLACE_TERMS": 110,
+      "EW_BLOCKED_PICK_SP": 121,
+      "EW_BLOCKED_FINISH_POSITION": 144,
+      "EW_BLOCKED_INSUFFICIENT_DATA": 1774
+    },
+    "ew_audit_label_distribution_after_repair": {
+      "EW_RESULT_CONFIRMED": 145,
+      "EW_RESULT_POSSIBLE": 48,
+      "EW_BLOCKED_FIELD_SIZE": 60,
+      "EW_BLOCKED_PLACE_TERMS": 233,
+      "EW_BLOCKED_PICK_SP": 308,
+      "EW_BLOCKED_FINISH_POSITION": 484,
+      "EW_BLOCKED_INSUFFICIENT_DATA": 1774
+    },
+    "ew_label_changes_after_repair": 749,
+    "ew_analysis_possible_rows_after_repair": 193,
+    "ew_analysis_coverage_pct_after_repair": 6.32,
+    "ew_profitability_verdict": "PARTIAL",
+    "evidence_note": "After repair, field_size remains unknown for 152/3052 rows (down from 1989). EW analysis is possible (EW_RESULT_CONFIRMED + EW_RESULT_POSSIBLE) for 193 rows (6.32%). Verdict is PARTIAL because 152 rows remain an unrecoverable source gap \u2014 partial improvement, not full proof.",
+    "blocked_from_live_use": true,
+    "dry_run_only": true
+  },
+  "final_classifications": [
+    "VFU_20_FIELD_SIZE_REMEDIATION_COMPLETE",
+    "FIELD_SIZE_GAP_QUANTIFIED",
+    "FIELD_SIZE_RECOVERY_PROVENANCE_WRITTEN",
+    "EW_ELIGIBILITY_RECONCILED_AFTER_REPAIR",
+    "EW_PROFITABILITY_CLAIM_REEVALUATED",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "REPORT_ONLY"
+  ],
+  "blocked_from_live_use": true,
+  "dry_run_only": true,
+  "human_approval_required": true
+}

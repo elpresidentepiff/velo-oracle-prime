@@ -1,0 +1,29 @@
+{
+  "audit_version": "VFU_20_EACH_WAY_EVIDENCE_AUDIT_AFTER_REPAIR_V1",
+  "total_rows": 3052,
+  "ew_audit_label_distribution_before_repair": {
+    "EW_RESULT_CONFIRMED": 69,
+    "EW_RESULT_POSSIBLE": 25,
+    "EW_BLOCKED_FIELD_SIZE": 809,
+    "EW_BLOCKED_PLACE_TERMS": 110,
+    "EW_BLOCKED_PICK_SP": 121,
+    "EW_BLOCKED_FINISH_POSITION": 144,
+    "EW_BLOCKED_INSUFFICIENT_DATA": 1774
+  },
+  "ew_audit_label_distribution_after_repair": {
+    "EW_RESULT_CONFIRMED": 145,
+    "EW_RESULT_POSSIBLE": 48,
+    "EW_BLOCKED_FIELD_SIZE": 60,
+    "EW_BLOCKED_PLACE_TERMS": 233,
+    "EW_BLOCKED_PICK_SP": 308,
+    "EW_BLOCKED_FINISH_POSITION": 484,
+    "EW_BLOCKED_INSUFFICIENT_DATA": 1774
+  },
+  "ew_label_changes_after_repair": 749,
+  "ew_analysis_possible_rows_after_repair": 193,
+  "ew_analysis_coverage_pct_after_repair": 6.32,
+  "ew_profitability_verdict": "PARTIAL",
+  "evidence_note": "After repair, field_size remains unknown for 152/3052 rows (down from 1989). EW analysis is possible (EW_RESULT_CONFIRMED + EW_RESULT_POSSIBLE) for 193 rows (6.32%). Verdict is PARTIAL because 152 rows remain an unrecoverable source gap \u2014 partial improvement, not full proof.",
+  "blocked_from_live_use": true,
+  "dry_run_only": true
+}
