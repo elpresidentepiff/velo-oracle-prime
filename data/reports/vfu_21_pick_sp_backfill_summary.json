@@ -1,0 +1,35 @@
+{
+  "vfu": "VFU-21",
+  "generated_at": "2026-06-17T21:15:23.828641+00:00",
+  "version": "VFU_21_PICK_SP_BACKFILL_V1",
+  "total_rows": 3052,
+  "already_had_sp": 855,
+  "recovered_results_json": 903,
+  "recovered_sigma_win": 49,
+  "unrecovered": 1245,
+  "total_with_sp": 1807,
+  "sp_coverage_pct": 59.21,
+  "ew_analysis": {
+    "rows_with_sp": 1807,
+    "win_rows": 494,
+    "place_rows": 356,
+    "total_stake_units": 3614.0,
+    "total_return_units": 3203.38,
+    "profit_units": -410.62,
+    "roi_pct": -11.36,
+    "basis": "1-unit EW stakes, SP from results files"
+  },
+  "classification": "VFU_21_PICK_SP_BACKFILL_COMPLETE",
+  "blocked_from_live_use": true,
+  "no_vp_threshold_change": true,
+  "no_model_change": true,
+  "no_live_scoring_change": true,
+  "operator_brief": {
+    "S01": "VFU-21 recovered pick_sp for placed and missed horses from local result archives.",
+    "S02": "SP coverage: 1807/3052 (59.2%). 1245 rows remain unrecovered (June 6-14 gap).",
+    "S03": "EW P&L on 1807 rows with SP: ROI=-11.4% (-410.6 units on 3614 staked).",
+    "S04": "VFU-22 (prospective dual-lane validation) and VFU-23 (specialist watchlist) remain NOT AUTHORIZED.",
+    "S05": "STOP \u2014 operator review required before VFU-22."
+  },
+  "output_ledger": "/mnt/c/Users/puror/velo-oracle-prime/data/reports/vfu_21_pick_sp_backfill_ledger.jsonl"
+}
