@@ -1,15 +1,15 @@
 # Current-Card Passport Feed
-Generated: 2026-06-16T16:11:36.223285Z
+Generated: 2026-06-17T07:24:42.326453Z
 
 ## Summary
 - **Classification**: `CURRENT_CARD_FEED_READY`
-- **Races processed**: 33
-- **Runners processed**: 346
-- **Passport coverage**: 181 / 346 (52.31%)
-- **Champion feature coverage**: 181 / 346 (52.31%)
-- **Intent feature coverage**: 0 / 346 (0.0%)
-- **Missing horses**: 165
-- **Unraced/new horses**: 165
+- **Races processed**: 35
+- **Runners processed**: 336
+- **Passport coverage**: 167 / 336 (49.7%)
+- **Champion feature coverage**: 167 / 336 (49.7%)
+- **Intent feature coverage**: 0 / 336 (0.0%)
+- **Missing horses**: 169
+- **Unraced/new horses**: 169
 - **RPR violations**: 0
 
 ## Feature Matrix Validation
@@ -19,268 +19,282 @@ Generated: 2026-06-16T16:11:36.223285Z
 
 ## Race Analyst Read
 
-### 2026-06-16 Stratford 2026-06-16T14:05:00
-- **Race**: Racing To School Novices' Hurdle (GBB Race)
-- **Coverage**: passport 6/10 | champion 6/10 | intent 0/10
-- **Strongest passport horse**: Usyk (JOCKEY_CONTINUITY, CASH_RUN_CANDIDATE, SETUP_RUN_CANDIDATE, HISTORICAL_MARKET_RESPECT, OR_FALLING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Usyk, Louis Veron, Maskarvel
-- **Warnings**: 4 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Thirsk 2026-06-16T14:15:00
-- **Race**: British EBF Fillies' Novice Stakes (GBB/GBBPlus Race)
-- **Coverage**: passport 1/5 | champion 1/5 | intent 0/5
-- **Strongest passport horse**: Talitha Rouge (UNEXPOSED_PROFILE, STRONG_PLACE_PROFILE)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Talitha Rouge
-- **Warnings**: 4 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Ascot 2026-06-16T14:30:00
-- **Race**: Queen Anne Stakes (Group 1)
-- **Coverage**: passport 9/9 | champion 9/9 | intent 0/9
-- **Strongest passport horse**: Opera Ballo (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_RISING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Opera Ballo, Notable Speech, Zeus Olympios
-- **Warnings**: No current-race intent feature rows available
-
-### 2026-06-16 Stratford 2026-06-16T14:40:00
-- **Race**: Stratford Supporting Racing Staff Week Novices' Limited Handicap Hurdle
-- **Coverage**: passport 0/12 | champion 0/12 | intent 0/12
+### 2026-06-17 Worcester 2026-06-17T13:35:00
+- **Race**: CopyBet Proudly Backs UK Horse Racing Novices' Limited Handicap Chase (GBB Race)
+- **Coverage**: passport 0/3 | champion 0/3 | intent 0/3
 - **Strongest passport horse**: none
 - **Strongest intent candidate**: unavailable
-- **Warnings**: 12 missing/unraced passport rows; No current-race intent feature rows available
+- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Thirsk 2026-06-16T14:50:00
-- **Race**: PD Hook Gallop Handicap
-- **Coverage**: passport 2/7 | champion 2/7 | intent 0/7
-- **Strongest passport horse**: Dragon Spin (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, OR_RISING)
+### 2026-06-17 Worcester 2026-06-17T14:05:00
+- **Race**: CopyBet Pay First Past The Post Handicap Chase (Arc Summer Chase Series Qualifier)
+- **Coverage**: passport 2/9 | champion 2/9 | intent 0/9
+- **Strongest passport horse**: Definite Dream (OR_RISING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Dragon Spin, Golden Havana
-- **Warnings**: 5 missing/unraced passport rows; No current-race intent feature rows available
+- **Top 3 by champion-read availability**: Definite Dream, Daany
+- **Warnings**: 7 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Ascot 2026-06-16T15:05:00
-- **Race**: Coventry Stakes (Group 2)
-- **Coverage**: passport 12/21 | champion 12/21 | intent 0/21
-- **Strongest passport horse**: The Scallionator (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, OR_RISING)
+### 2026-06-17 Hamilton 2026-06-17T14:15:00
+- **Race**: racingtv.com Apprentice Handicap
+- **Coverage**: passport 4/6 | champion 4/6 | intent 0/6
+- **Strongest passport horse**: Falcon Nine (SETUP_RUN_CANDIDATE, OR_FALLING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: The Scallionator, The Ginger Kid, High King
+- **Top 3 by champion-read availability**: Falcon Nine, Port Darwin, Storm On Jura
+- **Warnings**: 2 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ascot 2026-06-17T14:30:00
+- **Race**: Queen Mary Stakes (Group 2) (Fillies)
+- **Coverage**: passport 11/27 | champion 11/27 | intent 0/27
+- **Strongest passport horse**: Victorious (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Victorious, Wild Blossom, Velozee
+- **Warnings**: 16 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Worcester 2026-06-17T14:40:00
+- **Race**: CopyBet Daily World Cup Profit Boost Maiden Hurdle (Arc Summer Novices' Brush Qual') (GBB) (Div I)
+- **Coverage**: passport 2/10 | champion 2/10 | intent 0/10
+- **Strongest passport horse**: Baileys Big Image (UNEXPOSED_PROFILE, SETUP_RUN_CANDIDATE)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Baileys Big Image, Mystic Wind
+- **Warnings**: 8 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Hamilton 2026-06-17T14:50:00
+- **Race**: Scullion Law, Law Firm For Life EBF Restricted Maiden Stakes (Bands B, C & D) (Qual') (GBB Race)
+- **Coverage**: passport 4/6 | champion 4/6 | intent 0/6
+- **Strongest passport horse**: Concert Pitch (STRONG_PLACE_PROFILE, OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Concert Pitch, Le Grand Etoile, Cheeky Chesca
+- **Warnings**: 2 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ascot 2026-06-17T15:05:00
+- **Race**: Queen's Vase (Group 2)
+- **Coverage**: passport 2/11 | champion 2/11 | intent 0/11
+- **Strongest passport horse**: Limestone (STRONG_PLACE_PROFILE, OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Limestone, Port Of Spain
 - **Warnings**: 9 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Stratford 2026-06-16T15:15:00
-- **Race**: Karen Poulter Handicap Chase (GBB Race)
-- **Coverage**: passport 4/7 | champion 4/7 | intent 0/7
-- **Strongest passport horse**: Seeyouinmydreams (CASH_RUN_CANDIDATE, SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_FALLING)
+### 2026-06-17 Worcester 2026-06-17T15:15:00
+- **Race**: CopyBet Daily World Cup Profit Boost Maiden Hurdle (Arc Summer Novices' Brush Qual') (GBB) (Div II)
+- **Coverage**: passport 3/9 | champion 3/9 | intent 0/9
+- **Strongest passport horse**: Maskarvel (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, OR_RISING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Seeyouinmydreams, In The Air, Boom Boom
-- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Thirsk 2026-06-16T15:25:00
-- **Race**: Theakston Brewing Legends Since 1827 Handicap
-- **Coverage**: passport 8/11 | champion 8/11 | intent 0/11
-- **Strongest passport horse**: Space Bear (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_FALLING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Space Bear, Frantic, Emperor Caradoc
-- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Ascot 2026-06-16T15:40:00
-- **Race**: King Charles III Stakes (Group 1)
-- **Coverage**: passport 26/26 | champion 26/26 | intent 0/26
-- **Strongest passport horse**: Mission Central (STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_RISING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Mission Central, Rosy Affair, Shagraan
-- **Warnings**: No current-race intent feature rows available
-
-### 2026-06-16 Stratford 2026-06-16T15:50:00
-- **Race**: Clear Insurance Management Handicap Hurdle
-- **Coverage**: passport 2/3 | champion 2/3 | intent 0/3
-- **Strongest passport horse**: Machete Beach (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_RISING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Machete Beach, Edelak
-- **Warnings**: 1 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Thirsk 2026-06-16T16:02:00
-- **Race**: Every Race Live On Racing TV Handicap
-- **Coverage**: passport 2/10 | champion 2/10 | intent 0/10
-- **Strongest passport horse**: It Just Takes Time (JOCKEY_CONTINUITY, SETUP_RUN_CANDIDATE, OR_FALLING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: It Just Takes Time, Fuji Mountain
-- **Warnings**: 8 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Ascot 2026-06-16T16:20:00
-- **Race**: St James's Palace Stakes (Group 1) (Colts)
-- **Coverage**: passport 6/6 | champion 6/6 | intent 0/6
-- **Strongest passport horse**: Bow Echo (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_RISING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Bow Echo, Talk Of New York, Gstaad
-- **Warnings**: No current-race intent feature rows available
-
-### 2026-06-16 Stratford 2026-06-16T16:30:00
-- **Race**: Happy 80th Birthday David Handicap Chase (GBB Race)
-- **Coverage**: passport 3/5 | champion 3/5 | intent 0/5
-- **Strongest passport horse**: Two To Tango (JOCKEY_CONTINUITY, SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_FALLING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Two To Tango, Tamarind Bay, Mix Of Clover
-- **Warnings**: 2 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Thirsk 2026-06-16T16:42:00
-- **Race**: Download The QuinnBet App Handicap
-- **Coverage**: passport 6/10 | champion 6/10 | intent 0/10
-- **Strongest passport horse**: Spendmore Lane (STRONG_PLACE_PROFILE, OR_RISING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Spendmore Lane, Emerald Harmony, Military Girl
-- **Warnings**: 4 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Ascot 2026-06-16T17:00:00
-- **Race**: Ascot Stakes (Heritage Handicap) (GBBPlus Race)
-- **Coverage**: passport 3/20 | champion 3/20 | intent 0/20
-- **Strongest passport horse**: Tim Toe (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_FALLING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Tim Toe, Ismahane, Beylerbeyi
-- **Warnings**: 17 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Stratford 2026-06-16T17:08:00
-- **Race**: 19th July Is Ladies Day Conditional Jockeys' Handicap Hurdle
-- **Coverage**: passport 2/4 | champion 2/4 | intent 0/4
-- **Strongest passport horse**: Raffles Nobu (SETUP_RUN_CANDIDATE)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Raffles Nobu, Saint Polo
-- **Warnings**: 2 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T17:15:00
-- **Race**: Download The At The Races App Amateur Jockeys' Handicap
-- **Coverage**: passport 7/13 | champion 7/13 | intent 0/13
-- **Strongest passport horse**: Pentonville (STRONG_PLACE_PROFILE, OR_RISING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Pentonville, Ebn Sabt, Harbour Vision
+- **Top 3 by champion-read availability**: Maskarvel, Division Day, Rogue Impact
 - **Warnings**: 6 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Thirsk 2026-06-16T17:20:00
-- **Race**: Next Meeting Wednesday 1st July - Book Now Handicap
-- **Coverage**: passport 7/10 | champion 7/10 | intent 0/10
-- **Strongest passport horse**: Irish Dancer (STRONG_PLACE_PROFILE, OR_RISING)
+### 2026-06-17 Hamilton 2026-06-17T15:25:00
+- **Race**: Follow Us On X @hamiltonparkrc Handicap
+- **Coverage**: passport 7/9 | champion 7/9 | intent 0/9
+- **Strongest passport horse**: Montezuma (JOCKEY_CONTINUITY, SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_FALLING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Irish Dancer, Crocus Time, Dandy Dinmont
-- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
+- **Top 3 by champion-read availability**: Montezuma, Classy Al, Canaria Queen
+- **Warnings**: 2 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Ascot 2026-06-16T17:35:00
-- **Race**: Wolferton Stakes (Listed Race)
-- **Coverage**: passport 6/16 | champion 6/16 | intent 0/16
-- **Strongest passport horse**: Survie (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_FALLING)
+### 2026-06-17 Ascot 2026-06-17T15:40:00
+- **Race**: Duke Of Cambridge Stakes (Group 2) (Fillies & Mares)
+- **Coverage**: passport 7/15 | champion 7/15 | intent 0/15
+- **Strongest passport horse**: Catalina Delcarpio (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_RISING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Survie, Galen, Adelaide River
-- **Warnings**: 10 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T17:45:00
-- **Race**: Free Race Replays On attheraces.com EBF Restricted Novice (EBF Restriced Race Qual') (GBB) (Div I)
-- **Coverage**: passport 2/9 | champion 2/9 | intent 0/9
-- **Strongest passport horse**: Ventura Power (UNEXPOSED_PROFILE)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Ventura Power, Lincoln Warrior
-- **Warnings**: 7 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Ascot 2026-06-16T18:10:00
-- **Race**: Copper Horse Stakes (Handicap) (GBBPlus Race)
-- **Coverage**: passport 1/16 | champion 1/16 | intent 0/16
-- **Strongest passport horse**: Ascending (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_FALLING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Ascending
-- **Warnings**: 15 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T18:15:00
-- **Race**: Free Race Replays On attheraces.com EBF Restricted Novice (EBF Restriced Race Qual') (GBB) (Div II)
-- **Coverage**: passport 2/10 | champion 2/10 | intent 0/10
-- **Strongest passport horse**: Zohar (UNEXPOSED_PROFILE)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Zohar, Hadlan
+- **Top 3 by champion-read availability**: Catalina Delcarpio, Friendly Soul, Shes Perfect
 - **Warnings**: 8 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Beverley 2026-06-16T18:30:00
-- **Race**: Napoleons Casino Hull Dine In Style From £35 EBF Novice Stakes (GBB/IRE Incentive Race)
-- **Coverage**: passport 3/7 | champion 3/7 | intent 0/7
-- **Strongest passport horse**: Persian Land (UNEXPOSED_PROFILE, STRONG_PLACE_PROFILE)
+### 2026-06-17 Worcester 2026-06-17T15:50:00
+- **Race**: James Brewer 21 Years Undefeated Handicap Hurdle
+- **Coverage**: passport 0/4 | champion 0/4 | intent 0/4
+- **Strongest passport horse**: none
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Persian Land, Waasil, High Hazard
 - **Warnings**: 4 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T18:45:00
-- **Race**: Cavani Best Dressed Handicap
-- **Coverage**: passport 7/10 | champion 7/10 | intent 0/10
-- **Strongest passport horse**: Enter Sandman (STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_RISING)
+### 2026-06-17 Hamilton 2026-06-17T16:02:00
+- **Race**: #Cleanstay At Hampton By Hilton Handicap
+- **Coverage**: passport 7/8 | champion 7/8 | intent 0/8
+- **Strongest passport horse**: Emperor's Son (JOCKEY_CONTINUITY, SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_FALLING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Enter Sandman, Wyle Cop, Victor Cee
-- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
+- **Top 3 by champion-read availability**: Emperor's Son, Stirrup Cup, Doon The Glen
+- **Warnings**: 1 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Beverley 2026-06-16T19:00:00
-- **Race**: Connexin Ultrafast Maiden Stakes (GBB Race)
-- **Coverage**: passport 4/9 | champion 4/9 | intent 0/9
-- **Strongest passport horse**: Glen Nevis (JOCKEY_CONTINUITY, SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_FALLING)
+### 2026-06-17 Ascot 2026-06-17T16:20:00
+- **Race**: Prince Of Wales's Stakes (Group 1)
+- **Coverage**: passport 8/8 | champion 8/8 | intent 0/8
+- **Strongest passport horse**: Ombudsman (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_FALLING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Glen Nevis, Indefensible, Fozzie
+- **Top 3 by champion-read availability**: Ombudsman, Minnie Hauk, See The Fire
+- **Warnings**: No current-race intent feature rows available
+
+### 2026-06-17 Worcester 2026-06-17T16:30:00
+- **Race**: CopyBet Bog Now Royal Ascot Tomorrow Handicap Hurdle
+- **Coverage**: passport 1/6 | champion 1/6 | intent 0/6
+- **Strongest passport horse**: Bertie B (SETUP_RUN_CANDIDATE, OR_RISING, HIDDEN_SPEED_VALUE)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Bertie B
 - **Warnings**: 5 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T19:15:00
-- **Race**: Call 01902 390016 To Name A Race Handicap
-- **Coverage**: passport 8/10 | champion 8/10 | intent 0/10
-- **Strongest passport horse**: Risk Averse Rebel (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_FALLING)
+### 2026-06-17 Hamilton 2026-06-17T16:42:00
+- **Race**: Hamilton Park Fillies' Handicap
+- **Coverage**: passport 6/6 | champion 6/6 | intent 0/6
+- **Strongest passport horse**: Second Fiddle (SETUP_RUN_CANDIDATE, OR_RISING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Risk Averse Rebel, Lady Lauren, Ada Rose
-- **Warnings**: 2 missing/unraced passport rows; No current-race intent feature rows available
+- **Top 3 by champion-read availability**: Second Fiddle, Bearin Up, Epidavros
+- **Warnings**: No current-race intent feature rows available
 
-### 2026-06-16 Beverley 2026-06-16T19:30:00
-- **Race**: Biffa North Handicap
-- **Coverage**: passport 9/14 | champion 9/14 | intent 0/14
-- **Strongest passport horse**: Emerald Army (OR_RISING)
+### 2026-06-17 Ascot 2026-06-17T17:00:00
+- **Race**: Royal Hunt Cup (Heritage Handicap)
+- **Coverage**: passport 17/30 | champion 17/30 | intent 0/30
+- **Strongest passport horse**: Excellent Believe (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_FALLING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Emerald Army, Oselton, Valsharah
+- **Top 3 by champion-read availability**: Excellent Believe, Linwood, Classic
+- **Warnings**: 13 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Worcester 2026-06-17T17:10:00
+- **Race**: CopyBet Bog Now Royal Ascot Friday Handicap Hurdle (Div I)
+- **Coverage**: passport 1/10 | champion 1/10 | intent 0/10
+- **Strongest passport horse**: Genbu (OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Genbu
+- **Warnings**: 9 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Hamilton 2026-06-17T17:20:00
+- **Race**: Scottish Racing Supporting #Racingwithpride Handicap
+- **Coverage**: passport 3/6 | champion 3/6 | intent 0/6
+- **Strongest passport horse**: Spiritoftheblues (SETUP_RUN_CANDIDATE, OR_FALLING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Spiritoftheblues, Beyond The Bar, Attention Seeker
+- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ascot 2026-06-17T17:35:00
+- **Race**: Kensington Palace Stakes (Fillies' Handicap)
+- **Coverage**: passport 10/25 | champion 10/25 | intent 0/25
+- **Strongest passport horse**: Renesmee (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Renesmee, Alobayyah, Lady Mariko
+- **Warnings**: 15 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ffos Las 2026-06-17T17:42:00
+- **Race**: Trustmark Apprentice Handicap
+- **Coverage**: passport 6/6 | champion 6/6 | intent 0/6
+- **Strongest passport horse**: Vape (JOCKEY_CONTINUITY, SETUP_RUN_CANDIDATE, OR_FALLING, HIDDEN_SPEED_VALUE)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Vape, So Smart, Level Up
+- **Warnings**: No current-race intent feature rows available
+
+### 2026-06-17 Worcester 2026-06-17T17:47:00
+- **Race**: CopyBet Bog Now Royal Ascot Friday Handicap Hurdle (Div II)
+- **Coverage**: passport 3/8 | champion 3/8 | intent 0/8
+- **Strongest passport horse**: No More Bolero (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT, OR_FALLING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: No More Bolero, Master Dunraven, Peace Motivator
 - **Warnings**: 5 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T19:45:00
-- **Race**: Sky Sports Racing Virgin 512 Classified Stakes
-- **Coverage**: passport 7/10 | champion 7/10 | intent 0/10
-- **Strongest passport horse**: Arlecchino's Rex (STRONG_PLACE_PROFILE, OR_RISING)
+### 2026-06-17 Hamilton 2026-06-17T17:52:00
+- **Race**: Hampton By Hilton Hamilton Park Handicap
+- **Coverage**: passport 6/7 | champion 6/7 | intent 0/7
+- **Strongest passport horse**: Tee Aitch Aye (SETUP_RUN_CANDIDATE, OR_FALLING, HIDDEN_SPEED_VALUE)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Arlecchino's Rex, First Encounter, Sorted
-- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
+- **Top 3 by champion-read availability**: Tee Aitch Aye, Uncle Liam, Stepanov
+- **Warnings**: 1 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Beverley 2026-06-16T20:00:00
-- **Race**: Coachman Caravans Classic Handicap
-- **Coverage**: passport 6/9 | champion 6/9 | intent 0/9
-- **Strongest passport horse**: Dream Deal (SETUP_RUN_CANDIDATE, OR_FALLING, HIDDEN_SPEED_VALUE)
+### 2026-06-17 Ripon 2026-06-17T17:57:00
+- **Race**: Book Online At ripon-races.co.uk Maiden Fillies' Stakes (GBB/IRE Incentive Race)
+- **Coverage**: passport 0/7 | champion 0/7 | intent 0/7
+- **Strongest passport horse**: none
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Dream Deal, Jojo Rabbit, Keldeo
-- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
-
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T20:20:00
-- **Race**: Book To Stay At Wolverhampton Holiday Inn Maiden Stakes (GBB Race)
-- **Coverage**: passport 1/8 | champion 1/8 | intent 0/8
-- **Strongest passport horse**: Argy Bhaji (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, OR_RISING)
-- **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Argy Bhaji
 - **Warnings**: 7 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Beverley 2026-06-16T20:30:00
-- **Race**: Churchill Tyres Handicap
-- **Coverage**: passport 6/8 | champion 6/8 | intent 0/8
-- **Strongest passport horse**: Copper And Five (OR_RISING)
+### 2026-06-17 Ascot 2026-06-17T18:10:00
+- **Race**: Windsor Castle Stakes (Listed Race)
+- **Coverage**: passport 15/25 | champion 15/25 | intent 0/25
+- **Strongest passport horse**: Alpe d'Huez (UNEXPOSED_PROFILE, STRONG_PLACE_PROFILE, HISTORICAL_MARKET_RESPECT)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Copper And Five, Wicklow Way, Mavetheforcebewivu
-- **Warnings**: 2 missing/unraced passport rows; No current-race intent feature rows available
+- **Top 3 by champion-read availability**: Alpe d'Huez, Wild Terrain, A Bear Affair
+- **Warnings**: 10 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Wolverhampton (AW) 2026-06-16T20:54:00
-- **Race**: Cavani Modern Gentleman Handicap
-- **Coverage**: passport 8/11 | champion 8/11 | intent 0/11
-- **Strongest passport horse**: Beachborough Girl (SETUP_RUN_CANDIDATE, STRONG_PLACE_PROFILE, OR_RISING)
+### 2026-06-17 Ffos Las 2026-06-17T18:15:00
+- **Race**: Carmarthenshire Hunt Restricted Maiden Fillies' Stakes (Bands C and D) (GBB Race)
+- **Coverage**: passport 5/6 | champion 5/6 | intent 0/6
+- **Strongest passport horse**: Past Passion (STRONG_PLACE_PROFILE, OR_RISING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Beachborough Girl, Kaaranah, Study Up
+- **Top 3 by champion-read availability**: Past Passion, Tango Hotel, Nasserein
+- **Warnings**: 1 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ripon 2026-06-17T18:30:00
+- **Race**: Napoleons Casino And Restaurant Leeds Maiden Stakes (GBB Race)
+- **Coverage**: passport 1/5 | champion 1/5 | intent 0/5
+- **Strongest passport horse**: Grasmere Boy (UNEXPOSED_PROFILE, STRONG_PLACE_PROFILE)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Grasmere Boy
+- **Warnings**: 4 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ffos Las 2026-06-17T18:45:00
+- **Race**: Blackmore Building Contractors Handicap
+- **Coverage**: passport 3/8 | champion 3/8 | intent 0/8
+- **Strongest passport horse**: Phantom Shadow (OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Phantom Shadow, Red Moon, Distillation
+- **Warnings**: 5 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ripon 2026-06-17T19:00:00
+- **Race**: Lloyd Land Rover Ripon Handicap (GBBPlus Race)
+- **Coverage**: passport 2/6 | champion 2/6 | intent 0/6
+- **Strongest passport horse**: Raulin (OR_FALLING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Raulin, Something
+- **Warnings**: 4 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ffos Las 2026-06-17T19:15:00
+- **Race**: RHN Travel Handicap
+- **Coverage**: passport 2/7 | champion 2/7 | intent 0/7
+- **Strongest passport horse**: Sunny Smile (STRONG_PLACE_PROFILE, OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Sunny Smile, Huscal
+- **Warnings**: 5 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ripon 2026-06-17T19:30:00
+- **Race**: Wells Memorial Challenge Trophy Handicap
+- **Coverage**: passport 6/6 | champion 6/6 | intent 0/6
+- **Strongest passport horse**: Glory Hyde (OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Glory Hyde, Mark's Choice, Beattie Is Back
+- **Warnings**: No current-race intent feature rows available
+
+### 2026-06-17 Ffos Las 2026-06-17T19:45:00
+- **Race**: Blackmore Building Contractors Handicap
+- **Coverage**: passport 6/7 | champion 6/7 | intent 0/7
+- **Strongest passport horse**: Fifty Sent (OR_FALLING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Fifty Sent, Alice's Influence, Pay Attention
+- **Warnings**: 1 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ripon 2026-06-17T20:00:00
+- **Race**: Sky Sports Racing Sky 415 Fillies' Handicap
+- **Coverage**: passport 7/8 | champion 7/8 | intent 0/8
+- **Strongest passport horse**: Krissy (JOCKEY_CONTINUITY, STRONG_PLACE_PROFILE, OR_RISING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Krissy, Melody De Vega, Angela's Baar
+- **Warnings**: 1 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ffos Las 2026-06-17T20:15:00
+- **Race**: Oil 4 Wales Restricted Maiden Fillies' Stakes (Bands B, C And D) (GBB Race)
+- **Coverage**: passport 2/8 | champion 2/8 | intent 0/8
+- **Strongest passport horse**: Lady Magu (JOCKEY_CONTINUITY, SETUP_RUN_CANDIDATE, OR_FALLING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Lady Magu, Blue Tulip
+- **Warnings**: 6 missing/unraced passport rows; No current-race intent feature rows available
+
+### 2026-06-17 Ripon 2026-06-17T20:30:00
+- **Race**: We're Back For Ladies' Day Tomorrow Handicap
+- **Coverage**: passport 6/9 | champion 6/9 | intent 0/9
+- **Strongest passport horse**: Doralee (CASH_RUN_CANDIDATE, SETUP_RUN_CANDIDATE, OR_FALLING)
+- **Strongest intent candidate**: unavailable
+- **Top 3 by champion-read availability**: Doralee, You Mystify Me, What A Tahoo
 - **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
 
-### 2026-06-16 Beverley 2026-06-16T21:00:00
-- **Race**: Napoleons Casino And Restaurant Hull Handicap
-- **Coverage**: passport 5/10 | champion 5/10 | intent 0/10
-- **Strongest passport horse**: Hijo De La Luna (SETUP_RUN_CANDIDATE, OR_RISING)
+### 2026-06-17 Ffos Las 2026-06-17T20:45:00
+- **Race**: Josh Perry BPRFC Supporters Player Of The Year Handicap
+- **Coverage**: passport 2/5 | champion 2/5 | intent 0/5
+- **Strongest passport horse**: Zooter (OR_RISING)
 - **Strongest intent candidate**: unavailable
-- **Top 3 by champion-read availability**: Hijo De La Luna, Rajawail, Sweet Cicely
-- **Warnings**: 5 missing/unraced passport rows; No current-race intent feature rows available
+- **Top 3 by champion-read availability**: Zooter, Blue Jammin
+- **Warnings**: 3 missing/unraced passport rows; No current-race intent feature rows available
 
 ## Boundaries
 - Analyst feed only. No staking, no picks, no Telegram.

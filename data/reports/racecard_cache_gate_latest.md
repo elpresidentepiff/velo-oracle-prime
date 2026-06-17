@@ -1,18 +1,18 @@
-# Racecard Cache Gate — 2026-06-14
+# Racecard Cache Gate — 2026-06-17
 
 **Verdict:** PASS  
-**Source:** rp_merged  
-**Run at:** 2026-06-14T12:38:38.790589Z  
-**Races (UK/IRE):** 29  
-**Runners:** 314  
-**Courses:** Cork, Doncaster, Downpatrick, Salisbury
+**Source:** cache  
+**Run at:** 2026-06-17T07:26:31.871990Z  
+**Races (UK/IRE):** 35  
+**Runners:** 336  
+**Courses:** Ascot, Ffos Las, Hamilton, Ripon, Worcester
 
 ## Checks
 
-- ✓ **date_match**: date confirmed: 2026-06-14
-- ✓ **race_count**: 29 UK/IRE races with runners (min 15)
-- ✓ **course_coverage**: 4 unique courses: ['Cork', 'Doncaster', 'Downpatrick', 'Salisbury'] (min 3)
-- ✓ **runner_count**: 314 total runners (min 80)
-- ✓ **metadata_coverage**: 314/314 runners have required fields (100.0%) (rp_merged: jockey excluded — may not be declared)
-- ✓ **rpr_live_leak** _(warn-only)_: 272 runners have rpr (accepted — RPR_ACCEPTED policy)
-- ✓ **sidecar_date_match** _(warn-only)_: RPDC covers 29/29 racecard races (100%)
+- ✓ **date_match**: date confirmed: 2026-06-17
+- ✓ **race_count**: 35 UK/IRE races with runners (min 15)
+- ✓ **course_coverage**: 5 unique courses: ['Ascot', 'Ffos Las', 'Hamilton', 'Ripon', 'Worcester'] (min 3)
+- ✓ **runner_count**: 336 total runners (min 80)
+- ✓ **metadata_coverage**: 336/336 runners have required fields (100.0%)
+- ✓ **rpr_live_leak** _(warn-only)_: 0 runners have rpr (accepted — RPR_ACCEPTED policy)
+- ⚠ **sidecar_date_match** _(warn-only)_: RPDC covers 0/35 racecard races (0%)
