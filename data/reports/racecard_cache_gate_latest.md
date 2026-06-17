@@ -2,7 +2,7 @@
 
 **Verdict:** PASS  
 **Source:** cache  
-**Run at:** 2026-06-17T07:26:31.871990Z  
+**Run at:** 2026-06-17T20:12:58.753438Z  
 **Races (UK/IRE):** 35  
 **Runners:** 336  
 **Courses:** Ascot, Ffos Las, Hamilton, Ripon, Worcester
