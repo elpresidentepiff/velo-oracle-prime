@@ -4,9 +4,10 @@ VFU-21: Pick SP Backfill
 Recover pick_sp for the 2,197 rows missing it in the VFU-20 repaired ledger.
 
 Sources (in priority order):
-  1. results_2026_MM_DD.json  — sp_dec matched by race_id + normalised horse name
-  2. sigma_results JSON rows  — winner_sp used when outcome == WIN
-  3. UNRECOVERED             — row flagged, no SP change
+  1. data/results/rp_results_2026_*.json — CDO key (venue+yyyymmdd+off) + norm name
+  2. data/results_2026_*.json            — rac_ format race_id + norm name
+  3. sigma_results JSON rows             — winner_sp when outcome == WIN
+  4. UNRECOVERED                        — row flagged, no SP change
 
 Outputs:
   data/reports/vfu_21_pick_sp_backfill_ledger.jsonl   — full 3052-row ledger
@@ -51,8 +52,74 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _load_rp_results_cdo_lookup() -> tuple:
+    """Build two lookups from data/results/rp_results_*.json:
+      cdo_lookup  : (venue, yyyymmdd, off) -> {norm_name -> sp_dec}  (for rp_ IDs)
+      numeric_rid : (race_id_str, norm_name) -> sp_dec               (for numeric IDs)
+    """
+    cdo_lookup: dict[tuple, dict] = {}
+    numeric_rid: dict[tuple, str] = {}
+    rp_results_dir = DATA / "results"
+    for rf in sorted(rp_results_dir.glob("rp_results_2026_*.json")):
+        m = re.search(r"rp_results_(\d{4}_\d{2}_\d{2})\.json", rf.name)
+        if not m:
+            continue
+        yyyymmdd = m.group(1).replace("_", "")
+        try:
+            raw = json.loads(rf.read_text(encoding="utf-8"))
+            races = raw.get("results", []) if isinstance(raw, dict) else raw
+            for race in races:
+                venue = str(race.get("venue", "")).upper()
+                off = str(race.get("off", ""))
+                rid_num = str(race.get("race_id", ""))
+                cdo = (venue, yyyymmdd, off)
+                if cdo not in cdo_lookup:
+                    cdo_lookup[cdo] = {}
+                for runner in race.get("runners", []):
+                    horse = runner.get("horse", "")
+                    sp_dec = runner.get("sp_dec")
+                    try:
+                        sp_val = float(sp_dec or 0)
+                    except (TypeError, ValueError):
+                        sp_val = 0
+                    if horse and sp_val > 0:
+                        nm = _norm_name(horse)
+                        cdo_lookup[cdo][nm] = str(sp_dec)
+                        if rid_num:
+                            numeric_rid[(rid_num, nm)] = str(sp_dec)
+        except Exception:
+            continue
+    return cdo_lookup, numeric_rid
+
+
+_VENUE_NAME_TO_CODE = {
+    "SALISBURY": "SAL", "CARLISLE": "CAR", "SLIGO": "SLI", "SOUTHWELL": "SOU",
+    "BRIGHTON": "BRI", "CHEPSTOW": "CHP", "DONCASTER": "DON", "GOODWOOD": "GOO",
+    "MUSSELBURGH": "MUS", "NOTTINGHAM": "NOT", "WOLVERHAMPTON": "WOL",
+    "NEWMARKET": "NMK", "NEWCASTLE": "NEW", "HAYDOCK": "HAY", "CHESTER": "CHE",
+    "ASCOT": "ASC", "SANDOWN": "SAN", "WINDSOR": "WIN", "LEICESTER": "LEI",
+    "RIPON": "RIP", "YARMOUTH": "YAR", "FFOSLAS": "FFS", "HAMILTON": "HAM",
+    "HAMILTON": "HAM", "PONTEFRACT": "PON", "REDCAR": "RED", "THIRSK": "THI",
+    "BEVERLEY": "BEV", "BATH": "BAT", "EPSOM": "EPS", "AYR": "AYR",
+    "CATTERICK": "CAT", "EXETER": "EXE", "STRATFORD": "STR", "WORCESTER": "WOR",
+    "KEMPTON": "KEM", "LINGFIELD": "LIN", "CHELMSFORD": "CHM", "YORK": "YOR",
+    "FFOS": "FFS", "CURRAGH": "CUR", "LEOPARDSTOWN": "LEO", "NAAS": "NAA",
+    "DUNDALK": "DUN", "GALWAY": "GAL", "TIPPERARY": "TIP", "NAVAN": "NAV",
+}
+
+
+def _parse_rp_race_id(rid: str):
+    """Parse rp_VENUE_YYYYMMDD_H.MM -> (venue_code, yyyymmdd, off). Returns None tuple on failure."""
+    m = re.match(r"rp_([A-Za-z]+)_(\d{8})_([\d.]+)", rid or "")
+    if m:
+        venue_raw = m.group(1).upper()
+        venue = _VENUE_NAME_TO_CODE.get(venue_raw, venue_raw)
+        return venue, m.group(2), m.group(3)
+    return None, None, None
+
+
 def _load_results_sp_lookup() -> dict:
-    """Build (race_id, norm_horse_name) -> sp_dec from all available results JSONs."""
+    """Build (race_id, norm_horse_name) -> sp_dec from data/results_2026_*.json (rac_ format)."""
     lookup: dict[tuple, str] = {}
     for rf in sorted(DATA.glob("results_2026_*.json")):
         try:
@@ -68,7 +135,7 @@ def _load_results_sp_lookup() -> dict:
                 for runner in race.get("runners", []):
                     horse = runner.get("horse", "")
                     sp_dec = runner.get("sp_dec", "")
-                    if rid and horse and sp_dec:
+                    if rid and horse and sp_dec and float(sp_dec or 0) > 0:
                         key = (rid, _norm_name(horse))
                         if key not in lookup:
                             lookup[key] = str(sp_dec)
@@ -114,16 +181,22 @@ def main() -> None:
     print(f"Loaded {len(ledger)} ledger rows")
 
     # Build SP lookups
-    print("Building SP lookups from result files...")
-    results_lookup = _load_results_sp_lookup()
-    print(f"  Results lookup: {len(results_lookup)} entries")
+    print("Building SP lookups from data/results/rp_results_*.json (CDO + numeric)...")
+    cdo_lookup, numeric_rid_lookup = _load_rp_results_cdo_lookup()
+    print(f"  CDO lookup: {len(cdo_lookup)} CDO keys  |  numeric_rid: {len(numeric_rid_lookup)} entries")
 
-    print("Building SP lookups from sigma results...")
+    print("Building SP lookups from data/results_2026_*.json (rac_ format)...")
+    results_lookup = _load_results_sp_lookup()
+    print(f"  rac_ lookup: {len(results_lookup)} entries")
+
+    print("Building SP lookups from sigma results (WIN rows)...")
     sigma_lookup = _load_sigma_sp_lookup()
     print(f"  Sigma lookup: {len(sigma_lookup)} entries")
 
     # Counters
     already_had = 0
+    recovered_cdo = 0
+    recovered_numeric = 0
     recovered_results = 0
     recovered_sigma = 0
     unrecovered = 0
@@ -146,15 +219,37 @@ def main() -> None:
         horse = _norm_name(row.get("horse_name", ""))
         key = (rid, horse)
 
-        # Source 1: results JSON
+        # Source 1: rp_results CDO lookup (covers rp_VENUE_YYYYMMDD_H.MM format)
+        venue, yyyymmdd, off = _parse_rp_race_id(rid)
+        if venue and yyyymmdd and off:
+            cdo = (venue, yyyymmdd, off)
+            sp = cdo_lookup.get(cdo, {}).get(horse)
+            if sp:
+                out["pick_sp"] = sp
+                out["pick_sp_source"] = "RP_RESULTS_CDO"
+                recovered_cdo += 1
+                output_rows.append(out)
+                continue
+
+        # Source 2: numeric race_id from rp_results files
+        if str(rid).isdigit():
+            sp = numeric_rid_lookup.get((rid, horse))
+            if sp:
+                out["pick_sp"] = sp
+                out["pick_sp_source"] = "RP_RESULTS_NUMERIC_RID"
+                recovered_numeric += 1
+                output_rows.append(out)
+                continue
+
+        # Source 3: rac_ format results JSON
         if key in results_lookup:
             out["pick_sp"] = results_lookup[key]
-            out["pick_sp_source"] = "RESULTS_JSON"
+            out["pick_sp_source"] = "RESULTS_JSON_RAC"
             recovered_results += 1
             output_rows.append(out)
             continue
 
-        # Source 2: sigma results (WIN outcome match)
+        # Source 3: sigma results (WIN outcome match)
         if key in sigma_lookup:
             out["pick_sp"] = sigma_lookup[key]
             out["pick_sp_source"] = "SIGMA_WIN"
@@ -168,14 +263,16 @@ def main() -> None:
         output_rows.append(out)
 
     total = len(output_rows)
-    total_with_sp = already_had + recovered_results + recovered_sigma
+    total_with_sp = already_had + recovered_cdo + recovered_numeric + recovered_results + recovered_sigma
     coverage_pct = total_with_sp / total * 100
 
     print(f"\nResults:")
-    print(f"  Already had SP : {already_had}")
-    print(f"  Recovered (results JSON): {recovered_results}")
-    print(f"  Recovered (sigma WIN)   : {recovered_sigma}")
-    print(f"  Unrecovered             : {unrecovered}")
+    print(f"  Already had SP              : {already_had}")
+    print(f"  Recovered (rp_results CDO)  : {recovered_cdo}")
+    print(f"  Recovered (rp_results num.) : {recovered_numeric}")
+    print(f"  Recovered (rac_ results)    : {recovered_results}")
+    print(f"  Recovered (sigma WIN)       : {recovered_sigma}")
+    print(f"  Unrecovered                 : {unrecovered}")
     print(f"  Total with SP  : {total_with_sp}/{total} ({coverage_pct:.1f}%)")
 
     # Write output ledger
@@ -223,7 +320,8 @@ def main() -> None:
         "version": VFU21_VERSION,
         "total_rows": total,
         "already_had_sp": already_had,
-        "recovered_results_json": recovered_results,
+        "recovered_rp_results_cdo": recovered_cdo,
+        "recovered_results_json_rac": recovered_results,
         "recovered_sigma_win": recovered_sigma,
         "unrecovered": unrecovered,
         "total_with_sp": total_with_sp,

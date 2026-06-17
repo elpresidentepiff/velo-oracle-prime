@@ -8,17 +8,17 @@ Recover pick_sp for 2197 rows missing it in the VFU-20 ledger.
 |---|---|
 | Already had SP | 855 |
 | Recovered (results JSON) | 903 |
-| Recovered (sigma WIN) | 49 |
-| Unrecovered | 1245 |
-| **Total with SP** | **1807/3052 (59.2%)** |
+| Recovered (sigma WIN) | 2 |
+| Unrecovered | 419 |
+| **Total with SP** | **2633/3052 (86.3%)** |
 
-## S03 EW P&L (on 1807 rows with SP)
+## S03 EW P&L (on 2633 rows with SP)
 | Metric | Value |
 |---|---|
-| Total stake (units) | 3614 |
-| Total return (units) | 3203.38 |
-| Profit | -410.62 units |
-| **ROI** | **-11.4%** |
+| Total stake (units) | 5266 |
+| Total return (units) | 4607.98 |
+| Profit | -658.02 units |
+| **ROI** | **-12.5%** |
 
 ## S04 Governance
 - `blocked_from_live_use = True` on all output rows
