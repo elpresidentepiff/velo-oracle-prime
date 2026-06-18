@@ -277,6 +277,18 @@ def test_19_watchlist_json_contains_classifications():
         assert cls in wl["classifications"], f"Missing classification: {cls}"
 
 
+def test_20_small_field_rejected_before_watchlist():
+    """VFU-25 fix: verdicts with runner_count < 5 must be rejected, not admitted."""
+    small = _verdict(0.55, extra_root={"scored": 3})   # 3 runners
+    large = _verdict(0.50, extra_root={"scored": 8})   # 8 runners
+    candidates, rejected, stats = _run([small, large])
+    candidate_names = [c["horse_name"] for c in candidates]
+    assert "Test Horse" in candidate_names or len(candidates) == 1  # large field admitted
+    assert stats["no_ew_terms_excluded"] == 1
+    ew_rej = [r for r in rejected if r.get("rejection_reason") == "FIELD_TOO_SMALL_FOR_EW"]
+    assert len(ew_rej) == 1
+
+
 # ── Runner ────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":

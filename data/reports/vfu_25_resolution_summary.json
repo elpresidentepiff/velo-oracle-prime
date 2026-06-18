@@ -1,0 +1,61 @@
+{
+  "vfu": "VFU-25",
+  "version": "VFU_25_IDENTITY_RESOLUTION_V1",
+  "generated_at": "2026-06-18T02:45:13.165472+00:00",
+  "stats": {
+    "total_ledger_rows": 6019,
+    "total_name_only": 1977,
+    "total_resolved": 833,
+    "total_unresolved": 1144,
+    "resolution_rate_pct": 42.1,
+    "current_era_name_only": 1268,
+    "current_era_resolved": 833,
+    "current_era_resolution_pct": 65.7,
+    "sp_repairs": 317,
+    "source_distribution": {
+      "vfu21_ledger": 368,
+      "acca_lane": 2,
+      "runner_snapshot": 458,
+      "rp_results": 5
+    },
+    "confidence_distribution": {
+      "CONFIRMED": 368,
+      "MEDIUM": 2,
+      "HIGH": 463
+    },
+    "era_distribution_resolved": {
+      "CURRENT_ERA_VALIDATED": 833
+    },
+    "era_distribution_unresolved": {
+      "CURRENT_ERA_VALIDATED": 435,
+      "PRE_SURGERY_MAY_QUARANTINE": 256,
+      "PRE_SURGERY_ARCHIVE_QUARANTINE": 453
+    },
+    "unresolved_date_range": {
+      "first": "2026-04-16",
+      "last": "2026-06-03"
+    },
+    "unresolved_date_count": 35,
+    "unresolved_gap_note": "Unresolved rows are primarily May 8-19 \u2014 no local snapshot or results files cover this window. Irreducible gap without additional source import."
+  },
+  "blocked_from_live_use": true,
+  "paper_only": true,
+  "no_supabase_writes": true,
+  "no_telegram": true,
+  "no_model_promotion": true,
+  "no_vp_threshold_change": true,
+  "no_live_scoring_change": true,
+  "vfu11_ledger_mutated": false,
+  "horse_passport_mutated": false,
+  "classifications": [
+    "VFU_25_IDENTITY_RESOLUTION_COMPLETE",
+    "VFU11_LEDGER_NOT_MUTATED",
+    "HORSE_PASSPORT_NOT_MUTATED",
+    "BLOCKED_FROM_LIVE_USE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM",
+    "NO_MODEL_PROMOTION",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_LIVE_SCORING_CHANGE"
+  ]
+}

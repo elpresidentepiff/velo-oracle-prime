@@ -131,6 +131,7 @@ def build_watchlist(
     candidates: list[dict] = []
     rejected:   list[dict] = []
     below_threshold = 0
+    no_ew_terms_excluded = 0  # VFU-25: field_size < 5 has no EW place terms
 
     for v in verdicts:
         top    = v.get("top") or {}
@@ -175,6 +176,22 @@ def build_watchlist(
 
         if vp < VP_THRESHOLD:
             below_threshold += 1
+            continue
+
+        # VFU-25 fix: EW bets have no place terms with < 5 runners — exclude at creation
+        if runner_count is not None and runner_count < 5:
+            no_ew_terms_excluded += 1
+            rejected.append({
+                "race_id":               race_id,
+                "course":                course,
+                "off_time":              off_time,
+                "horse_name":            horse,
+                "VP":                    round(vp, 4),
+                "runner_count":          runner_count,
+                "rejection_reason":      "FIELD_TOO_SMALL_FOR_EW",
+                "governance_note":       f"field_size={runner_count} < 5: no EW place terms exist (VFU-25 filter)",
+                "blocked_from_live_use": True,
+            })
             continue
 
         band = _assign_band(vp, tie_ew)
@@ -235,11 +252,12 @@ def build_watchlist(
         band_counts[b] = band_counts.get(b, 0) + 1
 
     stats = {
-        "total_verdicts":        len(verdicts),
-        "candidates_generated":  len(candidates),
-        "below_threshold":       below_threshold,
-        "rejected_contaminated": len(rejected),
-        "band_counts":           band_counts,
+        "total_verdicts":              len(verdicts),
+        "candidates_generated":        len(candidates),
+        "below_threshold":             below_threshold,
+        "rejected_contaminated":       len(rejected),
+        "no_ew_terms_excluded":        no_ew_terms_excluded,
+        "band_counts":                 band_counts,
     }
     return candidates, rejected, stats
 
