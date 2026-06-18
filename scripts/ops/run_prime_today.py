@@ -2444,7 +2444,15 @@ def main():
                     print(f"  ✓ {rid}")
             print(f"  {'-' * 45}")
             print(f"  Total verified writes: {persist_ok}")
-        
+
+        # ── Auto-publish dashboard (always runs on PASS) ──────────────────
+        try:
+            from publish_daily_predictions_to_dashboard import publish as _publish_dashboard
+            _dash = _publish_dashboard(date_str)
+            print(f"  Dashboard: {_dash.get('races_found', 0)} races published → {_dash.get('destination_table_or_api', '')}")
+        except Exception as _dash_err:
+            print(f"  [WARN] Dashboard auto-publish failed (non-fatal): {_dash_err}")
+
         return RunPrimeResult(
             status="PASS",
             exit_code=0,
