@@ -2445,7 +2445,43 @@ def main():
             print(f"  {'-' * 45}")
             print(f"  Total verified writes: {persist_ok}")
 
-        # ── Auto-publish dashboard (always runs on PASS) ──────────────────
+        # ── Auto-update: New Build card feed + two-lane score + dashboard ────
+        import subprocess as _sp
+        _py = sys.executable
+        _date_tag = date_str.replace("-", "_")
+        _rc_path = str(ROOT / "data" / f"racecards_{_date_tag}_standard.json")
+        _nb_env = {**os.environ, "PYTHONPATH": str(ROOT)}
+
+        # Step 1: New Build current card feed
+        try:
+            _r = _sp.run(
+                [_py, str(ROOT / "scripts/ops/new_build_current_card_feed.py"),
+                 "--racecard-path", _rc_path, "--execute"],
+                capture_output=True, text=True, cwd=str(ROOT), env=_nb_env,
+            )
+            if _r.returncode == 0:
+                print("  New Build card feed: OK")
+            else:
+                print(f"  [WARN] New Build card feed failed (non-fatal): {_r.stderr[-200:]}")
+        except Exception as _e:
+            print(f"  [WARN] New Build card feed error (non-fatal): {_e}")
+
+        # Step 2: New Build two-lane score
+        try:
+            _r = _sp.run(
+                [_py, str(ROOT / "scripts/ops/new_build_two_lane_score.py"),
+                 "--date", date_str, "--execute"],
+                capture_output=True, text=True, cwd=str(ROOT), env=_nb_env,
+            )
+            if _r.returncode == 0:
+                _nb_line = [l for l in _r.stdout.splitlines() if "Races scored" in l]
+                print(f"  New Build two-lane: OK{(' — ' + _nb_line[0].strip()) if _nb_line else ''}")
+            else:
+                print(f"  [WARN] New Build two-lane failed (non-fatal): {_r.stderr[-200:]}")
+        except Exception as _e:
+            print(f"  [WARN] New Build two-lane error (non-fatal): {_e}")
+
+        # Step 3: Publish dashboard
         try:
             from publish_daily_predictions_to_dashboard import publish as _publish_dashboard
             _dash = _publish_dashboard(date_str)
