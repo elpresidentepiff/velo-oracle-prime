@@ -1,0 +1,195 @@
+{
+  "vfu": "VFU-15",
+  "version": "VFU_15_REPEATED_FG_HORSE_STUDY_V1",
+  "generated_at": "2026-06-18T02:11:02.841845+00:00",
+  "paper_only": true,
+  "blocked_from_live_use": true,
+  "stats": {
+    "total_fg_cases": 121,
+    "total_unique_horses": 118,
+    "repeater_threshold": 2,
+    "repeater_horses": 3,
+    "repeater_cases": 6,
+    "single_event_horses": 115,
+    "repeater_pct_of_horses": 2.5,
+    "repeater_pct_of_cases": 5.0,
+    "repeater_class_distribution": {
+      "MODERATE_REPEATER": 2,
+      "CONSISTENT_CAUSE_REPEATER": 1
+    },
+    "top_failure_classes_overall": {
+      "INSUFFICIENT_EVIDENCE": 62,
+      "VP_FALSE_POSITIVE": 56,
+      "COURSE_DRAIN_CONFIRMED": 3
+    }
+  },
+  "repeater_profiles": [
+    {
+      "horse_key": "NAME:?",
+      "horse_name": "?",
+      "horse_id": null,
+      "fg_count": 2,
+      "repeater_class": "MODERATE_REPEATER",
+      "is_repeater": true,
+      "severity_total": 5.0,
+      "avg_severity": 2.5,
+      "vp_min": 0.4313,
+      "vp_max": 0.5978,
+      "vp_mean": 0.5146,
+      "sp_min": null,
+      "sp_max": null,
+      "sp_mean": null,
+      "outcome_counts": {
+        "MISS": 1,
+        "PLACED": 1
+      },
+      "miss_count": 1,
+      "placed_not_won_count": 1,
+      "top_failure_class": "VP_FALSE_POSITIVE",
+      "failure_classes": {
+        "VP_FALSE_POSITIVE": 1,
+        "INSUFFICIENT_EVIDENCE": 1
+      },
+      "price_attributions": {
+        "HIGH_VP_NO_PICK_SP_REMAINING": 1,
+        "PLACE_SIGNAL_NOT_WIN_SIGNAL": 1
+      },
+      "race_dates": [
+        "2026-05-10",
+        "2026-05-10"
+      ],
+      "race_ids": [
+        "rac_11927461",
+        "rac_11957712"
+      ],
+      "courses": [
+        "Ludlow",
+        "Leopardstown (IRE)"
+      ],
+      "blocked_from_live_use": true,
+      "human_review_required": true,
+      "ledger_total_races": 28,
+      "ledger_outcomes": {
+        "MISS": 12,
+        "PLACED": 10,
+        "WIN": 6
+      },
+      "ledger_win_rate": 21.4,
+      "ledger_frame_rate": 57.1,
+      "fg_pct_of_ledger": 7.1
+    },
+    {
+      "horse_key": "ID:7529955",
+      "horse_name": "Gaelic Approach",
+      "horse_id": "7529955",
+      "fg_count": 2,
+      "repeater_class": "CONSISTENT_CAUSE_REPEATER",
+      "is_repeater": true,
+      "severity_total": 5.0,
+      "avg_severity": 2.5,
+      "vp_min": 0.4501,
+      "vp_max": 0.5711,
+      "vp_mean": 0.5106,
+      "sp_min": 2.38,
+      "sp_max": 8.5,
+      "sp_mean": 5.44,
+      "outcome_counts": {
+        "PLACED": 2
+      },
+      "miss_count": 0,
+      "placed_not_won_count": 2,
+      "top_failure_class": "INSUFFICIENT_EVIDENCE",
+      "failure_classes": {
+        "INSUFFICIENT_EVIDENCE": 2
+      },
+      "price_attributions": {
+        "PLACE_SIGNAL_NOT_WIN_SIGNAL": 2
+      },
+      "race_dates": [
+        "2026-05-15",
+        "2026-06-06"
+      ],
+      "race_ids": [
+        "rac_11930698",
+        "rp_DON_20260606_3.05"
+      ],
+      "courses": [
+        "Hamilton",
+        "Doncaster"
+      ],
+      "blocked_from_live_use": true,
+      "human_review_required": true,
+      "ledger_total_races": 2,
+      "ledger_outcomes": {
+        "PLACED": 2
+      },
+      "ledger_win_rate": 0.0,
+      "ledger_frame_rate": 100.0,
+      "fg_pct_of_ledger": 100.0
+    },
+    {
+      "horse_key": "ID:2067379",
+      "horse_name": "Malangen",
+      "horse_id": "2067379",
+      "fg_count": 2,
+      "repeater_class": "MODERATE_REPEATER",
+      "is_repeater": true,
+      "severity_total": 5.0,
+      "avg_severity": 2.5,
+      "vp_min": 0.4207,
+      "vp_max": 0.5073,
+      "vp_mean": 0.464,
+      "sp_min": 2.62,
+      "sp_max": 6.0,
+      "sp_mean": 4.31,
+      "outcome_counts": {
+        "PLACED": 1,
+        "MISS": 1
+      },
+      "miss_count": 1,
+      "placed_not_won_count": 1,
+      "top_failure_class": "INSUFFICIENT_EVIDENCE",
+      "failure_classes": {
+        "INSUFFICIENT_EVIDENCE": 1,
+        "VP_FALSE_POSITIVE": 1
+      },
+      "price_attributions": {
+        "PLACE_SIGNAL_NOT_WIN_SIGNAL": 1,
+        "HIGH_VP_SHORT_PRICE_FAILURE": 1
+      },
+      "race_dates": [
+        "2026-06-06",
+        "2026-06-13"
+      ],
+      "race_ids": [
+        "rp_HEX_20260606_4.30",
+        "919948"
+      ],
+      "courses": [
+        "Hexham",
+        "Hexham"
+      ],
+      "blocked_from_live_use": true,
+      "human_review_required": true,
+      "ledger_total_races": 2,
+      "ledger_outcomes": {
+        "PLACED": 1,
+        "MISS": 1
+      },
+      "ledger_win_rate": 0.0,
+      "ledger_frame_rate": 50.0,
+      "fg_pct_of_ledger": 100.0
+    }
+  ],
+  "single_event_count": 115,
+  "classifications": [
+    "VFU_15_REPEATED_FG_STUDY_COMPLETE",
+    "BLOCKED_FROM_LIVE_USE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM",
+    "NO_MODEL_PROMOTION",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED"
+  ]
+}
