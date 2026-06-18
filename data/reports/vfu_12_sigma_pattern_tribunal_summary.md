@@ -1,6 +1,6 @@
 # VFU-12 — Sigma Pattern Tribunal + Human Review Triage
 **Version:** VFU_12_SIGMA_PATTERN_TRIBUNAL_V1  
-**Timestamp:** 2026-06-15T02:23:27.572256+00:00  
+**Timestamp:** 2026-06-18T01:32:09.486219+00:00  
 **VP Threshold:** 0.4 (UNCHANGED)  
 
 ---

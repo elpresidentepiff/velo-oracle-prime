@@ -1,6 +1,6 @@
 # VFU-13 — False-GREEN Feature Autopsy
 **Version:** VFU_13_FALSE_GREEN_FEATURE_AUTOPSY_V1  
-**Timestamp:** 2026-06-15T02:49:19.300676+00:00  
+**Timestamp:** 2026-06-18T01:33:09.673107+00:00  
 **VP Threshold:** 0.4 (UNCHANGED)  
 
 ---
