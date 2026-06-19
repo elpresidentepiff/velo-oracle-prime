@@ -1,14 +1,11 @@
 {
-  "version": "v17.0",
-  "trained_at": "2026-03-16T16:37:26.134656",
-  "source": "data/raceform_clean.parquet",
-  "train_rows": 1447607,
-  "test_rows": 253582,
-  "auc": 0.94,
-  "log_loss": 0.175,
-  "mrr": 0.8487,
-  "top1_accuracy": 0.737,
-  "features": [
+  "version": "v17.1",
+  "model_type": "GradientBoostingClassifier + IsotonicCalibration",
+  "trained_at": "2026-06-19T07:18:10.943113",
+  "source": "C:\\Users\\puror\\velo-oracle-prime\\data\\raceform_v17_features.parquet",
+  "train_cutoff_year": 2025,
+  "n_features": 37,
+  "feature_names": [
     "sp_dec",
     "log_sp",
     "implied_prob",
@@ -46,5 +43,78 @@
     "decoy_support_flag",
     "setup_run_flag",
     "cash_run_flag"
-  ]
+  ],
+  "train_rows": 1535890,
+  "test_rows": 79742,
+  "test_races": 8738,
+  "auc": 0.9296,
+  "log_loss": 0.194,
+  "top1_accuracy": 0.7197,
+  "mrr": 0.8344,
+  "train_win_rate": 0.1076,
+  "test_win_rate": 0.1097,
+  "top_15_features": [
+    {
+      "feature": "rpr_vs_field",
+      "importance": 0.3967
+    },
+    {
+      "feature": "implied_prob",
+      "importance": 0.1123
+    },
+    {
+      "feature": "rpr_num",
+      "importance": 0.102
+    },
+    {
+      "feature": "log_sp",
+      "importance": 0.0665
+    },
+    {
+      "feature": "sp_dec",
+      "importance": 0.0564
+    },
+    {
+      "feature": "or_num",
+      "importance": 0.042
+    },
+    {
+      "feature": "ts_num",
+      "importance": 0.0361
+    },
+    {
+      "feature": "wgt_lbs",
+      "importance": 0.0272
+    },
+    {
+      "feature": "field_size",
+      "importance": 0.0265
+    },
+    {
+      "feature": "or_vs_field",
+      "importance": 0.0264
+    },
+    {
+      "feature": "is_fav",
+      "importance": 0.0209
+    },
+    {
+      "feature": "sp_rank",
+      "importance": 0.0179
+    },
+    {
+      "feature": "class_num",
+      "importance": 0.0153
+    },
+    {
+      "feature": "draw_num",
+      "importance": 0.0072
+    },
+    {
+      "feature": "draw_pct",
+      "importance": 0.0067
+    }
+  ],
+  "promoted_at": "2026-06-19T07:33:59.442617",
+  "promoted_from": "models/sqpe_v17_staging"
 }
