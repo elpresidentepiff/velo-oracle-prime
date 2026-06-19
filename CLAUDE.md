@@ -152,9 +152,12 @@ app/engine/uma.py                   <- UMA: fuses SQPE + TIE + Longshot + Overla
       |
 app/intelligence/chains/
   prediction_chain.py               <- Orchestrates full pipeline (HAS BUGS - see below)
-  narrative_chain.py                <- Market story detection
-  market_chain.py                   <- Manipulation detection
-  pace_chain.py                     <- Pace map analysis
+  narrative_chain.py                <- Market story detection [BUILT_NOT_CALLED_BY_PRODUCTION — tests + API endpoint only]
+  market_chain.py                   <- Manipulation detection [BUILT_NOT_CALLED_BY_PRODUCTION — tests + API endpoint only]
+  pace_chain.py                     <- Pace map analysis [BUILT_NOT_CALLED_BY_PRODUCTION — tests + API endpoint only]
+src/intelligence/nds.py             <- Narrative Disruption Scanner [BUILT_ZERO_CALLERS — never imported anywhere]
+                                       Detects: HYPE_FAVORITE, RECENCY_BIAS, FALSE_FORM, BREEDING_BIAS,
+                                       CONNECTION_BIAS, DUE_TO_WIN, HOT_STREAK. Wire as report-only before use.
       |
 app/playbooks/playbook_orchestrator.py <- Playbook E/F/G (doctrine, execution, evolution)
       |
@@ -172,13 +175,15 @@ Supabase (predictions, results, plot_memory_spine)
 | SQPE v1_real | `models/v1_real/sqpe/sqpe_model.pkl` | REAL — trained, loadable |
 | SQPE v14 | `models/sqpe_v14/` | METADATA_ONLY — pkl absent, not loadable |
 | SQPE v15 | `models/sqpe_v15/` | MISSING — directory does not exist |
-| SQPE v17 | `models/sqpe_v17/sqpe_v17.pkl` | LIVE MODEL — trained 2026-03-16, AUC=0.94 |
-| SQPE v18 | `models/sqpe_v18/sqpe_v18.pkl` | UNCLASSIFIED LAB MODEL — NO LIFT verdict, not wired |
-| TIE v9 | `models/tie_v9/tie_v9.pkl` | EXISTS on disk |
+| SQPE v17 | `models/sqpe_v17/sqpe_v17.pkl` | LIVE MODEL — trained 2026-03-16, AUC=0.94. **WARNING (MOT-01):** RPR-dominant (~50% feature importance via rpr_vs_field). SP features (sp_dec, log_sp, implied_prob, sp_rank, is_fav) are trained but ARTIFICIAL at inference — all runners default to sp_dec=10.0 because best_odds_decimal is never populated by RP injection or LOCAL_JSON. Effective RPR weight at morning scoring ≈ 65%. |
+| SQPE v18 | `models/sqpe_v18/sqpe_v18.pkl` | UNCLASSIFIED LAB MODEL — NO LIFT verdict, not wired. Same RPR/SP structural issue as v17. |
+| TIE v9 | `models/tie_v9/tie_v9.pkl` | **STUB — 126-byte placeholder, NOT loadable.** Contains `StubModel` class only. Not a real trained model. |
 | Longshot v6 | `models/longshot_v6/` | METADATA_ONLY — pkl absent, not loadable |
 | Overlay v5 | `models/overlay_v5/` | METADATA_ONLY — pkl absent, not loadable |
 
 Load SQPE with: `SQPEEngine.load(Path("models/v1_real/sqpe/"))`
+
+**MOT-01 SP inference bug (2026-06-18):** `_build_live_features()` looks for `best_odds_decimal` which is None in both RP injection and LOCAL_JSON_FALLBACK. Fix requires mapping `forecast_odds` (RP probability field) → `best_odds_decimal = 1.0/forecast_odds`. NO LIVE FIX UNTIL AUDITED — see `docs/MOT-01_MODEL_TRUTH_AUDIT.md`.
 
 ---
 
