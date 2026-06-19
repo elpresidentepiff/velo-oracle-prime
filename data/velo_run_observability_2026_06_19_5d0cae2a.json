@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "5d0cae2a-b721-4e9e-9bc7-f86648673b49",
+  "date": "2026-06-19",
+  "timestamp": "2026-06-19T20:36:42.833969+00:00",
+  "git_commit_sha": "3667d392b769562344b1c60009d66b816dc8c53e",
+  "git_branch": "main",
+  "source_truth": "RP_MERGED_CLEAN",
+  "feature_health": "HEALTHY",
+  "active_formula": "sqpe_v17 | RP_MERGED_CLEAN",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 100.0,
+  "persistence_status": "OK",
+  "supabase_write_attempt_success": true,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "PASS",
+  "learning_gate": "ELIGIBLE",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 56,
+    "runners_processed": 579
+  },
+  "gates": {
+    "gate_2_flatline_fires": false,
+    "gate_5_rpdc_warn_fires": false,
+    "gate_6_learning_blocked": false,
+    "gate_source_unknown_block": false
+  },
+  "warnings": [],
+  "extra": {
+    "git_commit_sha": "3667d392b769562344b1c60009d66b816dc8c53e",
+    "racecard_source_raw": "rp_merged",
+    "persist_ok": 56,
+    "persist_fail": 0,
+    "score_errors": 0,
+    "flatline_summary": {
+      "flatline_count": 0,
+      "total_races": 56,
+      "flatline_pct": 0.0,
+      "fully_uniform_count": 0,
+      "majority_tied_count": 0,
+      "races": []
+    }
+  }
+}

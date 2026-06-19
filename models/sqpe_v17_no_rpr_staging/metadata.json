@@ -1,0 +1,137 @@
+{
+  "version": "v17.2-no-rpr",
+  "model_type": "GradientBoostingClassifier + IsotonicCalibration",
+  "trained_at": "2026-06-19T10:55:47.144898",
+  "source": "/mnt/c/Users/puror/velo-oracle-prime/data/raceform_v17_features.parquet",
+  "banned_features": [
+    "decoy_support_flag",
+    "implied_prob",
+    "is_fav",
+    "log_sp",
+    "odds_contraction_score",
+    "odds_resilience_score",
+    "rpr_num",
+    "rpr_vs_field",
+    "runs_since_mkt_support",
+    "sp_dec",
+    "sp_rank",
+    "ts_num"
+  ],
+  "no_rpr_features": [
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "or_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "runs_since_win",
+    "runs_since_place",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "n_features": 25,
+  "train_rows": 1535890,
+  "test_rows": 79742,
+  "test_races": 8738,
+  "metrics": {
+    "or_naive_top1": 0.1783,
+    "or_model": {
+      "auc": 0.5673669815883239,
+      "ll": 0.3420440505425463,
+      "top1": 0.1742,
+      "mrr": 0.3797
+    },
+    "no_rpr_model": {
+      "auc": 0.6941603715895696,
+      "ll": 0.32128100583091823,
+      "top1": 0.256,
+      "mrr": 0.4649
+    },
+    "production_model": {
+      "auc": 0.9295754122192967,
+      "ll": 0.1940268759843229,
+      "top1": 0.7197,
+      "mrr": 0.8344
+    }
+  },
+  "doctrine_lift_vs_or_model_top1": 0.0818,
+  "doctrine_lift_vs_or_naive_top1": 0.0777,
+  "verdict": "DOCTRINE FEATURES PROVEN \u2014 significant lift over OR baseline",
+  "top_15_features": [
+    {
+      "feature": "field_size",
+      "importance": 0.2435
+    },
+    {
+      "feature": "distance_fit_score",
+      "importance": 0.1093
+    },
+    {
+      "feature": "or_vs_field",
+      "importance": 0.0966
+    },
+    {
+      "feature": "going_fit_score",
+      "importance": 0.0769
+    },
+    {
+      "feature": "trainer_timing_score",
+      "importance": 0.0683
+    },
+    {
+      "feature": "runs_since_place",
+      "importance": 0.0656
+    },
+    {
+      "feature": "quiet_run_score",
+      "importance": 0.0469
+    },
+    {
+      "feature": "wgt_lbs",
+      "importance": 0.0429
+    },
+    {
+      "feature": "or_num",
+      "importance": 0.0395
+    },
+    {
+      "feature": "class_num",
+      "importance": 0.03
+    },
+    {
+      "feature": "course_fit_score",
+      "importance": 0.0291
+    },
+    {
+      "feature": "draw_num",
+      "importance": 0.0275
+    },
+    {
+      "feature": "mark_compression_score",
+      "importance": 0.0231
+    },
+    {
+      "feature": "age_num",
+      "importance": 0.0173
+    },
+    {
+      "feature": "setup_run_flag",
+      "importance": 0.0163
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 # Horse Passport V2
-Generated: 2026-06-09T03:52:21.469362+00:00
+Generated: 2026-06-18T17:47:43.805151+00:00
 
 ## Summary
 - **Total passports**: 6168
-- **Existing before run**: 0
-- **Newly appended**: 6168
+- **Existing before run**: 6168
+- **Newly appended**: 0
 - **Source horses found (history + profiles)**: 6168
 - **Build failures**: 0
 - **Existing duplicate rows skipped**: 0

@@ -1,7 +1,7 @@
 {
   "version": "v17.1",
   "model_type": "GradientBoostingClassifier + IsotonicCalibration",
-  "trained_at": "2026-06-19T07:59:16.959520",
+  "trained_at": "2026-06-19T06:52:14.036371",
   "source": "C:\\Users\\puror\\velo-oracle-prime\\data\\raceform_v17_features.parquet",
   "train_cutoff_year": 2025,
   "n_features": 37,
@@ -44,76 +44,75 @@
     "setup_run_flag",
     "cash_run_flag"
   ],
-  "train_rows": 1535890,
-  "test_rows": 79742,
-  "test_races": 8738,
-  "auc": 0.9296,
-  "log_loss": 0.194,
-  "top1_accuracy": 0.7197,
-  "mrr": 0.8344,
-  "train_win_rate": 0.1076,
-  "test_win_rate": 0.1097,
+  "train_rows": 190186,
+  "test_rows": 9814,
+  "test_races": 2659,
+  "auc": 0.9333,
+  "log_loss": 0.1893,
+  "top1_accuracy": 0.2166,
+  "mrr": 0.2275,
+  "train_win_rate": 0.1081,
+  "test_win_rate": 0.1086,
   "top_15_features": [
     {
       "feature": "rpr_vs_field",
-      "importance": 0.3967
-    },
-    {
-      "feature": "implied_prob",
-      "importance": 0.1123
+      "importance": 0.3823
     },
     {
       "feature": "rpr_num",
-      "importance": 0.102
+      "importance": 0.1
     },
     {
-      "feature": "log_sp",
-      "importance": 0.0665
+      "feature": "implied_prob",
+      "importance": 0.0789
     },
     {
       "feature": "sp_dec",
-      "importance": 0.0564
-    },
-    {
-      "feature": "or_num",
-      "importance": 0.042
+      "importance": 0.0755
     },
     {
       "feature": "ts_num",
-      "importance": 0.0361
+      "importance": 0.0457
     },
     {
-      "feature": "wgt_lbs",
-      "importance": 0.0272
+      "feature": "or_num",
+      "importance": 0.0444
     },
     {
-      "feature": "field_size",
-      "importance": 0.0265
-    },
-    {
-      "feature": "or_vs_field",
-      "importance": 0.0264
-    },
-    {
-      "feature": "is_fav",
-      "importance": 0.0209
+      "feature": "log_sp",
+      "importance": 0.0395
     },
     {
       "feature": "sp_rank",
-      "importance": 0.0179
+      "importance": 0.0342
+    },
+    {
+      "feature": "wgt_lbs",
+      "importance": 0.0279
+    },
+    {
+      "feature": "field_size",
+      "importance": 0.0261
+    },
+    {
+      "feature": "or_vs_field",
+      "importance": 0.025
     },
     {
       "feature": "class_num",
-      "importance": 0.0153
+      "importance": 0.0159
     },
     {
-      "feature": "draw_num",
-      "importance": 0.0072
+      "feature": "is_fav",
+      "importance": 0.0143
     },
     {
-      "feature": "draw_pct",
-      "importance": 0.0067
+      "feature": "odds_contraction_score",
+      "importance": 0.0126
+    },
+    {
+      "feature": "dist_f",
+      "importance": 0.0085
     }
-  ],
-  "promoted_at": "2026-06-19T07:59:17.079322"
+  ]
 }

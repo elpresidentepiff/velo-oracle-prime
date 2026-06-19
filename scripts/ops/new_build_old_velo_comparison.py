@@ -122,7 +122,7 @@ def _load_sigma(date_str: str) -> dict[str, dict]:
     data = _load_json(path, None)
     if data is None:
         return {}
-    rows = data if isinstance(data, list) else data.get("results") or data.get("verdicts") or []
+    rows = data if isinstance(data, list) else data.get("rows") or data.get("results") or data.get("verdicts") or []
     result: dict[str, dict] = {}
     for row in rows:
         rid = str(row.get("race_id") or "")
@@ -171,7 +171,7 @@ def compare(date_str: str, execute: bool = False) -> dict:
         )
 
         # Outcome
-        winner = sigma_row.get("winner") or sigma_row.get("horse") if sigma_row else None
+        winner = sigma_row.get("actual_name") or sigma_row.get("winner") or sigma_row.get("horse") if sigma_row else None
         placed = sigma_row.get("placed") or [] if sigma_row else []
 
         nb_win = _norm(nb_top) == _norm(winner) if nb_top and winner else None

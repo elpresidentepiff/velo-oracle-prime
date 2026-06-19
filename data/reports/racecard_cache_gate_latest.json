@@ -1,34 +1,37 @@
 {
-  "date_str": "2026-06-17",
-  "racecard_source": "cache",
+  "date_str": "2026-06-19",
+  "racecard_source": "rp_merged",
   "gate_passed": true,
-  "run_at": "2026-06-17T20:12:58.753438Z",
-  "races_uk_ire": 35,
+  "run_at": "2026-06-19T20:35:24.659609Z",
+  "races_uk_ire": 56,
   "courses": [
     "Ascot",
-    "Ffos Las",
-    "Hamilton",
-    "Ripon",
-    "Worcester"
+    "Ayr",
+    "Down Royal",
+    "Goodwood",
+    "Limerick",
+    "Market Rasen",
+    "Newmarket (July)",
+    "Redcar"
   ],
-  "total_runners": 336,
+  "total_runners": 579,
   "checks": [
     {
       "name": "date_match",
       "passed": true,
       "value": [
-        "2026-06-17"
+        "2026-06-19"
       ],
-      "threshold": "2026-06-17",
-      "message": "date confirmed: 2026-06-17",
+      "threshold": "2026-06-19",
+      "message": "date confirmed: 2026-06-19",
       "blocking": true
     },
     {
       "name": "race_count",
       "passed": true,
-      "value": 35,
+      "value": 56,
       "threshold": 15,
-      "message": "35 UK/IRE races with runners (min 15)",
+      "message": "56 UK/IRE races with runners (min 15)",
       "blocking": true
     },
     {
@@ -36,50 +39,53 @@
       "passed": true,
       "value": [
         "Ascot",
-        "Ffos Las",
-        "Hamilton",
-        "Ripon",
-        "Worcester"
+        "Ayr",
+        "Down Royal",
+        "Goodwood",
+        "Limerick",
+        "Market Rasen",
+        "Newmarket (July)",
+        "Redcar"
       ],
       "threshold": 3,
-      "message": "5 unique courses: ['Ascot', 'Ffos Las', 'Hamilton', 'Ripon', 'Worcester'] (min 3)",
+      "message": "8 unique courses: ['Ascot', 'Ayr', 'Down Royal', 'Goodwood', 'Limerick', 'Market Rasen', 'Newmarket (July)', 'Redcar'] (min 3)",
       "blocking": true
     },
     {
       "name": "runner_count",
       "passed": true,
-      "value": 336,
+      "value": 579,
       "threshold": 80,
-      "message": "336 total runners (min 80)",
+      "message": "579 total runners (min 80)",
       "blocking": true
     },
     {
       "name": "metadata_coverage",
       "passed": true,
       "value": 1.0,
-      "threshold": 0.9,
-      "message": "336/336 runners have required fields (100.0%)",
+      "threshold": 0.85,
+      "message": "579/579 runners have required fields (100.0%) (rp_merged: jockey excluded — may not be declared)",
       "blocking": true
     },
     {
       "name": "rpr_live_leak",
       "passed": true,
-      "value": 0,
+      "value": 531,
       "threshold": 0,
-      "message": "0 runners have rpr (accepted — RPR_ACCEPTED policy)",
+      "message": "531 runners have rpr (accepted — RPR_ACCEPTED policy)",
       "blocking": false
     },
     {
       "name": "sidecar_date_match",
-      "passed": false,
+      "passed": true,
       "value": {
-        "sidecar_races": 0,
-        "racecard_races": 35,
-        "overlap": 0,
-        "coverage": 0.0
+        "sidecar_races": 56,
+        "racecard_races": 56,
+        "overlap": 56,
+        "coverage": 1.0
       },
-      "threshold": "2026-06-17",
-      "message": "RPDC covers 0/35 racecard races (0%)",
+      "threshold": "2026-06-19",
+      "message": "RPDC covers 56/56 racecard races (100%)",
       "blocking": false
     }
   ]
