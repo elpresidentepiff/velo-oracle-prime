@@ -147,15 +147,18 @@ class NDS:
         Returns:
             Signal strength (0-1), higher = stronger recency bias
         """
+        if historical_data is None or historical_data.empty or 'horse' not in historical_data.columns:
+            return 0.0
+
         horse = runner.get('horse')
         current_date = pd.to_datetime(runner.get('date'))
-        
+
         # Get historical runs for this horse
         prev_runs = historical_data[
             (historical_data['horse'] == horse) &
             (pd.to_datetime(historical_data['date']) < current_date)
         ].sort_values('date', ascending=False)
-        
+
         if len(prev_runs) < 3:
             return 0.0  # Insufficient data
         
@@ -194,17 +197,20 @@ class NDS:
         Returns:
             Signal strength (0-1), higher = more false form
         """
+        if historical_data is None or historical_data.empty or 'horse' not in historical_data.columns:
+            return 0.0
+
         horse = runner.get('horse')
         current_date = pd.to_datetime(runner.get('date'))
-        
+
         prev_runs = historical_data[
             (historical_data['horse'] == horse) &
             (pd.to_datetime(historical_data['date']) < current_date)
         ].sort_values('date', ascending=False).head(5)
-        
+
         if len(prev_runs) < 3:
             return 0.0
-        
+
         # Check if recent wins were in lower class
         current_class = runner.get('class', 4)
         

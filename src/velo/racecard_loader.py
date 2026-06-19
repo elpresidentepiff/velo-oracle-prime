@@ -61,6 +61,11 @@ def _parse_betting_forecast(forecast_str: str | None) -> dict[str, float]:
                 dec = round(int(num) / int(den) + 1, 3)
             else:
                 dec = round(float(odds_tok) + 1, 3)
+                # RP sometimes stores morning price as (probability - 1), e.g. "-0.667".
+                # After +1 this recovers the probability (e.g. 0.333).
+                # Convert probability → decimal odds so downstream sp_dec is correct.
+                if 0 < dec < 1.0:
+                    dec = round(1.0 / dec, 3)
             result[horse_name.strip().lower()] = dec
         except (ValueError, ZeroDivisionError):
             continue

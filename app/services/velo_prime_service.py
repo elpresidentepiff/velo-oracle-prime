@@ -364,6 +364,20 @@ def score_race_velo_prime(
         else:
             r.setdefault("rpr_vs_field", 0.0)
 
+    # Pre-inject sp_rank and is_fav across the full field.
+    # build_v17_feature_vector uses runner.get("sp_rank") — without pre-injection
+    # all runners default to sp_rank=3.0 and is_fav=0.0.
+    from app.services.sqpe_v17_service import _resolve_decimal_odds
+    _runner_odds = [(r, _resolve_decimal_odds(r)) for r in runners]
+    _sorted_odds = sorted(
+        [sp for _, sp in _runner_odds if sp < 500.0], # exclude clear defaults
+    )
+    for r, sp in _runner_odds:
+        rank = (_sorted_odds.index(sp) + 1) if sp in _sorted_odds else len(runners)
+        r["sp_rank"] = float(rank)
+        r["is_fav"] = 1.0 if rank == 1 else 0.0
+        r["_resolved_sp_dec"] = sp  # cache for build_v17 to use directly
+
     # Macro context — current year, race type
     race_date = race.get("date") or datetime.now().strftime("%Y-%m-%d")
     race_type = race.get("type", "").lower()
@@ -463,6 +477,7 @@ def score_race_velo_prime(
                 row["or_missing"] = ei["or_missing"]
                 row["rpr_missing"] = ei["rpr_missing"]
                 row["ts_missing"] = ei["ts_missing"]
+                row.setdefault("sp_dec", ei.get("sp_dec", 10.0))
                 break
         results.append(row)
 

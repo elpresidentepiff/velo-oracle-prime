@@ -165,9 +165,49 @@ def _parse_num(val) -> float:
         return 0.0
 
 
+def _resolve_decimal_odds(runner: dict) -> float:
+    """
+    Resolve morning price to European decimal odds from whichever field is populated.
+
+    Priority:
+      1. _resolved_sp_dec — pre-cached by score_race_velo_prime (avoid double-compute)
+      2. best_odds_decimal — normalizer output, already decimal format
+         If value is 0 < v < 1.0, treat as implied probability and invert.
+      3. sp — fractional string ("5/2", "4/6") via _parse_sp
+      4. Default 10.0 (no price available)
+
+    Never applies the +1 fractional correction to decimal-format fields.
+    """
+    cached = runner.get("_resolved_sp_dec")
+    if cached is not None:
+        try:
+            return float(cached)
+        except (TypeError, ValueError):
+            pass
+
+    bd = runner.get("best_odds_decimal")
+    if bd is not None:
+        try:
+            bd_f = float(bd)
+            if bd_f > 1.0:
+                return round(bd_f, 2)          # proper decimal odds
+            if 0.005 < bd_f < 1.0:
+                return round(1.0 / bd_f, 2)    # probability → decimal
+        except (TypeError, ValueError):
+            pass
+
+    sp_str = runner.get("sp")
+    if sp_str:
+        parsed = _parse_sp(sp_str)
+        if parsed > 1.0:
+            return parsed
+
+    return 10.0
+
+
 def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     """Build feature dictionary from raw runner+race dicts."""
-    sp_dec = _parse_sp(runner.get("sp") or runner.get("odds") or runner.get("best_odds_decimal"))
+    sp_dec = _resolve_decimal_odds(runner)
     dist_f = _parse_dist(race.get("dist") or race.get("distance_f") or race.get("distance"))
     going_code, is_aw = _parse_going(race.get("going"))
 
@@ -179,7 +219,7 @@ def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
         "going_code": going_code,
         "is_aw": float(is_aw),
         "class_num": _parse_class(race.get("class") or race.get("class_raw") or race.get("race_class")),
-        "wgt_lbs": _parse_wgt(runner.get("wgt") or runner.get("weight")),
+        "wgt_lbs": _parse_wgt(runner.get("wgt") or runner.get("weight") or runner.get("weight_lbs")),
         "or_num": _parse_num(runner.get("or") or runner.get("or_rating") or runner.get("official_rating")),
         "rpr_num": _parse_num(runner.get("rpr")),
         "ts_num": _parse_num(runner.get("ts")),
@@ -188,10 +228,11 @@ def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
         "age_num": _parse_num(runner.get("age")),
         "or_vs_field": _parse_num(runner.get("or_vs_field", 0.0)),
         "rpr_vs_field": _parse_num(runner.get("rpr_vs_field", 0.0)),
-        "sp_rank": _parse_num(runner.get("sp_rank", 3.0)),
+        # sp_rank and is_fav pre-injected by score_race_velo_prime; fall back to field_size if missing
+        "sp_rank": _parse_num(runner.get("sp_rank") or len(race.get("runners", []))),
+        "is_fav": _parse_num(runner.get("is_fav", 0.0)),
     }
     feats["draw_pct"] = feats["draw_num"] / max(feats["field_size"], 1)
-    feats["is_fav"] = 1.0 if feats["sp_rank"] == 1.0 else 0.0
 
     # Missing flags for observability
     feats["or_missing"] = 1.0 if runner.get("official_rating") is None else 0.0

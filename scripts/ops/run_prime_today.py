@@ -1793,6 +1793,87 @@ def main():
                     _flatlines.append(_flatline_info)
                     log.warning(_flatline_info["warning"])
 
+                # ── NDS Report-Only Wire-In ────────────────────────────────
+                # REPORT_ONLY — never alters velo_prime_prob, tier, routing,
+                # or execution. Attaches nds_* badge fields to each pred.
+                try:
+                    import pandas as _pd
+                    from src.intelligence.nds import NDS as _NDS
+                    _nds_engine = _NDS()
+                    _runners_df = _pd.DataFrame([{
+                        "sp_decimal": float(p.get("sp_dec") or 10.0),
+                        "horse": p.get("horse", ""),
+                        "date": date_str,
+                        "course": race.get("course", ""),
+                        "num": i + 1,
+                    } for i, p in enumerate(preds)])
+                    _hist_df = _pd.DataFrame()
+                    _nds_results = _nds_engine.analyze_race(_runners_df, _hist_df)
+                    _nds_by_horse = {r.horse_name: r for r in _nds_results}
+                    for _p in preds:
+                        _nr = _nds_by_horse.get(_p.get("horse", ""))
+                        if _nr:
+                            _p["nds_narrative"] = _nr.narrative_type.value
+                            _p["nds_score"] = round(_nr.nds_score, 4)
+                            _p["nds_disruption"] = _nr.disruption_strength.value
+                            _p["nds_is_fade"] = _nr.is_fade_opportunity
+                            _p["nds_overround_signal"] = round(_nr.overround_signal, 4)
+                        else:
+                            _p["nds_narrative"] = "none"
+                            _p["nds_score"] = 0.0
+                            _p["nds_disruption"] = "none"
+                            _p["nds_is_fade"] = False
+                            _p["nds_overround_signal"] = 0.0
+                    _fade_flags = [_p.get("horse") for _p in preds if _p.get("nds_is_fade")]
+                    if _fade_flags:
+                        log.info("[NDS] FADE signals race=%s horses=%s", race.get("race_id"), _fade_flags)
+                except Exception as _nds_err:
+                    log.debug("[NDS] wire-in skipped: %s", _nds_err)
+                    for _p in preds:
+                        _p.setdefault("nds_narrative", "none")
+                        _p.setdefault("nds_score", 0.0)
+                        _p.setdefault("nds_is_fade", False)
+                # ─────────────────────────────────────────────────────────
+
+                # ── Intelligence Chains Report-Only Wire-In ───────────────
+                # REPORT_ONLY — pace, narrative, market chains run for context.
+                # Results stored as chain_* badge fields only.
+                # Never alters velo_prime_prob, tier, routing, or execution.
+                try:
+                    import asyncio as _asyncio
+                    from app.optim.async_scheduler import run_chains_parallel as _run_chains
+                    _chain_result = _asyncio.run(
+                        _run_chains(race, race.get("runners", []))
+                    )
+                    _pace_shape = (
+                        _chain_result.get("pace", {})
+                        .get("signals", {})
+                        .get("race_shape", {})
+                        .get("shape", "unknown")
+                    )
+                    _narrative_sig = (
+                        _chain_result.get("narrative", {})
+                        .get("signals", {})
+                        .get("primary_narrative", {})
+                        .get("narrative_type", "unknown")
+                    )
+                    _market_status = _chain_result.get("market", {}).get("status", "unknown")
+                    for _p in preds:
+                        _p["chain_pace_shape"] = _pace_shape
+                        _p["chain_narrative"] = _narrative_sig
+                        _p["chain_market_status"] = _market_status
+                    log.info(
+                        "[CHAINS] race=%s pace=%s narrative=%s market=%s",
+                        race.get("race_id"), _pace_shape, _narrative_sig, _market_status,
+                    )
+                except Exception as _chain_err:
+                    log.debug("[CHAINS] wire-in skipped: %s", _chain_err)
+                    for _p in preds:
+                        _p.setdefault("chain_pace_shape", "unavailable")
+                        _p.setdefault("chain_narrative", "unavailable")
+                        _p.setdefault("chain_market_status", "unavailable")
+                # ─────────────────────────────────────────────────────────
+
                 top = preds[0]
                 second = preds[1] if len(preds) > 1 else {}
                 sec_prob = float(second.get("velo_prime_prob") or 0)
