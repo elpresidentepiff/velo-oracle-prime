@@ -155,7 +155,10 @@ async def predict_early_pressure(clusters: dict, race: dict) -> dict[str, Any]:
     """Predict early pace pressure"""
 
     leader_count = clusters["leader_count"]
-    distance = race.get("distance", 1600)
+    try:
+        distance = float(race.get("distance") or 1600)
+    except (TypeError, ValueError):
+        distance = 1600.0
 
     # More leaders = more pressure
     # Shorter distance = more pressure

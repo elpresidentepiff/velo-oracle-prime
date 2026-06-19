@@ -327,7 +327,7 @@ def score_race_velo_prime(
     -------
     list[dict]  sorted by velo_prime_prob desc
     """
-    from app.services.sqpe_v17_service import build_v17_feature_vector, predict_sqpe_v17
+    from app.services.sqpe_v17_service import build_v17_feature_vector, predict_sqpe_no_rpr_shadow, predict_sqpe_v17
     from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
     from src.intelligence.specialist_models.loader import score_runner
     from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble
@@ -347,12 +347,22 @@ def score_race_velo_prime(
         except (TypeError, ValueError):
             return 0.0
 
-    [
-        _to_float(r["official_rating"])
+    field_or = [
+        _to_float(r.get("official_rating") or r.get("or_rating") or r.get("or"))
         for r in runners
-        if r.get("official_rating") is not None and _to_float(r["official_rating"]) > 0
+        if _to_float(r.get("official_rating") or r.get("or_rating") or r.get("or")) > 0
     ]
     field_rpr = [_to_float(r["rpr"]) for r in runners if r.get("rpr") is not None and _to_float(r["rpr"]) > 0]
+
+    # Pre-inject or_vs_field so no-RPR / doctrine challengers get the same
+    # race-relative OR signal they were trained on. Neutral when OR is absent.
+    avg_or = sum(field_or) / len(field_or) if field_or else 0.0
+    for r in runners:
+        or_val = _to_float(r.get("official_rating") or r.get("or_rating") or r.get("or") or 0)
+        if or_val > 0 and avg_or > 0:
+            r["or_vs_field"] = round(or_val - avg_or, 1)
+        else:
+            r.setdefault("or_vs_field", 0.0)
 
     # Pre-inject rpr_vs_field so build_v17_feature_vector picks up the relative value.
     # build_v17_feature_vector reads runner.get("rpr_vs_field", 0.0) — inject before the loop.
@@ -407,6 +417,7 @@ def score_race_velo_prime(
         feats = build_v17_feature_vector(runner, race)
         _feats_by_horse[horse_name] = feats
         sqpe_prob_raw = predict_sqpe_v17(feats)
+        sqpe_no_rpr_shadow_prob, sqpe_no_rpr_shadow_features = predict_sqpe_no_rpr_shadow(feats)
 
         # Apply BHA Intelligence (Collateral & Decline-Curve)
         sqpe_prob, bha_reasons = _apply_bha_intelligence(sqpe_prob_raw, runner, code)
@@ -437,6 +448,8 @@ def score_race_velo_prime(
                 "horse_id": runner.get("horse_id", ""),
                 "race_id": race_id,
                 "sqpe_v17_prob": sqpe_prob,
+                "sqpe_no_rpr_shadow_prob": sqpe_no_rpr_shadow_prob,
+                "sqpe_no_rpr_shadow_feature_count": len(sqpe_no_rpr_shadow_features),
                 "improvement_score": spec_scores.get("improvement_score"),
                 "release_window_score": spec_scores.get("release_window_score"),
                 "market_deception_score": spec_scores.get("market_deception_score"),
@@ -474,6 +487,8 @@ def score_race_velo_prime(
         for ei in ensemble_inputs:
             if ei["horse"] == row["horse"]:
                 row["horse_id"] = ei["horse_id"]
+                row["sqpe_no_rpr_shadow_prob"] = ei.get("sqpe_no_rpr_shadow_prob")
+                row["sqpe_no_rpr_shadow_feature_count"] = ei.get("sqpe_no_rpr_shadow_feature_count", 0)
                 row["or_missing"] = ei["or_missing"]
                 row["rpr_missing"] = ei["rpr_missing"]
                 row["ts_missing"] = ei["ts_missing"]

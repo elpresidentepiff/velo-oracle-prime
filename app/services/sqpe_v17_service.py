@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parents[2]
 MODEL_PATH = ROOT / "models" / "sqpe_v17" / "sqpe_v17.pkl"
 V16_MODEL_PATH = ROOT / "models" / "sqpe_v16" / "sqpe_v16.pkl"
+NO_RPR_SHADOW_MODEL_PATH = ROOT / "models" / "sqpe_v17_no_rpr_staging" / "sqpe_v17_no_rpr.pkl"
 
 # Exact order from model.feature_names_in_
 EXPECTED_FEATURES = [
@@ -61,10 +62,13 @@ EXPECTED_FEATURES = [
 ]
 
 _model = None
+_model_feature_names = None
+_no_rpr_shadow_model = None
+_no_rpr_shadow_feature_names = None
 
 
 def _load_model():
-    global _model
+    global _model, _model_feature_names
     if _model is not None:
         return _model
 
@@ -77,8 +81,72 @@ def _load_model():
         return None
 
     _model = joblib.load(path)
+    _model_feature_names = _extract_model_feature_names(_model)
     logger.info(f"SQPE model loaded from {path}")
     return _model
+
+
+def _extract_model_feature_names(model) -> list[str]:
+    """Return the real feature contract for live and challenger SQPE models."""
+    names = getattr(model, "feature_names_in_", None)
+    if names is not None:
+        return [str(name) for name in names]
+
+    classifiers = getattr(model, "calibrated_classifiers_", None) or []
+    for clf in classifiers:
+        estimator = getattr(clf, "estimator", None) or getattr(clf, "base_estimator", None)
+        names = getattr(estimator, "feature_names_in_", None)
+        if names is not None:
+            return [str(name) for name in names]
+
+    return list(EXPECTED_FEATURES)
+
+
+def _feature_names_for_model(model=None) -> list[str]:
+    """Expose the loaded model's feature order for tests and shadow lanes."""
+    global _model_feature_names
+    if model is not None:
+        return _extract_model_feature_names(model)
+    if _model_feature_names is None:
+        loaded = _load_model()
+        if loaded is None:
+            return list(EXPECTED_FEATURES)
+    return list(_model_feature_names or EXPECTED_FEATURES)
+
+
+def _load_no_rpr_shadow_model():
+    """Load the no-RPR challenger for report-only shadow scoring."""
+    global _no_rpr_shadow_model, _no_rpr_shadow_feature_names
+    if _no_rpr_shadow_model is not None:
+        return _no_rpr_shadow_model
+    if not NO_RPR_SHADOW_MODEL_PATH.exists():
+        return None
+    try:
+        _no_rpr_shadow_model = joblib.load(NO_RPR_SHADOW_MODEL_PATH)
+        _no_rpr_shadow_feature_names = _extract_model_feature_names(_no_rpr_shadow_model)
+        logger.info("SQPE no-RPR shadow model loaded from %s", NO_RPR_SHADOW_MODEL_PATH)
+        return _no_rpr_shadow_model
+    except Exception as exc:
+        logger.warning("SQPE no-RPR shadow model load failed: %s", exc)
+        _no_rpr_shadow_model = None
+        _no_rpr_shadow_feature_names = None
+        return None
+
+
+def predict_sqpe_no_rpr_shadow(runner_features: dict) -> tuple[float | None, list[str]]:
+    """Report-only no-RPR challenger prediction. Never affects live scoring."""
+    model = _load_no_rpr_shadow_model()
+    if model is None:
+        return None, []
+    feature_names = list(_no_rpr_shadow_feature_names or _feature_names_for_model(model))
+    vec = [float(runner_features.get(f, 0.0)) for f in feature_names]
+    X_df = pd.DataFrame(np.array([vec]), columns=feature_names)
+    try:
+        prob = float(model.predict_proba(X_df)[0, 1])
+        return round(prob, 4), feature_names
+    except Exception as exc:
+        logger.warning("SQPE no-RPR shadow prediction failed: %s", exc)
+        return None, feature_names
 
 
 def _parse_sp(sp_str) -> float:
@@ -254,10 +322,11 @@ def predict_sqpe_v17(runner_features: dict) -> float:
     if model is None:
         return 0.5
 
-    vec = [float(runner_features.get(f, 0.0)) for f in EXPECTED_FEATURES]
+    feature_names = _feature_names_for_model(model)
+    vec = [float(runner_features.get(f, 0.0)) for f in feature_names]
     X = np.array([vec])
     try:
-        X_df = pd.DataFrame(X, columns=EXPECTED_FEATURES)
+        X_df = pd.DataFrame(X, columns=feature_names)
         prob = float(model.predict_proba(X_df)[0, 1])
         return round(prob, 4)
     except Exception as e:
