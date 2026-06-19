@@ -152,12 +152,11 @@ app/engine/uma.py                   <- UMA: fuses SQPE + TIE + Longshot + Overla
       |
 app/intelligence/chains/
   prediction_chain.py               <- Orchestrates full pipeline (HAS BUGS - see below)
-  narrative_chain.py                <- Market story detection [BUILT_NOT_CALLED_BY_PRODUCTION — tests + API endpoint only]
-  market_chain.py                   <- Manipulation detection [BUILT_NOT_CALLED_BY_PRODUCTION — tests + API endpoint only]
-  pace_chain.py                     <- Pace map analysis [BUILT_NOT_CALLED_BY_PRODUCTION — tests + API endpoint only]
-src/intelligence/nds.py             <- Narrative Disruption Scanner [BUILT_ZERO_CALLERS — never imported anywhere]
-                                       Detects: HYPE_FAVORITE, RECENCY_BIAS, FALSE_FORM, BREEDING_BIAS,
-                                       CONNECTION_BIAS, DUE_TO_WIN, HOT_STREAK. Wire as report-only before use.
+  narrative_chain.py                <- Market story detection [WIRED_REPORT_ONLY — run_prime_today via async_scheduler]
+  market_chain.py                   <- Manipulation detection [WIRED_REPORT_ONLY — run_prime_today via async_scheduler]
+  pace_chain.py                     <- Pace map analysis [WIRED_REPORT_ONLY — soft-fails without speed data, badge only]
+src/intelligence/nds.py             <- Narrative Disruption Scanner [WIRED_REPORT_ONLY — run_prime_today post-scoring]
+                                       Attaches: nds_narrative, nds_score, nds_disruption, nds_is_fade per runner.
       |
 app/playbooks/playbook_orchestrator.py <- Playbook E/F/G (doctrine, execution, evolution)
       |
@@ -183,7 +182,7 @@ Supabase (predictions, results, plot_memory_spine)
 
 Load SQPE with: `SQPEEngine.load(Path("models/v1_real/sqpe/"))`
 
-**MOT-01 SP inference bug (2026-06-18):** `_build_live_features()` looks for `best_odds_decimal` which is None in both RP injection and LOCAL_JSON_FALLBACK. Fix requires mapping `forecast_odds` (RP probability field) → `best_odds_decimal = 1.0/forecast_odds`. NO LIVE FIX UNTIL AUDITED — see `docs/MOT-01_MODEL_TRUTH_AUDIT.md`.
+**SP inference fix (2026-06-18, commit b672f0e):** `_resolve_decimal_odds()` now reads `best_odds_decimal` correctly — probability values (0 < v < 1.0) converted to decimal via `1/v`. `_parse_betting_forecast` fixes the `(probability - 1)` string format. `sp_rank` and `is_fav` pre-injected across the full field in `score_race_velo_prime`. NDS wired report-only. Chains (pace/narrative/market) wired report-only via async_scheduler.
 
 ---
 
