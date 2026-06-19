@@ -82,7 +82,10 @@ async def extract_runner_speeds(runners: list[dict], race: dict) -> list[dict[st
         adjusted_speed = speed_ratings.get("adjusted", 100)
 
         # Early speed indicator (from draw and form)
-        draw = runner.get("draw", 10)
+        try:
+            draw = int(runner.get("draw") or 10)
+        except (TypeError, ValueError):
+            draw = 10
         form = runner.get("form", "")
 
         # Early speed score (lower draw + good recent form = higher early speed)
@@ -92,7 +95,10 @@ async def extract_runner_speeds(runners: list[dict], race: dict) -> list[dict[st
 
         # Late speed (from sectional times)
         sectionals = runner.get("sectional_times", {})
-        last_200m = sectionals.get("last_200m", 12.0)
+        try:
+            last_200m = float(sectionals.get("last_200m") or 12.0)
+        except (TypeError, ValueError):
+            last_200m = 12.0
         late_speed = max(0, 100 - (last_200m - 10.0) * 10)
 
         speeds.append(
