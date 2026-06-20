@@ -142,6 +142,8 @@ def _build_runner_row(
     run_id: str,
     generated_at: str,
     nb_data: dict | None = None,
+    no_rpr_rank: int | None = None,
+    no_rpr_prob: float | None = None,
 ) -> dict:
     """Build one normalized dashboard payload row for one runner."""
     flags = _compute_flags(pred, race_tier)
@@ -263,6 +265,9 @@ def _build_runner_row(
         # ── Full sidecar dict for expand/collapse display ─────────────
         "sidecars":            sidecars,
         "feature_presence":    feature_presence,
+        # ── No-RPR model (parallel rank independent of Old VELO) ─────────
+        "no_rpr_rank":         no_rpr_rank,
+        "no_rpr_prob":         no_rpr_prob,
         # ── New Build shadow lanes ─────────────────────────────────────
         "nb_lane_a_rank":      nb_data.get("nb_lane_a_rank") if nb_data else None,
         "nb_lane_a_prob":      nb_data.get("nb_lane_a_prob") if nb_data else None,
@@ -498,7 +503,7 @@ def publish(date_str: str) -> dict:
 
         races_processed.add(race_id)
 
-        # Enforce rank order: highest velo_prime_prob = rank 1
+        # Enforce rank order: highest velo_prime_prob = rank 1 (Old VELO)
         try:
             runner_preds = sorted(
                 runner_preds,
@@ -508,10 +513,26 @@ def publish(date_str: str) -> dict:
         except Exception:
             pass
 
+        # Build no-RPR rank within this race (independent of Old VELO rank)
+        try:
+            _no_rpr_sorted = sorted(
+                runner_preds,
+                key=lambda p: float(p.get("sqpe_no_rpr_shadow_prob") or 0),
+                reverse=True,
+            )
+            _no_rpr_rank_map = {
+                (p.get("horse") or "").lower(): (i + 1, float(p.get("sqpe_no_rpr_shadow_prob") or 0))
+                for i, p in enumerate(_no_rpr_sorted)
+            }
+        except Exception:
+            _no_rpr_rank_map = {}
+
         for rank, pred in enumerate(runner_preds, start=1):
             try:
                 _horse_lower = (pred.get("horse") or "").lower()
                 _nb_data = nb_runner_index.get((race_id, _horse_lower))
+                _no_rpr_entry = _no_rpr_rank_map.get(_horse_lower, (None, None))
+                _no_rpr_rank_val, _no_rpr_prob_val = _no_rpr_entry
                 row = _build_runner_row(
                     pred=pred,
                     race_tier=race_tier,
@@ -524,6 +545,8 @@ def publish(date_str: str) -> dict:
                     run_id=run_id,
                     generated_at=generated_at,
                     nb_data=_nb_data,
+                    no_rpr_rank=_no_rpr_rank_val,
+                    no_rpr_prob=_no_rpr_prob_val,
                 )
                 all_rows.append(row)
 
