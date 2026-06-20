@@ -1561,6 +1561,13 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             sb_verdict_rows = resp.data or []
             for row in sb_verdict_rows:
                 gov_by_race[row["race_id"]] = row
+                # Extract No-RPR top pick from full_analysis.predictions
+                _fa = row.get("full_analysis") or {}
+                _preds = _fa.get("predictions", []) if isinstance(_fa, dict) else []
+                if _preds:
+                    _best = max(_preds, key=lambda p: float(p.get("sqpe_no_rpr_shadow_prob") or 0))
+                    gov_by_race[row["race_id"]]["no_rpr_top_horse"] = _best.get("horse") or ""
+                    gov_by_race[row["race_id"]]["no_rpr_top_prob"] = float(_best.get("sqpe_no_rpr_shadow_prob") or 0)
         except Exception as e:
             logger.warning("Supabase query failed: %s", e)
 
@@ -1908,6 +1915,8 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "new_build_passport_coverage_pct": _new_build.get("passport_coverage_pct"),
                 "new_build_weak_data": _new_build.get("weak_data"),
                 "new_build_top_pick_lane": _new_build.get("top_pick_lane"),
+                "no_rpr_top_horse": gov.get("no_rpr_top_horse") or "",
+                "no_rpr_top_prob": gov.get("no_rpr_top_prob") or 0.0,
             }
         )
 

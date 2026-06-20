@@ -3474,12 +3474,12 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
     html += '<div class="tl-lane">';
     html += '<div class="tl-lane-header"><span class="tl-lane-label-nr">NO-RPR</span><span class="rc-full-field-note">DOCTRINE MODEL</span></div>';
 
-    const nrRunner = runners.find(r => parseInt(r.no_rpr_rank) === 1);
-    if (nrRunner && parseFloat(nrRunner.no_rpr_prob || 0) > 0) {
-      const nrProb = parseFloat(nrRunner.no_rpr_prob);
-      const nrPct  = maxProb > 0 ? Math.round((nrProb / maxProb) * 100) : Math.round(nrProb * 100);
-      const nrAgree = (nrRunner.horse || '').toLowerCase().trim() === ovTopHorse && ovTopHorse !== '';
-      html += `<div class="tl-horse tl-top1-nr${nrAgree ? ' tl-agree' : ''}">${esc(nrRunner.horse || '—')}</div>`;
+    const nrHorse = r0.no_rpr_top_horse || '';
+    const nrProb  = parseFloat(r0.no_rpr_top_prob || 0);
+    if (nrHorse && nrProb > 0) {
+      const nrPct   = maxProb > 0 ? Math.round((nrProb / maxProb) * 100) : Math.round(nrProb * 100);
+      const nrAgree = nrHorse.toLowerCase().trim() === ovTopHorse && ovTopHorse !== '';
+      html += `<div class="tl-horse tl-top1-nr${nrAgree ? ' tl-agree' : ''}">${esc(nrHorse)}</div>`;
       html += `<div class="tl-stat-row">
         <span class="tl-prob" style="color:var(--purple)">${(nrProb*100).toFixed(1)}%</span>
         <div class="tl-prob-bar-wrap"><div class="tl-prob-bar nr" style="width:${Math.min(nrPct,100)}%"></div></div>
