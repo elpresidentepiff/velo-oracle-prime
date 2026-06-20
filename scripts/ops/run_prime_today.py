@@ -1983,7 +1983,7 @@ def main():
                 # SHADOW ONLY — never alters velo_prime_prob, tier, routing,
                 # or execution. Runs after score_race_velo_prime() returns.
                 try:
-                    _midprice_evaluate(
+                    _midprice_verdict = _midprice_evaluate(
                         race_id=race.get("race_id", ""),
                         race_date=date_str,
                         course=race.get("course", ""),
@@ -1994,7 +1994,14 @@ def main():
                         top_mds=top.get("market_deception_score"),
                         top_improvement=top.get("improvement_score"),
                         top_place_prob=top.get("place_prob"),
+                        field_size=len(preds),
+                        class_num=race.get("class_num") or race.get("race_class"),
+                        sp_dec=top.get("sp_dec"),
                     )
+                    top["midprice_shadow_action"] = _midprice_verdict.get("shadow_action")
+                    top["midprice_shadow_evidence"] = _midprice_verdict.get("evidence")
+                    top["midprice_shadow_field_band"] = _midprice_verdict.get("field_band")
+                    top["midprice_shadow_rule_version"] = _midprice_verdict.get("rule_version")
                 except Exception as _mph_exc:
                     log.warning("midprice_hunter shadow eval failed: %s", _mph_exc)
 
@@ -2530,14 +2537,16 @@ def main():
         import subprocess as _sp
         _py = sys.executable
         _date_tag = date_str.replace("-", "_")
-        _rc_path = str(ROOT / "data" / f"racecards_{_date_tag}_standard.json")
+        _rc_path = ROOT / "data" / f"racecards_{_date_tag}_standard.json"
         _nb_env = {**os.environ, "PYTHONPATH": str(ROOT)}
 
         # Step 1: New Build current card feed
         try:
+            _nb_cmd = [_py, str(ROOT / "scripts/ops/new_build_current_card_feed.py"), "--execute"]
+            if _rc_path.exists():
+                _nb_cmd += ["--racecard-path", str(_rc_path)]
             _r = _sp.run(
-                [_py, str(ROOT / "scripts/ops/new_build_current_card_feed.py"),
-                 "--racecard-path", _rc_path, "--execute"],
+                _nb_cmd,
                 capture_output=True, text=True, cwd=str(ROOT), env=_nb_env,
             )
             if _r.returncode == 0:

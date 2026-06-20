@@ -43,6 +43,12 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / ".env")
+except ImportError:
+    pass
+
 # ── Thresholds — sourced directly from run_prime_today.py signal stack ──────
 # Source: _signal_stack_badges_and_risks() and SIGNAL_STACK_EVIDENCE dict
 # DO NOT modify without first changing the source in run_prime_today.py.
@@ -50,6 +56,7 @@ _VP30_THRESHOLD = 0.30         # line 709: if vp >= 0.30 and tier == "A"
 _MDS_HIGH_THRESHOLD = 0.50     # line 711: if mds > 0.50
 _IMPROVE_HIGH_THRESHOLD = 0.40 # line 714: if improve > 0.40
 # B_LOW_VP uses same _VP30_THRESHOLD: line 717: if tier=="B" and vp < 0.30
+_EW_SIGNAL_THRESHOLD = 0.35    # place_prob >= 0.35 → EW interest flag
 
 PUBLISHER_VERSION = "dashboard_publisher_v1"
 AUDIT_PATH = ROOT / "data" / "dashboard_daily_predictions_publish_audit_v1.json"
@@ -109,6 +116,9 @@ def _compute_flags(pred: dict, race_tier: str) -> dict:
     improve_high = bool(improve > _IMPROVE_HIGH_THRESHOLD) if improve is not None else None
     b_tier_low_vp_suppress = bool(race_tier == "B" and vp < _VP30_THRESHOLD) if race_tier else None
 
+    place_prob_val = _sf(pred.get("place_prob"))
+    ew_signal = bool(place_prob_val >= _EW_SIGNAL_THRESHOLD) if place_prob_val is not None else None
+
     return {
         "vp30": vp30,
         "tier_a": tier_a,
@@ -116,6 +126,7 @@ def _compute_flags(pred: dict, race_tier: str) -> dict:
         "mds_high": mds_high,
         "improve_high": improve_high,
         "b_tier_low_vp_suppress": b_tier_low_vp_suppress,
+        "ew_signal": ew_signal,
     }
 
 
@@ -130,6 +141,7 @@ def _build_runner_row(
     publish_date: str,
     run_id: str,
     generated_at: str,
+    nb_data: dict | None = None,
 ) -> dict:
     """Build one normalized dashboard payload row for one runner."""
     flags = _compute_flags(pred, race_tier)
@@ -251,6 +263,14 @@ def _build_runner_row(
         # ── Full sidecar dict for expand/collapse display ─────────────
         "sidecars":            sidecars,
         "feature_presence":    feature_presence,
+        # ── New Build shadow lanes ─────────────────────────────────────
+        "nb_lane_a_rank":      nb_data.get("nb_lane_a_rank") if nb_data else None,
+        "nb_lane_a_prob":      nb_data.get("nb_lane_a_prob") if nb_data else None,
+        "nb_lane_a_decision":  nb_data.get("nb_lane_a_decision") if nb_data else None,
+        "nb_lane_b_rank":      nb_data.get("nb_lane_b_rank") if nb_data else None,
+        "nb_lane_b_prob":      nb_data.get("nb_lane_b_prob") if nb_data else None,
+        "nb_lane_b_decision":  nb_data.get("nb_lane_b_decision") if nb_data else None,
+        "nb_passport_coverage": nb_data.get("nb_passport_coverage") if nb_data else None,
         # ── Provenance ───────────────────────────────────────────────
         "model_version":       pred.get("ensemble_version"),
         "run_id":              run_id,
@@ -365,6 +385,38 @@ def publish(date_str: str) -> dict:
     sb_data, sb_race_meta, sb_source = _load_supabase_predictions(date_str)
     print(f"\n  Supabase:  {len(sb_data)} races  [{sb_source}]")
 
+    # ── Build New Build runner index from two-lane scorecard (always, regardless of Supabase) ──
+    # Index key: (race_id, horse_lower) → {nb_lane_a_rank, nb_lane_a_prob, nb_lane_a_decision,
+    #                                       nb_lane_b_rank, nb_lane_b_prob, nb_lane_b_decision,
+    #                                       nb_passport_coverage}
+    nb_runner_index: dict[tuple[str, str], dict] = {}
+    nb_path = ROOT / "data" / "new_build" / "reports" / f"two_lane_readiness_{date_tag}.json"
+    if nb_path.exists():
+        try:
+            nb_payload = json.loads(nb_path.read_text(encoding="utf-8"))
+            for sc in nb_payload.get("race_day_scorecards", []):
+                rid = str(sc.get("race_id", ""))
+                pcov = sc.get("passport_coverage", "")
+                for entry in sc.get("lane_a_top3", []):
+                    key = (rid, (entry.get("horse") or "").lower())
+                    nb_runner_index.setdefault(key, {}).update({
+                        "nb_lane_a_rank":     entry.get("rank"),
+                        "nb_lane_a_prob":     entry.get("prob"),
+                        "nb_lane_a_decision": entry.get("nb_decision_lane"),
+                        "nb_passport_coverage": pcov,
+                    })
+                for entry in sc.get("lane_b_top3", []):
+                    key = (rid, (entry.get("horse") or "").lower())
+                    nb_runner_index.setdefault(key, {}).update({
+                        "nb_lane_b_rank":     entry.get("rank"),
+                        "nb_lane_b_prob":     entry.get("prob"),
+                        "nb_lane_b_decision": entry.get("nb_decision_lane"),
+                        "nb_passport_coverage": pcov,
+                    })
+            print(f"  New Build: {len(nb_runner_index)} runner entries indexed from {nb_path.name}")
+        except Exception as e:
+            print(f"  [WARN] New Build index failed: {e}")
+
     # ── Load local JSON — only used when Supabase has no data for this date ──
     race_meta: dict = {}
     if sb_data:
@@ -458,6 +510,8 @@ def publish(date_str: str) -> dict:
 
         for rank, pred in enumerate(runner_preds, start=1):
             try:
+                _horse_lower = (pred.get("horse") or "").lower()
+                _nb_data = nb_runner_index.get((race_id, _horse_lower))
                 row = _build_runner_row(
                     pred=pred,
                     race_tier=race_tier,
@@ -469,6 +523,7 @@ def publish(date_str: str) -> dict:
                     publish_date=publish_date,
                     run_id=run_id,
                     generated_at=generated_at,
+                    nb_data=_nb_data,
                 )
                 all_rows.append(row)
 
