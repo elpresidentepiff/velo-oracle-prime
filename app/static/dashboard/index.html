@@ -2896,6 +2896,7 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
 }
 .tl-lane-label-nb  { color: var(--cyan); }
 .tl-lane-label-ov  { color: var(--gold); }
+.tl-lane-label-nr  { color: var(--purple); }
 .tl-lane-empty { color: var(--fg-muted); font-size: 9px; padding: 4px 0; }
 .tl-horse {
   font-family: var(--font-mono);
@@ -2924,6 +2925,7 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
 .tl-prob-bar-wrap { flex: 1; min-width: 40px; max-width: 90px; height: 4px; background: var(--bg-deep); border-radius: 2px; overflow: hidden; }
 .tl-prob-bar      { height: 100%; background: var(--cyan); border-radius: 2px; transition: width 0.4s ease; }
 .tl-prob-bar.ov   { background: var(--gold); }
+.tl-prob-bar.nr   { background: var(--purple); }
 .tl-tier {
   font-family: var(--font-hud);
   font-size: 9px;
@@ -3467,6 +3469,26 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
     }
 
     html += '</div>'; // end OV lane
+
+    // ── NO-RPR lane ────────────────────────────────────────────────
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-nr">NO-RPR</span><span class="rc-full-field-note">DOCTRINE MODEL</span></div>';
+
+    const nrRunner = runners.find(r => parseInt(r.no_rpr_rank) === 1);
+    if (nrRunner && parseFloat(nrRunner.no_rpr_prob || 0) > 0) {
+      const nrProb = parseFloat(nrRunner.no_rpr_prob);
+      const nrPct  = maxProb > 0 ? Math.round((nrProb / maxProb) * 100) : Math.round(nrProb * 100);
+      const nrAgree = (nrRunner.horse || '').toLowerCase().trim() === ovTopHorse && ovTopHorse !== '';
+      html += `<div class="tl-horse tl-top1-nr${nrAgree ? ' tl-agree' : ''}">${esc(nrRunner.horse || '—')}</div>`;
+      html += `<div class="tl-stat-row">
+        <span class="tl-prob" style="color:var(--purple)">${(nrProb*100).toFixed(1)}%</span>
+        <div class="tl-prob-bar-wrap"><div class="tl-prob-bar nr" style="width:${Math.min(nrPct,100)}%"></div></div>
+      </div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No No-RPR data</div>';
+    }
+
+    html += '</div>'; // end NR lane
     html += '</div>'; // end tl-lanes
 
     if (runners.length > 3) {
