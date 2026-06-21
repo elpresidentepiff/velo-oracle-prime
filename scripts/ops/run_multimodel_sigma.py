@@ -145,23 +145,23 @@ def _print_summary(rows: list[dict]) -> None:
         ("No-RPR",   "norpr_outcome"),
         ("New Build","nb_outcome"),
     ]
-    print("\n  ┌─────────────────────────────────────────────────────┐")
-    print(  "  │  MULTI-MODEL SIGMA SUMMARY                          │")
-    print(  "  ├────────────┬───────┬───────┬───────┬───────────────┤")
-    print(  "  │  Model     │  n    │  WIN  │ PLACE │   SR   Frame  │")
-    print(  "  ├────────────┼───────┼───────┼───────┼───────────────┤")
+    print("\n  +-----------------------------------------------------+")
+    print(  "  |  MULTI-MODEL SIGMA SUMMARY                          |")
+    print(  "  +------------+-------+-------+-------+---------------+")
+    print(  "  |  Model     |  n    |  WIN  | PLACE |   SR   Frame  |")
+    print(  "  +------------+-------+-------+-------+---------------+")
     for label, col in models:
         vals = [r[col] for r in rows if r[col] not in ("NO_DATA", "")]
         n = len(vals)
         if n == 0:
-            print(f"  │  {label:<10}│  n/a  │  n/a  │  n/a  │  n/a          │")
+            print(f"  |  {label:<10}|  n/a  |  n/a  |  n/a  |  n/a          |")
             continue
         wins   = sum(1 for v in vals if v == "WIN")
         places = sum(1 for v in vals if v in ("WIN", "PLACE"))
         sr     = wins / n
         frame  = places / n
-        print(f"  │  {label:<10}│  {n:<5}│  {wins:<5}│  {places:<5}│  {sr:.1%}   {frame:.1%}  │")
-    print(  "  └────────────┴───────┴───────┴───────┴───────────────┘")
+        print(f"  |  {label:<10}|  {n:<5}|  {wins:<5}|  {places:<5}|  {sr:.1%}   {frame:.1%}  |")
+    print(  "  +------------+-------+-------+-------+---------------+")
 
 
 def run(date_str: str, execute: bool = False) -> list[dict]:
@@ -248,7 +248,7 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             w = csv.DictWriter(f, fieldnames=LEDGER_COLS)
             w.writeheader()
             w.writerows(all_rows_out)
-        print(f"\n  Ledger: +{len(added)} new rows ({len(existing)} existing) → {LEDGER_PATH.name}")
+        print(f"\n  Ledger: +{len(added)} new rows ({len(existing)} existing) -> {LEDGER_PATH.name}")
 
         # Print cumulative summary across all dates
         all_rows = []
