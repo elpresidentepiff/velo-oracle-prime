@@ -1,0 +1,584 @@
+{
+  "generated_at": "2026-06-19T23:09:26.636478+00:00",
+  "source": "evidence_only_no_live_changes",
+  "sigma_selector": {
+    "status": "PASS",
+    "rows": 1105,
+    "train_rows": 827,
+    "test_rows": 278,
+    "test_races": 274,
+    "baseline_auc": 0.5872034747744738,
+    "selector_auc": 0.7657200133645172,
+    "baseline_logloss": 0.5834528045510814,
+    "selector_logloss": 0.5678410485976101,
+    "baseline_top1": {
+      "races": 274,
+      "top1": 0.2664,
+      "mrr": 1.0
+    },
+    "selector_top1": {
+      "races": 274,
+      "top1": 0.2664,
+      "mrr": 1.0
+    },
+    "acceptance_bands": [
+      {
+        "ranker": "baseline_model_probability",
+        "accept_top_pct": 10,
+        "n": 27,
+        "sr": 0.5185,
+        "roi": 0.1333,
+        "pl": 3.6,
+        "avg_sp": 3.1163
+      },
+      {
+        "ranker": "baseline_model_probability",
+        "accept_top_pct": 20,
+        "n": 55,
+        "sr": 0.4182,
+        "roi": -0.0945,
+        "pl": -5.2,
+        "avg_sp": 3.4196
+      },
+      {
+        "ranker": "baseline_model_probability",
+        "accept_top_pct": 30,
+        "n": 83,
+        "sr": 0.3494,
+        "roi": -0.1299,
+        "pl": -10.78,
+        "avg_sp": 4.2594
+      },
+      {
+        "ranker": "baseline_model_probability",
+        "accept_top_pct": 50,
+        "n": 139,
+        "sr": 0.3022,
+        "roi": -0.1091,
+        "pl": -15.17,
+        "avg_sp": 5.4325
+      },
+      {
+        "ranker": "sigma_selector",
+        "accept_top_pct": 10,
+        "n": 27,
+        "sr": 0.7037,
+        "roi": 0.127,
+        "pl": 3.43,
+        "avg_sp": 1.6278
+      },
+      {
+        "ranker": "sigma_selector",
+        "accept_top_pct": 20,
+        "n": 55,
+        "sr": 0.6364,
+        "roi": 0.1589,
+        "pl": 8.74,
+        "avg_sp": 1.8765
+      },
+      {
+        "ranker": "sigma_selector",
+        "accept_top_pct": 30,
+        "n": 83,
+        "sr": 0.5301,
+        "roi": 0.06,
+        "pl": 4.98,
+        "avg_sp": 2.1666
+      },
+      {
+        "ranker": "sigma_selector",
+        "accept_top_pct": 50,
+        "n": 139,
+        "sr": 0.4173,
+        "roi": -0.0004,
+        "pl": -0.06,
+        "avg_sp": 2.7676
+      }
+    ],
+    "staging_model": "C:\\Users\\puror\\velo-oracle-prime\\models\\sigma_selector_staging\\sigma_selector.pkl",
+    "note": "Small post-score selector test from sigma/innovation protocol rows only."
+  },
+  "passport_vs_rp": {
+    "status": "PASS",
+    "rows_after_filter": 661591,
+    "train_rows": 631099,
+    "test_rows": 30492,
+    "train_races": 72246,
+    "test_races": 3691,
+    "passport_coverage_2025": {
+      "pp_career_runs": 1.0,
+      "pp_win_rate": 0.9342,
+      "pp_place_rate": 0.9342,
+      "pp_days_since_last": 0.9342,
+      "pp_layoff": 0.9342,
+      "pp_avg_sp_last5": 0.9341,
+      "pp_jockey_continuity": 0.9342,
+      "pp_course_seen": 1.0,
+      "pp_or_change_3": 0.6038,
+      "pp_class_moved_up": 0.9342,
+      "pp_class_moved_down": 0.9342
+    },
+    "results": [
+      {
+        "label": "RP_SAFE_FILES_ONLY",
+        "features": 25,
+        "auc": 0.6983255525405623,
+        "logloss": 0.3413831652722903,
+        "races": 3691,
+        "top1": 0.2652,
+        "mrr": 0.4807,
+        "top_importance": [
+          {
+            "feature": "field_size",
+            "importance": 0.016286
+          },
+          {
+            "feature": "runs_since_place",
+            "importance": 0.008397
+          },
+          {
+            "feature": "or_vs_field",
+            "importance": 0.007074
+          },
+          {
+            "feature": "or_num",
+            "importance": 0.005005
+          },
+          {
+            "feature": "class_num",
+            "importance": 0.004633
+          },
+          {
+            "feature": "quiet_run_score",
+            "importance": 0.004482
+          },
+          {
+            "feature": "age_num",
+            "importance": 0.001211
+          },
+          {
+            "feature": "wgt_lbs",
+            "importance": 0.001069
+          },
+          {
+            "feature": "course_fit_score",
+            "importance": 0.000482
+          },
+          {
+            "feature": "runs_since_win",
+            "importance": 0.000413
+          },
+          {
+            "feature": "mark_compression_score",
+            "importance": 0.000361
+          },
+          {
+            "feature": "trainer_timing_score",
+            "importance": 0.000265
+          }
+        ]
+      },
+      {
+        "label": "RP_CORE_NO_RPR_NO_MARKET",
+        "features": 17,
+        "auc": 0.6869931674463524,
+        "logloss": 0.3449858688827512,
+        "races": 3691,
+        "top1": 0.2482,
+        "mrr": 0.4651,
+        "top_importance": [
+          {
+            "feature": "field_size",
+            "importance": 0.018672
+          },
+          {
+            "feature": "or_vs_field",
+            "importance": 0.007378
+          },
+          {
+            "feature": "quiet_run_score",
+            "importance": 0.006404
+          },
+          {
+            "feature": "distance_fit_score",
+            "importance": 0.002309
+          },
+          {
+            "feature": "going_fit_score",
+            "importance": 0.00209
+          },
+          {
+            "feature": "age_num",
+            "importance": 0.001318
+          },
+          {
+            "feature": "wgt_lbs",
+            "importance": 0.001
+          },
+          {
+            "feature": "trainer_timing_score",
+            "importance": 0.000751
+          },
+          {
+            "feature": "cash_run_flag",
+            "importance": 0.000305
+          },
+          {
+            "feature": "draw_num",
+            "importance": 0.000231
+          },
+          {
+            "feature": "release_window_score",
+            "importance": 0.000179
+          },
+          {
+            "feature": "draw_pct",
+            "importance": 0.000167
+          }
+        ]
+      },
+      {
+        "label": "RP_DOCTRINE_NO_RATINGS_NO_MARKET",
+        "features": 23,
+        "auc": 0.6915509060859004,
+        "logloss": 0.3438153784801966,
+        "races": 3691,
+        "top1": 0.2604,
+        "mrr": 0.477,
+        "top_importance": [
+          {
+            "feature": "field_size",
+            "importance": 0.015532
+          },
+          {
+            "feature": "runs_since_place",
+            "importance": 0.008266
+          },
+          {
+            "feature": "quiet_run_score",
+            "importance": 0.004809
+          },
+          {
+            "feature": "class_num",
+            "importance": 0.003969
+          },
+          {
+            "feature": "wgt_lbs",
+            "importance": 0.002927
+          },
+          {
+            "feature": "age_num",
+            "importance": 0.001282
+          },
+          {
+            "feature": "trainer_timing_score",
+            "importance": 0.000996
+          },
+          {
+            "feature": "mark_compression_score",
+            "importance": 0.000972
+          },
+          {
+            "feature": "going_fit_score",
+            "importance": 0.000808
+          },
+          {
+            "feature": "course_fit_score",
+            "importance": 0.000377
+          },
+          {
+            "feature": "runs_since_win",
+            "importance": 0.000373
+          },
+          {
+            "feature": "curr_or_minus_best_or",
+            "importance": 0.000353
+          }
+        ]
+      },
+      {
+        "label": "PASSPORT_ONLY",
+        "features": 11,
+        "auc": 0.6361673038731324,
+        "logloss": 0.3559618743585526,
+        "races": 3691,
+        "top1": 0.2471,
+        "mrr": 0.4623,
+        "top_importance": [
+          {
+            "feature": "pp_avg_sp_last5",
+            "importance": 0.009123
+          },
+          {
+            "feature": "pp_place_rate",
+            "importance": 0.004764
+          },
+          {
+            "feature": "pp_days_since_last",
+            "importance": 0.003906
+          },
+          {
+            "feature": "pp_class_moved_up",
+            "importance": 0.001283
+          },
+          {
+            "feature": "pp_career_runs",
+            "importance": 0.001124
+          },
+          {
+            "feature": "pp_class_moved_down",
+            "importance": 0.000725
+          },
+          {
+            "feature": "pp_win_rate",
+            "importance": 0.000709
+          },
+          {
+            "feature": "pp_jockey_continuity",
+            "importance": 0.000632
+          },
+          {
+            "feature": "pp_or_change_3",
+            "importance": 0.000356
+          },
+          {
+            "feature": "pp_course_seen",
+            "importance": 0.000207
+          },
+          {
+            "feature": "pp_layoff",
+            "importance": 0.0
+          }
+        ]
+      },
+      {
+        "label": "RP_CORE_PLUS_PASSPORT",
+        "features": 28,
+        "auc": 0.6989123642890475,
+        "logloss": 0.34130507269831023,
+        "races": 3691,
+        "top1": 0.2609,
+        "mrr": 0.4798,
+        "top_importance": [
+          {
+            "feature": "field_size",
+            "importance": 0.017355
+          },
+          {
+            "feature": "or_vs_field",
+            "importance": 0.005564
+          },
+          {
+            "feature": "quiet_run_score",
+            "importance": 0.00541
+          },
+          {
+            "feature": "pp_avg_sp_last5",
+            "importance": 0.005182
+          },
+          {
+            "feature": "pp_days_since_last",
+            "importance": 0.002118
+          },
+          {
+            "feature": "pp_place_rate",
+            "importance": 0.001303
+          },
+          {
+            "feature": "pp_class_moved_up",
+            "importance": 0.000738
+          },
+          {
+            "feature": "going_fit_score",
+            "importance": 0.000621
+          },
+          {
+            "feature": "pp_career_runs",
+            "importance": 0.000569
+          },
+          {
+            "feature": "wgt_lbs",
+            "importance": 0.00056
+          },
+          {
+            "feature": "trainer_timing_score",
+            "importance": 0.000342
+          },
+          {
+            "feature": "cash_run_flag",
+            "importance": 0.000311
+          }
+        ]
+      },
+      {
+        "label": "RP_DOCTRINE_PLUS_PASSPORT",
+        "features": 34,
+        "auc": 0.7017780226228478,
+        "logloss": 0.34059828433116446,
+        "races": 3691,
+        "top1": 0.269,
+        "mrr": 0.4848,
+        "top_importance": [
+          {
+            "feature": "field_size",
+            "importance": 0.014318
+          },
+          {
+            "feature": "pp_avg_sp_last5",
+            "importance": 0.006719
+          },
+          {
+            "feature": "runs_since_place",
+            "importance": 0.005988
+          },
+          {
+            "feature": "quiet_run_score",
+            "importance": 0.003537
+          },
+          {
+            "feature": "class_num",
+            "importance": 0.002148
+          },
+          {
+            "feature": "pp_days_since_last",
+            "importance": 0.001847
+          },
+          {
+            "feature": "wgt_lbs",
+            "importance": 0.000915
+          },
+          {
+            "feature": "pp_class_moved_up",
+            "importance": 0.000613
+          },
+          {
+            "feature": "runs_since_win",
+            "importance": 0.000584
+          },
+          {
+            "feature": "pp_class_moved_down",
+            "importance": 0.00053
+          },
+          {
+            "feature": "mark_compression_score",
+            "importance": 0.000508
+          },
+          {
+            "feature": "age_num",
+            "importance": 0.000456
+          }
+        ]
+      }
+    ],
+    "best_by_top1": "RP_DOCTRINE_PLUS_PASSPORT",
+    "feature_contract": {
+      "rp_safe_files_only": [
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "class_num",
+        "wgt_lbs",
+        "or_num",
+        "or_vs_field",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "runs_since_win",
+        "runs_since_place",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "rp_core_no_rpr_no_market": [
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "wgt_lbs",
+        "or_vs_field",
+        "release_window_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "rp_doctrine_no_ratings_no_market": [
+        "dist_f",
+        "going_code",
+        "is_aw",
+        "class_num",
+        "field_size",
+        "draw_num",
+        "draw_pct",
+        "age_num",
+        "wgt_lbs",
+        "runs_since_win",
+        "runs_since_place",
+        "curr_or_minus_last_win_or",
+        "curr_or_minus_best_or",
+        "mark_compression_score",
+        "release_window_score",
+        "course_fit_score",
+        "going_fit_score",
+        "distance_fit_score",
+        "quiet_run_score",
+        "trainer_timing_score",
+        "jockey_switch_intent",
+        "setup_run_flag",
+        "cash_run_flag"
+      ],
+      "passport_features": [
+        "pp_career_runs",
+        "pp_win_rate",
+        "pp_place_rate",
+        "pp_days_since_last",
+        "pp_layoff",
+        "pp_avg_sp_last5",
+        "pp_jockey_continuity",
+        "pp_course_seen",
+        "pp_or_change_3",
+        "pp_class_moved_up",
+        "pp_class_moved_down"
+      ],
+      "banned_rpr_market_features": [
+        "sp_dec",
+        "log_sp",
+        "implied_prob",
+        "sp_rank",
+        "is_fav",
+        "rpr_num",
+        "rpr_vs_field",
+        "ts_num",
+        "odds_resilience_score",
+        "odds_contraction_score",
+        "decoy_support_flag"
+      ],
+      "banned_features_used": []
+    },
+    "passport_only_gap_vs_rp_core_top1": -0.0011,
+    "passport_only_gap_vs_rp_core_auc": -0.0508,
+    "core_plus_passport_top1_lift_vs_core": 0.0127,
+    "core_plus_passport_auc_lift_vs_core": 0.0119,
+    "doctrine_plus_passport_top1_lift_vs_doctrine": 0.0086,
+    "doctrine_plus_passport_auc_lift_vs_doctrine": 0.0102,
+    "combined_top1_lift_vs_rp": -0.0043,
+    "combined_auc_lift_vs_rp": 0.0006
+  },
+  "verdict": "PASSPORT_HELPFUL_SHADOW_ONLY | SIGMA_SELECTOR_HAS_SIGNAL"
+}

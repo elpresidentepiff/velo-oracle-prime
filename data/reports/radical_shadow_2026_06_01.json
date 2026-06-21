@@ -1,0 +1,3307 @@
+{
+  "generated_at": "2026-06-20T13:54:59.104251+00:00",
+  "date": "2026-06-01",
+  "status": "SHADOW_ONLY_NOT_LIVE",
+  "live_writes": false,
+  "source_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\velo_prime_verdicts_2026_06_01.json",
+  "decision_counts": {
+    "CASH_RUN": 13,
+    "PASS_OR_WATCH": 18,
+    "NO_BET_SHADOW": 5,
+    "PASS": 6
+  },
+  "gate_status": {
+    "win_gate_loaded": true,
+    "win_gate_error": null,
+    "frame_gate_loaded": true,
+    "frame_gate_error": null,
+    "shadow_only": true,
+    "passport_feed": {
+      "requested_date": "2026-06-01",
+      "dated_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_2026_06_01.jsonl",
+      "latest_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_latest.jsonl",
+      "selected_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_latest.jsonl",
+      "selected_kind": "latest",
+      "rows": 13077,
+      "available_rows": 9842,
+      "loaded": true,
+      "error": null
+    },
+    "passport_matches": 42,
+    "passport_available_on_top_picks": 42
+  },
+  "obstacles": [
+    "PASSPORT_DATED_FEED_MISSING: using latest feed only"
+  ],
+  "decisions": [
+    {
+      "race_id": "921817",
+      "course": "Listowel",
+      "off_time": "15:32",
+      "race_name": "John B. Keane Beginners Chase",
+      "horse": "Whispering Willow",
+      "tier": "A",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.571,
+      "velo_prime_prob": 0.6233,
+      "old_velo_top": {
+        "horse": "Whispering Willow",
+        "velo_prime_prob": 0.6233,
+        "sqpe_v17_prob": 0.2385,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1584,
+        "place_prob": 0.6949,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.62"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Whispering Willow",
+        "rp_uid": "7334537",
+        "race_class": null,
+        "race_type": "Chase",
+        "distance_furlongs": 19,
+        "going": "Yielding",
+        "forecast_odds": 0.571,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.6233,
+        "sp_decimal": 0.571,
+        "implied_probability": 1.7513134851138354,
+        "edge": -1.1280134851138355,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.9974,
+      "frame_gate_probability": 0.9985,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "vp_band": "VP_55_PLUS",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "919957",
+      "course": "Lingfield",
+      "off_time": "15:52",
+      "race_name": "British Stallion Studs EBF Novice Stakes (GBB Race)",
+      "horse": "Mrair",
+      "tier": "A",
+      "field_size": 7,
+      "class_num": 2,
+      "sp_decimal": 0.571,
+      "velo_prime_prob": 0.599,
+      "old_velo_top": {
+        "horse": "Mrair",
+        "velo_prime_prob": 0.599,
+        "sqpe_v17_prob": 0.1891,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.121,
+        "place_prob": 0.6013,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.60"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Mrair",
+        "rp_uid": "9244717",
+        "race_class": "2",
+        "race_type": "Flat",
+        "distance_furlongs": 6,
+        "going": "Good",
+        "forecast_odds": 0.571,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.599,
+        "sp_decimal": 0.571,
+        "implied_probability": 1.7513134851138354,
+        "edge": -1.1523134851138355,
+        "field_size": 7.0,
+        "class_num": 2.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.9973,
+      "frame_gate_probability": 0.9983,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "vp_band": "VP_55_PLUS",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_2",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921818",
+      "course": "Listowel",
+      "off_time": "16:07",
+      "race_name": "John J. Galvin Chase",
+      "horse": "Blood Destiny",
+      "tier": "C",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 1.0,
+      "velo_prime_prob": 0.2579,
+      "old_velo_top": {
+        "horse": "Blood Destiny",
+        "velo_prime_prob": 0.2579,
+        "sqpe_v17_prob": 0.0044,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1564,
+        "place_prob": 0.0655,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Blood Destiny",
+        "rp_uid": "4241537",
+        "race_class": null,
+        "race_type": "Chase",
+        "distance_furlongs": 19,
+        "going": "Yielding",
+        "forecast_odds": 1,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2579,
+        "sp_decimal": 1.0,
+        "implied_probability": 1.0,
+        "edge": -0.7421,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.97,
+      "frame_gate_probability": 0.9708,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "920250",
+      "course": "Lingfield (AW)",
+      "off_time": "15:17",
+      "race_name": "Follow @AtTheRaces On X Handicap (GBBPlus Race)",
+      "horse": "Charles Darnay",
+      "tier": "D",
+      "field_size": 5,
+      "class_num": 4,
+      "sp_decimal": 1.625,
+      "velo_prime_prob": 0.3227,
+      "old_velo_top": {
+        "horse": "Charles Darnay",
+        "velo_prime_prob": 0.3227,
+        "sqpe_v17_prob": 0.0638,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.174,
+        "place_prob": 0.1685,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.32"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Charles Darnay",
+        "rp_uid": "8678960",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 12,
+        "going": "Standard",
+        "forecast_odds": 1.625,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.3227,
+        "sp_decimal": 1.625,
+        "implied_probability": 0.6153846153846154,
+        "edge": -0.29268461538461543,
+        "field_size": 5.0,
+        "class_num": 4.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 1.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.8687,
+      "frame_gate_probability": 0.9104,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:CLASS_4_FS_2_5",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921814",
+      "course": "Listowel",
+      "off_time": "13:47",
+      "race_name": "Nora Canty Mares Maiden Hurdle",
+      "horse": "Wonderful Everyday",
+      "tier": "C",
+      "field_size": 14,
+      "class_num": 0,
+      "sp_decimal": 1.5,
+      "velo_prime_prob": 0.2124,
+      "old_velo_top": {
+        "horse": "Wonderful Everyday",
+        "velo_prime_prob": 0.2124,
+        "sqpe_v17_prob": 0.0731,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0874,
+        "place_prob": 0.3059,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Wonderful Everyday",
+        "rp_uid": "7347779",
+        "race_class": null,
+        "race_type": "Hurdle",
+        "distance_furlongs": 16,
+        "going": "Yielding",
+        "forecast_odds": 1.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2124,
+        "sp_decimal": 1.5,
+        "implied_probability": 0.6666666666666666,
+        "edge": -0.4542666666666666,
+        "field_size": 14.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.8586,
+      "frame_gate_probability": 0.8554,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921812",
+      "course": "Gowran Park",
+      "off_time": "16:54",
+      "race_name": "Ladies Day July 25th Handicap (Div I)",
+      "horse": "Accelereight",
+      "tier": "C",
+      "field_size": 14,
+      "class_num": 0,
+      "sp_decimal": 2.25,
+      "velo_prime_prob": 0.2515,
+      "old_velo_top": {
+        "horse": "Accelereight",
+        "velo_prime_prob": 0.2515,
+        "sqpe_v17_prob": 0.059,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0747,
+        "place_prob": 0.1505,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Accelereight",
+        "rp_uid": "7865996",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 9.5,
+        "going": "Good",
+        "forecast_odds": 2.25,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2515,
+        "sp_decimal": 2.25,
+        "implied_probability": 0.4444444444444444,
+        "edge": -0.19294444444444442,
+        "field_size": 14.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6866,
+      "frame_gate_probability": 0.7165,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "919963",
+      "course": "Newbury",
+      "off_time": "15:25",
+      "race_name": "Favourite Things Boosted Daily At BetVictor Maiden Stakes (GBB Race)",
+      "horse": "Jellystone Park",
+      "tier": "X",
+      "field_size": 7,
+      "class_num": 4,
+      "sp_decimal": 2.5,
+      "velo_prime_prob": 0.224,
+      "old_velo_top": {
+        "horse": "Jellystone Park",
+        "velo_prime_prob": 0.224,
+        "sqpe_v17_prob": 0.0843,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0996,
+        "place_prob": 0.3487,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Jellystone Park",
+        "rp_uid": "7436345",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 6,
+        "going": "Good To Firm",
+        "forecast_odds": 2.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.224,
+        "sp_decimal": 2.5,
+        "implied_probability": 0.4,
+        "edge": -0.17600000000000002,
+        "field_size": 7.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6809,
+      "frame_gate_probability": 0.7474,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "919958",
+      "course": "Lingfield",
+      "off_time": "16:27",
+      "race_name": "Follow @AtTheRaces On Instagram Restricted Novice Stakes (Bands C/D) (GBB Race)",
+      "horse": "Star Banner",
+      "tier": "X",
+      "field_size": 8,
+      "class_num": 5,
+      "sp_decimal": 2.5,
+      "velo_prime_prob": 0.2413,
+      "old_velo_top": {
+        "horse": "Star Banner",
+        "velo_prime_prob": 0.2413,
+        "sqpe_v17_prob": 0.0886,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0863,
+        "place_prob": 0.2889,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Star Banner",
+        "rp_uid": "7784905",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Good",
+        "forecast_odds": 2.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2413,
+        "sp_decimal": 2.5,
+        "implied_probability": 0.4,
+        "edge": -0.15870000000000004,
+        "field_size": 8.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6665,
+      "frame_gate_probability": 0.7259,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_5",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ]
+      }
+    },
+    {
+      "race_id": "919960",
+      "course": "Newbury",
+      "off_time": "16:35",
+      "race_name": "South Downs Water Handicap (GBBPlus Race)",
+      "horse": "Naval Tribute",
+      "tier": "X",
+      "field_size": 8,
+      "class_num": 4,
+      "sp_decimal": 2.75,
+      "velo_prime_prob": 0.1719,
+      "old_velo_top": {
+        "horse": "Naval Tribute",
+        "velo_prime_prob": 0.1719,
+        "sqpe_v17_prob": 0.0226,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0858,
+        "place_prob": 0.0286,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Naval Tribute",
+        "rp_uid": "7020716",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 16,
+        "going": "Good To Firm",
+        "forecast_odds": 2.75,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1719,
+        "sp_decimal": 2.75,
+        "implied_probability": 0.36363636363636365,
+        "edge": -0.19173636363636365,
+        "field_size": 8.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6449,
+      "frame_gate_probability": 0.7097,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "919967",
+      "course": "Windsor",
+      "off_time": "17:05",
+      "race_name": "Fenchurch Insurance Brokers Handicap",
+      "horse": "Wheels Of Fire",
+      "tier": "X",
+      "field_size": 8,
+      "class_num": 4,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.1619,
+      "old_velo_top": {
+        "horse": "Wheels Of Fire",
+        "velo_prime_prob": 0.1619,
+        "sqpe_v17_prob": 0.0167,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0756,
+        "place_prob": 0.0126,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Wheels Of Fire",
+        "rp_uid": "6055636",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 5,
+        "going": "Good To Firm",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1619,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.17143333333333333,
+        "field_size": 8.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6132,
+      "frame_gate_probability": 0.6844,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "919965",
+      "course": "Newbury",
+      "off_time": "16:00",
+      "race_name": "Pump Technology Jonathan And Natalie Handicap",
+      "horse": "Spring Bloom",
+      "tier": "D",
+      "field_size": 7,
+      "class_num": 5,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.1833,
+      "old_velo_top": {
+        "horse": "Spring Bloom",
+        "velo_prime_prob": 0.1833,
+        "sqpe_v17_prob": 0.0353,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0841,
+        "place_prob": 0.0468,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Spring Bloom",
+        "rp_uid": "2645551",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 5,
+        "going": "Good To Firm",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1833,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.15003333333333332,
+        "field_size": 7.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6125,
+      "frame_gate_probability": 0.689,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_5",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ]
+      }
+    },
+    {
+      "race_id": "921809",
+      "course": "Gowran Park",
+      "off_time": "15:09",
+      "race_name": "Irish Stallion Farms EBF Fillies Handicap",
+      "horse": "Thrifty Of Digby",
+      "tier": "C",
+      "field_size": 8,
+      "class_num": 0,
+      "sp_decimal": 3.333,
+      "velo_prime_prob": 0.1705,
+      "old_velo_top": {
+        "horse": "Thrifty Of Digby",
+        "velo_prime_prob": 0.1705,
+        "sqpe_v17_prob": 0.0205,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0754,
+        "place_prob": 0.0213,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Thrifty Of Digby",
+        "rp_uid": "5353795",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 9.5,
+        "going": "Good",
+        "forecast_odds": 3.333,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1705,
+        "sp_decimal": 3.333,
+        "implied_probability": 0.3000300030003,
+        "edge": -0.12953000300030001,
+        "field_size": 8.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5908,
+      "frame_gate_probability": 0.6854,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921816",
+      "course": "Listowel",
+      "off_time": "14:57",
+      "race_name": "Join Racing TV With A Free Trial Now Handicap Hurdle",
+      "horse": "Putapoundinthejar",
+      "tier": "D",
+      "field_size": 8,
+      "class_num": 0,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.1534,
+      "old_velo_top": {
+        "horse": "Putapoundinthejar",
+        "velo_prime_prob": 0.1534,
+        "sqpe_v17_prob": 0.0016,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0751,
+        "place_prob": 0.004,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Putapoundinthejar",
+        "rp_uid": "5746471",
+        "race_class": null,
+        "race_type": "Hurdle",
+        "distance_furlongs": 16,
+        "going": "Yielding",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1534,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.1323142857142857,
+        "field_size": 8.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5769,
+      "frame_gate_probability": 0.6735,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "919968",
+      "course": "Windsor",
+      "off_time": "18:45",
+      "race_name": "Ravens Roofing Supplies Fillies' Novice Stakes (GBB Race)",
+      "horse": "Gold Digger",
+      "tier": "B",
+      "field_size": 10,
+      "class_num": 4,
+      "sp_decimal": 0.4,
+      "velo_prime_prob": 0.3384,
+      "old_velo_top": {
+        "horse": "Gold Digger",
+        "velo_prime_prob": 0.3384,
+        "sqpe_v17_prob": 0.0547,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1072,
+        "place_prob": 0.0988,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.34"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Gold Digger",
+        "rp_uid": "7534594",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 6,
+        "going": "Good To Firm",
+        "forecast_odds": 0.4,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.3384,
+        "sp_decimal": 0.4,
+        "implied_probability": 2.5,
+        "edge": -2.1616,
+        "field_size": 10.0,
+        "class_num": 4.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 1.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.9999,
+      "frame_gate_probability": 0.9998,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "921820",
+      "course": "Listowel",
+      "off_time": "17:17",
+      "race_name": "Bryan MacMahon (Pro/Am) INH Flat Race",
+      "horse": "Caman Hill",
+      "tier": "D",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 1.5,
+      "velo_prime_prob": 0.231,
+      "old_velo_top": {
+        "horse": "Caman Hill",
+        "velo_prime_prob": 0.231,
+        "sqpe_v17_prob": 0.0808,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1025,
+        "place_prob": 0.3108,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Caman Hill",
+        "rp_uid": "7592652",
+        "race_class": null,
+        "race_type": "NH Flat",
+        "distance_furlongs": 20,
+        "going": "Yielding",
+        "forecast_odds": 1.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.231,
+        "sp_decimal": 1.5,
+        "implied_probability": 0.6666666666666666,
+        "edge": -0.43566666666666665,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.8685,
+      "frame_gate_probability": 0.8777,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "921819",
+      "course": "Listowel",
+      "off_time": "16:42",
+      "race_name": "Beasley Engineering Hunters Chase",
+      "horse": "Solitary Man",
+      "tier": "B",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 1.75,
+      "velo_prime_prob": 0.2412,
+      "old_velo_top": {
+        "horse": "Solitary Man",
+        "velo_prime_prob": 0.2412,
+        "sqpe_v17_prob": 0.0727,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0985,
+        "place_prob": 0.2965,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Solitary Man",
+        "rp_uid": "4231722",
+        "race_class": null,
+        "race_type": "Chase",
+        "distance_furlongs": 23.5,
+        "going": "Yielding",
+        "forecast_odds": 1.75,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2412,
+        "sp_decimal": 1.75,
+        "implied_probability": 0.5714285714285714,
+        "edge": -0.3302285714285714,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.8117,
+      "frame_gate_probability": 0.8339,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919972",
+      "course": "Windsor",
+      "off_time": "20:15",
+      "race_name": "Marley Solar Roof System \"Confined\" Handicap (For horses Which Have Not Won More Than One Race)",
+      "horse": "Mohaab",
+      "tier": "B",
+      "field_size": 10,
+      "class_num": 6,
+      "sp_decimal": 1.5,
+      "velo_prime_prob": 0.3647,
+      "old_velo_top": {
+        "horse": "Mohaab",
+        "velo_prime_prob": 0.3647,
+        "sqpe_v17_prob": 0.0667,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.104,
+        "place_prob": 0.1279,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.36"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Mohaab",
+        "rp_uid": "7020505",
+        "race_class": "6",
+        "race_type": "Flat",
+        "distance_furlongs": 10,
+        "going": "Good To Firm",
+        "forecast_odds": 1.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.3647,
+        "sp_decimal": 1.5,
+        "implied_probability": 0.6666666666666666,
+        "edge": -0.3019666666666666,
+        "field_size": 10.0,
+        "class_num": 6.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.7805,
+      "frame_gate_probability": 0.9038,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920258",
+      "course": "Wolverhampton (AW)",
+      "off_time": "20:30",
+      "race_name": "Free Digital Racecard At raceday-ready.com Classified Stakes",
+      "horse": "A Lott Of Kane",
+      "tier": "B",
+      "field_size": 11,
+      "class_num": 6,
+      "sp_decimal": 2.25,
+      "velo_prime_prob": 0.1949,
+      "old_velo_top": {
+        "horse": "A Lott Of Kane",
+        "velo_prime_prob": 0.1949,
+        "sqpe_v17_prob": 0.0805,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0863,
+        "place_prob": 0.2108,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "A Lott Of Kane",
+        "rp_uid": "8058112",
+        "race_class": "6",
+        "race_type": "Flat",
+        "distance_furlongs": 5,
+        "going": "Standard",
+        "forecast_odds": 2.25,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1949,
+        "sp_decimal": 2.25,
+        "implied_probability": 0.4444444444444444,
+        "edge": -0.24954444444444443,
+        "field_size": 11.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6932,
+      "frame_gate_probability": 0.7168,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919962",
+      "course": "Newbury",
+      "off_time": "14:50",
+      "race_name": "BetVictor Backing England To Win Handicap",
+      "horse": "Classic Encounter",
+      "tier": "X",
+      "field_size": 12,
+      "class_num": 4,
+      "sp_decimal": 2.5,
+      "velo_prime_prob": 0.1346,
+      "old_velo_top": {
+        "horse": "Classic Encounter",
+        "velo_prime_prob": 0.1346,
+        "sqpe_v17_prob": 0.0153,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.084,
+        "place_prob": 0.0164,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 2.2375,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "STRONG_PLACE_PROFILE",
+          "OR_FALLING"
+        ],
+        "horse": "Classic Encounter",
+        "rp_uid": "5234275",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 8,
+        "going": "Good To Firm",
+        "forecast_odds": 2.5,
+        "passport_live_features": {
+          "pp_career_runs": 16,
+          "pp_win_rate": 0.125,
+          "pp_place_rate": 0.5,
+          "pp_days_since_last": 30.0,
+          "pp_avg_sp_last5": 9.48,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": -9.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 1.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1346,
+        "sp_decimal": 2.5,
+        "implied_probability": 0.4,
+        "edge": -0.2654,
+        "field_size": 12.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6602,
+      "frame_gate_probability": 0.687,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920253",
+      "course": "Wolverhampton (AW)",
+      "off_time": "19:30",
+      "race_name": "Race And Rest At The Holiday Inn Maiden Stakes (GBB Race) (Div I)",
+      "horse": "Al Qatem",
+      "tier": "C",
+      "field_size": 11,
+      "class_num": 4,
+      "sp_decimal": 2.5,
+      "velo_prime_prob": 0.2041,
+      "old_velo_top": {
+        "horse": "Al Qatem",
+        "velo_prime_prob": 0.2041,
+        "sqpe_v17_prob": 0.0787,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.084,
+        "place_prob": 0.2342,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Al Qatem",
+        "rp_uid": "8245528",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 8.5,
+        "going": "Standard",
+        "forecast_odds": 2.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2041,
+        "sp_decimal": 2.5,
+        "implied_probability": 0.4,
+        "edge": -0.19590000000000002,
+        "field_size": 11.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6552,
+      "frame_gate_probability": 0.6954,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "921939",
+      "course": "Wolverhampton (AW)",
+      "off_time": "20:00",
+      "race_name": "Race And Rest At The Holiday Inn Maiden Stakes (GBB Race) (Div II)",
+      "horse": "Seven Sisters",
+      "tier": "C",
+      "field_size": 11,
+      "class_num": 4,
+      "sp_decimal": 2.5,
+      "velo_prime_prob": 0.2218,
+      "old_velo_top": {
+        "horse": "Seven Sisters",
+        "velo_prime_prob": 0.2218,
+        "sqpe_v17_prob": 0.0787,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.084,
+        "place_prob": 0.2342,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Seven Sisters",
+        "rp_uid": "9179733",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 8.5,
+        "going": "Standard",
+        "forecast_odds": 2.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2218,
+        "sp_decimal": 2.5,
+        "implied_probability": 0.4,
+        "edge": -0.17820000000000003,
+        "field_size": 11.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.652,
+      "frame_gate_probability": 0.6939,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "921815",
+      "course": "Listowel",
+      "off_time": "14:22",
+      "race_name": "Southern Waste Management Mares Handicap Hurdle",
+      "horse": "Mo Ghille Mar",
+      "tier": "D",
+      "field_size": 10,
+      "class_num": 0,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.1298,
+      "old_velo_top": {
+        "horse": "Mo Ghille Mar",
+        "velo_prime_prob": 0.1298,
+        "sqpe_v17_prob": 0.0038,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0674,
+        "place_prob": 0.0035,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Mo Ghille Mar",
+        "rp_uid": "5147922",
+        "race_class": null,
+        "race_type": "Hurdle",
+        "distance_furlongs": 16,
+        "going": "Yielding",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1298,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.20353333333333332,
+        "field_size": 10.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6215,
+      "frame_gate_probability": 0.6902,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920252",
+      "course": "Lingfield (AW)",
+      "off_time": "14:42",
+      "race_name": "Download The At The Races App Handicap",
+      "horse": "Tomarlo",
+      "tier": "X",
+      "field_size": 9,
+      "class_num": 6,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.1977,
+      "old_velo_top": {
+        "horse": "Tomarlo",
+        "velo_prime_prob": 0.1977,
+        "sqpe_v17_prob": 0.081,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0773,
+        "place_prob": 0.1616,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Tomarlo",
+        "rp_uid": "5915791",
+        "race_class": "6",
+        "race_type": "Flat",
+        "distance_furlongs": 6,
+        "going": "Standard",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1977,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.13563333333333333,
+        "field_size": 9.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5894,
+      "frame_gate_probability": 0.6499,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919964",
+      "course": "Newbury",
+      "off_time": "14:15",
+      "race_name": "Get 100/1 On England At BetVictor EBF Maiden Fillies' Stakes (GBB/IRE Incentive Race)",
+      "horse": "Scommessa Sicura",
+      "tier": "B",
+      "field_size": 12,
+      "class_num": 4,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.2376,
+      "old_velo_top": {
+        "horse": "Scommessa Sicura",
+        "velo_prime_prob": 0.2376,
+        "sqpe_v17_prob": 0.0561,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0691,
+        "place_prob": 0.1684,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Scommessa Sicura",
+        "rp_uid": "9115896",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 6.5,
+        "going": "Good To Firm",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2376,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.09573333333333331,
+        "field_size": 12.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5667,
+      "frame_gate_probability": 0.6168,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919961",
+      "course": "Newbury",
+      "off_time": "17:10",
+      "race_name": "West Court Retreat Supports Heros Charity Handicap (GBBPlus Race)",
+      "horse": "Twisting Physics",
+      "tier": "C",
+      "field_size": 9,
+      "class_num": 4,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.1411,
+      "old_velo_top": {
+        "horse": "Twisting Physics",
+        "velo_prime_prob": 0.1411,
+        "sqpe_v17_prob": 0.0143,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0727,
+        "place_prob": 0.0104,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Twisting Physics",
+        "rp_uid": "6256656",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 10,
+        "going": "Good To Firm",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1411,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.1446142857142857,
+        "field_size": 9.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5526,
+      "frame_gate_probability": 0.6257,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919966",
+      "course": "Windsor",
+      "off_time": "19:15",
+      "race_name": "Fitzdares Sprint Series Handicap (Windsor Sprint Series Qualifier)",
+      "horse": "The Untamed",
+      "tier": "C",
+      "field_size": 11,
+      "class_num": 3,
+      "sp_decimal": 3.333,
+      "velo_prime_prob": 0.2214,
+      "old_velo_top": {
+        "horse": "The Untamed",
+        "velo_prime_prob": 0.2214,
+        "sqpe_v17_prob": 0.0146,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0691,
+        "place_prob": 0.0098,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "The Untamed",
+        "rp_uid": "8982337",
+        "race_class": "3",
+        "race_type": "Flat",
+        "distance_furlongs": 6,
+        "going": "Good To Firm",
+        "forecast_odds": 3.333,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2214,
+        "sp_decimal": 3.333,
+        "implied_probability": 0.3000300030003,
+        "edge": -0.07863000300030001,
+        "field_size": 11.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5427,
+      "frame_gate_probability": 0.6098,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_3",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919971",
+      "course": "Windsor",
+      "off_time": "19:45",
+      "race_name": "Don & Low Champions Cup 2026 Handicap",
+      "horse": "Just Adair",
+      "tier": "X",
+      "field_size": 11,
+      "class_num": 6,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.1587,
+      "old_velo_top": {
+        "horse": "Just Adair",
+        "velo_prime_prob": 0.1587,
+        "sqpe_v17_prob": 0.0621,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0691,
+        "place_prob": 0.1133,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Just Adair",
+        "rp_uid": "7378606",
+        "race_class": "6",
+        "race_type": "Flat",
+        "distance_furlongs": 11.5,
+        "going": "Good To Firm",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1587,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.1270142857142857,
+        "field_size": 11.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5233,
+      "frame_gate_probability": 0.5742,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920251",
+      "course": "Lingfield (AW)",
+      "off_time": "14:07",
+      "race_name": "Free Tips On attheraces.com Handicap",
+      "horse": "Virtue Patience",
+      "tier": "C",
+      "field_size": 12,
+      "class_num": 6,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.1384,
+      "old_velo_top": {
+        "horse": "Virtue Patience",
+        "velo_prime_prob": 0.1384,
+        "sqpe_v17_prob": 0.0382,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0691,
+        "place_prob": 0.047,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Virtue Patience",
+        "rp_uid": "5580098",
+        "race_class": "6",
+        "race_type": "Flat",
+        "distance_furlongs": 8,
+        "going": "Standard",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1384,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.1473142857142857,
+        "field_size": 12.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5191,
+      "frame_gate_probability": 0.5597,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920255",
+      "course": "Wolverhampton (AW)",
+      "off_time": "18:00",
+      "race_name": "Get Raceday Ready Handicap",
+      "horse": "South Kensington",
+      "tier": "X",
+      "field_size": 12,
+      "class_num": 6,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.1573,
+      "old_velo_top": {
+        "horse": "South Kensington",
+        "velo_prime_prob": 0.1573,
+        "sqpe_v17_prob": 0.0534,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0691,
+        "place_prob": 0.089,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "South Kensington",
+        "rp_uid": "5073241",
+        "race_class": "6",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Standard",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1573,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.1284142857142857,
+        "field_size": 12.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5154,
+      "frame_gate_probability": 0.5579,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920254",
+      "course": "Wolverhampton (AW)",
+      "off_time": "19:00",
+      "race_name": "Enjoy Summer Racing At Wolverhampton Racecourse Handicap",
+      "horse": "Asian Journey",
+      "tier": "C",
+      "field_size": 12,
+      "class_num": 6,
+      "sp_decimal": 4.0,
+      "velo_prime_prob": 0.1437,
+      "old_velo_top": {
+        "horse": "Asian Journey",
+        "velo_prime_prob": 0.1437,
+        "sqpe_v17_prob": 0.0445,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0648,
+        "place_prob": 0.0761,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Asian Journey",
+        "rp_uid": "7789374",
+        "race_class": "6",
+        "race_type": "Flat",
+        "distance_furlongs": 8.5,
+        "going": "Standard",
+        "forecast_odds": 4,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1437,
+        "sp_decimal": 4.0,
+        "implied_probability": 0.25,
+        "edge": -0.1063,
+        "field_size": 12.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.4724,
+      "frame_gate_probability": 0.5196,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "THREE_TO_FIVE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "921806",
+      "course": "Gowran Park",
+      "off_time": "13:29",
+      "race_name": "Today's Gate Sponsored By The INPBA Fillies Maiden",
+      "horse": "Elusive Echo",
+      "tier": "C",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 4.5,
+      "velo_prime_prob": 0.2267,
+      "old_velo_top": {
+        "horse": "Elusive Echo",
+        "velo_prime_prob": 0.2267,
+        "sqpe_v17_prob": 0.05,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0616,
+        "place_prob": 0.1248,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Elusive Echo",
+        "rp_uid": "9322099",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 8,
+        "going": "Good",
+        "forecast_odds": 4.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2267,
+        "sp_decimal": 4.5,
+        "implied_probability": 0.2222222222222222,
+        "edge": 0.004477777777777803,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.4553,
+      "frame_gate_probability": 0.5505,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "THREE_TO_FIVE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "921810",
+      "course": "Gowran Park",
+      "off_time": "15:44",
+      "race_name": "Irish Stallion Farms EBF Gowran Classic (Smullen Series)",
+      "horse": "Hardy Warrior",
+      "tier": "C",
+      "field_size": 18,
+      "class_num": 0,
+      "sp_decimal": 1.75,
+      "velo_prime_prob": 0.1522,
+      "old_velo_top": {
+        "horse": "Hardy Warrior",
+        "velo_prime_prob": 0.1522,
+        "sqpe_v17_prob": 0.0047,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0741,
+        "place_prob": 0.0279,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 3.9,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING"
+        ],
+        "horse": "Hardy Warrior",
+        "rp_uid": "7551787",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 9.5,
+        "going": "Good",
+        "forecast_odds": 1.75,
+        "passport_live_features": {
+          "pp_career_runs": 3,
+          "pp_win_rate": 0.6667,
+          "pp_place_rate": 1.0,
+          "pp_days_since_last": 71.0,
+          "pp_avg_sp_last5": 6.46,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 18.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1522,
+        "sp_decimal": 1.75,
+        "implied_probability": 0.5714285714285714,
+        "edge": -0.4192285714285714,
+        "field_size": 18.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.786,
+      "frame_gate_probability": 0.7651,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921807",
+      "course": "Gowran Park",
+      "off_time": "13:59",
+      "race_name": "KCLR 96FM Apprentice Handicap",
+      "horse": "Hale Bopp",
+      "tier": "X",
+      "field_size": 16,
+      "class_num": 0,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.1359,
+      "old_velo_top": {
+        "horse": "Hale Bopp",
+        "velo_prime_prob": 0.1359,
+        "sqpe_v17_prob": 0.0591,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0452,
+        "place_prob": 0.1523,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Hale Bopp",
+        "rp_uid": "3102127",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 8,
+        "going": "Good",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1359,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.1498142857142857,
+        "field_size": 16.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.515,
+      "frame_gate_probability": 0.5487,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921940",
+      "course": "Gowran Park",
+      "off_time": "17:29",
+      "race_name": "Ladies Day July 25th Handicap (Div II)",
+      "horse": "A Pretty Penny",
+      "tier": "C",
+      "field_size": 15,
+      "class_num": 0,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.1935,
+      "old_velo_top": {
+        "horse": "A Pretty Penny",
+        "velo_prime_prob": 0.1935,
+        "sqpe_v17_prob": 0.0422,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0452,
+        "place_prob": 0.1095,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "A Pretty Penny",
+        "rp_uid": "7966358",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 9.5,
+        "going": "Good",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1935,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.0922142857142857,
+        "field_size": 15.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5117,
+      "frame_gate_probability": 0.5596,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921808",
+      "course": "Gowran Park",
+      "off_time": "14:34",
+      "race_name": "Sonix Entertainment Handicap",
+      "horse": "Obscenity",
+      "tier": "X",
+      "field_size": 19,
+      "class_num": 0,
+      "sp_decimal": 4.0,
+      "velo_prime_prob": 0.0711,
+      "old_velo_top": {
+        "horse": "Obscenity",
+        "velo_prime_prob": 0.0711,
+        "sqpe_v17_prob": 0.0079,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0339,
+        "place_prob": 0.0343,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Obscenity",
+        "rp_uid": "7966374",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 12,
+        "going": "Good",
+        "forecast_odds": 4,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.0711,
+        "sp_decimal": 4.0,
+        "implied_probability": 0.25,
+        "edge": -0.1789,
+        "field_size": 19.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.4576,
+      "frame_gate_probability": 0.4653,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "THREE_TO_FIVE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921811",
+      "course": "Gowran Park",
+      "off_time": "16:19",
+      "race_name": "QuinnBet (C & G) Maiden",
+      "horse": "Sharkeyboy",
+      "tier": "D",
+      "field_size": 16,
+      "class_num": 0,
+      "sp_decimal": 4.5,
+      "velo_prime_prob": 0.1299,
+      "old_velo_top": {
+        "horse": "Sharkeyboy",
+        "velo_prime_prob": 0.1299,
+        "sqpe_v17_prob": 0.0386,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0434,
+        "place_prob": 0.1237,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Sharkeyboy",
+        "rp_uid": "8179308",
+        "race_class": null,
+        "race_type": "Flat",
+        "distance_furlongs": 9.5,
+        "going": "Good",
+        "forecast_odds": 4.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1299,
+        "sp_decimal": 4.5,
+        "implied_probability": 0.2222222222222222,
+        "edge": -0.09232222222222222,
+        "field_size": 16.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.4336,
+      "frame_gate_probability": 0.4767,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "THREE_TO_FIVE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "921938",
+      "course": "Windsor",
+      "off_time": "18:15",
+      "race_name": "Pourou Garhigh Anniversary EBF Restricted Novice Stakes (Bands C/D) (EBF Qual') (GBB Race) (Div II)",
+      "horse": "Dowman",
+      "tier": "B",
+      "field_size": 10,
+      "class_num": 5,
+      "sp_decimal": 0.8,
+      "velo_prime_prob": 0.5102,
+      "old_velo_top": {
+        "horse": "Dowman",
+        "velo_prime_prob": 0.5102,
+        "sqpe_v17_prob": 0.1356,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1067,
+        "place_prob": 0.4452,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.51"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Dowman",
+        "rp_uid": "9046241",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 5,
+        "going": "Good To Firm",
+        "forecast_odds": 0.8,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.5102,
+        "sp_decimal": 0.8,
+        "implied_probability": 1.25,
+        "edge": -0.7398,
+        "field_size": 10.0,
+        "class_num": 5.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.9755,
+      "frame_gate_probability": 0.9869,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "vp_band": "VP_45_55",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919970",
+      "course": "Windsor",
+      "off_time": "17:40",
+      "race_name": "Pourou Garhigh Anniversary EBF Restricted Novice Stakes (Bands C/D) (EBF Qual') (GBB Race) (Div I)",
+      "horse": "Envision",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 5,
+      "sp_decimal": 2.0,
+      "velo_prime_prob": 0.2928,
+      "old_velo_top": {
+        "horse": "Envision",
+        "velo_prime_prob": 0.2928,
+        "sqpe_v17_prob": 0.0738,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0943,
+        "place_prob": 0.2884,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Envision",
+        "rp_uid": "9254243",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 5,
+        "going": "Good To Firm",
+        "forecast_odds": 2,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2928,
+        "sp_decimal": 2.0,
+        "implied_probability": 0.5,
+        "edge": -0.2072,
+        "field_size": 10.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.7388,
+      "frame_gate_probability": 0.7696,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919959",
+      "course": "Lingfield",
+      "off_time": "17:00",
+      "race_name": "Sky Sports Racing Virgin 512 Handicap",
+      "horse": "Tattie Bogle",
+      "tier": "D",
+      "field_size": 9,
+      "class_num": 5,
+      "sp_decimal": 2.75,
+      "velo_prime_prob": 0.1939,
+      "old_velo_top": {
+        "horse": "Tattie Bogle",
+        "velo_prime_prob": 0.1939,
+        "sqpe_v17_prob": 0.0459,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0896,
+        "place_prob": 0.0538,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Tattie Bogle",
+        "rp_uid": "6074545",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Good",
+        "forecast_odds": 2.75,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1939,
+        "sp_decimal": 2.75,
+        "implied_probability": 0.36363636363636365,
+        "edge": -0.16973636363636366,
+        "field_size": 9.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6289,
+      "frame_gate_probability": 0.6859,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920256",
+      "course": "Wolverhampton (AW)",
+      "off_time": "21:00",
+      "race_name": "Get The Inside Track With raceday-ready.com Handicap",
+      "horse": "Initial Blue",
+      "tier": "C",
+      "field_size": 12,
+      "class_num": 5,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.1518,
+      "old_velo_top": {
+        "horse": "Initial Blue",
+        "velo_prime_prob": 0.1518,
+        "sqpe_v17_prob": 0.0396,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0691,
+        "place_prob": 0.047,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Initial Blue",
+        "rp_uid": "6537071",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 6,
+        "going": "Standard",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1518,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.18153333333333332,
+        "field_size": 12.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5788,
+      "frame_gate_probability": 0.6162,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "920257",
+      "course": "Wolverhampton (AW)",
+      "off_time": "18:30",
+      "race_name": "Download The Raceday Ready App Fillies' Handicap",
+      "horse": "Wave Rock",
+      "tier": "B",
+      "field_size": 11,
+      "class_num": 5,
+      "sp_decimal": 3.5,
+      "velo_prime_prob": 0.181,
+      "old_velo_top": {
+        "horse": "Wave Rock",
+        "velo_prime_prob": 0.181,
+        "sqpe_v17_prob": 0.0519,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0691,
+        "place_prob": 0.0725,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Wave Rock",
+        "rp_uid": "7713437",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 9.5,
+        "going": "Standard",
+        "forecast_odds": 3.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.181,
+        "sp_decimal": 3.5,
+        "implied_probability": 0.2857142857142857,
+        "edge": -0.1047142857142857,
+        "field_size": 11.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5236,
+      "frame_gate_probability": 0.581,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "919969",
+      "course": "Windsor",
+      "off_time": "20:45",
+      "race_name": "Skyline Roofing Centers Handicap",
+      "horse": "Galaxy Wonder",
+      "tier": "X",
+      "field_size": 10,
+      "class_num": 5,
+      "sp_decimal": 4.5,
+      "velo_prime_prob": 0.1239,
+      "old_velo_top": {
+        "horse": "Galaxy Wonder",
+        "velo_prime_prob": 0.1239,
+        "sqpe_v17_prob": 0.019,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0625,
+        "place_prob": 0.0175,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Galaxy Wonder",
+        "rp_uid": "7134165",
+        "race_class": "5",
+        "race_type": "Flat",
+        "distance_furlongs": 10,
+        "going": "Good To Firm",
+        "forecast_odds": 4.5,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.1239,
+        "sp_decimal": 4.5,
+        "implied_probability": 0.2222222222222222,
+        "edge": -0.09832222222222221,
+        "field_size": 10.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.4604,
+      "frame_gate_probability": 0.5313,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "THREE_TO_FIVE",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    }
+  ]
+}

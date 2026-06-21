@@ -36,6 +36,15 @@ This ledger tracks the closure of "Honesty Gaps" and "Silent Splits" identified 
 
 ---
 
+### [2026-06-21] Paper Intelligence Overlay Hardening
+- **Problem:** Old VELO, New Build, Shadow/No-RPR, cash-run, and course intelligence were being discussed as one mental blob. That creates operator confusion and risks accidental promotion of research lanes into live decisioning.
+- **Fix:** Added explicit paper-only overlay lanes and documentation: Radical Shadow VELO, Tri-Lane V2, Tri-Lane Agent Review, Deep Race Agent V1, and Course Master.
+- **Atomic Rule:** These overlays may explain, challenge, suppress for study, or warn. They may not mutate `velo_prime_prob`, `decision_tier`, `assigned_product`, Supabase verdicts, model files, router execution, Telegram output, staking, or live execution.
+- **Dashboard Proof:** `/api/governed-card?date=2026-06-21` verified `course_master_loaded: true`, `deep_agent_loaded: true`, `record_count: 20`, with Course Master actions `COURSE_NEUTRAL: 14` and `COURSE_SUPPORT: 6`.
+- **Truth Proof:** Root `THE_ONE_TRUTH.md` now defines Steps 9.1-9.5 as post-Step-9 paper/context overlays. `docs/current/ONE_TRUTH.md` names the same lanes as shadow-only.
+
+---
+
 ## 3. Hardening Roadmap
 1. **[LANE 1] Honesty Path:** (Atomic Persistence, Fail-Fast Loops).
 2. **[LANE 2] Surface Security:** (API Key verification, env isolation).

@@ -2897,6 +2897,8 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
 .tl-lane-label-nb  { color: var(--cyan); }
 .tl-lane-label-ov  { color: var(--gold); }
 .tl-lane-label-nr  { color: var(--purple); }
+.tl-lane-label-sh  { color: var(--green); }
+.tl-lane-label-tri { color: var(--amber); }
 .tl-lane-empty { color: var(--fg-muted); font-size: 9px; padding: 4px 0; }
 .tl-horse {
   font-family: var(--font-mono);
@@ -3489,6 +3491,99 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
     }
 
     html += '</div>'; // end NR lane
+
+    // Shadow VELO lane - paper only, no live execution
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-sh">SHADOW VELO</span><span class="rc-full-field-note">PAPER ONLY</span></div>';
+    const shAction = r0.shadow_action || '';
+    if (shAction) {
+      const shConf = r0.shadow_confidence || 'n/a';
+      const shWin = parseFloat(r0.shadow_win_gate_probability || 0);
+      const shFrame = parseFloat(r0.shadow_frame_gate_probability || 0);
+      const shPassport = r0.shadow_passport_available === true ? 'PP' : (r0.shadow_passport_available === false ? 'NO PP' : 'PP ?');
+      const shActionColor = shAction === 'CASH_RUN' ? 'var(--green)' : (shAction.includes('WATCH') ? 'var(--amber)' : 'var(--fg-secondary)');
+      html += `<div class="tl-horse" style="color:${shActionColor}">${esc(shAction)}</div>`;
+      html += `<div class="tl-stat-row">
+        <span class="tl-prob" style="color:${shActionColor}">${esc(String(shConf).toUpperCase())}</span>
+        <span class="tl-mds">WIN ${(shWin*100).toFixed(0)}%</span>
+        <span class="tl-mds">FR ${(shFrame*100).toFixed(0)}%</span>
+        <span class="${r0.shadow_passport_available ? 'tl-pp-yes' : 'tl-mds'}">${shPassport}</span>
+      </div>`;
+      const shWarn = Array.isArray(r0.shadow_warnings) && r0.shadow_warnings.length ? r0.shadow_warnings[0] : '';
+      if (shWarn) html += `<div class="tl-lane-empty" title="${esc(shWarn)}">${esc(shWarn)}</div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No Shadow data</div>';
+    }
+    html += '</div>'; // end Shadow lane
+
+    // Tri-Lane lane - stress test only, never live execution
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-tri">TRI-LANE V2</span><span class="rc-full-field-note">STRESS TEST ONLY</span></div>';
+    const triAction = r0.tri_lane_action || '';
+    if (triAction) {
+      const triColor = triAction === 'TRI_CASH_RUN' ? 'var(--green)' : (triAction === 'TRI_WATCH' ? 'var(--amber)' : 'var(--fg-secondary)');
+      html += `<div class="tl-horse" style="color:${triColor}">${esc(triAction)}</div>`;
+      html += `<div class="tl-stat-row">
+        <span class="tl-mds">${esc(r0.tri_review_priority || 'NO REVIEW')}</span>
+        <span class="${r0.tri_lane_live_execution_allowed ? 'tl-pp-yes' : 'tl-mds'}">${r0.tri_lane_live_execution_allowed ? 'LIVE OK' : 'LIVE OFF'}</span>
+      </div>`;
+      const triReason = Array.isArray(r0.tri_lane_reasons) && r0.tri_lane_reasons.length ? r0.tri_lane_reasons.slice(0, 2).join(' | ') : '';
+      if (triReason) html += `<div class="tl-lane-empty" title="${esc(triReason)}">${esc(triReason)}</div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No Tri-Lane data</div>';
+    }
+    html += '</div>'; // end Tri-Lane lane
+
+    // Deep Race Agent lane - paper-only analyst gate from local RP/BHA/download evidence
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-tri">DEEP AGENT</span><span class="rc-full-field-note">PAPER ONLY</span></div>';
+    const daVerdict = r0.deep_agent_verdict || '';
+    if (daVerdict) {
+      const daGate = r0.deep_agent_gate || 'STUDY_ONLY';
+      const daIdentity = r0.deep_agent_identity || 'UNKNOWN';
+      const daSupport = r0.deep_agent_support_score ?? '—';
+      const daRisk = r0.deep_agent_risk_score ?? '—';
+      let daColor = 'var(--fg-secondary)';
+      if (daGate === 'GREEN_CASH_REVIEW') daColor = 'var(--green)';
+      else if (daGate === 'AMBER_UPGRADE_REVIEW') daColor = 'var(--amber)';
+      else if (daGate === 'SUPPRESS_OR_STUDY') daColor = 'var(--red)';
+      html += `<div class="tl-horse" style="color:${daColor}">${esc(daGate)}</div>`;
+      html += `<div class="tl-stat-row">
+        <span class="tl-mds">${esc(daVerdict)}</span>
+        <span class="tl-mds">ID ${esc(daIdentity)}</span>
+        <span class="tl-mds">S/R ${esc(daSupport)}/${esc(daRisk)}</span>
+      </div>`;
+      const daReason = Array.isArray(r0.deep_agent_why_wrong) && r0.deep_agent_why_wrong.length ? r0.deep_agent_why_wrong[0] : '';
+      if (daReason) html += `<div class="tl-lane-empty" title="${esc(daReason)}">${esc(daReason)}</div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No Deep Agent data</div>';
+    }
+    html += '</div>'; // end Deep Agent lane
+
+    // Course Master lane - course context, never a model score
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-nr">COURSE MASTER</span><span class="rc-full-field-note">CONTEXT ONLY</span></div>';
+    const cmAction = r0.course_master_action || '';
+    if (cmAction) {
+      const cmConf = r0.course_master_confidence || 'LOW';
+      const cmScore = r0.course_master_score ?? 0;
+      let cmColor = 'var(--fg-secondary)';
+      if (cmAction === 'COURSE_BOOST' || cmAction === 'COURSE_SUPPORT') cmColor = 'var(--green)';
+      else if (cmAction === 'COURSE_WARNING') cmColor = 'var(--amber)';
+      else if (cmAction === 'COURSE_SUPPRESS') cmColor = 'var(--red)';
+      const cmNote = (Array.isArray(r0.course_master_warnings) && r0.course_master_warnings.length)
+        ? r0.course_master_warnings[0]
+        : (Array.isArray(r0.course_master_reasons) && r0.course_master_reasons.length ? r0.course_master_reasons[0] : '');
+      html += `<div class="tl-horse" style="color:${cmColor}">${esc(cmAction)}</div>`;
+      html += `<div class="tl-stat-row">
+        <span class="tl-mds">CONF ${esc(cmConf)}</span>
+        <span class="tl-mds">SCORE ${esc(cmScore)}</span>
+      </div>`;
+      if (cmNote) html += `<div class="tl-lane-empty" title="${esc(cmNote)}">${esc(cmNote)}</div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No Course Master data</div>';
+    }
+    html += '</div>'; // end Course Master lane
     html += '</div>'; // end tl-lanes
 
     if (runners.length > 3) {

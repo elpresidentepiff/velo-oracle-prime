@@ -1,0 +1,3514 @@
+{
+  "generated_at": "2026-06-21T14:50:59.056006Z",
+  "status": "DEEP_RACE_AGENT_V1_PAPER_ONLY",
+  "live_writes": false,
+  "racing_api_used": false,
+  "source_review": "C:\\Users\\puror\\velo-oracle-prime\\data\\reports\\tri_lane_agent_review_2026_06_21_v2.json",
+  "downloads": "C:\\Users\\puror\\Downloads",
+  "summary": {
+    "cards": 18,
+    "raw_cards": 18,
+    "excluded_non_uk_ire_cards": 0,
+    "excluded_non_uk_ire_courses": [],
+    "agent_verdict_counts": {
+      "CASH_RUN_REVIEW": 1,
+      "WATCH_ONLY": 1,
+      "UPGRADE_CANDIDATE_REVIEW": 2,
+      "NO_BET": 6,
+      "PASS_WITH_SUPPORT_REVIEW": 8
+    },
+    "identity_confidence_counts": {
+      "LIVE_ONLY": 2,
+      "LIVE_WEAK": 2,
+      "LIVE_CONFIRMED": 14
+    },
+    "ratings_rows": 11849,
+    "performance_rows": 11849,
+    "raceform_loaded": true,
+    "race_pdf_files": 1260,
+    "race_pdf_sets": 217,
+    "live_identity_files_loaded": 3,
+    "live_identity_runners_loaded": 166,
+    "live_identity_duplicates_removed": 0
+  },
+  "pdf_inventory": {
+    "race_pdf_files": 1260,
+    "race_pdf_sets": 217
+  },
+  "agent_cards": [
+    {
+      "date": "2026-06-21",
+      "race_id": "921234",
+      "off_time": "13:35",
+      "course": "Pontefract",
+      "race_name": "Pontefract Races Autism In Racing EBF Novice Stakes (GBB Race)",
+      "horse": "Clash Of Hearts",
+      "priority": "EXECUTION_REVIEW",
+      "tri_action": "TRI_CASH_RUN",
+      "agent": {
+        "agent_verdict": "CASH_RUN_REVIEW",
+        "support_score": 7,
+        "risk_score": 3,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.594",
+          "RPD_TAG:H",
+          "PASSPORT_SUPPORT:2.05",
+          "FRAME_GATE:0.840",
+          "WIN_GATE:0.780",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA"
+        ],
+        "questions": [
+          "Cash-run has win-gate plus passport: check if upgraded WIN is justified."
+        ],
+        "danger_horses": [
+          "Onslaught",
+          "Excessive",
+          "La Fuerza"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "cash-run shortlist only; paper until Sigma confirms",
+        "key_numbers": {
+          "vp": 0.5944,
+          "mds": 0.1884,
+          "frame_gate": 0.8401,
+          "win_gate": 0.7804,
+          "passport_strength": 2.05,
+          "shadow_action": "CASH_RUN",
+          "tri_action": "TRI_CASH_RUN"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Pontefract",
+          "venue": "Pontefract",
+          "venue_code": "PON",
+          "race_id": "921234",
+          "off_time": "1.35",
+          "horse": "Clash Of Hearts",
+          "horse_id": 9231655,
+          "age": 2,
+          "trainer": "Adrian Paul Keatley",
+          "trainer_name": "Adrian Paul Keatley",
+          "jockey": "Mikey Sheehy",
+          "jockey_name": "Mikey Sheehy",
+          "current_or": null,
+          "rpr_master": 88.0,
+          "ts_master": 76.0,
+          "days_since_last_run": "22",
+          "form_figures": "23",
+          "spotlight_comment": "Half-brother to a 6f Group 3 winner; third of 15 (subsequently promoted to second) in York novice (6f, good) on debut in May and again showed considerable promise when third in quite valuable conditions race at Pontefract (5f, good to firm) a fortnight later; back up in trip today; ought to be a tough nut to crack.",
+          "diomed_comment": "Launched career with two very promising runs last month (6f/5f); should be tough to beat",
+          "newspaper_tip_count": 11,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Clash Of Hearts",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 9231655,
+            "trainer": "Adrian Paul Keatley",
+            "jockey": "Mikey Sheehy",
+            "age": 2,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/6",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Clash Of Hearts",
+        "lane_b_top": "Clash Of Hearts",
+        "lane_a_top3": [
+          "Clash Of Hearts",
+          "Onslaught",
+          "Excessive"
+        ],
+        "lane_b_top3": [
+          "Clash Of Hearts",
+          "La Fuerza",
+          "Sole Ruler"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921243",
+      "off_time": "14:56",
+      "course": "Brighton",
+      "race_name": "Bet Now With fairplaybet.co.uk Handicap",
+      "horse": "Power Of Prayer",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_WATCH",
+      "agent": {
+        "agent_verdict": "WATCH_ONLY",
+        "support_score": 5,
+        "risk_score": 4,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "RPD_TAG:H",
+          "PASSPORT_SUPPORT:1.35",
+          "FRAME_GATE:0.645",
+          "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "LOCAL_EVIDENCE_LIVE_WEAK"
+        ],
+        "questions": [
+          "WATCH contains strong signal: should it be CASH_RUN or WIN?"
+        ],
+        "danger_horses": [
+          "Night Bear",
+          "Sarangpur",
+          "Amber Honey"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Horse-state race fit is weak.",
+          "Live RP racecard identifies the horse, but laptop evidence is thin or historical."
+        ],
+        "recommended_use": "watch / learning only",
+        "key_numbers": {
+          "vp": 0.254,
+          "mds": 0.1053,
+          "frame_gate": 0.6448,
+          "win_gate": 0.5784,
+          "passport_strength": 1.35,
+          "shadow_action": "PASS_OR_WATCH",
+          "tri_action": "TRI_WATCH"
+        },
+        "identity_confidence": "LIVE_WEAK",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Brighton",
+          "venue": "Brighton",
+          "venue_code": "BRI",
+          "race_id": "921243",
+          "off_time": "2.56",
+          "horse": "Power Of Prayer",
+          "horse_id": 7409413,
+          "age": 4,
+          "trainer": "George Baker",
+          "trainer_name": "George Baker",
+          "jockey": "Jack Callan",
+          "jockey_name": "Jack Callan",
+          "current_or": 53.0,
+          "rpr_master": 69.0,
+          "ts_master": 37.0,
+          "days_since_last_run": "12",
+          "form_figures": "315-53",
+          "spotlight_comment": "Won in Ireland (1m4f, AW) in the autumn and made pleasing stable debut when running-on third here (1m2f, good; behind Night Bear) 12 days ago; back up in trip today; dangerous if that recent outing brought her on.",
+          "diomed_comment": "Made pleasing stable debut when running-on third here (1m2f) 12 days ago; 1m4f also suits",
+          "newspaper_tip_count": 1,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 3,
+          "recent_wins": 0,
+          "recent_frames": 0,
+          "recent_courses": [
+            "Cork (IRE)",
+            "Gowran Park (IRE)",
+            "Gowran Park (IRE)"
+          ],
+          "latest": {
+            "date": "2025-05-06",
+            "course": "Cork (IRE)",
+            "race_type": "Flat",
+            "class": "",
+            "dist": "1m2½f",
+            "going": "Good",
+            "ran": "16",
+            "pos": "15",
+            "draw": "13",
+            "sp": "125/1",
+            "jockey": "Hugh Horgan",
+            "trainer": "Joseph Patrick OBrien",
+            "or": "–",
+            "rpr": "42",
+            "ts": "30",
+            "comment": "Towards rear throughout(tchd 300/1)"
+          },
+          "recent_comments": [
+            "Towards rear throughout(tchd 300/1)",
+            "Slowly away - always behind(op 125/1 tchd 100/1)",
+            "Slowly into stride - always behind(op 14/1 tchd 20/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Power Of Prayer",
+          "overall_confidence": "LIVE_WEAK",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 7409413,
+            "trainer": "George Baker",
+            "jockey": "Jack Callan",
+            "age": 4,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/9",
+        "passport_coverage_pct": 55.6,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Night Bear",
+        "lane_b_top": "Night Bear",
+        "lane_a_top3": [
+          "Night Bear",
+          "Power Of Prayer",
+          "Sarangpur"
+        ],
+        "lane_b_top3": [
+          "Night Bear",
+          "Sarangpur",
+          "Amber Honey"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921031",
+      "off_time": "15:13",
+      "course": "Hexham",
+      "race_name": "Matfen Hall Hotel Handicap Chase (GBB Race)",
+      "horse": "Conquer The Breeze",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_WATCH",
+      "agent": {
+        "agent_verdict": "UPGRADE_CANDIDATE_REVIEW",
+        "support_score": 10,
+        "risk_score": 3,
+        "support": [
+          "RPD_TAG:H",
+          "PASSPORT_SUPPORT:2.65",
+          "FRAME_GATE:0.653",
+          "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS",
+          "PERFORMANCE_TREND_UP:16",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA"
+        ],
+        "questions": [
+          "WATCH contains strong signal: should it be CASH_RUN or WIN?"
+        ],
+        "danger_horses": [
+          "Cossack Chach",
+          "Kientzheim",
+          "Parisencore"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "agent review candidate; do not promote automatically",
+        "key_numbers": {
+          "vp": 0.2725,
+          "mds": 0.1521,
+          "frame_gate": 0.653,
+          "win_gate": 0.5476,
+          "passport_strength": 2.65,
+          "shadow_action": "WATCHLIST_SHADOW",
+          "tri_action": "TRI_WATCH"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Hexham",
+          "venue": "Hexham",
+          "venue_code": "HEX",
+          "race_id": "921031",
+          "off_time": "3.13",
+          "horse": "Conquer The Breeze",
+          "horse_id": 3851614,
+          "age": 7,
+          "trainer": "Adam Nicol",
+          "trainer_name": "Adam Nicol",
+          "jockey": "Ryan Mania",
+          "jockey_name": "Ryan Mania",
+          "current_or": 102.0,
+          "rpr_master": 135.0,
+          "ts_master": 104.0,
+          "days_since_last_run": "15",
+          "form_figures": "4P-114",
+          "spotlight_comment": "Started off for Adam Nicol with two comfortable C&D wins last month (good to soft/good) and travelled strongly for a long way before failing to see out 2m4f here a fortnight ago; upped significantly in grade today but this drop back in trip is the obvious move, and he might still have more to offer for his new stable.",
+          "diomed_comment": "Dual C&D winner for new stable in May; stretched by 2m4f last time but still ran well",
+          "newspaper_tip_count": 2,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Adam Nicol",
+          "flat_rating": "",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "102",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Adam Nicol",
+          "figures": [
+            "S:102",
+            "S:89",
+            "S:0",
+            "S:67",
+            "S:67",
+            "S:86"
+          ],
+          "numeric_figures": [
+            102,
+            89,
+            0,
+            67,
+            67,
+            86
+          ],
+          "six_run_trend": 16
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 8,
+          "recent_wins": 1,
+          "recent_frames": 5,
+          "recent_courses": [
+            "Hexham",
+            "Market Rasen",
+            "Sedgefield",
+            "Sedgefield"
+          ],
+          "latest": {
+            "date": "2025-06-14",
+            "course": "Hexham",
+            "race_type": "Chase",
+            "class": "Class 5",
+            "dist": "1m7½f",
+            "going": "Good To Soft",
+            "ran": "8",
+            "pos": "1",
+            "draw": "",
+            "sp": "100/30",
+            "jockey": "Charlie Price",
+            "trainer": "Maurice Barnes",
+            "or": "78",
+            "rpr": "87",
+            "ts": "64",
+            "comment": "Travelled strongly - towards rear - not fluent 7th - midfield when not fluent 4 out - headway approaching last - ridden and kept on well to lead run-in - ran on(tchd 4/1)"
+          },
+          "recent_comments": [
+            "Travelled strongly - towards rear - not fluent 7th - midfield when not fluent 4 out - headway approaching last - ridden and kept on well to lead run-in - ran on(tchd 4/1)",
+            "Held up in rear - hit 5th - headway before 4 out - soon in touch with leaders - went second approaching last - kept on(op 13/2)",
+            "Prominent - awkward jump and nearly lost jockey 1st - raced in third after 2nd - not fluent 4th - some headway before 4 out - no extra when hit last(op 9/4)"
+          ]
+        },
+        "identity": {
+          "horse": "Conquer The Breeze",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 3851614,
+            "trainer": "Adam Nicol",
+            "jockey": "Ryan Mania",
+            "age": 7,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/7",
+        "passport_coverage_pct": 28.6,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Cossack Chach",
+        "lane_b_top": "Cossack Chach",
+        "lane_a_top3": [
+          "Cossack Chach",
+          "Conquer The Breeze",
+          "Kientzheim"
+        ],
+        "lane_b_top3": [
+          "Cossack Chach",
+          "Kientzheim",
+          "Parisencore"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=3",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921035",
+      "off_time": "16:43",
+      "course": "Hexham",
+      "race_name": "Sun Racing Summer Jumps Championship Handicap Hurdle",
+      "horse": "Miss Kassiopi",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_WATCH",
+      "agent": {
+        "agent_verdict": "UPGRADE_CANDIDATE_REVIEW",
+        "support_score": 8,
+        "risk_score": 5,
+        "support": [
+          "RPD_TAG:H",
+          "FRAME_GATE:0.895",
+          "WIN_GATE:0.910",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "WATCH contains strong signal: should it be CASH_RUN or WIN?"
+        ],
+        "danger_horses": [
+          "Jeteye",
+          "Belladinotte",
+          "Myfavouritesister"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "agent review candidate; do not promote automatically",
+        "key_numbers": {
+          "vp": 0.2283,
+          "mds": 0.1594,
+          "frame_gate": 0.8947,
+          "win_gate": 0.9097,
+          "passport_strength": -1.0,
+          "shadow_action": "PASS_OR_WATCH",
+          "tri_action": "TRI_WATCH"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Hexham",
+          "venue": "Hexham",
+          "venue_code": "HEX",
+          "race_id": "921035",
+          "off_time": "4.43",
+          "horse": "Miss Kassiopi",
+          "horse_id": 5447233,
+          "age": 7,
+          "trainer": "Dan Skelton",
+          "trainer_name": "Dan Skelton",
+          "jockey": "Harry Skelton",
+          "jockey_name": "Harry Skelton",
+          "current_or": 96.0,
+          "rpr_master": 102.0,
+          "ts_master": 95.0,
+          "days_since_last_run": "41",
+          "form_figures": "2213-7",
+          "spotlight_comment": "Didn't fire when dropped back to 2m six weeks ago, her final start for Richard Bandey, but was in good form at about 2m4f beforehand, notably when making all at Hereford (good) in April; recently changed hands for £20,000 and now tackles a new trip on stable debut; interesting to see what Dan Skelton can do with her.",
+          "diomed_comment": "Won over 2m3f in April; now with Dan Skelton after recent £20,000 sale",
+          "newspaper_tip_count": 2,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Dan Skelton",
+          "flat_rating": "",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "96",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Dan Skelton",
+          "figures": [
+            "H:85",
+            "H:95",
+            "H:98",
+            "H:90",
+            "H:92",
+            "H:78"
+          ],
+          "numeric_figures": [
+            85,
+            95,
+            98,
+            90,
+            92,
+            78
+          ],
+          "six_run_trend": 7
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 8,
+          "recent_wins": 0,
+          "recent_frames": 3,
+          "recent_courses": [
+            "Worcester",
+            "Warwick",
+            "Stratford",
+            "Lingfield"
+          ],
+          "latest": {
+            "date": "2025-06-25",
+            "course": "Worcester",
+            "race_type": "Hurdle",
+            "class": "Class 5",
+            "dist": "2m4f",
+            "going": "Good",
+            "ran": "14",
+            "pos": "8",
+            "draw": "",
+            "sp": "16/1",
+            "jockey": "Gavin Sheehan",
+            "trainer": "Danni ONeill",
+            "or": "99",
+            "rpr": "81",
+            "ts": "64",
+            "comment": "Prominent - weakened just before 3 out(op 18/1)"
+          },
+          "recent_comments": [
+            "Prominent - weakened just before 3 out(op 18/1)",
+            "Disputed lead - prominent after 5th - outpaced after 3 out - weakened before 2 out(tchd 6/1)",
+            "Disputed lead - led but pestered from before 5th - ridden run-in - no extra and headed towards finish(op 18/1 tchd 25/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Miss Kassiopi",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 5447233,
+            "trainer": "Dan Skelton",
+            "jockey": "Harry Skelton",
+            "age": 7,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "7/13",
+        "passport_coverage_pct": 53.8,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Jeteye",
+        "lane_b_top": "Jeteye",
+        "lane_a_top3": [
+          "Jeteye",
+          "Belladinotte",
+          "Myfavouritesister"
+        ],
+        "lane_b_top3": [
+          "Jeteye",
+          "Myfavouritesister",
+          "Nitty Gritty"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921242",
+      "off_time": "13:56",
+      "course": "Brighton",
+      "race_name": "Fostering Changes Lives Amateur Jockeys' Handicap",
+      "horse": "Palazzo Persico",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 6,
+        "support": [
+          "RPD_TAG:H",
+          "FRAME_GATE:0.741",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.41"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "LOCAL_EVIDENCE_LIVE_WEAK"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Endowed",
+          "Kodi Fire",
+          "Pentonville"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak.",
+          "Live RP racecard identifies the horse, but laptop evidence is thin or historical."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4064,
+          "mds": 0.1678,
+          "frame_gate": 0.7407,
+          "win_gate": 0.4128,
+          "passport_strength": -1.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_WEAK",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Brighton",
+          "venue": "Brighton",
+          "venue_code": "BRI",
+          "race_id": "921242",
+          "off_time": "1.56",
+          "horse": "Palazzo Persico",
+          "horse_id": 4827118,
+          "age": 5,
+          "trainer": "Tony Carroll",
+          "trainer_name": "Tony Carroll",
+          "jockey": "Mr William Pearman",
+          "jockey_name": "Mr William Pearman",
+          "current_or": 57.0,
+          "rpr_master": 64.0,
+          "ts_master": 52.0,
+          "days_since_last_run": "6",
+          "form_figures": "703001",
+          "spotlight_comment": "Four-time winner for Ed Dunlop who lost his way in Ireland but bounced back to form last Monday (1m2f, good to soft; fine on faster) when a clearcut winner on his debut for this yard; William Pearman rides again with a penalty to carry.",
+          "diomed_comment": "Carries a penalty for Monday's win but that was decisive on his debut for this yard",
+          "newspaper_tip_count": 2,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 8,
+          "recent_wins": 1,
+          "recent_frames": 2,
+          "recent_courses": [
+            "Brighton",
+            "Chelmsford (AW)",
+            "Beverley",
+            "Catterick"
+          ],
+          "latest": {
+            "date": "2025-07-01",
+            "course": "Brighton",
+            "race_type": "Flat",
+            "class": "Class 6",
+            "dist": "1m2f",
+            "going": "Good To Firm",
+            "ran": "4",
+            "pos": "1",
+            "draw": "3",
+            "sp": "7/2",
+            "jockey": "Saffie Osborne",
+            "trainer": "Ed Dunlop",
+            "or": "59",
+            "rpr": "73",
+            "ts": "47",
+            "comment": "Raced in third - lost position from over 2f out - headway 2f out - towards near side when led over 1f out - ridden and kept on inside final furlong - comfortably"
+          },
+          "recent_comments": [
+            "Raced in third - lost position from over 2f out - headway 2f out - towards near side when led over 1f out - ridden and kept on inside final furlong - comfortably",
+            "Took keen hold - prominent - led and increased tempo after 3f - headed 2f out - no extra from over 1f out(op 15/2)",
+            "Prominent - hung right from over 1f out - no extra inside final 110yds(Mkt1: op 10/1; Mkt2 tchd 14/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Palazzo Persico",
+          "overall_confidence": "LIVE_WEAK",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 4827118,
+            "trainer": "Tony Carroll",
+            "jockey": "Mr William Pearman",
+            "age": 5,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/6",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Endowed",
+        "lane_b_top": "Endowed",
+        "lane_a_top3": [
+          "Endowed",
+          "Kodi Fire",
+          "Pentonville"
+        ],
+        "lane_b_top3": [
+          "Endowed",
+          "Kodi Fire",
+          "Palazzo Persico"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921238",
+      "off_time": "14:05",
+      "course": "Pontefract",
+      "race_name": "Anna Woolley Memorial Handicap",
+      "horse": "Melissa Honey",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 9,
+        "risk_score": 6,
+        "support": [
+          "RPD_TAG:H",
+          "BHA_OR_DIFF:LOWERED:1",
+          "FRAME_GATE:0.697",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.36",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP",
+          "FIELD_TRAP:FS_9_12",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Instant Bond",
+          "Diligent Henry",
+          "Ideal Guest"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.3578,
+          "mds": 0.1148,
+          "frame_gate": 0.6968,
+          "win_gate": 0.4262,
+          "passport_strength": 0.9,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Pontefract",
+          "venue": "Pontefract",
+          "venue_code": "PON",
+          "race_id": "921238",
+          "off_time": "2.05",
+          "horse": "Melissa Honey",
+          "horse_id": 6088062,
+          "age": 4,
+          "trainer": "Michael Herrington",
+          "trainer_name": "Michael Herrington",
+          "jockey": "Daniel Tudhope",
+          "jockey_name": "Daniel Tudhope",
+          "current_or": 53.0,
+          "rpr_master": 73.0,
+          "ts_master": 60.0,
+          "days_since_last_run": "15",
+          "form_figures": "8-6431",
+          "spotlight_comment": "In-form filly who prevailed by half a length at Doncaster (6f, good to firm) most recently, opening her account at the 16th attempt; back up 3lb but is still unexposed at this trip on turf; following up is not out of the question.",
+          "diomed_comment": "Opened her account in Doncaster event last time; still unexposed over 6f on turf",
+          "newspaper_tip_count": 6,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Michael Herrington",
+          "flat_rating": "50",
+          "diff_flat": "-1",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Michael Herrington",
+          "figures": [
+            "T:49",
+            "A:50",
+            "A:48",
+            "A:50",
+            "A:49",
+            "A:56"
+          ],
+          "numeric_figures": [
+            49,
+            50,
+            48,
+            50,
+            49,
+            56
+          ],
+          "six_run_trend": -7
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 5,
+          "recent_wins": 0,
+          "recent_frames": 1,
+          "recent_courses": [
+            "Redcar",
+            "Wolverhampton (AW)",
+            "Beverley",
+            "Lingfield"
+          ],
+          "latest": {
+            "date": "2025-06-21",
+            "course": "Redcar",
+            "race_type": "Flat",
+            "class": "Class 6",
+            "dist": "6f",
+            "going": "Good To Firm",
+            "ran": "11",
+            "pos": "7",
+            "draw": "1",
+            "sp": "25/1",
+            "jockey": "Andrea Pinna",
+            "trainer": "Michael Herrington",
+            "or": "60",
+            "rpr": "59",
+            "ts": "38",
+            "comment": "Midfield against far rail - short of room 2f out - no impression inside final furlong (jockey said filly was denied a clear run 1 1/2f out)(op 18/1)"
+          },
+          "recent_comments": [
+            "Midfield against far rail - short of room 2f out - no impression inside final furlong (jockey said filly was denied a clear run 1 1/2f out)(op 18/1)",
+            "Steadied start - always behind(op 50/1)",
+            "Prominent - weakened over 1f out(op 28/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Melissa Honey",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "STRONG"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 6088062,
+            "trainer": "Michael Herrington",
+            "jockey": "Daniel Tudhope",
+            "age": 4,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "10/12",
+        "passport_coverage_pct": 83.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Instant Bond",
+        "lane_b_top": "Instant Bond",
+        "lane_a_top3": [
+          "Instant Bond",
+          "Diligent Henry",
+          "Ideal Guest"
+        ],
+        "lane_b_top3": [
+          "Instant Bond",
+          "Diligent Henry",
+          "Lindoro"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921036",
+      "off_time": "14:13",
+      "course": "Hexham",
+      "race_name": "L & R Pest Control Services Conditional Jockeys' Handicap Hurdle",
+      "horse": "Malangen",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 11,
+        "risk_score": 4,
+        "support": [
+          "RPD_TAG:H",
+          "PASSPORT_SUPPORT:1.70",
+          "FRAME_GATE:0.682",
+          "WIN_GATE:0.640",
+          "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS",
+          "PERFORMANCE_TREND_UP:30",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Newport",
+          "Curious Mrs Fox",
+          "Bouboule"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.2629,
+          "mds": 0.1584,
+          "frame_gate": 0.6824,
+          "win_gate": 0.6401,
+          "passport_strength": 1.7,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Hexham",
+          "venue": "Hexham",
+          "venue_code": "HEX",
+          "race_id": "921036",
+          "off_time": "2.13",
+          "horse": "Malangen",
+          "horse_id": 2067379,
+          "age": 11,
+          "trainer": "Lisa Harrison",
+          "trainer_name": "Lisa Harrison",
+          "jockey": "Jack Stenhouse",
+          "jockey_name": "Jack Stenhouse",
+          "current_or": 81.0,
+          "rpr_master": 104.0,
+          "ts_master": 85.0,
+          "days_since_last_run": "8",
+          "form_figures": "-3232U",
+          "spotlight_comment": "Ten wins over hurdles, including over C&D; in front when unseating rider two out in race won by Snapaudaciaheros here eight days ago; a possible",
+          "diomed_comment": "Ten wins over hurdles; in front when unseating rider two out here last time; a possible",
+          "newspaper_tip_count": 2,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Lisa Harrison",
+          "flat_rating": "",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "81",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Lisa Harrison",
+          "figures": [
+            "H:80",
+            "H:83",
+            "H:63",
+            "H:64",
+            "H:0",
+            "H:50"
+          ],
+          "numeric_figures": [
+            80,
+            83,
+            63,
+            64,
+            0,
+            50
+          ],
+          "six_run_trend": 30
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 8,
+          "recent_wins": 0,
+          "recent_frames": 2,
+          "recent_courses": [
+            "Perth",
+            "Hexham",
+            "Perth",
+            "Perth"
+          ],
+          "latest": {
+            "date": "2025-07-03",
+            "course": "Perth",
+            "race_type": "Hurdle",
+            "class": "Class 5",
+            "dist": "2m4f",
+            "going": "Good",
+            "ran": "11",
+            "pos": "5",
+            "draw": "",
+            "sp": "9/1",
+            "jockey": "Peter Kavanagh",
+            "trainer": "Lisa Harrison",
+            "or": "86",
+            "rpr": "84",
+            "ts": "56",
+            "comment": "Took keen hold - disputed lead - led before 2nd - soon clear - went further clear before 4 out - carried head awkwardly and much reduced lead before 2 out - soon headed - weakened approaching last"
+          },
+          "recent_comments": [
+            "Took keen hold - disputed lead - led before 2nd - soon clear - went further clear before 4 out - carried head awkwardly and much reduced lead before 2 out - soon headed - weakened approaching last",
+            "In touch with leaders - headway before 3rd - led before 4th - hit 3 out - headed after 2 out - weakened run-in(op 5/1)",
+            "Held up in midfield - weakened run-in(op 9/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Malangen",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "STRONG"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 2067379,
+            "trainer": "Lisa Harrison",
+            "jockey": "Jack Stenhouse",
+            "age": 11,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/11",
+        "passport_coverage_pct": 45.5,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Newport",
+        "lane_b_top": "Newport",
+        "lane_a_top3": [
+          "Newport",
+          "Curious Mrs Fox",
+          "Bouboule"
+        ],
+        "lane_b_top3": [
+          "Newport",
+          "Curious Mrs Fox",
+          "Mr Lincoln"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921240",
+      "off_time": "14:26",
+      "course": "Brighton",
+      "race_name": "Brighton & Hove Fostering Maiden Stakes (GBB Race)",
+      "horse": "Nevasca Cinza",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 8,
+        "risk_score": 6,
+        "support": [
+          "VP_HIGH:0.506",
+          "RPD_TAG:H",
+          "FRAME_GATE:0.905",
+          "WIN_GATE:0.882",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Ridger",
+          "Debrief",
+          "Landslide"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.5059,
+          "mds": 0.2763,
+          "frame_gate": 0.9055,
+          "win_gate": 0.8819,
+          "passport_strength": -1.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Brighton",
+          "venue": "Brighton",
+          "venue_code": "BRI",
+          "race_id": "921240",
+          "off_time": "2.26",
+          "horse": "Nevasca Cinza",
+          "horse_id": 8048369,
+          "age": 3,
+          "trainer": "James Fanshawe",
+          "trainer_name": "James Fanshawe",
+          "jockey": "Billy Loughnane",
+          "jockey_name": "Billy Loughnane",
+          "current_or": 77.0,
+          "rpr_master": 85.0,
+          "ts_master": 49.0,
+          "days_since_last_run": "10",
+          "form_figures": "32-434",
+          "spotlight_comment": "Two promising runs (6f, good and soft) for another yard as a 2yo; not at the same level in three runs for James Fanshawe and hopes appear to rest on the faster ground sparking something extra from him; cheekpieces tried last time swiftly dispensed with.",
+          "diomed_comment": "Not matched 2yo form in three runs for James Fanshawe; faster ground needs to help",
+          "newspaper_tip_count": 5,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "James Fanshawe",
+          "flat_rating": "80",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "James Fanshawe",
+          "figures": [
+            "T:x",
+            "T:x",
+            "T:x",
+            "T:x",
+            "-",
+            "-"
+          ],
+          "numeric_figures": [],
+          "six_run_trend": null
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Nevasca Cinza",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 8048369,
+            "trainer": "James Fanshawe",
+            "jockey": "Billy Loughnane",
+            "age": 3,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "0/6",
+        "passport_coverage_pct": 0.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Ridger",
+        "lane_b_top": "Ridger",
+        "lane_a_top3": [
+          "Ridger",
+          "Debrief",
+          "Landslide"
+        ],
+        "lane_b_top3": [
+          "Ridger",
+          "Debrief",
+          "Landslide"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921034",
+      "off_time": "14:43",
+      "course": "Hexham",
+      "race_name": "Chris Lowther & Brian Ellison 28 Years Maiden Hurdle (GBB Race)",
+      "horse": "Loman Lady",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 5,
+        "risk_score": 5,
+        "support": [
+          "RPD_TAG:H",
+          "FRAME_GATE:0.815",
+          "WIN_GATE:0.765",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.32",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP",
+          "FIELD_TRAP:FS_9_12"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Run Happy",
+          "Beyond The Verge",
+          "Redbridge Rocco"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.3228,
+          "mds": 0.1308,
+          "frame_gate": 0.8153,
+          "win_gate": 0.7648,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Hexham",
+          "venue": "Hexham",
+          "venue_code": "HEX",
+          "race_id": "921034",
+          "off_time": "2.43",
+          "horse": "Loman Lady",
+          "horse_id": 8423309,
+          "age": 5,
+          "trainer": "Dan Skelton",
+          "trainer_name": "Dan Skelton",
+          "jockey": "Harry Skelton",
+          "jockey_name": "Harry Skelton",
+          "current_or": null,
+          "rpr_master": null,
+          "ts_master": null,
+          "days_since_last_run": "8",
+          "form_figures": "47-21",
+          "spotlight_comment": "Joined Dan Skelton after last month's Irish point second and comfortably made winning rules debut in good-ground course bumper eight days ago, having made smooth headway from the rear; obvious contender on hurdling debut.",
+          "diomed_comment": "Impressed when winning course bumper on rules debut eight days ago; obvious contender",
+          "newspaper_tip_count": 8,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Loman Lady",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 8423309,
+            "trainer": "Dan Skelton",
+            "jockey": "Harry Skelton",
+            "age": 5,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/11",
+        "passport_coverage_pct": 36.4,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Run Happy",
+        "lane_b_top": "Run Happy",
+        "lane_a_top3": [
+          "Run Happy",
+          "Beyond The Verge",
+          "Redbridge Rocco"
+        ],
+        "lane_b_top3": [
+          "Run Happy",
+          "Frisky Whiskey",
+          "Loman Lady"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921232",
+      "off_time": "15:05",
+      "course": "Pontefract",
+      "race_name": "Pontefract Castle Fillies' Stakes (Listed Race) (GBBPlus Race)",
+      "horse": "Cabrera",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 8,
+        "risk_score": 5,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "RPD_TAG:H",
+          "PASSPORT_SUPPORT:1.80",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "MDS_FLAT:0.033",
+          "NEW_BUILD_WEAK_DATA",
+          "ODDS_RISK:LONGSHOT_15_PLUS"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Revoir",
+          "Lemsairbat",
+          "Merveilleux Lapin"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.162,
+          "mds": 0.0329,
+          "frame_gate": 0.0524,
+          "win_gate": 0.0383,
+          "passport_strength": 1.8,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Pontefract",
+          "venue": "Pontefract",
+          "venue_code": "PON",
+          "race_id": "921232",
+          "off_time": "3.05",
+          "horse": "Cabrera",
+          "horse_id": 5759904,
+          "age": 5,
+          "trainer": "Edward Bethell",
+          "trainer_name": "Edward Bethell",
+          "jockey": "P J McDonald",
+          "jockey_name": "P J McDonald",
+          "current_or": 83.0,
+          "rpr_master": 101.0,
+          "ts_master": 93.0,
+          "days_since_last_run": "21",
+          "form_figures": "6/5-45",
+          "spotlight_comment": "Has fairly useful figures but an underwhelming strike-rate and this is the most difficult task of her career (has the worst chance at the weights); fifth in the Thirsk handicap won by Brielle most recently.",
+          "diomed_comment": "Has an underwhelming strike-rate and this is the most difficult task of her career",
+          "newspaper_tip_count": null,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Edward Bethell",
+          "flat_rating": "84",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Edward Bethell",
+          "figures": [
+            "A:82",
+            "T:83",
+            "T:83",
+            "T:90",
+            "T:90",
+            "T:x"
+          ],
+          "numeric_figures": [
+            82,
+            83,
+            83,
+            90,
+            90
+          ],
+          "six_run_trend": -8
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 8,
+          "recent_wins": 1,
+          "recent_frames": 6,
+          "recent_courses": [
+            "Ripon",
+            "Newmarket",
+            "Doncaster",
+            "Newmarket (July)"
+          ],
+          "latest": {
+            "date": "2025-04-26",
+            "course": "Ripon",
+            "race_type": "Flat",
+            "class": "Class 2",
+            "dist": "1m4f",
+            "going": "Good",
+            "ran": "7",
+            "pos": "5",
+            "draw": "4",
+            "sp": "11/4",
+            "jockey": "Callum Rodriguez",
+            "trainer": "Edward Bethell",
+            "or": "90",
+            "rpr": "89",
+            "ts": "51",
+            "comment": "In touch with leaders on outer - no impression from over 2f out - weakened from over 1f out(op 5/2 tchd 3/1)"
+          },
+          "recent_comments": [
+            "In touch with leaders on outer - no impression from over 2f out - weakened from over 1f out(op 5/2 tchd 3/1)",
+            "Midfield - outpaced when not clear run over 2f out - no impression but kept on from over 1f out(op 3/1)",
+            "Dwelt start - soon in touch with leaders - headway and led narrowly over 2f out - edged left over 1f out - kept on final 110yds - headed final stride(op 5/4)"
+          ]
+        },
+        "identity": {
+          "horse": "Cabrera",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "STRONG"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 5759904,
+            "trainer": "Edward Bethell",
+            "jockey": "P J McDonald",
+            "age": 5,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/10",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Cabrera",
+        "lane_b_top": "Cabrera",
+        "lane_a_top3": [
+          "Cabrera",
+          "Revoir",
+          "Lemsairbat"
+        ],
+        "lane_b_top3": [
+          "Cabrera",
+          "Revoir",
+          "Merveilleux Lapin"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "medium",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33",
+          "chaos_exposure:field=10 sp_rank=10"
+        ],
+        "live_signals": 4
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921244",
+      "off_time": "15:26",
+      "course": "Brighton",
+      "race_name": "Watch Live Racing On fairplaybet.co.uk Handicap",
+      "horse": "Lucky Sevens",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 10,
+        "risk_score": 4,
+        "support": [
+          "RPD_TAG:H",
+          "BHA_OR_DIFF:LOWERED:1",
+          "PASSPORT_SUPPORT:2.00",
+          "FRAME_GATE:0.702",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.40",
+          "PERFORMANCE_TREND_UP:16",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Twilight Guest",
+          "West Hill Rosie",
+          "Dogged"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.3972,
+          "mds": 0.0979,
+          "frame_gate": 0.702,
+          "win_gate": 0.3666,
+          "passport_strength": 2.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Brighton",
+          "venue": "Brighton",
+          "venue_code": "BRI",
+          "race_id": "921244",
+          "off_time": "3.26",
+          "horse": "Lucky Sevens",
+          "horse_id": 8688353,
+          "age": 3,
+          "trainer": "James Owen",
+          "trainer_name": "James Owen",
+          "jockey": "Billy Loughnane",
+          "jockey_name": "Billy Loughnane",
+          "current_or": 54.0,
+          "rpr_master": 64.0,
+          "ts_master": 64.0,
+          "days_since_last_run": "22",
+          "form_figures": "761325",
+          "spotlight_comment": "First-time cheekpieces did the trick at Yarmouth (1m, good to firm) four runs ago and was bang there in his next two races at 1m2f; the extended 1m3f perhaps stretched him last time; solid claims.",
+          "diomed_comment": "Running well before perhaps stretched by an extended 1m3f last time; solid chance",
+          "newspaper_tip_count": 1,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "James Owen",
+          "flat_rating": "54",
+          "diff_flat": "-1",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "James Owen",
+          "figures": [
+            "T:53",
+            "T:55",
+            "T:54",
+            "T:49",
+            "A:37",
+            "A:x"
+          ],
+          "numeric_figures": [
+            53,
+            55,
+            54,
+            49,
+            37
+          ],
+          "six_run_trend": 16
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Lucky Sevens",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 8688353,
+            "trainer": "James Owen",
+            "jockey": "Billy Loughnane",
+            "age": 3,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/6",
+        "passport_coverage_pct": 83.3,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Lucky Sevens",
+        "lane_b_top": "Twilight Guest",
+        "lane_a_top3": [
+          "Lucky Sevens",
+          "Twilight Guest",
+          "West Hill Rosie"
+        ],
+        "lane_b_top3": [
+          "Twilight Guest",
+          "West Hill Rosie",
+          "Dogged"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921235",
+      "off_time": "15:35",
+      "course": "Pontefract",
+      "race_name": "Moor Top Farm Shop Hemsworth Pontefract Cup Handicap (GBBPlus Race)",
+      "horse": "Trojan Soldier",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 10,
+        "risk_score": 5,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "RPD_TAG:H",
+          "FRAME_GATE:0.892",
+          "WIN_GATE:0.868",
+          "PERFORMANCE_TREND_UP:27",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Treasure Islands",
+          "Anzac Day",
+          "Secret Force"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.3471,
+          "mds": 0.1961,
+          "frame_gate": 0.892,
+          "win_gate": 0.8681,
+          "passport_strength": -1.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Pontefract",
+          "venue": "Pontefract",
+          "venue_code": "PON",
+          "race_id": "921235",
+          "off_time": "3.35",
+          "horse": "Trojan Soldier",
+          "horse_id": 6496523,
+          "age": 4,
+          "trainer": "Jedd O'Keeffe",
+          "trainer_name": "Jedd O'Keeffe",
+          "jockey": "Jack Garritty",
+          "jockey_name": "Jack Garritty",
+          "current_or": 78.0,
+          "rpr_master": 97.0,
+          "ts_master": 80.0,
+          "days_since_last_run": "30",
+          "form_figures": "-22111",
+          "spotlight_comment": "Unraced on firmer than good; seconds were becoming a habit before the cheekpieces went on and he won at Southwell (1m6f, AW), Ripon (2m, good) and Pontefract (2m1f, good to soft) on last three outings; latest (after five days off) saw him assert by about 4l in the final 1f and the four-timer may well be beckoning despite 5lb rise.",
+          "diomed_comment": "3-3 in cheekpieces, asserting in good style over 2m1f here latest; major chance again",
+          "newspaper_tip_count": 9,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Jedd O'Keeffe",
+          "flat_rating": "78",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Jedd O'Keeffe",
+          "figures": [
+            "T:78",
+            "T:77",
+            "A:74",
+            "A:71",
+            "A:70",
+            "T:51"
+          ],
+          "numeric_figures": [
+            78,
+            77,
+            74,
+            71,
+            70,
+            51
+          ],
+          "six_run_trend": 27
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 6,
+          "recent_wins": 0,
+          "recent_frames": 2,
+          "recent_courses": [
+            "Hamilton",
+            "Beverley",
+            "Newcastle (AW)",
+            "Doncaster"
+          ],
+          "latest": {
+            "date": "2025-05-28",
+            "course": "Hamilton",
+            "race_type": "Flat",
+            "class": "Class 5",
+            "dist": "1m4f",
+            "going": "Good",
+            "ran": "6",
+            "pos": "2",
+            "draw": "7",
+            "sp": "3/1J",
+            "jockey": "Callum Rodriguez",
+            "trainer": "Jedd OKeeffe",
+            "or": "69",
+            "rpr": "74",
+            "ts": "64",
+            "comment": "Held up in midfield - ridden and headway over 1f out - went second inside final furlong - stayed on(op 11/4 tchd 7/2)"
+          },
+          "recent_comments": [
+            "Held up in midfield - ridden and headway over 1f out - went second inside final furlong - stayed on(op 11/4 tchd 7/2)",
+            "Towards rear - still plenty to do 2f out - bumped but kept on well from over 1f out - went second final strides - no match for winner(op 9/1 tchd 15/2)",
+            "In rear - headway from under 2f out - kept on but not pace to challenge(op 33/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Trojan Soldier",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "STRONG"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 6496523,
+            "trainer": "Jedd O'Keeffe",
+            "jockey": "Jack Garritty",
+            "age": 4,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/6",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Treasure Islands",
+        "lane_b_top": "Anzac Day",
+        "lane_a_top3": [
+          "Treasure Islands",
+          "Anzac Day",
+          "Secret Force"
+        ],
+        "lane_b_top3": [
+          "Anzac Day",
+          "Secret Force",
+          "Trojan Soldier"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921241",
+      "off_time": "15:56",
+      "course": "Brighton",
+      "race_name": "Fairplay Daily Price Boosts Handicap",
+      "horse": "Danehill Star",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 8,
+        "risk_score": 3,
+        "support": [
+          "RPD_TAG:H",
+          "PASSPORT_SUPPORT:2.50",
+          "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Extraterrestrial",
+          "Man Is King"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.2427,
+          "mds": 0.0955,
+          "frame_gate": 0.5687,
+          "win_gate": 0.4821,
+          "passport_strength": 2.5,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Brighton",
+          "venue": "Brighton",
+          "venue_code": "BRI",
+          "race_id": "921241",
+          "off_time": "3.56",
+          "horse": "Danehill Star",
+          "horse_id": 5207729,
+          "age": 5,
+          "trainer": "Tony Carroll",
+          "trainer_name": "Tony Carroll",
+          "jockey": "Billy Loughnane",
+          "jockey_name": "Billy Loughnane",
+          "current_or": 59.0,
+          "rpr_master": 73.0,
+          "ts_master": 60.0,
+          "days_since_last_run": "8",
+          "form_figures": "522143",
+          "spotlight_comment": "Six-time AW winner who is 0-10 on grass but placed in 1m handicaps at Bath in his last two races and returning to further looks a good thing.",
+          "diomed_comment": "Yet to win on turf but two good recent runs at Bath; goes further here and that's fine",
+          "newspaper_tip_count": 4,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Tony Carroll",
+          "flat_rating": "59",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Tony Carroll",
+          "figures": [
+            "T:58",
+            "A:59",
+            "A:56",
+            "A:56",
+            "A:51",
+            "A:57"
+          ],
+          "numeric_figures": [
+            58,
+            59,
+            56,
+            56,
+            51,
+            57
+          ],
+          "six_run_trend": 1
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 8,
+          "recent_wins": 3,
+          "recent_frames": 5,
+          "recent_courses": [
+            "Lingfield",
+            "Brighton",
+            "Wolverhampton (AW)",
+            "Wolverhampton (AW)"
+          ],
+          "latest": {
+            "date": "2025-06-28",
+            "course": "Lingfield",
+            "race_type": "Flat",
+            "class": "Class 6",
+            "dist": "1m2f",
+            "going": "Good To Firm",
+            "ran": "6",
+            "pos": "3",
+            "draw": "5",
+            "sp": "16/1",
+            "jockey": "Charles Bishop",
+            "trainer": "Tony Carroll",
+            "or": "60",
+            "rpr": "61",
+            "ts": "36",
+            "comment": "Took keen hold - led at slow pace - increased tempo over 4f out - headed 1f out - weakened and lost second final 110yds(op 12/1)"
+          },
+          "recent_comments": [
+            "Took keen hold - led at slow pace - increased tempo over 4f out - headed 1f out - weakened and lost second final 110yds(op 12/1)",
+            "Took keen hold - pressed leaders - weakened over 1f out(op 7/2 tchd 9/2)",
+            "Took keen hold - prominent - led over 3f out - ridden over 1f out - kept on well inside final furlong - readily(Mkt1: op 9/1 tchd 11/1; Mkt2 op 7/1 tchd 11/2)"
+          ]
+        },
+        "identity": {
+          "horse": "Danehill Star",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "STRONG"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 5207729,
+            "trainer": "Tony Carroll",
+            "jockey": "Billy Loughnane",
+            "age": 5,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "7/9",
+        "passport_coverage_pct": 77.8,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Danehill Star",
+        "lane_b_top": "Danehill Star",
+        "lane_a_top3": [
+          "Danehill Star",
+          "Extraterrestrial",
+          "Man Is King"
+        ],
+        "lane_b_top3": [
+          "Danehill Star",
+          "Extraterrestrial",
+          "Man Is King"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921233",
+      "off_time": "16:05",
+      "course": "Pontefract",
+      "race_name": "Sunpak Potatoes Handicap",
+      "horse": "Rock Opera",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 10,
+        "risk_score": 4,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "RPD_TAG:H",
+          "BHA_OR_DIFF:LOWERED:1",
+          "FRAME_GATE:0.776",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.44",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "The Good Biscuit",
+          "Azure Zain"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.4407,
+          "mds": 0.1745,
+          "frame_gate": 0.7764,
+          "win_gate": 0.4645,
+          "passport_strength": 0.95,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Pontefract",
+          "venue": "Pontefract",
+          "venue_code": "PON",
+          "race_id": "921233",
+          "off_time": "4.05",
+          "horse": "Rock Opera",
+          "horse_id": 4288065,
+          "age": 6,
+          "trainer": "Richard & Peter Fahey",
+          "trainer_name": "Richard & Peter Fahey",
+          "jockey": "Oisin Orr",
+          "jockey_name": "Oisin Orr",
+          "current_or": 75.0,
+          "rpr_master": 95.0,
+          "ts_master": 83.0,
+          "days_since_last_run": "19",
+          "form_figures": "8-7341",
+          "spotlight_comment": "Belatedly regained the winning thread in C&D event (good) last time, perhaps benefiting from the removal of visor and beating a subsequent scorer (pair clear); still favourably treated even though he's gone back up 5lb; strong contender.",
+          "diomed_comment": "Suited by removal of visor in C&D race last time, beating a subsequent scorer (pair clear)",
+          "newspaper_tip_count": 2,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Richard & Peter Fahey",
+          "flat_rating": "69",
+          "diff_flat": "-1",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Richard & Peter Fahey",
+          "figures": [
+            "T:69",
+            "T:69",
+            "T:66",
+            "T:58",
+            "T:59",
+            "T:75"
+          ],
+          "numeric_figures": [
+            69,
+            69,
+            66,
+            58,
+            59,
+            75
+          ],
+          "six_run_trend": -6
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 8,
+          "recent_wins": 0,
+          "recent_frames": 4,
+          "recent_courses": [
+            "Haydock",
+            "Hamilton",
+            "York",
+            "Doncaster"
+          ],
+          "latest": {
+            "date": "2025-07-05",
+            "course": "Haydock",
+            "race_type": "Flat",
+            "class": "Class 4",
+            "dist": "6f",
+            "going": "Good",
+            "ran": "15",
+            "pos": "3",
+            "draw": "14",
+            "sp": "6/1",
+            "jockey": "Warren Fentiman",
+            "trainer": "Richard Fahey",
+            "or": "78",
+            "rpr": "–",
+            "ts": "67",
+            "comment": "Held up in rear - waiting for room 2f out - headway against near rail over 1f out - ran on inside final furlong - no extra towards finish(op 7/1)"
+          },
+          "recent_comments": [
+            "Held up in rear - waiting for room 2f out - headway against near rail over 1f out - ran on inside final furlong - no extra towards finish(op 7/1)",
+            "In rear - headway on far side of group from 2f out - soon switched right - against far rail 1f out - kept on(tchd 10/1)",
+            "Held up in rear - headway over 1f out - went third inside final 110yds - ran on(op 8/1 tchd 17/2)"
+          ]
+        },
+        "identity": {
+          "horse": "Rock Opera",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 4288065,
+            "trainer": "Richard & Peter Fahey",
+            "jockey": "Oisin Orr",
+            "age": 6,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/7",
+        "passport_coverage_pct": 57.1,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "The Good Biscuit",
+        "lane_b_top": "The Good Biscuit",
+        "lane_a_top3": [
+          "The Good Biscuit",
+          "Rock Opera",
+          "Azure Zain"
+        ],
+        "lane_b_top3": [
+          "The Good Biscuit",
+          "Rock Opera",
+          "Azure Zain"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921033",
+      "off_time": "16:13",
+      "course": "Hexham",
+      "race_name": "Tynedale Function Suite Handicap Chase (GBB Race)",
+      "horse": "Laffer Curve",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 8,
+        "risk_score": 4,
+        "support": [
+          "RPD_TAG:H",
+          "PASSPORT_SUPPORT:1.80",
+          "FRAME_GATE:0.890",
+          "WIN_GATE:0.863",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Buddah Castle",
+          "Passengerontheship",
+          "Ostend"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.4008,
+          "mds": 0.2153,
+          "frame_gate": 0.8899,
+          "win_gate": 0.8632,
+          "passport_strength": 1.8,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Hexham",
+          "venue": "Hexham",
+          "venue_code": "HEX",
+          "race_id": "921033",
+          "off_time": "4.13",
+          "horse": "Laffer Curve",
+          "horse_id": 7060305,
+          "age": 5,
+          "trainer": "Dan Skelton",
+          "trainer_name": "Dan Skelton",
+          "jockey": "Harry Skelton",
+          "jockey_name": "Harry Skelton",
+          "current_or": 101.0,
+          "rpr_master": 117.0,
+          "ts_master": 75.0,
+          "days_since_last_run": "15",
+          "form_figures": "4334-2",
+          "spotlight_comment": "Maiden hurdler who was a creditable second of four to a progressive rival in a mares' handicap at Worcester on chase debut this month (2m4f, good; first run after wind op; made a mistake four out, but rallied); one with a chance.",
+          "diomed_comment": "Maiden; sound chase debut after wind op when 2nd to a decent mare at Worcester; chance",
+          "newspaper_tip_count": 7,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Dan Skelton",
+          "flat_rating": "",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "101",
+          "diff_chase": "new",
+          "hurdle_rating": "101",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Dan Skelton",
+          "figures": [
+            "H:x",
+            "H:100",
+            "H:x",
+            "H:x",
+            "N:x",
+            "N:x"
+          ],
+          "numeric_figures": [
+            100
+          ],
+          "six_run_trend": null
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 1,
+          "recent_wins": 0,
+          "recent_frames": 0,
+          "recent_courses": [
+            "Ascot"
+          ],
+          "latest": {
+            "date": "2025-02-15",
+            "course": "Ascot",
+            "race_type": "NH Flat",
+            "class": "Class 2",
+            "dist": "1m7½f",
+            "going": "Good",
+            "ran": "10",
+            "pos": "4",
+            "draw": "",
+            "sp": "15/2",
+            "jockey": "Ben Jones",
+            "trainer": "Tom Weston",
+            "or": "–",
+            "rpr": "77",
+            "ts": "21",
+            "comment": "In touch with leaders - ridden and no extra from over 1f out(op 9/1 tchd 10/1)"
+          },
+          "recent_comments": [
+            "In touch with leaders - ridden and no extra from over 1f out(op 9/1 tchd 10/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Laffer Curve",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 7060305,
+            "trainer": "Dan Skelton",
+            "jockey": "Harry Skelton",
+            "age": 5,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_HEX_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/6",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Buddah Castle",
+        "lane_b_top": "Buddah Castle",
+        "lane_a_top3": [
+          "Buddah Castle",
+          "Laffer Curve",
+          "Passengerontheship"
+        ],
+        "lane_b_top3": [
+          "Buddah Castle",
+          "Laffer Curve",
+          "Ostend"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921245",
+      "off_time": "16:26",
+      "course": "Brighton",
+      "race_name": "fairplaybet.co.uk Bet Â£20 Get Â£20 Free Bets Classified Stakes (Brighton Summer Sprint Series Qual)",
+      "horse": "Shes Got The Blues",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 9,
+        "risk_score": 3,
+        "support": [
+          "RPD_TAG:H",
+          "BHA_OR_DIFF:LOWERED:1",
+          "PASSPORT_SUPPORT:1.21",
+          "FRAME_GATE:0.783",
+          "WIN_GATE:0.774",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "FIELD_TRAP:FS_9_12"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Mister Sandman",
+          "Barnsnape Boy"
+        ],
+        "why_velo_may_be_wrong": [
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.3457,
+          "mds": 0.104,
+          "frame_gate": 0.783,
+          "win_gate": 0.774,
+          "passport_strength": 1.2076,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Brighton",
+          "venue": "Brighton",
+          "venue_code": "BRI",
+          "race_id": "921245",
+          "off_time": "4.26",
+          "horse": "Shes Got The Blues",
+          "horse_id": 7771197,
+          "age": 3,
+          "trainer": "Tony Carroll",
+          "trainer_name": "Tony Carroll",
+          "jockey": "Billy Loughnane",
+          "jockey_name": "Billy Loughnane",
+          "current_or": 52.0,
+          "rpr_master": 63.0,
+          "ts_master": 58.0,
+          "days_since_last_run": "13",
+          "form_figures": "523541",
+          "spotlight_comment": "Off the mark at the 15th attempt when justifying favouritism in a 7f classified event at Leicester (good ground; ridden by Billy Loughnane) 13 days ago; leading claims of following up.",
+          "diomed_comment": "15th time lucky when winning a similar race at Leicester two weeks ago; strong contender",
+          "newspaper_tip_count": 4,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Tony Carroll",
+          "flat_rating": "48",
+          "diff_flat": "-1",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Tony Carroll",
+          "figures": [
+            "T:46",
+            "T:38",
+            "A:49",
+            "A:49",
+            "A:40",
+            "A:37"
+          ],
+          "numeric_figures": [
+            46,
+            38,
+            49,
+            49,
+            40,
+            37
+          ],
+          "six_run_trend": 9
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 1,
+          "recent_wins": 0,
+          "recent_frames": 0,
+          "recent_courses": [
+            "Beverley"
+          ],
+          "latest": {
+            "date": "2025-07-04",
+            "course": "Beverley",
+            "race_type": "Flat",
+            "class": "Class 4",
+            "dist": "5f",
+            "going": "Good To Firm",
+            "ran": "8",
+            "pos": "7",
+            "draw": "8",
+            "sp": "33/1",
+            "jockey": "Harry Russell",
+            "trainer": "Richard Fahey",
+            "or": "–",
+            "rpr": "–",
+            "ts": "–",
+            "comment": "Ducked left start - always behind(op 25/1 tchd 40/1)"
+          },
+          "recent_comments": [
+            "Ducked left start - always behind(op 25/1 tchd 40/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Shes Got The Blues",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 7771197,
+            "trainer": "Tony Carroll",
+            "jockey": "Billy Loughnane",
+            "age": 3,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "12/12",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Mister Sandman",
+        "lane_b_top": "Mister Sandman",
+        "lane_a_top3": [
+          "Mister Sandman",
+          "Barnsnape Boy",
+          "Shes Got The Blues"
+        ],
+        "lane_b_top3": [
+          "Mister Sandman",
+          "Barnsnape Boy",
+          "Shes Got The Blues"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921237",
+      "off_time": "16:35",
+      "course": "Pontefract",
+      "race_name": "Next Family Day Sunday 26th July Handicap",
+      "horse": "Masaban",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 7,
+        "risk_score": 5,
+        "support": [
+          "RPD_TAG:H",
+          "FRAME_GATE:0.853",
+          "WIN_GATE:0.830",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "Amidst The Chaos",
+          "Ravishing Beauty",
+          "Thats My Boy Luke"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.3422,
+          "mds": 0.111,
+          "frame_gate": 0.8532,
+          "win_gate": 0.8302,
+          "passport_strength": -1.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Pontefract",
+          "venue": "Pontefract",
+          "venue_code": "PON",
+          "race_id": "921237",
+          "off_time": "4.35",
+          "horse": "Masaban",
+          "horse_id": 7865999,
+          "age": 3,
+          "trainer": "Edward Bethell",
+          "trainer_name": "Edward Bethell",
+          "jockey": "Connor Beasley",
+          "jockey_name": "Connor Beasley",
+          "current_or": 70.0,
+          "rpr_master": 73.0,
+          "ts_master": 38.0,
+          "days_since_last_run": "36",
+          "form_figures": "58-613",
+          "spotlight_comment": "Ex-Dermot Weld; 8-11 for his handicap debut in seven-runner race at Ripon (1m, good) last month and won easily from the front; 8lb higher when respectable third of 14 at Doncaster (1m, good to soft) eight days later, having chased the leaders, and needs to resume improvement with another 2lb rise today; he's had just five races, so it may be possible.",
+          "diomed_comment": "Odds-on in April for easy win and respectable 3rd in his first two handicaps; off since",
+          "newspaper_tip_count": null,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Edward Bethell",
+          "flat_rating": "70",
+          "diff_flat": "",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Edward Bethell",
+          "figures": [
+            "T:70",
+            "T:68",
+            "T:x",
+            "-",
+            "-",
+            "-"
+          ],
+          "numeric_figures": [
+            70,
+            68
+          ],
+          "six_run_trend": 2
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Masaban",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 7865999,
+            "trainer": "Edward Bethell",
+            "jockey": "Connor Beasley",
+            "age": 3,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_PON_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/8",
+        "passport_coverage_pct": 25.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Amidst The Chaos",
+        "lane_b_top": "Ravishing Beauty",
+        "lane_a_top3": [
+          "Amidst The Chaos",
+          "Ravishing Beauty",
+          "Thats My Boy Luke"
+        ],
+        "lane_b_top3": [
+          "Ravishing Beauty",
+          "Thats My Boy Luke",
+          "Masaban"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "race_id": "921239",
+      "off_time": "16:56",
+      "course": "Brighton",
+      "race_name": "Download The Fairplay App Now Handicap",
+      "horse": "Correspondence",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "PASS_WITH_SUPPORT_REVIEW",
+        "support_score": 11,
+        "risk_score": 4,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "RPD_TAG:H",
+          "BHA_OR_DIFF:RAISED:1",
+          "PASSPORT_SUPPORT:2.90",
+          "FRAME_GATE:0.683",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.41",
+          "LOCAL_EVIDENCE_LIVE_CONFIRMED"
+        ],
+        "risk": [
+          "NEW_BUILD_WEAK_DATA",
+          "MIDPRICE_SUPPRESS_TOP"
+        ],
+        "questions": [],
+        "danger_horses": [
+          "The Flying Seagull",
+          "Rogue Bullet"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "do not bet; study contradiction after result",
+        "key_numbers": {
+          "vp": 0.4124,
+          "mds": 0.1571,
+          "frame_gate": 0.6829,
+          "win_gate": 0.522,
+          "passport_strength": 2.9,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_CONFIRMED",
+        "identity_warnings": [
+          "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+        ]
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json",
+          "date": "2026-06-21",
+          "course": "Brighton",
+          "venue": "Brighton",
+          "venue_code": "BRI",
+          "race_id": "921239",
+          "off_time": "4.56",
+          "horse": "Correspondence",
+          "horse_id": 7631477,
+          "age": 4,
+          "trainer": "Tony Carroll",
+          "trainer_name": "Tony Carroll",
+          "jockey": "Myla Coppins",
+          "jockey_name": "Myla Coppins",
+          "current_or": 68.0,
+          "rpr_master": 92.0,
+          "ts_master": 80.0,
+          "days_since_last_run": "26",
+          "form_figures": "826312",
+          "spotlight_comment": "Running well in turf handicaps this summer, following his success at Windsor (5f, good to firm; cheekpieces first time) with a good second (winner gone in again since) at Bath (5f, firm) two weeks later; up in grade but could well have more to offer.",
+          "diomed_comment": "Progressing in fast-ground sprint handicaps this year; unexposed in cheekpieces; chance",
+          "newspaper_tip_count": 5,
+          "postdata_score": 0.0,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.0
+        },
+        "rating": {
+          "available": true,
+          "trainer": "Tony Carroll",
+          "flat_rating": "68",
+          "diff_flat": "+1",
+          "awt_rating": "",
+          "diff_awt": "",
+          "chase_rating": "",
+          "diff_chase": "",
+          "hurdle_rating": "",
+          "diff_hurdle": ""
+        },
+        "performance": {
+          "available": true,
+          "trainer": "Tony Carroll",
+          "figures": [
+            "T:68",
+            "T:67",
+            "T:61",
+            "A:59",
+            "A:x",
+            "A:58"
+          ],
+          "numeric_figures": [
+            68,
+            67,
+            61,
+            59,
+            58
+          ],
+          "six_run_trend": 10
+        },
+        "history": {
+          "available": true,
+          "runs_loaded": 2,
+          "recent_wins": 0,
+          "recent_frames": 2,
+          "recent_courses": [
+            "Brighton",
+            "Yarmouth"
+          ],
+          "latest": {
+            "date": "2025-06-24",
+            "course": "Brighton",
+            "race_type": "Flat",
+            "class": "Class 5",
+            "dist": "6f",
+            "going": "Good To Firm",
+            "ran": "5",
+            "pos": "3",
+            "draw": "2",
+            "sp": "6/4",
+            "jockey": "George Wood",
+            "trainer": "Harry Eustace",
+            "or": "–",
+            "rpr": "77",
+            "ts": "62",
+            "comment": "In touch with leaders - steady headway and pressed leaders 2f out - weakened inside final furlong(op 11/8)"
+          },
+          "recent_comments": [
+            "In touch with leaders - steady headway and pressed leaders 2f out - weakened inside final furlong(op 11/8)",
+            "Towards rear - headway and went third over 1f out - kept on(op 12/1 tchd 11/1)"
+          ]
+        },
+        "identity": {
+          "horse": "Correspondence",
+          "overall_confidence": "LIVE_CONFIRMED",
+          "source_confidence": {
+            "rating": "EXACT",
+            "performance": "EXACT",
+            "history": "WEAK"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": 7631477,
+            "trainer": "Tony Carroll",
+            "jockey": "Myla Coppins",
+            "age": 4,
+            "source_file": "C:\\Users\\puror\\velo-oracle-prime\\data\\racecard_merged\\racecard_BRI_2026-06-21.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [
+            "HISTORY_TRAINER_DIFF_FROM_LIVE_CARD"
+          ],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/6",
+        "passport_coverage_pct": 83.3,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "The Flying Seagull",
+        "lane_b_top": "The Flying Seagull",
+        "lane_a_top3": [
+          "The Flying Seagull",
+          "Correspondence",
+          "Rogue Bullet"
+        ],
+        "lane_b_top3": [
+          "The Flying Seagull",
+          "Correspondence",
+          "Rogue Bullet"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=3",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    }
+  ]
+}

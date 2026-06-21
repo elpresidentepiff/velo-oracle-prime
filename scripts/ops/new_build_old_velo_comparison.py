@@ -4,7 +4,8 @@ Fair comparison evaluator: Old VELO vs New Build vs OR baseline.
 
 For each race on a target date:
   A. Old VELO top pick  (from velo_prime_verdicts_YYYY_MM_DD.json)
-  B. New Build top pick  (from new_build_predictions_YYYY_MM_DD.jsonl)
+  B. New Build top pick  (from new_build_predictions_YYYY_MM_DD.jsonl,
+     falling back to two_lane_readiness_YYYY_MM_DD.json lane A)
   C. OR baseline top pick  (highest official_rating in race, from New Build feed)
   D. New Build top 3
   E. Old VELO top pick inside New Build top 3 (alignment check)
@@ -105,6 +106,8 @@ def _load_new_build(date_str: str) -> dict[str, list[dict]]:
     if not rows:
         latest = PRED_DIR / "new_build_predictions_latest.jsonl"
         rows = [r for r in _read_jsonl(latest) if str(r.get("race_date", ""))[:10] == date_str]
+    if not rows:
+        rows = _load_new_build_from_two_lane_readiness(date_str)
     by_race: dict[str, list[dict]] = defaultdict(list)
     for row in rows:
         rid = str(row.get("race_id") or "")
@@ -113,6 +116,51 @@ def _load_new_build(date_str: str) -> dict[str, list[dict]]:
     for rid in by_race:
         by_race[rid].sort(key=lambda r: int(r.get("champion_rank") or 99))
     return dict(by_race)
+
+
+def _load_new_build_from_two_lane_readiness(date_str: str) -> list[dict]:
+    """
+    Load New Build from the passport/two-lane readiness artifact.
+
+    This is the real daily New Build output in the current architecture. The
+    older paper_predictions JSONL path is retained as first choice for backward
+    compatibility, but absence there must not make the comparison report say
+    New Build is missing when lane A scorecards exist.
+    """
+    tag = date_str.replace("-", "_")
+    candidates = [
+        REPORT_DIR / f"two_lane_readiness_{tag}.json",
+        REPORT_DIR / "two_lane_readiness_latest.json",
+    ]
+    for path in candidates:
+        data = _load_json(path, {})
+        if not isinstance(data, dict):
+            continue
+        if path.name.endswith("_latest.json") and str(data.get("target_date", ""))[:10] != date_str:
+            continue
+        rows: list[dict] = []
+        for card in data.get("race_day_scorecards") or []:
+            rid = str(card.get("race_id") or "")
+            if not rid:
+                continue
+            for idx, runner in enumerate(card.get("lane_a_top3") or []):
+                horse = runner.get("horse")
+                if not horse:
+                    continue
+                rows.append({
+                    "race_id": rid,
+                    "race_date": card.get("race_date") or date_str,
+                    "course": card.get("course") or "",
+                    "off_time": card.get("off_time") or "",
+                    "horse": horse,
+                    "champion_probability": runner.get("champion_probability", runner.get("prob", 0)),
+                    "champion_rank": runner.get("champion_rank", runner.get("rank", idx + 1)),
+                    "nb_decision_lane": runner.get("nb_decision_lane") or card.get("top_pick_lane") or "",
+                    "source": "two_lane_readiness_lane_a",
+                })
+        if rows:
+            return rows
+    return []
 
 
 def _load_sigma(date_str: str) -> dict[str, dict]:
@@ -208,9 +256,10 @@ def compare(date_str: str, execute: bool = False) -> dict:
     races_with_both = [e for e in race_evals if e["old_velo_present"] and e["nb_top"]]
     aligned_count = sum(1 for e in races_with_both if e["old_velo_in_nb_top3"])
     decided = [e for e in race_evals if e["outcome_available"]]
+    or_decided = [e for e in decided if e["or_baseline_top"]]
     nb_wins = sum(1 for e in decided if e["nb_top_win"])
     old_wins = sum(1 for e in decided if e["old_velo_top_win"])
-    or_wins = sum(1 for e in decided if e["or_baseline_win"])
+    or_wins = sum(1 for e in or_decided if e["or_baseline_win"])
 
     classification_parts = []
     if not old_velo_present:
@@ -244,7 +293,8 @@ def compare(date_str: str, execute: bool = False) -> dict:
             "races_with_outcomes": len(decided),
             "nb_sr": round(nb_wins / len(decided), 4) if decided else None,
             "old_velo_sr": round(old_wins / len(decided), 4) if decided else None,
-            "or_baseline_sr": round(or_wins / len(decided), 4) if decided else None,
+            "or_baseline_evaluated": len(or_decided),
+            "or_baseline_sr": round(or_wins / len(or_decided), 4) if or_decided else None,
         },
         "race_evaluations": race_evals,
         "rules": {
@@ -293,6 +343,7 @@ def _markdown(p: dict) -> str:
         f"| Races with outcomes | {s['races_with_outcomes']} |",
         f"| New Build SR | {s['nb_sr']} |",
         f"| Old VELO SR | {s['old_velo_sr']} |",
+        f"| OR baseline evaluated | {s['or_baseline_evaluated']} |",
         f"| OR baseline SR | {s['or_baseline_sr']} |",
         "",
         "## AUC Comparison Requirement",

@@ -1,18 +1,18 @@
-# Racecard Cache Gate — 2026-06-19
+# Racecard Cache Gate — 2026-06-21
 
-**Verdict:** PASS  
-**Source:** rp_merged  
-**Run at:** 2026-06-19T20:35:24.659609Z  
-**Races (UK/IRE):** 56  
-**Runners:** 579  
-**Courses:** Ascot, Ayr, Down Royal, Goodwood, Limerick, Market Rasen, Newmarket (July), Redcar
+**Verdict:** PASS
+**Source:** cache
+**Run at:** 2026-06-21T01:43:44.017911Z
+**Races (UK/IRE):** 20
+**Runners:** 166
+**Courses:** Brighton, Hexham, Pontefract
 
 ## Checks
 
-- ✓ **date_match**: date confirmed: 2026-06-19
-- ✓ **race_count**: 56 UK/IRE races with runners (min 15)
-- ✓ **course_coverage**: 8 unique courses: ['Ascot', 'Ayr', 'Down Royal', 'Goodwood', 'Limerick', 'Market Rasen', 'Newmarket (July)', 'Redcar'] (min 3)
-- ✓ **runner_count**: 579 total runners (min 80)
-- ✓ **metadata_coverage**: 579/579 runners have required fields (100.0%) (rp_merged: jockey excluded — may not be declared)
-- ✓ **rpr_live_leak** _(warn-only)_: 531 runners have rpr (accepted — RPR_ACCEPTED policy)
-- ✓ **sidecar_date_match** _(warn-only)_: RPDC covers 56/56 racecard races (100%)
+- ✓ **date_match**: date confirmed: 2026-06-21
+- ✓ **race_count**: 20 UK/IRE races with runners (min 15)
+- ✓ **course_coverage**: 3 unique courses: ['Brighton', 'Hexham', 'Pontefract'] (min 3)
+- ✓ **runner_count**: 166 total runners (min 80)
+- ✓ **metadata_coverage**: 166/166 runners have required fields (100.0%)
+- ✓ **rpr_live_leak** _(warn-only)_: 0 runners have rpr (accepted — RPR_ACCEPTED policy)
+- ⚠ **sidecar_date_match** _(warn-only)_: RPDC covers 0/20 racecard races (0%)

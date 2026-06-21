@@ -1,0 +1,2019 @@
+{
+  "generated_at": "2026-06-20T13:54:43.461845+00:00",
+  "date": "2026-05-30",
+  "status": "SHADOW_ONLY_NOT_LIVE",
+  "live_writes": false,
+  "source_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\velo_prime_verdicts_2026_05_30.json",
+  "decision_counts": {
+    "CASH_RUN": 1,
+    "WATCHLIST_SHADOW": 13,
+    "PASS_OR_WATCH": 14,
+    "NO_BET_SHADOW": 7
+  },
+  "gate_status": {
+    "win_gate_loaded": true,
+    "win_gate_error": null,
+    "frame_gate_loaded": true,
+    "frame_gate_error": null,
+    "shadow_only": true,
+    "passport_feed": {
+      "requested_date": "2026-05-30",
+      "dated_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_2026_05_30.jsonl",
+      "latest_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_latest.jsonl",
+      "selected_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_latest.jsonl",
+      "selected_kind": "latest",
+      "rows": 13077,
+      "available_rows": 9842,
+      "loaded": true,
+      "error": null
+    },
+    "passport_matches": 0,
+    "passport_available_on_top_picks": 0
+  },
+  "obstacles": [
+    "PASSPORT_DATED_FEED_MISSING: using latest feed only"
+  ],
+  "decisions": [
+    {
+      "race_id": "rp_BEV_20260530_15_25",
+      "course": "Beverley",
+      "off_time": "15:25",
+      "race_name": "Birch Flooring Novice Stakes (GBB/GBBPlus Race)",
+      "horse": "Who's Lope",
+      "tier": "B",
+      "field_size": 3,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.4324,
+      "old_velo_top": {
+        "horse": "Who's Lope",
+        "velo_prime_prob": 0.4324,
+        "sqpe_v17_prob": 0.0863,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1319,
+        "place_prob": 0.4871,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.43"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.4324,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.4324,
+        "field_size": 3.0,
+        "class_num": 0.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.237,
+      "frame_gate_probability": 0.6575,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_STR_20260530_18_20",
+      "course": "Stratford",
+      "off_time": "18:20",
+      "race_name": "Happy 70th Birthday Rich Wilding Mares' Novices' Limited Handicap Hurdle",
+      "horse": "For Love Of Beauty",
+      "tier": "X",
+      "field_size": 7,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1468,
+      "old_velo_top": {
+        "horse": "For Love Of Beauty",
+        "velo_prime_prob": 0.1468,
+        "sqpe_v17_prob": 0.0045,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0451,
+        "place_prob": 0.0104,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1468,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1468,
+        "field_size": 7.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.345,
+      "frame_gate_probability": 0.5051,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_CAT_20260530_14_58",
+      "course": "Catterick",
+      "off_time": "14:58",
+      "race_name": "Download The Raceday Ready App Maiden Stakes (GBB Race)",
+      "horse": "Two Commanders",
+      "tier": "X",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1928,
+      "old_velo_top": {
+        "horse": "Two Commanders",
+        "velo_prime_prob": 0.1928,
+        "sqpe_v17_prob": 0.0194,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0581,
+        "place_prob": 0.2061,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1928,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1928,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3442,
+      "frame_gate_probability": 0.5172,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_CAT_20260530_15_35",
+      "course": "Catterick",
+      "off_time": "15:35",
+      "race_name": "Netherfield FC Team Of 1990 Handicap",
+      "horse": "Lillistar",
+      "tier": "X",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1934,
+      "old_velo_top": {
+        "horse": "Lillistar",
+        "velo_prime_prob": 0.1934,
+        "sqpe_v17_prob": 0.0265,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0581,
+        "place_prob": 0.1835,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1934,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1934,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3441,
+      "frame_gate_probability": 0.5172,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_LIN_20260530_18_42",
+      "course": "Lingfield",
+      "off_time": "18:42",
+      "race_name": "Drain Detectives CCTV Drain Surveys Handicap",
+      "horse": "Post Rider",
+      "tier": "X",
+      "field_size": 7,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.152,
+      "old_velo_top": {
+        "horse": "Post Rider",
+        "velo_prime_prob": 0.152,
+        "sqpe_v17_prob": 0.005,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0451,
+        "place_prob": 0.0095,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.152,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.152,
+        "field_size": 7.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3441,
+      "frame_gate_probability": 0.5046,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_STR_20260530_17_50",
+      "course": "Stratford",
+      "off_time": "17:50",
+      "race_name": "Julie Satterley Waving Goodbye To 49 Novices' Hurdle (GBB Race)",
+      "horse": "Take The Boat",
+      "tier": "X",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1954,
+      "old_velo_top": {
+        "horse": "Take The Boat",
+        "velo_prime_prob": 0.1954,
+        "sqpe_v17_prob": 0.0176,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0581,
+        "place_prob": 0.2105,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1954,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1954,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3437,
+      "frame_gate_probability": 0.517,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_CAT_20260530_16_43",
+      "course": "Catterick",
+      "off_time": "16:43",
+      "race_name": "Racing TV Handicap",
+      "horse": "Battenburg Belle",
+      "tier": "X",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1963,
+      "old_velo_top": {
+        "horse": "Battenburg Belle",
+        "velo_prime_prob": 0.1963,
+        "sqpe_v17_prob": 0.0215,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0581,
+        "place_prob": 0.1748,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1963,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1963,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3436,
+      "frame_gate_probability": 0.5169,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_CAT_20260530_16_12",
+      "course": "Catterick",
+      "off_time": "16:12",
+      "race_name": "Ann Whitehouse Memorial Veterans' Handicap",
+      "horse": "Ramon Di Loria",
+      "tier": "C",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2105,
+      "old_velo_top": {
+        "horse": "Ramon Di Loria",
+        "velo_prime_prob": 0.2105,
+        "sqpe_v17_prob": 0.019,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0581,
+        "place_prob": 0.1336,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2105,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2105,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.341,
+      "frame_gate_probability": 0.5155,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_CAT_20260530_17_17",
+      "course": "Catterick",
+      "off_time": "17:17",
+      "race_name": "Bet At racingtv.com Handicap",
+      "horse": "Favourite Friend",
+      "tier": "X",
+      "field_size": 7,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1732,
+      "old_velo_top": {
+        "horse": "Favourite Friend",
+        "velo_prime_prob": 0.1732,
+        "sqpe_v17_prob": 0.0176,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0451,
+        "place_prob": 0.131,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1732,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1732,
+        "field_size": 7.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3403,
+      "frame_gate_probability": 0.5025,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_LIN_20260530_20_12",
+      "course": "Lingfield",
+      "off_time": "20:12",
+      "race_name": "Linton Electrical Contractors 50th Anniversary Handicap",
+      "horse": "Accademia",
+      "tier": "X",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2161,
+      "old_velo_top": {
+        "horse": "Accademia",
+        "velo_prime_prob": 0.2161,
+        "sqpe_v17_prob": 0.0102,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0581,
+        "place_prob": 0.0416,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2161,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2161,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.34,
+      "frame_gate_probability": 0.5149,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BEV_20260530_14_15",
+      "course": "Beverley",
+      "off_time": "14:15",
+      "race_name": "Hilary Needler Trophy EBF Fillies' Conditions Stakes (GBB Race)",
+      "horse": "Kodi Bear Light",
+      "tier": "X",
+      "field_size": 8,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1333,
+      "old_velo_top": {
+        "horse": "Kodi Bear Light",
+        "velo_prime_prob": 0.1333,
+        "sqpe_v17_prob": 0.0156,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0402,
+        "place_prob": 0.0945,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1333,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1333,
+        "field_size": 8.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.34,
+      "frame_gate_probability": 0.4897,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_LIN_20260530_19_12",
+      "course": "Lingfield",
+      "off_time": "19:12",
+      "race_name": "APC Electrical EBF Fillies' Novice Stakes (GBB Race)",
+      "horse": "Roxa Love",
+      "tier": "X",
+      "field_size": 8,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1342,
+      "old_velo_top": {
+        "horse": "Roxa Love",
+        "velo_prime_prob": 0.1342,
+        "sqpe_v17_prob": 0.0152,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0402,
+        "place_prob": 0.0945,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1342,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1342,
+        "field_size": 8.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3399,
+      "frame_gate_probability": 0.4896,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_CAT_20260530_13_55",
+      "course": "Catterick",
+      "off_time": "13:55",
+      "race_name": "Pennine Brewing Company Novice Stakes (GBB Race)",
+      "horse": "Aurora's Doublesix",
+      "tier": "C",
+      "field_size": 6,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2203,
+      "old_velo_top": {
+        "horse": "Aurora's Doublesix",
+        "velo_prime_prob": 0.2203,
+        "sqpe_v17_prob": 0.0265,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0581,
+        "place_prob": 0.1985,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2203,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2203,
+        "field_size": 6.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3392,
+      "frame_gate_probability": 0.5145,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_LIN_20260530_18_12",
+      "course": "Lingfield",
+      "off_time": "18:12",
+      "race_name": "Drain Detectives Premier Drainage Company Handicap",
+      "horse": "Shifra",
+      "tier": "X",
+      "field_size": 8,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1385,
+      "old_velo_top": {
+        "horse": "Shifra",
+        "velo_prime_prob": 0.1385,
+        "sqpe_v17_prob": 0.0205,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0402,
+        "place_prob": 0.0934,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1385,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1385,
+        "field_size": 8.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3391,
+      "frame_gate_probability": 0.4892,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_LIN_20260530_19_42",
+      "course": "Lingfield",
+      "off_time": "19:42",
+      "race_name": "Free Race Replays On attheraces.com EBF Restricted Maiden Stakes (Bands B, C & D",
+      "horse": "Ariane Sky",
+      "tier": "X",
+      "field_size": 9,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1176,
+      "old_velo_top": {
+        "horse": "Ariane Sky",
+        "velo_prime_prob": 0.1176,
+        "sqpe_v17_prob": 0.0152,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.042,
+        "place_prob": 0.0781,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1176,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1176,
+        "field_size": 9.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3354,
+      "frame_gate_probability": 0.4746,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CHE_20260530_14_53",
+      "course": "Chester",
+      "off_time": "14:53",
+      "race_name": "Louise Keegan Handicap (GBBPlus Race)",
+      "horse": "Solar Pass",
+      "tier": "X",
+      "field_size": 10,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.107,
+      "old_velo_top": {
+        "horse": "Solar Pass",
+        "velo_prime_prob": 0.107,
+        "sqpe_v17_prob": 0.0052,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0333,
+        "place_prob": 0.007,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.107,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.107,
+        "field_size": 10.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.33,
+      "frame_gate_probability": 0.459,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_BEV_20260530_14_48",
+      "course": "Beverley",
+      "off_time": "14:48",
+      "race_name": "Beverley Two Year Old Trophy EBF Conditions Stakes (Colts & Geldings) (IRE Incen",
+      "horse": "Wait Geordie",
+      "tier": "X",
+      "field_size": 10,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.108,
+      "old_velo_top": {
+        "horse": "Wait Geordie",
+        "velo_prime_prob": 0.108,
+        "sqpe_v17_prob": 0.0141,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0333,
+        "place_prob": 0.0672,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.108,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.108,
+        "field_size": 10.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3298,
+      "frame_gate_probability": 0.4589,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_STR_20260530_20_50",
+      "course": "Stratford",
+      "off_time": "20:50",
+      "race_name": "Sun Racing Summer Jumps Championship Handicap Hurdle",
+      "horse": "Masonbrook Meadow",
+      "tier": "X",
+      "field_size": 10,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1131,
+      "old_velo_top": {
+        "horse": "Masonbrook Meadow",
+        "velo_prime_prob": 0.1131,
+        "sqpe_v17_prob": 0.0028,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0333,
+        "place_prob": 0.004,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1131,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1131,
+        "field_size": 10.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3289,
+      "frame_gate_probability": 0.4584,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CAT_20260530_14_27",
+      "course": "Catterick",
+      "off_time": "14:27",
+      "race_name": "Every Race Live On Racing TV Handicap",
+      "horse": "Tanaka",
+      "tier": "X",
+      "field_size": 10,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1217,
+      "old_velo_top": {
+        "horse": "Tanaka",
+        "velo_prime_prob": 0.1217,
+        "sqpe_v17_prob": 0.017,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0333,
+        "place_prob": 0.0655,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1217,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1217,
+        "field_size": 10.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3274,
+      "frame_gate_probability": 0.4575,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_BEV_20260530_16_00",
+      "course": "Beverley",
+      "off_time": "16:00",
+      "race_name": "Happy Birthday Colin \"Spud\" Stamford Handicap",
+      "horse": "Physique",
+      "tier": "X",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0977,
+      "old_velo_top": {
+        "horse": "Physique",
+        "velo_prime_prob": 0.0977,
+        "sqpe_v17_prob": 0.005,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0047,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0977,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0977,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3244,
+      "frame_gate_probability": 0.4433,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CHE_20260530_15_30",
+      "course": "Chester",
+      "off_time": "15:30",
+      "race_name": "Virgin Bet Handicap",
+      "horse": "Lexington Jet",
+      "tier": "X",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0988,
+      "old_velo_top": {
+        "horse": "Lexington Jet",
+        "velo_prime_prob": 0.0988,
+        "sqpe_v17_prob": 0.0034,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0038,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0988,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0988,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3242,
+      "frame_gate_probability": 0.4432,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CHE_20260530_13_15",
+      "course": "Chester",
+      "off_time": "13:15",
+      "race_name": "Chester Roman Day Maiden Fillies' Stakes (GBB Race)",
+      "horse": "Lc Tiffen",
+      "tier": "X",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0993,
+      "old_velo_top": {
+        "horse": "Lc Tiffen",
+        "velo_prime_prob": 0.0993,
+        "sqpe_v17_prob": 0.0154,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0623,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0993,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0993,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3241,
+      "frame_gate_probability": 0.4432,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_LIN_20260530_17_42",
+      "course": "Lingfield",
+      "off_time": "17:42",
+      "race_name": "Drain Detectives Handicap",
+      "horse": "Out In The Cold",
+      "tier": "X",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1077,
+      "old_velo_top": {
+        "horse": "Out In The Cold",
+        "velo_prime_prob": 0.1077,
+        "sqpe_v17_prob": 0.017,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0623,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1077,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1077,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3226,
+      "frame_gate_probability": 0.4423,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CHE_20260530_16_38",
+      "course": "Chester",
+      "off_time": "16:38",
+      "race_name": "General Elliot Croft Handicap (GBBPlus Race)",
+      "horse": "Carwyn",
+      "tier": "D",
+      "field_size": 10,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1623,
+      "old_velo_top": {
+        "horse": "Carwyn",
+        "velo_prime_prob": 0.1623,
+        "sqpe_v17_prob": 0.0056,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0333,
+        "place_prob": 0.0088,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1623,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1623,
+        "field_size": 10.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3203,
+      "frame_gate_probability": 0.4535,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_BEV_20260530_17_08",
+      "course": "Beverley",
+      "off_time": "17:08",
+      "race_name": "Platinum Queen Play Live After Racing Handicap",
+      "horse": "Caledonian Dream",
+      "tier": "X",
+      "field_size": 12,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0916,
+      "old_velo_top": {
+        "horse": "Caledonian Dream",
+        "velo_prime_prob": 0.0916,
+        "sqpe_v17_prob": 0.017,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0668,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0916,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0916,
+        "field_size": 12.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3182,
+      "frame_gate_probability": 0.4275,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CHE_20260530_13_50",
+      "course": "Chester",
+      "off_time": "13:50",
+      "race_name": "British Stallion Studs EBF Novice Stakes (GBB Race)",
+      "horse": "Metamouse",
+      "tier": "X",
+      "field_size": 12,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0982,
+      "old_velo_top": {
+        "horse": "Metamouse",
+        "velo_prime_prob": 0.0982,
+        "sqpe_v17_prob": 0.0134,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0613,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0982,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0982,
+        "field_size": 12.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3171,
+      "frame_gate_probability": 0.4268,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CHE_20260530_14_20",
+      "course": "Chester",
+      "off_time": "14:20",
+      "race_name": "Kingkabs Selling Stakes",
+      "horse": "Claret And Blues",
+      "tier": "X",
+      "field_size": 12,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0982,
+      "old_velo_top": {
+        "horse": "Claret And Blues",
+        "velo_prime_prob": 0.0982,
+        "sqpe_v17_prob": 0.0134,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0613,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0982,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0982,
+        "field_size": 12.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3171,
+      "frame_gate_probability": 0.4268,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_CHE_20260530_16_05",
+      "course": "Chester",
+      "off_time": "16:05",
+      "race_name": "John Smith's Fillies' Handicap",
+      "horse": "Fizzy Cristal",
+      "tier": "C",
+      "field_size": 11,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1683,
+      "old_velo_top": {
+        "horse": "Fizzy Cristal",
+        "velo_prime_prob": 0.1683,
+        "sqpe_v17_prob": 0.0053,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.0076,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1683,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1683,
+        "field_size": 11.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3121,
+      "frame_gate_probability": 0.4364,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_STR_20260530_19_20",
+      "course": "Stratford",
+      "off_time": "19:20",
+      "race_name": "Farmers Fresh Handicap Chase (GBB Race)",
+      "horse": "Ballynaheer",
+      "tier": "X",
+      "field_size": 5,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2073,
+      "old_velo_top": {
+        "horse": "Ballynaheer",
+        "velo_prime_prob": 0.2073,
+        "sqpe_v17_prob": 0.0014,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0706,
+        "place_prob": 0.0084,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2073,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2073,
+        "field_size": 5.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.349,
+      "frame_gate_probability": 0.5325,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BEV_20260530_16_32",
+      "course": "Beverley",
+      "off_time": "16:32",
+      "race_name": "ICS Cleaning Services Handicap",
+      "horse": "Vietnorm",
+      "tier": "X",
+      "field_size": 4,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2657,
+      "old_velo_top": {
+        "horse": "Vietnorm",
+        "velo_prime_prob": 0.2657,
+        "sqpe_v17_prob": 0.0363,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0932,
+        "place_prob": 0.2358,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2657,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2657,
+        "field_size": 4.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3459,
+      "frame_gate_probability": 0.5433,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BEV_20260530_13_45",
+      "course": "Beverley",
+      "off_time": "13:45",
+      "race_name": "Napoleons Casino Hull Handicap",
+      "horse": "Moonjid",
+      "tier": "C",
+      "field_size": 5,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2271,
+      "old_velo_top": {
+        "horse": "Moonjid",
+        "velo_prime_prob": 0.2271,
+        "sqpe_v17_prob": 0.0123,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0706,
+        "place_prob": 0.0379,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2271,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2271,
+        "field_size": 5.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3454,
+      "frame_gate_probability": 0.5305,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_STR_20260530_19_50",
+      "course": "Stratford",
+      "off_time": "19:50",
+      "race_name": "Owen Thomas Memorial Handicap Chase (GBB Race)",
+      "horse": "Rocks Up Late",
+      "tier": "X",
+      "field_size": 5,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2284,
+      "old_velo_top": {
+        "horse": "Rocks Up Late",
+        "velo_prime_prob": 0.2284,
+        "sqpe_v17_prob": 0.002,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0706,
+        "place_prob": 0.0084,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2284,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2284,
+        "field_size": 5.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3452,
+      "frame_gate_probability": 0.5304,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_STR_20260530_18_50",
+      "course": "Stratford",
+      "off_time": "18:50",
+      "race_name": "Julie Satterley 50th Birthday Celebration Handicap Hurdle",
+      "horse": "Hope Rising",
+      "tier": "C",
+      "field_size": 5,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2302,
+      "old_velo_top": {
+        "horse": "Hope Rising",
+        "velo_prime_prob": 0.2302,
+        "sqpe_v17_prob": 0.0009,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0706,
+        "place_prob": 0.0077,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2302,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2302,
+        "field_size": 5.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3449,
+      "frame_gate_probability": 0.5302,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_STR_20260530_20_20",
+      "course": "Stratford",
+      "off_time": "20:20",
+      "race_name": "Happy 70th Birthday Steve Cotton Handicap Chase (GBB Race)",
+      "horse": "Lacrima",
+      "tier": "X",
+      "field_size": 5,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2342,
+      "old_velo_top": {
+        "horse": "Lacrima",
+        "velo_prime_prob": 0.2342,
+        "sqpe_v17_prob": 0.001,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0706,
+        "place_prob": 0.0082,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2342,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2342,
+        "field_size": 5.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3442,
+      "frame_gate_probability": 0.5298,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_LIN_20260530_20_42",
+      "course": "Lingfield",
+      "off_time": "20:42",
+      "race_name": "Drain Detectives No.1 For Drains Apprentice Handicap",
+      "horse": "Lahina Bay",
+      "tier": "C",
+      "field_size": 5,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2547,
+      "old_velo_top": {
+        "horse": "Lahina Bay",
+        "velo_prime_prob": 0.2547,
+        "sqpe_v17_prob": 0.0206,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0706,
+        "place_prob": 0.1238,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2547,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2547,
+        "field_size": 5.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3405,
+      "frame_gate_probability": 0.5277,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    }
+  ]
+}

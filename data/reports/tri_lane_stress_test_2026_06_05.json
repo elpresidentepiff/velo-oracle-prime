@@ -1,0 +1,6775 @@
+{
+  "generated_at": "2026-06-21T01:03:39.627389Z",
+  "date": "2026-06-05",
+  "status": "TRI_LANE_STRESS_TEST_ONLY",
+  "live_writes": false,
+  "racing_api_used": false,
+  "inputs": {
+    "old_velo_races": 53,
+    "new_build_races": 56,
+    "shadow_races": 53,
+    "sigma_outcomes": 39
+  },
+  "obstacles": [],
+  "summary": {
+    "total_races": 109,
+    "action_counts": {
+      "TRI_INCOMPLETE": 56,
+      "TRI_WATCH": 53
+    },
+    "evaluated_races": 39,
+    "by_action": [
+      {
+        "action": "TRI_INCOMPLETE",
+        "races": 56,
+        "evaluated": 0,
+        "wins": 0,
+        "strike_rate": null,
+        "frames": 0,
+        "frame_rate": null
+      },
+      {
+        "action": "TRI_WATCH",
+        "races": 53,
+        "evaluated": 39,
+        "wins": 13,
+        "strike_rate": 33.33,
+        "frames": 23,
+        "frame_rate": 58.97
+      }
+    ]
+  },
+  "races": [
+    {
+      "race_id": "915536",
+      "course": "Epsom",
+      "off_time": "2026-06-05T16:00:00",
+      "race_name": "Betfred Oaks (Group 1) (Fillies)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Amelia Earhart",
+        "lane_b_top": "Amelia Earhart",
+        "lane_a_top3": [
+          "Amelia Earhart",
+          "A La Prochaine",
+          "Legacy Link"
+        ],
+        "lane_b_top3": [
+          "Amelia Earhart",
+          "A La Prochaine",
+          "Legacy Link"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920011",
+      "course": "Bath",
+      "off_time": "2026-06-05T17:35:00",
+      "race_name": "Juddmonte EBF Restricted Maiden Stakes (For Horses In Band D) (EBF Restricted Race Qualifier) (GBB)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "12/12",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Temple Court",
+        "lane_b_top": "Temple Court",
+        "lane_a_top3": [
+          "Temple Court",
+          "Madentine",
+          "Bill The Bull"
+        ],
+        "lane_b_top3": [
+          "Temple Court",
+          "Madentine",
+          "Texas Crown"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920012",
+      "course": "Bath",
+      "off_time": "2026-06-05T17:00:00",
+      "race_name": "Larkhall Construction Handicap (Bath Summer Stayers' Series Qualifier)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "8/8",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Taritino",
+        "lane_b_top": "Taritino",
+        "lane_a_top3": [
+          "Taritino",
+          "No More Bolero",
+          "Curran"
+        ],
+        "lane_b_top3": [
+          "Taritino",
+          "No More Bolero",
+          "Kotari"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920013",
+      "course": "Bath",
+      "off_time": "2026-06-05T18:40:00",
+      "race_name": "RUHX Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "10/10",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "The Flying Seagull",
+        "lane_b_top": "The Flying Seagull",
+        "lane_a_top3": [
+          "The Flying Seagull",
+          "Tiger Tulip",
+          "Lazzar"
+        ],
+        "lane_b_top3": [
+          "The Flying Seagull",
+          "Tiger Tulip",
+          "Lazzar"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920014",
+      "course": "Bath",
+      "off_time": "2026-06-05T21:00:00",
+      "race_name": "Thank You To Bath University Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "10/10",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Man Is King",
+        "lane_b_top": "Man Is King",
+        "lane_a_top3": [
+          "Man Is King",
+          "Nuptown Girl",
+          "Four Fifty"
+        ],
+        "lane_b_top3": [
+          "Man Is King",
+          "Nuptown Girl",
+          "Four Fifty"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920015",
+      "course": "Bath",
+      "off_time": "2026-06-05T20:25:00",
+      "race_name": "Bath University Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "14/14",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Three Builders",
+        "lane_b_top": "Shirakawa",
+        "lane_a_top3": [
+          "Three Builders",
+          "Mali Star",
+          "New Objective"
+        ],
+        "lane_b_top3": [
+          "Shirakawa",
+          "Emerald Coast",
+          "Elora Prince"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920016",
+      "course": "Bath",
+      "off_time": "2026-06-05T18:05:00",
+      "race_name": "Hampton By Hilton Bath City Handicap (Bath Summer Sprint Series Qualifier)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "11/11",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Rogue Rebellion",
+        "lane_b_top": "Rogue Rebellion",
+        "lane_a_top3": [
+          "Rogue Rebellion",
+          "Forever Glamorous",
+          "Luna Beaux"
+        ],
+        "lane_b_top3": [
+          "Rogue Rebellion",
+          "Luna Beaux",
+          "Tickettothestars"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920017",
+      "course": "Bath",
+      "off_time": "2026-06-05T19:15:00",
+      "race_name": "Mitchell & Co Classified Stakes (Div I)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Wedgewood",
+        "lane_b_top": "Wedgewood",
+        "lane_a_top3": [
+          "Wedgewood",
+          "Jackie Brown",
+          "Porfin"
+        ],
+        "lane_b_top3": [
+          "Wedgewood",
+          "Jackie Brown",
+          "Rokuni"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920018",
+      "course": "Goodwood",
+      "off_time": "2026-06-05T17:55:00",
+      "race_name": "Fitzdares Apprentice Fillies' Restricted Novice Stakes (Horses In Bands B-D)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "7/7",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Afraj",
+        "lane_b_top": "Afraj",
+        "lane_a_top3": [
+          "Afraj",
+          "Venetian Gold",
+          "Matilda Joslyngage"
+        ],
+        "lane_b_top3": [
+          "Afraj",
+          "Venetian Gold",
+          "Poddle Park"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920019",
+      "course": "Goodwood",
+      "off_time": "2026-06-05T20:12:00",
+      "race_name": "Goodwood Horseracing Club Membership Apprentice Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Salamanca City",
+        "lane_b_top": "Must Believe",
+        "lane_a_top3": [
+          "Salamanca City",
+          "Must Believe",
+          "Dancing Tiger"
+        ],
+        "lane_b_top3": [
+          "Must Believe",
+          "Dancing Tiger",
+          "Love Is Golden"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920020",
+      "course": "Goodwood",
+      "off_time": "2026-06-05T19:37:00",
+      "race_name": "Thelma Horne Memorial Apprentice Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Ararat",
+        "lane_b_top": "Ararat",
+        "lane_a_top3": [
+          "Ararat",
+          "Rising Force",
+          "Asteverdi"
+        ],
+        "lane_b_top3": [
+          "Ararat",
+          "Asteverdi",
+          "Silca Bay"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920021",
+      "course": "Goodwood",
+      "off_time": "2026-06-05T17:25:00",
+      "race_name": "Track Radio On Digital & DAB Apprentice Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Look Back Smiling",
+        "lane_b_top": "Look Back Smiling",
+        "lane_a_top3": [
+          "Look Back Smiling",
+          "Pay Attention",
+          "Tilani"
+        ],
+        "lane_b_top3": [
+          "Look Back Smiling",
+          "Pay Attention",
+          "Perfect Scoundrel"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920022",
+      "course": "Goodwood",
+      "off_time": "2026-06-05T18:27:00",
+      "race_name": "Tommie Jakes Memorial Apprentice Fillies' Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "10/10",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Magna",
+        "lane_b_top": "Magna",
+        "lane_a_top3": [
+          "Magna",
+          "Moostar",
+          "Insuspense"
+        ],
+        "lane_b_top3": [
+          "Magna",
+          "Moostar",
+          "Insuspense"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920023",
+      "course": "Goodwood",
+      "off_time": "2026-06-05T19:02:00",
+      "race_name": "Join Fitzdares For A Personal Betting Service Apprentice Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Fanjove",
+        "lane_b_top": "Fanjove",
+        "lane_a_top3": [
+          "Fanjove",
+          "Miss Lady Grace",
+          "Perfect Location"
+        ],
+        "lane_b_top3": [
+          "Fanjove",
+          "Miss Lady Grace",
+          "Perfect Location"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920024",
+      "course": "Thirsk",
+      "off_time": "2026-06-05T16:10:00",
+      "race_name": "Ruby Lodge Care Home In Thirsk Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "6/6",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Myrrh",
+        "lane_b_top": "Myrrh",
+        "lane_a_top3": [
+          "Myrrh",
+          "King Of Berkshire",
+          "Forever Perfect"
+        ],
+        "lane_b_top3": [
+          "Myrrh",
+          "King Of Berkshire",
+          "Fareenar"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920025",
+      "course": "Thirsk",
+      "off_time": "2026-06-05T13:40:00",
+      "race_name": "Hartshead Dos Champions Restricted Maiden Stakes (Bands C And D) (GBB Race) (Div I)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "10/10",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Eagle Bay",
+        "lane_b_top": "Eagle Bay",
+        "lane_a_top3": [
+          "Eagle Bay",
+          "Soda",
+          "Kyrenia"
+        ],
+        "lane_b_top3": [
+          "Eagle Bay",
+          "Soda",
+          "Ma Leila"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920026",
+      "course": "Thirsk",
+      "off_time": "2026-06-05T17:20:00",
+      "race_name": "Next Meeting Tuesday 16th June Featuring Royal Ascot Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "13/13",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Napolian",
+        "lane_b_top": "Napolian",
+        "lane_a_top3": [
+          "Napolian",
+          "Von Trotter",
+          "Showtown"
+        ],
+        "lane_b_top3": [
+          "Napolian",
+          "Showtown",
+          "Empress Olivia"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920027",
+      "course": "Thirsk",
+      "off_time": "2026-06-05T16:45:00",
+      "race_name": "David Ritchie Is 50! Happy Birthday! Fillies' Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "12/12",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Dragon Spin",
+        "lane_b_top": "Fille Unique",
+        "lane_a_top3": [
+          "Dragon Spin",
+          "Fille Unique",
+          "Tanjen"
+        ],
+        "lane_b_top3": [
+          "Fille Unique",
+          "Tanjen",
+          "Pull The Rug"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920028",
+      "course": "Thirsk",
+      "off_time": "2026-06-05T15:30:00",
+      "race_name": "Moody Construction Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "11/11",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Bibendum",
+        "lane_b_top": "Imperial Guard",
+        "lane_a_top3": [
+          "Bibendum",
+          "Imperial Guard",
+          "Fan Mail"
+        ],
+        "lane_b_top3": [
+          "Imperial Guard",
+          "Fan Mail",
+          "Woodhay Whisper"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920029",
+      "course": "Thirsk",
+      "off_time": "2026-06-05T14:50:00",
+      "race_name": "Power Plastics \"Big Day Out\" Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "12/12",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Irish Dancer",
+        "lane_b_top": "Irish Dancer",
+        "lane_a_top3": [
+          "Irish Dancer",
+          "Beerwah",
+          "Keep The Gold"
+        ],
+        "lane_b_top3": [
+          "Irish Dancer",
+          "Beerwah",
+          "Without Flaw"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920030",
+      "course": "Doncaster",
+      "off_time": "2026-06-05T19:30:00",
+      "race_name": "Apus Life Sciences Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "13/13",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Cavolo Nero",
+        "lane_b_top": "Cavolo Nero",
+        "lane_a_top3": [
+          "Cavolo Nero",
+          "Miletus",
+          "City Of Kings"
+        ],
+        "lane_b_top3": [
+          "Cavolo Nero",
+          "Miletus",
+          "Bowood"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920031",
+      "course": "Doncaster",
+      "off_time": "2026-06-05T20:05:00",
+      "race_name": "Join Us To Walk As One Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "14/14",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Betties Bay",
+        "lane_b_top": "Betties Bay",
+        "lane_a_top3": [
+          "Betties Bay",
+          "Novello Lad",
+          "American Style"
+        ],
+        "lane_b_top3": [
+          "Betties Bay",
+          "Novello Lad",
+          "American Style"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920032",
+      "course": "Doncaster",
+      "off_time": "2026-06-05T18:55:00",
+      "race_name": "Rotabroach Proudly Supports WPCC Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "12/12",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "King's Trust",
+        "lane_b_top": "Peel Park",
+        "lane_a_top3": [
+          "King's Trust",
+          "Peel Park",
+          "Sanaam"
+        ],
+        "lane_b_top3": [
+          "Peel Park",
+          "Sanaam",
+          "Valpovo"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920033",
+      "course": "Doncaster",
+      "off_time": "2026-06-05T17:45:00",
+      "race_name": "Support Weston Park Cancer Charity Today Restricted Novice Stakes (Bands B-D) (GBB/GBBPlus Race)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "My Mate Roger",
+        "lane_b_top": "My Mate Roger",
+        "lane_a_top3": [
+          "My Mate Roger",
+          "Harmonics",
+          "Annahita"
+        ],
+        "lane_b_top3": [
+          "My Mate Roger",
+          "Harmonics",
+          "Hawksworth"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920034",
+      "course": "Doncaster",
+      "off_time": "2026-06-05T18:20:00",
+      "race_name": "Hits Radio Proudly Supports WPCC Novice Stakes Novice Stakes (GBB Race)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "6/6",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Ruler Of Time",
+        "lane_b_top": "Ruler Of Time",
+        "lane_a_top3": [
+          "Ruler Of Time",
+          "Seet",
+          "Impierious"
+        ],
+        "lane_b_top3": [
+          "Ruler Of Time",
+          "Seet",
+          "Master Of Delphi"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920035",
+      "course": "Doncaster",
+      "off_time": "2026-06-05T20:40:00",
+      "race_name": "Download The Raceday Ready App Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "10/10",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Aerial Silk",
+        "lane_b_top": "Aerial Silk",
+        "lane_a_top3": [
+          "Aerial Silk",
+          "Dryburgh",
+          "Filly Eilish"
+        ],
+        "lane_b_top3": [
+          "Aerial Silk",
+          "Dryburgh",
+          "Faeberon"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920036",
+      "course": "Doncaster",
+      "off_time": "2026-06-05T17:10:00",
+      "race_name": "Summer Saturday Series At Doncaster Racecourse Apprentice Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "7/7",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Letmeseethecolts",
+        "lane_b_top": "Letmeseethecolts",
+        "lane_a_top3": [
+          "Letmeseethecolts",
+          "Sweet Kiss",
+          "Muhib"
+        ],
+        "lane_b_top3": [
+          "Letmeseethecolts",
+          "Sweet Kiss",
+          "Muhib"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920044",
+      "course": "Epsom",
+      "off_time": "2026-06-05T14:40:00",
+      "race_name": "Betfred Diomed Stakes (Group 3)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "8/8",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Chancellor",
+        "lane_b_top": "Chancellor",
+        "lane_a_top3": [
+          "Chancellor",
+          "Skukuza",
+          "Ice Max"
+        ],
+        "lane_b_top3": [
+          "Chancellor",
+          "Skukuza",
+          "Ice Max"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920045",
+      "course": "Epsom",
+      "off_time": "2026-06-05T15:15:00",
+      "race_name": "Betfred \"Nifty 50\" Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "17/17",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Respond",
+        "lane_b_top": "Ammes",
+        "lane_a_top3": [
+          "Respond",
+          "Sallaal",
+          "Ammes"
+        ],
+        "lane_b_top3": [
+          "Ammes",
+          "Liberty Lane",
+          "Quai De Bethune"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920046",
+      "course": "Epsom",
+      "off_time": "2026-06-05T17:15:00",
+      "race_name": "Cygames Surrey Stakes (Listed Race)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Greek Mythology",
+        "lane_b_top": "Greek Mythology",
+        "lane_a_top3": [
+          "Greek Mythology",
+          "Stellar Sunrise",
+          "Postmodern"
+        ],
+        "lane_b_top3": [
+          "Greek Mythology",
+          "Stellar Sunrise",
+          "Postmodern"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920047",
+      "course": "Epsom",
+      "off_time": "2026-06-05T16:40:00",
+      "race_name": "HKJC World Pool Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "18/18",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Man Of La Mancha",
+        "lane_b_top": "Man Of La Mancha",
+        "lane_a_top3": [
+          "Man Of La Mancha",
+          "Bragbor",
+          "Asmen Warrior"
+        ],
+        "lane_b_top3": [
+          "Man Of La Mancha",
+          "Bragbor",
+          "Asmen Warrior"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920048",
+      "course": "Epsom",
+      "off_time": "2026-06-05T17:50:00",
+      "race_name": "Debenhams Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "16/16",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Pietro",
+        "lane_b_top": "Pietro",
+        "lane_a_top3": [
+          "Pietro",
+          "Arctic Thunder",
+          "Dance In The Storm"
+        ],
+        "lane_b_top3": [
+          "Pietro",
+          "Arctic Thunder",
+          "Son"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920049",
+      "course": "Epsom",
+      "off_time": "2026-06-05T13:30:00",
+      "race_name": "Win With Zyn 3YO \"Dash\" Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "16/16",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Wedonttelllies",
+        "lane_b_top": "Wedonttelllies",
+        "lane_a_top3": [
+          "Wedonttelllies",
+          "Alfa Duplicate",
+          "Coyy"
+        ],
+        "lane_b_top3": [
+          "Wedonttelllies",
+          "Alfa Duplicate",
+          "Riley Rocks"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920050",
+      "course": "Epsom",
+      "off_time": "2026-06-05T14:05:00",
+      "race_name": "Oddschecker British EBF Woodcote Stakes (Conditions Race) (GBB Race)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "13/13",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Alpe d'Huez",
+        "lane_b_top": "Alpe d'Huez",
+        "lane_a_top3": [
+          "Alpe d'Huez",
+          "Wild Terrain",
+          "Possessive"
+        ],
+        "lane_b_top3": [
+          "Alpe d'Huez",
+          "Wild Terrain",
+          "Possessive"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920057",
+      "course": "Musselburgh",
+      "off_time": "2026-06-05T16:15:00",
+      "race_name": "Travis Perkins Edinburgh Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "8/8",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Little Mi Mi",
+        "lane_b_top": "Little Mi Mi",
+        "lane_a_top3": [
+          "Little Mi Mi",
+          "I'm Next",
+          "Right And Exact"
+        ],
+        "lane_b_top3": [
+          "Little Mi Mi",
+          "I'm Next",
+          "Woohoo"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920058",
+      "course": "Musselburgh",
+      "off_time": "2026-06-05T14:25:00",
+      "race_name": "Menzies Meander EBF Restricted Novice Stakes (Bands B-D) (EBF Restricted Qual') (GBB/IRE Incentive)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "6/6",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Time For The Moon",
+        "lane_b_top": "Time For The Moon",
+        "lane_a_top3": [
+          "Time For The Moon",
+          "Tribal Appearance",
+          "Heldobeldo"
+        ],
+        "lane_b_top3": [
+          "Time For The Moon",
+          "Tribal Appearance",
+          "Mr Minz"
+        ],
+        "lane_a_decision": "WIN_TRUST",
+        "lane_b_decision": "WIN_TRUST"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920059",
+      "course": "Musselburgh",
+      "off_time": "2026-06-05T13:50:00",
+      "race_name": "Reichhartinger Rush Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "7/7",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Velvet Whisper",
+        "lane_b_top": "Velvet Whisper",
+        "lane_a_top3": [
+          "Velvet Whisper",
+          "Spit Spot",
+          "Cascade Hall"
+        ],
+        "lane_b_top3": [
+          "Velvet Whisper",
+          "Spit Spot",
+          "Cascade Hall"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920060",
+      "course": "Musselburgh",
+      "off_time": "2026-06-05T15:40:00",
+      "race_name": "Keith Mitchell Law Accountants Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "8/8",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Dingwall",
+        "lane_b_top": "Dingwall",
+        "lane_a_top3": [
+          "Dingwall",
+          "Starliner",
+          "Amidst The Chaos"
+        ],
+        "lane_b_top3": [
+          "Dingwall",
+          "Starliner",
+          "Amidst The Chaos"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920061",
+      "course": "Musselburgh",
+      "off_time": "2026-06-05T15:00:00",
+      "race_name": "Construction & Property Recruitment Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "10/10",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Sandy Craic",
+        "lane_b_top": "Sandy Craic",
+        "lane_a_top3": [
+          "Sandy Craic",
+          "Yorkshire Queen",
+          "Maximum Velocity"
+        ],
+        "lane_b_top3": [
+          "Sandy Craic",
+          "Yorkshire Queen",
+          "Maximum Velocity"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920062",
+      "course": "Musselburgh",
+      "off_time": "2026-06-05T16:50:00",
+      "race_name": "Travis Perkins Scotland Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "6/6",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Mereside Princess",
+        "lane_b_top": "Mereside Princess",
+        "lane_a_top3": [
+          "Mereside Princess",
+          "Lope Y Linda",
+          "Longevity"
+        ],
+        "lane_b_top3": [
+          "Mereside Princess",
+          "Lope Y Linda",
+          "Longevity"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "921983",
+      "course": "Saratoga",
+      "off_time": "2026-06-05T22:08:00",
+      "race_name": "Draftkings Acorn Stakes (Grade 1) (Fillies) (Dirt)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "5/5",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Maximum Offer",
+        "lane_b_top": "Counting Stars",
+        "lane_a_top3": [
+          "Maximum Offer",
+          "Counting Stars",
+          "Meaning"
+        ],
+        "lane_b_top3": [
+          "Counting Stars",
+          "Meaning",
+          "Prom Queen"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "921985",
+      "course": "Saratoga",
+      "off_time": "2026-06-05T22:46:00",
+      "race_name": "New York Stakes (Grade 1) (Fillies & Mares) (Turf)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Portfolio Duration",
+        "lane_b_top": "Portfolio Duration",
+        "lane_a_top3": [
+          "Portfolio Duration",
+          "Speed Shopper",
+          "Bellezza"
+        ],
+        "lane_b_top3": [
+          "Portfolio Duration",
+          "Speed Shopper",
+          "Bellezza"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "921986",
+      "course": "Saratoga",
+      "off_time": "2026-06-05T23:25:00",
+      "race_name": "Ogden Phipps Stakes Presented By Ford (Grade 1) (Fillies & Mares) (Dirt)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "6/6",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Alpine Princess",
+        "lane_b_top": "Fully Subscribed",
+        "lane_a_top3": [
+          "Alpine Princess",
+          "Regaled",
+          "Fully Subscribed"
+        ],
+        "lane_b_top3": [
+          "Fully Subscribed",
+          "Cassiar",
+          "Nitrogen"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "921999",
+      "course": "Fairyhouse",
+      "off_time": "2026-06-05T16:20:00",
+      "race_name": "Irish Stallion Farms EBF Race",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "9/9",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Florida Bay",
+        "lane_b_top": "Florida Bay",
+        "lane_a_top3": [
+          "Florida Bay",
+          "Mudyrk",
+          "Dancing Destiny"
+        ],
+        "lane_b_top3": [
+          "Florida Bay",
+          "Mudyrk",
+          "My Antonio"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922000",
+      "course": "Fairyhouse",
+      "off_time": "2026-06-05T16:55:00",
+      "race_name": "#5 General Admission At Fairyhouse On June 12th Maiden",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "17/17",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Krasimir",
+        "lane_b_top": "Krasimir",
+        "lane_a_top3": [
+          "Krasimir",
+          "Zenford",
+          "Suspicious Mindz"
+        ],
+        "lane_b_top3": [
+          "Krasimir",
+          "Solana Beach",
+          "Elusive Path"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922001",
+      "course": "Fairyhouse",
+      "off_time": "2026-06-05T17:30:00",
+      "race_name": "Fiver Fridays At Fairyhouse Rated Race",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "7/7",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "County Carlow",
+        "lane_b_top": "County Carlow",
+        "lane_a_top3": [
+          "County Carlow",
+          "Ocean's Breath",
+          "Breaking Dawn"
+        ],
+        "lane_b_top3": [
+          "County Carlow",
+          "Ocean's Breath",
+          "Breaking Dawn"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922002",
+      "course": "Fairyhouse",
+      "off_time": "2026-06-05T18:00:00",
+      "race_name": "Irish Stallion Farms EBF Median Auction Race",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "7/7",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Tina's Indian",
+        "lane_b_top": "Tina's Indian",
+        "lane_a_top3": [
+          "Tina's Indian",
+          "Alibah",
+          "Little Queenie"
+        ],
+        "lane_b_top3": [
+          "Tina's Indian",
+          "Alibah",
+          "Little Queenie"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922003",
+      "course": "Fairyhouse",
+      "off_time": "2026-06-05T18:34:00",
+      "race_name": "Dino Day 8th July Handicap",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "21/21",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "I'm Spartacus",
+        "lane_b_top": "I'm Spartacus",
+        "lane_a_top3": [
+          "I'm Spartacus",
+          "Sovereign Banter",
+          "Glen Breeze"
+        ],
+        "lane_b_top3": [
+          "I'm Spartacus",
+          "Sovereign Banter",
+          "Andosky"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922004",
+      "course": "Fairyhouse",
+      "off_time": "2026-06-05T19:09:00",
+      "race_name": "Bobbyjo Restaurant At Fairyhouse Maiden",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "13/13",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Noble Honour",
+        "lane_b_top": "Noble Honour",
+        "lane_a_top3": [
+          "Noble Honour",
+          "Big Cypress",
+          "Antigua"
+        ],
+        "lane_b_top3": [
+          "Noble Honour",
+          "Big Cypress",
+          "Antigua"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922005",
+      "course": "Fairyhouse",
+      "off_time": "2026-06-05T19:44:00",
+      "race_name": "Racing Again Next Friday Handicap (Div I)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "16/16",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Master Garvey",
+        "lane_b_top": "Master Garvey",
+        "lane_a_top3": [
+          "Master Garvey",
+          "Tara Na Ri",
+          "Captain Ciano"
+        ],
+        "lane_b_top3": [
+          "Master Garvey",
+          "Amavasya",
+          "Onyeisi"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922009",
+      "course": "Clonmel",
+      "off_time": "2026-06-05T17:05:00",
+      "race_name": "Bulmers Original Maiden Hurdle",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "17/17",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Clanokre Lass",
+        "lane_b_top": "Clanokre Lass",
+        "lane_a_top3": [
+          "Clanokre Lass",
+          "Magna Gee Gee",
+          "Earthwatch"
+        ],
+        "lane_b_top3": [
+          "Clanokre Lass",
+          "Magna Gee Gee",
+          "Whats New"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922010",
+      "course": "Clonmel",
+      "off_time": "2026-06-05T17:40:00",
+      "race_name": "Bulmers Berries Handicap Hurdle (Div I)",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "16/17",
+        "passport_coverage_pct": 94.1,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Gino Bella",
+        "lane_b_top": "Gino Bella",
+        "lane_a_top3": [
+          "Gino Bella",
+          "Ishan",
+          "Mon Sheriffe"
+        ],
+        "lane_b_top3": [
+          "Gino Bella",
+          "Ishan",
+          "Mon Sheriffe"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922011",
+      "course": "Clonmel",
+      "off_time": "2026-06-05T18:45:00",
+      "race_name": "Talbot Hotel Clonmel (C & G) Maiden Hurdle",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "15/15",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "This Songisforyou",
+        "lane_b_top": "This Songisforyou",
+        "lane_a_top3": [
+          "This Songisforyou",
+          "Slowdownbarney",
+          "It's All Clear"
+        ],
+        "lane_b_top3": [
+          "This Songisforyou",
+          "Slowdownbarney",
+          "Whoyougonnacall"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922012",
+      "course": "Clonmel",
+      "off_time": "2026-06-05T19:20:00",
+      "race_name": "Bulmers Strawberry & Lime Hurdle",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "6/6",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Mighty Tom",
+        "lane_b_top": "Mighty Tom",
+        "lane_a_top3": [
+          "Mighty Tom",
+          "King Of Kingsfield",
+          "Farren Glory"
+        ],
+        "lane_b_top3": [
+          "Mighty Tom",
+          "King Of Kingsfield",
+          "Encanto Bruno"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922013",
+      "course": "Clonmel",
+      "off_time": "2026-06-05T19:55:00",
+      "race_name": "Bulmers Zero Handicap Hurdle",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "17/17",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Inthenickoftime",
+        "lane_b_top": "Inthenickoftime",
+        "lane_a_top3": [
+          "Inthenickoftime",
+          "Ned In The Park",
+          "Churchwarden"
+        ],
+        "lane_b_top3": [
+          "Inthenickoftime",
+          "Churchwarden",
+          "The Monkey Pole"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922014",
+      "course": "Clonmel",
+      "off_time": "2026-06-05T20:30:00",
+      "race_name": "Paul Kavanagh Memorial Handicap Hurdle",
+      "old_velo": {
+        "top": null,
+        "tier": null,
+        "velo_prime_prob": null,
+        "mds": null,
+        "improvement": null,
+        "place_prob": null,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "13/19",
+        "passport_coverage_pct": 68.4,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Fire Coral",
+        "lane_b_top": "Spellacy's Cross",
+        "lane_a_top3": [
+          "Fire Coral",
+          "Spellacy's Cross",
+          "Sallap"
+        ],
+        "lane_b_top3": [
+          "Spellacy's Cross",
+          "Love Like This",
+          "Where Are You Now"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": null,
+        "confidence": null,
+        "field_band": null,
+        "odds_band": null,
+        "win_gate_probability": null,
+        "frame_gate_probability": null,
+        "passport_available": null,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_INCOMPLETE",
+        "reasons": [
+          "missing_old_or_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260605_5.00",
+      "course": "Bath",
+      "off_time": "5.00",
+      "race_name": "Larkhall Construction Handicap (Bath Summer Stayers' Series Qualifier)",
+      "old_velo": {
+        "top": "Lusaka",
+        "tier": "B",
+        "velo_prime_prob": 0.2494,
+        "mds": 0.0408,
+        "improvement": 0.0168,
+        "place_prob": 0.5036,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3195,
+        "frame_gate_probability": 0.4781,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Curran",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260605_5.35",
+      "course": "Bath",
+      "off_time": "5.35",
+      "race_name": "Juddmonte EBF Restricted Maiden Stakes (For Horses In Band D) (EBF Restricted Ra",
+      "old_velo": {
+        "top": "Bill The Bull",
+        "tier": "A",
+        "velo_prime_prob": 0.5712,
+        "mds": 0.2695,
+        "improvement": 0.589,
+        "place_prob": 0.9678,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1712,
+        "frame_gate_probability": 0.4986,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Bill The Bull",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260605_6.05",
+      "course": "Bath",
+      "off_time": "6.05",
+      "race_name": "Hampton By Hilton Bath City Handicap (Bath Summer Sprint Series Qualifier)",
+      "old_velo": {
+        "top": "Tickettothestars",
+        "tier": "C",
+        "velo_prime_prob": 0.2408,
+        "mds": 0.0171,
+        "improvement": 0.0222,
+        "place_prob": 0.2642,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2998,
+        "frame_gate_probability": 0.4293,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Mortubo",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260605_6.40",
+      "course": "Bath",
+      "off_time": "6.40",
+      "race_name": "RUHX Handicap",
+      "old_velo": {
+        "top": "Glamour Show",
+        "tier": "C",
+        "velo_prime_prob": 0.3102,
+        "mds": 0.0261,
+        "improvement": 0.0363,
+        "place_prob": 0.2973,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2951,
+        "frame_gate_probability": 0.4389,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Jax Edge",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260605_7.15",
+      "course": "Bath",
+      "off_time": "7.15",
+      "race_name": "Mitchell & Co Classified Stakes (Div I)",
+      "old_velo": {
+        "top": "Dion Baker",
+        "tier": "A",
+        "velo_prime_prob": 0.5306,
+        "mds": 0.0883,
+        "improvement": 0.0768,
+        "place_prob": 0.6161,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1907,
+        "frame_gate_probability": 0.5526,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Dion Baker",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260605_8.25",
+      "course": "Bath",
+      "off_time": "8.25",
+      "race_name": "Bath University Handicap",
+      "old_velo": {
+        "top": "Mali Star",
+        "tier": "C",
+        "velo_prime_prob": 0.3056,
+        "mds": 0.0246,
+        "improvement": 0.0427,
+        "place_prob": 0.2148,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2692,
+        "frame_gate_probability": 0.3748,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Shirakawa",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260605_9.00",
+      "course": "Bath",
+      "off_time": "9.00",
+      "race_name": "Thank You To Bath University Handicap",
+      "old_velo": {
+        "top": "Man Is King",
+        "tier": "B",
+        "velo_prime_prob": 0.279,
+        "mds": 0.0193,
+        "improvement": 0.0142,
+        "place_prob": 0.311,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3004,
+        "frame_gate_probability": 0.442,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Man Is King",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_CLO_20260605_5.05",
+      "course": "Clonmel",
+      "off_time": "5.05",
+      "race_name": "Bulmers Original Maiden Hurdle",
+      "old_velo": {
+        "top": "Whats New",
+        "tier": "A",
+        "velo_prime_prob": 0.4042,
+        "mds": 0.1667,
+        "improvement": 0.3957,
+        "place_prob": 0.9772,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1668,
+        "frame_gate_probability": 0.432,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_CLO_20260605_5.40",
+      "course": "Clonmel",
+      "off_time": "5.40",
+      "race_name": "Bulmers Berries Handicap Hurdle (Div I)",
+      "old_velo": {
+        "top": "Benzine",
+        "tier": "B",
+        "velo_prime_prob": 0.3106,
+        "mds": 0.0257,
+        "improvement": 0.0832,
+        "place_prob": 0.5818,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2494,
+        "frame_gate_probability": 0.3286,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_CLO_20260605_6.45",
+      "course": "Clonmel",
+      "off_time": "6.45",
+      "race_name": "Talbot Hotel Clonmel (C & G) Maiden Hurdle",
+      "old_velo": {
+        "top": "In The Trenches",
+        "tier": "C",
+        "velo_prime_prob": 0.2561,
+        "mds": 0.1445,
+        "improvement": 0.2705,
+        "place_prob": 0.9296,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2705,
+        "frame_gate_probability": 0.3638,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_CLO_20260605_7.20",
+      "course": "Clonmel",
+      "off_time": "7.20",
+      "race_name": "Bulmers Strawberry & Lime Hurdle",
+      "old_velo": {
+        "top": "Farren Glory",
+        "tier": "A",
+        "velo_prime_prob": 0.4285,
+        "mds": 0.2215,
+        "improvement": 0.1253,
+        "place_prob": 0.9739,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2201,
+        "frame_gate_probability": 0.6113,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_CLO_20260605_7.55",
+      "course": "Clonmel",
+      "off_time": "7.55",
+      "race_name": "Bulmers Zero Handicap Hurdle",
+      "old_velo": {
+        "top": "Le Diablo",
+        "tier": "C",
+        "velo_prime_prob": 0.2522,
+        "mds": 0.0052,
+        "improvement": 0.0679,
+        "place_prob": 0.36,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2582,
+        "frame_gate_probability": 0.3338,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_CLO_20260605_8.30",
+      "course": "Clonmel",
+      "off_time": "8.30",
+      "race_name": "Paul Kavanagh Memorial Handicap Hurdle",
+      "old_velo": {
+        "top": "Zolpharine",
+        "tier": "B",
+        "velo_prime_prob": 0.2534,
+        "mds": 0.0115,
+        "improvement": 0.0235,
+        "place_prob": 0.2591,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2456,
+        "frame_gate_probability": 0.3046,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_DON_20260605_5.10",
+      "course": "Doncaster",
+      "off_time": "5.10",
+      "race_name": "Summer Saturday Series At Doncaster Racecourse Apprentice Handicap",
+      "old_velo": {
+        "top": "The Ubermensch",
+        "tier": "D",
+        "velo_prime_prob": 0.2619,
+        "mds": 0.0335,
+        "improvement": 0.0156,
+        "place_prob": 0.3578,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3246,
+        "frame_gate_probability": 0.4936,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Division Day",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_DON_20260605_5.45",
+      "course": "Doncaster",
+      "off_time": "5.45",
+      "race_name": "Support Weston Park Cancer Charity Today Restricted Novice Stakes (Bands B-D) (G",
+      "old_velo": {
+        "top": "My Mate Roger",
+        "tier": "A",
+        "velo_prime_prob": 0.6391,
+        "mds": 0.2929,
+        "improvement": 0.4098,
+        "place_prob": 0.9878,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1777,
+        "frame_gate_probability": 0.5419,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Harmonics",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_DON_20260605_6.20",
+      "course": "Doncaster",
+      "off_time": "6.20",
+      "race_name": "Hits Radio Proudly Supports WPCC Novice Stakes Novice Stakes (GBB Race)",
+      "old_velo": {
+        "top": "Ruler Of Time",
+        "tier": "A",
+        "velo_prime_prob": 0.553,
+        "mds": 0.265,
+        "improvement": 0.1936,
+        "place_prob": 0.9611,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2035,
+        "frame_gate_probability": 0.5994,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Seet",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_DON_20260605_6.55",
+      "course": "Doncaster",
+      "off_time": "6.55",
+      "race_name": "Rotabroach Proudly Supports WPCC Handicap",
+      "old_velo": {
+        "top": "King's Cavalry",
+        "tier": "B",
+        "velo_prime_prob": 0.336,
+        "mds": 0.0271,
+        "improvement": 0.0637,
+        "place_prob": 0.234,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1996,
+        "frame_gate_probability": 0.522,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "King's Cavalry",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_DON_20260605_7.30",
+      "course": "Doncaster",
+      "off_time": "7.30",
+      "race_name": "Apus Life Sciences Handicap",
+      "old_velo": {
+        "top": "Sailthisshipalone",
+        "tier": "C",
+        "velo_prime_prob": 0.1903,
+        "mds": 0.0435,
+        "improvement": 0.0837,
+        "place_prob": 0.1776,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2945,
+        "frame_gate_probability": 0.4017,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Rumba Numba",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_DON_20260605_8.05",
+      "course": "Doncaster",
+      "off_time": "8.05",
+      "race_name": "Join Us To Walk As One Handicap",
+      "old_velo": {
+        "top": "Novello Lad",
+        "tier": "C",
+        "velo_prime_prob": 0.1839,
+        "mds": 0.0149,
+        "improvement": 0.0157,
+        "place_prob": 0.1733,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2887,
+        "frame_gate_probability": 0.3863,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Novello Lad",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_DON_20260605_8.40",
+      "course": "Doncaster",
+      "off_time": "8.40",
+      "race_name": "Download The Raceday Ready App Handicap",
+      "old_velo": {
+        "top": "Faeberon",
+        "tier": "B",
+        "velo_prime_prob": 0.5081,
+        "mds": 0.0466,
+        "improvement": 0.0427,
+        "place_prob": 0.4217,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1884,
+        "frame_gate_probability": 0.5383,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_1.30",
+      "course": "Epsom",
+      "off_time": "1.30",
+      "race_name": "Win With Zyn 3YO \"Dash\" Handicap",
+      "old_velo": {
+        "top": "Naana's Shadow",
+        "tier": "C",
+        "velo_prime_prob": 0.1616,
+        "mds": 0.0085,
+        "improvement": 0.0167,
+        "place_prob": 0.1862,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2789,
+        "frame_gate_probability": 0.3571,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Naana's Shadow",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_2.05",
+      "course": "Epsom",
+      "off_time": "2.05",
+      "race_name": "Oddschecker British EBF Woodcote Stakes (Conditions Race) (GBB Race)",
+      "old_velo": {
+        "top": "Hickory Lad",
+        "tier": "B",
+        "velo_prime_prob": 0.4735,
+        "mds": 0.0876,
+        "improvement": 0.1698,
+        "place_prob": 0.4591,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2497,
+        "frame_gate_probability": 0.3748,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Hickory Lad",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_2.40",
+      "course": "Epsom",
+      "off_time": "2.40",
+      "race_name": "Betfred Diomed Stakes (Group 3)",
+      "old_velo": {
+        "top": "Boiling Point",
+        "tier": "B",
+        "velo_prime_prob": 0.265,
+        "mds": 0.0274,
+        "improvement": 0.0344,
+        "place_prob": 0.5386,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3047,
+        "frame_gate_probability": 0.449,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Seagulls Eleven",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_3.15",
+      "course": "Epsom",
+      "off_time": "3.15",
+      "race_name": "Betfred \"Nifty 50\" Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": "Sallaal",
+        "tier": "C",
+        "velo_prime_prob": 0.1884,
+        "mds": 0.0118,
+        "improvement": 0.0156,
+        "place_prob": 0.2915,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2681,
+        "frame_gate_probability": 0.3395,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Sallaal",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_4.00",
+      "course": "Epsom",
+      "off_time": "4.00",
+      "race_name": "Betfred Oaks (Group 1) (Fillies)",
+      "old_velo": {
+        "top": "Legacy Link",
+        "tier": "A",
+        "velo_prime_prob": 0.451,
+        "mds": 0.0718,
+        "improvement": 0.0916,
+        "place_prob": 0.848,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1977,
+        "frame_gate_probability": 0.5513,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Thundering On",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_4.40",
+      "course": "Epsom",
+      "off_time": "4.40",
+      "race_name": "HKJC World Pool Handicap",
+      "old_velo": {
+        "top": "Asmen Warrior",
+        "tier": "B",
+        "velo_prime_prob": 0.2661,
+        "mds": 0.0096,
+        "improvement": 0.0369,
+        "place_prob": 0.2492,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2499,
+        "frame_gate_probability": 0.3179,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Mister Winston",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_5.15",
+      "course": "Epsom",
+      "off_time": "5.15",
+      "race_name": "Cygames Surrey Stakes (Listed Race)",
+      "old_velo": {
+        "top": "Stellar Sunrise",
+        "tier": "A",
+        "velo_prime_prob": 0.4135,
+        "mds": 0.0511,
+        "improvement": 0.0612,
+        "place_prob": 0.7208,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1964,
+        "frame_gate_probability": 0.5367,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Ellusive Butterfly",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_EPS_20260605_5.50",
+      "course": "Epsom",
+      "off_time": "5.50",
+      "race_name": "Debenhams Handicap",
+      "old_velo": {
+        "top": "Dance In The Storm",
+        "tier": "C",
+        "velo_prime_prob": 0.2288,
+        "mds": 0.0234,
+        "improvement": 0.0426,
+        "place_prob": 0.3704,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2683,
+        "frame_gate_probability": 0.351,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Colombier",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_FAI_20260605_4.20",
+      "course": "Fairyhouse",
+      "off_time": "4.20",
+      "race_name": "Irish Stallion Farms EBF Race",
+      "old_velo": {
+        "top": "Florida Bay",
+        "tier": "A",
+        "velo_prime_prob": 0.4581,
+        "mds": 0.2152,
+        "improvement": 0.3027,
+        "place_prob": 0.8994,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1998,
+        "frame_gate_probability": 0.5598,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_FAI_20260605_4.55",
+      "course": "Fairyhouse",
+      "off_time": "4.55",
+      "race_name": "#5 General Admission At Fairyhouse On June 12th Maiden",
+      "old_velo": {
+        "top": "Al Haarith",
+        "tier": "A",
+        "velo_prime_prob": 0.3271,
+        "mds": 0.2089,
+        "improvement": 0.4962,
+        "place_prob": 0.7478,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1755,
+        "frame_gate_probability": 0.4396,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_FAI_20260605_5.30",
+      "course": "Fairyhouse",
+      "off_time": "5.30",
+      "race_name": "Fiver Fridays At Fairyhouse Rated Race",
+      "old_velo": {
+        "top": "Ocean's Breath",
+        "tier": "B",
+        "velo_prime_prob": 0.3452,
+        "mds": 0.0341,
+        "improvement": 0.025,
+        "place_prob": 0.4256,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2259,
+        "frame_gate_probability": 0.6033,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_FAI_20260605_6.00",
+      "course": "Fairyhouse",
+      "off_time": "6.00",
+      "race_name": "Irish Stallion Farms EBF Median Auction Race",
+      "old_velo": {
+        "top": "Gazelle d'Or",
+        "tier": "A",
+        "velo_prime_prob": 0.571,
+        "mds": 0.1037,
+        "improvement": 0.0898,
+        "place_prob": 0.8263,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1959,
+        "frame_gate_probability": 0.5815,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_FAI_20260605_6.34",
+      "course": "Fairyhouse",
+      "off_time": "6.34",
+      "race_name": "Dino Day 8th July Handicap",
+      "old_velo": {
+        "top": "Whatswrongnow",
+        "tier": "X",
+        "velo_prime_prob": 0.1093,
+        "mds": 0.0046,
+        "improvement": 0.0194,
+        "place_prob": 0.0599,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2548,
+        "frame_gate_probability": 0.2887,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_FAI_20260605_7.09",
+      "course": "Fairyhouse",
+      "off_time": "7.09",
+      "race_name": "Bobbyjo Restaurant At Fairyhouse Maiden",
+      "old_velo": {
+        "top": "Big Cypress",
+        "tier": "B",
+        "velo_prime_prob": 0.3252,
+        "mds": 0.1183,
+        "improvement": 0.2897,
+        "place_prob": 0.8815,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2726,
+        "frame_gate_probability": 0.3888,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_FAI_20260605_7.44",
+      "course": "Fairyhouse",
+      "off_time": "7.44",
+      "race_name": "Racing Again Next Friday Handicap (Div I)",
+      "old_velo": {
+        "top": "Amavasya",
+        "tier": "X",
+        "velo_prime_prob": 0.1752,
+        "mds": 0.0048,
+        "improvement": 0.0426,
+        "place_prob": 0.1004,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2767,
+        "frame_gate_probability": 0.3559,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260605_5.25",
+      "course": "Goodwood",
+      "off_time": "5.25",
+      "race_name": "Track Radio On Digital & DAB Apprentice Handicap",
+      "old_velo": {
+        "top": "Look Back Smiling",
+        "tier": "X",
+        "velo_prime_prob": 0.1943,
+        "mds": 0.0569,
+        "improvement": 0.0822,
+        "place_prob": 0.2181,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3219,
+        "frame_gate_probability": 0.4669,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Oman",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260605_5.55",
+      "course": "Goodwood",
+      "off_time": "5.55",
+      "race_name": "Fitzdares Apprentice Fillies' Restricted Novice Stakes (Horses In Bands B-D)",
+      "old_velo": {
+        "top": "Matilda Joslyngage",
+        "tier": "A",
+        "velo_prime_prob": 0.5583,
+        "mds": 0.3175,
+        "improvement": 0.4505,
+        "place_prob": 0.9944,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1976,
+        "frame_gate_probability": 0.5827,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Matilda Joslyngage",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260605_6.27",
+      "course": "Goodwood",
+      "off_time": "6.27",
+      "race_name": "Tommie Jakes Memorial Apprentice Fillies' Handicap",
+      "old_velo": {
+        "top": "Insuspense",
+        "tier": "X",
+        "velo_prime_prob": 0.1954,
+        "mds": 0.0096,
+        "improvement": 0.025,
+        "place_prob": 0.1463,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3146,
+        "frame_gate_probability": 0.4502,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Land Of Magic",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260605_7.02",
+      "course": "Goodwood",
+      "off_time": "7.02",
+      "race_name": "Join Fitzdares For A Personal Betting Service Apprentice Handicap",
+      "old_velo": {
+        "top": "Ice Cube",
+        "tier": "B",
+        "velo_prime_prob": 0.3955,
+        "mds": 0.0281,
+        "improvement": 0.0222,
+        "place_prob": 0.3779,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2079,
+        "frame_gate_probability": 0.5659,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Miss Lady Grace",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260605_7.37",
+      "course": "Goodwood",
+      "off_time": "7.37",
+      "race_name": "Thelma Horne Memorial Apprentice Handicap",
+      "old_velo": {
+        "top": "Asteverdi",
+        "tier": "A",
+        "velo_prime_prob": 0.4439,
+        "mds": 0.0518,
+        "improvement": 0.0679,
+        "place_prob": 0.5656,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2016,
+        "frame_gate_probability": 0.5612,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Silca Bay",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260605_8.12",
+      "course": "Goodwood",
+      "off_time": "8.12",
+      "race_name": "Goodwood Horseracing Club Membership Apprentice Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": "Dancing Tiger",
+        "tier": "C",
+        "velo_prime_prob": 0.2875,
+        "mds": 0.0177,
+        "improvement": 0.025,
+        "place_prob": 0.2482,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3059,
+        "frame_gate_probability": 0.4577,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Salamanca City",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_MUS_20260605_1.50",
+      "course": "Musselburgh",
+      "off_time": "1.50",
+      "race_name": "Reichhartinger Rush Handicap",
+      "old_velo": {
+        "top": "Cascade Hall",
+        "tier": "A",
+        "velo_prime_prob": 0.52,
+        "mds": 0.2185,
+        "improvement": 0.1117,
+        "place_prob": 0.9824,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2024,
+        "frame_gate_probability": 0.5865,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Cascade Hall",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_MUS_20260605_2.25",
+      "course": "Musselburgh",
+      "off_time": "2.25",
+      "race_name": "Menzies Meander EBF Restricted Novice Stakes (Bands B-D) (EBF Restricted Qual')",
+      "old_velo": {
+        "top": "Time For The Moon",
+        "tier": "A",
+        "velo_prime_prob": 0.4513,
+        "mds": 0.0996,
+        "improvement": 0.039,
+        "place_prob": 0.5908,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.217,
+        "frame_gate_probability": 0.6091,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Time For The Moon",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_MUS_20260605_3.00",
+      "course": "Musselburgh",
+      "off_time": "3.00",
+      "race_name": "Construction & Property Recruitment Handicap",
+      "old_velo": {
+        "top": "Sandy Craic",
+        "tier": "B",
+        "velo_prime_prob": 0.4547,
+        "mds": 0.0261,
+        "improvement": 0.0374,
+        "place_prob": 0.2756,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.195,
+        "frame_gate_probability": 0.5436,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Highland Shah",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_MUS_20260605_3.40",
+      "course": "Musselburgh",
+      "off_time": "3.40",
+      "race_name": "Keith Mitchell Law Accountants Handicap",
+      "old_velo": {
+        "top": "Amidst The Chaos",
+        "tier": "A",
+        "velo_prime_prob": 0.409,
+        "mds": 0.0484,
+        "improvement": 0.0374,
+        "place_prob": 0.5497,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2116,
+        "frame_gate_probability": 0.581,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Poet's Dawn",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_MUS_20260605_4.15",
+      "course": "Musselburgh",
+      "off_time": "4.15",
+      "race_name": "Travis Perkins Edinburgh Handicap",
+      "old_velo": {
+        "top": "Tiva",
+        "tier": "C",
+        "velo_prime_prob": 0.1923,
+        "mds": 0.0171,
+        "improvement": 0.0156,
+        "place_prob": 0.1759,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3295,
+        "frame_gate_probability": 0.4838,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Right And Exact",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_MUS_20260605_4.50",
+      "course": "Musselburgh",
+      "off_time": "4.50",
+      "race_name": "Travis Perkins Scotland Handicap",
+      "old_velo": {
+        "top": "Lope Y Linda",
+        "tier": "B",
+        "velo_prime_prob": 0.4576,
+        "mds": 0.0816,
+        "improvement": 0.0426,
+        "place_prob": 0.7173,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2162,
+        "frame_gate_probability": 0.6085,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Mereside Princess",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "PLACED",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_THI_20260605_1.40",
+      "course": "Thirsk",
+      "off_time": "1.40",
+      "race_name": "Hartshead Dos Champions Restricted Maiden Stakes (Bands C And D) (GBB Race) (Div",
+      "old_velo": {
+        "top": "Eagle Bay",
+        "tier": "A",
+        "velo_prime_prob": 0.5324,
+        "mds": 0.1351,
+        "improvement": 0.1571,
+        "place_prob": 0.5289,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.1854,
+        "frame_gate_probability": 0.5358,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Eagle Bay",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_THI_20260605_2.50",
+      "course": "Thirsk",
+      "off_time": "2.50",
+      "race_name": "Power Plastics \"Big Day Out\" Handicap",
+      "old_velo": {
+        "top": "Keep The Gold",
+        "tier": "B",
+        "velo_prime_prob": 0.2903,
+        "mds": 0.0218,
+        "improvement": 0.0426,
+        "place_prob": 0.2154,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2848,
+        "frame_gate_probability": 0.4082,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Miss Rainbow",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_THI_20260605_3.30",
+      "course": "Thirsk",
+      "off_time": "3.30",
+      "race_name": "Moody Construction Handicap",
+      "old_velo": {
+        "top": "Sherlock",
+        "tier": "B",
+        "velo_prime_prob": 0.2922,
+        "mds": 0.0151,
+        "improvement": 0.0156,
+        "place_prob": 0.1935,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2913,
+        "frame_gate_probability": 0.4242,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Annie Edson Taylor",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_THI_20260605_4.10",
+      "course": "Thirsk",
+      "off_time": "4.10",
+      "race_name": "Ruby Lodge Care Home In Thirsk Handicap",
+      "old_velo": {
+        "top": "King Of Berkshire",
+        "tier": "A",
+        "velo_prime_prob": 0.4614,
+        "mds": 0.0779,
+        "improvement": 0.025,
+        "place_prob": 0.7357,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2156,
+        "frame_gate_probability": 0.6082,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "King Of Berkshire",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_THI_20260605_4.45",
+      "course": "Thirsk",
+      "off_time": "4.45",
+      "race_name": "David Ritchie Is 50! Happy Birthday! Fillies' Handicap",
+      "old_velo": {
+        "top": "Fille Unique",
+        "tier": "X",
+        "velo_prime_prob": 0.1943,
+        "mds": 0.0118,
+        "improvement": 0.0177,
+        "place_prob": 0.1071,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.3007,
+        "frame_gate_probability": 0.4175,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Military Girl",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "rp_THI_20260605_5.20",
+      "course": "Thirsk",
+      "off_time": "5.20",
+      "race_name": "Next Meeting Tuesday 16th June Featuring Royal Ascot Handicap",
+      "old_velo": {
+        "top": "Brave Traveller",
+        "tier": "B",
+        "velo_prime_prob": 0.2829,
+        "mds": 0.0203,
+        "improvement": 0.0426,
+        "place_prob": 0.2099,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "NO_ODDS",
+        "win_gate_probability": 0.2793,
+        "frame_gate_probability": 0.3928,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "Daizen",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    }
+  ]
+}

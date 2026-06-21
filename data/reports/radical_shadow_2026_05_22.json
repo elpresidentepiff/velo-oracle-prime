@@ -1,0 +1,2491 @@
+{
+  "generated_at": "2026-06-20T13:54:16.141741+00:00",
+  "date": "2026-05-22",
+  "status": "SHADOW_ONLY_NOT_LIVE",
+  "live_writes": false,
+  "source_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\velo_prime_verdicts_2026_05_22.json",
+  "decision_counts": {
+    "CASH_RUN": 2,
+    "WATCHLIST_SHADOW": 13,
+    "PASS_OR_WATCH": 14,
+    "NO_BET_SHADOW": 9,
+    "PASS": 5
+  },
+  "gate_status": {
+    "win_gate_loaded": true,
+    "win_gate_error": null,
+    "frame_gate_loaded": true,
+    "frame_gate_error": null,
+    "shadow_only": true,
+    "passport_feed": {
+      "requested_date": "2026-05-22",
+      "dated_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_2026_05_22.jsonl",
+      "latest_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_latest.jsonl",
+      "selected_path": "C:\\Users\\puror\\velo-oracle-prime\\data\\new_build\\current_cards\\current_card_passport_feed_latest.jsonl",
+      "selected_kind": "latest",
+      "rows": 13077,
+      "available_rows": 9842,
+      "loaded": true,
+      "error": null
+    },
+    "passport_matches": 0,
+    "passport_available_on_top_picks": 0
+  },
+  "obstacles": [
+    "PASSPORT_DATED_FEED_MISSING: using latest feed only"
+  ],
+  "decisions": [
+    {
+      "race_id": "rp_GOO_20260522_1.57",
+      "course": "GOO",
+      "off_time": "1.57",
+      "race_name": "6f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Love Is",
+      "tier": "B",
+      "field_size": 3,
+      "class_num": 2,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.3662,
+      "old_velo_top": {
+        "horse": "Love Is",
+        "velo_prime_prob": 0.3662,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1908,
+        "place_prob": 0.9783,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.37"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.3662,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.3662,
+        "field_size": 3.0,
+        "class_num": 2.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2398,
+      "frame_gate_probability": 0.6467,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_2",
+        "reasons": [
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_HAY_20260522_3.30",
+      "course": "HAY",
+      "off_time": "3.30",
+      "race_name": "6f 212y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Pat'S Cash",
+      "tier": "A",
+      "field_size": 4,
+      "class_num": 3,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.3542,
+      "old_velo_top": {
+        "horse": "Pat'S Cash",
+        "velo_prime_prob": 0.3542,
+        "sqpe_v17_prob": 0.01,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1083,
+        "place_prob": 0.7029,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.35"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.3542,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.3542,
+        "field_size": 4.0,
+        "class_num": 3.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2321,
+      "frame_gate_probability": 0.6237,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_3",
+        "reasons": [
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_PON_20260522_7.52",
+      "course": "PON",
+      "off_time": "7.52",
+      "race_name": "2m 1f 27y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Sea Of Kings",
+      "tier": "B",
+      "field_size": 7,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1615,
+      "old_velo_top": {
+        "horse": "Sea Of Kings",
+        "velo_prime_prob": 0.1615,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.082,
+        "place_prob": 0.7583,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1615,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1615,
+        "field_size": 7.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3256,
+      "frame_gate_probability": 0.4666,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_DPT_20260522_8.00",
+      "course": "DPT",
+      "off_time": "8.00",
+      "race_name": "3m 4f 165y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Cause For Comment",
+      "tier": "B",
+      "field_size": 8,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2297,
+      "old_velo_top": {
+        "horse": "Cause For Comment",
+        "velo_prime_prob": 0.2297,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1008,
+        "place_prob": 0.7104,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2297,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2297,
+        "field_size": 8.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.323,
+      "frame_gate_probability": 0.4801,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_HAY_20260522_1.45",
+      "course": "HAY",
+      "off_time": "1.45",
+      "race_name": "1m 2f 42y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Ladykirk",
+      "tier": "B",
+      "field_size": 6,
+      "class_num": 3,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2464,
+      "old_velo_top": {
+        "horse": "Ladykirk",
+        "velo_prime_prob": 0.2464,
+        "sqpe_v17_prob": 0.0287,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0302,
+        "place_prob": 0.5086,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2464,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2464,
+        "field_size": 6.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3221,
+      "frame_gate_probability": 0.4841,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_3",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_3.53",
+      "course": "BAT",
+      "off_time": "3.53",
+      "race_name": "5f 160y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Moe'S Legacy",
+      "tier": "B",
+      "field_size": 5,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.267,
+      "old_velo_top": {
+        "horse": "Moe'S Legacy",
+        "velo_prime_prob": 0.267,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1111,
+        "place_prob": 0.8893,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.267,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.267,
+        "field_size": 5.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3216,
+      "frame_gate_probability": 0.4895,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:CLASS_4_FS_2_5"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_4.28",
+      "course": "BAT",
+      "off_time": "4.28",
+      "race_name": "5f 160y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Our Guy",
+      "tier": "C",
+      "field_size": 8,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1294,
+      "old_velo_top": {
+        "horse": "Our Guy",
+        "velo_prime_prob": 0.1294,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0325,
+        "place_prob": 0.4866,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1294,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1294,
+        "field_size": 8.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3198,
+      "frame_gate_probability": 0.4441,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_5",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_5.32",
+      "course": "WOR",
+      "off_time": "5.32",
+      "race_name": "2m 4f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Lermoos Legend",
+      "tier": "C",
+      "field_size": 8,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.163,
+      "old_velo_top": {
+        "horse": "Lermoos Legend",
+        "velo_prime_prob": 0.163,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0254,
+        "place_prob": 0.4644,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.163,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.163,
+        "field_size": 8.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3181,
+      "frame_gate_probability": 0.4499,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_HAY_20260522_5.15",
+      "course": "HAY",
+      "off_time": "5.15",
+      "race_name": "7f 212y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Kiss For An Angel",
+      "tier": "X",
+      "field_size": 8,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1603,
+      "old_velo_top": {
+        "horse": "Kiss For An Angel",
+        "velo_prime_prob": 0.1603,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0121,
+        "place_prob": 0.3473,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1603,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1603,
+        "field_size": 8.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3145,
+      "frame_gate_probability": 0.441,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_5",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_3.18",
+      "course": "BAT",
+      "off_time": "3.18",
+      "race_name": "5f 10y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Jaan Ki Tukri",
+      "tier": "A",
+      "field_size": 5,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.5352,
+      "old_velo_top": {
+        "horse": "Jaan Ki Tukri",
+        "velo_prime_prob": 0.5352,
+        "sqpe_v17_prob": 0.0537,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1336,
+        "place_prob": 0.8752,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.54"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.5352,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.5352,
+        "field_size": 5.0,
+        "class_num": 4.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 1.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3135,
+      "frame_gate_probability": 0.5427,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_45_55",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:CLASS_4_FS_2_5"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_PON_20260522_8.22",
+      "course": "PON",
+      "off_time": "8.22",
+      "race_name": "1m 4f 5y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Blondina",
+      "tier": "B",
+      "field_size": 7,
+      "class_num": 6,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1842,
+      "old_velo_top": {
+        "horse": "Blondina",
+        "velo_prime_prob": 0.1842,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0288,
+        "place_prob": 0.5888,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1842,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1842,
+        "field_size": 7.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3134,
+      "frame_gate_probability": 0.446,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_6",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_2.43",
+      "course": "BAT",
+      "off_time": "2.43",
+      "race_name": "1m 2f 37y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Eloquencia",
+      "tier": "A",
+      "field_size": 7,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.5084,
+      "old_velo_top": {
+        "horse": "Eloquencia",
+        "velo_prime_prob": 0.5084,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0288,
+        "place_prob": 0.5984,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.51"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.5084,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.5084,
+        "field_size": 7.0,
+        "class_num": 4.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 1.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.304,
+      "frame_gate_probability": 0.512,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_45_55",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_DPT_20260522_8.30",
+      "course": "DPT",
+      "off_time": "8.30",
+      "race_name": "2m 1f 165y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Majestic Horizon",
+      "tier": "B",
+      "field_size": 7,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.3504,
+      "old_velo_top": {
+        "horse": "Majestic Horizon",
+        "velo_prime_prob": 0.3504,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0324,
+        "place_prob": 0.6289,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.35"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.3504,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.3504,
+        "field_size": 7.0,
+        "class_num": 0.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2252,
+      "frame_gate_probability": 0.6028,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_8.41",
+      "course": "WOR",
+      "off_time": "8.41",
+      "race_name": "2m (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Saccary",
+      "tier": "B",
+      "field_size": 7,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.3014,
+      "old_velo_top": {
+        "horse": "Saccary",
+        "velo_prime_prob": 0.3014,
+        "sqpe_v17_prob": 0.0504,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0421,
+        "place_prob": 0.5837,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.30"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.3014,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.3014,
+        "field_size": 7.0,
+        "class_num": 5.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2157,
+      "frame_gate_probability": 0.5626,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_5",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_DPT_20260522_7.30",
+      "course": "DPT",
+      "off_time": "7.30",
+      "race_name": "2m 7f 150y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "West Of Idaho",
+      "tier": "A",
+      "field_size": 7,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.47,
+      "old_velo_top": {
+        "horse": "West Of Idaho",
+        "velo_prime_prob": 0.47,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.2013,
+        "place_prob": 0.899,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.47"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.47,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.47,
+        "field_size": 7.0,
+        "class_num": 0.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.209,
+      "frame_gate_probability": 0.5913,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_45_55",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_DPT_20260522_5.52",
+      "course": "DPT",
+      "off_time": "5.52",
+      "race_name": "2m 2f 185y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Sea Of Doubt",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1098,
+      "old_velo_top": {
+        "horse": "Sea Of Doubt",
+        "velo_prime_prob": 0.1098,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0335,
+        "place_prob": 0.4258,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1098,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1098,
+        "field_size": 10.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3295,
+      "frame_gate_probability": 0.4587,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260522_4.17",
+      "course": "GOO",
+      "off_time": "4.17",
+      "race_name": "1m 1f 197y (Class 1) Last 8 outings",
+      "horse": "Haatem",
+      "tier": "C",
+      "field_size": 9,
+      "class_num": 1,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1388,
+      "old_velo_top": {
+        "horse": "Haatem",
+        "velo_prime_prob": 0.1388,
+        "sqpe_v17_prob": 0.0537,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0341,
+        "place_prob": 0.4204,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1388,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1388,
+        "field_size": 9.0,
+        "class_num": 1.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3275,
+      "frame_gate_probability": 0.4632,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_1",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260522_5.27",
+      "course": "GOO",
+      "off_time": "5.27",
+      "race_name": "5f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Seven Questions",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 3,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1043,
+      "old_velo_top": {
+        "horse": "Seven Questions",
+        "velo_prime_prob": 0.1043,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0351,
+        "place_prob": 0.4644,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1043,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1043,
+        "field_size": 10.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3181,
+      "frame_gate_probability": 0.4318,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_3",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260522_2.32",
+      "course": "GOO",
+      "off_time": "2.32",
+      "race_name": "5f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Lazurite",
+      "tier": "A",
+      "field_size": 9,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.3551,
+      "old_velo_top": {
+        "horse": "Lazurite",
+        "velo_prime_prob": 0.3551,
+        "sqpe_v17_prob": 0.0634,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1025,
+        "place_prob": 0.6423,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.36"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.3551,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.3551,
+        "field_size": 9.0,
+        "class_num": 4.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 1.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3161,
+      "frame_gate_probability": 0.4939,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_7.41",
+      "course": "WOR",
+      "off_time": "7.41",
+      "race_name": "2m 7f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Noble Blue",
+      "tier": "C",
+      "field_size": 9,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1357,
+      "old_velo_top": {
+        "horse": "Noble Blue",
+        "velo_prime_prob": 0.1357,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0322,
+        "place_prob": 0.4528,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1357,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1357,
+        "field_size": 9.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3157,
+      "frame_gate_probability": 0.4361,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260522_3.42",
+      "course": "GOO",
+      "off_time": "3.42",
+      "race_name": "1m 3f 218y (Class 3) Last 8 outings",
+      "horse": "Venetia",
+      "tier": "B",
+      "field_size": 10,
+      "class_num": 3,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1388,
+      "old_velo_top": {
+        "horse": "Venetia",
+        "velo_prime_prob": 0.1388,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0978,
+        "place_prob": 0.6648,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1388,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1388,
+        "field_size": 10.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3121,
+      "frame_gate_probability": 0.4284,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_3",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_PON_20260522_6.20",
+      "course": "PON",
+      "off_time": "6.20",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Naval Light",
+      "tier": "A",
+      "field_size": 9,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.4058,
+      "old_velo_top": {
+        "horse": "Naval Light",
+        "velo_prime_prob": 0.4058,
+        "sqpe_v17_prob": 0.0456,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.174,
+        "place_prob": 0.747,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.41"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.4058,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.4058,
+        "field_size": 9.0,
+        "class_num": 4.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 1.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3074,
+      "frame_gate_probability": 0.4888,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_7.11",
+      "course": "WOR",
+      "off_time": "7.11",
+      "race_name": "2m (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Medina Blue",
+      "tier": "X",
+      "field_size": 10,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1537,
+      "old_velo_top": {
+        "horse": "Medina Blue",
+        "velo_prime_prob": 0.1537,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0108,
+        "place_prob": 0.2901,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1537,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1537,
+        "field_size": 10.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3055,
+      "frame_gate_probability": 0.4179,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_2.08",
+      "course": "BAT",
+      "off_time": "2.08",
+      "race_name": "1m 6f (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Captain Brett",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 6,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1165,
+      "old_velo_top": {
+        "horse": "Captain Brett",
+        "velo_prime_prob": 0.1165,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0481,
+        "place_prob": 0.5344,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1165,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1165,
+        "field_size": 10.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3038,
+      "frame_gate_probability": 0.4036,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_6.41",
+      "course": "WOR",
+      "off_time": "6.41",
+      "race_name": "2m (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Shamsat",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 4,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1829,
+      "old_velo_top": {
+        "horse": "Shamsat",
+        "velo_prime_prob": 0.1829,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0201,
+        "place_prob": 0.3799,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1829,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1829,
+        "field_size": 10.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3006,
+      "frame_gate_probability": 0.4151,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_4",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_PON_20260522_6.52",
+      "course": "PON",
+      "off_time": "6.52",
+      "race_name": "6f (Class 2) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Too Many Spirits",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 2,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2388,
+      "old_velo_top": {
+        "horse": "Too Many Spirits",
+        "velo_prime_prob": 0.2388,
+        "sqpe_v17_prob": 0.0287,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0851,
+        "place_prob": 0.5109,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2388,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2388,
+        "field_size": 10.0,
+        "class_num": 2.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2992,
+      "frame_gate_probability": 0.4277,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_2",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_HAY_20260522_2.20",
+      "course": "HAY",
+      "off_time": "2.20",
+      "race_name": "6f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Jazz Queen",
+      "tier": "B",
+      "field_size": 12,
+      "class_num": 3,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1938,
+      "old_velo_top": {
+        "horse": "Jazz Queen",
+        "velo_prime_prob": 0.1938,
+        "sqpe_v17_prob": 0.0287,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0284,
+        "place_prob": 0.3591,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1938,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1938,
+        "field_size": 12.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.289,
+      "frame_gate_probability": 0.3908,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_3",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_8.11",
+      "course": "WOR",
+      "off_time": "8.11",
+      "race_name": "2m 4f (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Ice Jet",
+      "tier": "B",
+      "field_size": 15,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1189,
+      "old_velo_top": {
+        "horse": "Ice Jet",
+        "velo_prime_prob": 0.1189,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.1446,
+        "place_prob": 0.768,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1189,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1189,
+        "field_size": 15.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2734,
+      "frame_gate_probability": 0.3343,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_4.57",
+      "course": "WOR",
+      "off_time": "4.57",
+      "race_name": "2m 110y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Applicationofcash",
+      "tier": "B",
+      "field_size": 4,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.3575,
+      "old_velo_top": {
+        "horse": "Applicationofcash",
+        "velo_prime_prob": 0.3575,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0357,
+        "place_prob": 0.7753,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.36"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.3575,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.3575,
+        "field_size": 4.0,
+        "class_num": 5.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.225,
+      "frame_gate_probability": 0.6059,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260522_3.07",
+      "course": "GOO",
+      "off_time": "3.07",
+      "race_name": "2m (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Give It To Me Oj",
+      "tier": "B",
+      "field_size": 5,
+      "class_num": 3,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.2196,
+      "old_velo_top": {
+        "horse": "Give It To Me Oj",
+        "velo_prime_prob": 0.2196,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0909,
+        "place_prob": 0.8848,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.2196,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.2196,
+        "field_size": 5.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3341,
+      "frame_gate_probability": 0.5035,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_2_5",
+        "class_band": "CLASS_3",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_DPT_20260522_6.29",
+      "course": "DPT",
+      "off_time": "6.29",
+      "race_name": "2m 5f 180y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Gangster Granny",
+      "tier": "X",
+      "field_size": 15,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0851,
+      "old_velo_top": {
+        "horse": "Gangster Granny",
+        "velo_prime_prob": 0.0851,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0271,
+        "place_prob": 0.4668,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0851,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0851,
+        "field_size": 15.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2982,
+      "frame_gate_probability": 0.3798,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_GOO_20260522_4.52",
+      "course": "GOO",
+      "off_time": "4.52",
+      "race_name": "7f (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Oliver Show",
+      "tier": "X",
+      "field_size": 13,
+      "class_num": 3,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1074,
+      "old_velo_top": {
+        "horse": "Oliver Show",
+        "velo_prime_prob": 0.1074,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0119,
+        "place_prob": 0.2942,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1074,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1074,
+        "field_size": 13.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2965,
+      "frame_gate_probability": 0.3831,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_3",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_DPT_20260522_7.00",
+      "course": "DPT",
+      "off_time": "7.00",
+      "race_name": "2m 3f 100y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Auntie Lacey",
+      "tier": "X",
+      "field_size": 14,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1584,
+      "old_velo_top": {
+        "horse": "Auntie Lacey",
+        "velo_prime_prob": 0.1584,
+        "sqpe_v17_prob": 0.0445,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0122,
+        "place_prob": 0.2167,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1584,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1584,
+        "field_size": 14.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2929,
+      "frame_gate_probability": 0.3887,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_HAY_20260522_2.55",
+      "course": "HAY",
+      "off_time": "2.55",
+      "race_name": "6f (Class 1) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Rosy Affair",
+      "tier": "B",
+      "field_size": 15,
+      "class_num": 1,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1532,
+      "old_velo_top": {
+        "horse": "Rosy Affair",
+        "velo_prime_prob": 0.1532,
+        "sqpe_v17_prob": 0.0537,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0844,
+        "place_prob": 0.5807,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1532,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1532,
+        "field_size": 15.0,
+        "class_num": 1.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2831,
+      "frame_gate_probability": 0.3648,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_1",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_6.15",
+      "course": "BAT",
+      "off_time": "6.15",
+      "race_name": "1m (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Tilani",
+      "tier": "X",
+      "field_size": 14,
+      "class_num": 6,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1244,
+      "old_velo_top": {
+        "horse": "Tilani",
+        "velo_prime_prob": 0.1244,
+        "sqpe_v17_prob": 0.0287,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0197,
+        "place_prob": 0.2323,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1244,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1244,
+        "field_size": 14.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2754,
+      "frame_gate_probability": 0.3404,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_DPT_20260522_5.20",
+      "course": "DPT",
+      "off_time": "5.20",
+      "race_name": "2m 2f 185y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Le Questionnaire",
+      "tier": "X",
+      "field_size": 19,
+      "class_num": 0,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.0847,
+      "old_velo_top": {
+        "horse": "Le Questionnaire",
+        "velo_prime_prob": 0.0847,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0169,
+        "place_prob": 0.5991,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.0847,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.0847,
+        "field_size": 19.0,
+        "class_num": 0.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2714,
+      "frame_gate_probability": 0.3191,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_UNKNOWN",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_5.03",
+      "course": "BAT",
+      "off_time": "5.03",
+      "race_name": "5f 160y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Legendsoftheland",
+      "tier": "C",
+      "field_size": 13,
+      "class_num": 6,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1999,
+      "old_velo_top": {
+        "horse": "Legendsoftheland",
+        "velo_prime_prob": 0.1999,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0329,
+        "place_prob": 0.4378,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1999,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1999,
+        "field_size": 13.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.27,
+      "frame_gate_probability": 0.3487,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_BAT_20260522_5.40",
+      "course": "BAT",
+      "off_time": "5.40",
+      "race_name": "5f 160y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Sioux Warrior",
+      "tier": "X",
+      "field_size": 25,
+      "class_num": 6,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.059,
+      "old_velo_top": {
+        "horse": "Sioux Warrior",
+        "velo_prime_prob": 0.059,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0084,
+        "place_prob": 0.5991,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.059,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.059,
+        "field_size": 25.0,
+        "class_num": 6.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2178,
+      "frame_gate_probability": 0.2024,
+      "radical": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_6",
+        "reasons": [],
+        "warnings": []
+      }
+    },
+    {
+      "race_id": "rp_PON_20260522_7.22",
+      "course": "PON",
+      "off_time": "7.22",
+      "race_name": "5f 3y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Betweenthesticks",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1041,
+      "old_velo_top": {
+        "horse": "Betweenthesticks",
+        "velo_prime_prob": 0.1041,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0335,
+        "place_prob": 0.4258,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1041,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1041,
+        "field_size": 10.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3099,
+      "frame_gate_probability": 0.4138,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_PON_20260522_8.52",
+      "course": "PON",
+      "off_time": "8.52",
+      "race_name": "1m 6y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Arkenstaar",
+      "tier": "X",
+      "field_size": 9,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1775,
+      "old_velo_top": {
+        "horse": "Arkenstaar",
+        "velo_prime_prob": 0.1775,
+        "sqpe_v17_prob": 0.0287,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0254,
+        "place_prob": 0.3253,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1775,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1775,
+        "field_size": 9.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3045,
+      "frame_gate_probability": 0.4229,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_HAY_20260522_4.40",
+      "course": "HAY",
+      "off_time": "4.40",
+      "race_name": "1m 2f 42y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Bnaider",
+      "tier": "C",
+      "field_size": 10,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1385,
+      "old_velo_top": {
+        "horse": "Bnaider",
+        "velo_prime_prob": 0.1385,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0481,
+        "place_prob": 0.5344,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1385,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1385,
+        "field_size": 10.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3041,
+      "frame_gate_probability": 0.4104,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_LT_15",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_HAY_20260522_4.05",
+      "course": "HAY",
+      "off_time": "4.05",
+      "race_name": "1m 2f 42y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Joseph",
+      "tier": "X",
+      "field_size": 10,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.1617,
+      "old_velo_top": {
+        "horse": "Joseph",
+        "velo_prime_prob": 0.1617,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.029,
+        "place_prob": 0.3799,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.1617,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.1617,
+        "field_size": 10.0,
+        "class_num": 5.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.3002,
+      "frame_gate_probability": 0.4082,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    },
+    {
+      "race_id": "rp_WOR_20260522_6.06",
+      "course": "WOR",
+      "off_time": "6.06",
+      "race_name": "2m (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Faithful Guardian",
+      "tier": "C",
+      "field_size": 11,
+      "class_num": 5,
+      "sp_decimal": 0.0,
+      "velo_prime_prob": 0.315,
+      "old_velo_top": {
+        "horse": "Faithful Guardian",
+        "velo_prime_prob": 0.315,
+        "sqpe_v17_prob": 0.0985,
+        "sqpe_no_rpr_shadow_prob": null,
+        "market_deception_score": 0.0197,
+        "place_prob": 0.3566,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "execution_allowed": false,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.32"
+      },
+      "passport": {
+        "matched": false,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "reason_codes": [],
+        "passport_live_features": {}
+      },
+      "sigma_features": {
+        "model_probability": 0.315,
+        "sp_decimal": 0.0,
+        "implied_probability": 0.0,
+        "edge": 0.315,
+        "field_size": 11.0,
+        "class_num": 5.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.1925,
+      "frame_gate_probability": 0.4946,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "NO_ODDS",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_5",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ]
+      }
+    }
+  ]
+}

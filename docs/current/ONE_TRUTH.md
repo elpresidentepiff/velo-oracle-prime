@@ -36,6 +36,19 @@ An auditable UK/IRE horse-racing prediction system. It captures Racing Post HTML
 ## What is SHADOW (no scoring effect)
 New Build / Passport two-lane scorer · Playbook G sentient loopback (`sentient_state_shadow.json`) · Execution bridge paper ledger (SIM-only, hard LIVE guard) · Router lanes V1/V2/V6 · Shadow Model C · Race Shape v1 · BHA OR-diff and surface-trajectory badges (evidence only).
 
+## Paper Intelligence Added 2026-06-21
+These are active dashboard/research overlays only. They do not alter live scoring, tiers, model weights, Supabase verdicts, router execution, Telegram, or staking.
+
+| Layer | Entrypoint | Truth |
+|---|---|---|
+| Radical Shadow VELO | `scripts/ops/run_radical_shadow_today.py` | No-RPR/radical challenge lane; paper only |
+| Tri-Lane V2 | `scripts/ops/run_tri_lane_stress_test.py` | Old/New/Shadow comparison; stress test only |
+| Tri-Lane Agent Review | `scripts/ops/build_tri_lane_agent_review.py` | Race review instructions; paper only |
+| Deep Race Agent V1 | `scripts/ops/build_deep_race_agent_v1.py` | Analyst gate and why-wrong notes; paper only |
+| Course Master | `scripts/ops/build_course_master.py` | Course-level support/warning context; context only |
+
+Daily order: run root `THE_ONE_TRUTH.md` Steps 1-9 first, then Steps 9.1-9.5, then dashboard review. Evening learning remains Steps 10-20.
+
 ## What is DEPRECATED
 Racing API as a data source (decommissioned 2026-05-14; client files deleted) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.
 

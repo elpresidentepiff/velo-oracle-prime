@@ -39,6 +39,9 @@ def _race(tier="B", vp=0.35, mds=0.10, imp=0.08, place_prob=0.65):
         "top_mds": mds,
         "top_improvement": imp,
         "top_place_prob": place_prob,
+        "field_size": 8,
+        "class_num": 4,
+        "sp_dec": 3.5,
     }
 
 
@@ -175,6 +178,11 @@ def test_evaluate_returns_all_required_fields():
         "top_mds",
         "top_improvement",
         "top_place_prob",
+        "field_size",
+        "class_num",
+        "sp_dec",
+        "field_band",
+        "rule_version",
         "shadow_action",
         "evidence",
         "live_scoring_changed",
@@ -182,6 +190,22 @@ def test_evaluate_returns_all_required_fields():
     }
     for field in required:
         assert field in v, f"Missing field: {field}"
+
+
+def test_v2_field_band_risk_is_annotated_for_fs_6_8():
+    v = evaluate_race(**_race(tier="A", vp=0.45, mds=0.10, imp=0.08))
+    assert v["field_band"] == "FS_6_8"
+    assert "J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY" in v["evidence"]
+    assert v["rule_version"] == "midprice_hunter_v2_2026_06_19"
+
+
+def test_v2_small_field_signal_is_annotated():
+    payload = _race(tier="B", vp=0.35, mds=0.35, imp=0.25)
+    payload["field_size"] = 5
+    v = evaluate_race(**payload)
+    assert v["shadow_action"] == MIDPRICE_CLEAN
+    assert v["field_band"] == "FS_2_5"
+    assert "J19_FIELD_BAND_SIGNAL:FS_2_5_CLEAN" in v["evidence"]
 
 
 # ── Ledger append ──────────────────────────────────────────────────────────

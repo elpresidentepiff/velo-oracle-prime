@@ -1,0 +1,3500 @@
+{
+  "generated_at": "2026-06-21T01:03:43.158563Z",
+  "date": "2026-06-12",
+  "status": "TRI_LANE_STRESS_TEST_ONLY",
+  "live_writes": false,
+  "racing_api_used": false,
+  "inputs": {
+    "old_velo_races": 51,
+    "new_build_races": 51,
+    "shadow_races": 51,
+    "sigma_outcomes": 51
+  },
+  "obstacles": [],
+  "summary": {
+    "total_races": 51,
+    "action_counts": {
+      "TRI_CASH_RUN": 2,
+      "TRI_WATCH": 43,
+      "TRI_WIN": 3,
+      "TRI_PASS": 3
+    },
+    "evaluated_races": 51,
+    "by_action": [
+      {
+        "action": "TRI_CASH_RUN",
+        "races": 2,
+        "evaluated": 2,
+        "wins": 0,
+        "strike_rate": 0.0,
+        "frames": 0,
+        "frame_rate": 0.0
+      },
+      {
+        "action": "TRI_PASS",
+        "races": 3,
+        "evaluated": 3,
+        "wins": 0,
+        "strike_rate": 0.0,
+        "frames": 0,
+        "frame_rate": 0.0
+      },
+      {
+        "action": "TRI_WATCH",
+        "races": 43,
+        "evaluated": 43,
+        "wins": 17,
+        "strike_rate": 39.53,
+        "frames": 17,
+        "frame_rate": 39.53
+      },
+      {
+        "action": "TRI_WIN",
+        "races": 3,
+        "evaluated": 3,
+        "wins": 1,
+        "strike_rate": 33.33,
+        "frames": 1,
+        "frame_rate": 33.33
+      }
+    ]
+  },
+  "races": [
+    {
+      "race_id": "919930",
+      "course": "Market Rasen",
+      "off_time": "5.41",
+      "race_name": "Hayley Middleton Juvenile Hurdle (GBB Race)",
+      "old_velo": {
+        "top": "Tiny Riot",
+        "tier": "A",
+        "velo_prime_prob": 0.4915,
+        "mds": 0.2292,
+        "improvement": 0.0879,
+        "place_prob": 0.8454,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "4/4",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Vietnorm",
+        "lane_b_top": "Vietnorm",
+        "lane_a_top3": [
+          "Vietnorm",
+          "Tiny Riot",
+          "Steel Fixer"
+        ],
+        "lane_b_top3": [
+          "Vietnorm",
+          "Tiny Riot",
+          "Steel Fixer"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9992,
+        "frame_gate_probability": 0.9989,
+        "passport_available": true,
+        "passport_strength_score": 0.45,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:CLASS_4_FS_2_5",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_CASH_RUN",
+        "reasons": [
+          "shadow_cash_run_frame_gate"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8304796",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "919931",
+      "course": "Market Rasen",
+      "off_time": "7.26",
+      "race_name": "Bob And Babs Handicap Chase (GBB Race)",
+      "old_velo": {
+        "top": "Maximum Offers",
+        "tier": "A",
+        "velo_prime_prob": 0.3881,
+        "mds": 0.0613,
+        "improvement": 0.0261,
+        "place_prob": 0.7748,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "1/7",
+        "passport_coverage_pct": 14.3,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "King Roly",
+        "lane_b_top": "King Roly",
+        "lane_a_top3": [
+          "King Roly",
+          "Wudya",
+          "Maximum Offers"
+        ],
+        "lane_b_top3": [
+          "King Roly",
+          "Maximum Offers",
+          "Fringill Dike"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.8804,
+        "frame_gate_probability": 0.9128,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "3432677",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "919932",
+      "course": "Market Rasen",
+      "off_time": "8.36",
+      "race_name": "Rase Equine Conditional Jockeys' Handicap Hurdle",
+      "old_velo": {
+        "top": "Bunker Bay",
+        "tier": "B",
+        "velo_prime_prob": 0.2991,
+        "mds": 0.0335,
+        "improvement": 0.0126,
+        "place_prob": 0.4775,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/7",
+        "passport_coverage_pct": 42.9,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Little Ledgend",
+        "lane_b_top": "Little Ledgend",
+        "lane_a_top3": [
+          "Little Ledgend",
+          "Bunker Bay",
+          "Born Like Me"
+        ],
+        "lane_b_top3": [
+          "Little Ledgend",
+          "Bunker Bay",
+          "Born Like Me"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.6246,
+        "frame_gate_probability": 0.7053,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "3801053",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "919933",
+      "course": "Market Rasen",
+      "off_time": "8.01",
+      "race_name": "Rase Veterinary Summer Party Handicap Hurdle",
+      "old_velo": {
+        "top": "Ip Up",
+        "tier": "B",
+        "velo_prime_prob": 0.3458,
+        "mds": 0.0659,
+        "improvement": 0.013,
+        "place_prob": 0.9057,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "1/4",
+        "passport_coverage_pct": 25.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Trust House",
+        "lane_b_top": "Trust House",
+        "lane_a_top3": [
+          "Trust House",
+          "Pigeon House",
+          "Kingston Sunflower"
+        ],
+        "lane_b_top3": [
+          "Trust House",
+          "Pigeon House",
+          "Kingston Sunflower"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5963,
+        "frame_gate_probability": 0.7478,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:CLASS_4_FS_2_5",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "4305431",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "919934",
+      "course": "Market Rasen",
+      "off_time": "6.51",
+      "race_name": "Rebecca Brooks Handicap Chase",
+      "old_velo": {
+        "top": "Get A Superstar",
+        "tier": "A",
+        "velo_prime_prob": 0.6327,
+        "mds": 0.0774,
+        "improvement": 0.0296,
+        "place_prob": 0.815,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/6",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Prospect House",
+        "lane_b_top": "Prospect House",
+        "lane_a_top3": [
+          "Prospect House",
+          "Tsavo Park",
+          "Blue Bear"
+        ],
+        "lane_b_top3": [
+          "Prospect House",
+          "Tsavo Park",
+          "Blue Bear"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5034,
+        "frame_gate_probability": 0.8069,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "4853584",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "919935",
+      "course": "Market Rasen",
+      "off_time": "6.16",
+      "race_name": "Rase Vets Summer Party Novices' Limited Handicap Hurdle",
+      "old_velo": {
+        "top": "Jessie Jump Jet",
+        "tier": "A",
+        "velo_prime_prob": 0.4232,
+        "mds": 0.0584,
+        "improvement": 0.0768,
+        "place_prob": 0.7229,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/8",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Ramaah",
+        "lane_b_top": "Ramaah",
+        "lane_a_top3": [
+          "Ramaah",
+          "Popa Rich",
+          "Swingingonthesteel"
+        ],
+        "lane_b_top3": [
+          "Ramaah",
+          "Popa Rich",
+          "Swingingonthesteel"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.3178,
+        "frame_gate_probability": 0.6497,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "6550858",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920173",
+      "course": "Goodwood",
+      "off_time": "5.32",
+      "race_name": "Sir Eric Parker Memorial EBF Restricted Maiden Fillies Stakes (EBF Restricted Ra",
+      "old_velo": {
+        "top": "Rollthedicebaby",
+        "tier": "A",
+        "velo_prime_prob": 0.7391,
+        "mds": 0.213,
+        "improvement": 0.3027,
+        "place_prob": 0.8771,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/8",
+        "passport_coverage_pct": 25.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Rollthedicebaby",
+        "lane_b_top": "Rollthedicebaby",
+        "lane_a_top3": [
+          "Rollthedicebaby",
+          "Greek Symphony",
+          "Tallahassee Lassie"
+        ],
+        "lane_b_top3": [
+          "Rollthedicebaby",
+          "Greek Symphony",
+          "Polgaria"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "WIN_CANDIDATE_SHADOW",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.8112,
+        "frame_gate_probability": 0.8756,
+        "passport_available": true,
+        "passport_strength_score": 2.05,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8",
+          "WIN_GATE_HIGH_EDGE_REGIME"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WIN",
+        "reasons": [
+          "old_tier_a",
+          "passport_support",
+          "new_build_alignment",
+          "shadow_win_candidate"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8688643",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": true,
+        "tri_frame_hit": true
+      }
+    },
+    {
+      "race_id": "920174",
+      "course": "Goodwood",
+      "off_time": "6.39",
+      "race_name": "Highclere Castle Gin Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": "Aggagio",
+        "tier": "C",
+        "velo_prime_prob": 0.2511,
+        "mds": 0.0486,
+        "improvement": 0.0575,
+        "place_prob": 0.6282,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "1/8",
+        "passport_coverage_pct": 12.5,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Selenic",
+        "lane_b_top": "Selenic",
+        "lane_a_top3": [
+          "Selenic",
+          "Cruden",
+          "Expressionless"
+        ],
+        "lane_b_top3": [
+          "Selenic",
+          "Cruden",
+          "Expressionless"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4253,
+        "frame_gate_probability": 0.5333,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "3632533",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920175",
+      "course": "Goodwood",
+      "off_time": "8.24",
+      "race_name": "Download The Track Radio App Amateur Jockeys' Handicap",
+      "old_velo": {
+        "top": "Warning Sign",
+        "tier": "C",
+        "velo_prime_prob": 0.2956,
+        "mds": 0.02,
+        "improvement": 0.0177,
+        "place_prob": 0.0933,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/8",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Post Rider",
+        "lane_b_top": "Post Rider",
+        "lane_a_top3": [
+          "Post Rider",
+          "Talis Evolvere",
+          "Eupator"
+        ],
+        "lane_b_top3": [
+          "Post Rider",
+          "Eupator",
+          "Desperate Dan"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.3483,
+        "frame_gate_probability": 0.4631,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "4265157",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920176",
+      "course": "Goodwood",
+      "off_time": "7.49",
+      "race_name": "Casamigos Handicap",
+      "old_velo": {
+        "top": "Wedonttelllies",
+        "tier": "A",
+        "velo_prime_prob": 0.4157,
+        "mds": 0.0774,
+        "improvement": 0.0192,
+        "place_prob": 0.6813,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/5",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Wedonttelllies",
+        "lane_b_top": "Wedonttelllies",
+        "lane_a_top3": [
+          "Wedonttelllies",
+          "Carefree Dream",
+          "Saffron Dandy"
+        ],
+        "lane_b_top3": [
+          "Wedonttelllies",
+          "Killavia",
+          "Comic Strip"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "WIN_CANDIDATE_SHADOW",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.8849,
+        "frame_gate_probability": 0.9221,
+        "passport_available": true,
+        "passport_strength_score": 2.4,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:CLASS_4_FS_2_5",
+          "WIN_GATE_HIGH_EDGE_REGIME"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WIN",
+        "reasons": [
+          "old_tier_a",
+          "passport_support",
+          "new_build_alignment",
+          "shadow_win_candidate"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7413947",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920177",
+      "course": "Goodwood",
+      "off_time": "6.04",
+      "race_name": "Fitzdares Telephone & Text Betting Handicap",
+      "old_velo": {
+        "top": "Lavender Gold",
+        "tier": "C",
+        "velo_prime_prob": 0.286,
+        "mds": 0.0246,
+        "improvement": 0.0258,
+        "place_prob": 0.2751,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/8",
+        "passport_coverage_pct": 37.5,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Three Socks On",
+        "lane_b_top": "Three Socks On",
+        "lane_a_top3": [
+          "Three Socks On",
+          "Semper Femina",
+          "Exquisite Skye"
+        ],
+        "lane_b_top3": [
+          "Three Socks On",
+          "Semper Femina",
+          "Houndswood Willow"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4817,
+        "frame_gate_probability": 0.5808,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7878377",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920178",
+      "course": "Goodwood",
+      "off_time": "7.14",
+      "race_name": "Fitzdares Fillies' Handicap",
+      "old_velo": {
+        "top": "Double Naughty",
+        "tier": "B",
+        "velo_prime_prob": 0.4197,
+        "mds": 0.0358,
+        "improvement": 0.0298,
+        "place_prob": 0.3152,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/9",
+        "passport_coverage_pct": 22.2,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Overbudget",
+        "lane_b_top": "Overbudget",
+        "lane_a_top3": [
+          "Overbudget",
+          "Perfect Location",
+          "Double Naughty"
+        ],
+        "lane_b_top3": [
+          "Overbudget",
+          "Perfect Location",
+          "Double Naughty"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.4788,
+        "frame_gate_probability": 0.763,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_PASS",
+        "reasons": [
+          "shadow_hard_pass"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7529953",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920179",
+      "course": "Chester",
+      "off_time": "2.02",
+      "race_name": "Juddmonte EBF Restricted Novice Stakes (Bands B-D) (EBF Restricted Race Qual) (G",
+      "old_velo": {
+        "top": "Lady Branksome",
+        "tier": "A",
+        "velo_prime_prob": 0.5586,
+        "mds": 0.2466,
+        "improvement": 0.3452,
+        "place_prob": 0.9256,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/9",
+        "passport_coverage_pct": 55.6,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Towelontheterrace",
+        "lane_b_top": "Towelontheterrace",
+        "lane_a_top3": [
+          "Towelontheterrace",
+          "Harry's Pop",
+          "Zambezi Shark"
+        ],
+        "lane_b_top3": [
+          "Towelontheterrace",
+          "Metamouse",
+          "Koodini"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9067,
+        "frame_gate_probability": 0.963,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "9194406",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920180",
+      "course": "Chester",
+      "off_time": "5.28",
+      "race_name": "Tom Jones At Chester Racecourse Handicap",
+      "old_velo": {
+        "top": "Oman",
+        "tier": "C",
+        "velo_prime_prob": 0.2978,
+        "mds": 0.0215,
+        "improvement": 0.0294,
+        "place_prob": 0.2658,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/11",
+        "passport_coverage_pct": 36.4,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Dapper Gee Gee",
+        "lane_b_top": "Dapper Gee Gee",
+        "lane_a_top3": [
+          "Dapper Gee Gee",
+          "Military Leader",
+          "Born A Rebel"
+        ],
+        "lane_b_top3": [
+          "Dapper Gee Gee",
+          "Military Leader",
+          "Born A Rebel"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4547,
+        "frame_gate_probability": 0.5301,
+        "passport_available": true,
+        "passport_strength_score": 1.3,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_PASS",
+        "reasons": [
+          "shadow_hard_pass"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5237858",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920181",
+      "course": "Chester",
+      "off_time": "1.30",
+      "race_name": "Allington Hughes Law Bicentenary Amateur Jockeys' Handicap (Special Rider Condit",
+      "old_velo": {
+        "top": "Kindest Nation",
+        "tier": "C",
+        "velo_prime_prob": 0.1787,
+        "mds": 0.0107,
+        "improvement": 0.0226,
+        "place_prob": 0.0225,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/11",
+        "passport_coverage_pct": 45.5,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Mission Command",
+        "lane_b_top": "Mission Command",
+        "lane_a_top3": [
+          "Mission Command",
+          "Be Frank",
+          "Paws For Thought"
+        ],
+        "lane_b_top3": [
+          "Mission Command",
+          "Be Frank",
+          "King's School"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.2997,
+        "frame_gate_probability": 0.3765,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5920299",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920182",
+      "course": "Chester",
+      "off_time": "4.20",
+      "race_name": "Chester Fillies' Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": "Star Cast",
+        "tier": "B",
+        "velo_prime_prob": 0.4891,
+        "mds": 0.0274,
+        "improvement": 0.0374,
+        "place_prob": 0.4778,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/8",
+        "passport_coverage_pct": 37.5,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Star Cast",
+        "lane_b_top": "Star Cast",
+        "lane_a_top3": [
+          "Star Cast",
+          "Winged One",
+          "Tryst"
+        ],
+        "lane_b_top3": [
+          "Star Cast",
+          "Winged One",
+          "Princess Rascal"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_6_8",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4221,
+        "frame_gate_probability": 0.5887,
+        "passport_available": true,
+        "passport_strength_score": 2.7,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_watchlist_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "6215485",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920183",
+      "course": "Chester",
+      "off_time": "2.37",
+      "race_name": "Danny And Harriett Birthday Bash Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": "Morbeh",
+        "tier": "B",
+        "velo_prime_prob": 0.4185,
+        "mds": 0.0345,
+        "improvement": 0.0378,
+        "place_prob": 0.4499,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/9",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Silver State",
+        "lane_b_top": "Silver State",
+        "lane_a_top3": [
+          "Silver State",
+          "Valpovo",
+          "Simon Pierre"
+        ],
+        "lane_b_top3": [
+          "Silver State",
+          "Valpovo",
+          "Simon Pierre"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5987,
+        "frame_gate_probability": 0.716,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7771207",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920184",
+      "course": "Chester",
+      "off_time": "3.12",
+      "race_name": "Allington Hughes Law Handicap (Div I)",
+      "old_velo": {
+        "top": "Crazee Icon",
+        "tier": "C",
+        "velo_prime_prob": 0.2471,
+        "mds": 0.0217,
+        "improvement": 0.0176,
+        "place_prob": 0.3457,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/9",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Vidmiyr",
+        "lane_b_top": "Vidmiyr",
+        "lane_a_top3": [
+          "Vidmiyr",
+          "Cool Molly",
+          "Norman Invasion"
+        ],
+        "lane_b_top3": [
+          "Vidmiyr",
+          "Cool Molly",
+          "Norman Invasion"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.589,
+        "frame_gate_probability": 0.6622,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7870265",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920185",
+      "course": "Chester",
+      "off_time": "4.55",
+      "race_name": "Allington Hughes 200 Year Anniversary Celebrations Handicap",
+      "old_velo": {
+        "top": "Dolos Dream",
+        "tier": "C",
+        "velo_prime_prob": 0.3298,
+        "mds": 0.0359,
+        "improvement": 0.0374,
+        "place_prob": 0.3433,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/8",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Dolos Dream",
+        "lane_b_top": "Dolos Dream",
+        "lane_a_top3": [
+          "Dolos Dream",
+          "Saucy Jane",
+          "Explosive Finnish"
+        ],
+        "lane_b_top3": [
+          "Dolos Dream",
+          "Saucy Jane",
+          "Tactical Blitz"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.4116,
+        "frame_gate_probability": 0.7204,
+        "passport_available": true,
+        "passport_strength_score": 3.15,
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_CASH_RUN",
+        "reasons": [
+          "shadow_cash_run_frame_gate",
+          "passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7020422",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920193",
+      "course": "Sandown",
+      "off_time": "3.23",
+      "race_name": "Molson Coors Handicap",
+      "old_velo": {
+        "top": "Greek Order",
+        "tier": "B",
+        "velo_prime_prob": 0.3497,
+        "mds": 0.0163,
+        "improvement": 0.0638,
+        "place_prob": 0.3761,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/15",
+        "passport_coverage_pct": 26.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Galyx",
+        "lane_b_top": "Galyx",
+        "lane_a_top3": [
+          "Galyx",
+          "Tipsy Tiger",
+          "Alcarath"
+        ],
+        "lane_b_top3": [
+          "Galyx",
+          "Alcarath",
+          "Dangerman"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.2769,
+        "frame_gate_probability": 0.3378,
+        "passport_available": true,
+        "passport_strength_score": 2.2666,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7390857",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920194",
+      "course": "Sandown",
+      "off_time": "2.48",
+      "race_name": "British Stallion Studs EBF Maiden Stakes (GBB Race)",
+      "old_velo": {
+        "top": "King's Welcome",
+        "tier": "B",
+        "velo_prime_prob": 0.3528,
+        "mds": 0.1245,
+        "improvement": 0.0872,
+        "place_prob": 0.4842,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "0/7",
+        "passport_coverage_pct": 0.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "King's Welcome",
+        "lane_b_top": "King's Welcome",
+        "lane_a_top3": [
+          "King's Welcome",
+          "Il Capo",
+          "Kaito"
+        ],
+        "lane_b_top3": [
+          "King's Welcome",
+          "Il Capo",
+          "Gymbaazy"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9467,
+        "frame_gate_probability": 0.9774,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "9317832",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920195",
+      "course": "Sandown",
+      "off_time": "1.38",
+      "race_name": "Chris Barnett Memorial Handicap (Div I)",
+      "old_velo": {
+        "top": "Silver Wraith",
+        "tier": "C",
+        "velo_prime_prob": 0.2536,
+        "mds": 0.0151,
+        "improvement": 0.0178,
+        "place_prob": 0.297,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/10",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Charlie Mason",
+        "lane_b_top": "Charlie Mason",
+        "lane_a_top3": [
+          "Charlie Mason",
+          "Tan Rapido",
+          "Over Spiced"
+        ],
+        "lane_b_top3": [
+          "Charlie Mason",
+          "Tan Rapido",
+          "Over Spiced"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4764,
+        "frame_gate_probability": 0.5603,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "2996837",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920196",
+      "course": "Sandown",
+      "off_time": "3.58",
+      "race_name": "Ministry Of Sound At Sandown Park 24 July Handicap",
+      "old_velo": {
+        "top": "Dryburgh",
+        "tier": "B",
+        "velo_prime_prob": 0.3869,
+        "mds": 0.0166,
+        "improvement": 0.0374,
+        "place_prob": 0.2554,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/13",
+        "passport_coverage_pct": 23.1,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Dryburgh",
+        "lane_b_top": "Dryburgh",
+        "lane_a_top3": [
+          "Dryburgh",
+          "Al Maslool",
+          "Bemersyde"
+        ],
+        "lane_b_top3": [
+          "Dryburgh",
+          "Al Maslool",
+          "Bemersyde"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.3602,
+        "frame_gate_probability": 0.4365,
+        "passport_available": true,
+        "passport_strength_score": 1.95,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7204779",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920197",
+      "course": "Sandown",
+      "off_time": "1.08",
+      "race_name": "British EBF Novice Stakes (GBB Race)",
+      "old_velo": {
+        "top": "Mysterious Times",
+        "tier": "D",
+        "velo_prime_prob": 0.2323,
+        "mds": 0.1,
+        "improvement": 0.0872,
+        "place_prob": 0.3308,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/10",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Perigord Noir",
+        "lane_b_top": "Perigord Noir",
+        "lane_a_top3": [
+          "Perigord Noir",
+          "Henley On Thames",
+          "Courseyoudo"
+        ],
+        "lane_b_top3": [
+          "Perigord Noir",
+          "Henley On Thames",
+          "Underdog"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.8347,
+        "frame_gate_probability": 0.8455,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8688606",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920198",
+      "course": "Sandown",
+      "off_time": "5.08",
+      "race_name": "Billy Ocean At Sandown Park 29 July Handicap",
+      "old_velo": {
+        "top": "Wardlaw",
+        "tier": "B",
+        "velo_prime_prob": 0.4157,
+        "mds": 0.0636,
+        "improvement": 0.0192,
+        "place_prob": 0.7696,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/4",
+        "passport_coverage_pct": 75.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "King Of Berkshire",
+        "lane_b_top": "King Of Berkshire",
+        "lane_a_top3": [
+          "King Of Berkshire",
+          "Red Rifle",
+          "Wardlaw"
+        ],
+        "lane_b_top3": [
+          "King Of Berkshire",
+          "Wardlaw",
+          "Heroics"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.3205,
+        "frame_gate_probability": 0.6849,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "warnings": [
+          "TOXIC_REGIME:class_5"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8219421",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920199",
+      "course": "Sandown",
+      "off_time": "4.35",
+      "race_name": "Ladies Day At Sandown Park 3 July Handicap",
+      "old_velo": {
+        "top": "Euphonia",
+        "tier": "B",
+        "velo_prime_prob": 0.4534,
+        "mds": 0.0273,
+        "improvement": 0.0427,
+        "place_prob": 0.2888,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/12",
+        "passport_coverage_pct": 41.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Enamorus",
+        "lane_b_top": "Enamorus",
+        "lane_a_top3": [
+          "Enamorus",
+          "Lohoobb",
+          "Galba"
+        ],
+        "lane_b_top3": [
+          "Enamorus",
+          "Lohoobb",
+          "Ecclefechan"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.3736,
+        "frame_gate_probability": 0.6662,
+        "passport_available": true,
+        "passport_strength_score": 1.9,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_PASS",
+        "reasons": [
+          "shadow_hard_pass"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7436444",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920207",
+      "course": "York",
+      "off_time": "4.10",
+      "race_name": "Sky Bet The World's Gone Football Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": "Antipodes",
+        "tier": "X",
+        "velo_prime_prob": 0.2211,
+        "mds": 0.0139,
+        "improvement": 0.0222,
+        "place_prob": 0.3004,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/16",
+        "passport_coverage_pct": 31.2,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Urban Glimpse",
+        "lane_b_top": "Urban Glimpse",
+        "lane_a_top3": [
+          "Urban Glimpse",
+          "Altareq",
+          "Love Beach"
+        ],
+        "lane_b_top3": [
+          "Urban Glimpse",
+          "Altareq",
+          "Love Beach"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.4885,
+        "frame_gate_probability": 0.5218,
+        "passport_available": true,
+        "passport_strength_score": 2.4833,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7570753",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920208",
+      "course": "York",
+      "off_time": "3.00",
+      "race_name": "British EBF Fillies' Handicap",
+      "old_velo": {
+        "top": "Bintaryana",
+        "tier": "B",
+        "velo_prime_prob": 0.4566,
+        "mds": 0.0281,
+        "improvement": 0.0304,
+        "place_prob": 0.4157,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/12",
+        "passport_coverage_pct": 41.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Cool Molly",
+        "lane_b_top": "Cool Molly",
+        "lane_a_top3": [
+          "Cool Molly",
+          "Siouxpersonic",
+          "Mercury Day"
+        ],
+        "lane_b_top3": [
+          "Cool Molly",
+          "Mercury Day",
+          "Shallow"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5032,
+        "frame_gate_probability": 0.7702,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8236349",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920209",
+      "course": "York",
+      "off_time": "3.35",
+      "race_name": "Juddmonte EBF Fillies' Restricted Novice (Bands A-D) (EBF Restricted Race Qual')",
+      "old_velo": {
+        "top": "Big Negotiator",
+        "tier": "A",
+        "velo_prime_prob": 0.563,
+        "mds": 0.1701,
+        "improvement": 0.2867,
+        "place_prob": 0.8916,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/10",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Big Negotiator",
+        "lane_b_top": "Big Negotiator",
+        "lane_a_top3": [
+          "Big Negotiator",
+          "Time Glory",
+          "Sable Island"
+        ],
+        "lane_b_top3": [
+          "Big Negotiator",
+          "Time Glory",
+          "Sable Island"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.8101,
+        "frame_gate_probability": 0.9263,
+        "passport_available": true,
+        "passport_strength_score": 3.05,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "9254401",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920210",
+      "course": "York",
+      "off_time": "5.18",
+      "race_name": "Event Traffic Control Handicap (GBBPlus Race)",
+      "old_velo": {
+        "top": "Dawn Of Liberation",
+        "tier": "B",
+        "velo_prime_prob": 0.313,
+        "mds": 0.0063,
+        "improvement": 0.0658,
+        "place_prob": 0.2371,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/20",
+        "passport_coverage_pct": 30.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Say What You See",
+        "lane_b_top": "Say What You See",
+        "lane_a_top3": [
+          "Say What You See",
+          "Epictetus",
+          "Mafting"
+        ],
+        "lane_b_top3": [
+          "Say What You See",
+          "Epictetus",
+          "Mafting"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EIGHT_TO_FOURTEEN",
+        "win_gate_probability": 0.1569,
+        "frame_gate_probability": 0.1714,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "6247248",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920211",
+      "course": "York",
+      "off_time": "1.50",
+      "race_name": "Andy Thornton Hospitality Furniture Apprentice Handicap",
+      "old_velo": {
+        "top": "Jannas Journey",
+        "tier": "B",
+        "velo_prime_prob": 0.3949,
+        "mds": 0.0084,
+        "improvement": 0.0928,
+        "place_prob": 0.3026,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/21",
+        "passport_coverage_pct": 38.1,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Inspired",
+        "lane_b_top": "Inspired",
+        "lane_a_top3": [
+          "Inspired",
+          "Mister Sox",
+          "Criminal Shore"
+        ],
+        "lane_b_top3": [
+          "Inspired",
+          "Mister Sox",
+          "Criminal Shore"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EIGHT_TO_FOURTEEN",
+        "win_gate_probability": 0.1564,
+        "frame_gate_probability": 0.1705,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5021374",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920212",
+      "course": "York",
+      "off_time": "4.45",
+      "race_name": "Dawson Williamson Architects Handicap",
+      "old_velo": {
+        "top": "I'm Dan Dare",
+        "tier": "C",
+        "velo_prime_prob": 0.195,
+        "mds": 0.0093,
+        "improvement": 0.0192,
+        "place_prob": 0.192,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/15",
+        "passport_coverage_pct": 53.3,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Vinciamo",
+        "lane_b_top": "Vinciamo",
+        "lane_a_top3": [
+          "Vinciamo",
+          "Straight Ahead",
+          "I'm Dan Dare"
+        ],
+        "lane_b_top3": [
+          "Vinciamo",
+          "Empress Olivia",
+          "Bravo Hotel"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.3337,
+        "frame_gate_probability": 0.3782,
+        "passport_available": true,
+        "passport_strength_score": 0.9,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7365393",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "920213",
+      "course": "York",
+      "off_time": "2.25",
+      "race_name": "Constant Security Keeping York Racegoers Safe Rous Selling Stakes",
+      "old_velo": {
+        "top": "Everatease",
+        "tier": "B",
+        "velo_prime_prob": 0.3164,
+        "mds": 0.0928,
+        "improvement": 0.2585,
+        "place_prob": 0.5998,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/15",
+        "passport_coverage_pct": 53.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Tamam Star",
+        "lane_b_top": "Tamam Star",
+        "lane_a_top3": [
+          "Tamam Star",
+          "Explainingislosing",
+          "Martial Order"
+        ],
+        "lane_b_top3": [
+          "Tamam Star",
+          "Martial Order",
+          "Turnstile"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5669,
+        "frame_gate_probability": 0.5998,
+        "passport_available": true,
+        "passport_strength_score": 0.65,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8688497",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922646",
+      "course": "Fairyhouse",
+      "off_time": "4.27",
+      "race_name": "Irish EBF Auction Series Maiden (IRE Incentive Race)",
+      "old_velo": {
+        "top": "Penny Benjamin",
+        "tier": "B",
+        "velo_prime_prob": 0.3968,
+        "mds": 0.1073,
+        "improvement": 0.4241,
+        "place_prob": 0.6555,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/19",
+        "passport_coverage_pct": 21.1,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Bit Of A Buzz",
+        "lane_b_top": "Bit Of A Buzz",
+        "lane_a_top3": [
+          "Bit Of A Buzz",
+          "Banks Of The Boyne",
+          "Portaliffe Phil"
+        ],
+        "lane_b_top3": [
+          "Bit Of A Buzz",
+          "Banks Of The Boyne",
+          "Portaliffe Phil"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.6801,
+        "frame_gate_probability": 0.6786,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": [
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "9254399",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922647",
+      "course": "Fairyhouse",
+      "off_time": "5.02",
+      "race_name": "Winter Festival Early Bird Handicap",
+      "old_velo": {
+        "top": "Joyful Tidings",
+        "tier": "C",
+        "velo_prime_prob": 0.1781,
+        "mds": 0.0054,
+        "improvement": 0.0304,
+        "place_prob": 0.1173,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/13",
+        "passport_coverage_pct": 61.5,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Stone Bear",
+        "lane_b_top": "Stone Bear",
+        "lane_a_top3": [
+          "Stone Bear",
+          "Sovereign Cry",
+          "Breaking Dawn"
+        ],
+        "lane_b_top3": [
+          "Stone Bear",
+          "Sovereign Cry",
+          "Breaking Dawn"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EIGHT_TO_FOURTEEN",
+        "win_gate_probability": 0.2197,
+        "frame_gate_probability": 0.2879,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8089275",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922648",
+      "course": "Fairyhouse",
+      "off_time": "5.37",
+      "race_name": "Maher Tractor Sales Handicap (Div I)",
+      "old_velo": {
+        "top": "Rosato",
+        "tier": "X",
+        "velo_prime_prob": 0.1865,
+        "mds": 0.0048,
+        "improvement": 0.055,
+        "place_prob": 0.1,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "14/16",
+        "passport_coverage_pct": 87.5,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Whatswrongnow",
+        "lane_b_top": "Whatswrongnow",
+        "lane_a_top3": [
+          "Whatswrongnow",
+          "Rosato",
+          "I'm Spartacus"
+        ],
+        "lane_b_top3": [
+          "Whatswrongnow",
+          "Rosato",
+          "I'm Spartacus"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "LONGSHOT_15_PLUS",
+        "win_gate_probability": 0.1173,
+        "frame_gate_probability": 0.1462,
+        "passport_available": true,
+        "passport_strength_score": 0.9,
+        "warnings": [
+          "TOXIC_REGIME:longshot_15_plus"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8277441",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922649",
+      "course": "Fairyhouse",
+      "off_time": "6.45",
+      "race_name": "Pat's Carpets Race",
+      "old_velo": {
+        "top": "Cowardofthecounty",
+        "tier": "A",
+        "velo_prime_prob": 0.5864,
+        "mds": 0.0854,
+        "improvement": 0.0916,
+        "place_prob": 0.7368,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/9",
+        "passport_coverage_pct": 55.6,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Tina's Indian",
+        "lane_b_top": "Tina's Indian",
+        "lane_a_top3": [
+          "Tina's Indian",
+          "Ocean's Breath",
+          "Queen Of The Bogs"
+        ],
+        "lane_b_top3": [
+          "Tina's Indian",
+          "Ocean's Breath",
+          "Queen Of The Bogs"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.6941,
+        "frame_gate_probability": 0.8897,
+        "passport_available": true,
+        "passport_strength_score": 0.9,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5845523",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922650",
+      "course": "Fairyhouse",
+      "off_time": "7.20",
+      "race_name": "Dino Day At Fairyhouse 8th July Handicap",
+      "old_velo": {
+        "top": "Sanctity Of Space",
+        "tier": "X",
+        "velo_prime_prob": 0.1245,
+        "mds": 0.0058,
+        "improvement": 0.0837,
+        "place_prob": 0.0054,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "9/21",
+        "passport_coverage_pct": 42.9,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Sanctity Of Space",
+        "lane_b_top": "Sanctity Of Space",
+        "lane_a_top3": [
+          "Sanctity Of Space",
+          "Earthwatch",
+          "Jr Mahon"
+        ],
+        "lane_b_top3": [
+          "Sanctity Of Space",
+          "Voice Of Reason",
+          "Just Keep Flying"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "LONGSHOT_15_PLUS",
+        "win_gate_probability": 0.1209,
+        "frame_gate_probability": 0.1278,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [
+          "TOXIC_REGIME:longshot_15_plus"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5017645",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922651",
+      "course": "Fairyhouse",
+      "off_time": "7.55",
+      "race_name": "Irish Stallion Farms EBF Median Auction Maiden",
+      "old_velo": {
+        "top": "Now Maybe",
+        "tier": "A",
+        "velo_prime_prob": 0.3355,
+        "mds": 0.144,
+        "improvement": 0.4114,
+        "place_prob": 0.574,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/17",
+        "passport_coverage_pct": 23.5,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Ravens Can Fly",
+        "lane_b_top": "Ravens Can Fly",
+        "lane_a_top3": [
+          "Ravens Can Fly",
+          "Mr Ballynonty",
+          "Pettus Bridge"
+        ],
+        "lane_b_top3": [
+          "Ravens Can Fly",
+          "Mr Ballynonty",
+          "Pettus Bridge"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5609,
+        "frame_gate_probability": 0.5925,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "9092867",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922652",
+      "course": "Fairyhouse",
+      "off_time": "8.30",
+      "race_name": "Kate O'Sullivan Memorial Handicap",
+      "old_velo": {
+        "top": "Alto Sax",
+        "tier": "B",
+        "velo_prime_prob": 0.4187,
+        "mds": 0.0223,
+        "improvement": 0.0898,
+        "place_prob": 0.3192,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "11/21",
+        "passport_coverage_pct": 52.4,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Alto Sax",
+        "lane_b_top": "Alto Sax",
+        "lane_a_top3": [
+          "Alto Sax",
+          "Magna Gee Gee",
+          "Mapa"
+        ],
+        "lane_b_top3": [
+          "Alto Sax",
+          "Magna Gee Gee",
+          "Mapa"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.418,
+        "frame_gate_probability": 0.4373,
+        "passport_available": true,
+        "passport_strength_score": 1.45,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7887313",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922653",
+      "course": "Gowran Park",
+      "off_time": "4.15",
+      "race_name": "Irish Stallion Farms EBF Maiden",
+      "old_velo": {
+        "top": "Folsom Blues",
+        "tier": "A",
+        "velo_prime_prob": 0.7027,
+        "mds": 0.4218,
+        "improvement": 0.8319,
+        "place_prob": 0.968,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/10",
+        "passport_coverage_pct": 40.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Folsom Blues",
+        "lane_b_top": "Folsom Blues",
+        "lane_a_top3": [
+          "Folsom Blues",
+          "Wo Wo Never",
+          "Anthony Of Lisbon"
+        ],
+        "lane_b_top3": [
+          "Folsom Blues",
+          "King's Fury",
+          "Chico Guapo"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.4028,
+        "frame_gate_probability": 0.7408,
+        "passport_available": true,
+        "passport_strength_score": 2.55,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8881154",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922654",
+      "course": "Gowran Park",
+      "off_time": "4.50",
+      "race_name": "Golf At Gowran Park Handicap",
+      "old_velo": {
+        "top": "Sancerre Rock",
+        "tier": "C",
+        "velo_prime_prob": 0.2097,
+        "mds": 0.0118,
+        "improvement": 0.0426,
+        "place_prob": 0.1269,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "9/13",
+        "passport_coverage_pct": 69.2,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Imnotleavinyou",
+        "lane_b_top": "Fate's Gambit",
+        "lane_a_top3": [
+          "Imnotleavinyou",
+          "Fate's Gambit",
+          "Love Bomb"
+        ],
+        "lane_b_top3": [
+          "Fate's Gambit",
+          "Love Bomb",
+          "Sancerre Rock"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.2965,
+        "frame_gate_probability": 0.3769,
+        "passport_available": true,
+        "passport_strength_score": 0.35,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "9115754",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922655",
+      "course": "Gowran Park",
+      "off_time": "5.23",
+      "race_name": "Irish Stallion Farms EBF Fillies Handicap",
+      "old_velo": {
+        "top": "Solana Beach",
+        "tier": "C",
+        "velo_prime_prob": 0.2288,
+        "mds": 0.0191,
+        "improvement": 0.0227,
+        "place_prob": 0.2276,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "7/9",
+        "passport_coverage_pct": 77.8,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Luna Mia",
+        "lane_b_top": "Luna Mia",
+        "lane_a_top3": [
+          "Luna Mia",
+          "Greydreambeliever",
+          "Solana Beach"
+        ],
+        "lane_b_top3": [
+          "Luna Mia",
+          "Solana Beach",
+          "Una Matata"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4401,
+        "frame_gate_probability": 0.5557,
+        "passport_available": true,
+        "passport_strength_score": 1.6,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "6166255",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922656",
+      "course": "Gowran Park",
+      "off_time": "5.58",
+      "race_name": "Societies Welcome At Gowran Park Golf Club Handicap",
+      "old_velo": {
+        "top": "Rock Etoile",
+        "tier": "C",
+        "velo_prime_prob": 0.1878,
+        "mds": 0.0118,
+        "improvement": 0.0294,
+        "place_prob": 0.1313,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/16",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Miss Americana",
+        "lane_b_top": "Miss Americana",
+        "lane_a_top3": [
+          "Miss Americana",
+          "Mythical Rock",
+          "Limbocall"
+        ],
+        "lane_b_top3": [
+          "Miss Americana",
+          "Mythical Rock",
+          "Limbocall"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.3445,
+        "frame_gate_probability": 0.3981,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7648509",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922657",
+      "course": "Gowran Park",
+      "off_time": "6.33",
+      "race_name": "Ladies Day July 25th Apprentice Handicap",
+      "old_velo": {
+        "top": "Rayzera",
+        "tier": "A",
+        "velo_prime_prob": 0.4932,
+        "mds": 0.0758,
+        "improvement": 0.0298,
+        "place_prob": 0.612,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/6",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Rayzera",
+        "lane_b_top": "Fallacy",
+        "lane_a_top3": [
+          "Rayzera",
+          "Chapel Island",
+          "Rapide Vega"
+        ],
+        "lane_b_top3": [
+          "Fallacy",
+          "Arctic Assassin",
+          "Son Of Beauty"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "WIN_CANDIDATE_SHADOW",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.695,
+        "frame_gate_probability": 0.8987,
+        "passport_available": true,
+        "passport_strength_score": 1.45,
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_EDGE_REGIME"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WIN",
+        "reasons": [
+          "old_tier_a",
+          "passport_support",
+          "new_build_alignment",
+          "shadow_win_candidate"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "8295074",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922658",
+      "course": "Gowran Park",
+      "off_time": "7.08",
+      "race_name": "Irish Stallion Farms EBF Fillies Maiden",
+      "old_velo": {
+        "top": "Sangreal",
+        "tier": "B",
+        "velo_prime_prob": 0.3076,
+        "mds": 0.1118,
+        "improvement": 0.3136,
+        "place_prob": 0.5781,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/15",
+        "passport_coverage_pct": 26.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Isabella Johnson",
+        "lane_b_top": "Zadawa",
+        "lane_a_top3": [
+          "Isabella Johnson",
+          "Zadawa",
+          "Pink Coral"
+        ],
+        "lane_b_top3": [
+          "Zadawa",
+          "Pink Coral",
+          "Bofa Beach"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5471,
+        "frame_gate_probability": 0.5976,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "9227259",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922659",
+      "course": "Gowran Park",
+      "off_time": "7.43",
+      "race_name": "Packages At www.gowranpark.ie Race",
+      "old_velo": {
+        "top": "Trustyourinstinct",
+        "tier": "B",
+        "velo_prime_prob": 0.5313,
+        "mds": 0.4204,
+        "improvement": 0.2028,
+        "place_prob": 0.9983,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "0/5",
+        "passport_coverage_pct": 0.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Leopold The First",
+        "lane_b_top": "Leopold The First",
+        "lane_a_top3": [
+          "Leopold The First",
+          "Tiberius Thunder",
+          "Terre De Vega"
+        ],
+        "lane_b_top3": [
+          "Leopold The First",
+          "Terre De Vega",
+          "Iron Fist"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9992,
+        "frame_gate_probability": 0.9994,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": [
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5079029",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922693",
+      "course": "Gowran Park",
+      "off_time": "8.18",
+      "race_name": "Gowran Park Handicap",
+      "old_velo": {
+        "top": "Zipster",
+        "tier": "B",
+        "velo_prime_prob": 0.2867,
+        "mds": 0.0156,
+        "improvement": 0.0549,
+        "place_prob": 0.1403,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/17",
+        "passport_coverage_pct": 47.1,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Elusive Duke",
+        "lane_b_top": "Elusive Duke",
+        "lane_a_top3": [
+          "Elusive Duke",
+          "Tero d'Rosa",
+          "Faro Island"
+        ],
+        "lane_b_top3": [
+          "Elusive Duke",
+          "Tero d'Rosa",
+          "Faro Island"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.3409,
+        "frame_gate_probability": 0.3935,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "6362960",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922717",
+      "course": "Fairyhouse",
+      "off_time": "6.10",
+      "race_name": "Maher Tractor Sales Handicap (Div II)",
+      "old_velo": {
+        "top": "Reponse Finale",
+        "tier": "D",
+        "velo_prime_prob": 0.1448,
+        "mds": 0.0171,
+        "improvement": 0.0852,
+        "place_prob": 0.0712,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "17/17",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "One Cool Bear",
+        "lane_b_top": "One Cool Bear",
+        "lane_a_top3": [
+          "One Cool Bear",
+          "Jackandthefox",
+          "Hooves Your Daddy"
+        ],
+        "lane_b_top3": [
+          "One Cool Bear",
+          "Jackandthefox",
+          "Ukiyo"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "NO_BET_SHADOW",
+        "confidence": "low",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EIGHT_TO_FOURTEEN",
+        "win_gate_probability": 0.2022,
+        "frame_gate_probability": 0.2387,
+        "passport_available": true,
+        "passport_strength_score": 1.6222,
+        "warnings": [],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_no_bet_shadow"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5820858",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "MISS",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922719",
+      "course": "Chester",
+      "off_time": "3.47",
+      "race_name": "Allington Hughes Law Handicap (Div II)",
+      "old_velo": {
+        "top": "Miss Lady Grace",
+        "tier": "A",
+        "velo_prime_prob": 0.7277,
+        "mds": 0.0943,
+        "improvement": 0.1004,
+        "place_prob": 0.8294,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/9",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Miss Lady Grace",
+        "lane_b_top": "Miss Lady Grace",
+        "lane_a_top3": [
+          "Miss Lady Grace",
+          "Berkshire Boom",
+          "Pints In Peace"
+        ],
+        "lane_b_top3": [
+          "Miss Lady Grace",
+          "Pints In Peace",
+          "Lucky Hero"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9037,
+        "frame_gate_probability": 0.9286,
+        "passport_available": true,
+        "passport_strength_score": 1.75,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "shadow_pass_or_watch"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "7926360",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "race_id": "922720",
+      "course": "Sandown",
+      "off_time": "2.13",
+      "race_name": "Chris Barnett Memorial Handicap (Div II)",
+      "old_velo": {
+        "top": "Marching Mac",
+        "tier": "C",
+        "velo_prime_prob": 0.343,
+        "mds": 0.0277,
+        "improvement": 0.0344,
+        "place_prob": 0.4008,
+        "sp_dec": null,
+        "midprice_shadow_action": null
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/9",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Betties Bay",
+        "lane_b_top": "Betties Bay",
+        "lane_a_top3": [
+          "Betties Bay",
+          "Em Four",
+          "Cayman Tai"
+        ],
+        "lane_b_top3": [
+          "Betties Bay",
+          "Em Four",
+          "Cayman Tai"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4738,
+        "frame_gate_probability": 0.6136,
+        "passport_available": true,
+        "passport_strength_score": 0.5,
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "tri_lane": {
+        "final_action": "TRI_WATCH",
+        "reasons": [
+          "new_build_weak_data_without_passport_support"
+        ],
+        "paper_only": true,
+        "live_execution_allowed": false
+      },
+      "outcome": {
+        "available": true,
+        "actual_winner": "5624623",
+        "winner_sp": 0.0,
+        "old_pick_outcome": "WIN",
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    }
+  ]
+}

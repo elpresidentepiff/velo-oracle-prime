@@ -32,6 +32,8 @@ MIDPRICE_NO_EDGE = "MIDPRICE_NO_EDGE"
 MIDPRICE_SPLIT_RACE = "MIDPRICE_SPLIT_RACE"
 MIDPRICE_CLEAN = "MIDPRICE_CLEAN"
 
+_RULE_VERSION = "midprice_hunter_v2_2026_06_19"
+
 # ── Thresholds (from Phase 1 forensic audit — do not change without audit) ─
 
 _VP_GATE = 0.30  # Minimum VP for SUPPRESS_TOP rule
@@ -60,6 +62,11 @@ _LEDGER_FIELDS = [
     "top_mds",
     "top_improvement",
     "top_place_prob",
+    "field_size",
+    "class_num",
+    "sp_dec",
+    "field_band",
+    "rule_version",
     "shadow_action",
     "evidence",
     "live_scoring_changed",
@@ -78,6 +85,9 @@ def evaluate_race(
     top_mds: float | None,
     top_improvement: float | None,
     top_place_prob: float | None,
+    field_size: int | None = None,
+    class_num: int | None = None,
+    sp_dec: float | None = None,
 ) -> dict[str, Any]:
     """
     Evaluate mid-price displacement risk for one race using top-pick signals.
@@ -89,7 +99,16 @@ def evaluate_race(
     mds = top_mds or 0.0
     imp = top_improvement or 0.0
 
-    shadow_action, evidence = _apply_rules(tier, vp, mds, imp)
+    shadow_action, evidence = _apply_rules(
+        tier=tier,
+        vp=vp,
+        mds=mds,
+        imp=imp,
+        field_size=field_size,
+        class_num=class_num,
+        sp_dec=sp_dec,
+    )
+    field_band = _field_band(field_size)
 
     return {
         "created_at": datetime.now(tz=UTC).isoformat(),
@@ -103,6 +122,11 @@ def evaluate_race(
         "top_mds": top_mds,
         "top_improvement": top_improvement,
         "top_place_prob": top_place_prob,
+        "field_size": field_size,
+        "class_num": class_num,
+        "sp_dec": sp_dec,
+        "field_band": field_band,
+        "rule_version": _RULE_VERSION,
         "shadow_action": shadow_action,
         "evidence": "|".join(evidence),
         "live_scoring_changed": False,
@@ -115,6 +139,9 @@ def _apply_rules(
     vp: float,
     mds: float,
     imp: float,
+    field_size: int | None = None,
+    class_num: int | None = None,
+    sp_dec: float | None = None,
 ) -> tuple[str, list[str]]:
     """
     Return (shadow_action, evidence_tags) for the given signal state.
@@ -123,6 +150,23 @@ def _apply_rules(
     All rule thresholds derived from Phase 1 forensic audit (PR #79).
     """
     evidence: list[str] = []
+    field_band = _field_band(field_size)
+    if field_band:
+        evidence.append(f"FIELD_BAND:{field_band}")
+    if class_num:
+        evidence.append(f"CLASS:{class_num}")
+    if sp_dec:
+        evidence.append(f"TOP_SP:{sp_dec:.2f}")
+
+    # June 19 EOD evidence: small fields were clean, but 6-8 runner races
+    # carried frame-heavy / win-light risk. This is annotation-only; it does
+    # not override the underlying action label or permit execution.
+    if field_band == "FS_6_8":
+        evidence.append("J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY")
+    elif field_band == "FS_2_5":
+        evidence.append("J19_FIELD_BAND_SIGNAL:FS_2_5_CLEAN")
+    elif field_band == "FS_13_PLUS":
+        evidence.append("J19_FIELD_BAND_RISK:FS_13_PLUS_LOW_FRAME")
 
     # Rule 3: MIDPRICE_SPLIT_RACE
     # Tier A + high VP + both MDS and improvement absent
@@ -153,7 +197,24 @@ def _apply_rules(
         evidence.append(f"IMP_ABSENT:{imp:.4f}")
         return MIDPRICE_NO_EDGE, evidence
 
-    return MIDPRICE_CLEAN, [f"VP:{vp:.3f}", f"MDS:{mds:.4f}"]
+    evidence.extend([f"VP:{vp:.3f}", f"MDS:{mds:.4f}"])
+    return MIDPRICE_CLEAN, evidence
+
+
+def _field_band(field_size: int | None) -> str:
+    try:
+        fs = int(field_size or 0)
+    except (TypeError, ValueError):
+        return ""
+    if 2 <= fs <= 5:
+        return "FS_2_5"
+    if 6 <= fs <= 8:
+        return "FS_6_8"
+    if 9 <= fs <= 12:
+        return "FS_9_12"
+    if fs >= 13:
+        return "FS_13_PLUS"
+    return ""
 
 
 def append_to_ledger(
@@ -186,6 +247,9 @@ def evaluate_and_log(
     top_mds: float | None,
     top_improvement: float | None,
     top_place_prob: float | None,
+    field_size: int | None = None,
+    class_num: int | None = None,
+    sp_dec: float | None = None,
     ledger_path: Path | str | None = None,
 ) -> dict[str, Any]:
     """
@@ -203,6 +267,9 @@ def evaluate_and_log(
         top_mds=top_mds,
         top_improvement=top_improvement,
         top_place_prob=top_place_prob,
+        field_size=field_size,
+        class_num=class_num,
+        sp_dec=sp_dec,
     )
     append_to_ledger(verdict, ledger_path=ledger_path)
     return verdict

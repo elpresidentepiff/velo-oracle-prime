@@ -52,8 +52,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 SOURCE_LABELS = frozenset({
     "RP_MERGED_CLEAN",
     "RP_MERGED_DEGRADED",
-    "API_CLEAN",
     "LOCAL_JSON_FALLBACK",
+    "RACING_API_BLOCKED",
     "SOURCE_UNKNOWN_BLOCK",
 })
 

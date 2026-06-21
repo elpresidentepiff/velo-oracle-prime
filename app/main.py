@@ -1616,6 +1616,67 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         except Exception as e:
             logger.warning("Could not read New Build readiness file %s: %s", new_build_path, e)
 
+    shadow_by_race: dict[str, dict] = {}
+    shadow_path = root / "data" / "reports" / f"radical_shadow_{date_tag}.json"
+    if shadow_path.exists():
+        try:
+            shadow_payload = _json.loads(shadow_path.read_text(encoding="utf-8"))
+            shadow_by_race = {
+                str(row.get("race_id")): row
+                for row in shadow_payload.get("decisions") or []
+                if row.get("race_id")
+            }
+        except Exception as e:
+            logger.warning("Could not read Shadow VELO file %s: %s", shadow_path, e)
+
+    tri_lane_by_race: dict[str, dict] = {}
+    tri_lane_path = root / "data" / "reports" / f"tri_lane_stress_test_{date_tag}_v2.json"
+    if tri_lane_path.exists():
+        try:
+            tri_lane_payload = _json.loads(tri_lane_path.read_text(encoding="utf-8"))
+            tri_lane_by_race = {
+                str(row.get("race_id")): row
+                for row in tri_lane_payload.get("races") or []
+                if row.get("race_id")
+            }
+        except Exception as e:
+            logger.warning("Could not read Tri-Lane stress test file %s: %s", tri_lane_path, e)
+
+    tri_review_by_race: dict[str, dict] = {}
+    tri_review_path = root / "data" / "reports" / f"tri_lane_agent_review_{date_tag}_v2.json"
+    if tri_review_path.exists():
+        try:
+            tri_review_payload = _json.loads(tri_review_path.read_text(encoding="utf-8"))
+            tri_review_by_race = {
+                str(row.get("race_id")): row
+                for row in tri_review_payload.get("review_cards") or []
+                if row.get("race_id")
+            }
+        except Exception as e:
+            logger.warning("Could not read Tri-Lane agent review file %s: %s", tri_review_path, e)
+
+    deep_agent_by_race: dict[str, dict] = {}
+    deep_agent_path = root / "data" / "reports" / f"deep_race_agent_v1_{date_tag}_v2.json"
+    if deep_agent_path.exists():
+        try:
+            deep_agent_payload = _json.loads(deep_agent_path.read_text(encoding="utf-8"))
+            deep_agent_by_race = {
+                str(row.get("race_id")): row
+                for row in deep_agent_payload.get("agent_cards") or []
+                if row.get("race_id")
+            }
+        except Exception as e:
+            logger.warning("Could not read Deep Race Agent file %s: %s", deep_agent_path, e)
+
+    course_master_by_key: dict[str, dict] = {}
+    course_master_path = root / "data" / "reports" / f"course_master_{date_tag}.json"
+    if course_master_path.exists():
+        try:
+            course_master_payload = _json.loads(course_master_path.read_text(encoding="utf-8"))
+            course_master_by_key = course_master_payload.get("courses") or {}
+        except Exception as e:
+            logger.warning("Could not read Course Master file %s: %s", course_master_path, e)
+
     sidecar_path = root / "app" / "static" / "dashboard" / "sidecar_stack_latest.json"
     if sidecar_path.exists():
         try:
@@ -1756,6 +1817,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             return "WATCH_SKEPTICAL", flags
         return "LOW_QUALITY_SKEPTICAL", flags
 
+    def _course_master_key(value: str) -> str:
+        key = re.sub(r"[^a-z0-9]+", "", str(value or "").lower())
+        if key == "wolverhampton":
+            return "wolverhamptonaw"
+        return key
+
     verdicts = []
     for v in raw_verdicts:
         race_id = v.get("race_id", "")
@@ -1875,6 +1942,35 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         )
         _flatline_warning = _fa_gov.get("rp_flatline_warning") or top.get("rp_flatline_warning") or None
         _new_build = new_build_by_race.get(str(race_id), {})
+        _shadow_row = shadow_by_race.get(str(race_id), {})
+        _shadow = _shadow_row.get("shadow") or _shadow_row.get("radical") or _shadow_row
+        _shadow_old = _shadow_row.get("old_velo") or {}
+        _shadow_passport = _shadow_row.get("passport") or {}
+        _tri_row = tri_lane_by_race.get(str(race_id), {})
+        _tri_lane = _tri_row.get("tri_lane") or {}
+        _tri_review = tri_review_by_race.get(str(race_id), {})
+        _deep_agent_row = deep_agent_by_race.get(str(race_id), {})
+        _deep_agent = _deep_agent_row.get("agent") or {}
+        _deep_evidence = _deep_agent_row.get("evidence") or {}
+        _deep_identity = _deep_evidence.get("identity") or {}
+        _deep_verdict = _deep_agent.get("agent_verdict")
+        _deep_identity_conf = _deep_identity.get("overall_confidence")
+        if _deep_verdict == "CASH_RUN_REVIEW" and _deep_identity_conf == "LIVE_CONFIRMED":
+            _deep_gate = "GREEN_CASH_REVIEW"
+        elif _deep_verdict == "UPGRADE_CANDIDATE_REVIEW" and _deep_identity_conf == "STRONG":
+            _deep_gate = "AMBER_UPGRADE_REVIEW"
+        elif _deep_identity_conf == "LIVE_CONFLICT" or _deep_verdict in {
+            "NO_BET",
+            "WATCH_ONLY",
+            "PASS_WITH_SUPPORT_REVIEW",
+        }:
+            _deep_gate = "SUPPRESS_OR_STUDY"
+        elif _deep_verdict:
+            _deep_gate = "STUDY_ONLY"
+        else:
+            _deep_gate = None
+        _course_key = _course_master_key(course)
+        _course_master = course_master_by_key.get(_course_key, {})
 
         verdicts.append(
             {
@@ -1917,6 +2013,42 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "new_build_top_pick_lane": _new_build.get("top_pick_lane"),
                 "no_rpr_top_horse": gov.get("no_rpr_top_horse") or "",
                 "no_rpr_top_prob": gov.get("no_rpr_top_prob") or 0.0,
+                "shadow_action": _shadow.get("action"),
+                "shadow_confidence": _shadow.get("confidence"),
+                "shadow_win_gate_probability": _shadow.get("win_gate_probability")
+                or _shadow_row.get("win_gate_probability"),
+                "shadow_frame_gate_probability": _shadow.get("frame_gate_probability")
+                or _shadow_row.get("frame_gate_probability"),
+                "shadow_passport_available": _shadow.get("passport_available")
+                if _shadow.get("passport_available") is not None
+                else _shadow_passport.get("passport_available"),
+                "shadow_passport_strength_score": _shadow.get("passport_strength_score")
+                or _shadow_passport.get("passport_strength_score"),
+                "shadow_reasons": _shadow.get("reasons") or [],
+                "shadow_warnings": _shadow.get("warnings") or [],
+                "shadow_field_band": _shadow.get("field_band"),
+                "shadow_odds_band": _shadow.get("odds_band"),
+                "shadow_midprice_action": _shadow_old.get("midprice_shadow_action"),
+                "tri_lane_action": _tri_lane.get("final_action"),
+                "tri_lane_reasons": _tri_lane.get("reasons") or [],
+                "tri_lane_ruleset": _tri_lane.get("ruleset"),
+                "tri_lane_paper_only": _tri_lane.get("paper_only"),
+                "tri_lane_live_execution_allowed": _tri_lane.get("live_execution_allowed"),
+                "tri_review_priority": _tri_review.get("priority"),
+                "tri_review_instruction": _tri_review.get("agent_instruction"),
+                "deep_agent_verdict": _deep_verdict,
+                "deep_agent_gate": _deep_gate,
+                "deep_agent_identity": _deep_identity_conf,
+                "deep_agent_support_score": _deep_agent.get("support_score"),
+                "deep_agent_risk_score": _deep_agent.get("risk_score"),
+                "deep_agent_recommended_use": _deep_agent.get("recommended_use"),
+                "deep_agent_why_wrong": _deep_agent.get("why_velo_may_be_wrong") or [],
+                "deep_agent_warnings": _deep_identity.get("warnings") or [],
+                "course_master_action": _course_master.get("master_action"),
+                "course_master_score": _course_master.get("master_score"),
+                "course_master_confidence": _course_master.get("master_confidence"),
+                "course_master_reasons": _course_master.get("reasons") or [],
+                "course_master_warnings": _course_master.get("warnings") or [],
             }
         )
 
@@ -1994,6 +2126,18 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             "exact_date_file_present": verdict_path.exists(),
             "new_build_loaded": bool(new_build_by_race),
             "new_build_race_count": len(new_build_by_race),
+            "shadow_loaded": bool(shadow_by_race),
+            "shadow_race_count": len(shadow_by_race),
+            "tri_lane_loaded": bool(tri_lane_by_race),
+            "tri_lane_race_count": len(tri_lane_by_race),
+            "tri_review_loaded": bool(tri_review_by_race),
+            "tri_review_card_count": len(tri_review_by_race),
+            "deep_agent_loaded": bool(deep_agent_by_race),
+            "deep_agent_card_count": len(deep_agent_by_race),
+            "deep_agent_ruleset": "PAPER_ONLY_BACKFILL_GATE_2026_06_21",
+            "course_master_loaded": bool(course_master_by_key),
+            "course_master_course_count": len(course_master_by_key),
+            "course_master_ruleset": "COURSE_MASTER_V1_SIGMA_PLUS_DEEP_AGENT",
         },
         "cashrun": {
             "status": cashrun_status,

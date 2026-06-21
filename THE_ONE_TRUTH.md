@@ -29,6 +29,11 @@ once after Step 3 and reused everywhere; downstream steps must not rediscover it
 | 8 | `scripts/ops/build_racecard_merged_from_injection.py` | READY | Exact injection from Step 4 | One Old VELO RP file per venue preserving real RP IDs |
 | 8.5 | `scripts/ops/build_rpdc_daily.py` | READY | Exact injection from Step 4 | Current-day RPDC rows with 100% race-ID coverage |
 | 9 | `scripts/ops/run_prime_today.py` | READY | RP merged files and RPDC | 100% races scored/persisted and real `pipeline_runs` truth |
+| 9.1 | `scripts/ops/run_radical_shadow_today.py` | SHADOW / PAPER ONLY | Same race day artifacts as Step 9 | Radical Shadow VELO report; never live execution |
+| 9.2 | `scripts/ops/run_tri_lane_stress_test.py` | SHADOW / PAPER ONLY | Old VELO, New Build, Shadow artifacts | Tri-lane stress test report; never live execution |
+| 9.3 | `scripts/ops/build_tri_lane_agent_review.py` | SHADOW / PAPER ONLY | Tri-lane stress test | Race-level agent review instructions |
+| 9.4 | `scripts/ops/build_deep_race_agent_v1.py` | SHADOW / PAPER ONLY | RP racecard artifacts plus local evidence | Deep Race Agent gate cards |
+| 9.5 | `scripts/ops/build_course_master.py` | SHADOW / CONTEXT ONLY | Course excellence table, Deep Agent eval, today's RP card | Course Master context; never alters scoring/staking |
 | 10A | `scripts/ops/build_rp_results_url_list.py` | READY | `FINAL_CAPTURE_LABEL` manifest | Deduplicated RP results URL list |
 | 10B | `scripts/ops/racing_post_account_collector.py capture` | READY | Results URL list | Final results-page capture |
 | 11 | `scripts/ops/parse_rp_results_capture.py` | READY | Final results capture | Canonical RP results JSON with numeric IDs and SP truth |
@@ -389,6 +394,121 @@ Update this file each week by replacing with the new BHA "performance figures" C
 Discipline mapping: Chase→S figures; Hurdle/NHF→H figures; Flat→T or A (whichever surface has more non-zero figures).
 Excludes: zero figures (NR/PU/void); `x` cells (ran but no figure assigned).
 Evidence accumulation only — no scoring weight. Track ACCELERATING/PROGRESSIVE SR over 4–6 weeks to determine if improving surface trajectory predicts wins.
+
+---
+
+## STEPS 9.1-9.5 -- PAPER INTELLIGENCE OVERLAYS
+
+**Status:** Active from 2026-06-21. These steps run after Step 9 scoring and
+before operator dashboard review. They are not live model scoring. They are not
+staking permission. They are context, stress testing, and agent review.
+
+**Hard law:** If any 9.x overlay conflicts with Old VELO, New Build, or the
+persisted Step 9 verdict, the conflict is reported. No overlay may silently
+change `velo_prime_prob`, `decision_tier`, `assigned_product`, Supabase
+verdicts, router lanes, model files, or Telegram/execution behavior.
+
+### Step 9.1: Radical Shadow VELO
+
+Command:
+```
+PYTHONPATH=. python scripts/ops/run_radical_shadow_today.py --date YYYY-MM-DD
+```
+
+Outputs:
+- `data/reports/radical_shadow_YYYY_MM_DD.json`
+- `data/reports/radical_shadow_YYYY_MM_DD.md`
+- `data/reports/radical_shadow_latest.json`
+- `data/reports/radical_shadow_latest.md`
+
+Purpose: run the No-RPR / radical interpretation as paper-only intelligence.
+It is designed to challenge RPR dependence and expose mid-price opportunities.
+
+### Step 9.2: Tri-Lane Stress Test
+
+Command:
+```
+PYTHONPATH=. python scripts/ops/run_tri_lane_stress_test.py --date YYYY-MM-DD --version v2
+```
+
+Outputs:
+- `data/reports/tri_lane_stress_test_YYYY_MM_DD_v2.json`
+- `data/reports/tri_lane_stress_test_YYYY_MM_DD_v2.md`
+- latest copies under `data/reports/tri_lane_stress_test_latest.*`
+
+Purpose: compare Old VELO, New Build/Passport, and Shadow VELO together. This
+is a stress test only. `live_execution_allowed` must remain false.
+
+### Step 9.3: Tri-Lane Agent Review
+
+Command:
+```
+PYTHONPATH=. python scripts/ops/build_tri_lane_agent_review.py --date YYYY-MM-DD --version v2
+```
+
+Outputs:
+- `data/reports/tri_lane_agent_review_YYYY_MM_DD_v2.json`
+- `data/reports/tri_lane_agent_review_YYYY_MM_DD_v2.md`
+- latest copies under `data/reports/tri_lane_agent_review_latest.*`
+
+Purpose: turn tri-lane conflicts into explicit race review instructions. This
+is where an agent is told which races need human-style scrutiny.
+
+### Step 9.4: Deep Race Agent V1
+
+Command:
+```
+PYTHONPATH=. python scripts/ops/build_deep_race_agent_v1.py --date YYYY-MM-DD
+```
+
+Outputs:
+- `data/reports/deep_race_agent_v1_YYYY_MM_DD_v2.json`
+- `data/reports/deep_race_agent_v1_YYYY_MM_DD_v2.md`
+- latest copies under `data/reports/deep_race_agent_v1_latest.*`
+
+Purpose: paper-only analyst layer using RP race evidence, local gold, identity
+checks, support/risk scoring, and "why VELO may be wrong" explanations. The
+agent can mark `GREEN_CASH_REVIEW`, `AMBER_UPGRADE_REVIEW`,
+`SUPPRESS_OR_STUDY`, or `STUDY_ONLY`, but it cannot alter Step 9.
+
+Backfill/evaluation:
+```
+PYTHONPATH=. python scripts/ops/build_deep_race_agent_v1.py --start-date YYYY-MM-DD --end-date YYYY-MM-DD
+PYTHONPATH=. python scripts/ops/evaluate_deep_race_agent_v1.py --start-date YYYY-MM-DD --end-date YYYY-MM-DD
+```
+
+### Step 9.5: Course Master
+
+Command:
+```
+PYTHONPATH=. python scripts/ops/build_course_master.py --date YYYY-MM-DD
+```
+
+Outputs:
+- `data/reports/course_master_YYYY_MM_DD.json`
+- `data/reports/course_master_YYYY_MM_DD.md`
+- `data/reports/course_master_latest.json`
+- `data/reports/course_master_latest.md`
+
+Purpose: course-level context from historical Sigma course excellence plus Deep
+Race Agent evaluation. It labels today's courses as `COURSE_BOOST`,
+`COURSE_SUPPORT`, `COURSE_NEUTRAL`, `COURSE_WARNING`, or `COURSE_SUPPRESS`.
+
+Course Master is context only. It tells the operator whether today's battlefield
+is historically friendly or dangerous for VELO. It does not select horses.
+
+### Dashboard Proof
+
+The dashboard endpoint `/api/governed-card?date=YYYY-MM-DD` must expose:
+- `shadow_loaded`
+- `tri_lane_loaded`
+- `tri_review_loaded`
+- `deep_agent_loaded`
+- `course_master_loaded`
+
+The dashboard page must show Old VELO, New Build, No-RPR/Shadow, Tri-Lane,
+Deep Agent, and Course Master in separate lanes. Missing overlay data must show
+as missing. It must never borrow numbers from another lane.
 
 ---
 

@@ -44,6 +44,8 @@ def _pred(horse="Horse A", velo_prime_prob=0.40, mds=0.15, imp=0.12):
         "horse_id": f"hid_{horse.replace(' ', '_').lower()}",
         "velo_prime_prob": velo_prime_prob,
         "sqpe_v17_prob": 0.35,
+        "sqpe_no_rpr_shadow_prob": 0.31,
+        "sqpe_no_rpr_shadow_feature_count": 25,
         "market_deception_score": mds,
         "improvement_score": imp,
         "place_prob": 0.65,
@@ -62,6 +64,18 @@ def _pred(horse="Horse A", velo_prime_prob=0.40, mds=0.15, imp=0.12):
         "rpdc_tags": [],
         "tie_gate_fires": False,
         "tie_gate_tier_upgrade": None,
+        "nds_narrative": "none",
+        "nds_score": 0.0,
+        "nds_disruption": "none",
+        "nds_is_fade": False,
+        "nds_overround_signal": "normal",
+        "chain_pace_shape": "unknown",
+        "chain_narrative": "unknown",
+        "chain_market_status": "unknown",
+        "midprice_shadow_action": "MIDPRICE_CLEAN",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_2_5|VP:0.350|MDS:0.1000",
+        "midprice_shadow_field_band": "FS_2_5",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
         "active_components": ["sqpe", "mds", "improvement"],
         "excluded_from_ensemble": [],
         "assigned_product": "WIN_ONLY",
@@ -226,6 +240,9 @@ def test_required_context_fields_present(tmp_path):
         "rank", "horse", "horse_id", "velo_prime_prob", "market_deception_score",
         "improvement_score", "top_pick_name", "top_pick_vp", "prob_gap",
         "live_scoring_changed", "write_execution_allowed",
+        "sqpe_no_rpr_shadow_prob", "sqpe_no_rpr_shadow_feature_count",
+        "nds_score", "chain_pace_shape", "midprice_shadow_action",
+        "midprice_shadow_rule_version",
     }
     for row in rows:
         for field in required:
@@ -252,11 +269,13 @@ def test_write_execution_allowed_always_false(tmp_path):
 # ── Failure safety (write failure cannot affect caller) ───────────────────────
 
 
-def test_unwritable_dir_does_not_raise():
+def test_unwritable_dir_does_not_raise(tmp_path):
     scored = _scored_1race_2runners()
+    blocked_path = tmp_path / "not_a_directory"
+    blocked_path.write_text("I am a file, not a directory")
     result = write_runner_snapshots(
         scored, _DATE_STR, _DATE_TAG, run_id=_RUN_ID,
-        snapshot_dir=Path("/dev/null/nonexistent"),
+        snapshot_dir=blocked_path,
     )
     assert result == 0
 

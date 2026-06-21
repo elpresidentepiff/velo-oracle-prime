@@ -282,7 +282,7 @@ class TestObservabilityCannotBeSkipped:
         from write_velo_run_observability import build_observability_packet, write_observability_packet
         packet = build_observability_packet(
             date_str="2026-05-27",
-            source_truth="API_CLEAN",
+            source_truth="RP_MERGED_CLEAN",
             feature_health="HEALTHY",
             active_formula="sqpe_v17",
             excluded_live_components=[],
@@ -303,7 +303,7 @@ class TestObservabilityCannotBeSkipped:
         from write_velo_run_observability import build_observability_packet, load_observability_packet, write_observability_packet
         packet = build_observability_packet(
             date_str="2026-05-27",
-            source_truth="API_CLEAN",
+            source_truth="RP_MERGED_CLEAN",
             feature_health="HEALTHY",
             active_formula="sqpe_v17",
             excluded_live_components=[],
@@ -317,7 +317,7 @@ class TestObservabilityCannotBeSkipped:
         write_observability_packet(packet)
         loaded = load_observability_packet("2026-05-27")
         assert loaded is not None
-        assert loaded["source_truth"] == "API_CLEAN"
+        assert loaded["source_truth"] == "RP_MERGED_CLEAN"
 
     def test_missing_observability_file_returns_none(self, tmp_path, monkeypatch):
         """load_observability_packet must return None when no file exists."""
@@ -351,11 +351,18 @@ class TestSourceTruthWiring:
             enforce_source_truth("mystery_source_xyz", raise_on_block=True)
 
     def test_valid_sources_do_not_raise(self):
-        """All valid loader labels must not raise."""
+        """Allowed loader labels must not raise."""
         from velo.source_truth_enforcer import enforce_source_truth
-        for label in ("cache", "rp_merged", "api"):
+        for label in ("cache", "rp_merged"):
             result = enforce_source_truth(label, races=[])
             assert result.execution_allowed is True
+
+    def test_racing_api_source_raises_block_error(self):
+        """Racing API aliases must be blocked before normalization/scoring."""
+        from velo.source_truth_enforcer import SourceTruthBlockError, enforce_source_truth
+        for label in ("api", "racing_api", "API_CLEAN"):
+            with pytest.raises(SourceTruthBlockError, match="RACING_API_BLOCKED"):
+                enforce_source_truth(label, races=[])
 
     def test_block_error_message_contains_source_unknown(self):
         """SourceTruthBlockError message must mention SOURCE_UNKNOWN_BLOCK."""

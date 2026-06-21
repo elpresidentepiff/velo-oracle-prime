@@ -319,6 +319,88 @@ This establishes the first complete governed execution layer for VÉLØ Prime.
 - `NO_TELEGRAM_SEND`
 - `NO_RACING_API_RESTORATION`
 
+## P2-1 -- Paper Intelligence Overlay Hardening
+
+**Status:** COMPLETE
+**Date:** 2026-06-21
+**Branch:** main
+**Scope:** Radical Shadow VELO, Tri-Lane V2, Deep Race Agent V1, Course Master, dashboard overlay lanes.
+
+### Purpose
+
+P2-1 adds post-scoring paper intelligence without changing live scoring. The work creates a safer operator cockpit: Old VELO, New Build/Passport, No-RPR/Shadow, Tri-Lane, Deep Agent, and Course Master can now be viewed separately instead of being mentally merged or borrowed across lanes.
+
+### Files Added
+
+- `scripts/ops/run_radical_shadow_today.py`
+- `scripts/ops/evaluate_radical_shadow.py`
+- `scripts/ops/run_tri_lane_stress_test.py`
+- `scripts/ops/build_tri_lane_agent_review.py`
+- `scripts/ops/build_deep_race_agent_v1.py`
+- `scripts/ops/evaluate_deep_race_agent_v1.py`
+- `scripts/ops/build_course_master.py`
+- `scripts/audit/june19_midprice_deep_dive.py`
+- `scripts/audit/passport_sigma_training_test.py`
+- `scripts/audit/radical_edge_discovery.py`
+- `scripts/ops/cash_run_deep_dive.py`
+- `scripts/ops/replay_midprice_shadow.py`
+- `scripts/train/train_new_build_doctrine_passport_challenger.py`
+- `src/velo/radical/`
+
+### Files Modified
+
+- `app/main.py`
+- `app/static/dashboard/index.html`
+- `THE_ONE_TRUTH.md`
+- `docs/current/ONE_TRUTH.md`
+- `docs/current/VELO_HARDENING_STATE.md`
+- `docs/VELO_HARDENING_LEDGER.md`
+
+### Behavior Added
+
+1. **Dashboard overlay loading:** `/api/governed-card` now exposes Shadow, Tri-Lane, Tri Review, Deep Agent, and Course Master metadata when dated reports exist.
+2. **Separate visual lanes:** Dashboard displays Shadow VELO, Tri-Lane V2, Deep Agent, and Course Master independently. Missing lane data is shown as missing, not borrowed.
+3. **Course Master:** Daily course context combines historical Sigma course excellence with Deep Agent evaluation. It labels courses as support, neutral, warning, suppress, or boost.
+4. **Deep Race Agent V1:** Produces paper-only race review gates and why-wrong notes for operator review.
+5. **Tri-Lane V2:** Stress-tests Old VELO, New Build/Passport, and Shadow together without permitting live execution.
+
+### Enforcement Rule
+
+Paper intelligence overlays may explain, challenge, or warn. They may not mutate:
+
+- `velo_prime_prob`
+- `decision_tier`
+- `assigned_product`
+- Supabase `velo_verdicts`
+- live model files
+- router execution gates
+- Telegram output
+- staking or live execution
+
+### Verification
+
+Live dashboard API verified for 2026-06-21:
+
+- `course_master_loaded: true`
+- `course_master_course_count: 63`
+- `deep_agent_loaded: true`
+- `record_count: 20`
+- Course actions: `COURSE_NEUTRAL: 14`, `COURSE_SUPPORT: 6`
+
+### Final Classification
+
+- PAPER_INTELLIGENCE_OVERLAYS_ACTIVE
+- COURSE_MASTER_ACTIVE
+- DEEP_RACE_AGENT_V1_ACTIVE
+- TRI_LANE_V2_STRESS_TEST_ACTIVE
+- SHADOW_VELO_DASHBOARD_ACTIVE
+- DASHBOARD_LANES_SEPARATED
+- NO_LIVE_SCORING_CHANGE
+- NO_MODEL_PROMOTION
+- NO_ROUTER_EXECUTION_CHANGE
+- NO_TELEGRAM_SEND
+- NO_RACING_API_RESTORATION
+
 ### Next Research Mission
 
 Mar–Apr PRE_SURGERY study — BLOCKED until operator approves after current-era dry-run validation (14+ days minimum). Plan at `data/reports/pre_surgery_sigma_study_plan.md`.
