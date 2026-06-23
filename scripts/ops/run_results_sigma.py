@@ -299,7 +299,7 @@ def main():
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
     print("\nSTEP 1: Load predictions from velo_verdicts")
     verdicts_raw = sb_get(
-        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis"
+        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
         f"&generated_at=gte.{race_date}T00:00:00"
         f"&generated_at=lt.{race_date}T23:59:59"
         f"&order=generated_at"
@@ -312,7 +312,7 @@ def main():
         next_day = (race_date_obj + timedelta(days=1)).strftime("%Y-%m-%d")
         date_tag = race_date.replace("-", "")  # e.g. "20260529"
         extended = sb_get(
-            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis"
+            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
             f"&generated_at=gte.{next_day}T00:00:00"
             f"&generated_at=lt.{next_day}T12:00:00"
             f"&order=generated_at"
@@ -633,6 +633,7 @@ def main():
                 elif winner_sp > 10.0: mc = "outsider_won"
                 else: mc = "mid_priced_won"
                 misses.append(race_id)
+                _ap_absent = pred.get("assigned_product") or predictions.get(race_id, {}).get("assigned_product") or "UNKNOWN"
                 all_matched.append({
                     "race_id": race_id, "course": result.get("course",""), "off": result.get("off",""),
                     "predicted": info.get("horse","?"), "predicted_id": predicted_horse_id,
@@ -641,6 +642,8 @@ def main():
                     "winner_sp": winner_sp, "velo_prime_prob": vpp,
                     "predicted_position": None, "predicted_sp": 0,
                     "outcome": "MISS", "miss_class": mc, "top3": result.get("top3_names",[]),
+                    "assigned_product": _ap_absent,
+                    "ew_outcome": "EW_MISS" if _ap_absent == "EW_CANDIDATE" else None,
                 })
                 print(f"  MISS({mc})             {result.get('course',''):<22} {result.get('off','')}  pred={info.get('horse','?'):<30} [HORSE_ABSENT→MISS]")
             else:
@@ -679,6 +682,16 @@ def main():
             else: miss_class = "mid_priced_won"
             misses.append(race_id)
 
+        _assigned_product = pred.get("assigned_product") or predictions.get(race_id, {}).get("assigned_product") or "UNKNOWN"
+        _ew_outcome: str | None = None
+        if _assigned_product == "EW_CANDIDATE":
+            if is_hit:
+                _ew_outcome = "EW_WIN"
+            elif is_frame:
+                _ew_outcome = "EW_PLACE"
+            else:
+                _ew_outcome = "EW_MISS"
+
         all_matched.append(
             {
                 "race_id": race_id,
@@ -696,6 +709,8 @@ def main():
                 "outcome": outcome,
                 "miss_class": miss_class,
                 "top3": result.get("top3_names", []),
+                "assigned_product": _assigned_product,
+                "ew_outcome": _ew_outcome,
             }
         )
 
@@ -832,6 +847,20 @@ def main():
     print(f"  avg prob (misses):  {avg_miss_prob:.4f}")
     print(f"  high-conf picks:    {len(high_conf)} (prob>=0.30)")
     print(f"  high-conf strikes:  {len(high_hits)} ({high_strike:.1%})")
+
+    # EW_CANDIDATE tracking
+    ew_rows = [r for r in all_matched if r.get("assigned_product") == "EW_CANDIDATE"]
+    win_only_rows = [r for r in all_matched if r.get("assigned_product") == "WIN_ONLY"]
+    ew_placed = [r for r in ew_rows if r.get("ew_outcome") in ("EW_WIN", "EW_PLACE")]
+    ew_won = [r for r in ew_rows if r.get("ew_outcome") == "EW_WIN"]
+    ew_place_rate = len(ew_placed) / len(ew_rows) if ew_rows else 0
+    win_only_hits = [r for r in win_only_rows if r.get("outcome") == "WIN"]
+    win_only_sr = len(win_only_hits) / len(win_only_rows) if win_only_rows else 0
+    print(f"\n  EW_CANDIDATE picks: {len(ew_rows)}")
+    print(f"  EW_CANDIDATE place rate (top3): {ew_place_rate:.1%} ({len(ew_placed)}/{len(ew_rows)})")
+    print(f"  EW_CANDIDATE wins: {len(ew_won)}")
+    print(f"  WIN_ONLY picks: {len(win_only_rows)}")
+    print(f"  WIN_ONLY SR: {win_only_sr:.1%} ({len(win_only_hits)}/{len(win_only_rows)})")
 
     # Doctrine patch: should we update sigma?
     sigma_note = ""
@@ -1118,6 +1147,11 @@ def main():
     # C. Frame picks (2nd/3rd)
     frame_lines = [r for r in all_matched if r["outcome"] == "PLACED"]
 
+    _ew_tg_line = (
+        f"EW picks:      {len(ew_rows)} placed {len(ew_placed)} ({ew_place_rate:.1%})\n"
+        f"WIN picks:     {len(win_only_rows)} won {len(win_only_hits)} ({win_only_sr:.1%})\n"
+    ) if (ew_rows or win_only_rows) else ""
+
     # Main sigma report
     sigma_msg = (
         f"VELO SIGMA REPORT — {_display_date}\n"
@@ -1128,7 +1162,8 @@ def main():
         f"Misses:           {total_misses}\n"
         + (f"Non-runners:      {total_nr} (excluded)\n" if total_nr else "")
         + f"\n"
-        f"High-conf (>=0.30): {len(high_conf)} picks, {len(high_hits)} hits ({high_strike:.1%})\n"
+        + _ew_tg_line
+        + f"High-conf (>=0.30): {len(high_conf)} picks, {len(high_hits)} hits ({high_strike:.1%})\n"
         f"Avg prob (hits):    {avg_hit_prob:.4f}\n"
         f"Avg prob (misses):  {avg_miss_prob:.4f}\n"
         f"\n"
@@ -1221,6 +1256,8 @@ def main():
                 "vp_missing_reason": None if _vp_present else "vp_not_in_supabase_verdict",
                 "outcome": _row.get("outcome", ""),
                 "miss_class": _row.get("miss_class", ""),
+                "assigned_product": _row.get("assigned_product", "UNKNOWN"),
+                "ew_outcome": _row.get("ew_outcome"),
             }
         )
 
@@ -1250,6 +1287,15 @@ def main():
         "learning_candidate_rows": sigma_ok,
         "unresolved_rows": no_result_ct,
         "raw_sigma_audits_preserved": True,
+        "ew_tracking": {
+            "ew_candidate_n": len(ew_rows),
+            "ew_place_n": len(ew_placed),
+            "ew_win_n": len(ew_won),
+            "ew_place_rate": round(ew_place_rate, 4),
+            "win_only_n": len(win_only_rows),
+            "win_only_hits": len(win_only_hits),
+            "win_only_sr": round(win_only_sr, 4),
+        },
         # Per-race rows with VP provenance — never omit, always write null + reason if unavailable.
         "rows": _vp_rows,
         "vp_coverage": {
@@ -1285,6 +1331,8 @@ def main():
     print(f"SIGMA COMPLETE — {race_date}")
     print(f"  Strike rate:  {strike_rate:.1%} ({total_hits}/{total_matched})")
     print(f"  Frame rate:   {frame_rate:.1%} ({total_hits + total_frames}/{total_matched})")
+    print(f"  WIN_ONLY:     {len(win_only_rows)} picks  SR={win_only_sr:.1%} ({len(win_only_hits)} wins)")
+    print(f"  EW_CANDIDATE: {len(ew_rows)} picks  place_rate={ew_place_rate:.1%} ({len(ew_placed)} placed, {len(ew_won)} won)")
     print(f"  Miss classes: {miss_classes}")
     print(f"  Sigma note:   {sigma_note}")
     print(f"  Supabase:     sigma_audits={sigma_ok} learned_patterns={patterns_saved}")

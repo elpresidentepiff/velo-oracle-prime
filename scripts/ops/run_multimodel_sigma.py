@@ -31,7 +31,7 @@ except ImportError:
 LEDGER_PATH = ROOT / "data" / "model_comparison_ledger.csv"
 LEDGER_COLS = [
     "date", "race_id", "course", "off",
-    "velo_top_pick", "velo_outcome",
+    "velo_top_pick", "velo_outcome", "velo_assigned_product", "velo_ew_outcome",
     "norpr_top_pick", "norpr_prob", "norpr_outcome",
     "nb_top_pick", "nb_prob", "nb_outcome",
     "winner", "top3",
@@ -163,6 +163,25 @@ def _print_summary(rows: list[dict]) -> None:
         print(f"  |  {label:<10}|  {n:<5}|  {wins:<5}|  {places:<5}|  {sr:.1%}   {frame:.1%}  |")
     print(  "  +------------+-------+-------+-------+---------------+")
 
+    # EW_CANDIDATE split for Old VELO
+    ew_rows = [r for r in rows if r.get("velo_assigned_product") == "EW_CANDIDATE"]
+    win_rows = [r for r in rows if r.get("velo_assigned_product") == "WIN_ONLY"]
+    if ew_rows or win_rows:
+        print()
+        print("  VELO PRODUCT SPLIT:")
+        if win_rows:
+            wo_wins = sum(1 for r in win_rows if r.get("velo_outcome") == "WIN")
+            wo_sr = wo_wins / len(win_rows)
+            print(f"    WIN_ONLY   n={len(win_rows):3d}  wins={wo_wins:3d}  SR={wo_sr:.1%}")
+        if ew_rows:
+            ew_placed = sum(1 for r in ew_rows if r.get("velo_ew_outcome") in ("EW_WIN", "EW_PLACE"))
+            ew_won = sum(1 for r in ew_rows if r.get("velo_ew_outcome") == "EW_WIN")
+            ew_pr = ew_placed / len(ew_rows)
+            print(f"    EW_CAND    n={len(ew_rows):3d}  placed={ew_placed:3d}  place%={ew_pr:.1%}  wins={ew_won}")
+        unknown_n = sum(1 for r in rows if r.get("velo_assigned_product", "UNKNOWN") not in ("WIN_ONLY", "EW_CANDIDATE", "FRAME_ONLY", "VISION_ONLY", "PASS"))
+        if unknown_n:
+            print(f"    UNKNOWN    n={unknown_n:3d}  (pre-fix rows — no assigned_product stored)")
+
 
 def run(date_str: str, execute: bool = False) -> list[dict]:
     print(f"\nMULTI-MODEL SIGMA — {date_str}")
@@ -191,6 +210,8 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
         velo_pick    = sr.get("predicted", "")
         _raw_outcome = sr.get("outcome", "MISS")
         velo_outcome = "PLACE" if _raw_outcome == "PLACED" else _raw_outcome
+        velo_assigned_product = sr.get("assigned_product", "UNKNOWN")
+        velo_ew_outcome = sr.get("ew_outcome", "")
 
         # No-RPR: highest sqpe_no_rpr_shadow_prob in Supabase
         norpr_pick, norpr_prob, norpr_outcome = None, None, "NO_DATA"
@@ -214,6 +235,8 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             "off":           sr.get("off", ""),
             "velo_top_pick": velo_pick,
             "velo_outcome":  velo_outcome,
+            "velo_assigned_product": velo_assigned_product,
+            "velo_ew_outcome": velo_ew_outcome or "",
             "norpr_top_pick": norpr_pick or "",
             "norpr_prob":    round(norpr_prob, 4) if norpr_prob else "",
             "norpr_outcome": norpr_outcome,
@@ -245,7 +268,7 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
         added = [r for r in new_rows if (r["date"], r["race_id"]) not in existing_keys]
         all_rows_out = existing + added
         with open(LEDGER_PATH, "w", newline="", encoding="utf-8") as f:
-            w = csv.DictWriter(f, fieldnames=LEDGER_COLS)
+            w = csv.DictWriter(f, fieldnames=LEDGER_COLS, restval="", extrasaction="ignore")
             w.writeheader()
             w.writerows(all_rows_out)
         print(f"\n  Ledger: +{len(added)} new rows ({len(existing)} existing) -> {LEDGER_PATH.name}")
