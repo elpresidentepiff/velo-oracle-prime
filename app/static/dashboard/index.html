@@ -3093,23 +3093,25 @@ async function loadCard() {
   const picker = document.getElementById('date-picker');
   if (picker) picker.value = dateParam;
   try {
-    const [nbRes, ovRes] = await Promise.all([
+    const [nbRes, ovRes, threeOptRes] = await Promise.all([
       fetch(`${API}?date=${encodeURIComponent(dateParam)}`),
       fetch(`${OV_API}?date=${encodeURIComponent(dateParam)}`),
+      fetch('/old_velo_three_option_card_latest.json'),
     ]);
     if (!nbRes.ok) throw new Error(`NB API ${nbRes.status}`);
     const nbData = await nbRes.json();
     const ovData = ovRes.ok ? await ovRes.json() : { verdicts: [] };
-    render(nbData, ovData.verdicts || []);
+    const threeOptData = threeOptRes.ok ? await threeOptRes.json() : null;
+    render(nbData, ovData.verdicts || [], threeOptData);
   } catch (_err) {
-    render(MOCK_DATA, []);
+    render(MOCK_DATA, [], null);
     const badge = document.getElementById('sh-badge');
     badge.textContent = 'DEMO MODE';
     badge.className = 'live-badge cache';
   }
 }
 
-function render(data, ovVerdicts) {
+function render(data, ovVerdicts, threeOptData) {
   document.getElementById('loading').style.display = 'none';
 
   const meta = data.meta || {};
@@ -3203,7 +3205,7 @@ function render(data, ovVerdicts) {
     document.getElementById('t-exec-sub').textContent = 'EXECUTION AUTHORIZED';
   }
 
-  renderRaceCards(rows, toMin, ovVerdicts || []);
+  renderRaceCards(rows, toMin, ovVerdicts || [], threeOptData);
 }
 
 function animateCount(id, target) {
@@ -3325,13 +3327,23 @@ function nbTimeKey(t) {
   return racingTimeToMin(t);
 }
 
-function renderRaceCards(rows, toMin, ovVerdicts) {
+function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
   const container = document.getElementById('race-cards');
   container.innerHTML = '';
 
   if (!rows.length) {
     container.innerHTML = '<div style="padding:24px;color:var(--fg-muted);font-family:var(--font-mono);">NO DATA FOR THIS DATE</div>';
     return;
+  }
+
+  // Build three-option card lookup: { race_id -> { WIN, PLACE, LONGSHOT } }
+  const threeOptMap = new Map();
+  if (threeOptData && Array.isArray(threeOptData.races)) {
+    threeOptData.races.forEach(race => {
+      const byRole = {};
+      (race.picks || []).forEach(p => { byRole[p.role] = p; });
+      threeOptMap.set(String(race.race_id), byRole);
+    });
   }
 
   // Build Old VELO lookup: { "CourseName::minutes" -> verdict }
@@ -3477,6 +3489,26 @@ function renderRaceCards(rows, toMin, ovVerdicts) {
       }
     } else {
       html += '<div class="tl-lane-empty">No Old VELO data</div>';
+    }
+
+    // ── Three-option picks (WIN / PLACE / LONGSHOT) ────────────────
+    const threePicks = threeOptMap.get(String(rid));
+    if (threePicks) {
+      html += '<div style="margin-top:6px;border-top:1px solid var(--border);padding-top:5px">';
+      [['WIN','var(--cyan)'],['PLACE','var(--amber)'],['LONGSHOT','var(--purple)']].forEach(([role, col]) => {
+        const p = threePicks[role];
+        if (!p) return;
+        const outcome = p.outcome || {};
+        const pos = outcome.position || outcome.status || '';
+        const posStr = pos && pos !== 'RESULT' && pos !== 'NO_RESULT' && pos !== 'UNMATCHED' ? ` · ${pos}` : '';
+        const winMark = outcome.win ? ' ✓' : '';
+        html += `<div class="tl-stat-row" style="margin-top:2px;gap:4px">
+          <span style="font-size:8px;font-weight:700;color:${col};min-width:52px">${role}</span>
+          <span style="font-size:9px;color:var(--fg-primary);flex:1">${esc(p.horse || '—')}</span>
+          <span style="font-size:8px;color:var(--fg-secondary)">${p.sp_dec > 0 ? p.sp_dec.toFixed(1) : '?'}sp${posStr}${winMark}</span>
+        </div>`;
+      });
+      html += '</div>';
     }
 
     html += '</div>'; // end OV lane

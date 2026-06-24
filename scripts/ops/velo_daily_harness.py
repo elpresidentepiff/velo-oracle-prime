@@ -286,7 +286,7 @@ def run_morning(date_str: str) -> dict:
 
     # Step 0: check verdicts exist
     has_verdicts, count = _check_verdicts(date_str)
-    total_steps = 4
+    total_steps = 5
     step = 0
 
     if not has_verdicts:
@@ -324,7 +324,16 @@ def run_morning(date_str: str) -> dict:
         print(f"[STEP {step}/{total_steps}] place_signal_operator_card... SKIP (script not found)")
         step_results.append(("place_signal_operator_card", None, "NOT_FOUND"))
 
-    # Step 3: cashrun detector (only if racecard merged files exist)
+    # Step 3: Old VELO three-option card (WIN / PLACE / LONGSHOT)
+    step += 1
+    ok_3opt, out_3opt = _run_step(
+        "build_old_velo_three_option_card",
+        step, total_steps,
+        _python("ops/build_old_velo_three_option_card.py", ["--date", date_str]),
+    )
+    step_results.append(("build_old_velo_three_option_card", ok_3opt, out_3opt))
+
+    # Step 4: cashrun detector (only if racecard merged files exist)
     step += 1
     cashrun_input = DATA / f"cashrun_report_{date_str}.csv"
     cashrun_script = SCRIPTS / "cashrun_detector.py"
@@ -369,7 +378,7 @@ def run_close(date_str: str) -> dict:
     """Run post-race close mode."""
     print(f"\n[HARNESS] CLOSE MODE — {date_str} — {_ts()}")
 
-    total_steps = 6
+    total_steps = 7
     step = 0
     step_results = []
 
@@ -392,6 +401,15 @@ def run_close(date_str: str) -> dict:
         _python("run_results_sigma.py", ["--date", date_str]),
     )
     step_results.append(("run_results_sigma", ok2, out2))
+
+    # Step 2b: Old VELO three-option card with outcomes
+    step += 1
+    ok_3opt, out_3opt = _run_step(
+        "build_old_velo_three_option_card (outcomes)",
+        step, total_steps,
+        _python("ops/build_old_velo_three_option_card.py", ["--date", date_str]),
+    )
+    step_results.append(("build_old_velo_three_option_card_outcomes", ok_3opt, out_3opt))
 
     # Step 3: execution bridge close
     step += 1

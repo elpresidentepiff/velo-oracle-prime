@@ -269,6 +269,30 @@ def sb_upsert(path: str, data: dict | list, on_conflict: str) -> bool:
         return False
 
 
+def _load_three_option_summary(race_date: str) -> dict:
+    """Load WIN/PLACE/LONGSHOT role metrics from the three-option card if available."""
+    tag = race_date.replace("-", "_")
+    card_path = ROOT / "data" / "reports" / f"old_velo_three_option_card_{tag}.json"
+    if not card_path.exists():
+        return {"available": False}
+    try:
+        card = json.loads(card_path.read_text(encoding="utf-8"))
+        metrics = card.get("role_metrics", {})
+        summary = {"available": True, "roles": {}}
+        for role, m in metrics.items():
+            n = m.get("evaluated", 0)
+            summary["roles"][role] = {
+                "n": n,
+                "wins": m.get("wins", 0),
+                "frames": m.get("frames", 0),
+                "sr": round(m["wins"] / n, 4) if n else 0,
+                "frame_rate": round(m["frames"] / n, 4) if n else 0,
+            }
+        return summary
+    except Exception:
+        return {"available": False}
+
+
 # ── main ─────────────────────────────────────────────────────────────────────
 
 
@@ -320,6 +344,27 @@ def main():
         verdicts_raw = [v for v in (extended or []) if date_tag in v.get("race_id", "")]
         if verdicts_raw:
             print(f"  [INFO] Found {len(verdicts_raw)} verdicts via overnight window (generated_at={next_day})")
+
+    # Pre-scored future dates: verdicts generated the day before the race date.
+    # Filter by race_ids in the local backup to ensure we only pull today's races.
+    if not verdicts_raw:
+        prev_day = (race_date_obj - timedelta(days=1)).strftime("%Y-%m-%d")
+        prev_raw = sb_get(
+            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
+            f"&generated_at=gte.{prev_day}T00:00:00"
+            f"&generated_at=lt.{race_date}T00:00:00"
+            f"&order=generated_at"
+        )
+        if prev_raw:
+            backup_path = ROOT / "data" / f"velo_prime_verdicts_{race_date.replace('-', '_')}.json"
+            if backup_path.exists():
+                backup_ids = {str(r["race_id"]) for r in json.loads(backup_path.read_text())}
+                verdicts_raw = [v for v in prev_raw if str(v.get("race_id", "")) in backup_ids]
+            else:
+                verdicts_raw = [v for v in prev_raw if str(v.get("race_id", "")).isdigit()]
+        if verdicts_raw:
+            print(f"  [INFO] Found {len(verdicts_raw)} verdicts via prev-day lookback (generated_at={prev_day})")
+
     print(f"  Predictions loaded: {len(verdicts_raw)}")
     if not verdicts_raw:
         print("  ABORT: no predictions found for this date")
@@ -1296,6 +1341,7 @@ def main():
             "win_only_hits": len(win_only_hits),
             "win_only_sr": round(win_only_sr, 4),
         },
+        "three_option_tracking": _load_three_option_summary(race_date),
         # Per-race rows with VP provenance — never omit, always write null + reason if unavailable.
         "rows": _vp_rows,
         "vp_coverage": {

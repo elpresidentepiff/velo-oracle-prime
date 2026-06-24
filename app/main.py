@@ -1332,6 +1332,15 @@ async def dashboard_sidecar_stack():
     return FileResponse(str(sidecar_path), media_type="application/json")
 
 
+@app.get("/old_velo_three_option_card_latest.json", include_in_schema=False)
+async def old_velo_three_option_card():
+    """Serve the Old VELO WIN/PLACE/LONGSHOT operator card for the dashboard."""
+    card_path = pathlib.Path(__file__).parent.parent / "data" / "reports" / "old_velo_three_option_card_latest.json"
+    if not card_path.exists():
+        raise HTTPException(status_code=404, detail="Three-option card not found")
+    return FileResponse(str(card_path), media_type="application/json")
+
+
 @app.get("/api/old-velo-verdicts")
 async def old_velo_verdicts(date: str = Query(default=None)):
     """Old VELO lane for the dashboard: top pick per race from the day's
