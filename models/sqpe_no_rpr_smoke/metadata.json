@@ -1,8 +1,8 @@
 {
   "version": "v17.2-no-rpr",
   "model_type": "GradientBoostingClassifier + IsotonicCalibration",
-  "trained_at": "2026-06-19T07:47:46.735731",
-  "source": "C:\\Users\\puror\\velo-oracle-prime\\data\\raceform_v17_features.parquet",
+  "trained_at": "2026-06-27T01:32:46.626639",
+  "source": "/mnt/c/Users/puror/velo-oracle-prime/data/raceform_v17_features.parquet",
   "banned_features": [
     "decoy_support_flag",
     "implied_prob",
@@ -45,93 +45,93 @@
     "cash_run_flag"
   ],
   "n_features": 25,
-  "train_rows": 95120,
-  "test_rows": 4880,
-  "test_races": 929,
+  "train_rows": 1535890,
+  "test_rows": 79742,
+  "test_races": 8738,
   "metrics": {
-    "or_naive_top1": 0.1023,
+    "or_naive_top1": 0.1783,
     "or_model": {
-      "auc": 0.5591902162502624,
-      "ll": 0.3495347694994586,
-      "top1": 0.1001,
-      "mrr": 0.1497
+      "auc": 0.5673669815883239,
+      "ll": 0.3420440505425463,
+      "top1": 0.1742,
+      "mrr": 0.3797
     },
     "no_rpr_model": {
-      "auc": 0.7041555742179298,
-      "ll": 0.3238614194369503,
-      "top1": 0.1324,
-      "mrr": 0.1662
+      "auc": 0.6941603715895696,
+      "ll": 0.32128100583091823,
+      "top1": 0.256,
+      "mrr": 0.4649
     },
     "production_model": {
-      "auc": 0.9404600041990343,
-      "ll": 0.18470708328792598,
-      "top1": 0.1873,
-      "mrr": 0.1956
+      "auc": 0.9295754122192967,
+      "ll": 0.1940268759843229,
+      "top1": 0.7197,
+      "mrr": 0.8344
     }
   },
-  "doctrine_lift_vs_or_model_top1": 0.0323,
-  "doctrine_lift_vs_or_naive_top1": 0.0301,
+  "doctrine_lift_vs_or_model_top1": 0.0818,
+  "doctrine_lift_vs_or_naive_top1": 0.0777,
   "verdict": "DOCTRINE FEATURES PROVEN \u2014 significant lift over OR baseline",
   "top_15_features": [
     {
       "feature": "field_size",
-      "importance": 0.1505
-    },
-    {
-      "feature": "or_vs_field",
-      "importance": 0.1088
+      "importance": 0.2435
     },
     {
       "feature": "distance_fit_score",
-      "importance": 0.0842
+      "importance": 0.1093
+    },
+    {
+      "feature": "or_vs_field",
+      "importance": 0.0966
     },
     {
       "feature": "going_fit_score",
-      "importance": 0.0833
+      "importance": 0.0769
     },
     {
       "feature": "trainer_timing_score",
-      "importance": 0.0707
-    },
-    {
-      "feature": "mark_compression_score",
-      "importance": 0.05
-    },
-    {
-      "feature": "or_num",
-      "importance": 0.0476
+      "importance": 0.0683
     },
     {
       "feature": "runs_since_place",
-      "importance": 0.0474
-    },
-    {
-      "feature": "wgt_lbs",
-      "importance": 0.0444
+      "importance": 0.0656
     },
     {
       "feature": "quiet_run_score",
-      "importance": 0.0342
+      "importance": 0.0469
     },
     {
-      "feature": "course_fit_score",
-      "importance": 0.0332
+      "feature": "wgt_lbs",
+      "importance": 0.0429
     },
     {
-      "feature": "draw_pct",
-      "importance": 0.0299
-    },
-    {
-      "feature": "curr_or_minus_last_win_or",
-      "importance": 0.0283
+      "feature": "or_num",
+      "importance": 0.0395
     },
     {
       "feature": "class_num",
-      "importance": 0.0281
+      "importance": 0.03
     },
     {
-      "feature": "curr_or_minus_best_or",
-      "importance": 0.0266
+      "feature": "course_fit_score",
+      "importance": 0.0291
+    },
+    {
+      "feature": "draw_num",
+      "importance": 0.0275
+    },
+    {
+      "feature": "mark_compression_score",
+      "importance": 0.0231
+    },
+    {
+      "feature": "age_num",
+      "importance": 0.0173
+    },
+    {
+      "feature": "setup_run_flag",
+      "importance": 0.0163
     }
   ]
 }

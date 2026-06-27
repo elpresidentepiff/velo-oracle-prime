@@ -24,6 +24,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -35,6 +36,7 @@ INTENT_FEATURE_PATH = NEW_BUILD_ROOT / "training" / "intent_features.parquet"
 
 LANE_A_PKL = ROOT / "data" / "new_build" / "models" / "core_v0_or_passport" / "core_v0_or_passport_model.pkl"
 LANE_B_PKL = ROOT / "data" / "new_build" / "models" / "core_v0_or_passport_intent" / "model.pkl"
+LANE_C_PKL = ROOT / "data" / "new_build" / "models" / "soft_label_challenger" / "champion_model.pkl"
 REGISTRY_PATH = NEW_BUILD_ROOT / "models" / "champion" / "champion_registry.json"
 
 INTENT_COVERAGE_GATE = 80.0  # percent; below this → Lane A is operational
@@ -160,7 +162,13 @@ def _score_lane(bundle: dict, rows: list[dict], label: str) -> tuple[list[float]
     if violations:
         raise AssertionError(f"LEAKAGE ABORT {label}: {violations}")
     X, missing = _build_matrix(rows, feature_cols, medians)
-    probs = model.predict_proba(X)[:, 1].tolist() if len(X) else []
+    if not len(X):
+        probs = []
+    elif bundle.get("model_type") == "lgb_native_booster":
+        raw = model.predict(X.values)
+        probs = (1.0 / (1.0 + np.exp(-raw))).tolist()
+    else:
+        probs = model.predict_proba(X)[:, 1].tolist()
     return probs, missing, violations
 
 
@@ -251,16 +259,26 @@ def score_date(target_date: str, execute: bool = False) -> dict:
         bundle_a = pickle.load(f)
     with LANE_B_PKL.open("rb") as f:
         bundle_b = pickle.load(f)
+    bundle_c = None
+    if LANE_C_PKL.exists():
+        with LANE_C_PKL.open("rb") as f:
+            bundle_c = pickle.load(f)
 
     # Score both lanes
     probs_a, missing_a, violations_a = _score_lane(bundle_a, target_rows, "LaneA")
     probs_b, missing_b, violations_b = _score_lane(bundle_b, target_rows, "LaneB")
+    probs_c: list[float] = []
+    if bundle_c is not None:
+        probs_c, _, _ = _score_lane(bundle_c, target_rows, "LaneC_SoftLabel")
 
     # Clone rows for each lane so we don't mix keys
     rows_a = [dict(r) for r in target_rows]
     rows_b = [dict(r) for r in target_rows]
+    rows_c = [dict(r) for r in target_rows]
     _rank_within_race(rows_a, probs_a, "lane_a_prob", "lane_a_rank")
     _rank_within_race(rows_b, probs_b, "lane_b_prob", "lane_b_rank")
+    if probs_c:
+        _rank_within_race(rows_c, probs_c, "lane_c_prob", "lane_c_rank")
 
     # ── NEW: Apply Decision Policy V1 ─────────────────────────────────────────
     from new_build_velo.policy_v1 import apply_policy_v1
@@ -296,6 +314,7 @@ def score_date(target_date: str, execute: bool = False) -> dict:
 
     # Build per-race scorecards
     by_race: dict[str, dict] = {}
+    rows_c_map = {str(r.get("race_id","")) + str(r.get("horse","")): r for r in rows_c} if rows_c else {}
     for row_a, row_b in zip(rows_a, rows_b):
         rid = str(row_a.get("race_id"))
         if rid not in by_race:
@@ -307,6 +326,7 @@ def score_date(target_date: str, execute: bool = False) -> dict:
                 "race_title": row_a.get("race_title"),
                 "runners": [],
             }
+        row_c = rows_c_map.get(str(row_a.get("race_id","")) + str(row_a.get("horse","")), {})
         by_race[rid]["runners"].append({
             "horse": row_a.get("horse"),
             "rp_uid": row_a.get("rp_uid"),
@@ -315,6 +335,8 @@ def score_date(target_date: str, execute: bool = False) -> dict:
             "lane_a_rank": row_a.get("lane_a_rank"),
             "lane_b_prob": row_b.get("lane_b_prob"),
             "lane_b_rank": row_b.get("lane_b_rank"),
+            "lane_c_prob": row_c.get("lane_c_prob"),
+            "lane_c_rank": row_c.get("lane_c_rank"),
             "nb_decision_lane": row_a.get("nb_decision_lane"),
             "nb_policy_reasons": row_a.get("nb_policy_reasons"),
         })
@@ -336,6 +358,8 @@ def score_date(target_date: str, execute: bool = False) -> dict:
                              for r in runners if r.get("lane_a_rank", 99) <= 3],
             "lane_b_top3": [{"rank": r["lane_b_rank"], "horse": r["horse"], "prob": r["lane_b_prob"], "nb_decision_lane": r.get("nb_decision_lane")}
                              for r in runners if r.get("lane_b_rank", 99) <= 3],
+            "lane_c_top3": [{"rank": r["lane_c_rank"], "horse": r["horse"], "prob": r["lane_c_prob"]}
+                             for r in runners if r.get("lane_c_rank") is not None and r.get("lane_c_rank", 99) <= 3],
             "lane_b_note": "PAPER_ONLY_NO_INTENT" if intent_pct < INTENT_COVERAGE_GATE else "LIVE",
             "weak_data": pp_found < len(runners),
             "top_pick_lane": runners[0].get("nb_decision_lane") if runners else None,

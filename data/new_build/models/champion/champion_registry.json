@@ -1,11 +1,11 @@
 {
   "generated_at": "2026-05-29T03:22:29.908570Z",
-  "champion_name": "core_v0_or_passport_intent",
-  "champion_version": "Challenger_V1",
-  "promoted_at": "2026-05-29T03:22:29.908570Z",
-  "promoted_from": "challenger",
-  "dethroned_champion": "Core_V0_OR_Passport_V1",
-  "promotion_reason": "CHALLENGER_V1_PROMOTED — held-out 2025 test: AUC +0.0047 / SR +0.0086 / Frame +0.0094 over champion",
+  "champion_name": "soft_label_challenger_v1",
+  "champion_version": "SoftLabel_V1",
+  "promoted_at": "2026-06-27T02:20:31.949071+00:00",
+  "promoted_from": "soft_label_challenger",
+  "dethroned_champion": "core_v0_or_passport_intent",
+  "promotion_reason": "SOFT_LABEL_V1_PROMOTED \u2014 2025 holdout: AUC=0.7028 (+0.0059) SR=28.4% (+3.4ppts). Label fix: win=1.0 placed=0.35 else=0.",
   "classification": [
     "INTENT_SIGNAL_CONFIRMED",
     "CHALLENGER_V1_BEATS_CHAMPION_ON_UNSEEN_2025",
@@ -16,7 +16,7 @@
   "velo_scoring_allowed": false,
   "rpr_violation": false,
   "sp_violation": false,
-  "model_pkl": "data/new_build/models/core_v0_or_passport_intent/model.pkl",
+  "model_pkl": "data/new_build/models/champion/champion_model.pkl",
   "features_frozen": [
     "dist_f",
     "going_code",
@@ -122,13 +122,10 @@
     ]
   },
   "metrics_2025_unseen": {
-    "auc": 0.6969,
-    "brier": 0.0855,
-    "sr": 0.2502,
-    "frame": 0.5498,
-    "races": 5775,
-    "runners": 57221,
-    "note": "held-out 2025 test set"
+    "auc": 0.7028,
+    "sr": 0.2842,
+    "races": 3691,
+    "note": "2025 holdout, soft label fix"
   },
   "prior_champion_metrics_2025_unseen": {
     "auc": 0.6922,
@@ -145,5 +142,6 @@
   "intent_current_card_note": "Intent features (15) are filled from training medians for current-card rows. Model will score on Core+Passport signals primarily. Intent median-fill is expected behavior.",
   "paper_only": true,
   "live_velo_impact": false,
-  "shadow_velo_impact": false
+  "shadow_velo_impact": false,
+  "model_type": "lgb_native_booster"
 }
