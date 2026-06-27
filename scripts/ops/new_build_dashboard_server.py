@@ -429,6 +429,34 @@ def _build_governed_card_from_two_lane_readiness(date_str: str) -> dict | None:
     }
 
 
+def _load_radical_shadow_for_date(date_str: str) -> dict:
+    """Load radical shadow report keyed by race_id → decision dict."""
+    date_tag = date_str.replace("-", "_")
+    path = ROOT / "data" / "reports" / f"radical_shadow_{date_tag}.json"
+    data = _load_json(path, {})
+    if not data:
+        return {}
+    decisions = data.get("decisions", [])
+    return {str(d["race_id"]): d for d in decisions if d.get("race_id")}
+
+
+def _build_no_rpr_race_map(rows: list[dict]) -> dict:
+    """Build race_id → {top_horse, top_prob} from sqpe_no_rpr_shadow_prob in snapshot rows."""
+    race_probs: dict[str, list[tuple[float, str]]] = {}
+    for row in rows:
+        rid = str(row.get("race_id") or "")
+        horse = row.get("horse") or ""
+        prob = float(row.get("sqpe_no_rpr_shadow_prob") or 0.0)
+        if rid and horse and prob > 0:
+            race_probs.setdefault(rid, []).append((prob, horse))
+    result = {}
+    for rid, pairs in race_probs.items():
+        pairs.sort(reverse=True)
+        top_prob, top_horse = pairs[0]
+        result[rid] = {"top_horse": top_horse, "top_prob": top_prob}
+    return result
+
+
 def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
     """Serve the official local Live VÉLØ runner snapshot in dashboard shape.
 
@@ -438,6 +466,24 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
     rows = _find_live_runner_snapshots_for_date(date_str)
     if not rows:
         return None
+
+    # Pre-build No-RPR top pick per race and shadow decisions
+    no_rpr_map = _build_no_rpr_race_map(rows)
+    shadow_map = _load_radical_shadow_for_date(date_str)
+
+    # Load New Build two-lane Lane A top3 per race
+    tl_data, _ = _load_new_build_readiness(date_str)
+    nb_lane_a_map: dict[str, dict] = {}
+    for card in tl_data.get("race_day_scorecards", []):
+        rid = str(card.get("race_id") or "")
+        if not rid:
+            continue
+        lane_a_top3 = sorted(card.get("lane_a_top3") or [], key=lambda x: x.get("rank", 99))
+        nb_lane_a_map[rid] = {
+            "top3": [{"horse": p.get("horse"), "rank": p.get("rank"), "prob": p.get("prob") or p.get("lane_a_prob"), "nb_decision_lane": p.get("nb_decision_lane")} for p in lane_a_top3[:3]],
+            "runner_count": card.get("runner_count"),
+            "passport_coverage": card.get("passport_coverage"),
+        }
 
     verdicts = []
     for row in rows:
@@ -461,8 +507,15 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
         if place_prob >= 0.80:
             badges.append("PLACE_PROB_HIGH")
 
+        rid = str(row.get("race_id") or "")
+        nr = no_rpr_map.get(rid, {})
+        sh = shadow_map.get(rid, {})
+        nb = nb_lane_a_map.get(rid, {})
+        radical = sh.get("radical", {})
+        sh_passport = sh.get("passport", {})
+
         verdicts.append({
-            "race_id": str(row.get("race_id") or ""),
+            "race_id": rid,
             "horse": row.get("horse") or "",
             "horse_id": str(row.get("horse_id") or ""),
             "course": row.get("course") or "",
@@ -474,6 +527,7 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
             "top_pick_vp": row.get("top_pick_vp"),
             "velo_prime_prob": prob,
             "sqpe_v17_prob": row.get("sqpe_v17_prob"),
+            "sqpe_no_rpr_shadow_prob": row.get("sqpe_no_rpr_shadow_prob"),
             "place_prob": place_prob,
             "market_deception_score": mds,
             "improvement_score": improvement,
@@ -505,6 +559,21 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
             "rp_flatline_warning": False,
             "trust_policy": "LIVE_VERDICT_READ_ONLY_DASHBOARD",
             "paper_only": False,
+            # New Build two-lane Lane A (top3 per race on all runner rows)
+            "new_build_top3": nb.get("top3") or [],
+            "new_build_runner_count": nb.get("runner_count"),
+            "new_build_passport_coverage": nb.get("passport_coverage"),
+            # No-RPR shadow (top pick per race, on all runner rows)
+            "no_rpr_top_horse": nr.get("top_horse"),
+            "no_rpr_top_prob": nr.get("top_prob"),
+            # Radical shadow lane
+            "shadow_action": radical.get("action"),
+            "shadow_confidence": radical.get("confidence"),
+            "shadow_win_gate_probability": sh.get("win_gate_probability"),
+            "shadow_frame_gate_probability": sh.get("frame_gate_probability"),
+            "shadow_passport_available": sh_passport.get("passport_available"),
+            "shadow_warnings": radical.get("warnings") or [],
+            "shadow_reasons": radical.get("reasons") or [],
         })
 
     verdicts.sort(key=lambda x: (x.get("off_time") or "", x.get("course") or "", x.get("rank") or 99))
@@ -561,12 +630,13 @@ def _build_governed_card(date_str: str) -> dict:
     feed = report.get("current_card_feed", {}) if report else {}
 
     if not preds:
-        two_lane = _build_governed_card_from_two_lane_readiness(date_str)
-        if two_lane:
-            return two_lane
+        # Live snapshot is richer (has VP, MDS, improvement, No-RPR, shadow) — try first
         live_snapshot = _build_governed_card_from_live_snapshots(date_str)
         if live_snapshot:
             return live_snapshot
+        two_lane = _build_governed_card_from_two_lane_readiness(date_str)
+        if two_lane:
+            return two_lane
         return {
             "meta": {
                 "status": "NO_DATA",
