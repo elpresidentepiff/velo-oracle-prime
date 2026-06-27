@@ -63,12 +63,23 @@ def _read_jsonl(path: Path) -> list[dict]:
 def _fmt_time(val: str | None) -> str | None:
     if not val:
         return None
-    if "T" in str(val):
+    s = str(val)
+    if "T" in s:
         try:
-            return datetime.fromisoformat(val).strftime("%H:%M")
+            return datetime.fromisoformat(s).strftime("%H:%M")
         except Exception:
             pass
-    return str(val)[:5] if len(str(val)) >= 5 else val
+    # RP dot notation: "2.20" = 14:20, "9.00" = 21:00 — UK racing is always PM (13:00–22:00)
+    if "." in s and ":" not in s:
+        try:
+            parts = s.strip().split(".")
+            h, m = int(parts[0]), int(parts[1][:2])
+            if 1 <= h <= 9:  # 1pm–9pm
+                h += 12
+            return f"{h:02d}:{m:02d}"
+        except Exception:
+            pass
+    return s[:5] if len(s) >= 5 else s
 
 
 def _find_predictions_for_date(date_str: str) -> list[dict]:
