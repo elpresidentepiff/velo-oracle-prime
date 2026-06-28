@@ -105,6 +105,7 @@ def _load_injection_runners(injection_path: Path) -> tuple[list[dict], set[str]]
             continue
         race_ids.add(race_id)
         course_id = str(race.get("course_id") or "")
+        course_name = str(race.get("course") or "")
         dist_f = _to_float(race.get("distance_furlongs"))
         for runner in race.get("runners") or []:
             if runner.get("non_runner"):
@@ -112,14 +113,18 @@ def _load_injection_runners(injection_path: Path) -> tuple[list[dict], set[str]]
             horse_id = str(runner.get("horse_id") or "").strip()
             if not horse_id:
                 continue
+            # "or" is the canonical OR field from RP racecard; "official_rating" is
+            # a fallback that often contains '-' for non-handicap runners
+            raw_or = runner.get("or") or runner.get("official_rating")
             runners.append({
                 "horse_id": horse_id,
                 "horse": runner.get("horse", ""),
                 "race_id": race_id,
                 "trainer_id": str(runner.get("trainer_id") or ""),
                 "trainer": runner.get("trainer", ""),
-                "current_or": _to_int(runner.get("official_rating")),
+                "current_or": _to_int(raw_or),
                 "course_id": course_id,
+                "course_name": course_name,
                 "dist_f": dist_f,
             })
     return runners, race_ids
@@ -235,6 +240,7 @@ def compute_rpdc(
     trainer: str,
     current_or: int | None,
     today_course_id: str,
+    today_course: str,
     today_dist_f: float | None,
     today_str: str,
     history: list[dict],
@@ -325,12 +331,12 @@ def compute_rpdc(
             pass
 
     # ── Flags ─────────────────────────────────────────────────────────────────
-    # course_id is empty in RP-sourced racing_horse_runs rows — fall back to
-    # course name match (today_course_id often IS the short course name from injection)
+    # course_id is empty in RP-sourced racing_horse_runs rows; injection gives
+    # numeric IDs not names — use today_course (name) for the name comparison
     def _course_match(run: dict) -> bool:
         if today_course_id and run.get("course_id") == today_course_id:
             return True
-        if today_course_id and run.get("course", "").lower() == today_course_id.lower():
+        if today_course and run.get("course", "").lower() == today_course.lower():
             return True
         return False
 
@@ -620,6 +626,7 @@ def build_rpdc_for_date(date_str: str, injection_path: str | Path | None = None)
                 trainer=runner.get("trainer", ""),
                 current_or=runner.get("current_or"),
                 today_course_id=runner.get("course_id", ""),
+                today_course=runner.get("course_name", ""),
                 today_dist_f=runner.get("dist_f"),
                 today_str=date_str,
                 history=history,
