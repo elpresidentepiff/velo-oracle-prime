@@ -16,6 +16,7 @@ import argparse
 import json
 import logging
 import os
+import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -186,23 +187,34 @@ def _fetch_horse_history(horse_id: str, horse_name: str = "") -> list[dict]:
         f"&order=run_date.desc&limit=20&select={_fields}"
     )
     if not rows and horse_name:
-        # Horse_id format mismatch — fall back to name match
-        safe_name = horse_name.replace("'", "''")
+        # Horse_id format mismatch — fall back to name match (URL-encode the name)
+        encoded_name = urllib.parse.quote(horse_name, safe="")
         rows = _sb_get(
-            f"/racing_horse_runs?horse=ilike.{safe_name}"
+            f"/racing_horse_runs?horse=ilike.{encoded_name}"
             f"&order=run_date.desc&limit=20&select={_fields}"
         )
     return rows
 
 
-def _trainer_stats(trainer_id: str, today_str: str) -> dict:
-    """Compute trainer win/place rate over last 30 days from racing_horse_runs."""
+def _trainer_stats(trainer_id: str, today_str: str, trainer_name: str = "") -> dict:
+    """Compute trainer win/place rate over last 30 days from racing_horse_runs.
+
+    racing_horse_runs.trainer_id is empty for RP-sourced rows; falls back to
+    trainer name lookup when the ID query returns nothing.
+    """
     cutoff = (date.fromisoformat(today_str) - timedelta(days=30)).isoformat()
     rows = _sb_get(
         f"/racing_horse_runs?trainer_id=eq.{trainer_id}"
         f"&run_date=gte.{cutoff}"
         f"&select=is_win,is_place"
     )
+    if not rows and trainer_name:
+        encoded = urllib.parse.quote(trainer_name, safe="")
+        rows = _sb_get(
+            f"/racing_horse_runs?trainer=ilike.{encoded}"
+            f"&run_date=gte.{cutoff}"
+            f"&select=is_win,is_place"
+        )
     if not rows:
         return {"runs": 0, "wins": 0, "places": 0, "win_rate": 0.0}
     wins = sum(1 for r in rows if r.get("is_win"))
@@ -313,9 +325,18 @@ def compute_rpdc(
             pass
 
     # ── Flags ─────────────────────────────────────────────────────────────────
-    course_return_flag = (
-        today_course_id is not None
-        and any(r.get("course_id") == today_course_id and r.get("is_win") for r in history)
+    # course_id is empty in RP-sourced racing_horse_runs rows — fall back to
+    # course name match (today_course_id often IS the short course name from injection)
+    def _course_match(run: dict) -> bool:
+        if today_course_id and run.get("course_id") == today_course_id:
+            return True
+        if today_course_id and run.get("course", "").lower() == today_course_id.lower():
+            return True
+        return False
+
+    course_return_flag = bool(
+        today_course_id
+        and any(_course_match(r) and r.get("is_win") for r in history)
     )
 
     distance_revert_flag = (
@@ -569,12 +590,18 @@ def build_rpdc_for_date(date_str: str, injection_path: str | Path | None = None)
     runners_unique = list(seen_horses.values())
     print(f"  Runners to score: {len(runners_unique)}")
 
-    # Pre-fetch trainer stats (batch by unique trainer_ids)
+    # Pre-fetch trainer stats (batch by unique trainer_id; keyed by name for fallback)
     trainer_ids = list({r["trainer_id"] for r in runners_unique if r.get("trainer_id")})
     log.info("Pre-fetching stats for %d trainers", len(trainer_ids))
+    # Build trainer_id → trainer_name map for name fallback
+    _tid_to_name: dict[str, str] = {}
+    for r in runners_unique:
+        tid = r.get("trainer_id", "")
+        if tid and tid not in _tid_to_name:
+            _tid_to_name[tid] = r.get("trainer", "")
     trainer_cache: dict[str, dict] = {}
     for tid in trainer_ids:
-        trainer_cache[tid] = _trainer_stats(tid, date_str)
+        trainer_cache[tid] = _trainer_stats(tid, date_str, _tid_to_name.get(tid, ""))
 
     # Score each runner
     candidates = []
