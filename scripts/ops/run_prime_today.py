@@ -785,6 +785,38 @@ def _attach_bha_perf_trajectory(top: dict, race_type: str) -> None:
     top["surf_traj_flag"] = flag
 
 
+def _apply_bha_or_diff_to_rpdc(top: dict) -> None:
+    """Post-attach BHA OR diff modifier for RPDC mark signals.
+
+    Rules:
+      BHA LOWERED ≥3pts + MARK_NEAR → add BHA_MARK_CONFIRMED, bump release_score +0.5
+      BHA RAISED  ≥3pts + MARK_READY → add BHA_MARK_RAISED (suppressor evidence)
+    Evidence-only — no gate change, no staking weight. Shadow signal.
+    """
+    flag = top.get("bha_or_diff_flag")
+    magnitude = top.get("bha_or_diff_magnitude") or 0
+    if not flag or magnitude < 3:
+        return
+
+    tags = list(top.get("rpdc_tags") or [])
+    primary = top.get("rpdc_primary_tag") or ""
+
+    if flag == "LOWERED" and "MARK_NEAR" in tags:
+        if "BHA_MARK_CONFIRMED" not in tags:
+            tags.append("BHA_MARK_CONFIRMED")
+            top["rpdc_tags"] = tags
+            top["rpdc_release_score"] = float(top.get("rpdc_release_score") or 0) + 0.5
+            log.debug("BHA_MARK_CONFIRMED added for %s (lowered %dpts + MARK_NEAR)",
+                      top.get("horse"), magnitude)
+
+    elif flag == "RAISED" and "MARK_READY" in tags:
+        if "BHA_MARK_RAISED" not in tags:
+            tags.append("BHA_MARK_RAISED")
+            top["rpdc_tags"] = tags
+            log.debug("BHA_MARK_RAISED suppressor added for %s (raised %dpts + MARK_READY)",
+                      top.get("horse"), magnitude)
+
+
 def _attach_rpdc_from_row(top: dict, row: dict | None) -> None:
     """Attach RPDC tags to the top pick from an already loaded row."""
     if not row:
@@ -1904,6 +1936,19 @@ def main():
                 _attach_bha_or_diff(top, race.get("type") or race.get("race_type") or "")
                 # Attach BHA surface trajectory badge (evidence only — no scoring weight)
                 _attach_bha_perf_trajectory(top, race.get("type") or race.get("race_type") or "")
+                # Apply BHA OR diff modifier to RPDC mark tags (shadow signal — evidence only)
+                _apply_bha_or_diff_to_rpdc(top)
+                # Claiming race flag — adds OWNERSHIP_CHANGE badge (evidence only, shadow)
+                _rt = (race.get("type") or race.get("race_type") or "").lower()
+                if "claim" in _rt:
+                    _tags = list(top.get("rpdc_tags") or [])
+                    if "OWNERSHIP_CHANGE" not in _tags:
+                        _tags.append("OWNERSHIP_CHANGE")
+                        top["rpdc_tags"] = _tags
+                        top["claiming_race"] = True
+                        log.debug("OWNERSHIP_CHANGE badge added for %s (claiming race)", top.get("horse"))
+                else:
+                    top["claiming_race"] = False
 
                 # ── GOVERNED EXECUTION ROUTER ────────────────────────────────
                 top_raw_runner = runner_map.get(top.get("horse", ""), {})

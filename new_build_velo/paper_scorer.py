@@ -7,8 +7,10 @@ reported as paper-read limitations.
 """
 from __future__ import annotations
 
+import csv as _csv
 import json
 import pickle
+import re as _re
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -24,6 +26,9 @@ from new_build_velo.spine import NEW_BUILD_ROOT, TRUST_POLICY, stable_id, utc_no
 
 
 ROOT = Path(__file__).resolve().parents[1]
+BHA_PERF_FIGURES_PATH = ROOT / "data" / "bha_perf_figures_latest.csv"
+_BHA_PERF_NORM_RE = _re.compile(r"\s*\([A-Z]{2,4}\)\s*$")
+_BHA_PERF_FIG_RE = _re.compile(r"^([TAHSNM]):(.+)$")
 PAPER_ROOT = NEW_BUILD_ROOT / "paper_predictions"
 REPORT_ROOT = NEW_BUILD_ROOT / "reports"
 PAPER_JSONL_PATH = PAPER_ROOT / "new_build_paper_predictions_latest.jsonl"
@@ -113,6 +118,72 @@ def _bad_keys(row: dict[str, Any]) -> list[str]:
         if any(token in lowered for token in BANNED_SUBSTRINGS):
             bad.append(key)
     return bad
+
+
+def _load_bha_perf_figures_lookup() -> dict[str, list[tuple[str, int | None]]]:
+    if not BHA_PERF_FIGURES_PATH.exists():
+        return {}
+    lookup: dict[str, list[tuple[str, int | None]]] = {}
+    try:
+        with open(BHA_PERF_FIGURES_PATH, encoding="utf-8-sig", errors="replace") as fh:
+            for row in _csv.DictReader(fh):
+                raw = (row.get("Racehorse") or "").strip()
+                norm = _BHA_PERF_NORM_RE.sub("", raw).lower().strip()
+                if not norm:
+                    continue
+                figs: list[tuple[str, int | None]] = []
+                for col in ["Latest", "2 runs ago", "3 runs ago", "4 runs ago", "5 runs ago", "6 runs ago"]:
+                    m = _BHA_PERF_FIG_RE.match((row.get(col) or "").strip())
+                    if not m:
+                        continue
+                    surf, val = m.group(1), m.group(2)
+                    figs.append((surf, None if val == "x" else _to_int(val)))
+                if figs:
+                    lookup[norm] = figs
+    except Exception:
+        pass
+    return lookup
+
+
+def _bha_slope(values: list[int]) -> float:
+    n = len(values)
+    if n < 2:
+        return 0.0
+    xm = (n - 1) / 2.0
+    ym = sum(values) / n
+    num = sum((i - xm) * (v - ym) for i, v in enumerate(values))
+    den = sum((i - xm) ** 2 for i in range(n))
+    return num / den if den else 0.0
+
+
+def _bha_form_momentum(horse: str, lookup: dict[str, list[tuple[str, int | None]]]) -> dict[str, Any]:
+    norm = _BHA_PERF_NORM_RE.sub("", (horse or "").strip()).lower().strip()
+    figs = lookup.get(norm)
+    if not figs:
+        return {"bha_form_momentum": None, "bha_form_latest_fig": None, "bha_form_n": 0, "bha_form_flag": "NO_DATA"}
+    nums_latest_first = [f for _, f in figs if f is not None and f > 0]
+    if not nums_latest_first:
+        return {"bha_form_momentum": None, "bha_form_latest_fig": None, "bha_form_n": 0, "bha_form_flag": "SPARSE"}
+    nums_asc = list(reversed(nums_latest_first))
+    slope = _bha_slope(nums_asc) if len(nums_asc) >= 2 else None
+    if slope is None:
+        flag = "SPARSE"
+    elif slope > 5.0:
+        flag = "ACCELERATING"
+    elif slope > 2.0:
+        flag = "PROGRESSIVE"
+    elif slope >= -2.0:
+        flag = "STABLE"
+    elif slope >= -5.0:
+        flag = "REGRESSING"
+    else:
+        flag = "DECLINING"
+    return {
+        "bha_form_momentum": round(slope, 2) if slope is not None else None,
+        "bha_form_latest_fig": nums_latest_first[0],
+        "bha_form_n": len(nums_asc),
+        "bha_form_flag": flag,
+    }
 
 
 def _going_code(value: Any, default: float) -> float:
@@ -344,6 +415,11 @@ def build_paper_predictions(
             }
         )
     _race_normalize(paper_rows)
+
+    # B-2 shadow signal: BHA form momentum (sidecar evidence — NOT in champion model feature matrix)
+    _bha_lookup = _load_bha_perf_figures_lookup()
+    for pr in paper_rows:
+        pr.update(_bha_form_momentum(pr.get("horse") or "", _bha_lookup))
 
     intent_count = sum(1 for row in paper_rows if row["intent_features_available"])
     classification = "NEW_BUILD_PRE_RUN_BLOCKED" if bad_keys else "NEW_BUILD_PAPER_READY_NO_INTENT"

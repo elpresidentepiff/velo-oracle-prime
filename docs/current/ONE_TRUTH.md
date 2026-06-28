@@ -35,7 +35,7 @@ An auditable UK/IRE horse-racing prediction system. It captures Racing Post HTML
 | SP inference | Fixed 2026-06-18 (`b672f0e`): `_resolve_decimal_odds()` reads `best_odds_decimal` correctly; `sp_rank` and `is_fav` pre-injected across full field |
 
 ## What is SHADOW (no scoring effect)
-New Build / Passport two-lane scorer · No-RPR model (parallel shadow — no RPR feature; promoted 2026-06-19 alongside sqpe_v17.1) · Playbook G sentient loopback (`sentient_state_shadow.json`) · Execution bridge paper ledger (SIM-only, hard LIVE guard) · Router lanes V1/V2/V6 · Shadow Model C · Race Shape v1 · BHA OR-diff and surface-trajectory badges (evidence only).
+New Build / Passport two-lane scorer · No-RPR model (parallel shadow — no RPR feature; promoted 2026-06-19 alongside sqpe_v17.1) · Playbook G sentient loopback (`sentient_state_shadow.json`) · Execution bridge paper ledger (SIM-only, hard LIVE guard) · Router lanes V1/V2/V6 · Shadow Model C · Race Shape v1 · BHA OR-diff and surface-trajectory badges (evidence only) · BHA form momentum sidecar (paper_scorer.py, 11,817 horses, slope/flag) · Claiming race OWNERSHIP_CHANGE badge (inline run_prime_today.py) · RPDC RS≥1.5 advisory gate (SR=44.7%, n=38).
 
 ## Paper Intelligence (dashboard/research overlays only — added 2026-06-21)
 These do **not** alter live scoring, tiers, model weights, Supabase verdicts, router execution, Telegram, or staking.
@@ -75,7 +75,14 @@ Racing API as a data source (decommissioned 2026-05-14; client files deleted) ·
 ## What is EXPERIMENTAL
 International prerace arenas (`scripts/audit_international_*`) · HK/FR feature builders · Intent Layer V1 (patched, rerun required) · sqpe_v18 (NO_LIFT verdict, not wired) · Race Shape v1 (shadow only, form history parser live).
 
-## What is BLOCKED / KNOWN ISSUES (as of 2026-06-26)
+## Phase A–D Audit Corpus (added 2026-06-28)
+- **Sigma local corpus:** `scripts/audit/build_sigma_local_corpus.py` → `data/training/sigma_local_corpus_latest.parquet` (1,050 rows, 36 dates, SR=26.7%). Run after any new sigma dates to extend.
+- **Top gates (shadow/advisory only):** VP≥0.40+HIGH_CONF SR=54.2% (n=83) · VP+IMP≥0.4 SR=55.6% (n=36) · VP+MDS≥0.3 SR=52.8% (n=53) · RS≥1.5 SR=44.7% (n=38)
+- **Going code bug (A-3):** Both `paper_scorer.py:189` and `new_build_two_lane_score.py:82` use wrong 0–8 scale (training uses -1 to 2). Fix NOT applied — operator decision pending. See `VELO_HARDENING_STATE.md`.
+- **RPDC missing tags:** STABLE_WARM / MARK_READY / MARK_NEAR / COURSE_RETURN absent from all May–Jun 2026 data. Investigate Supabase `runner_release_candidates`.
+- **New scrapers/parsers:** `scripts/ops/scrape_bha_going_stick.py` (D-1, shell ready) · `scripts/ops/parse_runner_notes.py` (D-3, verdict intel only)
+
+## What is BLOCKED / KNOWN ISSUES (as of 2026-06-28)
 - **Telegram scoring alerts:** DISABLED (`--no-notify`).
 - **Railway cron:** FAIL_OR_UNPROVEN — every run is manual.
 - **Local test suite:** pytest 6.2.5 incompatible with pytest-asyncio 1.3.0; 3 test modules have import drift. **30/30 governance tests pass** (governance-v1-hardened tag @ `2cc135a`).

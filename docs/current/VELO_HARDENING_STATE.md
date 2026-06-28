@@ -404,3 +404,87 @@ Live dashboard API verified for 2026-06-21:
 ### Next Research Mission
 
 Mar–Apr PRE_SURGERY study — BLOCKED until operator approves after current-era dry-run validation (14+ days minimum). Plan at `data/reports/pre_surgery_sigma_study_plan.md`.
+
+---
+
+## Phase A–D Audit (2026-06-28)
+
+**Status:** COMPLETE — all 14 tasks done  
+**Branch:** main  
+**Report:** `docs/current/PHASE_ABCD_AUDIT_REPORT_2026_06_28.md`
+
+### A-3 — Going Code Scale Bug (OPERATOR DECISION PENDING)
+
+**Bug:** Both scorer files use 0–8 going scale; champion model trained on -1 to 2 (raceform_v17).
+
+| File | Line | Current (wrong) | Training scale |
+|---|---|---|---|
+| `new_build_velo/paper_scorer.py` | 189 | Heavy=0, Good=3, Firm=5 | -1 to 2 |
+| `scripts/ops/new_build_two_lane_score.py` | 82 | Same 0–8 | -1 to 2 |
+
+`going_code` is feature rank 18 in champion model. Fix NOT applied — awaiting operator decision.  
+**Option A:** Update both `_going_code()` to -1→2 scale (one-line fix each).  
+**Option B:** Retrain with 0–8 scale as canonical.
+
+### A-4 — JTC-D Quarantine Confirmed
+
+- Static JTC-D profiles: `LEAKAGE_RISK` — stays quarantined. All-time cumulative = forward leakage.
+- Rolling JTC-D (`jtc_d_rp/`): CLEAN, SHADOW ONLY. Separate sidecar validation task required before any promotion.
+
+### B-1 — BHA OR-diff → RPDC Tag: WIRED (shadow)
+
+`_apply_bha_or_diff_to_rpdc()` in `scripts/ops/run_prime_today.py` (line 788, called ~1940):
+- BHA LOWERED ≥3pts + MARK_NEAR → `BHA_MARK_CONFIRMED` badge + +0.5 release_score
+- BHA RAISED ≥3pts + MARK_READY → `BHA_MARK_RAISED` suppressor
+- Evidence only, no VP change.
+
+### B-2 — BHA Form Momentum: WIRED (paper sidecar)
+
+`new_build_velo/paper_scorer.py` — three helpers + wired in `build_paper_predictions()`.  
+Attaches `bha_form_momentum`, `bha_form_latest_fig`, `bha_form_n`, `bha_form_flag` to paper rows.  
+NOT in champion model feature matrix. Shadow sidecar only.
+
+### C-1 — Sigma Local Corpus: BUILT
+
+`scripts/audit/build_sigma_local_corpus.py` → `data/training/sigma_local_corpus_latest.parquet`  
+1,050 rows, 36 dates (May 21–Jun 27), SR=26.7%.
+
+### C-3 — RPDC RS≥1.5 Gate: ADVISORY (operator promotion decision pending)
+
+Release score ≥ 1.5 → SR=44.7% (n=38) vs 26.7% base. Advisory signal. Not yet promoted to active.
+
+### RPDC Missing Tags Warning (OPEN)
+
+STABLE_WARM, MARK_READY, MARK_NEAR, COURSE_RETURN absent from all May–Jun 2026 sigma corpus rows.  
+Only CYCLE_RUN_1/2/3, PLACE_FORM, WIN_STREAK visible. Root cause unknown.  
+**Needs investigation:** check Supabase `runner_release_candidates` for tag computation gaps.
+
+### D-2 — Claiming Race Badge: WIRED (shadow)
+
+Inline in `scripts/ops/run_prime_today.py` after `_apply_bha_or_diff_to_rpdc()` call.  
+`race_type` string containing "claim" → appends `OWNERSHIP_CHANGE` to `rpdc_tags`, sets `claiming_race=True`.  
+Evidence only, no scoring effect.
+
+### D-3 — Runner Notes Parser: BUILT
+
+`scripts/ops/parse_runner_notes.py` — reads `comment_intel_score`, `nds_narrative`, `nds_is_fade` from local verdicts.  
+Emits NDS_FADE tags (BLED, LAME, UNSEAT, INTERFERENCE, HAMPERED, NEVER_DANGEROUS, LOST_ACTION, FELL, REFUSED, SLOW_START).  
+RP stewards report scraping NOT yet implemented (documented TODO in script header).
+
+### Final Classification (Phase A–D)
+
+- `PHASE_ABCD_AUDIT_COMPLETE`
+- `GOING_CODE_BUG_DOCUMENTED_OPERATOR_DECISION_PENDING`
+- `JTC_D_QUARANTINE_CONFIRMED`
+- `BHA_MARK_CONFIRMED_BADGE_WIRED`
+- `BHA_FORM_MOMENTUM_SIDECAR_WIRED`
+- `SIGMA_LOCAL_CORPUS_BUILT_1050_ROWS`
+- `RPDC_RS_15_ADVISORY_GATE_DOCUMENTED`
+- `RPDC_MISSING_TAGS_WARNING_OPEN`
+- `CLAIMING_RACE_BADGE_WIRED`
+- `RUNNER_NOTES_PARSER_BUILT`
+- `NO_LIVE_SCORING_CHANGE`
+- `NO_SUPABASE_WRITES`
+- `NO_MODEL_PROMOTION`
+- `NO_TELEGRAM_SEND`
+- `NO_RACING_API_RESTORATION`
