@@ -18,6 +18,7 @@ Directive types (priority order):
   POWER_ANCHOR_MODE     — Tier A, VP≥0.40, execution gate clear
   FAVOURITE_LIABILITY_MODE — MDS≥0.50, VP≥0.30, Tier A/B
   MULTI_THREAT_ZONE_MODE— VP≥0.30, improvement_score≥0.40
+  RPDC_RELEASE_MODE     — rpdc_release_score≥1.5, VP≥0.30 (calibrated: SR=44.7%, n=38)
   WATCH_ONLY            — VP≥0.30 but below execution threshold
   BLOCKED               — sub-threshold fallthrough
 
@@ -475,7 +476,26 @@ class VeloExecutionBridge:
                 **base,
             )
 
-        # ── Priority 6: WATCH_ONLY (VP30+ but gate not met) ──────────────────
+        # ── Priority 6: RPDC_RELEASE_MODE (RS≥1.5 + VP≥0.30) ───────────────────
+        # RPDC release score ≥1.5 = horse career context confirms execution window.
+        # Calibrated on 1,050-row sigma corpus: SR=44.7% at n=38 vs 26.7% base.
+        if rpdc >= 1.5 and prob >= 0.30 and not suppressed:
+            codes = [f"RS={rpdc:.2f}", f"VP={prob:.3f}"]
+            if mds >= 0.20:
+                codes.append(f"MDS={mds:.2f}")
+            if imp >= 0.20:
+                codes.append(f"IMP={imp:.2f}")
+            if place_p >= 0.60:
+                codes.append(f"PLACE={place_p:.2f}")
+            return ExecutionDirective(
+                directive_type="RPDC_RELEASE_MODE",
+                confidence=round(min(0.70, rpdc * 0.15 + prob * 0.85), 4),
+                reason_codes=codes,
+                recommended_bet_type="WIN",
+                **base,
+            )
+
+        # ── Priority 7: WATCH_ONLY (VP30+ but gate not met) ──────────────────
         if prob >= 0.30:
             codes = [f"VP={prob:.3f}"]
             blocked_parts = []

@@ -170,14 +170,29 @@ def _sb_delete(path: str) -> bool:
         return False
 
 
-def _fetch_horse_history(horse_id: str) -> list[dict]:
-    """Fetch last 20 runs for a horse, ordered newest first."""
-    return _sb_get(
-        f"/racing_horse_runs?horse_id=eq.{horse_id}"
-        f"&order=run_date.desc&limit=20"
-        f"&select=run_date,official_rating,race_class,course,course_id"
-        f",distance_f,position_int,is_win,is_place,headgear,jockey_id,trainer_id"
+def _fetch_horse_history(horse_id: str, horse_name: str = "") -> list[dict]:
+    """Fetch last 20 runs for a horse, ordered newest first.
+
+    racing_horse_runs uses a name-based horse_id format (rp_{COURSE}_{name})
+    while racecard injection uses numeric IDs — so we fall back to horse-name
+    lookup when the ID query returns nothing.
+    """
+    _fields = (
+        "run_date,official_rating,race_class,course,course_id"
+        ",distance_f,position_int,is_win,is_place,headgear,jockey_id,trainer_id"
     )
+    rows = _sb_get(
+        f"/racing_horse_runs?horse_id=eq.{horse_id}"
+        f"&order=run_date.desc&limit=20&select={_fields}"
+    )
+    if not rows and horse_name:
+        # Horse_id format mismatch — fall back to name match
+        safe_name = horse_name.replace("'", "''")
+        rows = _sb_get(
+            f"/racing_horse_runs?horse=ilike.{safe_name}"
+            f"&order=run_date.desc&limit=20&select={_fields}"
+        )
+    return rows
 
 
 def _trainer_stats(trainer_id: str, today_str: str) -> dict:
@@ -568,7 +583,7 @@ def build_rpdc_for_date(date_str: str, injection_path: str | Path | None = None)
     for runner in runners_unique:
         hid = runner["horse_id"]
         try:
-            history = _fetch_horse_history(hid)
+            history = _fetch_horse_history(hid, runner.get("horse", ""))
             t_stats = trainer_cache.get(runner.get("trainer_id", ""), {"win_rate": 0.0})
             row = compute_rpdc(
                 horse_id=hid,

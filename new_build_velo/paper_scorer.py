@@ -190,16 +190,17 @@ def _going_code(value: Any, default: float) -> float:
     raw = str(value or "").strip().lower()
     if not raw:
         return default
+    # Scale matches raceform_v17 training data (-1 to 2)
     mapping = {
-        "heavy": 0.0,
-        "soft": 1.0,
-        "good to soft": 2.0,
-        "good": 3.0,
-        "good to firm": 4.0,
-        "firm": 5.0,
-        "standard": 6.0,
-        "standard to slow": 7.0,
-        "slow": 8.0,
+        "heavy": -1.0,
+        "soft": -0.5,
+        "good to soft": 0.0,
+        "good": 1.0,
+        "good to firm": 1.5,
+        "firm": 2.0,
+        "standard": 1.0,
+        "standard to slow": 0.0,
+        "slow": -0.5,
     }
     for label, code in mapping.items():
         if label in raw:

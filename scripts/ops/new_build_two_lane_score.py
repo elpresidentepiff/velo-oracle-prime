@@ -79,11 +79,12 @@ def _to_float(v, default=None):
         return default
 
 
-def _going_code(value, default=3.0) -> float:
+def _going_code(value, default=1.0) -> float:
     raw = str(value or "").strip().lower()
-    mapping = {"heavy": 0.0, "soft": 1.0, "good to soft": 2.0, "good": 3.0,
-               "good to firm": 4.0, "firm": 5.0, "standard": 6.0,
-               "standard to slow": 7.0, "slow": 8.0}
+    # Scale matches raceform_v17 training data (-1 to 2)
+    mapping = {"heavy": -1.0, "soft": -0.5, "good to soft": 0.0, "good": 1.0,
+               "good to firm": 1.5, "firm": 2.0, "standard": 1.0,
+               "standard to slow": 0.0, "slow": -0.5}
     for label, code in mapping.items():
         if label in raw:
             return code
