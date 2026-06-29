@@ -1,0 +1,109 @@
+{
+  "heartbeat_version": "velo_heartbeat_v1",
+  "generated_at": "2026-06-29T23:56:59.758639+00:00",
+  "living_state_version": "velo_living_state_v1",
+  "living_state_generated_at": "2026-06-29T23:50:27.246139+00:00",
+  "repo_head": "e5b259b",
+  "sections": {
+    "system_status": {
+      "truth_lock": "LOCKED",
+      "spine_count": 25,
+      "stale_docs_archived": true,
+      "repo_head": "e5b259b"
+    },
+    "source_truth": {
+      "status": "LOCAL_JSON_FALLBACK",
+      "note": "Not RP_MERGED_CLEAN \u2014 promotion gated until source is verified."
+    },
+    "vfu_status": {
+      "latest": "VFU-20",
+      "signed_off": true,
+      "signed_off_date": "2026-06-29",
+      "field_size_recovery_rate": 0.9236,
+      "field_size_missing_before": 1989,
+      "field_size_missing_after": 152,
+      "ew_profitability_status": "PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF",
+      "vfu_21_gate": "CLOSED"
+    },
+    "a3_going_code": {
+      "status": "FIXED",
+      "scale": "[-1, 2]",
+      "regression_tests": 4
+    },
+    "council_verdict": {
+      "verdict": "WATCH_ONLY",
+      "learning_gate": "BLOCKED",
+      "promotion_gate": "BLOCKED",
+      "gate_reasons": [
+        "GATE_COUNCIL_WATCH_ONLY",
+        "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
+      ],
+      "sigma_date": "2026-06-29",
+      "sigma_status": "PASS",
+      "sigma_sr": 0.3636,
+      "identity_failures": 0
+    },
+    "learning_routes": {
+      "memory_capture": "OPEN",
+      "failure_learning": "OPEN",
+      "promotion_learning": "GATED",
+      "promotion_blockers": [
+        "source_truth=LOCAL_JSON_FALLBACK",
+        "council_verdict=WATCH_ONLY"
+      ]
+    },
+    "contradictions": {
+      "count": 0,
+      "items": []
+    },
+    "playbook_g_shadow": {
+      "status": "SHADOW_ONLY",
+      "live_sentient_state_touched": false,
+      "compliant": true
+    },
+    "next_safe_action": {
+      "id": "VCP-01-REVIEW",
+      "name": "Operator review of velo_living_state_v1 before VCP-02 Heartbeat",
+      "allowed": false,
+      "requires_operator_approval": true,
+      "reason": "VCP-01 must pass tests and operator review before Heartbeat is built"
+    },
+    "forbidden_actions": [
+      "NO_LIVE_SCORING_CHANGE",
+      "NO_VP_THRESHOLD_CHANGE",
+      "NO_MODEL_PROMOTION",
+      "NO_SUPABASE_WRITES",
+      "NO_TELEGRAM_SEND",
+      "NO_VFU_21_START",
+      "NO_CASE_MEMORY_BUILD",
+      "NO_DEEPSEARCHER_BUILD",
+      "NO_AGENT_BROWSER_BUILD",
+      "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+      "REPORT_ONLY"
+    ],
+    "operator_decisions_needed": [
+      "Operator review of velo_living_state_v1 before VCP-02 Heartbeat"
+    ]
+  },
+  "final_classifications": [
+    "VCP_02_HEARTBEAT_V1_COMPLETE",
+    "HEARTBEAT_READS_LIVING_STATE_ONLY",
+    "VELO_HEARTBEAT_MD_WRITTEN",
+    "VELO_HEARTBEAT_JSON_WRITTEN",
+    "MEMORY_CAPTURE_OPEN_RENDERED",
+    "FAILURE_LEARNING_OPEN_RENDERED",
+    "PROMOTION_LEARNING_GATED_RENDERED",
+    "CONTRADICTIONS_RENDERED",
+    "MISSING_LIVING_STATE_RESOLVES_UNKNOWN_NOT_CLEAN",
+    "NO_VFU_21_START",
+    "NO_CASE_MEMORY_BUILD",
+    "NO_HEARTBEAT_DIRECT_ORGAN_READS",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "REPORT_ONLY"
+  ]
+}
