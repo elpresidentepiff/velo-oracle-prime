@@ -1,0 +1,2180 @@
+{
+  "generated_at": "2026-06-28T13:48:31.204917Z",
+  "target_date": "2026-06-28",
+  "overall_status": "READY",
+  "capture_status": {
+    "date": "2026-06-28",
+    "status": "NOT_CAPTURED",
+    "races": 0,
+    "runners": 0
+  },
+  "races_scored": 30,
+  "runners_scored": 294,
+  "rpr_violations": 0,
+  "sp_violations": 0,
+  "quality_gates": {
+    "rpr_clean": true,
+    "sp_clean": true,
+    "passport_coverage_above_50pct": false,
+    "no_leakage_violations": true
+  },
+  "intent_coverage": {
+    "found": 0,
+    "total": 294,
+    "coverage_pct": 0.0,
+    "gate": 80.0,
+    "status": "UNAVAILABLE_BELOW_GATE",
+    "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+  },
+  "operational_lane": "LANE_A_CORE_PASSPORT",
+  "operational_note": "Intent coverage 0.0% < 80.0% gate. Lane B is PAPER_ONLY_NO_INTENT. Lane A (Core+Passport) is operational read.",
+  "lane_a": {
+    "label": "Core_V0_OR_Passport (30 features)",
+    "model_pkl": "/mnt/c/Users/puror/velo-oracle-prime/data/new_build/models/core_v0_or_passport/core_v0_or_passport_model.pkl",
+    "feature_count": 30,
+    "median_fill_counts": {
+      "release_window_score": 294,
+      "going_fit_score": 294,
+      "distance_fit_score": 294,
+      "quiet_run_score": 294,
+      "trainer_timing_score": 294,
+      "jockey_switch_intent": 294,
+      "setup_run_flag": 294,
+      "cash_run_flag": 294,
+      "pp_days_since_last": 294,
+      "pp_layoff": 294
+    }
+  },
+  "lane_b": {
+    "label": "Challenger_V1 Core+Passport+Intent (45 features)",
+    "model_pkl": "/mnt/c/Users/puror/velo-oracle-prime/data/new_build/models/core_v0_or_passport_intent/model.pkl",
+    "feature_count": 45,
+    "intent_coverage_pct": 0.0,
+    "status": "PAPER_ONLY_NO_INTENT",
+    "median_fill_counts": {
+      "release_window_score": 294,
+      "going_fit_score": 294,
+      "distance_fit_score": 294,
+      "quiet_run_score": 294,
+      "trainer_timing_score": 294,
+      "jockey_switch_intent": 294,
+      "setup_run_flag": 294,
+      "cash_run_flag": 294,
+      "pp_days_since_last": 294,
+      "pp_layoff": 294
+    }
+  },
+  "race_day_scorecards": [
+    {
+      "race_id": "923588",
+      "course": "Curragh",
+      "off_time": "2026-06-28T13:10:00",
+      "race_date": "2026-06-28",
+      "race_title": "GAIN Equine Nutrition Irish EBF Fillies Maiden (IRE Incentive Race)",
+      "runner_count": 13,
+      "passport_coverage": "4/13",
+      "passport_coverage_pct": 30.8,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Exceptionally",
+          "prob": 0.077252,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Isle Of Capri",
+          "prob": 0.076414,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Ibelieveicanfly",
+          "prob": 0.074317,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Exceptionally",
+          "prob": 0.072005,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Isle Of Capri",
+          "prob": 0.072656,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Littlepacer",
+          "prob": 0.073354,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Exceptionally",
+          "prob": 0.534446
+        },
+        {
+          "rank": 1,
+          "horse": "Isle Of Capri",
+          "prob": 0.534534
+        },
+        {
+          "rank": 3,
+          "horse": "Old Joanie",
+          "prob": 0.533108
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "922975",
+      "course": "Curragh",
+      "off_time": "2026-06-28T13:40:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dubai Duty Free Rockingham Handicap (Premier Handicap)",
+      "runner_count": 17,
+      "passport_coverage": "6/17",
+      "passport_coverage_pct": 35.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Buddy Batt",
+          "prob": 0.109762,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Red Evolution",
+          "prob": 0.057225,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Shadow Of The Moon",
+          "prob": 0.05412,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Buddy Batt",
+          "prob": 0.096337,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Red Evolution",
+          "prob": 0.054171,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Shadow Of The Moon",
+          "prob": 0.052587,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Buddy Batt",
+          "prob": 0.535285
+        },
+        {
+          "rank": 2,
+          "horse": "Red Evolution",
+          "prob": 0.528686
+        },
+        {
+          "rank": 3,
+          "horse": "Likedbymike",
+          "prob": 0.528053
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "921073",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-28T13:47:00",
+      "race_date": "2026-06-28",
+      "race_title": "bet365 Novices' Limited Handicap Chase (GBB Race)",
+      "runner_count": 3,
+      "passport_coverage": "1/3",
+      "passport_coverage_pct": 33.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Tamarind Bay",
+          "prob": 0.316418,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Sony Bill",
+          "prob": 0.211947,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Pony Soprano",
+          "prob": 0.182866,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Tamarind Bay",
+          "prob": 0.231478,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Sony Bill",
+          "prob": 0.267291,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Pony Soprano",
+          "prob": 0.196396,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Tamarind Bay",
+          "prob": 0.629171
+        },
+        {
+          "rank": 2,
+          "horse": "Sony Bill",
+          "prob": 0.62733
+        },
+        {
+          "rank": 3,
+          "horse": "Pony Soprano",
+          "prob": 0.619822
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921064",
+      "course": "Cartmel",
+      "off_time": "2026-06-28T13:57:00",
+      "race_date": "2026-06-28",
+      "race_title": "Molson Coors Mares' Novices' Hurdle (GBB Race)",
+      "runner_count": 10,
+      "passport_coverage": "3/10",
+      "passport_coverage_pct": 30.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Letmeseethecolts",
+          "prob": 0.145654,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Cinating",
+          "prob": 0.131501,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Crokes Cross",
+          "prob": 0.111711,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Letmeseethecolts",
+          "prob": 0.125496,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Cinating",
+          "prob": 0.123581,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Order Another One",
+          "prob": 0.093676,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Letmeseethecolts",
+          "prob": 0.553801
+        },
+        {
+          "rank": 2,
+          "horse": "Cinating",
+          "prob": 0.55179
+        },
+        {
+          "rank": 3,
+          "horse": "Order Another One",
+          "prob": 0.548444
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921448",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-28T14:05:00",
+      "race_date": "2026-06-28",
+      "race_title": "Enjoy A Bostin Day At The Races With SFRacing Club Restricted Maiden Fillies' Stakes (GBB)",
+      "runner_count": 11,
+      "passport_coverage": "7/11",
+      "passport_coverage_pct": 63.6,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sunshine And Roses",
+          "prob": 0.115149,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Miss Mambo",
+          "prob": 0.095298,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Celestial",
+          "prob": 0.092249,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sunshine And Roses",
+          "prob": 0.10569,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Peace Belle",
+          "prob": 0.08613,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Cherringham",
+          "prob": 0.087066,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Sunshine And Roses",
+          "prob": 0.53997
+        },
+        {
+          "rank": 1,
+          "horse": "Peace Belle",
+          "prob": 0.540298
+        },
+        {
+          "rank": 3,
+          "horse": "Crack Of Thunder",
+          "prob": 0.53712
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923589",
+      "course": "Curragh",
+      "off_time": "2026-06-28T14:10:00",
+      "race_date": "2026-06-28",
+      "race_title": "Jebel Ali Racecourse & Stables Dash Stakes (Listed Race)",
+      "runner_count": 10,
+      "passport_coverage": "5/10",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Oh Cecelia",
+          "prob": 0.102947,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Temperance",
+          "prob": 0.097248,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Little Queenie",
+          "prob": 0.092966,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Temperance",
+          "prob": 0.092211,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Little Queenie",
+          "prob": 0.09987,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Tahcawin",
+          "prob": 0.081273,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Temperance",
+          "prob": 0.541789
+        },
+        {
+          "rank": 2,
+          "horse": "Little Queenie",
+          "prob": 0.541822
+        },
+        {
+          "rank": 1,
+          "horse": "Bodhi Bear",
+          "prob": 0.544468
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "921072",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-28T14:17:00",
+      "race_date": "2026-06-28",
+      "race_title": "Never Ordinary At bet365 Novices' Hurdle (GBB Race)",
+      "runner_count": 5,
+      "passport_coverage": "3/5",
+      "passport_coverage_pct": 60.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Flying Ace",
+          "prob": 0.315179,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Moi Mon Vieux",
+          "prob": 0.278136,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Way Maker",
+          "prob": 0.207314,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Flying Ace",
+          "prob": 0.307044,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Moi Mon Vieux",
+          "prob": 0.215275,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Way Maker",
+          "prob": 0.202505,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Flying Ace",
+          "prob": 0.588835
+        },
+        {
+          "rank": 1,
+          "horse": "Way Maker",
+          "prob": 0.596501
+        },
+        {
+          "rank": 3,
+          "horse": "Not Now",
+          "prob": 0.58695
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "921068",
+      "course": "Cartmel",
+      "off_time": "2026-06-28T14:27:00",
+      "race_date": "2026-06-28",
+      "race_title": "Burlington Stone Novices' Limited Handicap Hurdle",
+      "runner_count": 10,
+      "passport_coverage": "2/10",
+      "passport_coverage_pct": 20.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Caspada",
+          "prob": 0.107742,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Path Of Stars",
+          "prob": 0.096103,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Roi Du Roume",
+          "prob": 0.092456,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Caspada",
+          "prob": 0.117422,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Path Of Stars",
+          "prob": 0.08629,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Poetry Man",
+          "prob": 0.084158,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Caspada",
+          "prob": 0.548531
+        },
+        {
+          "rank": 2,
+          "horse": "Ballynoe Boy",
+          "prob": 0.54767
+        },
+        {
+          "rank": 3,
+          "horse": "Kantagua Du Large",
+          "prob": 0.54767
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "921450",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-28T14:37:00",
+      "race_date": "2026-06-28",
+      "race_title": "First Windsorlot Then Voltaic & Now Teardrops Handicap",
+      "runner_count": 10,
+      "passport_coverage": "5/10",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "The Stone Power",
+          "prob": 0.181693,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Faeberon",
+          "prob": 0.112654,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Court Of Stars",
+          "prob": 0.11263,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "The Stone Power",
+          "prob": 0.135546,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Aerial Silk",
+          "prob": 0.116374,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Silky Lass",
+          "prob": 0.098445,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "The Stone Power",
+          "prob": 0.551372
+        },
+        {
+          "rank": 2,
+          "horse": "Aerial Silk",
+          "prob": 0.547958
+        },
+        {
+          "rank": 3,
+          "horse": "Taradif",
+          "prob": 0.544608
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "922976",
+      "course": "Curragh",
+      "off_time": "2026-06-28T14:45:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dubai Duty Free Derby Festival Handicap (Premier Handicap)",
+      "runner_count": 13,
+      "passport_coverage": "7/13",
+      "passport_coverage_pct": 53.8,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Pierre Royal",
+          "prob": 0.121104,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Playin Cool",
+          "prob": 0.094688,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Zarathos",
+          "prob": 0.090283,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Pierre Royal",
+          "prob": 0.10778,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Playin Cool",
+          "prob": 0.092248,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Pretty Omagh Girl",
+          "prob": 0.075326,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Playin Cool",
+          "prob": 0.53538
+        },
+        {
+          "rank": 1,
+          "horse": "State Actor",
+          "prob": 0.53685
+        },
+        {
+          "rank": 2,
+          "horse": "Lord Massusus",
+          "prob": 0.535843
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921070",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-28T14:52:00",
+      "race_date": "2026-06-28",
+      "race_title": "bet365 Handicap Chase (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": "2/6",
+      "passport_coverage_pct": 33.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Breaking Cover",
+          "prob": 0.136095,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Newtown Rambler",
+          "prob": 0.125208,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Kingston Narcissus",
+          "prob": 0.108941,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Breaking Cover",
+          "prob": 0.139888,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Newtown Rambler",
+          "prob": 0.098101,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Kingston Narcissus",
+          "prob": 0.105904,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Breaking Cover",
+          "prob": 0.565806
+        },
+        {
+          "rank": 3,
+          "horse": "Newtown Rambler",
+          "prob": 0.564938
+        },
+        {
+          "rank": 1,
+          "horse": "Kingston Narcissus",
+          "prob": 0.566652
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "921066",
+      "course": "Cartmel",
+      "off_time": "2026-06-28T15:02:00",
+      "race_date": "2026-06-28",
+      "race_title": "Campbell & Rowley Handicap Hurdle",
+      "runner_count": 13,
+      "passport_coverage": "3/13",
+      "passport_coverage_pct": 23.1,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "It's All About You",
+          "prob": 0.079224,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Sea The Clouds",
+          "prob": 0.077538,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Dinons",
+          "prob": 0.07621,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "It's All About You",
+          "prob": 0.077714,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Sea The Clouds",
+          "prob": 0.073303,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Miss Manzor",
+          "prob": 0.064233,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Nakassama",
+          "prob": 0.53871
+        },
+        {
+          "rank": 1,
+          "horse": "Feach Amach",
+          "prob": 0.538789
+        },
+        {
+          "rank": 2,
+          "horse": "Rauzan",
+          "prob": 0.538789
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "921451",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-28T15:12:00",
+      "race_date": "2026-06-28",
+      "race_title": "Oldboys Fieldsman The Legend And Undercurfew Restricted Maiden Stakes (Bands B/C/D) (GBB Race)",
+      "runner_count": 12,
+      "passport_coverage": "4/12",
+      "passport_coverage_pct": 33.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Vichenza",
+          "prob": 0.112594,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Sonbelievable",
+          "prob": 0.088215,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Cosmic Jive",
+          "prob": 0.0858,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Vichenza",
+          "prob": 0.08411,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Sonbelievable",
+          "prob": 0.081514,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Hozam",
+          "prob": 0.082964,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Vichenza",
+          "prob": 0.537838
+        },
+        {
+          "rank": 1,
+          "horse": "Sonbelievable",
+          "prob": 0.538262
+        },
+        {
+          "rank": 3,
+          "horse": "Cosmic Jive",
+          "prob": 0.537744
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "922587",
+      "course": "Curragh",
+      "off_time": "2026-06-28T15:20:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dubai Duty Free International Stakes (Group 3)",
+      "runner_count": 8,
+      "passport_coverage": "4/8",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Geryon",
+          "prob": 0.131528,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Isaac Newton",
+          "prob": 0.123823,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Sindria",
+          "prob": 0.098677,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Geryon",
+          "prob": 0.103058,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Isaac Newton",
+          "prob": 0.111768,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Tiberius Thunder",
+          "prob": 0.092878,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Isaac Newton",
+          "prob": 0.552796
+        },
+        {
+          "rank": 3,
+          "horse": "Tiberius Thunder",
+          "prob": 0.552046
+        },
+        {
+          "rank": 2,
+          "horse": "Trustyourinstinct",
+          "prob": 0.552169
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921069",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-28T15:27:00",
+      "race_date": "2026-06-28",
+      "race_title": "bet365 Summer Cup Handicap Chase (GBB Race)",
+      "runner_count": 13,
+      "passport_coverage": "4/13",
+      "passport_coverage_pct": 30.8,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Hang In There",
+          "prob": 0.086016,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Twig",
+          "prob": 0.066223,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Riskintheground",
+          "prob": 0.064972,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Hang In There",
+          "prob": 0.084521,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Twig",
+          "prob": 0.057663,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Riskintheground",
+          "prob": 0.068795,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Ki Woo",
+          "prob": 0.54078
+        },
+        {
+          "rank": 3,
+          "horse": "Peaky Boy",
+          "prob": 0.53811
+        },
+        {
+          "rank": 2,
+          "horse": "Alien Storm",
+          "prob": 0.538132
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "921063",
+      "course": "Cartmel",
+      "off_time": "2026-06-28T15:37:00",
+      "race_date": "2026-06-28",
+      "race_title": "Oakmere Homes Handicap Hurdle (GBB Race)",
+      "runner_count": 11,
+      "passport_coverage": "2/11",
+      "passport_coverage_pct": 18.2,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Zillow",
+          "prob": 0.138762,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Amancio",
+          "prob": 0.115274,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Goodwin Face",
+          "prob": 0.094404,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Zillow",
+          "prob": 0.121921,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Amancio",
+          "prob": 0.113878,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Filibustering",
+          "prob": 0.072371,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Zillow",
+          "prob": 0.543609
+        },
+        {
+          "rank": 1,
+          "horse": "Amancio",
+          "prob": 0.553393
+        },
+        {
+          "rank": 2,
+          "horse": "Filibustering",
+          "prob": 0.543986
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "921452",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-28T15:47:00",
+      "race_date": "2026-06-28",
+      "race_title": "Francesi Wins Again For SF Racing Club Handicap",
+      "runner_count": 8,
+      "passport_coverage": "5/8",
+      "passport_coverage_pct": 62.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Qaaeadd",
+          "prob": 0.126331,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Four Fifty",
+          "prob": 0.12633,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Edwardtheninth",
+          "prob": 0.116789,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Qaaeadd",
+          "prob": 0.111594,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Four Fifty",
+          "prob": 0.114617,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Edwardtheninth",
+          "prob": 0.102295,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Qaaeadd",
+          "prob": 0.55176
+        },
+        {
+          "rank": 3,
+          "horse": "Edwardtheninth",
+          "prob": 0.550858
+        },
+        {
+          "rank": 1,
+          "horse": "The Craftymaster",
+          "prob": 0.552779
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923590",
+      "course": "Curragh",
+      "off_time": "2026-06-28T15:55:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dubai Duty Free Celebration Stakes (Listed Race)",
+      "runner_count": 7,
+      "passport_coverage": "6/7",
+      "passport_coverage_pct": 85.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Tokenomics",
+          "prob": 0.154401,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Accredited",
+          "prob": 0.1517,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Alcantor",
+          "prob": 0.131024,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Tokenomics",
+          "prob": 0.12862,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Accredited",
+          "prob": 0.133437,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Alcantor",
+          "prob": 0.161115,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Tokenomics",
+          "prob": 0.560375
+        },
+        {
+          "rank": 3,
+          "horse": "Accredited",
+          "prob": 0.558298
+        },
+        {
+          "rank": 1,
+          "horse": "Alcantor",
+          "prob": 0.571168
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921071",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-28T16:03:00",
+      "race_date": "2026-06-28",
+      "race_title": "bet365 Handicap Hurdle (GBB Race)",
+      "runner_count": 11,
+      "passport_coverage": "4/11",
+      "passport_coverage_pct": 36.4,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Escapologist",
+          "prob": 0.086402,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Ebony Warrior",
+          "prob": 0.079387,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Blizzard Of Oz",
+          "prob": 0.077666,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Escapologist",
+          "prob": 0.080425,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Blizzard Of Oz",
+          "prob": 0.08521,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Miss Goldfire",
+          "prob": 0.065384,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Escapologist",
+          "prob": 0.541896
+        },
+        {
+          "rank": 3,
+          "horse": "Blizzard Of Oz",
+          "prob": 0.541427
+        },
+        {
+          "rank": 1,
+          "horse": "Musique De Fee",
+          "prob": 0.542075
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "921062",
+      "course": "Cartmel",
+      "off_time": "2026-06-28T16:15:00",
+      "race_date": "2026-06-28",
+      "race_title": "Oakmere Homes Handicap Chase (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": "3/6",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Breizh River",
+          "prob": 0.196965,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Pour Les Filles",
+          "prob": 0.136095,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Buy Some Time",
+          "prob": 0.113811,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Breizh River",
+          "prob": 0.17722,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Pour Les Filles",
+          "prob": 0.143582,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Light N Strike",
+          "prob": 0.121814,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Breizh River",
+          "prob": 0.566441
+        },
+        {
+          "rank": 1,
+          "horse": "Pour Les Filles",
+          "prob": 0.568122
+        },
+        {
+          "rank": 3,
+          "horse": "Got Grey",
+          "prob": 0.564162
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "921449",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-28T16:23:00",
+      "race_date": "2026-06-28",
+      "race_title": "Alfred Cove You Will Always Be A Star Handicap",
+      "runner_count": 12,
+      "passport_coverage": "5/12",
+      "passport_coverage_pct": 41.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Barry The Worm",
+          "prob": 0.098722,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "On Key",
+          "prob": 0.098593,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Porfin",
+          "prob": 0.091596,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Barry The Worm",
+          "prob": 0.091396,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "On Key",
+          "prob": 0.084077,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Last Outlaw",
+          "prob": 0.079806,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Barry The Worm",
+          "prob": 0.538095
+        },
+        {
+          "rank": 3,
+          "horse": "Last Outlaw",
+          "prob": 0.537945
+        },
+        {
+          "rank": 1,
+          "horse": "Sunlit Sea",
+          "prob": 0.538299
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "908061",
+      "course": "Curragh",
+      "off_time": "2026-06-28T16:35:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dubai Duty Free Irish Derby (Group 1) (No Geldings)",
+      "runner_count": 8,
+      "passport_coverage": "8/8",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Pierre Bonnard",
+          "prob": 0.159937,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Action",
+          "prob": 0.150001,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Raaheeb",
+          "prob": 0.147975,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Pierre Bonnard",
+          "prob": 0.132189,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Action",
+          "prob": 0.13002,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Raaheeb",
+          "prob": 0.115465,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Pierre Bonnard",
+          "prob": 0.556578
+        },
+        {
+          "rank": 1,
+          "horse": "Action",
+          "prob": 0.558487
+        },
+        {
+          "rank": 3,
+          "horse": "Raaheeb",
+          "prob": 0.555438
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921075",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-28T16:43:00",
+      "race_date": "2026-06-28",
+      "race_title": "Bet Boost At bet365 Handicap Hurdle",
+      "runner_count": 4,
+      "passport_coverage": "4/4",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Morning Mayhem",
+          "prob": 0.304519,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Hope Rising",
+          "prob": 0.29094,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Edelak",
+          "prob": 0.224744,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Morning Mayhem",
+          "prob": 0.351656,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Hope Rising",
+          "prob": 0.249149,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Edelak",
+          "prob": 0.210959,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Morning Mayhem",
+          "prob": 0.609666
+        },
+        {
+          "rank": 1,
+          "horse": "Hope Rising",
+          "prob": 0.610632
+        },
+        {
+          "rank": 3,
+          "horse": "Caelan",
+          "prob": 0.603023
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "921067",
+      "course": "Cartmel",
+      "off_time": "2026-06-28T16:55:00",
+      "race_date": "2026-06-28",
+      "race_title": "Holker Hall & Gardens Handicap Chase",
+      "runner_count": 10,
+      "passport_coverage": "1/10",
+      "passport_coverage_pct": 10.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Judicial Review",
+          "prob": 0.097041,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Star Turn",
+          "prob": 0.090814,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Lights Are Green",
+          "prob": 0.089935,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Star Turn",
+          "prob": 0.080653,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Lights Are Green",
+          "prob": 0.075007,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Shantou Show",
+          "prob": 0.094229,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Star Turn",
+          "prob": 0.549909
+        },
+        {
+          "rank": 1,
+          "horse": "You Did",
+          "prob": 0.552198
+        },
+        {
+          "rank": 2,
+          "horse": "Halfway House Lad",
+          "prob": 0.550943
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "921453",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-28T17:03:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dapper Gee Gee Owners Handicap",
+      "runner_count": 5,
+      "passport_coverage": "3/5",
+      "passport_coverage_pct": 60.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Shalaa Asker",
+          "prob": 0.221634,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Style King",
+          "prob": 0.213914,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Level Up",
+          "prob": 0.175168,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Shalaa Asker",
+          "prob": 0.184357,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Style King",
+          "prob": 0.200736,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Lancero",
+          "prob": 0.157101,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Shalaa Asker",
+          "prob": 0.585327
+        },
+        {
+          "rank": 1,
+          "horse": "Style King",
+          "prob": 0.587619
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Lancero",
+          "prob": 0.581032
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "922977",
+      "course": "Curragh",
+      "off_time": "2026-06-28T17:15:00",
+      "race_date": "2026-06-28",
+      "race_title": "Tulfarris Hotel And Golf Resort Maddenstown Handicap (Premier Handicap)",
+      "runner_count": 18,
+      "passport_coverage": "13/18",
+      "passport_coverage_pct": 72.2,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "King Of Earth",
+          "prob": 0.075062,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Punica Granatum",
+          "prob": 0.069077,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Liberation Date",
+          "prob": 0.066103,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "King Of Earth",
+          "prob": 0.077908,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Punica Granatum",
+          "prob": 0.060935,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Manton Bay",
+          "prob": 0.066789,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "King Of Earth",
+          "prob": 0.525462
+        },
+        {
+          "rank": 1,
+          "horse": "Summer Is Tomorrow",
+          "prob": 0.526616
+        },
+        {
+          "rank": 2,
+          "horse": "Listentodwindblow",
+          "prob": 0.526479
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "921074",
+      "course": "Uttoxeter",
+      "off_time": "2026-06-28T17:20:00",
+      "race_date": "2026-06-28",
+      "race_title": "Best Odds Guaranteed At bet365 Handicap Hurdle",
+      "runner_count": 7,
+      "passport_coverage": "2/7",
+      "passport_coverage_pct": 28.6,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Kom Tu Voudras",
+          "prob": 0.125847,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Ocean Conquest",
+          "prob": 0.124071,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Hello Cello",
+          "prob": 0.103314,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Kom Tu Voudras",
+          "prob": 0.129356,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Ocean Conquest",
+          "prob": 0.142142,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Ballygeary",
+          "prob": 0.0955,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Kom Tu Voudras",
+          "prob": 0.56304
+        },
+        {
+          "rank": 1,
+          "horse": "Ocean Conquest",
+          "prob": 0.564458
+        },
+        {
+          "rank": 3,
+          "horse": "Hello Cello",
+          "prob": 0.560565
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "921065",
+      "course": "Cartmel",
+      "off_time": "2026-06-28T17:28:00",
+      "race_date": "2026-06-28",
+      "race_title": "Women's Community Matters Handicap Chase",
+      "runner_count": 10,
+      "passport_coverage": "3/10",
+      "passport_coverage_pct": 30.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Conquer The Breeze",
+          "prob": 0.112901,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Dream Jet",
+          "prob": 0.109646,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Ghasham",
+          "prob": 0.101252,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Conquer The Breeze",
+          "prob": 0.126154,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Dream Jet",
+          "prob": 0.106221,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Fort Randall",
+          "prob": 0.100436,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Dream Jet",
+          "prob": 0.551794
+        },
+        {
+          "rank": 3,
+          "horse": "Fort Randall",
+          "prob": 0.546527
+        },
+        {
+          "rank": 2,
+          "horse": "Intenzo",
+          "prob": 0.547927
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "921454",
+      "course": "Wolverhampton (AW)",
+      "off_time": "2026-06-28T17:37:00",
+      "race_date": "2026-06-28",
+      "race_title": "Thanks To TC Titch & The Team From SFRacing Club Handicap",
+      "runner_count": 9,
+      "passport_coverage": "6/9",
+      "passport_coverage_pct": 66.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Skellig Isle",
+          "prob": 0.125198,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Split Elevens",
+          "prob": 0.106904,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Clover Time",
+          "prob": 0.104427,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Skellig Isle",
+          "prob": 0.104941,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Cooramook",
+          "prob": 0.10093,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Pearly Squirrel",
+          "prob": 0.101568,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Skellig Isle",
+          "prob": 0.546329
+        },
+        {
+          "rank": 1,
+          "horse": "Clover Time",
+          "prob": 0.547264
+        },
+        {
+          "rank": 3,
+          "horse": "Faster Bee",
+          "prob": 0.545438
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "922978",
+      "course": "Curragh",
+      "off_time": "2026-06-28T17:45:00",
+      "race_date": "2026-06-28",
+      "race_title": "Dubai Duty Free Irish EBF Ragusa Handicap (Premier Handicap)",
+      "runner_count": 14,
+      "passport_coverage": "6/14",
+      "passport_coverage_pct": 42.9,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Marazion",
+          "prob": 0.091698,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Factual Fact",
+          "prob": 0.078145,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Obscenity",
+          "prob": 0.068469,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Marazion",
+          "prob": 0.078864,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Factual Fact",
+          "prob": 0.068029,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Obscenity",
+          "prob": 0.074571,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Factual Fact",
+          "prob": 0.535808
+        },
+        {
+          "rank": 2,
+          "horse": "What's Your Game",
+          "prob": 0.533536
+        },
+        {
+          "rank": 3,
+          "horse": "The Real Screamer",
+          "prob": 0.532557
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_engine": true,
+    "no_telegram": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_staking": true,
+    "rpr_archive_only": true,
+    "no_market_lane_morning": true,
+    "no_jtcd_alltime": true
+  }
+}

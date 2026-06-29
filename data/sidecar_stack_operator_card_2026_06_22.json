@@ -1,0 +1,805 @@
+{
+  "date": "2026-06-22",
+  "generated_at": "2026-06-22T20:05:09.123115+00:00",
+  "status": "OPERATOR_VISIBILITY_ONLY",
+  "thresholds": {
+    "vp30": 0.3,
+    "mds_high": 0.5,
+    "improve_high": 0.4
+  },
+  "threshold_source": "place_signal_classifier.py",
+  "stacks": {
+    "ELITE_STACK": [
+      {
+        "race_id": "921259",
+        "horse": "Lady Dublin",
+        "horse_id": "9092904",
+        "course": "Musselburgh",
+        "off_time": "14:45",
+        "race_name": "100% Racing TV Profits Back To Racing Selling Stakes",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.7132,
+        "market_deception_score": 0.6406,
+        "improvement_score": 0.3208,
+        "place_prob": 0.9893,
+        "stack_badges": [
+          "TIER_A",
+          "VP30",
+          "MDS_HIGH"
+        ],
+        "stacks": [
+          "ELITE_STACK",
+          "STRONG_STACK"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921246",
+        "horse": "Roxa Love",
+        "horse_id": "9312945",
+        "course": "Brighton",
+        "off_time": "18:35",
+        "race_name": "Download The Fairplay App Now EBF Maiden Stakes (GBB Race)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.7024,
+        "market_deception_score": 0.5711,
+        "improvement_score": 0.5068,
+        "place_prob": 0.9945,
+        "stack_badges": [
+          "TIER_A",
+          "VP30",
+          "MDS_HIGH",
+          "IMP_HIGH"
+        ],
+        "stacks": [
+          "ELITE_STACK",
+          "STRONG_STACK_PLUS"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      }
+    ],
+    "STRONG_STACK_PLUS": [
+      {
+        "race_id": "921246",
+        "horse": "Roxa Love",
+        "horse_id": "9312945",
+        "course": "Brighton",
+        "off_time": "18:35",
+        "race_name": "Download The Fairplay App Now EBF Maiden Stakes (GBB Race)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.7024,
+        "market_deception_score": 0.5711,
+        "improvement_score": 0.5068,
+        "place_prob": 0.9945,
+        "stack_badges": [
+          "TIER_A",
+          "VP30",
+          "MDS_HIGH",
+          "IMP_HIGH"
+        ],
+        "stacks": [
+          "ELITE_STACK",
+          "STRONG_STACK_PLUS"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      }
+    ],
+    "STRONG_STACK": [
+      {
+        "race_id": "921259",
+        "horse": "Lady Dublin",
+        "horse_id": "9092904",
+        "course": "Musselburgh",
+        "off_time": "14:45",
+        "race_name": "100% Racing TV Profits Back To Racing Selling Stakes",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.7132,
+        "market_deception_score": 0.6406,
+        "improvement_score": 0.3208,
+        "place_prob": 0.9893,
+        "stack_badges": [
+          "TIER_A",
+          "VP30",
+          "MDS_HIGH"
+        ],
+        "stacks": [
+          "ELITE_STACK",
+          "STRONG_STACK"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      }
+    ],
+    "VP30_IMPROVE": [
+      {
+        "race_id": "921268",
+        "horse": "House Of Medici",
+        "horse_id": "9259000",
+        "course": "Windsor",
+        "off_time": "18:45",
+        "race_name": "Track Radio On Digital & DAB Restricted Novice Stakes (Bands B-D) (GBB Race)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.3254,
+        "market_deception_score": 0.3046,
+        "improvement_score": 0.4098,
+        "place_prob": 0.9256,
+        "stack_badges": [
+          "VP30",
+          "IMP_HIGH"
+        ],
+        "stacks": [
+          "VP30_IMPROVE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      }
+    ],
+    "VP30_BASE": [
+      {
+        "race_id": "921262",
+        "horse": "Only Dream Big",
+        "horse_id": "7020410",
+        "course": "Musselburgh",
+        "off_time": "14:15",
+        "race_name": "Future Ticketing Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.6762,
+        "market_deception_score": 0.0896,
+        "improvement_score": 0.041,
+        "place_prob": 0.7712,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921252",
+        "horse": "Roots In Touche",
+        "horse_id": "9254358",
+        "course": "Catterick",
+        "off_time": "14:30",
+        "race_name": "British EBF Maiden Fillies' Stakes (GBB Race)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.581,
+        "market_deception_score": 0.3601,
+        "improvement_score": 0.2737,
+        "place_prob": 0.9369,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921255",
+        "horse": "Albegone",
+        "horse_id": "3454843",
+        "course": "Catterick",
+        "off_time": "15:00",
+        "race_name": "Jimmy Loxam Is 80 Today \"Confined\" Handicap (For horses Which Have Not Won In 2026 Flat Turf Season)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.3235,
+        "market_deception_score": 0.0396,
+        "improvement_score": 0.0162,
+        "place_prob": 0.5096,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921263",
+        "horse": "Patontheback",
+        "horse_id": "3215030",
+        "course": "Musselburgh",
+        "off_time": "15:15",
+        "race_name": "Tamper-Proof Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.3306,
+        "market_deception_score": 0.0109,
+        "improvement_score": 0.0314,
+        "place_prob": 0.2333,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921257",
+        "horse": "Battenburg Belle",
+        "horse_id": "8547317",
+        "course": "Catterick",
+        "off_time": "15:30",
+        "race_name": "Catterick Racecourse Supporting Racing Staff Week Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.5091,
+        "market_deception_score": 0.0611,
+        "improvement_score": 0.027,
+        "place_prob": 0.6462,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921260",
+        "horse": "Sophiesticate",
+        "horse_id": "3816930",
+        "course": "Musselburgh",
+        "off_time": "15:45",
+        "race_name": "Haysmith By A Nose 60th Birthday Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.5804,
+        "market_deception_score": 0.0368,
+        "improvement_score": 0.0768,
+        "place_prob": 0.8508,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921253",
+        "horse": "Yorkshire Queen",
+        "horse_id": "7493137",
+        "course": "Catterick",
+        "off_time": "16:00",
+        "race_name": "Congratulations To The Happy Couple EBF Fillies' Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "C",
+        "velo_prime_prob": 0.3691,
+        "market_deception_score": 0.0345,
+        "improvement_score": 0.0385,
+        "place_prob": 0.565,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921264",
+        "horse": "Wee Mary",
+        "horse_id": "5947083",
+        "course": "Musselburgh",
+        "off_time": "16:15",
+        "race_name": "Racing TV Profits Returned To Racing Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.4891,
+        "market_deception_score": 0.0392,
+        "improvement_score": 0.011,
+        "place_prob": 0.272,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921254",
+        "horse": "Valley Of Flowers",
+        "horse_id": "3226210",
+        "course": "Catterick",
+        "off_time": "16:35",
+        "race_name": "Start Your Racing TV Free Trial Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.6081,
+        "market_deception_score": 0.2724,
+        "improvement_score": 0.0426,
+        "place_prob": 0.9974,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921258",
+        "horse": "Port Darwin",
+        "horse_id": "7578894",
+        "course": "Musselburgh",
+        "off_time": "16:45",
+        "race_name": "Stand In What You Stand For Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.8061,
+        "market_deception_score": 0.1233,
+        "improvement_score": 0.1172,
+        "place_prob": 0.9833,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921261",
+        "horse": "Approaching Dawn",
+        "horse_id": "8183833",
+        "course": "Musselburgh",
+        "off_time": "17:15",
+        "race_name": "Watch On Racing TV Apprentice Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.5678,
+        "market_deception_score": 0.0549,
+        "improvement_score": 0.0811,
+        "place_prob": 0.7991,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "923419",
+        "horse": "Zitkala Sa",
+        "horse_id": "8953958",
+        "course": "Ballinrobe",
+        "off_time": "17:25",
+        "race_name": "Ronan & Tom Gibbons Memorial Apprentice Claiming Race",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "C",
+        "velo_prime_prob": 0.3349,
+        "market_deception_score": 0.0824,
+        "improvement_score": 0.0392,
+        "place_prob": 0.5563,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921271",
+        "horse": "Just King High",
+        "horse_id": "5708614",
+        "course": "Windsor",
+        "off_time": "17:45",
+        "race_name": "Royal Windsor Supports Racing Staff Week Apprentice Handicap (Apprentice Training Race Series)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.4852,
+        "market_deception_score": 0.0294,
+        "improvement_score": 0.0807,
+        "place_prob": 0.4063,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "923420",
+        "horse": "Wonderfulwonderful",
+        "horse_id": "6202597",
+        "course": "Ballinrobe",
+        "off_time": "17:55",
+        "race_name": "Irish Stallion Farms EBF Median Auction Maiden (Median Auction Race)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.4309,
+        "market_deception_score": 0.1983,
+        "improvement_score": 0.1933,
+        "place_prob": 0.8379,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921250",
+        "horse": "Harry Brown",
+        "horse_id": "4369773",
+        "course": "Brighton",
+        "off_time": "18:05",
+        "race_name": "Bet Now With fairplaybet.co.uk Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.5189,
+        "market_deception_score": 0.0715,
+        "improvement_score": 0.0339,
+        "place_prob": 0.8377,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921266",
+        "horse": "Perfect Nation",
+        "horse_id": "9419795",
+        "course": "Windsor",
+        "off_time": "18:15",
+        "race_name": "British Stallion Studs EBF Newcomers' \"Confined\" Maiden Stakes (Unraced) (GBB Race)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.311,
+        "market_deception_score": 0.0703,
+        "improvement_score": 0.0872,
+        "place_prob": 0.223,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921251",
+        "horse": "Gearing's Point",
+        "horse_id": "3162626",
+        "course": "Brighton",
+        "off_time": "19:05",
+        "race_name": "Watch Live Racing On fairplaybet.co.uk Classified Stakes",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.5461,
+        "market_deception_score": 0.0809,
+        "improvement_score": 0.0768,
+        "place_prob": 0.7638,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921265",
+        "horse": "Nogo's Dream",
+        "horse_id": "4175313",
+        "course": "Windsor",
+        "off_time": "19:17",
+        "race_name": "Fitzdares Sprint Series Handicap (Windsor Sprint Series Qualifier)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "C",
+        "velo_prime_prob": 0.3465,
+        "market_deception_score": 0.0358,
+        "improvement_score": 0.0618,
+        "place_prob": 0.6072,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921249",
+        "horse": "Joycean Way",
+        "horse_id": "5315427",
+        "course": "Brighton",
+        "off_time": "19:37",
+        "race_name": "Fairplay Lets Bet On It! Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.6686,
+        "market_deception_score": 0.2375,
+        "improvement_score": 0.0773,
+        "place_prob": 0.9153,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921267",
+        "horse": "Rumbustious",
+        "horse_id": "8406259",
+        "course": "Windsor",
+        "off_time": "19:50",
+        "race_name": "Carrington Wealth Management Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.4719,
+        "market_deception_score": 0.0808,
+        "improvement_score": 0.0426,
+        "place_prob": 0.9097,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "923424",
+        "horse": "Miss Australie",
+        "horse_id": "6573375",
+        "course": "Ballinrobe",
+        "off_time": "20:00",
+        "race_name": "GAIN The Advantage Series Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.3547,
+        "market_deception_score": 0.0118,
+        "improvement_score": 0.1031,
+        "place_prob": 0.2952,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921247",
+        "horse": "King Of War",
+        "horse_id": "3634785",
+        "course": "Brighton",
+        "off_time": "20:10",
+        "race_name": "Fairplay Daily Price Boosts \"Confined\" Handicap (For horses Which Have Not Won In 2026)",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.6079,
+        "market_deception_score": 0.2189,
+        "improvement_score": 0.1067,
+        "place_prob": 0.9235,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921269",
+        "horse": "Wedgewood",
+        "horse_id": "4269993",
+        "course": "Windsor",
+        "off_time": "20:20",
+        "race_name": "Fitzdares Taking Bets Since 1882 Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.4132,
+        "market_deception_score": 0.0674,
+        "improvement_score": 0.1312,
+        "place_prob": 0.3346,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "923425",
+        "horse": "La Dame Blanche",
+        "horse_id": "4274155",
+        "course": "Ballinrobe",
+        "off_time": "20:30",
+        "race_name": "Irish Stallion Farms EBF Fillies Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.3713,
+        "market_deception_score": 0.026,
+        "improvement_score": 0.0855,
+        "place_prob": 0.5628,
+        "stack_badges": [
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": true,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "921270",
+        "horse": "Mertoun",
+        "horse_id": "7882518",
+        "course": "Windsor",
+        "off_time": "20:50",
+        "race_name": "Vnetrix Cyber Security Solutions Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "A",
+        "velo_prime_prob": 0.7765,
+        "market_deception_score": 0.0594,
+        "improvement_score": 0.0829,
+        "place_prob": 0.6143,
+        "stack_badges": [
+          "TIER_A",
+          "VP30"
+        ],
+        "stacks": [
+          "VP30_BASE"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      }
+    ],
+    "SUPPRESS": [
+      {
+        "race_id": "921256",
+        "horse": "Captain Cess",
+        "horse_id": "5906640",
+        "course": "Catterick",
+        "off_time": "17:10",
+        "race_name": "Racing Again 8th July Handicap",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.2567,
+        "market_deception_score": 0.024,
+        "improvement_score": 0.0067,
+        "place_prob": 0.2529,
+        "stack_badges": [],
+        "stacks": [
+          "SUPPRESS"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      },
+      {
+        "race_id": "923421",
+        "horse": "Mano Chicago",
+        "horse_id": "6037323",
+        "course": "Ballinrobe",
+        "off_time": "18:25",
+        "race_name": "Lodge At Ashford Castle Maiden",
+        "metadata_complete": true,
+        "missing_metadata": false,
+        "tier": "B",
+        "velo_prime_prob": 0.2692,
+        "market_deception_score": 0.2054,
+        "improvement_score": 0.1541,
+        "place_prob": 0.9043,
+        "stack_badges": [],
+        "stacks": [
+          "SUPPRESS"
+        ],
+        "candidate_execution_allowed": false,
+        "status": "OPERATOR_VISIBILITY_ONLY"
+      }
+    ]
+  },
+  "counts": {
+    "total_races": 33,
+    "metadata_complete_count": 33,
+    "metadata_missing_count": 0,
+    "metadata_coverage": 1.0,
+    "vp30_count": 28,
+    "elite_stack_count": 2,
+    "strong_stack_plus_count": 1,
+    "strong_stack_count": 1,
+    "vp30_improve_count": 1,
+    "vp30_base_count": 25,
+    "suppress_count": 2
+  },
+  "metadata_audit": {
+    "metadata_coverage": 1.0,
+    "metadata_complete_count": 33,
+    "metadata_missing_count": 0
+  },
+  "disclaimer": "OPERATOR VISIBILITY ONLY \u2014 These are sidecar stack signals. They do not change live scoring, do not trigger staking, and are not betting instructions."
+}

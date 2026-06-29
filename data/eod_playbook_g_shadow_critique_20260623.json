@@ -1,0 +1,35 @@
+{
+  "shadow_state_delta_summary": "Observed 19 races today",
+  "shadow_state_after_summary": "Evolved to 450 races",
+  "events_studied": 19,
+  "updates_applied": 19,
+  "duplicates_skipped": 19,
+  "loss_count_by_type": {
+    "CALIBRATION_ERROR": 11,
+    "WRONG_HORSE": 5,
+    "DATA_ERROR": 1,
+    "NONE": 3
+  },
+  "recurring_failure_patterns": [
+    "High-prob volatility"
+  ],
+  "protected_patterns": [
+    "favourites_protected",
+    "favourites_abandoned",
+    "market_lies_detected",
+    "safe_bets_imploded",
+    "recurring_setups"
+  ],
+  "confidence_warnings": [
+    "Elevated"
+  ],
+  "market_warnings": [],
+  "data_quality_warnings": [
+    "Green"
+  ],
+  "tomorrow_watchlist": [
+    "Forensic review of high-prob losses"
+  ],
+  "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+  "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+}

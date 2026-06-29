@@ -1,28 +1,28 @@
 # Horse Passport V2
-Generated: 2026-06-18T17:47:43.805151+00:00
+Generated: 2026-06-25T20:47:39.223549+00:00
 
 ## Summary
-- **Total passports**: 6168
-- **Existing before run**: 6168
-- **Newly appended**: 0
-- **Source horses found (history + profiles)**: 6168
+- **Total passports**: 6221
+- **Existing before run**: 6220
+- **Newly appended**: 1
+- **Source horses found (history + profiles)**: 6221
 - **Build failures**: 0
 - **Existing duplicate rows skipped**: 0
-- **Cash-run candidates**: 68
-- **Setup-run candidates**: 2285
-- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 1421
+- **Cash-run candidates**: 69
+- **Setup-run candidates**: 2295
+- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 1425
 
 ## Field Coverage
 | Field | Coverage |
 |---|---|
-| last_run_date | 81.7% |
+| last_run_date | 81.3% |
 | win_rate_last3 | 100.0% |
-| beaten_margin_slope | 69.6% |
-| sp_trajectory | 64.7% |
-| avg_sp_last5 | 81.7% |
-| going_preference | 13.2% |
+| beaten_margin_slope | 69.2% |
+| sp_trajectory | 64.4% |
+| avg_sp_last5 | 81.3% |
+| going_preference | 13.1% |
 | course_affinity | 6.7% |
-| current_or | 80.6% |
+| current_or | 80.2% |
 
 ## Top 10 Cash-Run Candidates
 | Horse | SP | WF Rate | WF Fail Rate | Last Run |

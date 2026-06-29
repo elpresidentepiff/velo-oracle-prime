@@ -1,0 +1,104 @@
+{
+  "date": "2026-06-26",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "sigma": {
+    "races_studied": 41,
+    "predictions_matched": 41,
+    "results_matched": 41,
+    "winners_found": 9,
+    "strike_rate": 0.21951219512195122,
+    "top_1_accuracy": 0.21951219512195122,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.2143704536585366,
+    "calibration_error": 0.2589024390243903,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 13,
+    "calibration_error_count": 19,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "921341",
+        "horse": "Belle Amie",
+        "prob": 0.7737,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "921435",
+        "horse": "Diamond Rain",
+        "prob": 0.7138,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "921335",
+        "horse": "Dereham",
+        "prob": 0.6367,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "921344",
+        "horse": "Starlight Lass",
+        "prob": 0.8567,
+        "result": "WIN"
+      },
+      {
+        "race_id": "921355",
+        "horse": "Always Perfect",
+        "prob": 0.7264,
+        "result": "WIN"
+      },
+      {
+        "race_id": "921056",
+        "horse": "Loch Cuan",
+        "prob": 0.6857,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "WEAK_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 41 races today",
+    "shadow_state_after_summary": "Evolved to 450 races",
+    "events_studied": 41,
+    "updates_applied": 0,
+    "duplicates_skipped": 41,
+    "loss_count_by_type": {
+      "CALIBRATION_ERROR": 19,
+      "WRONG_HORSE": 13,
+      "NONE": 9
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

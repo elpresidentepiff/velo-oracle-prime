@@ -1,37 +1,31 @@
 {
-  "races_studied": 29,
-  "predictions_matched": 29,
-  "results_matched": 29,
-  "winners_found": 8,
-  "strike_rate": 0.27586206896551724,
-  "top_1_accuracy": 0.27586206896551724,
+  "races_studied": 15,
+  "predictions_matched": 15,
+  "results_matched": 15,
+  "winners_found": 5,
+  "strike_rate": 0.3333333333333333,
+  "top_1_accuracy": 0.3333333333333333,
   "top_3_accuracy": null,
   "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
-  "brier_score": 0.21086029551724134,
-  "calibration_error": 0.12721724137931034,
+  "brier_score": 0.20081877199999998,
+  "calibration_error": 0.08296,
   "calibration_error_status": "CALCULATED",
-  "wrong_horse_count": 4,
-  "calibration_error_count": 17,
+  "wrong_horse_count": 3,
+  "calibration_error_count": 7,
   "market_lied_count": 0,
   "chaos_race_count": 0,
   "data_error_count": 0,
   "biggest_confidence_misses": [
     {
-      "race_id": "921566",
-      "horse": "Nyra",
-      "prob": 0.6165,
-      "result": "LOSS"
-    },
-    {
-      "race_id": "922698",
-      "horse": "Butch Coolidge",
-      "prob": 0.5732,
-      "result": "LOSS"
-    },
-    {
       "race_id": "920240",
       "horse": "Boston Max",
       "prob": 0.4618,
+      "result": "LOSS"
+    },
+    {
+      "race_id": "920237",
+      "horse": "Holly Mist",
+      "prob": 0.4236,
       "result": "LOSS"
     }
   ],
@@ -43,17 +37,17 @@
       "result": "WIN"
     },
     {
-      "race_id": "922687",
-      "horse": "Ballinea Star",
-      "prob": 0.6342,
-      "result": "WIN"
-    },
-    {
       "race_id": "920242",
       "horse": "Wild Violet",
       "prob": 0.4707,
       "result": "WIN"
+    },
+    {
+      "race_id": "920244",
+      "horse": "Blue Prince",
+      "prob": 0.3618,
+      "result": "WIN"
     }
   ],
-  "sigma_verdict": "ACCEPTABLE_DAY"
+  "sigma_verdict": "STRONG_DAY"
 }

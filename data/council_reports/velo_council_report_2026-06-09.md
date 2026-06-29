@@ -1,11 +1,11 @@
 # VÉLØ LLM Council Operator Report - 2026-06-09
 
-**Run Date:** 2026-06-09T19:58:36.760896
-**Council Status:** READY
+**Run Date:** 2026-06-26T18:19:00.054963
+**Council Status:** EVIDENCE_INCOMPLETE
 **Status:** SHADOW / OPERATOR ONLY
 
 ## 1. Executive Summary (Prime Chair)
-WATCH_ONLY — 2026-06-09. Evidence accumulation continues. Do not consume for learning yet. Watch: SIGMA COVERAGE: SR_BELOW_BASELINE
+PASS_TO_LEARNING — 2026-06-09. All gates clear. Learning consume permitted if operator approves.
 
 ## 2. Agent Deliberations
 ### DATA AUDITOR
@@ -20,8 +20,8 @@ WATCH_ONLY — 2026-06-09. Evidence accumulation continues. Do not consume for l
 
 ### SIGMA COVERAGE
 **Role:** Result Coverage Check
-**Labels:** SR_BELOW_BASELINE
-**Read:** SR=13.8% — below baseline 20%. Watchlist day.
+**Labels:** SR_ABOVE_BASELINE
+**Read:** SR=21.1% — at or above baseline 20%. Coverage OK.
 
 ### CONTAMINATION DETECTOR
 **Role:** Run ID Contamination Check
@@ -39,8 +39,6 @@ WATCH_ONLY — 2026-06-09. Evidence accumulation continues. Do not consume for l
 - **cashrun_report**: MISSING 
 - **live_sidecar_audit**: FOUND 
   - Path: `data/live_sidecar_ablation_audit_latest.md`
-- **signal_promotion_board**: FOUND 
-  - Path: `data/signal_promotion_board_latest.md`
 - **router_shadow_audit**: FOUND 
   - Path: `data/router_shadow_audit_latest.md`
 - **execution_bridge_ledger**: FOUND 
