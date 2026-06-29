@@ -1,0 +1,52 @@
+{
+  "task_id": "VCP-01",
+  "allowed_paths": [
+    "scripts/ops/build_velo_living_state.py",
+    "tests/test_velo_living_state.py",
+    "data/current/velo_living_state.json",
+    "data/reports/vcp_01_living_state_operator_brief.md",
+    "ops/task_contracts/VCP-01.json",
+    "docs/current/ONE_TRUTH.md"
+  ],
+  "forbidden_paths": [
+    "src/velo/scoring/",
+    "src/velo/models/",
+    "src/velo/supabase/",
+    "src/velo/telegram/",
+    "models/",
+    "data/velo_prime_verdicts_",
+    "src/intelligence/velo_prime_ensemble.py"
+  ],
+  "forbidden_keywords": [
+    "score_race",
+    "supabase",
+    "telegram",
+    "model_promotion",
+    "place_order",
+    "place_bet",
+    "promote_model",
+    "VFU-21",
+    "vfu_21"
+  ],
+  "classification_required": [
+    "VCP_01_LIVING_STATE_PACKET_COMPLETE",
+    "VELO_LIVING_STATE_V1_WRITTEN",
+    "ONE_TRUTH_LOCK_CONSUMED",
+    "VFU_20_SIGNOFF_CONSUMED",
+    "A3_GOING_CODE_FIX_CONSUMED",
+    "MEMORY_CAPTURE_OPEN",
+    "FAILURE_LEARNING_OPEN",
+    "PROMOTION_LEARNING_GATED",
+    "MISSING_ARTIFACTS_RESOLVE_UNKNOWN_NOT_CLEAN",
+    "CONTRADICTIONS_RECORDED_NOT_SUPPRESSED",
+    "NO_VFU_21_START",
+    "NO_HEARTBEAT_BUILD",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "REPORT_ONLY"
+  ]
+}
