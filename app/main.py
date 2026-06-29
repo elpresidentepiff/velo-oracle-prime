@@ -1643,7 +1643,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "Southwell": "SOW", "Southwell (AW)": "SOW",
         "Newcastle": "NCS", "Newcastle (AW)": "NCS",
         "Dundalk": "DUN", "Dundalk (AW)": "DUN",
-        "Chester": "CHS", "Chepstow": "CHP", "Windsor": "WDR",
+        "Chester": "CHS", "Chepstow": "CHP", "Windsor": "WIN",
         "Newmarket": "NMK", "Ascot": "ASC", "Goodwood": "GOO",
         "York": "YOR", "Haydock": "HAY", "Sandown": "SAN",
         "Nottingham": "NOT", "Leicester": "LEI", "Salisbury": "SAL",
@@ -1653,7 +1653,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "Galway": "GAL", "Cork": "COR", "Tipperary": "TIP",
         "Punchestown": "PUN", "Fairyhouse": "FAI", "Gowran": "GOW",
         "Bangor": "BAN", "Cartmel": "CRT", "Catterick": "CAT",
-        "Cheltenham": "CHE", "Exeter": "EXE", "Ffos Las": "FFL",
+        "Cheltenham": "CHE", "Exeter": "EXE", "Ffos Las": "FFO",
         "Hereford": "HER", "Huntingdon": "HUN", "Kelso": "KEL",
         "Ludlow": "LUD", "Market Rasen": "MAR", "Musselburgh": "MUS",
         "Perth": "PER", "Plumpton": "PLU", "Sedgefield": "SED",
@@ -1677,7 +1677,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 if ":" in _off:
                     _h, _m = map(int, _off.split(":"))
                     if _h >= 13: _h -= 12
-                    _dot = f"{_h}.{_m:02d}" if _m else str(_h)
+                    _dot = f"{_h}.{_m:02d}"
                 else:
                     _dot = _off
                 _gc_num_to_velo[_num] = f"rp_{_crs}_{date_tag.replace('_','')}_{_dot}"
@@ -1706,6 +1706,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                     _num = str(card.get("race_id", ""))
                     _vrid = _gc_num_to_velo.get(_num, _num)
                     new_build_by_race[_vrid] = card
+                    new_build_by_race[_num] = card  # always index by numeric RP race_id too
         except Exception as e:
             logger.warning("Could not read New Build readiness file %s: %s", new_build_path, e)
 
