@@ -28,13 +28,13 @@ URL_LIST_ROOT = ROOT / "data" / "racing_post_url_lists"
 # UK and IRE venue slugs as they appear in Racing Post URLs.
 # When a new UK/IRE venue appears, add it here.
 UK_IRE_VENUES = {
-    "ascot", "ayr", "bath", "beverley", "brighton", "carlisle", "catterick",
+    "ascot", "ayr", "bangor-on-dee", "bath", "beverley", "brighton", "carlisle", "cartmel", "catterick",
     "chelmsford-city", "cheltenham", "chester", "chepstow", "doncaster",
     "epsom", "exeter", "fakenham", "ffos-las", "goodwood", "hamilton",
     "fontwell",
     "haydock", "hereford", "hexham", "huntingdon", "kempton", "kempton-aw", "leicester",
     "lingfield", "ludlow", "market-rasen", "musselburgh", "newbury",
-    "newcastle", "newmarket", "nottingham", "perth", "plumpton", "pontefract",
+    "newcastle", "newcastle-aw", "newmarket", "newmarket-july", "nottingham", "perth", "plumpton", "pontefract",
     "redcar", "ripon", "salisbury", "sandown", "southwell", "stratford",
     "taunton", "thirsk", "towcester", "uttoxeter", "warwick", "wetherby",
     "wincanton", "windsor", "wolverhampton", "worcester", "yarmouth", "york",

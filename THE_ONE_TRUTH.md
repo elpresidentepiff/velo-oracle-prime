@@ -26,7 +26,7 @@ once after Step 3 and reused everywhere; downstream steps must not rediscover it
 | 5 | `scripts/ops/validate_rp_injection.py` | READY | Exact injection from Step 4 | Unique race IDs, no null off-times, full card gate PASS |
 | 6 | `scripts/ops/new_build_current_card_feed.py` | READY | Standard cache | Current-card passport feed |
 | 7 | `scripts/ops/new_build_two_lane_score.py` | READY | Passport feed | Two-lane readiness report |
-| 8 | `scripts/ops/build_racecard_merged_from_injection.py` | READY | Exact injection from Step 4 | One Old VELO RP file per venue preserving real RP IDs |
+| 8 | `scripts/ops/ensure_old_velo_rp_newspaper_files.py` | READY / HARD GATE | RP Newspaper Form PDFs from local Downloads/incoming folders | Five engine PDFs per venue staged, `0010_XX` excluded, PDF-ingested Old VELO files written |
 | 8.5 | `scripts/ops/build_rpdc_daily.py` | READY | Exact injection from Step 4 | Current-day RPDC rows with 100% race-ID coverage |
 | 9 | `scripts/ops/run_prime_today.py` | READY | RP merged files and RPDC | 100% races scored/persisted and real `pipeline_runs` truth |
 | 9.1 | `scripts/ops/run_radical_shadow_today.py` | SHADOW / PAPER ONLY | Same race day artifacts as Step 9 | Radical Shadow VELO report; never live execution |
@@ -34,6 +34,7 @@ once after Step 3 and reused everywhere; downstream steps must not rediscover it
 | 9.3 | `scripts/ops/build_tri_lane_agent_review.py` | SHADOW / PAPER ONLY | Tri-lane stress test | Race-level agent review instructions |
 | 9.4 | `scripts/ops/build_deep_race_agent_v1.py` | SHADOW / PAPER ONLY | RP racecard artifacts plus local evidence | Deep Race Agent gate cards |
 | 9.5 | `scripts/ops/build_course_master.py` | SHADOW / CONTEXT ONLY | Course excellence table, Deep Agent eval, today's RP card | Course Master context; never alters scoring/staking |
+| 9.6 | `scripts/ops/build_old_velo_three_option_card.py` | SHADOW / OPERATOR ONLY | Old VELO runner snapshots | Old VELO WIN / PLACE / LONGSHOT role card |
 | 10A | `scripts/ops/build_rp_results_url_list.py` | READY | `FINAL_CAPTURE_LABEL` manifest | Deduplicated RP results URL list |
 | 10B | `scripts/ops/racing_post_account_collector.py capture` | READY | Results URL list | Final results-page capture |
 | 11 | `scripts/ops/parse_rp_results_capture.py` | READY | Final results capture | Canonical RP results JSON with numeric IDs and SP truth |
@@ -214,34 +215,54 @@ python scripts/ops/new_build_two_lane_score.py
 
 ---
 
-## STEP 8 — BUILD OLD VELO RP FILES
+## STEP 8 — GET AND INGEST OLD VELO RP NEWSPAPER FILES
 
-**Why:** Old VELO was built to read Racing Post data in newspaper form. This step takes the injection JSON and converts it into that format. One file per racecourse. Races listed by time in British dot-time (14:30 becomes 2.30, 17:10 becomes 5.10).
+**Why:** Old VELO was built to read Racing Post data in newspaper form. The engine source is the Racing Post `Newspaper Form` dropdown PDF pack, not the selection file and not a convenient injection fallback. The agent must first find/download/stage the RP newspaper PDFs, then ingest them into `data/racecard_merged/`, then score.
 
-This is not a merge. It is one source — the RP HTML you captured — converted into the shape Old VELO expects.
+This is a hard source gate. If the five required files are not present for every venue, Old VELO scoring must stop and announce the missing files. Do not run `run_prime_today.py --source rp` from stale or injection-derived `racecard_merged` files and call it complete.
 
-**Each race in these files contains 5 things:**
+**Important correction — Newspaper Form dropdown files:**
+
+Racing Post's race page has a `Newspaper Form` dropdown. The Old VELO newspaper-file feed must use the five engine-intelligence files per track/race day:
+
+1. `0011_XX` — Postdata grid
+2. `0012_XX` — Colour racecard
+3. `0015_OR` — Official ratings/history sheet
+4. `0016_XX` — Spotlight comments
+5. `0032_TS` — Topspeed ratings
+
+`0010_XX` is the selection box / competitor consensus file. It must not be fed into Old VELO as engine truth. It may be stored separately for competitor-comparison reporting only. The gate script records any `0010_XX` files it sees and excludes them.
+
+**Each Old VELO race payload must contain engine facts from these sources:**
 
 1. **Race info** — name, distance, going, class, prize money, surface, race type
-2. **Post data pick** — the horse with the most newspaper tips. This is what the Racing Post and the press have selected as their best bet
-3. **Topspeed pick** — the horse with the highest topspeed rating from the RP data
-4. **Spotlight verdict** — the Racing Post spotlight comments on the tipped horses, verbatim
-5. **Newspaper selections** — every tip from every newspaper that tipped a horse in this race
+2. **Postdata grid** — trainer form, going, distance, course, draw, ability, recent form factors
+3. **Colour racecard facts** — runners, weights, jockey/trainer, OR, TS, RPR
+4. **Official ratings/history** — OR movement, historical marks, best winning ratings
+5. **Spotlight and Topspeed** — runner comments plus condition-specific speed figures
 
 Every runner in every race also carries: horse name, jockey, trainer, weight, draw, form figures, official rating, RPR, topspeed, days since last run, spotlight comment, headgear, wind surgery flag.
 
-**Command:**
+**Competitor comparison rule:** `0010_XX` can be parsed into a separate competitor-predictions report, but it must remain outside the Old VELO scoring input. If a report compares VELO with Racing Post/press selections, it must label that lane as competitor intelligence.
+
+**Command — required before Old VELO scoring:**
 ```
-python scripts/ops/build_racecard_merged_from_injection.py
+PYTHONPATH=. python scripts/ops/ensure_old_velo_rp_newspaper_files.py
   --date YYYY-MM-DD
-  --injection-path data/racing_post_account_parsed/live-full-racepages-YYYY-MM-DD/racecard_injection.json
+  --execute
 ```
 
 **What lands on disk:**
-`data/racecard_merged/racecard_{VENUE}_YYYY-MM-DD.json` — one file per venue, named by venue code (GOO, NAV, PER, PUN etc.)
+`data/incoming_pdfs/YYYY-MM-DD/` — staged engine PDFs only (`0011_XX`, `0012_XX`, `0015_OR`, `0016_XX`, `0032_TS`)
+`data/reports/old_velo_rp_newspaper_file_gate_YYYY_MM_DD.json` — source gate proof
+`data/reports/old_velo_rp_newspaper_file_gate_YYYY_MM_DD.md` — human-readable source gate proof
+`data/racecard_merged/racecard_{VENUE}_YYYY-MM-DD.json` — one PDF-ingested Old VELO file per venue, named by venue code (GOO, NAV, PER, PUN etc.)
 
 **How you know it worked:**
-Every race has `off`, `course`, `name`, `distance` populated. Every runner has `official_rating`, `topspeed`, `form_figures`. Time keys are dot-time and match the race schedule.
+The gate report status is `PASS`. Every expected venue has all five required keys. No `0010_XX` file is staged as engine input. Every race has `off`, `course`, `name`, `distance` populated. Every runner has `official_rating`, `topspeed`, `form_figures`. Time keys are dot-time and match the race schedule.
+
+**Hard stop:**
+If `ensure_old_velo_rp_newspaper_files.py` exits non-zero, stop. The operator must download the missing RP `Newspaper Form` files or provide the folder using `--search-dir`. Do not substitute `build_racecard_merged_from_injection.py` unless the operator explicitly labels the run as non-compliant/fallback.
 
 ---
 
@@ -496,6 +517,39 @@ Race Agent evaluation. It labels today's courses as `COURSE_BOOST`,
 
 Course Master is context only. It tells the operator whether today's battlefield
 is historically friendly or dangerous for VELO. It does not select horses.
+
+### Step 9.6: Old VELO Three-Option Card
+
+Command:
+```
+PYTHONPATH=. python scripts/ops/build_old_velo_three_option_card.py --date YYYY-MM-DD
+```
+
+Old VELO must not be read as a single-horse system only. Step 9 writes full
+runner snapshots for every scored horse. Step 9.6 turns those snapshots into
+three operator roles per race:
+
+- `WIN` — highest `velo_prime_prob`
+- `PLACE` — highest `place_prob`, distinct from WIN when possible
+- `LONGSHOT` — highest value/longshot role score, preferring `sp_dec >= 4.5`
+  and using `longshot_prob`, `market_deception_score`, `improvement_score`,
+  `sqpe_no_rpr_shadow_prob`, and odds band
+
+Outputs:
+
+- `data/reports/old_velo_three_option_card_YYYY_MM_DD.json`
+- `data/reports/old_velo_three_option_card_YYYY_MM_DD.md`
+- `data/reports/old_velo_three_option_card_latest.json`
+- `data/reports/old_velo_three_option_card_latest.md`
+
+Boundary: this is an operator/shadow card only. It does not change live scoring,
+does not change model weights, does not stake, and does not write Telegram. It
+only exposes the structure already present in Old VELO runner snapshots.
+
+June 23 proof: on 2026-06-23 Old VELO WIN went 3/17, but the LONGSHOT role found
+4/17 winners and exposed the mid-price/outsider class that the single top-pick
+view missed. Therefore the daily operator view must show all three Old VELO
+roles.
 
 ### Dashboard Proof
 
@@ -964,3 +1018,18 @@ The agent must report all of the following every day:
 `DAY COMPLETE` may only be stated when Steps 10-20 and the final refreshed
 Council/Mission Control checks all pass. Otherwise state `DAY INCOMPLETE` and
 name the exact failed step and obstacle.
+
+---
+
+## HARDENING ADDENDUM - RACEDAY UNIVERSE GATE
+
+Before morning scoring and before evening learning, run:
+
+```
+python scripts/ops/verify_raceday_universe.py --date YYYY-MM-DD --execute
+```
+
+This compares RP injection, standard cache, Old VELO RP-merged files, New Build
+readiness, and RP results when available. All race IDs must match. If the check
+returns `FAIL`, stop. Do not score, do not run Sigma, and do not learn until the
+artifact mismatch is fixed.

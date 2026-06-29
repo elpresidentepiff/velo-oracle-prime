@@ -139,11 +139,11 @@ def init_login(profile_dir: Path, login_url: str, *, execute: bool) -> dict:
     sync_playwright = _import_playwright()
     profile_dir.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
-        browser = p.chromium.launch_persistent_context(
+        # Firefox works reliably on WSLg; Chromium crashes due to GPU init issues
+        browser = p.firefox.launch_persistent_context(
             user_data_dir=str(profile_dir),
             headless=False,
             viewport={"width": 1400, "height": 1000},
-            args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
         )
         page = browser.new_page()
         page.goto(login_url, wait_until="domcontentloaded", timeout=60000)
@@ -214,12 +214,21 @@ def capture_urls(
     batch_captured = 0
 
     with sync_playwright() as p:
-        browser = p.chromium.launch_persistent_context(
-            user_data_dir=str(profile_dir),
-            headless=not headed,
-            viewport={"width": 1400, "height": 1000},
-            args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
-        )
+        # Use Firefox profile if profile_dir contains Firefox markers, else Chromium
+        _is_firefox_profile = (profile_dir / "prefs.js").exists() or "firefox" in str(profile_dir).lower()
+        if _is_firefox_profile:
+            browser = p.firefox.launch_persistent_context(
+                user_data_dir=str(profile_dir),
+                headless=not headed,
+                viewport={"width": 1400, "height": 1000},
+            )
+        else:
+            browser = p.chromium.launch_persistent_context(
+                user_data_dir=str(profile_dir),
+                headless=not headed,
+                viewport={"width": 1400, "height": 1000},
+                args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
+            )
         page = browser.new_page()
         for idx, url in enumerate(urls, start=1):
             if url in completed_urls:
@@ -334,13 +343,21 @@ def manual_capture(
 
     sync_playwright = _import_playwright()
     day_dir.mkdir(parents=True, exist_ok=True)
+    _is_firefox_profile = (profile_dir / "prefs.js").exists() or "firefox" in str(profile_dir).lower()
     with sync_playwright() as p:
-        browser = p.chromium.launch_persistent_context(
-            user_data_dir=str(profile_dir),
-            headless=headless,
-            viewport={"width": 1400, "height": 1000},
-            args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
-        )
+        if _is_firefox_profile:
+            browser = p.firefox.launch_persistent_context(
+                user_data_dir=str(profile_dir),
+                headless=headless,
+                viewport={"width": 1400, "height": 1000},
+            )
+        else:
+            browser = p.chromium.launch_persistent_context(
+                user_data_dir=str(profile_dir),
+                headless=headless,
+                viewport={"width": 1400, "height": 1000},
+                args=["--ignore-certificate-errors", "--disable-dev-shm-usage", "--disable-gpu", "--use-gl=swiftshader"],
+            )
         page = browser.new_page()
         response = page.goto(start_url, wait_until="domcontentloaded", timeout=60000)
         if not headless:
