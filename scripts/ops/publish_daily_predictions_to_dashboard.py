@@ -430,7 +430,7 @@ def publish(date_str: str) -> dict:
                         if ":" in _off_raw:
                             _h, _m = map(int, _off_raw.split(":"))
                             if _h >= 13: _h -= 12
-                            _dot = f"{_h}.{_m:02d}" if _m else str(_h)
+                            _dot = f"{_h}.{_m:02d}"
                         else:
                             _dot = _off_raw
                         _velo_rid = f"rp_{_crs}_{date_tag.replace('-','')}_{_dot}"
