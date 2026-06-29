@@ -80,6 +80,62 @@ COURSE_ALIASES = {
     "rip": "ripon",
     "thi": "thirsk",
     "yor": "york",
+    # Short venue codes used in verdict race_ids → full RP course names
+    "crt": "cartmel",
+    "cur": "curragh",
+    "utt": "uttoxeter",
+    "wol": "wolverhampton",
+    "woa": "wolverhampton",
+    "che": "cheltenham",
+    "asc": "ascot",
+    "eps": "epsom",
+    "goo": "goodwood",
+    "hyd": "haydock",
+    "leo": "leopardstown",
+    "nav": "navan",
+    "tip": "tipperary",
+    "gal": "galway",
+    "kil": "killarney",
+    "cor": "cork",
+    "kem": "kempton",
+    "lin": "lingfield",
+    "san": "sandown",
+    "win": "windsor",
+    "not": "nottingham",
+    "lei": "leicester",
+    "wor": "worcester",
+    "sal": "salisbury",
+    "bri": "brighton",
+    "cat": "catterick",
+    "car": "carlisle",
+    "cht": "chepstow",
+    "dev": "devon",
+    "don": "doncaster",
+    "exe": "exeter",
+    "ffo": "ffos las",
+    "fon": "fontwell",
+    "hei": "hereford",
+    "hun": "huntingdon",
+    "mkt": "market rasen",
+    "mus": "musselburgh",
+    "nca": "newcastle",
+    "ncl": "newcastle",
+    "nwc": "newcastle",
+    "nth": "northampton",
+    "per": "perth",
+    "plt": "plumpton",
+    "pon": "pontefract",
+    "red": "redcar",
+    "sed": "sedgefield",
+    "sou": "southwell",
+    "str": "stratford",
+    "tnt": "taunton",
+    "tow": "towcester",
+    "weth": "wetherby",
+    "wet": "wetherby",
+    "hpk": "haydock",
+    "mss": "musselburgh",
+    "kmp": "kempton",
 }
 
 
@@ -557,7 +613,8 @@ def main():
                 _r["top3_names"]   = [x.get("horse","") for x in _top3]
                 _r["full_runners"] = _r["runners"]
             # Ensure 24h off_time for course-time fallback (SL uses H.MM 12h)
-            if "off_time" not in _r:
+            # Also handles RP results where off_time key exists but value is None
+            if not _r.get("off_time"):
                 _off = str(_r.get("off",""))
                 try:
                     _h, _m = map(int, _off.split("."))
@@ -629,7 +686,7 @@ def main():
         else:
             # Fallback: match by course + off_time
             fb = local_backup.get(race_id, {})
-            fb_course = _norm_course(fb.get("course", ""))
+            fb_course = _canonical_course(fb.get("course", ""))
             fb_off = fb.get("off_time", "")
             if fb_course and fb_off:
                 for bst_cand in _candidate_bst_times(fb_off):
