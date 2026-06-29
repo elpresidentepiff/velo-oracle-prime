@@ -399,8 +399,49 @@ def publish(date_str: str) -> dict:
     if nb_path.exists():
         try:
             nb_payload = json.loads(nb_path.read_text(encoding="utf-8"))
+
+            # Build numeric NB race_id → velo race_id map via injection JSON.
+            # NB scorecard uses RP numeric race IDs; verdicts/Supabase use rp_CRS_DATE_H.MM.
+            # Find the most recent injection JSON for this date to get the mapping.
+            _nb_num_to_velo: dict[str, str] = {}
+            _inj_glob = sorted(
+                (ROOT / "data" / "racing_post_account_parsed").glob(
+                    f"*{date_tag}*/racecard_injection.json"
+                )
+            )
+            if _inj_glob:
+                try:
+                    _inj = json.loads(_inj_glob[-1].read_text(encoding="utf-8"))
+                    _COURSE_ABBR = {
+                        "Curragh": "CUR", "Uttoxeter": "UTT", "Cartmel": "CRT",
+                        "Wolverhampton": "WOL", "Wolverhampton (AW)": "WOL",
+                        "Kempton": "KEM", "Kempton (AW)": "KEM",
+                        "Chelmsford": "CHE", "Chelmsford City": "CHE",
+                        "Lingfield": "LIN", "Lingfield (AW)": "LIN",
+                        "Southwell": "SOW", "Southwell (AW)": "SOW",
+                        "Newcastle": "NCS", "Newcastle (AW)": "NCS",
+                        "Dundalk": "DUN", "Dundalk (AW)": "DUN",
+                    }
+                    for _race in _inj.get("races", []):
+                        _num = str(_race.get("race_id", ""))
+                        _crs_full = _race.get("course", "")
+                        _crs = _COURSE_ABBR.get(_crs_full, _crs_full[:3].upper())
+                        _off_raw = _race.get("off_time", "")  # e.g. "13:10"
+                        if ":" in _off_raw:
+                            _h, _m = map(int, _off_raw.split(":"))
+                            if _h >= 13: _h -= 12
+                            _dot = f"{_h}.{_m:02d}" if _m else str(_h)
+                        else:
+                            _dot = _off_raw
+                        _velo_rid = f"rp_{_crs}_{date_tag.replace('-','')}_{_dot}"
+                        _nb_num_to_velo[_num] = _velo_rid
+                except Exception:
+                    pass
+
             for sc in nb_payload.get("race_day_scorecards", []):
-                rid = str(sc.get("race_id", ""))
+                num_rid = str(sc.get("race_id", ""))
+                # Use velo race_id if mapping found, else fall back to numeric
+                rid = _nb_num_to_velo.get(num_rid, num_rid)
                 pcov = sc.get("passport_coverage", "")
                 for entry in sc.get("lane_a_top3", []):
                     key = (rid, (entry.get("horse") or "").lower())

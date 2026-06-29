@@ -1422,6 +1422,10 @@ td:last-child  { padding-right: 20px; }
       <div class="truth-val" id="tc-source-truth">UNKNOWN</div>
     </div>
     <div class="truth-card">
+      <div class="truth-label">Old VELO RP Gate</div>
+      <div class="truth-val"><span id="tc-old-velo-rp-gate" class="truth-status st-MISSING">MISSING</span></div>
+    </div>
+    <div class="truth-card">
       <div class="truth-label">Supabase Sync</div>
       <div class="truth-val"><span id="tc-sb-state">—</span> <span id="tc-sb-status" class="truth-status st-UNKNOWN">UNKNOWN</span></div>
     </div>
@@ -1495,6 +1499,7 @@ td:last-child  { padding-right: 20px; }
       setEl('tc-live-state', data.live_velo_status);
       setStatus('tc-live-status', data.live_velo_status === 'READY' ? 'PASS' : data.live_velo_status);
       setEl('tc-source-truth', data.source_truth_label || 'UK_IRE_STABLE');
+      setStatus('tc-old-velo-rp-gate', data.old_velo_source_gate_status || 'MISSING');
       setEl('tc-sb-state', data.supabase_persistence_status);
       setStatus('tc-sb-status', data.supabase_readback_verified);
       setEl('tc-nb-state', data.new_build_status);
@@ -2564,6 +2569,17 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
         <div class="stt-row"><span class="k">RPR violations:</span><span class="v" id="stt-d-rpr">—</span></div>
         <div class="stt-err" id="stt-d-err" style="display:none"></div>
       </div>
+      <div class="stt-card">
+        <div class="stt-card-title">
+          <span>E · OLD VELO RP GATE</span>
+          <span class="stt-source-badge">LOCAL_ARTIFACT</span>
+        </div>
+        <div class="stt-status off" id="stt-e-status">—</div>
+        <div class="stt-row"><span class="k">file:</span><span class="v" id="stt-e-file">—</span></div>
+        <div class="stt-row"><span class="k">venues:</span><span class="v" id="stt-e-venues">—</span></div>
+        <div class="stt-row"><span class="k">missing:</span><span class="v" id="stt-e-missing">—</span></div>
+        <div class="stt-err" id="stt-e-err" style="display:none"></div>
+      </div>
     </div>
     <div class="stt-meta" id="stt-meta">
       <span>no_scoring: —</span>
@@ -2575,7 +2591,8 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
 <script>
 (function() {
   function _statusClass(s) {
-    if (s === 'CONNECTED' || s === 'FOUND') return 'ok';
+    if (s === 'CONNECTED' || s === 'FOUND' || s === 'PASS') return 'ok';
+    if (s === 'BLOCKED') return 'warn';
     if (s === 'READ_ERROR') return 'err';
     if (s === 'SUPABASE_UNAVAILABLE') return 'warn';
     return 'off';
@@ -2613,6 +2630,7 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
     var B = d.b_local_harness || {};
     var C = d.c_doctrine_scorecard || {};
     var D = d.d_new_build_sidecar || {};
+    var E = d.e_old_velo_rp_newspaper_gate || {};
     var M = d.meta || {};
 
     // A: Supabase
@@ -2663,6 +2681,22 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
     } else {
       _setText('stt-d-count', '—'); _setText('stt-d-today', '—'); _setText('stt-d-rpr', '—');
       _setErr('stt-d-err', D.error || null);
+    }
+
+    // E: Old VELO RP Newspaper Gate
+    _setStatus('stt-e-status', E.status);
+    _setText('stt-e-file', E.file || 'none');
+    if ((E.status === 'PASS' || E.status === 'BLOCKED') && E.data) {
+      _setText('stt-e-venues', (E.data.expected_venues || []).join(', ') || '—');
+      var missing = E.data.missing_by_venue || {};
+      var missingText = Object.keys(missing).map(function(k) {
+        return k + ':' + (missing[k] || []).length;
+      }).join(' · ');
+      _setText('stt-e-missing', missingText || 'none');
+      _setErr('stt-e-err', E.data.blocked_reason || null);
+    } else {
+      _setText('stt-e-venues', '—'); _setText('stt-e-missing', '—');
+      _setErr('stt-e-err', E.error || null);
     }
 
     // Meta strip
