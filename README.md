@@ -137,7 +137,7 @@ if os.getenv("VELO_EXECUTION_MODE") == "LIVE":
 
 | Document | Location |
 |---|---|
-| **Single source of truth** | `CURRENT_RUNTIME_TRUTH.md` |
+| **Single source of truth** | `docs/current/ONE_TRUTH.md` |
 | Engineering decisions | `docs/engineering/` |
 | Process wiring | `docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md` |
 | Shadow model governance | `docs/engineering/VELO_SHADOW_MODEL_ARTIFACT_GOVERNANCE_V1.md` |
