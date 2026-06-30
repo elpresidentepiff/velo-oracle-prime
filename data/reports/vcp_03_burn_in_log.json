@@ -1,0 +1,28 @@
+{
+  "burn_in_version": "vcp_03_v1",
+  "target_days": 10,
+  "started": "2026-06-29",
+  "days": [
+    {
+      "date": "2026-06-30",
+      "verdict": "PASS",
+      "passed_checks": [
+        "living_state_generated",
+        "heartbeat_generated",
+        "truth_lock=LOCKED",
+        "a3_going_code=FIXED",
+        "vfu_20_signed_off=True",
+        "vfu_21_gate=CLOSED",
+        "memory_capture=OPEN",
+        "failure_learning=OPEN",
+        "promotion_learning=GATED (labelled)",
+        "contradictions_counted",
+        "forbidden_actions_present"
+      ],
+      "failed_checks": [],
+      "promotion_learning": "GATED",
+      "contradictions_count": 0,
+      "logged_at": "2026-06-30T00:00:29.813435+00:00"
+    }
+  ]
+}
