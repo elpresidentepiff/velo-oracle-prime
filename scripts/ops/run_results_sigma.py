@@ -349,6 +349,17 @@ def _load_three_option_summary(race_date: str) -> dict:
         return {"available": False}
 
 
+# SIGMA-26: verdict select clause used by STEP 1 to build predictions[race_id].
+# predicted_field_size and race_type were added here so the enrichment helpers
+# below actually receive them — without this, extraction would silently return
+# None forever regardless of what's persisted on velo_verdicts. verdict_id is
+# intentionally not included — out of scope for this mission.
+SIGMA_VERDICT_SELECT_COLUMNS = (
+    "race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,"
+    "generated_at,full_analysis,assigned_product,predicted_field_size,race_type"
+)
+
+
 # ── SIGMA-26 dry-run enrichment (pick_sp / field_size / race_type) ───────────
 # Pure helpers — no Supabase access, no side effects. Extract from a verdict
 # row (as returned by the /velo_verdicts select in STEP 1) so tests can verify
@@ -430,9 +441,13 @@ def _build_sigma_row(
     Identical to the pre-SIGMA-26 inline dict for all existing keys — the
     known-good actual_winner_sp/winner_sp path is untouched. Adds pick_sp,
     field_size, and race_type as dry-run enrichment when `prediction` (the
-    verdict row from predictions[race_id]) supplies them; absent sources leave
-    the key as None and never block row construction. verdict_id is
-    intentionally not included — out of scope for this mission.
+    verdict row from predictions[race_id]) supplies them.
+
+    Missing sources OMIT the key entirely rather than writing None. This is an
+    upsert into sigma_audits — writing an explicit null for a key that already
+    has a good value on an earlier run would overwrite it. Omitting the key
+    leaves any existing Supabase value untouched. verdict_id is intentionally
+    not included — out of scope for this mission.
     """
     row = {
         "race_id": race_id,
@@ -449,9 +464,18 @@ def _build_sigma_row(
         "actual_winner_sp": actual_winner_sp,
         "notes": notes,
     }
-    row["pick_sp"] = _extract_pick_sp_from_prediction(prediction)
-    row["field_size"] = _extract_field_size_from_prediction(prediction)
-    row["race_type"] = _extract_race_type_from_prediction(prediction)
+    pick_sp = _extract_pick_sp_from_prediction(prediction)
+    if pick_sp is not None:
+        row["pick_sp"] = pick_sp
+
+    field_size = _extract_field_size_from_prediction(prediction)
+    if field_size is not None:
+        row["field_size"] = field_size
+
+    race_type = _extract_race_type_from_prediction(prediction)
+    if race_type is not None:
+        row["race_type"] = race_type
+
     return row
 
 
@@ -485,7 +509,7 @@ def main():
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
     print("\nSTEP 1: Load predictions from velo_verdicts")
     verdicts_raw = sb_get(
-        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
+        f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
         f"&generated_at=gte.{race_date}T00:00:00"
         f"&generated_at=lt.{race_date}T23:59:59"
         f"&order=generated_at"
@@ -498,7 +522,7 @@ def main():
         next_day = (race_date_obj + timedelta(days=1)).strftime("%Y-%m-%d")
         date_tag = race_date.replace("-", "")  # e.g. "20260529"
         extended = sb_get(
-            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
+            f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
             f"&generated_at=gte.{next_day}T00:00:00"
             f"&generated_at=lt.{next_day}T12:00:00"
             f"&order=generated_at"
@@ -512,7 +536,7 @@ def main():
     if not verdicts_raw:
         prev_day = (race_date_obj - timedelta(days=1)).strftime("%Y-%m-%d")
         prev_raw = sb_get(
-            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
+            f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
             f"&generated_at=gte.{prev_day}T00:00:00"
             f"&generated_at=lt.{race_date}T00:00:00"
             f"&order=generated_at"

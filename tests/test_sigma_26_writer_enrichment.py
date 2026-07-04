@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from app.services.velo_prime_service import _build_race_type_fields
 from scripts.ops.run_results_sigma import (
+    SIGMA_VERDICT_SELECT_COLUMNS,
     _build_sigma_row,
     _extract_field_size_from_prediction,
     _extract_pick_sp_from_prediction,
@@ -109,13 +110,26 @@ def test_sigma_row_includes_three_enrichment_fields_when_present():
 
 def test_missing_enrichment_fields_do_not_block_sigma_row():
     row = _build_sigma_row(**_base_sigma_row_kwargs(prediction=None))
-    assert row["pick_sp"] is None
-    assert row["field_size"] is None
-    assert row["race_type"] is None
+    assert "pick_sp" not in row
+    assert "field_size" not in row
+    assert "race_type" not in row
     # Core fields still present — row construction was not blocked.
     assert row["race_id"] == "922170_20260630"
     assert row["outcome"] == "MISS"
     assert row["decision_tier"] == "B"
+
+
+def test_missing_enrichment_fields_are_omitted_to_prevent_null_overwrite():
+    # prediction missing all three enrichment sources (no full_analysis,
+    # no predicted_field_size, no race_type). _build_sigma_row must omit the
+    # keys rather than writing None, because run_results_sigma.py upserts
+    # this row into sigma_audits — an explicit null would overwrite any good
+    # value already written by a prior run for this race_id.
+    prediction = {"top_rank_horse_id": "h1"}
+    row = _build_sigma_row(**_base_sigma_row_kwargs(prediction=prediction))
+    assert "pick_sp" not in row
+    assert "field_size" not in row
+    assert "race_type" not in row
 
 
 def test_verdict_persistence_payload_accepts_race_type_fields():
@@ -134,7 +148,7 @@ def test_verdict_persistence_payload_accepts_race_type_fields():
     assert fields2["race_type_recorded_at"] is None
 
 
-def test_no_verdict_id_write_in_sigma_26():
+def test_sigma_26_does_not_add_verdict_id_even_when_prediction_has_id():
     prediction = {
         "top_rank_horse_id": "h1",
         "predicted_field_size": 12,
@@ -144,3 +158,10 @@ def test_no_verdict_id_write_in_sigma_26():
     }
     row = _build_sigma_row(**_base_sigma_row_kwargs(prediction=prediction))
     assert "verdict_id" not in row
+
+
+def test_sigma_verdict_select_columns_include_field_size_and_race_type():
+    assert "predicted_field_size" in SIGMA_VERDICT_SELECT_COLUMNS
+    assert "race_type" in SIGMA_VERDICT_SELECT_COLUMNS
+    # verdict_id is intentionally excluded from this mission's scope.
+    assert "verdict_id" not in SIGMA_VERDICT_SELECT_COLUMNS
