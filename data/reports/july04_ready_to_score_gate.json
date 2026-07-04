@@ -1,0 +1,16 @@
+{
+  "date": "2026-07-04",
+  "today_card_found": false,
+  "rp_files_found": true,
+  "passport_coverage_pct": null,
+  "critical_missing_fields": [
+    "structured racecard not yet built (racecards_2026_07_04_standard.json / racecard_merged/*2026-07-04*.json both absent) — requires JULY04-RP-INGEST to run first",
+    "Sandown missing F_0011_XX Postdata PDF (5/6 file types present)",
+    "5 courses (Ffos Las, Musselburgh, Salisbury, Stratford, Thirsk) have only a course-statistics HTML page, no racecard PDF at all — cannot be scored until racecard material for these arrives, or they are confirmed out of scope for today's card"
+  ],
+  "safe_to_run_verdicts_only": false,
+  "safe_to_run_scoring": false,
+  "safe_to_run_sigma": false,
+  "safe_to_write_supabase": false,
+  "reason": "RP raw files for 8 of 13 identified courses now exist locally in data/racing_post_account_raw/2026-07-04/ (53 files: PDFs + course-stats HTML), inventoried in this mission. No structured racecard has been built from them yet, so no per-runner/per-field coverage can be computed and no scoring or verdict persistence is safe. Next step is JULY04-RP-INGEST (parse + merge these PDFs into a racecard), followed by re-running this readiness gate before any --verdicts-only or scoring attempt."
+}
