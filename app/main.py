@@ -1652,12 +1652,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "Naas": "NAA", "Leopardstown": "LEO", "Navan": "NAV",
         "Galway": "GAL", "Cork": "COR", "Tipperary": "TIP",
         "Punchestown": "PUN", "Fairyhouse": "FAI", "Gowran": "GOW",
-        "Bangor": "BAN", "Cartmel": "CRT", "Catterick": "CAT",
+        "Bangor": "BAN", "Catterick": "CAT",
         "Cheltenham": "CHE", "Exeter": "EXE", "Ffos Las": "FFO",
         "Hereford": "HER", "Huntingdon": "HUN", "Kelso": "KEL",
         "Ludlow": "LUD", "Market Rasen": "MAR", "Musselburgh": "MUS",
         "Perth": "PER", "Plumpton": "PLU", "Sedgefield": "SED",
-        "Stratford": "STR", "Taunton": "TAU", "Uttoxeter": "UTT",
+        "Stratford": "STR", "Taunton": "TAU",
         "Warwick": "WAR", "Wetherby": "WET", "Wincanton": "WIN",
         "Worcester": "WOR",
     }
@@ -1676,7 +1676,8 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 _off = _r.get("off_time", "")
                 if ":" in _off:
                     _h, _m = map(int, _off.split(":"))
-                    if _h >= 13: _h -= 12
+                    if _h >= 13:
+                        _h -= 12
                     _dot = f"{_h}.{_m:02d}"
                 else:
                     _dot = _off
