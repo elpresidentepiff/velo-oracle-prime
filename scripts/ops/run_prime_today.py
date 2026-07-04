@@ -1400,12 +1400,68 @@ def _get_day_rpdc_name_map(date_str: str) -> dict:
     return _DAY_RPDC_NAME_MAP
 
 
+def _resolve_persistence_modes(args) -> dict:
+    """Resolve verdict/snapshot/Telegram enablement from CLI args (SIGMA-28B).
+
+    Pure function — no I/O, no Supabase, no side effects. Exists so the
+    interaction between --dry-run, --verdicts-only, and --no-runner-snapshots
+    can be tested without running the pipeline.
+
+    Precedence: --dry-run always wins and disables everything, regardless of
+    any other flag. Otherwise --verdicts-only disables runner snapshots and
+    Telegram while leaving verdict persistence enabled — the safety valve that
+    lets a proof mission write exactly one velo_verdicts row without also
+    writing runner_prediction_snapshots. --no-runner-snapshots disables only
+    the snapshot write on its own. Default (no flags): unchanged from
+    pre-SIGMA-28B behaviour — verdict persistence, runner snapshots, and
+    Telegram all enabled.
+    """
+    dry_run = bool(getattr(args, "dry_run", False))
+    verdicts_only = bool(getattr(args, "verdicts_only", False))
+    no_runner_snapshots = bool(getattr(args, "no_runner_snapshots", False))
+    no_notify = bool(getattr(args, "no_notify", False))
+
+    if dry_run:
+        return {
+            "persistence_enabled": False,
+            "verdict_persistence_enabled": False,
+            "runner_snapshots_enabled": False,
+            "telegram_enabled": False,
+            "mode_label": "DRY_RUN",
+        }
+
+    persistence_enabled = True
+    runner_snapshots_enabled = not no_runner_snapshots and not verdicts_only
+    telegram_enabled = not no_notify and not verdicts_only
+
+    return {
+        "persistence_enabled": persistence_enabled,
+        "verdict_persistence_enabled": persistence_enabled,
+        "runner_snapshots_enabled": runner_snapshots_enabled,
+        "telegram_enabled": telegram_enabled,
+        "mode_label": "VERDICTS_ONLY" if verdicts_only else "STANDARD",
+    }
+
+
 def main():
     global _TG_DATE, _TG_NOTIFY_ENABLED
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-notify", action="store_true")
+    parser.add_argument(
+        "--no-runner-snapshots",
+        action="store_true",
+        help="Disable runner_prediction_snapshots writes. Verdict persistence is unaffected.",
+    )
+    parser.add_argument(
+        "--verdicts-only",
+        action="store_true",
+        help=(
+            "Persist velo_verdicts only — disables runner_prediction_snapshots writes "
+            "and Telegram sends. Does not disable verdict persistence. Overridden by --dry-run."
+        ),
+    )
     parser.add_argument("--env-file", default=None)
     parser.add_argument(
         "--source",
@@ -1414,12 +1470,14 @@ def main():
         help="Racecard source: auto (default, tries cache→rp→api), cache, rp, api",
     )
     args = parser.parse_args()
-    notify_enabled = not args.no_notify and not args.dry_run
+    _modes = _resolve_persistence_modes(args)
+    notify_enabled = _modes["telegram_enabled"]
     _bootstrap_runtime(env_file=args.env_file, notify=notify_enabled)
     date_tag = args.date.replace("-", "_") if args.date else TODAY
     date_str = date_tag.replace("_", "-")
     _display_date = datetime.strptime(date_str, "%Y-%m-%d").strftime("%d %b %Y")
-    persistence_enabled = not args.dry_run
+    persistence_enabled = _modes["persistence_enabled"]
+    runner_snapshots_enabled = _modes["runner_snapshots_enabled"]
     _TG_DATE = date_str
     _TG_NOTIFY_ENABLED = notify_enabled
 
@@ -2392,7 +2450,7 @@ def main():
             date_str=date_str,
             date_tag=date_tag,
             run_id=_snapshot_run_id,
-            supabase_client=db if persistence_enabled else None,
+            supabase_client=db if runner_snapshots_enabled else None,
         )
         print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}_{_snapshot_run_id}.jsonl")
     except Exception as _snap_exc:
