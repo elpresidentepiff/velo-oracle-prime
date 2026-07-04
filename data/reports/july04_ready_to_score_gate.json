@@ -1,0 +1,24 @@
+{
+  "date": "2026-07-04",
+  "today_card_found": true,
+  "venue_count": 8,
+  "race_count": 56,
+  "runner_count": 482,
+  "rp_files_found": true,
+  "horse_id_available": false,
+  "passport_bank_found": true,
+  "passport_coverage_count": 241,
+  "passport_coverage_pct": 50.0,
+  "match_mode": "NAME_ONLY_WITH_CONFIDENCE_TIERS",
+  "identity_risk": "HIGH",
+  "critical_missing_fields": [
+    "horse_id/RP UID absent from all 482 runners across all 8 venue files — name-only matching only",
+    "passport coverage 50.0% is below the 60% floor for MEDIUM identity risk",
+    "2 runners (Beagle Bay, He'S Waliim) held as FUZZY_AMBIGUOUS_BLOCKED pending manual review — not counted either way"
+  ],
+  "safe_to_run_verdicts_only": false,
+  "safe_to_run_scoring": false,
+  "safe_to_run_sigma": false,
+  "safe_to_write_supabase": false,
+  "reason": "Passport identity match repair pass complete: usable coverage improved only marginally (239/482=49.6% -> 241/482=50.0%) because the remaining 239 misses are genuinely absent from the passport bank, not spelling/normalisation failures. Two initially-accepted fuzzy matches (Beagle Bay/Eagle Bay, He'S Waliim/Yes Waliim) were caught as likely different-horse false positives and reclassified to blocked rather than counted. Coverage remains below the 60% floor and matching is name-only with no horse_id cross-check available, so identity_risk is HIGH and both verdicts-only and scoring runs stay blocked pending operator decision on how to proceed."
+}
