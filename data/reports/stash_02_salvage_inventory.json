@@ -1,0 +1,114 @@
+{
+  "audit_id": "STASH-02",
+  "generated_at": "2026-07-04T00:00:00Z",
+  "mode": "REPORT_ONLY",
+  "stashes_reviewed": ["stash@{4}", "stash@{5}", "stash@{6}", "stash@{8}", "stash@{10}"],
+  "extracted_files": [
+    {
+      "file": "data/reports/stash_02_extracted/stash4_VELO_LLM_COUNCIL_V1.md",
+      "source_stash": "stash@{4}",
+      "source_path": "docs/engineering/VELO_LLM_COUNCIL_V1.md",
+      "content_summary": "Full version of the file including a confirmed-unmerged 'Daily Run Truth Duty' section (60 diff lines vs current committed file)",
+      "verdict": "SAFE_FOR_DOCS_PR",
+      "note": "referenced watchdog script scripts/ops/velo_daily_run_truth_watchdog.py confirmed to still exist"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/VELO_COMPANY_MASTER_PLAN_V1.md",
+      "source_stash": "stash@{6}",
+      "source_path": "docs/company/VELO_COMPANY_MASTER_PLAN_V1.md",
+      "content_summary": "~20KB business/strategy master plan document, never committed",
+      "verdict": "SAFE_FOR_DOCS_PR_PENDING_SENSITIVITY_SIGNOFF"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/VELO_FUNDING_PACK_OUTLINE_V1.md",
+      "source_stash": "stash@{6}",
+      "source_path": "docs/company/VELO_FUNDING_PACK_OUTLINE_V1.md",
+      "content_summary": "Funding pack outline, never committed",
+      "verdict": "SAFE_FOR_DOCS_PR_PENDING_SENSITIVITY_SIGNOFF"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/VELO_WHITEPAPER_OUTLINE_V1.md",
+      "source_stash": "stash@{6}",
+      "source_path": "docs/company/VELO_WHITEPAPER_OUTLINE_V1.md",
+      "content_summary": "Whitepaper outline, never committed",
+      "verdict": "SAFE_FOR_DOCS_PR_PENDING_SENSITIVITY_SIGNOFF"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/VELO_49_DAY_SIGNAL_DISCOVERY_REPORT_V1.md",
+      "source_stash": "stash@{6}",
+      "source_path": "docs/evidence/VELO_49_DAY_SIGNAL_DISCOVERY_REPORT_V1.md",
+      "content_summary": "Evidence report on 49-day signal discovery, never committed",
+      "verdict": "SAFE_FOR_DOCS_PR_PENDING_SENSITIVITY_SIGNOFF"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/VELO_SIGNAL_RANKINGS_V1.md",
+      "source_stash": "stash@{6}",
+      "source_path": "docs/evidence/VELO_SIGNAL_RANKINGS_V1.md",
+      "content_summary": "Signal rankings evidence doc, never committed",
+      "verdict": "SAFE_FOR_DOCS_PR_PENDING_SENSITIVITY_SIGNOFF"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/stash5_locked_runtime_patch.diff",
+      "source_stash": "stash@{5}",
+      "source_path": "full patch, 9 files, 917 lines",
+      "content_summary": "Includes a change to the LOCKED scripts/run_results_sigma.py adding detection of horses entirely absent from the results set (pre-race withdrawal) as a non-runner exclusion case; also touches app/main.py, dashboard, scripts/backfill_historical_feature_store.py",
+      "verdict": "MANUAL_REVIEW_REQUIRED_BEFORE_ANY_PR",
+      "note": "touches LOCKED sigma script — requires explicit operator sign-off per project doctrine before any change"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/stash8_security_validator_patch.diff",
+      "source_stash": "stash@{8}",
+      "source_path": "full patch, app/services/security_validator.py + app/core/config.py + app/services/velo_prime_service.py",
+      "content_summary": "1015-line patch; significant restructuring of security_validator.py and persist_race_predictions/persist_runner_derived_features logic in velo_prime_service.py",
+      "verdict": "MANUAL_REVIEW_REQUIRED_BEFORE_ANY_PR",
+      "note": "all touched files still exist at original paths, not orphaned by reorg — genuinely reviewable, security-relevant"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/stash10_deletion_proposal.txt",
+      "source_stash": "stash@{10}",
+      "source_path": "name-status summary",
+      "content_summary": "Confirms 5 files proposed for deletion: app/ml/stability_clusters.py, app/ml/v11_signal_engines.py, app/strategy/gti_game_theory.py, tests/test_phase2a_integration.py, tests/test_stability_clusters.py",
+      "verdict": "OPERATOR_DECISION_PENDING"
+    },
+    {
+      "file": "data/reports/stash_02_extracted/stash10_deletion_proposal.diff",
+      "source_stash": "stash@{10}",
+      "source_path": "full patch, 1686 lines",
+      "content_summary": "Full diff of the proposed deletions plus CLAUDE.md rewrite (+102 lines, now superseded by current governance doctrine)",
+      "verdict": "OPERATOR_DECISION_PENDING"
+    }
+  ],
+  "next_pr_candidates": [
+    {
+      "candidate": "docs-only: append Daily Run Truth Duty section to VELO_LLM_COUNCIL_V1.md",
+      "risk": "low",
+      "source": "stash@{4}"
+    },
+    {
+      "candidate": "docs-only: restore 5 business/evidence docs under docs/company/ and docs/evidence/",
+      "risk": "low technical risk, needs operator sensitivity sign-off",
+      "source": "stash@{6}"
+    }
+  ],
+  "not_yet_actionable": [
+    {"item": "run_results_sigma.py non-runner fix", "source": "stash@{5}", "reason": "touches LOCKED sigma script, needs manual sign-off"},
+    {"item": "security_validator.py rework", "source": "stash@{8}", "reason": "security-relevant, needs dedicated review"},
+    {"item": "5-file deletion proposal", "source": "stash@{10}", "reason": "operator decision pending"}
+  ],
+  "final_classifications": [
+    "STASH_02_SALVAGE_REVIEW_COMPLETE",
+    "NO_STASH_APPLIED",
+    "NO_STASH_POPPED",
+    "NO_STASH_DROPPED",
+    "NO_STASH_CREATED",
+    "NO_FILES_MOVED",
+    "NO_FILES_DELETED",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_COURSE_01_IMPLEMENTATION",
+    "NO_VFU_21_LIVE_START",
+    "NO_VCP_04_START",
+    "NO_MODEL_TRAINING",
+    "REPORT_ONLY"
+  ]
+}

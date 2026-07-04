@@ -1,0 +1,1686 @@
+diff --git a/.gitignore b/.gitignore
+index d864b3a..2e44a14 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -72,3 +72,4 @@ mlruns/
+ storage/
+ incoming/
+ training_data/
++.gitnexus
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 04f0c7e..4315da0 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -332,3 +332,105 @@ docs/VELO_SPOTLIGHT_HARD_LIMITS.md     — Spotlight CANNOT override structural
+ - Wire VeloPrimeEnsemble to live prediction endpoint (app/main.py /predict routes)
+ - Persist specialist scores + VELO_PRIME_prob to Supabase `velo_verdicts` table
+ - Push to main + verify Railway auto-deploy
++
++<!-- gitnexus:start -->
++# GitNexus — Code Intelligence
++
++This project is indexed by GitNexus as **velo-oracle-prime** (7321 symbols, 18090 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
++
++> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
++
++## Always Do
++
++- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
++- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
++- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
++- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
++- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
++
++## When Debugging
++
++1. `gitnexus_query({query: "<error or symptom>"})` — find execution flows related to the issue
++2. `gitnexus_context({name: "<suspect function>"})` — see all callers, callees, and process participation
++3. `READ gitnexus://repo/velo-oracle-prime/process/{processName}` — trace the full execution flow step by step
++4. For regressions: `gitnexus_detect_changes({scope: "compare", base_ref: "main"})` — see what your branch changed
++
++## When Refactoring
++
++- **Renaming**: MUST use `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` first. Review the preview — graph edits are safe, text_search edits need manual review. Then run with `dry_run: false`.
++- **Extracting/Splitting**: MUST run `gitnexus_context({name: "target"})` to see all incoming/outgoing refs, then `gitnexus_impact({target: "target", direction: "upstream"})` to find all external callers before moving code.
++- After any refactor: run `gitnexus_detect_changes({scope: "all"})` to verify only expected files changed.
++
++## Never Do
++
++- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
++- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
++- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
++- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
++
++## Tools Quick Reference
++
++| Tool | When to use | Command |
++|------|-------------|---------|
++| `query` | Find code by concept | `gitnexus_query({query: "auth validation"})` |
++| `context` | 360-degree view of one symbol | `gitnexus_context({name: "validateUser"})` |
++| `impact` | Blast radius before editing | `gitnexus_impact({target: "X", direction: "upstream"})` |
++| `detect_changes` | Pre-commit scope check | `gitnexus_detect_changes({scope: "staged"})` |
++| `rename` | Safe multi-file rename | `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` |
++| `cypher` | Custom graph queries | `gitnexus_cypher({query: "MATCH ..."})` |
++
++## Impact Risk Levels
++
++| Depth | Meaning | Action |
++|-------|---------|--------|
++| d=1 | WILL BREAK — direct callers/importers | MUST update these |
++| d=2 | LIKELY AFFECTED — indirect deps | Should test |
++| d=3 | MAY NEED TESTING — transitive | Test if critical path |
++
++## Resources
++
++| Resource | Use for |
++|----------|---------|
++| `gitnexus://repo/velo-oracle-prime/context` | Codebase overview, check index freshness |
++| `gitnexus://repo/velo-oracle-prime/clusters` | All functional areas |
++| `gitnexus://repo/velo-oracle-prime/processes` | All execution flows |
++| `gitnexus://repo/velo-oracle-prime/process/{name}` | Step-by-step execution trace |
++
++## Self-Check Before Finishing
++
++Before completing any code modification task, verify:
++1. `gitnexus_impact` was run for all modified symbols
++2. No HIGH/CRITICAL risk warnings were ignored
++3. `gitnexus_detect_changes()` confirms changes match expected scope
++4. All d=1 (WILL BREAK) dependents were updated
++
++## Keeping the Index Fresh
++
++After committing code changes, the GitNexus index becomes stale. Re-run analyze to update it:
++
++```bash
++npx gitnexus analyze
++```
++
++If the index previously included embeddings, preserve them by adding `--embeddings`:
++
++```bash
++npx gitnexus analyze --embeddings
++```
++
++To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.embeddings` field shows the count (0 means no embeddings). **Running analyze without `--embeddings` will delete any previously generated embeddings.**
++
++> Claude Code users: A PostToolUse hook handles this automatically after `git commit` and `git merge`.
++
++## CLI
++
++| Task | Read this skill file |
++|------|---------------------|
++| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md` |
++| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
++| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md` |
++| Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
++| Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
++| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
++
++<!-- gitnexus:end -->
+diff --git a/app/ml/stability_clusters.py b/app/ml/stability_clusters.py
+deleted file mode 100644
+index e51b57d..0000000
+--- a/app/ml/stability_clusters.py
++++ /dev/null
+@@ -1,344 +0,0 @@
+-"""
+-VELO Stability Cluster Engine v1 (Phase 2A)
+-
+-Rule-based clustering of runners by performance patterns.
+-Descriptive, not predictive. Labels structure, doesn't decide outcomes.
+-
+-Cluster dimensions:
+-1. Stability class (STABLE/MODERATE/VOLATILE)
+-2. Consistency score band
+-3. Recent form trend
+-4. Field-relative ranking
+-
+-NO ML. NO k-means. Auditable, explainable.
+-
+-Author: VELO Team
+-Version: 1.0 (Phase 2A)
+-Date: December 21, 2025
+-"""
+-
+-from typing import List, Dict, Optional
+-from dataclasses import dataclass
+-import logging
+-
+-logger = logging.getLogger(__name__)
+-
+-
+-@dataclass
+-class StabilityProfile:
+-    """Runner stability profile."""
+-    runner_id: str
+-    stability_class: str  # STABLE, MODERATE, VOLATILE, INSUFFICIENT_DATA
+-    consistency_band: str  # HIGH, MEDIUM, LOW
+-    form_trend: str  # IMPROVING, STABLE, DECLINING, UNKNOWN
+-    field_rank_band: str  # TOP, MID, BOTTOM
+-    cluster_id: str  # Composite cluster identifier
+-    
+-    # Raw metrics
+-    consistency_score: float
+-    recent_form_score: float
+-    win_rate: float
+-    place_rate: float
+-
+-
+-def classify_consistency_band(consistency: float) -> str:
+-    """
+-    Classify consistency into bands.
+-    
+-    Args:
+-        consistency: Consistency score (0.0-1.0)
+-        
+-    Returns:
+-        Band: HIGH, MEDIUM, LOW
+-    """
+-    if consistency >= 0.7:
+-        return "HIGH"
+-    elif consistency >= 0.4:
+-        return "MEDIUM"
+-    else:
+-        return "LOW"
+-
+-
+-def classify_form_trend(positions: List[Optional[int]], lookback: int = 5) -> str:
+-    """
+-    Classify form trend from recent positions.
+-    
+-    Args:
+-        positions: List of positions (most recent first)
+-        lookback: Number of races to analyze
+-        
+-    Returns:
+-        Trend: IMPROVING, STABLE, DECLINING, UNKNOWN
+-    """
+-    if not positions or len(positions) < 3:
+-        return "UNKNOWN"
+-    
+-    # Take last N races
+-    recent = positions[:lookback]
+-    valid = [p for p in recent if p is not None]
+-    
+-    if len(valid) < 3:
+-        return "UNKNOWN"
+-    
+-    # Positions are most-recent-first, reverse to get chronological order
+-    chronological = list(reversed(valid))
+-    
+-    # Split into older half and recent half
+-    mid = len(chronological) // 2
+-    older_half = chronological[:mid]
+-    recent_half = chronological[mid:]
+-    
+-    avg_older = sum(older_half) / len(older_half)
+-    avg_recent = sum(recent_half) / len(recent_half)
+-    
+-    # Lower position = better (1st is best)
+-    # If recent avg is lower than older avg, runner is improving
+-    diff = avg_older - avg_recent
+-    
+-    if diff > 1.0:
+-        return "IMPROVING"  # Recent positions better than older
+-    elif diff < -1.0:
+-        return "DECLINING"  # Recent positions worse than older
+-    else:
+-        return "STABLE"  # Consistent
+-
+-
+-def classify_field_rank_band(field_position: int, field_size: int) -> str:
+-    """
+-    Classify runner's position in field.
+-    
+-    Args:
+-        field_position: Runner's rank in field (1 = favorite)
+-        field_size: Total number of runners
+-        
+-    Returns:
+-        Band: TOP, MID, BOTTOM
+-    """
+-    if field_size <= 0:
+-        return "UNKNOWN"
+-    
+-    # Normalize to percentile (1-indexed, so subtract 1)
+-    percentile = (field_position - 1) / field_size
+-    
+-    if percentile < 0.33:
+-        return "TOP"
+-    elif percentile < 0.67:
+-        return "MID"
+-    else:
+-        return "BOTTOM"
+-
+-
+-def generate_cluster_id(
+-    stability_class: str,
+-    consistency_band: str,
+-    form_trend: str,
+-    field_rank_band: str
+-) -> str:
+-    """
+-    Generate composite cluster identifier.
+-    
+-    Format: {stability}_{consistency}_{trend}_{rank}
+-    Example: STABLE_HIGH_IMPROVING_TOP
+-    
+-    Args:
+-        stability_class: STABLE, MODERATE, VOLATILE, INSUFFICIENT_DATA
+-        consistency_band: HIGH, MEDIUM, LOW
+-        form_trend: IMPROVING, STABLE, DECLINING, UNKNOWN
+-        field_rank_band: TOP, MID, BOTTOM
+-        
+-    Returns:
+-        Cluster ID string
+-    """
+-    return f"{stability_class}_{consistency_band}_{form_trend}_{field_rank_band}"
+-
+-
+-def build_stability_profile(
+-    runner_id: str,
+-    form_metrics: Dict[str, float],
+-    positions: List[Optional[int]],
+-    field_position: int,
+-    field_size: int
+-) -> StabilityProfile:
+-    """
+-    Build complete stability profile for a runner.
+-    
+-    Args:
+-        runner_id: Runner identifier
+-        form_metrics: Dict from form_parser.analyze_form()
+-        positions: List of positions for trend analysis
+-        field_position: Runner's rank in current field
+-        field_size: Total field size
+-        
+-    Returns:
+-        StabilityProfile
+-    """
+-    # Extract metrics
+-    consistency = form_metrics.get("consistency", 0.0)
+-    recent_form = form_metrics.get("recent_form", 0.5)
+-    win_rate = form_metrics.get("win_rate", 0.0)
+-    place_rate = form_metrics.get("place_rate", 0.0)
+-    valid_races = form_metrics.get("valid_races", 0)
+-    
+-    # Classify stability
+-    if valid_races < 3:
+-        stability_class = "INSUFFICIENT_DATA"
+-    elif consistency >= 0.7:
+-        stability_class = "STABLE"
+-    elif consistency <= 0.4:
+-        stability_class = "VOLATILE"
+-    else:
+-        stability_class = "MODERATE"
+-    
+-    # Classify dimensions
+-    consistency_band = classify_consistency_band(consistency)
+-    form_trend = classify_form_trend(positions)
+-    field_rank_band = classify_field_rank_band(field_position, field_size)
+-    
+-    # Generate cluster ID
+-    cluster_id = generate_cluster_id(
+-        stability_class,
+-        consistency_band,
+-        form_trend,
+-        field_rank_band
+-    )
+-    
+-    return StabilityProfile(
+-        runner_id=runner_id,
+-        stability_class=stability_class,
+-        consistency_band=consistency_band,
+-        form_trend=form_trend,
+-        field_rank_band=field_rank_band,
+-        cluster_id=cluster_id,
+-        consistency_score=consistency,
+-        recent_form_score=recent_form,
+-        win_rate=win_rate,
+-        place_rate=place_rate
+-    )
+-
+-
+-def cluster_field(runners_data: List[Dict]) -> Dict[str, List[StabilityProfile]]:
+-    """
+-    Cluster all runners in a field by stability profiles.
+-    
+-    Args:
+-        runners_data: List of runner dicts with:
+-            - runner_id
+-            - form_metrics (from analyze_form)
+-            - positions (parsed form)
+-            - field_position
+-            - field_size
+-            
+-    Returns:
+-        Dict mapping cluster_id to list of StabilityProfiles
+-    """
+-    clusters = {}
+-    
+-    for runner in runners_data:
+-        profile = build_stability_profile(
+-            runner_id=runner["runner_id"],
+-            form_metrics=runner["form_metrics"],
+-            positions=runner["positions"],
+-            field_position=runner["field_position"],
+-            field_size=runner["field_size"]
+-        )
+-        
+-        # Add to cluster
+-        if profile.cluster_id not in clusters:
+-            clusters[profile.cluster_id] = []
+-        
+-        clusters[profile.cluster_id].append(profile)
+-    
+-    logger.info(f"Clustered {len(runners_data)} runners into {len(clusters)} clusters")
+-    
+-    return clusters
+-
+-
+-def get_cluster_trust_modifier(cluster_id: str) -> float:
+-    """
+-    Get trust modifier for a cluster (for Top-4 ranking).
+-    
+-    Trust modifier adjusts confidence in predictions.
+-    Range: -0.10 to +0.10 (additive to score)
+-    
+-    Args:
+-        cluster_id: Cluster identifier
+-        
+-    Returns:
+-        Trust modifier (-0.10 to +0.10)
+-    """
+-    # Parse cluster ID
+-    parts = cluster_id.split("_")
+-    if len(parts) != 4:
+-        return 0.0
+-    
+-    stability, consistency, trend, rank = parts
+-    
+-    modifier = 0.0
+-    
+-    # Stability contribution
+-    if stability == "STABLE":
+-        modifier += 0.05
+-    elif stability == "VOLATILE":
+-        modifier -= 0.05
+-    
+-    # Consistency contribution
+-    if consistency == "HIGH":
+-        modifier += 0.03
+-    elif consistency == "LOW":
+-        modifier -= 0.03
+-    
+-    # Trend contribution (smaller weight)
+-    if trend == "IMPROVING":
+-        modifier += 0.02
+-    elif trend == "DECLINING":
+-        modifier -= 0.02
+-    
+-    # Clamp to range
+-    modifier = max(-0.10, min(0.10, modifier))
+-    
+-    return modifier
+-
+-
+-def identify_hidden_value(clusters: Dict[str, List[StabilityProfile]]) -> List[str]:
+-    """
+-    Identify runners with hidden value (improving + mid-field).
+-    
+-    These are runners the market may undervalue.
+-    
+-    Args:
+-        clusters: Dict from cluster_field()
+-        
+-    Returns:
+-        List of runner_ids with potential hidden value
+-    """
+-    hidden_value = []
+-    
+-    for cluster_id, profiles in clusters.items():
+-        # Look for: IMPROVING + MID/BOTTOM rank + STABLE/MODERATE
+-        if "IMPROVING" in cluster_id and ("MID" in cluster_id or "BOTTOM" in cluster_id):
+-            if "STABLE" in cluster_id or "MODERATE" in cluster_id:
+-                hidden_value.extend([p.runner_id for p in profiles])
+-    
+-    return hidden_value
+-
+-
+-def identify_liquidity_traps(clusters: Dict[str, List[StabilityProfile]]) -> List[str]:
+-    """
+-    Identify potential liquidity traps (volatile favorites).
+-    
+-    These are favorites with inconsistent performance.
+-    
+-    Args:
+-        clusters: Dict from cluster_field()
+-        
+-    Returns:
+-        List of runner_ids that may be liquidity traps
+-    """
+-    traps = []
+-    
+-    for cluster_id, profiles in clusters.items():
+-        # Look for: VOLATILE + TOP rank
+-        if "VOLATILE" in cluster_id and "TOP" in cluster_id:
+-            traps.extend([p.runner_id for p in profiles])
+-    
+-    return traps
+diff --git a/app/ml/v11_signal_engines.py b/app/ml/v11_signal_engines.py
+deleted file mode 100644
+index 81f49e8..0000000
+--- a/app/ml/v11_signal_engines.py
++++ /dev/null
+@@ -1,261 +0,0 @@
+-"""
+-VÉLØ v11 - Signal Engines (Phase 1)
+-Layer 2: Multiple specialized model families
+-
+-Phase 1 engines:
+-- Naive Bayes (probabilistic, fast, interpretable)
+-- K-Means Clustering (race/horse grouping, chaos detection)
+-- PCA (dimensionality reduction, noise compression)
+-"""
+-
+-import numpy as np
+-import pandas as pd
+-from sklearn.naive_bayes import GaussianNB
+-from sklearn.cluster import KMeans
+-from sklearn.decomposition import PCA
+-from sklearn.preprocessing import StandardScaler
+-from typing import Dict, List, Tuple
+-import pickle
+-import os
+-
+-
+-class NaiveBayesEngine:
+-    """
+-    Naive Bayes probability engine
+-    Fast, interpretable, robust in low-sample regimes
+-    Great for low-grade handicaps where noise is huge
+-    """
+-    
+-    def __init__(self):
+-        self.model = GaussianNB()
+-        self.scaler = StandardScaler()
+-        self.is_trained = False
+-    
+-    def train(self, X: pd.DataFrame, y: np.ndarray):
+-        """Train on feature blocks"""
+-        X_scaled = self.scaler.fit_transform(X)
+-        self.model.fit(X_scaled, y)
+-        self.is_trained = True
+-    
+-    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
+-        """Return P(win | ability, intent, market, conditions)"""
+-        if not self.is_trained:
+-            return np.zeros((len(X), 2))
+-        X_scaled = self.scaler.transform(X)
+-        return self.model.predict_proba(X_scaled)
+-    
+-    def save(self, path: str):
+-        """Save model"""
+-        os.makedirs(os.path.dirname(path), exist_ok=True)
+-        with open(path, 'wb') as f:
+-            pickle.dump({'model': self.model, 'scaler': self.scaler}, f)
+-    
+-    def load(self, path: str):
+-        """Load model"""
+-        with open(path, 'rb') as f:
+-            data = pickle.load(f)
+-            self.model = data['model']
+-            self.scaler = data['scaler']
+-            self.is_trained = True
+-
+-
+-class KMeansClusteringEngine:
+-    """
+-    K-Means clustering for automatic grouping
+-    
+-    Clusters races into regimes:
+-    - Slow/honest/feral
+-    - Strong favourite vs wide open
+-    
+-    Clusters horses into types:
+-    - Exposed grinder
+-    - Unexposed improver
+-    - Plot horse
+-    - Outside gaff
+-    
+-    Outputs:
+-    - Race chaos score
+-    - Structure class (feeds SQPE and staking)
+-    """
+-    
+-    def __init__(self, n_race_clusters: int = 4, n_horse_clusters: int = 5):
+-        self.race_clusterer = KMeans(n_clusters=n_race_clusters, random_state=42)
+-        self.horse_clusterer = KMeans(n_clusters=n_horse_clusters, random_state=42)
+-        self.race_scaler = StandardScaler()
+-        self.horse_scaler = StandardScaler()
+-        self.is_trained = False
+-    
+-    def train_race_clusters(self, race_features: pd.DataFrame):
+-        """
+-        Cluster races by structure
+-        Features: field_size, pace_pressure, odds_spread, class, going
+-        """
+-        X = self.race_scaler.fit_transform(race_features)
+-        self.race_clusterer.fit(X)
+-        self.is_trained = True
+-    
+-    def train_horse_clusters(self, horse_features: pd.DataFrame):
+-        """
+-        Cluster horses by type
+-        Features: ability, form_trend, days_since_run, class_best, variance
+-        """
+-        X = self.horse_scaler.fit_transform(horse_features)
+-        self.horse_clusterer.fit(X)
+-    
+-    def predict_race_cluster(self, race_features: pd.DataFrame) -> np.ndarray:
+-        """Return race structure cluster ID"""
+-        X = self.race_scaler.transform(race_features)
+-        return self.race_clusterer.predict(X)
+-    
+-    def predict_horse_cluster(self, horse_features: pd.DataFrame) -> np.ndarray:
+-        """Return horse type cluster ID"""
+-        X = self.horse_scaler.transform(horse_features)
+-        return self.horse_clusterer.predict(X)
+-    
+-    def get_chaos_score(self, race_features: pd.DataFrame) -> float:
+-        """
+-        Calculate race chaos score from cluster assignment
+-        Cluster 0 = structured, Cluster 3 = full chaos
+-        """
+-        cluster = self.predict_race_cluster(race_features)[0]
+-        # Map cluster to chaos score (0 = clean, 1 = chaos)
+-        chaos_map = {0: 0.2, 1: 0.4, 2: 0.6, 3: 0.9}
+-        return chaos_map.get(cluster, 0.5)
+-    
+-    def save(self, path: str):
+-        """Save clusterers"""
+-        os.makedirs(os.path.dirname(path), exist_ok=True)
+-        with open(path, 'wb') as f:
+-            pickle.dump({
+-                'race_clusterer': self.race_clusterer,
+-                'horse_clusterer': self.horse_clusterer,
+-                'race_scaler': self.race_scaler,
+-                'horse_scaler': self.horse_scaler
+-            }, f)
+-    
+-    def load(self, path: str):
+-        """Load clusterers"""
+-        with open(path, 'rb') as f:
+-            data = pickle.load(f)
+-            self.race_clusterer = data['race_clusterer']
+-            self.horse_clusterer = data['horse_clusterer']
+-            self.race_scaler = data['race_scaler']
+-            self.horse_scaler = data['horse_scaler']
+-            self.is_trained = True
+-
+-
+-class PCAEngine:
+-    """
+-    PCA dimensionality reduction
+-    Compress correlated features into clean components
+-    Feed to gradient boosting and RF instead of raw variables
+-    
+-    Effect:
+-    - Less overfitting
+-    - Sharper signals
+-    - Faster training
+-    """
+-    
+-    def __init__(self, n_components: int = 10):
+-        self.pca = PCA(n_components=n_components)
+-        self.scaler = StandardScaler()
+-        self.is_trained = False
+-    
+-    def fit(self, X: pd.DataFrame):
+-        """Fit PCA on training data"""
+-        X_scaled = self.scaler.fit_transform(X)
+-        self.pca.fit(X_scaled)
+-        self.is_trained = True
+-    
+-    def transform(self, X: pd.DataFrame) -> np.ndarray:
+-        """Transform features to PCA components"""
+-        if not self.is_trained:
+-            return X.values
+-        X_scaled = self.scaler.transform(X)
+-        return self.pca.transform(X_scaled)
+-    
+-    def get_explained_variance(self) -> np.ndarray:
+-        """Return explained variance ratio per component"""
+-        return self.pca.explained_variance_ratio_
+-    
+-    def save(self, path: str):
+-        """Save PCA"""
+-        os.makedirs(os.path.dirname(path), exist_ok=True)
+-        with open(path, 'wb') as f:
+-            pickle.dump({'pca': self.pca, 'scaler': self.scaler}, f)
+-    
+-    def load(self, path: str):
+-        """Load PCA"""
+-        with open(path, 'rb') as f:
+-            data = pickle.load(f)
+-            self.pca = data['pca']
+-            self.scaler = data['scaler']
+-            self.is_trained = True
+-
+-
+-class V11SignalEngines:
+-    """
+-    Orchestrator for Phase 1 signal engines
+-    Combines Naive Bayes, K-Means, and PCA outputs
+-    """
+-    
+-    def __init__(self):
+-        self.bayes = NaiveBayesEngine()
+-        self.clusters = KMeansClusteringEngine()
+-        self.pca = PCAEngine(n_components=10)
+-    
+-    def train(self, X: pd.DataFrame, y: np.ndarray):
+-        """Train all Phase 1 engines"""
+-        print("Training Naive Bayes...")
+-        self.bayes.train(X, y)
+-        
+-        print("Training K-Means clusters...")
+-        # Race features for clustering
+-        race_features = X[['field_size', 'pace_pressure', 'chaos_score']]
+-        self.clusters.train_race_clusters(race_features)
+-        
+-        # Horse features for clustering
+-        horse_features = X[['rpr_best', 'form_trend', 'days_since_run', 'rpr_variance']]
+-        self.clusters.train_horse_clusters(horse_features)
+-        
+-        print("Training PCA...")
+-        self.pca.fit(X)
+-        
+-        print("✅ Phase 1 engines trained")
+-    
+-    def predict(self, X: pd.DataFrame) -> Dict:
+-        """
+-        Get predictions from all Phase 1 engines
+-        
+-        Returns:
+-            Dict with:
+-            - bayes_proba: Naive Bayes win probability
+-            - race_cluster: Race structure cluster ID
+-            - horse_cluster: Horse type cluster ID
+-            - chaos_score: Race chaos score
+-            - pca_components: PCA-transformed features
+-        """
+-        race_features = X[['field_size', 'pace_pressure', 'chaos_score']]
+-        horse_features = X[['rpr_best', 'form_trend', 'days_since_run', 'rpr_variance']]
+-        
+-        return {
+-            'bayes_proba': self.bayes.predict_proba(X)[:, 1],
+-            'race_cluster': self.clusters.predict_race_cluster(race_features),
+-            'horse_cluster': self.clusters.predict_horse_cluster(horse_features),
+-            'chaos_score': self.clusters.get_chaos_score(race_features),
+-            'pca_components': self.pca.transform(X)
+-        }
+-    
+-    def save_all(self, base_dir: str):
+-        """Save all engines"""
+-        self.bayes.save(f"{base_dir}/bayes_engine.pkl")
+-        self.clusters.save(f"{base_dir}/kmeans_engine.pkl")
+-        self.pca.save(f"{base_dir}/pca_engine.pkl")
+-        print(f"✅ All Phase 1 engines saved to {base_dir}")
+-    
+-    def load_all(self, base_dir: str):
+-        """Load all engines"""
+-        self.bayes.load(f"{base_dir}/bayes_engine.pkl")
+-        self.clusters.load(f"{base_dir}/kmeans_engine.pkl")
+-        self.pca.load(f"{base_dir}/pca_engine.pkl")
+-        print(f"✅ All Phase 1 engines loaded from {base_dir}")
+diff --git a/app/ml/vetp_enhanced_predictor.py b/app/ml/vetp_enhanced_predictor.py
+index e86e897..ce2b800 100644
+--- a/app/ml/vetp_enhanced_predictor.py
++++ b/app/ml/vetp_enhanced_predictor.py
+@@ -12,6 +12,7 @@ This is how VÉLØ stops being a dumb model and becomes a learning system.
+ """
+ 
+ import pickle
++from pathlib import Path
+ import pandas as pd
+ import numpy as np
+ from typing import Dict, List, Optional, Tuple
+@@ -268,9 +269,12 @@ class VETPEnhancedPredictor:
+         return self.vetp.log_event(event)
+ 
+ 
++_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
++
++
+ def create_vetp_predictor(
+-    model_path: str = "/home/ubuntu/velo-oracle/models/sqpe_v15/sqpe_v15.pkl",
+-    vetp_db_path: str = "/home/ubuntu/velo-oracle/data/vetp_memory.db"
++    model_path: str = str(_REPO_ROOT / "models" / "sqpe_v15" / "sqpe_v15.pkl"),
++    vetp_db_path: str = str(_REPO_ROOT / "data" / "vetp_memory.db")
+ ) -> VETPEnhancedPredictor:
+     """Factory function to create VETP-enhanced predictor"""
+     return VETPEnhancedPredictor(model_path, vetp_db_path)
+diff --git a/app/services/model_manager.py b/app/services/model_manager.py
+index 6a8fa8b..dbaa1c5 100644
+--- a/app/services/model_manager.py
++++ b/app/services/model_manager.py
+@@ -69,10 +69,10 @@ class ModelManager:
+     def load_sqpe(self) -> Any:
+         """Load SQPE v17 model from disk using joblib/pickle."""
+         import joblib
+-        model_path = Path("models/sqpe_v17/sqpe_v17.pkl")
++        _root = Path(__file__).resolve().parent.parent.parent
++        model_path = _root / "models" / "sqpe_v17" / "sqpe_v17.pkl"
+         if not model_path.exists():
+-            # Fallback to v16 if v17 not present
+-            model_path = Path("models/sqpe_v16/sqpe_v16.pkl")
++            model_path = _root / "models" / "sqpe_v16" / "sqpe_v16.pkl"
+         if not model_path.exists():
+             logger.warning("No SQPE model found at models/sqpe_v17/ or models/sqpe_v16/ — returning None")
+             return None
+diff --git a/app/services/velo_prime_service.py b/app/services/velo_prime_service.py
+index b9d8b09..ed32eb9 100644
+--- a/app/services/velo_prime_service.py
++++ b/app/services/velo_prime_service.py
+@@ -627,6 +627,7 @@ def persist_race_predictions(race: dict, predictions: list[dict],
+             "macro_chaos_mode":      top.get("macro_chaos_mode"),
+             "favourite_trap_risk":   top.get("favourite_trap_risk"),
+             "decision_tier":         decision_tier,
++            "region":                race.get("region"),
+             # Full ranked field — enriched below before upsert
+             "full_analysis":         predictions,
+         }
+diff --git a/app/strategy/gti_game_theory.py b/app/strategy/gti_game_theory.py
+deleted file mode 100644
+index 262de08..0000000
+--- a/app/strategy/gti_game_theory.py
++++ /dev/null
+@@ -1,204 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-VELO Game Theory Intent (GTI)
+-Treats races as strategic interactions, not independent outcomes
+-
+-Models:
+-- Players: trainers/owners, book/exchange liquidity providers, crowd
+-- Objective mismatch: "place for money" vs "win for badge" vs "prep run"
+-- Multi-runner tactics: one sets pace, one finishes
+-- Equilibrium signals: odds shape that "makes sense" vs "designed"
+-
+-Author: VELO Team
+-Version: 1.0 (stub)
+-Date: December 17, 2025
+-"""
+-
+-from dataclasses import dataclass
+-from typing import Dict, List, Optional
+-from enum import Enum
+-import logging
+-
+-logger = logging.getLogger(__name__)
+-
+-
+-class EquilibriumType(Enum):
+-    """Market equilibrium classification."""
+-    FAIR = "FAIR"
+-    BAIT = "BAIT"
+-    TRAP = "TRAP"
+-    RELEASE_WINDOW = "RELEASE_WINDOW"
+-
+-
+-class RaceScript(Enum):
+-    """Expected race script based on game theory."""
+-    FRONT_LOADED = "FRONT_LOADED"
+-    LATE_BURST = "LATE_BURST"
+-    SPLIT_STABLE = "SPLIT_STABLE"
+-    CHAOS_SCATTER = "CHAOS_SCATTER"
+-
+-
+-@dataclass
+-class GTIOutput:
+-    """Output from GTI analysis."""
+-    equilibrium_type: EquilibriumType
+-    race_script: RaceScript
+-    multi_runner_tactics: List[Dict] = None
+-    objective_mismatch_detected: bool = False
+-    confidence: float = 0.0
+-    notes: Dict = None
+-    
+-    def __post_init__(self):
+-        if self.multi_runner_tactics is None:
+-            self.multi_runner_tactics = []
+-        if self.notes is None:
+-            self.notes = {}
+-    
+-    def to_dict(self) -> Dict:
+-        return {
+-            'equilibrium_type': self.equilibrium_type.value,
+-            'race_script': self.race_script.value,
+-            'multi_runner_tactics': self.multi_runner_tactics,
+-            'objective_mismatch_detected': self.objective_mismatch_detected,
+-            'confidence': self.confidence,
+-            'notes': self.notes
+-        }
+-
+-
+-class GameTheoryIntentEngine:
+-    """
+-    Game Theory Intent Engine.
+-    
+-    Treats the race as a strategic interaction between multiple players
+-    with potentially conflicting objectives.
+-    """
+-    
+-    def __init__(self):
+-        logger.info("GTI initialized (stub mode)")
+-    
+-    def analyze(self, race_ctx: Dict, market_ctx: Dict, runner_data: List[Dict]) -> GTIOutput:
+-        """
+-        Analyze race using game theory framework.
+-        
+-        Args:
+-            race_ctx: Race context
+-            market_ctx: Market context
+-            runner_data: List of runner data dictionaries
+-            
+-        Returns:
+-            GTIOutput with equilibrium type and race script
+-        """
+-        logger.info(f"GTI analyzing race: {race_ctx.get('race_id', 'unknown')}")
+-        
+-        # STUB: Return conservative output
+-        # In production, this would:
+-        # 1. Identify players and their objectives
+-        # 2. Detect multi-runner tactics (same stable)
+-        # 3. Analyze odds shape for manipulation signals
+-        # 4. Classify equilibrium type
+-        # 5. Predict race script
+-        
+-        # Default to FAIR equilibrium and CHAOS_SCATTER script
+-        output = GTIOutput(
+-            equilibrium_type=EquilibriumType.FAIR,
+-            race_script=RaceScript.CHAOS_SCATTER,
+-            confidence=0.5,
+-            notes={'status': 'stub_mode'}
+-        )
+-        
+-        logger.info(f"GTI: Equilibrium={output.equilibrium_type.value}, Script={output.race_script.value}")
+-        return output
+-    
+-    def detect_multi_runner_tactics(self, runner_data: List[Dict]) -> List[Dict]:
+-        """
+-        Detect multi-runner tactics from same stable.
+-        
+-        Args:
+-            runner_data: List of runner data
+-            
+-        Returns:
+-            List of detected tactics
+-        """
+-        # STUB: In production, group by trainer/owner and detect:
+-        # - Pace setter + finisher combinations
+-        # - Coupling signals
+-        # - Stable targeting patterns
+-        
+-        return []
+-    
+-    def classify_equilibrium(self, market_ctx: Dict) -> EquilibriumType:
+-        """
+-        Classify market equilibrium type.
+-        
+-        Args:
+-            market_ctx: Market context
+-            
+-        Returns:
+-            EquilibriumType
+-        """
+-        # STUB: In production, analyze:
+-        # - Odds distribution shape
+-        # - Liquidity patterns
+-        # - Steam/drift signals
+-        # - Public narrative vs actual signals
+-        
+-        return EquilibriumType.FAIR
+-    
+-    def predict_race_script(self, race_ctx: Dict, runner_data: List[Dict]) -> RaceScript:
+-        """
+-        Predict race script based on game theory.
+-        
+-        Args:
+-            race_ctx: Race context
+-            runner_data: Runner data
+-            
+-        Returns:
+-            RaceScript
+-        """
+-        # STUB: In production, analyze:
+-        # - Pace profiles
+-        # - Draw positions
+-        # - Jockey tactics
+-        # - Multi-runner stable patterns
+-        
+-        return RaceScript.CHAOS_SCATTER
+-
+-
+-def analyze_game_theory(race_ctx: Dict, market_ctx: Dict, runner_data: List[Dict]) -> GTIOutput:
+-    """
+-    Convenience function to analyze race with GTI.
+-    
+-    Args:
+-        race_ctx: Race context
+-        market_ctx: Market context
+-        runner_data: Runner data
+-        
+-    Returns:
+-        GTIOutput
+-    """
+-    engine = GameTheoryIntentEngine()
+-    return engine.analyze(race_ctx, market_ctx, runner_data)
+-
+-
+-if __name__ == "__main__":
+-    # Example usage
+-    race_ctx = {
+-        'race_id': 'test_001',
+-        'course': 'Newmarket',
+-        'distance': 1200,
+-        'field_size': 10
+-    }
+-    
+-    market_ctx = {
+-        'snapshot_timestamp': '2025-12-17T14:00:00',
+-        'runners': []
+-    }
+-    
+-    runner_data = [
+-        {'runner_id': 'r1', 'trainer': 'Trainer A', 'odds': 3.5},
+-        {'runner_id': 'r2', 'trainer': 'Trainer A', 'odds': 8.0},
+-        {'runner_id': 'r3', 'trainer': 'Trainer B', 'odds': 5.0},
+-    ]
+-    
+-    output = analyze_game_theory(race_ctx, market_ctx, runner_data)
+-    print(f"GTI Output: {output.to_dict()}")
+diff --git a/scripts/run_prime_today.py b/scripts/run_prime_today.py
+index e460731..4b4304e 100644
+--- a/scripts/run_prime_today.py
++++ b/scripts/run_prime_today.py
+@@ -437,7 +437,11 @@ def main():
+     print("\nSTEP 1: Load racecards")
+     raw_races, racecard_source = load_racecards(date_tag, date_str)
+     races_with_runners = [r for r in raw_races if r.get("runners")]
+-    print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {len(races_with_runners)}")
++    # UK/IRE only — block France and other non-GB/IRE races from entering pipeline
++    _before = len(races_with_runners)
++    races_with_runners = [r for r in races_with_runners if r.get("region", "").upper() in ("GB", "IRE")]
++    _filtered = _before - len(races_with_runners)
++    print(f"  Source: {racecard_source}  races: {len(raw_races)}  with runners: {_before}  UK/IRE: {len(races_with_runners)}" + (f"  [{_filtered} non-UK/IRE blocked]" if _filtered else ""))
+ 
+     # ── STEP 2: Normalize ALL races before any scoring ────────────────────────
+     print("\nSTEP 2: Normalize (canonical schema — no raw payloads to workers)")
+diff --git a/src/agents/velo_prime.py b/src/agents/velo_prime.py
+index ef04e40..ebc9366 100644
+--- a/src/agents/velo_prime.py
++++ b/src/agents/velo_prime.py
+@@ -170,11 +170,7 @@ class VeloPrime:
+         Returns:
+             Shortlisted horses with filter results
+         """
+-        # Import Five-Filter System
+-        import sys
+-        from pathlib import Path
+-        sys.path.insert(0, str(Path(__file__).parent.parent))
+-        from modules.five_filters import FiveFilters
++        from src.modules.five_filters import FiveFilters
+         
+         filters = FiveFilters()
+         
+diff --git a/src/intelligence/velo_prime_ensemble.py b/src/intelligence/velo_prime_ensemble.py
+index e58c35f..a4df18d 100644
+--- a/src/intelligence/velo_prime_ensemble.py
++++ b/src/intelligence/velo_prime_ensemble.py
+@@ -139,6 +139,7 @@ class VeloPrimePrediction:
+             "place_prob": self.place_prob,
+             "comment_intel_score": self.comment_intel_score,
+             "longshot_score": self.longshot_score,
++            "sp_dec": self.sp_dec,
+             "confidence_level": self.confidence_level,
+             "regime_override": self.regime_override,
+             "verdict_flags": self.verdict_flags,
+@@ -198,6 +199,15 @@ class VeloPrimeEnsemble:
+         if total > 0:
+             for p in predictions:
+                 p.velo_prime_prob = round(p.velo_prime_prob / total, 4)
++                # Recalculate confidence_level from the final normalised probability.
++                # Must happen after renormalisation — pre-normalisation probs are
++                # too small (0.05–0.20) and would leave all runners at "low".
++                if p.velo_prime_prob >= 0.50:
++                    p.confidence_level = "high"
++                elif p.velo_prime_prob >= 0.25:
++                    p.confidence_level = "normal"
++                else:
++                    p.confidence_level = "low"
+ 
+         predictions.sort(key=lambda p: p.velo_prime_prob, reverse=True)
+         return predictions
+diff --git a/tests/test_phase2a_integration.py b/tests/test_phase2a_integration.py
+deleted file mode 100644
+index 27b5ef2..0000000
+--- a/tests/test_phase2a_integration.py
++++ /dev/null
+@@ -1,285 +0,0 @@
+-"""
+-Phase 2A Integration Tests
+-
+-Tests the full pipeline with form, stability, and historical stats.
+-"""
+-
+-import pytest
+-from app.strategy.top4_ranker import calculate_runner_score, rank_top4
+-from app.ml.form_parser import analyze_form, parse_form_string
+-from app.ml.stability_clusters import build_stability_profile
+-from app.ml.historical_stats import HistoricalStats
+-
+-
+-def test_score_with_stability_modifier():
+-    """Test that stability modifier affects score."""
+-    # Create profile with stability
+-    profile = {
+-        'runner_id': 'r1',
+-        'market_role': 'ANCHOR',
+-        'odds_decimal': 2.5,
+-        'stability_profile': {
+-            'cluster_id': 'STABLE_HIGH_IMPROVING_TOP'
+-        }
+-    }
+-    
+-    race_ctx = {
+-        'chaos_level': 0.5,
+-        'field_size': 10,
+-        'manipulation_risk': 0.3
+-    }
+-    
+-    score = calculate_runner_score(profile, race_ctx)
+-    
+-    # Should have positive stability modifier
+-    assert score.components['stability'] > 0.0
+-    assert score.components['stability_reason'] == 'STABLE_HIGH_IMPROVING_TOP'
+-
+-
+-def test_score_with_historical_modifier():
+-    """Test that historical stats modifier affects score."""
+-    # Create profile with historical stats
+-    stats = HistoricalStats(
+-        trainer_win_rate=0.20,  # Above baseline
+-        jockey_win_rate=0.15,  # Above baseline
+-        combo_win_rate=0.25,
+-        trainer_sample_size=20,
+-        jockey_sample_size=20,
+-        combo_sample_size=10,
+-        track="AYR",
+-        distance_band="MILE",
+-        surface="Turf",
+-        recency_days=365
+-    )
+-    
+-    profile = {
+-        'runner_id': 'r1',
+-        'market_role': 'ANCHOR',
+-        'odds_decimal': 2.5,
+-        'historical_stats': stats
+-    }
+-    
+-    race_ctx = {
+-        'chaos_level': 0.5,
+-        'field_size': 10,
+-        'manipulation_risk': 0.3
+-    }
+-    
+-    score = calculate_runner_score(profile, race_ctx)
+-    
+-    # Should have positive historical modifier
+-    assert score.components['historical'] > 0.0
+-    assert 'trainer:' in score.components['historical_reason']
+-    assert 'jockey:' in score.components['historical_reason']
+-
+-
+-def test_score_with_both_modifiers():
+-    """Test that stability and historical modifiers combine."""
+-    stats = HistoricalStats(
+-        trainer_win_rate=0.20,
+-        jockey_win_rate=0.15,
+-        combo_win_rate=0.25,
+-        trainer_sample_size=20,
+-        jockey_sample_size=20,
+-        combo_sample_size=10,
+-        track="AYR",
+-        distance_band="MILE",
+-        surface="Turf",
+-        recency_days=365
+-    )
+-    
+-    profile = {
+-        'runner_id': 'r1',
+-        'market_role': 'ANCHOR',
+-        'odds_decimal': 2.5,
+-        'stability_profile': {
+-            'cluster_id': 'STABLE_HIGH_IMPROVING_TOP'
+-        },
+-        'historical_stats': stats
+-    }
+-    
+-    race_ctx = {
+-        'chaos_level': 0.5,
+-        'field_size': 10,
+-        'manipulation_risk': 0.3
+-    }
+-    
+-    score = calculate_runner_score(profile, race_ctx)
+-    
+-    # Both modifiers should be positive
+-    assert score.components['stability'] > 0.0
+-    assert score.components['historical'] > 0.0
+-    
+-    # Total should include both
+-    assert score.total > (score.components['role'] + score.components['odds'])
+-
+-
+-def test_score_without_modifiers():
+-    """Test that score works without Phase 2A data."""
+-    # Profile without stability or historical stats
+-    profile = {
+-        'runner_id': 'r1',
+-        'market_role': 'ANCHOR',
+-        'odds_decimal': 2.5
+-    }
+-    
+-    race_ctx = {
+-        'chaos_level': 0.5,
+-        'field_size': 10,
+-        'manipulation_risk': 0.3
+-    }
+-    
+-    score = calculate_runner_score(profile, race_ctx)
+-    
+-    # Modifiers should be zero
+-    assert score.components['stability'] == 0.0
+-    assert score.components['historical'] == 0.0
+-    assert score.components['stability_reason'] == 'not_available'
+-    assert score.components['historical_reason'] == 'not_available'
+-    
+-    # But score should still work (Phase 1 components)
+-    assert score.total > 0.0
+-
+-
+-def test_modifier_caps_respected():
+-    """Test that modifiers respect their caps."""
+-    # Create extreme stats
+-    stats = HistoricalStats(
+-        trainer_win_rate=0.50,  # Extreme
+-        jockey_win_rate=0.50,  # Extreme
+-        combo_win_rate=0.50,
+-        trainer_sample_size=100,
+-        jockey_sample_size=100,
+-        combo_sample_size=100,
+-        track="AYR",
+-        distance_band="MILE",
+-        surface="Turf",
+-        recency_days=365
+-    )
+-    
+-    profile = {
+-        'runner_id': 'r1',
+-        'market_role': 'ANCHOR',
+-        'odds_decimal': 2.5,
+-        'stability_profile': {
+-            'cluster_id': 'STABLE_HIGH_IMPROVING_TOP'  # Max positive
+-        },
+-        'historical_stats': stats
+-    }
+-    
+-    race_ctx = {
+-        'chaos_level': 0.5,
+-        'field_size': 10,
+-        'manipulation_risk': 0.3
+-    }
+-    
+-    score = calculate_runner_score(profile, race_ctx)
+-    
+-    # Stability should be capped at ±0.10
+-    assert -0.10 <= score.components['stability'] <= 0.10
+-    
+-    # Historical should be capped at ±0.05
+-    assert -0.05 <= score.components['historical'] <= 0.05
+-
+-
+-def test_rank_top4_with_phase2a_data():
+-    """Test Top-4 ranking with Phase 2A data."""
+-    stats_good = HistoricalStats(
+-        trainer_win_rate=0.20,
+-        jockey_win_rate=0.15,
+-        combo_win_rate=0.25,
+-        trainer_sample_size=20,
+-        jockey_sample_size=20,
+-        combo_sample_size=10,
+-        track="AYR",
+-        distance_band="MILE",
+-        surface="Turf",
+-        recency_days=365
+-    )
+-    
+-    stats_poor = HistoricalStats(
+-        trainer_win_rate=0.05,
+-        jockey_win_rate=0.05,
+-        combo_win_rate=0.05,
+-        trainer_sample_size=20,
+-        jockey_sample_size=20,
+-        combo_sample_size=10,
+-        track="AYR",
+-        distance_band="MILE",
+-        surface="Turf",
+-        recency_days=365
+-    )
+-    
+-    profiles = [
+-        {
+-            'runner_id': 'r1',
+-            'market_role': 'ANCHOR',
+-            'odds_decimal': 2.5,
+-            'stability_profile': {'cluster_id': 'STABLE_HIGH_IMPROVING_TOP'},
+-            'historical_stats': stats_good
+-        },
+-        {
+-            'runner_id': 'r2',
+-            'market_role': 'RELEASE',
+-            'odds_decimal': 4.0,
+-            'stability_profile': {'cluster_id': 'VOLATILE_LOW_DECLINING_BOTTOM'},
+-            'historical_stats': stats_poor
+-        },
+-        {
+-            'runner_id': 'r3',
+-            'market_role': 'NOISE',
+-            'odds_decimal': 10.0
+-        }
+-    ]
+-    
+-    race_ctx = {
+-        'chaos_level': 0.5,
+-        'field_size': 3,
+-        'manipulation_risk': 0.3
+-    }
+-    
+-    top4, scores = rank_top4(profiles, race_ctx)
+-    
+-    # Should return all 3 runners (field < 4)
+-    assert len(top4) == 3
+-    
+-    # r1 should rank first (good everything)
+-    assert top4[0]['runner_id'] == 'r1'
+-    
+-    # All runners should have scores
+-    assert 'r1' in scores
+-    assert 'r2' in scores
+-    assert 'r3' in scores
+-
+-
+-def test_phase1_regression_with_phase2a():
+-    """Test that Phase 1 behavior is preserved when Phase 2A data is absent."""
+-    # Use Phase 1 test case
+-    profiles = [
+-        {'runner_id': 'r1', 'market_role': 'ANCHOR', 'odds_decimal': 2.0},
+-        {'runner_id': 'r2', 'market_role': 'RELEASE', 'odds_decimal': 4.0},
+-        {'runner_id': 'r3', 'market_role': 'NOISE', 'odds_decimal': 10.0},
+-        {'runner_id': 'r4', 'market_role': 'NOISE', 'odds_decimal': 15.0}
+-    ]
+-    
+-    race_ctx = {
+-        'chaos_level': 0.5,
+-        'field_size': 4,
+-        'manipulation_risk': 0.3
+-    }
+-    
+-    top4, scores = rank_top4(profiles, race_ctx)
+-    
+-    # Phase 1 contract: exactly 4 returned
+-    assert len(top4) == 4
+-    
+-    # All runners scored
+-    assert len(scores) == 4
+-    
+-    # Scores are positive
+-    for runner_id, score in scores.items():
+-        assert score.total > 0.0
+-
+-
+-if __name__ == "__main__":
+-    pytest.main([__file__, "-v"])
+diff --git a/tests/test_stability_clusters.py b/tests/test_stability_clusters.py
+deleted file mode 100644
+index dbf9f0c..0000000
+--- a/tests/test_stability_clusters.py
++++ /dev/null
+@@ -1,244 +0,0 @@
+-"""
+-Unit tests for Stability Cluster Engine (Phase 2A)
+-"""
+-
+-import pytest
+-from app.ml.stability_clusters import (
+-    classify_consistency_band,
+-    classify_form_trend,
+-    classify_field_rank_band,
+-    generate_cluster_id,
+-    build_stability_profile,
+-    cluster_field,
+-    get_cluster_trust_modifier,
+-    identify_hidden_value,
+-    identify_liquidity_traps
+-)
+-
+-
+-def test_classify_consistency_band():
+-    """Test consistency band classification."""
+-    assert classify_consistency_band(0.8) == "HIGH"
+-    assert classify_consistency_band(0.5) == "MEDIUM"
+-    assert classify_consistency_band(0.2) == "LOW"
+-
+-
+-def test_classify_form_trend_improving():
+-    """Test form trend - improving."""
+-    # Positions getting better (lower numbers)
+-    positions = [1, 2, 3, 4, 5]  # Most recent first
+-    trend = classify_form_trend(positions)
+-    assert trend == "IMPROVING"
+-
+-
+-def test_classify_form_trend_declining():
+-    """Test form trend - declining."""
+-    # Positions getting worse (higher numbers)
+-    positions = [5, 4, 3, 2, 1]  # Most recent first
+-    trend = classify_form_trend(positions)
+-    assert trend == "DECLINING"
+-
+-
+-def test_classify_form_trend_stable():
+-    """Test form trend - stable."""
+-    positions = [3, 3, 3, 3]
+-    trend = classify_form_trend(positions)
+-    assert trend == "STABLE"
+-
+-
+-def test_classify_form_trend_insufficient_data():
+-    """Test form trend with insufficient data."""
+-    assert classify_form_trend([1, 2]) == "UNKNOWN"
+-    assert classify_form_trend([]) == "UNKNOWN"
+-
+-
+-def test_classify_field_rank_band():
+-    """Test field rank band classification."""
+-    # Field of 12 runners
+-    assert classify_field_rank_band(1, 12) == "TOP"  # 1st = top 33%
+-    assert classify_field_rank_band(4, 12) == "TOP"  # 4th = top 33%
+-    assert classify_field_rank_band(6, 12) == "MID"  # 6th = middle 33%
+-    assert classify_field_rank_band(10, 12) == "BOTTOM"  # 10th = bottom 33%
+-
+-
+-def test_generate_cluster_id():
+-    """Test cluster ID generation."""
+-    cluster_id = generate_cluster_id("STABLE", "HIGH", "IMPROVING", "TOP")
+-    assert cluster_id == "STABLE_HIGH_IMPROVING_TOP"
+-
+-
+-def test_build_stability_profile_stable():
+-    """Test building profile for stable runner."""
+-    form_metrics = {
+-        "consistency": 0.8,
+-        "recent_form": 0.7,
+-        "win_rate": 0.3,
+-        "place_rate": 0.6,
+-        "valid_races": 5
+-    }
+-    positions = [2, 2, 3, 2, 2]
+-    
+-    profile = build_stability_profile(
+-        runner_id="r1",
+-        form_metrics=form_metrics,
+-        positions=positions,
+-        field_position=2,
+-        field_size=10
+-    )
+-    
+-    assert profile.runner_id == "r1"
+-    assert profile.stability_class == "STABLE"
+-    assert profile.consistency_band == "HIGH"
+-    assert profile.field_rank_band == "TOP"
+-
+-
+-def test_build_stability_profile_volatile():
+-    """Test building profile for volatile runner."""
+-    form_metrics = {
+-        "consistency": 0.2,
+-        "recent_form": 0.5,
+-        "win_rate": 0.1,
+-        "place_rate": 0.3,
+-        "valid_races": 5
+-    }
+-    positions = [1, 8, 2, 9, 3]
+-    
+-    profile = build_stability_profile(
+-        runner_id="r2",
+-        form_metrics=form_metrics,
+-        positions=positions,
+-        field_position=5,
+-        field_size=10
+-    )
+-    
+-    assert profile.stability_class == "VOLATILE"
+-    assert profile.consistency_band == "LOW"
+-
+-
+-def test_build_stability_profile_insufficient_data():
+-    """Test building profile with insufficient data."""
+-    form_metrics = {
+-        "consistency": 0.5,
+-        "recent_form": 0.5,
+-        "win_rate": 0.0,
+-        "place_rate": 0.0,
+-        "valid_races": 1
+-    }
+-    positions = [3]
+-    
+-    profile = build_stability_profile(
+-        runner_id="r3",
+-        form_metrics=form_metrics,
+-        positions=positions,
+-        field_position=5,
+-        field_size=10
+-    )
+-    
+-    assert profile.stability_class == "INSUFFICIENT_DATA"
+-
+-
+-def test_cluster_field():
+-    """Test clustering entire field."""
+-    runners_data = [
+-        {
+-            "runner_id": "r1",
+-            "form_metrics": {"consistency": 0.8, "recent_form": 0.7, "win_rate": 0.3, "place_rate": 0.6, "valid_races": 5},
+-            "positions": [2, 2, 3, 2, 2],
+-            "field_position": 1,
+-            "field_size": 5
+-        },
+-        {
+-            "runner_id": "r2",
+-            "form_metrics": {"consistency": 0.2, "recent_form": 0.4, "win_rate": 0.1, "place_rate": 0.2, "valid_races": 5},
+-            "positions": [5, 4, 6, 5, 7],
+-            "field_position": 5,
+-            "field_size": 5
+-        },
+-        {
+-            "runner_id": "r3",
+-            "form_metrics": {"consistency": 0.8, "recent_form": 0.7, "win_rate": 0.3, "place_rate": 0.6, "valid_races": 5},
+-            "positions": [2, 2, 3, 2, 2],
+-            "field_position": 2,
+-            "field_size": 5
+-        }
+-    ]
+-    
+-    clusters = cluster_field(runners_data)
+-    
+-    # Should have clusters
+-    assert len(clusters) > 0
+-    
+-    # r1 and r3 have similar form but different field positions (1st vs 2nd)
+-    # So they will be in different clusters (TOP vs TOP, but different exact positions)
+-    # Just verify all runners are clustered
+-    all_runner_ids = set()
+-    for cluster_id, profiles in clusters.items():
+-        for p in profiles:
+-            all_runner_ids.add(p.runner_id)
+-    
+-    assert all_runner_ids == {"r1", "r2", "r3"}, "All runners should be clustered"
+-
+-
+-def test_get_cluster_trust_modifier_stable():
+-    """Test trust modifier for stable cluster."""
+-    modifier = get_cluster_trust_modifier("STABLE_HIGH_IMPROVING_TOP")
+-    assert modifier > 0.0, "Stable + high consistency + improving should have positive modifier"
+-
+-
+-def test_get_cluster_trust_modifier_volatile():
+-    """Test trust modifier for volatile cluster."""
+-    modifier = get_cluster_trust_modifier("VOLATILE_LOW_DECLINING_BOTTOM")
+-    assert modifier < 0.0, "Volatile + low consistency + declining should have negative modifier"
+-
+-
+-def test_get_cluster_trust_modifier_bounded():
+-    """Test trust modifier is bounded."""
+-    # Even extreme cases should be bounded
+-    modifier = get_cluster_trust_modifier("STABLE_HIGH_IMPROVING_TOP")
+-    assert -0.10 <= modifier <= 0.10
+-
+-
+-def test_identify_hidden_value():
+-    """Test identification of hidden value runners."""
+-    clusters = {
+-        "STABLE_MEDIUM_IMPROVING_MID": [
+-            type('Profile', (), {"runner_id": "r1"})()
+-        ],
+-        "VOLATILE_LOW_DECLINING_TOP": [
+-            type('Profile', (), {"runner_id": "r2"})()
+-        ],
+-        "MODERATE_HIGH_IMPROVING_BOTTOM": [
+-            type('Profile', (), {"runner_id": "r3"})()
+-        ]
+-    }
+-    
+-    hidden = identify_hidden_value(clusters)
+-    
+-    assert "r1" in hidden, "Stable improving mid-field should be hidden value"
+-    assert "r3" in hidden, "Moderate improving bottom should be hidden value"
+-    assert "r2" not in hidden, "Volatile declining top should not be hidden value"
+-
+-
+-def test_identify_liquidity_traps():
+-    """Test identification of liquidity traps."""
+-    clusters = {
+-        "VOLATILE_LOW_DECLINING_TOP": [
+-            type('Profile', (), {"runner_id": "r1"})()
+-        ],
+-        "STABLE_HIGH_IMPROVING_TOP": [
+-            type('Profile', (), {"runner_id": "r2"})()
+-        ],
+-        "VOLATILE_MEDIUM_STABLE_TOP": [
+-            type('Profile', (), {"runner_id": "r3"})()
+-        ]
+-    }
+-    
+-    traps = identify_liquidity_traps(clusters)
+-    
+-    assert "r1" in traps, "Volatile top runner should be liquidity trap"
+-    assert "r3" in traps, "Volatile top runner should be liquidity trap"
+-    assert "r2" not in traps, "Stable top runner should not be liquidity trap"
+-
+-
+-if __name__ == "__main__":
+-    pytest.main([__file__, "-v"])
+diff --git a/workers/daily_pipeline.py b/workers/daily_pipeline.py
+index d2fc3c1..0aa7148 100644
+--- a/workers/daily_pipeline.py
++++ b/workers/daily_pipeline.py
+@@ -41,6 +41,8 @@ sys.path.insert(0, str(ROOT))
+ from dotenv import load_dotenv
+ load_dotenv(ROOT / ".env")
+ 
++from src.rpd.rpdc_rules import tag_from_live_runner
++
+ logging.basicConfig(
+     level=logging.INFO,
+     format="%(asctime)s [%(levelname)s] %(message)s",
+@@ -450,6 +452,17 @@ def upsert_runner_race_fact(race, runner, race_date, run_id, stats):
+         "morning_odds_dec": morning_odds,
+         "updated_at": datetime.utcnow().isoformat() + "Z",
+     }
++
++    # ── RPD-C deterministic tag (live data only — confidence=low until intelligence stack backfill) ──
++    try:
++        rpdc = tag_from_live_runner(runner, race)
++        row["rpdc_tag_base"]   = rpdc.rpdc_tag_base
++        row["rpdc_confidence"] = rpdc.rpdc_confidence
++        row["rpdc_evidence"]   = rpdc.rpdc_evidence   # list → JSONB
++        row["rpdc_blockers"]   = rpdc.rpdc_blockers   # list → JSONB
++    except Exception as _rpdc_err:
++        log.warning(f"[rpdc] tag_from_live_runner failed for {runner.get('horse_id','?')}: {_rpdc_err}")
++
+     supabase_upsert("runner_race_facts", row, conflict_keys=["race_id", "horse_id"], run_id=run_id, stats=stats)
+ 
+ 
+@@ -728,8 +741,8 @@ def run_pipeline(target_date=None):
+                     "trainer":    runner.get("trainer", ""),
+                     "jockey":     runner.get("jockey", ""),
+                     "form":       runner.get("form", ""),
+-                    "rpd_tag":    runner.get("run_style", ""),
+-                    "rpd_evidence": spotlight_text[:500] if spotlight_text else "",
++                    "rpd_tag":    "",        # no longer populated from run_style — see runner_race_facts.rpdc_tag_base
++                    "rpd_evidence": "",
+                     "horse_id":   runner.get("horse_id", ""),
+                     "trainer_id": runner.get("trainer_id", ""),
+                     "jockey_id":  runner.get("jockey_id", ""),
+diff --git a/workers/racing_api_normalizer.py b/workers/racing_api_normalizer.py
+index ac37763..0ecc694 100644
+--- a/workers/racing_api_normalizer.py
++++ b/workers/racing_api_normalizer.py
+@@ -61,6 +61,25 @@ def _safe_str(val: Any, default: str = "") -> str:
+     return str(val).strip()
+ 
+ 
++def _dist_f_to_yards(distance_f: Any) -> int:
++    """
++    Convert API distance_f (furlongs, e.g. 7.5) to integer yards.
++    1 furlong = 220 yards. Returns 0 on any parse failure.
++
++    Examples:
++        7.0  -> 1540    (7f)
++        7.5  -> 1650    (7½f)
++        8.0  -> 1760    (1m)
++        12.5 -> 2750    (1m4½f)
++    """
++    if distance_f is None:
++        return 0
++    try:
++        return round(float(str(distance_f).strip()) * 220)
++    except (TypeError, ValueError):
++        return 0
++
++
+ def _best_decimal(odds_list: Any) -> float:
+     """
+     Standard API returns odds as a list of bookmaker dicts:
+@@ -189,6 +208,7 @@ def normalize_race(raw: dict) -> dict:
+         "race_name":   _safe_str(raw.get("race_name")),
+         "distance":    _safe_str(raw.get("distance")),
+         "distance_f":  _safe_str(raw.get("distance_f")),
++        "distance_y":  _dist_f_to_yards(raw.get("distance_f")),
+         "going":       _safe_str(raw.get("going")),
+         "going_detailed": _safe_str(raw.get("going_detailed")),
+         "surface":     _safe_str(raw.get("surface")),
