@@ -864,6 +864,52 @@ def _enrich_full_analysis_from_warehouse(
 # ── Supabase persistence ──────────────────────────────────────────────────────
 
 
+def _normalize_race_type(raw: str | None) -> str | None:
+    """Normalise a raw race-type string to a canonical label.
+
+    Free text column — does not force an enum. Falls back to the lowercased
+    raw value when it doesn't match a known category.
+    """
+    if not raw:
+        return None
+    v = str(raw).strip().lower()
+    if not v:
+        return None
+    if "chase" in v:
+        return "chase"
+    if "hurdle" in v:
+        return "hurdle"
+    if "bumper" in v or "nhf" in v:
+        return "bumper"
+    if "aw" in v or "all-weather" in v or "all weather" in v:
+        return "aw_flat"
+    if "flat" in v:
+        return "flat"
+    return v
+
+
+def _build_race_type_fields(race: dict) -> dict:
+    """Pure helper: derive race_type persistence fields from the race dict.
+
+    Returns all four keys, leaving them None when no source race type is
+    available. Never invents a value; never blocks persistence.
+    """
+    raw = race.get("type") or race.get("race_type")
+    if not raw:
+        return {
+            "race_type": None,
+            "race_type_raw": None,
+            "race_type_source": None,
+            "race_type_recorded_at": None,
+        }
+    return {
+        "race_type": _normalize_race_type(raw),
+        "race_type_raw": str(raw),
+        "race_type_source": "scoring_race_dict",
+        "race_type_recorded_at": datetime.now(UTC).isoformat(),
+    }
+
+
 def persist_race_predictions(
     race: dict,
     predictions: list[dict],
@@ -1031,6 +1077,11 @@ def persist_race_predictions(
             # git_commit_sha: scoring run commit for audit queries; NULL until fixed.
             "decision_tier": decision_tier,
             "git_commit_sha": commit_sha,
+            # ── Race type persistence (SIGMA-26) ────────────────────────────────
+            # Populates columns added by migration add_race_type_source_to_
+            # velo_verdicts_v1 (2026-07-04). Nullable — never blocks persistence,
+            # never invents a value when the source race dict lacks a type.
+            **_build_race_type_fields(race),
         }
 
         # VÉLØ Oracle — Narrative and regime
@@ -1130,6 +1181,11 @@ def persist_race_predictions(
                 "governance",
                 ["assigned_product", "router_reasons", "execution_allowed"],
                 "Apply migration to add governance columns to velo_verdicts.",
+            ),
+            (
+                "race_type_persistence",
+                ["race_type", "race_type_raw", "race_type_source", "race_type_recorded_at"],
+                "Apply migration add_race_type_source_to_velo_verdicts_v1 (2026-07-04).",
             ),
         ]
 

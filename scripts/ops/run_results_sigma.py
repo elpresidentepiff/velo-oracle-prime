@@ -349,6 +349,136 @@ def _load_three_option_summary(race_date: str) -> dict:
         return {"available": False}
 
 
+# SIGMA-26: verdict select clause used by STEP 1 to build predictions[race_id].
+# predicted_field_size and race_type were added here so the enrichment helpers
+# below actually receive them — without this, extraction would silently return
+# None forever regardless of what's persisted on velo_verdicts. verdict_id is
+# intentionally not included — out of scope for this mission.
+SIGMA_VERDICT_SELECT_COLUMNS = (
+    "race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,"
+    "generated_at,full_analysis,assigned_product,predicted_field_size,race_type"
+)
+
+
+# ── SIGMA-26 dry-run enrichment (pick_sp / field_size / race_type) ───────────
+# Pure helpers — no Supabase access, no side effects. Extract from a verdict
+# row (as returned by the /velo_verdicts select in STEP 1) so tests can verify
+# behaviour without hitting the network. verdict_id is explicitly out of scope
+# for this mission — see SIGMA-25/26 operator briefs.
+
+
+def _extract_pick_sp_from_prediction(prediction: dict) -> float | None:
+    """Find the top-ranked runner in full_analysis.predictions and return its sp_dec.
+
+    Returns None if the verdict, its full_analysis, its predictions list, the
+    matching runner, or the sp_dec value itself is missing — never raises.
+    """
+    if not prediction:
+        return None
+    top_horse_id = prediction.get("top_rank_horse_id")
+    if not top_horse_id:
+        return None
+    full = prediction.get("full_analysis") or {}
+    preds_list = full.get("predictions") or []
+    for runner in preds_list:
+        if runner.get("horse_id") == top_horse_id:
+            sp = runner.get("sp_dec")
+            if sp is None:
+                return None
+            try:
+                return float(sp)
+            except (TypeError, ValueError):
+                return None
+    return None
+
+
+def _extract_field_size_from_prediction(prediction: dict) -> int | None:
+    """Read the persisted field size from a verdict row.
+
+    Source: velo_verdicts.predicted_field_size (SIGMA-25 confirmed-persisted
+    source). Returns None if absent — never invented.
+    """
+    if not prediction:
+        return None
+    size = prediction.get("predicted_field_size")
+    if size is None:
+        return None
+    try:
+        return int(size)
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_race_type_from_prediction(prediction: dict) -> str | None:
+    """Read the persisted race_type from a verdict row.
+
+    Source: velo_verdicts.race_type, populated by SIGMA-26's persistence patch
+    (app/services/velo_prime_service.py::_build_race_type_fields). Rows written
+    before that patch will have race_type = None — returns None, never invented.
+    """
+    if not prediction:
+        return None
+    return prediction.get("race_type") or None
+
+
+def _build_sigma_row(
+    race_id: str,
+    race_date: str,
+    course: str,
+    off_time: str | None,
+    outcome: str,
+    decision_tier: str | None,
+    miss_reason: str | None,
+    top_pick_position,
+    actual_winner_id,
+    actual_winner_name: str | None,
+    actual_winner_sp: float | None,
+    notes: str,
+    prediction: dict | None = None,
+) -> dict:
+    """Build the sigma_audits upsert payload.
+
+    Identical to the pre-SIGMA-26 inline dict for all existing keys — the
+    known-good actual_winner_sp/winner_sp path is untouched. Adds pick_sp,
+    field_size, and race_type as dry-run enrichment when `prediction` (the
+    verdict row from predictions[race_id]) supplies them.
+
+    Missing sources OMIT the key entirely rather than writing None. This is an
+    upsert into sigma_audits — writing an explicit null for a key that already
+    has a good value on an earlier run would overwrite it. Omitting the key
+    leaves any existing Supabase value untouched. verdict_id is intentionally
+    not included — out of scope for this mission.
+    """
+    row = {
+        "race_id": race_id,
+        "date": race_date,
+        "track": course,
+        "off_time": off_time,
+        "event_type": "sigma_reconciliation",
+        "outcome": outcome,
+        "decision_tier": decision_tier,
+        "miss_reason": miss_reason,
+        "top_pick_position": top_pick_position,
+        "actual_winner_id": actual_winner_id,
+        "actual_winner_name": actual_winner_name,
+        "actual_winner_sp": actual_winner_sp,
+        "notes": notes,
+    }
+    pick_sp = _extract_pick_sp_from_prediction(prediction)
+    if pick_sp is not None:
+        row["pick_sp"] = pick_sp
+
+    field_size = _extract_field_size_from_prediction(prediction)
+    if field_size is not None:
+        row["field_size"] = field_size
+
+    race_type = _extract_race_type_from_prediction(prediction)
+    if race_type is not None:
+        row["race_type"] = race_type
+
+    return row
+
+
 # ── main ─────────────────────────────────────────────────────────────────────
 
 
@@ -379,7 +509,7 @@ def main():
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
     print("\nSTEP 1: Load predictions from velo_verdicts")
     verdicts_raw = sb_get(
-        f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
+        f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
         f"&generated_at=gte.{race_date}T00:00:00"
         f"&generated_at=lt.{race_date}T23:59:59"
         f"&order=generated_at"
@@ -392,7 +522,7 @@ def main():
         next_day = (race_date_obj + timedelta(days=1)).strftime("%Y-%m-%d")
         date_tag = race_date.replace("-", "")  # e.g. "20260529"
         extended = sb_get(
-            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
+            f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
             f"&generated_at=gte.{next_day}T00:00:00"
             f"&generated_at=lt.{next_day}T12:00:00"
             f"&order=generated_at"
@@ -406,7 +536,7 @@ def main():
     if not verdicts_raw:
         prev_day = (race_date_obj - timedelta(days=1)).strftime("%Y-%m-%d")
         prev_raw = sb_get(
-            f"/velo_verdicts?select=race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product"
+            f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
             f"&generated_at=gte.{prev_day}T00:00:00"
             f"&generated_at=lt.{race_date}T00:00:00"
             f"&order=generated_at"
@@ -1063,26 +1193,26 @@ def main():
             print(f"  [CANON REJECT] {row['race_id']}: {_ve}")
             continue
 
-        sigma_row = {
-            "race_id": row["race_id"],
-            "date": race_date,
-            "track": row["course"],
-            "off_time": row.get("off") or None,  # race start time
-            "event_type": "sigma_reconciliation",
-            "outcome": row["outcome"],
-            "decision_tier": predictions.get(row["race_id"], {}).get("decision_tier"),
-            "miss_reason": miss_reason,
-            "top_pick_position": top_pos,
-            "actual_winner_id": row["actual_winner"],
-            "actual_winner_name": row.get("actual_name") or None,  # winner name
-            "actual_winner_sp": float(row["winner_sp"]) if row["winner_sp"] else None,
-            "notes": json.dumps(
+        sigma_row = _build_sigma_row(
+            race_id=row["race_id"],
+            race_date=race_date,
+            course=row["course"],
+            off_time=row.get("off") or None,  # race start time
+            outcome=row["outcome"],
+            decision_tier=predictions.get(row["race_id"], {}).get("decision_tier"),
+            miss_reason=miss_reason,
+            top_pick_position=top_pos,
+            actual_winner_id=row["actual_winner"],
+            actual_winner_name=row.get("actual_name") or None,  # winner name
+            actual_winner_sp=float(row["winner_sp"]) if row["winner_sp"] else None,
+            notes=json.dumps(
                 {
                     "summary": _notes_summary,
                     "full_field_rpd": full_field_rpd,
                 }
             ),
-        }
+            prediction=predictions.get(row["race_id"]),
+        )
         if sb_upsert("/sigma_audits", sigma_row, "race_id"):
             sigma_ok += 1
     print(
