@@ -1,0 +1,22 @@
+file_path,category,note
+data/dashboard_daily_predictions_2026_07_04.json,dashboard,refreshed again with RPDC-attached verdicts; source=supabase+local_json
+data/dashboard_daily_predictions_publish_audit_v1.json,dashboard,publish audit sidecar
+data/midprice_shadow_ledger.csv,shadow_ledger,pre-existing shadow evaluation log; appended to by midprice hunter shadow eval (SHADOW ONLY)
+data/new_build/current_cards/current_card_passport_feed_2026_07_04.jsonl,new_build,local-only passport feed
+data/new_build/current_cards/current_card_passport_feed_latest.jsonl,new_build,alias/latest copy
+data/new_build/reports/current_card_passport_feed_2026_07_04.json,new_build,summary report
+data/new_build/reports/current_card_passport_feed_2026_07_04.md,new_build,markdown summary
+data/new_build/reports/current_card_passport_feed_latest.json,new_build,alias/latest copy
+data/new_build/reports/current_card_passport_feed_latest.md,new_build,alias/latest copy
+data/new_build/reports/passport_coverage_latest.json,new_build,passport coverage summary
+data/new_build/reports/two_lane_readiness_2026_07_04.json,new_build,two-lane scoring readiness (local-only, no Supabase calls)
+data/new_build/reports/two_lane_readiness_2026_07_04.md,new_build,markdown summary
+data/racecards_2026_07_04_standard.race_date_normalized.json,racecard_cache,normalized copy produced during racecard load
+data/reports/racecard_cache_gate_latest.json,gate,racecard cache gate pass/fail report
+data/reports/racecard_cache_gate_latest.md,gate,markdown version
+data/telegram_delivery_truth_2026_07_04.json,telegram_log,records every Telegram send as CONTAINMENT NO-OP
+data/timing_audit/runtime_timing_audit_2026_07_04.json,timing,per-step runtime breakdown; runner_snapshots=0.000s confirms skip
+data/velo_daily_run_truth_2026_07_04.json,truth_packet,daily run truth packet
+data/velo_daily_run_truth_2026_07_04.md,truth_packet,markdown version
+data/velo_prime_verdicts_2026_07_04.json,local_verdict_mirror,local JSON mirror of scored verdicts (NOT system of record)
+data/velo_run_observability_2026_07_04_a7cf95a2.json,observability,mandatory observability packet written on PASS (new run_id this time)

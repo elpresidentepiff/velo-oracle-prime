@@ -1,0 +1,9 @@
+check,before_value,after_value,note
+runner_release_candidates rows for run_date=2026-07-04,0,453,confirmed via read-only count
+distinct races represented,0,51,matches standard cache race_id count (51)
+distinct horse_ids represented,0,453,1:1 with rows - no duplicates
+null horse_id count,n/a,0,none found
+null race_id count,n/a,0,none found
+duplicate (race_id,horse_id) pairs,n/a,0,none found
+max run_date on record before build,2026-06-30,2026-07-04,confirms today's date was genuinely missing before this build
+rows for other recent dates (>2026-06-25, != 2026-07-04),n/a,2082,sanity check - delete/upsert was date-scoped, other dates untouched by construction (confirmed via code read)

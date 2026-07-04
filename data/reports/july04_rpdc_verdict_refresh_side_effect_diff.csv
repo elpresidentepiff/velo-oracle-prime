@@ -1,0 +1,13 @@
+check,before_value,after_value,changed,note
+velo_verdicts rows with generated_at > 2026-07-04T00:00:00,51,51,no (refreshed in place),upsert on race_id replaced existing rows; no growth, no duplication
+velo_verdicts rpdc_primary_tag non-null,0,51,yes - authorised,RPDC now attached after build_rpdc_daily.py populated runner_release_candidates
+velo_verdicts rpdc_release_score > 0,0,51,yes - authorised,same cause
+velo_verdicts rpdc_tags non-empty,0,51,yes - authorised,same cause
+velo_verdicts race_type non-null,51,51,no,unchanged, still working correctly
+velo_verdicts predicted_field_size non-null,51,51,no,unchanged
+velo_verdicts full_analysis present,51,51,no,unchanged
+runner_release_candidates rows for 2026-07-04,453,453,no,verdict refresh does not write this table
+runner_prediction_snapshots rows for 2026-07-04+,0,0,no,--no-runner-snapshots guard confirmed skipping the writer call (0.000s in timing summary)
+sigma_audits rows for 2026-07-03+,0,0,no,run_results_sigma.py never invoked
+local runner_snapshots_*.jsonl file count,116,116,no,confirmed via find before and after (corrected path typo caught before reporting)
+Telegram sends,0,0,no,every message logged as CONTAINMENT NO-OP
