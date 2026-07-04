@@ -1,0 +1,401 @@
+{
+  "meta": {
+    "mission": "VCP-03-DAY2-DOCKET",
+    "generated_at": "2026-07-01 02:33 UTC",
+    "hard_constraints": [
+      "REPORT_ONLY",
+      "NO_SUPABASE_WRITES",
+      "NO_TELEGRAM_SEND",
+      "NO_COURSE_01_IMPLEMENTATION",
+      "NO_VFU_21_START",
+      "NO_VCP_04_START",
+      "NO_LIVE_SCORING_CHANGE",
+      "NO_MODEL_PROMOTION",
+      "NO_TRAINING_DECISIONS",
+      "NO_NEW_BUILD_PROMOTION",
+      "NO_NORPR_FOLD_DECISIONS",
+      "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+      "DO_NOT_SUPPRESS_CONTRADICTIONS"
+    ],
+    "final_classifications": [
+      "VCP03_DAY2_DOCKET_COMPLETE",
+      "VCP03_DAY2_PASS_SIGNED_OFF",
+      "COURSE_00A_FINDINGS_SUMMARISED",
+      "POST_BURNIN_DECISION_BOARD_WRITTEN",
+      "KNOWN_STALE_LABEL_RECORDED",
+      "CONTRADICTION_C01_RECORDED_NOT_SUPPRESSED",
+      "COURSE_01_QUEUED_NOT_STARTED",
+      "VFU_21_QUEUED_NOT_STARTED",
+      "MODEL_TRAINING_BLOCKED",
+      "NEW_BUILD_PROMOTION_BLOCKED",
+      "NO_RPR_TRAINING_BLOCKED",
+      "MEMORY_CAPTURE_OPEN",
+      "FAILURE_LEARNING_OPEN",
+      "PROMOTION_LEARNING_GATED",
+      "NO_COURSE_01_IMPLEMENTATION",
+      "NO_VFU_21_START",
+      "NO_VCP_04_START",
+      "NO_LIVE_SCORING_CHANGE",
+      "NO_MODEL_PROMOTION",
+      "NO_SUPABASE_WRITES",
+      "NO_TELEGRAM_SEND",
+      "REPORT_ONLY"
+    ]
+  },
+  "s1_burnin_status": {
+    "day_count": 2,
+    "target_days": 10,
+    "remaining_days": 8,
+    "started": "2026-06-29",
+    "burn_in_valid": true,
+    "truth_lock": "LOCKED",
+    "source_truth": "RP_MERGED_CLEAN",
+    "contradiction_count": 1,
+    "contradictions": [
+      {
+        "id": "C-01",
+        "description": "Mission Control reports RP_MERGED_CLEAN source but learning gate is BLOCKED",
+        "severity": "WARN"
+      }
+    ],
+    "memory_capture": "OPEN",
+    "failure_learning": "OPEN",
+    "promotion_learning": "ELIGIBLE",
+    "vfu21_gate": "CLOSED",
+    "next_safe_action_id": "VCP-01-REVIEW",
+    "next_safe_action_label": "KNOWN_STALE_LABEL_COSMETIC \u2014 still reads VCP-01-REVIEW; VCP-01 was completed and signed off. No patch during burn-in without separate operator authorisation.",
+    "pass_days": [
+      "2026-06-30",
+      "2026-07-01"
+    ],
+    "repo_head": "a8b3e8a",
+    "generated_at": "2026-07-01T02:19:04.805795+00:00"
+  },
+  "s2_course00a_findings": {
+    "total_claims": 33,
+    "evidence_status_tally": {
+      "STALE": 1,
+      "SECONDARY_PUBLIC_SOURCE": 29,
+      "HYPOTHESIS_FROM_RESULTS": 3
+    },
+    "action_tally": {
+      "CORRECT": 1,
+      "KEEP": 15,
+      "DOWNGRADE_TO_HYPOTHESIS": 17
+    },
+    "stale_facts": {
+      "count": 1,
+      "items": [
+        {
+          "course": "Southwell (AW)",
+          "claim_type": "surface",
+          "stale_value": "Fibresand",
+          "corrected_to": "Tapeta",
+          "note": "Southwell changed from Fibresand to Tapeta in 2021. All 2026 data should assume Tapeta.",
+          "label": "STALE_FACT \u2192 CORRECTED_FACT"
+        }
+      ]
+    },
+    "southwell_verdict": {
+      "stale_claim": "Fibresand",
+      "corrected_to": "Tapeta",
+      "correction_note": "Southwell changed from Fibresand to Tapeta in 2021. All 2026 data should assume Tapeta.",
+      "label": "STALE_FACT_CORRECTED"
+    },
+    "aw_surface_verdicts": [
+      {
+        "course": "Southwell (AW)",
+        "surface_current": "Tapeta",
+        "surface_source_status": "SECONDARY_PUBLIC_SOURCE",
+        "draw_bias_source_status": "HYPOTHESIS_FROM_SECONDARY_SOURCE",
+        "confidence": "0.4",
+        "tribunal_verdict": "SURFACE_STALE_CORRECTED_DRAW_PACE_HYPOTHESIS"
+      },
+      {
+        "course": "Kempton (AW)",
+        "surface_current": "Polytrack",
+        "surface_source_status": "SECONDARY_PUBLIC_SOURCE",
+        "draw_bias_source_status": "HYPOTHESIS_DOWNGRADED_TO_UNKNOWN",
+        "confidence": "0.4",
+        "tribunal_verdict": "SURFACE_CORRECT_DRAW_DOWNGRADED_UNKNOWN"
+      },
+      {
+        "course": "Wolverhampton (AW)",
+        "surface_current": "Tapeta",
+        "surface_source_status": "SECONDARY_PUBLIC_SOURCE",
+        "draw_bias_source_status": "HYPOTHESIS_DOWNGRADED_TO_UNKNOWN",
+        "confidence": "0.4",
+        "tribunal_verdict": "SURFACE_CORRECT_DRAW_DOWNGRADED_UNKNOWN"
+      },
+      {
+        "course": "Lingfield (AW)",
+        "surface_current": "Polytrack",
+        "surface_source_status": "SECONDARY_PUBLIC_SOURCE",
+        "draw_bias_source_status": "HYPOTHESIS_DOWNGRADED_TO_UNKNOWN",
+        "confidence": "0.4",
+        "tribunal_verdict": "SURFACE_CORRECT_DRAW_DOWNGRADED_UNKNOWN"
+      },
+      {
+        "course": "Newcastle (AW)",
+        "surface_current": "Tapeta",
+        "surface_source_status": "SECONDARY_PUBLIC_SOURCE",
+        "draw_bias_source_status": "HYPOTHESIS_DOWNGRADED_TO_UNKNOWN",
+        "confidence": "0.4",
+        "tribunal_verdict": "SURFACE_CORRECT_DRAW_DOWNGRADED_UNKNOWN"
+      },
+      {
+        "course": "Chelmsford (AW)",
+        "surface_current": "Polytrack",
+        "surface_source_status": "SECONDARY_PUBLIC_SOURCE",
+        "draw_bias_source_status": "HYPOTHESIS_DOWNGRADED_TO_UNKNOWN",
+        "confidence": "0.4",
+        "tribunal_verdict": "SURFACE_CORRECT_DRAW_DOWNGRADED_UNKNOWN"
+      }
+    ],
+    "draw_bias_verdicts": {
+      "total_draw_claims": 10,
+      "hypothesis_only_count": 9,
+      "verified_local_count": 0,
+      "reason": "No local draw data in VELO pipeline. All draw bias from public guides = HYPOTHESIS_ONLY",
+      "exception": "Chester low-draw = SECONDARY_PUBLIC_SOURCE_HIGH_CONFIDENCE (not VERIFIED)",
+      "label": "HYPOTHESIS_ONLY \u2014 must not be promoted to scoring"
+    },
+    "pace_verdicts": {
+      "total_pace_claims": 6,
+      "hypothesis_only_count": 6,
+      "verified_local_count": 0,
+      "reason": "No in-running position, running-style, or sectional data in VELO pipeline",
+      "label": "HYPOTHESIS_ONLY \u2014 must not be promoted to scoring"
+    },
+    "bha_rp_field_access": {
+      "proven_locally_present": [
+        "course",
+        "going",
+        "race_type",
+        "distance",
+        "field_size",
+        "finish_order",
+        "SP (partial)",
+        "trainer (partial)"
+      ],
+      "sections_exist_but_not_proven": [
+        "surface",
+        "handedness",
+        "draw",
+        "GoingStick",
+        "stalls_position",
+        "OR_per_runner",
+        "pace"
+      ],
+      "login_required_for_rp_field_access": true,
+      "login_automated_in_pipeline": false
+    },
+    "course01_safe_to_consume": [
+      "course",
+      "going",
+      "race_type",
+      "distance"
+    ],
+    "course01_blocked_until_local_capture": [
+      "draw_bias",
+      "pace_map",
+      "stalls_position",
+      "GoingStick",
+      "OR_per_runner",
+      "surface_subtype"
+    ],
+    "course00_reclassified_as": "WATCHLIST_MAP_WITH_STALE_FACTS_CORRECTED",
+    "course00_not": "SOURCE_VERIFIED_COURSE_REGISTRY",
+    "registry_entries": 16
+  },
+  "s3_proven_facts": [
+    {
+      "fact": "VELO lands mostly short-to-mid selections",
+      "source": "RESULTS-01",
+      "label": "RESULT_PATTERN",
+      "detail": "Pick SP distribution skews below market mid-price. System over-trusts public strength/RPR signal."
+    },
+    {
+      "fact": "803 mid-price misses exist \u2014 6\u201310 odds band is the core wound",
+      "source": "RESULTS-01 + RESULTS-02",
+      "label": "RESULT_PATTERN",
+      "detail": "6\u201310 = 312 misses (core). 4\u20136 = 288. 10\u201316 = 65. Winners at 6\u201310 SP lost to wrong selection."
+    },
+    {
+      "fact": "Old VELO is RPR/public-strength anchored",
+      "source": "RESULTS-01",
+      "label": "VERIFIED_FACT",
+      "detail": "Model heavily weighted on RPR and trainer/jockey public form. Creates short-price over-selection."
+    },
+    {
+      "fact": "New Build is VALUE_SCOUT / EXOTIC_FILL_CANDIDATE \u2014 not replacement engine",
+      "source": "RESULTS-01 model comparison ledger",
+      "label": "VERIFIED_FACT",
+      "detail": "New Build SR=24.2% but only N=1125 prospective rows. 4/4 unseen gates passed. Shadow only until N\u2265300 top-decile."
+    },
+    {
+      "fact": "EW_CANDIDATE is PLACE_SIGNAL \u2014 not profit proof",
+      "source": "RESULTS-01 EW analysis",
+      "label": "VERIFIED_FACT",
+      "detail": "EW place rate 37.3%. No pick_sp data. Cannot compute EW ROI without prices. VFU-21 required."
+    },
+    {
+      "fact": "Exotics are SIGNAL_ONLY \u2014 dividends missing",
+      "source": "RESULTS-01",
+      "label": "VERIFIED_FACT",
+      "detail": "Top-3 containment signal exists but no dividend data captured. Cannot proof exotic profit without it."
+    },
+    {
+      "fact": "Course intelligence is missing from VELO scoring",
+      "source": "RESULTS-02 + COURSE-00",
+      "label": "VERIFIED_FACT",
+      "detail": "Draw bias, pace map, course-position features are CRITICAL missing features. Not in any live model."
+    },
+    {
+      "fact": "Draw/pace features are critical but not implemented",
+      "source": "COURSE-00 feature readiness matrix",
+      "label": "VERIFIED_FACT",
+      "detail": "draw_bias_by_course_distance and pace_map_front_runner_flag are CRITICAL. Require COURSE-01 implementation."
+    },
+    {
+      "fact": "All draw and pace course claims require provenance fields",
+      "source": "COURSE-00A tribunal",
+      "label": "VERIFIED_FACT",
+      "detail": "No local draw or pace data exists. All public-guide claims = HYPOTHESIS_ONLY. Chester only at SECONDARY_HIGH_CONF."
+    },
+    {
+      "fact": "Southwell surface was stale (Fibresand \u2192 Tapeta, changed 2021)",
+      "source": "COURSE-00A tribunal",
+      "label": "CORRECTED_FACT",
+      "detail": "COURSE-00 had Southwell listed as Fibresand. Tapeta since 2021. Stale for 5 years. Now corrected."
+    },
+    {
+      "fact": "Beverley is a drain course: 4.0% SR, pick avg SP 13.92 vs winner avg SP 7.21",
+      "source": "RESULTS-02 Beverley deep dive",
+      "label": "RESULT_PATTERN",
+      "detail": "50 races. \u22126.7 SP gap. Root cause: draw bias + uphill finish + pace dynamics not captured."
+    },
+    {
+      "fact": "AW cluster has combined 86 mid-price misses and no draw/pace modelling",
+      "source": "RESULTS-02 + COURSE-00",
+      "label": "RESULT_PATTERN",
+      "detail": "Southwell, Kempton, Wolverhampton, Lingfield \u2014 all have draw/pace but VELO has none of it."
+    }
+  ],
+  "s4_decision_board": [
+    {
+      "id": "A",
+      "decision": "COURSE-01 \u2014 Draw and Pace Shadow Feature Registry",
+      "status": "QUEUED_AFTER_VCP03",
+      "gate": "VCP-03 Day 10/10",
+      "priority": 1,
+      "purpose": "Build shadow-only course eyes: draw bias, pace map, course-position per track/distance.",
+      "contract": [
+        "Every feature must carry source_status + confidence + last_checked.",
+        "HYPOTHESIS features: shadow only, not promoted to scoring.",
+        "UNKNOWN-safe fallbacks mandatory.",
+        "Draw and pace must be LOCALLY CAPTURED before scoring use.",
+        "Provenance violation = feature blocked."
+      ],
+      "blocked_by": "VCP-03 10/10 gate"
+    },
+    {
+      "id": "B",
+      "decision": "VFU-21 \u2014 pick_sp Price Truth Repair",
+      "status": "QUEUED_AFTER_VCP03",
+      "gate": "VCP-03 Day 10/10",
+      "priority": 2,
+      "purpose": "Repair price truth for EW ROI, value band, and exotics. Required before any profit claim on EW/exotics.",
+      "contract": [
+        "Backfill pick_sp for all sigma rows where absent.",
+        "EW ROI cannot be claimed until prices are clean.",
+        "Exotics signal cannot be profit-proven without dividends."
+      ],
+      "blocked_by": "VCP-03 10/10 gate"
+    },
+    {
+      "id": "C",
+      "decision": "No-RPR GBM fold 2/3 decision",
+      "status": "BLOCKED",
+      "gate": "VCP-03 Day 10/10 + operator review",
+      "priority": 3,
+      "purpose": "Complete No-RPR GBM training (fold 2/3 was running). Evaluate vs legacy ensemble.",
+      "contract": [
+        "No promotion without N\u2265300 prospective shadow rows.",
+        "Must not use --promote flag.",
+        "Operator gate required at fold completion."
+      ],
+      "blocked_by": "VCP-03 gate + training corpus gap (76 audit dates absent Jan\u2013May 2026)"
+    },
+    {
+      "id": "D",
+      "decision": "New Build challenger promotion",
+      "status": "BLOCKED_NOT_READY",
+      "gate": "N\u2265300 prospective shadow rows + VCP-03 Day 10/10",
+      "priority": 4,
+      "purpose": "Promote New Build from VALUE_SCOUT shadow to operational layer.",
+      "contract": [
+        "NB is VALUE_SCOUT / EXOTIC_FILL_CANDIDATE \u2014 not replacement engine.",
+        "N=1125 ledger rows exist but need prospective shadow validation.",
+        "Must pass 300+ runners, 75+ top-decile prospective rows before operator review."
+      ],
+      "blocked_by": "Insufficient prospective shadow n. VCP-03 gate."
+    },
+    {
+      "id": "E",
+      "decision": "Model training decisions (corpus + source truth)",
+      "status": "BLOCKED",
+      "gate": "VFU-21 completion + VCP-03 Day 10/10",
+      "priority": 5,
+      "purpose": "Retrain on clean corpus once price truth and source truth are repaired.",
+      "contract": [
+        "76 audit dates absent from training corpus (Jan\u2013May 2026).",
+        "pick_sp missing in most rows \u2014 EW/value training corrupted until VFU-21.",
+        "No training decisions before VFU-21 price truth repair."
+      ],
+      "blocked_by": "Training corpus gap. Price truth gap. VCP-03 gate."
+    },
+    {
+      "id": "F",
+      "decision": "C-01 contradiction \u2014 RP_MERGED_CLEAN vs BLOCKED learning gate",
+      "status": "OPEN_HONEST",
+      "gate": "Not gated \u2014 requires operator resolution",
+      "priority": 6,
+      "purpose": "Mission Control reports RP_MERGED_CLEAN but learning gate is BLOCKED. Contradiction must not be suppressed.",
+      "contract": [
+        "C-01 is logged in contradictions.items[] with severity=WARN.",
+        "Do not patch or suppress during burn-in.",
+        "Operator must resolve after VCP-03: either open learning gate or update source truth label."
+      ],
+      "blocked_by": "Operator decision required. Do not auto-resolve."
+    },
+    {
+      "id": "G",
+      "decision": "next_safe_action stale label",
+      "status": "KNOWN_STALE_LABEL_COSMETIC",
+      "gate": "Operator-approved VCP maintenance patch",
+      "priority": 7,
+      "purpose": "next_safe_action field still reads VCP-01-REVIEW. VCP-01 was completed and signed off. Field is cosmetically stale.",
+      "contract": [
+        "Do not patch during burn-in without separate operator authorisation.",
+        "Recommended treatment: VCP maintenance patch after Day 10/10.",
+        "Label as KNOWN_STALE_LABEL_COSMETIC in all reporting until patched."
+      ],
+      "blocked_by": "Do not patch during burn-in."
+    }
+  ],
+  "s5_tomorrow": {
+    "run_order": [
+      "PYTHONPATH=. venv/bin/python scripts/ops/build_velo_living_state.py",
+      "PYTHONPATH=. venv/bin/python scripts/ops/build_velo_heartbeat.py",
+      "PYTHONPATH=. venv/bin/python scripts/ops/build_vcp03_burn_in_log.py"
+    ],
+    "report_after": [
+      "Day 3/10 PASS or FAIL",
+      "contradiction count",
+      "promotion gate state",
+      "stale label state",
+      "any new anomaly"
+    ]
+  }
+}
