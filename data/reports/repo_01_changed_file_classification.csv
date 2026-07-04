@@ -1,0 +1,46 @@
+pattern_or_file,source_commit,file_count,classification,note
+CLAUDE.md,e5b259b,1,MERGE_TO_MAIN,doc accuracy update
+README.md,e5b259b,1,MERGE_TO_MAIN,doc accuracy update
+docs/current/ONE_TRUTH.md,e5b259b,1,MERGE_TO_MAIN,truth-lock content update
+scripts/ops/new_build_two_lane_score.py,e5b259b,1,MERGE_TO_MAIN,going_code scale regression fix (A-3)
+tests/test_new_build_paper_scorer.py,e5b259b,1,MERGE_TO_MAIN,test for going_code fix
+docs/current/*.md -> docs/archive/*.md (R100 renames),e5b259b,34,MERGE_TO_MAIN,pure reorg — archives stale root/docs-current truth files including CURRENT_RUNTIME_TRUTH.md and THE_NEW_TRUTH.md
+scripts/ops/build_velo_living_state.py,ff86674,1,MERGE_TO_MAIN,VCP-01 organ, report-only
+data/reports/vcp_01_living_state_operator_brief.md,ff86674,1,MERGE_TO_MAIN,VCP-01 report
+ops/task_contracts/VCP-01.json,ff86674,1,MERGE_TO_MAIN,task contract
+data/current/velo_living_state.json,ff86674,1,KEEP_ON_REVIEW_BRANCH_ONLY,gitignored current-state scratch — not meant for git history at all
+scripts/ops/build_velo_heartbeat.py,5f83fec,1,MERGE_TO_MAIN,VCP-02 organ, report-only
+data/reports/vcp_02_heartbeat_operator_brief.md,5f83fec,1,MERGE_TO_MAIN,VCP-02 report
+data/reports/velo_heartbeat_latest.json,5f83fec,1,MERGE_TO_MAIN,VCP-02 output
+data/reports/velo_heartbeat_latest.md,5f83fec,1,MERGE_TO_MAIN,VCP-02 output
+ops/task_contracts/VCP-02.json,5f83fec,1,MERGE_TO_MAIN,task contract
+tests/test_velo_heartbeat.py,5f83fec,1,MERGE_TO_MAIN,test coverage
+scripts/ops/build_vcp03_burn_in_log.py,a8b3e8a,1,MERGE_TO_MAIN,VCP-03 organ, report-only
+data/reports/vcp_03_burn_in_log.json,a8b3e8a,1,MERGE_TO_MAIN,VCP-03 Day1 log (Day2 progress is uncommitted local-only, not in this diff)
+data/reports/vcp_03_burn_in_log.md,a8b3e8a,1,MERGE_TO_MAIN,VCP-03 Day1 log
+data/reports/vcp_03_operator_brief.md,a8b3e8a,1,MERGE_TO_MAIN,VCP-03 report
+docs/current/VCP_03_COHERENCE_BURN_IN_PROTOCOL.md,a8b3e8a,1,MERGE_TO_MAIN,protocol doc
+tests/test_velo_living_state.py,a8b3e8a,1,MERGE_TO_MAIN,test coverage
+app/main.py,ede88e6,1,MERGE_TO_MAIN,dashboard NB top3 fix
+scripts/ops/publish_daily_predictions_to_dashboard.py,ede88e6,1,MERGE_TO_MAIN,dashboard NB top3 fix
+data/reports/local_01_*.md + .json + .csv (9 files),b0c354f,9,MERGE_TO_MAIN,the LOCAL-01 evidence pack itself — purpose of this whole exercise
+data/_check_passport_coverage.py,8753b4f,1,DO_NOT_MERGE,scratch debug script, hardcoded Windows path, wrong directory
+data/_check_supabase_jun24.py,8753b4f,1,DO_NOT_MERGE,scratch debug script, hardcoded Windows path, wrong directory
+data/_multimodel_june23_tmp.json,8753b4f,1,DELETE_CANDIDATE,scratch output of the tmp script above, no lasting value
+data/_tmp_fetch.py,8753b4f,1,DO_NOT_MERGE,scratch debug script, hardcoded Windows path, wrong directory
+data/reports/* (dated audit/report snapshots),8753b4f,105,NEEDS_OPERATOR_REVIEW,legitimate historical audit trail 2026-06-09 to 2026-06-29 — recommend split into separate data-backfill PR, not bundled with code
+data/sigma_results/*,8753b4f,29,NEEDS_OPERATOR_REVIEW,daily sigma reconciliation history — same recommendation as above
+data/learning_inputs/*,8753b4f,20,NEEDS_OPERATOR_REVIEW,supported results/verdicts learning corpus inputs
+data/sigma_memory/*,8753b4f,15,NEEDS_OPERATOR_REVIEW,sigma memory distillation snapshots
+data/mission_control/*,8753b4f,15,NEEDS_OPERATOR_REVIEW,daily mission control snapshots
+data/council_packets/* + council_reports/* + council_runs/*,8753b4f,43,NEEDS_OPERATOR_REVIEW,council review artifacts, daily
+data/timing_audit/*,8753b4f,9,NEEDS_OPERATOR_REVIEW,runtime timing audits
+data/new_build/reports/* (subset touched by this commit),8753b4f,9,NEEDS_OPERATOR_REVIEW,new-build passport/feature reports
+data/race_shape/*,8753b4f,8,NEEDS_OPERATOR_REVIEW,form history batches
+data/router_shadow_audit_runs/*,8753b4f,4,NEEDS_OPERATOR_REVIEW,shadow router audit runs
+data/telegram_delivery_truth_*.json,8753b4f,9,NEEDS_OPERATOR_REVIEW,daily telegram delivery confirmation logs — text only, no live send risk from committing
+data/velo_run_observability_*.json,8753b4f,~19,NEEDS_OPERATOR_REVIEW,per-run observability snapshots
+data/velo_daily_run_truth_*.md,8753b4f,9,NEEDS_OPERATOR_REVIEW,daily run truth summaries
+racecards_2026_06_*.json (dated),8753b4f,~10,NEEDS_OPERATOR_REVIEW,normalized racecard snapshots, moderate size
+data/nightly_eod_learning_*/data/playbook_g_nightly_audit_*/data/eod_*,8753b4f,~90,NEEDS_OPERATOR_REVIEW,nightly learning pipeline outputs, bulk of remaining file count
+models/*/feature_importance.csv (4 files),8753b4f,4,NEEDS_OPERATOR_REVIEW,small routine model-artifact diffs (52-76 lines each), low risk

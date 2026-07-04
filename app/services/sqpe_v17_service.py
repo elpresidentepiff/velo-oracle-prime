@@ -258,9 +258,9 @@ def _resolve_decimal_odds(runner: dict) -> float:
         try:
             bd_f = float(bd)
             if bd_f > 1.0:
-                return round(bd_f, 2)          # proper decimal odds
+                return round(bd_f, 2)  # proper decimal odds
             if 0.005 < bd_f < 1.0:
-                return round(1.0 / bd_f, 2)    # probability → decimal
+                return round(1.0 / bd_f, 2)  # probability → decimal
         except (TypeError, ValueError):
             pass
 

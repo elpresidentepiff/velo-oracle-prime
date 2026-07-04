@@ -2,7 +2,7 @@
 
 > **IF THIS FILE CONFLICTS WITH ANY OTHER DOC, THIS FILE WINS UNTIL OPERATOR SAYS OTHERWISE.**
 
-**Effective:** 2026-06-26 (updated from 2026-06-10 baseline) · **Branch:** `main` · **HEAD:** `c33cece` · **Verified against code, not docs.**
+**Effective:** 2026-06-29 (updated from 2026-06-26 baseline) · **Branch:** `main` · **HEAD:** `8753b4f` · **Verified against code, not docs.**
 
 **This file supersedes:** `THE_NEW_TRUTH.md`, `CURRENT_RUNTIME_TRUTH.md`, root `CLAUDE.md` state claims, all numbered docs in `docs/` flat directory.
 **This file defers to:** root `THE_ONE_TRUTH.md` for step-by-step command detail (Steps 1–20), `docs/current/RACE_DAY_RUNBOOK.md` for the lifecycle.
@@ -75,10 +75,23 @@ Racing API as a data source (decommissioned 2026-05-14; client files deleted) ·
 ## What is EXPERIMENTAL
 International prerace arenas (`scripts/audit_international_*`) · HK/FR feature builders · Intent Layer V1 (patched, rerun required) · sqpe_v18 (NO_LIFT verdict, not wired) · Race Shape v1 (shadow only, form history parser live).
 
+## VFU Sign-Off Log
+- **VFU-20 — OPERATOR SIGN-OFF GRANTED 2026-06-29:** Field-size remediation complete. 1,989 missing → 152 remaining (92.36% recovery accepted). 749 EW label changes accepted. EW profitability = `PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF` — no EW profitability claim authorised. No VP change, no model promotion, no Supabase write. VFU-21 NOT started — awaiting VCP-00 truth lock completion. Output: `data/reports/vfu_20_operator_brief.md`.
+- **VFU-01 to VFU-12:** See `docs/current/VELO_VFU_TIMELINE_APPENDIX.md` (archived timeline).
+- **VFU-13 to VFU-19:** COMPLETE — contamination catches (Kakirra=CONTAMINATED, MiK=PARTIAL), sigma master ledger, pattern tribunal. No pending operator gates.
+
+## VÉLØ Coherence Protocol (VCP) State (added 2026-06-29)
+- **VCP-00 — Truth Lock:** IN PROGRESS (2026-06-29). Stale root docs archived. CLAUDE.md rewritten as pointer-only. docs/current/ thinned to operational spine. ONE_TRUTH HEAD updated.
+- **VCP-01 — Living State Packet:** COMPLETE (`ff86674`). `data/current/velo_living_state.json` (gitignored runtime state). Operator signed off 2026-06-29. Builder: `scripts/ops/build_velo_living_state.py`.
+- **VCP-02 — Heartbeat V1:** COMPLETE (`5f83fec`). Reads living state only. 25 tests pass. Operator signed off 2026-06-29. Builder: `scripts/ops/build_velo_heartbeat.py`.
+- **VCP-03 — Ten-Day Coherence Burn-In:** IN PROGRESS (started 2026-06-29). Day 1: PASS. 1/10 days. Log: `data/reports/vcp_03_burn_in_log.md`. Daily commands: `build_velo_living_state.py` → `build_velo_heartbeat.py` → `build_vcp03_burn_in_log.py`. Protocol: `docs/current/VCP_03_COHERENCE_BURN_IN_PROTOCOL.md`.
+- **VCP-04 — Shadow Judgment:** NOT STARTED. Requires 10 passing burn-in days + operator sign-off.
+- **Learning doctrine:** VÉLØ learns from every event. Only clean, verified events are allowed to train or promote predictive rules. Dirty events become failure-memory, not model-food. Three lanes: MEMORY_CAPTURE_OPEN (always) · FAILURE_LEARNING_OPEN (always) · PROMOTION_LEARNING_GATED (clean evidence only).
+
 ## Phase A–D Audit Corpus (added 2026-06-28)
 - **Sigma local corpus:** `scripts/audit/build_sigma_local_corpus.py` → `data/training/sigma_local_corpus_latest.parquet` (1,050 rows, 36 dates, SR=26.7%). Run after any new sigma dates to extend.
 - **Top gates (shadow/advisory only):** VP≥0.40+HIGH_CONF SR=54.2% (n=83) · VP+IMP≥0.4 SR=55.6% (n=36) · VP+MDS≥0.3 SR=52.8% (n=53) · RS≥1.5 SR=44.7% (n=38)
-- **Going code bug (A-3):** Both `paper_scorer.py:189` and `new_build_two_lane_score.py:82` use wrong 0–8 scale (training uses -1 to 2). Fix NOT applied — operator decision pending. See `VELO_HARDENING_STATE.md`.
+- **Going code bug (A-3):** FIXED (`09f3252` + `8753b4f`). Both `paper_scorer.py` and `new_build_two_lane_score.py` now use -1 to 2 scale matching raceform_v17 training (Heavy=-1, Good=1, Firm=2). Median fallback corrected to 1.0. Regression tests in `tests/test_new_build_paper_scorer.py` (6 tests, all pass). Operator approved 2026-06-29.
 - **RPDC missing tags:** STABLE_WARM / MARK_READY / MARK_NEAR / COURSE_RETURN absent from all May–Jun 2026 data. Investigate Supabase `runner_release_candidates`.
 - **New scrapers/parsers:** `scripts/ops/scrape_bha_going_stick.py` (D-1, shell ready) · `scripts/ops/parse_runner_notes.py` (D-3, verdict intel only)
 

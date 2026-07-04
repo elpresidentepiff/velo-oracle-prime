@@ -1635,30 +1635,69 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     # Build numeric RP race_id → velo race_id map for this date.
     # NB and Tri-Lane reports use numeric race IDs; verdicts use rp_CRS_YYYYMMDD_H.MM.
     _COURSE_ABBR_GC = {
-        "Curragh": "CUR", "Uttoxeter": "UTT", "Cartmel": "CRT",
-        "Wolverhampton": "WOL", "Wolverhampton (AW)": "WOL",
-        "Kempton": "KEM", "Kempton (AW)": "KEM",
-        "Chelmsford": "CHE", "Chelmsford City": "CHE",
-        "Lingfield": "LIN", "Lingfield (AW)": "LIN",
-        "Southwell": "SOW", "Southwell (AW)": "SOW",
-        "Newcastle": "NCS", "Newcastle (AW)": "NCS",
-        "Dundalk": "DUN", "Dundalk (AW)": "DUN",
-        "Chester": "CHS", "Chepstow": "CHP", "Windsor": "WDR",
-        "Newmarket": "NMK", "Ascot": "ASC", "Goodwood": "GOO",
-        "York": "YOR", "Haydock": "HAY", "Sandown": "SAN",
-        "Nottingham": "NOT", "Leicester": "LEI", "Salisbury": "SAL",
-        "Thirsk": "THI", "Beverley": "BEV", "Ripon": "RIP",
-        "Epsom": "EPS", "Brighton": "BRI", "Yarmouth": "YAR",
-        "Naas": "NAA", "Leopardstown": "LEO", "Navan": "NAV",
-        "Galway": "GAL", "Cork": "COR", "Tipperary": "TIP",
-        "Punchestown": "PUN", "Fairyhouse": "FAI", "Gowran": "GOW",
-        "Bangor": "BAN", "Cartmel": "CRT", "Catterick": "CAT",
-        "Cheltenham": "CHE", "Exeter": "EXE", "Ffos Las": "FFL",
-        "Hereford": "HER", "Huntingdon": "HUN", "Kelso": "KEL",
-        "Ludlow": "LUD", "Market Rasen": "MAR", "Musselburgh": "MUS",
-        "Perth": "PER", "Plumpton": "PLU", "Sedgefield": "SED",
-        "Stratford": "STR", "Taunton": "TAU", "Uttoxeter": "UTT",
-        "Warwick": "WAR", "Wetherby": "WET", "Wincanton": "WIN",
+        "Curragh": "CUR",
+        "Uttoxeter": "UTT",
+        "Cartmel": "CRT",
+        "Wolverhampton": "WOL",
+        "Wolverhampton (AW)": "WOL",
+        "Kempton": "KEM",
+        "Kempton (AW)": "KEM",
+        "Chelmsford": "CHE",
+        "Chelmsford City": "CHE",
+        "Lingfield": "LIN",
+        "Lingfield (AW)": "LIN",
+        "Southwell": "SOW",
+        "Southwell (AW)": "SOW",
+        "Newcastle": "NCS",
+        "Newcastle (AW)": "NCS",
+        "Dundalk": "DUN",
+        "Dundalk (AW)": "DUN",
+        "Chester": "CHS",
+        "Chepstow": "CHP",
+        "Windsor": "WIN",
+        "Newmarket": "NMK",
+        "Ascot": "ASC",
+        "Goodwood": "GOO",
+        "York": "YOR",
+        "Haydock": "HAY",
+        "Sandown": "SAN",
+        "Nottingham": "NOT",
+        "Leicester": "LEI",
+        "Salisbury": "SAL",
+        "Thirsk": "THI",
+        "Beverley": "BEV",
+        "Ripon": "RIP",
+        "Epsom": "EPS",
+        "Brighton": "BRI",
+        "Yarmouth": "YAR",
+        "Naas": "NAA",
+        "Leopardstown": "LEO",
+        "Navan": "NAV",
+        "Galway": "GAL",
+        "Cork": "COR",
+        "Tipperary": "TIP",
+        "Punchestown": "PUN",
+        "Fairyhouse": "FAI",
+        "Gowran": "GOW",
+        "Bangor": "BAN",
+        "Catterick": "CAT",
+        "Cheltenham": "CHE",
+        "Exeter": "EXE",
+        "Ffos Las": "FFO",
+        "Hereford": "HER",
+        "Huntingdon": "HUN",
+        "Kelso": "KEL",
+        "Ludlow": "LUD",
+        "Market Rasen": "MAR",
+        "Musselburgh": "MUS",
+        "Perth": "PER",
+        "Plumpton": "PLU",
+        "Sedgefield": "SED",
+        "Stratford": "STR",
+        "Taunton": "TAU",
+        "Warwick": "WAR",
+        "Wetherby": "WET",
+        "Wincanton": "WIN",
         "Worcester": "WOR",
     }
     _gc_num_to_velo: dict[str, str] = {}
@@ -1676,11 +1715,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 _off = _r.get("off_time", "")
                 if ":" in _off:
                     _h, _m = map(int, _off.split(":"))
-                    if _h >= 13: _h -= 12
-                    _dot = f"{_h}.{_m:02d}" if _m else str(_h)
+                    if _h >= 13:
+                        _h -= 12
+                    _dot = f"{_h}.{_m:02d}"
                 else:
                     _dot = _off
-                _gc_num_to_velo[_num] = f"rp_{_crs}_{date_tag.replace('_','')}_{_dot}"
+                _gc_num_to_velo[_num] = f"rp_{_crs}_{date_tag.replace('_', '')}_{_dot}"
         except Exception:
             pass
     # Fallback: pre-exported race ID map in data/reports/ (committed to git, available on Railway)
@@ -1706,6 +1746,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                     _num = str(card.get("race_id", ""))
                     _vrid = _gc_num_to_velo.get(_num, _num)
                     new_build_by_race[_vrid] = card
+                    new_build_by_race[_num] = card  # always index by numeric RP race_id too
         except Exception as e:
             logger.warning("Could not read New Build readiness file %s: %s", new_build_path, e)
 
@@ -1715,9 +1756,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         try:
             shadow_payload = _json.loads(shadow_path.read_text(encoding="utf-8"))
             shadow_by_race = {
-                str(row.get("race_id")): row
-                for row in shadow_payload.get("decisions") or []
-                if row.get("race_id")
+                str(row.get("race_id")): row for row in shadow_payload.get("decisions") or [] if row.get("race_id")
             }
         except Exception as e:
             logger.warning("Could not read Shadow VELO file %s: %s", shadow_path, e)

@@ -101,7 +101,7 @@ def _feature_map(row: dict, medians: dict) -> dict:
     return {
         "dist_f": _to_float(row.get("distance_furlongs")),
         "going_code": _going_code(row.get("going") or row.get("going_code_raw"),
-                                   medians.get("going_code", 3.0)),
+                                   medians.get("going_code", 1.0)),
         "is_aw": 1.0 if str(row.get("surface") or "").lower() in {"aw", "all-weather", "all weather"} else 0.0,
         "field_size": fs,
         "draw_num": draw,

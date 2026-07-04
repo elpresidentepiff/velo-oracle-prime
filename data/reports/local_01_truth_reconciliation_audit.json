@@ -1,0 +1,160 @@
+{
+  "audit_id": "LOCAL-01",
+  "generated_at": "2026-07-03T00:00:00Z",
+  "repo_path": "/mnt/c/Users/puror/velo-oracle-prime",
+  "mode": "REPORT_ONLY",
+  "repo_copies_found": [
+    {"path": "/home/purorpurorestrepo1981/velo-oracle-prime", "head": "d573e94", "head_date": "2026-04-05", "status": "STALE"},
+    {"path": "/mnt/wslg/distro/home/purorpurorestrepo1981/velo-oracle-prime", "head": "d573e94", "head_date": "2026-04-05", "status": "STALE_MIRROR"},
+    {"path": "/home/purorpurorestrepo1981/.openclaw/workspace/repos/velo-oracle-prime", "head": "5967c74", "head_date": "2026-03-23", "status": "STALE"},
+    {"path": "/mnt/c/Users/puror/velo-oracle-prime", "head": "a8b3e8a", "head_date": "2026-06-29", "status": "ACTIVE_AUDITED"}
+  ],
+  "git": {
+    "branch": "main",
+    "local_head": "a8b3e8aca059900f6cf71b85cf4c7657bf72f5ce",
+    "local_main_head": "a8b3e8aca059900f6cf71b85cf4c7657bf72f5ce",
+    "origin_main_head": "018d6188adf7e86a509250f4004f75a634fa5f9d",
+    "ahead_count": 6,
+    "behind_count": 0,
+    "unpushed_commits": [
+      "a8b3e8a feat(VCP-03): Ten-Day Coherence Burn-In — Day 1 PASS",
+      "5f83fec feat(VCP-02): VÉLØ Heartbeat V1 — first voice of coherence",
+      "ff86674 feat(VCP-01): VÉLØ Living State Packet — velo_living_state_v1",
+      "e5b259b fix(A-3)+chore(VCP-00): going_code regression fix + truth lock + docs archive sweep",
+      "8753b4f chore(data): raceday 2026-06-29 sigma + learning + June 30 prep",
+      "ede88e6 fix(dashboard): NB top3 missing for all races on governed-card API"
+    ],
+    "vcp_commits_local_only": ["e5b259b", "ff86674", "5f83fec", "a8b3e8a"],
+    "modified_tracked_files_count": 29,
+    "untracked_files_count_first_page": 90,
+    "stale_branches_flagged": [
+      "merge/operator-integrity-core-2026-05-04 (ahead 13, behind 350)",
+      "release/operator-integrity-approved (ahead 3, behind 350)",
+      "worktree-agent-a4cfb9a6 (behind 156 of feature/v10-launch)"
+    ]
+  },
+  "vcp": {
+    "vcp_00_status": "COMPLETE (commit e5b259b)",
+    "vcp_01_status": "COMPLETE, committed, unpushed",
+    "vcp_02_status": "COMPLETE, committed, unpushed",
+    "vcp_03_status": "IN_PROGRESS, 2/10 days PASS, committed Day1 + uncommitted Day2 progress",
+    "vcp_03_days_logged": [
+      {"date": "2026-06-30", "verdict": "PASS", "promotion_learning": "GATED", "contradictions_count": 0},
+      {"date": "2026-07-01", "verdict": "PASS", "promotion_learning": "ELIGIBLE", "contradictions_count": 1}
+    ],
+    "contradiction_c01_present": true,
+    "contradiction_c01_text": "Mission Control reports RP_MERGED_CLEAN source but learning gate is BLOCKED",
+    "filename_mismatch_note": "mission brief expected 'vcp03_*' files; actual convention is 'vcp_03_*' — no real artifact missing, just a naming guess mismatch",
+    "next_safe_action_field_stale": "VCP-02 brief still shows next_safe_action=VCP-01-REVIEW, leftover template text, not a functional block"
+  },
+  "results_course": {
+    "results_01_exists": true,
+    "results_02_exists": true,
+    "course_00_exists": true,
+    "course_00a_exists": true,
+    "course_00b_exists": true,
+    "course_00c_exists": false,
+    "all_existing_files_tracked": false,
+    "note": "All RESULTS/COURSE-00/00A/00B files exist on disk, generated 2026-06-30, untracked (not gitignored, simply not committed)."
+  },
+  "results_01_vs_supabase": {
+    "results_01_generated_at": "2026-07-01T00:05:31Z",
+    "results_01_sigma_rows": 2977,
+    "results_01_max_date": "2026-06-23",
+    "results_01_verdict_races_field": 3173,
+    "supabase_sigma_audits_rows": 3167,
+    "row_gap": 190,
+    "row_gap_explanation": "time lag — RESULTS-01 corpus capped at 2026-06-23, Supabase continued ingesting through ~2026-07-01/02",
+    "pick_sp_match": {
+      "results_01_pick_sp_present": 1212,
+      "results_01_denominator": 2977,
+      "supabase_pick_sp_known": 1212,
+      "supabase_denominator": 3167,
+      "finding": "identical absolute pick_sp count despite different denominators — Supabase has gained zero new pick_sp values since this local snapshot"
+    },
+    "mid_priced_won": {"local": 803, "supabase": 857, "gap_proportional_to_row_growth": true}
+  },
+  "vfu_21": {
+    "ran_at": "2026-06-17T21:47:40Z",
+    "predates_vcp_gate_by_days": 12,
+    "sp_coverage": "2633/3052 (86.3%)",
+    "ew_roi_pct": -12.5,
+    "blocked_from_live_use": true,
+    "pushed_to_github": true,
+    "github_commit": "7af104e",
+    "classification": "HISTORICAL_ARTIFACT_REPORT_ONLY_PREWORK",
+    "gate_violation": false,
+    "reasoning": "self-terminated per its own governance before any VCP gate existed; VCP-01 brief's 'VFU-21 gate: CLOSED' is forward-looking language about a future continuation (VFU-22), not a retroactive violation finding"
+  },
+  "supabase_repair_candidates": [
+    {
+      "artifact": "data/reports/vfu_21_pick_sp_backfill_ledger.jsonl",
+      "target_gap": "sigma_audits.pick_sp coverage (38.27% in Supabase)",
+      "local_coverage_pct": 86.3,
+      "strength": "STRONG",
+      "caveat": "EW ROI on recovered rows is -12.5%; coverage repair and staking trust are separate decisions"
+    },
+    {
+      "artifact": "data/reports/local_draw_stats_by_course.csv",
+      "target_gap": "course_profiles missing handedness/draw geometry (0/70 known)",
+      "local_coverage": "14 courses / 49 races, VERIFIED_LOCAL",
+      "strength": "PARTIAL"
+    },
+    {
+      "artifact": "sigma_audits <-> velo_verdicts linkage",
+      "target_gap": "363/3167 linked in Supabase",
+      "local_file_found": false,
+      "strength": "NONE_FOUND",
+      "note": "flag for SUPA-02"
+    }
+  ],
+  "course_eyes": {
+    "course_00c_built": false,
+    "rp_capture_blocked": true,
+    "rp_capture_stats": {"url_list_count": 209, "html_files_found": 106, "pages_ok": 0, "pages_404": 53, "pages_login_blocked": 53},
+    "local_draw_stats_verified_local": true,
+    "local_draw_stats_courses": 14,
+    "local_draw_stats_races": 49,
+    "southwell_corrected_to_tapeta": true,
+    "southwell_source_status": "SECONDARY_PUBLIC_SOURCE (not VERIFIED_LOCAL despite registry filename)",
+    "courses_remaining_hypothesis_only": "most of the 17-course registry outside Chester/York low-draw claims"
+  },
+  "data_inventory": {
+    "data_total": "3.7G",
+    "data_reports": {"size": "88M", "files": 790},
+    "data_results": {"size": "5.8M", "files": 39},
+    "data_sigma_results": {"size": "596K", "files": 88},
+    "data_racecard_merged": {"size": "55M", "files": 356},
+    "data_racing_post_account_raw": {"size": "271M", "files": 1877, "gitignored": true},
+    "data_current": {"size": "32K", "gitignored": true},
+    "models": {"size": "114M"}
+  },
+  "final_classifications": [
+    "LOCAL_01_TRUTH_RECONCILIATION_COMPLETE",
+    "LOCAL_GIT_STATE_AUDITED",
+    "UNPUSHED_COMMITS_IDENTIFIED",
+    "LOCAL_VCP_STATE_AUDITED",
+    "LOCAL_RESULTS_REPORTS_AUDITED",
+    "LOCAL_COURSE_REPORTS_AUDITED",
+    "LOCAL_VFU21_STATE_AUDITED",
+    "LOCAL_SUPABASE_REPAIR_CANDIDATES_IDENTIFIED",
+    "LOCAL_RUNTIME_ENTRYPOINTS_MAPPED",
+    "LOCAL_SUPABASE_WRITE_PATHS_MAPPED",
+    "LOCAL_FILE_CLASSIFICATION_WRITTEN",
+    "GITHUB_LOCAL_DRIFT_REPORTED",
+    "SUPABASE_LOCAL_DRIFT_REPORTED",
+    "CONTRADICTIONS_RECORDED_NOT_SUPPRESSED",
+    "MEMORY_CAPTURE_OPEN",
+    "FAILURE_LEARNING_OPEN",
+    "PROMOTION_LEARNING_GATED",
+    "NO_COURSE_01_IMPLEMENTATION",
+    "NO_VFU_21_LIVE_START",
+    "NO_VCP_04_START",
+    "NO_MODEL_TRAINING",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "REPORT_ONLY"
+  ]
+}
