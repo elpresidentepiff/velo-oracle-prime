@@ -1,0 +1,8 @@
+test,purpose
+sigma_row includes pick_sp when predictions[race_id] has a selection price,confirm enrichment wired correctly
+sigma_row includes field_size when source value present,confirm enrichment wired correctly
+sigma_row includes race_type when source value present,confirm enrichment wired correctly
+sigma_row includes verdict_id only when exactly one race_id+date match exists,prevent ambiguous/incorrect verdict linkage
+missing source value does not block or alter the winner_sp write,confirm no regression to the one field that already works
+dry-run mode produces no Supabase write call,confirm safe local testing before any live write
+existing LOCKED-writer guards (validate_outcome, validate_tier) remain enforced unchanged,confirm the patch does not weaken existing governance checks

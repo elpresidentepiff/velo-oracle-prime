@@ -1,0 +1,5 @@
+field,live_source,historical_source,confidence,note
+pick_sp,predictions[race_id] verdict selection record,vfu_21_pick_sp_backfill_ledger.jsonl (~86.3% through mid-June),high,decision_tier already pulled from same dict at same point in code
+field_size,predictions[race_id] (tentative),racecard_merged/ archives (not yet built),medium,persistence in verdict record not confirmed this pass; run_prime_today.py computes it at scoring time
+race_type,predictions[race_id] or racecard_merged/ (tentative),racecard_merged/ archives (not yet built),medium,run_prime_today.py uses race_type for BHA lookups at scoring time; persistence not confirmed
+verdict_id,join query against velo_verdicts (not a copied field),n/a - join not backfill,high,363/363 existing links have zero orphans confirming join concept is sound

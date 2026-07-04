@@ -1,0 +1,35 @@
+{
+  "audit_id": "SIGMA-24",
+  "generated_at": "2026-07-04T00:00:00Z",
+  "mode": "REPORT_ONLY",
+  "current_writer": {
+    "file": "scripts/ops/run_results_sigma.py",
+    "function_builds_sigma_row": "inline in main loop, ~line 1066",
+    "fields_present": ["race_id","date","track","off_time","event_type","outcome","decision_tier","miss_reason","top_pick_position","actual_winner_id","actual_winner_name","actual_winner_sp","notes"],
+    "fields_missing": ["pick_sp","field_size","race_type","verdict_id"],
+    "existing_dry_run_mode": "not confirmed in this pass",
+    "existing_write_isolation_flag": "not confirmed in this pass"
+  },
+  "field_sources": {
+    "pick_sp": {"live_source": "predictions[race_id] verdict selection record", "historical_source": "data/reports/vfu_21_pick_sp_backfill_ledger.jsonl (partial, ~86.3%, through mid-June)", "join_key": "race_id"},
+    "field_size": {"live_source": "predictions[race_id] (tentative, persistence not confirmed)", "historical_source": "racecard_merged/ archives (not yet built)", "join_key": "race_id"},
+    "race_type": {"live_source": "predictions[race_id] or racecard_merged/ (tentative)", "historical_source": "racecard_merged/ archives (not yet built)", "join_key": "race_id"},
+    "verdict_id": {"live_source": "join query against velo_verdicts, not a copied field", "join_key": "race_id + date", "note": "363/363 existing links have zero orphans; join logic concept is sound"}
+  },
+  "recommended_architecture": "ADD_PREWRITE_ENRICHMENT for pick_sp/field_size/race_type; ADD_POSTWRITE_RECONCILIATION_JOB for verdict_id; SPLIT_LIVE_AND_HISTORICAL_REPAIR for backfill",
+  "historical_repair_scope": {
+    "vfu21_covers": "pick_sp only, ~86.3% coverage, through ~2026-06-17",
+    "true_gap_start": "2026-04-23 (verdict_id) / 2026-04-25 (field_size) / 2026-04-29 (pick_sp) / 2026-05-01 (race_type)",
+    "uncovered_by_vfu21": "2026-04-23 through ~2026-06-17 for the earliest-breaking fields, plus all rows June 18 onward for all four fields"
+  },
+  "required_tests": [
+    "sigma_row includes pick_sp when predictions[race_id] has a selection price",
+    "sigma_row includes field_size when source value present",
+    "sigma_row includes race_type when source value present",
+    "sigma_row includes verdict_id only when exactly one race_id+date match exists in velo_verdicts",
+    "missing source value does not block or alter the winner_sp write",
+    "dry-run mode produces no Supabase write call",
+    "existing LOCKED-writer guards/validation (validate_outcome, validate_tier) remain enforced unchanged"
+  ],
+  "final_classifications": ["SIGMA_24_FIELD_WRITE_CONTRACT_COMPLETE","NO_SUPABASE_WRITES","NO_CODE_CHANGE","LOCKED_SIGMA_WRITER_NOT_PATCHED","PICK_SP_SOURCE_IDENTIFIED","FIELD_SIZE_SOURCE_IDENTIFIED","RACE_TYPE_SOURCE_IDENTIFIED","VERDICT_ID_SOURCE_IDENTIFIED","WRITE_ARCHITECTURE_RECOMMENDED","SUPABASE_WRITE_APPROVAL_REQUIRED","REPORT_ONLY"]
+}
