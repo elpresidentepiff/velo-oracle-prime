@@ -1,0 +1,6 @@
+check,before_value,after_value,changed,note
+velo_verdicts rows with generated_at > 2026-07-04T00:00:00,0,0,no,no scoring was run in this mission; dashboard update used existing local files only
+runner_prediction_snapshots rows with created_at > 2026-07-04T00:00:00,0,0,no,no scoring was run in this mission
+sigma_audits rows with date > 2026-07-03,0,0,no,run_results_sigma.py was never invoked
+local runner_snapshots_*.jsonl file count,116,116,no,confirmed via find before and after
+Telegram sends,0,0,no,no command capable of sending Telegram was executed in this mission

@@ -1,0 +1,28 @@
+field,value,source
+date,2026-07-04,july04 dry-run pipeline
+race_count,51,run_prime_today.py console log (STEP 7 count verification)
+active_runner_count,453,data/racecards_2026_07_04_standard.json / july04_live_rp_identity_gate.json
+horse_id_coverage_count,453,july04_live_rp_identity_gate.json
+horse_id_coverage_pct,100.0,july04_live_rp_identity_gate.json
+historical_passport_id_match_count,242,july04_live_rp_identity_gate.json
+historical_passport_id_match_pct,53.4,july04_live_rp_identity_gate.json
+identity_risk,LOW,july04_live_rp_identity_gate.json
+history_depth_risk,HIGH,july04_live_rp_identity_gate.json
+scoring_mode,LOCAL_DRY_RUN_ONLY,run_prime_today.py --dry-run flag
+races_processed,51/51,run_prime_today.py console log
+tier_a_strike_count,4,run_prime_today.py console log (day posture line)
+tier_b_playable_count,25,run_prime_today.py console log (day posture line)
+tier_c_watch_count,13,run_prime_today.py console log (day posture line)
+tier_d_no_bet_count,3,run_prime_today.py console log (day posture line)
+tier_x_chaos_count,6,run_prime_today.py console log (day posture line)
+overall_card_label,strong card,run_prime_today.py console log (day posture line)
+supabase_writes,0,confirmed via read-only count check
+verdict_persistence,0,confirmed via read-only count check
+runner_snapshots,0,confirmed unchanged 116/116 local files
+sigma_run,not run,run_results_sigma.py never invoked
+telegram_send,no real send,every message logged as CONTAINMENT NO-OP
+selections_included,yes,data/dashboard_daily_predictions_2026_07_04.json (51 top-pick predictions, real horse names/probs)
+selections_gap_disclosed,decision_tier shows placeholder "?" per runner; sp/odds/bsp null for all 51 (pre-existing local-fallback publisher limitation),data/dashboard_daily_predictions_2026_07_04.json
+readiness_local_scoring,complete,july04_local_dry_scoring_operator_brief.md
+readiness_verdict_persistence,blocked,operator decision
+readiness_sigma,blocked,operator decision
