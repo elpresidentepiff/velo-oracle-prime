@@ -1,32 +1,36 @@
 {
-  "date_str": "2026-06-21",
-  "racecard_source": "cache",
+  "date_str": "2026-06-30",
+  "racecard_source": "rp_merged",
   "gate_passed": true,
-  "run_at": "2026-06-21T01:43:44.017911Z",
-  "races_uk_ire": 20,
+  "run_at": "2026-07-01T03:51:22.934147Z",
+  "races_uk_ire": 46,
   "courses": [
     "Brighton",
-    "Hexham",
-    "Pontefract"
+    "Ffos Las",
+    "Musselburgh",
+    "Roscommon",
+    "Salisbury",
+    "Stratford",
+    "Wexford"
   ],
-  "total_runners": 166,
+  "total_runners": 424,
   "checks": [
     {
       "name": "date_match",
       "passed": true,
       "value": [
-        "2026-06-21"
+        "2026-06-30"
       ],
-      "threshold": "2026-06-21",
-      "message": "date confirmed: 2026-06-21",
+      "threshold": "2026-06-30",
+      "message": "date confirmed: 2026-06-30",
       "blocking": true
     },
     {
       "name": "race_count",
       "passed": true,
-      "value": 20,
+      "value": 46,
       "threshold": 15,
-      "message": "20 UK/IRE races with runners (min 15)",
+      "message": "46 UK/IRE races with runners (min 15)",
       "blocking": true
     },
     {
@@ -34,48 +38,52 @@
       "passed": true,
       "value": [
         "Brighton",
-        "Hexham",
-        "Pontefract"
+        "Ffos Las",
+        "Musselburgh",
+        "Roscommon",
+        "Salisbury",
+        "Stratford",
+        "Wexford"
       ],
       "threshold": 3,
-      "message": "3 unique courses: ['Brighton', 'Hexham', 'Pontefract'] (min 3)",
+      "message": "7 unique courses: ['Brighton', 'Ffos Las', 'Musselburgh', 'Roscommon', 'Salisbury', 'Stratford', 'Wexford'] (min 3)",
       "blocking": true
     },
     {
       "name": "runner_count",
       "passed": true,
-      "value": 166,
+      "value": 424,
       "threshold": 80,
-      "message": "166 total runners (min 80)",
+      "message": "424 total runners (min 80)",
       "blocking": true
     },
     {
       "name": "metadata_coverage",
       "passed": true,
       "value": 1.0,
-      "threshold": 0.9,
-      "message": "166/166 runners have required fields (100.0%)",
+      "threshold": 0.85,
+      "message": "424/424 runners have required fields (100.0%) (rp_merged: jockey excluded — may not be declared)",
       "blocking": true
     },
     {
       "name": "rpr_live_leak",
       "passed": true,
-      "value": 0,
+      "value": 372,
       "threshold": 0,
-      "message": "0 runners have rpr (accepted � RPR_ACCEPTED policy)",
+      "message": "372 runners have rpr (accepted — RPR_ACCEPTED policy)",
       "blocking": false
     },
     {
       "name": "sidecar_date_match",
-      "passed": false,
+      "passed": true,
       "value": {
-        "sidecar_races": 0,
-        "racecard_races": 20,
-        "overlap": 0,
-        "coverage": 0.0
+        "sidecar_races": 46,
+        "racecard_races": 46,
+        "overlap": 46,
+        "coverage": 1.0
       },
-      "threshold": "2026-06-21",
-      "message": "RPDC covers 0/20 racecard races (0%)",
+      "threshold": "2026-06-30",
+      "message": "RPDC covers 46/46 racecard races (100%)",
       "blocking": false
     }
   ]
