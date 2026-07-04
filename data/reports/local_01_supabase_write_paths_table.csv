@@ -1,0 +1,15 @@
+script,role,supabase_table,write_or_read,danger_if_run_by_mistake
+scripts/ops/run_prime_today.py,race-day scoring entrypoint,pipeline_runs,write (insert+update),HIGH — writes live pipeline run rows; central scoring entrypoint
+scripts/ops/build_rp_runner_signals.py,RP signal builder,rp_runner_signals,write (upsert),MEDIUM — upserts signal payloads, keyed so re-run is mostly idempotent
+scripts/ops/force_close_runs.py,ops utility,pipeline_runs,write (update),HIGH — force-closes run records; can mask a genuinely stuck/failed run if used carelessly
+scripts/ops/publish_daily_predictions_to_dashboard.py,dashboard publisher,velo_verdicts / races,write (insert) + read,MEDIUM — writes verdict rows consumed by dashboard/operator
+scripts/ops/audit_race_day_manifest.py,audit tool,velo_verdicts,read only,LOW
+scripts/ops/build_industry_comparison.py,comparison report,sigma_audits,read only,LOW
+scripts/ops/fetch_june_06_verdicts.py,one-off fetch script,velo_verdicts,read only,LOW — appears to be a dated one-off debugging script
+scripts/ops/run_multimodel_sigma.py,shadow sigma,velo_verdicts,read only,LOW
+scripts/ops/velo_morning_cockpit.py,operator dashboard reader,pipeline_runs / velo_verdicts / sigma_audits / learned_patterns,read only,LOW
+scripts/ops/write_velo_run_observability.py,observability writer,unknown (name suggests Supabase or local write — not confirmed this pass),unconfirmed,MEDIUM — name implies a write path; verify before relying on read-only assumption
+scripts/ops/send_final_tg_report.py,Telegram sender,none confirmed,n/a,HIGH — sends live Telegram messages; do not run outside the daily loop
+scripts/ops/send_degraded_run_notice.py,Telegram sender,none confirmed,n/a,HIGH — sends live Telegram messages
+scripts/ops/notify_governed_results.py,Telegram sender,none confirmed,n/a,HIGH — sends live Telegram messages
+scripts/ops/vfu_21_pick_sp_backfill.py,report-only backfill,none (local files only),n/a,LOW — explicitly blocked_from_live_use, no Supabase/Telegram touch confirmed

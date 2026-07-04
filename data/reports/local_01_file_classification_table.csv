@@ -1,0 +1,32 @@
+path_or_pattern,classification,note
+scripts/ops/run_prime_today.py,VITAL,live race-day scoring entrypoint
+scripts/ops/run_results_sigma.py,VITAL,locked-format sigma reconciliation — never change output format per prior operator feedback
+scripts/ops/racecard_loader.py,VITAL,core racecard loader, RP-primary since 2026-05-18
+scripts/ops/source_truth_enforcer.py,VITAL,source gating organ
+scripts/ops/build_rpdc_daily.py,VITAL,RPDC daily builder
+scripts/ops/velo_prime_ensemble.py,VITAL,core ensemble organ (per GitHub audit)
+scripts/ops/build_velo_living_state.py,INTEGRAL,VCP-01 daily organ, feeds heartbeat
+scripts/ops/build_velo_heartbeat.py,INTEGRAL,VCP-02 daily organ
+scripts/ops/build_vcp03_burn_in_log.py,INTEGRAL,VCP-03 burn-in tracker, currently 2/10 days
+scripts/ops/vfu_21_pick_sp_backfill.py,USEFUL_SHADOW,report-only, produced the strongest Supabase repair candidate found in this audit
+scripts/ops/build_results_01_audit.py,USEFUL_SHADOW,report-only audit generator, untracked
+scripts/ops/build_results_02_audit.py,USEFUL_SHADOW,report-only audit generator, untracked
+scripts/ops/build_course_00_audit.py,USEFUL_SHADOW,report-only, untracked
+scripts/ops/build_course_00a_tribunal.py,USEFUL_SHADOW,report-only, untracked
+scripts/ops/parse_rp_course_profiles.py,USEFUL_SHADOW,blocked by 406/login-required capture, needs COURSE-00C (CDP capture) to unblock
+scripts/ops/extract_local_draw_stats.py,USEFUL_SHADOW,only source of VERIFIED_LOCAL course draw data (14 courses/49 races)
+data/reports/*.md;data/reports/*.json (RESULTS/COURSE/J30/VCP report families),REPORT_ONLY,large untracked report corpus; should be committed selectively, not bulk-added
+data/council_packets/,REPORT_ONLY,untracked, single dated snapshot
+data/council_reports/,REPORT_ONLY,untracked, single dated snapshot
+data/mission_control/,REPORT_ONLY,contains latest.json (tracked/modified) + dated snapshot (untracked)
+data/current/,ARCHIVE (gitignored),intentionally excluded from git — current-state scratch, not history
+data/racing_post_account_raw/,ARCHIVE (gitignored),271M of raw capture HTML, mostly 404/blocked pages per COURSE-00B — largely DELETE_CANDIDATE content-wise but path itself is intentionally kept local-only
+CURRENT_RUNTIME_TRUTH.md (root),STALE,confirmed absent from local root already (archived in e5b259b) — only stale on GitHub's un-pulled copy
+README.md (root),VITAL,verified accurate against actual daily-loop behavior (Racing Post PDFs -> score -> Telegram -> Sigma -> Supabase)
+docs/current/,VITAL,26-doc governed spine per VCP-01 brief; truth-locked
+run_login.bat / run_login.sh (root),UNKNOWN_NEEDS_REVIEW,untracked, root-level scripts outside scripts/ convention — verify purpose before either committing or deleting
+calibrated_scorer_results.json / intent_calibration_results.json (root, in other repo copies),UNKNOWN_NEEDS_REVIEW,seen as untracked root artifacts in sibling repo copies (~/velo-oracle-prime), not present as an issue in the active /mnt/c/Users/puror copy audited here
+scripts/ops/force_close_runs.py,DANGEROUS_DO_NOT_RUN,writes pipeline_runs.update — can mask a stuck/failed live run if misused
+scripts/ops/send_final_tg_report.py;send_degraded_run_notice.py;notify_governed_results.py,DANGEROUS_DO_NOT_RUN,live Telegram senders — do not invoke outside the daily loop
+worktree-agent-a4cfb9a6 (branch/worktree at .claude/worktrees/agent-a4cfb9a6),UNKNOWN_NEEDS_REVIEW,156 commits behind feature/v10-launch — stale agent worktree, review before deleting
+merge/operator-integrity-core-2026-05-04;release/operator-integrity-approved (branches),STALE,350 commits behind current main — old integration branches, DELETE_CANDIDATE after operator confirms nothing unique remains

@@ -1,0 +1,23 @@
+function,script_path,status,reads_supabase,writes_supabase,sends_telegram,touches_live_scoring,last_modified
+race_day_scoring,scripts/ops/run_prime_today.py,LIVE,yes,yes (pipeline_runs insert/update),unknown (not confirmed in this pass),yes,2026-06-28
+race_day_orchestrator,scripts/ops/velo_race_day_button.py,LIVE,unknown,unknown,likely (name match on telegram grep),yes,unknown
+RP_results_capture,scripts/ops/parse_rp_results_capture.py,LIVE/REPORT_ONLY (unclear),no,no,no,no,unknown
+RP_racecard_merge,scripts/ops/build_racecard_merged_from_injection.py,LIVE,unknown,unknown,no,indirectly (feeds scoring),unknown
+sigma_reconciliation,scripts/ops/run_results_sigma.py,LIVE,unknown,unknown,likely (name match on telegram grep),no (post-hoc audit),2026-06-30 (per sigma results dated same day)
+sigma_multimodel,scripts/ops/run_multimodel_sigma.py,SHADOW,yes (velo_verdicts read),no,no,no,unknown
+VCP_daily_triple_living_state,scripts/ops/build_velo_living_state.py,REPORT_ONLY,unknown,no,no,no,2026-06-29
+VCP_daily_triple_heartbeat,scripts/ops/build_velo_heartbeat.py,REPORT_ONLY,no (reads living_state only),no,no,no,2026-06-29
+VCP_daily_triple_burn_in,scripts/ops/build_vcp03_burn_in_log.py,REPORT_ONLY,no,no,no,no,2026-06-30 (Day2 run 07-01)
+VFU_pick_sp_backfill,scripts/ops/vfu_21_pick_sp_backfill.py,REPORT_ONLY (blocked_from_live_use=True),no,no,no,no,2026-06-17
+RESULTS_01_audit,scripts/ops/build_results_01_audit.py,REPORT_ONLY,unknown (reads local sigma dump),no,no,no,2026-06-30
+RESULTS_02_audit,scripts/ops/build_results_02_audit.py,REPORT_ONLY,unknown,no,no,no,2026-06-30
+COURSE_00_audit,scripts/ops/build_course_00_audit.py,REPORT_ONLY,unknown,no,no,no,2026-06-30
+COURSE_00A_tribunal,scripts/ops/build_course_00a_tribunal.py,REPORT_ONLY,unknown,no,no,no,2026-06-30
+COURSE_00B_rp_capture,scripts/ops/parse_rp_course_profiles.py,REPORT_ONLY (0 usable pages recovered),no,no,no,no,2026-06-30
+dashboard_publish,scripts/ops/publish_daily_predictions_to_dashboard.py,LIVE,yes (races/velo_verdicts read),yes (velo_verdicts insert at line ~325),no,no,unknown
+dashboard_server,scripts/ops/new_build_dashboard_server.py,LIVE/SHADOW,unknown,unknown,no,no,unknown
+telegram_final_report,scripts/ops/send_final_tg_report.py,LIVE (per README daily-loop description),unknown,unknown,yes,no,unknown
+telegram_degraded_notice,scripts/ops/send_degraded_run_notice.py,LIVE,unknown,unknown,yes,no,unknown
+telegram_governed_notify,scripts/ops/notify_governed_results.py,LIVE,unknown,unknown,yes,no,unknown
+pipeline_run_force_close,scripts/ops/force_close_runs.py,DANGEROUS_IF_MISUSED,yes,yes (pipeline_runs update),no,indirectly (can close a live run record),unknown
+morning_cockpit_reader,scripts/ops/velo_morning_cockpit.py,REPORT_ONLY,yes (pipeline_runs/velo_verdicts/sigma_audits/learned_patterns read),no,no,no,unknown

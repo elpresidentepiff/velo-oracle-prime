@@ -1,0 +1,6 @@
+local_artifact,supabase_table_gap,repair_candidate_strength,note
+data/reports/vfu_21_pick_sp_backfill_ledger.jsonl,sigma_audits.pick_sp (38.27% coverage),STRONG,3052-row ledger reaches 86.3% pick_sp coverage locally; never written to Supabase; EW ROI on recovered rows is -12.5%, needs operator decision before write
+data/reports/results_01_full_results_truth_audit.json,sigma_audits <-> velo_verdicts linkage (363/3167 only),NONE_FOUND,no local file carries an explicit sigma-row-to-verdict-id join; flag for SUPA-02
+data/reports/results_02_course_intelligence_audit.json,course_profiles (handedness known: 0/70),PARTIAL,course_00a registry has handedness for 17 courses but tagged SECONDARY_PUBLIC_SOURCE not VERIFIED_LOCAL — usable as a hypothesis layer, not a verified repair
+data/reports/local_draw_stats_by_course.csv,course_profiles (no draw/pace geometry),PARTIAL,14 courses / 49 races VERIFIED_LOCAL draw bias data exists locally and is not in Supabase's course_profiles table
+runner_prediction_snapshots gap (stale since 2026-06-19 vs verdicts to 2026-07-01),no local file found bridging this in this pass,NONE_FOUND,flag for SUPA-02 — likely a pipeline write-cadence issue, not a data-availability issue
