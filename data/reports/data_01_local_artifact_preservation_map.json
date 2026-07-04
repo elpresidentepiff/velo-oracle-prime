@@ -1,0 +1,94 @@
+{
+  "audit_id": "DATA-01",
+  "generated_at": "2026-07-04T00:00:00Z",
+  "mode": "REPORT_ONLY",
+  "branch_at_time_of_audit": "audit/local-01-truth-reconciliation",
+  "git_state": {
+    "local_main_head": "a8b3e8aca059900f6cf71b85cf4c7657bf72f5ce",
+    "origin_main_head": "1ed846248a1768dcd1c72a4fc72efb89896b2263",
+    "local_main_status": "STALE — ahead 6, behind 12 of origin/main; needs a fast-forward pull",
+    "stash_count": 11,
+    "stash_touched_this_session": 0,
+    "stash_note": "all 11 pre-existing stashes untouched; transient stash/pop pairs used during REPO-02 branch switches were fully resolved and none remain"
+  },
+  "risk_summary": {
+    "headline": "less at risk than assumed — main, audit branch (incl. 8753b4f), reconcile branch, and doctrine branch are all already pushed to origin",
+    "genuinely_local_only_and_uncommitted": 97,
+    "genuinely_local_only_but_correctly_gitignored": ["data/current/ (12 files)", "data/browser_profiles/ (761MB)", "data/racing_post_account_raw/ (271MB)", ".env"],
+    "vfu_21_ledger_status": "already committed and pushed (commit 7af104e, on origin/main) — not a git-loss risk, remains a Supabase-write decision for SUPA-02"
+  },
+  "uncommitted_tracked_files": {
+    "count": 30,
+    "github_commit": 8,
+    "data_backfill_candidate": 22,
+    "note": "all 30 are deltas against already-committed baselines, not first appearances"
+  },
+  "untracked_files": {
+    "count": 67,
+    "github_commit": 59,
+    "data_backfill_candidate": 10,
+    "unknown_operator_review": 2,
+    "breakdown": {
+      "vcp03_day2_artifacts": 2,
+      "new_audit_scripts": 7,
+      "new_tests": 5,
+      "results_course_j30_reports": 45,
+      "council_mission_control_sigma_snapshots": 10,
+      "operator_card_snapshots": 2,
+      "root_launcher_scripts": 2
+    }
+  },
+  "special_focus": {
+    "8753b4f_bulk_sweep": {"status": "pushed to origin/audit/local-01-truth-reconciliation", "loss_risk": false, "merged_to_main": false},
+    "vcp_03_day2_progress": {"status": "local-only, uncommitted", "loss_risk": true, "recommendation": "commit next"},
+    "todays_raceday_files": {"status": "DATA_BACKFILL_CANDIDATE group"},
+    "vfu_20_working_tree_files": {"status": "modifications to already-on-main baseline (commit ffc37e0)", "classification": "DATA_BACKFILL_CANDIDATE"},
+    "vfu_21_pick_sp_ledger": {"status": "committed and pushed (7af104e)", "loss_risk": false, "supabase_write_status": "pending SUPA-02 operator decision"},
+    "results_01_02_files": {"status": "untracked", "classification": "GITHUB_COMMIT"},
+    "course_00_00a_00b_files": {"status": "untracked", "classification": "GITHUB_COMMIT"},
+    "course_00c": {"status": "still not built, confirmed absent again"},
+    "j30_forensic_files": {"status": "untracked", "classification": "GITHUB_COMMIT"},
+    "council_reports": {"status": "untracked (06-30 snapshot)", "classification": "DATA_BACKFILL_CANDIDATE"},
+    "data_current": {"file_count": 12, "size": "32K", "gitignored": true, "classification": "LOCAL_ONLY_SCRATCH"},
+    "data_racing_post_account_raw": {"size": "271M", "gitignored": true, "classification": "LOCAL_ONLY_SECRET_OR_RAW_CAPTURE", "note": "mostly unusable captures per earlier COURSE-00B audit (0/106 pages OK)"},
+    "data_browser_profiles": {"size": "761M", "gitignored": true, "classification": "LOCAL_ONLY_SECRET_OR_RAW_CAPTURE", "note": "largest local-only artifact found; Firefox session/cookie data for RP login; correctly excluded from git"},
+    "raw_rp_html": {"status": "covered under data_racing_post_account_raw"},
+    "env_credential_cookie_browser_profile_files": {
+      "found": [".env", ".env.example", ".env.template", "workers/ingestion_spine/.env.example"],
+      "only_env_is_secret_and_gitignored": true,
+      "templates_correctly_tracked": true
+    },
+    "scratch_debug_files": {
+      "files": ["data/_check_passport_coverage.py", "data/_check_supabase_jun24.py", "data/_tmp_fetch.py", "data/_multimodel_june23_tmp.json"],
+      "status": "already committed via 8753b4f on pushed audit branch",
+      "loss_risk": false,
+      "classification": "DO_NOT_KEEP — confirmed for exclusion from any future merge to main"
+    }
+  },
+  "recommended_migration_order": [
+    "1. fast-forward local main to origin/main (1ed8462)",
+    "2. commit VCP-03 Day 2 progress + 7 new audit scripts + 5 tests as a follow-up PR",
+    "3. commit ~45 RESULTS/COURSE/J30 report files as same or separate PR",
+    "4. build dedicated DATA-BACKFILL PR for ~25-file daily operational data family (plus 8753b4f eventually)",
+    "5. run SUPA-02 report-only once GitHub state is current",
+    "6. leave the 11 stashes and gitignored secret/raw-capture directories for separate operator review"
+  ],
+  "final_classifications": [
+    "DATA_01_LOCAL_ARTIFACT_PRESERVATION_MAP_COMPLETE",
+    "NO_FILES_MOVED",
+    "NO_FILES_DELETED",
+    "NO_COMMITS_AFTER_DOCTRINE_MERGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_COURSE_01_IMPLEMENTATION",
+    "NO_VFU_21_LIVE_START",
+    "NO_VCP_04_START",
+    "NO_MODEL_TRAINING",
+    "LOCAL_ONLY_ARTIFACTS_DECLARED",
+    "GITHUB_CANDIDATES_DECLARED",
+    "SUPABASE_CANDIDATES_DECLARED",
+    "DATA_BACKFILL_CANDIDATES_DECLARED",
+    "DO_NOT_KEEP_CANDIDATES_DECLARED",
+    "REPORT_ONLY"
+  ]
+}

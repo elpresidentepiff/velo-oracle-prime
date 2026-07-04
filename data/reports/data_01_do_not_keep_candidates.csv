@@ -1,0 +1,5 @@
+path,current_status,classification,reason,safe_to_delete
+data/_check_passport_coverage.py,already committed via 8753b4f on pushed audit branch,DO_NOT_KEEP,scratch debug script hardcoded to absolute Windows path, wrong directory (data/ not scripts/), no lasting purpose,no — not without operator confirmation; it's committed history, deleting from working tree only removes local copy, git history retains it regardless
+data/_check_supabase_jun24.py,already committed via 8753b4f on pushed audit branch,DO_NOT_KEEP,same reasoning as above — one-off Supabase row-count check from 2026-06-24,no — same caveat
+data/_tmp_fetch.py,already committed via 8753b4f on pushed audit branch,DO_NOT_KEEP,same reasoning as above — one-off multimodel comparison from 2026-06-23,no — same caveat
+data/_multimodel_june23_tmp.json,already committed via 8753b4f on pushed audit branch,DO_NOT_KEEP,disposable output of _tmp_fetch.py, no lasting value,no — same caveat

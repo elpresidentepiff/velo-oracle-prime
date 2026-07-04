@@ -1,0 +1,8 @@
+path,size,gitignored,classification,reason
+.env,unknown (not read),yes,LOCAL_ONLY_SECRET_OR_RAW_CAPTURE,live credentials — must never go to git
+data/current/ (12 files),32K,yes,LOCAL_ONLY_SCRATCH,volatile current-state pointer files (branch_protection_readiness_latest.json, capture_proof_latest.json, governed_task_latest.json, hardening_state_check_latest.json, rpdc_attach_preflight_latest.json, rpdc_integrity_latest.json, side_effect_sentinel_latest.json, task_contract_latest.json, velo_living_state.json, worktree_safety_latest.json, plus 2 classification txt files)
+data/racing_post_account_raw/,271M,yes,LOCAL_ONLY_SECRET_OR_RAW_CAPTURE,raw RP HTML captures; mostly unusable per earlier COURSE-00B audit (0/106 pages OK: 404/login-blocked)
+data/browser_profiles/,761M,yes,LOCAL_ONLY_SECRET_OR_RAW_CAPTURE,Firefox session/cookie data for RP login flow — largest local-only artifact found this pass; correctly excluded from git
+run_login.bat,75,no (untracked, not ignored),UNKNOWN_OPERATOR_REVIEW,small launcher script, no secrets, but root location is unconventional and it is not yet classified GITHUB_COMMIT vs DO_NOT_KEEP
+run_login.sh,207,no (untracked, not ignored),UNKNOWN_OPERATOR_REVIEW,same as above — sources .env and launches racing_post_account_collector.py correctly, no hardcoded credentials
+11 git stashes (stash@{0}..stash@{10}),unknown,n/a (not files, stash refs),UNKNOWN_OPERATOR_REVIEW,accumulated across multiple branches since at least May 2026; not reviewed in this pass; represents exactly the kind of silent local-only state the new doctrine is meant to end
