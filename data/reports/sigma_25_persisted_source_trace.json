@@ -1,0 +1,88 @@
+{
+  "mission": "SIGMA-25-PERSISTED-SOURCE-TRACE",
+  "generated": "2026-07-04",
+  "mode": "REPORT_ONLY",
+  "writer_correction": {
+    "fresh_daily_predictions_to_supabase.py": "NOT_FOUND_IN_REPO",
+    "build_rpdc_daily.py": "EXISTS_BUT_NOT_IN_VELO_VERDICTS_WRITE_PATH",
+    "actual_writer": "app/services/velo_prime_service.py::persist_race_predictions()",
+    "actual_writer_caller": "scripts/ops/run_prime_today.py (STEP 4, line ~2132)"
+  },
+  "fields": {
+    "pick_sp": {
+      "status": "SOURCE_CONFIRMED_PERSISTED",
+      "location": "velo_verdicts.full_analysis.predictions[*].sp_dec, matched by horse_id == top_rank_horse_id",
+      "already_selected_by_sigma": true,
+      "requires_extraction_logic": true,
+      "confirmed_via": "local artifact data/velo_prime_verdicts_2026_06_30.json race 922170: top.sp_dec=3.5, top.horse_id=5021393"
+    },
+    "field_size": {
+      "status": "SOURCE_CONFIRMED_PERSISTED",
+      "location": "velo_verdicts.predicted_field_size (top-level column)",
+      "computed_as": "len(race.get('runners') or [])",
+      "gated_by_migration": "20260418_001_velo_verdicts_honesty_labels.sql",
+      "already_selected_by_sigma": false,
+      "requires_select_clause_change": true
+    },
+    "race_type": {
+      "status": "SOURCE_CONFIRMED_TRANSIENT_ONLY",
+      "location": "run_prime_today.py in-memory race dict only (race.get('type'))",
+      "persisted_anywhere": false,
+      "checked_locations": [
+        "velo_verdicts row dict (persist_race_predictions) - absent",
+        "full_analysis_data (predictions/plot_intel/governance) - absent",
+        "local JSON fallback velo_prime_verdicts_2026_06_29.json / _30.json - absent",
+        "data/racecard_merged/*.json race_info - unstructured free-text string, not usable"
+      ],
+      "requires_new_column": true,
+      "requires_migration": true
+    },
+    "verdict_id": {
+      "status": "SOURCE_NEEDS_SUPABASE_QUERY",
+      "location": "velo_verdicts.id (presumed PK, not directly confirmed via live query this pass)",
+      "already_selected_by_sigma": false,
+      "requires_select_clause_change": true,
+      "join_strategy": "race_id + generated_at (same dedup key sigma already computes at lines 499-508 for latest-generated_at resolution)"
+    },
+    "actual_winner_sp_control": {
+      "status": "SOURCE_CONFIRMED_PERSISTED_AND_ALREADY_WRITTEN",
+      "location": "sigma_row['actual_winner_sp'] from row['winner_sp'] (result-side data, not verdict-side)",
+      "note": "known-good control field; confirms the write mechanism itself works"
+    }
+  },
+  "sigma_select_clause_current": "race_id,top_rank_horse_id,velo_prime_prob,decision_tier,confidence_level,generated_at,full_analysis,assigned_product",
+  "sigma_select_clause_missing": ["predicted_field_size", "id"],
+  "recommended_patches": [
+    {
+      "patch": "SIGMA_SELECT_AND_EXTRACTION_PATCH",
+      "target": "scripts/ops/run_results_sigma.py",
+      "scope": "add predicted_field_size,id to select clause (both occurrences); add pick_sp lookup by horse_id in full_analysis.predictions; add field_size and verdict_id keys to sigma_row",
+      "requires_schema_migration": false,
+      "requires_operator_signoff": true,
+      "status": "PATCH_READY"
+    },
+    {
+      "patch": "RACE_TYPE_PERSISTENCE_PATCH",
+      "target": "app/services/velo_prime_service.py::persist_race_predictions()",
+      "scope": "add race_type column to velo_verdicts (new migration) and write race.get('type') into row dict",
+      "requires_schema_migration": true,
+      "requires_operator_signoff": true,
+      "status": "PATCH_BLOCKED"
+    }
+  ],
+  "open_item": "velo_verdicts.id existence not directly confirmed via live Supabase query this pass (inferred from PostgREST/schema convention only)",
+  "classifications": [
+    "SIGMA_25_PERSISTED_SOURCE_TRACE_COMPLETE",
+    "NO_SUPABASE_WRITES",
+    "NO_CODE_CHANGE",
+    "LOCKED_SIGMA_WRITER_NOT_PATCHED",
+    "PICK_SP_SOURCE_CONFIDENCE_CONFIRMED_PERSISTED",
+    "FIELD_SIZE_SOURCE_CONFIDENCE_CONFIRMED_PERSISTED",
+    "RACE_TYPE_SOURCE_CONFIDENCE_CONFIRMED_TRANSIENT_ONLY",
+    "VERDICT_ID_SOURCE_CONFIDENCE_SOURCE_NEEDS_SUPABASE_QUERY",
+    "PATCH_READY_FOR_FIELD_SIZE_PICK_SP_VERDICT_ID",
+    "PATCH_BLOCKED_FOR_RACE_TYPE",
+    "SUPABASE_WRITE_APPROVAL_REQUIRED",
+    "REPORT_ONLY"
+  ]
+}

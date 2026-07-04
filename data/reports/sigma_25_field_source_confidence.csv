@@ -1,0 +1,5 @@
+field,confidence_status,source,requires_select_change,requires_schema_migration,requires_new_code
+pick_sp,SOURCE_CONFIRMED_PERSISTED,full_analysis.predictions[*].sp_dec matched by horse_id,no (full_analysis already selected),no,yes (extraction/lookup logic)
+field_size,SOURCE_CONFIRMED_PERSISTED,velo_verdicts.predicted_field_size,yes (not in current select clause),no,yes (add key to sigma_row)
+race_type,SOURCE_CONFIRMED_TRANSIENT_ONLY,run_prime_today.py in-memory race dict only,n/a,yes (new column on velo_verdicts),yes (persist_race_predictions patch)
+verdict_id,SOURCE_NEEDS_SUPABASE_QUERY,velo_verdicts.id (presumed PK),yes (not in current select clause),no,yes (join/carry-through logic)
