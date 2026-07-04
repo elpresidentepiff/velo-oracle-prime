@@ -1,0 +1,21 @@
+{
+  "date": "2026-07-04",
+  "source": "LIVE_RP_STANDARD_CACHE",
+  "race_count": 51,
+  "course_count": 8,
+  "active_runner_count": 453,
+  "null_off_time_count": 0,
+  "horse_id_coverage_count": 453,
+  "horse_id_coverage_pct": 100.0,
+  "historical_passport_id_match_count": 242,
+  "historical_passport_id_match_pct": 53.4,
+  "historical_passport_missing_count": 211,
+  "identity_mode": "RP_HORSE_ID_DETERMINISTIC",
+  "identity_risk": "LOW",
+  "history_depth_risk": "HIGH",
+  "safe_to_run_local_scoring": true,
+  "safe_to_run_verdicts_only": false,
+  "safe_to_write_supabase": false,
+  "safe_to_run_sigma": false,
+  "reason": "RP horse_id identity is complete for all active runners, but historical passport depth is only 53.4%; local dry scoring allowed, persistence blocked."
+}
