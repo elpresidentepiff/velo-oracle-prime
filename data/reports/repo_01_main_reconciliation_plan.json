@@ -1,0 +1,97 @@
+{
+  "audit_id": "REPO-01",
+  "generated_at": "2026-07-03T00:00:00Z",
+  "mode": "REPORT_ONLY",
+  "compared": {
+    "base": "origin/main (018d6188adf7e86a509250f4004f75a634fa5f9d)",
+    "head": "audit/local-01-truth-reconciliation (b0c354f6bba429efe0ae28d17bd6c30ade8e8c39)",
+    "commits_ahead": 7,
+    "commits_behind": 0,
+    "files_changed": 555,
+    "insertions": 470571,
+    "deletions": 56982
+  },
+  "per_commit": [
+    {"sha": "ede88e6", "subject": "fix(dashboard): NB top3 missing for all races on governed-card API", "files_changed": 2, "category": "code_fix_safe"},
+    {"sha": "8753b4f", "subject": "chore(data): raceday 2026-06-29 sigma + learning + June 30 prep", "files_changed": 474, "category": "bulk_data_backfill_needs_split", "date_range_covered": "2026-06-09 to 2026-06-29"},
+    {"sha": "e5b259b", "subject": "fix(A-3)+chore(VCP-00): going_code regression fix + truth lock + docs archive sweep", "files_changed": 55, "category": "mostly_doc_renames_safe", "rename_count": 34, "non_rename_files": ["CLAUDE.md", "README.md", "docs/current/ONE_TRUTH.md", "scripts/ops/new_build_two_lane_score.py", "tests/test_new_build_paper_scorer.py"]},
+    {"sha": "ff86674", "subject": "feat(VCP-01): VÉLØ Living State Packet", "files_changed": 4, "category": "vcp_code_safe"},
+    {"sha": "5f83fec", "subject": "feat(VCP-02): VÉLØ Heartbeat V1", "files_changed": 6, "category": "vcp_code_safe"},
+    {"sha": "a8b3e8a", "subject": "feat(VCP-03): Ten-Day Coherence Burn-In — Day 1 PASS", "files_changed": 6, "category": "vcp_code_safe"},
+    {"sha": "b0c354f", "subject": "audit(local): LOCAL-01 truth reconciliation report", "files_changed": 9, "category": "audit_reports_safe"}
+  ],
+  "dangerous_file_check": {
+    "scratch_scripts_found": [
+      "data/_check_passport_coverage.py",
+      "data/_check_supabase_jun24.py",
+      "data/_multimodel_june23_tmp.json",
+      "data/_tmp_fetch.py"
+    ],
+    "scratch_scripts_verdict": "DO_NOT_MERGE / DELETE_CANDIDATE — hardcoded absolute Windows path, one-off debug purpose, wrong directory (data/ instead of scripts/), no secrets hardcoded (use os.getenv correctly)",
+    "secrets_scan_performed": true,
+    "secrets_scan_patterns": ["api_key", "secret", "password", "token", "service_role", "BEGIN PRIVATE", "sk-ant", "sk-proj", "AKIA"],
+    "secrets_found": false,
+    "secrets_scan_note": "all matches were safe os.getenv() references or incidental text substrings in racecard data; one archived doc line references an old 'rotate Racing API password' action item as historical text, not a live credential",
+    "large_binary_outputs_found": false,
+    "stale_reports_found": "34 R100 renames correctly move stale root docs into docs/archive/ — this is the intended fix"
+  },
+  "vcp_governance_dashboard_safety": {
+    "vcp_code_files": ["scripts/ops/build_velo_living_state.py", "scripts/ops/build_velo_heartbeat.py", "scripts/ops/build_vcp03_burn_in_log.py"],
+    "vcp_code_verdict": "safe_to_merge",
+    "governance_docs_verdict": "safe_to_merge",
+    "dashboard_fix_verdict": "safe_to_merge"
+  },
+  "raceday_data_commit_decision": {
+    "commit": "8753b4f",
+    "recommendation": "split",
+    "reasoning": "470K-line single commit makes review/blame meaningless and buries 4 scratch files; genuine audit value in the ~470 legitimate files but needs its own dedicated commit/PR separate from code changes",
+    "action_required": "remove 4 scratch files permanently, then re-commit remaining ~470 files as standalone data-backfill PR"
+  },
+  "local_01_commit_decision": {
+    "commit": "b0c354f",
+    "recommendation": "merge",
+    "reasoning": "purpose of publishing was external visibility; must land on/near main to be durable"
+  },
+  "merge_plan": {
+    "selected_option": "C",
+    "option_a_merge_as_is": "rejected — bundles 470K lines of unreviewed raw data with real VCP/audit work",
+    "option_b_cherry_pick_onto_messy_branch": "rejected — doesn't solve the review-ability problem",
+    "option_c_clean_branch_from_main": {
+      "status": "recommended, not yet executed",
+      "proposed_file_count": 82,
+      "proposed_contents": [
+        "e5b259b non-rename files (CLAUDE.md, README.md, docs/current/ONE_TRUTH.md, new_build_two_lane_score.py, test_new_build_paper_scorer.py)",
+        "34 R100 doc renames from e5b259b",
+        "ff86674 (VCP-01)",
+        "5f83fec (VCP-02)",
+        "a8b3e8a (VCP-03)",
+        "ede88e6 (dashboard fix)",
+        "b0c354f (LOCAL-01 reports)"
+      ]
+    },
+    "deferred_decision": "8753b4f raceday-data backfill (470 files after scratch removal) — separate operator decision, not bundled into clean PR"
+  },
+  "actions_taken_this_pass": {
+    "clean_branch_created": false,
+    "cherry_pick_performed": false,
+    "pr_opened": false,
+    "merge_to_main": false,
+    "main_head_local": "a8b3e8aca059900f6cf71b85cf4c7657bf72f5ce",
+    "origin_main_head": "018d6188adf7e86a509250f4004f75a634fa5f9d"
+  },
+  "final_classifications": [
+    "REPO_01_MAIN_RECONCILIATION_COMPLETE",
+    "AUDIT_BRANCH_REVIEWED",
+    "MAIN_NOT_TOUCHED",
+    "MERGE_PLAN_WRITTEN",
+    "VCP_FILES_IDENTIFIED",
+    "RAW_DATA_NOT_PROMOTED",
+    "NO_COURSE_01_IMPLEMENTATION",
+    "NO_VFU_21_LIVE_START",
+    "NO_VCP_04_START",
+    "NO_MODEL_TRAINING",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "REPORT_ONLY"
+  ]
+}

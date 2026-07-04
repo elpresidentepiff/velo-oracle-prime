@@ -1,0 +1,21 @@
+path,source_commit,classification,reason
+data/_check_passport_coverage.py,8753b4f,DO_NOT_MERGE,scratch debug script hardcoded to C:\Users\puror\velo-oracle-prime, wrong directory (data/ not scripts/), no lasting purpose
+data/_check_supabase_jun24.py,8753b4f,DO_NOT_MERGE,scratch debug script hardcoded to absolute Windows path, one-off Supabase row-count check from 2026-06-24
+data/_tmp_fetch.py,8753b4f,DO_NOT_MERGE,scratch debug script hardcoded to absolute Windows path, one-off multimodel comparison from 2026-06-23
+data/_multimodel_june23_tmp.json,8753b4f,DELETE_CANDIDATE,disposable output of _tmp_fetch.py, no lasting value
+data/current/velo_living_state.json,ff86674,KEEP_ON_REVIEW_BRANCH_ONLY,intentionally .gitignore'd current-state scratch file — should never be in git history at all, not just excluded from this merge
+data/reports/* (105 dated files),8753b4f,SPLIT_TO_DATA_ARCHIVE,legitimate but should be its own dedicated data-backfill PR, not bundled with code changes — see repo_01_main_reconciliation_plan for full list of subdirectories
+data/sigma_results/* (29 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/learning_inputs/* (20 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/sigma_memory/* (15 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/mission_control/* (15 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/council_packets/* + council_reports/* + council_runs/* (43 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/timing_audit/* (9 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/race_shape/* (8 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/router_shadow_audit_runs/* (4 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/telegram_delivery_truth_*.json (9 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above — text logs only, not a live-send risk
+data/velo_run_observability_*.json (~19 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/velo_daily_run_truth_*.md (9 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/racecards_2026_06_*.json (~10 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above
+data/nightly_eod_learning_*/data/playbook_g_nightly_audit_*/data/eod_* (~90 files),8753b4f,SPLIT_TO_DATA_ARCHIVE,same as above — largest remaining group
+models/*/feature_importance.csv (4 files),8753b4f,NEEDS_OPERATOR_REVIEW,low-risk but bundle decision (which PR) left to operator
