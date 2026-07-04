@@ -152,3 +152,21 @@ python scripts/ops/velo_session_start_check.py
 
 ## NEVER touch without operator approval
 Live weights/profile in `velo_prime_ensemble.py` · `models/sqpe_v17/` and `models/specialist/` · `app/agents/betfair_execution_agent.py` + `betfair_trading_agents.py` (never import into live path) · LIVE guard in `src/velo/execution_bridge.py` · `data/sentient_state.json` · Sigma Telegram format (LOCKED) · old verdicts in Supabase · `MC_CONFIG.CONTAMINATED_RUN_IDS`.
+
+## 2026-07-04 Raceday State — LIVE / SIGMA READY BUT NOT RUN
+
+**Source capture:** THE_ONE_TRUTH live RP scrape Steps 1-6 completed. 51 races, 8 courses, 453 active runners, 0 null off_times. Standard cache: `data/racecards_2026_07_04_standard.json`. RP `horse_id` coverage 453/453 = 100%. Historical passport ID coverage 242/453 = 53.4%. Identity risk: LOW. History depth risk: HIGH. Remaining gap: 211 runners without historical passport depth.
+
+**Scoring:** Local dry scoring completed first — `run_prime_today.py --date 2026-07-04 --source cache --dry-run --no-runner-snapshots --no-notify`, 51/51 races processed, exit 0. Tier count: A=4, B=25, C=13, D=3, X=6.
+
+**Verdict persistence:** Controlled verdicts-only persistence authorised and executed — `run_prime_today.py --date 2026-07-04 --source cache --verdicts-only --no-runner-snapshots --no-notify`. `public.velo_verdicts`: 51 rows / 51 races. `race_type`, `race_type_raw`, `race_type_source`, `race_type_recorded_at`, `predicted_field_size`, `full_analysis`, `top_rank_horse_id` all 51/51. **SIGMA-26 persistence patch: PRODUCTION VERIFIED.**
+
+**RPDC:** Build authorised and executed — `scripts/ops/build_rpdc_daily.py --date 2026-07-04`. `public.runner_release_candidates`: 453 rows. Race coverage 51/51, runner/horse_id coverage 453/453, no duplicates, no null `race_id`/`horse_id`. Verdict refresh executed after RPDC build. RPDC attached to verdicts: 51/51 via `rpdc_primary_tag`, `rpdc_release_score`, `rpdc_tags`.
+
+**Dashboard:** Reports published. Dashboard server started — `scripts/ops/new_build_dashboard_server.py`, local endpoint `http://localhost:8765/dashboard`, route returns HTTP 200. Dashboard truth API: `verdict_count_today = 51`, Supabase status `CONNECTED`. Status: `RPDC_ENRICHED_VERDICTS_ON_DASHBOARD`. `sp`/`odds`/`bsp` still null — pre-existing market-data publisher gap, disclosed, not fabricated.
+
+**Forbidden / untouched:** `sigma_audits` 0 rows for July 4 · `runner_prediction_snapshots` 0 rows for July 4 · local `runner_snapshots_*.jsonl` unchanged (116) · Telegram no real sends (containment/no-op only) · model training not run · model promotion not run · historical backfill not run · VFU-21 not run · COURSE-01 not run.
+
+**Current gate:** `RACEDAY_LIVE_VERDICTS_READY` · `RPDC_ENRICHED_VERDICTS_READY` · `DASHBOARD_LIVE` · `SIGMA_29_READY_BUT_NOT_RUN` · `SIGMA_LEARNING_WAIT_UNTIL_LATER_TONIGHT` · `PROMOTION_LEARNING_GATED` · `FAILURE_LEARNING_OPEN` · `MEMORY_CAPTURE_OPEN`.
+
+**Decision:** Do not run Sigma yet. Do not run model learning yet. Wait until later tonight for Sigma learning / results-based audit. Next authorised decision point: SIGMA-29 controlled Sigma rehearsal, after race results are available and operator signs off.
