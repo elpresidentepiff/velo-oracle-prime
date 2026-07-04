@@ -1,0 +1,2 @@
+note,detail
+scope_limitation,"Given context/time budget this pass, git log --since/--until commit archaeology around specific dates was not exhaustively performed. The root cause was found structurally (current sigma_row payload never includes the 4 fields) rather than via bisecting commit history. No specific commit was identified as introducing a regression, because the current evidence points to these fields never being in the live write payload, not a working path being removed."

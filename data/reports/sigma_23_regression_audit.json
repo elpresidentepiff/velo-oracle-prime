@@ -1,0 +1,1091 @@
+{
+  "audit_id": "SIGMA-23",
+  "generated_at": "2026-07-04T00:00:00Z",
+  "mode": "REPORT_ONLY",
+  "corrected_finding": "gap dates to ~2026-04-25/29, not 2026-06-23 as originally framed",
+  "writer_script": "scripts/ops/run_results_sigma.py",
+  "writer_line": 1086,
+  "sigma_row_fields_written": [
+    "race_id",
+    "date",
+    "track",
+    "off_time",
+    "event_type",
+    "outcome",
+    "decision_tier",
+    "miss_reason",
+    "top_pick_position",
+    "actual_winner_id",
+    "actual_winner_name",
+    "actual_winner_sp",
+    "notes"
+  ],
+  "fields_never_written_by_live_writer": [
+    "pick_sp",
+    "field_size",
+    "race_type",
+    "verdict_id"
+  ],
+  "last_good_dates": {
+    "pick_sp": "2026-04-29",
+    "field_size": "2026-04-25",
+    "race_type": "2026-05-01",
+    "verdict_id": "2026-04-23"
+  },
+  "sigma_by_date": [
+    {
+      "date": "NULL_DATE",
+      "rows": 153,
+      "races": 153,
+      "winner_sp_known": 152,
+      "pick_sp_known": 143,
+      "field_size_known": 153,
+      "race_type_known": 153,
+      "verdict_id_known": 153
+    },
+    {
+      "date": "2026-06-30",
+      "rows": 45,
+      "races": 45,
+      "winner_sp_known": 45,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-29",
+      "rows": 26,
+      "races": 26,
+      "winner_sp_known": 26,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-28",
+      "rows": 28,
+      "races": 28,
+      "winner_sp_known": 28,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-27",
+      "rows": 37,
+      "races": 37,
+      "winner_sp_known": 6,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-26",
+      "rows": 46,
+      "races": 46,
+      "winner_sp_known": 46,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-25",
+      "rows": 8,
+      "races": 8,
+      "winner_sp_known": 8,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-23",
+      "rows": 16,
+      "races": 16,
+      "winner_sp_known": 16,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-22",
+      "rows": 30,
+      "races": 30,
+      "winner_sp_known": 30,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-20",
+      "rows": 46,
+      "races": 46,
+      "winner_sp_known": 46,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-19",
+      "rows": 52,
+      "races": 52,
+      "winner_sp_known": 52,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-18",
+      "rows": 33,
+      "races": 33,
+      "winner_sp_known": 33,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-17",
+      "rows": 20,
+      "races": 20,
+      "winner_sp_known": 20,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-16",
+      "rows": 33,
+      "races": 33,
+      "winner_sp_known": 33,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-15",
+      "rows": 32,
+      "races": 32,
+      "winner_sp_known": 32,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-14",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 29,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-13",
+      "rows": 54,
+      "races": 54,
+      "winner_sp_known": 54,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-12",
+      "rows": 43,
+      "races": 43,
+      "winner_sp_known": 43,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-11",
+      "rows": 35,
+      "races": 35,
+      "winner_sp_known": 35,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-10",
+      "rows": 26,
+      "races": 26,
+      "winner_sp_known": 26,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-09",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 29,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-08",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 28,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-07",
+      "rows": 25,
+      "races": 25,
+      "winner_sp_known": 25,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-06",
+      "rows": 42,
+      "races": 42,
+      "winner_sp_known": 42,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-05",
+      "rows": 44,
+      "races": 44,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-04",
+      "rows": 23,
+      "races": 23,
+      "winner_sp_known": 23,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-03",
+      "rows": 7,
+      "races": 7,
+      "winner_sp_known": 7,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-06-02",
+      "rows": 11,
+      "races": 11,
+      "winner_sp_known": 11,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-30",
+      "rows": 8,
+      "races": 8,
+      "winner_sp_known": 8,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-29",
+      "rows": 16,
+      "races": 16,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-27",
+      "rows": 33,
+      "races": 33,
+      "winner_sp_known": 33,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-25",
+      "rows": 24,
+      "races": 24,
+      "winner_sp_known": 24,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-24",
+      "rows": 22,
+      "races": 22,
+      "winner_sp_known": 22,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-22",
+      "rows": 36,
+      "races": 36,
+      "winner_sp_known": 36,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-21",
+      "rows": 44,
+      "races": 44,
+      "winner_sp_known": 44,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-20",
+      "rows": 32,
+      "races": 32,
+      "winner_sp_known": 32,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-19",
+      "rows": 24,
+      "races": 24,
+      "winner_sp_known": 24,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-18",
+      "rows": 28,
+      "races": 28,
+      "winner_sp_known": 28,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-17",
+      "rows": 21,
+      "races": 21,
+      "winner_sp_known": 21,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-16",
+      "rows": 50,
+      "races": 50,
+      "winner_sp_known": 50,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-15",
+      "rows": 42,
+      "races": 42,
+      "winner_sp_known": 42,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-14",
+      "rows": 28,
+      "races": 28,
+      "winner_sp_known": 28,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-13",
+      "rows": 34,
+      "races": 34,
+      "winner_sp_known": 34,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-12",
+      "rows": 38,
+      "races": 38,
+      "winner_sp_known": 37,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-10",
+      "rows": 21,
+      "races": 21,
+      "winner_sp_known": 21,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-09",
+      "rows": 56,
+      "races": 56,
+      "winner_sp_known": 56,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-08",
+      "rows": 44,
+      "races": 44,
+      "winner_sp_known": 44,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-07",
+      "rows": 36,
+      "races": 36,
+      "winner_sp_known": 36,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-06",
+      "rows": 31,
+      "races": 31,
+      "winner_sp_known": 31,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-05",
+      "rows": 31,
+      "races": 31,
+      "winner_sp_known": 31,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-04",
+      "rows": 49,
+      "races": 49,
+      "winner_sp_known": 49,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-03",
+      "rows": 35,
+      "races": 35,
+      "winner_sp_known": 34,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-02",
+      "rows": 40,
+      "races": 40,
+      "winner_sp_known": 40,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-05-01",
+      "rows": 34,
+      "races": 34,
+      "winner_sp_known": 34,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 34,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-30",
+      "rows": 36,
+      "races": 36,
+      "winner_sp_known": 36,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 36,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-29",
+      "rows": 33,
+      "races": 33,
+      "winner_sp_known": 33,
+      "pick_sp_known": 29,
+      "field_size_known": 0,
+      "race_type_known": 33,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-28",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 29,
+      "pick_sp_known": 25,
+      "field_size_known": 0,
+      "race_type_known": 29,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-27",
+      "rows": 26,
+      "races": 26,
+      "winner_sp_known": 26,
+      "pick_sp_known": 21,
+      "field_size_known": 0,
+      "race_type_known": 26,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-25",
+      "rows": 50,
+      "races": 50,
+      "winner_sp_known": 50,
+      "pick_sp_known": 0,
+      "field_size_known": 50,
+      "race_type_known": 50,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-24",
+      "rows": 43,
+      "races": 43,
+      "winner_sp_known": 43,
+      "pick_sp_known": 32,
+      "field_size_known": 43,
+      "race_type_known": 43,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-23",
+      "rows": 39,
+      "races": 39,
+      "winner_sp_known": 39,
+      "pick_sp_known": 35,
+      "field_size_known": 39,
+      "race_type_known": 39,
+      "verdict_id_known": 39
+    },
+    {
+      "date": "2026-04-22",
+      "rows": 32,
+      "races": 32,
+      "winner_sp_known": 32,
+      "pick_sp_known": 32,
+      "field_size_known": 32,
+      "race_type_known": 32,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-21",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 29,
+      "pick_sp_known": 27,
+      "field_size_known": 29,
+      "race_type_known": 29,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-20",
+      "rows": 37,
+      "races": 37,
+      "winner_sp_known": 37,
+      "pick_sp_known": 37,
+      "field_size_known": 37,
+      "race_type_known": 37,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-19",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 29,
+      "pick_sp_known": 25,
+      "field_size_known": 29,
+      "race_type_known": 29,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-18",
+      "rows": 45,
+      "races": 45,
+      "winner_sp_known": 45,
+      "pick_sp_known": 44,
+      "field_size_known": 45,
+      "race_type_known": 45,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-17",
+      "rows": 35,
+      "races": 35,
+      "winner_sp_known": 35,
+      "pick_sp_known": 34,
+      "field_size_known": 35,
+      "race_type_known": 35,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-16",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 29,
+      "pick_sp_known": 24,
+      "field_size_known": 29,
+      "race_type_known": 29,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-15",
+      "rows": 38,
+      "races": 38,
+      "winner_sp_known": 38,
+      "pick_sp_known": 36,
+      "field_size_known": 38,
+      "race_type_known": 38,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-14",
+      "rows": 35,
+      "races": 35,
+      "winner_sp_known": 35,
+      "pick_sp_known": 33,
+      "field_size_known": 35,
+      "race_type_known": 35,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-13",
+      "rows": 29,
+      "races": 29,
+      "winner_sp_known": 29,
+      "pick_sp_known": 29,
+      "field_size_known": 29,
+      "race_type_known": 29,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-12",
+      "rows": 36,
+      "races": 36,
+      "winner_sp_known": 36,
+      "pick_sp_known": 34,
+      "field_size_known": 36,
+      "race_type_known": 36,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-11",
+      "rows": 44,
+      "races": 44,
+      "winner_sp_known": 44,
+      "pick_sp_known": 39,
+      "field_size_known": 44,
+      "race_type_known": 44,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-10",
+      "rows": 41,
+      "races": 41,
+      "winner_sp_known": 41,
+      "pick_sp_known": 39,
+      "field_size_known": 41,
+      "race_type_known": 41,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-09",
+      "rows": 35,
+      "races": 35,
+      "winner_sp_known": 35,
+      "pick_sp_known": 29,
+      "field_size_known": 35,
+      "race_type_known": 35,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-08",
+      "rows": 37,
+      "races": 37,
+      "winner_sp_known": 37,
+      "pick_sp_known": 35,
+      "field_size_known": 37,
+      "race_type_known": 37,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-07",
+      "rows": 23,
+      "races": 23,
+      "winner_sp_known": 23,
+      "pick_sp_known": 23,
+      "field_size_known": 23,
+      "race_type_known": 23,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-06",
+      "rows": 44,
+      "races": 44,
+      "winner_sp_known": 44,
+      "pick_sp_known": 42,
+      "field_size_known": 44,
+      "race_type_known": 44,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-04",
+      "rows": 46,
+      "races": 46,
+      "winner_sp_known": 46,
+      "pick_sp_known": 38,
+      "field_size_known": 46,
+      "race_type_known": 46,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-03",
+      "rows": 22,
+      "races": 22,
+      "winner_sp_known": 22,
+      "pick_sp_known": 20,
+      "field_size_known": 22,
+      "race_type_known": 22,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-02",
+      "rows": 27,
+      "races": 27,
+      "winner_sp_known": 27,
+      "pick_sp_known": 27,
+      "field_size_known": 27,
+      "race_type_known": 27,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-04-01",
+      "rows": 33,
+      "races": 33,
+      "winner_sp_known": 33,
+      "pick_sp_known": 33,
+      "field_size_known": 33,
+      "race_type_known": 33,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-03-31",
+      "rows": 27,
+      "races": 27,
+      "winner_sp_known": 27,
+      "pick_sp_known": 26,
+      "field_size_known": 27,
+      "race_type_known": 27,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-03-29",
+      "rows": 22,
+      "races": 22,
+      "winner_sp_known": 22,
+      "pick_sp_known": 21,
+      "field_size_known": 22,
+      "race_type_known": 22,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-03-28",
+      "rows": 32,
+      "races": 32,
+      "winner_sp_known": 32,
+      "pick_sp_known": 32,
+      "field_size_known": 32,
+      "race_type_known": 32,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-03-27",
+      "rows": 36,
+      "races": 36,
+      "winner_sp_known": 36,
+      "pick_sp_known": 35,
+      "field_size_known": 36,
+      "race_type_known": 36,
+      "verdict_id_known": 36
+    },
+    {
+      "date": "2026-03-26",
+      "rows": 35,
+      "races": 35,
+      "winner_sp_known": 35,
+      "pick_sp_known": 34,
+      "field_size_known": 35,
+      "race_type_known": 35,
+      "verdict_id_known": 35
+    },
+    {
+      "date": "2026-03-25",
+      "rows": 30,
+      "races": 30,
+      "winner_sp_known": 30,
+      "pick_sp_known": 30,
+      "field_size_known": 30,
+      "race_type_known": 30,
+      "verdict_id_known": 30
+    },
+    {
+      "date": "2026-03-24",
+      "rows": 23,
+      "races": 23,
+      "winner_sp_known": 23,
+      "pick_sp_known": 23,
+      "field_size_known": 23,
+      "race_type_known": 23,
+      "verdict_id_known": 23
+    },
+    {
+      "date": "2026-03-23",
+      "rows": 21,
+      "races": 21,
+      "winner_sp_known": 21,
+      "pick_sp_known": 21,
+      "field_size_known": 21,
+      "race_type_known": 21,
+      "verdict_id_known": 21
+    },
+    {
+      "date": "2026-03-19",
+      "rows": 26,
+      "races": 26,
+      "winner_sp_known": 26,
+      "pick_sp_known": 25,
+      "field_size_known": 26,
+      "race_type_known": 26,
+      "verdict_id_known": 26
+    },
+    {
+      "date": "2026-03-17",
+      "rows": 37,
+      "races": 37,
+      "winner_sp_known": 37,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-02-25",
+      "rows": 2,
+      "races": 2,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-02-22",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-02-20",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-02-18",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-02-15",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-02-10",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-02-05",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-01-30",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-01-25",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-01-20",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-01-15",
+      "rows": 3,
+      "races": 3,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 0,
+      "verdict_id_known": 0
+    },
+    {
+      "date": "2026-01-09",
+      "rows": 5,
+      "races": 5,
+      "winner_sp_known": 0,
+      "pick_sp_known": 0,
+      "field_size_known": 0,
+      "race_type_known": 5,
+      "verdict_id_known": 0
+    }
+  ],
+  "classification": "WRITE_PATH_SPLIT",
+  "vfu21_sufficient": false,
+  "final_classifications": [
+    "SIGMA_23_REGRESSION_AUDIT_COMPLETE",
+    "ACTIVE_PIPELINE_REGRESSION_CONFIRMED",
+    "WINNER_SP_PATH_ALIVE",
+    "PICK_SP_PATH_BROKEN",
+    "FIELD_SIZE_PATH_BROKEN",
+    "RACE_TYPE_PATH_BROKEN",
+    "VERDICT_LINKAGE_PATH_BROKEN",
+    "VFU_21_NOT_SUFFICIENT_FOR_JUNE23_GAP",
+    "NO_SUPABASE_WRITES",
+    "REPORT_ONLY"
+  ]
+}

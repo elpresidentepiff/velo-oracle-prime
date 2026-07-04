@@ -1,0 +1,5 @@
+script,role,writes_pick_sp,writes_field_size,writes_race_type,writes_verdict_id,writes_winner_sp,supabase_write
+scripts/ops/run_results_sigma.py,live daily sigma reconciliation writer (LOCKED),no,no,no,no,yes,yes (sigma_audits upsert on race_id, line 1086)
+scripts/ops/vfu_enrich_pick_sp.py,VFU-03 local pick_sp enrichment,local file only,no,no,no,no,no (local-only, last touched 2026-06-14)
+scripts/ops/vfu_21_pick_sp_backfill.py,VFU-21 local pick_sp backfill ledger,local ledger only,no,no,no,no,no (blocked_from_live_use=True, local-only)
+(none found),no script writes verdict_id to Supabase,,,,,,not found anywhere in scripts/ops/*.py
