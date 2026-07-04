@@ -89,3 +89,64 @@ python scripts/run_velo_council.py --date YYYY-MM-DD
 - No changing router lanes.
 - No automatic promotion.
 - Council output is **SHADOW / OPERATOR ONLY**.
+
+---
+
+## 6. Daily Run Truth Duty
+
+> Recovered from STASH-02 salvage review of stash@{4}; docs-only governance addition; no code change.
+
+The council is not allowed to act as if "the system ran" unless the daily run-truth packet exists.
+
+### Named ownership
+
+#### DATA AUDITOR
+- **Owns** the daily run-truth watchdog.
+- Must run or review:
+  - `python scripts/ops/velo_daily_run_truth_watchdog.py --date YYYY-MM-DD`
+- Must classify the day as one of:
+  - `AUTOMATED_RUN_OK`
+  - `MANUAL_RECOVERY_ONLY`
+  - `RUN_FAILED_NO_VERDICTS`
+  - `FALSE_PASS_NO_VERDICTS`
+  - `NO_SCORING_RUN`
+  - `RUNNING_OR_STALLED`
+  - `VERDICTS_WITHOUT_PIPELINE_TRUTH`
+- Has veto power over operator trust if the truth packet is missing or degraded.
+
+#### PRIME CHAIR
+- **Owns escalation** when the watchdog is not `AUTOMATED_RUN_OK`.
+- Must treat:
+  - manual-only recovery,
+  - missing local truth,
+  - missing commit SHA,
+  - and untracked Telegram delivery
+as explicit governance defects, not background noise.
+
+### Required packet
+
+Every race day must have:
+- `data/velo_daily_run_truth_YYYY_MM_DD.json`
+- `data/velo_daily_run_truth_YYYY_MM_DD.md`
+
+If those files do not exist, the council is not operating on proven truth.
+
+### Five separate truths the council must keep distinct
+
+- **Deploy truth**: what code was deployed
+- **Cron truth**: whether the scheduled scorer actually fired
+- **Supabase truth**: whether verdicts were written
+- **Local truth**: whether the local verdict artifact hydrated
+- **Telegram truth**: whether operator delivery was actually proven
+
+These are separate facts. One does not imply the others.
+
+### Hard rule
+
+The council must not say "the day ran" unless at minimum:
+- cron truth is proven or manual recovery is explicitly labeled
+- Supabase verdict truth is present
+- local truth is present or explicitly marked degraded
+
+If Telegram delivery is not logged in the system of record, the council must mark it:
+- `UNTRACKED_IN_SYSTEM_OF_RECORD`
