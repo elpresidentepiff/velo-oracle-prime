@@ -1,0 +1,5 @@
+artifact,target_table,status,strength,note
+data/reports/vfu_21_pick_sp_backfill_ledger.jsonl,sigma_audits.pick_sp,already in git (commit 7af104e) — not local-only,STRONG,repeat of REPO-01/LOCAL-01 finding; 86.3% local coverage vs 38.27% Supabase; EW ROI on recovered rows -12.5%, needs explicit operator approval before write; this is SUPA-02 scope, not DATA-01
+data/reports/local_draw_stats_by_course.csv,course_profiles (handedness/draw geometry),already in git,PARTIAL,repeat of LOCAL-01 finding; 14 courses / 49 races VERIFIED_LOCAL
+sigma_audits <-> velo_verdicts linkage,velo_verdicts.id / sigma_audits.verdict_id,no local file found in this pass either,NONE_FOUND,confirmed again — no new linkage file discovered; remains open for SUPA-02
+runner_prediction_snapshots freshness gap (stale since 2026-06-19),runner_prediction_snapshots,no local bridging file found,NONE_FOUND,repeat finding from LOCAL-01, no new local artifact closes this gap
