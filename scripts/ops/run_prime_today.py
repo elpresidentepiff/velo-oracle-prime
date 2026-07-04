@@ -2444,17 +2444,26 @@ def main():
     # STORAGE ONLY — never alters scoring, routing, or execution.
     # Batch write of all runners across all scored races.
     # Failure logs a warning and returns 0; never aborts the pipeline.
-    try:
-        _snapshot_n = _write_runner_snapshots(
-            scored=scored,
-            date_str=date_str,
-            date_tag=date_tag,
-            run_id=_snapshot_run_id,
-            supabase_client=db if runner_snapshots_enabled else None,
-        )
-        print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}_{_snapshot_run_id}.jsonl")
-    except Exception as _snap_exc:
-        print(f"\nRunner snapshot write skipped: {_snap_exc}")
+    #
+    # SIGMA-28B: when disabled (--verdicts-only / --no-runner-snapshots), the
+    # writer function itself is not called at all — write_runner_snapshots()
+    # always writes a local JSONL file regardless of supabase_client, so
+    # passing supabase_client=None alone would still produce local runner
+    # snapshot files. "Disabled" means the side-effect function never runs.
+    if runner_snapshots_enabled:
+        try:
+            _snapshot_n = _write_runner_snapshots(
+                scored=scored,
+                date_str=date_str,
+                date_tag=date_tag,
+                run_id=_snapshot_run_id,
+                supabase_client=db,
+            )
+            print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}_{_snapshot_run_id}.jsonl")
+        except Exception as _snap_exc:
+            print(f"\nRunner snapshot write skipped: {_snap_exc}")
+    else:
+        print("\nRUNNER SNAPSHOTS: skipped by --verdicts-only/--no-runner-snapshots")
     _timer.mark("runner_snapshots", races=len(scored), runners=sum(len(p) for _, p, _, _ in scored))
 
     # ── TIMING AUDIT ──────────────────────────────────────────────────────────
