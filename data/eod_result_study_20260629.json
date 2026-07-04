@@ -1,0 +1,105 @@
+{
+  "date": "2026-06-29",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "sigma": {
+    "races_studied": 33,
+    "predictions_matched": 34,
+    "results_matched": 33,
+    "winners_found": 12,
+    "strike_rate": 0.36363636363636365,
+    "top_1_accuracy": 0.36363636363636365,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.26185070696969687,
+    "calibration_error": 0.17873030303030304,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 12,
+    "calibration_error_count": 9,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 1,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "923563",
+        "horse": "Beelzebub",
+        "prob": 0.6337,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "922090",
+        "horse": "Tiny Riot",
+        "prob": 0.6063,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "923562",
+        "horse": "This Moment",
+        "prob": 0.5543,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "922161",
+        "horse": "Captaincy",
+        "prob": 0.6895,
+        "result": "WIN"
+      },
+      {
+        "race_id": "923759",
+        "horse": "Duidin",
+        "prob": 0.547,
+        "result": "WIN"
+      },
+      {
+        "race_id": "922152",
+        "horse": "Alfred Wincham",
+        "prob": 0.3833,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "WEAK_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 33 races today",
+    "shadow_state_after_summary": "Evolved to 512 races",
+    "events_studied": 33,
+    "updates_applied": 0,
+    "duplicates_skipped": 33,
+    "loss_count_by_type": {
+      "CALIBRATION_ERROR": 9,
+      "NONE": 12,
+      "WRONG_HORSE": 12,
+      "DATA_ERROR": 1
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}
