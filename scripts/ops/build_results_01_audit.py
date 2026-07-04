@@ -18,14 +18,12 @@ HARD CONSTRAINTS:
 - SP_PROXY_IS_NOT_DIVIDEND_PROOF
 """
 
-import json
 import csv
-import os
 import glob
-import sys
-import re
-from datetime import datetime
+import json
+import os
 from collections import defaultdict
+from datetime import datetime
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DATA_DIR = os.path.join(REPO_ROOT, "data")
@@ -83,6 +81,7 @@ FINAL_CLASSIFICATIONS = [
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _sp_to_dec(sp_val):
     """Convert SP to decimal. Handles fractional '9/2', decimal 4.5, None, etc."""
@@ -147,12 +146,13 @@ def _normalize_course(name):
 # Data loaders
 # ---------------------------------------------------------------------------
 
+
 def _load_sigma_dump():
     path = os.path.join(DATA_DIR, "sigma_audits_dump.json")
     if not os.path.exists(path):
         print(f"  WARNING: sigma_audits_dump.json not found at {path}")
         return []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     rows = data if isinstance(data, list) else data.get("rows", [])
     # Enrich each row with derived fields
@@ -179,7 +179,7 @@ def _load_ledger():
         print(f"  WARNING: model_comparison_ledger.csv not found at {path}")
         return []
     rows = []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             rows.append(dict(row))
@@ -193,9 +193,11 @@ def _load_sigma_results():
     result_map = {}
     for fp in files:
         try:
-            with open(fp, "r", encoding="utf-8") as f:
+            with open(fp, encoding="utf-8") as f:
                 data = json.load(f)
-            date_key = data.get("date", os.path.basename(fp).replace("sigma_results_", "").replace(".json", "").replace("_", "-"))
+            date_key = data.get(
+                "date", os.path.basename(fp).replace("sigma_results_", "").replace(".json", "").replace("_", "-")
+            )
             result_map[date_key] = data
         except Exception as e:
             print(f"  WARNING: Could not load {fp}: {e}")
@@ -206,11 +208,11 @@ def _load_results_map():
     """Load all rp_results_*.json files. Returns dict keyed by race_id, also date-keyed dict."""
     pattern = os.path.join(DATA_DIR, "results", "rp_results_*.json")
     files = glob.glob(pattern)
-    race_map = {}   # race_id -> result dict
-    date_map = {}   # date -> list of result dicts
+    race_map = {}  # race_id -> result dict
+    date_map = {}  # date -> list of result dicts
     for fp in files:
         try:
-            with open(fp, "r", encoding="utf-8") as f:
+            with open(fp, encoding="utf-8") as f:
                 data = json.load(f)
             results = data.get("results", []) if isinstance(data, dict) else data
             date_str = data.get("date", "") if isinstance(data, dict) else ""
@@ -237,7 +239,7 @@ def _load_verdicts_map():
     verdict_map = {}
     for fp in files:
         try:
-            with open(fp, "r", encoding="utf-8") as f:
+            with open(fp, encoding="utf-8") as f:
                 data = json.load(f)
             items = data if isinstance(data, list) else data.get("items", data.get("races", []))
             for item in items:
@@ -257,7 +259,7 @@ def _load_radical_shadow_map():
     shadow_map = {}
     for fp in files:
         try:
-            with open(fp, "r", encoding="utf-8") as f:
+            with open(fp, encoding="utf-8") as f:
                 data = json.load(f)
             decisions = data.get("decisions", [])
             for d in decisions:
@@ -275,9 +277,11 @@ def _load_parquet_optional(path):
         return None, "FILE_NOT_FOUND"
     try:
         import pyarrow.parquet as pq
+
         tbl = pq.read_table(path)
         try:
             import pandas as pd
+
             return tbl.to_pandas(), "LOADED_PYARROW_PANDAS"
         except ImportError:
             # Return as dict-list
@@ -291,6 +295,7 @@ def _load_parquet_optional(path):
         pass
     try:
         import pandas as pd
+
         df = pd.read_parquet(path)
         return df, "LOADED_PANDAS"
     except ImportError:
@@ -303,13 +308,14 @@ def _load_parquet_optional(path):
 # Section functions
 # ---------------------------------------------------------------------------
 
+
 def _section1_inventory(audit_rows, ledger_rows, sigma_results_map, race_map, verdict_map):
     """Data coverage inventory."""
-    dates_in_audit = set(r["_date"] for r in audit_rows if r["_date"] != "UNKNOWN")
-    dates_in_ledger = set(r.get("date", "") for r in ledger_rows if r.get("date"))
+    dates_in_audit = {r["_date"] for r in audit_rows if r["_date"] != "UNKNOWN"}
+    dates_in_ledger = {r.get("date", "") for r in ledger_rows if r.get("date")}
     dates_in_sigma_results = set(sigma_results_map.keys())
     dates_in_results = set()
-    for rid, res in race_map.items():
+    for _rid, res in race_map.items():
         d = res.get("date", "")
         if d:
             dates_in_results.add(d)
@@ -351,7 +357,7 @@ def _section1_inventory(audit_rows, ledger_rows, sigma_results_map, race_map, ve
             "actual_winner_sp": f"{winner_sp_present}/{len(audit_rows)}",
             "pick_sp": f"{pick_sp_present}/{len(audit_rows)}",
             "actual_winner_name": f"{winner_name_present}/{len(audit_rows)}",
-        }
+        },
     }
 
 
@@ -380,19 +386,21 @@ def _section2_horses_landed(audit_rows, ledger_rows):
             # Also try ledger by date+course+off
         sp_dec = r["_winner_sp_dec"]
         pick_sp_dec = r["_pick_sp_dec"]
-        wins.append({
-            "date": r["_date"],
-            "course": r["_course"],
-            "off_time": r.get("off_time") or "UNKNOWN",
-            "horse_name": horse_name,
-            "winner_sp": sp_dec if sp_dec is not None else "PRICE_UNKNOWN",
-            "pick_sp": pick_sp_dec if pick_sp_dec is not None else "PRICE_UNKNOWN",
-            "tier": r["_tier"] or "UNKNOWN",
-            "race_type": r.get("race_type") or "UNKNOWN",
-            "assigned_product": r.get("assigned_product") or "UNKNOWN",
-            "verdict_score": r.get("verdict_score") or "UNKNOWN",
-            "odds_band": r["_winner_odds_band"],
-        })
+        wins.append(
+            {
+                "date": r["_date"],
+                "course": r["_course"],
+                "off_time": r.get("off_time") or "UNKNOWN",
+                "horse_name": horse_name,
+                "winner_sp": sp_dec if sp_dec is not None else "PRICE_UNKNOWN",
+                "pick_sp": pick_sp_dec if pick_sp_dec is not None else "PRICE_UNKNOWN",
+                "tier": r["_tier"] or "UNKNOWN",
+                "race_type": r.get("race_type") or "UNKNOWN",
+                "assigned_product": r.get("assigned_product") or "UNKNOWN",
+                "verdict_score": r.get("verdict_score") or "UNKNOWN",
+                "odds_band": r["_winner_odds_band"],
+            }
+        )
     # Sort by SP descending (biggest priced wins first)
     wins.sort(key=lambda x: float(x["winner_sp"]) if isinstance(x["winner_sp"], (int, float)) else 0.0, reverse=True)
     return wins
@@ -405,32 +413,36 @@ def _section3_biggest_price(audit_rows):
     for r in audit_rows:
         sp_dec = r["_winner_sp_dec"]
         if r["_is_win"] and sp_dec is not None:
-            wins.append({
-                "date": r["_date"],
-                "course": r["_course"],
-                "off_time": r.get("off_time") or "UNKNOWN",
-                "horse_name": r.get("actual_winner_name") or "UNKNOWN",
-                "winner_sp": sp_dec,
-                "pick_sp": r["_pick_sp_dec"] if r["_pick_sp_dec"] is not None else "PRICE_UNKNOWN",
-                "tier": r["_tier"],
-                "race_type": r.get("race_type") or "UNKNOWN",
-                "outcome": "WIN",
-            })
-        elif r["_is_place"] and not r["_is_win"]:
-            pos = r.get("top_pick_position")
-            if pos in (2, 3):
-                places.append({
+            wins.append(
+                {
                     "date": r["_date"],
                     "course": r["_course"],
                     "off_time": r.get("off_time") or "UNKNOWN",
                     "horse_name": r.get("actual_winner_name") or "UNKNOWN",
-                    "winner_sp": sp_dec if sp_dec is not None else "PRICE_UNKNOWN",
+                    "winner_sp": sp_dec,
                     "pick_sp": r["_pick_sp_dec"] if r["_pick_sp_dec"] is not None else "PRICE_UNKNOWN",
-                    "position": pos,
                     "tier": r["_tier"],
                     "race_type": r.get("race_type") or "UNKNOWN",
-                    "outcome": "PLACED",
-                })
+                    "outcome": "WIN",
+                }
+            )
+        elif r["_is_place"] and not r["_is_win"]:
+            pos = r.get("top_pick_position")
+            if pos in (2, 3):
+                places.append(
+                    {
+                        "date": r["_date"],
+                        "course": r["_course"],
+                        "off_time": r.get("off_time") or "UNKNOWN",
+                        "horse_name": r.get("actual_winner_name") or "UNKNOWN",
+                        "winner_sp": sp_dec if sp_dec is not None else "PRICE_UNKNOWN",
+                        "pick_sp": r["_pick_sp_dec"] if r["_pick_sp_dec"] is not None else "PRICE_UNKNOWN",
+                        "position": pos,
+                        "tier": r["_tier"],
+                        "race_type": r.get("race_type") or "UNKNOWN",
+                        "outcome": "PLACED",
+                    }
+                )
     wins.sort(key=lambda x: float(x["winner_sp"]) if isinstance(x["winner_sp"], (int, float)) else 0.0, reverse=True)
     places.sort(key=lambda x: float(x["winner_sp"]) if isinstance(x["winner_sp"], (int, float)) else 0.0, reverse=True)
     return wins[:50], places[:50]
@@ -438,12 +450,16 @@ def _section3_biggest_price(audit_rows):
 
 def _section4_course_performance(audit_rows):
     """Per-course performance dict."""
-    course_data = defaultdict(lambda: {
-        "total": 0, "wins": 0, "places": 0,
-        "winner_sps": [],
-        "miss_classes": defaultdict(int),
-        "tiers": defaultdict(int),
-    })
+    course_data = defaultdict(
+        lambda: {
+            "total": 0,
+            "wins": 0,
+            "places": 0,
+            "winner_sps": [],
+            "miss_classes": defaultdict(int),
+            "tiers": defaultdict(int),
+        }
+    )
     for r in audit_rows:
         c = r["_course"]
         course_data[c]["total"] += 1
@@ -591,19 +607,30 @@ def _section6_lane_performance(audit_rows, ledger_rows):
     lane_summary = {}
     for prod, d in product_data.items():
         lane_summary[f"PRODUCT_{prod}"] = {
-            "n": d["n"], "wins": d["wins"], "places": d["places"],
-            "sr": _sr(d), "place_rate": _fr(d), "source": "sigma_dump"
+            "n": d["n"],
+            "wins": d["wins"],
+            "places": d["places"],
+            "sr": _sr(d),
+            "place_rate": _fr(d),
+            "source": "sigma_dump",
         }
     for tier, d in tier_data.items():
         lane_summary[f"TIER_{tier}"] = {
-            "n": d["n"], "wins": d["wins"], "places": d["places"],
-            "sr": _sr(d), "place_rate": _fr(d), "source": "sigma_dump"
+            "n": d["n"],
+            "wins": d["wins"],
+            "places": d["places"],
+            "sr": _sr(d),
+            "place_rate": _fr(d),
+            "source": "sigma_dump",
         }
     lane_summary["VP_HIGH"] = {
-        "n": vs_high_data["n"], "wins": vs_high_data["wins"],
+        "n": vs_high_data["n"],
+        "wins": vs_high_data["wins"],
         "places": vs_high_data["places"],
-        "sr": _sr(vs_high_data), "place_rate": _fr(vs_high_data),
-        "source": "sigma_dump", "note": "verdict_score>=0.4"
+        "sr": _sr(vs_high_data),
+        "place_rate": _fr(vs_high_data),
+        "source": "sigma_dump",
+        "note": "verdict_score>=0.4",
     }
 
     # Ledger lanes: NB, NoRPR, EW, WIN_ONLY, PASS, etc.
@@ -642,16 +669,28 @@ def _section6_lane_performance(audit_rows, ledger_rows):
 
     for prod, d in ledger_lanes.items():
         lane_summary[f"LEDGER_PRODUCT_{prod}"] = {
-            "n": d["n"], "wins": d["wins"], "places": d["places"],
-            "sr": _sr(d), "place_rate": _fr(d), "source": "ledger"
+            "n": d["n"],
+            "wins": d["wins"],
+            "places": d["places"],
+            "sr": _sr(d),
+            "place_rate": _fr(d),
+            "source": "ledger",
         }
     lane_summary["NEW_BUILD"] = {
-        "n": nb_data["n"], "wins": nb_data["wins"], "places": nb_data["places"],
-        "sr": _sr(nb_data), "place_rate": _fr(nb_data), "source": "ledger"
+        "n": nb_data["n"],
+        "wins": nb_data["wins"],
+        "places": nb_data["places"],
+        "sr": _sr(nb_data),
+        "place_rate": _fr(nb_data),
+        "source": "ledger",
     }
     lane_summary["NO_RPR"] = {
-        "n": norpr_data["n"], "wins": norpr_data["wins"], "places": norpr_data["places"],
-        "sr": _sr(norpr_data), "place_rate": _fr(norpr_data), "source": "ledger"
+        "n": norpr_data["n"],
+        "wins": norpr_data["wins"],
+        "places": norpr_data["places"],
+        "sr": _sr(norpr_data),
+        "place_rate": _fr(norpr_data),
+        "source": "ledger",
     }
 
     return lane_summary
@@ -669,15 +708,17 @@ def _section7_rpr_dependency(audit_rows, verdict_map):
         if sqpe_v17 is not None and sqpe_norpr is not None:
             try:
                 gap = float(sqpe_v17) - float(sqpe_norpr)
-                rpr_data.append({
-                    "race_id": rid,
-                    "date": r["_date"],
-                    "outcome": r.get("outcome", ""),
-                    "is_win": r["_is_win"],
-                    "rpr_gap": round(gap, 4),
-                    "rpr_boosted": gap > 0.01,
-                    "rpr_dragged": gap < -0.01,
-                })
+                rpr_data.append(
+                    {
+                        "race_id": rid,
+                        "date": r["_date"],
+                        "outcome": r.get("outcome", ""),
+                        "is_win": r["_is_win"],
+                        "rpr_gap": round(gap, 4),
+                        "rpr_boosted": gap > 0.01,
+                        "rpr_dragged": gap < -0.01,
+                    }
+                )
             except (TypeError, ValueError):
                 pass
 
@@ -744,18 +785,20 @@ def _section8_new_build(ledger_rows, race_map):
         except ValueError:
             prob = None
 
-        nb_rows.append({
-            "date": row.get("date", ""),
-            "race_id": row.get("race_id", ""),
-            "course": row.get("course", ""),
-            "nb_pick": nb_pick,
-            "nb_prob": prob,
-            "nb_outcome": nb_out,
-            "is_win": is_win,
-            "is_place": is_place,
-            "in_top3": in_top3,
-            "winner": winner,
-        })
+        nb_rows.append(
+            {
+                "date": row.get("date", ""),
+                "race_id": row.get("race_id", ""),
+                "course": row.get("course", ""),
+                "nb_pick": nb_pick,
+                "nb_prob": prob,
+                "nb_outcome": nb_out,
+                "is_win": is_win,
+                "is_place": is_place,
+                "in_top3": in_top3,
+                "winner": winner,
+            }
+        )
 
     n = len(nb_rows)
     if n == 0:
@@ -801,20 +844,22 @@ def _section9_ew_candidate(audit_rows, ledger_rows, race_map):
         winner_sp = result.get("winner_sp", None) if result else None
         winner_sp_dec = _sp_to_dec(winner_sp)
 
-        ew_rows.append({
-            "date": row.get("date", ""),
-            "race_id": rid,
-            "course": row.get("course", ""),
-            "off": row.get("off", ""),
-            "pick": row.get("velo_top_pick", ""),
-            "velo_outcome": velo_out,
-            "ew_outcome": ew_out,
-            "field_size": field_size,
-            "going": going,
-            "winner_sp_dec": winner_sp_dec if winner_sp_dec is not None else "PRICE_UNKNOWN",
-            "is_ew_win": ew_out == "EW_WIN",
-            "is_ew_place": ew_out in ("EW_WIN", "EW_PLACE"),
-        })
+        ew_rows.append(
+            {
+                "date": row.get("date", ""),
+                "race_id": rid,
+                "course": row.get("course", ""),
+                "off": row.get("off", ""),
+                "pick": row.get("velo_top_pick", ""),
+                "velo_outcome": velo_out,
+                "ew_outcome": ew_out,
+                "field_size": field_size,
+                "going": going,
+                "winner_sp_dec": winner_sp_dec if winner_sp_dec is not None else "PRICE_UNKNOWN",
+                "is_ew_win": ew_out == "EW_WIN",
+                "is_ew_place": ew_out in ("EW_WIN", "EW_PLACE"),
+            }
+        )
 
     n = len(ew_rows)
     if n == 0:
@@ -828,7 +873,7 @@ def _section9_ew_candidate(audit_rows, ledger_rows, race_map):
     place_rate = round(ew_places / n, 4) if n > 0 else 0.0
 
     # EW profit cannot be claimed without price+field
-    profit_claimable = (unknown_field == 0 and unknown_sp == 0)
+    profit_claimable = unknown_field == 0 and unknown_sp == 0
     ew_verdict = "EW_REALITY_CHECKED"
     if unknown_field > 0 or unknown_sp > 0:
         ew_verdict = "EW_PARTIAL_DATA_NO_PROFIT_CLAIM"
@@ -856,7 +901,7 @@ def _section10_midprice_miss(audit_rows, ledger_rows):
     # Also build by date+course+off as fallback
     ledger_by_dco = {}
     for row in ledger_rows:
-        key = f"{row.get('date','')}_{row.get('course','')}_{row.get('off','')}"
+        key = f"{row.get('date', '')}_{row.get('course', '')}_{row.get('off', '')}"
         ledger_by_dco[key] = row
 
     recovery_rows = []
@@ -864,7 +909,7 @@ def _section10_midprice_miss(audit_rows, ledger_rows):
         rid = r.get("race_id", "")
         ledger_row = ledger_by_raceid.get(rid)
         if ledger_row is None:
-            dco = f"{r['_date']}_{r['_course']}_{r.get('off_time','')}"
+            dco = f"{r['_date']}_{r['_course']}_{r.get('off_time', '')}"
             ledger_row = ledger_by_dco.get(dco)
 
         nb_pick = ""
@@ -880,20 +925,22 @@ def _section10_midprice_miss(audit_rows, ledger_rows):
             if not actual_winner or actual_winner == "UNKNOWN":
                 actual_winner = ledger_row.get("winner", "UNKNOWN") or "UNKNOWN"
 
-        recovery_rows.append({
-            "date": r["_date"],
-            "race_id": rid,
-            "course": r["_course"],
-            "off_time": r.get("off_time") or "UNKNOWN",
-            "velo_pick": r.get("horse_id", "UNKNOWN"),
-            "actual_winner": actual_winner,
-            "winner_sp": r["_winner_sp_dec"] if r["_winner_sp_dec"] is not None else "PRICE_UNKNOWN",
-            "odds_band": r["_winner_odds_band"],
-            "nb_pick": nb_pick or "UNKNOWN",
-            "nb_outcome": nb_out,
-            "norpr_pick": norpr_pick or "UNKNOWN",
-            "norpr_outcome": norpr_out,
-        })
+        recovery_rows.append(
+            {
+                "date": r["_date"],
+                "race_id": rid,
+                "course": r["_course"],
+                "off_time": r.get("off_time") or "UNKNOWN",
+                "velo_pick": r.get("horse_id", "UNKNOWN"),
+                "actual_winner": actual_winner,
+                "winner_sp": r["_winner_sp_dec"] if r["_winner_sp_dec"] is not None else "PRICE_UNKNOWN",
+                "odds_band": r["_winner_odds_band"],
+                "nb_pick": nb_pick or "UNKNOWN",
+                "nb_outcome": nb_out,
+                "norpr_pick": norpr_pick or "UNKNOWN",
+                "norpr_outcome": norpr_out,
+            }
+        )
 
     n = len(mp_rows)
     nb_hits = sum(1 for r in recovery_rows if str(r.get("nb_outcome", "")).upper() == "WIN")
@@ -941,19 +988,21 @@ def _section11_exotics(ledger_rows, race_map):
         if trifecta_hit:
             trifecta_box_hits += 1
 
-        rows_out.append({
-            "date": row.get("date", ""),
-            "race_id": row.get("race_id", ""),
-            "course": row.get("course", ""),
-            "off": row.get("off", ""),
-            "velo_pick": velo_pick,
-            "nb_pick": nb_pick or "UNKNOWN",
-            "norpr_pick": norpr_pick or "UNKNOWN",
-            "top3": top3_raw,
-            "exacta_box_hit": exacta_hit,
-            "trifecta_box_hit": trifecta_hit,
-            "dividend_status": "DIVIDEND_UNKNOWN",
-        })
+        rows_out.append(
+            {
+                "date": row.get("date", ""),
+                "race_id": row.get("race_id", ""),
+                "course": row.get("course", ""),
+                "off": row.get("off", ""),
+                "velo_pick": velo_pick,
+                "nb_pick": nb_pick or "UNKNOWN",
+                "norpr_pick": norpr_pick or "UNKNOWN",
+                "top3": top3_raw,
+                "exacta_box_hit": exacta_hit,
+                "trifecta_box_hit": trifecta_hit,
+                "dividend_status": "DIVIDEND_UNKNOWN",
+            }
+        )
 
     return {
         "knowable_races": knowable,
@@ -979,29 +1028,23 @@ def _section12_training_gap(audit_rows):
     sigma_rows = 0
     sigma2k_rows = 0
     sigma_dates = []
-    sigma2k_dates = []
 
     if sigma_df is not None:
-        if hasattr(sigma_df, '__len__'):
+        if hasattr(sigma_df, "__len__"):
             sigma_rows = len(sigma_df)
-        if hasattr(sigma_df, 'columns') and 'date' in sigma_df.columns:
+        if hasattr(sigma_df, "columns") and "date" in sigma_df.columns:
             try:
-                sigma_dates = sorted(sigma_df['date'].dropna().unique().tolist())
+                sigma_dates = sorted(sigma_df["date"].dropna().unique().tolist())
             except Exception:
                 pass
-        elif isinstance(sigma_df, list) and sigma_df and 'date' in sigma_df[0]:
-            sigma_dates = sorted(set(str(r.get('date', ''))[:10] for r in sigma_df if r.get('date')))
+        elif isinstance(sigma_df, list) and sigma_df and "date" in sigma_df[0]:
+            sigma_dates = sorted({str(r.get("date", ""))[:10] for r in sigma_df if r.get("date")})
 
     if sigma2k_df is not None:
-        if hasattr(sigma2k_df, '__len__'):
+        if hasattr(sigma2k_df, "__len__"):
             sigma2k_rows = len(sigma2k_df)
-        if hasattr(sigma2k_df, 'columns') and 'date' in sigma2k_df.columns:
-            try:
-                sigma2k_dates = sorted(sigma2k_df['date'].dropna().unique().tolist())
-            except Exception:
-                pass
 
-    audit_dates = sorted(set(r["_date"] for r in audit_rows if r["_date"] != "UNKNOWN"))
+    audit_dates = sorted({r["_date"] for r in audit_rows if r["_date"] != "UNKNOWN"})
 
     gap_dates = [d for d in audit_dates if d not in sigma_dates] if sigma_dates else "UNKNOWN"
 
@@ -1076,7 +1119,6 @@ def _section14_operator_brief(all_sections, win_rows):
     """Plain text operator brief answering 15 questions."""
     inv = all_sections.get("inventory", {})
     course_perf = all_sections.get("course_performance", {})
-    odds_band = all_sections.get("odds_band", {})
     lane_perf = all_sections.get("lane_performance", {})
     rpr = all_sections.get("rpr_dependency", {})
     nb = all_sections.get("new_build", {})
@@ -1103,7 +1145,9 @@ def _section14_operator_brief(all_sections, win_rows):
             top_wins_str += f"\n  - {w['horse_name']} ({w['course']} {w['date']}) {sp_str} [{w['tier']}]"
 
     # Best course
-    course_edges = [c for c, d in course_perf.items() if d.get("label") == "COURSE_EDGE_CONFIRMED" and d.get("n", 0) >= 10]
+    course_edges = [
+        c for c, d in course_perf.items() if d.get("label") == "COURSE_EDGE_CONFIRMED" and d.get("n", 0) >= 10
+    ]
     course_drains = [c for c, d in course_perf.items() if d.get("label") == "COURSE_DRAIN" and d.get("n", 0) >= 10]
 
     # Best tier
@@ -1117,55 +1161,55 @@ def _section14_operator_brief(all_sections, win_rows):
         f"Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
         "=" * 70,
         "",
-        f"Q1. OVERALL PERFORMANCE",
+        "Q1. OVERALL PERFORMANCE",
         f"    Total rows: {total} | Wins: {wins} | Places: {places} | Misses: {misses}",
         f"    Strike Rate: {overall_sr:.1%} | Frame Rate: {overall_fr:.1%}",
-        f"    Date range: {inv.get('sigma_dump_date_count',0)} unique dates in sigma dump",
+        f"    Date range: {inv.get('sigma_dump_date_count', 0)} unique dates in sigma dump",
         "",
-        f"Q2. BIGGEST PRICE WINNERS (top 10 by SP):{top_wins_str or chr(10)+'    No wins with named horse found in sigma dump'}",
+        f"Q2. BIGGEST PRICE WINNERS (top 10 by SP):{top_wins_str or chr(10) + '    No wins with named horse found in sigma dump'}",
         "",
-        f"Q3. TIER BREAKDOWN",
-        f"    Tier A: n={tier_a.get('n',0)} SR={tier_a.get('sr',0):.1%}",
-        f"    Tier B: n={tier_b.get('n',0)} SR={tier_b.get('sr',0):.1%}",
-        f"    Tier C: n={tier_c.get('n',0)} SR={tier_c.get('sr',0):.1%}",
+        "Q3. TIER BREAKDOWN",
+        f"    Tier A: n={tier_a.get('n', 0)} SR={tier_a.get('sr', 0):.1%}",
+        f"    Tier B: n={tier_b.get('n', 0)} SR={tier_b.get('sr', 0):.1%}",
+        f"    Tier C: n={tier_c.get('n', 0)} SR={tier_c.get('sr', 0):.1%}",
         "",
-        f"Q4. COURSE PERFORMANCE",
+        "Q4. COURSE PERFORMANCE",
         f"    Edge confirmed (n>=10): {', '.join(course_edges) or 'None'}",
         f"    Drains (n>=10): {', '.join(course_drains) or 'None'}",
         f"    Total unique courses: {len(course_perf)}",
         "",
-        f"Q5. RPR DEPENDENCY",
+        "Q5. RPR DEPENDENCY",
         f"    Verdict: {rpr.get('verdict', 'UNKNOWN')}",
-        f"    Boosted n={rpr.get('n_rpr_boosted',0)} SR={rpr.get('boost_sr',0):.1%}",
-        f"    Dragged n={rpr.get('n_rpr_dragged',0)} SR={rpr.get('drag_sr',0):.1%}",
-        f"    Avg gap: {rpr.get('avg_gap','UNKNOWN')}",
+        f"    Boosted n={rpr.get('n_rpr_boosted', 0)} SR={rpr.get('boost_sr', 0):.1%}",
+        f"    Dragged n={rpr.get('n_rpr_dragged', 0)} SR={rpr.get('drag_sr', 0):.1%}",
+        f"    Avg gap: {rpr.get('avg_gap', 'UNKNOWN')}",
         "",
-        f"Q6. NEW BUILD MODEL",
-        f"    n={nb.get('n',0)} SR={nb.get('sr',0):.1%} Place={nb.get('place_rate',0):.1%}",
-        f"    Top3 containment={nb.get('top3_hit_rate','UNKNOWN')} — CONTAINMENT IS NOT PROFIT",
+        "Q6. NEW BUILD MODEL",
+        f"    n={nb.get('n', 0)} SR={nb.get('sr', 0):.1%} Place={nb.get('place_rate', 0):.1%}",
+        f"    Top3 containment={nb.get('top3_hit_rate', 'UNKNOWN')} — CONTAINMENT IS NOT PROFIT",
         "",
-        f"Q7. EW CANDIDATE LANE",
-        f"    n={ew.get('n',0)} EW place rate={ew.get('place_rate',0):.1%}",
-        f"    Verdict: {ew.get('verdict','UNKNOWN')}",
-        f"    Unknown field size: {ew.get('unknown_field_size',0)} | Unknown SP: {ew.get('unknown_sp',0)}",
+        "Q7. EW CANDIDATE LANE",
+        f"    n={ew.get('n', 0)} EW place rate={ew.get('place_rate', 0):.1%}",
+        f"    Verdict: {ew.get('verdict', 'UNKNOWN')}",
+        f"    Unknown field size: {ew.get('unknown_field_size', 0)} | Unknown SP: {ew.get('unknown_sp', 0)}",
         "",
-        f"Q8. MID-PRICE MISS RECOVERY",
-        f"    n={mp.get('n_midprice_misses',0)} mid-price misses",
-        f"    NB picked winner: {mp.get('nb_recovery_wins',0)} ({mp.get('nb_recovery_rate',0):.1%})",
-        f"    NoRPR picked winner: {mp.get('norpr_recovery_wins',0)} ({mp.get('norpr_recovery_rate',0):.1%})",
+        "Q8. MID-PRICE MISS RECOVERY",
+        f"    n={mp.get('n_midprice_misses', 0)} mid-price misses",
+        f"    NB picked winner: {mp.get('nb_recovery_wins', 0)} ({mp.get('nb_recovery_rate', 0):.1%})",
+        f"    NoRPR picked winner: {mp.get('norpr_recovery_wins', 0)} ({mp.get('norpr_recovery_rate', 0):.1%})",
         "",
-        f"Q9. EXOTICS SIGNAL",
-        f"    Knowable races: {exotics.get('knowable_races',0)}",
-        f"    Exacta box rate: {exotics.get('exacta_box_rate',0):.1%} ({exotics.get('exacta_box_hits',0)} hits)",
-        f"    Trifecta box rate: {exotics.get('trifecta_box_rate',0):.1%} ({exotics.get('trifecta_box_hits',0)} hits)",
-        f"    *** DIVIDEND STATUS: UNKNOWN — NO PROFIT CLAIM ***",
+        "Q9. EXOTICS SIGNAL",
+        f"    Knowable races: {exotics.get('knowable_races', 0)}",
+        f"    Exacta box rate: {exotics.get('exacta_box_rate', 0):.1%} ({exotics.get('exacta_box_hits', 0)} hits)",
+        f"    Trifecta box rate: {exotics.get('trifecta_box_rate', 0):.1%} ({exotics.get('trifecta_box_hits', 0)} hits)",
+        "    *** DIVIDEND STATUS: UNKNOWN — NO PROFIT CLAIM ***",
         "",
-        f"Q10. TRAINING VS SIGMA GAP",
-        f"    Corpus status: {training.get('sigma_corpus_status','UNKNOWN')}",
-        f"    Corpus rows: {training.get('sigma_corpus_rows',0)}",
-        f"    Gap dates (in audit, not in training): {training.get('gap_count','UNKNOWN')}",
+        "Q10. TRAINING VS SIGMA GAP",
+        f"    Corpus status: {training.get('sigma_corpus_status', 'UNKNOWN')}",
+        f"    Corpus rows: {training.get('sigma_corpus_rows', 0)}",
+        f"    Gap dates (in audit, not in training): {training.get('gap_count', 'UNKNOWN')}",
         "",
-        f"Q11. MISS CLASSIFICATION BREAKDOWN",
+        "Q11. MISS CLASSIFICATION BREAKDOWN",
     ]
     miss_top = inv.get("miss_reason_top5", [])
     for mr, cnt in miss_top:
@@ -1173,33 +1217,33 @@ def _section14_operator_brief(all_sections, win_rows):
 
     lines += [
         "",
-        f"Q12. DATA COVERAGE",
-        f"    winner_sp present: {inv.get('field_coverage',{}).get('actual_winner_sp','UNKNOWN')}",
-        f"    pick_sp present: {inv.get('field_coverage',{}).get('pick_sp','UNKNOWN')}",
-        f"    winner_name present: {inv.get('field_coverage',{}).get('actual_winner_name','UNKNOWN')}",
-        f"    RP results races indexed: {inv.get('rp_results_races',0)}",
-        f"    Verdict races indexed: {inv.get('verdict_races',0)}",
+        "Q12. DATA COVERAGE",
+        f"    winner_sp present: {inv.get('field_coverage', {}).get('actual_winner_sp', 'UNKNOWN')}",
+        f"    pick_sp present: {inv.get('field_coverage', {}).get('pick_sp', 'UNKNOWN')}",
+        f"    winner_name present: {inv.get('field_coverage', {}).get('actual_winner_name', 'UNKNOWN')}",
+        f"    RP results races indexed: {inv.get('rp_results_races', 0)}",
+        f"    Verdict races indexed: {inv.get('verdict_races', 0)}",
         "",
-        f"Q13. HARD CONSTRAINTS CONFIRMED",
-        f"    NO_SUPABASE_WRITES: TRUE",
-        f"    NO_LIVE_SCORING_CHANGE: TRUE",
-        f"    NO_MODEL_PROMOTION: TRUE",
-        f"    NO_TELEGRAM_SEND: TRUE",
-        f"    CANONICAL_HORSE_PASSPORT_NOT_MUTATED: TRUE",
-        f"    CONTAINMENT_IS_NOT_PROFIT: TRUE",
-        f"    SP_PROXY_IS_NOT_DIVIDEND_PROOF: TRUE",
+        "Q13. HARD CONSTRAINTS CONFIRMED",
+        "    NO_SUPABASE_WRITES: TRUE",
+        "    NO_LIVE_SCORING_CHANGE: TRUE",
+        "    NO_MODEL_PROMOTION: TRUE",
+        "    NO_TELEGRAM_SEND: TRUE",
+        "    CANONICAL_HORSE_PASSPORT_NOT_MUTATED: TRUE",
+        "    CONTAINMENT_IS_NOT_PROFIT: TRUE",
+        "    SP_PROXY_IS_NOT_DIVIDEND_PROOF: TRUE",
         "",
-        f"Q14. CONTRADICTIONS FLAGGED",
-        f"    EW profit not claimable (field/SP gaps): {ew.get('unknown_field_size',0)+ew.get('unknown_sp',0)} rows affected",
-        f"    Exotics dividend unknown: {exotics.get('knowable_races',0)} races — NO profit claim",
-        f"    winner_sp missing in audit: {total - int(inv.get('field_coverage',{}).get('actual_winner_sp','0/0').split('/')[0])} rows",
+        "Q14. CONTRADICTIONS FLAGGED",
+        f"    EW profit not claimable (field/SP gaps): {ew.get('unknown_field_size', 0) + ew.get('unknown_sp', 0)} rows affected",
+        f"    Exotics dividend unknown: {exotics.get('knowable_races', 0)} races — NO profit claim",
+        f"    winner_sp missing in audit: {total - int(inv.get('field_coverage', {}).get('actual_winner_sp', '0/0').split('/')[0])} rows",
         "",
-        f"Q15. NEXT OPERATOR ACTIONS (gated)",
-        f"    - Review COURSE_EDGE_CONFIRMED courses for lane targeting",
-        f"    - Verify RPR verdict: {rpr.get('verdict','UNKNOWN')} — adjust weighting if MISLED",
-        f"    - New Build SR={nb.get('sr',0):.1%} — gate promotion at n>=300",
-        f"    - EW candidate: expand dividend data capture before any EW staking",
-        f"    - Training gap: {training.get('gap_count','UNKNOWN')} dates not in training corpus",
+        "Q15. NEXT OPERATOR ACTIONS (gated)",
+        "    - Review COURSE_EDGE_CONFIRMED courses for lane targeting",
+        f"    - Verify RPR verdict: {rpr.get('verdict', 'UNKNOWN')} — adjust weighting if MISLED",
+        f"    - New Build SR={nb.get('sr', 0):.1%} — gate promotion at n>=300",
+        "    - EW candidate: expand dividend data capture before any EW staking",
+        f"    - Training gap: {training.get('gap_count', 'UNKNOWN')} dates not in training corpus",
         "",
         "=" * 70,
         "END OF OPERATOR BRIEF — REPORT_ONLY",
@@ -1211,6 +1255,7 @@ def _section14_operator_brief(all_sections, win_rows):
 # ---------------------------------------------------------------------------
 # CSV writers
 # ---------------------------------------------------------------------------
+
 
 def _write_csv(path, rows, fieldnames=None):
     if not rows:
@@ -1228,6 +1273,7 @@ def _write_csv(path, rows, fieldnames=None):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
 
 def main():
     print("RESULTS-01 — VÉLØ Full Results Truth Audit")
@@ -1265,28 +1311,28 @@ def main():
     print(f"  S4 course performance: {len(course_perf)} courses")
 
     odds_band_data = _section5_odds_band(audit_rows)
-    print(f"  S5 odds band performance: complete")
+    print("  S5 odds band performance: complete")
 
     lane_perf = _section6_lane_performance(audit_rows, ledger_rows)
     print(f"  S6 lane performance: {len(lane_perf)} lanes")
 
     rpr_data = _section7_rpr_dependency(audit_rows, verdict_map)
-    print(f"  S7 RPR dependency: verdict={rpr_data.get('verdict','?')}, n={rpr_data.get('n_with_gap',0)}")
+    print(f"  S7 RPR dependency: verdict={rpr_data.get('verdict', '?')}, n={rpr_data.get('n_with_gap', 0)}")
 
     nb_data = _section8_new_build(ledger_rows, race_map)
-    print(f"  S8 new build: n={nb_data.get('n',0)}, SR={nb_data.get('sr',0):.1%}")
+    print(f"  S8 new build: n={nb_data.get('n', 0)}, SR={nb_data.get('sr', 0):.1%}")
 
     ew_data = _section9_ew_candidate(audit_rows, ledger_rows, race_map)
-    print(f"  S9 EW candidate: n={ew_data.get('n',0)}, place_rate={ew_data.get('place_rate',0):.1%}")
+    print(f"  S9 EW candidate: n={ew_data.get('n', 0)}, place_rate={ew_data.get('place_rate', 0):.1%}")
 
     mp_data = _section10_midprice_miss(audit_rows, ledger_rows)
-    print(f"  S10 midprice miss: n={mp_data.get('n_midprice_misses',0)}")
+    print(f"  S10 midprice miss: n={mp_data.get('n_midprice_misses', 0)}")
 
     exotics_data = _section11_exotics(ledger_rows, race_map)
-    print(f"  S11 exotics: exacta_rate={exotics_data.get('exacta_box_rate',0):.1%}")
+    print(f"  S11 exotics: exacta_rate={exotics_data.get('exacta_box_rate', 0):.1%}")
 
     training_data = _section12_training_gap(audit_rows)
-    print(f"  S12 training gap: {training_data.get('sigma_corpus_status','?')}")
+    print(f"  S12 training gap: {training_data.get('sigma_corpus_status', '?')}")
 
     ext_sources = _section13_external_sources()
     print(f"  S13 external sources: {len(ext_sources)} sources documented")
@@ -1308,7 +1354,7 @@ def main():
     }
 
     operator_brief = _section14_operator_brief(all_sections, win_rows)
-    print(f"  S14 operator brief: written")
+    print("  S14 operator brief: written")
 
     print("\n[3] Writing output files...")
 
@@ -1358,9 +1404,11 @@ def main():
         inv_oc = inv.get("outcome_counts", {})
         total_r = inv.get("sigma_dump_rows", 0)
         f.write(f"- Total sigma dump rows: **{total_r}**\n")
-        f.write(f"- Wins: **{inv_oc.get('WIN',0)}** | Places: **{inv_oc.get('PLACED',0)}** | Misses: **{inv_oc.get('MISS',0)}**\n")
-        f.write(f"- Overall SR: **{inv_oc.get('WIN',0)/max(total_r,1):.1%}**\n")
-        f.write(f"- Dates covered: **{inv.get('sigma_dump_date_count',0)}**\n\n")
+        f.write(
+            f"- Wins: **{inv_oc.get('WIN', 0)}** | Places: **{inv_oc.get('PLACED', 0)}** | Misses: **{inv_oc.get('MISS', 0)}**\n"
+        )
+        f.write(f"- Overall SR: **{inv_oc.get('WIN', 0) / max(total_r, 1):.1%}**\n")
+        f.write(f"- Dates covered: **{inv.get('sigma_dump_date_count', 0)}**\n\n")
         f.write("## Hard Constraints\n\n")
         for c in HARD_CONSTRAINTS:
             f.write(f"- `{c}`\n")
@@ -1368,106 +1416,184 @@ def main():
 
     # Horses landed CSV
     horses_csv_path = os.path.join(REPORTS_DIR, "results_01_horses_landed_table.csv")
-    _write_csv(horses_csv_path, win_rows, fieldnames=[
-        "date", "course", "off_time", "horse_name", "winner_sp", "pick_sp",
-        "tier", "race_type", "assigned_product", "verdict_score", "odds_band"
-    ])
+    _write_csv(
+        horses_csv_path,
+        win_rows,
+        fieldnames=[
+            "date",
+            "course",
+            "off_time",
+            "horse_name",
+            "winner_sp",
+            "pick_sp",
+            "tier",
+            "race_type",
+            "assigned_product",
+            "verdict_score",
+            "odds_band",
+        ],
+    )
     print(f"  Written: {horses_csv_path}")
 
     # Biggest price winners CSV
     bpw_path = os.path.join(REPORTS_DIR, "results_01_biggest_price_winners.csv")
-    _write_csv(bpw_path, biggest_wins, fieldnames=[
-        "date", "course", "off_time", "horse_name", "winner_sp", "pick_sp", "tier", "race_type", "outcome"
-    ])
+    _write_csv(
+        bpw_path,
+        biggest_wins,
+        fieldnames=["date", "course", "off_time", "horse_name", "winner_sp", "pick_sp", "tier", "race_type", "outcome"],
+    )
     print(f"  Written: {bpw_path}")
 
     # Biggest price placers CSV
     bpp_path = os.path.join(REPORTS_DIR, "results_01_biggest_price_placers.csv")
-    _write_csv(bpp_path, biggest_places, fieldnames=[
-        "date", "course", "off_time", "horse_name", "winner_sp", "pick_sp", "position", "tier", "race_type", "outcome"
-    ])
+    _write_csv(
+        bpp_path,
+        biggest_places,
+        fieldnames=[
+            "date",
+            "course",
+            "off_time",
+            "horse_name",
+            "winner_sp",
+            "pick_sp",
+            "position",
+            "tier",
+            "race_type",
+            "outcome",
+        ],
+    )
     print(f"  Written: {bpp_path}")
 
     # Course performance CSV
     course_rows = []
     for course, d in sorted(course_perf.items(), key=lambda x: -x[1]["n"]):
-        course_rows.append({
-            "course": course,
-            "n": d["n"],
-            "wins": d["wins"],
-            "places": d["places"],
-            "sr": d["sr"],
-            "frame_rate": d["frame_rate"],
-            "avg_winner_sp": d["avg_winner_sp"] or "UNKNOWN",
-            "median_winner_sp": d["median_winner_sp"] or "UNKNOWN",
-            "label": d["label"],
-        })
+        course_rows.append(
+            {
+                "course": course,
+                "n": d["n"],
+                "wins": d["wins"],
+                "places": d["places"],
+                "sr": d["sr"],
+                "frame_rate": d["frame_rate"],
+                "avg_winner_sp": d["avg_winner_sp"] or "UNKNOWN",
+                "median_winner_sp": d["median_winner_sp"] or "UNKNOWN",
+                "label": d["label"],
+            }
+        )
     cp_path = os.path.join(REPORTS_DIR, "results_01_course_performance_table.csv")
-    _write_csv(cp_path, course_rows, fieldnames=[
-        "course", "n", "wins", "places", "sr", "frame_rate",
-        "avg_winner_sp", "median_winner_sp", "label"
-    ])
+    _write_csv(
+        cp_path,
+        course_rows,
+        fieldnames=["course", "n", "wins", "places", "sr", "frame_rate", "avg_winner_sp", "median_winner_sp", "label"],
+    )
     print(f"  Written: {cp_path}")
 
     # Odds band CSV
     band_rows = []
     for band, d in odds_band_data.get("by_pick_sp", {}).items():
-        band_rows.append({
-            "odds_band": band,
-            "n_picks": d["n_picks"],
-            "wins": d["wins"],
-            "places": d["places"],
-            "sr": d["sr"],
-            "place_rate": d["place_rate"],
-            "wins_in_band_by_winner_sp": odds_band_data.get("by_winner_sp", {}).get(band, {}).get("wins_at_this_price", 0),
-        })
+        band_rows.append(
+            {
+                "odds_band": band,
+                "n_picks": d["n_picks"],
+                "wins": d["wins"],
+                "places": d["places"],
+                "sr": d["sr"],
+                "place_rate": d["place_rate"],
+                "wins_in_band_by_winner_sp": odds_band_data.get("by_winner_sp", {})
+                .get(band, {})
+                .get("wins_at_this_price", 0),
+            }
+        )
     ob_path = os.path.join(REPORTS_DIR, "results_01_odds_band_performance_table.csv")
-    _write_csv(ob_path, band_rows, fieldnames=[
-        "odds_band", "n_picks", "wins", "places", "sr", "place_rate", "wins_in_band_by_winner_sp"
-    ])
+    _write_csv(
+        ob_path,
+        band_rows,
+        fieldnames=["odds_band", "n_picks", "wins", "places", "sr", "place_rate", "wins_in_band_by_winner_sp"],
+    )
     print(f"  Written: {ob_path}")
 
     # Lane performance CSV
     lane_rows = []
     for lane, d in sorted(lane_perf.items(), key=lambda x: -x[1].get("n", 0)):
-        lane_rows.append({
-            "lane": lane,
-            "n": d.get("n", 0),
-            "wins": d.get("wins", 0),
-            "places": d.get("places", 0),
-            "sr": d.get("sr", 0.0),
-            "place_rate": d.get("place_rate", 0.0),
-            "source": d.get("source", ""),
-            "note": d.get("note", "") or d.get("notee", ""),
-        })
+        lane_rows.append(
+            {
+                "lane": lane,
+                "n": d.get("n", 0),
+                "wins": d.get("wins", 0),
+                "places": d.get("places", 0),
+                "sr": d.get("sr", 0.0),
+                "place_rate": d.get("place_rate", 0.0),
+                "source": d.get("source", ""),
+                "note": d.get("note", "") or d.get("notee", ""),
+            }
+        )
     lp_path = os.path.join(REPORTS_DIR, "results_01_lane_performance_table.csv")
-    _write_csv(lp_path, lane_rows, fieldnames=[
-        "lane", "n", "wins", "places", "sr", "place_rate", "source", "note"
-    ])
+    _write_csv(lp_path, lane_rows, fieldnames=["lane", "n", "wins", "places", "sr", "place_rate", "source", "note"])
     print(f"  Written: {lp_path}")
 
     # Midprice recovery CSV
     mp_path_csv = os.path.join(REPORTS_DIR, "results_01_midprice_recovery_table.csv")
-    _write_csv(mp_path_csv, mp_data.get("rows", []), fieldnames=[
-        "date", "race_id", "course", "off_time", "velo_pick", "actual_winner",
-        "winner_sp", "odds_band", "nb_pick", "nb_outcome", "norpr_pick", "norpr_outcome"
-    ])
+    _write_csv(
+        mp_path_csv,
+        mp_data.get("rows", []),
+        fieldnames=[
+            "date",
+            "race_id",
+            "course",
+            "off_time",
+            "velo_pick",
+            "actual_winner",
+            "winner_sp",
+            "odds_band",
+            "nb_pick",
+            "nb_outcome",
+            "norpr_pick",
+            "norpr_outcome",
+        ],
+    )
     print(f"  Written: {mp_path_csv}")
 
     # EW candidate CSV
     ew_path_csv = os.path.join(REPORTS_DIR, "results_01_ew_candidate_truth_table.csv")
-    _write_csv(ew_path_csv, ew_data.get("rows", []), fieldnames=[
-        "date", "race_id", "course", "off", "pick", "velo_outcome",
-        "ew_outcome", "field_size", "going", "winner_sp_dec", "is_ew_win", "is_ew_place"
-    ])
+    _write_csv(
+        ew_path_csv,
+        ew_data.get("rows", []),
+        fieldnames=[
+            "date",
+            "race_id",
+            "course",
+            "off",
+            "pick",
+            "velo_outcome",
+            "ew_outcome",
+            "field_size",
+            "going",
+            "winner_sp_dec",
+            "is_ew_win",
+            "is_ew_place",
+        ],
+    )
     print(f"  Written: {ew_path_csv}")
 
     # Exotics CSV
     exotics_csv_path = os.path.join(REPORTS_DIR, "results_01_exotics_signal_table.csv")
-    _write_csv(exotics_csv_path, exotics_data.get("rows", []), fieldnames=[
-        "date", "race_id", "course", "off", "velo_pick", "nb_pick", "norpr_pick",
-        "top3", "exacta_box_hit", "trifecta_box_hit", "dividend_status"
-    ])
+    _write_csv(
+        exotics_csv_path,
+        exotics_data.get("rows", []),
+        fieldnames=[
+            "date",
+            "race_id",
+            "course",
+            "off",
+            "velo_pick",
+            "nb_pick",
+            "norpr_pick",
+            "top3",
+            "exacta_box_hit",
+            "trifecta_box_hit",
+            "dividend_status",
+        ],
+    )
     print(f"  Written: {exotics_csv_path}")
 
     # External source map MD
@@ -1476,12 +1602,12 @@ def main():
         f.write("# External Source Backfill Map\n\n")
         for src, d in ext_sources.items():
             f.write(f"## {src}\n\n")
-            f.write(f"- **URL:** {d.get('url','')}\n")
-            f.write(f"- **Content:** {d.get('content','')}\n")
-            f.write(f"- **Status:** {d.get('status','')}\n")
-            f.write(f"- **Proven:** {d.get('proven','')}\n")
-            f.write(f"- **Coverage:** {d.get('coverage','')}\n")
-            f.write(f"- **Note:** {d.get('note','')}\n\n")
+            f.write(f"- **URL:** {d.get('url', '')}\n")
+            f.write(f"- **Content:** {d.get('content', '')}\n")
+            f.write(f"- **Status:** {d.get('status', '')}\n")
+            f.write(f"- **Proven:** {d.get('proven', '')}\n")
+            f.write(f"- **Coverage:** {d.get('coverage', '')}\n")
+            f.write(f"- **Note:** {d.get('note', '')}\n\n")
     print(f"  Written: {ext_md_path}")
 
     # Operator brief MD
@@ -1494,16 +1620,16 @@ def main():
     tg_path = os.path.join(REPORTS_DIR, "results_01_training_vs_sigma_gap.md")
     with open(tg_path, "w", encoding="utf-8") as f:
         f.write("# Training vs Sigma Gap\n\n")
-        f.write(f"- Sigma corpus status: {training_data.get('sigma_corpus_status','UNKNOWN')}\n")
-        f.write(f"- Sigma corpus rows: {training_data.get('sigma_corpus_rows',0)}\n")
-        f.write(f"- Sigma2k status: {training_data.get('sigma2k_status','UNKNOWN')}\n")
-        f.write(f"- Sigma2k rows: {training_data.get('sigma2k_rows',0)}\n")
-        f.write(f"- Audit dates: {training_data.get('audit_date_count',0)}\n")
-        f.write(f"- Training dates: {training_data.get('training_date_count',0)}\n")
+        f.write(f"- Sigma corpus status: {training_data.get('sigma_corpus_status', 'UNKNOWN')}\n")
+        f.write(f"- Sigma corpus rows: {training_data.get('sigma_corpus_rows', 0)}\n")
+        f.write(f"- Sigma2k status: {training_data.get('sigma2k_status', 'UNKNOWN')}\n")
+        f.write(f"- Sigma2k rows: {training_data.get('sigma2k_rows', 0)}\n")
+        f.write(f"- Audit dates: {training_data.get('audit_date_count', 0)}\n")
+        f.write(f"- Training dates: {training_data.get('training_date_count', 0)}\n")
         gap = training_data.get("gap_dates_not_in_training", "UNKNOWN")
-        f.write(f"- Gap count: {training_data.get('gap_count','UNKNOWN')}\n")
+        f.write(f"- Gap count: {training_data.get('gap_count', 'UNKNOWN')}\n")
         if isinstance(gap, list):
-            f.write(f"- Gap dates:\n")
+            f.write("- Gap dates:\n")
             for d in gap:
                 f.write(f"  - {d}\n")
     print(f"  Written: {tg_path}")

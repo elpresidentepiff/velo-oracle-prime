@@ -3,6 +3,7 @@ Tests for J30-FOR forensic pack builder.
 Verifies hard constraints: no side effects, no profit claims without dividends,
 missing data → UNKNOWN, contradictions recorded.
 """
+
 from __future__ import annotations
 
 import sys
@@ -12,8 +13,17 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "ops"))
 from build_j30_forensic_pack import (  # type: ignore[import]
-    _HARD_CONSTRAINTS,
     _FINAL_CLASSIFICATIONS,
+    _HARD_CONSTRAINTS,
+    _box_hit,
+    _exacta_hit,
+    _odds_band,
+    _render_brief,
+    _render_ew,
+    _render_exotics,
+    _render_mp,
+    _render_nb,
+    _render_rpr,
     _section1,
     _section2,
     _section3,
@@ -23,17 +33,8 @@ from build_j30_forensic_pack import (  # type: ignore[import]
     _section7,
     _section8,
     _section9,
-    _exacta_hit,
-    _trifecta_hit,
-    _box_hit,
     _sp_to_dec,
-    _odds_band,
-    _render_rpr,
-    _render_nb,
-    _render_ew,
-    _render_mp,
-    _render_exotics,
-    _render_brief,
+    _trifecta_hit,
 )
 
 _MINIMAL_RACE = {
@@ -107,18 +108,25 @@ _MISS_RACE = {
 _MINIMAL_DATA = {
     "races": [_MINIMAL_RACE, _MISS_RACE],
     "sigma_summary": {
-        "rows": [], "identity_failures": 0, "ew_tracking": {},
-        "miss_class_breakdown": {}, "wins": 1,
+        "rows": [],
+        "identity_failures": 0,
+        "ew_tracking": {},
+        "miss_class_breakdown": {},
+        "wins": 1,
     },
     "nr_raw": {"decisions": []},
     "artifacts": {
-        "verdicts": "data/test.json", "results": "data/test.json",
-        "sigma": "data/test.json", "nr": "data/test.json", "ledger": "data/test.csv",
+        "verdicts": "data/test.json",
+        "results": "data/test.json",
+        "sigma": "data/test.json",
+        "nr": "data/test.json",
+        "ledger": "data/test.csv",
     },
 }
 
 
 # ── T-01: No banned imports in builder ───────────────────────────────────────
+
 
 def test_no_supabase_import() -> None:
     src = (Path(__file__).parent.parent / "scripts" / "ops" / "build_j30_forensic_pack.py").read_text()
@@ -140,9 +148,16 @@ def test_no_model_mutation_calls() -> None:
 
 # ── T-02: Hard constraints present ───────────────────────────────────────────
 
+
 def test_hard_constraints_present() -> None:
-    required = {"REPORT_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION",
-                 "NO_SUPABASE_WRITES", "NO_TELEGRAM_SEND", "NO_VFU_21_START"}
+    required = {
+        "REPORT_ONLY",
+        "NO_LIVE_SCORING_CHANGE",
+        "NO_MODEL_PROMOTION",
+        "NO_SUPABASE_WRITES",
+        "NO_TELEGRAM_SEND",
+        "NO_VFU_21_START",
+    }
     assert required.issubset(set(_HARD_CONSTRAINTS))
 
 
@@ -158,6 +173,7 @@ def test_final_classifications_complete() -> None:
 
 
 # ── T-03: Section 1 — loop integrity ─────────────────────────────────────────
+
 
 def test_s1_race_count() -> None:
     s1 = _section1(_MINIMAL_DATA)
@@ -177,11 +193,16 @@ def test_s1_partial_order_note() -> None:
 
 # ── T-04: Section 2 — RPR dependency ─────────────────────────────────────────
 
+
 def test_s2_verdict_present() -> None:
     s2 = _section2(_MINIMAL_DATA)
     assert s2["verdict"] in {
-        "RPR_HELPED", "RPR_NEUTRAL", "RPR_MISLED", "NO_RPR_BETTER",
-        "RPR_PUBLIC_MARKET_ANCHOR", "INSUFFICIENT_RPR_EVIDENCE",
+        "RPR_HELPED",
+        "RPR_NEUTRAL",
+        "RPR_MISLED",
+        "NO_RPR_BETTER",
+        "RPR_PUBLIC_MARKET_ANCHOR",
+        "INSUFFICIENT_RPR_EVIDENCE",
     }
 
 
@@ -192,11 +213,14 @@ def test_s2_limitation_note() -> None:
 
 # ── T-05: Section 3 — New Build ───────────────────────────────────────────────
 
+
 def test_s3_verdict_present() -> None:
     s3 = _section3(_MINIMAL_DATA)
     assert s3["verdict_primary"] in {
-        "NEW_BUILD_BAD_TOP_PICK_ONLY", "NEW_BUILD_VALUE_SCOUT",
-        "NEW_BUILD_TOP3_CONTAINMENT_SIGNAL", "NEW_BUILD_NO_EVIDENCE",
+        "NEW_BUILD_BAD_TOP_PICK_ONLY",
+        "NEW_BUILD_VALUE_SCOUT",
+        "NEW_BUILD_TOP3_CONTAINMENT_SIGNAL",
+        "NEW_BUILD_NO_EVIDENCE",
         "NEEDS_PROSPECTIVE_VALIDATION",
     }
 
@@ -207,6 +231,7 @@ def test_s3_limitation_note() -> None:
 
 
 # ── T-06: Section 4 — EW reality, no profit claim ────────────────────────────
+
 
 def test_s4_no_ew_profit_claim_without_data() -> None:
     s4 = _section4(_MINIMAL_DATA)
@@ -221,6 +246,7 @@ def test_s4_pick_sp_coverage_note() -> None:
 
 # ── T-07: Section 5 — mid-price miss ─────────────────────────────────────────
 
+
 def test_s5_miss_count() -> None:
     s5 = _section5(_MINIMAL_DATA)
     # _MISS_RACE has miss_class=mid_priced_won
@@ -230,15 +256,20 @@ def test_s5_miss_count() -> None:
 def test_s5_recovery_labels_valid() -> None:
     s5 = _section5(_MINIMAL_DATA)
     valid = {
-        "OLD_MISSED_NEW_BUILD_CAUGHT", "OLD_MISSED_EW_CAUGHT",
-        "OLD_MISSED_NO_RPR_CAUGHT", "RPR_ANCHOR_MISS", "INTENT_VALUE_MISS",
-        "MIDPRICE_UNRECOVERED", "EXOTIC_ONLY_RECOVERY",
+        "OLD_MISSED_NEW_BUILD_CAUGHT",
+        "OLD_MISSED_EW_CAUGHT",
+        "OLD_MISSED_NO_RPR_CAUGHT",
+        "RPR_ANCHOR_MISS",
+        "INTENT_VALUE_MISS",
+        "MIDPRICE_UNRECOVERED",
+        "EXOTIC_ONLY_RECOVERY",
     }
     for d in s5["detail"]:
         assert d["recovery"] in valid, f"Invalid recovery label: {d['recovery']}"
 
 
 # ── T-08: Section 6 — exotics, no profit claim ───────────────────────────────
+
 
 def test_s6_no_profit_claim() -> None:
     s6 = _section6(_MINIMAL_DATA)
@@ -258,6 +289,7 @@ def test_s6_exacta_verdict_valid() -> None:
 
 
 # ── T-09: Exacta / trifecta helpers ──────────────────────────────────────────
+
 
 def test_exacta_hit_ordered() -> None:
     assert _exacta_hit(["A", "B"], "A", "B", ordered=True) is True
@@ -286,6 +318,7 @@ def test_box_hit_subset() -> None:
 
 # ── T-10: SP conversion ───────────────────────────────────────────────────────
 
+
 def test_sp_to_dec_fractional() -> None:
     assert abs(_sp_to_dec("3/1") - 4.0) < 0.001
     assert abs(_sp_to_dec("7/4F") - 2.75) < 0.001
@@ -313,6 +346,7 @@ def test_odds_band() -> None:
 
 # ── T-11: Missing finish order → PARTIAL_ORDER_EVIDENCE ──────────────────────
 
+
 def test_partial_order_when_finish_missing() -> None:
     sparse = {
         **_MINIMAL_RACE,
@@ -328,6 +362,7 @@ def test_partial_order_when_finish_missing() -> None:
 
 # ── T-12: Missing field_size → flagged in EW ─────────────────────────────────
 
+
 def test_ew_field_size_gap_noted() -> None:
     ew_race = {
         **_MINIMAL_RACE,
@@ -341,6 +376,7 @@ def test_ew_field_size_gap_noted() -> None:
 
 
 # ── T-13: Contradiction C-01 not suppressed ──────────────────────────────────
+
 
 def test_contradiction_c01_in_brief() -> None:
     s1 = _section1(_MINIMAL_DATA)
@@ -374,6 +410,7 @@ def test_final_classifications_in_brief() -> None:
 
 # ── T-14: Section 9 — no auto-promotion in next actions ──────────────────────
 
+
 def test_s9_no_auto_promotion() -> None:
     s9 = _section9()
     blocked = s9["do_not_start"]
@@ -384,10 +421,20 @@ def test_s9_no_auto_promotion() -> None:
 
 # ── T-15: Race table completeness ────────────────────────────────────────────
 
+
 def test_s7_race_table_fields() -> None:
     s7 = _section7(_MINIMAL_DATA)
-    required = {"race_id", "course", "off", "winner", "old_top1", "old_hit",
-                "exacta_top3_box", "trifecta_top3_box", "miss_class"}
+    required = {
+        "race_id",
+        "course",
+        "off",
+        "winner",
+        "old_top1",
+        "old_hit",
+        "exacta_top3_box",
+        "trifecta_top3_box",
+        "miss_class",
+    }
     for row in s7["rows"]:
         missing = required - set(row.keys())
         assert not missing, f"Race table row missing fields: {missing}"

@@ -3,11 +3,12 @@ Tests for RESULTS-01 — VÉLØ Full Results Truth Audit.
 Minimum 15 tests. Uses synthetic fixtures only — no real data files required.
 """
 
+import importlib
 import json
 import os
 import sys
-import importlib
 import types
+
 import pytest
 
 # ---------------------------------------------------------------------------
@@ -34,9 +35,10 @@ def mod():
 # CONSTRAINT TESTS — no forbidden imports in builder
 # ---------------------------------------------------------------------------
 
+
 def test_no_supabase_import():
     """Builder must not import supabase."""
-    with open(MODULE_PATH, "r", encoding="utf-8") as f:
+    with open(MODULE_PATH, encoding="utf-8") as f:
         source = f.read()
     assert "import supabase" not in source, "supabase import found — violates NO_SUPABASE_WRITES"
     assert "from supabase" not in source, "from supabase import found — violates NO_SUPABASE_WRITES"
@@ -44,7 +46,7 @@ def test_no_supabase_import():
 
 def test_no_telegram_import():
     """Builder must not import telegram."""
-    with open(MODULE_PATH, "r", encoding="utf-8") as f:
+    with open(MODULE_PATH, encoding="utf-8") as f:
         source = f.read()
     assert "import telegram" not in source, "telegram import found — violates NO_TELEGRAM_SEND"
     assert "from telegram" not in source, "from telegram import found — violates NO_TELEGRAM_SEND"
@@ -52,7 +54,7 @@ def test_no_telegram_import():
 
 def test_no_model_mutation_calls():
     """Builder must not call promote_model, place_order, or score_race."""
-    with open(MODULE_PATH, "r", encoding="utf-8") as f:
+    with open(MODULE_PATH, encoding="utf-8") as f:
         source = f.read()
     forbidden = ["promote_model(", "place_order(", "score_race("]
     for fn in forbidden:
@@ -86,6 +88,7 @@ def test_final_classifications_present(mod):
 # LOGIC TESTS — using synthetic fixtures
 # ---------------------------------------------------------------------------
 
+
 def _make_audit_row(**kwargs):
     """Build a minimal audit row with defaults."""
     defaults = {
@@ -113,7 +116,7 @@ def _make_audit_row(**kwargs):
     defaults.update(kwargs)
     # Apply enrichment that _load_sigma_dump would do
     row = dict(defaults)
-    row["_date"] = (row.get("date") or row.get("created_at", "")[:10])
+    row["_date"] = row.get("date") or row.get("created_at", "")[:10]
     row["_course"] = (row.get("track") or "UNKNOWN").title()
     sp_dec = row.get("actual_winner_sp")
     row["_winner_sp_dec"] = float(sp_dec) if sp_dec is not None else None
@@ -155,9 +158,7 @@ def test_missing_winner_sp_resolves_price_unknown(mod):
 
     result = mod._section2_horses_landed([row], [])
     assert len(result) == 1
-    assert result[0]["winner_sp"] == "PRICE_UNKNOWN", (
-        f"Expected PRICE_UNKNOWN, got {result[0]['winner_sp']}"
-    )
+    assert result[0]["winner_sp"] == "PRICE_UNKNOWN", f"Expected PRICE_UNKNOWN, got {result[0]['winner_sp']}"
 
 
 def test_missing_field_size_resolves_unknown_in_ew(mod):
@@ -176,9 +177,7 @@ def test_missing_field_size_resolves_unknown_in_ew(mod):
     result = mod._section9_ew_candidate([], [ledger_row], {})
     assert result["n"] == 1
     assert result["unknown_field_size"] == 1
-    assert result["verdict"] != "EW_PROFIT_PROOF", (
-        "EW profit must not be claimed when field_size is unknown"
-    )
+    assert result["verdict"] != "EW_PROFIT_PROOF", "EW profit must not be claimed when field_size is unknown"
 
 
 def test_missing_finish_order_exotics(mod):
@@ -195,9 +194,7 @@ def test_missing_finish_order_exotics(mod):
         "winner": "",
     }
     result = mod._section11_exotics([ledger_row], {})
-    assert result["knowable_races"] == 0, (
-        "Race with no top3 data should not count as knowable for exotics"
-    )
+    assert result["knowable_races"] == 0, "Race with no top3 data should not count as knowable for exotics"
 
 
 def test_exotics_cannot_claim_profit(mod):
@@ -307,8 +304,11 @@ def test_operator_brief_contains_horse_names(mod):
         },
         "new_build": {"n": 50, "sr": 0.20, "place_rate": 0.40, "top3_hit_rate": 0.55},
         "ew_candidate": {
-            "n": 30, "place_rate": 0.35, "verdict": "EW_REALITY_CHECKED",
-            "unknown_field_size": 5, "unknown_sp": 3,
+            "n": 30,
+            "place_rate": 0.35,
+            "verdict": "EW_REALITY_CHECKED",
+            "unknown_field_size": 5,
+            "unknown_sp": 3,
         },
         "midprice_miss": {
             "n_midprice_misses": 100,
@@ -331,9 +331,7 @@ def test_operator_brief_contains_horse_names(mod):
         },
     }
     brief = mod._section14_operator_brief(all_sections, win_rows)
-    assert "GoldenArrow" in brief, (
-        f"Operator brief must contain horse name 'GoldenArrow', but it was not found"
-    )
+    assert "GoldenArrow" in brief, "Operator brief must contain horse name 'GoldenArrow', but it was not found"
 
 
 def test_odds_band_function_correct_values(mod):
@@ -415,9 +413,7 @@ def test_new_build_containment_is_not_profit(mod):
         }
     ]
     result = mod._section8_new_build(ledger_rows, {})
-    assert result.get("containment_is_not_profit") is True, (
-        "New Build must always flag containment_is_not_profit=True"
-    )
+    assert result.get("containment_is_not_profit") is True, "New Build must always flag containment_is_not_profit=True"
 
 
 def test_section6_lanes_include_vp_high(mod):

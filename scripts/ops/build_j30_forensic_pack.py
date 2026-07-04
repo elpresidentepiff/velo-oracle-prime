@@ -4,12 +4,12 @@ J30-FOR — June 30 Full Forensic Pack With Exotics.
 REPORT_ONLY. No scoring change, no Supabase write, no model promotion,
 no Telegram send, no canonical horse passport mutation.
 """
+
 from __future__ import annotations
 
 import json
-import math
 import statistics
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -35,11 +35,19 @@ _F_EX_MD = _OUT / f"j30_exotics_audit_{_DATE}.md"
 _F_BRIEF_MD = _OUT / f"j30_forensic_operator_brief_{_DATE}.md"
 
 _HARD_CONSTRAINTS = [
-    "REPORT_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_VP_THRESHOLD_CHANGE",
-    "NO_MODEL_PROMOTION", "NO_SUPABASE_WRITES", "NO_TELEGRAM_SEND",
-    "NO_VFU_21_START", "NO_VCP_04_START", "NO_CASE_MEMORY_BUILD",
-    "NO_DEEPSEARCHER_BUILD", "NO_AGENT_BROWSER_BUILD",
-    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED", "DO_NOT_SUPPRESS_CONTRADICTIONS",
+    "REPORT_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_VFU_21_START",
+    "NO_VCP_04_START",
+    "NO_CASE_MEMORY_BUILD",
+    "NO_DEEPSEARCHER_BUILD",
+    "NO_AGENT_BROWSER_BUILD",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "DO_NOT_SUPPRESS_CONTRADICTIONS",
     "MISSING_ARTIFACTS_RESOLVE_UNKNOWN_NOT_CLEAN",
 ]
 
@@ -74,6 +82,7 @@ _FINAL_CLASSIFICATIONS = [
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
+
 
 def _load(path: Path) -> Any:
     try:
@@ -137,6 +146,7 @@ def _pct(num: int, den: int) -> str:
 
 # ── data loading and join ────────────────────────────────────────────────────
 
+
 def _load_all() -> dict:
     verdicts_raw = _load(_VERDICTS) or []
     results_raw = _load(_RESULTS) or {}
@@ -151,6 +161,7 @@ def _load_all() -> dict:
     nb_map: dict[str, dict] = {}
     try:
         import csv
+
         with open(_LEDGER, newline="", encoding="utf-8") as f:
             for row in csv.DictReader(f):
                 if row.get("date") == _DATE:
@@ -170,13 +181,18 @@ def _load_all() -> dict:
         # Full finish order
         runners_raw = res.get("runners", [])
         runners_sorted = sorted(
-            runners_raw,
-            key=lambda x: int(x["position"]) if str(x.get("position", 99)).isdigit() else 99
+            runners_raw, key=lambda x: int(x["position"]) if str(x.get("position", 99)).isdigit() else 99
         )
         finish_order = [
-            {"horse": r["horse"], "horse_id": r.get("horse_id", ""), "pos": r["position"],
-             "sp_str": r.get("sp", ""), "sp_dec": r.get("sp_dec") or _sp_to_dec(r.get("sp", ""))}
-            for r in runners_sorted if not r.get("non_runner")
+            {
+                "horse": r["horse"],
+                "horse_id": r.get("horse_id", ""),
+                "pos": r["position"],
+                "sp_str": r.get("sp", ""),
+                "sp_dec": r.get("sp_dec") or _sp_to_dec(r.get("sp", "")),
+            }
+            for r in runners_sorted
+            if not r.get("non_runner")
         ]
 
         # No-RPR top pick from ledger (most reliable)
@@ -221,55 +237,57 @@ def _load_all() -> dict:
 
         field_size = res.get("field_size") or nr.get("field_size")
 
-        races.append({
-            "race_id": rid,
-            "course": v.get("course", ""),
-            "off": v.get("off_time", ""),
-            "race_name": v.get("race_name", ""),
-            "tier": v.get("tier", ""),
-            "field_size": field_size,
-            "race_class": res.get("race_class", ""),
-            "going": res.get("going", ""),
-            "distance_f": res.get("distance_f"),
-            # Old VELO
-            "old_pick": old_pick,
-            "old_vp": old_vp,
-            "old_sqpe": sqpe_rpr,
-            "old_sqpe_norpr": sqpe_norpr,
-            "rpr_gap": rpr_gap,
-            "rpr_missing": top.get("rpr_missing", False),
-            "or_missing": top.get("or_missing", False),
-            "mds": top.get("market_deception_score"),
-            "improvement": top.get("improvement_score"),
-            "old_outcome": old_outcome,
-            "miss_class": miss_class,
-            "assigned_product": assigned_product,
-            "ew_outcome": ew_outcome,
-            # No-RPR
-            "norpr_pick": norpr_pick,
-            "norpr_outcome": norpr_outcome,
-            # New Build
-            "nb_pick": nb_pick,
-            "nb_prob": nb_prob,
-            "nb_outcome": nb_outcome,
-            # Results
-            "winner": winner,
-            "winner_sp_str": winner_sp_str,
-            "winner_sp_dec": winner_sp_dec,
-            "horse_2nd": horse_2nd,
-            "sp_2nd": sp_2nd,
-            "horse_3rd": horse_3rd,
-            "sp_3rd": sp_3rd,
-            "top3": top3,
-            "finish_order": finish_order,
-            # Derived
-            "old_win": old_outcome == "WIN",
-            "old_place": old_outcome in ("WIN", "PLACED"),
-            "nb_win": nb_outcome == "WIN",
-            "nb_place": nb_outcome in ("WIN", "PLACE"),
-            "norpr_win": norpr_outcome == "WIN",
-            "norpr_place": norpr_outcome in ("WIN", "PLACE"),
-        })
+        races.append(
+            {
+                "race_id": rid,
+                "course": v.get("course", ""),
+                "off": v.get("off_time", ""),
+                "race_name": v.get("race_name", ""),
+                "tier": v.get("tier", ""),
+                "field_size": field_size,
+                "race_class": res.get("race_class", ""),
+                "going": res.get("going", ""),
+                "distance_f": res.get("distance_f"),
+                # Old VELO
+                "old_pick": old_pick,
+                "old_vp": old_vp,
+                "old_sqpe": sqpe_rpr,
+                "old_sqpe_norpr": sqpe_norpr,
+                "rpr_gap": rpr_gap,
+                "rpr_missing": top.get("rpr_missing", False),
+                "or_missing": top.get("or_missing", False),
+                "mds": top.get("market_deception_score"),
+                "improvement": top.get("improvement_score"),
+                "old_outcome": old_outcome,
+                "miss_class": miss_class,
+                "assigned_product": assigned_product,
+                "ew_outcome": ew_outcome,
+                # No-RPR
+                "norpr_pick": norpr_pick,
+                "norpr_outcome": norpr_outcome,
+                # New Build
+                "nb_pick": nb_pick,
+                "nb_prob": nb_prob,
+                "nb_outcome": nb_outcome,
+                # Results
+                "winner": winner,
+                "winner_sp_str": winner_sp_str,
+                "winner_sp_dec": winner_sp_dec,
+                "horse_2nd": horse_2nd,
+                "sp_2nd": sp_2nd,
+                "horse_3rd": horse_3rd,
+                "sp_3rd": sp_3rd,
+                "top3": top3,
+                "finish_order": finish_order,
+                # Derived
+                "old_win": old_outcome == "WIN",
+                "old_place": old_outcome in ("WIN", "PLACED"),
+                "nb_win": nb_outcome == "WIN",
+                "nb_place": nb_outcome in ("WIN", "PLACE"),
+                "norpr_win": norpr_outcome == "WIN",
+                "norpr_place": norpr_outcome in ("WIN", "PLACE"),
+            }
+        )
 
     return {
         "races": races,
@@ -286,6 +304,7 @@ def _load_all() -> dict:
 
 
 # ── Section 1: Loop integrity ─────────────────────────────────────────────────
+
 
 def _section1(data: dict) -> dict:
     races = data["races"]
@@ -326,6 +345,7 @@ def _section1(data: dict) -> dict:
 
 
 # ── Section 2: RPR dependency ─────────────────────────────────────────────────
+
 
 def _section2(data: dict) -> dict:
     races = data["races"]
@@ -416,15 +436,24 @@ def _section2(data: dict) -> dict:
         "old_winner_sp_median": round(_safe_median(old_winner_sps), 2) if _safe_median(old_winner_sps) else None,
         "norpr_winner_sp_avg": round(_safe_mean(norpr_winner_sps), 2) if _safe_mean(norpr_winner_sps) else None,
         "norpr_winner_sp_median": round(_safe_median(norpr_winner_sps), 2) if _safe_median(norpr_winner_sps) else None,
-        "norpr_better_detail": [{"course": r["course"], "off": r["off"], "winner": r["winner"],
-                                  "winner_sp": r["winner_sp_str"], "norpr": r["norpr_pick"], "old": r["old_pick"]}
-                                 for r in norpr_better],
+        "norpr_better_detail": [
+            {
+                "course": r["course"],
+                "off": r["off"],
+                "winner": r["winner"],
+                "winner_sp": r["winner_sp_str"],
+                "norpr": r["norpr_pick"],
+                "old": r["old_pick"],
+            }
+            for r in norpr_better
+        ],
         "limitation": "SINGLE_TOP_PICK_ONLY — no full ranked list per model; top-2/top-3 rank analysis not possible",
         "ranked_list_note": "RPR dependency fully provable only with full per-runner score lists across all models",
     }
 
 
 # ── Section 3: New Build value audit ─────────────────────────────────────────
+
 
 def _section3(data: dict) -> dict:
     races = data["races"]
@@ -468,12 +497,12 @@ def _section3(data: dict) -> dict:
             nb_top3_bands[band]["in_top3"] += 1
 
     # Long price winners where NB was in top3 finishers
-    long_price_nb_in_top3 = [r for r in nb_races if r["nb_pick"] in r["top3"]
-                              and r["winner_sp_dec"] and r["winner_sp_dec"] >= 6.0]
+    long_price_nb_in_top3 = [
+        r for r in nb_races if r["nb_pick"] in r["top3"] and r["winner_sp_dec"] and r["winner_sp_dec"] >= 6.0
+    ]
 
     # EW overlap
-    ew_nb_in_top3 = sum(1 for r in nb_races
-                        if r["assigned_product"] == "EW_CANDIDATE" and r["nb_pick"] in r["top3"])
+    ew_nb_in_top3 = sum(1 for r in nb_races if r["assigned_product"] == "EW_CANDIDATE" and r["nb_pick"] in r["top3"])
     ew_n = sum(1 for r in nb_races if r["assigned_product"] == "EW_CANDIDATE")
 
     # Verdict
@@ -513,19 +542,35 @@ def _section3(data: dict) -> dict:
         "nb_win_bands": nb_win_bands,
         "nb_top3_bands": nb_top3_bands,
         "long_price_nb_in_top3": len(long_price_nb_in_top3),
-        "long_price_detail": [{"course": r["course"], "off": r["off"], "winner": r["winner"],
-                                "winner_sp": r["winner_sp_str"], "nb_pick": r["nb_pick"],
-                                "nb_in_top3": r["nb_pick"] in r["top3"]}
-                               for r in long_price_nb_in_top3],
+        "long_price_detail": [
+            {
+                "course": r["course"],
+                "off": r["off"],
+                "winner": r["winner"],
+                "winner_sp": r["winner_sp_str"],
+                "nb_pick": r["nb_pick"],
+                "nb_in_top3": r["nb_pick"] in r["top3"],
+            }
+            for r in long_price_nb_in_top3
+        ],
         "ew_nb_overlap": f"{ew_nb_in_top3}/{ew_n}",
-        "old_miss_nb_win_detail": [{"course": r["course"], "off": r["off"], "winner": r["winner"],
-                                     "winner_sp": r["winner_sp_str"], "old": r["old_pick"], "nb": r["nb_pick"]}
-                                    for r in old_miss_nb_win],
+        "old_miss_nb_win_detail": [
+            {
+                "course": r["course"],
+                "off": r["off"],
+                "winner": r["winner"],
+                "winner_sp": r["winner_sp_str"],
+                "old": r["old_pick"],
+                "nb": r["nb_pick"],
+            }
+            for r in old_miss_nb_win
+        ],
         "limitation": "SINGLE_TOP_PICK_ONLY — no New Build ranked 2nd/3rd available; top-3 containment = pick in actual top-3 finishers",
     }
 
 
 # ── Section 4: EW candidate reality ──────────────────────────────────────────
+
 
 def _section4(data: dict) -> dict:
     races = data["races"]
@@ -536,12 +581,7 @@ def _section4(data: dict) -> dict:
     n_known_sp = sum(1 for r in ew_races if r["winner_sp_dec"] is not None)
     n_known_field = sum(1 for r in ew_races if r["field_size"] is not None)
     n_known_finish = sum(1 for r in ew_races if len(r["finish_order"]) >= 3)
-    n_all_known = sum(1 for r in ew_races
-                      if r["winner_sp_dec"] and r["field_size"] and len(r["finish_order"]) >= 3)
-
-    wins = sum(r["old_win"] for r in ew_races)
-    places = sum(r["old_place"] for r in ew_races)
-    frames = sum(1 for r in ew_races if r["old_pick"] in r["top3"])
+    n_all_known = sum(1 for r in ew_races if r["winner_sp_dec"] and r["field_size"] and len(r["finish_order"]) >= 3)
 
     ew_wins = sum(1 for r in ew_races if r["ew_outcome"] == "EW_WIN")
     ew_places = sum(1 for r in ew_races if r["ew_outcome"] in ("EW_WIN", "EW_PLACE"))
@@ -599,14 +639,23 @@ def _section4(data: dict) -> dict:
         "vfu20_note": vfu20_note,
         "profitability_status": "PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF — not changed by n=6 sample",
         "pick_sp_coverage": "PRICE_UNKNOWN for most — pick SP not systematically stored; see NEEDS_VFU_21_PICK_SP_BACKFILL",
-        "detail": [{"course": r["course"], "off": r["off"], "pick": r["old_pick"],
-                    "winner": r["winner"], "ew_outcome": r["ew_outcome"],
-                    "winner_sp": r["winner_sp_str"], "field_size": r["field_size"]}
-                   for r in ew_races],
+        "detail": [
+            {
+                "course": r["course"],
+                "off": r["off"],
+                "pick": r["old_pick"],
+                "winner": r["winner"],
+                "ew_outcome": r["ew_outcome"],
+                "winner_sp": r["winner_sp_str"],
+                "field_size": r["field_size"],
+            }
+            for r in ew_races
+        ],
     }
 
 
 # ── Section 5: Mid-price miss recovery ───────────────────────────────────────
+
 
 def _section5(data: dict) -> dict:
     races = data["races"]
@@ -619,7 +668,6 @@ def _section5(data: dict) -> dict:
     unrecovered = 0
 
     for r in mp_misses:
-        winner_in_top3 = r["winner"] in r["top3"]
         old_top3 = r["old_pick"] in r["top3"]
         nb_in_top3 = r["nb_pick"] in r["top3"] if r["nb_pick"] else False
         norpr_in_top3 = r["norpr_pick"] in r["top3"] if r["norpr_pick"] else False
@@ -646,24 +694,26 @@ def _section5(data: dict) -> dict:
         # Was winner ranked by RPR above Old pick?
         rpr_anchor = r["rpr_gap"] is not None and r["rpr_gap"] > 0.02
 
-        detail.append({
-            "course": r["course"],
-            "off": r["off"],
-            "winner": r["winner"],
-            "winner_sp": r["winner_sp_str"],
-            "old_pick": r["old_pick"],
-            "old_vp": round(r["old_vp"], 3) if r["old_vp"] else None,
-            "old_sqpe": round(r["old_sqpe"], 4) if r["old_sqpe"] else None,
-            "norpr_pick": r["norpr_pick"],
-            "norpr_in_top3": norpr_in_top3,
-            "nb_pick": r["nb_pick"],
-            "nb_in_top3": nb_in_top3,
-            "old_in_top3": old_top3,
-            "is_ew_candidate": r["assigned_product"] == "EW_CANDIDATE",
-            "rpr_anchor_miss": rpr_anchor,
-            "recovery": rec,
-            "mds": round(r["mds"], 3) if r["mds"] else None,
-        })
+        detail.append(
+            {
+                "course": r["course"],
+                "off": r["off"],
+                "winner": r["winner"],
+                "winner_sp": r["winner_sp_str"],
+                "old_pick": r["old_pick"],
+                "old_vp": round(r["old_vp"], 3) if r["old_vp"] else None,
+                "old_sqpe": round(r["old_sqpe"], 4) if r["old_sqpe"] else None,
+                "norpr_pick": r["norpr_pick"],
+                "norpr_in_top3": norpr_in_top3,
+                "nb_pick": r["nb_pick"],
+                "nb_in_top3": nb_in_top3,
+                "old_in_top3": old_top3,
+                "is_ew_candidate": r["assigned_product"] == "EW_CANDIDATE",
+                "rpr_anchor_miss": rpr_anchor,
+                "recovery": rec,
+                "mds": round(r["mds"], 3) if r["mds"] else None,
+            }
+        )
 
     return {
         "total_midprice_misses": len(mp_misses),
@@ -678,6 +728,7 @@ def _section5(data: dict) -> dict:
 
 
 # ── Section 6: Exotics ───────────────────────────────────────────────────────
+
 
 def _exacta_hit(picks: list[str], winner: str, second: str, ordered: bool) -> bool:
     if not winner or not second or len(picks) < 2:
@@ -706,14 +757,34 @@ def _section6(data: dict) -> dict:
 
     # Build pick sets per construction
     stats: dict[str, dict] = {
-        "old_top1_only": {"exacta_ordered": 0, "exacta_reverse": 0, "exacta_box2": 0,
-                          "trifecta_ordered": 0, "trifecta_box3": 0, "n_exacta": 0, "n_trifecta": 0},
-        "old_norpr_box": {"exacta_ordered": 0, "exacta_reverse": 0, "exacta_box": 0,
-                          "trifecta_box": 0, "n_exacta": 0, "n_trifecta": 0, "combinations": 2},
-        "old_nb_box": {"exacta_ordered": 0, "exacta_reverse": 0, "exacta_box": 0,
-                       "trifecta_box": 0, "n_exacta": 0, "n_trifecta": 0, "combinations": 2},
-        "consensus_top1s": {"exacta_box": 0, "trifecta_box": 0,
-                             "n_exacta": 0, "n_trifecta": 0, "avg_picks": 0},
+        "old_top1_only": {
+            "exacta_ordered": 0,
+            "exacta_reverse": 0,
+            "exacta_box2": 0,
+            "trifecta_ordered": 0,
+            "trifecta_box3": 0,
+            "n_exacta": 0,
+            "n_trifecta": 0,
+        },
+        "old_norpr_box": {
+            "exacta_ordered": 0,
+            "exacta_reverse": 0,
+            "exacta_box": 0,
+            "trifecta_box": 0,
+            "n_exacta": 0,
+            "n_trifecta": 0,
+            "combinations": 2,
+        },
+        "old_nb_box": {
+            "exacta_ordered": 0,
+            "exacta_reverse": 0,
+            "exacta_box": 0,
+            "trifecta_box": 0,
+            "n_exacta": 0,
+            "n_trifecta": 0,
+            "combinations": 2,
+        },
+        "consensus_top1s": {"exacta_box": 0, "trifecta_box": 0, "n_exacta": 0, "n_trifecta": 0, "avg_picks": 0},
         "nb_only_top1": {"in_exacta_pos": 0, "in_top3_actual": 0, "n": 0},
         "norpr_only_top1": {"in_exacta_pos": 0, "in_top3_actual": 0, "n": 0},
     }
@@ -790,28 +861,30 @@ def _section6(data: dict) -> dict:
 
         # Collect race detail
         exacta_ordered = old == w1 and norpr == w2
-        exacta_reverse = set([old, norpr]) == {w1, w2} if norpr else False
+        exacta_reverse = {old, norpr} == {w1, w2} if norpr else False
         trifecta_box = _box_hit(consensus_picks, [w1, w2, w3]) if w3 else None
 
-        race_detail.append({
-            "race_id": r["race_id"],
-            "course": r["course"],
-            "off": r["off"],
-            "w1": w1,
-            "w1_sp": r["winner_sp_str"],
-            "w2": w2,
-            "w2_sp": _sp_str(r["sp_2nd"]),
-            "w3": w3,
-            "old_pick": old,
-            "norpr_pick": norpr,
-            "nb_pick": nb,
-            "consensus_picks": consensus_picks,
-            "exacta_ordered": exacta_ordered,
-            "exacta_reverse": exacta_reverse,
-            "old_norpr_exacta_box": _box_hit([old, norpr], [w1, w2]) if norpr else None,
-            "consensus_exacta_box": _box_hit(consensus_picks, [w1, w2]),
-            "consensus_trifecta_box": trifecta_box,
-        })
+        race_detail.append(
+            {
+                "race_id": r["race_id"],
+                "course": r["course"],
+                "off": r["off"],
+                "w1": w1,
+                "w1_sp": r["winner_sp_str"],
+                "w2": w2,
+                "w2_sp": _sp_str(r["sp_2nd"]),
+                "w3": w3,
+                "old_pick": old,
+                "norpr_pick": norpr,
+                "nb_pick": nb,
+                "consensus_picks": consensus_picks,
+                "exacta_ordered": exacta_ordered,
+                "exacta_reverse": exacta_reverse,
+                "old_norpr_exacta_box": _box_hit([old, norpr], [w1, w2]) if norpr else None,
+                "consensus_exacta_box": _box_hit(consensus_picks, [w1, w2]),
+                "consensus_trifecta_box": trifecta_box,
+            }
+        )
 
     n_ex = len(eligible)
     n_tri = len(trifecta_eligible)
@@ -843,10 +916,8 @@ def _section6(data: dict) -> dict:
         "consensus_trifecta_box_rate": _pct(ct_box, n_tri),
         "nb_in_exacta_positions": _pct(stats["nb_only_top1"]["in_exacta_pos"], stats["nb_only_top1"]["n"]),
         "nb_in_actual_top3": _pct(stats["nb_only_top1"]["in_top3_actual"], stats["nb_only_top1"]["n"]),
-        "norpr_in_exacta_positions": _pct(stats["norpr_only_top1"]["in_exacta_pos"],
-                                          stats["norpr_only_top1"]["n"]),
-        "norpr_in_actual_top3": _pct(stats["norpr_only_top1"]["in_top3_actual"],
-                                     stats["norpr_only_top1"]["n"]),
+        "norpr_in_exacta_positions": _pct(stats["norpr_only_top1"]["in_exacta_pos"], stats["norpr_only_top1"]["n"]),
+        "norpr_in_actual_top3": _pct(stats["norpr_only_top1"]["in_top3_actual"], stats["norpr_only_top1"]["n"]),
         "containment_is_not_profit": True,
         "box_hit_is_not_profit": True,
         "sp_proxy_labelled": "SIMULATED_SP_PROXY_NOT_DIVIDEND_PROOF",
@@ -860,6 +931,7 @@ def _sp_str(val: float | None) -> str:
 
 
 # ── Section 7: Combined race table ───────────────────────────────────────────
+
 
 def _section7(data: dict) -> dict:
     races = data["races"]
@@ -879,48 +951,49 @@ def _section7(data: dict) -> dict:
         nb_top3 = nb in r["top3"] if nb != "—" else False
         ew_placed = r["ew_outcome"] in ("EW_WIN", "EW_PLACE") if r["ew_outcome"] else False
 
-        exacta_top2_ordered = (old == w1 and norpr == w2)
+        exacta_top2_ordered = old == w1 and norpr == w2
         exacta_top3_box = _box_hit(consensus, [w1, w2])
-        trifecta_top3_ordered = (old == w1 and norpr == w2 and nb == w3)
+        trifecta_top3_ordered = old == w1 and norpr == w2 and nb == w3
         trifecta_top3_box = _box_hit(consensus, [w1, w2, w3]) if w3 else False
         trifecta_top4_box = False  # Only 3 picks max from 3 models
 
-        rows.append({
-            "race_id": r["race_id"],
-            "course": r["course"],
-            "off": r["off"],
-            "field_size": r["field_size"] or "?",
-            "winner": w1,
-            "winner_sp": r["winner_sp_str"],
-            "second": w2 or "?",
-            "second_sp": _sp_str(r["sp_2nd"]),
-            "third": w3 or "?",
-            "third_sp": _sp_str(r["sp_3rd"]),
-            "old_top1": old,
-            "norpr_top1": norpr,
-            "nb_top1": nb,
-            "ew_candidate": r["assigned_product"] == "EW_CANDIDATE",
-            "old_hit": old_hit,
-            "norpr_hit": norpr_hit,
-            "nb_top3_containment": nb_top3,
-            "ew_placed": ew_placed,
-            "exacta_top2_ordered": exacta_top2_ordered,
-            "exacta_top3_box": exacta_top3_box,
-            "trifecta_top3_ordered": trifecta_top3_ordered,
-            "trifecta_top3_box": trifecta_top3_box,
-            "trifecta_top4_box": trifecta_top4_box,
-            "miss_class": r["miss_class"] or "n/a",
-            "notes": (r["miss_class"] or "") + (" EW" if r["assigned_product"] == "EW_CANDIDATE" else ""),
-        })
+        rows.append(
+            {
+                "race_id": r["race_id"],
+                "course": r["course"],
+                "off": r["off"],
+                "field_size": r["field_size"] or "?",
+                "winner": w1,
+                "winner_sp": r["winner_sp_str"],
+                "second": w2 or "?",
+                "second_sp": _sp_str(r["sp_2nd"]),
+                "third": w3 or "?",
+                "third_sp": _sp_str(r["sp_3rd"]),
+                "old_top1": old,
+                "norpr_top1": norpr,
+                "nb_top1": nb,
+                "ew_candidate": r["assigned_product"] == "EW_CANDIDATE",
+                "old_hit": old_hit,
+                "norpr_hit": norpr_hit,
+                "nb_top3_containment": nb_top3,
+                "ew_placed": ew_placed,
+                "exacta_top2_ordered": exacta_top2_ordered,
+                "exacta_top3_box": exacta_top3_box,
+                "trifecta_top3_ordered": trifecta_top3_ordered,
+                "trifecta_top3_box": trifecta_top3_box,
+                "trifecta_top4_box": trifecta_top4_box,
+                "miss_class": r["miss_class"] or "n/a",
+                "notes": (r["miss_class"] or "") + (" EW" if r["assigned_product"] == "EW_CANDIDATE" else ""),
+            }
+        )
     return {"rows": rows, "note": "SINGLE_TOP_PICK_ONLY per model — no_rpr/nb top2/top3 not available"}
 
 
 # ── Section 8: Operator summary ───────────────────────────────────────────────
 
+
 def _section8(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict) -> dict:
     old_sr = float(s2["old_velo_sr"].rstrip("%")) if "%" in s2["old_velo_sr"] else 0
-    nb_sr = float(s3["nb_sr"].rstrip("%")) if "%" in s3["nb_sr"] else 0
-    norpr_sr = float(s2["norpr_sr"].rstrip("%")) if "%" in s2["norpr_sr"] else 0
 
     day_rating = "WEAK" if old_sr < 20 else ("AVERAGE" if old_sr < 28 else "STRONG")
 
@@ -940,9 +1013,9 @@ def _section8(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict) -> dic
         "q9_best_construction": "Old VELO top-1 as win anchor + consensus box for exotic fill. Minimal overlap (avg ~2 unique picks from 3 models) = low-cost box.",
         "q10_forward_test": "Run 7-day prospective shadow of: (A) Old anchor + consensus box exacta. (B) EW candidates on field>=8. Both PAPER only, no live staking.",
         "q11_blocked_by_missing_data": [
-            f"pick_sp missing — EW and exotics cannot be profit-proven (need VFU-21)",
-            f"No ranked list per model — top-2/top-3 model containment unverifiable (SINGLE_TOP_PICK_ONLY)",
-            f"Exotic dividends unknown — all returns are SIMULATED_SP_PROXY_NOT_DIVIDEND_PROOF",
+            "pick_sp missing — EW and exotics cannot be profit-proven (need VFU-21)",
+            "No ranked list per model — top-2/top-3 model containment unverifiable (SINGLE_TOP_PICK_ONLY)",
+            "Exotic dividends unknown — all returns are SIMULATED_SP_PROXY_NOT_DIVIDEND_PROOF",
             f"field_size gaps: {s4['ew_n'] - s4['ew_known_field_size']} EW races missing field_size",
         ],
         "q12_next": [
@@ -956,6 +1029,7 @@ def _section8(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict) -> dic
 
 
 # ── Section 9: Next action ────────────────────────────────────────────────────
+
 
 def _section9() -> dict:
     return {
@@ -976,6 +1050,7 @@ def _section9() -> dict:
 
 # ── Markdown renderers ────────────────────────────────────────────────────────
 
+
 def _h(n: int, text: str) -> str:
     return f"{'#' * n} {text}"
 
@@ -983,13 +1058,16 @@ def _h(n: int, text: str) -> str:
 def _render_rpr(s2: dict) -> str:
     lines = [
         _h(1, "J30-FOR — Old VELO RPR Dependency Audit — 2026-06-30"),
-        f"**Generated:** {datetime.now(timezone.utc).isoformat()}  ",
-        "**REPORT_ONLY — no scoring change, no model mutation.**", "",
-        _h(2, "Verdict"), f"- Primary: **{s2['verdict']}**",
-        f"- RPR interpretation: `{s2['rpr_interpretation']}`", "",
+        f"**Generated:** {datetime.now(UTC).isoformat()}  ",
+        "**REPORT_ONLY — no scoring change, no model mutation.**",
+        "",
+        _h(2, "Verdict"),
+        f"- Primary: **{s2['verdict']}**",
+        f"- RPR interpretation: `{s2['rpr_interpretation']}`",
+        "",
         _h(2, "Win SR Comparison"),
-        f"| Model | n | Wins | SR | Top-3 containment |",
-        f"|---|---|---|---|---|",
+        "| Model | n | Wins | SR | Top-3 containment |",
+        "|---|---|---|---|---|",
         f"| Old VELO | 46 | {s2['old_velo_wins']} | **{s2['old_velo_sr']}** | {s2['old_velo_top3_containment']} |",
         f"| No-RPR | {s2['norpr_n']} | {s2['norpr_wins']} | {s2['norpr_sr']} | {s2['norpr_top3_containment']} |",
         "",
@@ -999,26 +1077,32 @@ def _render_rpr(s2: dict) -> str:
         f"- Avg RPR gap on **wins**: {s2['rpr_gap_avg_wins']}",
         f"- Avg RPR gap on **misses**: {s2['rpr_gap_avg_misses']}",
         f"- RPR missing on top pick: {s2['rpr_missing_on_top_pick']}",
-        f"- OR missing on top pick: {s2['or_missing_on_top_pick']}", "",
+        f"- OR missing on top pick: {s2['or_missing_on_top_pick']}",
+        "",
         _h(2, "Pick Agreement"),
         f"- Old VELO and No-RPR agree on same pick: **{s2['norpr_agreement_with_old']}** of races",
         f"- No-RPR won and Old missed: {s2['norpr_better_cases']} races",
         f"- Old won and No-RPR missed: {s2['old_better_cases']} races",
-        f"- Both won same race: {s2['both_win_cases']} races", "",
+        f"- Both won same race: {s2['both_win_cases']} races",
+        "",
         _h(2, "Winner SP Profile"),
-        f"| Model | Avg winner SP | Median winner SP |",
-        f"|---|---|---|",
+        "| Model | Avg winner SP | Median winner SP |",
+        "|---|---|---|",
         f"| Old VELO | {s2['old_winner_sp_avg']} | {s2['old_winner_sp_median']} |",
-        f"| No-RPR | {s2['norpr_winner_sp_avg']} | {s2['norpr_winner_sp_median']} |", "",
+        f"| No-RPR | {s2['norpr_winner_sp_avg']} | {s2['norpr_winner_sp_median']} |",
+        "",
     ]
     if s2["norpr_better_detail"]:
         lines += [_h(2, "No-RPR Better Cases")]
         for d in s2["norpr_better_detail"]:
-            lines.append(f"- {d['course']} {d['off']}: winner={d['winner']} ({d['winner_sp']}) | No-RPR={d['norpr']} | Old={d['old']}")
+            lines.append(
+                f"- {d['course']} {d['off']}: winner={d['winner']} ({d['winner_sp']}) | No-RPR={d['norpr']} | Old={d['old']}"
+            )
         lines.append("")
     lines += [
         _h(2, "Limitation"),
-        f"> {s2['limitation']}", "",
+        f"> {s2['limitation']}",
+        "",
         "---",
         "REPORT_ONLY",
     ]
@@ -1028,14 +1112,16 @@ def _render_rpr(s2: dict) -> str:
 def _render_nb(s3: dict) -> str:
     lines = [
         _h(1, "J30-FOR — New Build Top-3 Value Containment Audit — 2026-06-30"),
-        f"**Generated:** {datetime.now(timezone.utc).isoformat()}  ",
-        "**REPORT_ONLY — no scoring change, no model mutation.**", "",
+        f"**Generated:** {datetime.now(UTC).isoformat()}  ",
+        "**REPORT_ONLY — no scoring change, no model mutation.**",
+        "",
         _h(2, "Verdict"),
         f"- Top-pick verdict: **{s3['verdict_primary']}**",
-        f"- Long-price verdict: **{s3['verdict_longprice']}**", "",
+        f"- Long-price verdict: **{s3['verdict_longprice']}**",
+        "",
         _h(2, "New Build Metrics"),
-        f"| Metric | Value |",
-        f"|---|---|",
+        "| Metric | Value |",
+        "|---|---|",
         f"| n (picks available) | {s3['nb_n']} |",
         f"| Win SR (top-1) | **{s3['nb_sr']}** |",
         f"| Place rate | {s3['nb_place_rate']} |",
@@ -1047,22 +1133,29 @@ def _render_nb(s3: dict) -> str:
         f"| Old missed, NB won | {s3['old_miss_nb_win']} |",
         f"| Old missed, NB in top-3 | {s3['old_miss_nb_in_top3']} |",
         f"| Long-price (6+) NB in top-3 | {s3['long_price_nb_in_top3']} |",
-        f"| EW/NB top-3 overlap | {s3['ew_nb_overlap']} |", "",
+        f"| EW/NB top-3 overlap | {s3['ew_nb_overlap']} |",
+        "",
     ]
     if s3["old_miss_nb_win_detail"]:
         lines += [_h(2, "Old Missed — New Build Caught")]
         for d in s3["old_miss_nb_win_detail"]:
-            lines.append(f"- {d['course']} {d['off']}: winner={d['winner']} ({d['winner_sp']}) | NB={d['nb']} | Old={d['old']}")
+            lines.append(
+                f"- {d['course']} {d['off']}: winner={d['winner']} ({d['winner_sp']}) | NB={d['nb']} | Old={d['old']}"
+            )
         lines.append("")
     if s3["long_price_detail"]:
         lines += [_h(2, "Long-Price New Build Top-3 Containment")]
         for d in s3["long_price_detail"]:
-            lines.append(f"- {d['course']} {d['off']}: winner={d['winner']} ({d['winner_sp']}) | NB={d['nb_pick']} in_top3={d['nb_in_top3']}")
+            lines.append(
+                f"- {d['course']} {d['off']}: winner={d['winner']} ({d['winner_sp']}) | NB={d['nb_pick']} in_top3={d['nb_in_top3']}"
+            )
         lines.append("")
     lines += [
         _h(2, "Limitation"),
-        f"> {s3['limitation']}", "",
-        "---", "REPORT_ONLY",
+        f"> {s3['limitation']}",
+        "",
+        "---",
+        "REPORT_ONLY",
     ]
     return "\n".join(lines)
 
@@ -1070,13 +1163,16 @@ def _render_nb(s3: dict) -> str:
 def _render_ew(s4: dict) -> str:
     lines = [
         _h(1, "J30-FOR — EW Candidate Reality Audit — 2026-06-30"),
-        f"**Generated:** {datetime.now(timezone.utc).isoformat()}  ",
-        "**REPORT_ONLY — no profitability claim without dividend data.**", "",
-        _h(2, "Verdict"), f"- **{s4['verdict']}**",
-        f"- Profitability: **{s4['profitability_status']}**", "",
+        f"**Generated:** {datetime.now(UTC).isoformat()}  ",
+        "**REPORT_ONLY — no profitability claim without dividend data.**",
+        "",
+        _h(2, "Verdict"),
+        f"- **{s4['verdict']}**",
+        f"- Profitability: **{s4['profitability_status']}**",
+        "",
         _h(2, "EW Coverage"),
-        f"| Field | Value |",
-        f"|---|---|",
+        "| Field | Value |",
+        "|---|---|",
         f"| EW candidates | {s4['ew_n']} |",
         f"| Known SP | {s4['ew_known_sp']} |",
         f"| Known field_size | {s4['ew_known_field_size']} |",
@@ -1090,18 +1186,23 @@ def _render_ew(s4: dict) -> str:
         f"| 3-place eligible (field≥8) | {s4['ew_3place_eligible']} |",
         f"| Pick SP avg | {s4['pick_sp_avg']} |",
         f"| Max SP placed | {s4['max_sp_placed']} |",
-        f"| Max SP won | {s4['max_sp_won']} |", "",
+        f"| Max SP won | {s4['max_sp_won']} |",
+        "",
         _h(2, "Race Detail"),
         "| Course | Off | Pick | Winner | EW Outcome | SP | Field |",
         "|---|---|---|---|---|---|---|",
     ]
     for d in s4["detail"]:
-        lines.append(f"| {d['course']} | {d['off']} | {d['pick']} | {d['winner']} | {d['ew_outcome']} | {d['winner_sp']} | {d['field_size']} |")
+        lines.append(
+            f"| {d['course']} | {d['off']} | {d['pick']} | {d['winner']} | {d['ew_outcome']} | {d['winner_sp']} | {d['field_size']} |"
+        )
     lines += [
         "",
         f"> **Note:** {s4['vfu20_note']}",
-        f"> {s4['pick_sp_coverage']}", "",
-        "---", "REPORT_ONLY",
+        f"> {s4['pick_sp_coverage']}",
+        "",
+        "---",
+        "REPORT_ONLY",
     ]
     return "\n".join(lines)
 
@@ -1109,23 +1210,25 @@ def _render_ew(s4: dict) -> str:
 def _render_mp(s5: dict) -> str:
     lines = [
         _h(1, "J30-FOR — Mid-Price Miss Recovery Audit — 2026-06-30"),
-        f"**Generated:** {datetime.now(timezone.utc).isoformat()}  ",
-        "**REPORT_ONLY — no model change.**", "",
+        f"**Generated:** {datetime.now(UTC).isoformat()}  ",
+        "**REPORT_ONLY — no model change.**",
+        "",
         _h(2, "Summary"),
         f"- Total mid-price misses: **{s5['total_midprice_misses']}** (mid_priced_won ×10)",
         f"- Old missed, NB won: {s5['old_miss_nb_win']}",
         f"- Old missed, No-RPR won: {s5['old_miss_norpr_win']}",
         f"- Old missed, EW caught (placed): {s5['old_miss_ew_caught']}",
         f"- Fully unrecovered: **{s5['unrecovered']}**",
-        f"- Recovery rate: {s5['recovery_rate']}", "",
+        f"- Recovery rate: {s5['recovery_rate']}",
+        "",
         _h(2, "Race Detail"),
         "| Course | Off | Winner | SP | Old | norpr | NB | NB top-3 | RPR anchor miss | Recovery |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for d in s5["detail"]:
         lines.append(
-            f"| {d['course']} | {d['off']} | {d['winner']} | {d.get('winner_sp','?')} "
-            f"| {d['old_pick']} | {d.get('norpr_pick','—')} | {d.get('nb_pick','—')} "
+            f"| {d['course']} | {d['off']} | {d['winner']} | {d.get('winner_sp', '?')} "
+            f"| {d['old_pick']} | {d.get('norpr_pick', '—')} | {d.get('nb_pick', '—')} "
             f"| {'Y' if d['nb_in_top3'] else 'N'} | {'Y' if d['rpr_anchor_miss'] else 'N'} "
             f"| {d['recovery']} |"
         )
@@ -1136,52 +1239,61 @@ def _render_mp(s5: dict) -> str:
 def _render_exotics(s6: dict) -> str:
     lines = [
         _h(1, "J30-FOR — Exotics Audit — 2026-06-30"),
-        f"**Generated:** {datetime.now(timezone.utc).isoformat()}  ",
-        "**REPORT_ONLY. Containment is not profit. SP proxy is not dividend.**", "",
+        f"**Generated:** {datetime.now(UTC).isoformat()}  ",
+        "**REPORT_ONLY. Containment is not profit. SP proxy is not dividend.**",
+        "",
         _h(2, "Verdicts"),
         f"- Exacta: **{s6['exacta_verdict']}**",
         f"- Trifecta: **{s6['trifecta_verdict']}**",
-        f"- Proof status: **{s6['exotics_proof_status']}**", "",
+        f"- Proof status: **{s6['exotics_proof_status']}**",
+        "",
         _h(2, "Exacta / Forecast Metrics"),
-        f"| Construction | Hits | n | Rate | Cost |",
-        f"|---|---|---|---|---|",
+        "| Construction | Hits | n | Rate | Cost |",
+        "|---|---|---|---|---|",
         f"| Old top-1 as winner | — | {s6['n_exacta_eligible']} | {s6['old_top1_as_winner']} | 1 unit |",
         f"| Old+NoRPR exacta box | {s6['old_norpr_exacta_box_hits']} | {s6['n_exacta_eligible']} | {s6['old_norpr_exacta_box_rate']} | 2 combos |",
-        f"| Consensus box (2-3 picks) | {s6['consensus_exacta_box_hits']} | {s6['n_exacta_eligible']} | {s6['consensus_exacta_box_rate']} | 2-6 combos |", "",
+        f"| Consensus box (2-3 picks) | {s6['consensus_exacta_box_hits']} | {s6['n_exacta_eligible']} | {s6['consensus_exacta_box_rate']} | 2-6 combos |",
+        "",
         _h(2, "Trifecta / Tricast Metrics"),
-        f"| Construction | Hits | n | Rate |",
-        f"|---|---|---|---|",
-        f"| Consensus box (top-3 finishers) | {s6['consensus_trifecta_box_hits']} | {s6['n_trifecta_eligible']} | {s6['consensus_trifecta_box_rate']} |", "",
+        "| Construction | Hits | n | Rate |",
+        "|---|---|---|---|",
+        f"| Consensus box (top-3 finishers) | {s6['consensus_trifecta_box_hits']} | {s6['n_trifecta_eligible']} | {s6['consensus_trifecta_box_rate']} |",
+        "",
         _h(2, "Exotic Fill Signal"),
-        f"| Lane | In exacta positions (1st/2nd) | In actual top-3 |",
-        f"|---|---|---|",
+        "| Lane | In exacta positions (1st/2nd) | In actual top-3 |",
+        "|---|---|---|",
         f"| New Build top-1 | {s6['nb_in_exacta_positions']} | {s6['nb_in_actual_top3']} |",
-        f"| No-RPR top-1 | {s6['norpr_in_exacta_positions']} | {s6['norpr_in_actual_top3']} |", "",
+        f"| No-RPR top-1 | {s6['norpr_in_exacta_positions']} | {s6['norpr_in_actual_top3']} |",
+        "",
         _h(2, "Hard Constraints"),
         "- CONTAINMENT IS NOT PROFIT",
         "- BOX HIT IS NOT PROFIT",
         "- SP PROXY IS NOT PAYOUT",
-        "- DIVIDEND_UNKNOWN on all constructions", "",
+        "- DIVIDEND_UNKNOWN on all constructions",
+        "",
         _h(2, "Limitation"),
-        f"> {s6['limitation']}", "",
-        "---", "REPORT_ONLY",
+        f"> {s6['limitation']}",
+        "",
+        "---",
+        "REPORT_ONLY",
     ]
     return "\n".join(lines)
 
 
-def _render_brief(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict, s7: dict,
-                  s8: dict, s9: dict) -> str:
+def _render_brief(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict, s7: dict, s8: dict, s9: dict) -> str:
     lines = [
         _h(1, "J30-FOR — Forensic Operator Brief — 2026-06-30"),
-        f"**Generated:** {datetime.now(timezone.utc).isoformat()}  ",
-        "**Mission:** J30-FOR — June 30 Full Forensic Pack With Exotics", "",
+        f"**Generated:** {datetime.now(UTC).isoformat()}  ",
+        "**Mission:** J30-FOR — June 30 Full Forensic Pack With Exotics",
+        "",
         "---",
         _h(2, "Loop Integrity"),
         f"- Races: {s1['races_total']} | Matched: {s1['races_matched']} | Parse retries: {s1['parse_retry_count']}",
         f"- Identity failures: {s1['identity_failures']} | Missing winner SP: {s1['missing_winner_sp']}",
         f"- Full finish order: {s1['full_finish_order_races']}/46 races",
         f"- No-RPR available: {s1['norpr_available']}/46 | New Build available: {s1['nb_available']}/46",
-        f"- Note: **{s1['ranked_list_note']}**", "",
+        f"- Note: **{s1['ranked_list_note']}**",
+        "",
         "---",
         _h(2, "Answers to Operator Questions"),
         "",
@@ -1218,7 +1330,8 @@ def _render_brief(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict, s7
         "",
         _h(2, "Active Contradiction"),
         "- **C-01** (WARN): Mission Control source_truth=RP_MERGED_CLEAN but learning/promotion gate BLOCKED",
-        "  (GATE_PIPELINE_TRUTH_FALSE_PASS_NO_VERDICTS). Expected and valid. NOT SUPPRESSED.", "",
+        "  (GATE_PIPELINE_TRUTH_FALSE_PASS_NO_VERDICTS). Expected and valid. NOT SUPPRESSED.",
+        "",
         _h(2, "Final Classifications"),
     ]
     for fc in _FINAL_CLASSIFICATIONS:
@@ -1227,11 +1340,11 @@ def _render_brief(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict, s7
     return "\n".join(lines)
 
 
-def _render_full_md(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict,
-                    s7: dict, s8: dict, s9: dict) -> str:
+def _render_full_md(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict, s7: dict, s8: dict, s9: dict) -> str:
     brief = _render_brief(s1, s2, s3, s4, s5, s6, s7, s8, s9)
     table_lines = [
-        _h(1, "J30-FOR — Combined Race Table — 2026-06-30"), "",
+        _h(1, "J30-FOR — Combined Race Table — 2026-06-30"),
+        "",
         "| Race | Course | Off | FS | Winner | W-SP | 2nd | 3rd | Old | NoRPR | NB | EW | OldW | NoRPRW | NB-T3 | EW-P | Ex-Ord | Ex-Box | Tri-Box | Miss |",
         "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
@@ -1251,6 +1364,7 @@ def _render_full_md(s1: dict, s2: dict, s3: dict, s4: dict, s5: dict, s6: dict,
 
 
 # ── main ─────────────────────────────────────────────────────────────────────
+
 
 def main() -> None:
     print(f"── J30-FOR: June 30 Forensic Pack — {_DATE} ──")
@@ -1281,11 +1395,12 @@ def main() -> None:
     pack = {
         "mission": "J30-FOR",
         "date": _DATE,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "hard_constraints": _HARD_CONSTRAINTS,
         "final_classifications": _FINAL_CLASSIFICATIONS,
         "contradiction_c01": {
-            "id": "C-01", "status": "RECORDED_NOT_SUPPRESSED",
+            "id": "C-01",
+            "status": "RECORDED_NOT_SUPPRESSED",
             "description": "source_truth=RP_MERGED_CLEAN but learning gate BLOCKED (GATE_PIPELINE_TRUTH_FALSE_PASS_NO_VERDICTS)",
         },
         "s1_loop_integrity": s1,
@@ -1333,11 +1448,17 @@ def main() -> None:
     print(f"  Loop integrity: {s1['races_matched']}/46 matched | retries: {s1['parse_retry_count']}")
     print(f"  Old VELO SR: {s2['old_velo_sr']} | RPR verdict: {s2['verdict']}")
     print(f"  No-RPR SR: {s2['norpr_sr']} | better cases: {s2['norpr_better_cases']}")
-    print(f"  New Build SR: {s3['nb_sr']} | in-actual-top3: {s3['nb_top3_containment']} | verdict: {s3['verdict_primary']}")
+    print(
+        f"  New Build SR: {s3['nb_sr']} | in-actual-top3: {s3['nb_top3_containment']} | verdict: {s3['verdict_primary']}"
+    )
     print(f"  EW: {s4['ew_place_rate']} place rate (n={s4['ew_n']}) | {s4['verdict']}")
-    print(f"  Mid-price misses: {s5['total_midprice_misses']} | recovered: {s5['old_miss_nb_win']+s5['old_miss_norpr_win']+s5['old_miss_ew_caught']} | unrecovered: {s5['unrecovered']}")
-    print(f"  Exotics: exacta consensus box {s6['consensus_exacta_box_rate']} | trifecta {s6['consensus_trifecta_box_rate']}")
-    print(f"  C-01: RECORDED_NOT_SUPPRESSED")
+    print(
+        f"  Mid-price misses: {s5['total_midprice_misses']} | recovered: {s5['old_miss_nb_win'] + s5['old_miss_norpr_win'] + s5['old_miss_ew_caught']} | unrecovered: {s5['unrecovered']}"
+    )
+    print(
+        f"  Exotics: exacta consensus box {s6['consensus_exacta_box_rate']} | trifecta {s6['consensus_trifecta_box_rate']}"
+    )
+    print("  C-01: RECORDED_NOT_SUPPRESSED")
     print()
     print("── J30-FOR DONE ──")
 
