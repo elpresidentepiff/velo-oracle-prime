@@ -1,0 +1,33 @@
+path,category,tracked_locally,reason
+scripts/ops/build_velo_living_state.py,VCP,yes,committed locally only (unpushed commit ff86674)
+scripts/ops/build_velo_heartbeat.py,VCP,yes,committed locally only (unpushed commit 5f83fec)
+scripts/ops/build_vcp03_burn_in_log.py,VCP,yes,committed locally only (unpushed commit a8b3e8a)
+data/reports/vcp_01_living_state_operator_brief.md,VCP,yes,committed locally only
+data/reports/vcp_02_heartbeat_operator_brief.md,VCP,yes,committed locally only
+data/reports/vcp_03_burn_in_log.json,VCP,yes,committed Day1 / modified Day2 uncommitted
+data/reports/vcp_03_burn_in_log.md,VCP,yes,committed Day1 / modified Day2 uncommitted
+data/reports/vcp_03_operator_brief.md,VCP,yes,committed locally only
+data/current/velo_living_state.json,VCP,no (gitignored),data/current/ is .gitignore'd by design
+scripts/ops/build_results_01_audit.py,RESULTS,no,untracked, never git add'ed
+scripts/ops/build_results_02_audit.py,RESULTS,no,untracked, never git add'ed
+data/reports/results_01_full_results_truth_audit.md,RESULTS,no,untracked
+data/reports/results_01_full_results_truth_audit.json,RESULTS,no,untracked
+data/reports/results_01_operator_brief.md,RESULTS,no,untracked
+data/reports/results_02_course_intelligence_audit.md,RESULTS,no,untracked
+data/reports/results_02_operator_brief.md,RESULTS,no,untracked
+scripts/ops/build_course_00_audit.py,COURSE,no,untracked
+scripts/ops/build_course_00a_tribunal.py,COURSE,no,untracked
+scripts/ops/parse_rp_course_profiles.py,COURSE,no,untracked
+scripts/ops/extract_local_draw_stats.py,COURSE,no,untracked
+data/reports/course_00_course_eyes_completion_pack.md,COURSE,no,untracked
+data/reports/course_00a_source_provenance_tribunal.md,COURSE,no,untracked
+data/reports/course_00b_rp_capture_operator_brief.md,COURSE,no,untracked
+scripts/ops/build_j30_forensic_pack.py,J30 forensic,no,untracked
+data/reports/j30_forensic_full_pack_2026-06-30.md,J30 forensic,no,untracked
+data/reports/j30_forensic_operator_brief_2026-06-30.md,J30 forensic,no,untracked
+data/council_packets/council_packet_2026-06-30.json,council,no,untracked
+data/council_reports/velo_council_report_2026-06-30.md,council,no,untracked
+data/mission_control/2026-06-30_mission_control.json,mission_control,no,untracked
+scripts/ops/rp_course_profile_cdp_capture.py,COURSE-00C,MISSING,file never created — mission not started
+data/reports/course_00c_cdp_capture_operator_brief.md,COURSE-00C,MISSING,file never created — mission not started
+ops/task_contracts/VCP-03.json,VCP,MISSING,not created under this name — burn-in tracked via vcp_03_burn_in_log.json instead
