@@ -1,0 +1,6 @@
+option,scope,risk,recommendation
+PATCH_LOCKED_RUN_RESULTS_SIGMA_DIRECTLY,add 3 fields (pick_sp/field_size/race_type) inline via existing predictions[race_id] dict,touches LOCKED script - requires explicit operator sign-off,RECOMMENDED for the 3 same-dict fields only
+ADD_PREWRITE_ENRICHMENT_LAYER,same as above framed as a small internal enrichment step before the upsert call,lower risk than a broad rewrite; minimal diff,RECOMMENDED - this is the concrete form of the option above
+ADD_POSTWRITE_RECONCILIATION_JOB,separate job joins verdict_id after sigma rows exist,isolates riskier join logic from the LOCKED insert path,RECOMMENDED for verdict_id only
+SPLIT_LIVE_AND_HISTORICAL_REPAIR,treat live-pipeline fix and historical backfill as separate missions/PRs,avoids bundling a live code change with a bulk historical Supabase write,RECOMMENDED as overall sequencing principle
+OTHER,rewrite run_results_sigma.py more broadly,unnecessary scope increase for this problem,NOT_RECOMMENDED
