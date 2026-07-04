@@ -1,0 +1,20 @@
+file_path,size_bytes,category,note
+data/dashboard_daily_predictions_2026_07_04.json,198694,dashboard,local staging file for dashboard display; not a Supabase write
+data/dashboard_daily_predictions_publish_audit_v1.json,4033,dashboard,publish audit sidecar; overwritten each run
+data/midprice_shadow_ledger.csv,928797,shadow_ledger,pre-existing shadow evaluation log; appended to by midprice hunter shadow eval (SHADOW ONLY per code comments, no scoring/routing effect)
+data/new_build/current_cards/current_card_passport_feed_2026_07_04.jsonl,997796,new_build,per-runner passport feed built by new_build_current_card_feed.py --execute (local-only, no Supabase calls)
+data/new_build/current_cards/current_card_passport_feed_latest.jsonl,997796,new_build,alias/latest copy of the above
+data/new_build/reports/current_card_passport_feed_2026_07_04.json,,new_build,summary report
+data/new_build/reports/current_card_passport_feed_2026_07_04.md,,new_build,markdown summary report
+data/new_build/reports/current_card_passport_feed_latest.json,,new_build,alias/latest copy
+data/new_build/reports/current_card_passport_feed_latest.md,,new_build,alias/latest copy
+data/new_build/reports/passport_coverage_latest.json,,new_build,passport coverage summary (local passport_lookup module output)
+data/new_build/reports/two_lane_readiness_2026_07_04.json,88175,new_build,new_build_two_lane_score.py --execute output (local-only, no Supabase calls)
+data/new_build/reports/two_lane_readiness_2026_07_04.md,,new_build,markdown summary
+data/racecards_2026_07_04_standard.race_date_normalized.json,1094825,racecard_cache,normalized copy of the standard cache produced during racecard load
+data/reports/racecard_cache_gate_latest.json,2105,gate,racecard cache gate pass/fail report
+data/reports/racecard_cache_gate_latest.md,,gate,markdown version of the above
+data/telegram_delivery_truth_2026_07_04.json,11408,telegram_log,records that every Telegram send attempt was a CONTAINMENT NO-OP; not an actual send log
+data/timing_audit/runtime_timing_audit_2026_07_04.json,15039,timing,per-step runtime timing breakdown (persist=37.09s dry-run skip path, runner_snapshots=0.000s confirming skip)
+data/velo_prime_verdicts_2026_07_04.json,364745,local_verdict_mirror,local JSON mirror of scored verdicts (NOT system of record per script's own comment)
+data/velo_run_observability_2026_07_04_9a18b8e5.json,1367,observability,mandatory observability packet written on PASS

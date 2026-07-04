@@ -1,0 +1,6 @@
+check,before_value,after_value,changed,note
+velo_verdicts rows with generated_at > 2026-07-04T00:00:00,0,0,no,dry-run persistence path never calls persist_race_predictions()
+runner_prediction_snapshots rows with created_at > 2026-07-04T00:00:00,0,0,no,--no-runner-snapshots guard skipped the writer call entirely (0.000s in timing summary)
+sigma_audits rows with date > 2026-07-03,0,0,no,run_results_sigma.py was never invoked
+local runner_snapshots_*.jsonl file count,116,116,no,confirmed via find before and after the run
+Telegram sends,0,0,no,every message logged with [CONTAINMENT NO-OP] TG: prefix; _legacy_tg() never performs a real network send
