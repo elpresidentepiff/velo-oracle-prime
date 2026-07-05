@@ -1,0 +1,22 @@
+script,table_or_file,write_type (INSERT/UPSERT/DELETE/APPEND/OVERWRITE),gating_flag,verified_by (file:line)
+scripts/ops/run_prime_today.py,Supabase pipeline_runs,UPDATE (stale-run close),persistence_enabled,scripts/ops/run_prime_today.py:1296-1303
+scripts/ops/run_prime_today.py,Supabase pipeline_runs,INSERT (open new run),persistence_enabled (via _open_pipeline_run call at 1518),scripts/ops/run_prime_today.py:1327
+scripts/ops/run_prime_today.py,Supabase pipeline_runs,UPDATE (close run PASS/FAIL/DEGRADED),persistence_enabled (run_id no-op if None),scripts/ops/run_prime_today.py:1354 (called from 2571/2603/2633/2756)
+scripts/ops/run_prime_today.py,Supabase velo_verdicts,UPSERT (on_conflict=race_id),persistence_enabled / verdict_persistence_enabled (same value always),app/services/velo_prime_service.py:1201 (called from run_prime_today.py:2190)
+scripts/ops/run_prime_today.py,Supabase runner_derived_features,UPSERT (on_conflict=race_id,horse_id),persistence_enabled,app/services/velo_prime_service.py:1291
+scripts/ops/run_prime_today.py,Supabase runner_prediction_snapshots,INSERT,runner_snapshots_enabled (false under --dry-run/--verdicts-only/--no-runner-snapshots),src/velo/runner_snapshot_store.py:234 (called from run_prime_today.py:2455)
+scripts/ops/run_prime_today.py,data/velo_prime_verdicts_{date}.json,OVERWRITE,NONE - fires even under --dry-run,scripts/ops/run_prime_today.py:2437
+scripts/ops/run_prime_today.py,data/timing_audit/runtime_timing_audit_{date}.json,OVERWRITE,NONE - fires even under --dry-run,scripts/ops/run_prime_today.py:2482
+scripts/ops/run_prime_today.py,data/velo_run_observability_{date}_{run_id}.json,OVERWRITE (new file per run_id),NONE - dry_run param never threaded from CLI,scripts/ops/write_velo_run_observability.py:204-225 (called from run_prime_today.py:1627/2563/2743)
+scripts/ops/run_prime_today.py,data/runner_snapshots_{date}_{run_id}.jsonl,APPEND,runner_snapshots_enabled,src/velo/runner_snapshot_store.py:202-216 (called from run_prime_today.py:2453-2455)
+scripts/ops/build_rpdc_daily.py,Supabase runner_release_candidates,DELETE (full day wipe before rewrite),NONE - unconditional full-day replace,scripts/ops/build_rpdc_daily.py:645
+scripts/ops/build_rpdc_daily.py,Supabase runner_release_candidates,UPSERT (batches of 100; on_conflict=run_date,race_id,horse_id),NONE,scripts/ops/build_rpdc_daily.py:650-654
+scripts/ops/ingest_results_to_horse_runs.py,Supabase racing_horse_runs,INSERT/UPSERT (per runner),NONE identified in this audit scope,THE_ONE_TRUTH.md:690-696 (script not deep-dived line-by-line this audit)
+scripts/ops/parse_rp_results_capture.py,data/results/rp_results_{date}.json,OVERWRITE,NONE,THE_ONE_TRUTH.md:654-666 (script not deep-dived line-by-line this audit)
+scripts/ops/publish_daily_predictions_to_dashboard.py,Supabase velo_verdicts,READ ONLY (select),n/a,scripts/ops/publish_daily_predictions_to_dashboard.py:324-330
+scripts/ops/publish_daily_predictions_to_dashboard.py,data/dashboard_daily_predictions_{date}.json,OVERWRITE,NONE - VELO_DASHBOARD_PUBLISH_ENABLED mentioned in docstring only, never read in code,scripts/ops/publish_daily_predictions_to_dashboard.py:628-642
+scripts/ops/publish_daily_predictions_to_dashboard.py,data/dashboard_daily_predictions_publish_audit_v1.json,OVERWRITE,NONE,scripts/ops/publish_daily_predictions_to_dashboard.py:675
+scripts/ops/new_build_dashboard_server.py,(none - read-only server),n/a,n/a,confirmed via grep for write_text/open(...w)/.write( - zero hits
+scripts/ops/velo_race_day_button.py,(chains run_prime_today.py with env override),n/a,VELO_FORCE_CARD=1 hardcoded unconditionally,scripts/ops/velo_race_day_button.py:312
+src/velo/racecard_cache_gate.py,data/reports/racecard_cache_gate_latest.json,OVERWRITE,NONE - runs every validate_racecard() call,src/velo/racecard_cache_gate.py:243-245
+src/velo/racecard_cache_gate.py,data/reports/racecard_cache_gate_latest.md,OVERWRITE,NONE,src/velo/racecard_cache_gate.py:244-265
