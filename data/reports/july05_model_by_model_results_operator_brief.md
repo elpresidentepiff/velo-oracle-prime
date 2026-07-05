@@ -1,7 +1,7 @@
 # July 5 2026 — Model-by-Model Results — Operator Brief
 Generated: 2026-07-05 | Mission: JULY05-MODEL-BY-MODEL-RESULTS-PACKET
 
-> **AMENDED 2026-07-05** after operator Supabase verification found two errors: (1) New Build was wrongly reported as having no scorecard — `passport_strength_score` is a real, reconcilable field; (2) the No-RPR shadow's "1/22" hid an undisclosed tie in 4 of 22 races. Both corrected below. Full detail in `data/reports/july05_model_by_model_supabase_correction_note.md`.
+> **AMENDED TWICE.** First amendment (Supabase check) fixed the No-RPR tie disclosure but used the WRONG New Build field (`passport_strength_score` — a feature input, not New Build's model output). Second amendment (dashboard forensic trace, `data/reports/july05_dashboard_newbuild_little_lady_rock_forensic_note.md`) traced the actual dashboard source code and corrected New Build to the real operational field (`lane_a_top3`). **Confirmed: New Build's real model ranked the 41.0 winner (Little Lady Rock, race 922118) #1 — a genuine hit, not a near-miss — and had the best strike rate of any model checked (27.3%).** This is the authoritative version.
 
 ---
 
@@ -23,8 +23,10 @@ None were skipped — all 6 ran successfully for 2026-07-05. New Build Lane B (i
 ## 4. Main VELO Prime result
 4/22 wins, SR 18.2%, 13/22 frames, frame rate 59.1%. (Unchanged from the earlier Sigma reconciliation — this mission did not re-run Sigma.)
 
-## 5. New Build result [CORRECTED]
-A real scorecard **does** exist and was missed in the original report. `data/new_build/current_cards/current_card_passport_feed_2026_07_05.jsonl` carries a `passport_strength_score` per runner, with real `race_id`/`rp_uid` (horse_id) fields that reconcile cleanly against results. Ranking each race by this score: **5/22 wins (22.7% SR), 14/22 frames (63.6% frame rate) — the best-performing reconcilable model of the day**, beating Main VELO Prime (18.2%/59.1%) and every Old VELO role. Caveat: this is a feature-engineering heuristic (passport strength), not the calibrated output of New Build's actual Lane A `.pkl` model — labeled as a proxy signal, not New Build's true model probability. `two_lane_readiness_2026_07_05.json` remains a separate feature-quality gate report (RPR clean, SP clean, passport coverage >50%, no leakage), not itself a scorecard.
+## 5. New Build result [CORRECTED TWICE — this is the final version]
+A real scorecard exists, and it is New Build's **actual operational Lane A model output** — `data/new_build/reports/two_lane_readiness_2026_07_05.json`, `race_day_scorecards[].lane_a_top3` (each entry: `rank`, `horse`, `prob`, `nb_decision_lane`). This is confirmed, by reading `new_build_dashboard_server.py`'s source code, to be exactly what the live dashboard displays as `new_build_top3`. Ranking each race by this field (rank 1 = highest `prob`): **6/22 wins (27.3% SR), 11/22 frames (50.0% frame rate) — the best strike rate of any model checked across both July 4 and July 5**, beating Main VELO Prime (18.2%/59.1%) and every Old VELO role.
+
+My first amendment used the wrong field (`passport_strength_score`, a feature-engineering input from the passport feed, not New Build's model output) and reported New Build ranking Little Lady Rock 2nd for race 922118. **That was wrong.** The dashboard-forensic trace proves New Build's real model ranked Little Lady Rock (the actual 41.0 winner) **#1**, exactly as the operator's dashboard showed. Full trace in `data/reports/july05_dashboard_newbuild_little_lady_rock_forensic_note.md`.
 
 ## 6. Old VELO result
 Reconciled directly from `old_velo_three_option_card_2026_07_05.json`'s `role_metrics`:
@@ -68,16 +70,19 @@ Still the weakest reconcilable model under any framing — removing RPR-derived 
 
 All 3 router lanes had 0 wins from today's small candidate pools — a bad day for the router lanes specifically, masked by the strong cumulative history if the two aren't kept separate (which is exactly why the operator asked for this split).
 
-## 13. Which model beat Main VELO today? [CORRECTED]
-**New Build (passport_strength_score proxy) beat Main VELO today**: 22.7% SR / 63.6% frame rate vs Main VELO's 18.2% / 59.1%. This was missed in the original report. Old VELO's WIN role tied Main VELO exactly (same pick). PLACE and LONGSHOT roles were both below on wins, LONGSHOT's frame rate (27.3%) well below. No-RPR shadow was clearly worse under every framing. Router lanes went 0-for-today across all three.
+## 13. Which model beat Main VELO today? [CORRECTED TWICE]
+**New Build (Lane A, the real operational model) beat Main VELO decisively today**: 27.3% SR / 50.0% frame rate vs Main VELO's 18.2% / 59.1%. Old VELO's WIN role tied Main VELO exactly (same pick). PLACE and LONGSHOT roles were both below on wins. No-RPR shadow was clearly worse under every framing. Router lanes went 0-for-today across all three.
 
-### The 41.0 winner, traced (race 922118, Little Lady Rock) — not confirmed for any model
+### The 41.0 winner, traced (race 922118, Little Lady Rock) — CONFIRMED HIT for New Build
 | Model | Top pick | Result |
 |---|---|---|
 | Main VELO / Old VELO WIN / Radical Shadow | Way Maker (prob 0.53, SP 1.1) | Lost (3rd) |
 | Old VELO LONGSHOT | Brosna Town (SP 10.0) | Placed 2nd |
-| New Build (passport_strength_score) | Way Maker (2.95) — Little Lady Rock ranked 2nd (2.90) | Lost (3rd) |
-No model selected Little Lady Rock as its top pick. New Build came within 0.05 of ranking it 1st (a genuine near-miss) but its designated top pick lost, same as every other model.
+| No-RPR shadow | Brosna Town (0.15) | Placed 2nd |
+| **New Build Lane A (operational, dashboard-visible)** | **Little Lady Rock (prob 0.2179, rank 1)** | **WON @ 41.0** |
+| (superseded) passport_strength_score, the wrong field | Way Maker (2.95) — Little Lady Rock ranked 2nd (2.90) | N/A — not New Build's real output |
+
+**New Build's operational model correctly identified the actual winner as its top pick.** Main VELO, Old VELO WIN, and Radical Shadow all converged on the same short-priced favourite (Way Maker, SP 1.1) and lost together. This is a genuine value-discovery event: a single 41.0 winner at 1-unit stake returns +40 units, more than enough to outweigh several short-priced Main VELO wins on economics alone, even though this report is strike-rate/frame-rate focused rather than a staking/ROI analysis.
 
 ## 14. Which model framed best?
 Main VELO Prime / Old VELO WIN, tied at 59.1% (13/22).
@@ -95,12 +100,13 @@ No. Nothing here changes the router-lane promotion picture from the EOD packet (
 Everything under the standing hard laws — no promotion, no live scoring change, no model training. Council's `WATCH_ONLY` verdict from the EOD packet is unchanged by this report-only mission.
 
 ## 19. What should be built next so every model has a proper daily scorecard?
-1. A proper New Build scorecard script that reconciles Lane A's **actual calibrated `.pkl` model output** against daily results — `passport_strength_score` is a usable proxy (and today it outperformed everything else) but it is a feature heuristic, not the real model probability. Building the genuine Lane A scorecard is now the top priority, not a "gap" to wave at — it may already be VÉLØ's best signal.
+1. **A permanent, dated New Build scorecard script that reads `lane_a_top3` directly** (not a feature-proxy field) and reconciles it against results every day, going forward — today's forensic trace should become a standing report, not a one-off correction. New Build's Lane A may already be VÉLØ's best signal (27.3% SR, caught a genuine 41.0 winner) and it deserves dedicated daily tracking, not rediscovery under operator pressure each time.
 2. A per-model mid-price-trap breakdown (not just Main VELO's Sigma reconciliation) so Q15 can be answered properly next time.
 3. A tri-lane/deep-race-agent/course-master "verdict accuracy" layer — today these tools only produce governance classifications, not scored predictions, so there's no way to ask "did the tri-lane governance call turn out to be right?"
 4. A documented, single tie-break rule for `sqpe_no_rpr_shadow_prob` ties (or a fix to whatever produces flatlined values in some races), so this metric stops requiring three different framings to report honestly.
+5. **A standing rule for future model-comparison reports**: every row must carry model name, source path, race_id, horse_id, rank, odds, and result — and any dashboard-adjacent claim must be traced to the exact server code that renders it, not assumed from the nearest-looking local artifact.
 
 ---
 
 ## Classifications
-PR_126_MERGED · JULY05_MODEL_BY_MODEL_RESULTS_COMPLETE · MAIN_VELO_SIGMA_RESULT_INCLUDED · NEW_BUILD_SCORECARD_CHECKED · NEW_BUILD_SCORECARD_CORRECTED · OLD_VELO_SCORECARD_CHECKED · NO_RPR_SHADOW_CHECKED · NO_RPR_RESULT_CORRECTED · SIDECAR_OVERLAYS_CHECKED · ROUTER_LANES_INCLUDED_WITH_TODAY_VS_CUMULATIVE_SPLIT · NO_SUPABASE_WRITES · NO_VERDICT_REWRITE · NO_SIGMA_REWRITE · NO_RUNNER_SNAPSHOT_WRITE · NO_TELEGRAM_SEND · NO_MODEL_TRAINING · NO_MODEL_PROMOTION · REPORT_ONLY_MODEL_COMPARISON
+PR_126_MERGED · JULY05_MODEL_BY_MODEL_RESULTS_COMPLETE · MAIN_VELO_SIGMA_RESULT_INCLUDED · NEW_BUILD_SCORECARD_CHECKED · NEW_BUILD_SCORECARD_CORRECTED · NEW_BUILD_SCORECARD_DASHBOARD_TRACED · NEW_BUILD_LONGSHOT_HIT · DASHBOARD_SOURCE_OUTRANKS_LOCAL_REPORT · MAIN_VELO_SHORT_PRICE_TRAP · OLD_VELO_SCORECARD_CHECKED · NO_RPR_SHADOW_CHECKED · NO_RPR_RESULT_CORRECTED · SIDECAR_OVERLAYS_CHECKED · ROUTER_LANES_INCLUDED_WITH_TODAY_VS_CUMULATIVE_SPLIT · NO_SUPABASE_WRITES · NO_VERDICT_REWRITE · NO_SIGMA_REWRITE · NO_RUNNER_SNAPSHOT_WRITE · NO_TELEGRAM_SEND · NO_MODEL_TRAINING · NO_MODEL_PROMOTION · PROMOTION_GATED · REPORT_ONLY_MODEL_COMPARISON

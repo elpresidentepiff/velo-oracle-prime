@@ -3,8 +3,8 @@ Main VELO Prime,Supabase velo_verdicts (22 rows),yes,supabase_table
 Main VELO Prime,data/sigma_results/sigma_results_2026_07_05.json,yes,local_file
 Main VELO Prime,Supabase sigma_audits (21 rows),yes,supabase_table
 Main VELO Prime,data/dashboard_daily_predictions_2026_07_05.json,yes,local_file
-New Build,data/new_build/current_cards/current_card_passport_feed_2026_07_05.jsonl (field passport_strength_score),yes,"local_file (field present all along; CORRECTED 2026-07-05 -- original report wrongly said no reconcilable score existed)"
-New Build,data/new_build/reports/two_lane_readiness_2026_07_05.json,yes,local_file (feature-quality gate report, separate from the scorecard above)
+New Build,data/new_build/reports/two_lane_readiness_2026_07_05.json race_day_scorecards[].lane_a_top3,yes,"local_file (THE real operational New Build scorecard -- DASHBOARD-FORENSIC CONFIRMED 2026-07-05 as the exact field new_build_dashboard_server.py surfaces as new_build_top3). Field present all along; missed twice before being correctly identified."
+New Build,data/new_build/current_cards/current_card_passport_feed_2026_07_05.jsonl (field passport_strength_score),yes,"SUPERSEDED -- local_file. Wrongly used as New Build's result in the first amendment. It is a feature-engineering input, not New Build's model output, and not what the dashboard displays. Kept for audit trail only."
 Old VELO,data/racecard_merged/racecard_AYR_2026-07-05.json,yes,local_file
 Old VELO,data/racecard_merged/racecard_MAR_2026-07-05.json,yes,local_file
 Old VELO,data/racecard_merged/racecard_STH_2026-07-05.json,yes,local_file
