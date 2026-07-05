@@ -1,0 +1,11 @@
+check,before_this_mission,after_this_mission,changed,note
+velo_verdicts rows for 2026-07-05,22,22,no,not touched; read-only queries only
+runner_release_candidates rows for run_date=2026-07-05,193,193,no,not touched
+sigma_audits rows for 2026-07-05,21,21,no,run_results_sigma.py not re-run
+racing_horse_runs rows for run_date=2026-07-05,193 (22 races),193 (22 races),no,ingest_results_to_horse_runs.py not re-run
+runner_prediction_snapshots (Supabase),unchanged,unchanged,no,not touched
+local runner_snapshots_*.jsonl file count,124,124,no,confirmed via find before and after
+model files,untouched,untouched,no,no model training or promotion
+Telegram sends during this mission,0,0,no,no Telegram-capable command executed; sidecars confirmed report-only via source grep before running
+main branch head before this mission,e3e8e69 (before PR126 merge),1c1870d (after PR126 merge),yes,PR #126 merge was explicitly authorized in Part A of this mission
+new local report files created,0 dated 2026-07-05 for old_velo/radical_shadow/tri_lane/deep_race_agent/course_master,6 new dated report files created,yes,authorized in Part D as report-only sidecar runs; no Supabase/Telegram writes confirmed via source inspection before each run

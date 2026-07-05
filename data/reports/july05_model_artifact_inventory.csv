@@ -1,0 +1,19 @@
+model,artifact_path,existed_before_mission,type
+Main VELO Prime,Supabase velo_verdicts (22 rows),yes,supabase_table
+Main VELO Prime,data/sigma_results/sigma_results_2026_07_05.json,yes,local_file
+Main VELO Prime,Supabase sigma_audits (21 rows),yes,supabase_table
+Main VELO Prime,data/dashboard_daily_predictions_2026_07_05.json,yes,local_file
+New Build,data/new_build/current_cards/current_card_passport_feed_2026_07_05.jsonl,yes,local_file
+New Build,data/new_build/reports/two_lane_readiness_2026_07_05.json,yes,local_file
+Old VELO,data/racecard_merged/racecard_AYR_2026-07-05.json,yes,local_file
+Old VELO,data/racecard_merged/racecard_MAR_2026-07-05.json,yes,local_file
+Old VELO,data/racecard_merged/racecard_STH_2026-07-05.json,yes,local_file
+Old VELO,data/reports/old_velo_three_option_card_2026_07_05.json,no (built this mission),local_file
+No-RPR shadow,velo_verdicts.full_analysis.predictions[].sqpe_no_rpr_shadow_prob,yes (field already present),supabase_table_field
+Radical Shadow,data/reports/radical_shadow_2026_07_05.json,no (built this mission),local_file
+Tri-Lane Stress Test,data/reports/tri_lane_stress_test_2026_07_05_v2.json,no (built this mission),local_file
+Tri-Lane Agent Review,data/reports/tri_lane_agent_review_2026_07_05_v2.json,no (built this mission),local_file
+Deep Race Agent,data/reports/deep_race_agent_v1_2026_07_05_v2.json,no (built this mission),local_file
+Course Master,data/reports/course_master_2026_07_05.json,no (built this mission),local_file
+Router lanes,data/router_shadow_audit_latest.csv,yes (cumulative),local_file
+Router lanes,data/velo_innovation_protocol_1k_deduped.csv,yes (cumulative; today's 22 rows isolated by this mission for today-only figures),local_file

@@ -1,0 +1,18 @@
+model_name,lane_name,races_evaluated,wins,frames,strike_rate_pct,frame_rate_pct,evidence_source,notes
+VELO_PRIME_LIVE,main,22,4,13,18.2,59.1,data/sigma_results/sigma_results_2026_07_05.json,Sigma-reconciled; miss classes mid_priced_won=7 short_fav_won=2
+NEW_BUILD_LANE_A_CORE_PASSPORT,Lane A,NOT_AVAILABLE,NOT_AVAILABLE,NOT_AVAILABLE,NOT_AVAILABLE,NOT_AVAILABLE,data/new_build/reports/two_lane_readiness_2026_07_05.json,"Readiness/quality-gate report only (RPR clean SP clean passport>50% no leakage); no ranked-pick reconciliation artifact exists"
+NEW_BUILD_LANE_B_INTENT,Lane B,NOT_AVAILABLE_INTENT_COVERAGE_ZERO,NOT_AVAILABLE,NOT_AVAILABLE,NOT_AVAILABLE,NOT_AVAILABLE,data/new_build/reports/two_lane_readiness_2026_07_05.json,"Intent coverage 0.0% is expected for morning reads (historical race_id+horse pairs never match current card); Lane B is PAPER_ONLY_NO_INTENT by design"
+OLD_VELO_WIN,WIN role,22,4,13,18.2,59.1,data/reports/old_velo_three_option_card_2026_07_05.json,Identical picks to VELO_PRIME_LIVE (same top-ranked velo_prime_prob horse)
+OLD_VELO_PLACE,PLACE role,22,3,9,13.6,40.9,data/reports/old_velo_three_option_card_2026_07_05.json,Distinct pick from WIN role
+OLD_VELO_LONGSHOT,LONGSHOT role,22,3,6,13.6,27.3,data/reports/old_velo_three_option_card_2026_07_05.json,Distinct pick from WIN/PLACE roles
+SQPE_NO_RPR_SHADOW,shadow,22,1,10,4.5,45.5,velo_verdicts.full_analysis (re-ranked by sqpe_no_rpr_shadow_prob per race),Own independent top pick per race using only no-RPR features; weakest reconcilable model today
+RADICAL_SHADOW,overlay,22,4,13,18.2,59.1,data/reports/radical_shadow_2026_07_05.json,"Tracks same top pick as VELO_PRIME_LIVE with added passport/midprice-shadow diagnostic context; not an independent ranking"
+TRI_LANE_STRESS_TEST,governance,22,NOT_RECONCILABLE,NOT_RECONCILABLE,NOT_RECONCILABLE,NOT_RECONCILABLE,data/reports/tri_lane_stress_test_2026_07_05_v2.json,"Action counts: TRI_PASS=19 TRI_WIN=1 TRI_CASH_RUN=2; governance classification, not a horse pick"
+DEEP_RACE_AGENT,review,14,NOT_RECONCILABLE,NOT_RECONCILABLE,NOT_RECONCILABLE,NOT_RECONCILABLE,data/reports/deep_race_agent_v1_2026_07_05_v2.json,"14 of 22 races reviewed (curated, not full-field); verdicts NO_BET=8 CASH_RUN_REVIEW=2 PASS_WITH_SUPPORT_REVIEW=4; ratings_rows=0 (no raceform PDF cross-reference supplied)"
+COURSE_MASTER,course-level,3 courses,NOT_RECONCILABLE,NOT_RECONCILABLE,NOT_RECONCILABLE,NOT_RECONCILABLE,data/reports/course_master_2026_07_05.json,"Course-level actions: COURSE_SUPPRESS=1 COURSE_BOOST=1 COURSE_NEUTRAL=1; not a runner-level pick"
+ROUTER_V1_BASE,today_only,5,0,0,0.0,0.0,data/velo_innovation_protocol_1k_deduped.csv (filtered to date=2026-07-05),TODAY-ONLY figure; see separate cumulative row below
+ROUTER_V1_BASE,cumulative_to_date,226,78,166,34.5,73.5,data/router_shadow_audit_latest.csv,"CUMULATIVE across whole shadow-tracking period, NOT today's number; LANE_FROZEN"
+ROUTER_V2_CLASS4_ONLY,today_only,5,0,0,0.0,0.0,data/velo_innovation_protocol_1k_deduped.csv (filtered to date=2026-07-05),TODAY-ONLY figure; see separate cumulative row below
+ROUTER_V2_CLASS4_ONLY,cumulative_to_date,216,75,157,34.7,72.7,data/router_shadow_audit_latest.csv,"CUMULATIVE, NOT today's number; WATCHLIST (improved from LANE_FROZEN)"
+ROUTER_V6_GOLD_SEAM,today_only,4,0,0,0.0,0.0,data/velo_innovation_protocol_1k_deduped.csv (filtered to date=2026-07-05),TODAY-ONLY figure; see separate cumulative row below
+ROUTER_V6_GOLD_SEAM,cumulative_to_date,86,26,52,30.2,60.5,data/router_shadow_audit_latest.csv,"CUMULATIVE, NOT today's number; LANE_FROZEN (frame below 70% threshold despite positive ROI)"

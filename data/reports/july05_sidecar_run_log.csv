@@ -1,0 +1,7 @@
+script,command,output,supabase_writes,telegram,promotion,status
+scripts/ops/build_old_velo_three_option_card.py,--date 2026-07-05,data/reports/old_velo_three_option_card_2026_07_05.json + .md,none,none,none,COMPLETE
+scripts/ops/run_radical_shadow_today.py,--date 2026-07-05,data/reports/radical_shadow_2026_07_05.json + .md,none,none,none,COMPLETE
+scripts/ops/run_tri_lane_stress_test.py,--date 2026-07-05 --ruleset v2,data/reports/tri_lane_stress_test_2026_07_05_v2.json + .md,none,none,none,COMPLETE
+scripts/ops/build_tri_lane_agent_review.py,--packet data/reports/tri_lane_stress_test_2026_07_05_v2.json,data/reports/tri_lane_agent_review_2026_07_05_v2.json + .md,none,none,none,COMPLETE
+scripts/ops/build_deep_race_agent_v1.py,--date 2026-07-05,data/reports/deep_race_agent_v1_2026_07_05_v2.json + .md,none,none,none,"COMPLETE (14/22 races curated, not full-field; ratings_rows=0 without optional raceform PDF cross-reference)"
+scripts/ops/build_course_master.py,--date 2026-07-05,data/reports/course_master_2026_07_05.json + .md,none,none,none,COMPLETE
