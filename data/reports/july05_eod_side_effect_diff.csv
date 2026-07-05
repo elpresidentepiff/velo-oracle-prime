@@ -1,0 +1,11 @@
+check,before_this_mission,after_this_mission,changed,note
+velo_verdicts rows for 2026-07-05,22,22,no,not touched; verdicts already persisted from earlier scoring mission
+runner_release_candidates rows for run_date=2026-07-05,193,193,no,RPDC not touched by this mission
+sigma_audits rows for 2026-07-05,21,21,no,run_results_sigma.py NOT re-run; verified via read-only dump, already complete
+racing_horse_runs rows for run_date=2026-07-05,193 (22 races),193 (22 races),no,ingest_results_to_horse_runs.py NOT re-run; verified already complete
+runner_prediction_snapshots,unchanged,unchanged,no,not touched by this mission
+local runner_snapshots_*.jsonl file count,unchanged,unchanged,no,no new scoring runs in this mission
+model files,untouched,untouched,no,no model training or promotion
+Telegram sends during this mission,0,0,no,no Telegram-capable command executed; this mission is report-only
+Mission Control / Council / Execution Bridge / Innovation / Router / Nightly Learning artifacts,already present from prior EOD run,unchanged,no,all verified read-only via Part A; none rerun
+main branch head before this mission,e3e8e69 (after PR124 merge),e3e8e69,no,no PR merged during this mission; PR opened at the end for operator review
