@@ -1,0 +1,10 @@
+step,script,race_count_before,race_count_after,status,notes
+13,scripts/ops/ingest_results_to_horse_runs.py,50,51,REFRESHED,"racing_horse_runs 439->449 rows; upsert on (race_id,horse_id); Leicester 922278 confirmed present after run"
+14,scripts/ops/build_sigma_retrieval_corpus.py,50 (date_max=2026-06-23 stale),51 (date_max=2026-07-04),REFRESHED,"required a fresh dump_sigma_audits.py run first; freshness_gate_passed=true after"
+15,scripts/ops/update_mission_control.py,50,51,REFRESHED,"sigma_artifact sr=0.2941 wins=15 n=51; learning_gate BLOCKED; promotion_gate BLOCKED"
+16A,scripts/audit/vp30_operator_card.py,51,51,RERUN_NO_DRIFT,"reads velo_verdicts directly (already 51/51 all along); rerun for consistency only"
+16B,scripts/audit/run_velo_council.py,50,51,REFRESHED,"verdict WATCH_ONLY both before and after; reason is missing runner_prediction_snapshots, unrelated to race count"
+17,scripts/ops/run_execution_bridge_shadow.py,50,51,REFRESHED,"0 active paper bets; WATCH_ONLY n=9 SR=11%; no live execution, no staking, no Telegram"
+18,scripts/ops/build_innovation_protocol.py,50,51,REFRESHED,"51 new verdict rows deduped in; V6_GOLD_SEAM_WATCHLIST n=81->82 ROI=-1.2%->+1.2%"
+19,scripts/ops/router_shadow_audit.py,50,51,REFRESHED,"V1_BASE n=220->221; V2_CLASS4_ONLY n=210->211; V6_GOLD_SEAM n=81->82; all lanes remain LANE_FROZEN"
+20,scripts/ops/nightly_eod_learning_runner.py,50,51,REFRESHED,"matched_races 50->51; events_created 50->51; engine_updates_applied_first_run=1 (only new Leicester event, 50 correctly skipped as duplicates); data_error_count 1->0"
