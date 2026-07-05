@@ -104,5 +104,18 @@ This supersedes both the original PR #127 number (New Build "unavailable") and t
 11. **Files amended:** `july05_model_by_model_results_operator_brief.md`, `july05_model_by_model_results_matrix.csv`, `july05_model_artifact_inventory.csv`, plus this new forensic note.
 12. **New commit hash:** recorded after this commit is pushed (see PR #127).
 
+## Addendum — the No-RPR tie is a real bug, not just a reporting disagreement
+
+Read `scripts/ops/new_build_dashboard_server.py`'s `_build_no_rpr_race_map()` (the function that actually powers the dashboard's `no_rpr_top_horse` field on the live-snapshot code path) and ran it against race 922122's real data. Its tie-break: it sorts `(prob, horse)` tuples with `reverse=True` and takes the first. For a tie, Python breaks ties on the second tuple element (`horse`), so `reverse=True` picks whichever horse name sorts **last alphabetically**.
+
+For race 922122 (the 11-way tie at 0.0975), this dashboard function itself produces:
+
+**"Zandahar" — a fourth different answer**, matching neither my original pick (Masterius, first-in-list), nor the operator's (Parisian Fair, winner-credited), nor Instant Force from the earlier passport-feed pass. This is not a disagreement between me and the operator — **the dashboard's own two different code paths (`_build_no_rpr_race_map` for live snapshots vs. the single `old_velo_top.sqpe_no_rpr_shadow_prob` value used in the two-lane path) are internally inconsistent with each other on tied races**, because nobody wrote an intentional tie-break rule — it's an accidental side effect of tuple sorting.
+
+**This is a real, reportable bug**, separate from the reconciliation reporting mistake: `sqpe_no_rpr_shadow_prob` needs either (a) a documented, deterministic tie-break rule applied consistently everywhere it's used, or (b) the underlying model fixed so it stops producing flatlined/tied probabilities across a whole field in some races. Filed as a finding, not fixed here — no scoring/model changes made.
+
+## Reference document produced from this investigation
+`docs/current/VELO_MODEL_SOURCE_MAP.md` — a permanent map of every model/lane, its exact source file/field, sort direction, and known gotchas, written after reading the full daily-scoring codebase (New Build two-lane scorer, decision policy, dashboard server, Old VELO three-option card, racecard loader) end to end, not just grepping for field names.
+
 ## Classifications
-PR_127_HELD_PENDING_DASHBOARD_FORENSIC · ONE_TRUTH_READ · HARDENING_STATE_READ · DASHBOARD_SOURCE_TRACED · LITTLE_LADY_ROCK_RANK_PROVEN · ODDS_INCLUDED · NEW_BUILD_LEARNING_IMPACT_CLASSIFIED · NO_SUPABASE_WRITES · NO_SCORING_RUN · NO_SIGMA_RUN · NO_TELEGRAM_SEND · NO_MODEL_TRAINING · NO_PROMOTION
+PR_127_HELD_PENDING_DASHBOARD_FORENSIC · ONE_TRUTH_READ · HARDENING_STATE_READ · DASHBOARD_SOURCE_TRACED · LITTLE_LADY_ROCK_RANK_PROVEN · ODDS_INCLUDED · NEW_BUILD_LEARNING_IMPACT_CLASSIFIED · NO_RPR_TIE_BREAK_BUG_FOUND · NO_SUPABASE_WRITES · NO_SCORING_RUN · NO_SIGMA_RUN · NO_TELEGRAM_SEND · NO_MODEL_TRAINING · NO_PROMOTION
