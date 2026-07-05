@@ -152,3 +152,10 @@ python scripts/ops/velo_session_start_check.py
 
 ## NEVER touch without operator approval
 Live weights/profile in `velo_prime_ensemble.py` · `models/sqpe_v17/` and `models/specialist/` · `app/agents/betfair_execution_agent.py` + `betfair_trading_agents.py` (never import into live path) · LIVE guard in `src/velo/execution_bridge.py` · `data/sentient_state.json` · Sigma Telegram format (LOCKED) · old verdicts in Supabase · `MC_CONFIG.CONTAMINATED_RUN_IDS`.
+
+## PDF intelligence must never overwrite identity truth (2026-07-05)
+Found live on the 2026-07-05 raceday (Ayr/Market Rasen/Southwell AW) and fixed in PR #122/#123/#124:
+- `southwell-aw` (and any future all-weather venue slug) must be present in `UK_IRE_VENUES` (`build_racing_post_racecard_url_list.py`) — a missing alias silently drops a whole meeting into the international/dropped file.
+- PDF intelligence (OR/TS/Spotlight/Postdata) must be attached as an **overlay** onto the injection-based `racecard_merged` file (`scripts/ops/merge_pdf_intel_into_racecard_merged.py`), never as a from-scratch replacement — `ingest_racecard_pdfs.py`'s own output has no `race_id` and must not be written directly over `build_racecard_merged_from_injection.py`'s output.
+- The live RP numeric `race_id` and `horse_id` are identity truth and must survive every enrichment step. RPDC coverage must be re-checked using the *preserved* real `race_id` after any PDF merge — a coverage drop to 0% after enrichment is a race_id mismatch, not missing RPDC.
+- `race_type` must be carried through `load_rp_merged_as_racecards()` (`src/velo/racecard_loader.py`) under the `type` key (matching the standard-cache convention), not dropped or mis-keyed.

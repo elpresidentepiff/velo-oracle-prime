@@ -1,0 +1,21 @@
+check,value,verified_by
+races,22,live_scrape + velo_verdicts count
+courses,3 (Ayr, Market Rasen, Southwell AW),racecard_injection.json course list
+runners,193,standard_cache / racecard_injection.json
+horse_id_coverage,193/193 real numeric RP IDs,racecard_injection.json + full_analysis predictions
+race_id_coverage,22/22 real numeric RP race IDs,velo_verdicts.race_id sample (921918 921920 921916 922291 ...)
+synthetic_race_id_count_after_fix,0,confirmed no rp_{venue}_{date}_{time} pattern in velo_verdicts.race_id
+rpdc_rows_for_date,193,runner_release_candidates run_date=2026-07-05
+rpdc_race_coverage,22/22,check_rpdc_integrity.py -> RPDC_OK counts:{"RPDC_OK":22}
+rpdc_primary_tag_present,22/22,prove_supabase_persistence.py checks.rpdc_primary_tag_present
+pdf_intel_coverage_ayr,53/62 = 85.5%,merge_pdf_intel_into_racecard_merged.py output
+pdf_intel_coverage_market_rasen,55/57 = 96.5%,merge_pdf_intel_into_racecard_merged.py output
+pdf_intel_coverage_southwell_aw,65/74 = 87.8%,merge_pdf_intel_into_racecard_merged.py output
+pdf_intel_coverage_overall,173/193 ~= 89.6%,sum of above
+race_type_coverage,22/22 (chase/hurdle/flat),velo_verdicts.race_type query
+predicted_field_size_coverage,22/22,velo_verdicts.predicted_field_size query
+full_analysis_coverage,22/22,velo_verdicts.full_analysis query
+top_rank_horse_id_coverage,22/22,velo_verdicts.top_rank_horse_id query
+cache_gate_status,PASS (clean, no override needed),racecard_cache_gate_latest.json
+metadata_coverage,193/193 = 100.0%,racecard_cache_gate_latest.json
+dashboard_published,yes (supabase+local_json source),run_prime_today.py dashboard publisher output

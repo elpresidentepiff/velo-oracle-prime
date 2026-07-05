@@ -1,0 +1,11 @@
+check,before_this_mission,after_this_mission,changed,note
+velo_verdicts rows for 2026-07-05,22,22,no,verdicts were already persisted before this merge/lock mission started; this mission only merged 2 PRs and ran read-only verification
+runner_release_candidates rows for run_date=2026-07-05,193,193,no,RPDC not touched by this mission
+sigma_audits rows for 2026-07-05,0,0,no,run_results_sigma.py not run; pending tonight
+runner_prediction_snapshots (Supabase),unchanged,unchanged,no,not touched by this mission (writes happened earlier during the raceday scoring itself, before this mission began)
+local runner_snapshots_*.jsonl file count,124,124,no,confirmed via find before and after this mission's Part A-F actions
+Telegram sends during this mission,0,0,no,no Telegram-capable command executed in Part A-F
+model files,untouched,untouched,no,no model training or promotion
+main branch head before this mission,fcce9e1 (after PR122+123),fcce9e1,no,PR merges happened at the start of this mission (Part A/B), not during Part C-F
+PR #124 (race_type fix),not part of original 2-PR scope,opened, not merged,new,found and fixed during Part C verification; awaiting separate operator review
+data/racecard_merged/* local files,pre-fix (0.0 pdf placeholders / synthetic ids depending on run),corrected (real race_id + real pdf intel + race_type),yes,local file rebuild only, not a Supabase write; required to get race_type populated correctly
