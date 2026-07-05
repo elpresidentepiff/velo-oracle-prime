@@ -35,7 +35,7 @@ UK_IRE_VENUES = {
     "haydock", "hereford", "hexham", "huntingdon", "kempton", "kempton-aw", "leicester",
     "lingfield", "ludlow", "market-rasen", "musselburgh", "newbury",
     "newcastle", "newcastle-aw", "newmarket", "newmarket-july", "nottingham", "perth", "plumpton", "pontefract",
-    "redcar", "ripon", "salisbury", "sandown", "southwell", "stratford",
+    "redcar", "ripon", "salisbury", "sandown", "southwell", "southwell-aw", "stratford",
     "taunton", "thirsk", "towcester", "uttoxeter", "warwick", "wetherby",
     "wincanton", "windsor", "wolverhampton", "worcester", "yarmouth", "york",
     # Ireland
