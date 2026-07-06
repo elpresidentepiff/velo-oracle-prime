@@ -8,14 +8,20 @@
    promoted. Operator to confirm this remains accepted as-is.
 2. **Complete DOCS-01.** This mission — the documentation spine in `docs/current/`.
    Status: this file is part of that completion.
-3. **VFU-22 — False-GREEN Feature Autopsy** (formerly proposed as VFU-13 before
-   DOCS-01 index reconciliation) — **RESOLVED and OPEN**. Operator ruling
-   2026-07-06: VFU-13 is retired and must never be reused; this work is VFU-22.
-   IN PROGRESS. Task contract: `ops/task_contracts/VFU-22.json`. Branch:
-   `vfu-22-false-green-feature-autopsy`. Must consume the DOCS-01 spine, not
-   bypass it.
+3. **VFU-22 — False-GREEN Feature Autopsy** — **COMPLETE**. Merged PR #137
+   (`4f789b1`). 6 of 16 GREEN days (37.5%) confirmed false-green;
+   `CONFIDENCE_FLOOD_FALSE_GREEN` class identified. See
+   `data/reports/vfu_22_false_green_feature_autopsy.md`.
+3a. **VFU-23 — Confidence Flood Retrospective Diagnostic** — IN PROGRESS (opened
+   2026-07-06 per operator formal dispatch, following VFU-22). Builds the
+   thermometer, not the cure: a tested, reusable post-Sigma diagnostic
+   (`scripts/ops/build_confidence_flood_diagnostic.py`) that reproduces the
+   VFU-22 false-green set 6/6. Task contract: `ops/task_contracts/VFU-23.json`.
+   Branch: `vfu-23-confidence-flood-retrospective-diagnostic`. Does not change
+   the VP Gatekeeper's pre-race criteria — see
+   `docs/current/CONFIDENCE_FLOOD_DIAGNOSTIC.md`.
 4. **Plan Knowledge Graph only after evidence objects are clean.** Not started.
-   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and VFU-22 closing
+   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and VFU-23 closing
    clean.
 
 ## Postponed lanes (not started, no artifacts exist yet)

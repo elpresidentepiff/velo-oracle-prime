@@ -1,0 +1,92 @@
+{
+  "task_id": "VFU-23",
+  "title": "Confidence Flood Retrospective Diagnostic",
+  "classification": "DRY_RUN_REPORT_ONLY_DIAGNOSTIC",
+  "allowed_paths": [
+    "docs/current/",
+    "data/reports/",
+    "data/current/",
+    "ops/task_contracts/VFU-23.json",
+    "scripts/ops/build_confidence_flood_diagnostic.py",
+    "tests/test_confidence_flood_diagnostic.py"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/sqpe_v17/",
+    "models/specialist/",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/build_vp_opportunity_panel.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_sigma_results",
+    "create_report",
+    "create_docs",
+    "create_tests",
+    "create_task_contract",
+    "run_tests",
+    "run_task_contract_audit"
+  ],
+  "forbidden_actions": [
+    "pre_race_gate_change",
+    "vp_gate_criteria_change",
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [
+    "supabase.table(",
+    "requests.post(supabase",
+    "telegram send",
+    "bot.send_message",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true"
+  ],
+  "required_outputs": [
+    "ops/task_contracts/VFU-23.json",
+    "scripts/ops/build_confidence_flood_diagnostic.py",
+    "tests/test_confidence_flood_diagnostic.py",
+    "docs/current/CONFIDENCE_FLOOD_DIAGNOSTIC.md",
+    "data/reports/vfu_23_confidence_flood_retrospective_diagnostic.md"
+  ],
+  "required_classifications": [
+    "CONFIDENCE_FLOOD_DIAGNOSTIC_ACTIVE",
+    "RETROSPECTIVE_ONLY_DIAGNOSTIC",
+    "VFU_22_FALSE_GREEN_SET_REPRODUCED",
+    "DIAGNOSTIC_ARTIFACTS_CREATED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "classification_required": [
+    "CONFIDENCE_FLOOD_DIAGNOSTIC_ACTIVE",
+    "RETROSPECTIVE_ONLY_DIAGNOSTIC",
+    "VFU_22_FALSE_GREEN_SET_REPRODUCED",
+    "DIAGNOSTIC_ARTIFACTS_CREATED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "CONFIDENCE_FLOOD_DIAGNOSTIC_ACTIVE",
+    "RETROSPECTIVE_ONLY_DIAGNOSTIC",
+    "VFU_22_FALSE_GREEN_SET_REPRODUCED",
+    "DIAGNOSTIC_ARTIFACTS_CREATED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}
