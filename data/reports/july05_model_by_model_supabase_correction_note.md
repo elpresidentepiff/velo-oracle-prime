@@ -1,6 +1,15 @@
 # July 5 2026 — Supabase Correction Note (amends PR #127)
 Generated: 2026-07-05 | Mission: PR127-SUPABASE-CORRECTION-AUDIT
 
+> **SUPERSEDED, 2026-07-05, by the dashboard forensic trace and hard-reset audit.** This note's
+> New Build conclusion below (using `passport_strength_score`, "Little Lady Rock ranked 2nd,
+> near-miss") was itself wrong — that field is a feature input, not New Build's model output, and
+> not what the dashboard displays. The authoritative version is
+> `data/reports/july05_model_truth_reset_note.md` and
+> `data/reports/july05_little_lady_rock_rank_policy_forensic.csv`: New Build's real Lane A model
+> ranked Little Lady Rock #1 (a confirmed hit), and the decision-policy layer separately classified
+> it `NO_EDGE`. Kept below for audit trail only — do not cite the "near-miss" conclusion.
+
 The operator directly verified Supabase and found two real problems in the original PR #127 report. Both are corrected here.
 
 ## Finding 1: SQPE No-RPR shadow — the "1/22" number hid a tie problem

@@ -129,3 +129,37 @@ Before citing any model's "result," answer three questions in the report itself:
 3. If the field can tie, what happens on a tie, and did this race hit one?
 
 If any of the three isn't answered in writing, the number does not go in the report.
+
+## MODEL_RESULT_REPORTING_LAW
+
+Added 2026-07-05 after a chain of corrections on race 922118 (Little Lady Rock, 41.0) that kept
+collapsing distinct layers into one word, "result." A horse can simultaneously be rank #1 by a
+model, `NO_EDGE` by policy, not staked, the actual race winner, absent from any Supabase New Build
+table, and visible on the dashboard — all six true at once, none contradicting another.
+
+**Every future model-result claim must separate, explicitly, in writing:**
+
+1. **Model rank is not policy decision.** A model's own `predict_proba`/`prob` ranking (e.g.
+   `lane_a_top3[].prob`) is a different fact from what `policy_v1.py::apply_policy_v1()` classifies
+   it as (`WIN_TRUST`/`FRAME_TRUST`/`SUPPRESS`/`LOW_DATA`/`NO_EDGE`). Report both, never one standing
+   in for the other.
+2. **Policy decision is not staking result.** `NO_EDGE`/`SUPPRESS` etc. are paper classifications
+   under a hard no-staking, no-live-execution law — they say nothing about realized P&L, because
+   nothing here is ever staked live. Do not describe a `NO_EDGE` pick's outcome as a "loss" or "win"
+   in staking terms; describe it only as a model-rank outcome.
+3. **Dashboard display must name its source field.** Any claim about "what the dashboard shows" must
+   cite the exact function and field in `new_build_dashboard_server.py` (or the relevant server) that
+   renders it — not an assumption based on the nearest-looking local artifact.
+4. **A proxy score is not a calibrated model output.** Feature-engineering inputs (e.g.
+   `passport_strength_score`) that feed a model are not that model's prediction. Never rank a race by
+   an input feature and call it "the model's result."
+5. **No "model got it" claim without: rank, odds (SP), source file path, and policy decision**, all
+   four stated together for that specific pick.
+6. **Every future model-result report must print odds (SP decimal)** next to every pick — strike
+   rate alone hides value-discovery events (a single long-priced winner can outweigh several
+   short-priced ones economically, even though this report format is not a staking/ROI analysis).
+
+**Required table format for any model-comparison report:** `race_id, off_time, course, horse,
+horse_id, SP, model_name, model_rank, model_score, policy_decision, dashboard_visible,
+result_position, win, frame, source_file, source_field, sort_direction`. A row missing any of these
+16 fields is not accepted into a report.

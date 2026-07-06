@@ -1,7 +1,7 @@
 # July 5 2026 — Model-by-Model Results — Operator Brief
 Generated: 2026-07-05 | Mission: JULY05-MODEL-BY-MODEL-RESULTS-PACKET
 
-> **AMENDED TWICE.** First amendment (Supabase check) fixed the No-RPR tie disclosure but used the WRONG New Build field (`passport_strength_score` — a feature input, not New Build's model output). Second amendment (dashboard forensic trace, `data/reports/july05_dashboard_newbuild_little_lady_rock_forensic_note.md`) traced the actual dashboard source code and corrected New Build to the real operational field (`lane_a_top3`). **Confirmed: New Build's real model ranked the 41.0 winner (Little Lady Rock, race 922118) #1 — a genuine hit, not a near-miss — and had the best strike rate of any model checked (27.3%).** This is the authoritative version.
+> **AMENDED THREE TIMES.** Amendment 1 (Supabase check) fixed the No-RPR tie disclosure but used the WRONG New Build field (`passport_strength_score`). Amendment 2 (dashboard forensic trace) corrected New Build to the real field (`lane_a_top3`) — confirmed rank 1 = Little Lady Rock, the 41.0 winner. Amendment 3 (hard-reset audit, `data/reports/july05_model_truth_reset_note.md` + `data/reports/july05_little_lady_rock_rank_policy_forensic.csv`) adds the missing distinction: **New Build's Lane A model ranked the winner #1, but its own `policy_v1` decision layer separately classified the pick `NO_EDGE`** — a model hit, not a governance/staking hit. Model rank, policy decision, dashboard display, and staking outcome are four different things and must never be collapsed into one word, "result," again — see `docs/current/VELO_MODEL_SOURCE_MAP.md`'s `MODEL_RESULT_REPORTING_LAW`.
 
 ---
 
@@ -70,19 +70,23 @@ Still the weakest reconcilable model under any framing — removing RPR-derived 
 
 All 3 router lanes had 0 wins from today's small candidate pools — a bad day for the router lanes specifically, masked by the strong cumulative history if the two aren't kept separate (which is exactly why the operator asked for this split).
 
-## 13. Which model beat Main VELO today? [CORRECTED TWICE]
-**New Build (Lane A, the real operational model) beat Main VELO decisively today**: 27.3% SR / 50.0% frame rate vs Main VELO's 18.2% / 59.1%. Old VELO's WIN role tied Main VELO exactly (same pick). PLACE and LONGSHOT roles were both below on wins. No-RPR shadow was clearly worse under every framing. Router lanes went 0-for-today across all three.
+## 13. Which model beat Main VELO today? [CORRECTED THREE TIMES — see full row-level proof in `data/reports/july05_little_lady_rock_rank_policy_forensic.csv`]
+**New Build Lane A's model rank beat Main VELO decisively today**: 27.3% SR / 50.0% frame rate vs Main VELO's 18.2% / 59.1%. Old VELO's WIN role tied Main VELO exactly (same pick). PLACE and LONGSHOT roles were both below on wins. No-RPR shadow was clearly worse under every framing. Router lanes went 0-for-today across all three.
 
-### The 41.0 winner, traced (race 922118, Little Lady Rock) — CONFIRMED HIT for New Build
-| Model | Top pick | Result |
-|---|---|---|
-| Main VELO / Old VELO WIN / Radical Shadow | Way Maker (prob 0.53, SP 1.1) | Lost (3rd) |
-| Old VELO LONGSHOT | Brosna Town (SP 10.0) | Placed 2nd |
-| No-RPR shadow | Brosna Town (0.15) | Placed 2nd |
-| **New Build Lane A (operational, dashboard-visible)** | **Little Lady Rock (prob 0.2179, rank 1)** | **WON @ 41.0** |
-| (superseded) passport_strength_score, the wrong field | Way Maker (2.95) — Little Lady Rock ranked 2nd (2.90) | N/A — not New Build's real output |
+### The 41.0 winner, traced (race 922118, Little Lady Rock) — model rank, policy decision, and result kept separate
+| Layer | Value |
+|---|---|
+| New Build Lane A **model rank** (`lane_a_top3[].prob`, descending) | **Rank 1 — Little Lady Rock — 0.2179** |
+| New Build Lane B **model rank** (`lane_b_top3[].prob`) | Rank 1 — Little Lady Rock — 0.1679 |
+| New Build **policy_v1 decision** (`new_build_velo/policy_v1.py`, anchored to Lane B prob) | **`NO_EDGE`** — 0.1679 misses `FRAME_TRUST_VP_MIN=0.17` by ~0.002 and `WIN_TRUST_VP_MIN=0.22` |
+| **Dashboard-visible row** | Yes — this is the exact `lane_a_top3` field the dashboard renders |
+| Main VELO / Old VELO WIN / Radical Shadow **pick** | Way Maker, prob 0.53, SP 1.1 — lost (3rd) |
+| Old VELO LONGSHOT **pick** | Brosna Town, SP 10.0 — placed 2nd |
+| No-RPR shadow **pick** (race 922118 has no tie, unlike 922122) | Brosna Town, 0.15 — placed 2nd |
+| `passport_strength_score` (superseded proxy — NOT a model or dashboard field) | Way Maker 1st (2.95), Little Lady Rock 2nd (2.90) |
+| **Actual result** | Little Lady Rock, SP 41.0, WON |
 
-**New Build's operational model correctly identified the actual winner as its top pick.** Main VELO, Old VELO WIN, and Radical Shadow all converged on the same short-priced favourite (Way Maker, SP 1.1) and lost together. This is a genuine value-discovery event: a single 41.0 winner at 1-unit stake returns +40 units, more than enough to outweigh several short-priced Main VELO wins on economics alone, even though this report is strike-rate/frame-rate focused rather than a staking/ROI analysis.
+**Corrected classification: `NEW_BUILD_LANE_A_MODEL_HIT_41_TO_1` + `NEW_BUILD_POLICY_NO_EDGE_BLOCKED_STAKE`.** New Build's model rank correctly identified the actual winner. Its own policy layer separately did not clear it for any authorized action — this is not a realized-profit event, it is model-level evidence only. Main VELO, Old VELO WIN, and Radical Shadow all converged on the same short-priced favourite (Way Maker, SP 1.1) and lost together. Full row-level detail with every source path and field name: `data/reports/july05_little_lady_rock_rank_policy_forensic.csv`.
 
 ## 14. Which model framed best?
 Main VELO Prime / Old VELO WIN, tied at 59.1% (13/22).
@@ -94,7 +98,7 @@ Cannot be fully isolated per-model without a full re-classification of every mod
 SQPE_NO_RPR_SHADOW — weakest under every tie-break framing (5.6%/4.5%/9.1% SR depending on framing, all well below the field), and additionally the least trustworthy of all models today since 4 of its 22 races produce no real signal (tied/flatlined probabilities).
 
 ## 17. Did any model show promotion-grade evidence?
-No. Nothing here changes the router-lane promotion picture from the EOD packet (PR #126): V1_BASE and V6_GOLD_SEAM `LANE_FROZEN`, V2_CLASS4_ONLY `WATCHLIST` but not eligible.
+No. Nothing here changes the router-lane promotion picture from the EOD packet (PR #126): V1_BASE and V6_GOLD_SEAM `LANE_FROZEN`, V2_CLASS4_ONLY `WATCHLIST` but not eligible. New Build's Lane A 41.0 rank-1 pick is genuine model-level evidence, not promotion-grade — its own policy layer (`NO_EDGE`) didn't clear it either, and one race is not multi-day validation.
 
 ## 18. What remains WATCH_ONLY?
 Everything under the standing hard laws — no promotion, no live scoring change, no model training. Council's `WATCH_ONLY` verdict from the EOD packet is unchanged by this report-only mission.
@@ -109,4 +113,4 @@ Everything under the standing hard laws — no promotion, no live scoring change
 ---
 
 ## Classifications
-PR_126_MERGED · JULY05_MODEL_BY_MODEL_RESULTS_COMPLETE · MAIN_VELO_SIGMA_RESULT_INCLUDED · NEW_BUILD_SCORECARD_CHECKED · NEW_BUILD_SCORECARD_CORRECTED · NEW_BUILD_SCORECARD_DASHBOARD_TRACED · NEW_BUILD_LONGSHOT_HIT · DASHBOARD_SOURCE_OUTRANKS_LOCAL_REPORT · MAIN_VELO_SHORT_PRICE_TRAP · OLD_VELO_SCORECARD_CHECKED · NO_RPR_SHADOW_CHECKED · NO_RPR_RESULT_CORRECTED · SIDECAR_OVERLAYS_CHECKED · ROUTER_LANES_INCLUDED_WITH_TODAY_VS_CUMULATIVE_SPLIT · NO_SUPABASE_WRITES · NO_VERDICT_REWRITE · NO_SIGMA_REWRITE · NO_RUNNER_SNAPSHOT_WRITE · NO_TELEGRAM_SEND · NO_MODEL_TRAINING · NO_MODEL_PROMOTION · PROMOTION_GATED · REPORT_ONLY_MODEL_COMPARISON
+PR_127_HARD_HOLD · PREVIOUS_MODEL_REPORTS_NOT_TRUSTED · LITTLE_LADY_ROCK_MODEL_RANK_PROVEN · NEW_BUILD_LANE_A_MODEL_HIT_41_TO_1 · NEW_BUILD_POLICY_DECISION_PROVEN · MODEL_RANK_POLICY_STAKING_SEPARATED · ODDS_INCLUDED · SOURCE_PATHS_INCLUDED · PR_126_MERGED · JULY05_MODEL_BY_MODEL_RESULTS_COMPLETE · MAIN_VELO_SIGMA_RESULT_INCLUDED · NEW_BUILD_SCORECARD_CHECKED · NEW_BUILD_SCORECARD_CORRECTED · NEW_BUILD_SCORECARD_DASHBOARD_TRACED · DASHBOARD_SOURCE_OUTRANKS_LOCAL_REPORT · MAIN_VELO_SHORT_PRICE_TRAP · OLD_VELO_SCORECARD_CHECKED · NO_RPR_SHADOW_CHECKED · NO_RPR_RESULT_CORRECTED · NO_RPR_TIE_BREAK_BUG_FOUND · SIDECAR_OVERLAYS_CHECKED · ROUTER_LANES_INCLUDED_WITH_TODAY_VS_CUMULATIVE_SPLIT · NO_SUPABASE_WRITES · NO_SCORING_RUN · NO_SIGMA_RUN · NO_VERDICT_REWRITE · NO_RUNNER_SNAPSHOT_WRITE · NO_TELEGRAM_SEND · NO_MODEL_TRAINING · NO_PROMOTION · REPORT_ONLY_MODEL_COMPARISON
