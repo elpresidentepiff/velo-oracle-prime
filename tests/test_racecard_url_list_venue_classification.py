@@ -3,8 +3,26 @@
 southwell-aw (Southwell's all-weather fixture slug) was missing from UK_IRE_VENUES,
 causing today's Southwell meeting to be misclassified as international and dropped
 from the UK/IRE racecard URL list on 2026-07-05.
+
+The identical class of bug recurred one day later on 2026-07-06: lingfield-aw,
+lingfield-aw-gb, and wolverhampton-aw were also missing from UK_IRE_VENUES,
+silently routing 15 real UK races into the "international, not fed to VELO" file.
+This is a live race-universe correctness bug, not a one-off scrape issue --
+every downstream stage (passports, scoring, Sigma, dashboard, learning) depends
+on the race universe being complete before anything else runs.
 """
-from scripts.ops.build_racing_post_racecard_url_list import UK_IRE_VENUES, _venue_slug_from_url
+import json
+from pathlib import Path
+
+import pytest
+
+from scripts.ops.build_racing_post_racecard_url_list import (
+    UK_IRE_VENUES,
+    _venue_slug_from_url,
+    build_racecard_urls,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_southwell_aw_is_classified_uk_ire():
@@ -16,3 +34,107 @@ def test_southwell_aw_url_extracts_matching_slug():
     slug = _venue_slug_from_url(url)
     assert slug is not None
     assert slug.lower() in UK_IRE_VENUES
+
+
+def test_lingfield_aw_is_classified_uk_ire():
+    assert "lingfield-aw" in UK_IRE_VENUES
+
+
+def test_lingfield_aw_gb_is_classified_uk_ire():
+    assert "lingfield-aw-gb" in UK_IRE_VENUES
+
+
+def test_wolverhampton_aw_is_classified_uk_ire():
+    assert "wolverhampton-aw" in UK_IRE_VENUES
+
+
+def test_lingfield_aw_url_extracts_matching_slug():
+    url = "https://www.racingpost.com/racecards/393/lingfield-aw/2026-07-06/922456"
+    slug = _venue_slug_from_url(url)
+    assert slug is not None
+    assert slug.lower() in UK_IRE_VENUES
+
+
+def test_lingfield_aw_gb_url_extracts_matching_slug():
+    url = "https://www.racingpost.com/racecards/1321/lingfield-aw-gb/2026-07-06/924398"
+    slug = _venue_slug_from_url(url)
+    assert slug is not None
+    assert slug.lower() in UK_IRE_VENUES
+
+
+def test_wolverhampton_aw_url_extracts_matching_slug():
+    url = "https://www.racingpost.com/racecards/513/wolverhampton-aw/2026-07-06/922462"
+    slug = _venue_slug_from_url(url)
+    assert slug is not None
+    assert slug.lower() in UK_IRE_VENUES
+
+
+def test_no_known_aw_track_missing_its_aw_variant():
+    """Guard against this exact bug class recurring: every known all-weather
+    track's -aw slug must be present in the allowlist alongside its turf slug."""
+    known_aw_tracks = {"kempton", "newcastle", "southwell", "lingfield", "wolverhampton"}
+    for track in known_aw_tracks:
+        assert track in UK_IRE_VENUES, f"{track} missing from UK_IRE_VENUES"
+        assert f"{track}-aw" in UK_IRE_VENUES, f"{track}-aw missing from UK_IRE_VENUES"
+
+
+JULY06_INDEX_CAPTURE_DATE = "index-2026-07-06-FINAL"
+JULY06_INJECTION_PATH = (
+    ROOT / "data" / "racing_post_account_parsed" / "live-full-racepages-2026-07-06" / "racecard_injection.json"
+)
+JULY06_STANDARD_CACHE_PATH = ROOT / "data" / "racecards_2026_07_06_standard.json"
+
+
+def _july06_index_available() -> bool:
+    return (ROOT / "data" / "racing_post_account_raw" / JULY06_INDEX_CAPTURE_DATE).exists()
+
+
+def test_july06_universe_rebuild_recovers_all_36_races(tmp_path):
+    """Full regression proof: rebuilding the July 06 UK/IRE URL list from the
+    already-captured index HTML must now produce 36 races across 5 physical
+    venues (6 course entries, since Lingfield's two fixture IDs are counted
+    separately), with an empty international bucket -- not 21 races / 3 tracks."""
+    if not _july06_index_available():
+        pytest.skip("July 06 index capture not present in this environment")
+
+    scratch_dir = ROOT / "data" / "racing_post_url_lists" / "_test_scratch"
+    scratch_dir.mkdir(parents=True, exist_ok=True)
+    output = scratch_dir / "rp_racecards_2026-07-06_test.txt"
+    try:
+        result = build_racecard_urls(
+            capture_date=JULY06_INDEX_CAPTURE_DATE,
+            target_date="2026-07-06",
+            output=output,
+            execute=True,
+        )
+
+        assert result["uk_ire_url_count"] == 36
+        assert result["international_url_count"] == 0
+
+        lines = output.read_text(encoding="utf-8").splitlines()
+        assert len(lines) == 36
+
+        slugs = {_venue_slug_from_url(u) for u in lines}
+        assert slugs == {"ayr", "ripon", "roscommon", "lingfield-aw", "lingfield-aw-gb", "wolverhampton-aw"}
+    finally:
+        for f in scratch_dir.glob("*"):
+            f.unlink()
+        scratch_dir.rmdir()
+
+
+def test_july06_injection_has_36_races_zero_skipped():
+    if not JULY06_INJECTION_PATH.exists():
+        pytest.skip("July 06 injection file not present in this environment")
+    data = json.loads(JULY06_INJECTION_PATH.read_text(encoding="utf-8"))
+    assert data["races_count"] == 36
+    assert data["skipped_count"] == 0
+
+
+def test_july06_standard_cache_has_405_active_runners():
+    if not JULY06_STANDARD_CACHE_PATH.exists():
+        pytest.skip("July 06 standard cache not present in this environment")
+    data = json.loads(JULY06_STANDARD_CACHE_PATH.read_text(encoding="utf-8"))
+    races = data if isinstance(data, list) else data.get("races", [])
+    assert len(races) == 36
+    total_runners = sum(len(r.get("runners", [])) for r in races)
+    assert total_runners == 405

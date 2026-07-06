@@ -33,11 +33,11 @@ UK_IRE_VENUES = {
     "epsom", "exeter", "fakenham", "ffos-las", "goodwood", "hamilton",
     "fontwell",
     "haydock", "hereford", "hexham", "huntingdon", "kempton", "kempton-aw", "leicester",
-    "lingfield", "ludlow", "market-rasen", "musselburgh", "newbury",
+    "lingfield", "lingfield-aw", "lingfield-aw-gb", "ludlow", "market-rasen", "musselburgh", "newbury",
     "newcastle", "newcastle-aw", "newmarket", "newmarket-july", "nottingham", "perth", "plumpton", "pontefract",
     "redcar", "ripon", "salisbury", "sandown", "southwell", "southwell-aw", "stratford",
     "taunton", "thirsk", "towcester", "uttoxeter", "warwick", "wetherby",
-    "wincanton", "windsor", "wolverhampton", "worcester", "yarmouth", "york",
+    "wincanton", "windsor", "wolverhampton", "wolverhampton-aw", "worcester", "yarmouth", "york",
     # Ireland
     "ballinrobe", "bellewstown", "clonmel", "cork", "curragh", "downpatrick",
     "dundalk", "fairyhouse", "galway", "gowran-park", "kilbeggan", "killarney",
