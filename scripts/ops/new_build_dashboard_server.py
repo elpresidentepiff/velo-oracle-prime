@@ -9,7 +9,9 @@ Serves:
   GET /api/governed-card?date=YYYY-MM-DD → New Build verdicts in governed-card shape
   GET /api/health   → health check
 
-No Supabase. No model_manager. No Live VELO. No Telegram. No staking.
+Read-only Supabase reads added for canonical truth endpoints
+(public.canonical_model_scorecards, public.canonical_learning_events).
+No Supabase writes. No model_manager. No Live VELO. No Telegram. No staking.
 
 Usage:
   python scripts/ops/new_build_dashboard_server.py [--port 8000]
@@ -19,7 +21,9 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import re
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -58,6 +62,38 @@ def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def _sb_get(path: str) -> list[dict]:
+    """Read-only Supabase REST fetch. No write path exists in this file."""
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(str(ROOT / ".env"))
+    except Exception:
+        pass
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
+    if not url or not key:
+        return []
+    req = urllib.request.Request(
+        url + "/rest/v1" + path,
+        headers={"apikey": key, "Authorization": f"Bearer {key}"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read().decode())
+    except Exception:
+        return []
+
+
+def fetch_canonical_scorecard(date: str) -> list[dict]:
+    """Read-only fetch from public.canonical_model_scorecards for one run_date."""
+    return _sb_get(f"/canonical_model_scorecards?select=*&run_date=eq.{date}&order=race_id,model_name,rank")
+
+
+def fetch_canonical_learning_events(date: str) -> list[dict]:
+    """Read-only fetch from public.canonical_learning_events for one run_date."""
+    return _sb_get(f"/canonical_learning_events?select=*&run_date=eq.{date}&order=race_id,model_name")
 
 
 def _fmt_time(val: str | None) -> str | None:
@@ -864,6 +900,51 @@ async def old_velo_verdicts(date: str = Query(default=None)):
         "source": "velo_prime_verdicts_local",
         "count": len(rows),
         "verdicts": rows,
+    })
+
+
+@app.get("/api/canonical-scorecard")
+async def canonical_scorecard(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rows = fetch_canonical_scorecard(target)
+    return JSONResponse({
+        "date": target,
+        "source_table": "public.canonical_model_scorecards",
+        "count": len(rows),
+        "rows": rows,
+        "no_supabase_write": True,
+    })
+
+
+@app.get("/api/canonical-learning-events")
+async def canonical_learning_events(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rows = fetch_canonical_learning_events(target)
+    return JSONResponse({
+        "date": target,
+        "source_table": "public.canonical_learning_events",
+        "count": len(rows),
+        "rows": rows,
+        "no_supabase_write": True,
+    })
+
+
+@app.get("/api/canonical-race-truth")
+async def canonical_race_truth(date: str = Query(default=None), race_id: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if not race_id:
+        return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
+    scorecard_rows = [r for r in fetch_canonical_scorecard(target) if r.get("race_id") == race_id]
+    learning_rows = [r for r in fetch_canonical_learning_events(target) if r.get("race_id") == race_id]
+    return JSONResponse({
+        "date": target,
+        "race_id": race_id,
+        "source_tables": ["public.canonical_model_scorecards", "public.canonical_learning_events"],
+        "scorecard_count": len(scorecard_rows),
+        "learning_event_count": len(learning_rows),
+        "scorecard_rows": scorecard_rows,
+        "learning_events": learning_rows,
+        "no_supabase_write": True,
     })
 
 
