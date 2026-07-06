@@ -99,6 +99,7 @@ International prerace arenas (`scripts/audit_international_*`) · HK/FR feature 
 - **VFU-20 — OPERATOR SIGN-OFF GRANTED 2026-06-29:** Field-size remediation complete. 1,989 missing → 152 remaining (92.36% recovery accepted). 749 EW label changes accepted. EW profitability = `PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF` — no EW profitability claim authorised. No VP change, no model promotion, no Supabase write. VFU-21 NOT started — awaiting VCP-00 truth lock completion. Output: `data/reports/vfu_20_operator_brief.md`.
 - **VFU-01 to VFU-12:** See `docs/current/VELO_VFU_TIMELINE_APPENDIX.md` (archived timeline).
 - **VFU-13 to VFU-19:** COMPLETE — contamination catches (Kakirra=CONTAMINATED, MiK=PARTIAL), sigma master ledger, pattern tribunal. No pending operator gates.
+- **DOCS-01 — ACCEPTED 2026-07-06** (operator ruling): PR #136 merged (`868dff3`). Agent wiki + system map spine live at `docs/current/`. Numbering ruling issued in the same decision: **VFU-13 is retired and must never be reused** — the next forensic mission is **VFU-22 — False-GREEN Feature Autopsy** (formerly proposed as VFU-13 before DOCS-01 index reconciliation). VFU-22 is IN PROGRESS as of this entry; task contract `ops/task_contracts/VFU-22.json`, branch `vfu-22-false-green-feature-autopsy`.
 
 ## VÉLØ Coherence Protocol (VCP) State (added 2026-06-29)
 - **VCP-00 — Truth Lock:** IN PROGRESS (2026-06-29). Stale root docs archived. CLAUDE.md rewritten as pointer-only. docs/current/ thinned to operational spine. ONE_TRUTH HEAD updated.

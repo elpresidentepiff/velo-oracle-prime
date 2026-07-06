@@ -1,0 +1,73 @@
+{
+  "task_id": "VFU-22",
+  "title": "VFU-22 — False-GREEN Feature Autopsy",
+  "former_id": "VFU-13 (retired 2026-07-06 by operator ruling; do not reuse)",
+  "classification": "FORENSIC_AUTOPSY",
+  "allowed_paths": [
+    "docs/current/",
+    "data/reports/",
+    "ops/task_contracts/VFU-22.json",
+    "scripts/audit/",
+    "tests/"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/sqpe_v17/",
+    "models/specialist/",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_supabase",
+    "create_reports",
+    "create_docs",
+    "update_docs",
+    "run_doc_tests",
+    "run_existing_safety_tests",
+    "build_audit_scripts"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure",
+    "vp_gate_criteria_change"
+  ],
+  "forbidden_keywords": [
+    "supabase.table(",
+    "requests.post(supabase",
+    "telegram send",
+    "bot.send_message",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true"
+  ],
+  "required_outputs": [
+    "data/reports/vfu_22_false_green_feature_autopsy.md"
+  ],
+  "classification_required": [
+    "FALSE_GREEN_AUTOPSY_COMPLETE",
+    "FALSE_GREEN_CLASSES_IDENTIFIED",
+    "FEATURE_PUSH_PULL_REPORTED",
+    "LATENT_WARNING_GAPS_REPORTED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "FALSE_GREEN_AUTOPSY_COMPLETE",
+    "FALSE_GREEN_CLASSES_IDENTIFIED",
+    "FEATURE_PUSH_PULL_REPORTED",
+    "LATENT_WARNING_GAPS_REPORTED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}
