@@ -62,6 +62,25 @@ Three models tracked independently via `run_multimodel_sigma.py` after sigma:
 
 Ledger: `data/model_comparison_ledger.csv` (append-only). Run: `python scripts/ops/run_multimodel_sigma.py --date YYYY-MM-DD --execute`
 
+## CANONICAL MODEL TRUTH SPINE (added 2026-07-06, MODEL-TRUTH-01..04)
+
+- Dirty/local runtime artifacts are evidence, not final truth.
+- GitHub stores reviewed code, law, generated proof artifacts, and regression tests.
+- Supabase canonical tables (`public.canonical_model_scorecards`, `public.canonical_learning_events`) are the operational truth source for model scorecards and learning events.
+- Dashboard must read `canonical_model_scorecards` and `canonical_learning_events` for model/result/learning truth.
+- Dashboard must not invent model truth from ad-hoc local JSON, stale sidecar outputs, or prose reports.
+- Sigma remains result reconciliation truth, but model-rank and policy learning must join through canonical scorecard rows.
+- No model claim is accepted unless backed by: `source_path`, `source_field`, `race_id`, `horse_id`, `rank`, `odds`, `result`, `policy_decision`, `stake_authorised`, `learning_class`.
+- **Little Lady Rock 2026-07-05 is the regression anchor**: New Build Lane A/B rank 1, SP 41.0, policy `NO_EDGE`, `stake_authorised=false`, learning `VALUE_DISCOVERY_POLICY_BLOCKED`, no promotion.
+- Any future dashboard panel that displays model truth must either read canonical endpoints, or be explicitly labelled runtime/local/non-canonical.
+
+Canonical dashboard consumer endpoints (`scripts/ops/new_build_dashboard_server.py`, read-only, no Supabase writes):
+- `GET /api/canonical-scorecard?date=YYYY-MM-DD`
+- `GET /api/canonical-learning-events?date=YYYY-MM-DD`
+- `GET /api/canonical-race-truth?date=YYYY-MM-DD&race_id=<race_id>`
+
+Builders: `scripts/ops/build_canonical_model_scorecard.py`, `scripts/ops/persist_canonical_model_scorecard.py`, `scripts/ops/build_canonical_learning_events.py`. Law: `docs/current/MODEL_RESULT_REPORTING_LAW.md`. See also `docs/current/VELO_MODEL_SOURCE_MAP.md`.
+
 ## EW Tracking (added 2026-06-22)
 EW_CANDIDATE flag now tracked in sigma and multimodel ledger. `run_results_sigma.py` emits `ew_outcome` per verdict. `run_multimodel_sigma.py` includes `velo_ew_outcome` column.
 
