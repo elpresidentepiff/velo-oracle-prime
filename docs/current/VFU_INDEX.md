@@ -1,4 +1,4 @@
-# VFU_INDEX.md — VÉLØ Forensics Unit Index (VFU-01 to VFU-21)
+# VFU_INDEX.md — VÉLØ Forensics Unit Index (VFU-01 to VFU-22)
 
 Source material: `docs/current/VELO_VFU_TIMELINE_APPENDIX.md` (VFU-01 to VFU-12
 narrative), `docs/current/ONE_TRUTH.md` VFU Sign-Off Log (VFU-13 onward), and
@@ -27,15 +27,18 @@ promoted by the operator.
 | VFU-13 to VFU-19 | Contamination catches, Sigma master ledger, pattern tribunal (grouped in `ONE_TRUTH.md`; no further per-VFU breakdown documented) | Extend VFU-11/12 lineage | Kakirra confirmed CONTAMINATED, MiK confirmed PARTIAL (per `ONE_TRUTH.md` VFU Sign-Off Log) | **COMPLETE — no pending operator gates** (per `ONE_TRUTH.md` line 100) | VFU-20 |
 | VFU-20 | Field-size remediation | Recover missing field-size data across historical corpus | 1,989 missing → 152 remaining (92.36% recovery accepted); 749 EW label changes accepted; EW profitability ruled `PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF` — no profitability claim authorised | **OPERATOR SIGN-OFF GRANTED 2026-06-29.** No VP change, no model promotion, no Supabase write. Output: `data/reports/vfu_20_operator_brief.md` | VFU-21 |
 | VFU-21 | (not yet started per `ONE_TRUTH.md`: "VFU-21 NOT started — awaiting VCP-00 truth lock completion") | — | — | NOT STARTED | VCP-00 Truth Lock completion (VCP-00 was IN PROGRESS as of 2026-06-29 per `ONE_TRUTH.md` VCP State section) |
+| VFU-22 | False-GREEN Feature Autopsy (formerly proposed as VFU-13 before DOCS-01 index reconciliation) | Investigate days where the VP Gatekeeper classified GREEN but strike rate was poor (confirmed precedent: 2026-06-09, VP_avg=0.358, 9 picks VP>=0.40, SR=13.8% — see `docs/current/VP_GATEKEEPER_PROMOTION_V1.md` "MANDATORY CAVEAT — FALSE GREEN RISK"). Identify false-green feature classes, feature push/pull effects, and latent warning gaps the gate missed. | IN PROGRESS (opened 2026-07-06 per operator numbering ruling) | DRY_RUN / REPORT_ONLY — no live scoring, no Supabase write, no Telegram send, no model promotion | Task contract `ops/task_contracts/VFU-22.json` |
 
-## Naming conflict flag (do not silently resolve)
+## Numbering ruling (resolved 2026-07-06 — do not reopen)
 
-The DOCS-01 mission spec that produced this index named the *next* piece of work
-as **"VFU-13 — False-GREEN Feature Autopsy."** That number is already assigned in
-`ONE_TRUTH.md` to the completed contamination-catch group (VFU-13 to VFU-19,
-COMPLETE). This index deliberately does not renumber either side — see
-`docs/current/NEXT_ACTIONS.md` for how this is flagged for operator decision
-rather than resolved by an agent.
+The DOCS-01 mission spec that produced this index originally named the *next*
+piece of work as **"VFU-13 — False-GREEN Feature Autopsy."** That number was
+already assigned in `ONE_TRUTH.md` to the completed contamination-catch group
+(VFU-13 to VFU-19, COMPLETE). Operator ruling issued 2026-07-06:
+**VFU-13 is retired and must never be reused.** The work is **VFU-22 — False-GREEN
+Feature Autopsy** (formerly proposed as VFU-13 before DOCS-01 index reconciliation).
+Any reference to "VFU-13 — False-GREEN Feature Autopsy" in older mission text is
+stale — that number is dead.
 
 ## Cross-references
 

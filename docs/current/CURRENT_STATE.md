@@ -58,15 +58,15 @@ Check `git log --oneline -15` on `main` for anything newer than this snapshot.
 Full list: `docs/current/ONE_TRUTH.md` §"NEVER touch without operator approval" and
 `docs/current/FORBIDDEN_ACTIONS.md`.
 
-## What needs review before VFU-13?
+## What is VFU-22?
 
-There is a **naming conflict**, not a content gap: `ONE_TRUTH.md` already records
-VFU-13 to VFU-19 as COMPLETE (contamination catches, Sigma master ledger, pattern
-tribunal — see `docs/current/VFU_INDEX.md`). A separate mission spec has proposed
-"VFU-13 — False-GREEN Feature Autopsy" as the next VFU. Before any agent opens that
-work, the operator needs to resolve the numbering (e.g. the new work becomes
-VFU-22, following VFU-21 which per `ONE_TRUTH.md` is "NOT started — awaiting
-VCP-00 truth lock completion"). See `docs/current/NEXT_ACTIONS.md`.
+The numbering conflict flagged by DOCS-01 is resolved. Operator ruling
+2026-07-06: `ONE_TRUTH.md` already records VFU-13 to VFU-19 as COMPLETE
+(contamination catches, Sigma master ledger, pattern tribunal — see
+`docs/current/VFU_INDEX.md`). VFU-13 is retired and must never be reused. The
+work previously proposed as "VFU-13 — False-GREEN Feature Autopsy" is now
+**VFU-22 — False-GREEN Feature Autopsy**, IN PROGRESS as of 2026-07-06. See
+`docs/current/NEXT_ACTIONS.md` and `ops/task_contracts/VFU-22.json`.
 
 Also outstanding: VCP-00 Truth Lock was IN PROGRESS as of 2026-06-29 per
 `ONE_TRUTH.md`; VCP-03 Ten-Day Coherence Burn-In was at 1/10 days. Check current

@@ -8,18 +8,15 @@
    promoted. Operator to confirm this remains accepted as-is.
 2. **Complete DOCS-01.** This mission — the documentation spine in `docs/current/`.
    Status: this file is part of that completion.
-3. **Open VFU-13 — False-GREEN Feature Autopsy** — **BLOCKED pending numbering
-   resolution.** `ONE_TRUTH.md` already records VFU-13 to VFU-19 as COMPLETE
-   (contamination catches). The next VFU work should not silently reuse "VFU-13" —
-   an agent must not resolve this itself (that would be inventing a decision the
-   operator hasn't made). Options for the operator: (a) name it VFU-22 (following
-   VFU-21, which is itself not started — see below), or (b) explicitly confirm
-   "VFU-13" is intentionally being reused as a new phase name distinct from the
-   historical VFU-13-19 group. Flagged in `docs/current/VFU_INDEX.md` and
-   `docs/current/CURRENT_STATE.md`.
+3. **VFU-22 — False-GREEN Feature Autopsy** (formerly proposed as VFU-13 before
+   DOCS-01 index reconciliation) — **RESOLVED and OPEN**. Operator ruling
+   2026-07-06: VFU-13 is retired and must never be reused; this work is VFU-22.
+   IN PROGRESS. Task contract: `ops/task_contracts/VFU-22.json`. Branch:
+   `vfu-22-false-green-feature-autopsy`. Must consume the DOCS-01 spine, not
+   bypass it.
 4. **Plan Knowledge Graph only after evidence objects are clean.** Not started.
-   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and the outcome of
-   item 3 above.
+   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and VFU-22 closing
+   clean.
 
 ## Postponed lanes (not started, no artifacts exist yet)
 
@@ -48,6 +45,8 @@ for any of them yet — do not assume partial progress:
 
 ## Hard rule for whoever picks this up
 
-Do not start VFU-13 (or its renamed successor) inside a documentation-only
-mission. DOCS-01 was mapping/governance only — no live scoring, no Supabase
-writes, no Telegram, no model promotion occurred while producing this spine.
+DOCS-01 was mapping/governance only — no live scoring, no Supabase writes, no
+Telegram, no model promotion occurred while producing this spine. VFU-22 (the
+work formerly proposed as VFU-13) is a separate mission opened after DOCS-01
+merged (PR #136) and the operator's numbering ruling. VFU-13 itself is dead —
+never resurrect that number for new work.
