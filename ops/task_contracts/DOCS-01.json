@@ -1,0 +1,77 @@
+{
+  "task_id": "DOCS-01",
+  "title": "VÉLØ Agent Wiki + System Map",
+  "classification": "DOCUMENTATION_GOVERNANCE",
+  "allowed_paths": [
+    "docs/current/",
+    "ops/task_contracts/DOCS-01.json"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/sqpe_v17/",
+    "models/specialist/",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "create_docs",
+    "update_docs",
+    "create_task_contract",
+    "run_doc_tests",
+    "run_existing_safety_tests"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [
+    "supabase.table(",
+    "requests.post(supabase",
+    "telegram send",
+    "bot.send_message",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true"
+  ],
+  "required_outputs": [
+    "docs/current/CLAUDE.md",
+    "docs/current/AGENTS.md",
+    "docs/current/ONE_TRUTH.md",
+    "docs/current/VFU_INDEX.md",
+    "docs/current/SYSTEM_MAP.md",
+    "docs/current/CURRENT_STATE.md",
+    "docs/current/NEXT_ACTIONS.md",
+    "docs/current/FORBIDDEN_ACTIONS.md",
+    "docs/current/LIVE_VS_DRY_RUN.md",
+    "docs/current/ARTIFACT_REGISTRY.md"
+  ],
+  "classification_required": [
+    "DOCS_SPINE_ACTIVE",
+    "AGENT_CONTEXT_LOCKED",
+    "SYSTEM_MAP_CREATED",
+    "VFU_INDEX_CREATED",
+    "NEXT_ACTIONS_DECLARED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "DOCS_SPINE_ACTIVE",
+    "AGENT_CONTEXT_LOCKED",
+    "SYSTEM_MAP_CREATED",
+    "VFU_INDEX_CREATED",
+    "NEXT_ACTIONS_DECLARED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}

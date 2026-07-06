@@ -6,6 +6,7 @@
 
 **This file supersedes:** `THE_NEW_TRUTH.md`, `CURRENT_RUNTIME_TRUTH.md`, root `CLAUDE.md` state claims, all numbered docs in `docs/` flat directory.
 **This file defers to:** root `THE_ONE_TRUTH.md` for step-by-step command detail (Steps 1–20), `docs/current/RACE_DAY_RUNBOOK.md` for the lifecycle.
+**Agent wiki (added 2026-07-06, DOCS-01):** `docs/current/SYSTEM_MAP.md` (architecture), `docs/current/AGENTS.md` (roles), `docs/current/VFU_INDEX.md` (VFU-01 to VFU-21 index), `docs/current/CURRENT_STATE.md` (fast orientation), `docs/current/FORBIDDEN_ACTIONS.md` / `docs/current/LIVE_VS_DRY_RUN.md` (safety vocabulary), `docs/current/ARTIFACT_REGISTRY.md` (output index). This file remains the single source of truth for state; the wiki is navigation, not a second truth file.
 
 ## Law (operator-decided, permanent unless stated otherwise)
 1. VÉLØ is a behavioural prediction engine for racing. Live weights are **frozen**.
