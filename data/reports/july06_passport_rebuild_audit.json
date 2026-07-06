@@ -1,0 +1,154 @@
+{
+  "mission": "PASSPORT-INTENT-01-JULY06-RECOVERY-AND-SHADOW-WIRING",
+  "part": "A - Missing passport recovery",
+  "generated_at": "2026-07-06T13:15:00Z",
+  "target_date": "2026-07-06",
+  "total_runners": 405,
+  "before_coverage": {
+    "found": 188,
+    "total": 405,
+    "coverage_pct": 46.42
+  },
+  "after_coverage": {
+    "found": 285,
+    "total": 405,
+    "coverage_pct": 70.37
+  },
+  "recovered_count": 97,
+  "recovered_via_capture_pass1_2026_07_06": 18,
+  "recovered_via_capture_retry1_2026_07_06": 79,
+  "unrecoverable_count": 120,
+  "unraced_or_no_form_history_count": 37,
+  "recoverable_profile_not_captured_count": 83,
+  "recoverable_identity_match_gap_count": 0,
+  "rp_profile_not_found_count": 0,
+  "parser_gap_count": 0,
+  "unknown_needs_manual_review_count": 0,
+  "classification_method": "RP standard-card 'form' field used as ground truth for debut status (local raceform archive is stale, max date 2025-07-05, so archive-based lookups were not used)",
+  "waf_notes": "Initial capture pass (2026-07-06 evening, 187 attempts) hit Racing Post bot-block (HTTP 406) on ~90% of profile fetches. A cooldown + slower retry (15s delay, small batches) on 2026-07-06 recovered the majority of blocked profiles; 83 of 162 recovery-eligible profiles remained blocked after full retry.",
+  "still_blocked_examples": [
+    {
+      "horse": "Aurora Valkyrie",
+      "rp_uid": "9254246",
+      "course": "Ayr",
+      "form": "85"
+    },
+    {
+      "horse": "October Surprise",
+      "rp_uid": "8188069",
+      "course": "Lingfield (AW)",
+      "form": "8698-"
+    },
+    {
+      "horse": "Lightning Galaxy",
+      "rp_uid": "6265741",
+      "course": "Ayr",
+      "form": "70-995"
+    },
+    {
+      "horse": "Tullyveery Lad",
+      "rp_uid": "3265169",
+      "course": "Roscommon",
+      "form": "138-50"
+    },
+    {
+      "horse": "Paul Collins",
+      "rp_uid": "5727954",
+      "course": "Roscommon",
+      "form": "1000-P"
+    },
+    {
+      "horse": "Getaway Charlie",
+      "rp_uid": "3507922",
+      "course": "Roscommon",
+      "form": "P/P00-"
+    },
+    {
+      "horse": "Live My Dream",
+      "rp_uid": "7238166",
+      "course": "Roscommon",
+      "form": "07P7P-"
+    },
+    {
+      "horse": "Frankie's Freebie",
+      "rp_uid": "6609240",
+      "course": "Roscommon",
+      "form": "2240-2"
+    },
+    {
+      "horse": "Cooladdi",
+      "rp_uid": "7466747",
+      "course": "Roscommon",
+      "form": "3276-7"
+    },
+    {
+      "horse": "Little Big John",
+      "rp_uid": "7238190",
+      "course": "Roscommon",
+      "form": "P0-6"
+    }
+  ],
+  "confirmed_debutant_examples": [
+    {
+      "horse": "Dreamlighter",
+      "rp_uid": "9490310",
+      "course": "Ayr"
+    },
+    {
+      "horse": "Thai Paddy",
+      "rp_uid": "9481214",
+      "course": "Ayr"
+    },
+    {
+      "horse": "Threeoclockflyer",
+      "rp_uid": "9490309",
+      "course": "Ayr"
+    },
+    {
+      "horse": "The Resdev Rocket",
+      "rp_uid": "9222243",
+      "course": "Ayr"
+    },
+    {
+      "horse": "Sara's Silver Girl",
+      "rp_uid": "9490311",
+      "course": "Ayr"
+    },
+    {
+      "horse": "Drum Bay",
+      "rp_uid": "9490318",
+      "course": "Lingfield (AW)"
+    },
+    {
+      "horse": "Son Of A Fish",
+      "rp_uid": "9424938",
+      "course": "Lingfield (AW)"
+    },
+    {
+      "horse": "Mino",
+      "rp_uid": "9490319",
+      "course": "Lingfield (AW)"
+    },
+    {
+      "horse": "Harbour Prince",
+      "rp_uid": "9429295",
+      "course": "Lingfield (AW)"
+    },
+    {
+      "horse": "Peak Tram",
+      "rp_uid": "9490315",
+      "course": "Lingfield (AW)"
+    }
+  ],
+  "target_classification": "ALL_RECOVERABLE_PASSPORTS_CAPTURED_OR_CLASSIFIED",
+  "not_claiming_405_405": true,
+  "rules": {
+    "new_build_only": true,
+    "no_old_live_velo": true,
+    "no_shadow_in_this_part": true,
+    "no_telegram": true,
+    "no_live_scoring_tables": true,
+    "no_staking": true,
+    "rpr_archive_only": true
+  }
+}
