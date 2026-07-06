@@ -23,6 +23,7 @@ import csv
 import json
 import os
 import re
+import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -37,6 +38,8 @@ except ImportError:
     raise SystemExit("Run: pip install fastapi uvicorn")
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 STATIC_DIR = ROOT / "app" / "static" / "dashboard"
 NEW_BUILD_ROOT = ROOT / "data" / "new_build"
 REPORT_DIR = NEW_BUILD_ROOT / "reports"
@@ -946,6 +949,32 @@ async def canonical_race_truth(date: str = Query(default=None), race_id: str = Q
         "learning_events": learning_rows,
         "no_supabase_write": True,
     })
+
+
+@app.get("/api/model-suggestions")
+async def model_suggestions(date: str = Query(default=None)):
+    """Read-only, current-day pre-race suggestions across all model lanes.
+
+    Never scores, trains, promotes, stakes, or writes anywhere — joins
+    whatever artifacts already exist on disk. Missing lanes are reported as
+    MISSING_ARTIFACT with their expected source_path, never silently
+    dropped. This is CURRENT_DAY_RUNTIME_SUGGESTION_NOT_RESULT_TRUTH, not
+    canonical post-race truth — use /api/canonical-scorecard for that once
+    results are in.
+    """
+    from scripts.ops.model_suggestions_builder import build_model_suggestions
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return JSONResponse(build_model_suggestions(target))
+
+
+@app.get("/api/model-suggestions-race")
+async def model_suggestions_race(date: str = Query(default=None), race_id: str = Query(default=None)):
+    """Same as /api/model-suggestions, filtered to a single race_id."""
+    from scripts.ops.model_suggestions_builder import build_model_suggestions
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if not race_id:
+        return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
+    return JSONResponse(build_model_suggestions(target, race_id=race_id))
 
 
 @app.get("/api/health")
