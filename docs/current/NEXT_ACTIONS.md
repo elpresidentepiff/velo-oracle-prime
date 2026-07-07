@@ -20,17 +20,21 @@
    subtypes: 4 `GAP_COLLAPSE_FALSE_GREEN`, 2 `HEALTHY_GAP_FALSE_GREEN` (both
    also carrying `THRESHOLD_FLOOD_FALSE_GREEN`). See
    `docs/current/CONFIDENCE_FLOOD_ROOT_CAUSE_SPLIT.md`.
-3c. **VFU-25 — Confidence Flood Cure Design Sandbox** — IN PROGRESS (opened
-   2026-07-07 per operator formal dispatch, following VFU-24). Designs 5
-   candidate mitigations (Gap-Collapse Guard, Threshold-Flood Guard, Green-Day
-   Risk Overlay, Same-Day Post-Sigma Reporting Enhancement, Promotion/Rejection
-   Criteria) — none implemented, all rated `DESIGN_ONLY`/`NEEDS_MORE_EVIDENCE`/
-   `SHADOW_TEST_NEXT`. Task contract: `ops/task_contracts/VFU-25.json`. Branch:
-   `vfu-25-confidence-flood-cure-design-sandbox`. Recommends VFU-26 (evidence
-   expansion) and VFU-27 (reporting-enhancement shadow build) as follow-ups —
-   see `docs/current/CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX.md`.
+3c. **VFU-25 — Confidence Flood Cure Design Sandbox** — **COMPLETE**. Merged PR
+   #140 (`92446ee`). Designed 5 candidate mitigations, none implemented. See
+   `docs/current/CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX.md`.
+3d. **VFU-26 — Confidence Flood Evidence Expansion** — IN PROGRESS (opened
+   2026-07-07 per operator formal dispatch, following VFU-25). Expanded the
+   sigma_results corpus 31→42 dates. Baseline false-green set reproduced 6/6;
+   4 new false-green dates found; rate held/increased; new `WEAK`-gap-band
+   `UNRESOLVED_FALSE_GREEN` case found; Threshold-Flood Guard false-positive
+   rate revised upward (0%→30.8%) with a larger true-green cohort. Verdict:
+   `EVIDENCE_EXPANDED_MIXED_RESULT`. No cure promoted. Task contract:
+   `ops/task_contracts/VFU-26.json`. Branch:
+   `vfu-26-confidence-flood-evidence-expansion`. See
+   `docs/current/CONFIDENCE_FLOOD_EVIDENCE_EXPANSION.md`.
 4. **Plan Knowledge Graph only after evidence objects are clean.** Not started.
-   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and VFU-25 closing
+   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and VFU-26 closing
    clean.
 
 ## Postponed lanes (not started, no artifacts exist yet)

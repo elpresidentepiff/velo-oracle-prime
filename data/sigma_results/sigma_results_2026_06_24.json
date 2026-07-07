@@ -1,0 +1,76 @@
+{
+  "date": "2026-06-24",
+  "generated_at": "2026-06-27T01:16:30.649015+00:00",
+  "expected_predictions": 8,
+  "result_races": 8,
+  "evaluated_count": 4,
+  "wins": 2,
+  "frames": 1,
+  "misses": 1,
+  "true_non_runners": 4,
+  "identity_failures": 0,
+  "no_result_count": 0,
+  "total_reviewed": 4,
+  "sr": 0.5,
+  "frame_rate": 0.75,
+  "miss_class_breakdown": {
+    "mid_priced_won": 1
+  },
+  "high_conf_n": 4,
+  "high_conf_sr": 0.25,
+  "avg_hit_prob": 0.3023,
+  "avg_miss_prob": 0.1546,
+  "source": "racing_post_supported_sigma",
+  "sigma_status": "PASS",
+  "sigma_note": "ABOVE BASELINE - model calibration healthy",
+  "learning_candidate_rows": 4,
+  "unresolved_rows": 0,
+  "raw_sigma_audits_preserved": true,
+  "local_only_no_racing_api": true,
+  "rows": [
+    {
+      "race_id": "921303",
+      "course": "Carlisle",
+      "off": "2.30",
+      "predicted": "Silesia",
+      "actual_name": "Ruby Moon",
+      "winner_sp": 5.0,
+      "velo_prime_prob": 0.4224,
+      "outcome": "PLACED",
+      "miss_class": "n/a"
+    },
+    {
+      "race_id": "921301",
+      "course": "Carlisle",
+      "off": "3.30",
+      "predicted": "Geo",
+      "actual_name": "Runswick",
+      "winner_sp": 5.0,
+      "velo_prime_prob": 0.1546,
+      "outcome": "MISS",
+      "miss_class": "mid_priced_won"
+    },
+    {
+      "race_id": "921298",
+      "course": "Carlisle",
+      "off": "4.02",
+      "predicted": "Ellusive Butterfly",
+      "actual_name": "Ellusive Butterfly",
+      "winner_sp": 3.5,
+      "velo_prime_prob": 0.2647,
+      "outcome": "WIN",
+      "miss_class": "n/a"
+    },
+    {
+      "race_id": "921302",
+      "course": "Carlisle",
+      "off": "5.35",
+      "predicted": "Who Wants Me",
+      "actual_name": "Who Wants Me",
+      "winner_sp": 12.0,
+      "velo_prime_prob": 0.3398,
+      "outcome": "WIN",
+      "miss_class": "n/a"
+    }
+  ]
+}
