@@ -9,7 +9,9 @@ Serves:
   GET /api/governed-card?date=YYYY-MM-DD → New Build verdicts in governed-card shape
   GET /api/health   → health check
 
-No Supabase. No model_manager. No Live VELO. No Telegram. No staking.
+Read-only Supabase reads added for canonical truth endpoints
+(public.canonical_model_scorecards, public.canonical_learning_events).
+No Supabase writes. No model_manager. No Live VELO. No Telegram. No staking.
 
 Usage:
   python scripts/ops/new_build_dashboard_server.py [--port 8000]
@@ -19,7 +21,10 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import re
+import sys
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -33,6 +38,8 @@ except ImportError:
     raise SystemExit("Run: pip install fastapi uvicorn")
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 STATIC_DIR = ROOT / "app" / "static" / "dashboard"
 NEW_BUILD_ROOT = ROOT / "data" / "new_build"
 REPORT_DIR = NEW_BUILD_ROOT / "reports"
@@ -58,6 +65,38 @@ def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def _sb_get(path: str) -> list[dict]:
+    """Read-only Supabase REST fetch. No write path exists in this file."""
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(str(ROOT / ".env"))
+    except Exception:
+        pass
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
+    if not url or not key:
+        return []
+    req = urllib.request.Request(
+        url + "/rest/v1" + path,
+        headers={"apikey": key, "Authorization": f"Bearer {key}"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read().decode())
+    except Exception:
+        return []
+
+
+def fetch_canonical_scorecard(date: str) -> list[dict]:
+    """Read-only fetch from public.canonical_model_scorecards for one run_date."""
+    return _sb_get(f"/canonical_model_scorecards?select=*&run_date=eq.{date}&order=race_id,model_name,rank")
+
+
+def fetch_canonical_learning_events(date: str) -> list[dict]:
+    """Read-only fetch from public.canonical_learning_events for one run_date."""
+    return _sb_get(f"/canonical_learning_events?select=*&run_date=eq.{date}&order=race_id,model_name")
 
 
 def _fmt_time(val: str | None) -> str | None:
@@ -468,6 +507,54 @@ def _build_no_rpr_race_map(rows: list[dict]) -> dict:
     return result
 
 
+_COURSE_ABBR = {
+    "Curragh": "CUR", "Uttoxeter": "UTT", "Cartmel": "CRT",
+    "Wolverhampton": "WOL", "Wolverhampton (AW)": "WOL",
+    "Kempton": "KEM", "Kempton (AW)": "KEM",
+    "Chelmsford": "CHE", "Chelmsford City": "CHE",
+    "Lingfield": "LIN", "Lingfield (AW)": "LIN",
+    "Southwell": "SOW", "Southwell (AW)": "SOW",
+    "Newcastle": "NCS", "Newcastle (AW)": "NCS",
+    "Dundalk": "DUN", "Dundalk (AW)": "DUN",
+    "Tramore": "TRM", "Brighton": "BRI", "Pontefract": "PON",
+}
+
+
+def _load_injection_numeric_to_velo_race_id(date_str: str) -> dict[str, str]:
+    """Map RP numeric race_id (used by New Build) → rp_CRS_YYYYMMDD_H.MM (used by Live VÉLØ).
+
+    New Build's two-lane readiness keys races by the raw RP numeric race_id.
+    Live VÉLØ verdicts/snapshots key races by rp_{course}_{date}_{dot_time}.
+    Without this bridge the two never join and New Build always reads empty.
+    """
+    date_tag = date_str.replace("-", "_")
+    mapping: dict[str, str] = {}
+    inj_matches = sorted((ROOT / "data" / "racing_post_account_parsed").glob(
+        f"*{date_str}*/racecard_injection.json"
+    )) + sorted((ROOT / "data" / "racing_post_account_parsed").glob(
+        f"*{date_tag}*/racecard_injection.json"
+    ))
+    if not inj_matches:
+        return mapping
+    inj = _load_json(inj_matches[-1], {})
+    for race in (inj.get("races") or []):
+        num = str(race.get("race_id", ""))
+        if not num:
+            continue
+        course_full = race.get("course", "")
+        course_code = _COURSE_ABBR.get(course_full, course_full[:3].upper())
+        off_raw = race.get("off_time", "")
+        if ":" in off_raw:
+            h, m = map(int, off_raw.split(":"))
+            if h >= 13:
+                h -= 12
+            dot = f"{h}.{m:02d}"
+        else:
+            dot = off_raw
+        mapping[num] = f"rp_{course_code}_{date_str.replace('-', '')}_{dot}"
+    return mapping
+
+
 def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
     """Serve the official local Live VÉLØ runner snapshot in dashboard shape.
 
@@ -484,11 +571,13 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
 
     # Load New Build two-lane Lane A top3 per race
     tl_data, _ = _load_new_build_readiness(date_str)
+    numeric_to_velo = _load_injection_numeric_to_velo_race_id(date_str)
     nb_lane_a_map: dict[str, dict] = {}
     for card in tl_data.get("race_day_scorecards", []):
         rid = str(card.get("race_id") or "")
         if not rid:
             continue
+        rid = numeric_to_velo.get(rid, rid)
         lane_a_top3 = sorted(card.get("lane_a_top3") or [], key=lambda x: x.get("rank", 99))
         nb_lane_a_map[rid] = {
             "top3": [{"horse": p.get("horse"), "rank": p.get("rank"), "prob": p.get("prob") or p.get("lane_a_prob"), "nb_decision_lane": p.get("nb_decision_lane")} for p in lane_a_top3[:3]],
@@ -865,6 +954,92 @@ async def old_velo_verdicts(date: str = Query(default=None)):
         "count": len(rows),
         "verdicts": rows,
     })
+
+
+@app.get("/api/canonical-scorecard")
+async def canonical_scorecard(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rows = fetch_canonical_scorecard(target)
+    return JSONResponse({
+        "date": target,
+        "source_table": "public.canonical_model_scorecards",
+        "count": len(rows),
+        "rows": rows,
+        "no_supabase_write": True,
+    })
+
+
+@app.get("/api/canonical-learning-events")
+async def canonical_learning_events(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rows = fetch_canonical_learning_events(target)
+    return JSONResponse({
+        "date": target,
+        "source_table": "public.canonical_learning_events",
+        "count": len(rows),
+        "rows": rows,
+        "no_supabase_write": True,
+    })
+
+
+@app.get("/api/canonical-race-truth")
+async def canonical_race_truth(date: str = Query(default=None), race_id: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if not race_id:
+        return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
+    scorecard_rows = [r for r in fetch_canonical_scorecard(target) if r.get("race_id") == race_id]
+    learning_rows = [r for r in fetch_canonical_learning_events(target) if r.get("race_id") == race_id]
+    return JSONResponse({
+        "date": target,
+        "race_id": race_id,
+        "source_tables": ["public.canonical_model_scorecards", "public.canonical_learning_events"],
+        "scorecard_count": len(scorecard_rows),
+        "learning_event_count": len(learning_rows),
+        "scorecard_rows": scorecard_rows,
+        "learning_events": learning_rows,
+        "no_supabase_write": True,
+    })
+
+
+def _remap_numeric_race_ids(payload: dict, date_str: str) -> dict:
+    """New Build / Champion Intent Shadow lanes key rows by RP's raw numeric
+    race_id; every other lane (and the dashboard's own race grouping) uses
+    rp_{course}_{date}_{dot_time}. Without this, those lanes never join to
+    a race in the UI regardless of date."""
+    numeric_to_velo = _load_injection_numeric_to_velo_race_id(date_str)
+    if not numeric_to_velo:
+        return payload
+    for row in payload.get("rows", []) or []:
+        rid = str(row.get("race_id") or "")
+        if rid in numeric_to_velo:
+            row["race_id"] = numeric_to_velo[rid]
+    return payload
+
+
+@app.get("/api/model-suggestions")
+async def model_suggestions(date: str = Query(default=None)):
+    """Read-only, current-day pre-race suggestions across all model lanes.
+
+    Never scores, trains, promotes, stakes, or writes anywhere — joins
+    whatever artifacts already exist on disk. Missing lanes are reported as
+    MISSING_ARTIFACT with their expected source_path, never silently
+    dropped. This is CURRENT_DAY_RUNTIME_SUGGESTION_NOT_RESULT_TRUTH, not
+    canonical post-race truth — use /api/canonical-scorecard for that once
+    results are in.
+    """
+    from scripts.ops.model_suggestions_builder import build_model_suggestions
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return JSONResponse(_remap_numeric_race_ids(build_model_suggestions(target), target))
+
+
+@app.get("/api/model-suggestions-race")
+async def model_suggestions_race(date: str = Query(default=None), race_id: str = Query(default=None)):
+    """Same as /api/model-suggestions, filtered to a single race_id."""
+    from scripts.ops.model_suggestions_builder import build_model_suggestions
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if not race_id:
+        return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
+    return JSONResponse(build_model_suggestions(target, race_id=race_id))
 
 
 @app.get("/api/health")

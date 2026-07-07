@@ -1,0 +1,42 @@
+{
+  "date": "2026-07-05",
+  "generated_at": "2026-07-06T00:46:56.319805+00:00",
+  "csv_path": "data/reports/canonical_model_scorecard_2026_07_05.csv",
+  "row_count": 374,
+  "unique_races": 22,
+  "model_counts": {
+    "MAIN_VELO_PRIME": 22,
+    "SQPE_NO_RPR_SHADOW": 22,
+    "NEW_BUILD_LANE_A_MODEL": 66,
+    "NEW_BUILD_LANE_B_MODEL": 66,
+    "NEW_BUILD_LANE_C_MODEL": 66,
+    "PASSPORT_STRENGTH_SCORE_PROXY": 66,
+    "OLD_VELO_WIN_ROLE": 22,
+    "OLD_VELO_PLACE_ROLE": 22,
+    "OLD_VELO_LONGSHOT_ROLE": 22
+  },
+  "win_counts": {
+    "MAIN_VELO_PRIME": 4,
+    "SQPE_NO_RPR_SHADOW": 1,
+    "NEW_BUILD_LANE_B_MODEL": 10,
+    "PASSPORT_STRENGTH_SCORE_PROXY": 11,
+    "NEW_BUILD_LANE_A_MODEL": 11,
+    "NEW_BUILD_LANE_C_MODEL": 8,
+    "OLD_VELO_PLACE_ROLE": 3,
+    "OLD_VELO_WIN_ROLE": 4,
+    "OLD_VELO_LONGSHOT_ROLE": 3
+  },
+  "learning_class_counts": {
+    "MODEL_MISS": 260,
+    "TIE_UNRESOLVED": 4,
+    "MODEL_HIT": 15,
+    "PROXY_NOT_A_MODEL_CLAIM": 66,
+    "MODEL_HIT_POLICY_BLOCKED": 29
+  },
+  "regression_check": "PASS",
+  "mode": "EXECUTE",
+  "generated_from_commit": "5f269b49cf8e6e75cc4d8ffafd9394c55cd5bb38",
+  "table": "public.canonical_model_scorecards",
+  "rows_written": 374,
+  "write_error": null
+}
