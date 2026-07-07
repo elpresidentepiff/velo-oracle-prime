@@ -20,9 +20,12 @@ clean worktree) — held **11 additional dates** not yet present here: 2026-05-2
 06-15, 06-22, 06-24, 06-25, 06-26, 06-27, 06-28, 06-29, 07-04, 07-05. These are
 pre-existing local artifacts (not external API calls, not live racecards), so per the
 dispatch's explicit allowance they were copied into this worktree's
-`data/sigma_results/` directory (gitignored — this is local data enrichment, not a git
-change) so the existing discovery logic picks them up naturally. **Expansion
-succeeded: 31 → 42 dates scanned (+11).**
+`data/sigma_results/` directory so the existing discovery logic picks them up
+naturally. **`data/sigma_results/` is not gitignored** — the original 31 dates are
+already git-tracked in this repo, so the 11 new artifacts were tracked and committed
+in this same PR as evidence artifacts, consistent with that existing precedent. They
+were not produced by external APIs, live racecards, Supabase writes, or Telegram
+sends. **Expansion succeeded: 31 → 42 dates scanned (+11).**
 
 ## 1. Baseline reproduction (must happen before any new conclusion)
 
