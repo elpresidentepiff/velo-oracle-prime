@@ -15,15 +15,22 @@
 3a. **VFU-23 — Confidence Flood Retrospective Diagnostic** — **COMPLETE**. Merged
    PR #138 (`797cdef`). Reproduces the VFU-22 false-green set 6/6 with zero
    extras; 21 tests pass. See `docs/current/CONFIDENCE_FLOOD_DIAGNOSTIC.md`.
-3b. **VFU-24 — Confidence Flood Root-Cause Split** — IN PROGRESS (opened
-   2026-07-06 per operator formal dispatch, following VFU-23). Splits the six
-   confirmed false-green days into root-cause subtypes: 4
-   `GAP_COLLAPSE_FALSE_GREEN`, 2 `HEALTHY_GAP_FALSE_GREEN` (both also carrying
-   `THRESHOLD_FLOOD_FALSE_GREEN`). Task contract: `ops/task_contracts/VFU-24.json`.
-   Branch: `vfu-24-confidence-flood-root-cause-split`. Proposes no cure, no
-   gate change — see `docs/current/CONFIDENCE_FLOOD_ROOT_CAUSE_SPLIT.md`.
+3b. **VFU-24 — Confidence Flood Root-Cause Split** — **COMPLETE**. Merged PR #139
+   (`ad1a4aa`). Splits the six confirmed false-green days into root-cause
+   subtypes: 4 `GAP_COLLAPSE_FALSE_GREEN`, 2 `HEALTHY_GAP_FALSE_GREEN` (both
+   also carrying `THRESHOLD_FLOOD_FALSE_GREEN`). See
+   `docs/current/CONFIDENCE_FLOOD_ROOT_CAUSE_SPLIT.md`.
+3c. **VFU-25 — Confidence Flood Cure Design Sandbox** — IN PROGRESS (opened
+   2026-07-07 per operator formal dispatch, following VFU-24). Designs 5
+   candidate mitigations (Gap-Collapse Guard, Threshold-Flood Guard, Green-Day
+   Risk Overlay, Same-Day Post-Sigma Reporting Enhancement, Promotion/Rejection
+   Criteria) — none implemented, all rated `DESIGN_ONLY`/`NEEDS_MORE_EVIDENCE`/
+   `SHADOW_TEST_NEXT`. Task contract: `ops/task_contracts/VFU-25.json`. Branch:
+   `vfu-25-confidence-flood-cure-design-sandbox`. Recommends VFU-26 (evidence
+   expansion) and VFU-27 (reporting-enhancement shadow build) as follow-ups —
+   see `docs/current/CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX.md`.
 4. **Plan Knowledge Graph only after evidence objects are clean.** Not started.
-   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and VFU-24 closing
+   Depends on VFU-21 (awaiting VCP-00 Truth Lock completion) and VFU-25 closing
    clean.
 
 ## Postponed lanes (not started, no artifacts exist yet)
