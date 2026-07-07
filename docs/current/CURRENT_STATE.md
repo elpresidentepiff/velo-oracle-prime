@@ -58,7 +58,7 @@ Check `git log --oneline -15` on `main` for anything newer than this snapshot.
 Full list: `docs/current/ONE_TRUTH.md` §"NEVER touch without operator approval" and
 `docs/current/FORBIDDEN_ACTIONS.md`.
 
-## What is VFU-22 / VFU-23 / VFU-24 / VFU-25?
+## What is VFU-22 / VFU-23 / VFU-24 / VFU-25 / VFU-26?
 
 The numbering conflict flagged by DOCS-01 is resolved. Operator ruling
 2026-07-06: `ONE_TRUTH.md` already records VFU-13 to VFU-19 as COMPLETE
@@ -71,11 +71,15 @@ COMPLETE** (merged PR #138, `797cdef`): tested post-Sigma diagnostic that
 reproduces the VFU-22 false-green set 6/6. **VFU-24 — Confidence Flood
 Root-Cause Split is COMPLETE** (merged PR #139, `ad1a4aa`): splits the six
 false-green days into subtypes (4 gap-collapse, 2 healthy-gap-with-threshold-
-flood). **VFU-25 — Confidence Flood Cure Design Sandbox** is IN PROGRESS as of
-2026-07-07 — designs (does not implement) 5 candidate mitigations, all rated
-`DESIGN_ONLY`/`NEEDS_MORE_EVIDENCE`/`SHADOW_TEST_NEXT`. See
-`docs/current/NEXT_ACTIONS.md`, `ops/task_contracts/VFU-25.json`, and
-`docs/current/CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX.md`.
+flood). **VFU-25 — Confidence Flood Cure Design Sandbox is COMPLETE** (merged
+PR #140, `92446ee`): designed (did not implement) 5 candidate mitigations.
+**VFU-26 — Confidence Flood Evidence Expansion** is IN PROGRESS as of
+2026-07-07 — expanded the sigma_results corpus 31→42 dates, reproduced the
+known false-green set 6/6, found 4 new false-green dates, and revised the
+Threshold-Flood Guard's false-positive rate upward (0%→30.8%). Verdict:
+`EVIDENCE_EXPANDED_MIXED_RESULT`. No cure promoted. See
+`docs/current/NEXT_ACTIONS.md`, `ops/task_contracts/VFU-26.json`, and
+`docs/current/CONFIDENCE_FLOOD_EVIDENCE_EXPANSION.md`.
 
 Also outstanding: VCP-00 Truth Lock was IN PROGRESS as of 2026-06-29 per
 `ONE_TRUTH.md`; VCP-03 Ten-Day Coherence Burn-In was at 1/10 days. Check current

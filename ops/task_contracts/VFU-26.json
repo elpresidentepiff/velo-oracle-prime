@@ -1,0 +1,107 @@
+{
+  "task_id": "VFU-26",
+  "title": "Confidence Flood Evidence Expansion",
+  "classification": "DRY_RUN_REPORT_ONLY_EVIDENCE_EXPANSION",
+  "allowed_paths": [
+    "docs/current/",
+    "data/reports/",
+    "data/current/",
+    "data/sigma_results/",
+    "ops/task_contracts/VFU-26.json",
+    "scripts/ops/expand_confidence_flood_evidence.py",
+    "tests/test_confidence_flood_evidence_expansion.py"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/sqpe_v17/",
+    "models/specialist/",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/build_vp_opportunity_panel.py",
+    "scripts/ops/build_confidence_flood_diagnostic.py",
+    "scripts/ops/build_confidence_flood_root_cause_split.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_sigma_results",
+    "read_confidence_flood_diagnostics",
+    "create_report",
+    "create_docs",
+    "create_tests",
+    "create_task_contract",
+    "run_tests",
+    "run_task_contract_audit"
+  ],
+  "forbidden_actions": [
+    "implement_cure",
+    "pre_race_gate_change",
+    "vp_gate_criteria_change",
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure",
+    "external_api_call"
+  ],
+  "forbidden_keywords": [
+    "supabase.table(",
+    "requests.post(supabase",
+    "telegram send",
+    "bot.send_message",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true"
+  ],
+  "required_outputs": [
+    "ops/task_contracts/VFU-26.json",
+    "scripts/ops/expand_confidence_flood_evidence.py",
+    "tests/test_confidence_flood_evidence_expansion.py",
+    "docs/current/CONFIDENCE_FLOOD_EVIDENCE_EXPANSION.md",
+    "data/reports/vfu_26_confidence_flood_evidence_expansion.md"
+  ],
+  "required_classifications": [
+    "CONFIDENCE_FLOOD_EVIDENCE_EXPANSION_COMPLETE",
+    "SIGMA_CORPUS_EXPANSION_ATTEMPTED",
+    "BASELINE_FALSE_GREEN_SET_REPRODUCED",
+    "GUARD_COVERAGE_RECOMPUTED",
+    "MARKET_OUTLIER_BEHAVIOUR_REPORTED",
+    "CURE_PROMOTION_STATUS_REPORTED",
+    "NO_CURE_IMPLEMENTED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "classification_required": [
+    "CONFIDENCE_FLOOD_EVIDENCE_EXPANSION_COMPLETE",
+    "SIGMA_CORPUS_EXPANSION_ATTEMPTED",
+    "BASELINE_FALSE_GREEN_SET_REPRODUCED",
+    "GUARD_COVERAGE_RECOMPUTED",
+    "MARKET_OUTLIER_BEHAVIOUR_REPORTED",
+    "CURE_PROMOTION_STATUS_REPORTED",
+    "NO_CURE_IMPLEMENTED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "CONFIDENCE_FLOOD_EVIDENCE_EXPANSION_COMPLETE",
+    "SIGMA_CORPUS_EXPANSION_ATTEMPTED",
+    "BASELINE_FALSE_GREEN_SET_REPRODUCED",
+    "GUARD_COVERAGE_RECOMPUTED",
+    "MARKET_OUTLIER_BEHAVIOUR_REPORTED",
+    "CURE_PROMOTION_STATUS_REPORTED",
+    "NO_CURE_IMPLEMENTED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}
