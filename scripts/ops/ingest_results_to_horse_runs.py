@@ -172,6 +172,7 @@ def ingest_results(date_str: str) -> None:
                 "owner_id": runner.get("owner_id", ""),
                 "owner": runner.get("owner", ""),
                 "prize": _to_float(runner.get("prize")),
+                "in_running_comment": runner.get("in_running_comment", "") or "",
             })
 
     # Filter out rows with no horse_id

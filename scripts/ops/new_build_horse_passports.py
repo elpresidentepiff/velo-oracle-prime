@@ -2,9 +2,16 @@
 """
 Build Horse Passport V1 from scraped RP form history and profile metadata.
 
-Default mode is append-only: existing passport rows are preserved and only
-missing horse_rp_uid records are appended. Use --rebuild only for a deliberate
-full overwrite.
+Default mode is merge-in-place: every horse rebuildable from current source
+data (form history + profiles + runner-notes intent tags) has its passport
+row recomputed and overwritten; horses on file but not rebuildable this run
+(e.g. their form-history source has aged out) are carried over untouched.
+This applies to every recency-based field (ts_last6_array, sp_trajectory,
+recent_in_running_comments, etc.) -- before 2026-07-10 this mode only
+appended brand-new horse_rp_uids and silently skipped updating any recency
+field for horses already on file, which meant those fields never actually
+refreshed in production. Use --rebuild for a full from-scratch rebuild that
+drops even the untouched carry-over rows.
 """
 from __future__ import annotations
 
@@ -21,6 +28,7 @@ sys.path.insert(0, str(ROOT))
 
 from new_build_velo.horse_passport import HorsePassportBuilder
 
+DATA_DIR = ROOT / "data"
 RACE_SHAPE_DIR = ROOT / "data" / "race_shape"
 PARSED_DIR = ROOT / "data" / "racing_post_account_parsed"
 OUT_DIR = ROOT / "data" / "new_build" / "passports"
@@ -34,6 +42,37 @@ def _passport_key(row: dict) -> str:
     if uid not in (None, ""):
         return str(uid)
     return f"name:{row.get('horse_name', '').strip().lower()}"
+
+
+def load_intent_notes_index(limit_per_horse: int = 6) -> dict[str, list[dict]]:
+    """Index parse_runner_notes.py's daily trainer_intent output by
+    horse_rp_uid, most recent first. Archive/context only -- never scoring.
+    """
+    by_uid: dict[str, list[dict]] = defaultdict(list)
+    for f in sorted(DATA_DIR.glob("runner_notes_*.json")):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        note_date = data.get("date", "")
+        for row in data.get("trainer_intent") or []:
+            uid = row.get("horse_rp_uid")
+            if not uid:
+                continue
+            comment = row.get("in_running_comment") or ""
+            if not comment:
+                continue
+            by_uid[str(uid)].append({
+                "date": note_date,
+                "comment": comment,
+                "tags": row.get("intent_tags") or [],
+            })
+
+    for uid, entries in by_uid.items():
+        entries.sort(key=lambda e: e["date"], reverse=True)
+        by_uid[uid] = entries[:limit_per_horse]
+
+    return by_uid
 
 
 def load_all_horses() -> dict[str, list[dict]]:
@@ -215,13 +254,24 @@ def run(*, rebuild: bool = False) -> dict:
     by_horse = load_all_horses()
     print(f"  {len(by_horse)} distinct horses found")
 
+    intent_index = load_intent_notes_index()
+    print(f"  {len(intent_index)} horses with in-running comment/intent history")
+
     builder = HorsePassportBuilder()
     passports = []
     failures = []
 
     for key, runs in by_horse.items():
         try:
-            passports.append(builder.build(runs))
+            passport = builder.build(runs)
+            uid = passport.horse_rp_uid
+            notes = intent_index.get(str(uid)) if uid else None
+            if notes:
+                passport.recent_in_running_comments = [n["comment"] for n in notes]
+                passport.recent_trainer_intent_tags = sorted({
+                    tag for n in notes for tag in n["tags"]
+                })
+            passports.append(passport)
         except Exception as exc:
             failures.append({"key": key, "error": str(exc)})
 
@@ -239,18 +289,21 @@ def run(*, rebuild: bool = False) -> dict:
         newly_appended = len(combined_rows)
         print(f"  Rebuilt: {out_path}")
     else:
-        new_rows = [row for key, row in built_by_key.items() if key not in existing_by_key]
-        if new_rows:
-            write_passport_rows(out_path, new_rows, append=True)
+        updated_keys = [key for key in built_by_key if key in existing_by_key]
+        new_keys = [key for key in built_by_key if key not in existing_by_key]
+        carried_over_keys = [key for key in existing_by_key if key not in built_by_key]
+
         combined_by_key = dict(existing_by_key)
-        for row in new_rows:
-            combined_by_key[_passport_key(row)] = row
+        combined_by_key.update(built_by_key)  # rebuilt rows overwrite stale ones in place
         combined_rows = list(combined_by_key.values())
-        already_present = len(existing_by_key)
-        newly_appended = len(new_rows)
-        print(f"  Existing passports: {already_present}")
+        write_passport_rows(out_path, combined_rows, append=False)
+
+        already_present = len(carried_over_keys)
+        newly_appended = len(new_keys)
+        print(f"  Existing passports carried over untouched: {already_present}")
+        print(f"  Updated in place: {len(updated_keys)}")
         print(f"  Newly appended: {newly_appended}")
-        print(f"  Written append-only: {out_path}")
+        print(f"  Written (merge-in-place): {out_path}")
 
     write_reports(
         combined_rows=combined_rows,

@@ -146,7 +146,8 @@ class NightlyEODRunner:
         results_map = {r.get("race_id") or r.get("id"): r for r in results_list}
 
         # Secondary index: venue+off (e.g. "CHP_5.10") for VELO race_ids (rp_CHP_20260606_5.10)
-        venue_aliases = {"PAT": "PUN"}
+        # "CHE" is the results-parser's own code for Chester; VELO race_ids use "CHS".
+        venue_aliases = {"PAT": "PUN", "CHE": "CHS"}
 
         def _normalise_venue(value: str) -> str:
             venue = (value or "").upper()
