@@ -1180,19 +1180,15 @@ def main():
             continue
 
         stake = STAKE[tier]
-        # Find predicted horse's SP from the canonical RP runner list.
-        _result_race = results_by_id.get(rid, {})
-        full_runners = _result_race.get("full_runners") or _result_race.get("runners") or []
+        # Step 3 already reconciled this row against the correct result race
+        # (results_by_id is keyed on raw RP numeric race_id, not the rid scheme
+        # used here, so re-deriving pred_sp via that map always misses).
         pred_sp = None
-        horse_in_results = False
-        for runner in full_runners:
-            if str(runner.get("horse_id")) == str(row["predicted_id"]):
-                horse_in_results = True
-                try:
-                    pred_sp = float(runner.get("sp_dec") or 0) or None
-                except (ValueError, TypeError):
-                    pass
-                break
+        try:
+            pred_sp = float(row.get("predicted_sp") or 0) or None
+        except (ValueError, TypeError):
+            pass
+        horse_in_results = not str(row.get("reconciliation_provenance", "")).endswith("HORSE_ABSENT")
 
         if not pred_sp or pred_sp <= 1.0:
             if not horse_in_results:
