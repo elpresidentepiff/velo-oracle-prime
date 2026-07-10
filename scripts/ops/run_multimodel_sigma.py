@@ -31,11 +31,27 @@ except ImportError:
 LEDGER_PATH = ROOT / "data" / "model_comparison_ledger.csv"
 LEDGER_COLS = [
     "date", "race_id", "course", "off",
-    "velo_top_pick", "velo_outcome", "velo_assigned_product", "velo_ew_outcome",
-    "norpr_top_pick", "norpr_prob", "norpr_outcome",
-    "nb_top_pick", "nb_prob", "nb_outcome",
-    "winner", "top3",
+    "velo_top_pick", "velo_outcome", "velo_assigned_product", "velo_ew_outcome", "velo_miss_class",
+    "norpr_top_pick", "norpr_prob", "norpr_outcome", "norpr_miss_class",
+    "nb_top_pick", "nb_prob", "nb_outcome", "nb_miss_class",
+    "champion_top_pick", "champion_prob", "champion_outcome", "champion_miss_class",
+    "winner", "winner_sp", "top3",
 ]
+
+
+def _classify_miss(sp: float | str | None) -> str:
+    """SP band of the actual winner on a missed race. Thresholds match
+    run_results_sigma.py exactly (short_fav_won <=3.0, outsider_won >10.0,
+    else mid_priced_won) so miss classes are comparable across models."""
+    try:
+        sp = float(sp)
+    except (TypeError, ValueError):
+        return ""
+    if sp > 0 and sp <= 3.0:
+        return "short_fav_won"
+    if sp > 10.0:
+        return "outsider_won"
+    return "mid_priced_won"
 
 
 def _norm(name: str | None) -> str:
@@ -64,8 +80,16 @@ def _load_sigma(date_str: str) -> list[dict]:
 
 
 def _load_rp_results(date_str: str) -> dict[str, dict]:
-    """Returns {race_id: {winner, top3_names}} from RP results JSON."""
+    """Returns {race_id: {winner, top3_names}} from RP results JSON.
+
+    Indexed under BOTH the raw numeric RP race_id (e.g. "921398") and a
+    synthesized VELO-style race_id (e.g. "rp_ASC_20260710_2.00") -- sigma_rows
+    and Supabase/New Build predictions use the VELO format, so without this
+    secondary key every lookup here silently missed and No-RPR/New Build
+    always showed n/a (root-caused 2026-07-10).
+    """
     date_tag = date_str.replace("-", "_")
+    date_compact = date_str.replace("-", "")
     path = ROOT / "data" / "results" / f"rp_results_{date_tag}.json"
     if not path.exists():
         path = ROOT / "data" / "results" / f"rp_results_{date_str}.json"
@@ -73,14 +97,23 @@ def _load_rp_results(date_str: str) -> dict[str, dict]:
         return {}
     d = json.loads(path.read_text(encoding="utf-8"))
     results = d.get("results", [])
+    # Results-parser venue code -> VELO race_id venue code (mirrors the same
+    # alias nightly_eod_learning_runner.py needs for the same reason).
+    venue_aliases = {"CHE": "CHS"}
     index: dict[str, dict] = {}
     for r in results:
+        entry = {
+            "winner": r.get("winner_horse", ""),
+            "winner_sp": r.get("winner_sp"),
+            "top3": r.get("top3_names", []),
+        }
         rid = str(r.get("race_id", ""))
         if rid:
-            index[rid] = {
-                "winner": r.get("winner_horse", ""),
-                "top3": r.get("top3_names", []),
-            }
+            index[rid] = entry
+        venue = venue_aliases.get(r.get("venue", ""), r.get("venue", ""))
+        off = r.get("off", "")
+        if venue and off:
+            index[f"rp_{venue}_{date_compact}_{off}"] = entry
     return index
 
 
@@ -128,6 +161,55 @@ def _load_nb_scorecards(date_str: str) -> dict[str, dict]:
     return result
 
 
+def _load_champion_scorecards(date_str: str) -> dict[str, dict]:
+    """Returns {race_id: {horse, prob}} for the top_pick_shadow=True runner
+    per race, from build_intent_shadow_scorecard.py's CSV. Keyed by the same
+    raw numeric race_id as the results file (needs the same numeric->velo
+    remap as New Build before joining against sigma_rows)."""
+    date_tag = date_str.replace("-", "_")
+    path = ROOT / "data" / "reports" / f"intent_shadow_scorecard_{date_tag}.csv"
+    if not path.exists():
+        return {}
+    result: dict[str, dict] = {}
+    with path.open(newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("top_pick_shadow") == "True":
+                rid = str(row.get("race_id", ""))
+                if rid:
+                    result[rid] = {
+                        "horse": row.get("horse"),
+                        "prob": row.get("champion_intent_shadow_prob"),
+                    }
+    return result
+
+
+def _build_numeric_to_velo_map(date_str: str) -> dict[str, str]:
+    """Maps raw numeric RP race_id (e.g. "921398") -> VELO race_id (e.g.
+    "rp_NMK_20260710_1.50"), from the same results file _load_rp_results
+    reads. New Build's two_lane_readiness scorecards are keyed by the raw
+    numeric id, which 1:1-matches the results file's numeric id but not
+    sigma's VELO id -- without this remap New Build always showed n/a
+    (root-caused 2026-07-10, same family as the _load_rp_results fix above).
+    """
+    date_tag = date_str.replace("-", "_")
+    date_compact = date_str.replace("-", "")
+    path = ROOT / "data" / "results" / f"rp_results_{date_tag}.json"
+    if not path.exists():
+        path = ROOT / "data" / "results" / f"rp_results_{date_str}.json"
+    if not path.exists():
+        return {}
+    d = json.loads(path.read_text(encoding="utf-8"))
+    venue_aliases = {"CHE": "CHS"}
+    mapping: dict[str, str] = {}
+    for r in d.get("results", []):
+        rid = str(r.get("race_id", ""))
+        venue = venue_aliases.get(r.get("venue", ""), r.get("venue", ""))
+        off = r.get("off", "")
+        if rid and venue and off:
+            mapping[rid] = f"rp_{venue}_{date_compact}_{off}"
+    return mapping
+
+
 def _no_rpr_top_pick(preds: list[dict]) -> tuple[str | None, float | None]:
     best = max(
         preds,
@@ -141,16 +223,17 @@ def _no_rpr_top_pick(preds: list[dict]) -> tuple[str | None, float | None]:
 
 def _print_summary(rows: list[dict]) -> None:
     models = [
-        ("Old VELO", "velo_outcome"),
-        ("No-RPR",   "norpr_outcome"),
-        ("New Build","nb_outcome"),
+        ("Old VELO", "velo_outcome", "velo_miss_class"),
+        ("No-RPR",   "norpr_outcome", "norpr_miss_class"),
+        ("New Build","nb_outcome", "nb_miss_class"),
+        ("Champion", "champion_outcome", "champion_miss_class"),
     ]
     print("\n  +-----------------------------------------------------+")
     print(  "  |  MULTI-MODEL SIGMA SUMMARY                          |")
     print(  "  +------------+-------+-------+-------+---------------+")
     print(  "  |  Model     |  n    |  WIN  | PLACE |   SR   Frame  |")
     print(  "  +------------+-------+-------+-------+---------------+")
-    for label, col in models:
+    for label, col, _ in models:
         vals = [r[col] for r in rows if r[col] not in ("NO_DATA", "")]
         n = len(vals)
         if n == 0:
@@ -162,6 +245,16 @@ def _print_summary(rows: list[dict]) -> None:
         frame  = places / n
         print(f"  |  {label:<10}|  {n:<5}|  {wins:<5}|  {places:<5}|  {sr:.1%}   {frame:.1%}  |")
     print(  "  +------------+-------+-------+-------+---------------+")
+
+    print("\n  MISS CLASSES (winner SP band, on missed races):")
+    for label, col, miss_col in models:
+        misses = [r[miss_col] for r in rows if r[col] == "MISS" and r[miss_col]]
+        if not misses:
+            continue
+        from collections import Counter
+        counts = Counter(misses)
+        parts = ", ".join(f"{k}={v}" for k, v in counts.most_common())
+        print(f"    {label:<10} n={len(misses):<3d} {parts}")
 
     # EW_CANDIDATE split for Old VELO
     ew_rows = [r for r in rows if r.get("velo_assigned_product") == "EW_CANDIDATE"]
@@ -190,20 +283,30 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
     sigma_rows = _load_sigma(date_str)
     rp_results = _load_rp_results(date_str)
     sb_preds   = _load_supabase_predictions(date_str)
-    nb_cards   = _load_nb_scorecards(date_str)
+    numeric_to_velo = _build_numeric_to_velo_map(date_str)
+    nb_cards_raw = _load_nb_scorecards(date_str)
+    nb_cards = {
+        numeric_to_velo.get(rid, rid): card for rid, card in nb_cards_raw.items()
+    }
+    champion_cards_raw = _load_champion_scorecards(date_str)
+    champion_cards = {
+        numeric_to_velo.get(rid, rid): card for rid, card in champion_cards_raw.items()
+    }
 
     print(f"  Sigma rows : {len(sigma_rows)}")
     print(f"  RP results : {len(rp_results)} races")
     print(f"  Supabase   : {len(sb_preds)} races")
     print(f"  New Build  : {len(nb_cards)} races")
+    print(f"  Champion   : {len(champion_cards)} races")
 
     new_rows: list[dict] = []
 
     for sr in sigma_rows:
         race_id = str(sr.get("race_id", ""))
-        result  = rp_results.get(race_id, {})
-        winner  = result.get("winner", "")
-        top3    = result.get("top3", [])
+        result     = rp_results.get(race_id, {})
+        winner     = result.get("winner", "")
+        winner_sp  = result.get("winner_sp")
+        top3       = result.get("top3", [])
 
         # Old VELO: sigma already has the top pick + outcome
         # sigma uses "PLACED" — normalise to "PLACE" for consistency
@@ -212,6 +315,7 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
         velo_outcome = "PLACE" if _raw_outcome == "PLACED" else _raw_outcome
         velo_assigned_product = sr.get("assigned_product", "UNKNOWN")
         velo_ew_outcome = sr.get("ew_outcome", "")
+        velo_miss_class = _classify_miss(winner_sp) if velo_outcome == "MISS" else ""
 
         # No-RPR: highest sqpe_no_rpr_shadow_prob in Supabase
         norpr_pick, norpr_prob, norpr_outcome = None, None, "NO_DATA"
@@ -219,6 +323,7 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             norpr_pick, norpr_prob = _no_rpr_top_pick(sb_preds[race_id])
             if winner:
                 norpr_outcome = _outcome(norpr_pick, winner, top3)
+        norpr_miss_class = _classify_miss(winner_sp) if norpr_outcome == "MISS" else ""
 
         # New Build: lane_a_top3[0]
         nb_entry = nb_cards.get(race_id, {})
@@ -227,6 +332,16 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
         nb_outcome = "NO_DATA"
         if nb_pick and winner:
             nb_outcome = _outcome(nb_pick, winner, top3)
+        nb_miss_class = _classify_miss(winner_sp) if nb_outcome == "MISS" else ""
+
+        # Champion Intent Shadow: top_pick_shadow=True runner
+        champion_entry = champion_cards.get(race_id, {})
+        champion_pick  = champion_entry.get("horse")
+        champion_prob  = champion_entry.get("prob")
+        champion_outcome = "NO_DATA"
+        if champion_pick and winner:
+            champion_outcome = _outcome(champion_pick, winner, top3)
+        champion_miss_class = _classify_miss(winner_sp) if champion_outcome == "MISS" else ""
 
         row = {
             "date":          date_str,
@@ -237,13 +352,21 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             "velo_outcome":  velo_outcome,
             "velo_assigned_product": velo_assigned_product,
             "velo_ew_outcome": velo_ew_outcome or "",
+            "velo_miss_class": velo_miss_class,
             "norpr_top_pick": norpr_pick or "",
             "norpr_prob":    round(norpr_prob, 4) if norpr_prob else "",
             "norpr_outcome": norpr_outcome,
+            "norpr_miss_class": norpr_miss_class,
             "nb_top_pick":   nb_pick or "",
             "nb_prob":       round(nb_prob, 4) if nb_prob else "",
             "nb_outcome":    nb_outcome,
+            "nb_miss_class": nb_miss_class,
+            "champion_top_pick": champion_pick or "",
+            "champion_prob": round(float(champion_prob), 4) if champion_prob else "",
+            "champion_outcome": champion_outcome,
+            "champion_miss_class": champion_miss_class,
             "winner":        winner,
+            "winner_sp":     winner_sp if winner_sp is not None else "",
             "top3":          "|".join(top3),
         }
         new_rows.append(row)
@@ -253,25 +376,34 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             _norm(velo_pick) == _norm(nb_pick) if nb_pick else False,
             _norm(norpr_pick) == _norm(nb_pick) if (norpr_pick and nb_pick) else False,
         ])
-        status = f"V:{velo_outcome[0]} N:{norpr_outcome[0]} B:{nb_outcome[0]}"
+        status = f"V:{velo_outcome[0]} N:{norpr_outcome[0]} B:{nb_outcome[0]} C:{champion_outcome[0]}"
         print(f"  {race_id} {sr.get('course',''):12} {sr.get('off',''):5}  {status}")
 
     _print_summary(new_rows)
 
     if execute:
-        # Load existing rows, deduplicate before writing
+        # Load existing rows; merge-in-place so a rerun with corrected data
+        # (e.g. after a race_id-mapping fix) actually overwrites stale rows
+        # instead of permanently keeping whatever was first written for that
+        # (date, race_id) key (root-caused 2026-07-10 -- NO_DATA rows from a
+        # broken run were never refreshed by the corrected rerun under the
+        # old skip-if-exists logic).
         existing: list[dict] = []
         if LEDGER_PATH.exists():
             with open(LEDGER_PATH, newline="", encoding="utf-8") as f:
                 existing = list(csv.DictReader(f))
-        existing_keys = {(r["date"], r["race_id"]) for r in existing}
-        added = [r for r in new_rows if (r["date"], r["race_id"]) not in existing_keys]
-        all_rows_out = existing + added
+        existing_by_key = {(r["date"], r["race_id"]): r for r in existing}
+        new_by_key = {(r["date"], r["race_id"]): r for r in new_rows}
+        updated = sum(1 for k in new_by_key if k in existing_by_key)
+        added = sum(1 for k in new_by_key if k not in existing_by_key)
+        combined_by_key = dict(existing_by_key)
+        combined_by_key.update(new_by_key)
+        all_rows_out = list(combined_by_key.values())
         with open(LEDGER_PATH, "w", newline="", encoding="utf-8") as f:
             w = csv.DictWriter(f, fieldnames=LEDGER_COLS, restval="", extrasaction="ignore")
             w.writeheader()
             w.writerows(all_rows_out)
-        print(f"\n  Ledger: +{len(added)} new rows ({len(existing)} existing) -> {LEDGER_PATH.name}")
+        print(f"\n  Ledger: +{added} new rows, {updated} updated in place ({len(existing)} existing) -> {LEDGER_PATH.name}")
 
         # Print cumulative summary across all dates
         all_rows = []
