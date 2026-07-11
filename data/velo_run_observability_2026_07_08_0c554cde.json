@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "0c554cde-bf67-4b08-bacb-5b5c30f2e3a0",
+  "date": "2026-07-08",
+  "timestamp": "2026-07-08T15:16:00.343444+00:00",
+  "git_commit_sha": "5f269b49cf8e6e75cc4d8ffafd9394c55cd5bb38",
+  "git_branch": "audit/local-01-truth-reconciliation",
+  "source_truth": "SOURCE_UNKNOWN_BLOCK",
+  "feature_health": "BLOCKED",
+  "active_formula": "UNHANDLED_EXCEPTION",
+  "excluded_live_components": [],
+  "race_scoring_coverage_pct": 0.0,
+  "persistence_status": "FAIL",
+  "supabase_write_attempt_success": false,
+  "supabase_readback_verified": null,
+  "decision_tier_status": "EXCEPTION",
+  "learning_gate": "BLOCKED_EXCEPTION",
+  "next_safe_command": "python scripts/ops/velo_session_start_check.py",
+  "metrics": {
+    "races_processed": 0,
+    "runners_processed": 0
+  },
+  "gates": {
+    "gate_source_unknown_block": false
+  },
+  "warnings": [
+    "UNHANDLED_EXCEPTION: BrokenPipeError: [Errno 32] Broken pipe"
+  ],
+  "extra": {
+    "git_commit_sha": "unknown",
+    "exception_type": "BrokenPipeError"
+  }
+}

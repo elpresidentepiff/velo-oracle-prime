@@ -1,0 +1,174 @@
+{
+  "date": "2026-07-08",
+  "generated_at": "2026-07-08T16:15:55.860430Z",
+  "results": [
+    {
+      "step": "Step 4: Parse racecard captures",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/parse_racing_post_racecard_capture.py",
+        "--date",
+        "2026-07-08",
+        "--capture-label",
+        "2026-07-08",
+        "--write-standard-cache",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": true
+    },
+    {
+      "step": "Step 5: Validate injection",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/validate_rp_injection.py",
+        "--injection-path",
+        "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-08/racecard_injection.json"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": true
+    },
+    {
+      "step": "Step 6: New Build current-card feed",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/new_build_current_card_feed.py",
+        "--racecard-path",
+        "/mnt/c/Users/puror/velo-oracle-prime/data/racecards_2026_07_08_standard.json",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 8.5: RPDC daily",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_rpdc_daily.py",
+        "--date",
+        "2026-07-08"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 9.1: Radical Shadow (No-RPR)",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/run_radical_shadow_today.py",
+        "--date",
+        "2026-07-08"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 9.2: Tri-Lane Stress Test",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/run_tri_lane_stress_test.py",
+        "--date",
+        "2026-07-08",
+        "--ruleset",
+        "v2"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 9.3: Tri-Lane Agent Review",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_tri_lane_agent_review.py",
+        "--packet",
+        "/mnt/c/Users/puror/velo-oracle-prime/data/reports/tri_lane_stress_test_2026_07_08_v2.json"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 9.4: Deep Race Agent V1",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_deep_race_agent_v1.py",
+        "--date",
+        "2026-07-08"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 9.5: Course Master",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_course_master.py",
+        "--date",
+        "2026-07-08"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 9.6: Old VELO Three-Option Card",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_old_velo_three_option_card.py",
+        "--date",
+        "2026-07-08"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "New Build: Two-Lane Score",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/new_build_two_lane_score.py",
+        "--date",
+        "2026-07-08",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Champion Intent: Features",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_current_card_intent_features.py",
+        "--standard-cache",
+        "/mnt/c/Users/puror/velo-oracle-prime/data/racecards_2026_07_08_standard.json",
+        "--date",
+        "2026-07-08",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Champion Intent: Shadow Scorecard",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_intent_shadow_scorecard.py",
+        "--date",
+        "2026-07-08",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    }
+  ]
+}
