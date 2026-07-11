@@ -1362,6 +1362,103 @@ async def old_velo_three_option_card():
     return FileResponse(str(card_path), media_type="application/json")
 
 
+@app.get("/api/model-suggestions")
+async def model_suggestions_proxy(date: str = Query(default=None)):
+    """Same read-only, current-day model-suggestions join used by
+    new_build_dashboard_server.py -- added here 2026-07-08 because the
+    dashboard frontend (app/static/dashboard/index.html) fetches this exact
+    path, but this server (app/main.py) never defined it, so the CHAMPION
+    INTENT SHADOW panel always showed 'No Champion Intent data' regardless
+    of whether the underlying scorecard existed. Reuses the exact same
+    builder + numeric-race_id remap as the other server rather than
+    duplicating the join logic."""
+    import datetime as _dt
+    from scripts.ops.model_suggestions_builder import build_model_suggestions
+    from scripts.ops.new_build_dashboard_server import _remap_numeric_race_ids
+
+    target = date or _dt.date.today().isoformat()
+    return JSONResponse(_remap_numeric_race_ids(build_model_suggestions(target), target))
+
+
+@app.get("/api/model-suggestions-race")
+async def model_suggestions_race_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
+    """Same as /api/model-suggestions, filtered to a single race_id."""
+    import datetime as _dt
+    from scripts.ops.model_suggestions_builder import build_model_suggestions
+
+    target = date or _dt.date.today().isoformat()
+    if not race_id:
+        return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
+    return JSONResponse(build_model_suggestions(target, race_id=race_id))
+
+
+@app.get("/api/doctrine-scorecard")
+async def doctrine_scorecard_proxy():
+    """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation
+    to a single server — see docs/current/ONE_TRUTH.md)."""
+    import json as _json
+    path = pathlib.Path(__file__).parent.parent / "data" / "doctrine_scorecard_latest.json"
+    if not path.exists():
+        return JSONResponse(
+            {
+                "status": "NOT_FOUND",
+                "message": "doctrine_scorecard_latest.json not found — run build_doctrine_market_scorecard.py first",
+                "generated_at": utc_now_iso(),
+                "no_scoring": True, "no_model_calls": True, "no_live_writes": True,
+            },
+            status_code=404,
+        )
+    return JSONResponse(_json.loads(path.read_text(encoding="utf-8")))
+
+
+@app.get("/api/canonical-scorecard")
+async def canonical_scorecard_proxy(date: str = Query(default=None)):
+    """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
+    import datetime as _dt
+    from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard
+
+    target = date or _dt.date.today().isoformat()
+    rows = fetch_canonical_scorecard(target)
+    return JSONResponse({
+        "date": target, "source_table": "public.canonical_model_scorecards",
+        "count": len(rows), "rows": rows, "no_supabase_write": True,
+    })
+
+
+@app.get("/api/canonical-learning-events")
+async def canonical_learning_events_proxy(date: str = Query(default=None)):
+    """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
+    import datetime as _dt
+    from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events
+
+    target = date or _dt.date.today().isoformat()
+    rows = fetch_canonical_learning_events(target)
+    return JSONResponse({
+        "date": target, "source_table": "public.canonical_learning_events",
+        "count": len(rows), "rows": rows, "no_supabase_write": True,
+    })
+
+
+@app.get("/api/canonical-race-truth")
+async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
+    """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
+    import datetime as _dt
+    from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard, fetch_canonical_learning_events
+
+    target = date or _dt.date.today().isoformat()
+    if not race_id:
+        return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
+    scorecard_rows = [r for r in fetch_canonical_scorecard(target) if r.get("race_id") == race_id]
+    learning_rows = [r for r in fetch_canonical_learning_events(target) if r.get("race_id") == race_id]
+    return JSONResponse({
+        "date": target, "race_id": race_id,
+        "source_tables": ["public.canonical_model_scorecards", "public.canonical_learning_events"],
+        "scorecard_count": len(scorecard_rows), "learning_event_count": len(learning_rows),
+        "scorecard_rows": scorecard_rows, "learning_events": learning_rows,
+        "no_supabase_write": True,
+    })
+
+
 @app.get("/api/old-velo-verdicts")
 async def old_velo_verdicts(date: str = Query(default=None)):
     """Old VELO lane for the dashboard: top pick per race from the day's
@@ -2265,7 +2362,12 @@ async def dashboard_truth(date: str = Query(default=None)):
     target_date = date or utc_now().strftime("%Y-%m-%d")
     date_tag = target_date.replace("-", "_")
     sb_url = os.getenv("SUPABASE_URL", "")
-    sb_key = os.getenv("SUPABASE_KEY", "")
+    # SUPABASE_KEY (anon/publishable) is blocked by RLS on velo_verdicts --
+    # confirmed 2026-07-08: identical query returns 0 rows via SUPABASE_KEY,
+    # 33 via SUPABASE_SERVICE_ROLE_KEY. Every other read/write path in this
+    # pipeline already uses the service-role key; matching that here rather
+    # than changing RLS policy itself. This endpoint is read-only.
+    sb_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY", "")
 
     # ── A. Supabase truth ─────────────────────────────────────────────────────
     sb_truth: dict = {
@@ -2289,7 +2391,11 @@ async def dashboard_truth(date: str = Query(default=None)):
         try:
             req = urllib.request.Request(
                 f"{sb_url}/rest/v1/pipeline_runs"
-                f"?select=id,status,started_at,completed_at,source_date,run_type,error_message"
+                # NOTE: pipeline_runs has no completed_at column -- it's
+                # finished_at. Confirmed against the live PostgREST OpenAPI
+                # schema 2026-07-08 after this endpoint was silently
+                # returning SUPABASE_UNAVAILABLE/HTTP 400 for every request.
+                f"?select=id,status,started_at,finished_at,source_date,run_type,error_message"
                 f"&order=started_at.desc&limit=1",
                 headers=_hdrs,
             )
@@ -2307,8 +2413,13 @@ async def dashboard_truth(date: str = Query(default=None)):
 
         if sb_truth["status"] == "CONNECTED":
             try:
+                # NOTE: velo_verdicts has no `date` column -- race_id encodes
+                # the date as rp_<VENUE>_<YYYYMMDD>_<H.MM>. Same schema gap
+                # confirmed and worked around elsewhere this session
+                # (data/reports/july07_sigma_input_audit.md).
+                date_tag_compact = target_date.replace("-", "")
                 req = urllib.request.Request(
-                    f"{sb_url}/rest/v1/velo_verdicts?select=id&date=eq.{target_date}",
+                    f"{sb_url}/rest/v1/velo_verdicts?select=id&race_id=like.*{date_tag_compact}*",
                     headers={**_hdrs, "Prefer": "count=exact", "Range-Unit": "items", "Range": "0-0"},
                 )
                 with urllib.request.urlopen(req, timeout=6) as resp:
