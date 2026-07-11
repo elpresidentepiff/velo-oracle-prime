@@ -1,9 +1,9 @@
 # VCP-03 — Coherence Burn-In — Operator Brief
-**Generated:** 2026-06-30T00:00:29.827751+00:00
+**Generated:** 2026-07-01T02:24:14.367085+00:00
 
-- Passing days: **1/10**
-- Days remaining: **9**
-- Total days logged: 1
+- Passing days: **2/10**
+- Days remaining: **8**
+- Total days logged: 2
 
 ## Final Classifications
 - VCP_03_BURN_IN_PROTOCOL_DOCUMENTED
