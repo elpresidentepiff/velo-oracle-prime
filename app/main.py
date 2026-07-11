@@ -1373,6 +1373,7 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
     builder + numeric-race_id remap as the other server rather than
     duplicating the join logic."""
     import datetime as _dt
+
     from scripts.ops.model_suggestions_builder import build_model_suggestions
     from scripts.ops.new_build_dashboard_server import _remap_numeric_race_ids
 
@@ -1384,6 +1385,7 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
 async def model_suggestions_race_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Same as /api/model-suggestions, filtered to a single race_id."""
     import datetime as _dt
+
     from scripts.ops.model_suggestions_builder import build_model_suggestions
 
     target = date or _dt.date.today().isoformat()
@@ -1397,6 +1399,7 @@ async def doctrine_scorecard_proxy():
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation
     to a single server — see docs/current/ONE_TRUTH.md)."""
     import json as _json
+
     path = pathlib.Path(__file__).parent.parent / "data" / "doctrine_scorecard_latest.json"
     if not path.exists():
         return JSONResponse(
@@ -1404,7 +1407,9 @@ async def doctrine_scorecard_proxy():
                 "status": "NOT_FOUND",
                 "message": "doctrine_scorecard_latest.json not found — run build_doctrine_market_scorecard.py first",
                 "generated_at": utc_now_iso(),
-                "no_scoring": True, "no_model_calls": True, "no_live_writes": True,
+                "no_scoring": True,
+                "no_model_calls": True,
+                "no_live_writes": True,
             },
             status_code=404,
         )
@@ -1415,48 +1420,66 @@ async def doctrine_scorecard_proxy():
 async def canonical_scorecard_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
+
     from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
     rows = fetch_canonical_scorecard(target)
-    return JSONResponse({
-        "date": target, "source_table": "public.canonical_model_scorecards",
-        "count": len(rows), "rows": rows, "no_supabase_write": True,
-    })
+    return JSONResponse(
+        {
+            "date": target,
+            "source_table": "public.canonical_model_scorecards",
+            "count": len(rows),
+            "rows": rows,
+            "no_supabase_write": True,
+        }
+    )
 
 
 @app.get("/api/canonical-learning-events")
 async def canonical_learning_events_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
+
     from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events
 
     target = date or _dt.date.today().isoformat()
     rows = fetch_canonical_learning_events(target)
-    return JSONResponse({
-        "date": target, "source_table": "public.canonical_learning_events",
-        "count": len(rows), "rows": rows, "no_supabase_write": True,
-    })
+    return JSONResponse(
+        {
+            "date": target,
+            "source_table": "public.canonical_learning_events",
+            "count": len(rows),
+            "rows": rows,
+            "no_supabase_write": True,
+        }
+    )
 
 
 @app.get("/api/canonical-race-truth")
 async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
-    from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard, fetch_canonical_learning_events
+
+    from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events, fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
     if not race_id:
         return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
     scorecard_rows = [r for r in fetch_canonical_scorecard(target) if r.get("race_id") == race_id]
     learning_rows = [r for r in fetch_canonical_learning_events(target) if r.get("race_id") == race_id]
-    return JSONResponse({
-        "date": target, "race_id": race_id,
-        "source_tables": ["public.canonical_model_scorecards", "public.canonical_learning_events"],
-        "scorecard_count": len(scorecard_rows), "learning_event_count": len(learning_rows),
-        "scorecard_rows": scorecard_rows, "learning_events": learning_rows,
-        "no_supabase_write": True,
-    })
+    return JSONResponse(
+        {
+            "date": target,
+            "race_id": race_id,
+            "source_tables": ["public.canonical_model_scorecards", "public.canonical_learning_events"],
+            "scorecard_count": len(scorecard_rows),
+            "learning_event_count": len(learning_rows),
+            "scorecard_rows": scorecard_rows,
+            "learning_events": learning_rows,
+            "no_supabase_write": True,
+        }
+    )
 
 
 @app.get("/api/old-velo-verdicts")
