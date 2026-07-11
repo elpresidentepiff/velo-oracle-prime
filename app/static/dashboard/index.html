@@ -3315,6 +3315,13 @@ async function loadCard() {
 
   // CHAMPION_INTENT_SHADOW — permanent per-race-card lane, every day, all dates.
   // Fetched separately so a failure here never blocks the rest of the card.
+  // Keyed by course::minutes, NOT race_id: /api/governed-card (source of the
+  // `rid` used at render time) returns RP's raw numeric race_id, while
+  // /api/model-suggestions remaps CHAMPION_INTENT_SHADOW rows to the
+  // rp_COURSE_DATE_TIME scheme -- the two never match. course+time is the
+  // same cross-source join key already used for the Old VELO (ovMap) lookup
+  // just below, so this reuses that established pattern instead of a
+  // race_id join that silently never resolves.
   champIntentMap = new Map();
   try {
     const shRes = await fetch(`/api/model-suggestions?date=${encodeURIComponent(dateParam)}`);
@@ -3322,7 +3329,8 @@ async function loadCard() {
       const shData = await shRes.json();
       (shData.rows || []).forEach(r => {
         if (r.model_label === 'CHAMPION_INTENT_SHADOW' && r.rank === 1) {
-          champIntentMap.set(String(r.race_id), { horse: r.horse, score: r.score });
+          const key = (r.course || '').toLowerCase() + '::' + nbTimeKey(r.off_time);
+          champIntentMap.set(key, { horse: r.horse, score: r.score });
         }
       });
     }
@@ -3773,7 +3781,7 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     // Not staked, not promoted, not canonical truth. See PR #133/#134.
     html += '<div class="tl-lane">';
     html += '<div class="tl-lane-header"><span class="tl-lane-label-nr">CHAMPION INTENT SHADOW</span><span class="rc-full-field-note">SHADOW ONLY</span></div>';
-    const ciPick = champIntentMap.get(String(rid));
+    const ciPick = champIntentMap.get(ovKey);
     if (ciPick && ciPick.horse) {
       const ciPct = maxProb > 0 ? Math.round((parseFloat(ciPick.score || 0) / maxProb) * 100) : Math.round(parseFloat(ciPick.score || 0) * 100);
       html += `<div class="tl-horse">${esc(ciPick.horse)}</div>`;
