@@ -3,13 +3,27 @@ RACE-DAY-12-EOD-TRUTH-01 -- governed, evidence-only results/Sigma close for
 2026-07-12. Builds sealed LearningEventV2.2 packets from velo_verdicts +
 RP results truth. Does NOT mutate any learner state, Playbook G, Supabase,
 or Telegram. Read-only evidence production only.
+
+Corrected per PR #149 REQUEST CHANGES (P0-11..P0-14):
+  - time_safety/leakage_status are derived through an explicit priority
+    chain, never asserted SAFE_* by default.
+  - the Dundalk numeric<->composite race_id bridge is derived from
+    committed capture-manifest evidence (course+date+off-time+source
+    URL/title), never from a positional/ordering assumption, and fails
+    closed if the derived mapping is not a clean 1:1 bijection.
+  - prediction_run_id is a real immutable run identity: a hash of the
+    exact selected velo_verdicts row content, combined with its
+    generated_at and race_id -- not a bare race identity.
+  - odds_capture_ts is None (and EXCLUDED_UNTIMED_ODDS applies) unless a
+    documented check proves the timestamp represents the capture time of
+    the exact odds embedded in the verdict row. No such proof exists yet
+    for velo_verdicts.fetch_timestamp, so it is treated as unproven.
 """
 from __future__ import annotations
 
 import csv
 import hashlib
 import json
-import os
 import re
 import sys
 from datetime import datetime
@@ -25,22 +39,198 @@ from src.velo.learning.learning_event_v2 import (  # noqa: E402
     SafetyProvenance,
     build_learning_event,
     compute_input_card_hash,
-    TIME_SAFETY_SAFE_PROSPECTIVE,
+    TIME_SAFETY_SAFE_FROZEN_REPLAY,
+    TIME_SAFETY_EXCLUDED_IDENTITY_AMBIGUOUS,
+    TIME_SAFETY_EXCLUDED_INCOMPLETE_RESULT,
+    TIME_SAFETY_EXCLUDED_PREDICTION_TIME_UNPROVEN,
+    TIME_SAFETY_EXCLUDED_UNTIMED_ODDS,
 )
 from src.velo.learning.identity_resolver import resolve_horse  # noqa: E402
 
 RACE_DATE = "2026-07-12"
 RESULTS_PATH = Path("data/results/rp_results_2026_07_12.json")
 REPORTS_DIR = Path("data/reports")
+DUNDALK_RESULTS_MANIFEST_PATH = Path(
+    "data/racing_post_account_raw/rp-results-2026-07-12-dundalk/manifest.json"
+)
+LONDON = ZoneInfo("Europe/London")
+
+# No documented check currently proves velo_verdicts.fetch_timestamp is the
+# capture time of the exact odds embedded in predictions[].sp_dec -- it may
+# simply be racecard-page fetch time. Treat odds timing as unproven until
+# such a check exists. This is a explicit, auditable constant, not a
+# silent assumption buried in logic.
+ODDS_TIMING_PROVEN = False
 
 
-def load_results() -> dict:
+def sha256_of_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def sha256_of_obj(obj) -> str:
+    raw = json.dumps(obj, sort_keys=True, ensure_ascii=False, default=str)
+    return sha256_of_text(raw)
+
+
+def classify_time_safety(
+    *,
+    ambiguous: bool,
+    result_universe_complete: bool,
+    prediction_before_off: bool | None,
+    odds_timing_proven: bool,
+) -> tuple[str, str]:
+    """Pure, priority-ordered classification (P0-11). Returns
+    (time_safety, leakage_status). Never returns a SAFE_* class unless
+    every required provenance condition is explicitly proven."""
+    if ambiguous:
+        return TIME_SAFETY_EXCLUDED_IDENTITY_AMBIGUOUS, "UNKNOWN"
+    if not result_universe_complete:
+        return TIME_SAFETY_EXCLUDED_INCOMPLETE_RESULT, "UNKNOWN"
+    if prediction_before_off is not True:
+        return TIME_SAFETY_EXCLUDED_PREDICTION_TIME_UNPROVEN, "UNKNOWN"
+
+    # Leakage is about whether frozen prediction features could contain
+    # result-derived contamination -- that is fully determined by the
+    # causal proof that the row was generated before the race happened,
+    # independent of whether odds timing is separately proven.
+    leakage_status = "CLEAN"
+
+    if not odds_timing_proven:
+        return TIME_SAFETY_EXCLUDED_UNTIMED_ODDS, leakage_status
+    return TIME_SAFETY_SAFE_FROZEN_REPLAY, leakage_status
+
+
+def build_dundalk_id_map(
+    verdicts: list[dict], manifest_path: Path = DUNDALK_RESULTS_MANIFEST_PATH
+) -> tuple[dict[str, str], list[dict], str]:
+    """Derive the numeric<->composite Dundalk race_id bridge from
+    committed evidence (P0-12): the results-capture manifest's own
+    source_url + page title supplies the numeric race_id and its
+    off-time; the composite velo_verdicts race_id supplies its own
+    off-time by construction (rp_DUN_<date>_<off>). Matched by exact
+    off-time. Fails closed (raises) if either side has a duplicate
+    off-time or the two sides are not a clean 1:1 bijection.
+
+    Returns (numeric_to_composite_map, evidence_records, manifest_sha256).
+    """
+    manifest_text = manifest_path.read_text(encoding="utf-8")
+    manifest_sha256 = sha256_of_text(manifest_text)
+    manifest = json.loads(manifest_text)
+
+    numeric_by_off: dict[str, dict] = {}
+    for cap in manifest.get("captures", []):
+        m_url = re.search(r"/results/\d+/([a-z0-9-]+)/(\d{4}-\d{2}-\d{2})/(\d+)$", cap["source_url"])
+        m_title = re.search(r"Full Result (\d{1,2}\.\d{2})\s+Dundalk", cap.get("title", ""), re.IGNORECASE)
+        if not m_url or not m_title:
+            continue
+        course_slug, date, numeric_id = m_url.groups()
+        off_time = m_title.group(1)
+        if off_time in numeric_by_off:
+            raise RuntimeError(
+                f"Dundalk mapping evidence has a duplicate off-time {off_time} on the numeric "
+                f"(results-capture) side -- refusing to guess, ids {numeric_by_off[off_time]['numeric_race_id']} "
+                f"and {numeric_id} both claim it"
+            )
+        numeric_by_off[off_time] = {
+            "numeric_race_id": numeric_id,
+            "course_slug": course_slug,
+            "date": date,
+            "off_time": off_time,
+            "source_url": cap["source_url"],
+            "source_title": cap["title"],
+        }
+
+    composite = sorted(
+        {v["race_id"] for v in verdicts if v["race_id"].startswith("rp_DUN_")}
+    )
+    composite_by_off: dict[str, str] = {}
+    for rid in composite:
+        m = re.search(r"_(\d{1,2}\.\d{2})$", rid)
+        if not m:
+            raise RuntimeError(f"Dundalk composite verdict race_id {rid!r} has no parseable off-time suffix")
+        off_time = m.group(1)
+        if off_time in composite_by_off:
+            raise RuntimeError(
+                f"Dundalk mapping evidence has a duplicate off-time {off_time} on the composite "
+                f"(velo_verdicts) side -- refusing to guess, ids {composite_by_off[off_time]} and {rid} both claim it"
+            )
+        composite_by_off[off_time] = rid
+
+    numeric_offs = set(numeric_by_off.keys())
+    composite_offs = set(composite_by_off.keys())
+    if numeric_offs != composite_offs:
+        raise RuntimeError(
+            "Dundalk id reconciliation is not a clean 1:1 bijection -- "
+            f"numeric-only off-times: {numeric_offs - composite_offs}, "
+            f"composite-only off-times: {composite_offs - numeric_offs}. Refusing to guess."
+        )
+
+    id_map: dict[str, str] = {}
+    evidence: list[dict] = []
+    for off_time in sorted(numeric_offs):
+        numeric_rec = numeric_by_off[off_time]
+        composite_rid = composite_by_off[off_time]
+        id_map[numeric_rec["numeric_race_id"]] = composite_rid
+        evidence.append(
+            {
+                "course": numeric_rec["course_slug"],
+                "date": numeric_rec["date"],
+                "off_time": off_time,
+                "numeric_result_race_id": numeric_rec["numeric_race_id"],
+                "composite_verdict_race_id": composite_rid,
+                "source_url": numeric_rec["source_url"],
+                "source_title": numeric_rec["source_title"],
+                "source_manifest_sha256": manifest_sha256,
+                "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH",
+            }
+        )
+    return id_map, evidence, manifest_sha256
+
+
+def compute_prediction_run_identity(row: dict) -> dict:
+    """Derive a real immutable prediction-run identity (P0-14) from the
+    exact selected velo_verdicts row: hash of the canonical row content,
+    combined with race_id and generated_at. A changed/corrected row
+    mints a different run identity because the hash changes."""
+    row_hash = sha256_of_obj(row)
+    race_id = row["race_id"]
+    generated_at = row["generated_at"]
+    prediction_run_id = f"velo_verdicts:{race_id}:{generated_at}:{row_hash[:12]}"
+    return {
+        "prediction_run_id": prediction_run_id,
+        "source_row_hash": row_hash,
+    }
+
+
+def select_verdict_rows(raw_rows: list[dict]) -> dict[str, dict]:
+    """Group raw velo_verdicts rows by race_id and deterministically
+    select one per race_id, recording duplicate-row provenance rather
+    than silently assuming a single row (P0-14). Tie-break: latest
+    generated_at wins (documented, not positional)."""
+    by_race: dict[str, list[dict]] = {}
+    for row in raw_rows:
+        by_race.setdefault(row["race_id"], []).append(row)
+
+    selected: dict[str, dict] = {}
+    for race_id, rows in by_race.items():
+        rows_sorted = sorted(rows, key=lambda r: r["generated_at"])
+        chosen = rows_sorted[-1]
+        duplicate_count = len(rows) - 1
+        chosen = dict(chosen)
+        chosen["_duplicate_row_count"] = duplicate_count
+        chosen["_multiple_candidates"] = duplicate_count > 0
+        chosen["_tie_break_reason"] = "LATEST_GENERATED_AT" if duplicate_count > 0 else "SINGLE_CANDIDATE"
+        selected[race_id] = chosen
+    return selected
+
+
+def load_results() -> tuple[dict, str]:
     text = RESULTS_PATH.read_text(encoding="utf-8")
-    sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    sha = sha256_of_text(text)
     return json.loads(text), sha
 
 
-def load_verdicts() -> list[dict]:
+def load_verdicts_raw() -> list[dict]:
     from src.data.supabase_client import get_supabase_client
 
     sb = get_supabase_client().client
@@ -54,67 +244,71 @@ def load_verdicts() -> list[dict]:
     return r.data
 
 
-def build_dundalk_id_map(verdicts: list[dict]) -> dict[str, str]:
-    """Deterministic reconciliation of composite rp_DUN_<date>_<off> ids
-    used by velo_verdicts for Dundalk-AW to the numeric RP race_ids used
-    by the results truth, via off-time ordering. Both sides are drawn
-    from the same course/date, and off-times are strictly increasing in
-    the RP url-list capture order, so this is a 1:1 deterministic sort
-    join, not a fuzzy or fabricated one."""
-    composite = [rid for rid in (v["race_id"] for v in verdicts) if rid.startswith("rp_DUN_")]
-
-    def off_key(rid: str) -> tuple[int, int]:
-        m = re.search(r"_(\d{1,2})\.(\d{2})$", rid)
-        return (int(m.group(1)), int(m.group(2)))
-
-    composite_sorted = sorted(set(composite), key=off_key)
-    numeric_sorted = ["924518", "924519", "924520", "924521", "924522", "924523", "924524"]
-    if len(composite_sorted) != len(numeric_sorted):
-        raise RuntimeError(
-            f"Dundalk id reconciliation count mismatch: {len(composite_sorted)} composite vs "
-            f"{len(numeric_sorted)} numeric -- refusing to guess, treat as ambiguous"
-        )
-    return dict(zip(numeric_sorted, composite_sorted))
-
-
 def main() -> None:
     results_payload, results_sha256 = load_results()
     results_by_race = {r["race_id"]: r for r in results_payload["results"]}
 
-    verdicts = load_verdicts()
-    verdicts_by_race = {v["race_id"]: v for v in verdicts}
-    dundalk_map = build_dundalk_id_map(verdicts)
+    raw_verdicts = load_verdicts_raw()
+    dundalk_map, dundalk_evidence, dundalk_manifest_sha256 = build_dundalk_id_map(raw_verdicts)
+    verdicts_selected = select_verdict_rows(raw_verdicts)
 
     events = []
-    exclusions = []
+    horse_exclusions = []
+    race_exclusions = []
     per_race_summary = []
-
-    london = ZoneInfo("Europe/London")
 
     for race_id, res in results_by_race.items():
         if not res.get("winner_horse"):
-            exclusions.append({"race_id": race_id, "course": res.get("course_slug"), "reason": "NO_RESULT_DATA_PARSED"})
+            race_exclusions.append(
+                {
+                    "type": "RACE",
+                    "race_id": race_id,
+                    "resolved_race_id": None,
+                    "horse_id": None,
+                    "horse_name": None,
+                    "resolution_method": None,
+                    "reason": "NO_RESULT_DATA_PARSED",
+                    "race_completeness": "NO_RESULT",
+                    "shadow_exclusion_reason": "NO_RESULT_DATA_PARSED",
+                }
+            )
             continue
 
         verdict_key = dundalk_map.get(race_id, race_id)
-        verdict = verdicts_by_race.get(verdict_key)
-        if verdict is None:
-            exclusions.append({"race_id": race_id, "course": res.get("course_slug"), "reason": "NO_VELO_VERDICTS_ROW"})
+        verdict_row = verdicts_selected.get(verdict_key)
+        if verdict_row is None:
+            race_exclusions.append(
+                {
+                    "type": "RACE",
+                    "race_id": race_id,
+                    "resolved_race_id": verdict_key,
+                    "horse_id": None,
+                    "horse_name": None,
+                    "resolution_method": None,
+                    "reason": "NO_VELO_VERDICTS_ROW",
+                    "race_completeness": "NO_PREDICTION",
+                    "shadow_exclusion_reason": "NO_VELO_VERDICTS_ROW",
+                }
+            )
             continue
 
         race_resolution_method = (
-            "DETERMINISTIC_OFFTIME_COURSE_DATE_MATCH" if race_id in dundalk_map else "DIRECT_ID_MATCH"
+            "DUNDALK_COURSE_DATE_EXACT_OFFTIME_MATCH" if race_id in dundalk_map else "DIRECT_ID_MATCH"
         )
 
-        fa = verdict["full_analysis"]
+        run_identity = compute_prediction_run_identity(
+            {k: v for k, v in verdict_row.items() if not k.startswith("_")}
+        )
+        prediction_run_id = run_identity["prediction_run_id"]
+        source_row_hash = run_identity["source_row_hash"]
+
+        fa = verdict_row["full_analysis"]
         if isinstance(fa, str):
             fa = json.loads(fa)
         predictions = fa.get("predictions", [])
         pred_by_horse = {p["horse_id"]: p for p in predictions}
 
-        runner_universe = tuple(
-            {"horse_id": p["horse_id"], "horse": p.get("horse")} for p in predictions
-        )
+        runner_universe = tuple({"horse_id": p["horse_id"], "horse": p.get("horse")} for p in predictions)
         model_scores_by_horse = {
             p["horse_id"]: {
                 "velo_prime_prob": p.get("signal_stack", {}).get("vp"),
@@ -127,30 +321,28 @@ def main() -> None:
             for p in predictions
         }
         rank_order = tuple(
-            p["horse_id"]
-            for p in sorted(predictions, key=lambda x: -(x.get("signal_stack", {}).get("vp") or 0))
+            p["horse_id"] for p in sorted(predictions, key=lambda x: -(x.get("signal_stack", {}).get("vp") or 0))
         )
         top_three = rank_order[:3]
 
-        gen = verdict["generated_at"]
+        gen = verdict_row["generated_at"]
         off_raw = res.get("off") or ""
-        prediction_before_off = None
-        if off_raw:
+        prediction_before_off: bool | None = None
+        off_time_for_dundalk = None
+        if not off_raw and race_id in dundalk_map:
+            ev = next(e for e in dundalk_evidence if e["numeric_result_race_id"] == race_id)
+            off_time_for_dundalk = ev["off_time"]
+
+        off_source = off_raw or off_time_for_dundalk
+        if off_source:
             try:
-                hh, mm = off_raw.split(".")
-                off_dt = datetime(2026, 7, 12, int(hh) + 12 if int(hh) < 8 else int(hh), int(mm), tzinfo=london)
+                hh, mm = off_source.split(".")
+                hh_i = int(hh)
+                off_dt = datetime(2026, 7, 12, hh_i + 12 if hh_i < 8 else hh_i, int(mm), tzinfo=LONDON)
                 gen_dt = datetime.fromisoformat(gen.replace("Z", "+00:00"))
                 prediction_before_off = gen_dt < off_dt
             except Exception:
                 prediction_before_off = None
-        else:
-            # Dundalk: off empty in results truth; derive off from composite verdict key.
-            m = re.search(r"_(\d{1,2})\.(\d{2})$", verdict_key)
-            if m:
-                hh, mm = int(m.group(1)), int(m.group(2))
-                off_dt = datetime(2026, 7, 12, hh + 12 if hh < 8 else hh, mm, tzinfo=london)
-                gen_dt = datetime.fromisoformat(gen.replace("Z", "+00:00"))
-                prediction_before_off = gen_dt < off_dt
 
         runner_positions = {}
         sp_by_horse = {}
@@ -166,10 +358,6 @@ def main() -> None:
         result_ids = set(runner_positions.keys())
         pred_ids = set(pred_by_horse.keys())
 
-        # Horse-level identity: prediction-side ids do not share a scheme with
-        # result-side ids for Dundalk-AW (name-slug vs numeric RP id), so every
-        # horse must be resolved via resolve_horse() (exact id, then normalised
-        # name within THIS race) rather than assumed to match directly.
         resolution_by_pred_id = {}
         for horse_id in pred_ids:
             pred_name = pred_by_horse[horse_id].get("horse")
@@ -179,14 +367,34 @@ def main() -> None:
                 resolved_race={"runners": res["runners"]},
             )
 
-        resolved_ids = {
-            r.resolved_horse_id for r in resolution_by_pred_id.values() if r.is_resolved
-        }
+        resolved_ids = {r.resolved_horse_id for r in resolution_by_pred_id.values() if r.is_resolved}
         all_predictions_resolved = all(r.is_resolved for r in resolution_by_pred_id.values())
         result_universe_complete = all_predictions_resolved and (resolved_ids == result_ids)
 
         winner_id = res.get("winner_id")
         frame_ids = tuple(res.get("top3_ids", []))
+
+        if not result_universe_complete:
+            reason_bits = []
+            if not all_predictions_resolved:
+                reason_bits.append("UNRESOLVED_HORSE_IDENTITY")
+            if resolved_ids != result_ids:
+                missing_from_pred = result_ids - resolved_ids
+                if missing_from_pred:
+                    reason_bits.append(f"RESULT_RUNNERS_NOT_IN_PREDICTION:{sorted(missing_from_pred)}")
+            race_exclusions.append(
+                {
+                    "type": "RACE",
+                    "race_id": race_id,
+                    "resolved_race_id": verdict_key,
+                    "horse_id": None,
+                    "horse_name": None,
+                    "resolution_method": race_resolution_method,
+                    "reason": ";".join(reason_bits) or "INCOMPLETE_RESULT_UNIVERSE",
+                    "race_completeness": "PARTIAL",
+                    "shadow_exclusion_reason": "EXCLUDED_INCOMPLETE_RESULT",
+                }
+            )
 
         race_events_this_race = []
         for horse_id in pred_ids:
@@ -210,7 +418,28 @@ def main() -> None:
                     finish_pos = runner_positions[resolved_id]
 
             ambiguous = not in_result
-            time_safety = TIME_SAFETY_SAFE_PROSPECTIVE
+            if ambiguous:
+                horse_exclusions.append(
+                    {
+                        "type": "HORSE",
+                        "race_id": race_id,
+                        "resolved_race_id": verdict_key,
+                        "horse_id": horse_id,
+                        "horse_name": pred_by_horse[horse_id].get("horse"),
+                        "resolution_method": resolution.method,
+                        "reason": resolution.ambiguity_reason or "UNRESOLVED",
+                        "race_completeness": "PARTIAL" if not result_universe_complete else "COMPLETE",
+                        "shadow_exclusion_reason": "EXCLUDED_IDENTITY_AMBIGUOUS",
+                    }
+                )
+
+            time_safety, leakage_status = classify_time_safety(
+                ambiguous=ambiguous,
+                result_universe_complete=result_universe_complete,
+                prediction_before_off=prediction_before_off,
+                odds_timing_proven=ODDS_TIMING_PROVEN,
+            )
+
             analysis_allowed = not ambiguous
             shadow_evaluation_allowed = (
                 not ambiguous and result_universe_complete and prediction_before_off is True
@@ -219,13 +448,15 @@ def main() -> None:
             input_card_hash = compute_input_card_hash(
                 race_id=race_id,
                 subject_horse_id=horse_id,
-                prediction_run_id=verdict_key,
+                prediction_run_id=prediction_run_id,
                 runner_universe=runner_universe,
                 model_scores=model_scores_by_horse.get(horse_id, {}),
                 rank_order=rank_order,
                 top_three=top_three,
-                model_versions={"engine_version": verdict.get("engine_version", "")},
-                active_components=tuple(fa.get("predictions", [{}])[0].get("verdict_flags", []) if predictions else []),
+                model_versions={"engine_version": verdict_row.get("engine_version", "")},
+                active_components=tuple(
+                    fa.get("predictions", [{}])[0].get("verdict_flags", []) if predictions else []
+                ),
                 excluded_components=(),
             )
 
@@ -233,19 +464,19 @@ def main() -> None:
                 race_date=RACE_DATE,
                 race_id=race_id,
                 course=res.get("course_slug", ""),
-                off_time=off_raw,
+                off_time=off_source or "",
                 subject_horse_id=horse_id,
-                prediction_run_id=verdict_key,
+                prediction_run_id=prediction_run_id,
                 runner_universe=runner_universe,
                 model_scores=model_scores_by_horse.get(horse_id, {}),
                 rank_order=rank_order,
                 top_three=top_three,
                 odds_value=pred_by_horse[horse_id].get("sp_dec"),
-                odds_capture_ts=gen,
+                odds_capture_ts=None,
                 prediction_timestamp=gen,
-                source_commit=verdict.get("git_commit_sha"),
+                source_commit=verdict_row.get("git_commit_sha"),
                 input_card_hash=input_card_hash,
-                model_versions={"engine_version": verdict.get("engine_version", "")},
+                model_versions={"engine_version": verdict_row.get("engine_version", "")},
                 active_components=(),
                 excluded_components=(),
             )
@@ -285,16 +516,16 @@ def main() -> None:
                 horse_resolution_methods={horse_id: outcome.horse_resolution_method},
                 ambiguous_join_blocked=ambiguous,
                 time_safety=time_safety,
-                leakage_status="CLEAN",
+                leakage_status=leakage_status,
                 result_source="RP_LOCAL_JSON",
                 result_source_classification="RP_LOCAL_JSON",
                 result_source_complete=result_universe_complete,
                 prediction_timestamp_present=True,
                 prediction_timestamp_before_off=prediction_before_off,
-                odds_timestamp_present=True,
-                odds_timestamp_before_off=prediction_before_off,
-                source_commit_present=bool(verdict.get("git_commit_sha")),
-                model_versions_present=bool(verdict.get("engine_version")),
+                odds_timestamp_present=False,
+                odds_timestamp_before_off=None,
+                source_commit_present=bool(verdict_row.get("git_commit_sha")),
+                model_versions_present=bool(verdict_row.get("engine_version")),
                 input_card_hash_verified=True,
                 analysis_allowed=analysis_allowed,
                 shadow_evaluation_allowed=shadow_evaluation_allowed,
@@ -311,13 +542,20 @@ def main() -> None:
             {
                 "race_id": race_id,
                 "course": res.get("course_slug"),
-                "off": off_raw or (dundalk_map.get(race_id) and re.search(r"_(\d{1,2}\.\d{2})$", verdict_key).group(1)),
+                "off": off_source,
                 "verdict_race_id": verdict_key,
+                "prediction_run_id": prediction_run_id,
+                "source_row_hash": source_row_hash,
+                "duplicate_row_count": verdict_row.get("_duplicate_row_count", 0),
+                "multiple_candidates": verdict_row.get("_multiple_candidates", False),
+                "tie_break_reason": verdict_row.get("_tie_break_reason"),
                 "race_resolution_method": race_resolution_method,
                 "runners_predicted": len(pred_ids),
                 "runners_resulted": len(result_ids),
                 "runners_resolved": sum(1 for r in resolution_by_pred_id.values() if r.is_resolved),
-                "runners_ambiguous_or_unresolved": sum(1 for r in resolution_by_pred_id.values() if not r.is_resolved),
+                "runners_ambiguous_or_unresolved": sum(
+                    1 for r in resolution_by_pred_id.values() if not r.is_resolved
+                ),
                 "result_universe_complete": result_universe_complete,
                 "prediction_before_off": prediction_before_off,
                 "winner_horse": res.get("winner_horse"),
@@ -346,53 +584,118 @@ def main() -> None:
         for ev in events:
             f.write(json.dumps(ev.to_dict(), ensure_ascii=False, default=str) + "\n")
 
+    all_exclusions = race_exclusions + horse_exclusions
+    exclusions_path = REPORTS_DIR / "race_day_12_exclusions_2026_07_12.csv"
+    fieldnames = [
+        "type",
+        "race_id",
+        "resolved_race_id",
+        "horse_id",
+        "horse_name",
+        "resolution_method",
+        "reason",
+        "race_completeness",
+        "shadow_exclusion_reason",
+    ]
+    with exclusions_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        for row in all_exclusions:
+            w.writerow(row)
+
+    ledger_path = REPORTS_DIR / "_race_day_12_exclusion_ledger.json"
+    ledger_path.write_text(json.dumps(all_exclusions, indent=2, default=str), encoding="utf-8")
+
+    time_safety_distribution: dict[str, int] = {}
+    for ev in events:
+        ts = ev.safety.time_safety
+        time_safety_distribution[ts] = time_safety_distribution.get(ts, 0) + 1
+
+    unresolved_horse_count = len(horse_exclusions)
+    partial_ambiguous_race_count = sum(1 for r in per_race_summary if not r["result_universe_complete"])
+    shadow_eligible_race_ids = {
+        r["race_id"] for r in per_race_summary if r["result_universe_complete"] and r["prediction_before_off"] is True
+    }
+
+    assert not any(
+        ev.safety.ambiguous_join_blocked and ev.safety.time_safety not in (
+            TIME_SAFETY_EXCLUDED_IDENTITY_AMBIGUOUS,
+        )
+        for ev in events
+    ), "an ambiguous-identity event must classify EXCLUDED_IDENTITY_AMBIGUOUS"
+    assert not any(
+        ev.safety.time_safety == TIME_SAFETY_SAFE_FROZEN_REPLAY and ev.safety.ambiguous_join_blocked for ev in events
+    ), "no unresolved event may carry a SAFE_* time class"
+    assert not any(
+        ev.safety.time_safety == TIME_SAFETY_SAFE_FROZEN_REPLAY and not ev.safety.result_source_complete
+        for ev in events
+    ), "no incomplete-race event may carry a SAFE_* time class"
+    assert not any(
+        ev.safety.time_safety == TIME_SAFETY_SAFE_FROZEN_REPLAY and ev.safety.prediction_timestamp_before_off is not True
+        for ev in events
+    ), "no event with unproven prediction timing may carry a SAFE_* time class"
+    assert unresolved_horse_count == len(
+        {(e["race_id"], e["horse_id"]) for e in horse_exclusions}
+    ), "unresolved horse exclusion rows must be unique per (race, horse)"
+    assert partial_ambiguous_race_count == len(
+        {r["race_id"] for r in race_exclusions if r["race_completeness"] == "PARTIAL"}
+    ), "every partial race must have an explicit exclusion row"
+    assert not (shadow_eligible_race_ids & {r["race_id"] for r in race_exclusions}), (
+        "no excluded race may be shadow-eligible"
+    )
+
     manifest = {
         "schema_version": "learning_event_v2.2",
         "race_date": RACE_DATE,
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": datetime.now(tz=LONDON).astimezone(tz=None).isoformat(),
         "total_events": len(events),
         "total_races_with_events": len(per_race_summary),
-        "races_excluded": len(exclusions),
         "results_source_path": str(RESULTS_PATH),
         "results_source_sha256": results_sha256,
         "prediction_source": "velo_verdicts (Supabase)",
         "prediction_source_note": (
             "runner_prediction_snapshots has 0 rows for 2026-07-12; velo_verdicts is the "
-            "actual canonical prediction artifact for this date, confirmed one row per race_id "
-            "(no run-id pooling problem), all rows generated 09:35-09:43 UTC well before the "
-            "earliest race off (13:10 local)."
+            "actual canonical prediction artifact for this date."
         ),
         "dundalk_id_reconciliation": dundalk_map,
+        "dundalk_mapping_evidence": dundalk_evidence,
+        "dundalk_mapping_source_manifest_sha256": dundalk_manifest_sha256,
+        "odds_timing_proven": ODDS_TIMING_PROVEN,
+        "time_safety_distribution": time_safety_distribution,
         "allow_flag_law": {
             "analysis_allowed": "true where horse resolved unambiguously in result",
-            "shadow_evaluation_allowed": "true only if result_universe_complete AND prediction_before_off is True",
+            "shadow_evaluation_allowed": (
+                "true only if result_universe_complete AND prediction_before_off is True -- "
+                "independent of odds-timing proof, per established 01A analytical-evaluation law"
+            ),
             "state_learning_allowed": "false (sealed for later governed 01B consumption)",
             "model_training_allowed": "false (sealed)",
             "promotion_eligible": "false (sealed)",
+        },
+        "assertions": {
+            "unresolved_horse_exclusion_count": unresolved_horse_count,
+            "partial_ambiguous_race_count": partial_ambiguous_race_count,
+            "every_unresolved_horse_in_csv": True,
+            "every_partial_race_has_reason": True,
+            "no_excluded_race_shadow_eligible": True,
         },
         "consumption_status": "SEALED_NOT_CONSUMED",
     }
     manifest_path = REPORTS_DIR / "learning_events_v2_2_2026_07_12_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    exclusions_path = REPORTS_DIR / "race_day_12_exclusions_2026_07_12.csv"
-    with exclusions_path.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["race_id", "course", "reason"])
-        w.writeheader()
-        for row in exclusions:
-            w.writerow(row)
-
     print(json.dumps({
         "status": "PASS",
         "events_written": len(events),
         "races_with_events": len(per_race_summary),
-        "races_excluded": len(exclusions),
+        "race_exclusions": len(race_exclusions),
+        "horse_exclusions": len(horse_exclusions),
+        "time_safety_distribution": time_safety_distribution,
         "jsonl": str(jsonl_path),
         "manifest": str(manifest_path),
         "exclusions_csv": str(exclusions_path),
     }, indent=2))
 
-    # stash per_race_summary for the sigma/report step
     (REPORTS_DIR / "_race_day_12_per_race_summary.json").write_text(
         json.dumps(per_race_summary, indent=2, default=str), encoding="utf-8"
     )

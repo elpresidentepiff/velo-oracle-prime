@@ -1,6 +1,6 @@
 # Sigma Evidence-Only Close — 2026-07-12 (READ-ONLY, no mutation)
 
-Generated: 2026-07-12T19:12:41.069886+00:00
+Generated: 2026-07-12T21:31:35.617140+00:00
 
 ## Writes performed: NONE (Supabase / Telegram / learned_patterns / Playbook G / sentient state all untouched)
 
@@ -17,6 +17,16 @@ Generated: 2026-07-12T19:12:41.069886+00:00
 ## Top-pick performance (all 28 races, includes partial-coverage races — NOT a clean SR)
 - Wins: 6/28 (21.4%)
 - Frame hits: 14/28 (50.0%)
+
+## Time-safety distribution (256 events)
+
+- `EXCLUDED_UNTIMED_ODDS`: 214
+- `EXCLUDED_INCOMPLETE_RESULT`: 37
+- `EXCLUDED_IDENTITY_AMBIGUOUS`: 5
+
+## Exclusion ledger
+- Race-level exclusions (partial/ambiguous): 5
+- Horse-level exclusions (unresolved identity): 5
 
 ## Per-race detail
 

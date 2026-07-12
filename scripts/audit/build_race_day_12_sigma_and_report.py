@@ -20,6 +20,7 @@ def main() -> None:
     per_race = json.loads((REPORTS_DIR / "_race_day_12_per_race_summary.json").read_text())
     manifest = json.loads((REPORTS_DIR / "learning_events_v2_2_2026_07_12_manifest.json").read_text())
     results_payload = json.loads(Path("data/results/rp_results_2026_07_12.json").read_text())
+    exclusion_ledger = json.loads((REPORTS_DIR / "_race_day_12_exclusion_ledger.json").read_text())
 
     races_total = len(per_race)
     races_complete = sum(1 for r in per_race if r["result_universe_complete"])
@@ -84,11 +85,13 @@ def main() -> None:
             "note": "Complete result universe AND proven pre-race prediction timestamp only -- the clean, citable subset.",
         },
         "per_race": per_race,
-        "exclusions": [],
+        "exclusions": exclusion_ledger,
+        "time_safety_distribution": manifest["time_safety_distribution"],
         "prediction_source": manifest["prediction_source"],
         "prediction_source_note": manifest["prediction_source_note"],
         "results_source_sha256": manifest["results_source_sha256"],
         "dundalk_id_reconciliation": manifest["dundalk_id_reconciliation"],
+        "dundalk_mapping_evidence": manifest["dundalk_mapping_evidence"],
         "forbidden_paths_not_invoked": [
             "scripts/ops/run_results_sigma.py (unguarded)",
             "scripts/ops/eod_shadow_learning_bridge.py",
@@ -124,6 +127,14 @@ def main() -> None:
         "## Top-pick performance (all 28 races, includes partial-coverage races — NOT a clean SR)",
         f"- Wins: {top_pick_wins}/{races_total} ({top_pick_wins/races_total*100:.1f}%)",
         f"- Frame hits: {top_pick_frames}/{races_total} ({top_pick_frames/races_total*100:.1f}%)",
+        "",
+        "## Time-safety distribution (256 events)",
+        "",
+    ] + [f"- `{k}`: {v}" for k, v in manifest["time_safety_distribution"].items()] + [
+        "",
+        "## Exclusion ledger",
+        f"- Race-level exclusions (partial/ambiguous): {sum(1 for e in exclusion_ledger if e['type']=='RACE')}",
+        f"- Horse-level exclusions (unresolved identity): {sum(1 for e in exclusion_ledger if e['type']=='HORSE')}",
         "",
         "## Per-race detail",
         "",
@@ -180,6 +191,16 @@ def main() -> None:
         },
         "identity_reconciliation": {
             "dundalk_race_id_mapping": manifest["dundalk_id_reconciliation"],
+            "dundalk_race_id_mapping_derivation": (
+                "Derived from committed evidence, not positional ordering: each numeric race_id's "
+                "off-time comes from the results-capture manifest's own source_url + page title "
+                "(data/racing_post_account_raw/rp-results-2026-07-12-dundalk/manifest.json, "
+                f"SHA-256 {manifest['dundalk_mapping_source_manifest_sha256']}); each composite "
+                "velo_verdicts race_id's off-time is parsed from its own id string. Matched by exact "
+                "off-time; the generator fails closed (raises) if either side has a duplicate "
+                "off-time or the two sides are not a clean 1:1 bijection."
+            ),
+            "dundalk_mapping_evidence": manifest["dundalk_mapping_evidence"],
             "dundalk_horse_id_scheme_mismatch": (
                 "velo_verdicts uses name-slug horse ids (e.g. rp_DUN_collective_power) for Dundalk-AW, "
                 "not the numeric RP ids used by the result truth. Resolved per-horse via "
@@ -188,6 +209,19 @@ def main() -> None:
                 "could not be resolved and were excluded from shadow-eligibility for their race."
             ),
         },
+        "time_safety": {
+            "distribution": manifest["time_safety_distribution"],
+            "note": (
+                "No event is classified SAFE_* in this close: odds_capture_ts is None for every event "
+                "because no documented check yet proves velo_verdicts.fetch_timestamp represents the "
+                "capture time of the exact odds embedded in the frozen prediction row. The 214 events "
+                "for complete, proven-pre-race races are EXCLUDED_UNTIMED_ODDS (shadow-evaluation still "
+                "allowed per 01A law, which is independent of odds-timing proof); the 37 events "
+                "belonging to the 5 partial races are EXCLUDED_INCOMPLETE_RESULT; the 5 unresolved-horse "
+                "events are EXCLUDED_IDENTITY_AMBIGUOUS."
+            ),
+        },
+        "manifest_assertions": manifest["assertions"],
         "learning_events_v2_2": {
             "jsonl_path": "data/reports/learning_events_v2_2_2026_07_12.jsonl",
             "manifest_path": "data/reports/learning_events_v2_2_2026_07_12_manifest.json",
@@ -227,7 +261,16 @@ Governed, evidence-only results-and-Sigma close for 2026-07-12. No learner state
 
 ## Identity reconciliation
 - Dundalk race_id mapping (numeric → composite): {json.dumps(eod['identity_reconciliation']['dundalk_race_id_mapping'])}
+- Derivation: {eod['identity_reconciliation']['dundalk_race_id_mapping_derivation']}
 - {eod['identity_reconciliation']['dundalk_horse_id_scheme_mismatch']}
+
+## Time-safety classification
+{eod['time_safety']['note']}
+
+Distribution: {json.dumps(eod['time_safety']['distribution'])}
+
+## Manifest assertions
+{json.dumps(eod['manifest_assertions'], indent=2)}
 
 ## LearningEventV2.2 packet
 - {eod['learning_events_v2_2']['total_events']} events sealed to `{eod['learning_events_v2_2']['jsonl_path']}`
