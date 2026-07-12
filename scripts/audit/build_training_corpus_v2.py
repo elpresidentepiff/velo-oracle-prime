@@ -243,22 +243,45 @@ def process_race_group(
         ambiguous_blocked = race_res.method == "AMBIGUOUS" or horse_res.method == "AMBIGUOUS"
         odds_capture_ts = None  # not carried by runner_prediction_snapshots -- provenance unknown
 
+        # P0-10: classification priority -- identity ambiguous, then result
+        # incomplete, then timezone unproven, then prediction time
+        # unproven, then untimed odds, then otherwise-applicable replay
+        # class. An unproven prediction timestamp must never hide under
+        # EXCLUDED_UNTIMED_ODDS.
         if ambiguous_blocked:
             time_safety = "EXCLUDED_IDENTITY_AMBIGUOUS"
         elif not result_universe_complete:
             time_safety = "EXCLUDED_INCOMPLETE_RESULT"
+        elif run_selection.pre_race_proof == "TIMEZONE_UNPROVEN":
+            time_safety = "EXCLUDED_TIMEZONE_UNPROVEN"
+        elif run_selection.pre_race_proof == "UNPROVEN":
+            time_safety = "EXCLUDED_PREDICTION_TIME_UNPROVEN"
         elif odds_capture_ts is None:
             time_safety = "EXCLUDED_UNTIMED_ODDS"
         else:
             time_safety = "CURRENT_CODE_COUNTERFACTUAL_REPLAY"
 
         analysis_allowed = not ambiguous_blocked
-        shadow_evaluation_allowed = analysis_allowed and result_universe_complete
+        # P0-10: shadow evaluation requires a genuinely PROVEN_PRE_RACE
+        # canonical run -- TIMEZONE_UNPROVEN/UNPROVEN timing is retained
+        # for analysis only and must never enter shadow evaluation.
+        shadow_evaluation_allowed = (
+            analysis_allowed and result_universe_complete and run_selection.pre_race_proof == PROOF_PRE_RACE
+        )
         # This corpus never produces SAFE_* events -- state/model/promotion
         # gates are always False here regardless of the branch above.
         state_learning_allowed = False
         model_training_allowed = False
         promotion_eligible = False
+
+        # P0-9: reconciled subject-horse identity, persisted directly.
+        resolved_result_horse_id = horse_res.resolved_horse_id
+        subject_outcome_status = outcome_status_by_result_horse.get(resolved_result_horse_id, OUTCOME_UNKNOWN)
+        subject_finish_position = runner_positions.get(resolved_result_horse_id)
+        subject_sp = sp_by_horse.get(resolved_result_horse_id)
+        subject_is_winner = resolved_result_horse_id == winner_horse_id
+        subject_is_frame = resolved_result_horse_id in frame_horse_ids
+        subject_is_non_runner = resolved_result_horse_id in non_runners
 
         model_scores = {f: r.get(f) for f in MODEL_SCORE_FIELDS}
         active_components = tuple(f for f in MODEL_SCORE_FIELDS if r.get(f) is not None)
@@ -307,6 +330,15 @@ def process_race_group(
             frame_horse_ids=tuple(frame_horse_ids),
             result_source_hash=selection.source_hash,
             result_universe_complete=result_universe_complete,
+            resolved_result_horse_id=resolved_result_horse_id,
+            horse_resolution_method=horse_res.method,
+            subject_outcome_status=subject_outcome_status,
+            subject_finish_position=subject_finish_position,
+            subject_sp=subject_sp,
+            subject_bsp=None,
+            subject_is_winner=subject_is_winner,
+            subject_is_frame=subject_is_frame,
+            subject_is_non_runner=subject_is_non_runner,
         )
         context = RaceContext(
             race_class=None,
@@ -392,7 +424,9 @@ def main() -> None:
     canonical_races = {rid: rs for rid, rs in run_selections.items() if rs.resolved}
     canonical_prediction_races = len(canonical_races)
     no_pre_race_run_exclusions = sum(1 for rs in run_selections.values() if rs.reason == "NO_PRE_RACE_RUN")
+    proven_pre_race_races = sum(1 for rs in canonical_races.values() if rs.pre_race_proof == "PROVEN_PRE_RACE")
     timezone_unproven_races = sum(1 for rs in canonical_races.values() if rs.pre_race_proof == "TIMEZONE_UNPROVEN")
+    general_unproven_races = sum(1 for rs in canonical_races.values() if rs.pre_race_proof == "UNPROVEN")
 
     # -- Phase B: result-source selection per date, using the REAL expected
     #    universe from the canonical run (not the raw pooled rows) ---------
@@ -457,19 +491,18 @@ def main() -> None:
     )
     resolved_horse_rows = len(all_events)
     unresolved_horse_rows = sum(1 for e in all_exclusions if e["reason"].startswith("HORSE_"))
-    horse_rows_with_known_outcome = sum(
-        1
-        for e in all_events
-        if e["outcome"]["runner_positions"].get(e["prediction"]["subject_horse_id"], "UNKNOWN") != "UNKNOWN"
-    )
-    terminal_outcome_rows = sum(
-        1
-        for e in all_events
-        if e["outcome"]["runner_positions"].get(e["prediction"]["subject_horse_id"])
-        in {"F", "PU", "UR", "BD", "RO", "DSQ"}
-    )
-    non_runner_rows = sum(1 for e in all_events if e["prediction"]["subject_horse_id"] in e["outcome"]["non_runners"])
+    # P0-9: these metrics now read the reconciled subject_* fields directly
+    # (looked up via resolved_result_horse_id at event-build time), never
+    # the prediction-side subject_horse_id against result-side keyed dicts
+    # -- that mismatch was exactly the P0-7/P0-9 defect class.
+    horse_rows_with_known_outcome = sum(1 for e in all_events if e["outcome"]["subject_outcome_status"] != "UNKNOWN")
+    terminal_outcome_rows = sum(1 for e in all_events if e["outcome"]["subject_outcome_status"] == "TERMINAL")
+    non_runner_rows = sum(1 for e in all_events if e["outcome"]["subject_is_non_runner"])
     analysis_eligible_rows = sum(1 for e in all_events if e["safety"]["analysis_allowed"])
+    shadow_evaluation_eligible_races = len(
+        {e["prediction"]["race_id"] for e in all_events if e["safety"]["shadow_evaluation_allowed"]}
+    )
+    shadow_evaluation_eligible_rows = sum(1 for e in all_events if e["safety"]["shadow_evaluation_allowed"])
     state_learning_eligible_rows = sum(1 for e in all_events if e["safety"]["state_learning_allowed"])
     model_training_safe_rows = sum(1 for e in all_events if e["safety"]["model_training_allowed"])
     promotion_eligible_rows = sum(1 for e in all_events if e["safety"]["promotion_eligible"])
@@ -488,7 +521,19 @@ def main() -> None:
         "mission": "LEARNING-LOOP-01A",
         "phase": 4,
         "read_only": True,
-        "corrections_applied": ["P0-1", "P0-2", "P0-3", "P0-4", "P0-5", "P0-6", "P0-7", "P0-8", "P1"],
+        "corrections_applied": [
+            "P0-1",
+            "P0-2",
+            "P0-3",
+            "P0-4",
+            "P0-5",
+            "P0-6",
+            "P0-7",
+            "P0-8",
+            "P0-9",
+            "P0-10",
+            "P1",
+        ],
         # -- P1: full metric breakdown, reported separately -----------------
         "raw_snapshot_rows": raw_snapshot_rows,
         "distinct_snapshot_runs": distinct_snapshot_runs,
@@ -496,7 +541,11 @@ def main() -> None:
         "duplicate_rows_excluded": duplicate_rows_excluded,
         "canonical_prediction_races": canonical_prediction_races,
         "no_pre_race_run_exclusions": no_pre_race_run_exclusions,
+        "proven_pre_race_races": proven_pre_race_races,
         "timezone_unproven_races": timezone_unproven_races,
+        "general_unproven_races": general_unproven_races,
+        "shadow_evaluation_eligible_races": shadow_evaluation_eligible_races,
+        "shadow_evaluation_eligible_rows": shadow_evaluation_eligible_rows,
         "source_races": source_races,
         "resolved_races": resolved_races,
         "unresolved_races": unresolved_races,
@@ -561,7 +610,11 @@ def main() -> None:
         "duplicate_rows_excluded",
         "canonical_prediction_races",
         "no_pre_race_run_exclusions",
+        "proven_pre_race_races",
         "timezone_unproven_races",
+        "general_unproven_races",
+        "shadow_evaluation_eligible_races",
+        "shadow_evaluation_eligible_rows",
         "resolved_races",
         "unresolved_races",
         "ambiguous_races",

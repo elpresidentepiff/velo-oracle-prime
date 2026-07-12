@@ -73,6 +73,15 @@ def _outcome(**overrides):
         "frame_horse_ids": ("rp_LIN_volto_di_medusa",),
         "result_source_hash": "resulthash1",
         "result_universe_complete": True,
+        "resolved_result_horse_id": "rp_LIN_volto_di_medusa",
+        "horse_resolution_method": "EXACT_HORSE_ID",
+        "subject_outcome_status": "FINISHED",
+        "subject_finish_position": "1",
+        "subject_sp": 6.0,
+        "subject_bsp": None,
+        "subject_is_winner": True,
+        "subject_is_frame": True,
+        "subject_is_non_runner": False,
     }
     base.update(overrides)
     return OutcomeTruth(**base)

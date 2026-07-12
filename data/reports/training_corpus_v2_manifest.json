@@ -1,5 +1,5 @@
 {
-  "run_ts": "2026-07-12T15:55:48.134618Z",
+  "run_ts": "2026-07-12T18:08:51.592152Z",
   "mission": "LEARNING-LOOP-01A",
   "phase": 4,
   "read_only": true,
@@ -12,6 +12,8 @@
     "P0-6",
     "P0-7",
     "P0-8",
+    "P0-9",
+    "P0-10",
     "P1"
   ],
   "raw_snapshot_rows": 26425,
@@ -20,7 +22,11 @@
   "duplicate_rows_excluded": 127,
   "canonical_prediction_races": 1087,
   "no_pre_race_run_exclusions": 266,
+  "proven_pre_race_races": 915,
   "timezone_unproven_races": 136,
+  "general_unproven_races": 36,
+  "shadow_evaluation_eligible_races": 306,
+  "shadow_evaluation_eligible_rows": 3143,
   "source_races": 1360,
   "resolved_races": 682,
   "unresolved_races": 678,
@@ -28,11 +34,11 @@
   "full_result_races": 318,
   "partial_result_races": 364,
   "resolved_horse_rows": 4595,
-  "horse_rows_with_known_outcome": 3422,
-  "terminal_outcome_rows": 78,
+  "horse_rows_with_known_outcome": 4472,
+  "terminal_outcome_rows": 114,
   "non_runner_rows": 220,
   "unresolved_horse_rows": 2075,
-  "result_labelled_rows": 3422,
+  "result_labelled_rows": 4472,
   "event_rows_built": 4595,
   "analysis_eligible_rows": 4595,
   "state_learning_eligible_rows": 0,
@@ -49,7 +55,8 @@
   },
   "time_safety_distribution": {
     "EXCLUDED_INCOMPLETE_RESULT": 1353,
-    "EXCLUDED_UNTIMED_ODDS": 3242
+    "EXCLUDED_UNTIMED_ODDS": 3143,
+    "EXCLUDED_PREDICTION_TIME_UNPROVEN": 99
   },
   "result_source_distribution": {
     "RESULT_SOURCE_UNAVAILABLE": 3,

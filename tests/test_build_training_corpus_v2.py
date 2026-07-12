@@ -379,6 +379,153 @@ def test_contaminated_race_with_multiple_full_field_runs_selects_one(mod):
 
 
 # ---------------------------------------------------------------------------
+# P0-9: reconciled subject-horse identity is persisted, not discarded
+# ---------------------------------------------------------------------------
+
+
+def test_numeric_prediction_id_resolves_to_rp_scheme_result_id_by_name(mod):
+    """The exact regression scenario: prediction-side horse_id is a bare
+    numeric id, result-side horse_id is in the rp_ scheme -- they only
+    match via normalised-name resolution. The reconciled result-side id,
+    outcome, SP, and winner/frame flags must all be persisted directly on
+    the event, not left for a consumer to re-derive."""
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [
+        _snapshot_row(
+            "918945",
+            "run_1",
+            "2795739",
+            "Bayraat",
+            "Redcar",
+            "2026-05-26",
+            "5.23",
+            rank=1,
+            created_at="2026-05-26T10:00:00Z",
+        )
+    ]
+    rs = select_canonical_run("918945", rows)
+    result_race = _result_race(
+        "918945",
+        "Redcar",
+        "2026-05-26",
+        "5.23",
+        [
+            {"horse_id": "rp_RED_bayraat", "horse": "Bayraat", "position": "2", "sp_dec": 4.5},
+            {"horse_id": "rp_RED_other", "horse": "Other Horse", "position": "1"},
+        ],
+    )
+    selection = _selection(mod, [result_race])
+    events, exclusions = mod.process_race_group("918945", rs, selection)
+    assert exclusions == []
+    ev = events[0]
+    assert ev["prediction"]["subject_horse_id"] == "2795739"  # prediction-side id, unchanged
+    assert ev["outcome"]["resolved_result_horse_id"] == "rp_RED_bayraat"
+    assert ev["outcome"]["horse_resolution_method"] == "NORMALISED_NAME_IN_RESOLVED_RACE"
+    assert ev["outcome"]["subject_finish_position"] == "2"
+    assert ev["outcome"]["subject_sp"] == 4.5
+    assert ev["outcome"]["subject_is_winner"] is False
+    assert ev["outcome"]["subject_is_frame"] is True
+    assert ev["outcome"]["subject_outcome_status"] == "FINISHED"
+
+
+def test_reconciled_known_outcome_metric_counts_name_resolved_rows(mod, monkeypatch):
+    """horse_rows_with_known_outcome must use the reconciled subject_*
+    fields, not a prediction-id lookup into a result-side-keyed dict --
+    that mismatch is exactly what silently undercounted the metric."""
+    ev = {
+        "prediction": {"race_id": "918945", "subject_horse_id": "2795739"},
+        "outcome": {"subject_outcome_status": "FINISHED", "subject_is_non_runner": False},
+        "safety": {
+            "analysis_allowed": True,
+            "shadow_evaluation_allowed": False,
+            "state_learning_allowed": False,
+            "model_training_allowed": False,
+            "promotion_eligible": False,
+        },
+    }
+    known = sum(1 for e in [ev] if e["outcome"]["subject_outcome_status"] != "UNKNOWN")
+    assert known == 1
+
+
+def test_event_content_hash_changes_if_reconciled_target_changes(mod):
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [
+        _snapshot_row(
+            "918945", "run_1", "2795739", "Bayraat", "Redcar", "2026-05-26", "5.23", created_at="2026-05-26T10:00:00Z"
+        )
+    ]
+    rs = select_canonical_run("918945", rows)
+    result_race_a = _result_race(
+        "918945", "Redcar", "2026-05-26", "5.23", [{"horse_id": "rp_RED_bayraat", "horse": "Bayraat", "position": "2"}]
+    )
+    result_race_b = _result_race(
+        "918945", "Redcar", "2026-05-26", "5.23", [{"horse_id": "rp_RED_bayraat", "horse": "Bayraat", "position": "1"}]
+    )
+    events_a, _ = mod.process_race_group("918945", rs, _selection(mod, [result_race_a]))
+    events_b, _ = mod.process_race_group("918945", rs, _selection(mod, [result_race_b]))
+    assert events_a[0]["event_content_hash"] != events_b[0]["event_content_hash"]
+
+
+# ---------------------------------------------------------------------------
+# P0-10: timing-unproven runs are never shadow-evaluation-eligible
+# ---------------------------------------------------------------------------
+
+
+def test_timezone_unproven_run_is_never_shadow_evaluation_allowed(mod):
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [_snapshot_row("rp_DEA_20260601_2.07", "run_1", "h1", "Horse One", "Deauville", "2026-06-01", "2.07")]
+    rs = select_canonical_run("rp_DEA_20260601_2.07", rows)
+    assert rs.pre_race_proof == "TIMEZONE_UNPROVEN"
+    result_race = _result_race("rp_DEA_20260601_2.07", "Deauville", "2026-06-01", "2.07", [_runner("h1", 1)])
+    selection = _selection(mod, [result_race])
+    events, _ = mod.process_race_group("rp_DEA_20260601_2.07", rs, selection)
+    assert events[0]["safety"]["shadow_evaluation_allowed"] is False
+    assert events[0]["safety"]["time_safety"] == "EXCLUDED_TIMEZONE_UNPROVEN"
+    assert events[0]["safety"]["analysis_allowed"] is True  # still analysis-eligible
+
+
+def test_prediction_time_unproven_run_is_never_shadow_evaluation_allowed(mod):
+    """Unparseable race_date -> PROOF_UNPROVEN (distinct from TIMEZONE_UNPROVEN)
+    -- also must never be shadow-evaluation-eligible."""
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [_snapshot_row("rp_LIN_bad_2.07", "run_1", "h1", "Horse One", "Lingfield", "not-a-date", "2.07")]
+    rs = select_canonical_run("rp_LIN_bad_2.07", rows)
+    assert rs.pre_race_proof == "UNPROVEN"
+    result_race = _result_race("rp_LIN_bad_2.07", "Lingfield", "not-a-date", "2.07", [_runner("h1", 1)])
+    selection = _selection(mod, [result_race])
+    events, _ = mod.process_race_group("rp_LIN_bad_2.07", rs, selection)
+    assert events[0]["safety"]["shadow_evaluation_allowed"] is False
+    assert events[0]["safety"]["time_safety"] == "EXCLUDED_PREDICTION_TIME_UNPROVEN"
+
+
+def test_proven_pre_race_and_complete_result_is_shadow_evaluation_allowed(mod):
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [
+        _snapshot_row(
+            "rp_LIN_20260601_2.07",
+            "run_1",
+            "h1",
+            "Horse One",
+            "Lingfield",
+            "2026-06-01",
+            "2.07",
+            created_at="2026-06-01T10:00:00Z",  # well before 14:07 BST off (13:07 UTC)
+        )
+    ]
+    rs = select_canonical_run("rp_LIN_20260601_2.07", rows)
+    assert rs.pre_race_proof == "PROVEN_PRE_RACE"
+    result_race = _result_race("rp_LIN_20260601_2.07", "Lingfield", "2026-06-01", "2.07", [_runner("h1", 1)])
+    selection = _selection(mod, [result_race])
+    events, _ = mod.process_race_group("rp_LIN_20260601_2.07", rs, selection)
+    assert events[0]["safety"]["shadow_evaluation_allowed"] is True
+
+
+# ---------------------------------------------------------------------------
 # local result files are never mutated by the corpus builder
 # ---------------------------------------------------------------------------
 

@@ -40,7 +40,7 @@ import json
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-SCHEMA_VERSION = "learning_event_v2.1"
+SCHEMA_VERSION = "learning_event_v2.2"
 
 # -- required, no-default-safe time-safety classifications ------------------
 TIME_SAFETY_SAFE_PROSPECTIVE = "SAFE_PROSPECTIVE"
@@ -51,6 +51,8 @@ TIME_SAFETY_EXCLUDED_UNTIMED_ODDS = "EXCLUDED_UNTIMED_ODDS"
 TIME_SAFETY_EXCLUDED_IDENTITY_AMBIGUOUS = "EXCLUDED_IDENTITY_AMBIGUOUS"
 TIME_SAFETY_EXCLUDED_INCOMPLETE_RESULT = "EXCLUDED_INCOMPLETE_RESULT"
 TIME_SAFETY_EXCLUDED_FEATURE_PROVENANCE_UNKNOWN = "EXCLUDED_FEATURE_PROVENANCE_UNKNOWN"
+TIME_SAFETY_EXCLUDED_TIMEZONE_UNPROVEN = "EXCLUDED_TIMEZONE_UNPROVEN"
+TIME_SAFETY_EXCLUDED_PREDICTION_TIME_UNPROVEN = "EXCLUDED_PREDICTION_TIME_UNPROVEN"
 
 VALID_TIME_SAFETY = {
     TIME_SAFETY_SAFE_PROSPECTIVE,
@@ -61,6 +63,8 @@ VALID_TIME_SAFETY = {
     TIME_SAFETY_EXCLUDED_IDENTITY_AMBIGUOUS,
     TIME_SAFETY_EXCLUDED_INCOMPLETE_RESULT,
     TIME_SAFETY_EXCLUDED_FEATURE_PROVENANCE_UNKNOWN,
+    TIME_SAFETY_EXCLUDED_TIMEZONE_UNPROVEN,
+    TIME_SAFETY_EXCLUDED_PREDICTION_TIME_UNPROVEN,
 }
 
 SAFE_TIME_SAFETY_CLASSES = {TIME_SAFETY_SAFE_PROSPECTIVE, TIME_SAFETY_SAFE_FROZEN_REPLAY}
@@ -162,6 +166,24 @@ class OutcomeTruth:
     frame_horse_ids: tuple[str, ...]  # placed horses
     result_source_hash: str | None
     result_universe_complete: bool  # every predicted runner accounted for (position/terminal/NR)
+
+    # -- P0-9: reconciled subject-horse identity, persisted directly so no
+    # consumer ever has to rerun identity resolution to learn what
+    # happened to THIS event's predicted horse. `resolved_result_horse_id`
+    # is the result-side identity that `prediction.subject_horse_id`
+    # (prediction-side identity) was reconciled to -- these two ids may
+    # differ (numeric prediction id vs rp_ scheme result id, resolved by
+    # name), and every subject_* field below is looked up via the
+    # resolved id, never the raw prediction id.
+    resolved_result_horse_id: str | None
+    horse_resolution_method: str
+    subject_outcome_status: str  # FINISHED | TERMINAL | NON_RUNNER | UNKNOWN
+    subject_finish_position: str | None
+    subject_sp: float | None
+    subject_bsp: float | None
+    subject_is_winner: bool
+    subject_is_frame: bool
+    subject_is_non_runner: bool
 
 
 @dataclass(frozen=True)
