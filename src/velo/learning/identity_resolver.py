@@ -44,6 +44,11 @@ HORSE_METHOD_NAME_IN_RACE = "NORMALISED_NAME_IN_RESOLVED_RACE"
 HORSE_METHOD_UNRESOLVED = "UNRESOLVED"
 HORSE_METHOD_AMBIGUOUS = "AMBIGUOUS"
 
+AMBIGUITY_DUPLICATE_EXACT_RACE_ID = "DUPLICATE_EXACT_RACE_ID"
+AMBIGUITY_DUPLICATE_ALIASED_RACE_ID = "DUPLICATE_ALIASED_RACE_ID"
+AMBIGUITY_DUPLICATE_EXACT_HORSE_ID = "DUPLICATE_EXACT_HORSE_ID"
+AMBIGUITY_DUPLICATE_ALIASED_HORSE_ID = "DUPLICATE_ALIASED_HORSE_ID"
+
 
 def normalise_name(name: str | None) -> str:
     """Lowercase, strip a trailing country-suffix e.g. '(IRE)', strip non-alnum."""
@@ -128,19 +133,39 @@ def resolve_race(
     """
     race_id_aliases = race_id_aliases or {}
     pred_id = pred_race.get("race_id")
-    by_id: dict[str, dict] = {}
+    by_id: dict[str, list[dict]] = {}
     for r in candidate_races:
         rid = r.get("race_id")
         if rid:
-            by_id.setdefault(rid, r)
+            by_id.setdefault(rid, []).append(r)
 
     if pred_id in by_id:
+        matches = by_id[pred_id]
+        if len(matches) > 1:
+            return RaceResolution(
+                None,
+                RACE_METHOD_AMBIGUOUS,
+                "none",
+                len(matches),
+                [pred_id] * len(matches),
+                ambiguity_reason=AMBIGUITY_DUPLICATE_EXACT_RACE_ID,
+            )
         return RaceResolution(
             pred_id, RACE_METHOD_EXACT_ID, "exact", 1, [pred_id], provenance={"matched_on": "race_id"}
         )
 
     aliased = race_id_aliases.get(pred_id) if pred_id else None
     if aliased and aliased in by_id:
+        matches = by_id[aliased]
+        if len(matches) > 1:
+            return RaceResolution(
+                None,
+                RACE_METHOD_AMBIGUOUS,
+                "none",
+                len(matches),
+                [aliased] * len(matches),
+                ambiguity_reason=AMBIGUITY_DUPLICATE_ALIASED_RACE_ID,
+            )
         return RaceResolution(
             aliased,
             RACE_METHOD_ALIAS,
@@ -221,17 +246,37 @@ def resolve_horse(
 ) -> HorseResolution:
     horse_id_aliases = horse_id_aliases or {}
     runners = resolved_race.get("runners", [])
-    by_id: dict[str, dict] = {}
+    by_id: dict[str, list[dict]] = {}
     for r in runners:
         hid = r.get("horse_id")
         if hid:
-            by_id.setdefault(hid, r)
+            by_id.setdefault(hid, []).append(r)
 
     if pred_horse_id and pred_horse_id in by_id:
+        matches = by_id[pred_horse_id]
+        if len(matches) > 1:
+            return HorseResolution(
+                None,
+                HORSE_METHOD_AMBIGUOUS,
+                "none",
+                len(matches),
+                [pred_horse_id] * len(matches),
+                ambiguity_reason=AMBIGUITY_DUPLICATE_EXACT_HORSE_ID,
+            )
         return HorseResolution(pred_horse_id, HORSE_METHOD_EXACT_ID, "exact", 1, [pred_horse_id])
 
     aliased = horse_id_aliases.get(pred_horse_id) if pred_horse_id else None
     if aliased and aliased in by_id:
+        matches = by_id[aliased]
+        if len(matches) > 1:
+            return HorseResolution(
+                None,
+                HORSE_METHOD_AMBIGUOUS,
+                "none",
+                len(matches),
+                [aliased] * len(matches),
+                ambiguity_reason=AMBIGUITY_DUPLICATE_ALIASED_HORSE_ID,
+            )
         return HorseResolution(
             aliased,
             HORSE_METHOD_ALIAS,

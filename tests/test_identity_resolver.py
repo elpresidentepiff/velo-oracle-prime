@@ -153,20 +153,47 @@ def test_race_numeric_vs_rp_scheme_ids_join_correctly_by_race_id():
     assert res.method == RACE_METHOD_EXACT_ID
 
 
-def test_duplicate_candidate_race_ids_do_not_silently_pick_first():
-    """Two candidates sharing the same race_id string must not resolve
-    silently by insertion order -- the exact-id path uses the first match,
-    which is acceptable ONLY because true duplicates are a data-quality
-    issue caught upstream (Phase 4 hard-fails on duplicate ids in a single
-    corpus). Here we confirm the resolver at least returns a race present
-    in the candidate set rather than fabricating an unrelated id."""
+def test_duplicate_candidate_race_ids_block_as_ambiguous():
+    """Two candidates sharing the same race_id string must never resolve
+    silently by insertion order (setdefault-first-wins) -- a duplicate
+    exact race_id is a data-quality defect and must block the race as
+    AMBIGUOUS rather than fabricate a result from an arbitrary match."""
     pred = {"race_id": "dup_1", "course": "Ascot", "race_date": "2026-05-20", "off_time": "1.35"}
     candidates = [
         _cand("dup_1", "Ascot", "2026-05-20", "1.35", []),
         _cand("dup_1", "Ascot", "2026-05-20", "1.35", []),
     ]
     res = resolve_race(pred, candidates)
-    assert res.resolved_race_id == "dup_1"
+    assert res.method == RACE_METHOD_AMBIGUOUS
+    assert res.resolved_race_id is None
+    assert res.ambiguity_reason == "DUPLICATE_EXACT_RACE_ID"
+    assert res.candidate_count == 2
+
+
+def test_duplicate_aliased_race_id_blocks_as_ambiguous():
+    pred = {"race_id": "old_id", "course": "Ascot", "race_date": "2026-05-20", "off_time": "1.35"}
+    candidates = [
+        _cand("new_id", "Ascot", "2026-05-20", "1.35", []),
+        _cand("new_id", "Ascot", "2026-05-20", "1.35", []),
+    ]
+    res = resolve_race(pred, candidates, race_id_aliases={"old_id": "new_id"})
+    assert res.method == RACE_METHOD_AMBIGUOUS
+    assert res.ambiguity_reason == "DUPLICATE_ALIASED_RACE_ID"
+
+
+def test_duplicate_exact_horse_id_blocks_as_ambiguous():
+    race = {"runners": [_runner("hrs_1", "Same Horse"), _runner("hrs_1", "Same Horse Dup")]}
+    res = resolve_horse("hrs_1", "Same Horse", race)
+    assert res.method == HORSE_METHOD_AMBIGUOUS
+    assert res.resolved_horse_id is None
+    assert res.ambiguity_reason == "DUPLICATE_EXACT_HORSE_ID"
+
+
+def test_duplicate_aliased_horse_id_blocks_as_ambiguous():
+    race = {"runners": [_runner("hrs_new", "A"), _runner("hrs_new", "B")]}
+    res = resolve_horse("hrs_old", "A", race, horse_id_aliases={"hrs_old": "hrs_new"})
+    assert res.method == HORSE_METHOD_AMBIGUOUS
+    assert res.ambiguity_reason == "DUPLICATE_ALIASED_HORSE_ID"
 
 
 # ---------------------------------------------------------------------------

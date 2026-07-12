@@ -1,33 +1,59 @@
 {
-  "run_ts": "2026-07-12T00:13:06.645400Z",
+  "run_ts": "2026-07-12T01:28:27.193699Z",
   "mission": "LEARNING-LOOP-01A",
   "phase": 4,
   "read_only": true,
-  "source_rows": 26425,
+  "corrections_applied": [
+    "P0-1",
+    "P0-2",
+    "P0-3",
+    "P0-4",
+    "P0-5",
+    "P0-6",
+    "P1"
+  ],
+  "raw_snapshot_rows": 26425,
+  "distinct_snapshot_runs": 70,
+  "selected_canonical_run_rows": 13504,
+  "duplicate_rows_excluded": 127,
+  "canonical_prediction_races": 1353,
   "source_races": 1360,
-  "resolved_races": 943,
-  "unresolved_races": 417,
-  "ambiguous_races": 0,
-  "resolved_horse_rows": 10447,
-  "unresolved_horse_rows": 5323,
-  "result_labelled_rows": 15770,
+  "resolved_races": 900,
+  "unresolved_races": 460,
+  "ambiguous_races": 6,
+  "full_result_races": 454,
+  "partial_result_races": 899,
+  "resolved_horse_rows": 6552,
+  "horse_rows_with_known_outcome": 5294,
+  "terminal_outcome_rows": 124,
+  "non_runner_rows": 248,
+  "unresolved_horse_rows": 2595,
+  "result_labelled_rows": 5294,
+  "event_rows_built": 6552,
+  "analysis_eligible_rows": 6552,
+  "state_learning_eligible_rows": 0,
+  "model_training_safe_rows": 0,
+  "promotion_eligible_rows": 0,
   "full_feature_rows": 0,
   "safe_rows": 0,
   "exclusions_by_reason": {
-    "RACE_UNRESOLVED": 10655,
-    "HORSE_UNRESOLVED": 5323
+    "RUN_NO_COMPLETE_RUN": 7,
+    "RACE_UNRESOLVED": 4288,
+    "HORSE_UNRESOLVED": 2595,
+    "RACE_AMBIGUOUS": 69
   },
   "time_safety_distribution": {
-    "EXCLUDED_UNTIMED_ODDS": 10447
+    "EXCLUDED_UNTIMED_ODDS": 4994,
+    "EXCLUDED_INCOMPLETE_RESULT": 1558
   },
   "result_source_distribution": {
-    "RESULT_SOURCE_UNAVAILABLE": 120,
-    "RP_LOCAL_JSON": 1240
+    "RESULT_SOURCE_UNAVAILABLE": 3,
+    "RP_LOCAL_JSON": 27
   },
   "result_source_classification_distribution": {
-    "RESULT_SOURCE_MISSING": 120,
-    "RESULT_SOURCE_RP_LOCAL_PRIMARY": 1198,
-    "RESULT_SOURCE_PARTIAL": 42
+    "RESULT_SOURCE_MISSING": 3,
+    "RESULT_SOURCE_PARTIAL": 23,
+    "RESULT_SOURCE_RP_LOCAL_PRIMARY": 4
   },
   "date_range": {
     "min": "2026-05-20",
@@ -38,6 +64,8 @@
     "RICH_SNAPSHOT_RESULT_JOIN_MEASURED",
     "TRAINING_SAFE_SUBSET_MEASURED",
     "AMBIGUITY_BLOCKING_PROVEN",
+    "PREDICTION_RUN_CONTAMINATION_CORRECTED",
+    "RESULT_COMPLETENESS_PROVEN_AGAINST_EXPECTED_UNIVERSE",
     "NO_HFS_MUTATION",
     "NO_PLAYBOOK_G_MUTATION",
     "NO_LIVE_SCORING_CHANGE",
