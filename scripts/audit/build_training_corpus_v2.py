@@ -54,8 +54,11 @@ from src.velo.learning.prediction_run_selector import (
     select_canonical_run,
 )
 from src.velo.learning.result_source_selector import (
+    OUTCOME_NON_RUNNER,
+    OUTCOME_UNKNOWN,
     RESULTS_DIR_DEFAULT,
     ResultSourceSelection,
+    runner_outcome_status,
     select_result_source,
 )
 from supabase import create_client
@@ -176,17 +179,56 @@ def process_race_group(
     top_three = rank_order[:3]
     runner_universe = tuple({"horse_id": rr.get("horse_id"), "horse_name": rr.get("horse")} for rr in rows)
 
-    result_universe_complete = selection.completeness.get("race_completeness_by_id", {}).get(
-        race_res.resolved_race_id, False
-    )
-
     prediction_timestamp = None
     ts_candidates = [r.get("created_at") for r in rows if r.get("created_at")]
     if ts_candidates:
         prediction_timestamp = max(ts_candidates)
 
+    # -- P0-7: reconciled completeness, computed AFTER race+horse identity
+    # resolution, never by raw race-ID dictionary equality. -------------------
+    # Race-level outcome status per RESOLVED result-side horse_id (shared
+    # across all predicted horses in this race -- not recomputed per horse).
+    runner_positions: dict[str, str] = {}
+    sp_by_horse: dict[str, float] = {}
+    winner_horse_id = None
+    frame_horse_ids: list[str] = []
+    non_runners: list[str] = []
+    outcome_status_by_result_horse: dict[str, str] = {}
+    for runner in (resolved_race or {}).get("runners", []):
+        hid = runner.get("horse_id")
+        if not hid:
+            continue
+        pos = str(runner.get("position") or runner.get("position_text") or "")
+        runner_positions[hid] = pos or "UNKNOWN"
+        status = runner_outcome_status(pos)
+        outcome_status_by_result_horse[hid] = status
+        if status == OUTCOME_NON_RUNNER:
+            non_runners.append(hid)
+        sp = runner.get("sp_dec")
+        if sp is not None:
+            sp_by_horse[hid] = sp
+        if pos == "1" or runner.get("is_winner"):
+            winner_horse_id = hid
+        if pos in {"1", "2", "3"}:
+            frame_horse_ids.append(hid)
+
+    # Resolve every predicted horse against the resolved result race once,
+    # then require ALL of them (not just the ones that happen to resolve)
+    # to have a known outcome before the race can be called complete.
+    horse_resolutions = {
+        r.get("horse_id"): resolve_horse(r.get("horse_id"), r.get("horse"), resolved_race or {}) for r in rows
+    }
+    result_universe_complete = len(rows) > 0
     for r in rows:
-        horse_res = resolve_horse(r.get("horse_id"), r.get("horse"), resolved_race or {})
+        hres = horse_resolutions[r.get("horse_id")]
+        if not hres.is_resolved:
+            result_universe_complete = False
+            continue
+        if outcome_status_by_result_horse.get(hres.resolved_horse_id, OUTCOME_UNKNOWN) == OUTCOME_UNKNOWN:
+            result_universe_complete = False
+
+    for r in rows:
+        horse_res = horse_resolutions[r.get("horse_id")]
         if not horse_res.is_resolved:
             exclusions.append(
                 {
@@ -197,27 +239,6 @@ def process_race_group(
                 }
             )
             continue
-
-        runner_positions: dict[str, str] = {}
-        sp_by_horse: dict[str, float] = {}
-        winner_horse_id = None
-        frame_horse_ids: list[str] = []
-        non_runners: list[str] = []
-        for runner in (resolved_race or {}).get("runners", []):
-            hid = runner.get("horse_id")
-            if not hid:
-                continue
-            pos = str(runner.get("position") or runner.get("position_text") or "")
-            runner_positions[hid] = pos or "UNKNOWN"
-            if pos.strip().upper() in {"NR", "WD"}:
-                non_runners.append(hid)
-            sp = runner.get("sp_dec")
-            if sp is not None:
-                sp_by_horse[hid] = sp
-            if pos == "1" or runner.get("is_winner"):
-                winner_horse_id = hid
-            if pos in {"1", "2", "3"}:
-                frame_horse_ids.append(hid)
 
         ambiguous_blocked = race_res.method == "AMBIGUOUS" or horse_res.method == "AMBIGUOUS"
         odds_capture_ts = None  # not carried by runner_prediction_snapshots -- provenance unknown
@@ -370,6 +391,8 @@ def main() -> None:
 
     canonical_races = {rid: rs for rid, rs in run_selections.items() if rs.resolved}
     canonical_prediction_races = len(canonical_races)
+    no_pre_race_run_exclusions = sum(1 for rs in run_selections.values() if rs.reason == "NO_PRE_RACE_RUN")
+    timezone_unproven_races = sum(1 for rs in canonical_races.values() if rs.pre_race_proof == "TIMEZONE_UNPROVEN")
 
     # -- Phase B: result-source selection per date, using the REAL expected
     #    universe from the canonical run (not the raw pooled rows) ---------
@@ -404,22 +427,28 @@ def main() -> None:
     # -- Phase C: build events per canonical race ----------------------------
     all_events: list[dict] = []
     time_safety_counter: Counter = Counter()
-    full_result_races = 0
-    partial_result_races = 0
+    races_with_events: set[str] = set()
+    races_with_complete_result: set[str] = set()
 
     for race_id, rs in canonical_races.items():
         date = date_by_race[race_id]
         selection = selection_cache[date]
-        if selection.completeness.get("race_completeness_by_id", {}).get(race_id, False):
-            full_result_races += 1
-        else:
-            partial_result_races += 1
 
         events, exclusions = process_race_group(race_id, rs, selection)
         all_events.extend(events)
         all_exclusions.extend(exclusions)
         for ev in events:
             time_safety_counter[ev["safety"]["time_safety"]] += 1
+            races_with_events.add(race_id)
+            # P0-7: result_universe_complete is computed post-resolution in
+            # process_race_group (reconciled prediction<->result mapping),
+            # never by raw race-ID dictionary equality -- every event in a
+            # race shares the same value, so any one event's flag suffices.
+            if ev["outcome"]["result_universe_complete"]:
+                races_with_complete_result.add(race_id)
+
+    full_result_races = len(races_with_complete_result)
+    partial_result_races = len(races_with_events - races_with_complete_result)
 
     resolved_races = len({e["prediction"]["race_id"] for e in all_events})
     unresolved_races = source_races - resolved_races
@@ -459,13 +488,15 @@ def main() -> None:
         "mission": "LEARNING-LOOP-01A",
         "phase": 4,
         "read_only": True,
-        "corrections_applied": ["P0-1", "P0-2", "P0-3", "P0-4", "P0-5", "P0-6", "P1"],
+        "corrections_applied": ["P0-1", "P0-2", "P0-3", "P0-4", "P0-5", "P0-6", "P0-7", "P0-8", "P1"],
         # -- P1: full metric breakdown, reported separately -----------------
         "raw_snapshot_rows": raw_snapshot_rows,
         "distinct_snapshot_runs": distinct_snapshot_runs,
         "selected_canonical_run_rows": sum(len(rs.selected_rows) for rs in canonical_races.values()),
         "duplicate_rows_excluded": duplicate_rows_excluded,
         "canonical_prediction_races": canonical_prediction_races,
+        "no_pre_race_run_exclusions": no_pre_race_run_exclusions,
+        "timezone_unproven_races": timezone_unproven_races,
         "source_races": source_races,
         "resolved_races": resolved_races,
         "unresolved_races": unresolved_races,
@@ -529,6 +560,8 @@ def main() -> None:
         "selected_canonical_run_rows",
         "duplicate_rows_excluded",
         "canonical_prediction_races",
+        "no_pre_race_run_exclusions",
+        "timezone_unproven_races",
         "resolved_races",
         "unresolved_races",
         "ambiguous_races",

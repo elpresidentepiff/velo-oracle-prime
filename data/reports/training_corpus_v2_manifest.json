@@ -1,5 +1,5 @@
 {
-  "run_ts": "2026-07-12T01:28:27.193699Z",
+  "run_ts": "2026-07-12T15:55:48.134618Z",
   "mission": "LEARNING-LOOP-01A",
   "phase": 4,
   "read_only": true,
@@ -10,56 +10,61 @@
     "P0-4",
     "P0-5",
     "P0-6",
+    "P0-7",
+    "P0-8",
     "P1"
   ],
   "raw_snapshot_rows": 26425,
   "distinct_snapshot_runs": 70,
-  "selected_canonical_run_rows": 13504,
+  "selected_canonical_run_rows": 10861,
   "duplicate_rows_excluded": 127,
-  "canonical_prediction_races": 1353,
+  "canonical_prediction_races": 1087,
+  "no_pre_race_run_exclusions": 266,
+  "timezone_unproven_races": 136,
   "source_races": 1360,
-  "resolved_races": 900,
-  "unresolved_races": 460,
+  "resolved_races": 682,
+  "unresolved_races": 678,
   "ambiguous_races": 6,
-  "full_result_races": 454,
-  "partial_result_races": 899,
-  "resolved_horse_rows": 6552,
-  "horse_rows_with_known_outcome": 5294,
-  "terminal_outcome_rows": 124,
-  "non_runner_rows": 248,
-  "unresolved_horse_rows": 2595,
-  "result_labelled_rows": 5294,
-  "event_rows_built": 6552,
-  "analysis_eligible_rows": 6552,
+  "full_result_races": 318,
+  "partial_result_races": 364,
+  "resolved_horse_rows": 4595,
+  "horse_rows_with_known_outcome": 3422,
+  "terminal_outcome_rows": 78,
+  "non_runner_rows": 220,
+  "unresolved_horse_rows": 2075,
+  "result_labelled_rows": 3422,
+  "event_rows_built": 4595,
+  "analysis_eligible_rows": 4595,
   "state_learning_eligible_rows": 0,
   "model_training_safe_rows": 0,
   "promotion_eligible_rows": 0,
   "full_feature_rows": 0,
   "safe_rows": 0,
   "exclusions_by_reason": {
+    "RUN_NO_PRE_RACE_RUN": 266,
     "RUN_NO_COMPLETE_RUN": 7,
-    "RACE_UNRESOLVED": 4288,
-    "HORSE_UNRESOLVED": 2595,
+    "RACE_UNRESOLVED": 4122,
+    "HORSE_UNRESOLVED": 2075,
     "RACE_AMBIGUOUS": 69
   },
   "time_safety_distribution": {
-    "EXCLUDED_UNTIMED_ODDS": 4994,
-    "EXCLUDED_INCOMPLETE_RESULT": 1558
+    "EXCLUDED_INCOMPLETE_RESULT": 1353,
+    "EXCLUDED_UNTIMED_ODDS": 3242
   },
   "result_source_distribution": {
     "RESULT_SOURCE_UNAVAILABLE": 3,
-    "RP_LOCAL_JSON": 27
+    "RP_LOCAL_JSON": 23
   },
   "result_source_classification_distribution": {
     "RESULT_SOURCE_MISSING": 3,
-    "RESULT_SOURCE_PARTIAL": 23,
-    "RESULT_SOURCE_RP_LOCAL_PRIMARY": 4
+    "RESULT_SOURCE_PARTIAL": 20,
+    "RESULT_SOURCE_RP_LOCAL_PRIMARY": 3
   },
   "date_range": {
     "min": "2026-05-20",
-    "max": "2026-06-19"
+    "max": "2026-06-18"
   },
-  "distinct_source_hashes": 27,
+  "distinct_source_hashes": 23,
   "classifications": [
     "RICH_SNAPSHOT_RESULT_JOIN_MEASURED",
     "TRAINING_SAFE_SUBSET_MEASURED",

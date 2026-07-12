@@ -168,26 +168,144 @@ def test_process_race_group_excludes_unresolvable_horse_but_keeps_resolved_ones(
     ]
     rs = select_canonical_run("rp_LIN_20260601_2.07", rows)
     result_race = _result_race("rp_LIN_20260601_2.07", "Lingfield", "2026-06-01", "2.07", [_runner("rp_LIN_h1", 1)])
-    selection = _selection(mod, [result_race], race_completeness={"rp_LIN_20260601_2.07": True})
+    selection = _selection(mod, [result_race])
     events, exclusions = mod.process_race_group("rp_LIN_20260601_2.07", rs, selection)
     assert len(events) == 1
     assert len(exclusions) == 1
     assert exclusions[0]["reason"] == "HORSE_UNRESOLVED"
     assert exclusions[0]["horse_id"] == "unknown_id"
+    # P0-7: one predicted horse failing to resolve means the race is NOT
+    # complete, even for the one horse that did resolve cleanly.
+    assert events[0]["outcome"]["result_universe_complete"] is False
 
 
 def test_process_race_group_incomplete_result_marks_excluded_incomplete(mod):
+    """P0-7: completeness must be judged on the RECONCILED runner mapping,
+    not a raw race-ID dictionary lookup. Here 2 horses are predicted but
+    the result only carries a position for 1 of them (the other is blank,
+    not an explicit NR) -- this must be incomplete for BOTH events, not
+    just silently pass because the result file 'has runners'."""
     from src.velo.learning.prediction_run_selector import select_canonical_run
 
-    rows = [_snapshot_row("rp_LIN_20260601_2.07", "run_1", "rp_LIN_h1", "Horse One", "Lingfield", "2026-06-01", "2.07")]
+    rows = [
+        _snapshot_row(
+            "rp_LIN_20260601_2.07", "run_1", "rp_LIN_h1", "Horse One", "Lingfield", "2026-06-01", "2.07", rank=1
+        ),
+        _snapshot_row(
+            "rp_LIN_20260601_2.07", "run_1", "rp_LIN_h2", "Horse Two", "Lingfield", "2026-06-01", "2.07", rank=2
+        ),
+    ]
     rs = select_canonical_run("rp_LIN_20260601_2.07", rows)
-    result_race = _result_race("rp_LIN_20260601_2.07", "Lingfield", "2026-06-01", "2.07", [_runner("rp_LIN_h1", 1)])
-    # race_completeness_by_id explicitly says this race is NOT fully accounted
-    selection = _selection(mod, [result_race], race_completeness={"rp_LIN_20260601_2.07": False})
+    result_race = _result_race(
+        "rp_LIN_20260601_2.07",
+        "Lingfield",
+        "2026-06-01",
+        "2.07",
+        [_runner("rp_LIN_h1", 1), {"horse_id": "rp_LIN_h2", "position": ""}],
+    )
+    selection = _selection(mod, [result_race])
     events, _ = mod.process_race_group("rp_LIN_20260601_2.07", rs, selection)
-    assert events[0]["safety"]["time_safety"] == "EXCLUDED_INCOMPLETE_RESULT"
-    assert events[0]["safety"]["shadow_evaluation_allowed"] is False
-    assert events[0]["safety"]["state_learning_allowed"] is False
+    assert len(events) == 2
+    for ev in events:
+        assert ev["outcome"]["result_universe_complete"] is False
+        assert ev["safety"]["time_safety"] == "EXCLUDED_INCOMPLETE_RESULT"
+        assert ev["safety"]["shadow_evaluation_allowed"] is False
+        assert ev["safety"]["state_learning_allowed"] is False
+
+
+def test_process_race_group_top_three_only_result_is_incomplete(mod):
+    """The exact real-world defect: 12 predicted horses, result file only
+    carries the top 3 finishers -- must be incomplete, not silently
+    'passed' because the 3 present rows all looked fine."""
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [
+        _snapshot_row(
+            "918945",
+            "run_1",
+            f"h{i}",
+            f"Horse {i}",
+            "Redcar",
+            "2026-05-26",
+            "5.23",
+            rank=i,
+            created_at="2026-05-26T10:00:00Z",  # well before the 17:23 BST (16:23 UTC) off
+        )
+        for i in range(1, 13)
+    ]
+    rs = select_canonical_run("918945", rows)
+    # Result file resolved via course+date+time fallback to a differently
+    # schemed race_id, and only carries the top 3 finishers.
+    result_race = _result_race(
+        "rp_RED_20260526_5.23",
+        "Redcar",
+        "2026-05-26",
+        "5.23",
+        [_runner("h1", 1), _runner("h2", 2), _runner("h3", 3)],
+    )
+    selection = _selection(mod, [result_race])
+    events, exclusions = mod.process_race_group("918945", rs, selection)
+    # The 9 horses missing from the result entirely must be HORSE_UNRESOLVED
+    assert len([e for e in exclusions if e["reason"] == "HORSE_UNRESOLVED"]) == 9
+    # And even the 3 that DID resolve must be marked incomplete, because
+    # the other 9 predicted runners were never accounted for.
+    assert len(events) == 3
+    for ev in events:
+        assert ev["outcome"]["result_universe_complete"] is False
+        assert ev["safety"]["time_safety"] == "EXCLUDED_INCOMPLETE_RESULT"
+
+
+def test_process_race_group_complete_reconciled_universe_is_complete(mod):
+    """All predicted horses resolve and every one has a known outcome --
+    genuinely complete this time."""
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [
+        _snapshot_row(
+            "rp_LIN_20260601_2.07", "run_1", "rp_LIN_h1", "Horse One", "Lingfield", "2026-06-01", "2.07", rank=1
+        ),
+        _snapshot_row(
+            "rp_LIN_20260601_2.07", "run_1", "rp_LIN_h2", "Horse Two", "Lingfield", "2026-06-01", "2.07", rank=2
+        ),
+    ]
+    rs = select_canonical_run("rp_LIN_20260601_2.07", rows)
+    result_race = _result_race(
+        "rp_LIN_20260601_2.07",
+        "Lingfield",
+        "2026-06-01",
+        "2.07",
+        [_runner("rp_LIN_h1", 1), _runner("rp_LIN_h2", "NR")],
+    )
+    selection = _selection(mod, [result_race])
+    events, exclusions = mod.process_race_group("rp_LIN_20260601_2.07", rs, selection)
+    assert exclusions == []
+    assert len(events) == 2
+    for ev in events:
+        assert ev["outcome"]["result_universe_complete"] is True
+
+
+def test_process_race_group_horse_id_mismatch_resolves_by_name(mod):
+    """Prediction and result horse IDs differ (different namespace), but
+    the horse name resolves -- the reconciled completeness check must
+    still succeed via name-based resolution."""
+    from src.velo.learning.prediction_run_selector import select_canonical_run
+
+    rows = [
+        _snapshot_row("rp_LIN_20260601_2.07", "run_1", "rp_LIN_h1", "Same Horse", "Lingfield", "2026-06-01", "2.07")
+    ]
+    rs = select_canonical_run("rp_LIN_20260601_2.07", rows)
+    result_race = _result_race(
+        "rp_LIN_20260601_2.07",
+        "Lingfield",
+        "2026-06-01",
+        "2.07",
+        [{"horse_id": "different_id_scheme", "horse": "Same Horse", "position": "1"}],
+    )
+    selection = _selection(mod, [result_race])
+    events, exclusions = mod.process_race_group("rp_LIN_20260601_2.07", rs, selection)
+    assert exclusions == []
+    assert events[0]["outcome"]["result_universe_complete"] is True
+    assert events[0]["outcome"]["winner_horse_id"] == "different_id_scheme"
 
 
 def test_process_race_group_untimed_odds_when_result_complete(mod):
