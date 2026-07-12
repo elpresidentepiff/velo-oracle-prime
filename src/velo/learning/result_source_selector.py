@@ -65,7 +65,7 @@ def _norm(value: str | None) -> str:
     return re.sub(r"[^a-z0-9]", "", str(value or "").lower())
 
 
-def _runner_outcome_status(position_value: str | None) -> str:
+def runner_outcome_status(position_value: str | None) -> str:
     v = str(position_value or "").strip().upper()
     if _NUMERIC_POSITION_RE.match(v):
         return OUTCOME_FINISHED
@@ -93,7 +93,7 @@ def _race_completeness(race: dict, expected_horse_ids: set[str] | None) -> RaceC
         hid = r.get("horse_id")
         if not hid:
             continue
-        status = _runner_outcome_status(r.get("position") or r.get("position_text"))
+        status = runner_outcome_status(r.get("position") or r.get("position_text"))
         if status == OUTCOME_UNKNOWN and _norm(r.get("horse")) in non_runner_names:
             status = OUTCOME_NON_RUNNER
         statuses[hid] = status
