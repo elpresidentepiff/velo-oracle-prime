@@ -1,0 +1,49 @@
+{
+  "run_ts": "2026-07-12T00:13:06.645400Z",
+  "mission": "LEARNING-LOOP-01A",
+  "phase": 4,
+  "read_only": true,
+  "source_rows": 26425,
+  "source_races": 1360,
+  "resolved_races": 943,
+  "unresolved_races": 417,
+  "ambiguous_races": 0,
+  "resolved_horse_rows": 10447,
+  "unresolved_horse_rows": 5323,
+  "result_labelled_rows": 15770,
+  "full_feature_rows": 0,
+  "safe_rows": 0,
+  "exclusions_by_reason": {
+    "RACE_UNRESOLVED": 10655,
+    "HORSE_UNRESOLVED": 5323
+  },
+  "time_safety_distribution": {
+    "EXCLUDED_UNTIMED_ODDS": 10447
+  },
+  "result_source_distribution": {
+    "RESULT_SOURCE_UNAVAILABLE": 120,
+    "RP_LOCAL_JSON": 1240
+  },
+  "result_source_classification_distribution": {
+    "RESULT_SOURCE_MISSING": 120,
+    "RESULT_SOURCE_RP_LOCAL_PRIMARY": 1198,
+    "RESULT_SOURCE_PARTIAL": 42
+  },
+  "date_range": {
+    "min": "2026-05-20",
+    "max": "2026-06-19"
+  },
+  "distinct_source_hashes": 27,
+  "classifications": [
+    "RICH_SNAPSHOT_RESULT_JOIN_MEASURED",
+    "TRAINING_SAFE_SUBSET_MEASURED",
+    "AMBIGUITY_BLOCKING_PROVEN",
+    "NO_HFS_MUTATION",
+    "NO_PLAYBOOK_G_MUTATION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_TRAINING",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND"
+  ]
+}

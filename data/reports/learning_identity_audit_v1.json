@@ -1,0 +1,159 @@
+{
+  "run_ts": "2026-07-11T23:54:12.340561Z",
+  "mission": "LEARNING-LOOP-01A",
+  "phase": 1,
+  "read_only": true,
+  "namespaces": {
+    "runner_prediction_snapshots": {
+      "rows": 26425,
+      "distinct_races": 1360,
+      "race_id_formats": {
+        "rp_<COURSE>_<YYYYMMDD>_<time>": 12112,
+        "numeric": 13217,
+        "other": 1096
+      },
+      "horse_id_formats": {
+        "rp_<COURSE>_<slug>": 10870,
+        "numeric": 15555
+      }
+    },
+    "historical_feature_store": {
+      "rows": 31936,
+      "distinct_races": 3156,
+      "race_id_formats": {
+        "numeric": 19948,
+        "rac_<digits>": 11988
+      },
+      "horse_id_formats": {
+        "hrs_rf_<hex>": 19698,
+        "hrs_<digits>": 12238
+      }
+    },
+    "races": {
+      "rows": 3675,
+      "distinct_races": 3675,
+      "race_id_formats": {
+        "rac_<digits>": 1741,
+        "other": 10,
+        "numeric": 1924
+      }
+    },
+    "race_results": {
+      "rows": 3227,
+      "distinct_races": 3227,
+      "race_id_formats": {
+        "numeric": 1924,
+        "rac_<digits>": 1303
+      }
+    },
+    "runner_results": {
+      "rows": 33430,
+      "distinct_races": 3321,
+      "race_id_formats": {
+        "rac_<digits>": 13482,
+        "numeric": 19948
+      },
+      "horse_id_formats": {
+        "hrs_<digits>": 13732,
+        "hrs_rf_<hex>": 19698
+      }
+    },
+    "runners": {
+      "rows": 17386,
+      "distinct_races": 1707,
+      "horse_id_formats": {
+        "hrs_<digits>": 17364,
+        "empty": 22
+      }
+    },
+    "sigma_audits": {
+      "rows": 3344,
+      "distinct_races": 3344
+    },
+    "velo_verdicts": {
+      "rows": 4494,
+      "distinct_races": 4494
+    }
+  },
+  "identity_join": {
+    "runner_prediction_snapshots_distinct_races": 1360,
+    "runner_prediction_snapshots_distinct_race_horse_pairs": 14172,
+    "local_result_files_scanned": 44,
+    "local_distinct_races": 1617,
+    "local_distinct_race_horse_pairs": 13116,
+    "exact_race_id_join_to_local_results": 766,
+    "exact_race_id_join_pct": 56.3,
+    "exact_race_horse_pair_join_to_local_results": 5278,
+    "exact_race_horse_pair_join_pct": 37.2,
+    "unresolved_races": 594,
+    "unresolved_by_date": {
+      "2026-05-20": 33,
+      "2026-05-21": 44,
+      "2026-05-22": 43,
+      "2026-05-23": 3,
+      "2026-05-24": 7,
+      "2026-05-25": 7,
+      "2026-05-26": 48,
+      "2026-05-27": 2,
+      "2026-05-29": 11,
+      "2026-05-30": 35,
+      "2026-05-31": 7,
+      "2026-06-01": 42,
+      "2026-06-02": 35,
+      "2026-06-03": 65,
+      "2026-06-05": 56,
+      "2026-06-06": 51,
+      "2026-06-07": 30,
+      "2026-06-08": 35,
+      "2026-06-09": 33,
+      "2026-06-11": 6,
+      "2026-06-18": 1
+    },
+    "supabase_races_table_coverage_gap": {
+      "races_table_max_date": "2026-05-06",
+      "runner_prediction_snapshots_min_date": "2026-05-20",
+      "date_overlap_days": 0,
+      "note": "races/race_results/runner_results in Supabase are not populated for the era runner_prediction_snapshots covers. The real result-side source of truth for this era is the local data/results/rp_results_YYYY_MM_DD.json corpus, which uses the SAME rp_<COURSE>_<YYYYMMDD>_<time> race_id scheme as runner_prediction_snapshots."
+    }
+  },
+  "historical_feature_store_coverage": {
+    "sp_dec": {
+      "non_null": 31781,
+      "pct": 99.51
+    },
+    "implied_prob": {
+      "non_null": 31781,
+      "pct": 99.51
+    },
+    "log_sp": {
+      "non_null": 0,
+      "pct": 0.0
+    },
+    "sp_rank": {
+      "non_null": 0,
+      "pct": 0.0
+    },
+    "is_fav": {
+      "non_null": 0,
+      "pct": 0.0
+    },
+    "or_vs_field": {
+      "non_null": 0,
+      "pct": 0.0
+    },
+    "rpr_vs_field": {
+      "non_null": 0,
+      "pct": 0.0
+    }
+  },
+  "classifications": [
+    "LEARNING_IDENTITY_AUDITED",
+    "NO_HFS_MUTATION",
+    "NO_PLAYBOOK_G_MUTATION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_TRAINING",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND"
+  ]
+}
