@@ -1392,6 +1392,51 @@ async def model_suggestions_race_proxy(date: str = Query(default=None), race_id:
     return JSONResponse(build_model_suggestions(target, race_id=race_id))
 
 
+@app.get("/api/plot-conviction")
+async def plot_conviction_picks(date: str = Query(default=None), threshold: float = Query(default=0.7)):
+    """Today's RP-PDF-derived plot conviction picks (handicap-plot/OR-
+    compression/TS-trend composite), read directly from
+    data/racecard_merged/racecard_{VENUE}_{date}.json. This field is
+    PDF-only -- it does not exist in the live RP HTML capture, so it is
+    computed by scripts/ops/ingest_racecard_pdfs.py /
+    merge_pdf_intel_into_racecard_merged.py, not by the live scorer."""
+    import datetime as _dt
+    import glob as _glob
+
+    target = date or _dt.date.today().isoformat()
+    target_compact = target.replace("-", "")
+    picks: list[dict] = []
+    pattern = str(pathlib.Path("data") / "racecard_merged" / "racecard_*.json")
+    for fp in sorted(_glob.glob(pattern)):
+        name = pathlib.Path(fp).name
+        if target not in name and target_compact not in name:
+            continue
+        try:
+            data = json.loads(pathlib.Path(fp).read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        venue = data.get("venue", "")
+        for off_time, race in (data.get("races") or {}).items():
+            race_id = race.get("race_id")
+            for h in race.get("horses", []):
+                pc = h.get("plot_conviction") or 0.0
+                if pc >= threshold:
+                    picks.append(
+                        {
+                            "venue": venue,
+                            "race_id": race_id,
+                            "off_time": off_time,
+                            "horse": h.get("horse_name"),
+                            "plot_conviction": pc,
+                            "postdata_score": h.get("postdata_score"),
+                            "or_compression_score": h.get("or_compression_score"),
+                            "spotlight_comment": (h.get("spotlight_comment") or "")[:280],
+                        }
+                    )
+    picks.sort(key=lambda p: -p["plot_conviction"])
+    return JSONResponse({"date": target, "threshold": threshold, "count": len(picks), "picks": picks})
+
+
 @app.get("/api/doctrine-scorecard")
 async def doctrine_scorecard_proxy():
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation
@@ -1491,6 +1536,7 @@ async def old_velo_verdicts(date: str = Query(default=None)):
                 "router_reasons": top.get("router_reasons") or [],
                 "execution_allowed": top.get("execution_allowed"),
                 "place_prob": top.get("place_prob"),
+                "longshot_prob": top.get("longshot_prob"),
                 "archetype_label": top.get("race_archetype") or "",
             }
         )

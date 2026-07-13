@@ -722,6 +722,14 @@ td:last-child  { padding-right: 20px; }
   <span class="live-badge" id="sh-badge">—</span>
 </div>
 
+<!-- Plot Conviction Picks (RP PDF intelligence: handicap-plot/OR-compression/TS-trend composite) -->
+<div id="plot-conviction-panel" style="display:none;background:#111;border:1px solid var(--amber,#e0a030);border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:var(--amber,#e0a030);letter-spacing:0.05em;margin-bottom:6px;">
+    PLOT CONVICTION PICKS <span id="pc-count" style="color:#888;font-weight:400"></span>
+  </div>
+  <div id="pc-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+</div>
+
 <!-- Top Bar -->
 <div id="topbar">
   <div>
@@ -2726,6 +2734,189 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
 })();
 </script>
 
+<!-- ── Panel — All Model Suggestions (raceday, side-by-side) ────── -->
+<style>
+#mdl-wrap {
+  position: relative; z-index: 1;
+  margin: 0 0 2px;
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  background: linear-gradient(180deg, rgba(0,255,136,0.02) 0%, transparent 100%);
+}
+#mdl-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 20px; cursor: pointer; user-select: none;
+}
+#mdl-header:hover { background: var(--bg-hover); }
+.mdl-title {
+  font-family: var(--font-hud); font-size: 0.65rem;
+  letter-spacing: 0.18em; color: var(--green); text-transform: uppercase;
+}
+.mdl-tag {
+  font-family: var(--font-hud); font-size: 0.5rem;
+  letter-spacing: 0.12em; color: var(--amber);
+  border: 1px solid rgba(255,140,0,0.35); padding: 1px 6px; border-radius: 2px;
+}
+.mdl-toggle {
+  margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem;
+  color: var(--fg-muted); letter-spacing: 0.1em;
+}
+#mdl-body { display: none; padding: 0 20px 16px; }
+#mdl-body.open { display: block; }
+.mdl-meta {
+  font-family: var(--font-mono); font-size: 0.6rem; color: var(--fg-muted);
+  margin: 6px 0 10px; line-height: 1.7;
+}
+.mdl-meta b { color: var(--fg-primary); }
+.mdl-chips {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
+}
+.mdl-chip {
+  font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 2px; border: 1px solid;
+  cursor: default;
+}
+.mdl-chip.ok {
+  color: var(--green); background: var(--green-glow); border-color: rgba(0,255,136,0.3);
+}
+.mdl-chip.missing {
+  color: var(--red); background: var(--red-glow); border-color: rgba(255,34,85,0.3);
+}
+.mdl-table-wrap { overflow-x: auto; }
+table.mdl-table {
+  width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.62rem;
+}
+table.mdl-table th {
+  text-align: left; padding: 5px 8px; color: var(--fg-muted);
+  border-bottom: 1px solid var(--border-dim); white-space: nowrap;
+  font-family: var(--font-hud); font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+table.mdl-table td {
+  padding: 4px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); white-space: nowrap;
+}
+table.mdl-table td.mdl-missing-cell { color: var(--fg-muted); font-style: italic; }
+table.mdl-table tr:hover { background: var(--bg-hover); }
+.mdl-shadow-badge {
+  font-size: 0.5rem; color: var(--purple); border: 1px solid rgba(153,85,255,0.3);
+  padding: 0 4px; border-radius: 2px; margin-left: 4px;
+}
+</style>
+
+<div id="mdl-wrap">
+  <div id="mdl-header" onclick="toggleMDL()">
+    <span class="mdl-title">▸ Model Suggestions — All Lanes Side-by-Side</span>
+    <span class="mdl-tag">CURRENT_DAY_RUNTIME_SUGGESTION · NOT RESULT TRUTH</span>
+    <span class="mdl-toggle" id="mdl-toggle-btn">[ EXPAND ]</span>
+  </div>
+  <div id="mdl-body">
+    <div class="mdl-meta" id="mdl-meta">Loading model suggestions…</div>
+    <div class="mdl-chips" id="mdl-chips"></div>
+    <div class="mdl-table-wrap">
+      <table class="mdl-table">
+        <thead><tr id="mdl-thead-row"><th>TIME</th><th>COURSE</th></tr></thead>
+        <tbody id="mdl-tbody">
+          <tr><td colspan="2" style="font-family:var(--font-mono);font-size:0.62rem;color:var(--fg-muted);padding:16px 8px;">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const MDL_MODELS = [
+    'MAIN_VELO_PRIME', 'SQPE_NO_RPR_SHADOW', 'NEW_BUILD_LANE_A', 'NEW_BUILD_LANE_B',
+    'NEW_BUILD_LANE_C', 'NEW_BUILD_POLICY_V1', 'OLD_VELO_WIN', 'OLD_VELO_PLACE',
+    'OLD_VELO_LONGSHOT', 'CHAMPION_INTENT_SHADOW',
+  ];
+  const MDL_SHORT = {
+    MAIN_VELO_PRIME: 'MAIN VÉLØ', SQPE_NO_RPR_SHADOW: 'NO-RPR', NEW_BUILD_LANE_A: 'NB·A',
+    NEW_BUILD_LANE_B: 'NB·B', NEW_BUILD_LANE_C: 'NB·C', NEW_BUILD_POLICY_V1: 'NB·POLICY',
+    OLD_VELO_WIN: 'OLD·WIN', OLD_VELO_PLACE: 'OLD·PLACE', OLD_VELO_LONGSHOT: 'OLD·LONG',
+    CHAMPION_INTENT_SHADOW: 'INTENT·SHADOW',
+  };
+
+  window.toggleMDL = function() {
+    const body = document.getElementById('mdl-body');
+    const btn  = document.getElementById('mdl-toggle-btn');
+    const open = body.classList.toggle('open');
+    btn.textContent = open ? '[ COLLAPSE ]' : '[ EXPAND ]';
+  };
+
+  async function _loadMDL() {
+    const params = new URLSearchParams(window.location.search);
+    const today = new Date().toISOString().slice(0, 10);
+    const dateParam = params.get('date') || today;
+    let data;
+    try {
+      const res = await fetch(`/api/model-suggestions?date=${encodeURIComponent(dateParam)}`);
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      data = await res.json();
+    } catch (err) {
+      const meta = document.getElementById('mdl-meta');
+      if (meta) meta.innerHTML = `<span style="color:var(--red)">Failed to load model suggestions: ${err.message}</span>`;
+      return;
+    }
+
+    const meta = document.getElementById('mdl-meta');
+    const races = {};
+    (data.rows || []).forEach(r => {
+      if (!races[r.race_id]) races[r.race_id] = { off_time: r.off_time, course: r.course, byModel: {} };
+      if (r.rank === 1) races[r.race_id].byModel[r.model_label] = r;
+    });
+    const raceIds = Object.keys(races).sort((a, b) => (races[a].off_time || '').localeCompare(races[b].off_time || ''));
+
+    if (meta) {
+      meta.innerHTML =
+        `<b>${data.suggestion_status || '—'}</b> · date: <b>${data.date || '—'}</b> · ` +
+        `races: <b>${raceIds.length}</b> · total rows: <b>${(data.rows || []).length}</b> · ` +
+        `no_supabase_writes: <b>${data.no_supabase_writes ? 'true' : 'false'}</b> · ` +
+        `result_truth: <b>${data.result_truth ? 'true' : 'false'}</b> · ` +
+        `staking_instruction: <b>${data.staking_instruction ? 'true' : 'false'}</b> · ` +
+        `promotion_action: <b>${data.promotion_action ? 'true' : 'false'}</b>`;
+    }
+
+    const chipsEl = document.getElementById('mdl-chips');
+    if (chipsEl) {
+      chipsEl.innerHTML = MDL_MODELS.map(label => {
+        const count = (data.row_counts_by_model || {})[label];
+        if (count) return `<span class="mdl-chip ok">${MDL_SHORT[label]} — ${count} rows</span>`;
+        const miss = (data.missing_artifacts || []).find(m => m.model_label === label);
+        const path = miss ? miss.expected_source_path : '?';
+        return `<span class="mdl-chip missing" title="Expected: ${path}">${MDL_SHORT[label]} — MISSING_ARTIFACT</span>`;
+      }).join('');
+    }
+
+    const theadRow = document.getElementById('mdl-thead-row');
+    if (theadRow) {
+      theadRow.innerHTML = '<th>TIME</th><th>COURSE</th>' +
+        MDL_MODELS.map(label => `<th>${MDL_SHORT[label]}</th>`).join('');
+    }
+
+    const tbody = document.getElementById('mdl-tbody');
+    if (tbody) {
+      if (raceIds.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${2 + MDL_MODELS.length}" style="padding:16px 8px;color:var(--fg-muted)">No rows for this date.</td></tr>`;
+      } else {
+        tbody.innerHTML = raceIds.map(rid => {
+          const race = races[rid];
+          const cells = MDL_MODELS.map(label => {
+            const pick = race.byModel[label];
+            if (!pick) return '<td class="mdl-missing-cell">—</td>';
+            const shadowTag = pick.suggestion_status === 'SHADOW_ONLY' ? '<span class="mdl-shadow-badge">SHADOW</span>' : '';
+            const score = (pick.score === null || pick.score === undefined) ? '—' : Number(pick.score).toFixed(3);
+            return `<td>${pick.horse || '—'} <span style="color:var(--fg-muted)">${score}</span>${shadowTag}</td>`;
+          }).join('');
+          return `<tr><td>${race.off_time || '—'}</td><td>${race.course || '—'}</td>${cells}</tr>`;
+        }).join('');
+      }
+    }
+  }
+
+  _loadMDL();
+})();
+</script>
+
 <!-- Filter Bar -->
 <div id="filters">
   <span class="filter-label">PRODUCT</span>
@@ -3099,6 +3290,9 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
 const API    = '/api/governed-card';
 const OV_API = '/api/old-velo-verdicts';
 let allRows = [];
+// { race_id (string) -> { horse, score } } — CHAMPION_INTENT_SHADOW top pick per race.
+// Populated every load from /api/model-suggestions; permanent per-race-card lane, not a one-off.
+let champIntentMap = new Map();
 
 const MOCK_DATA = {"meta":{"requested_date":"2026-05-01","loaded_date":"2026-05-01","source":"local_json","commit_sha":"971ddfb","router_version":"ProductRouter v1 (live-safe)","record_count":43,"date_mismatch":false,"gov_overlay":true},"verdicts":[{"race_id":"rac_11914929","course":"Newmarket","off_time":"1:45","horse":"Earth Shot","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.3617,"prob_gap":0.0,"market_deception_score":0.4957,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9896,"archetype_label":""},{"race_id":"rac_11914682","course":"Ascot","off_time":"2:00","horse":"Adaay Of Scarlett","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.3476,"prob_gap":0.0,"market_deception_score":0.133,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.8744,"archetype_label":""},{"race_id":"rac_11914721","course":"Goodwood","off_time":"2:05","horse":"Harry Knows","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.2362,"prob_gap":0.0,"market_deception_score":0.2013,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3049,"archetype_label":""},{"race_id":"rac_11914890","course":"Newmarket","off_time":"2:20","horse":"Poseidon's Warrior","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.3862,"prob_gap":0.0,"market_deception_score":0.2709,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9894,"archetype_label":""},{"race_id":"rac_11914604","course":"Ascot","off_time":"2:35","horse":"Sweet William","tier":"X","decision_tier":"X","confidence_level":"low","velo_prime_prob":0.1548,"prob_gap":0.0,"market_deception_score":0.0333,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3231,"archetype_label":""},{"race_id":"rac_11914708","course":"Goodwood","off_time":"2:40","horse":"Pacific Avenue","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.4253,"prob_gap":0.0,"market_deception_score":0.2238,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9869,"archetype_label":""},{"race_id":"rac_11914942","course":"Newmarket","off_time":"2:55","horse":"St Anton","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.2199,"prob_gap":0.0,"market_deception_score":0.017,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.5733,"archetype_label":""},{"race_id":"rac_11914617","course":"Ascot","off_time":"3:10","horse":"Wise Approach","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.2486,"prob_gap":0.0,"market_deception_score":0.0931,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.5602,"archetype_label":""},{"race_id":"rac_11914695","course":"Goodwood","off_time":"3:15","horse":"Rhythm N Hooves","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.1642,"prob_gap":0.0,"market_deception_score":0.0212,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.8182,"archetype_label":""},{"race_id":"rac_11914877","course":"Newmarket","off_time":"3:30","horse":"Santorini Star","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.229,"prob_gap":0.0,"market_deception_score":0.0256,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.5944,"archetype_label":""},{"race_id":"rac_11950926","course":"Punchestown","off_time":"3:40","horse":"Last Round","tier":"D","decision_tier":"D","confidence_level":"low","velo_prime_prob":0.201,"prob_gap":0.0,"market_deception_score":0.1282,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3108,"archetype_label":""},{"race_id":"rac_11914630","course":"Ascot","off_time":"3:45","horse":"Jonquil","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.1733,"prob_gap":0.0,"market_deception_score":0.0135,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3399,"archetype_label":""},{"race_id":"rac_11914773","course":"Goodwood","off_time":"3:50","horse":"Crepe Suzette","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.3282,"prob_gap":0.0,"market_deception_score":0.1448,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9762,"archetype_label":""},{"race_id":"rac_11914916","course":"Newmarket","off_time":"4:05","horse":"Benacre","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.2681,"prob_gap":0.0,"market_deception_score":0.0295,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.8838,"archetype_label":""},{"race_id":"rac_11950939","course":"Punchestown","off_time":"4:15","horse":"Its On The Line","tier":"X","decision_tier":"X","confidence_level":"low","velo_prime_prob":0.1468,"prob_gap":0.0,"market_deception_score":0.1207,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3166,"archetype_label":""},{"race_id":"rac_11914656","course":"Ascot","off_time":"4:20","horse":"Rage Of Thunder","tier":"X","decision_tier":"X","confidence_level":"low","velo_prime_prob":0.1024,"prob_gap":0.0,"market_deception_score":0.0069,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.2927,"archetype_label":""},{"race_id":"rac_11914734","course":"Goodwood","off_time":"4:25","horse":"Kiss And Run","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.2453,"prob_gap":0.0,"market_deception_score":0.0168,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.6447,"archetype_label":""},{"race_id":"rac_11912420","course":"Warwick","off_time":"4:30","horse":"Great Valley","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.4645,"prob_gap":0.0,"market_deception_score":0.4504,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9764,"archetype_label":""},{"race_id":"rac_11914903","course":"Newmarket","off_time":"4:40","horse":"Ellusive Butterfly","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.3084,"prob_gap":0.0,"market_deception_score":0.0271,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.7395,"archetype_label":""},{"race_id":"rac_11916749","course":"Newcastle (AW)","off_time":"4:45","horse":"Fallacious Promise","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.2672,"prob_gap":0.0,"market_deception_score":0.0604,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9482,"archetype_label":""},{"race_id":"rac_11950952","course":"Punchestown","off_time":"4:50","horse":"Dinoblue","tier":"B","decision_tier":"B","confidence_level":"normal","velo_prime_prob":0.2734,"prob_gap":0.0,"market_deception_score":0.4504,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9601,"archetype_label":""},{"race_id":"rac_11914643","course":"Ascot","off_time":"4:55","horse":"So Regal","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.3712,"prob_gap":0.0,"market_deception_score":0.1847,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.7343,"archetype_label":""},{"race_id":"rac_11914760","course":"Goodwood","off_time":"5:00","horse":"Foothold","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.2538,"prob_gap":0.0,"market_deception_score":0.0137,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.7394,"archetype_label":""},{"race_id":"rac_11912355","course":"Warwick","off_time":"5:05","horse":"Tellmesomethingood","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.2492,"prob_gap":0.0,"market_deception_score":0.0319,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3021,"archetype_label":""},{"race_id":"rac_11914955","course":"Newmarket","off_time":"5:15","horse":"Cuban Lady","tier":"X","decision_tier":"X","confidence_level":"low","velo_prime_prob":0.1659,"prob_gap":0.0,"market_deception_score":0.0144,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3739,"archetype_label":""},{"race_id":"rac_11916723","course":"Newcastle (AW)","off_time":"5:20","horse":"Star Cast","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.1865,"prob_gap":0.0,"market_deception_score":0.012,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.6882,"archetype_label":""},{"race_id":"rac_11939928","course":"Punchestown","off_time":"5:25","horse":"He's Gorgeous","tier":"X","decision_tier":"X","confidence_level":"low","velo_prime_prob":0.0834,"prob_gap":0.0,"market_deception_score":0.0094,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3624,"archetype_label":""},{"race_id":"rac_11914669","course":"Ascot","off_time":"5:30","horse":"Joolianoss","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.1738,"prob_gap":0.0,"market_deception_score":0.0097,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.3929,"archetype_label":""},{"race_id":"rac_11914747","course":"Goodwood","off_time":"5:35","horse":"Fair Dinkum","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.1519,"prob_gap":0.0,"market_deception_score":0.0071,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.2698,"archetype_label":""},{"race_id":"rac_11912368","course":"Warwick","off_time":"5:40","horse":"Mister Coffey","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.5706,"prob_gap":0.0,"market_deception_score":0.3805,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.975,"archetype_label":""},{"race_id":"rac_11916671","course":"Newcastle (AW)","off_time":"5:53","horse":"Melinda","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.2832,"prob_gap":0.0,"market_deception_score":0.0425,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.8812,"archetype_label":""},{"race_id":"rac_11935274","course":"Punchestown","off_time":"6:00","horse":"King Rasko Grey","tier":"D","decision_tier":"D","confidence_level":"low","velo_prime_prob":0.1943,"prob_gap":0.0,"market_deception_score":0.1759,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.4116,"archetype_label":""},{"race_id":"rac_11912342","course":"Warwick","off_time":"6:15","horse":"Crawter","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.333,"prob_gap":0.0,"market_deception_score":0.0694,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.6976,"archetype_label":""},{"race_id":"rac_11916697","course":"Newcastle (AW)","off_time":"6:30","horse":"Eklleem","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.3085,"prob_gap":0.0,"market_deception_score":0.3411,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9133,"archetype_label":""},{"race_id":"rac_11935287","course":"Punchestown","off_time":"6:40","horse":"Lossiemouth","tier":"A","decision_tier":"A","confidence_level":"normal","velo_prime_prob":0.3657,"prob_gap":0.0,"market_deception_score":0.359,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.8085,"archetype_label":""},{"race_id":"rac_11912394","course":"Warwick","off_time":"6:50","horse":"Police Academy","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.4002,"prob_gap":0.0,"market_deception_score":0.231,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.7984,"archetype_label":""},{"race_id":"rac_11916710","course":"Newcastle (AW)","off_time":"7:02","horse":"Stoic Poet","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.2428,"prob_gap":0.0,"market_deception_score":0.0184,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.6367,"archetype_label":""},{"race_id":"rac_11950965","course":"Punchestown","off_time":"7:10","horse":"Half A Chance","tier":"X","decision_tier":"X","confidence_level":"low","velo_prime_prob":0.0844,"prob_gap":0.0,"market_deception_score":0.0038,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.1263,"archetype_label":""},{"race_id":"rac_11912381","course":"Warwick","off_time":"7:25","horse":"Slipway","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.3443,"prob_gap":0.0,"market_deception_score":0.0586,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.5001,"archetype_label":""},{"race_id":"rac_11916684","course":"Newcastle (AW)","off_time":"7:33","horse":"Blufferonthebus","tier":"B","decision_tier":"B","confidence_level":"low","velo_prime_prob":0.2282,"prob_gap":0.0,"market_deception_score":0.0231,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.6768,"archetype_label":""},{"race_id":"rac_11950978","course":"Punchestown","off_time":"7:40","horse":"Cityofblindinlites","tier":"D","decision_tier":"D","confidence_level":"low","velo_prime_prob":0.1169,"prob_gap":0.0,"market_deception_score":0.1235,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.2364,"archetype_label":""},{"race_id":"rac_11912407","course":"Warwick","off_time":"8:00","horse":"Unexpected Party","tier":"A","decision_tier":"A","confidence_level":"low","velo_prime_prob":0.4277,"prob_gap":0.0,"market_deception_score":0.5025,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.9557,"archetype_label":""},{"race_id":"rac_11916736","course":"Newcastle (AW)","off_time":"8:10","horse":"Asadjumeirah","tier":"C","decision_tier":"C","confidence_level":"low","velo_prime_prob":0.1886,"prob_gap":0.0,"market_deception_score":0.0136,"assigned_product":null,"router_reasons":[],"execution_allowed":null,"place_prob":0.6937,"archetype_label":""}]};
 
@@ -3126,6 +3320,30 @@ async function loadCard() {
   // Sync date picker
   const picker = document.getElementById('date-picker');
   if (picker) picker.value = dateParam;
+
+  // CHAMPION_INTENT_SHADOW — permanent per-race-card lane, every day, all dates.
+  // Fetched separately so a failure here never blocks the rest of the card.
+  // Keyed by course::minutes, NOT race_id: /api/governed-card (source of the
+  // `rid` used at render time) returns RP's raw numeric race_id, while
+  // /api/model-suggestions remaps CHAMPION_INTENT_SHADOW rows to the
+  // rp_COURSE_DATE_TIME scheme -- the two never match. course+time is the
+  // same cross-source join key already used for the Old VELO (ovMap) lookup
+  // just below, so this reuses that established pattern instead of a
+  // race_id join that silently never resolves.
+  champIntentMap = new Map();
+  try {
+    const shRes = await fetch(`/api/model-suggestions?date=${encodeURIComponent(dateParam)}`);
+    if (shRes.ok) {
+      const shData = await shRes.json();
+      (shData.rows || []).forEach(r => {
+        if (r.model_label === 'CHAMPION_INTENT_SHADOW' && r.rank === 1) {
+          const key = (r.course || '').toLowerCase() + '::' + nbTimeKey(r.off_time);
+          champIntentMap.set(key, { horse: r.horse, score: r.score });
+        }
+      });
+    }
+  } catch (_shErr) { /* leave champIntentMap empty — lane shows "No data" */ }
+
   try {
     const [nbRes, ovRes, threeOptRes] = await Promise.all([
       fetch(`${API}?date=${encodeURIComponent(dateParam)}`),
@@ -3500,6 +3718,7 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
       const ovProb = parseFloat(ov.velo_prime_prob || 0);
       const ovMds  = parseFloat(ov.market_deception_score || 0);
       const ovPp   = parseFloat(ov.place_prob || 0);
+      const ovLs   = parseFloat(ov.longshot_prob || 0);
       const tier   = ov.tier || '';
       const ap     = ov.assigned_product || 'UNKNOWN';
       const apLabel = ap === 'WIN_ONLY' ? 'WIN' : ap === 'EW_CANDIDATE' ? 'E/W' : ap === 'FRAME_ONLY' ? 'FRAME' : ap === 'VISION_ONLY' ? 'VISION' : ap === 'PASS' ? 'PASS' : '?';
@@ -3516,10 +3735,15 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
         <div class="tl-prob-bar-wrap"><div class="tl-prob-bar ov" style="width:${Math.min(ovPct,100)}%"></div></div>
         <span class="tl-mds">MDS ${ovMds.toFixed(3)}</span>
       </div>`;
-      if (ap === 'EW_CANDIDATE' && ovPp > 0) {
-        html += `<div class="tl-stat-row" style="margin-top:2px">
-          <span style="font-size:9px;color:var(--cyan)">place% ${(ovPp*100).toFixed(0)}%</span>
-        </div>`;
+      if (ovPp > 0 || ovLs > 0) {
+        html += '<div class="tl-stat-row" style="margin-top:2px;gap:8px">';
+        if (ovPp > 0) {
+          html += `<span style="font-size:9px;color:var(--cyan)">place ${(ovPp*100).toFixed(0)}%</span>`;
+        }
+        if (ovLs > 0) {
+          html += `<span style="font-size:9px;color:var(--purple)">longshot ${(ovLs*100).toFixed(0)}%</span>`;
+        }
+        html += '</div>';
       }
     } else {
       html += '<div class="tl-lane-empty">No Old VELO data</div>';
@@ -3566,6 +3790,23 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     }
 
     html += '</div>'; // end NR lane
+
+    // Champion + Intent shadow lane — research/shadow only, permanent panel.
+    // Not staked, not promoted, not canonical truth. See PR #133/#134.
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-nr">CHAMPION INTENT SHADOW</span><span class="rc-full-field-note">SHADOW ONLY</span></div>';
+    const ciPick = champIntentMap.get(ovKey);
+    if (ciPick && ciPick.horse) {
+      const ciPct = maxProb > 0 ? Math.round((parseFloat(ciPick.score || 0) / maxProb) * 100) : Math.round(parseFloat(ciPick.score || 0) * 100);
+      html += `<div class="tl-horse">${esc(ciPick.horse)}</div>`;
+      html += `<div class="tl-stat-row">
+        <span class="tl-prob" style="color:var(--purple)">${(parseFloat(ciPick.score || 0)*100).toFixed(1)}%</span>
+        <div class="tl-prob-bar-wrap"><div class="tl-prob-bar nr" style="width:${Math.min(Math.max(ciPct,0),100)}%"></div></div>
+      </div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No Champion Intent data</div>';
+    }
+    html += '</div>'; // end Champion Intent Shadow lane
 
     // Shadow VELO lane - paper only, no live execution
     html += '<div class="tl-lane">';
@@ -3692,7 +3933,38 @@ const style = document.createElement('style');
 style.textContent = `@keyframes fadeInRow { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:none; } }`;
 document.head.appendChild(style);
 
+async function loadPlotConviction() {
+  const params = new URLSearchParams(window.location.search);
+  const today = new Date().toISOString().slice(0, 10);
+  const dateParam = params.get('date') || today;
+  const panel = document.getElementById('plot-conviction-panel');
+  const list = document.getElementById('pc-list');
+  const countEl = document.getElementById('pc-count');
+  if (!panel || !list) return;
+  try {
+    const res = await fetch(`/api/plot-conviction?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const picks = data.picks || [];
+    if (!picks.length) { panel.style.display = 'none'; return; }
+    countEl.textContent = `(${picks.length})`;
+    list.innerHTML = picks.map(p => {
+      const pct = Math.round((p.plot_conviction || 0) * 100);
+      const title = (p.spotlight_comment || '').replace(/"/g, '&quot;');
+      return `<div title="${title}" style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:150px;">
+        <div style="font-size:11px;color:#888">${esc(p.venue || '')} ${esc(p.off_time || '')}</div>
+        <div style="font-weight:600">${esc(p.horse || '—')}</div>
+        <div style="font-size:12px;color:var(--amber,#e0a030)">${pct}% conviction</div>
+      </div>`;
+    }).join('');
+    panel.style.display = 'block';
+  } catch (_pcErr) {
+    panel.style.display = 'none';
+  }
+}
+
 loadCard();
+loadPlotConviction();
 </script>
 </body>
 </html>
