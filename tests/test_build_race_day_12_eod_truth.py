@@ -198,19 +198,119 @@ def test_corrected_verdict_row_changes_prediction_run_id(mod):
     assert ident_a["prediction_run_id"] != row_a["race_id"]
 
 
-def test_select_verdict_rows_deterministic_tie_break_on_duplicates(mod):
-    rows = [
-        {"race_id": "111", "generated_at": "2026-07-12T09:00:00Z"},
-        {"race_id": "111", "generated_at": "2026-07-12T09:05:00Z"},  # latest wins
-        {"race_id": "222", "generated_at": "2026-07-12T09:00:00Z"},
-    ]
-    selected = mod.select_verdict_rows(rows)
+def test_select_verdict_rows_single_candidate(mod):
+    rows = [{"race_id": "222", "generated_at": "2026-07-12T09:00:00Z", "engine_version": "v1"}]
+    selected, ambiguous = mod.select_verdict_rows(rows)
 
+    assert ambiguous == {}
+    assert selected["222"]["_duplicate_row_count"] == 0
+    assert selected["222"]["_multiple_candidates"] is False
+    assert selected["222"]["_tie_break_reason"] == "SINGLE_CANDIDATE"
+
+
+def test_select_verdict_rows_unique_latest_generated_at_wins(mod):
+    rows = [
+        {"race_id": "111", "generated_at": "2026-07-12T09:00:00Z", "engine_version": "v1"},
+        {"race_id": "111", "generated_at": "2026-07-12T09:05:00Z", "engine_version": "v1"},  # latest wins
+    ]
+    selected, ambiguous = mod.select_verdict_rows(rows)
+
+    assert ambiguous == {}
     assert selected["111"]["generated_at"] == "2026-07-12T09:05:00Z"
     assert selected["111"]["_duplicate_row_count"] == 1
     assert selected["111"]["_multiple_candidates"] is True
     assert selected["111"]["_tie_break_reason"] == "LATEST_GENERATED_AT"
 
-    assert selected["222"]["_duplicate_row_count"] == 0
-    assert selected["222"]["_multiple_candidates"] is False
-    assert selected["222"]["_tie_break_reason"] == "SINGLE_CANDIDATE"
+
+def test_select_verdict_rows_identical_duplicate_at_same_timestamp_collapses_safely(mod):
+    # Same race_id, same generated_at, IDENTICAL content -- a duplicate
+    # write, not a real ambiguity, so it is safe to collapse.
+    rows = [
+        {"race_id": "333", "generated_at": "2026-07-12T09:00:00Z", "engine_version": "v1", "git_commit_sha": "abc"},
+        {"race_id": "333", "generated_at": "2026-07-12T09:00:00Z", "engine_version": "v1", "git_commit_sha": "abc"},
+    ]
+    selected, ambiguous = mod.select_verdict_rows(rows)
+
+    assert ambiguous == {}
+    assert selected["333"]["_duplicate_row_count"] == 1
+    assert selected["333"]["_multiple_candidates"] is True
+    assert selected["333"]["_tie_break_reason"] == "IDENTICAL_DUPLICATE_COLLAPSED"
+
+
+def test_select_verdict_rows_conflicting_duplicate_at_same_timestamp_fails_closed(mod):
+    # Same race_id, same generated_at, DIFFERENT content -- a genuine
+    # ambiguity. Must not be resolved by input order; must fail closed.
+    rows = [
+        {"race_id": "444", "generated_at": "2026-07-12T09:00:00Z", "engine_version": "v1", "git_commit_sha": "aaa"},
+        {"race_id": "444", "generated_at": "2026-07-12T09:00:00Z", "engine_version": "v2", "git_commit_sha": "bbb"},
+    ]
+    selected, ambiguous = mod.select_verdict_rows(rows)
+
+    assert "444" not in selected
+    assert ambiguous["444"]["reason"] == mod.AMBIGUOUS_PREDICTION_RUN
+    assert ambiguous["444"]["candidate_count"] == 2
+    assert len(ambiguous["444"]["distinct_content_hashes"]) == 2
+
+    # order-independence: reversing input order must not change the outcome
+    selected_rev, ambiguous_rev = mod.select_verdict_rows(list(reversed(rows)))
+    assert "444" not in selected_rev
+    assert ambiguous_rev["444"]["reason"] == mod.AMBIGUOUS_PREDICTION_RUN
+
+
+# -- P0-12 follow-up: explicit course/date validation + clean-checkout ------
+
+
+def test_dundalk_mapping_rejects_wrong_course(mod, tmp_path):
+    manifest_path = _write_manifest(tmp_path, [_cap("some-other-course", "111", "2.00")])
+    verdicts = [{"race_id": "rp_DUN_20260712_2.00"}]
+    with pytest.raises(RuntimeError, match="course mismatch"):
+        mod.build_dundalk_id_map(verdicts, manifest_path=manifest_path)
+
+
+def test_dundalk_mapping_rejects_wrong_date(mod, tmp_path):
+    manifest = {
+        "captures": [
+            {
+                "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-11/111",
+                "title": "Full Result 2.00 Dundalk (AW) (IRE) | 11 July 2026 | Racing Post",
+            }
+        ]
+    }
+    p = tmp_path / "manifest.json"
+    p.write_text(json.dumps(manifest), encoding="utf-8")
+    verdicts = [{"race_id": "rp_DUN_20260712_2.00"}]
+    with pytest.raises(RuntimeError, match="date mismatch"):
+        mod.build_dundalk_id_map(verdicts, manifest_path=p)
+
+
+def test_dundalk_mapping_reproduces_from_committed_evidence_on_clean_checkout(mod):
+    """Regression for the residual-review finding: a clean checkout of this
+    repo (no locally-generated captures) must still be able to derive the
+    Dundalk bridge, because the manifest is a committed evidence artifact,
+    not a local-only capture byproduct."""
+    manifest_path = mod.DUNDALK_RESULTS_MANIFEST_PATH
+    assert manifest_path.exists(), (
+        f"{manifest_path} must be committed to the repo -- a clean checkout cannot "
+        "reproduce the Dundalk mapping without it"
+    )
+
+    verdicts = [
+        {"race_id": f"rp_DUN_20260712_{off}"}
+        for off in ["2.00", "2.35", "3.10", "3.45", "4.20", "4.55", "5.30"]
+    ]
+    id_map, evidence, manifest_sha = mod.build_dundalk_id_map(verdicts, manifest_path=manifest_path)
+
+    assert id_map == {
+        "924518": "rp_DUN_20260712_2.00",
+        "924519": "rp_DUN_20260712_2.35",
+        "924520": "rp_DUN_20260712_3.10",
+        "924521": "rp_DUN_20260712_3.45",
+        "924522": "rp_DUN_20260712_4.20",
+        "924523": "rp_DUN_20260712_4.55",
+        "924524": "rp_DUN_20260712_5.30",
+    }
+    assert len(evidence) == 7
+    for rec in evidence:
+        assert rec["course"] == "dundalk-aw"
+        assert rec["date"] == "2026-07-12"
+        assert rec["source_manifest_sha256"] == manifest_sha

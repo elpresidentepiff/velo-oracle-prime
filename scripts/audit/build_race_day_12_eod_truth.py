@@ -100,8 +100,14 @@ def classify_time_safety(
     return TIME_SAFETY_SAFE_FROZEN_REPLAY, leakage_status
 
 
+EXPECTED_DUNDALK_COURSE_SLUG = "dundalk-aw"
+
+
 def build_dundalk_id_map(
-    verdicts: list[dict], manifest_path: Path = DUNDALK_RESULTS_MANIFEST_PATH
+    verdicts: list[dict],
+    manifest_path: Path = DUNDALK_RESULTS_MANIFEST_PATH,
+    expected_course_slug: str = EXPECTED_DUNDALK_COURSE_SLUG,
+    expected_date: str = RACE_DATE,
 ) -> tuple[dict[str, str], list[dict], str]:
     """Derive the numeric<->composite Dundalk race_id bridge from
     committed evidence (P0-12): the results-capture manifest's own
@@ -125,6 +131,16 @@ def build_dundalk_id_map(
             continue
         course_slug, date, numeric_id = m_url.groups()
         off_time = m_title.group(1)
+        if course_slug != expected_course_slug:
+            raise RuntimeError(
+                f"Dundalk mapping evidence course mismatch: expected {expected_course_slug!r}, "
+                f"got {course_slug!r} for race {numeric_id} -- refusing to guess"
+            )
+        if date != expected_date:
+            raise RuntimeError(
+                f"Dundalk mapping evidence date mismatch: expected {expected_date!r}, "
+                f"got {date!r} for race {numeric_id} -- refusing to guess"
+            )
         if off_time in numeric_by_off:
             raise RuntimeError(
                 f"Dundalk mapping evidence has a duplicate off-time {off_time} on the numeric "
@@ -202,26 +218,77 @@ def compute_prediction_run_identity(row: dict) -> dict:
     }
 
 
-def select_verdict_rows(raw_rows: list[dict]) -> dict[str, dict]:
+AMBIGUOUS_PREDICTION_RUN = "AMBIGUOUS_PREDICTION_RUN"
+
+
+def _row_content_hash(row: dict) -> str:
+    return sha256_of_obj({k: v for k, v in row.items() if not k.startswith("_")})
+
+
+def select_verdict_rows(raw_rows: list[dict]) -> tuple[dict[str, dict], dict[str, dict]]:
     """Group raw velo_verdicts rows by race_id and deterministically
     select one per race_id, recording duplicate-row provenance rather
-    than silently assuming a single row (P0-14). Tie-break: latest
-    generated_at wins (documented, not positional)."""
+    than silently assuming a single row (P0-14).
+
+    Tie-break order, never positional/input-order:
+      1. single candidate -> that row.
+      2. multiple candidates, one uniquely has the latest generated_at ->
+         that row (LATEST_GENERATED_AT).
+      3. multiple candidates share the latest generated_at AND have
+         identical content -> safe to collapse (IDENTICAL_DUPLICATE_COLLAPSED),
+         since there is no actual ambiguity, just a duplicate write.
+      4. multiple candidates share the latest generated_at with DIFFERENT
+         content -> fails closed: excluded from `selected`, reported in the
+         second return value keyed by race_id with reason
+         AMBIGUOUS_PREDICTION_RUN. The caller must not guess a run for
+         that race.
+
+    Returns (selected, ambiguous_races).
+    """
     by_race: dict[str, list[dict]] = {}
     for row in raw_rows:
         by_race.setdefault(row["race_id"], []).append(row)
 
     selected: dict[str, dict] = {}
+    ambiguous_races: dict[str, dict] = {}
+
     for race_id, rows in by_race.items():
-        rows_sorted = sorted(rows, key=lambda r: r["generated_at"])
-        chosen = rows_sorted[-1]
-        duplicate_count = len(rows) - 1
-        chosen = dict(chosen)
-        chosen["_duplicate_row_count"] = duplicate_count
-        chosen["_multiple_candidates"] = duplicate_count > 0
-        chosen["_tie_break_reason"] = "LATEST_GENERATED_AT" if duplicate_count > 0 else "SINGLE_CANDIDATE"
-        selected[race_id] = chosen
-    return selected
+        if len(rows) == 1:
+            chosen = dict(rows[0])
+            chosen["_duplicate_row_count"] = 0
+            chosen["_multiple_candidates"] = False
+            chosen["_tie_break_reason"] = "SINGLE_CANDIDATE"
+            selected[race_id] = chosen
+            continue
+
+        max_generated_at = max(r["generated_at"] for r in rows)
+        candidates_at_max = [r for r in rows if r["generated_at"] == max_generated_at]
+
+        if len(candidates_at_max) == 1:
+            chosen = dict(candidates_at_max[0])
+            chosen["_duplicate_row_count"] = len(rows) - 1
+            chosen["_multiple_candidates"] = True
+            chosen["_tie_break_reason"] = "LATEST_GENERATED_AT"
+            selected[race_id] = chosen
+            continue
+
+        content_hashes = {_row_content_hash(r) for r in candidates_at_max}
+        if len(content_hashes) == 1:
+            chosen = dict(candidates_at_max[0])
+            chosen["_duplicate_row_count"] = len(rows) - 1
+            chosen["_multiple_candidates"] = True
+            chosen["_tie_break_reason"] = "IDENTICAL_DUPLICATE_COLLAPSED"
+            selected[race_id] = chosen
+            continue
+
+        ambiguous_races[race_id] = {
+            "reason": AMBIGUOUS_PREDICTION_RUN,
+            "generated_at": max_generated_at,
+            "candidate_count": len(candidates_at_max),
+            "distinct_content_hashes": sorted(content_hashes),
+        }
+
+    return selected, ambiguous_races
 
 
 def load_results() -> tuple[dict, str]:
@@ -250,7 +317,7 @@ def main() -> None:
 
     raw_verdicts = load_verdicts_raw()
     dundalk_map, dundalk_evidence, dundalk_manifest_sha256 = build_dundalk_id_map(raw_verdicts)
-    verdicts_selected = select_verdict_rows(raw_verdicts)
+    verdicts_selected, ambiguous_verdict_races = select_verdict_rows(raw_verdicts)
 
     events = []
     horse_exclusions = []
@@ -275,6 +342,28 @@ def main() -> None:
             continue
 
         verdict_key = dundalk_map.get(race_id, race_id)
+
+        if verdict_key in ambiguous_verdict_races:
+            amb = ambiguous_verdict_races[verdict_key]
+            race_exclusions.append(
+                {
+                    "type": "RACE",
+                    "race_id": race_id,
+                    "resolved_race_id": verdict_key,
+                    "horse_id": None,
+                    "horse_name": None,
+                    "resolution_method": None,
+                    "reason": (
+                        f"{amb['candidate_count']} velo_verdicts rows share the latest "
+                        f"generated_at={amb['generated_at']} with {len(amb['distinct_content_hashes'])} "
+                        "distinct contents -- refusing to guess which is canonical"
+                    ),
+                    "race_completeness": "AMBIGUOUS",
+                    "shadow_exclusion_reason": AMBIGUOUS_PREDICTION_RUN,
+                }
+            )
+            continue
+
         verdict_row = verdicts_selected.get(verdict_key)
         if verdict_row is None:
             race_exclusions.append(
