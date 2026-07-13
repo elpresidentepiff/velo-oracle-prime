@@ -28,22 +28,29 @@ URL_LIST_ROOT = ROOT / "data" / "racing_post_url_lists"
 # UK and IRE venue slugs as they appear in Racing Post URLs.
 # When a new UK/IRE venue appears, add it here.
 UK_IRE_VENUES = {
-    "ascot", "ayr", "bangor-on-dee", "bath", "beverley", "brighton", "carlisle", "cartmel", "catterick",
+    "aintree", "ascot", "ayr", "bangor-on-dee", "bath", "beverley", "brighton", "carlisle", "cartmel", "catterick",
     "chelmsford-city", "cheltenham", "chester", "chepstow", "doncaster",
     "epsom", "exeter", "fakenham", "ffos-las", "goodwood", "hamilton",
     "fontwell",
     "haydock", "hereford", "hexham", "huntingdon", "kempton", "kempton-aw", "leicester",
-    "lingfield", "ludlow", "market-rasen", "musselburgh", "newbury",
-    "newcastle", "newcastle-aw", "newmarket", "newmarket-july", "nottingham", "perth", "plumpton", "pontefract",
-    "redcar", "ripon", "salisbury", "sandown", "southwell", "stratford",
+    "lingfield", "lingfield-aw", "lingfield-aw-gb", "ludlow", "market-rasen", "musselburgh", "newbury",
+    "newcastle", "newcastle-aw", "newmarket", "newmarket-july", "newton-abbot", "nottingham", "perth", "plumpton", "pontefract",
+    "redcar", "ripon", "salisbury", "sandown", "southwell", "southwell-aw", "stratford",
     "taunton", "thirsk", "towcester", "uttoxeter", "warwick", "wetherby",
-    "wincanton", "windsor", "wolverhampton", "worcester", "yarmouth", "york",
+    "wincanton", "windsor", "wolverhampton", "wolverhampton-aw", "worcester", "yarmouth", "york",
     # Ireland
     "ballinrobe", "bellewstown", "clonmel", "cork", "curragh", "downpatrick",
-    "dundalk", "fairyhouse", "galway", "gowran-park", "kilbeggan", "killarney",
+    "dundalk", "dundalk-aw", "fairyhouse", "galway", "gowran-park", "kilbeggan", "killarney",
     "laytown", "leopardstown", "limerick", "listowel", "naas", "navan",
     "punchestown", "roscommon", "sligo", "thurles", "tipperary", "tralee",
     "tramore", "wexford",
+    # NOTE: this allowlist is advisory only, not a correctness gate -- every
+    # race RP shows for the date is captured regardless (see run_full_raceday.py
+    # Step 3.5), and real per-race jurisdiction data (each race's own RP
+    # "country" field, resolved by workers/racing_api_normalizer.py) is what
+    # actually decides scoring inclusion. Keep this list reasonably accurate
+    # for triage/labelling clarity, but a course missing from here can no
+    # longer cause a course to be silently dropped from the day's card.
 }
 
 

@@ -150,6 +150,44 @@ def main() -> int:
         ):
             return 1
 
+        # ── Step 3.5: supplementary capture of the "_intl" URL list ──────
+        # build_racing_post_racecard_url_list.py classifies each venue slug
+        # into UK/IRE vs international via a hand-maintained allowlist
+        # (UK_IRE_VENUES). That allowlist has twice been caught missing a
+        # genuine UK/IRE course (Dundalk-AW on 2026-07-12, Newton Abbot on
+        # 2026-07-13), silently dropping the entire course from the day's
+        # card until an operator noticed and manually recovered it.
+        #
+        # The permanent fix is architectural, not just patching the
+        # allowlist: capture every race RP shows for the date regardless
+        # of that classification, and let the real per-race jurisdiction
+        # data (parsed from each race's own RP page payload, resolved by
+        # normalize_race()/_resolve_jurisdiction() in
+        # workers/racing_api_normalizer.py at Step 2b of
+        # run_prime_today.py) decide inclusion. That check is independent
+        # of the venue-name allowlist and already correctly excludes
+        # genuinely non-UK/IRE cards (e.g. Deauville, Sha Tin) using each
+        # race's actual country field, so capturing the intl list here
+        # costs a handful of extra page fetches for races that get
+        # correctly filtered out downstream, in exchange for never again
+        # silently losing a genuine UK/IRE course to an incomplete list.
+        intl_url_list = ROOT / "data" / "racing_post_url_lists" / f"rp_racecards_{date}_intl.txt"
+        n_intl_urls = (
+            len([l for l in intl_url_list.read_text().splitlines() if l.strip()])
+            if intl_url_list.exists() else 0
+        )
+        if n_intl_urls:
+            print(f"\n  {n_intl_urls} supplementary (intl-classified) racecard URLs to capture.")
+            run(
+                "Step 3.5: Capture supplementary intl-classified racecard pages",
+                [PY, "scripts/ops/racing_post_account_collector.py", "capture",
+                 "--date", date, "--url-list", str(intl_url_list), "--profile-dir", str(FIREFOX_PROFILE),
+                 "--delay-seconds", "1.5", "--execute", "--batch-size", "0"],
+                critical=False, results=results,
+            )
+        else:
+            print("\n  0 supplementary intl-classified racecard URLs — nothing to capture.")
+
     # ── Step 4-5: parse + validate ───────────────────────────────────────
     if not run(
         "Step 4: Parse racecard captures",
