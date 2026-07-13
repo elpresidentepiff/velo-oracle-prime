@@ -1,0 +1,168 @@
+{
+  "mission": "RACE-DAY-12-EOD-TRUTH-01",
+  "race_date": "2026-07-12",
+  "generated_at": "2026-07-13T08:17:34.867590+00:00",
+  "classifications": {
+    "RACE_DAY_12_RESULTS_CAPTURED": true,
+    "RESULT_SOURCE_HASHED": true,
+    "RESULT_COMPLETENESS_MEASURED": true,
+    "CANONICAL_PREDICTION_RUNS_MEASURED": true,
+    "LEARNING_EVENT_V2_2_PACKET_SEALED": true,
+    "SIGMA_EVIDENCE_CLOSE_COMPLETE": true,
+    "PARTIAL_AND_AMBIGUOUS_RACES_EXCLUDED": true,
+    "NO_PLAYBOOK_G_CONSUMPTION": true,
+    "NO_STATE_LEARNING": true,
+    "NO_MODEL_TRAINING": true,
+    "NO_MODEL_PROMOTION": true,
+    "NO_LIVE_SCORING_CHANGE": true,
+    "NO_HFS_MUTATION": true,
+    "NO_SUPABASE_WRITES": true,
+    "NO_TELEGRAM_SEND": true
+  },
+  "results_capture": {
+    "primary_source": "data/results/rp_results_2026_07_12.json",
+    "sha256": "ee42a19325747c5f7deec54d19077c5fa97518b595c71e1383dc5bb2014b62e3",
+    "races_captured": 28,
+    "courses": [
+      "dundalk-aw",
+      "perth",
+      "sligo",
+      "stratford"
+    ],
+    "note_dundalk": "Dundalk-AW was absent from this morning's domestic racecard-capture manifest (it lives in the separate _intl racecard URL list, which run_full_raceday.py's standard Steps 1-9 do not currently process). Captured manually via a supplementary results-URL list derived from rp_racecards_2026-07-12_intl.txt and merged into the primary results file with full provenance retained (capture_sources[1] in the results JSON)."
+  },
+  "prediction_source": {
+    "selected_source": "velo_verdicts (Supabase)",
+    "reason": "runner_prediction_snapshots has 0 rows for 2026-07-12; velo_verdicts is the actual canonical prediction artifact for this date.",
+    "runner_prediction_snapshots_rows_for_date": 0
+  },
+  "identity_reconciliation": {
+    "dundalk_race_id_mapping": {
+      "924518": "rp_DUN_20260712_2.00",
+      "924519": "rp_DUN_20260712_2.35",
+      "924520": "rp_DUN_20260712_3.10",
+      "924521": "rp_DUN_20260712_3.45",
+      "924522": "rp_DUN_20260712_4.20",
+      "924523": "rp_DUN_20260712_4.55",
+      "924524": "rp_DUN_20260712_5.30"
+    },
+    "dundalk_race_id_mapping_derivation": "Derived from committed evidence, not positional ordering: each numeric race_id's off-time comes from the results-capture manifest's own source_url + page title (data/racing_post_account_raw/rp-results-2026-07-12-dundalk/manifest.json, SHA-256 ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a); each composite velo_verdicts race_id's off-time is parsed from its own id string. Matched by exact off-time; the generator fails closed (raises) if either side has a duplicate off-time or the two sides are not a clean 1:1 bijection.",
+    "dundalk_mapping_evidence": [
+      {
+        "course": "dundalk-aw",
+        "date": "2026-07-12",
+        "off_time": "2.00",
+        "numeric_result_race_id": "924518",
+        "composite_verdict_race_id": "rp_DUN_20260712_2.00",
+        "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-12/924518",
+        "source_title": "Full Result 2.00 Dundalk (AW) (IRE) | 12 July 2026 | Racing Post",
+        "source_manifest_sha256": "ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a",
+        "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH"
+      },
+      {
+        "course": "dundalk-aw",
+        "date": "2026-07-12",
+        "off_time": "2.35",
+        "numeric_result_race_id": "924519",
+        "composite_verdict_race_id": "rp_DUN_20260712_2.35",
+        "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-12/924519",
+        "source_title": "Full Result 2.35 Dundalk (AW) (IRE) | 12 July 2026 | Racing Post",
+        "source_manifest_sha256": "ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a",
+        "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH"
+      },
+      {
+        "course": "dundalk-aw",
+        "date": "2026-07-12",
+        "off_time": "3.10",
+        "numeric_result_race_id": "924520",
+        "composite_verdict_race_id": "rp_DUN_20260712_3.10",
+        "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-12/924520",
+        "source_title": "Full Result 3.10 Dundalk (AW) (IRE) | 12 July 2026 | Racing Post",
+        "source_manifest_sha256": "ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a",
+        "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH"
+      },
+      {
+        "course": "dundalk-aw",
+        "date": "2026-07-12",
+        "off_time": "3.45",
+        "numeric_result_race_id": "924521",
+        "composite_verdict_race_id": "rp_DUN_20260712_3.45",
+        "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-12/924521",
+        "source_title": "Full Result 3.45 Dundalk (AW) (IRE) | 12 July 2026 | Racing Post",
+        "source_manifest_sha256": "ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a",
+        "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH"
+      },
+      {
+        "course": "dundalk-aw",
+        "date": "2026-07-12",
+        "off_time": "4.20",
+        "numeric_result_race_id": "924522",
+        "composite_verdict_race_id": "rp_DUN_20260712_4.20",
+        "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-12/924522",
+        "source_title": "Full Result 4.20 Dundalk (AW) (IRE) | 12 July 2026 | Racing Post",
+        "source_manifest_sha256": "ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a",
+        "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH"
+      },
+      {
+        "course": "dundalk-aw",
+        "date": "2026-07-12",
+        "off_time": "4.55",
+        "numeric_result_race_id": "924523",
+        "composite_verdict_race_id": "rp_DUN_20260712_4.55",
+        "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-12/924523",
+        "source_title": "Full Result 4.55 Dundalk (AW) (IRE) | 12 July 2026 | Racing Post",
+        "source_manifest_sha256": "ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a",
+        "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH"
+      },
+      {
+        "course": "dundalk-aw",
+        "date": "2026-07-12",
+        "off_time": "5.30",
+        "numeric_result_race_id": "924524",
+        "composite_verdict_race_id": "rp_DUN_20260712_5.30",
+        "source_url": "https://www.racingpost.com/results/1138/dundalk-aw/2026-07-12/924524",
+        "source_title": "Full Result 5.30 Dundalk (AW) (IRE) | 12 July 2026 | Racing Post",
+        "source_manifest_sha256": "ee8e2f5721ec6c6bb16289ccb1b28c7e55fe32caba4c73fe54e8cb8002089f2a",
+        "resolution_method": "COURSE_DATE_EXACT_OFFTIME_MATCH"
+      }
+    ],
+    "dundalk_horse_id_scheme_mismatch": "velo_verdicts uses name-slug horse ids (e.g. rp_DUN_collective_power) for Dundalk-AW, not the numeric RP ids used by the result truth. Resolved per-horse via identity_resolver.resolve_horse() (exact id, then normalised name within the race). 5 of 256 predicted horses across all courses could not be resolved and were excluded from shadow-eligibility for their race."
+  },
+  "time_safety": {
+    "distribution": {
+      "EXCLUDED_UNTIMED_ODDS": 214,
+      "EXCLUDED_INCOMPLETE_RESULT": 37,
+      "EXCLUDED_IDENTITY_AMBIGUOUS": 5
+    },
+    "note": "No event is classified SAFE_* in this close: odds_capture_ts is None for every event because no documented check yet proves velo_verdicts.fetch_timestamp represents the capture time of the exact odds embedded in the frozen prediction row. The 214 events for complete, proven-pre-race races are EXCLUDED_UNTIMED_ODDS (shadow-evaluation still allowed per 01A law, which is independent of odds-timing proof); the 37 events belonging to the 5 partial races are EXCLUDED_INCOMPLETE_RESULT; the 5 unresolved-horse events are EXCLUDED_IDENTITY_AMBIGUOUS."
+  },
+  "manifest_assertions": {
+    "unresolved_horse_exclusion_count": 5,
+    "partial_ambiguous_race_count": 5,
+    "every_unresolved_horse_in_csv": true,
+    "every_partial_race_has_reason": true,
+    "no_excluded_race_shadow_eligible": true
+  },
+  "learning_events_v2_2": {
+    "jsonl_path": "data/reports/learning_events_v2_2_2026_07_12.jsonl",
+    "manifest_path": "data/reports/learning_events_v2_2_2026_07_12_manifest.json",
+    "total_events": 256,
+    "consumption_status": "SEALED_NOT_CONSUMED",
+    "allow_flag_law": {
+      "analysis_allowed": "true where horse resolved unambiguously in result",
+      "shadow_evaluation_allowed": "true only if result_universe_complete AND prediction_before_off is True -- independent of odds-timing proof, per established 01A analytical-evaluation law",
+      "state_learning_allowed": "false (sealed for later governed 01B consumption)",
+      "model_training_allowed": "false (sealed)",
+      "promotion_eligible": "false (sealed)"
+    }
+  },
+  "sigma_evidence_close": {
+    "json_path": "data/reports/sigma_2026_07_12_read_only.json",
+    "md_path": "data/reports/sigma_2026_07_12_read_only.md",
+    "races_shadow_eligible": 23,
+    "top_pick_win_rate_shadow_eligible": 0.2174,
+    "top_pick_frame_rate_shadow_eligible": 0.4783
+  },
+  "exclusions_csv_path": "data/reports/race_day_12_exclusions_2026_07_12.csv",
+  "next_step": "LEARNING-LOOP-01B not started. July 12 evidence sealed for later governed consumption. July 13 continues with the existing frozen scorer and weights."
+}
