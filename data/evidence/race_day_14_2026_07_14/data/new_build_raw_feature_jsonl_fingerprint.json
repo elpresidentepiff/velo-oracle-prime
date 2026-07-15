@@ -1,0 +1,21 @@
+{
+  "note": "The raw per-runner feature JSONL files (368 runners x 2 files, ~1.1MB combined) are NOT duplicated into this evidence bundle because they are not load-bearing for any headline claim in this mission -- the readiness reports committed verbatim above (two_lane_readiness_2026_07_14.json/.md, current_card_passport_feed_2026_07_14.json/.md) already state races_scored=43, runners_scored=368, and all quality-gate results authoritatively. This fingerprint (full-file SHA-256, line count, first/last line hash) lets a reviewer confirm the source file identity if the primary repo copy is later inspected, without committing the full feature dump here.",
+  "fingerprints": [
+    {
+      "source_path_in_evidence_staging": "data/new_build/current_cards/current_card_passport_feed_2026_07_14.jsonl",
+      "sha256": "6c6809efd7b55ee20177d673788923a72a74e57bebc01b49ef925e8594c3b506",
+      "size_bytes": 806270,
+      "line_count": 368,
+      "first_line_sha256": "9c2b83aff1e816142a30ddaf7d0c75a3b85d3f5f9a9467a9614061a0f3edb3b5",
+      "last_line_sha256": "ec74dee62a55e7f7efa0ffa18dfcb8799bafebee1713d5729d28342adf65b823"
+    },
+    {
+      "source_path_in_evidence_staging": "data/new_build/current_cards/current_card_intent_features_2026_07_14.jsonl",
+      "sha256": "c97dec4d6311094dd21b95e728fe50dc8c061499edff5a4c3efd4f9c464813b9",
+      "size_bytes": 278183,
+      "line_count": 368,
+      "first_line_sha256": "dfb3e1a1f6906f1444e774577beaf94e79a984112f6f36a71002755d01d4e6bf",
+      "last_line_sha256": "e51e016206cdd346940311ee0b951ac7cf4326cd5c17759b9ef8dc634ef59ecc"
+    }
+  ]
+}

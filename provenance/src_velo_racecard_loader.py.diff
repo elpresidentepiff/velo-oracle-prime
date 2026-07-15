@@ -1,0 +1,38 @@
+diff --git a/src/velo/racecard_loader.py b/src/velo/racecard_loader.py
+index 21dbd66..39752dd 100644
+--- a/src/velo/racecard_loader.py
++++ b/src/velo/racecard_loader.py
+@@ -24,10 +24,10 @@ from typing import Any
+ 
+ # Known Irish venue codes — everything else is treated as GB
+ _IRE_VENUE_CODES = frozenset({
+-    "GOW", "LEO", "NAV", "CUR", "TIP", "GAL", "KIL", "BAL", "BEL",
++    "GOW", "LEO", "NAV", "CUR", "TIP", "GAL", "KIL", "KLN", "BAL", "BEL",
+     "CLO", "DUN", "FAI", "LIM", "NAA", "PAR", "ROS", "SLI", "THU",
+     "WEX", "NAS", "DRO", "MUS", "SAL", "CAR", "FFA", "GRA", "KIG",
+-    "PTK",
++    "PTK", "DPT", "DOW",
+ })
+ 
+ 
+@@ -138,10 +138,12 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
+             race_info = race_data.get("race_info", "")
+             going_str: str | None = None
+             race_class: str | None = None
++            race_type_str: str | None = None
+             if isinstance(race_info, dict):
+                 going_str = race_info.get("going") or None
+                 rc = race_info.get("race_class")
+                 race_class = str(rc) if rc is not None else None
++                race_type_str = race_info.get("race_type") or None
+             else:
+                 race_info_str = str(race_info) if race_info else ""
+                 m_going = _re.search(r"\b(Good|Firm|Soft|Heavy|Yielding|Standard)[^\)]*", race_info_str, _re.I)
+@@ -228,6 +230,7 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
+                 "distance_f": None,
+                 "going": going_str,
+                 "race_class": race_class,
++                "type": race_type_str,
+                 "region": region,
+                 "runners": runners,
+                 # Keep raw forecast for diagnostics

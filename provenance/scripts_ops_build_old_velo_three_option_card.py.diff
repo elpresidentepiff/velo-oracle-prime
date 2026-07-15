@@ -1,0 +1,92 @@
+diff --git a/scripts/ops/build_old_velo_three_option_card.py b/scripts/ops/build_old_velo_three_option_card.py
+index 21c8366..111a09a 100644
+--- a/scripts/ops/build_old_velo_three_option_card.py
++++ b/scripts/ops/build_old_velo_three_option_card.py
+@@ -4,11 +4,10 @@ import argparse
+ import json
+ import re
+ from collections import defaultdict
+-from datetime import datetime, timezone
++from datetime import UTC, datetime
+ from pathlib import Path
+ from typing import Any
+ 
+-
+ ROOT = Path(__file__).resolve().parents[2]
+ DATA = ROOT / "data"
+ 
+@@ -121,10 +120,7 @@ def _longshot_score(row: dict[str, Any]) -> float:
+ 
+ def _pick_longshot(rows: list[dict[str, Any]], used: set[str]) -> dict[str, Any] | None:
+     candidates = [
+-        r
+-        for r in rows
+-        if str(r.get("horse_id") or r.get("horse")) not in used
+-        and _num(r.get("sp_dec"), 10.0) >= 4.5
++        r for r in rows if str(r.get("horse_id") or r.get("horse")) not in used and _num(r.get("sp_dec"), 10.0) >= 4.5
+     ]
+     if not candidates:
+         candidates = [r for r in rows if str(r.get("horse_id") or r.get("horse")) not in used] or rows
+@@ -177,7 +173,9 @@ def build_card(date: str) -> dict[str, Any]:
+         "LONGSHOT": {"evaluated": 0, "wins": 0, "frames": 0},
+     }
+ 
+-    for race_id, race_rows in sorted(by_race.items(), key=lambda item: (item[1][0].get("course"), item[1][0].get("off_time"))):
++    for race_id, race_rows in sorted(
++        by_race.items(), key=lambda item: (item[1][0].get("course"), item[1][0].get("off_time"))
++    ):
+         race_rows = sorted(race_rows, key=lambda r: int(r.get("rank") or 999))
+         result_race = results.get(race_id)
+         used: set[str] = set()
+@@ -219,7 +217,7 @@ def build_card(date: str) -> dict[str, Any]:
+ 
+     return {
+         "schema_version": "old_velo_three_option_card_v1",
+-        "generated_at": datetime.now(timezone.utc).isoformat(),
++        "generated_at": datetime.now(UTC).isoformat(),
+         "date": date,
+         "source_snapshot": str(snapshot_path.relative_to(ROOT)),
+         "races": races,
+@@ -277,7 +275,7 @@ def write_outputs(card: dict[str, Any]) -> tuple[Path, Path]:
+     for race in card["races"]:
+         by_role = {p["role"]: p for p in race["picks"]}
+ 
+-        def cell(role: str) -> tuple[str, str]:
++        def cell(role: str, by_role: dict[str, Any] = by_role) -> tuple[str, str]:
+             pick = by_role.get(role) or {}
+             outcome = pick.get("outcome") or {}
+             detail = (
+@@ -303,11 +301,32 @@ def write_outputs(card: dict[str, Any]) -> tuple[Path, Path]:
+     return json_path, md_path
+ 
+ 
++def _frozen_card_path(date: str) -> Path:
++    return DATA / "reports" / f"old_velo_three_option_card_{_date_tag(date)}.json"
++
++
+ def main() -> None:
+-    parser = argparse.ArgumentParser(description="Build Old VELO WIN/PLACE/LONGSHOT operator card from runner snapshots.")
++    parser = argparse.ArgumentParser(
++        description="Build Old VELO WIN/PLACE/LONGSHOT operator card from runner snapshots."
++    )
+     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
++    parser.add_argument(
++        "--force-rebuild",
++        action="store_true",
++        help="Recompute the morning selections even if a dated card already exists. "
++        "Never use this after results have arrived -- it discards the frozen "
++        "selections that evaluate_old_velo_three_option_card.py depends on.",
++    )
+     args = parser.parse_args()
+ 
++    existing = _frozen_card_path(args.date)
++    if existing.exists() and not args.force_rebuild:
++        card = json.loads(existing.read_text(encoding="utf-8"))
++        print(f"OLD_VELO_THREE_OPTION_FROZEN date={args.date} races={len(card['races'])}")
++        print(f"json={existing} (unchanged -- morning selections are frozen once made)")
++        print("Use --force-rebuild to override (destroys the frozen card; do not do this post-results).")
++        return
++
+     card = build_card(args.date)
+     json_path, md_path = write_outputs(card)
+     print(f"OLD_VELO_THREE_OPTION_COMPLETE date={args.date} races={len(card['races'])}")

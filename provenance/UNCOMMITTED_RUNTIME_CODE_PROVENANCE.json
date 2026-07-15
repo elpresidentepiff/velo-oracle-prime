@@ -1,0 +1,100 @@
+{
+  "mission": "RACE-DAY-14-BEST-DAY-PROOF-01",
+  "generated_at_utc": "2026-07-15T00:00:00Z",
+  "note": "Read-only provenance packet. Diffs captured via `git diff HEAD -- <path>` from the dirty primary worktree (/mnt/c/Users/puror/velo-oracle-prime, branch audit/local-01-truth-reconciliation, HEAD aef6305). Primary worktree was NOT modified to produce this packet.",
+  "primary_worktree": {
+    "path": "/mnt/c/Users/puror/velo-oracle-prime",
+    "branch": "audit/local-01-truth-reconciliation",
+    "head_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
+    "dirty_tracked_paths_total": 422,
+    "status_snapshot_file": "provenance/primary_worktree_status_porcelain_v2.txt",
+    "untracked_files_snapshot_file": "provenance/primary_worktree_untracked_files.txt"
+  },
+  "steps_1_20_scripts_cross_referenced_against_dirty_set": [
+    "scripts/ops/racing_post_account_collector.py",
+    "scripts/ops/build_racing_post_racecard_url_list.py",
+    "scripts/ops/parse_racing_post_racecard_capture.py",
+    "scripts/ops/validate_rp_injection.py",
+    "scripts/ops/new_build_current_card_feed.py",
+    "scripts/ops/new_build_two_lane_score.py",
+    "scripts/ops/ensure_old_velo_rp_newspaper_files.py",
+    "scripts/ops/build_rpdc_daily.py",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/run_radical_shadow_today.py",
+    "scripts/ops/run_tri_lane_stress_test.py",
+    "scripts/ops/build_tri_lane_agent_review.py",
+    "scripts/ops/build_deep_race_agent_v1.py",
+    "scripts/ops/build_course_master.py",
+    "scripts/ops/build_old_velo_three_option_card.py",
+    "scripts/ops/build_rp_results_url_list.py",
+    "scripts/ops/parse_rp_results_capture.py",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/ingest_results_to_horse_runs.py",
+    "scripts/ops/build_sigma_retrieval_corpus.py",
+    "scripts/ops/update_mission_control.py",
+    "scripts/audit/vp30_operator_card.py",
+    "scripts/audit/run_velo_council.py",
+    "scripts/ops/run_execution_bridge_shadow.py",
+    "scripts/ops/build_innovation_protocol.py",
+    "scripts/ops/router_shadow_audit.py",
+    "scripts/ops/nightly_eod_learning_runner.py",
+    "src/velo/racecard_loader.py"
+  ],
+  "dirty_and_invoked": [
+    {
+      "path": "scripts/ops/racing_post_account_collector.py",
+      "used_by_steps": ["1 (manual-capture)", "3 (capture, racecards)", "10B (capture, results)"],
+      "base_blob_sha_head": "f095f4eb65f8e1b9695ced567519a6bf1640531e",
+      "working_tree_sha256": "e6eca0d76e5b1da263dfe5fc54472a36b7f12085182193cf4c8a607c8c2fda74",
+      "diff_file": "provenance/scripts_ops_racing_post_account_collector.py.diff",
+      "lines_changed": 80,
+      "summary": "Adds _atomic_write_json() (temp file + os.replace) and moves the batch-capture manifest write inside the per-URL loop (incremental durability). Does NOT change the truncation-by-current-urls-list bug (all_captures = [captures_by_url[u] for u in urls if u in captures_by_url]) that is the root cause of the 2026-07-14 3-entry manifest -- that logic is byte-for-byte identical in HEAD and working tree. Also adds a non-interactive stdin fallback for init-login (unrelated to capture/manifest).",
+      "materially_affected_step": "Steps 3 and 10B (capture) -- affects manifest durability/atomicity only, not the manifest content/truncation defect investigated in Phase 10.",
+      "runtime_code_identity": "PARTIALLY_PROVEN",
+      "evidence": "manifest.json for 2026-07-14 racecards is well-formed JSON (not truncated/corrupted mid-write), consistent with -- but not conclusive proof of -- the atomic-write path having been exercised. The 3-entry truncation itself is explained by unchanged (both HEAD and working-tree) logic, so this diff does not change the Phase 10 root-cause finding."
+    },
+    {
+      "path": "scripts/ops/run_prime_today.py",
+      "used_by_steps": ["9 (scoring)"],
+      "base_blob_sha_head": "5d1447155dafdba66cdb6a93347ee02d5cae1e20",
+      "working_tree_sha256": "fff0020cc599ccabc007ddf27e6b3a3b4e8ebeed3255c9764341a6855db6d312",
+      "diff_file": "provenance/scripts_ops_run_prime_today.py.diff",
+      "lines_changed": 95,
+      "summary": "Adds --verdicts-only and --no-runner-snapshots opt-in CLI flags (labelled SIGMA-28B in code comments) that let a future run disable runner_prediction_snapshots writes and Telegram without disabling velo_verdicts persistence. When neither flag is passed (the standard Step 9 invocation used on 2026-07-14 per THE_ONE_TRUTH.md), _resolve_persistence_modes() returns mode_label=STANDARD with persistence/runner_snapshots/telegram all enabled -- byte-for-byte equivalent to the pre-diff behaviour (persistence_enabled = not args.dry_run). No change to the scoring/ensemble math itself (SQPE/improvement_score/market_deception_score paths untouched by this diff).",
+      "materially_affected_step": "Step 9, but only if --verdicts-only or --no-runner-snapshots were actually passed on 2026-07-14. THE_ONE_TRUTH.md's documented Step 9 command (`run_prime_today.py --date YYYY-MM-DD --source rp --no-notify`) does not include either new flag.",
+      "runtime_code_identity": "PLAUSIBLE_LOW_MATERIALITY",
+      "evidence": "Default code path is provably identical in behaviour to committed HEAD for the documented Step 9 invocation. This mission does not have shell history proving no undocumented flag was used, so this is PLAUSIBLE not PROVEN, but the diff's structure (purely additive, opt-in, no default-path change, no scoring-math touch) means even in the worst case this could not have altered verdict probabilities."
+    },
+    {
+      "path": "scripts/ops/build_old_velo_three_option_card.py",
+      "used_by_steps": ["9.6 (WIN/PLACE/LONGSHOT operator card)"],
+      "base_blob_sha_head": "21c836651c8dc3ba26490cf69b3e57e7f6659127",
+      "working_tree_sha256": "a50d995f3778b99ff3b9fe800ecb87e50baba77546a5503e9a0edf50aa20b385",
+      "diff_file": "provenance/scripts_ops_build_old_velo_three_option_card.py.diff",
+      "lines_changed": 41,
+      "summary": "Adds a --force-rebuild guard: once a dated card exists, reruns are frozen/no-ops unless --force-rebuild is explicitly passed (prevents accidental post-results rescoring of the morning WIN/PLACE/LONGSHOT selections). Remaining diff is Python-3.12 datetime.UTC modernization and line-length formatting -- no scoring logic change.",
+      "materially_affected_step": "Step 9.6 only; this step is SHADOW/OPERATOR ONLY per THE_ONE_TRUTH.md and does not feed live scoring or Sigma.",
+      "runtime_code_identity": "PLAUSIBLE_LOW_MATERIALITY",
+      "evidence": "Diff is protective (adds a freeze guard against post-result rescoring, directly relevant to and supportive of the Phase 2 'no post-result rescoring' requirement) plus lint-only changes. No selection/scoring math altered."
+    },
+    {
+      "path": "src/velo/racecard_loader.py",
+      "used_by_steps": ["Referenced by parse_rp_results_capture.py / build_rpdc_daily.py per THE_ONE_TRUTH.md's ID-chain note (line ~382)"],
+      "base_blob_sha_head": "21dbd66ed1c538aaa3ac88d07f47a7bada1b087a",
+      "working_tree_sha256": "9bef37780565b851b16831f85e8118a9eed667aa0cbfaf97231138092d7da621",
+      "diff_file": "provenance/src_velo_racecard_loader.py.diff",
+      "lines_changed": 9,
+      "summary": "Adds 'KLN' (Killarney) and 'DPT','DOW' (Downpatrick) to the _IRE_VENUE_CODES frozenset used for GB/IRE region classification, plus threads a race_type_str field through from race_info.",
+      "materially_affected_step": "Region tagging for every race at Killarney and Downpatrick -- both of which are on the 2026-07-14 card (7 courses reported: Leicester, Downpatrick, Wolverhampton AW, Longchamp, Killarney, Ffos Las, Beverley).",
+      "runtime_code_identity": "PROVEN_UNCOMMITTED_ACTIVE",
+      "evidence": "Fingerprinted directly against the output artifact: every 2026-07-14 racecard row for Killarney and Downpatrick carries region=='IRE' in evidence_staging/2026-07-14/data/racecards_2026_07_14_standard.json. Under the committed HEAD version of this file, KLN/DPT/DOW are NOT in _IRE_VENUE_CODES and 'everything else is treated as GB' per the function's own docstring, so these rows would have region=='GB' if committed HEAD had produced this file. Since the artifact shows IRE, the uncommitted working-tree version of this file was demonstrably the one that ran on 2026-07-14. This means committed HEAD (aef6305) does NOT equal the code that produced the 2026-07-14 racecard artifact -- proven, not merely suspected."
+    }
+  ],
+  "governance_conclusion": {
+    "committed_head_equals_runtime_code": false,
+    "reason": "Directly proven for src/velo/racecard_loader.py via output-artifact fingerprinting; plausible-but-unproven for run_prime_today.py and build_old_velo_three_option_card.py; the collector.py truncation bug is identical in both versions so is not a code-identity ambiguity for that specific defect.",
+    "scoring_math_affected": false,
+    "scoring_math_reasoning": "None of the four diffs touch the SQPE_IMPROVEMENT_MDS_V1 ensemble, velo_prime_prob computation, or any probability/weighting logic. The one PROVEN-active diff (racecard_loader.py) affects only GB/IRE region tagging, which determines universe membership/tagging, not win-probability math.",
+    "phase_6_verdict_constraint": "Per operator instruction: because committed HEAD is proven NOT to equal the runtime code that produced at least one primary artifact (the racecard file feeding every downstream step), the Phase 6 verdict must not be BEST_VERIFIED_DAY_EVER. This packet supports BEST_VERIFIED_RECENT_DAY (exceptional, rank #1 across all historical comparisons in the ledger, but with a proven code-provenance gap and a proven manual-fallback dependency on Step 10A/10B that keep it short of an unconditional 'best day ever' claim)."
+  }
+}

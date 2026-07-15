@@ -1,0 +1,177 @@
+{
+  "mission": "RACE-DAY-14-BEST-DAY-PROOF-01 (P0-17 correction pass)",
+  "primary_worktree_path": "/mnt/c/Users/puror/velo-oracle-prime",
+  "method": "Two independent read-only snapshots of `git status --porcelain=v2` and `git ls-files --others --exclude-standard` were captured: 'before' at the start of the original forensic mission (before any evidence copy or analysis began), and 'after' at the start of this correction pass (after all forensic work, including the initial PR, was already complete). Both commands are read-only and were run from the primary repo without any branch switch, reset, stash, clean, checkout, or write operation in between. In addition, every one of the 25 primary evidence files copied into evidence_staging/2026-07-14/ was re-hashed (SHA-256) directly from the primary repo at correction-pass time and compared against the hash recorded at original copy time in _evidence_import_manifest.json.",
+  "status_snapshot_before_path": "provenance/primary_worktree_status_before.txt",
+  "status_snapshot_after_path": "provenance/primary_worktree_status_after.txt",
+  "status_snapshot_before_sha256": "4aaf6843ba80a0fada513d91eea6b4bbe656a4ca2bf78531c1d658902073d1b5",
+  "status_snapshot_after_sha256": "4aaf6843ba80a0fada513d91eea6b4bbe656a4ca2bf78531c1d658902073d1b5",
+  "status_snapshot_identical": true,
+  "status_snapshot_dirty_path_count": 422,
+  "untracked_snapshot_before_path": "provenance/primary_worktree_untracked_before.txt",
+  "untracked_snapshot_after_path": "provenance/primary_worktree_untracked_after.txt",
+  "untracked_snapshot_before_sha256": "ebee73958dfeddd90c5649c7cf9f763a623b2eb6221cb9b9a40d872acf0f7255",
+  "untracked_snapshot_after_sha256": "ebee73958dfeddd90c5649c7cf9f763a623b2eb6221cb9b9a40d872acf0f7255",
+  "untracked_snapshot_identical": true,
+  "untracked_file_count": 327,
+  "per_file_hash_comparisons": [
+    {
+      "path": "data/council_packets/council_packet_2026-07-14.json",
+      "sha256_before": "6750fa9bf23d8f0a89246c6dfdaead7fec855a14a5b87dcbc0544d4200164c4e",
+      "sha256_after": "6750fa9bf23d8f0a89246c6dfdaead7fec855a14a5b87dcbc0544d4200164c4e",
+      "identical": true
+    },
+    {
+      "path": "data/council_reports/velo_council_report_2026-07-14.md",
+      "sha256_before": "02cb2f4f0a85e97db796c7d1415a901185d01e64c3361ae4a8e3c26c58cbfe68",
+      "sha256_after": "02cb2f4f0a85e97db796c7d1415a901185d01e64c3361ae4a8e3c26c58cbfe68",
+      "identical": true
+    },
+    {
+      "path": "data/council_runs/council_run_2026-07-14.json",
+      "sha256_before": "ac3e90f28f3916f1ec56e176a28bbd2947f6f6c6c3fd7cfb14eaedc12a4fd5ea",
+      "sha256_after": "ac3e90f28f3916f1ec56e176a28bbd2947f6f6c6c3fd7cfb14eaedc12a4fd5ea",
+      "identical": true
+    },
+    {
+      "path": "data/mission_control/2026-07-14_mission_control.json",
+      "sha256_before": "e6c5ab58a417192408988a8b35ca872541e21e5e3dbd34a4c698c157d02c4400",
+      "sha256_after": "e6c5ab58a417192408988a8b35ca872541e21e5e3dbd34a4c698c157d02c4400",
+      "identical": true
+    },
+    {
+      "path": "data/model_comparison_ledger.csv",
+      "sha256_before": "70e88c7a185fa24075cb62b7f89e8a8c8c262dfacba91f0e50a92bd9b28832a1",
+      "sha256_after": "70e88c7a185fa24075cb62b7f89e8a8c8c262dfacba91f0e50a92bd9b28832a1",
+      "identical": true
+    },
+    {
+      "path": "data/new_build/current_cards/current_card_intent_features_2026_07_14.jsonl",
+      "sha256_before": "c97dec4d6311094dd21b95e728fe50dc8c061499edff5a4c3efd4f9c464813b9",
+      "sha256_after": "c97dec4d6311094dd21b95e728fe50dc8c061499edff5a4c3efd4f9c464813b9",
+      "identical": true
+    },
+    {
+      "path": "data/new_build/current_cards/current_card_passport_feed_2026_07_14.jsonl",
+      "sha256_before": "6c6809efd7b55ee20177d673788923a72a74e57bebc01b49ef925e8594c3b506",
+      "sha256_after": "6c6809efd7b55ee20177d673788923a72a74e57bebc01b49ef925e8594c3b506",
+      "identical": true
+    },
+    {
+      "path": "data/new_build/reports/current_card_intent_features_2026_07_14_audit.json",
+      "sha256_before": "090d7d6581c9ecb814557d1c64a27fb3d74f478f4ac1b58860107cced78e006b",
+      "sha256_after": "090d7d6581c9ecb814557d1c64a27fb3d74f478f4ac1b58860107cced78e006b",
+      "identical": true
+    },
+    {
+      "path": "data/new_build/reports/current_card_passport_feed_2026_07_14.json",
+      "sha256_before": "4eb70f27c0804f684c67bbb047bbfb3d1f7203b1f2679260db6f532ee7865a95",
+      "sha256_after": "4eb70f27c0804f684c67bbb047bbfb3d1f7203b1f2679260db6f532ee7865a95",
+      "identical": true
+    },
+    {
+      "path": "data/new_build/reports/current_card_passport_feed_2026_07_14.md",
+      "sha256_before": "0b8a53b7df7d699b2ec5bed8c528fdbc81cd573b61c1da36c83e400c1bdba780",
+      "sha256_after": "0b8a53b7df7d699b2ec5bed8c528fdbc81cd573b61c1da36c83e400c1bdba780",
+      "identical": true
+    },
+    {
+      "path": "data/new_build/reports/two_lane_readiness_2026_07_14.json",
+      "sha256_before": "c54b3cbe817c07a447035406e3ced00d2bd9eb44198719f1df341c77381f665b",
+      "sha256_after": "c54b3cbe817c07a447035406e3ced00d2bd9eb44198719f1df341c77381f665b",
+      "identical": true
+    },
+    {
+      "path": "data/new_build/reports/two_lane_readiness_2026_07_14.md",
+      "sha256_before": "cd2cecb39dbca28c8c85757aa56ef477055d89eca9f868862a3f4f09758feb65",
+      "sha256_after": "cd2cecb39dbca28c8c85757aa56ef477055d89eca9f868862a3f4f09758feb65",
+      "identical": true
+    },
+    {
+      "path": "data/nightly_eod_learning_council_audit_2026_07_14.json",
+      "sha256_before": "2134f20891854d1ef391de4419310eaed62603e43af1926530d6cba590706366",
+      "sha256_after": "2134f20891854d1ef391de4419310eaed62603e43af1926530d6cba590706366",
+      "identical": true
+    },
+    {
+      "path": "data/nightly_eod_learning_status_2026_07_14.json",
+      "sha256_before": "3983a821ab79e66e5b7bafea2ee320de475d3ec6b75aeb96d84c11f7bf557f57",
+      "sha256_after": "3983a821ab79e66e5b7bafea2ee320de475d3ec6b75aeb96d84c11f7bf557f57",
+      "identical": true
+    },
+    {
+      "path": "data/racecards_2026_07_14_standard.json",
+      "sha256_before": "98b042ca11a4e1b1043656b885cd4f84ce8a2aa521b30df4929f8dded115a5fb",
+      "sha256_after": "98b042ca11a4e1b1043656b885cd4f84ce8a2aa521b30df4929f8dded115a5fb",
+      "identical": true
+    },
+    {
+      "path": "data/racing_post_account_raw/2026-07-14/manifest.json",
+      "sha256_before": "6c8c694e09d234625a8214cde04c6aa4326aa8623cf67ac12266fa445c3bc589",
+      "sha256_after": "6c8c694e09d234625a8214cde04c6aa4326aa8623cf67ac12266fa445c3bc589",
+      "identical": true
+    },
+    {
+      "path": "data/racing_post_url_lists/rp_results_2026-07-14.txt",
+      "sha256_before": "e5fd05772d04fc2c40fd969b3722d9dcb745d87d2d293302a40b82ffc30fce46",
+      "sha256_after": "e5fd05772d04fc2c40fd969b3722d9dcb745d87d2d293302a40b82ffc30fce46",
+      "identical": true
+    },
+    {
+      "path": "data/results/rp_results_2026_07_14.json",
+      "sha256_before": "b4c6cc32b5ae68cc63f3986d761e59469168053908869d1dfbee462a358727b6",
+      "sha256_after": "b4c6cc32b5ae68cc63f3986d761e59469168053908869d1dfbee462a358727b6",
+      "identical": true
+    },
+    {
+      "path": "data/router_shadow_audit_latest.csv",
+      "sha256_before": "593defa3c12b9626b5bbb4980680a08a9e787aed6fb6985fed797c53de64ca07",
+      "sha256_after": "593defa3c12b9626b5bbb4980680a08a9e787aed6fb6985fed797c53de64ca07",
+      "identical": true
+    },
+    {
+      "path": "data/router_shadow_audit_ledger.csv",
+      "sha256_before": "9cbaef42320d28041a7565dc471e9e1b0ba364d7506b53b11f4b598999df8217",
+      "sha256_after": "9cbaef42320d28041a7565dc471e9e1b0ba364d7506b53b11f4b598999df8217",
+      "identical": true
+    },
+    {
+      "path": "data/router_shadow_audit_runs/router_shadow_audit_20260714_231325.csv",
+      "sha256_before": "593defa3c12b9626b5bbb4980680a08a9e787aed6fb6985fed797c53de64ca07",
+      "sha256_after": "593defa3c12b9626b5bbb4980680a08a9e787aed6fb6985fed797c53de64ca07",
+      "identical": true
+    },
+    {
+      "path": "data/router_shadow_audit_runs/router_shadow_audit_20260714_231325.md",
+      "sha256_before": "0aa87f29805407d1b3698f7346c97127f760b7afc6cfce56f2f8f4280986b4bc",
+      "sha256_after": "0aa87f29805407d1b3698f7346c97127f760b7afc6cfce56f2f8f4280986b4bc",
+      "identical": true
+    },
+    {
+      "path": "data/sigma_results/sigma_results_2026_07_14.json",
+      "sha256_before": "644c86c9ffb7a8b5a3498a90b1fee6ddc9433400cb980c8f16de415769608427",
+      "sha256_after": "644c86c9ffb7a8b5a3498a90b1fee6ddc9433400cb980c8f16de415769608427",
+      "identical": true
+    },
+    {
+      "path": "data/velo_innovation_protocol_1k_deduped.csv",
+      "sha256_before": "34a31b459b91504fcc0682012044d04cb55e2af83e2e5ebab1ca9c50d6a3f2ad",
+      "sha256_after": "34a31b459b91504fcc0682012044d04cb55e2af83e2e5ebab1ca9c50d6a3f2ad",
+      "identical": true
+    },
+    {
+      "path": "data/velo_prime_verdicts_2026_07_14.json",
+      "sha256_before": "5f8b9b66b971aed38089d555a2df6fe1ffd0e8edc2484604925b218943ecfd8f",
+      "sha256_after": "5f8b9b66b971aed38089d555a2df6fe1ffd0e8edc2484604925b218943ecfd8f",
+      "identical": true
+    }
+  ],
+  "per_file_hash_comparison_count": 25,
+  "all_per_file_hashes_identical": true,
+  "explicit_equality_assertions": {
+    "status_before_equals_status_after": true,
+    "untracked_before_equals_untracked_after": true,
+    "every_copied_evidence_file_hash_unchanged": true
+  },
+  "classification": "PRIMARY_DIRTY_WORKTREE_BYTE_IDENTICAL_BEFORE_AFTER"
+}
