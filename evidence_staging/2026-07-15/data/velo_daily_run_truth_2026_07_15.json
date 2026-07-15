@@ -1,0 +1,91 @@
+{
+  "date": "2026-07-15",
+  "generated_at": "2026-07-15T14:08:56.272835Z",
+  "status": "MANUAL_RECOVERY_ONLY",
+  "alert_required": true,
+  "council_owner": "DATA_AUDITOR",
+  "escalation_owner": "PRIME_CHAIR",
+  "deploy_truth_status": "UNKNOWN_UNLESS_RAILWAY_COMMIT_EXPOSED",
+  "cron_truth_status": "FAIL_OR_UNPROVEN",
+  "supabase_verdict_truth_status": "PASS",
+  "local_verdict_truth_status": "PASS",
+  "telegram_truth_status": "DISABLED",
+  "telegram_truth_path": "/mnt/c/Users/puror/velo-oracle-prime/data/telegram_delivery_truth_2026_07_15.json",
+  "telegram_truth_summary": {
+    "velo-prime-scoring": {
+      "events": 93,
+      "sent_count": 0,
+      "failed_count": 0,
+      "notify_enabled_any": false,
+      "status": "DISABLED",
+      "updated_at": "2026-07-15T14:08:55.158086Z"
+    }
+  },
+  "supabase_verdict_count": 54,
+  "local_verdict_exists": true,
+  "local_verdict_count": 54,
+  "local_verdict_file": "/mnt/c/Users/puror/velo-oracle-prime/data/velo_prime_verdicts_2026_07_15.json",
+  "issues": [
+    "MANUAL_RUN_ONLY"
+  ],
+  "warnings": [
+    "AUTOMATION_DID_NOT_DELIVER"
+  ],
+  "latest_pipeline_run": {
+    "id": "a96235ce-9899-4773-bc0d-0aaf276f3cfd",
+    "service_name": "velo-prime-scoring",
+    "run_type": "daily_scoring",
+    "source_date": "2026-07-15",
+    "status": "PASS",
+    "run_state": "completed",
+    "started_at": "2026-07-15T14:08:10.622499+00:00",
+    "finished_at": "2026-07-15T14:08:55.945696+00:00",
+    "races_processed": 54,
+    "runners_processed": 454,
+    "error_message": null,
+    "trigger_source": "manual",
+    "commit_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
+    "environment": "production"
+  },
+  "pipeline_run_count": 2,
+  "verdict_preview": [
+    {
+      "race_id": "923084",
+      "generated_at": "2026-07-15T14:08:43.584212+00:00",
+      "engine_version": "velo_prime_v1",
+      "git_commit_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
+      "environment": "production"
+    },
+    {
+      "race_id": "923085",
+      "generated_at": "2026-07-15T14:08:43.958149+00:00",
+      "engine_version": "velo_prime_v1",
+      "git_commit_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
+      "environment": "production"
+    },
+    {
+      "race_id": "923089",
+      "generated_at": "2026-07-15T14:08:44.150947+00:00",
+      "engine_version": "velo_prime_v1",
+      "git_commit_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
+      "environment": "production"
+    },
+    {
+      "race_id": "923086",
+      "generated_at": "2026-07-15T14:08:44.327759+00:00",
+      "engine_version": "velo_prime_v1",
+      "git_commit_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
+      "environment": "production"
+    },
+    {
+      "race_id": "923087",
+      "generated_at": "2026-07-15T14:08:44.519047+00:00",
+      "engine_version": "velo_prime_v1",
+      "git_commit_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
+      "environment": "production"
+    }
+  ],
+  "local_archive_repair": {
+    "status": "SKIPPED"
+  }
+}

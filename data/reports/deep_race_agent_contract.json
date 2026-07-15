@@ -1,0 +1,87 @@
+{
+  "contract_name": "VELO_DEEP_RACE_AGENT_PACKET_CONTRACT",
+  "version": "v1-design-only",
+  "mission": "RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01 Phase 12",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "principle": "The Deep Agent is not the scheduler, database, or scorer. It receives a sealed race packet and returns structured analysis. It never mutates a score.",
+  "input_packet_schema": {
+    "packet_id": "string, format <run_id>_<race_id>",
+    "run_id": "string, the sealed Race Day Controller run_id this packet was frozen from",
+    "race_id": "string",
+    "course": "string",
+    "off_time_utc": "ISO 8601 timestamp",
+    "frozen_model_outputs": {
+      "old_velo": "object: full per-runner row from the sealed morning runner_snapshot",
+      "no_rpr_shadow": "object or null, with an explicit provenance.timing_safety field",
+      "new_build": "object or null, with explicit lane_a/lane_b/lane_c breakdown and nb_decision_lane per runner",
+      "champion_intent_shadow": "object or null, explicit trust_policy and velo_scoring_allowed fields preserved"
+    },
+    "last_six_or_progression": "array of {run_date, official_rating} per runner, oldest first",
+    "last_six_ts_progression": "array of {run_date, topspeed} per runner, oldest first",
+    "rpr": "per-runner Racing Post Rating, current and prior",
+    "spotlight": "per-runner RP Spotlight comment text",
+    "postdata": "per-runner Postdata score, if present",
+    "topspeed_selection": "RP's own topspeed-based selection for the race, if present",
+    "passport": "per-runner passport object (career runs, win/place rate, days since last run, jockey continuity, OR trend)",
+    "trainer_jockey": "per-runner trainer/jockey combo stats, course+distance where available",
+    "rpdc": "per-runner RPDC tags/scores if present",
+    "conditions": {
+      "going": "string",
+      "distance_furlongs": "number",
+      "class": "string",
+      "field_size": "integer"
+    },
+    "prices": {
+      "morning_price": "per-runner decimal odds at packet-freeze time",
+      "market_deception_score": "per-runner, if present"
+    },
+    "data_completeness": {
+      "passport_coverage_pct": "number",
+      "fields_missing": "array of field names absent for this race/runner set"
+    }
+  },
+  "output_schema": {
+    "packet_id": "echo of input packet_id",
+    "primary_horse": "string, agent's top selection",
+    "counter_horse": "string, agent's second-strongest alternative",
+    "convergence": {
+      "models_agreeing_with_primary": "array of model names from frozen_model_outputs that also picked primary_horse",
+      "convergence_score": "0-1"
+    },
+    "contradictions": [
+      {
+        "signal_a": "string, e.g. 'old_velo.velo_prime_prob'",
+        "signal_b": "string, e.g. 'spotlight'",
+        "description": "plain-text description of the conflict"
+      }
+    ],
+    "value": {
+      "assessment": "string enum: OVERBROKE | FAIR | UNDERBROKE | INSUFFICIENT_DATA",
+      "reasoning": "string"
+    },
+    "evidence_used": "array of field paths from the input packet actually cited in the reasoning",
+    "evidence_missing": "array of field paths the agent flagged as absent/would-have-helped",
+    "confidence": "0-1",
+    "operator_suggestion": "string, plain-language recommendation, explicitly NOT a stake or execution instruction",
+    "model_metadata": {
+      "provider": "string, e.g. glm | qwen | kimi",
+      "model_id": "string",
+      "latency_ms": "number",
+      "prompt_tokens": "number",
+      "completion_tokens": "number",
+      "cost_usd_estimate": "number"
+    }
+  },
+  "hard_constraints": [
+    "The agent must not write to velo_verdicts, canonical_model_scorecards, or any scoring table.",
+    "The agent must not be given access to the actual race result or SP at any point before its output is recorded.",
+    "The agent's output is stored separately from all scoring artifacts, keyed by packet_id, and is explicitly excluded from Sigma/strike-rate calculations unless a future, separately-approved promotion decision says otherwise.",
+    "If frozen_model_outputs for a lane is null or MORNING_RUN_UNPROVEN, the agent must say so explicitly in evidence_missing rather than silently treating it as absent data."
+  ],
+  "provider_neutral_adapter": {
+    "interface": "single Python function generate_deep_race_analysis(packet: dict, provider: str) -> dict matching output_schema",
+    "supported_providers_for_benchmark": ["glm", "qwen", "kimi"],
+    "no_hardwired_default": true,
+    "note": "Provider selection for production use is an operator decision made AFTER the blind benchmark in deep_race_agent_model_benchmark_plan.md, not before."
+  }
+}

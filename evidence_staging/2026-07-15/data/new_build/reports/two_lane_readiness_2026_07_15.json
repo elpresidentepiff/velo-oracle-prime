@@ -1,0 +1,3370 @@
+{
+  "generated_at": "2026-07-15T14:09:30.916443Z",
+  "target_date": "2026-07-15",
+  "overall_status": "READY",
+  "capture_status": {
+    "date": "2026-07-15",
+    "status": "READY",
+    "races": 47,
+    "runners": 409
+  },
+  "races_scored": 47,
+  "runners_scored": 394,
+  "rpr_violations": 0,
+  "sp_violations": 0,
+  "quality_gates": {
+    "rpr_clean": true,
+    "sp_clean": true,
+    "passport_coverage_above_50pct": false,
+    "no_leakage_violations": true
+  },
+  "intent_coverage": {
+    "found": 0,
+    "total": 394,
+    "coverage_pct": 0.0,
+    "gate": 80.0,
+    "status": "UNAVAILABLE_BELOW_GATE",
+    "note": "Intent features are historical (race_id, horse) pairs. Current-card rows never match → 0% is expected for morning reads."
+  },
+  "operational_lane": "LANE_A_CORE_PASSPORT",
+  "operational_note": "Intent coverage 0.0% < 80.0% gate. Lane B is PAPER_ONLY_NO_INTENT. Lane A (Core+Passport) is operational read.",
+  "lane_a": {
+    "label": "Core_V0_OR_Passport (30 features)",
+    "model_pkl": "/mnt/c/Users/puror/velo-oracle-prime/data/new_build/models/core_v0_or_passport/core_v0_or_passport_model.pkl",
+    "feature_count": 30,
+    "median_fill_counts": {
+      "release_window_score": 394,
+      "going_fit_score": 394,
+      "distance_fit_score": 394,
+      "quiet_run_score": 394,
+      "trainer_timing_score": 394,
+      "jockey_switch_intent": 394,
+      "setup_run_flag": 394,
+      "cash_run_flag": 394,
+      "pp_days_since_last": 394,
+      "pp_layoff": 394
+    }
+  },
+  "lane_b": {
+    "label": "Challenger_V1 Core+Passport+Intent (45 features)",
+    "model_pkl": "/mnt/c/Users/puror/velo-oracle-prime/data/new_build/models/core_v0_or_passport_intent/model.pkl",
+    "feature_count": 45,
+    "intent_coverage_pct": 0.0,
+    "status": "PAPER_ONLY_NO_INTENT",
+    "median_fill_counts": {
+      "release_window_score": 394,
+      "going_fit_score": 394,
+      "distance_fit_score": 394,
+      "quiet_run_score": 394,
+      "trainer_timing_score": 394,
+      "jockey_switch_intent": 394,
+      "setup_run_flag": 394,
+      "cash_run_flag": 394,
+      "pp_days_since_last": 394,
+      "pp_layoff": 394
+    }
+  },
+  "race_day_scorecards": [
+    {
+      "race_id": "924710",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T11:30:00",
+      "race_date": "2026-07-15",
+      "race_title": "Silver Grecian Handicap (Class 5) (Course C) (Turf)",
+      "runner_count": 12,
+      "passport_coverage": "5/12",
+      "passport_coverage_pct": 41.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Conrad The Great",
+          "prob": 0.101281,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Telecom Power",
+          "prob": 0.094195,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Fashion Legend",
+          "prob": 0.087732,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Conrad The Great",
+          "prob": 0.091642,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Fashion Legend",
+          "prob": 0.077649,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Viva Boss",
+          "prob": 0.079157,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Conrad The Great",
+          "prob": 0.538872
+        },
+        {
+          "rank": 2,
+          "horse": "Fashion Legend",
+          "prob": 0.538549
+        },
+        {
+          "rank": 3,
+          "horse": "Viva Boss",
+          "prob": 0.537839
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "924711",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T12:00:00",
+      "race_date": "2026-07-15",
+      "race_title": "Fast Most Furious Handicap (Class 4) (Course C) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "4/14",
+      "passport_coverage_pct": 28.6,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Loving Vibes",
+          "prob": 0.076453,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "I Am Back",
+          "prob": 0.07547,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Jolly Bonus",
+          "prob": 0.075248,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "I Am Back",
+          "prob": 0.069216,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Jolly Bonus",
+          "prob": 0.068701,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Genius Baby",
+          "prob": 0.070231,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "I Am Back",
+          "prob": 0.53231
+        },
+        {
+          "rank": 1,
+          "horse": "Jolly Bonus",
+          "prob": 0.532967
+        },
+        {
+          "rank": 2,
+          "horse": "Winning Money",
+          "prob": 0.53236
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "924712",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T12:30:00",
+      "race_date": "2026-07-15",
+      "race_title": "Turin Warrior Handicap (Class 4) (Course C) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "3/14",
+      "passport_coverage_pct": 21.4,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Casa Rochester",
+          "prob": 0.09768,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Fast Speed",
+          "prob": 0.073223,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Harmony Galaxy",
+          "prob": 0.069971,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Casa Rochester",
+          "prob": 0.083496,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Fast Speed",
+          "prob": 0.068076,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Harmony Galaxy",
+          "prob": 0.063767,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Casa Rochester",
+          "prob": 0.537003
+        },
+        {
+          "rank": 3,
+          "horse": "Fast Speed",
+          "prob": 0.532483
+        },
+        {
+          "rank": 2,
+          "horse": "Harmony Galaxy",
+          "prob": 0.533132
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "924713",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T13:00:00",
+      "race_date": "2026-07-15",
+      "race_title": "Sweet Orange Handicap (Class 4) (Course C) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "3/14",
+      "passport_coverage_pct": 21.4,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Take Action",
+          "prob": 0.116871,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Very Grateful",
+          "prob": 0.07742,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Light Years Glory",
+          "prob": 0.076153,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Take Action",
+          "prob": 0.091001,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Very Grateful",
+          "prob": 0.070851,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Light Years Glory",
+          "prob": 0.071665,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Take Action",
+          "prob": 0.53417
+        },
+        {
+          "rank": 1,
+          "horse": "Very Grateful",
+          "prob": 0.534523
+        },
+        {
+          "rank": 2,
+          "horse": "Sky Deep",
+          "prob": 0.53435
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "924714",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T13:30:00",
+      "race_date": "2026-07-15",
+      "race_title": "Star Shine Handicap (Class 4) (Course C) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "2/14",
+      "passport_coverage_pct": 14.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Shotgun",
+          "prob": 0.075206,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Poet's Reign",
+          "prob": 0.074779,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Pejibaye",
+          "prob": 0.071086,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Shotgun",
+          "prob": 0.067903,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Poet's Reign",
+          "prob": 0.068646,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Pejibaye",
+          "prob": 0.067285,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Shotgun",
+          "prob": 0.532547
+        },
+        {
+          "rank": 3,
+          "horse": "Poet's Reign",
+          "prob": 0.53235
+        },
+        {
+          "rank": 1,
+          "horse": "Pejibaye",
+          "prob": 0.534401
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "924715",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T14:00:00",
+      "race_date": "2026-07-15",
+      "race_title": "Super Oasis Handicap (Class 4) (Course C) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "4/14",
+      "passport_coverage_pct": 28.6,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Double Alpha",
+          "prob": 0.14608,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Gratifide",
+          "prob": 0.07538,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Copartner Fleet",
+          "prob": 0.0733,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Double Alpha",
+          "prob": 0.112118,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Gratifide",
+          "prob": 0.070079,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Copartner Fleet",
+          "prob": 0.067337,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Double Alpha",
+          "prob": 0.539695
+        },
+        {
+          "rank": 2,
+          "horse": "Copartner Fleet",
+          "prob": 0.534918
+        },
+        {
+          "rank": 3,
+          "horse": "Real Gentleman",
+          "prob": 0.534401
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923092",
+      "course": "Catterick",
+      "off_time": "2026-07-15T14:10:00",
+      "race_date": "2026-07-15",
+      "race_title": "AJA Novice Flat Amateur Jockeys' Handicap (For Riders With 3 Wins Or Fewer At Start Of Season)",
+      "runner_count": 6,
+      "passport_coverage": "1/6",
+      "passport_coverage_pct": 16.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Made All",
+          "prob": 0.166458,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "He's Our Cracker",
+          "prob": 0.144041,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Palazzo Persico",
+          "prob": 0.14337,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Made All",
+          "prob": 0.15261,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "He's Our Cracker",
+          "prob": 0.133642,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Palazzo Persico",
+          "prob": 0.130451,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Made All",
+          "prob": 0.57137
+        },
+        {
+          "rank": 3,
+          "horse": "He's Our Cracker",
+          "prob": 0.564378
+        },
+        {
+          "rank": 2,
+          "horse": "Palazzo Persico",
+          "prob": 0.567142
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "922986",
+      "course": "Uttoxeter",
+      "off_time": "2026-07-15T14:18:00",
+      "race_date": "2026-07-15",
+      "race_title": "QuinnBet Daily Free Bet Mares' Maiden Hurdle (GBB Race)",
+      "runner_count": 8,
+      "passport_coverage": "0/8",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fine Thing",
+          "prob": 0.135228,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Cougarontheloose",
+          "prob": 0.135228,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Diamond Grace",
+          "prob": 0.135228,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Fine Thing",
+          "prob": 0.119855,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Cougarontheloose",
+          "prob": 0.119855,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Diamond Grace",
+          "prob": 0.119855,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Fine Thing",
+          "prob": 0.559442
+        },
+        {
+          "rank": 2,
+          "horse": "Cougarontheloose",
+          "prob": 0.559442
+        },
+        {
+          "rank": 3,
+          "horse": "Diamond Grace",
+          "prob": 0.559442
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "923084",
+      "course": "Bath",
+      "off_time": "2026-07-15T14:31:00",
+      "race_date": "2026-07-15",
+      "race_title": "Broughton Transport The Mane Logistics Choice Apprentice Handicap",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Saucy Jane",
+          "prob": 0.235946,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Reality Queen",
+          "prob": 0.205859,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Safari Dream",
+          "prob": 0.176651,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Saucy Jane",
+          "prob": 0.244606,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Reality Queen",
+          "prob": 0.206089,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Safari Dream",
+          "prob": 0.173147,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Saucy Jane",
+          "prob": 0.584865
+        },
+        {
+          "rank": 2,
+          "horse": "Reality Queen",
+          "prob": 0.577577
+        },
+        {
+          "rank": 3,
+          "horse": "Safari Dream",
+          "prob": 0.570497
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "924716",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T14:35:00",
+      "race_date": "2026-07-15",
+      "race_title": "Encountered Handicap (Class 3) (Course C) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "3/14",
+      "passport_coverage_pct": 21.4,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Pass Line",
+          "prob": 0.066283,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Somelovefromabove",
+          "prob": 0.065948,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Winning Buddies",
+          "prob": 0.064231,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Pass Line",
+          "prob": 0.064614,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "I Can",
+          "prob": 0.060606,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Call Me Topseed",
+          "prob": 0.059907,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Somelovefromabove",
+          "prob": 0.532443
+        },
+        {
+          "rank": 2,
+          "horse": "Winning Buddies",
+          "prob": 0.532365
+        },
+        {
+          "rank": 3,
+          "horse": "I Can",
+          "prob": 0.532128
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "923093",
+      "course": "Catterick",
+      "off_time": "2026-07-15T14:40:00",
+      "race_date": "2026-07-15",
+      "race_title": "EBF Restricted Novice Stakes (Bands C And D) (EBF Restricted Race Qualifier) (GBB Race)",
+      "runner_count": 10,
+      "passport_coverage": "3/10",
+      "passport_coverage_pct": 30.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Mick's The Boy",
+          "prob": 0.101174,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Mr De Maggs",
+          "prob": 0.099175,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "South West",
+          "prob": 0.096841,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Mr De Maggs",
+          "prob": 0.090923,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "South West",
+          "prob": 0.104954,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Lion Of Persia",
+          "prob": 0.09526,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Mr De Maggs",
+          "prob": 0.542938
+        },
+        {
+          "rank": 1,
+          "horse": "Neverbeatdeswalker",
+          "prob": 0.543731
+        },
+        {
+          "rank": 2,
+          "horse": "Longshanks Luke",
+          "prob": 0.543731
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "922990",
+      "course": "Uttoxeter",
+      "off_time": "2026-07-15T14:48:00",
+      "race_date": "2026-07-15",
+      "race_title": "Jack Frost Chiller & Freezer Hire Novices' Limited Handicap Hurdle",
+      "runner_count": 12,
+      "passport_coverage": "7/12",
+      "passport_coverage_pct": 58.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Golden Circet",
+          "prob": 0.085155,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Character Testing",
+          "prob": 0.080186,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Granny B",
+          "prob": 0.079091,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Golden Circet",
+          "prob": 0.081705,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 1,
+          "horse": "Character Testing",
+          "prob": 0.085336,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Daring To Dream",
+          "prob": 0.081167,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Golden Circet",
+          "prob": 0.541192
+        },
+        {
+          "rank": 1,
+          "horse": "Daring To Dream",
+          "prob": 0.541264
+        },
+        {
+          "rank": 3,
+          "horse": "Louie The Legend",
+          "prob": 0.540252
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "923085",
+      "course": "Bath",
+      "off_time": "2026-07-15T15:01:00",
+      "race_date": "2026-07-15",
+      "race_title": "Resolution Canter Cup EBF Restricted Maiden Fillies' Stakes (Band D) (EBF Qualifier) (GBB Race)",
+      "runner_count": 7,
+      "passport_coverage": "5/7",
+      "passport_coverage_pct": 71.4,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sayidah Ardad",
+          "prob": 0.145575,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Bellatina",
+          "prob": 0.135103,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Tricky Jenny",
+          "prob": 0.134426,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sayidah Ardad",
+          "prob": 0.143098,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Tricky Jenny",
+          "prob": 0.139458,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Space Dreamer",
+          "prob": 0.125891,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Sayidah Ardad",
+          "prob": 0.552121
+        },
+        {
+          "rank": 2,
+          "horse": "Sheer Beauty",
+          "prob": 0.556715
+        },
+        {
+          "rank": 1,
+          "horse": "Yankeedoodledandy",
+          "prob": 0.556905
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923095",
+      "course": "Catterick",
+      "off_time": "2026-07-15T15:10:00",
+      "race_date": "2026-07-15",
+      "race_title": "racingtv.com/freetrial Nursery Handicap",
+      "runner_count": 4,
+      "passport_coverage": "2/4",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Mardy Bum",
+          "prob": 0.274863,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Showmethebubbles",
+          "prob": 0.231381,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Sunrise At Dawn",
+          "prob": 0.204209,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Mardy Bum",
+          "prob": 0.262953,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Sunrise At Dawn",
+          "prob": 0.190883,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Lady Dublin",
+          "prob": 0.188319,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Mardy Bum",
+          "prob": 0.608011
+        },
+        {
+          "rank": 3,
+          "horse": "Sunrise At Dawn",
+          "prob": 0.598265
+        },
+        {
+          "rank": 2,
+          "horse": "Lady Dublin",
+          "prob": 0.599646
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "924717",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T15:10:00",
+      "race_date": "2026-07-15",
+      "race_title": "Lucky Patch Handicap (Class 2) (Course C) (Turf)",
+      "runner_count": 11,
+      "passport_coverage": "1/11",
+      "passport_coverage_pct": 9.1,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Romantic Son",
+          "prob": 0.076595,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Crimson Flash",
+          "prob": 0.075356,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Bottomuptogether",
+          "prob": 0.072381,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Romantic Son",
+          "prob": 0.07658,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Sing Dragon",
+          "prob": 0.073677,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Young Champion",
+          "prob": 0.072477,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Crimson Flash",
+          "prob": 0.537692
+        },
+        {
+          "rank": 1,
+          "horse": "Bottomuptogether",
+          "prob": 0.541445
+        },
+        {
+          "rank": 2,
+          "horse": "Sing Dragon",
+          "prob": 0.537819
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "922985",
+      "course": "Uttoxeter",
+      "off_time": "2026-07-15T15:18:00",
+      "race_date": "2026-07-15",
+      "race_title": "Bravo Benefits Celebrations Novices' Limited Handicap Chase (GBB Race)",
+      "runner_count": 4,
+      "passport_coverage": "0/4",
+      "passport_coverage_pct": 0.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Samuel Spade",
+          "prob": 0.183582,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Sony Bill",
+          "prob": 0.174151,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "La Pinsonniere",
+          "prob": 0.16225,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Samuel Spade",
+          "prob": 0.164014,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Sony Bill",
+          "prob": 0.213789,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "La Pinsonniere",
+          "prob": 0.160778,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Sony Bill",
+          "prob": 0.60732
+        },
+        {
+          "rank": 2,
+          "horse": "La Pinsonniere",
+          "prob": 0.606394
+        },
+        {
+          "rank": 3,
+          "horse": "Sunray Shadow",
+          "prob": 0.603938
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "923089",
+      "course": "Bath",
+      "off_time": "2026-07-15T15:31:00",
+      "race_date": "2026-07-15",
+      "race_title": "Home Group Financial Wealth Management Trophy Handicap (Bath Summer Sprint Series Qualifier)",
+      "runner_count": 6,
+      "passport_coverage": "6/6",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Darkened Edge",
+          "prob": 0.190652,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Little Miss Magic",
+          "prob": 0.155742,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Beach Partee",
+          "prob": 0.141099,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Darkened Edge",
+          "prob": 0.142975,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Little Miss Magic",
+          "prob": 0.139082,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Secret Handsheikh",
+          "prob": 0.123041,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Darkened Edge",
+          "prob": 0.563381
+        },
+        {
+          "rank": 1,
+          "horse": "Little Miss Magic",
+          "prob": 0.563731
+        },
+        {
+          "rank": 3,
+          "horse": "Secret Handsheikh",
+          "prob": 0.56224
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923091",
+      "course": "Catterick",
+      "off_time": "2026-07-15T15:40:00",
+      "race_date": "2026-07-15",
+      "race_title": "Le Veinard 2026. Racing And Info Handicap",
+      "runner_count": 8,
+      "passport_coverage": "7/8",
+      "passport_coverage_pct": 87.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "The Good Biscuit",
+          "prob": 0.176653,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Dream Deal",
+          "prob": 0.125166,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Two Commanders",
+          "prob": 0.124538,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "The Good Biscuit",
+          "prob": 0.163577,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Two Commanders",
+          "prob": 0.125362,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Kody B",
+          "prob": 0.115429,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "The Good Biscuit",
+          "prob": 0.56363
+        },
+        {
+          "rank": 2,
+          "horse": "Kody B",
+          "prob": 0.553642
+        },
+        {
+          "rank": 3,
+          "horse": "Awraad",
+          "prob": 0.551672
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "922988",
+      "course": "Uttoxeter",
+      "off_time": "2026-07-15T15:48:00",
+      "race_date": "2026-07-15",
+      "race_title": "Sun Racing The Favourite Pullout Every Day Handicap Hurdle",
+      "runner_count": 6,
+      "passport_coverage": "3/6",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "An Bradan Feasa",
+          "prob": 0.214099,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Machete Beach",
+          "prob": 0.201988,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Romany Brown",
+          "prob": 0.142201,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "An Bradan Feasa",
+          "prob": 0.223781,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Machete Beach",
+          "prob": 0.173906,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Romany Brown",
+          "prob": 0.148436,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "An Bradan Feasa",
+          "prob": 0.576984
+        },
+        {
+          "rank": 2,
+          "horse": "Machete Beach",
+          "prob": 0.572608
+        },
+        {
+          "rank": 3,
+          "horse": "King Ulanda",
+          "prob": 0.568877
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "924718",
+      "course": "Happy Valley",
+      "off_time": "2026-07-15T15:50:00",
+      "race_date": "2026-07-15",
+      "race_title": "Sun Jewellery Handicap (Class 3) (Course C) (Turf)",
+      "runner_count": 14,
+      "passport_coverage": "5/14",
+      "passport_coverage_pct": 35.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "The Heir",
+          "prob": 0.091408,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Thunder Kit",
+          "prob": 0.07019,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Young Emperor",
+          "prob": 0.067953,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Thunder Kit",
+          "prob": 0.065151,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Young Emperor",
+          "prob": 0.065822,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "City Gold Banner",
+          "prob": 0.062306,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Thunder Kit",
+          "prob": 0.533955
+        },
+        {
+          "rank": 1,
+          "horse": "Young Emperor",
+          "prob": 0.534232
+        },
+        {
+          "rank": 3,
+          "horse": "Morgan Success",
+          "prob": 0.532953
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "923086",
+      "course": "Bath",
+      "off_time": "2026-07-15T16:01:00",
+      "race_date": "2026-07-15",
+      "race_title": "Novacast Don't Come Last Handicap (Bath Summer Stayers' Series Qualifier)",
+      "runner_count": 5,
+      "passport_coverage": "3/5",
+      "passport_coverage_pct": 60.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Endofastorm",
+          "prob": 0.241612,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Assured",
+          "prob": 0.171114,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Siam",
+          "prob": 0.167762,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Endofastorm",
+          "prob": 0.171265,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Assured",
+          "prob": 0.158639,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Siam",
+          "prob": 0.147798,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Endofastorm",
+          "prob": 0.57873
+        },
+        {
+          "rank": 1,
+          "horse": "Assured",
+          "prob": 0.581233
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Siam",
+          "prob": 0.575831
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "923090",
+      "course": "Catterick",
+      "off_time": "2026-07-15T16:10:00",
+      "race_date": "2026-07-15",
+      "race_title": "Try Racing TV For Free Now Handicap",
+      "runner_count": 4,
+      "passport_coverage": "1/4",
+      "passport_coverage_pct": 25.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Haaderr",
+          "prob": 0.322655,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Naval Light",
+          "prob": 0.20819,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Woodstock",
+          "prob": 0.200309,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Haaderr",
+          "prob": 0.234975,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Naval Light",
+          "prob": 0.200332,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Woodstock",
+          "prob": 0.186847,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Haaderr",
+          "prob": 0.602717
+        },
+        {
+          "rank": 3,
+          "horse": "Naval Light",
+          "prob": 0.598526
+        },
+        {
+          "rank": 2,
+          "horse": "Woodstock",
+          "prob": 0.599246
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "922987",
+      "course": "Uttoxeter",
+      "off_time": "2026-07-15T16:18:00",
+      "race_date": "2026-07-15",
+      "race_title": "Alfie Flatt 18th Birthday Celebration Handicap Chase (Arc Summer Chase Series Qualifier) (GBB Race)",
+      "runner_count": 5,
+      "passport_coverage": "3/5",
+      "passport_coverage_pct": 60.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Pep Talking",
+          "prob": 0.221825,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Theonlywayiswessex",
+          "prob": 0.202254,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "My Friend Sean",
+          "prob": 0.15877,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Pep Talking",
+          "prob": 0.180364,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Theonlywayiswessex",
+          "prob": 0.185467,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "My Friend Sean",
+          "prob": 0.155578,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Pep Talking",
+          "prob": 0.585952
+        },
+        {
+          "rank": 3,
+          "horse": "Theonlywayiswessex",
+          "prob": 0.583825
+        },
+        {
+          "rank": 1,
+          "horse": "Le Gentleman",
+          "prob": 0.587315
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923087",
+      "course": "Bath",
+      "off_time": "2026-07-15T16:31:00",
+      "race_date": "2026-07-15",
+      "race_title": "Wiltshire And Bath Air Ambulance Charity Handicap",
+      "runner_count": 8,
+      "passport_coverage": "6/8",
+      "passport_coverage_pct": 75.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Hope Rising",
+          "prob": 0.22814,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Jimmy Mark",
+          "prob": 0.153235,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Cezarro",
+          "prob": 0.151479,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Hope Rising",
+          "prob": 0.172152,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Jimmy Mark",
+          "prob": 0.136239,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Cezarro",
+          "prob": 0.131423,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Hope Rising",
+          "prob": 0.560248
+        },
+        {
+          "rank": 2,
+          "horse": "Jimmy Mark",
+          "prob": 0.557497
+        },
+        {
+          "rank": 3,
+          "horse": "Cezarro",
+          "prob": 0.556523
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "923094",
+      "course": "Catterick",
+      "off_time": "2026-07-15T16:40:00",
+      "race_date": "2026-07-15",
+      "race_title": "Racing Again 22nd July Handicap",
+      "runner_count": 9,
+      "passport_coverage": "6/9",
+      "passport_coverage_pct": 66.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Irish Dancer",
+          "prob": 0.154142,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Zuffolo",
+          "prob": 0.106198,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Edmond Halley",
+          "prob": 0.103207,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Irish Dancer",
+          "prob": 0.11036,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Edmond Halley",
+          "prob": 0.097635,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "South Shore",
+          "prob": 0.110223,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Edmond Halley",
+          "prob": 0.546871
+        },
+        {
+          "rank": 3,
+          "horse": "South Shore",
+          "prob": 0.544027
+        },
+        {
+          "rank": 2,
+          "horse": "Lucius Aurelius",
+          "prob": 0.546171
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "922989",
+      "course": "Uttoxeter",
+      "off_time": "2026-07-15T16:48:00",
+      "race_date": "2026-07-15",
+      "race_title": "Sun Racing Summer Jumps Championship Mares' Handicap Hurdle",
+      "runner_count": 10,
+      "passport_coverage": "4/10",
+      "passport_coverage_pct": 40.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Belladinotte",
+          "prob": 0.14198,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Kayla's Friend",
+          "prob": 0.108056,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Hello Cello",
+          "prob": 0.106492,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Belladinotte",
+          "prob": 0.10505,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Kayla's Friend",
+          "prob": 0.100846,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Hello Cello",
+          "prob": 0.100667,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Belladinotte",
+          "prob": 0.551444
+        },
+        {
+          "rank": 3,
+          "horse": "Camshaft",
+          "prob": 0.549411
+        },
+        {
+          "rank": 2,
+          "horse": "Grey Gamble",
+          "prob": 0.549466
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923104",
+      "course": "Yarmouth",
+      "off_time": "2026-07-15T17:00:00",
+      "race_date": "2026-07-15",
+      "race_title": "Iglu Apprentice Handicap",
+      "runner_count": 4,
+      "passport_coverage": "3/4",
+      "passport_coverage_pct": 75.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Victor Cee",
+          "prob": 0.268918,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Adalida",
+          "prob": 0.25588,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Ambishio",
+          "prob": 0.200594,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Victor Cee",
+          "prob": 0.2525,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Adalida",
+          "prob": 0.208297,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "London Is Blue",
+          "prob": 0.186738,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Victor Cee",
+          "prob": 0.601699
+        },
+        {
+          "rank": 1,
+          "horse": "Adalida",
+          "prob": 0.601967
+        },
+        {
+          "rank": 3,
+          "horse": "Ambishio",
+          "prob": 0.600963
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "923088",
+      "course": "Bath",
+      "off_time": "2026-07-15T17:05:00",
+      "race_date": "2026-07-15",
+      "race_title": "Stakes Are Always High Handicap",
+      "runner_count": 7,
+      "passport_coverage": "4/7",
+      "passport_coverage_pct": 57.1,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Rival",
+          "prob": 0.141717,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Havana Club",
+          "prob": 0.134791,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Blue Hero",
+          "prob": 0.133913,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Rival",
+          "prob": 0.128329,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Havana Club",
+          "prob": 0.125023,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Whisper Of Mist",
+          "prob": 0.12394,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Havana Club",
+          "prob": 0.556077
+        },
+        {
+          "rank": 2,
+          "horse": "Whisper Of Mist",
+          "prob": 0.556664
+        },
+        {
+          "rank": 1,
+          "horse": "Thai Princess",
+          "prob": 0.556965
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923098",
+      "course": "Lingfield",
+      "off_time": "2026-07-15T17:20:00",
+      "race_date": "2026-07-15",
+      "race_title": "Sky Sports Racing Sky 415 Handicap (GBBPlus Race)",
+      "runner_count": 3,
+      "passport_coverage": "3/3",
+      "passport_coverage_pct": 100.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Golden Orbit",
+          "prob": 0.383209,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Rajendra",
+          "prob": 0.37531,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Probation",
+          "prob": 0.291758,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Golden Orbit",
+          "prob": 0.29008,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Rajendra",
+          "prob": 0.311384,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Probation",
+          "prob": 0.231212,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Golden Orbit",
+          "prob": 0.628521
+        },
+        {
+          "rank": 1,
+          "horse": "Rajendra",
+          "prob": 0.644182
+        },
+        {
+          "rank": 3,
+          "horse": "Probation",
+          "prob": 0.620139
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": false,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "922991",
+      "course": "Uttoxeter",
+      "off_time": "2026-07-15T17:25:00",
+      "race_date": "2026-07-15",
+      "race_title": "QuinnBet Open National Hunt Flat Race (Category 1 Elimination) (GBB Race)",
+      "runner_count": 11,
+      "passport_coverage": "2/11",
+      "passport_coverage_pct": 18.2,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Stand Proud",
+          "prob": 0.103627,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Downtown Nashville",
+          "prob": 0.103627,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "The Elusive Pike",
+          "prob": 0.103627,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "Stand Proud",
+          "prob": 0.089657,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Redbarn",
+          "prob": 0.090124,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Emerald West",
+          "prob": 0.090124,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Stand Proud",
+          "prob": 0.543085
+        },
+        {
+          "rank": 3,
+          "horse": "Downtown Nashville",
+          "prob": 0.543085
+        },
+        {
+          "rank": 1,
+          "horse": "Ifyouhaveaplan",
+          "prob": 0.544337
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "924611",
+      "course": "Killarney",
+      "off_time": "2026-07-15T17:30:00",
+      "race_date": "2026-07-15",
+      "race_title": "O'Donoghue Ring Collection Optional Claiming Race",
+      "runner_count": 14,
+      "passport_coverage": "9/14",
+      "passport_coverage_pct": 64.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Glamazon",
+          "prob": 0.09576,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Land Of The Giants",
+          "prob": 0.091843,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Timandi",
+          "prob": 0.079208,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Glamazon",
+          "prob": 0.089081,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Land Of The Giants",
+          "prob": 0.07852,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Love Orchid",
+          "prob": 0.076247,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Glamazon",
+          "prob": 0.537831
+        },
+        {
+          "rank": 3,
+          "horse": "Land Of The Giants",
+          "prob": 0.534227
+        },
+        {
+          "rank": 2,
+          "horse": "Hazrama",
+          "prob": 0.534878
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "923105",
+      "course": "Yarmouth",
+      "off_time": "2026-07-15T17:35:00",
+      "race_date": "2026-07-15",
+      "race_title": "Aeropak Restricted Maiden Stakes (Bands B, C And D) (GBB Race)",
+      "runner_count": 5,
+      "passport_coverage": "1/5",
+      "passport_coverage_pct": 20.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Rogue Exile",
+          "prob": 0.171046,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Spareapenny",
+          "prob": 0.168557,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Sterling Fortune",
+          "prob": 0.16844,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Rogue Exile",
+          "prob": 0.160788,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Spareapenny",
+          "prob": 0.15777,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Sterling Fortune",
+          "prob": 0.158122,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Rogue Exile",
+          "prob": 0.58256
+        },
+        {
+          "rank": 3,
+          "horse": "Spareapenny",
+          "prob": 0.581673
+        },
+        {
+          "rank": 1,
+          "horse": "Sterling Fortune",
+          "prob": 0.582582
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "923097",
+      "course": "Lingfield",
+      "off_time": "2026-07-15T17:50:00",
+      "race_date": "2026-07-15",
+      "race_title": "Follow @attheraces On Instagram Maiden Stakes (GBB/GBBPlus Race)",
+      "runner_count": 4,
+      "passport_coverage": "2/4",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Brunhilde",
+          "prob": 0.27532,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Silk Mountain",
+          "prob": 0.245131,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Battle Hymn",
+          "prob": 0.207766,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Brunhilde",
+          "prob": 0.200046,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Battle Hymn",
+          "prob": 0.191313,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Lunella",
+          "prob": 0.191059,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Brunhilde",
+          "prob": 0.60013
+        },
+        {
+          "rank": 1,
+          "horse": "Silk Mountain",
+          "prob": 0.602889
+        },
+        {
+          "rank": 3,
+          "horse": "Battle Hymn",
+          "prob": 0.59831
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "924612",
+      "course": "Killarney",
+      "off_time": "2026-07-15T18:00:00",
+      "race_date": "2026-07-15",
+      "race_title": "Irish EBF Median Sires Series Race (IRE Incentive Race)",
+      "runner_count": 5,
+      "passport_coverage": "1/5",
+      "passport_coverage_pct": 20.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "South Dakota",
+          "prob": 0.195818,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Full Volume",
+          "prob": 0.17065,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Pints Of Glory",
+          "prob": 0.169228,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "South Dakota",
+          "prob": 0.182366,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Full Volume",
+          "prob": 0.159993,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Venetian Power",
+          "prob": 0.159062,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Full Volume",
+          "prob": 0.583368
+        },
+        {
+          "rank": 2,
+          "horse": "Venetian Power",
+          "prob": 0.582885
+        },
+        {
+          "rank": 3,
+          "horse": "Dakota Jack",
+          "prob": 0.582308
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923103",
+      "course": "Yarmouth",
+      "off_time": "2026-07-15T18:10:00",
+      "race_date": "2026-07-15",
+      "race_title": "Otex EBF Maiden Stakes (GBB Race)",
+      "runner_count": 6,
+      "passport_coverage": "1/6",
+      "passport_coverage_pct": 16.7,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "War Gaming",
+          "prob": 0.151929,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Anchiano",
+          "prob": 0.151646,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Horndean",
+          "prob": 0.150941,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 3,
+          "horse": "War Gaming",
+          "prob": 0.14068,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Anchiano",
+          "prob": 0.141122,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 1,
+          "horse": "Kochella",
+          "prob": 0.142377,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "War Gaming",
+          "prob": 0.566626
+        },
+        {
+          "rank": 2,
+          "horse": "Anchiano",
+          "prob": 0.566626
+        },
+        {
+          "rank": 3,
+          "horse": "Horndean",
+          "prob": 0.566481
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "923099",
+      "course": "Lingfield",
+      "off_time": "2026-07-15T18:20:00",
+      "race_date": "2026-07-15",
+      "race_title": "Hamways EBF Restricted Maiden Fillies' Stakes (Band D) (EBF Qualifier) (GBB Race)",
+      "runner_count": 7,
+      "passport_coverage": "2/7",
+      "passport_coverage_pct": 28.6,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Fire Thunder",
+          "prob": 0.150185,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Mrs Mole",
+          "prob": 0.131665,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Mystic Ballistic",
+          "prob": 0.130788,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Mrs Mole",
+          "prob": 0.122584,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Mystic Ballistic",
+          "prob": 0.122584,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Nightspell",
+          "prob": 0.122177,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Mrs Mole",
+          "prob": 0.557115
+        },
+        {
+          "rank": 3,
+          "horse": "Mystic Ballistic",
+          "prob": 0.556983
+        },
+        {
+          "rank": 2,
+          "horse": "Nightspell",
+          "prob": 0.556983
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "924613",
+      "course": "Killarney",
+      "off_time": "2026-07-15T18:30:00",
+      "race_date": "2026-07-15",
+      "race_title": "Irish Stallion Farms EBF (C & G) Maiden",
+      "runner_count": 9,
+      "passport_coverage": "3/9",
+      "passport_coverage_pct": 33.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Elusive Path",
+          "prob": 0.10958,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Holy Lettuce",
+          "prob": 0.109248,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Omissions",
+          "prob": 0.10884,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Elusive Path",
+          "prob": 0.114748,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Holy Lettuce",
+          "prob": 0.100165,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Winston's Promise",
+          "prob": 0.099843,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Holy Lettuce",
+          "prob": 0.547661
+        },
+        {
+          "rank": 3,
+          "horse": "Winston's Promise",
+          "prob": 0.546862
+        },
+        {
+          "rank": 2,
+          "horse": "Strikewhileitshot",
+          "prob": 0.54765
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "923102",
+      "course": "Yarmouth",
+      "off_time": "2026-07-15T18:40:00",
+      "race_date": "2026-07-15",
+      "race_title": "4-Head Handicap",
+      "runner_count": 6,
+      "passport_coverage": "3/6",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Sea Suite",
+          "prob": 0.196726,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Gorgeous Mr George",
+          "prob": 0.174663,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Dion Baker",
+          "prob": 0.151166,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Sea Suite",
+          "prob": 0.178857,
+          "nb_decision_lane": "FRAME_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Gorgeous Mr George",
+          "prob": 0.155833,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Up The Agenda",
+          "prob": 0.138658,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Sea Suite",
+          "prob": 0.569921
+        },
+        {
+          "rank": 1,
+          "horse": "Gorgeous Mr George",
+          "prob": 0.57112
+        },
+        {
+          "rank": 3,
+          "horse": "Up The Agenda",
+          "prob": 0.565333
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "FRAME_TRUST"
+    },
+    {
+      "race_id": "923100",
+      "course": "Lingfield",
+      "off_time": "2026-07-15T18:50:00",
+      "race_date": "2026-07-15",
+      "race_title": "Free Bets On attheraces.com Nursery Handicap",
+      "runner_count": 5,
+      "passport_coverage": "2/5",
+      "passport_coverage_pct": 40.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Jazz Queen",
+          "prob": 0.268659,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Ron's Angel",
+          "prob": 0.17131,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Quantum Swift",
+          "prob": 0.166062,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Jazz Queen",
+          "prob": 0.264514,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Ron's Angel",
+          "prob": 0.174745,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Quantum Swift",
+          "prob": 0.156757,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Jazz Queen",
+          "prob": 0.59399
+        },
+        {
+          "rank": 3,
+          "horse": "Quantum Swift",
+          "prob": 0.582709
+        },
+        {
+          "rank": 2,
+          "horse": "Knock Three Times",
+          "prob": 0.583047
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "924614",
+      "course": "Killarney",
+      "off_time": "2026-07-15T19:00:00",
+      "race_date": "2026-07-15",
+      "race_title": "Irish Stallion Farms EBF Cairn Rouge Stakes (Listed Race)",
+      "runner_count": 10,
+      "passport_coverage": "5/10",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Drop Dead Gorgeous",
+          "prob": 0.167775,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Pivotal Attack",
+          "prob": 0.087591,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Spinning Around",
+          "prob": 0.08531,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Drop Dead Gorgeous",
+          "prob": 0.150239,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Spinning Around",
+          "prob": 0.083448,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Wild Bessie",
+          "prob": 0.082705,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Drop Dead Gorgeous",
+          "prob": 0.552745
+        },
+        {
+          "rank": 2,
+          "horse": "Wild Bessie",
+          "prob": 0.54204
+        },
+        {
+          "rank": 3,
+          "horse": "Quiet Mutiny",
+          "prob": 0.541279
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923107",
+      "course": "Yarmouth",
+      "off_time": "2026-07-15T19:10:00",
+      "race_date": "2026-07-15",
+      "race_title": "Doublebase Classified Stakes",
+      "runner_count": 7,
+      "passport_coverage": "4/7",
+      "passport_coverage_pct": 57.1,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Spaceage Love Song",
+          "prob": 0.132018,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Suitcase Smith",
+          "prob": 0.127295,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Highland Harvey",
+          "prob": 0.121393,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Spaceage Love Song",
+          "prob": 0.123945,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Suitcase Smith",
+          "prob": 0.123466,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Ten Ten Twenty",
+          "prob": 0.102536,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Spaceage Love Song",
+          "prob": 0.555962
+        },
+        {
+          "rank": 1,
+          "horse": "Suitcase Smith",
+          "prob": 0.556983
+        },
+        {
+          "rank": 3,
+          "horse": "Ten Ten Twenty",
+          "prob": 0.550377
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "LOW_DATA"
+    },
+    {
+      "race_id": "923096",
+      "course": "Lingfield",
+      "off_time": "2026-07-15T19:20:00",
+      "race_date": "2026-07-15",
+      "race_title": "Follow @attheraces On X Handicap",
+      "runner_count": 4,
+      "passport_coverage": "3/4",
+      "passport_coverage_pct": 75.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Desert Shadow",
+          "prob": 0.306604,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Huscal",
+          "prob": 0.253724,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Classic Encounter",
+          "prob": 0.24205,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Desert Shadow",
+          "prob": 0.29303,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Huscal",
+          "prob": 0.236069,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Classic Encounter",
+          "prob": 0.210236,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Desert Shadow",
+          "prob": 0.614407
+        },
+        {
+          "rank": 3,
+          "horse": "Huscal",
+          "prob": 0.603894
+        },
+        {
+          "rank": 2,
+          "horse": "Classic Encounter",
+          "prob": 0.607301
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "924615",
+      "course": "Killarney",
+      "off_time": "2026-07-15T19:30:00",
+      "race_date": "2026-07-15",
+      "race_title": "Executive Helicopters Handicap",
+      "runner_count": 13,
+      "passport_coverage": "8/13",
+      "passport_coverage_pct": 61.5,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "The Blue Panther",
+          "prob": 0.086429,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Jasmine Affanalis",
+          "prob": 0.083435,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Tortola",
+          "prob": 0.080543,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Tortola",
+          "prob": 0.074893,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Bella Colombia",
+          "prob": 0.069952,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Shahada Ace",
+          "prob": 0.070963,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 3,
+          "horse": "Tortola",
+          "prob": 0.536712
+        },
+        {
+          "rank": 1,
+          "horse": "Bella Colombia",
+          "prob": 0.539279
+        },
+        {
+          "rank": 2,
+          "horse": "Convincing",
+          "prob": 0.536909
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "923106",
+      "course": "Yarmouth",
+      "off_time": "2026-07-15T19:40:00",
+      "race_date": "2026-07-15",
+      "race_title": "Bazuka Handicap",
+      "runner_count": 6,
+      "passport_coverage": "3/6",
+      "passport_coverage_pct": 50.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Superstorm",
+          "prob": 0.202691,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 2,
+          "horse": "Startled Lady",
+          "prob": 0.183381,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Dark Side Thunder",
+          "prob": 0.162517,
+          "nb_decision_lane": "NO_EDGE"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 2,
+          "horse": "Superstorm",
+          "prob": 0.150267,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 1,
+          "horse": "Startled Lady",
+          "prob": 0.169141,
+          "nb_decision_lane": "NO_EDGE"
+        },
+        {
+          "rank": 3,
+          "horse": "Komodo Rose",
+          "prob": 0.136284,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 2,
+          "horse": "Superstorm",
+          "prob": 0.565666
+        },
+        {
+          "rank": 1,
+          "horse": "Startled Lady",
+          "prob": 0.571332
+        },
+        {
+          "rank": 3,
+          "horse": "Komodo Rose",
+          "prob": 0.565339
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "NO_EDGE"
+    },
+    {
+      "race_id": "923101",
+      "course": "Lingfield",
+      "off_time": "2026-07-15T19:50:00",
+      "race_date": "2026-07-15",
+      "race_title": "Sky Sports Racing Virgin 512 Handicap",
+      "runner_count": 3,
+      "passport_coverage": "1/3",
+      "passport_coverage_pct": 33.3,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Mister Moet",
+          "prob": 0.370943,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 2,
+          "horse": "Real Gold",
+          "prob": 0.266506,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Sunlit Sea",
+          "prob": 0.25837,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Mister Moet",
+          "prob": 0.287214,
+          "nb_decision_lane": "WIN_TRUST"
+        },
+        {
+          "rank": 3,
+          "horse": "Real Gold",
+          "prob": 0.243663,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 2,
+          "horse": "Sunlit Sea",
+          "prob": 0.244926,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Mister Moet",
+          "prob": 0.628351
+        },
+        {
+          "rank": 3,
+          "horse": "Real Gold",
+          "prob": 0.623228
+        },
+        {
+          "rank": 2,
+          "horse": "Sunlit Sea",
+          "prob": 0.624542
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "WIN_TRUST"
+    },
+    {
+      "race_id": "924616",
+      "course": "Killarney",
+      "off_time": "2026-07-15T20:00:00",
+      "race_date": "2026-07-15",
+      "race_title": "Start Your Free Month Trial At racingtv.com Handicap",
+      "runner_count": 15,
+      "passport_coverage": "9/15",
+      "passport_coverage_pct": 60.0,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Alto Sax",
+          "prob": 0.115373,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Limbocall",
+          "prob": 0.07486,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Voice Of Northeast",
+          "prob": 0.074539,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Alto Sax",
+          "prob": 0.087987,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Limbocall",
+          "prob": 0.069245,
+          "nb_decision_lane": "LOW_DATA"
+        },
+        {
+          "rank": 3,
+          "horse": "Voice Of Northeast",
+          "prob": 0.06817,
+          "nb_decision_lane": "LOW_DATA"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Alto Sax",
+          "prob": 0.537111
+        },
+        {
+          "rank": 3,
+          "horse": "Limbocall",
+          "prob": 0.532393
+        },
+        {
+          "rank": 2,
+          "horse": "Vervain",
+          "prob": 0.532452
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    },
+    {
+      "race_id": "924617",
+      "course": "Killarney",
+      "off_time": "2026-07-15T20:30:00",
+      "race_date": "2026-07-15",
+      "race_title": "Kitty O'Se's Seafood And Grill Restaurant Handicap",
+      "runner_count": 11,
+      "passport_coverage": "9/11",
+      "passport_coverage_pct": 81.8,
+      "lane_a_top3": [
+        {
+          "rank": 1,
+          "horse": "Jurality",
+          "prob": 0.094063,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Lagoon Nebula",
+          "prob": 0.085347,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Moyassr",
+          "prob": 0.080567,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_b_top3": [
+        {
+          "rank": 1,
+          "horse": "Jurality",
+          "prob": 0.084737,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 2,
+          "horse": "Lagoon Nebula",
+          "prob": 0.071056,
+          "nb_decision_lane": "SUPPRESS"
+        },
+        {
+          "rank": 3,
+          "horse": "Celestially",
+          "prob": 0.070919,
+          "nb_decision_lane": "SUPPRESS"
+        }
+      ],
+      "lane_c_top3": [
+        {
+          "rank": 1,
+          "horse": "Jurality",
+          "prob": 0.54229
+        },
+        {
+          "rank": 3,
+          "horse": "Celestially",
+          "prob": 0.532954
+        },
+        {
+          "rank": 2,
+          "horse": "Party Dress",
+          "prob": 0.537772
+        }
+      ],
+      "lane_b_note": "PAPER_ONLY_NO_INTENT",
+      "weak_data": true,
+      "top_pick_lane": "SUPPRESS"
+    }
+  ],
+  "rules": {
+    "paper_only": true,
+    "no_live_engine": true,
+    "no_telegram": true,
+    "old_live_velo_untouched": true,
+    "shadow_velo_untouched": true,
+    "no_staking": true,
+    "rpr_archive_only": true,
+    "no_market_lane_morning": true,
+    "no_jtcd_alltime": true
+  }
+}
