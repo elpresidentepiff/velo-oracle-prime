@@ -1,98 +1,101 @@
-# Race Day 15 (2026-07-15) — Frozen Model Recount and Control-Plane Report
+# Race Day 15 (2026-07-15) — Frozen Model Recount and Control-Plane Report (v2, CORRECTED)
 
-**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01. Read-only forensic proof. No rescoring, no production repairs, no merges. All findings independently re-verified against fresh SHA-256 hashes and a fresh Supabase `.select()` query this session, not taken on the orchestrating session's word.
+**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01. Read-only forensic proof. No rescoring, no production repairs, no merges.
 
-## Phase 1 — Authoritative morning run
+**Revision v2** — issued after the operator's REQUEST CHANGES review of PR #151 v1. v1's evidence discovery (immutable morning snapshot identity, the Transcript→Kalir manufactured hit, Sigma's contamination) is **retained and accepted**. v1's performance/classification calculations contained material errors, corrected below (P0-19 through P0-24). Every number in this revision was independently recomputed from the evidence bundle by a portable, path-independent script — not copied from the operator's own expected figures — and the recomputation happens to match the operator's own independent estimate (12/38) exactly, which is treated as convergent confirmation, not as the reason for accepting the number.
 
-**Classification: `MORNING_RUN_PROVEN`** for Old VÉLØ. The immutable, run-scoped file `data/runner_snapshots_2026_07_15_2026_07_15_aef63056_1784105122721.jsonl` (SHA-256 `e2a80cc7...6d44da`, 400 rows, 47 unique race_ids, every row's `created_at="2026-07-15T08:46:03.598813+00:00"`) is independently cross-verified against three sources that all agree exactly: Supabase `pipeline_runs` row `54fee6ec-d1b3-4a9c-8c07-d4af813405f4` (started 08:45:22Z, finished 08:46:04Z, 47 races / 400 runners, PASS); `data/velo_run_observability_2026_07_15_b8ba4b61.json` (timestamp 08:46:04.619530Z, same counts); and the file's own internal consistency (single `run_id`, single `created_at` across all 400 rows).
+## What changed from v1, and why
 
-The afternoon file (`..._1784124491047.jsonl`, SHA-256 `d6935d7c...5a62a`, 454 rows, 54 races, `created_at="2026-07-15T14:08:55.167617+00:00"`) is classified **`POST_MORNING_DIAGNOSTIC_RUN`**, matching Supabase `pipeline_runs` row `a96235ce-9899-4773-bc0d-0aaf276f3cfd` (started 14:08:10Z, finished 14:08:55Z, 54/454, PASS) and `velo_run_observability_2026_07_15_0e131abc.json`.
-
-**No-RPR, New Build, and Champion Intent are classified `MORNING_RUN_UNPROVEN`.** None of the three has a run-scoped immutable morning file — each exists only as a single mutable artifact last generated in the 14:08-14:09 UTC window (`radical_shadow_2026_07_15.json` at 14:09:20Z; `two_lane_readiness_2026_07_15.json` at 14:09:30Z; `intent_shadow_scorecard_2026_07_15.csv` sharing the same pipeline step per `run_full_raceday_cron.log`, mtime 14:09Z). 23 of the day's 47 races (all of Happy Valley plus the early Catterick/Bath card) had already gone off before these files were even generated — they cannot serve as pre-race evidence for those races under any interpretation.
-
-## Identity-scheme drift found inside the afternoon run
-
-The afternoon run scored the **same 7 Uttoxeter races twice**, once under the pre-existing numeric RP id (e.g. `922990`) and once under a newly-introduced string scheme (`rp_UTT_20260715_2.48`), with byte-identical off-times for each pair. This is a live identity bug that any downstream joiner keyed to a single scheme will silently miss half of.
-
-## Phase 2/5 — Morning vs afternoon: one changed pick
-
-Of 47 races present in both runs, exactly **one** pick changed: race `924613`, Killarney 6.30.
-
-| | Morning (08:46, sealed) | Afternoon (14:08, diagnostic) |
+| # | v1 defect | v2 fix |
 |---|---|---|
-| Pick | **Transcript** | **Kalir** |
-| Probability | 0.4087 | 0.4442 |
-| Scoring-time price | 1.75 | 3.0 |
-| Product | WIN_ONLY | WIN_ONLY |
+| P0-19 | `14/47` timing logic incremented the denominator before checking timing safety, and the `H.MM` off-string parser misclassified evening races (e.g. would have read `7.20` as `07:20`) | Three explicit views computed from canonical `race_time_raw` + a per-course UTC offset table (Happy Valley UTC+8, GB/IRE UTC+1 in July): `FULL_SNAPSHOT_REPLAY` (informational only), `STRICT_PRE_RACE` (the only view that may be called a strike rate), `TIMING_UNPROVEN` |
+| P0-20 | `radical_shadow_2026_07_15.json` was mislabelled `NO_RPR_SHADOW` — it is a different, mutable, afternoon-generated decision layer built around Old VÉLØ's own top pick | Genuine No-RPR reconstructed from the immutable morning snapshot's own `sqpe_no_rpr_shadow_prob` field, ranked per race, horse_id-matched to results, with fail-closed exclusion of 5 races with tied top scores. Radical Shadow retained separately, correctly labelled `RADICAL_SHADOW` |
+| P0-21 | New Build / Champion Intent were blanket-labelled `MORNING_RUN_UNPROVEN` with no per-race distinction | Each race classified individually: `POST_RACE_GENERATED` / `AFTERNOON_PRE_RACE_PROVEN` / `TIMING_UNPROVEN`, using each artifact's own `generated_at` against canonical `off_dt` |
+| P0-22 | Phase 9 concluded `NOT_RECURRED_ON_2026-07-15` using the post-fallback `races_parsed=47` counter as if it proved the original manifest was complete — logically reversed | Reopened, root cause located directly in code (`racing_post_account_collector.py:329-334`); classification corrected to `MANIFEST_TRUNCATION_CONFIRMED_RECURRING_ROOT_CAUSE_LOCATED` |
+| P0-23 | Claimed the WSL cron "fired late" at 14:08 while also stating cron does not catch up missed jobs — self-contradictory, and not supported by the evidence (a wrapper log proves the wrapper ran, not that cron triggered it) | Both trigger origins reclassified `MORNING_TRIGGER_ORIGIN_UNPROVEN` / `AFTERNOON_TRIGGER_ORIGIN_UNPROVEN`; the structural finding (`NO_SINGLE_DAILY_RUN_OWNER_AND_NO_RUN_LOCK`) is retained, since it does not depend on resolving origin |
+| P0-24 | Scripts hardcoded an absolute worktree path, joined on horse name strings, hashed re-serialized JSON instead of raw JSONL bytes, and read a `decision_tier` field that doesn't exist in the snapshot (leaving Old VÉLØ tiers blank) | Scripts resolve repo root from their own location (or accept `--repo-root`), join on `horse_id` with name fallback explicitly flagged, hash the raw JSONL line bytes, and read the snapshot's actual `tier` field |
 
-**Actual winner: Kalir, final SP 4.0** (confirmed directly against `rp_results_2026_07_15.json`, runner-level `sp_dec` field — the operator's reported 4.0 is correct; the afternoon row's `sp_dec=3.0` was only the market price at 14:08, roughly 4 hours before the 18:30 off, not the final SP). Transcript did not win. The afternoon rescore therefore **manufactured a credited winner that did not exist in the sealed morning prediction** — this is the single point of divergence between the honest morning count and every inflated figure reported downstream.
+## Phase 1 — Authoritative morning run (unchanged, accepted in v1)
 
-Full race-by-race diff: `race_day_15_morning_vs_afternoon_verdict_diff.csv`.
+**Classification: `MORNING_RUN_PROVEN`** for Old VÉLØ. `data/runner_snapshots_2026_07_15_2026_07_15_aef63056_1784105122721.jsonl` (400 rows, 47 races, every row's `created_at="2026-07-15T08:46:03.598813+00:00"`), cross-verified against Supabase `pipeline_runs` row `54fee6ec-d1b3-4a9c-8c07-d4af813405f4` and `velo_run_observability_..._b8ba4b61.json`. The afternoon file (454 rows, 54 races, `created_at="2026-07-15T14:08:55.167617+00:00"`) remains `POST_MORNING_DIAGNOSTIC_RUN`.
 
-## Phase 6 — Honest Old VÉLØ recount (strict, timing-proven, morning-only)
+## Phase 2/5 — Killarney 924613 anchor (unchanged, accepted in v1)
 
-Computed directly from the 400-row immutable morning snapshot, joined against the canonical results file:
+Morning sealed pick **Transcript** (VP 0.4087) did not win. The 14:08 rescore changed the pick to **Kalir** (VP 0.4442), which won at final SP **4.0** (confirmed against `rp_results_2026_07_15.json`). Transcript's race off-time (18:30 local, 17:30 UTC) was well after the 08:46 UTC morning snapshot, so this was a genuinely timing-safe morning pick that the afternoon rescore silently overwrote and replaced with a pick that went on to win.
 
-| Metric | Value |
-|---|---|
-| Eligible races scored pre-race | 47 |
-| Non-runners | 1 |
-| **Wins** | **14** |
-| Placed only (2nd/3rd) | 13 |
-| Misses | 19 |
-| Timing-unproven / result-missing | 16 |
-| **Strike rate** | **29.8%** |
-| Frame rate | 57.5% |
-| Average winner SP | 4.18 |
-| Median winner SP | 3.13 |
-| One-unit SP return | +12.45 |
-| ROI | +27.1% |
+## Phase 6 — CORRECTED Old VÉLØ recount
 
-**Honest result: 14/47 (29.8%), not the reported 15/46 (32.6%).** The difference is exactly the manufactured Kalir hit above.
+| View | Wins | Eligible | Strike rate | Frame rate | Avg winner SP | ROI | Status |
+|---|---|---|---|---|---|---|---|
+| **STRICT_PRE_RACE** | **12** | **38** | **31.6%** | 65.8% | 3.64 | +14.9% | The only view that may be called a strike rate |
+| FULL_SNAPSHOT_REPLAY | 14 | 46 | 30.4% | 58.7% | 4.18 | +27.1% | Informational only — includes all 9 post-race Happy Valley races; never a predictive-performance figure |
 
-## Phase 6b — Why Sigma's 15/46 cannot be trusted
+9 races excluded from the strict denominator, all Happy Valley (off-times 11:30-15:50 local = 03:30-07:50 UTC, all before the 08:46:03 UTC morning snapshot). Two of these are the specific races the operator flagged: **Winning Champion** (1.30 HV, off_dt_utc 05:30) and **Thriving Brothers** (2.35 HV, off_dt_utc 06:35) — both correctly excluded in this revision.
 
-`sigma_results_2026_07_15.json` was generated at **22:28:32Z**, over 8 hours after the 14:08 rescore. All 46 evaluated rows carry `vp_source="supabase_velo_verdicts"` — Sigma reads the live mutable table, not a frozen run. Independently re-queried this session: **100% of the live `velo_verdicts` rows for today's 54 races carry `generated_at` in the 14:08 window; zero carry 08:46** — the morning run's rows were completely overwritten (upsert-by-`race_id`, no run-scoped key). The Sigma row schema itself contains **no `verdict_id`, `doctrine_event_id`, or `pick_sp` field at all** (not merely null — absent from the schema), so Sigma cannot, even in principle, prove which prediction run it evaluated. **The 15/46 figure must not be repeated as a verified Old VÉLØ result.**
+**Regression tests confirming the timing parser fix** (all independently recomputed against canonical `race_time_raw`, not the ambiguous `off` string):
 
-## Phase 3/5 — Four-model winners (see `race_day_15_four_model_winners.md`/`.csv` for full detail)
+| Race | Off (local) | `race_time_raw` | Course offset | off_dt_utc | vs. 08:46:03Z morning gen |
+|---|---|---|---|---|---|
+| Happy Valley 924714 | 1.30 | 13:30:00 | UTC+8 | 05:30 | POST-RACE (correctly excluded) |
+| Happy Valley 924716 | 2.35 | 14:35:00 | UTC+8 | 06:35 | POST-RACE (correctly excluded) |
+| Lingfield 923096 | 7.20 | 19:20:00 | UTC+1 | 18:20 | PRE-RACE (v1's `h<7` heuristic would have wrongly read this as 07:20 and excluded it as post-race — now correctly included) |
+| Yarmouth 923107 | 7.10 | 19:10:00 | UTC+1 | 18:10 | PRE-RACE (same fix) |
+| Killarney 924616 | 8.00 | 20:00:00 | UTC+1 | 19:00 | PRE-RACE |
 
-| Model | Winners | Eligible | Strike rate | Provenance |
+## Phase 6, continued — genuine No-RPR (P0-20)
+
+| View | Wins | Eligible | Strike rate | Frame rate | Avg winner SP | ROI |
+|---|---|---|---|---|---|---|
+| **STRICT_PRE_RACE** | **8** | **33** | **24.2%** | 60.6% | 6.50 | +57.6% |
+
+Source: the immutable morning snapshot's own `sqpe_no_rpr_shadow_prob` field (present alongside `velo_prime_prob` on every one of the 400 runner rows), ranked descending per race, matched to results by `horse_id`. 5 races (of the 38 timing-safe races) have an exact tie for the top `sqpe_no_rpr_shadow_prob` score and are fail-closed excluded from the strict denominator (38 − 5 = 33, exact reconciliation) rather than resolved by an undocumented arbitrary tiebreak. Full tie ledger in `race_day_15_frozen_recount.json` → `phase6_no_rpr_genuine.tie_ledger`.
+
+`radical_shadow_2026_07_15.json` is **not** No-RPR and is never labelled as such in this revision. It is retained separately as `RADICAL_SHADOW` — a mutable, afternoon-generated (14:09:20Z), `status=SHADOW_ONLY_NOT_LIVE` decision layer that reads the mutable `velo_prime_verdicts` table and is built around Old VÉLØ's own top horse (which is why its v1-mislabelled "No-RPR" scores exactly repeated Old VÉLØ's probabilities — a strong internal-consistency signal the operator correctly caught).
+
+## Phase 6b — Sigma invalidation (unchanged, accepted in v1)
+
+`sigma_results_2026_07_15.json` (generated 22:28:32Z) reads 100% from the live, mutable `velo_verdicts` table, 8+ hours after the 14:08 overwrite; its row schema has no `verdict_id`/`doctrine_event_id`/`pick_sp` field. The reported 15/46 remains invalid, and this revision's own v1 figure of 14/47 (also invalid, for the P0-19 reasons above) must not be quoted either. **The only strike rate that may be reported for Old VÉLØ from 2026-07-15 is 12/38 (31.6%), STRICT_PRE_RACE.**
+
+## Phase 3/5 — Four-model comparison (CORRECTED)
+
+| Model | Wins | Eligible | Strike rate | Provenance |
 |---|---|---|---|---|
-| Old VÉLØ | 14 | 47 | 29.8% | `MORNING_RUN_PROVEN` |
-| No-RPR Shadow | 15 | 46 | 32.6% | `MORNING_RUN_UNPROVEN` (single mutable file; also inherits the Kalir manufactured hit) |
-| New Build | 8 | 46 | 17.4% | `MORNING_RUN_UNPROVEN`; many rows are `SUPPRESS`/`LOW_DATA`, not live picks |
-| Champion Intent Shadow | 11 | 45 | 24.4% | `MORNING_RUN_UNPROVEN`; display-only shadow signal, `velo_scoring_allowed=False` |
+| Old VÉLØ | 12 | 38 | 31.6% | `STRICT_PRE_RACE_PROVEN`, 08:46 UTC morning snapshot |
+| No-RPR (genuine) | 8 | 33 | 24.2% | `STRICT_PRE_RACE_PROVEN`, 08:46 UTC morning snapshot, 5 races tie-excluded |
+| New Build (Lane A) | 7 | 32 | 21.9% | `AFTERNOON_PRE_RACE_PROVEN` only — 15 of 47 races were already post-race at the 14:09:30Z generation instant and are excluded |
+| Champion Intent Shadow | 9 | 32 | 28.1% | `AFTERNOON_PRE_RACE_PROVEN` shadow-only, `velo_scoring_allowed=False` on every row regardless of timing |
 
-Winners found by all four models: 4 races. Races found by none: 26. Full convergence matrix: `race_day_15_winner_convergence_matrix.csv`.
+Because Old VÉLØ/No-RPR and New Build/Champion Intent are proven against **different race universes** (38/33 races timing-safe at 08:46Z vs. 32 races timing-safe at ~14:09Z), the convergence/shared-winner comparison in `race_day_15_winner_convergence_matrix.csv` is computed strictly within each model's own proven population and explicitly marks which population each cell belongs to — it is not a naive like-for-like race-by-race comparison across all four models on identical footing, because no such footing exists in the underlying evidence.
 
-## Phase 7 — New Build / Champion Intent join failure
+## Phase 7 — New Build / Champion Intent per-race timing (P0-21)
 
-**Classification: `SCORECARD_GENERATED_NOT_PERSISTED`.** Both lanes produced real, populated, 47-race local scorecards on 2026-07-15. Independently re-queried this session: `canonical_model_scorecards` has 2,511 total rows, most recent `run_date = 2026-07-07`, **zero rows for `2026-07-15`**. `run_full_raceday.py`'s 19-step sequence (all 19 passed) never calls the canonical-scorecard build/persist scripts — persistence was simply never one of the steps. Multi-Model Sigma correctly reports `NO_DATA` because there is genuinely nothing in the table it joins against. The Uttoxeter ID-scheme drift (numeric vs. `rp_UTT_*` string) is a related but secondary risk, not today's root cause — both local lanes used the numeric scheme exclusively.
+| Model | POST_RACE_GENERATED (excluded) | AFTERNOON_PRE_RACE_PROVEN | Strike rate (proven subset) |
+|---|---|---|---|
+| New Build | 15 of 47 | 32 | 7/32 = 21.9% |
+| Champion Intent Shadow | 15 of 47 | 32 | 9/32 = 28.1% |
 
-Full detail: `race_day_15_scorecard_join_autopsy.md`.
+Neither lane has a run-scoped immutable morning artifact (unchanged finding from v1) — even their `AFTERNOON_PRE_RACE_PROVEN` subset is proven only against a single mutable file, not a sealed run. New Build's proven wins additionally include rows whose own `nb_decision_lane`/`top_pick_lane` is `SUPPRESS` or `LOW_DATA` — these are shown in the CSV export with their policy status explicit and must not be read as live recommendations regardless of whether the underlying pick happened to win.
 
-## Phase 8 — Cron / control-plane root cause
+## Phase 7 — New Build / Champion Intent join failure (unchanged, accepted in v1)
 
-The GitHub Actions scheduler (`score-daily.yml`, the repo's own designated "source-controlled scheduler") is **`state: disabled_manually`**, disabled 2026-06-10, over five weeks before this incident, with zero runs since. The local WSL crontab (`0 7 * * *` Europe/London = 06:00 UTC) produced exactly one logged `run_full_raceday.py` execution for 2026-07-15, ending 14:09:41 UTC — matching the **afternoon** run, not the scheduled 06:00 UTC time; consistent with a missed/late firing (WSL not running at the scheduled instant; cron does not catch up missed jobs). The 08:45 morning run has no corresponding entry in the cron log at all, meaning it came from a third, distinct invocation path outside both known schedulers. Both `pipeline_runs` rows self-report `trigger_source=manual` — **no automated scheduler produced either run**; two uncoordinated manual triggers collided on the same date, five and a half hours apart, with no locking anywhere to prevent it. Separately, `app/main.py:1249` still queries `pipeline_runs?target_date=eq...` against a table whose real column is `source_date` — confirmed live at commit `aef6305`, a genuine schema-drift bug that silently degrades a health-check read (not the trigger mechanism itself).
+**`SCORECARD_GENERATED_NOT_PERSISTED`.** `canonical_model_scorecards` independently re-queried: 2,511 total rows, most recent `run_date=2026-07-07`, zero for `2026-07-15`. `run_full_raceday.py`'s 19-step sequence never calls the canonical-scorecard persist scripts.
 
-Full detail: `race_day_15_cron_control_plane_autopsy.md`.
+## Phase 8 — Cron / control-plane (CORRECTED, P0-23)
 
-## Phase 9 — Manifest truncation recurrence
+GitHub Actions `score-daily.yml` confirmed `state=disabled_manually` since 2026-06-10 (unchanged, accepted). Both trigger origins are now correctly classified as **unproven**: `MORNING_TRIGGER_ORIGIN_UNPROVEN` (08:45 run — no matching log entry anywhere, no attribution evidence) and `AFTERNOON_TRIGGER_ORIGIN_UNPROVEN` (14:08 run — `run_full_raceday_cron.log` proves the wrapper script executed and was redirected into that log file; it does NOT prove the cron daemon itself triggered it, since a manual invocation of the identical command would leave an identical log signature). The structural finding is unaffected by this correction: `NO_SINGLE_DAILY_RUN_OWNER_AND_NO_RUN_LOCK` — two runs fired 5.5 hours apart against the same `source_date`, both self-reporting `trigger_source=manual`, with no locking or duplicate-run guard anywhere in the pipeline.
 
-**Not reproduced on 2026-07-15.** Today's Happy Valley capture (9 races, race_ids 924710-924718) is complete and consistent across every counter checked: manifest `url_count=9`, `captures=9` (all PASS), and `rp_results_2026_07_15.json`'s `html_files_seen=racecard_indexed=readiness_indexed=races_parsed=47`, `parse_errors=0`. The PR #150-documented filtering defect was not found firing today for this specific example; this should be read as "not observed today," not "proven fixed" — the underlying code path was not independently re-audited in this mission. Full detail and regression-test spec: `race_day_15_manifest_recurrence.md`.
+`app/main.py:1249`'s `target_date`/`source_date` schema drift remains confirmed live at `aef6305` (unchanged, accepted).
 
-## Phase 10 — Dashboard truth failure
+## Phase 9 — Manifest truncation recurrence (CORRECTED, P0-22)
 
-`app/main.py:2468`'s `verdict_count_today` logic (`race_id=like.*{date}*`) assumes `race_id` embeds the date, which it never does — confirmed still present at `aef6305`. Combined with the `velo_verdicts` upsert-by-`race_id` overwrite behavior, the dashboard has no reliable way to distinguish "today's sealed morning count" from "whatever the mutable table currently holds." Folded into the Race Day Controller design (Phase 11) as the replacement contract.
+**Classification corrected from `NOT_RECURRED_ON_2026-07-15` to `MANIFEST_TRUNCATION_CONFIRMED_RECURRING_ROOT_CAUSE_LOCATED`.**
 
-## Phase 11 — Race Day Controller (design summary)
+`data/racing_post_account_raw/2026-07-15/manifest.json`'s final on-disk state has exactly 9 entries, all Happy Valley — but all 49 raw HTML files (40 non-Happy-Valley + 9 Happy Valley) remain present on disk untouched. Root cause located directly in code: `scripts/ops/racing_post_account_collector.py`, function `capture_urls()`, lines 329-334. Step 3 (UK/IRE, 40 URLs) and Step 3.5 (Happy Valley, 9 URLs) both write to the identical `manifest.json`; Step 3.5's own manifest-rebuild step filters the merged capture list down to only URLs present in **its own** 9-URL input list, silently discarding Step 3's 40 prior entries from the file written to disk. This is the same class of defect PR #150 documented for 2026-07-14, recurring at a different call site. The final `rp_results_2026_07_15.json`'s 47-race, 7-course universe did not come from this truncated manifest via the standard automated path (`build_rp_results_url_list.py` could only have resolved to the same 9-entry manifest) — it required an unlogged manual reconstruction from the raw HTML files' own canonical URLs, consistent with the operator's own firsthand account of directly observing this happen. Full detail: `race_day_15_manifest_recurrence.md`.
 
-A single deterministic 17-stage state machine (`DAY_CREATED` → ... → `DAY_SEALED`) per `source_date`, with a per-stage `run_id`, source/output hashes, and a one-way `MORNING_RUN_SEALED` gate that prevents any later write from overwriting a sealed run's artifacts (requiring `run_id`, not just `race_id`, as the upsert key). A manual rerun mints a new `run_id` and writes to a clearly non-authoritative namespace. Exactly one scheduler is allowed to own the daily `DAY_CREATED` trigger. Full design: `race_day_controller_design.md`.
+## Phase 10/11/12 — unchanged from v1
 
-## Phase 12 — Deep Race Agent contract and benchmark plan
-
-A sealed-packet-in, structured-analysis-out contract (`deep_race_agent_contract.json`) with a provider-neutral adapter and a blind benchmark plan (`deep_race_agent_model_benchmark_plan.md`) scoring GLM, Qwen, and Kimi on structured-JSON validity, citation accuracy, field coverage, contradiction-detection recall (via planted synthetic conflicts), hallucination rate, latency, cost, and run-to-run consistency — with a hard structured-JSON-validity floor that disqualifies a provider regardless of other scores, and no pre-selected "recommended" winner.
+Dashboard truth failure (`app/main.py:2468`), Race Day Controller design, and Deep Race Agent contract/benchmark plan are unaffected by the P0-19..P0-24 corrections and are retained as-is from v1 (see `race_day_controller_design.md`, `deep_race_agent_contract.json`, `deep_race_agent_model_benchmark_plan.md`).
 
 ## Evidence integrity
 
-28 evidence files copied from the primary dirty repo into `evidence_staging/2026-07-15/` with byte-for-byte SHA-256 equality confirmed for every file, zero mismatches (`evidence_staging/2026-07-15/COPY_HASH_LOG.txt`). Primary repo untouched throughout — see `provenance/` for before/after status snapshots and the byte-identity classification.
+37 evidence files now copied from the primary dirty repo into `evidence_staging/2026-07-15/` (28 from v1 + 9 new in v2: racecard/intl/results URL lists, both racecard/results manifests, the collector script itself, the champion-intent audit file, and the cron log), all with byte-for-byte SHA-256 equality confirmed, zero mismatches. Primary repo untouched throughout this revision as well — see `provenance/` for the updated before/after status snapshots.

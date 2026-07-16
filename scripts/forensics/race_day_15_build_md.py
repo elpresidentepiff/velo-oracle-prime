@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
+import argparse
 import csv
 import json
 from pathlib import Path
 
-ROOT = Path("/mnt/c/Users/puror/velo-race-day-15-proof")
-OUT = ROOT / "data" / "reports"
+SCRIPT_DIR = Path(__file__).resolve().parent
 
-winners = list(csv.DictReader(open(OUT / "race_day_15_four_model_winners.csv")))
-recount = json.load(open(OUT / "race_day_15_frozen_recount.json"))
-s = recount["sections"]
+
+def resolve_root(cli_root):
+    return Path(cli_root).resolve() if cli_root else SCRIPT_DIR.parents[1]
+
 
 def tbl(rows, cols, headers):
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
@@ -16,94 +17,100 @@ def tbl(rows, cols, headers):
         lines.append("| " + " | ".join(str(r.get(c, "")) for c in cols) + " |")
     return "\n".join(lines)
 
-ov = sorted([r for r in winners if r["model"] == "OLD_VELO"], key=lambda x: x["off_time"])
-nr = sorted([r for r in winners if r["model"] == "NO_RPR_SHADOW"], key=lambda x: x["off_time"])
-nb = sorted([r for r in winners if r["model"] == "NEW_BUILD"], key=lambda x: x["off_time"])
-ci = sorted([r for r in winners if r["model"] == "CHAMPION_INTENT_SHADOW"], key=lambda x: x["off_time"])
 
-ov_rows = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
-            "Morning odds": r["morning_price"], "SP": r["final_sp"], "Tier": r["decision_tier"],
-            "Product": r["product"]} for r in ov]
-nr_rows = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
-            "Morning odds": r["morning_price"] or "n/a", "SP": r["final_sp"],
-            "Score": r["prediction_score"]} for r in nr]
-nb_rows = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
-            "Morning odds": r["morning_price"] or "n/a", "SP": r["final_sp"],
-            "Lane": r["lane"], "Score": r["prediction_score"]} for r in nb]
-ci_rows = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
-            "Morning odds": r["morning_price"] or "n/a", "SP": r["final_sp"],
-            "Score": r["prediction_score"]} for r in ci]
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--repo-root", default=None)
+    args = ap.parse_args()
+    ROOT = resolve_root(args.repo_root)
+    OUT = ROOT / "data" / "reports"
 
-ov_names = {r["predicted_horse"] for r in ov}
-nr_names = {r["predicted_horse"] for r in nr}
-nb_names = {r["predicted_horse"] for r in nb}
-ci_names = {r["predicted_horse"] for r in ci}
-shared_all4 = ov_names & nr_names & nb_names & ci_names
-unique_ov = ov_names - nr_names - nb_names - ci_names
+    winners = list(csv.DictReader(open(OUT / "race_day_15_four_model_winners.csv")))
+    recount = json.load(open(OUT / "race_day_15_frozen_recount.json"))
+    s = recount["sections"]
 
-recount_p6 = s["phase6_old_velo_honest_recount_strict_timing_proven"]
-sigma_inv = s["phase6b_sigma_invalidation"]
-diff = s["phase2_diff_summary"]
+    ov = sorted([r for r in winners if r["model"] == "OLD_VELO"], key=lambda x: x["off_time"])
+    nr = sorted([r for r in winners if r["model"] == "NO_RPR_GENUINE"], key=lambda x: x["off_time"])
+    nb = sorted([r for r in winners if r["model"] == "NEW_BUILD"], key=lambda x: x["off_time"])
+    ci = sorted([r for r in winners if r["model"] == "CHAMPION_INTENT_SHADOW"], key=lambda x: x["off_time"])
 
-md = f"""# Race Day 15 (2026-07-15) — Four-Model Winners Report
+    ov_rows = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
+                "SP": r["final_sp"], "Tier": r["decision_tier"], "Product": r["product"]} for r in ov]
+    nr_rows = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
+                "SP": r["final_sp"], "Score": r["prediction_score"]} for r in nr]
+    nb_rows_ = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
+                 "SP": r["final_sp"], "Lane": r["lane"], "Score": r["prediction_score"]} for r in nb]
+    ci_rows_ = [{"Time": r["off_time"], "Course": r["course"], "Horse": r["predicted_horse"],
+                 "SP": r["final_sp"], "Score": r["prediction_score"]} for r in ci]
 
-**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01 (read-only forensic proof, evidence-only)
+    ov_names = {r["predicted_horse"] for r in ov}
+    nr_names = {r["predicted_horse"] for r in nr}
+    nb_names = {r["predicted_horse"] for r in nb}
+    ci_names = {r["predicted_horse"] for r in ci}
+    shared_all4 = ov_names & nr_names & nb_names & ci_names
+    unique_ov = ov_names - nr_names - nb_names - ci_names
 
-**TRUTH LAW APPLIED**: every row below is sourced from a genuine pre-race scorecard artifact, cross-checked against the canonical results file (`rp_results_2026_07_15.json`). Old VÉLØ rows are sourced from the immutable, run-scoped morning snapshot (`runner_snapshots_..._1784105122721.jsonl`, created_at 2026-07-15T08:46:03Z) and are classified `MORNING_RUN_PROVEN`. **No-RPR, New Build and Champion Intent have NO run-scoped immutable morning artifact** — they exist only as single mutable files last written in the 14:08-14:09 UTC window, and are therefore classified `MORNING_RUN_UNPROVEN` for every race whose off-time preceded that window. Do not read these three models' rows as proven pre-race predictions without checking the timing-safety column in the full CSV export.
+    ov_strict = s["phase6_old_velo"]["STRICT_PRE_RACE"]
+    ov_full = s["phase6_old_velo"]["FULL_SNAPSHOT_REPLAY"]
+    nr_strict = s["phase6_no_rpr_genuine"]["STRICT_PRE_RACE"]
+    nb_perf = s["phase7_new_build_per_race_timing"]["AFTERNOON_PRE_RACE_PROVEN_performance"]
+    ci_perf = s["phase7_champion_intent_per_race_timing"]["AFTERNOON_PRE_RACE_PROVEN_performance"]
+
+    md = f"""# Race Day 15 (2026-07-15) — Four-Model Winners Report (v2, corrected)
+
+**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01. **Revision v2** — issued after operator REQUEST CHANGES on PR #151 v1. See `race_day_15_frozen_recount.md` for the full correction log (P0-19..P0-24).
+
+**TRUTH LAW APPLIED, CORRECTED**: v1 of this report over-counted Old VÉLØ by including 2 post-race Happy Valley "wins" inside a figure it mislabelled timing-proven, and mislabelled `radical_shadow_2026_07_15.json` as the No-RPR model when it is a distinct decision layer built around Old VÉLØ's own pick. Both defects are fixed in this revision.
+
+## Headline (first page)
+
+| View | Model | Wins | Eligible | Strike rate | Status |
+|---|---|---|---|---|---|
+| **Strict pre-race** | Old VÉLØ | **{ov_strict['wins']}** | **{ov_strict['eligible']}** | **{ov_strict['strike_rate']*100:.1f}%** | `STRICT_PRE_RACE_PROVEN` — canonical `off_dt_utc` after 08:46:03Z snapshot generation, excludes all 9 Happy Valley races (already run 03:30-07:50 UTC) |
+| Full replay (informational only, NOT predictive) | Old VÉLØ | {ov_full['wins']} | {ov_full['eligible']} | {ov_full['strike_rate']*100:.1f}% | `FULL_SNAPSHOT_REPLAY_INCLUDING_POST_RACE` — includes the 9 Happy Valley races; never quote this as a strike rate |
+| **Strict pre-race** | No-RPR (genuine, `sqpe_no_rpr_shadow_prob`) | **{nr_strict['wins']}** | **{nr_strict['eligible']}** | **{nr_strict['strike_rate']*100:.1f}%** | `STRICT_PRE_RACE_PROVEN`, 5 races excluded on tied top score (fail-closed) |
+| Afternoon pre-race | New Build (Lane A) | {nb_perf['wins']} | {nb_perf['eligible']} | {nb_perf['strike_rate']*100:.1f}% | `AFTERNOON_PRE_RACE_PROVEN` only — generated 14:09:30Z, valid solely for races whose off-time was still ahead of that instant |
+| Afternoon pre-race shadow | Champion Intent Shadow | {ci_perf['wins']} | {ci_perf['eligible']} | {ci_perf['strike_rate']*100:.1f}% | `AFTERNOON_PRE_RACE_PROVEN` shadow-only, `velo_scoring_allowed=False` for every row regardless of timing |
+
+Sigma's previously reported 15/46 (32.6%) and this mission's own v1 report's 14/47 remain **both invalid** as Old VÉLØ performance claims — see `race_day_15_frozen_recount.md` Section "Phase 6b" for the Sigma contamination finding (unchanged) and the corrected Phase 6/6b text for why 14/47 was also wrong.
 
 ---
 
-## Old VÉLØ winners (MORNING_RUN_PROVEN, n={len(ov_rows)})
+## Old VÉLØ winners — STRICT_PRE_RACE_PROVEN (n={len(ov_rows)})
 
-{tbl(ov_rows, ["Time","Course","Horse","Morning odds","SP","Tier","Product"], ["Time","Course","Horse","Morning odds","SP","Tier","Product"])}
+{tbl(ov_rows, ["Time","Course","Horse","SP","Tier","Product"], ["Time","Course","Horse","SP","Tier","Product"])}
 
-## No-RPR winners (MORNING_RUN_UNPROVEN — single mutable file, n={len(nr_rows)})
+## No-RPR winners — genuine, from `sqpe_no_rpr_shadow_prob`, STRICT_PRE_RACE_PROVEN (n={len(nr_rows)})
 
-{tbl(nr_rows, ["Time","Course","Horse","Morning odds","SP","Score"], ["Time","Course","Horse","Morning odds","SP","Score"])}
+{tbl(nr_rows, ["Time","Course","Horse","SP","Score"], ["Time","Course","Horse","SP","Score"])}
 
-## New Build winners (MORNING_RUN_UNPROVEN — single mutable file, n={len(nb_rows)})
+## New Build winners — Lane A, AFTERNOON_PRE_RACE_PROVEN only (n={len(nb_rows_)})
 
-{tbl(nb_rows, ["Time","Course","Horse","Morning odds","SP","Lane","Score"], ["Time","Course","Horse","Morning odds","SP","Lane","Score"])}
+{tbl(nb_rows_, ["Time","Course","Horse","SP","Lane","Score"], ["Time","Course","Horse","SP","Lane","Score"])}
 
-## Champion Intent winners (MORNING_RUN_UNPROVEN — single mutable file, n={len(ci_rows)})
+## Champion Intent winners — shadow, AFTERNOON_PRE_RACE_PROVEN only, velo_scoring_allowed=False (n={len(ci_rows_)})
 
-{tbl(ci_rows, ["Time","Course","Horse","Morning odds","SP","Score"], ["Time","Course","Horse","Morning odds","SP","Score"])}
+{tbl(ci_rows_, ["Time","Course","Horse","SP","Score"], ["Time","Course","Horse","SP","Score"])}
 
 ---
 
-## Shared winners (found by all four models)
+## Shared and unique winners (compared strictly within each model's own timing-proven population — NOT a like-for-like race-universe comparison, since the four models have different proven denominators: Old VÉLØ/No-RPR = 38/33 pre-race races at 08:46Z; New Build/Champion Intent = 32 pre-race races at ~14:09Z)
 
-{', '.join(sorted(shared_all4)) if shared_all4 else 'None'}
-
-## Unique winners
-
+- Shared by all four: {', '.join(sorted(shared_all4)) if shared_all4 else 'None'}
 - Unique to Old VÉLØ: {', '.join(sorted(unique_ov)) if unique_ov else 'None'}
 - Unique to No-RPR: {', '.join(sorted(nr_names - ov_names - nb_names - ci_names)) if (nr_names - ov_names - nb_names - ci_names) else 'None'}
 - Unique to New Build: {', '.join(sorted(nb_names - ov_names - nr_names - ci_names)) if (nb_names - ov_names - nr_names - ci_names) else 'None'}
 - Unique to Champion Intent: {', '.join(sorted(ci_names - ov_names - nr_names - nb_names)) if (ci_names - ov_names - nr_names - nb_names) else 'None'}
 
-## Total performance (timing-proven basis for Old VÉLØ; operational basis for the other three)
+## Excluded / timing-unproven races
 
-| Model | Winners | Eligible races | Strike rate | Timing-safety basis |
-|---|---|---|---|---|
-| Old VÉLØ | {recount_p6['wins']} | {recount_p6['eligible_races_scored_pre_race']} | {recount_p6['strike_rate']*100:.1f}% | MORNING_RUN_PROVEN |
-| No-RPR Shadow | {len(nr_rows)} | 46 | {len(nr_rows)/46*100:.1f}% | MORNING_RUN_UNPROVEN (single mutable file) |
-| New Build | {len(nb_rows)} | 46 | {len(nb_rows)/46*100:.1f}% | MORNING_RUN_UNPROVEN (single mutable file; many picks are `SUPPRESS`/`LOW_DATA`, not live picks) |
-| Champion Intent Shadow | {len(ci_rows)} | 45 | {len(ci_rows)/45*100:.1f}% | MORNING_RUN_UNPROVEN (display-only shadow signal, `velo_scoring_allowed=False`) |
+See `race_day_15_timing_excluded_races.csv` for the full per-race exclusion ledger (40 rows: 9 Old VÉLØ Happy Valley post-race exclusions + 15 New Build post-race exclusions + 16 Champion Intent post-race exclusions). Old VÉLØ additionally has 0 non-runners in the strict population; No-RPR has 5 races excluded on fail-closed tied top score (`race_day_15_frozen_recount.json`, `phase6_no_rpr_genuine.tie_ledger`).
 
-**The reported operator figure of Old VÉLØ 15/46 (32.6%) is INVALIDATED.** It was produced by Sigma reading the live, mutable `velo_verdicts` table at 22:28 UTC, over 8 hours after the undocumented 14:08 afternoon rescore silently overwrote every row for all 54 of today's races (upsert-by-`race_id`, no run-scoped key — independently confirmed: 100% of matching rows carry a 14:08 `generated_at`, zero carry 08:46). The Sigma row schema itself contains no `verdict_id`, `doctrine_event_id`, or `pick_sp` field at all, so it cannot even in principle prove which prediction run it evaluated.
-
-**The honest, timing-proven Old VÉLØ result, computed directly from the immutable 08:46 morning snapshot and independently reconciled against the canonical results file, is {recount_p6['honest_figure_string']}.**
-
-The single point of divergence between the honest 14 and the reported 15 is exactly the mandatory regression anchor: race 924613, Killarney 6.30. Morning sealed pick was **Transcript** (VP=0.4087, scoring-time price 1.75) — did not win. The 14:08 afternoon rescore silently changed the pick to **Kalir** (VP=0.4442), which went on to win at SP 4.0. Sigma, reading the overwritten live table at 22:28, credited this as a win for "Old VÉLØ" even though the sealed 08:46 morning prediction was Transcript, not Kalir. This is a manufactured hit, not a genuine morning-run result.
-
-## Excluded / unproven races
-
-- Old VÉLØ: {recount_p6['non_runners']} non-runner, {recount_p6['timing_unproven_or_result_missing']} timing-unproven or result-missing out of 47 morning-scored races.
-- No-RPR / New Build / Champion Intent: all {len(nr_rows)+len(nb_rows)+len(ci_rows)} winner-rows above are MORNING_RUN_UNPROVEN by construction — no run-scoped morning artifact exists for these three models on 2026-07-15. Roughly half of today's races (Happy Valley, off-times 11:30-13:30 UTC) had ALREADY RUN before the single surviving 14:09 UTC file for these three models was even generated.
-
-Full breakdown: see `race_day_15_four_model_winners.csv`, `race_day_15_four_model_placed_only.csv`, `race_day_15_four_model_misses.csv`, `race_day_15_non_runners_exclusions.csv`, `race_day_15_frozen_recount.json`.
+Full breakdown: `race_day_15_four_model_winners.csv`, `race_day_15_four_model_placed_only.csv`, `race_day_15_four_model_misses.csv`, `race_day_15_non_runners_exclusions.csv`, `race_day_15_timing_excluded_races.csv`, `race_day_15_frozen_recount.json`.
 """
+    (OUT / "race_day_15_four_model_winners.md").write_text(md)
+    print("wrote", OUT / "race_day_15_four_model_winners.md")
 
-(OUT / "race_day_15_four_model_winners.md").write_text(md)
-print("wrote", OUT / "race_day_15_four_model_winners.md")
+
+if __name__ == "__main__":
+    main()

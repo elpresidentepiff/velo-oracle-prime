@@ -1,16 +1,29 @@
 {
   "mission": "RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01",
-  "primary_repo": "/mnt/c/Users/puror/velo-oracle-prime",
+  "revision": "v2_post_operator_request_changes",
+  "primary_repo": "PRIMARY_REPO_ROOT (see status snapshots for exact working tree state)",
   "primary_repo_head_at_start": "aef63056f43b2c8558c10333cd226ecae359255b",
   "anchor_branch_used": "evidence/race-day-14-proof-anchor-aef6305",
   "anchor_branch_sha": "aef63056f43b2c8558c10333cd226ecae359255b",
-  "new_worktree_path": "/mnt/c/Users/puror/velo-race-day-15-proof",
   "new_branch": "evidence/race-day-15-frozen-recount",
   "before_status_porcelain_v2_line_count": 462,
-  "after_status_porcelain_v2_line_count": 462,
-  "status_diff_result": "IDENTICAL (diff exit 0)",
-  "immutable_evidence_file_hash_diff_result": "IDENTICAL (diff exit 0) for all 4 run-scoped snapshot/observability files re-hashed after evidence copy",
+  "after_status_v1_porcelain_v2_line_count": 462,
+  "after_status_v2_porcelain_v2_line_count": 462,
+  "status_diff_result_v1": "IDENTICAL (diff exit 0)",
+  "status_diff_result_v2": "IDENTICAL (diff exit 0)",
   "classification": "PRIMARY_DIRTY_WORKTREE_BYTE_IDENTICAL_BEFORE_AFTER",
   "no_branch_switch_reset_clean_restore_checkout_or_stash_performed_in_primary_repo": true,
-  "evidence_copy_method": "cp -p with per-file sha256 comparison, logged in evidence_staging/2026-07-15/COPY_HASH_LOG.txt, 28/28 files OK, 0 mismatches"
+  "evidence_copy_method": "cp -p with per-file sha256 comparison, logged in evidence_staging/2026-07-15/COPY_HASH_LOG.txt (v1, 28 files) and COPY_HASH_LOG_P0_FIXES.txt (v2, 9 additional files), 37/37 total files OK, 0 mismatches",
+  "v2_additional_evidence_files": [
+    "data/racing_post_url_lists/rp_racecards_2026-07-15.txt",
+    "data/racing_post_url_lists/rp_racecards_2026-07-15_intl.txt",
+    "data/racing_post_url_lists/rp_results_2026-07-15.txt",
+    "data/racing_post_account_raw/2026-07-15/manifest.json",
+    "data/racing_post_account_raw/2026-07-15/RAW_HTML_FILENAMES.txt (derived listing, not raw HTML content)",
+    "data/racing_post_account_raw/rp-results-2026-07-15/manifest.json",
+    "scripts/ops/racing_post_account_collector.py",
+    "scripts/ops/build_rp_results_url_list.py",
+    "data/reports/intent_shadow_audit_2026_07_15.json",
+    "data/reports/run_full_raceday_cron.log"
+  ]
 }

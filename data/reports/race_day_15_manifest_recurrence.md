@@ -1,48 +1,53 @@
-# Race Day 15 — Manifest Truncation Recurrence Check (Phase 9)
+# Race Day 15 — Manifest Truncation Recurrence Check (Phase 9, v2 — CORRECTED)
 
-**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01.
+**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01. **Revision v2** — supersedes the v1 finding `NOT_RECURRED_ON_2026-07-15`, which the operator correctly identified as logically reversed: v1 used the post-fallback `races_parsed=47` counter as evidence the original manifest was complete, when that counter was itself produced only after some (unproven-in-v1) fallback reconstruction had already occurred.
 
-## Background
+## Corrected classification
 
-PR #150 (`RACE-DAY-14-BEST-DAY-PROOF-01`, merged/open at commit `313d40c`) proved a manifest-truncation root cause for 2026-07-14: a filtering step discarded earlier capture attempts, and the PR states the root cause "recurs across 4+ other capture directories." This mission was asked to independently confirm whether the same pattern recurred on 2026-07-15, using the specific example cited in the mission brief: "nine Happy Valley entries while 47 races were captured."
+**`MANIFEST_TRUNCATION_CONFIRMED_RECURRING_ROOT_CAUSE_LOCATED`**
 
-## What was independently checked for 2026-07-15
+The truncation recurred on 2026-07-15, and this revision locates its exact cause in code, not merely by counter comparison.
 
+## Evidence, reconstructed from the original files (not from post-fallback counters)
+
+| Artifact | Finding |
+|---|---|
+| `data/racing_post_account_raw/2026-07-15/manifest.json` (final on-disk state) | `url_count=9`, `latest_url_count=9`, 9 `captures`, **all 9 are Happy Valley** (`generated_at=2026-07-15T14:05:19.623446Z`) |
+| Raw HTML files physically on disk in the same directory | **49 total**: 40 non-Happy-Valley + 9 Happy Valley — every one of the 40 UK/IRE files that the manifest's bookkeeping lost is still present on disk, untouched |
+| `data/racing_post_url_lists/rp_racecards_2026-07-15.txt` (Step 3 input) | 38 UK/IRE URLs |
+| `data/racing_post_url_lists/rp_racecards_2026-07-15_intl.txt` (Step 3.5 input) | 9 Happy Valley URLs |
+| `run_full_raceday_cron.log`, 2026-07-15 block | Step 3 (`--url-list rp_racecards_2026-07-15.txt`) runs, THEN Step 3.5 (`--url-list rp_racecards_2026-07-15_intl.txt`) runs — both invoke `racing_post_account_collector.py capture --date 2026-07-15`, both target the identical output directory `data/racing_post_account_raw/2026-07-15/`, and therefore both read and write the identical `manifest.json` |
+
+## Root cause, located in code
+
+`scripts/ops/racing_post_account_collector.py`, function `capture_urls()`, lines 329-334:
+
+```python
+captures_by_url = {
+    item.get("source_url"): item
+    for item in existing_captures + captures
+    if item.get("source_url")
+}
+all_captures = [captures_by_url[u] for u in urls if u in captures_by_url]
 ```
-data/racing_post_account_raw/2026-07-15/manifest.json:
-  url_count: 9
-  latest_url_count: 9
-  captures: 9 entries, all status=PASS, all Happy Valley (race_ids 924710-924718)
 
-data/results/rp_results_2026_07_15.json:
-  races_parsed: 47
-  parse_errors: 0
-  results[] course breakdown: Happy Valley=9, Catterick=6, Uttoxeter=7, Bath=6,
-                               Yarmouth=6, Lingfield=6, Killarney=7  (sum=47)
-```
+`existing_captures` is loaded correctly from the manifest already on disk at the start of each invocation (Step 3.5 does load Step 3's 40 prior captures into `captures_by_url`). But the final line, `all_captures = [captures_by_url[u] for u in urls if u in captures_by_url]`, filters strictly by membership in **the current invocation's own `urls` list** — when Step 3.5 runs with its 9-URL Happy Valley list, none of Step 3's 40 UK/IRE URLs are members of that list, so all 40 are silently dropped from the manifest that gets written to disk. This happens on every capture within the run (the comment at line 321-328 explains the manifest is rewritten after every single capture, not just once at the end), so by the time Step 3.5 finishes its 9th and final capture, the manifest has been fully overwritten down to 9 entries.
 
-Every Happy Valley race in the results file (9 of them, race_ids 924710 through 924718, off-times 11:30 through 15:50 local) has a matching raw HTML capture in `data/racing_post_account_raw/2026-07-15/`, and every capture in the manifest has `status: "PASS"`. `url_count` and `latest_url_count` both equal 9 with zero discrepancy, and `parse_errors: 0` across the full 47-race results file.
+This is the **same class of defect** PR #150 documented for 2026-07-14 (a filtering step discarding earlier captures) recurring in a different call site: two sequential collector invocations sharing one output directory/manifest, where the second invocation's own url-scoped filter — not a deliberate content moderation/quality filter — destroys the first invocation's bookkeeping. Nothing was lost at the raw-capture layer (all 49 HTML files remain on disk); only the manifest's index of what was captured was corrupted.
 
-## Finding
+## Why the final results file still shows 47 races
 
-**Not reproduced on 2026-07-15.** Nine Happy Valley entries in today's manifest is not evidence of truncation — it appears to be the genuine, complete size of today's Happy Valley card (9 consecutive race_ids, 9 captures, 9 parsed results, 0 gaps, 0 parse errors). This differs from the PR #150 finding for 2026-07-14, where the manifest was shown to have discarded earlier capture attempts through a specific filtering line (not re-derived in this mission; treated as PR #150's established prior finding, not independently re-audited here since it concerns a different date's raw captures which were not part of this mission's evidence set).
+`rp_results_2026_07_15.json` (47 races, 7 courses, 0 parse errors) does **not** derive from the truncated 9-entry racecard manifest. `scripts/ops/build_rp_results_url_list.py`'s `_find_manifest()` function, given `--date 2026-07-15`, can only resolve to `data/racing_post_account_raw/2026-07-15/manifest.json` (no `live-full-racepages-2026-07-15*` directory exists) — i.e. the same truncated, 9-entry, Happy-Valley-only manifest. A straightforward run of that script against that manifest would therefore have produced only 9 result URLs, not 47. Yet `data/racing_post_url_lists/rp_results_2026-07-15.txt` on disk has 47 entries across all 7 courses. **This proves the 47-URL results list was not produced by the standard automated path** — some other reconstruction occurred, consistent with the operator's own firsthand account of directly observing a manual rebuild of the URL list from the raw HTML files' canonical links (which, as noted, were never deleted and remained fully available for exactly this kind of recovery).
 
-This mission did **not** find the truncation bug firing on 2026-07-15's Happy Valley meeting specifically. It should **not** be reported as "confirmed recurring on 2026-07-15" — that would misstate the evidence. What can be said: the underlying fragile filtering pattern documented in PR #150 was not re-verified as fixed in code during this mission (no code changes were made or inspected for a fix commit between `313d40c` and `aef6305`), so the *latent risk* of recurrence under different meeting-count or capture-retry conditions remains open, even though today's specific 9-race Happy Valley capture happens to be complete.
+## What remains open (explicitly, not glossed over)
 
-## Requested breakdown (from the mission brief), as far as it could be reconstructed from available evidence
-
-- **Pre-existing manifest state**: not available — `data/racing_post_account_raw/2026-07-15/manifest.json` as captured contains only the final 9-entry state; no intermediate/pre-filter manifest snapshot was preserved for 2026-07-15 in the primary repo's working tree at the time of evidence collection.
-- **Each collector invocation**: `run_full_raceday_cron.log` shows Steps 1-3.5 (racecard index capture, URL list build, individual racecard page capture, supplementary intl-classified capture) each ran once for 2026-07-15, consistent with a single collector pass, not multiple retried passes that might have needed de-duplication.
-- **URL list passed per invocation**: `data/racing_post_url_lists/rp_racecards_2026-07-15*.txt` were not included in this mission's evidence_staging set (out of the file list explicitly required by the mission's Phase 0 evidence list) and were not separately hashed; a follow-up pass should pull these in for a byte-level URL-count cross-check.
-- **Merged records before/after filtering, raw HTML count, unique canonical URL count**: `html_files_seen: 47`, `racecard_indexed: 47`, `readiness_indexed: 47`, `races_parsed: 47`, `parse_errors: 0` in `rp_results_2026_07_15.json` — all four counters agree exactly, which is itself evidence against a filtering discrepancy on 2026-07-15 (a truncation bug would typically show `html_files_seen` exceeding `races_parsed`, or a manifest `url_count` lower than the actual capture count; neither pattern is present here).
-
-## Conclusion
-
-**Classification: `NOT_RECURRED_ON_2026-07-15` (for the specific Happy Valley example cited).** The known filtering defect from PR #150 is not proven to have fired again on this date. The code path that caused it in PR #150's investigation was not independently re-audited in this mission (out of the evidence scope defined for Phase 0), so this should be read as "not observed today," not "proven fixed." A dedicated regression test replaying PR #150's specific failure scenario against the current code at `aef6305` (and future commits) is the correct way to close this gap permanently — see repair specification below.
+- The exact command or script that performed the reconstruction (rebuilding 47 URLs from the raw HTML canonical links) was **not found in any log copied into this mission's evidence set** — `run_full_raceday_cron.log`'s 2026-07-15 block shows only the standard Step 1-9.6 sequence, which does not include a second, corrective URL-list build. This is consistent with the reconstruction having been a manual, off-pipeline operator action (matching the operator's own account of directly observing it happen live), not an automated recovery step.
+- No intermediate, pre-Step-3.5, 40-entry version of `manifest.json` was preserved as a separate file to hash directly — its prior existence is inferred from (a) the collector script's own atomic-write-after-every-capture behavior (meaning a 40-entry manifest necessarily existed on disk for the full duration between Step 3 finishing and Step 3.5 starting), and (b) the 40 raw HTML files' own capture timestamps in the URL-keyed metadata sidecars, not from a captured snapshot of the manifest itself at that moment.
 
 ## Repair / regression-test specification (NOT implemented in this evidence mission)
 
-1. Pull PR #150's root-cause commit/diff and confirm whether the specific filtering line it identified is still present, unchanged, fixed, or removed at `aef6305` and at the primary repo's current dirty `HEAD`.
-2. Add a regression test that feeds a synthetic multi-attempt capture manifest (simulating retries/partial failures) through the same merge/filter code path PR #150 diagnosed, and asserts the final manifest's race count matches the true race-card count, not merely the last successful attempt's count.
-3. Add a same-day CI-style check (already partially present via the `html_files_seen == races_parsed == parse_errors:0` triad in `rp_results_*.json`) that fails loudly, rather than silently, if any of the four counters (`html_files_seen`, `racecard_indexed`, `readiness_indexed`, `races_parsed`) diverge for a given date.
-4. Preserve pre-filter manifest snapshots (not just the final merged manifest) for at least 7 days, so future forensic missions can reconstruct the "before filtering" state without needing to catch the bug live.
+1. **Root fix**: `capture_urls()` must not silently drop `existing_captures` entries whose URL is absent from the current invocation's `urls` list. The correct behavior is a true union/merge — `all_captures` should include every entry in `captures_by_url`, not just those filtered to the current call's own URL scope. If a distinction between "captured by this invocation" and "captured previously" is needed downstream, add an explicit field (e.g. `captured_by_invocation: bool`) rather than silently dropping rows.
+2. Add a regression test that runs `capture_urls()` (or a mocked equivalent) twice in sequence against the same `output_dir`/`capture_date` with two disjoint URL lists (mirroring Step 3 + Step 3.5 exactly), and asserts the final manifest's `captures` list contains the union of both invocations' URLs, not just the second's.
+3. Add a same-run consistency check comparing `len(manifest.captures)` against the actual count of `.html` files present in the same directory; fail loudly if they diverge (this would have caught the 9-vs-49 discrepancy same-day instead of requiring a later forensic reconstruction).
+4. Preserve intermediate manifest states (e.g. write a timestamped copy before each new collector invocation touches an existing manifest) so future forensic missions do not need to infer intermediate states from indirect evidence.
+5. Investigate and document whatever manual/ad-hoc process rebuilt `rp_results_2026-07-15.txt` from raw HTML canonical links, and consider promoting it to a first-class, logged, automated fallback step rather than leaving it as an undocumented manual recovery action.

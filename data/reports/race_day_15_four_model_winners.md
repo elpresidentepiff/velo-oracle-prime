@@ -1,110 +1,91 @@
-# Race Day 15 (2026-07-15) — Four-Model Winners Report
+# Race Day 15 (2026-07-15) — Four-Model Winners Report (v2, corrected)
 
-**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01 (read-only forensic proof, evidence-only)
+**Mission**: RACE-DAY-15-FROZEN-MODEL-RECOUNT-AND-CONTROL-PLANE-01. **Revision v2** — issued after operator REQUEST CHANGES on PR #151 v1. See `race_day_15_frozen_recount.md` for the full correction log (P0-19..P0-24).
 
-**TRUTH LAW APPLIED**: every row below is sourced from a genuine pre-race scorecard artifact, cross-checked against the canonical results file (`rp_results_2026_07_15.json`). Old VÉLØ rows are sourced from the immutable, run-scoped morning snapshot (`runner_snapshots_..._1784105122721.jsonl`, created_at 2026-07-15T08:46:03Z) and are classified `MORNING_RUN_PROVEN`. **No-RPR, New Build and Champion Intent have NO run-scoped immutable morning artifact** — they exist only as single mutable files last written in the 14:08-14:09 UTC window, and are therefore classified `MORNING_RUN_UNPROVEN` for every race whose off-time preceded that window. Do not read these three models' rows as proven pre-race predictions without checking the timing-safety column in the full CSV export.
+**TRUTH LAW APPLIED, CORRECTED**: v1 of this report over-counted Old VÉLØ by including 2 post-race Happy Valley "wins" inside a figure it mislabelled timing-proven, and mislabelled `radical_shadow_2026_07_15.json` as the No-RPR model when it is a distinct decision layer built around Old VÉLØ's own pick. Both defects are fixed in this revision.
+
+## Headline (first page)
+
+| View | Model | Wins | Eligible | Strike rate | Status |
+|---|---|---|---|---|---|
+| **Strict pre-race** | Old VÉLØ | **12** | **38** | **31.6%** | `STRICT_PRE_RACE_PROVEN` — canonical `off_dt_utc` after 08:46:03Z snapshot generation, excludes all 9 Happy Valley races (already run 03:30-07:50 UTC) |
+| Full replay (informational only, NOT predictive) | Old VÉLØ | 14 | 46 | 30.4% | `FULL_SNAPSHOT_REPLAY_INCLUDING_POST_RACE` — includes the 9 Happy Valley races; never quote this as a strike rate |
+| **Strict pre-race** | No-RPR (genuine, `sqpe_no_rpr_shadow_prob`) | **8** | **33** | **24.2%** | `STRICT_PRE_RACE_PROVEN`, 5 races excluded on tied top score (fail-closed) |
+| Afternoon pre-race | New Build (Lane A) | 7 | 32 | 21.9% | `AFTERNOON_PRE_RACE_PROVEN` only — generated 14:09:30Z, valid solely for races whose off-time was still ahead of that instant |
+| Afternoon pre-race shadow | Champion Intent Shadow | 9 | 32 | 28.1% | `AFTERNOON_PRE_RACE_PROVEN` shadow-only, `velo_scoring_allowed=False` for every row regardless of timing |
+
+Sigma's previously reported 15/46 (32.6%) and this mission's own v1 report's 14/47 remain **both invalid** as Old VÉLØ performance claims — see `race_day_15_frozen_recount.md` Section "Phase 6b" for the Sigma contamination finding (unchanged) and the corrected Phase 6/6b text for why 14/47 was also wrong.
 
 ---
 
-## Old VÉLØ winners (MORNING_RUN_PROVEN, n=14)
+## Old VÉLØ winners — STRICT_PRE_RACE_PROVEN (n=12)
 
-| Time | Course | Horse | Morning odds | SP | Tier | Product |
-|---|---|---|---|---|---|---|
-| 1.30 | Happy Valley | Winning Champion | 7.0 | 11.0 |  | EW_CANDIDATE |
-| 2.18 | Uttoxeter | Fine Thing | 2.0 | 2.88 |  | PASS |
-| 2.35 | Happy Valley | Thriving Brothers | 3.0 | 3.8 |  | VISION_ONLY |
-| 2.40 | Catterick | South West | 1.88 | 2.88 |  | PASS |
-| 2.48 | Uttoxeter | Lady Fortune | 7.0 | 11.0 |  | EW_CANDIDATE |
-| 3.10 | Catterick | Lady Dublin | 1.88 | 3.0 |  | VISION_ONLY |
-| 5.00 | Yarmouth | Adalida | 1.25 | 2.5 |  | VISION_ONLY |
-| 5.05 | Bath | Havana Club | 3.0 | 3.25 |  | VISION_ONLY |
-| 5.20 | Lingfield | Probation | 1.5 | 2.25 |  | PASS |
-| 5.30 | Killarney | Minaun View | 5.0 | 4.0 |  | EW_CANDIDATE |
-| 5.35 | Yarmouth | Splash | 2.75 | 6.0 |  | PASS |
-| 5.50 | Lingfield | Brunhilde | 1.25 | 1.14 |  | PASS |
-| 6.20 | Lingfield | Fire Thunder | 2.25 | 1.25 |  | WIN_ONLY |
-| 7.20 | Lingfield | Desert Shadow | 3.5 | 3.5 |  | VISION_ONLY |
-
-## No-RPR winners (MORNING_RUN_UNPROVEN — single mutable file, n=15)
-
-| Time | Course | Horse | Morning odds | SP | Score |
+| Time | Course | Horse | SP | Tier | Product |
 |---|---|---|---|---|---|
-| 1.30 | Happy Valley | Winning Champion | n/a | 11.0 | 0.2992 |
-| 2.18 | Uttoxeter | Fine Thing | n/a | 2.88 | 0.3801 |
-| 2.35 | Happy Valley | Thriving Brothers | n/a | 3.8 | 0.3122 |
-| 2.40 | Catterick | South West | n/a | 2.88 | 0.425 |
-| 2.48 | Uttoxeter | Lady Fortune | n/a | 11.0 | 0.2458 |
-| 3.10 | Catterick | Lady Dublin | n/a | 3.0 | 0.5368 |
-| 5.00 | Yarmouth | Adalida | n/a | 2.5 | 0.6982 |
-| 5.05 | Bath | Havana Club | n/a | 3.25 | 0.5387 |
-| 5.20 | Lingfield | Probation | n/a | 2.25 | 0.4649 |
-| 5.30 | Killarney | Minaun View | n/a | 4.0 | 0.4933 |
-| 5.35 | Yarmouth | Splash | n/a | 6.0 | 0.375 |
-| 5.50 | Lingfield | Brunhilde | n/a | 1.14 | 0.5025 |
-| 6.20 | Lingfield | Fire Thunder | n/a | 1.25 | 0.6765 |
-| 6.30 | Killarney | Kalir | n/a | 4.0 | 0.4442 |
-| 7.20 | Lingfield | Desert Shadow | n/a | 3.5 | 0.5002 |
+| 2.18 | Uttoxeter | Fine Thing | 2.88 | B | PASS |
+| 2.40 | Catterick | South West | 2.88 | B | PASS |
+| 2.48 | Uttoxeter | Lady Fortune | 11.0 | B | EW_CANDIDATE |
+| 3.10 | Catterick | Lady Dublin | 3.0 | A | VISION_ONLY |
+| 5.00 | Yarmouth | Adalida | 2.5 | A | VISION_ONLY |
+| 5.05 | Bath | Havana Club | 3.25 | A | VISION_ONLY |
+| 5.20 | Lingfield | Probation | 2.25 | C | PASS |
+| 5.30 | Killarney | Minaun View | 4.0 | B | EW_CANDIDATE |
+| 5.35 | Yarmouth | Splash | 6.0 | C | PASS |
+| 5.50 | Lingfield | Brunhilde | 1.14 | B | PASS |
+| 6.20 | Lingfield | Fire Thunder | 1.25 | A | WIN_ONLY |
+| 7.20 | Lingfield | Desert Shadow | 3.5 | A | VISION_ONLY |
 
-## New Build winners (MORNING_RUN_UNPROVEN — single mutable file, n=8)
+## No-RPR winners — genuine, from `sqpe_no_rpr_shadow_prob`, STRICT_PRE_RACE_PROVEN (n=8)
 
-| Time | Course | Horse | Morning odds | SP | Lane | Score |
-|---|---|---|---|---|---|---|
-| 2.18 | Uttoxeter | Fine Thing | n/a | 2.88 | lane_a | 0.135228 |
-| 3.31 | Bath | Darkened Edge | n/a | 2.25 | lane_a | 0.190652 |
-| 3.40 | Catterick | The Good Biscuit | n/a | 2.75 | lane_a | 0.176653 |
-| 4.18 | Uttoxeter | Pep Talking | n/a | 3.5 | lane_a | 0.221825 |
-| 4.48 | Uttoxeter | Belladinotte | n/a | 9.5 | lane_a | 0.14198 |
-| 5.50 | Lingfield | Brunhilde | n/a | 1.14 | lane_a | 0.27532 |
-| 6.20 | Lingfield | Fire Thunder | n/a | 1.25 | lane_a | 0.150185 |
-| 7.20 | Lingfield | Desert Shadow | n/a | 3.5 | lane_a | 0.306604 |
-
-## Champion Intent winners (MORNING_RUN_UNPROVEN — single mutable file, n=11)
-
-| Time | Course | Horse | Morning odds | SP | Score |
-|---|---|---|---|---|---|
-| 2.18 | Uttoxeter | Fine Thing | n/a | 2.88 | 0.120047 |
-| 2.40 | Catterick | South West | n/a | 2.88 | 0.109476 |
-| 3.10 | Catterick | Lady Dublin | n/a | 3.0 | 0.269206 |
-| 3.31 | Bath | Darkened Edge | n/a | 2.25 | 0.204122 |
-| 3.40 | Catterick | The Good Biscuit | n/a | 2.75 | 0.155394 |
-| 4.01 | Bath | Campeona | n/a | 1.25 | 0.238131 |
-| 5.00 | Yarmouth | Adalida | n/a | 2.5 | 0.30003 |
-| 5.50 | Lingfield | Brunhilde | n/a | 1.14 | 0.330959 |
-| 6.20 | Lingfield | Fire Thunder | n/a | 1.25 | 0.147397 |
-| 7.10 | Yarmouth | Highland Harvey | n/a | 2.2 | 0.132866 |
-| 7.20 | Lingfield | Desert Shadow | n/a | 3.5 | 0.270703 |
-
----
-
-## Shared winners (found by all four models)
-
-Brunhilde, Desert Shadow, Fine Thing, Fire Thunder
-
-## Unique winners
-
-- Unique to Old VÉLØ: None
-- Unique to No-RPR: Kalir
-- Unique to New Build: Belladinotte, Pep Talking
-- Unique to Champion Intent: Campeona, Highland Harvey
-
-## Total performance (timing-proven basis for Old VÉLØ; operational basis for the other three)
-
-| Model | Winners | Eligible races | Strike rate | Timing-safety basis |
+| Time | Course | Horse | SP | Score |
 |---|---|---|---|---|
-| Old VÉLØ | 14 | 47 | 29.8% | MORNING_RUN_PROVEN |
-| No-RPR Shadow | 15 | 46 | 32.6% | MORNING_RUN_UNPROVEN (single mutable file) |
-| New Build | 8 | 46 | 17.4% | MORNING_RUN_UNPROVEN (single mutable file; many picks are `SUPPRESS`/`LOW_DATA`, not live picks) |
-| Champion Intent Shadow | 11 | 45 | 24.4% | MORNING_RUN_UNPROVEN (display-only shadow signal, `velo_scoring_allowed=False`) |
+| 2.31 | Bath | Grey Horizon | 4.5 | 0.1772 |
+| 3.10 | Catterick | Lady Dublin | 3.0 | 0.2569 |
+| 4.01 | Bath | Campeona | 1.25 | 0.2291 |
+| 5.50 | Lingfield | Brunhilde | 1.14 | 0.2184 |
+| 6.10 | Yarmouth | Anchiano | 26.0 | 0.1526 |
+| 7.30 | Killarney | Bella Colombia | 3.12 | 0.0935 |
+| 7.40 | Yarmouth | Startled Lady | 3.5 | 0.1619 |
+| 8.30 | Killarney | Loyal Touch | 9.5 | 0.0873 |
 
-**The reported operator figure of Old VÉLØ 15/46 (32.6%) is INVALIDATED.** It was produced by Sigma reading the live, mutable `velo_verdicts` table at 22:28 UTC, over 8 hours after the undocumented 14:08 afternoon rescore silently overwrote every row for all 54 of today's races (upsert-by-`race_id`, no run-scoped key — independently confirmed: 100% of matching rows carry a 14:08 `generated_at`, zero carry 08:46). The Sigma row schema itself contains no `verdict_id`, `doctrine_event_id`, or `pick_sp` field at all, so it cannot even in principle prove which prediction run it evaluated.
+## New Build winners — Lane A, AFTERNOON_PRE_RACE_PROVEN only (n=7)
 
-**The honest, timing-proven Old VÉLØ result, computed directly from the immutable 08:46 morning snapshot and independently reconciled against the canonical results file, is 14/47 (SR=29.8%).**
+| Time | Course | Horse | SP | Lane | Score |
+|---|---|---|---|---|---|
+| 3.31 | Bath | Darkened Edge | 2.25 | lane_a | 0.190652 |
+| 3.40 | Catterick | The Good Biscuit | 2.75 | lane_a | 0.176653 |
+| 4.18 | Uttoxeter | Pep Talking | 3.5 | lane_a | 0.221825 |
+| 4.48 | Uttoxeter | Belladinotte | 9.5 | lane_a | 0.14198 |
+| 5.50 | Lingfield | Brunhilde | 1.14 | lane_a | 0.27532 |
+| 6.20 | Lingfield | Fire Thunder | 1.25 | lane_a | 0.150185 |
+| 7.20 | Lingfield | Desert Shadow | 3.5 | lane_a | 0.306604 |
 
-The single point of divergence between the honest 14 and the reported 15 is exactly the mandatory regression anchor: race 924613, Killarney 6.30. Morning sealed pick was **Transcript** (VP=0.4087, scoring-time price 1.75) — did not win. The 14:08 afternoon rescore silently changed the pick to **Kalir** (VP=0.4442), which went on to win at SP 4.0. Sigma, reading the overwritten live table at 22:28, credited this as a win for "Old VÉLØ" even though the sealed 08:46 morning prediction was Transcript, not Kalir. This is a manufactured hit, not a genuine morning-run result.
+## Champion Intent winners — shadow, AFTERNOON_PRE_RACE_PROVEN only, velo_scoring_allowed=False (n=9)
 
-## Excluded / unproven races
+| Time | Course | Horse | SP | Score |
+|---|---|---|---|---|
+| 3.10 | Catterick | Lady Dublin | 3.0 | 0.269206 |
+| 3.31 | Bath | Darkened Edge | 2.25 | 0.204122 |
+| 3.40 | Catterick | The Good Biscuit | 2.75 | 0.155394 |
+| 4.01 | Bath | Campeona | 1.25 | 0.238131 |
+| 5.00 | Yarmouth | Adalida | 2.5 | 0.30003 |
+| 5.50 | Lingfield | Brunhilde | 1.14 | 0.330959 |
+| 6.20 | Lingfield | Fire Thunder | 1.25 | 0.147397 |
+| 7.10 | Yarmouth | Highland Harvey | 2.2 | 0.132866 |
+| 7.20 | Lingfield | Desert Shadow | 3.5 | 0.270703 |
 
-- Old VÉLØ: 1 non-runner, 16 timing-unproven or result-missing out of 47 morning-scored races.
-- No-RPR / New Build / Champion Intent: all 34 winner-rows above are MORNING_RUN_UNPROVEN by construction — no run-scoped morning artifact exists for these three models on 2026-07-15. Roughly half of today's races (Happy Valley, off-times 11:30-13:30 UTC) had ALREADY RUN before the single surviving 14:09 UTC file for these three models was even generated.
+---
 
-Full breakdown: see `race_day_15_four_model_winners.csv`, `race_day_15_four_model_placed_only.csv`, `race_day_15_four_model_misses.csv`, `race_day_15_non_runners_exclusions.csv`, `race_day_15_frozen_recount.json`.
+## Shared and unique winners (compared strictly within each model's own timing-proven population — NOT a like-for-like race-universe comparison, since the four models have different proven denominators: Old VÉLØ/No-RPR = 38/33 pre-race races at 08:46Z; New Build/Champion Intent = 32 pre-race races at ~14:09Z)
+
+- Shared by all four: Brunhilde
+- Unique to Old VÉLØ: Fine Thing, Havana Club, Lady Fortune, Minaun View, Probation, South West, Splash
+- Unique to No-RPR: Anchiano, Bella Colombia, Grey Horizon, Loyal Touch, Startled Lady
+- Unique to New Build: Belladinotte, Pep Talking
+- Unique to Champion Intent: Highland Harvey
+
+## Excluded / timing-unproven races
+
+See `race_day_15_timing_excluded_races.csv` for the full per-race exclusion ledger (40 rows: 9 Old VÉLØ Happy Valley post-race exclusions + 15 New Build post-race exclusions + 16 Champion Intent post-race exclusions). Old VÉLØ additionally has 0 non-runners in the strict population; No-RPR has 5 races excluded on fail-closed tied top score (`race_day_15_frozen_recount.json`, `phase6_no_rpr_genuine.tie_ledger`).
+
+Full breakdown: `race_day_15_four_model_winners.csv`, `race_day_15_four_model_placed_only.csv`, `race_day_15_four_model_misses.csv`, `race_day_15_non_runners_exclusions.csv`, `race_day_15_timing_excluded_races.csv`, `race_day_15_frozen_recount.json`.
