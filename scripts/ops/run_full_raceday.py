@@ -93,6 +93,11 @@ def main() -> int:
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--execute", action="store_true", required=True, help="Required — this runs real captures and scoring.")
     parser.add_argument("--skip-capture", action="store_true", help="Skip Steps 1-3 (assumes racecard_injection.json already exists for --date)")
+    parser.add_argument(
+        "--allow-missing-pdfs",
+        action="store_true",
+        help="Bypass the PDF-ingestion half of the scoring readiness gate (passport check is never overridable).",
+    )
     args = parser.parse_args()
 
     date = args.date
@@ -236,20 +241,55 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── SCORING READINESS GATE — hard law, added 2026-07-18 ──────────────
+    # Nothing past this point runs until (1) the New Build passport feed
+    # exists for this date and (2) every GB/IRE venue racing today has RP
+    # PDF ratings-sheet enrichment merged into its racecard_merged file.
+    # Origin: this exact daily failure repeated -- scoring and the full
+    # downstream report chain ran before PDFs landed, forcing a manual
+    # re-run of 6+ reports every time PDFs arrived late, and repeatedly
+    # opened the door to phantom-race/ID-mismatch bugs (2026-07-17 Hamilton
+    # incident). --allow-missing-pdfs bypasses check (2) only, for venues
+    # that genuinely never get RP PDFs; passport is never overridable.
+    from scripts.ops.check_scoring_readiness_gate import check_passport, check_pdf_ingestion
+
+    print(f"\n{'='*70}\nSCORING READINESS GATE\n{'='*70}")
+    passport_ok, passport_msg = check_passport(date)
+    print(f"  Passport:       {'OK   ' if passport_ok else 'FAIL '} {passport_msg}")
+    if args.allow_missing_pdfs:
+        pdf_ok, ok_venues, missing_venues = True, [], []
+        print("  PDF ingestion:  SKIP  --allow-missing-pdfs set")
+    else:
+        pdf_ok, ok_venues, missing_venues = check_pdf_ingestion(date)
+        print(f"  PDF ingestion:  {'OK   ' if pdf_ok else 'FAIL '} ingested={ok_venues or []} missing={missing_venues or []}")
+    if not (passport_ok and pdf_ok):
+        print(
+            "\n[BLOCKED] Scoring readiness gate failed — no scoring, no downstream reports.\n"
+            "  Fix the above (ingest PDFs for the missing venues) and rerun with --skip-capture,\n"
+            "  or pass --allow-missing-pdfs if those venues genuinely have no PDFs today."
+        )
+        return 1
+
     # ── Step 9: live scoring (idempotent — never overwrite an already-scored day) ──
     if verdicts_already_persisted(date):
         print(f"\n[SKIP] Step 9: velo_verdicts already exist for {date} — not re-scoring/overwriting.")
     else:
         if not run(
             "Step 9: Live scoring (run_prime_today.py)",
-            [PY, "scripts/ops/run_prime_today.py", "--date", date, "--source", "rp", "--no-notify"],
+            [PY, "scripts/ops/run_prime_today.py", "--date", date, "--source", "rp", "--no-notify"]
+            + (["--allow-missing-pdfs"] if args.allow_missing_pdfs else []),
             critical=True, results=results,
         ):
             return 1
 
     # ── Steps 9.1-9.6: paper intelligence overlays ───────────────────────
-    run("Step 9.1: Radical Shadow (No-RPR)",
-        [PY, "scripts/ops/run_radical_shadow_today.py", "--date", date], critical=False, results=results)
+    # The four core models (Old VELO, New Build, No-RPR/SQPE Shadow, Champion
+    # Intent Shadow) are critical=True: they must score every day without
+    # fail, together, as one atomic run. A silent failure in any of these is
+    # a FAILED day, not a partial pass (hard law, added 2026-07-18).
+    if not run("Step 9.1: Radical Shadow (No-RPR)",
+        [PY, "scripts/ops/run_radical_shadow_today.py", "--date", date], critical=True, results=results):
+        return 1
     run("Step 9.2: Tri-Lane Stress Test",
         [PY, "scripts/ops/run_tri_lane_stress_test.py", "--date", date, "--ruleset", "v2"], critical=False, results=results)
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"
@@ -259,17 +299,31 @@ def main() -> int:
         [PY, "scripts/ops/build_deep_race_agent_v1.py", "--date", date], critical=False, results=results)
     run("Step 9.5: Course Master",
         [PY, "scripts/ops/build_course_master.py", "--date", date], critical=False, results=results)
-    run("Step 9.6: Old VELO Three-Option Card",
-        [PY, "scripts/ops/build_old_velo_three_option_card.py", "--date", date], critical=False, results=results)
+    if not run("Step 9.6: Old VELO Three-Option Card",
+        [PY, "scripts/ops/build_old_velo_three_option_card.py", "--date", date], critical=True, results=results):
+        return 1
 
     # ── New Build two-lane + Champion Intent Shadow ──────────────────────
-    run("New Build: Two-Lane Score",
-        [PY, "scripts/ops/new_build_two_lane_score.py", "--date", date, "--execute"], critical=False, results=results)
+    if not run("New Build: Two-Lane Score",
+        [PY, "scripts/ops/new_build_two_lane_score.py", "--date", date, "--execute"], critical=True, results=results):
+        return 1
     run("Champion Intent: Features",
         [PY, "scripts/ops/build_current_card_intent_features.py",
          "--standard-cache", str(standard_cache), "--date", date, "--execute"], critical=False, results=results)
-    run("Champion Intent: Shadow Scorecard",
-        [PY, "scripts/ops/build_intent_shadow_scorecard.py", "--date", date, "--execute"], critical=False, results=results)
+    if not run("Champion Intent: Shadow Scorecard",
+        [PY, "scripts/ops/build_intent_shadow_scorecard.py", "--date", date, "--execute"], critical=True, results=results):
+        return 1
+
+    # ── Canonical model scorecard: build + persist (all four models measured
+    # every day -- New Build and Champion Intent were previously producing
+    # real predictions that were never persisted to the canonical join Sigma
+    # reads from, showing as n/a forever. Added 2026-07-16. ──────────────────
+    canonical_csv = ROOT / "data" / "reports" / f"canonical_model_scorecard_{date.replace('-', '_')}.csv"
+    run("Canonical Model Scorecard: Build",
+        [PY, "scripts/ops/build_canonical_model_scorecard.py", "--date", date], critical=False, results=results)
+    run("Canonical Model Scorecard: Persist",
+        [PY, "scripts/ops/persist_canonical_model_scorecard.py", "--date", date, "--csv", str(canonical_csv), "--execute"],
+        critical=False, results=results)
 
     # ── Summary ───────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY SUMMARY — {date}\n{'='*70}")

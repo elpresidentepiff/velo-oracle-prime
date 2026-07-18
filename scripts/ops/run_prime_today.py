@@ -1400,12 +1400,68 @@ def _get_day_rpdc_name_map(date_str: str) -> dict:
     return _DAY_RPDC_NAME_MAP
 
 
+def _resolve_persistence_modes(args) -> dict:
+    """Resolve verdict/snapshot/Telegram enablement from CLI args (SIGMA-28B).
+
+    Pure function — no I/O, no Supabase, no side effects. Exists so the
+    interaction between --dry-run, --verdicts-only, and --no-runner-snapshots
+    can be tested without running the pipeline.
+
+    Precedence: --dry-run always wins and disables everything, regardless of
+    any other flag. Otherwise --verdicts-only disables runner snapshots and
+    Telegram while leaving verdict persistence enabled — the safety valve that
+    lets a proof mission write exactly one velo_verdicts row without also
+    writing runner_prediction_snapshots. --no-runner-snapshots disables only
+    the snapshot write on its own. Default (no flags): unchanged from
+    pre-SIGMA-28B behaviour — verdict persistence, runner snapshots, and
+    Telegram all enabled.
+    """
+    dry_run = bool(getattr(args, "dry_run", False))
+    verdicts_only = bool(getattr(args, "verdicts_only", False))
+    no_runner_snapshots = bool(getattr(args, "no_runner_snapshots", False))
+    no_notify = bool(getattr(args, "no_notify", False))
+
+    if dry_run:
+        return {
+            "persistence_enabled": False,
+            "verdict_persistence_enabled": False,
+            "runner_snapshots_enabled": False,
+            "telegram_enabled": False,
+            "mode_label": "DRY_RUN",
+        }
+
+    persistence_enabled = True
+    runner_snapshots_enabled = not no_runner_snapshots and not verdicts_only
+    telegram_enabled = not no_notify and not verdicts_only
+
+    return {
+        "persistence_enabled": persistence_enabled,
+        "verdict_persistence_enabled": persistence_enabled,
+        "runner_snapshots_enabled": runner_snapshots_enabled,
+        "telegram_enabled": telegram_enabled,
+        "mode_label": "VERDICTS_ONLY" if verdicts_only else "STANDARD",
+    }
+
+
 def main():
     global _TG_DATE, _TG_NOTIFY_ENABLED
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-notify", action="store_true")
+    parser.add_argument(
+        "--no-runner-snapshots",
+        action="store_true",
+        help="Disable runner_prediction_snapshots writes. Verdict persistence is unaffected.",
+    )
+    parser.add_argument(
+        "--verdicts-only",
+        action="store_true",
+        help=(
+            "Persist velo_verdicts only — disables runner_prediction_snapshots writes "
+            "and Telegram sends. Does not disable verdict persistence. Overridden by --dry-run."
+        ),
+    )
     parser.add_argument("--env-file", default=None)
     parser.add_argument(
         "--source",
@@ -1413,13 +1469,24 @@ def main():
         default=None,
         help="Racecard source: auto (default, tries cache→rp→api), cache, rp, api",
     )
+    parser.add_argument(
+        "--allow-missing-pdfs",
+        action="store_true",
+        help=(
+            "Bypass the scoring-readiness PDF-ingestion check for venues that "
+            "genuinely have no RP PDFs today (e.g. US tracks). The passport "
+            "(New Build feed) check is never overridable."
+        ),
+    )
     args = parser.parse_args()
-    notify_enabled = not args.no_notify and not args.dry_run
+    _modes = _resolve_persistence_modes(args)
+    notify_enabled = _modes["telegram_enabled"]
     _bootstrap_runtime(env_file=args.env_file, notify=notify_enabled)
     date_tag = args.date.replace("-", "_") if args.date else TODAY
     date_str = date_tag.replace("_", "-")
     _display_date = datetime.strptime(date_str, "%Y-%m-%d").strftime("%d %b %Y")
-    persistence_enabled = not args.dry_run
+    persistence_enabled = _modes["persistence_enabled"]
+    runner_snapshots_enabled = _modes["runner_snapshots_enabled"]
     _TG_DATE = date_str
     _TG_NOTIFY_ENABLED = notify_enabled
 
@@ -1437,6 +1504,31 @@ def main():
     print(f"  Status: {pf_result.status}")
     print("-" * 40)
     _timer.mark("preflight")
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # ── SCORING READINESS GATE — passport + PDF ingestion, hard law 2026-07-18 ──
+    # Nothing scores for a date until New Build's passport feed exists AND every
+    # racing venue has RP PDF ratings-sheet enrichment merged in. Rule origin:
+    # every day the same failure repeated -- scoring ran before PDFs landed,
+    # forcing a manual re-run of 6+ downstream reports after the fact once PDFs
+    # arrived, and repeatedly opened the door to phantom-race/ID-mismatch bugs.
+    from scripts.ops.check_scoring_readiness_gate import check_passport, check_pdf_ingestion
+
+    print("\nSCORING READINESS GATE")
+    print("-" * 40)
+    passport_ok, passport_msg = check_passport(date_str)
+    print(f"  Passport:       {'OK   ' if passport_ok else 'FAIL '} {passport_msg}")
+    if args.allow_missing_pdfs:
+        pdf_ok = True
+        print("  PDF ingestion:  SKIP  --allow-missing-pdfs set")
+    else:
+        pdf_ok, ok_venues, missing_venues = check_pdf_ingestion(date_str)
+        print(f"  PDF ingestion:  {'OK   ' if pdf_ok else 'FAIL '} ingested={ok_venues or []} missing={missing_venues or []}")
+    print("-" * 40)
+    if not (passport_ok and pdf_ok):
+        print("\nSCORING BLOCKED — readiness gate failed. Fix the above, or pass "
+              "--allow-missing-pdfs if these venues genuinely have no PDFs today.\n")
+        sys.exit(1)
     # ─────────────────────────────────────────────────────────────────────────
 
     from app.services.velo_prime_service import persist_race_predictions, score_race_velo_prime
@@ -2386,17 +2478,26 @@ def main():
     # STORAGE ONLY — never alters scoring, routing, or execution.
     # Batch write of all runners across all scored races.
     # Failure logs a warning and returns 0; never aborts the pipeline.
-    try:
-        _snapshot_n = _write_runner_snapshots(
-            scored=scored,
-            date_str=date_str,
-            date_tag=date_tag,
-            run_id=_snapshot_run_id,
-            supabase_client=db if persistence_enabled else None,
-        )
-        print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}_{_snapshot_run_id}.jsonl")
-    except Exception as _snap_exc:
-        print(f"\nRunner snapshot write skipped: {_snap_exc}")
+    #
+    # SIGMA-28B: when disabled (--verdicts-only / --no-runner-snapshots), the
+    # writer function itself is not called at all — write_runner_snapshots()
+    # always writes a local JSONL file regardless of supabase_client, so
+    # passing supabase_client=None alone would still produce local runner
+    # snapshot files. "Disabled" means the side-effect function never runs.
+    if runner_snapshots_enabled:
+        try:
+            _snapshot_n = _write_runner_snapshots(
+                scored=scored,
+                date_str=date_str,
+                date_tag=date_tag,
+                run_id=_snapshot_run_id,
+                supabase_client=db,
+            )
+            print(f"\nRUNNER SNAPSHOTS: {_snapshot_n} rows → runner_snapshots_{date_tag}_{_snapshot_run_id}.jsonl")
+        except Exception as _snap_exc:
+            print(f"\nRunner snapshot write skipped: {_snap_exc}")
+    else:
+        print("\nRUNNER SNAPSHOTS: skipped by --verdicts-only/--no-runner-snapshots")
     _timer.mark("runner_snapshots", races=len(scored), runners=sum(len(p) for _, p, _, _ in scored))
 
     # ── TIMING AUDIT ──────────────────────────────────────────────────────────

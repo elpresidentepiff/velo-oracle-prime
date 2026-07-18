@@ -317,6 +317,12 @@ If any of these three go back to synthetic IDs, RPDC breaks silently.
 
 ## STEP 9 — SCORE WITH OLD VELO
 
+**Gate (hard law, see HARD RULES #8):** `run_prime_today.py` will not score at all
+until `scripts/ops/check_scoring_readiness_gate.py` passes — passport feed (Step 6)
+present, and every GB/IRE venue's RP PDF ratings-sheets ingested into
+`racecard_merged`. Fails loudly with `sys.exit(1)` if not, naming exactly what's
+missing. Override PDF-only with `--allow-missing-pdfs`.
+
 **Why:** Old VELO reads the RP files and runs every horse through a chain of systems. The SQPE Specialist Ensemble is the main scorer — a trained gradient boosting model. But multiple other systems fire alongside it:
 
 **Systems that run during scoring:**
@@ -447,9 +453,10 @@ It is designed to challenge RPR dependence and expose mid-price opportunities.
 
 ### Step 9.2: Tri-Lane Stress Test
 
-Command:
+Command (`--version` corrected to `--ruleset` 2026-07-08 — the flag never existed under
+the old name; verified against the script's actual argparse, not assumed):
 ```
-PYTHONPATH=. python scripts/ops/run_tri_lane_stress_test.py --date YYYY-MM-DD --version v2
+PYTHONPATH=. python scripts/ops/run_tri_lane_stress_test.py --date YYYY-MM-DD --ruleset v2
 ```
 
 Outputs:
@@ -462,9 +469,10 @@ is a stress test only. `live_execution_allowed` must remain false.
 
 ### Step 9.3: Tri-Lane Agent Review
 
-Command:
+Command (corrected 2026-07-08 — this script takes `--packet <path>`, not `--date`/
+`--version`; verified against the script's actual argparse):
 ```
-PYTHONPATH=. python scripts/ops/build_tri_lane_agent_review.py --date YYYY-MM-DD --version v2
+PYTHONPATH=. python scripts/ops/build_tri_lane_agent_review.py --packet data/reports/tri_lane_stress_test_YYYY_MM_DD_v2.json
 ```
 
 Outputs:
@@ -785,6 +793,30 @@ EVENING (after 21:00 BST)
 5. Do not touch anything without saying what you are doing first.
 6. If you find a problem you stop and state it. You do not patch. You fix the source.
 7. Brutal truth always. A problem stated is fixable. A problem hidden kills the system.
+8. **No scoring until passport + RP PDF ingestion are confirmed complete for the date.**
+   Enforced by `scripts/ops/check_scoring_readiness_gate.py`, hard-wired into both
+   `run_full_raceday.py` (before Step 9) and `run_prime_today.py` (its own entry
+   point, so no invocation path can bypass it). Checks: (1) New Build's passport
+   feed (Step 6) exists and is non-empty for the date — never overridable; (2)
+   every GB/IRE venue racing today has RP PDF ratings-sheet fields
+   (postdata_score/plot_conviction/or_compression_score) merged into its
+   `racecard_merged/racecard_{venue}_{date}.json` — non-GB/IRE venues (USA etc.,
+   RP never publishes PDFs for these) are auto-exempted via the standard cache's
+   region field. Override only with `--allow-missing-pdfs`, and only for venues
+   that genuinely have no PDFs today.
+   **Why:** the same failure repeated every day — scoring and the whole downstream
+   report chain ran before the operator's PDFs landed, forcing a manual re-run of
+   6+ reports every time PDFs arrived late, and repeatedly opened the door to
+   phantom-race/ID-mismatch bugs (2026-07-17 Hamilton incident: a stale PDF batch
+   minted 7 synthetic race_ids that could never resolve a result).
+9. **The four core models score together, every day, without exception — Old
+   VELO, New Build, No-RPR (SQPE Shadow), Champion Intent Shadow.** Their steps
+   in `run_full_raceday.py` (Step 9.1 Radical Shadow, Step 9.6 Old VELO
+   Three-Option Card, New Build Two-Lane Score, Champion Intent Shadow Scorecard)
+   are `critical=True`: a failure in any one of them stops the run and fails the
+   day — no silent partial pass. Added 2026-07-18 after these steps ran as
+   `critical=False` and could fail quietly with the rest of the pipeline still
+   reporting an overall PASS.
 
 ---
 
@@ -1033,3 +1065,37 @@ This compares RP injection, standard cache, Old VELO RP-merged files, New Build
 readiness, and RP results when available. All race IDs must match. If the check
 returns `FAIL`, stop. Do not score, do not run Sigma, and do not learn until the
 artifact mismatch is fixed.
+
+---
+
+## CANONICAL MODEL TRUTH SPINE (added 2026-07-06, MODEL-TRUTH-01..04)
+
+- Dirty/local runtime artifacts are evidence, not final truth.
+- GitHub stores reviewed code, law, generated proof artifacts, and regression tests.
+- Supabase canonical tables (`public.canonical_model_scorecards`, `public.canonical_learning_events`) are the operational truth source for model scorecards and learning events.
+- Dashboard must read `canonical_model_scorecards` and `canonical_learning_events` for model/result/learning truth.
+- Dashboard must not invent model truth from ad-hoc local JSON, stale sidecar outputs, or prose reports.
+- Sigma remains result reconciliation truth, but model-rank and policy learning must join through canonical scorecard rows.
+- No model claim is accepted unless backed by: `source_path`, `source_field`, `race_id`, `horse_id`, `rank`, `odds`, `result`, `policy_decision`, `stake_authorised`, `learning_class`.
+- **Little Lady Rock 2026-07-05 is the regression anchor**: New Build Lane A/B rank 1, SP 41.0, policy `NO_EDGE`, `stake_authorised=false`, learning `VALUE_DISCOVERY_POLICY_BLOCKED`, no promotion.
+- Any future dashboard panel that displays model truth must either read canonical endpoints, or be explicitly labelled runtime/local/non-canonical.
+
+Canonical dashboard consumer endpoints (`scripts/ops/new_build_dashboard_server.py`, read-only, no Supabase writes):
+- `GET /api/canonical-scorecard?date=YYYY-MM-DD`
+- `GET /api/canonical-learning-events?date=YYYY-MM-DD`
+- `GET /api/canonical-race-truth?date=YYYY-MM-DD&race_id=<race_id>`
+
+Builders: `scripts/ops/build_canonical_model_scorecard.py`, `scripts/ops/persist_canonical_model_scorecard.py`, `scripts/ops/build_canonical_learning_events.py`. Law: `docs/current/MODEL_RESULT_REPORTING_LAW.md`. See also `docs/current/VELO_MODEL_SOURCE_MAP.md`.
+
+Chain of custody:
+
+```
+Dirty repo   = evidence
+GitHub       = reviewed proof/code/law
+Supabase     = canonical operational truth
+Dashboard    = canonical consumer
+Learning     = canonical consumer
+Promotion    = gated
+```
+
+No dashboard truth is accepted from random local files.
