@@ -325,6 +325,14 @@ def main() -> int:
         [PY, "scripts/ops/persist_canonical_model_scorecard.py", "--date", date, "--csv", str(canonical_csv), "--execute"],
         critical=False, results=results)
 
+    # ── Sidecar Stack Operator Card ──────────────────────────────────────
+    # Added 2026-07-18: this was only ever run via the separate
+    # velo_daily_harness.py orchestrator, not run_full_raceday.py, so the
+    # dashboard's sidecar_stack_latest.json silently went 11 days stale
+    # (last generated 2026-07-07) while every other panel refreshed daily.
+    run("Sidecar Stack Operator Card",
+        [PY, "scripts/audit/sidecar_stack_operator_card.py", "--date", date], critical=False, results=results)
+
     # ── Summary ───────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY SUMMARY — {date}\n{'='*70}")
     n_ok = sum(1 for r in results if r["ok"])

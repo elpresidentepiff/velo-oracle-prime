@@ -725,7 +725,7 @@ td:last-child  { padding-right: 20px; }
 <!-- Plot Conviction Picks (RP PDF intelligence: handicap-plot/OR-compression/TS-trend composite) -->
 <div id="plot-conviction-panel" style="display:none;background:#111;border:1px solid var(--amber,#e0a030);border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:var(--amber,#e0a030);letter-spacing:0.05em;margin-bottom:6px;">
-    PLOT CONVICTION PICKS <span id="pc-count" style="color:#888;font-weight:400"></span>
+    HIGH-CONVICTION PDF PICKS <span id="pc-count" style="color:#888;font-weight:400"></span>
   </div>
   <div id="pc-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
 </div>
@@ -2941,6 +2941,22 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
   <button class="filter-btn" data-filter="exec" data-val="false">BLOCKED</button>
 </div>
 
+<!-- Canonical Model Performance (added 2026-07-16 -- reads public.canonical_model_scorecards,
+     the same source Multi-Model Sigma joins through. Top-pick rank=1 win/frame per model,
+     for the selected date only. Not a cumulative leaderboard -- see model_comparison_ledger.csv
+     for multi-day history. -->
+<div id="cmp-wrap" style="margin:8px 12px;border:1px solid var(--border);border-radius:6px;background:#111;">
+  <div id="cmp-header" style="padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;color:var(--fg-secondary);display:flex;justify-content:space-between;align-items:center;"
+       onclick="document.getElementById('cmp-body').classList.toggle('open')">
+    <span>CANONICAL MODEL PERFORMANCE — TODAY'S TOP PICKS ONLY</span>
+    <span class="sib-toggle">[ EXPAND ]</span>
+  </div>
+  <div id="cmp-body" style="padding:6px 14px 12px;">
+    <div id="cmp-table" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);"></div>
+  </div>
+</div>
+<style>#cmp-body { display: none; } #cmp-body.open { display: block; }</style>
+
 <!-- Race Cards -->
 <div id="race-table-wrap">
   <div id="loading">LOADING GOVERNED CARD</div>
@@ -3348,7 +3364,7 @@ async function loadCard() {
     const [nbRes, ovRes, threeOptRes] = await Promise.all([
       fetch(`${API}?date=${encodeURIComponent(dateParam)}`),
       fetch(`${OV_API}?date=${encodeURIComponent(dateParam)}`),
-      fetch('/old_velo_three_option_card_latest.json'),
+      fetch(`/old_velo_three_option_card_latest.json?date=${encodeURIComponent(dateParam)}`),
     ]);
     if (!nbRes.ok) throw new Error(`NB API ${nbRes.status}`);
     const nbData = await nbRes.json();
@@ -3360,6 +3376,48 @@ async function loadCard() {
     const badge = document.getElementById('sh-badge');
     badge.textContent = 'DEMO MODE';
     badge.className = 'live-badge cache';
+  }
+  loadCanonicalPerformance(dateParam);
+}
+
+// Canonical model performance -- added 2026-07-16. Reads public.canonical_model_scorecards
+// (the same source Multi-Model Sigma joins through) and computes today's rank=1 win/frame
+// per model. This is a per-day snapshot, not a rolling leaderboard.
+async function loadCanonicalPerformance(dateParam) {
+  const tableEl = document.getElementById('cmp-table');
+  if (!tableEl) return;
+  try {
+    const res = await fetch(`/api/canonical-scorecard?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`canonical-scorecard ${res.status}`);
+    const data = await res.json();
+    const rows = data.rows || [];
+    const byModel = {};
+    rows.forEach(r => {
+      const rank = parseInt(r.rank);
+      if (rank !== 1) return; // top pick only
+      const m = r.model_name || 'UNKNOWN';
+      if (!byModel[m]) byModel[m] = { n: 0, wins: 0, frames: 0 };
+      byModel[m].n += 1;
+      if (r.win === true || r.win === 'True' || r.win === 'true') byModel[m].wins += 1;
+      if (r.frame === true || r.frame === 'True' || r.frame === 'true') byModel[m].frames += 1;
+    });
+    const names = Object.keys(byModel).sort();
+    if (!names.length) {
+      tableEl.innerHTML = '<div style="color:var(--fg-muted)">No canonical rows for this date.</div>';
+      return;
+    }
+    let html = '<table style="width:100%;border-collapse:collapse;">';
+    html += '<tr style="color:var(--fg-muted);text-align:left;"><th style="padding:2px 8px 2px 0;">MODEL</th><th style="padding:2px 8px;">N</th><th style="padding:2px 8px;">WINS</th><th style="padding:2px 8px;">SR</th><th style="padding:2px 8px;">FRAME</th></tr>';
+    names.forEach(m => {
+      const s = byModel[m];
+      const sr = s.n ? (s.wins / s.n * 100).toFixed(1) : '—';
+      const fr = s.n ? (s.frames / s.n * 100).toFixed(1) : '—';
+      html += `<tr><td style="padding:2px 8px 2px 0;color:var(--fg-primary);">${esc(m)}</td><td style="padding:2px 8px;">${s.n}</td><td style="padding:2px 8px;">${s.wins}</td><td style="padding:2px 8px;color:var(--gold);">${sr}%</td><td style="padding:2px 8px;color:#5599ff;">${fr}%</td></tr>`;
+    });
+    html += '</table>';
+    tableEl.innerHTML = html;
+  } catch (e) {
+    tableEl.innerHTML = `<div style="color:var(--fg-muted)">Canonical performance unavailable: ${esc(String(e))}</div>`;
   }
 }
 
@@ -3568,6 +3626,26 @@ function ovTimeToMin(t) {
   return racingTimeToMin(t);
 }
 
+// Different scoring lanes label the same course two ways — short RP code
+// ("LEI", "DPT", "KLN") or full name ("Leicester", "Downpatrick",
+// "Killarney (AW)"). Reduce both to one canonical key so course+time joins
+// (three-option lookup, Old VELO lookup) don't silently miss. Found + fixed
+// 2026-07-14: three-lane panel was empty for most of the card because of
+// this exact mismatch.
+const _COURSE_CODE_TO_NAME = {
+  bev: 'beverley', wol: 'wolverhampton', lei: 'leicester', ffo: 'ffos las',
+  dpt: 'downpatrick', dow: 'downpatrick', kln: 'killarney', kil: 'killarney',
+  lon: 'longchamp', cur: 'curragh', utt: 'uttoxeter', crt: 'cartmel',
+  kem: 'kempton', che: 'chelmsford', lin: 'lingfield', sow: 'southwell',
+  ncs: 'newcastle', dun: 'dundalk', trm: 'tramore', tra: 'tramore',
+  bri: 'brighton', pon: 'pontefract', nmk: 'newmarket', wor: 'worcester',
+  cor: 'cork', chs: 'chester', klb: 'kilbeggan', asc: 'ascot', yor: 'york',
+};
+function normalizeCourseKey(course) {
+  const base = (course || '').toLowerCase().split('(')[0].trim();
+  return _COURSE_CODE_TO_NAME[base] || base;
+}
+
 // Build a lookup key from course + off_time for matching NB <-> OV races
 function nbTimeKey(t) {
   // Extract wall-clock time from ISO or HH:MM. Regex avoids new Date() timezone shift.
@@ -3588,13 +3666,19 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     return;
   }
 
-  // Build three-option card lookup: { race_id -> { WIN, PLACE, LONGSHOT } }
+  // Build three-option card lookup: { "course::minutes" -> { WIN, PLACE, LONGSHOT } }
+  // Keyed by course+time, NOT race_id: the three-option card and the New
+  // Build/governed-card rows are written by different scoring passes that
+  // don't share one race_id scheme (raw numeric vs rp_CRS_date_time), so an
+  // id-based join silently drops most of the card. course+time is stable
+  // across both (found + fixed 2026-07-14 — panel was empty for most courses).
   const threeOptMap = new Map();
   if (threeOptData && Array.isArray(threeOptData.races)) {
     threeOptData.races.forEach(race => {
       const byRole = {};
       (race.picks || []).forEach(p => { byRole[p.role] = p; });
-      threeOptMap.set(String(race.race_id), byRole);
+      const key = normalizeCourseKey(race.course) + '::' + ovTimeToMin(race.off_time);
+      threeOptMap.set(key, byRole);
     });
   }
 
@@ -3750,7 +3834,7 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     }
 
     // ── Three-option picks (WIN / PLACE / LONGSHOT) ────────────────
-    const threePicks = threeOptMap.get(String(rid));
+    const threePicks = threeOptMap.get(normalizeCourseKey(r0.course) + '::' + nbMin);
     if (threePicks) {
       html += '<div style="margin-top:6px;border-top:1px solid var(--border);padding-top:5px">';
       [['WIN','var(--cyan)'],['PLACE','var(--amber)'],['LONGSHOT','var(--purple)']].forEach(([role, col]) => {
@@ -3947,14 +4031,26 @@ async function loadPlotConviction() {
     const data = await res.json();
     const picks = data.picks || [];
     if (!picks.length) { panel.style.display = 'none'; return; }
-    countEl.textContent = `(${picks.length})`;
+    countEl.textContent = `(${picks.length} of ${data.total_found || picks.length})`;
+    const verdictColor = (v) => ({
+      CASH_RUN_REVIEW: '#4caf50',
+      PASS_WITH_SUPPORT_REVIEW: '#4caf50',
+      UPGRADE_CANDIDATE_REVIEW: '#42a5f5',
+      WATCH_ONLY: '#888',
+      NO_BET: '#e05050',
+    }[v] || '#666');
     list.innerHTML = picks.map(p => {
       const pct = Math.round((p.plot_conviction || 0) * 100);
+      const pdVal = (p.postdata_score === null || p.postdata_score === undefined) ? null : p.postdata_score.toFixed(2);
       const title = (p.spotlight_comment || '').replace(/"/g, '&quot;');
-      return `<div title="${title}" style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:150px;">
+      const verdictBadge = p.agent_verdict
+        ? `<div style="font-size:10px;font-weight:700;color:${verdictColor(p.agent_verdict)};margin-top:2px;">${esc(p.agent_verdict)} (sup ${p.support_score ?? '—'} / risk ${p.risk_score ?? '—'})</div>`
+        : '';
+      return `<div title="${title}" style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:170px;">
         <div style="font-size:11px;color:#888">${esc(p.venue || '')} ${esc(p.off_time || '')}</div>
         <div style="font-weight:600">${esc(p.horse || '—')}</div>
-        <div style="font-size:12px;color:var(--amber,#e0a030)">${pct}% conviction</div>
+        <div style="font-size:12px;color:var(--amber,#e0a030)">${pct}% plot conviction${pdVal !== null ? ` &middot; postdata ${pdVal}` : ''}</div>
+        ${verdictBadge}
       </div>`;
     }).join('');
     panel.style.display = 'block';

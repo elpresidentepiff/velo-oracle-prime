@@ -81,6 +81,10 @@ Canonical dashboard consumer endpoints (`scripts/ops/new_build_dashboard_server.
 
 Builders: `scripts/ops/build_canonical_model_scorecard.py`, `scripts/ops/persist_canonical_model_scorecard.py`, `scripts/ops/build_canonical_learning_events.py`. Law: `docs/current/MODEL_RESULT_REPORTING_LAW.md`. See also `docs/current/VELO_MODEL_SOURCE_MAP.md`.
 
+**Wired into the daily pipeline 2026-07-16.** Before this date, `canonical_model_scorecards` stopped dead at 2026-07-07 (2,511 rows) because the build+persist steps existed but were never called from `run_full_raceday.py` — New Build and Champion Intent were producing genuine daily pre-race scorecards that simply never reached the canonical join, so Multi-Model Sigma reported `n/a` for both every day regardless of real performance (root-caused in the RACE-DAY-15 forensic PR, `SCORECARD_GENERATED_NOT_PERSISTED`). `run_full_raceday.py` now runs `build_canonical_model_scorecard.py --date` then `persist_canonical_model_scorecard.py --date --csv <path> --execute` as its final two steps, every morning, non-critical (won't block the day on failure, but should not silently stay broken either — check `data/reports/canonical_model_scorecard_{date}_audit.json`'s `sources_missing` field daily).
+
+Also fixed the same day: `build_canonical_model_scorecard.py` never had a Champion Intent Shadow block at all (not just "never called" — the model type didn't exist in the builder's source). Added a block reading `data/reports/intent_shadow_scorecard_{date}.csv`, joining results by horse name the same way New Build does, tagged `CHAMPION_INTENT_SHADOW`, `stake_authorised=false`, `dashboard_visible` read from the source CSV's own field, `policy_decision` carrying the row's `trust_policy` (`ARCHIVE_CONTEXT_ONLY_NOT_SCORING`). This does **not** change Champion Intent's promotion eligibility, staking authority, or trust policy — it only means its real daily performance is now measured and visible instead of silently dropped.
+
 ## STANDARD DAILY OPERATION (added 2026-07-08 — supersedes ad-hoc manual Steps 1-9.6)
 
 **This is now mandatory, not optional, and not something the operator should have to ask for.** Before 2026-07-08, each of Steps 1-9.6 required a separate manual command, and in practice most days only Step 9 (core scoring) actually ran — New Build, Champion Intent Shadow, and RPDC sat empty for days at a time because nobody ran the rest. This is now one command, and it is scheduled.
@@ -201,6 +205,14 @@ EW_CANDIDATE flag now tracked in sigma and multimodel ledger. `run_results_sigma
 ## Dashboard Race Cards (added 2026-06-22/23)
 - Product badge (WIN/E-W/VISION/PASS) on Old VELO race cards (`DASH-01`)
 - Old VELO three-option card (WIN/PLACE/LONGSHOT role assignment) wired into full pipeline (`c33cece`)
+- New Build lane join bug fixed 2026-07-18: `_build_governed_card_from_live_snapshots()`
+  in `new_build_dashboard_server.py` was remapping New Build's race_id to the wrong
+  scheme before joining live snapshot rows (which use plain numeric race_id already) —
+  broke the join 100% of the time, showing "No New Build data" every day. `app/main.py`'s
+  production governed-card was never affected (dual-keyed already).
+- `/api/plot-conviction` (High-Conviction PDF Picks panel) wired 2026-07-18: reads
+  postdata_score/plot_conviction from `racecard_merged`, joined with Deep Race Agent's
+  verdict. Frontend panel existed as a dead placeholder before this.
 
 ## What is DEPRECATED
 Racing API as a data source (decommissioned 2026-05-14; client files deleted) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.
@@ -274,6 +286,15 @@ only, no external NLP/sentiment service.
 7. `python scripts/ops/velo_session_start_check.py` passes.
 8. RP index + race pages captured; injection parsed; `validate_rp_injection.py` exits 0.
 9. `build_racecard_merged_from_injection.py` and `build_rpdc_daily.py` run from the SAME injection path (`FINAL_CAPTURE_LABEL` chosen once at Step 4).
+10. **No scoring until passport + RP PDF ingestion confirmed complete (added 2026-07-18).**
+    `scripts/ops/check_scoring_readiness_gate.py` hard-wired into both `run_prime_today.py`
+    (own entry point, unbypassable) and `run_full_raceday.py` (before Step 9). Checks New
+    Build's passport feed exists (never overridable) and every GB/IRE venue has RP PDF
+    fields merged into `racecard_merged` (USA/international auto-exempt via region field).
+    Override PDF-only check with `--allow-missing-pdfs`. The four core models — Old VELO,
+    New Build, No-RPR/SQPE Shadow, Champion Intent Shadow — are `critical=True` in
+    `run_full_raceday.py`: a failure in any one fails the whole day, no silent partial pass.
+    See THE_ONE_TRUTH.md HARD RULES #8-9 for full rationale.
 
 ## What must happen AFTER results (~21:00 BST) — Steps 10-20
 ```

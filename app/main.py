@@ -1504,6 +1504,16 @@ async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: s
     })
 
 
+@app.get("/api/plot-conviction")
+async def plot_conviction_proxy(date: str = Query(default=None)):
+    """Ported from new_build_dashboard_server.py 2026-07-18 (dashboard consolidation,
+    same pattern as canonical-scorecard etc.). High-conviction RP PDF ratings-sheet
+    picks (postdata_score / plot_conviction), enriched with Deep Race Agent V1's
+    verdict where available. See HARD RULES #8-9 in THE_ONE_TRUTH.md."""
+    from scripts.ops.new_build_dashboard_server import plot_conviction as _plot_conviction
+    return await _plot_conviction(date=date)
+
+
 @app.get("/api/old-velo-verdicts")
 async def old_velo_verdicts(date: str = Query(default=None)):
     """Old VELO lane for the dashboard: top pick per race from the day's
@@ -1802,7 +1812,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "Perth": "PER", "Plumpton": "PLU", "Sedgefield": "SED",
         "Stratford": "STR", "Taunton": "TAU", "Uttoxeter": "UTT",
         "Warwick": "WAR", "Wetherby": "WET", "Wincanton": "WIN",
-        "Worcester": "WOR",
+        "Worcester": "WOR", "Downpatrick": "DPT", "Killarney": "KLN",
     }
     _gc_num_to_velo: dict[str, str] = {}
     _parsed_root_gc = root / "data" / "racing_post_account_parsed"
@@ -1875,6 +1885,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 _num = str(row.get("race_id", ""))
                 _vrid = _gc_num_to_velo.get(_num, _num)
                 tri_lane_by_race[_vrid] = row
+                tri_lane_by_race[_num] = row  # always index by numeric RP race_id too
         except Exception as e:
             logger.warning("Could not read Tri-Lane stress test file %s: %s", tri_lane_path, e)
 

@@ -500,6 +500,17 @@ checks, support/risk scoring, and "why VELO may be wrong" explanations. The
 agent can mark `GREEN_CASH_REVIEW`, `AMBER_UPGRADE_REVIEW`,
 `SUPPRESS_OR_STUDY`, or `STUDY_ONLY`, but it cannot alter Step 9.
 
+**RP PDF signal wiring (2026-07-18):** `_agent_judgement()` reads
+`postdata_score` (composite -1..+1 from the RP Postdata grid) and
+`plot_conviction` (0..1, the codebase's existing "plot candidate" concept)
+from `evidence["live_identity"]`, sourced from `racecard_merged`. These
+fields were loaded into the evidence snapshot from day one but never read
+again — a day's PDF ingestion never moved a verdict until this was wired.
+`postdata_score >= 0.3` (or `<= -0.3`) nudges support/risk by 1;
+`plot_conviction >= 0.7` adds support and lines up directly with
+`tri_action == "TRI_CASH_RUN"`. See HARD RULES #8-9 for the ingestion gate
+this depends on.
+
 Backfill/evaluation:
 ```
 PYTHONPATH=. python scripts/ops/build_deep_race_agent_v1.py --start-date YYYY-MM-DD --end-date YYYY-MM-DD
@@ -571,6 +582,32 @@ The dashboard endpoint `/api/governed-card?date=YYYY-MM-DD` must expose:
 The dashboard page must show Old VELO, New Build, No-RPR/Shadow, Tri-Lane,
 Deep Agent, and Course Master in separate lanes. Missing overlay data must show
 as missing. It must never borrow numbers from another lane.
+
+**New Build join bug, fixed 2026-07-18:** `_build_governed_card_from_live_snapshots()`
+in `scripts/ops/new_build_dashboard_server.py` was remapping New Build's
+`race_day_scorecards` race_id from plain numeric to the `rp_COURSE_DATE_TIME`
+scheme before joining against the live runner snapshot rows — but those rows
+already use plain numeric race_id (60/60 confirmed matching with no remap).
+That remap only belongs to `/api/model-suggestions`'s CHAMPION_INTENT_SHADOW
+join (a different endpoint, different row source); copied into this function
+it broke the New Build join 100% of the time regardless of whether New Build
+had actually scored, showing "No New Build data for this date" every day.
+Fixed by removing the remap in that one function. `app/main.py`'s own
+governed-card implementation (the production entrypoint per `railway.toml`)
+was never affected — it already indexes by both numeric and velo-scheme IDs.
+
+**High-Conviction PDF Picks panel, wired 2026-07-18:** `/api/plot-conviction`
+(also ported into `app/main.py`) reads `postdata_score`/`plot_conviction`
+straight from `racecard_merged`, cross-joined with Deep Race Agent V1's
+verdict where available. Thresholds: `plot_conviction >= 0.7` or
+`|postdata_score| >= 0.5` (tighter than the 0.3/0.7 bar that moves a verdict
+in `_agent_judgement` — this panel is a visual shortlist for the operator,
+capped at the top 30 by combined signal strength). The frontend panel
+(`plot-conviction-panel` / `pc-list` in `app/static/dashboard/index.html`)
+existed as a scaffolded placeholder with no backend behind it before this;
+now it renders horse, venue/time, plot_conviction %, postdata_score, and the
+agent verdict + support/risk score where Deep Race Agent has reviewed that
+horse.
 
 ---
 
