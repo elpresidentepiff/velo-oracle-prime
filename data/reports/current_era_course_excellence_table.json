@@ -613,6 +613,20 @@
       "avg_winner_sp": 4.94,
       "sample_tier": "MEANINGFUL",
       "course_tier": "CAUTION"
+    },
+    {
+      "course": "Cork",
+      "n": 18,
+      "wins": 4,
+      "placed": 6,
+      "sr": 0.2222,
+      "avg_vp": 0.3478,
+      "vp40_n": 5,
+      "vp40_sr": 0.6,
+      "avg_winner_sp": 12.56,
+      "sample_tier": "CAUTION",
+      "course_tier": "CAUTION",
+      "merge_note": "Manually merged from 3 naming-variant fragments (Cork / Cork (IRE) / cork) that were each individually stuck below OBSERVATION_ONLY reporting visibility; tier assigned conservatively by SR proximity to existing CAUTION-tier courses (Hamilton 16.1%, Nottingham 18.5%) since the original generator script for this table is not present in-repo to re-derive tiering algorithmically."
     }
   ],
   "drain": [
@@ -814,19 +828,6 @@
       "course_tier": "OBSERVATION_ONLY"
     },
     {
-      "course": "Cork (IRE)",
-      "n": 7,
-      "wins": 1,
-      "placed": 1,
-      "sr": 0.1429,
-      "avg_vp": 0.2216,
-      "vp40_n": 1,
-      "vp40_sr": 1.0,
-      "avg_winner_sp": 19.75,
-      "sample_tier": "OBSERVATION_ONLY",
-      "course_tier": "OBSERVATION_ONLY"
-    },
-    {
       "course": "Naas",
       "n": 7,
       "wins": 2,
@@ -862,19 +863,6 @@
       "vp40_n": 0,
       "vp40_sr": 0,
       "avg_winner_sp": 11.3,
-      "sample_tier": "OBSERVATION_ONLY",
-      "course_tier": "OBSERVATION_ONLY"
-    },
-    {
-      "course": "Cork",
-      "n": 7,
-      "wins": 2,
-      "placed": 2,
-      "sr": 0.2857,
-      "avg_vp": 0.454,
-      "vp40_n": 3,
-      "vp40_sr": 0.3333,
-      "avg_winner_sp": null,
       "sample_tier": "OBSERVATION_ONLY",
       "course_tier": "OBSERVATION_ONLY"
     },
@@ -1122,19 +1110,6 @@
       "vp40_n": 0,
       "vp40_sr": 0,
       "avg_winner_sp": 7.79,
-      "sample_tier": "OBSERVATION_ONLY",
-      "course_tier": "OBSERVATION_ONLY"
-    },
-    {
-      "course": "cork",
-      "n": 4,
-      "wins": 1,
-      "placed": 3,
-      "sr": 0.25,
-      "avg_vp": 0.3828,
-      "vp40_n": 1,
-      "vp40_sr": 1.0,
-      "avg_winner_sp": 5.38,
       "sample_tier": "OBSERVATION_ONLY",
       "course_tier": "OBSERVATION_ONLY"
     },
@@ -1898,6 +1873,7 @@
   "data_quality_notes": [
     "UNKNOWN course (n=39): backfill gap rows, exclude from course doctrine",
     "Lingfield vs lingfield: naming variant \u2014 same course, normalise before lock",
-    "Wolverhampton vs Wolverhampton (AW): different surfaces, keep separate"
+    "Wolverhampton vs Wolverhampton (AW): different surfaces, keep separate",
+    "2026-07-23: Cork naming split (Cork/Cork (IRE)/cork) merged into one CAUTION-tier row, n=18. See merge_note on the row."
   ]
 }

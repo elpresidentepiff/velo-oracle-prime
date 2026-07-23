@@ -1,23 +1,26 @@
 # VÉLØ Course Master
-Generated: 2026-06-29T01:25:17.768326Z
+Generated: 2026-07-23T22:11:06.647641Z
 
-- Date: 2026-06-29
+- Date: 2026-07-24
 - Status: `COURSE_MASTER_PAPER_ONLY`
 - Racing API used: `False`
 - Ruleset: `COURSE_MASTER_V1_SIGMA_PLUS_DEEP_AGENT`
 
 ## Today
-- Courses: 5
-- Races: 34
-- Action counts: {"COURSE_BOOST": 1, "COURSE_NEUTRAL": 3, "COURSE_SUPPORT": 1}
+- Courses: 8
+- Races: 55
+- Action counts: {"COURSE_BOOST": 1, "COURSE_NEUTRAL": 2, "COURSE_SUPPORT": 1, "COURSE_SUPPRESS": 2, "COURSE_WARNING": 2}
 
 | Course | Races | Action | Score | Confidence | Sigma | Deep ROI | Deep N | Warnings |
 |---|---:|---|---:|---|---|---:|---:|---|
-| Ffos Las | 7 | COURSE_BOOST | 3 | MEDIUM | n/a n=0 | 0.67 | 10 | - |
-| Kempton (AW) | 7 | COURSE_NEUTRAL | 0 | MEDIUM | DRAIN_CAUTION n=16 | -1.0 | 4 | - |
-| Pontefract | 7 | COURSE_NEUTRAL | 0 | MEDIUM | DOING_WELL_CAUTION n=17 | 1.826 | 5 | IDENTITY_MISS_HEAVY_SAMPLE |
-| Stratford | 6 | COURSE_NEUTRAL | 0 | LOW | n/a n=0 | -0.634 | 5 | - |
-| Windsor | 7 | COURSE_SUPPORT | 2 | HIGH | DOING_WELL n=29 | 0.4714 | 7 | - |
+| Ascot | 6 | COURSE_WARNING | -2 | MEDIUM | n/a n=0 | -0.2539 | 18 | DEEP_DRAIN_ROI_-0.254_N18 |
+| Chepstow | 7 | COURSE_WARNING | -2 | MEDIUM | n/a n=0 | -0.5 | 9 | DEEP_DRAIN_ROI_-0.500_N9 |
+| Cork | 7 | COURSE_NEUTRAL | 0 | MEDIUM | CAUTION n=18 | 1.06 | 5 | - |
+| Kilbeggan | 8 | COURSE_NEUTRAL | 0 | LOW | n/a n=0 | 0.0 | 2 | - |
+| Sandown | 6 | COURSE_SUPPRESS | -3 | MEDIUM | n/a n=0 | -0.35 | 10 | DEEP_DRAIN_ROI_-0.350_N10, DEEP_LOW_STRIKE_0.200 |
+| Thirsk | 7 | COURSE_SUPPRESS | -3 | MEDIUM | n/a n=0 | -1.0 | 11 | DEEP_DRAIN_ROI_-1.000_N11, DEEP_LOW_STRIKE_0.182 |
+| UTT | 8 | COURSE_BOOST | 5 | HIGH | EXCELLING n=27 | 0.2082 | 11 | - |
+| York | 6 | COURSE_SUPPORT | 2 | HIGH | DOING_WELL n=33 | 0.6025 | 4 | - |
 
 ## Law
 - Course Master is paper-only context.

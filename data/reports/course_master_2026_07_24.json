@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-23T21:03:01.688406Z",
+  "generated_at": "2026-07-23T22:11:06.647641Z",
   "date": "2026-07-24",
   "status": "COURSE_MASTER_PAPER_ONLY",
   "racing_api_used": false,
@@ -10,12 +10,12 @@
     "today_racecards": "data/racecard_merged/*2026-07-24*.json"
   },
   "summary": {
-    "course_profiles": 64,
-    "today_courses": 9,
-    "today_race_count": 63,
+    "course_profiles": 62,
+    "today_courses": 8,
+    "today_race_count": 55,
     "today_action_counts": {
       "COURSE_WARNING": 2,
-      "COURSE_NEUTRAL": 3,
+      "COURSE_NEUTRAL": 2,
       "COURSE_SUPPRESS": 2,
       "COURSE_BOOST": 1,
       "COURSE_SUPPORT": 1
@@ -95,11 +95,20 @@
       "key": "cork",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
-      "master_confidence": "LOW",
+      "master_confidence": "MEDIUM",
       "reasons": [],
       "warnings": [],
       "sigma": {
-        "available": false
+        "course": "Cork",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 18,
+        "wins": 4,
+        "sr": 0.2222,
+        "avg_vp": 0.3478,
+        "vp40_n": 5,
+        "vp40_sr": 0.6,
+        "sample_tier": "CAUTION"
       },
       "deep_agent": {
         "course": "Cork",
@@ -224,30 +233,8 @@
         "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_THI_2026-07-24.json"
       }
     },
-    "utt": {
-      "course": "UTT",
-      "key": "utt",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "LOW",
-      "reasons": [],
-      "warnings": [],
-      "sigma": {
-        "available": false
-      },
-      "deep_agent": {
-        "available": false
-      },
-      "today": {
-        "course": "UTT",
-        "venue": "UTT",
-        "venue_code": null,
-        "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTT_2026-07-24.json"
-      }
-    },
     "uttoxeter": {
-      "course": "Uttoxeter",
+      "course": "UTT",
       "key": "uttoxeter",
       "master_action": "COURSE_BOOST",
       "master_score": 5,
@@ -284,11 +271,11 @@
         "sample_tier": "CAUTION"
       },
       "today": {
-        "course": "Uttoxeter",
-        "venue": "Uttoxeter",
-        "venue_code": "UTTOXETER",
+        "course": "UTT",
+        "venue": "UTT",
+        "venue_code": null,
         "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTTOXETER_2026-07-24.json"
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTT_2026-07-24.json"
       }
     },
     "york": {
@@ -683,11 +670,20 @@
       "key": "cork",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
-      "master_confidence": "LOW",
+      "master_confidence": "MEDIUM",
       "reasons": [],
       "warnings": [],
       "sigma": {
-        "available": false
+        "course": "Cork",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 18,
+        "wins": 4,
+        "sr": 0.2222,
+        "avg_vp": 0.3478,
+        "vp40_n": 5,
+        "vp40_sr": 0.6,
+        "sample_tier": "CAUTION"
       },
       "deep_agent": {
         "course": "Cork",
@@ -1504,35 +1500,6 @@
         "race_count": 0
       }
     },
-    "nby": {
-      "course": "NBY",
-      "key": "nby",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "LOW",
-      "reasons": [],
-      "warnings": [],
-      "sigma": {
-        "available": false
-      },
-      "deep_agent": {
-        "course": "NBY",
-        "n": 0,
-        "wins": 0,
-        "frames": 0,
-        "sr": null,
-        "frame_rate": null,
-        "profit": 0.0,
-        "roi": null,
-        "identity_misses": 0,
-        "missing_results": 1,
-        "sample_tier": "NONE"
-      },
-      "today": {
-        "available": false,
-        "race_count": 0
-      }
-    },
     "newbury": {
       "course": "Newbury",
       "key": "newbury",
@@ -2129,30 +2096,8 @@
         "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_THI_2026-07-24.json"
       }
     },
-    "utt": {
-      "course": "UTT",
-      "key": "utt",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "LOW",
-      "reasons": [],
-      "warnings": [],
-      "sigma": {
-        "available": false
-      },
-      "deep_agent": {
-        "available": false
-      },
-      "today": {
-        "course": "UTT",
-        "venue": "UTT",
-        "venue_code": null,
-        "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTT_2026-07-24.json"
-      }
-    },
     "uttoxeter": {
-      "course": "Uttoxeter",
+      "course": "UTT",
       "key": "uttoxeter",
       "master_action": "COURSE_BOOST",
       "master_score": 5,
@@ -2189,11 +2134,11 @@
         "sample_tier": "CAUTION"
       },
       "today": {
-        "course": "Uttoxeter",
-        "venue": "Uttoxeter",
-        "venue_code": "UTTOXETER",
+        "course": "UTT",
+        "venue": "UTT",
+        "venue_code": null,
         "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTTOXETER_2026-07-24.json"
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTT_2026-07-24.json"
       }
     },
     "warwick": {
