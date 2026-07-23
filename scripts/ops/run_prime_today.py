@@ -1255,20 +1255,149 @@ def _derive_rpd_evidence(runner: dict, race: dict, runner_rpdc: dict = None) -> 
     return evidence, False, won_last_time
 
 
-def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
+_PIPELINE_SERVICE_NAME = "velo-prime-scoring"
+
+
+def _validate_supplied_run_id(db, run_id: str, service_name: str, date_str: str) -> PipelineRunOpenResult:
+    """Validate a caller-supplied PIPELINE_RUN_ID before trusting it as an already-claimed
+    lock (SCORING-RUN-ADMISSION-HARDENING-01, P0-3).
+
+    A supplied run_id previously bypassed the insert-and-collide admission path entirely
+    with no verification -- a wrong or stale value would silently let scoring proceed
+    believing a parent trigger already owns the lock, when it may not. Every dimension
+    below must match or this hard-aborts rather than silently creating/reusing a run.
+    """
+    try:
+        resp = (
+            db.table("pipeline_runs")
+            .select("id, service_name, source_date, run_state, status")
+            .eq("id", run_id)
+            .execute()
+        )
+    except Exception as e:
+        return PipelineRunOpenResult(error=f"could not validate supplied PIPELINE_RUN_ID {run_id}: {e}")
+
+    rows = resp.data or []
+    if not rows:
+        return PipelineRunOpenResult(error=f"supplied PIPELINE_RUN_ID {run_id} does not exist in pipeline_runs")
+
+    row = rows[0]
+    if row.get("service_name") != service_name:
+        return PipelineRunOpenResult(
+            error=(
+                f"supplied PIPELINE_RUN_ID {run_id} belongs to service_name="
+                f"{row.get('service_name')!r}, expected {service_name!r}"
+            )
+        )
+    if row.get("source_date") != date_str:
+        return PipelineRunOpenResult(
+            error=(
+                f"supplied PIPELINE_RUN_ID {run_id} belongs to source_date="
+                f"{row.get('source_date')!r}, expected {date_str!r}"
+            )
+        )
+    if row.get("run_state") != "running":
+        return PipelineRunOpenResult(
+            error=(
+                f"supplied PIPELINE_RUN_ID {run_id} has run_state={row.get('run_state')!r}, "
+                "expected 'running' -- refusing to treat a non-running row as an active lock"
+            )
+        )
+    if row.get("status") is not None:
+        return PipelineRunOpenResult(
+            error=(
+                f"supplied PIPELINE_RUN_ID {run_id} has non-null status={row.get('status')!r} "
+                "while run_state='running' -- inconsistent row, refusing to trust it"
+            )
+        )
+    return PipelineRunOpenResult(run_id=run_id)
+
+
+def _write_rescore_authorization_artifact(
+    *, date_str: str, reason: str, prior_run_ids: list[str], new_run_id: str, trigger_source: str
+) -> Path:
+    """Append-only audit record for an authorised rescore (P0-2). Never overwrites or
+    deletes anything -- one new file per authorisation, filename includes a timestamp so
+    repeated authorisations for the same date each get their own permanent record."""
+    out_dir = ROOT / "data" / "reports" / "rescore_authorizations"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    ts = utc_now().strftime("%Y%m%dT%H%M%SZ")
+    out_path = out_dir / f"{date_str.replace('-', '_')}_{ts}.json"
+    out_path.write_text(
+        json.dumps(
+            {
+                "source_date": date_str,
+                "reason": reason,
+                "prior_completed_pass_run_ids": prior_run_ids,
+                "new_run_id": new_run_id,
+                "trigger_source": trigger_source,
+                "authorized_at": utc_now().isoformat().replace("+00:00", "Z"),
+                "service_name": _PIPELINE_SERVICE_NAME,
+            },
+            indent=2,
+        )
+    )
+    return out_path
+
+
+def _open_pipeline_run(db, date_str: str, rescore_reason: str | None = None) -> PipelineRunOpenResult:
     """Open a pipeline_runs row.
 
-    Age-gate cleanup: any running row for this service + date older than 24h is
-    closed as FAIL before inserting the new row.  Rows newer than 24h abort the
-    new run (prevents duplicate concurrent runs).
+    Three admission checks, in order (SCORING-RUN-ADMISSION-HARDENING-01):
+
+    1. A caller-supplied PIPELINE_RUN_ID is validated, not trusted blindly (P0-3) --
+       must exist, match this service_name and source_date, and be run_state='running'
+       with a null status.
+    2. Completed-PASS admission gate (P0-1): if this date already has one or more
+       completed/PASS rows for this service, a fresh run is blocked by default --
+       production history shows this was routine, not exceptional (four separate
+       completed/PASS runs recorded for 2026-07-14 alone). Only an explicit
+       --authorised-rescore-reason bypasses this, and every use is logged to an
+       append-only artifact (P0-2) -- it never deletes or overwrites the prior row(s).
+    3. Age-gate cleanup + insert-and-collide against the real database uniqueness
+       constraint (idx_pipeline_runs_active_service_date, a partial unique index on
+       (service_name, source_date) WHERE run_state='running') for true concurrent
+       overlap -- this part pre-dates this change and was confirmed atomic by a live
+       concurrent-insert test against a real Postgres instance, not only a mock.
     """
-    SERVICE = "velo-prime-scoring"
+    SERVICE = _PIPELINE_SERVICE_NAME
     AGE_GATE_HOURS = 24
     now = utc_now()
     existing_run_id = os.getenv("PIPELINE_RUN_ID", "").strip()
 
     if existing_run_id:
-        return PipelineRunOpenResult(run_id=existing_run_id)
+        return _validate_supplied_run_id(db, existing_run_id, SERVICE, date_str)
+
+    # P0-1: completed-PASS admission gate -- checked before any running-row insert attempt.
+    try:
+        completed = (
+            db.table("pipeline_runs")
+            .select("id, started_at, finished_at, commit_sha")
+            .eq("service_name", SERVICE)
+            .eq("source_date", date_str)
+            .eq("run_state", "completed")
+            .eq("status", "PASS")
+            .execute()
+        )
+    except Exception as e:
+        return PipelineRunOpenResult(error=f"completed-PASS admission check failed: {e}")
+
+    prior_rows = completed.data or []
+    if prior_rows:
+        prior_ids = [r["id"] for r in prior_rows]
+        detail = "; ".join(
+            f"id={r['id']} started={r.get('started_at')} finished={r.get('finished_at')} sha={r.get('commit_sha')}"
+            for r in prior_rows
+        )
+        if not rescore_reason:
+            return PipelineRunOpenResult(
+                blocked_reason=(
+                    f"{date_str} already has {len(prior_rows)} completed PASS scoring run(s) "
+                    f"for {SERVICE} -- not re-scoring. Use --authorised-rescore-reason to override "
+                    f"with an audited exception. Prior runs: {detail}"
+                )
+            )
+        print(f"  [pipeline_runs] AUTHORISED RESCORE ({rescore_reason!r}) overriding {len(prior_rows)} prior PASS run(s): {detail}")
 
     try:
         # Find existing running rows scoped to this service + date
@@ -1303,7 +1432,8 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
                     ).eq("id", row["id"]).execute()
                     print(f"  [pipeline_runs] age-gate closed stale run {row['id']} ({age_hours:.1f}h)")
                 else:
-                    # Recent running row — warn but allow override
+                    # Recent running row — warn; the insert below still relies on the real
+                    # DB uniqueness constraint to actually block a true concurrent overlap.
                     print(
                         f"  [pipeline_runs] WARNING: run already running (id={row['id']}, age={age_hours:.1f}h). Proceeding anyway."
                     )
@@ -1315,7 +1445,7 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
         row = {
             "id": str(uuid.uuid4()),
             "service_name": SERVICE,
-            "run_type": "daily_scoring",
+            "run_type": "authorised_rescore" if rescore_reason else "daily_scoring",
             "source_date": date_str,
             "run_state": "running",
             "status": None,  # explicit NULL overrides DB DEFAULT 'in_progress'
@@ -1326,7 +1456,17 @@ def _open_pipeline_run(db, date_str: str) -> PipelineRunOpenResult:
         }
         resp = db.table("pipeline_runs").insert(row).execute()
         if resp.data:
-            return PipelineRunOpenResult(run_id=resp.data[0]["id"])
+            new_run_id = resp.data[0]["id"]
+            if rescore_reason and prior_rows:
+                artifact_path = _write_rescore_authorization_artifact(
+                    date_str=date_str,
+                    reason=rescore_reason,
+                    prior_run_ids=prior_ids,
+                    new_run_id=new_run_id,
+                    trigger_source=trigger_src,
+                )
+                print(f"  [pipeline_runs] rescore authorization artifact: {artifact_path}")
+            return PipelineRunOpenResult(run_id=new_run_id)
         return PipelineRunOpenResult(error="pipeline_runs insert returned no data")
     except Exception as e:
         detail = str(e)
@@ -1469,7 +1609,31 @@ def main():
         default=None,
         help="Racecard source: auto (default, tries cache→rp→api), cache, rp, api",
     )
+    parser.add_argument(
+        "--allow-missing-pdfs",
+        action="store_true",
+        help=(
+            "Bypass the scoring-readiness PDF-ingestion check for venues that "
+            "genuinely have no RP PDFs today (e.g. US tracks). The passport "
+            "(New Build feed) check is never overridable."
+        ),
+    )
+    parser.add_argument(
+        "--authorised-rescore-reason",
+        default=None,
+        metavar="INCIDENT_ID",
+        help=(
+            "Explicit, non-empty operator-governed override to rescore a date that "
+            "already has a completed PASS run. Requires an incident ID or reason string. "
+            "Every use is logged to an append-only artifact under "
+            "data/reports/rescore_authorizations/ and never deletes/overwrites the prior "
+            "run row(s). Default (omitted): fail closed, no rescore permitted."
+        ),
+    )
     args = parser.parse_args()
+    if args.authorised_rescore_reason is not None and not args.authorised_rescore_reason.strip():
+        print("[FAIL] --authorised-rescore-reason was passed but is empty — a non-empty incident ID/reason is required.")
+        sys.exit(1)
     _modes = _resolve_persistence_modes(args)
     notify_enabled = _modes["telegram_enabled"]
     _bootstrap_runtime(env_file=args.env_file, notify=notify_enabled)
@@ -1497,6 +1661,31 @@ def main():
     _timer.mark("preflight")
     # ─────────────────────────────────────────────────────────────────────────
 
+    # ── SCORING READINESS GATE — passport + PDF ingestion, hard law 2026-07-18 ──
+    # Nothing scores for a date until New Build's passport feed exists AND every
+    # racing venue has RP PDF ratings-sheet enrichment merged in. Rule origin:
+    # every day the same failure repeated -- scoring ran before PDFs landed,
+    # forcing a manual re-run of 6+ downstream reports after the fact once PDFs
+    # arrived, and repeatedly opened the door to phantom-race/ID-mismatch bugs.
+    from scripts.ops.check_scoring_readiness_gate import check_passport, check_pdf_ingestion
+
+    print("\nSCORING READINESS GATE")
+    print("-" * 40)
+    passport_ok, passport_msg = check_passport(date_str)
+    print(f"  Passport:       {'OK   ' if passport_ok else 'FAIL '} {passport_msg}")
+    if args.allow_missing_pdfs:
+        pdf_ok = True
+        print("  PDF ingestion:  SKIP  --allow-missing-pdfs set")
+    else:
+        pdf_ok, ok_venues, missing_venues = check_pdf_ingestion(date_str)
+        print(f"  PDF ingestion:  {'OK   ' if pdf_ok else 'FAIL '} ingested={ok_venues or []} missing={missing_venues or []}")
+    print("-" * 40)
+    if not (passport_ok and pdf_ok):
+        print("\nSCORING BLOCKED — readiness gate failed. Fix the above, or pass "
+              "--allow-missing-pdfs if these venues genuinely have no PDFs today.\n")
+        sys.exit(1)
+    # ─────────────────────────────────────────────────────────────────────────
+
     from app.services.velo_prime_service import persist_race_predictions, score_race_velo_prime
     from src.rpd import RPDv2Engine
     from src.velo.midprice_hunter import evaluate_and_log as _midprice_evaluate
@@ -1515,7 +1704,11 @@ def main():
     _sb_url = resolve_supabase_url()
     _sb_key = resolve_supabase_service_key()
     db = _sb_create(_sb_url, _sb_key) if _sb_url and _sb_key else None
-    run_open = _open_pipeline_run(db, date_str) if (db and persistence_enabled) else None
+    run_open = (
+        _open_pipeline_run(db, date_str, rescore_reason=args.authorised_rescore_reason)
+        if (db and persistence_enabled)
+        else None
+    )
     run_id = run_open.run_id if run_open else None
     os.environ["_ACTIVE_PIPELINE_RUN_ID"] = run_id or ""
     if not persistence_enabled:
