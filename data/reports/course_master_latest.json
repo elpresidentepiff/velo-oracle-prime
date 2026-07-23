@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-23T22:14:34.034293Z",
+  "generated_at": "2026-07-23T22:22:18.052889Z",
   "date": "2026-07-24",
   "status": "COURSE_MASTER_PAPER_ONLY",
   "racing_api_used": false,
@@ -10,7 +10,7 @@
     "today_racecards": "data/racecard_merged/*2026-07-24*.json"
   },
   "summary": {
-    "course_profiles": 62,
+    "course_profiles": 64,
     "today_courses": 8,
     "today_race_count": 55,
     "today_action_counts": {
@@ -72,7 +72,7 @@
       "master_score": 0,
       "master_confidence": "HIGH",
       "reasons": [
-        "SIGMA_DOING_WELL_N27"
+        "SIGMA_DOING_WELL_N35"
       ],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.500_N9"
@@ -81,12 +81,12 @@
         "course": "Chepstow",
         "source_section": "doing_well",
         "course_tier": "DOING_WELL",
-        "n": 27,
-        "wins": 8,
-        "sr": 0.2963,
-        "avg_vp": 0.352,
-        "vp40_n": 8,
-        "vp40_sr": 0.375,
+        "n": 35,
+        "wins": 10,
+        "sr": 0.2857,
+        "avg_vp": 0.3562,
+        "vp40_n": 11,
+        "vp40_sr": 0.2727,
         "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
@@ -315,19 +315,19 @@
       "master_score": 2,
       "master_confidence": "HIGH",
       "reasons": [
-        "SIGMA_DOING_WELL_N33"
+        "SIGMA_DOING_WELL_N37"
       ],
       "warnings": [],
       "sigma": {
         "course": "York",
         "source_section": "doing_well",
         "course_tier": "DOING_WELL",
-        "n": 33,
+        "n": 37,
         "wins": 11,
-        "sr": 0.3333,
-        "avg_vp": 0.2737,
-        "vp40_n": 6,
-        "vp40_sr": 0.3333,
+        "sr": 0.2973,
+        "avg_vp": 0.2963,
+        "vp40_n": 9,
+        "vp40_sr": 0.2222,
         "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
@@ -428,18 +428,55 @@
         "race_count": 0
       }
     },
+    "ballinrobeire": {
+      "course": "Ballinrobe (IRE)",
+      "key": "ballinrobeire",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Ballinrobe (IRE)",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 13,
+        "wins": 3,
+        "sr": 0.2308,
+        "avg_vp": 0.2692,
+        "vp40_n": 1,
+        "vp40_sr": 1.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
     "bath": {
       "course": "Bath",
       "key": "bath",
       "master_action": "COURSE_WARNING",
       "master_score": -2,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "HIGH",
       "reasons": [],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.876_N11"
       ],
       "sigma": {
-        "available": false
+        "course": "Bath",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 41,
+        "wins": 11,
+        "sr": 0.2683,
+        "avg_vp": 0.3237,
+        "vp40_n": 10,
+        "vp40_sr": 0.4,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Bath",
@@ -604,7 +641,7 @@
       "master_score": 0,
       "master_confidence": "HIGH",
       "reasons": [
-        "SIGMA_DOING_WELL_N27"
+        "SIGMA_DOING_WELL_N35"
       ],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.500_N9"
@@ -613,12 +650,12 @@
         "course": "Chepstow",
         "source_section": "doing_well",
         "course_tier": "DOING_WELL",
-        "n": 27,
-        "wins": 8,
-        "sr": 0.2963,
-        "avg_vp": 0.352,
-        "vp40_n": 8,
-        "vp40_sr": 0.375,
+        "n": 35,
+        "wins": 10,
+        "sr": 0.2857,
+        "avg_vp": 0.3562,
+        "vp40_n": 11,
+        "vp40_sr": 0.2727,
         "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
@@ -649,7 +686,7 @@
       "master_score": 1,
       "master_confidence": "HIGH",
       "reasons": [
-        "SIGMA_DOING_WELL_N28"
+        "SIGMA_DOING_WELL_N34"
       ],
       "warnings": [
         "DEEP_NEGATIVE_ROI_-0.023_N9"
@@ -658,12 +695,12 @@
         "course": "Chester",
         "source_section": "doing_well",
         "course_tier": "DOING_WELL",
-        "n": 28,
-        "wins": 8,
-        "sr": 0.2857,
-        "avg_vp": 0.2547,
-        "vp40_n": 5,
-        "vp40_sr": 0.6,
+        "n": 34,
+        "wins": 10,
+        "sr": 0.2941,
+        "avg_vp": 0.2801,
+        "vp40_n": 8,
+        "vp40_sr": 0.5,
         "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
@@ -790,7 +827,7 @@
       "key": "doncaster",
       "master_action": "COURSE_WARNING",
       "master_score": -1,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "HIGH",
       "reasons": [
         "DEEP_FRAME_SUPPORT_0.842"
       ],
@@ -798,7 +835,16 @@
         "DEEP_DRAIN_ROI_-0.564_N19"
       ],
       "sigma": {
-        "available": false
+        "course": "Doncaster",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 26,
+        "wins": 7,
+        "sr": 0.2692,
+        "avg_vp": 0.3562,
+        "vp40_n": 7,
+        "vp40_sr": 0.1429,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Doncaster",
@@ -983,20 +1029,11 @@
       "key": "fontwell",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "LOW",
       "reasons": [],
       "warnings": [],
       "sigma": {
-        "course": "Fontwell",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL_CAUTION",
-        "n": 11,
-        "wins": 4,
-        "sr": 0.3636,
-        "avg_vp": 0.3298,
-        "vp40_n": 3,
-        "vp40_sr": 0.6667,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Fontwell",
@@ -1027,7 +1064,16 @@
         "DEEP_DRAIN_ROI_-0.487_N21"
       ],
       "sigma": {
-        "available": false
+        "course": "Goodwood",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 31,
+        "wins": 8,
+        "sr": 0.2581,
+        "avg_vp": 0.308,
+        "vp40_n": 7,
+        "vp40_sr": 0.4286,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Goodwood",
@@ -1117,6 +1163,34 @@
         "race_count": 0
       }
     },
+    "haydock": {
+      "course": "Haydock",
+      "key": "haydock",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "HIGH",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Haydock",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 24,
+        "wins": 6,
+        "sr": 0.25,
+        "avg_vp": 0.2047,
+        "vp40_n": 0,
+        "vp40_sr": 0,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
     "hexham": {
       "course": "Hexham",
       "key": "hexham",
@@ -1128,16 +1202,7 @@
       ],
       "warnings": [],
       "sigma": {
-        "course": "Hexham",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL_CAUTION",
-        "n": 19,
-        "wins": 7,
-        "sr": 0.3684,
-        "avg_vp": 0.3951,
-        "vp40_n": 10,
-        "vp40_sr": 0.5,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Hexham",
@@ -1162,20 +1227,11 @@
       "key": "kemptonaw",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "LOW",
       "reasons": [],
       "warnings": [],
       "sigma": {
-        "course": "Kempton (AW)",
-        "source_section": "drain",
-        "course_tier": "DRAIN_CAUTION",
-        "n": 16,
-        "wins": 1,
-        "sr": 0.0625,
-        "avg_vp": 0.2738,
-        "vp40_n": 2,
-        "vp40_sr": 0.0,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Kempton (AW)",
@@ -1230,22 +1286,24 @@
     "killarneyire": {
       "course": "Killarney (IRE)",
       "key": "killarneyire",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "MEDIUM",
-      "reasons": [],
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 2,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N51"
+      ],
       "warnings": [],
       "sigma": {
         "course": "Killarney (IRE)",
         "source_section": "doing_well",
-        "course_tier": "DOING_WELL_CAUTION",
-        "n": 14,
-        "wins": 5,
-        "sr": 0.3571,
-        "avg_vp": 0.2433,
-        "vp40_n": 0,
-        "vp40_sr": 0,
-        "sample_tier": "CAUTION"
+        "course_tier": "DOING_WELL",
+        "n": 51,
+        "wins": 15,
+        "sr": 0.2941,
+        "avg_vp": 0.365,
+        "vp40_n": 16,
+        "vp40_sr": 0.5625,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "available": false
@@ -1260,14 +1318,23 @@
       "key": "leicester",
       "master_action": "COURSE_BOOST",
       "master_score": 3,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "HIGH",
       "reasons": [
         "DEEP_POSITIVE_ROI_1.346_N11",
         "DEEP_FRAME_SUPPORT_0.818"
       ],
       "warnings": [],
       "sigma": {
-        "available": false
+        "course": "Leicester",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 33,
+        "wins": 8,
+        "sr": 0.2424,
+        "avg_vp": 0.2966,
+        "vp40_n": 7,
+        "vp40_sr": 0.5714,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Leicester",
@@ -1354,13 +1421,22 @@
       "key": "lingfield",
       "master_action": "COURSE_WARNING",
       "master_score": -1,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "HIGH",
       "reasons": [],
       "warnings": [
         "DEEP_NEGATIVE_ROI_-0.154_N11"
       ],
       "sigma": {
-        "available": false
+        "course": "Lingfield",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 53,
+        "wins": 15,
+        "sr": 0.283,
+        "avg_vp": 0.3273,
+        "vp40_n": 17,
+        "vp40_sr": 0.4706,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Lingfield",
@@ -1450,16 +1526,7 @@
       ],
       "warnings": [],
       "sigma": {
-        "course": "Market Rasen",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL_CAUTION",
-        "n": 11,
-        "wins": 5,
-        "sr": 0.4545,
-        "avg_vp": 0.3608,
-        "vp40_n": 3,
-        "vp40_sr": 0.3333,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Market Rasen",
@@ -1555,20 +1622,11 @@
       "key": "newbury",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "LOW",
       "reasons": [],
       "warnings": [],
       "sigma": {
-        "course": "Newbury",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL_CAUTION",
-        "n": 19,
-        "wins": 7,
-        "sr": 0.3684,
-        "avg_vp": 0.2591,
-        "vp40_n": 2,
-        "vp40_sr": 0.0,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Newbury",
@@ -1582,6 +1640,34 @@
         "identity_misses": 0,
         "missing_results": 5,
         "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "newcastle": {
+      "course": "Newcastle",
+      "key": "newcastle",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Newcastle",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 14,
+        "wins": 4,
+        "sr": 0.2857,
+        "avg_vp": 0.2592,
+        "vp40_n": 1,
+        "vp40_sr": 1.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "available": false
       },
       "today": {
         "available": false,
@@ -1620,15 +1706,25 @@
     "newmarketjuly": {
       "course": "Newmarket (July)",
       "key": "newmarketjuly",
-      "master_action": "COURSE_SUPPORT",
-      "master_score": 1,
-      "master_confidence": "MEDIUM",
+      "master_action": "COURSE_BOOST",
+      "master_score": 3,
+      "master_confidence": "HIGH",
       "reasons": [
+        "SIGMA_DOING_WELL_N48",
         "DEEP_MODEST_POSITIVE_ROI_0.152_N14"
       ],
       "warnings": [],
       "sigma": {
-        "available": false
+        "course": "Newmarket (July)",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 48,
+        "wins": 15,
+        "sr": 0.3125,
+        "avg_vp": 0.4834,
+        "vp40_n": 34,
+        "vp40_sr": 0.3824,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Newmarket (July)",
@@ -1688,16 +1784,16 @@
         "DEEP_FRAME_SUPPORT_0.769"
       ],
       "warnings": [
-        "SIGMA_CAUTION_N27"
+        "SIGMA_CAUTION_N31"
       ],
       "sigma": {
         "course": "Nottingham",
         "source_section": "caution",
         "course_tier": "CAUTION",
-        "n": 27,
+        "n": 31,
         "wins": 5,
-        "sr": 0.1852,
-        "avg_vp": 0.3335,
+        "sr": 0.1613,
+        "avg_vp": 0.3109,
         "vp40_n": 7,
         "vp40_sr": 0.2857,
         "sample_tier": "MEANINGFUL"
@@ -1725,20 +1821,11 @@
       "key": "perth",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "LOW",
       "reasons": [],
       "warnings": [],
       "sigma": {
-        "course": "Perth",
-        "source_section": "drain",
-        "course_tier": "DRAIN_CAUTION",
-        "n": 16,
-        "wins": 0,
-        "sr": 0.0,
-        "avg_vp": 0.2757,
-        "vp40_n": 3,
-        "vp40_sr": 0.0,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Perth",
@@ -1763,22 +1850,13 @@
       "key": "pontefract",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "LOW",
       "reasons": [],
       "warnings": [
         "IDENTITY_MISS_HEAVY_SAMPLE"
       ],
       "sigma": {
-        "course": "Pontefract",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL_CAUTION",
-        "n": 17,
-        "wins": 6,
-        "sr": 0.3529,
-        "avg_vp": 0.2527,
-        "vp40_n": 3,
-        "vp40_sr": 1.0,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Pontefract",
@@ -1863,13 +1941,22 @@
       "key": "ripon",
       "master_action": "COURSE_WARNING",
       "master_score": -2,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "HIGH",
       "reasons": [],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.357_N15"
       ],
       "sigma": {
-        "available": false
+        "course": "Ripon",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 20,
+        "wins": 5,
+        "sr": 0.25,
+        "avg_vp": 0.3634,
+        "vp40_n": 5,
+        "vp40_sr": 0.8,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Ripon",
@@ -2056,13 +2143,24 @@
     "southwellaw": {
       "course": "Southwell (AW)",
       "key": "southwellaw",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "LOW",
-      "reasons": [],
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 1,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "SIGMA_CAUTION_SAMPLE_DOING_WELL_N15"
+      ],
       "warnings": [],
       "sigma": {
-        "available": false
+        "course": "Southwell (AW)",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 15,
+        "wins": 5,
+        "sr": 0.3333,
+        "avg_vp": 0.4175,
+        "vp40_n": 7,
+        "vp40_sr": 0.2857,
+        "sample_tier": "CAUTION"
       },
       "deep_agent": {
         "course": "Southwell (AW)",
@@ -2261,54 +2359,24 @@
         "race_count": 0
       }
     },
-    "wexford": {
-      "course": "Wexford",
-      "key": "wexford",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "MEDIUM",
-      "reasons": [],
-      "warnings": [],
-      "sigma": {
-        "course": "Wexford",
-        "source_section": "drain",
-        "course_tier": "DRAIN_CAUTION",
-        "n": 13,
-        "wins": 0,
-        "sr": 0.0,
-        "avg_vp": 0.2235,
-        "vp40_n": 1,
-        "vp40_sr": 0.0,
-        "sample_tier": "CAUTION"
-      },
-      "deep_agent": {
-        "available": false
-      },
-      "today": {
-        "available": false,
-        "race_count": 0
-      }
-    },
     "windsor": {
       "course": "Windsor",
       "key": "windsor",
-      "master_action": "COURSE_SUPPORT",
-      "master_score": 2,
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
       "master_confidence": "HIGH",
-      "reasons": [
-        "SIGMA_DOING_WELL_N29"
-      ],
+      "reasons": [],
       "warnings": [],
       "sigma": {
         "course": "Windsor",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL",
-        "n": 29,
-        "wins": 9,
-        "sr": 0.3103,
-        "avg_vp": 0.2567,
-        "vp40_n": 4,
-        "vp40_sr": 0.5,
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 40,
+        "wins": 10,
+        "sr": 0.25,
+        "avg_vp": 0.2953,
+        "vp40_n": 8,
+        "vp40_sr": 0.375,
         "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
@@ -2341,16 +2409,7 @@
       ],
       "warnings": [],
       "sigma": {
-        "course": "Wolverhampton (AW)",
-        "source_section": "drain",
-        "course_tier": "DRAIN_CAUTION",
-        "n": 13,
-        "wins": 1,
-        "sr": 0.0769,
-        "avg_vp": 0.243,
-        "vp40_n": 2,
-        "vp40_sr": 0.0,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "deep_agent": {
         "course": "Wolverhampton (AW)",
@@ -2460,19 +2519,19 @@
       "master_score": 2,
       "master_confidence": "HIGH",
       "reasons": [
-        "SIGMA_DOING_WELL_N33"
+        "SIGMA_DOING_WELL_N37"
       ],
       "warnings": [],
       "sigma": {
         "course": "York",
         "source_section": "doing_well",
         "course_tier": "DOING_WELL",
-        "n": 33,
+        "n": 37,
         "wins": 11,
-        "sr": 0.3333,
-        "avg_vp": 0.2737,
-        "vp40_n": 6,
-        "vp40_sr": 0.3333,
+        "sr": 0.2973,
+        "avg_vp": 0.2963,
+        "vp40_n": 9,
+        "vp40_sr": 0.2222,
         "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
