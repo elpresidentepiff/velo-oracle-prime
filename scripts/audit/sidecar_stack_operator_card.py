@@ -90,14 +90,45 @@ def detect_latest_date(sb) -> str:
     return rows[0]["generated_at"][:10]
 
 
+def _known_race_ids_for_date(date_str: str) -> list:
+    """race_ids from the standard racecard cache for this date, if it exists.
+
+    generated_at is write-time, not race-date -- scoring the evening before
+    race day stamps generated_at under the wrong calendar day and silently
+    zeroes out any date-range query. race_id reliably correlates to the
+    actual race date, so prefer it when the cache is available.
+    """
+    path = ROOT / "data" / f"racecards_{date_str.replace('-', '_')}_standard.json"
+    if not path.exists():
+        return []
+    try:
+        races = json.loads(path.read_text())
+    except Exception:
+        return []
+    return [r["race_id"] for r in races if r.get("race_id")]
+
+
 def load_verdicts(sb, date_str: str) -> list[dict]:
     """Load all verdicts for a given date from velo_verdicts."""
+    select_cols = (
+        "race_id,decision_tier,velo_prime_prob,market_deception_score,"
+        "improvement_score,place_prob,full_analysis,execution_allowed,generated_at"
+    )
+    known_race_ids = _known_race_ids_for_date(date_str)
+    if known_race_ids:
+        rows = (
+            sb.table("velo_verdicts")
+            .select(select_cols)
+            .in_("race_id", known_race_ids)
+            .order("velo_prime_prob", desc=True)
+            .execute()
+            .data
+        )
+        if rows:
+            return rows
     rows = (
         sb.table("velo_verdicts")
-        .select(
-            "race_id,decision_tier,velo_prime_prob,market_deception_score,"
-            "improvement_score,place_prob,full_analysis,execution_allowed,generated_at"
-        )
+        .select(select_cols)
         .gte("generated_at", f"{date_str}T00:00:00")
         .lt("generated_at", f"{date_str}T23:59:59")
         .order("velo_prime_prob", desc=True)
