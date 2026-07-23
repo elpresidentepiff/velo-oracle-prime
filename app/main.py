@@ -2083,6 +2083,10 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         key = re.sub(r"[^a-z0-9]+", "", str(value or "").lower())
         if key == "wolverhampton":
             return "wolverhamptonaw"
+        if key == "utt":
+            return "uttoxeter"
+        if key == "nby":
+            return "newbury"
         return key
 
     verdicts = []
@@ -2319,24 +2323,21 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     # the canonical course/time row.
     course_aliases = {
         "NBY": "NEWBURY",
+        "UTT": "UTTOXETER",
     }
-    canonical_new_build_keys = {
-        (
+    def _course_time_key(row: dict) -> tuple[str, str]:
+        return (
             course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
             _norm_time(row.get("off_time", "")),
         )
-        for row in verdicts
-        if row.get("new_build_top3")
+
+    canonical_numeric_keys = {
+        _course_time_key(row) for row in verdicts if str(row.get("race_id", "")).isdigit()
     }
     verdicts = [
         row
         for row in verdicts
-        if row.get("new_build_top3")
-        or (
-            course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
-            _norm_time(row.get("off_time", "")),
-        )
-        not in canonical_new_build_keys
+        if str(row.get("race_id", "")).isdigit() or _course_time_key(row) not in canonical_numeric_keys
     ]
 
     # Sort by off_time
