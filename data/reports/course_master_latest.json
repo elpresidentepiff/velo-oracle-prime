@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-23T22:11:06.647641Z",
+  "generated_at": "2026-07-23T22:14:34.034293Z",
   "date": "2026-07-24",
   "status": "COURSE_MASTER_PAPER_ONLY",
   "racing_api_used": false,
@@ -14,8 +14,8 @@
     "today_courses": 8,
     "today_race_count": 55,
     "today_action_counts": {
-      "COURSE_WARNING": 2,
-      "COURSE_NEUTRAL": 2,
+      "COURSE_WARNING": 1,
+      "COURSE_NEUTRAL": 3,
       "COURSE_SUPPRESS": 2,
       "COURSE_BOOST": 1,
       "COURSE_SUPPORT": 1
@@ -27,13 +27,22 @@
       "key": "ascot",
       "master_action": "COURSE_WARNING",
       "master_score": -2,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "HIGH",
       "reasons": [],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.254_N18"
       ],
       "sigma": {
-        "available": false
+        "course": "Ascot",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 41,
+        "wins": 11,
+        "sr": 0.2683,
+        "avg_vp": 0.3109,
+        "vp40_n": 14,
+        "vp40_sr": 0.3571,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Ascot",
@@ -59,15 +68,26 @@
     "chepstow": {
       "course": "Chepstow",
       "key": "chepstow",
-      "master_action": "COURSE_WARNING",
-      "master_score": -2,
-      "master_confidence": "MEDIUM",
-      "reasons": [],
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N27"
+      ],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.500_N9"
       ],
       "sigma": {
-        "available": false
+        "course": "Chepstow",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 27,
+        "wins": 8,
+        "sr": 0.2963,
+        "avg_vp": 0.352,
+        "vp40_n": 8,
+        "vp40_sr": 0.375,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Chepstow",
@@ -202,15 +222,25 @@
       "course": "Thirsk",
       "key": "thirsk",
       "master_action": "COURSE_SUPPRESS",
-      "master_score": -3,
-      "master_confidence": "MEDIUM",
+      "master_score": -5,
+      "master_confidence": "HIGH",
       "reasons": [],
       "warnings": [
+        "SIGMA_CAUTION_N22",
         "DEEP_DRAIN_ROI_-1.000_N11",
         "DEEP_LOW_STRIKE_0.182"
       ],
       "sigma": {
-        "available": false
+        "course": "Thirsk",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 22,
+        "wins": 4,
+        "sr": 0.1818,
+        "avg_vp": 0.348,
+        "vp40_n": 7,
+        "vp40_sr": 0.5714,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Thirsk",
@@ -328,13 +358,22 @@
       "key": "ascot",
       "master_action": "COURSE_WARNING",
       "master_score": -2,
-      "master_confidence": "MEDIUM",
+      "master_confidence": "HIGH",
       "reasons": [],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.254_N18"
       ],
       "sigma": {
-        "available": false
+        "course": "Ascot",
+        "source_section": "baseline",
+        "course_tier": "OK",
+        "n": 41,
+        "wins": 11,
+        "sr": 0.2683,
+        "avg_vp": 0.3109,
+        "vp40_n": 14,
+        "vp40_sr": 0.3571,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Ascot",
@@ -561,15 +600,26 @@
     "chepstow": {
       "course": "Chepstow",
       "key": "chepstow",
-      "master_action": "COURSE_WARNING",
-      "master_score": -2,
-      "master_confidence": "MEDIUM",
-      "reasons": [],
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N27"
+      ],
       "warnings": [
         "DEEP_DRAIN_ROI_-0.500_N9"
       ],
       "sigma": {
-        "available": false
+        "course": "Chepstow",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 27,
+        "wins": 8,
+        "sr": 0.2963,
+        "avg_vp": 0.352,
+        "vp40_n": 8,
+        "vp40_sr": 0.375,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Chepstow",
@@ -2065,15 +2115,25 @@
       "course": "Thirsk",
       "key": "thirsk",
       "master_action": "COURSE_SUPPRESS",
-      "master_score": -3,
-      "master_confidence": "MEDIUM",
+      "master_score": -5,
+      "master_confidence": "HIGH",
       "reasons": [],
       "warnings": [
+        "SIGMA_CAUTION_N22",
         "DEEP_DRAIN_ROI_-1.000_N11",
         "DEEP_LOW_STRIKE_0.182"
       ],
       "sigma": {
-        "available": false
+        "course": "Thirsk",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 22,
+        "wins": 4,
+        "sr": 0.1818,
+        "avg_vp": 0.348,
+        "vp40_n": 7,
+        "vp40_sr": 0.5714,
+        "sample_tier": "MEANINGFUL"
       },
       "deep_agent": {
         "course": "Thirsk",

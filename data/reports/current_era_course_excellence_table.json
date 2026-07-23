@@ -193,6 +193,20 @@
       "avg_winner_sp": 5.83,
       "sample_tier": "CAUTION",
       "course_tier": "DOING_WELL_CAUTION"
+    },
+    {
+      "course": "Chepstow",
+      "n": 27,
+      "wins": 8,
+      "placed": 11,
+      "sr": 0.2963,
+      "avg_vp": 0.352,
+      "vp40_n": 8,
+      "vp40_sr": 0.375,
+      "avg_winner_sp": 2.19,
+      "sample_tier": "MEANINGFUL",
+      "course_tier": "DOING_WELL",
+      "source_note": "Backfilled 2026-07-23 from data/sigma_results/*.json (dates 2026-05-29 to 2026-07-16), outside the table's original CURRENT_ERA window (2026-05-08 to 2026-06-13) because this course had zero rows in that window. Sigma strike-rate history only -- this is NOT the same signal as the Deep Race Agent ROI verdict for this course, which may disagree (profitability vs pick-accuracy are different metrics)."
     }
   ],
   "ok": [
@@ -627,6 +641,20 @@
       "sample_tier": "CAUTION",
       "course_tier": "CAUTION",
       "merge_note": "Manually merged from 3 naming-variant fragments (Cork / Cork (IRE) / cork) that were each individually stuck below OBSERVATION_ONLY reporting visibility; tier assigned conservatively by SR proximity to existing CAUTION-tier courses (Hamilton 16.1%, Nottingham 18.5%) since the original generator script for this table is not present in-repo to re-derive tiering algorithmically."
+    },
+    {
+      "course": "Thirsk",
+      "n": 22,
+      "wins": 4,
+      "placed": 3,
+      "sr": 0.1818,
+      "avg_vp": 0.348,
+      "vp40_n": 7,
+      "vp40_sr": 0.5714,
+      "avg_winner_sp": 1.67,
+      "sample_tier": "MEANINGFUL",
+      "course_tier": "CAUTION",
+      "source_note": "Backfilled 2026-07-23 from data/sigma_results/*.json (dates 2026-05-31 to 2026-07-16), outside the table's original CURRENT_ERA window (2026-05-08 to 2026-06-13) because this course had zero rows in that window. Sigma strike-rate history only -- this is NOT the same signal as the Deep Race Agent ROI verdict for this course, which may disagree (profitability vs pick-accuracy are different metrics)."
     }
   ],
   "drain": [
@@ -1190,6 +1218,20 @@
       "avg_winner_sp": null,
       "sample_tier": "OBSERVATION_ONLY",
       "course_tier": "OBSERVATION_ONLY"
+    },
+    {
+      "course": "Sandown",
+      "n": 7,
+      "wins": 2,
+      "placed": 0,
+      "sr": 0.2857,
+      "avg_vp": 0.3544,
+      "vp40_n": 2,
+      "vp40_sr": 0.5,
+      "avg_winner_sp": 2.37,
+      "sample_tier": "OBSERVATION_ONLY",
+      "course_tier": "OBSERVATION_ONLY",
+      "source_note": "Backfilled 2026-07-23 from data/sigma_results/*.json (dates 2026-07-04 to 2026-07-04), outside the table's original CURRENT_ERA window (2026-05-08 to 2026-06-13) because this course had zero rows in that window. Sigma strike-rate history only -- this is NOT the same signal as the Deep Race Agent ROI verdict for this course, which may disagree (profitability vs pick-accuracy are different metrics)."
     }
   ],
   "all_meaningful": [
@@ -1874,6 +1916,26 @@
     "UNKNOWN course (n=39): backfill gap rows, exclude from course doctrine",
     "Lingfield vs lingfield: naming variant \u2014 same course, normalise before lock",
     "Wolverhampton vs Wolverhampton (AW): different surfaces, keep separate",
-    "2026-07-23: Cork naming split (Cork/Cork (IRE)/cork) merged into one CAUTION-tier row, n=18. See merge_note on the row."
+    "2026-07-23: Cork naming split (Cork/Cork (IRE)/cork) merged into one CAUTION-tier row, n=18. See merge_note on the row.",
+    "2026-07-23: Chepstow added (doing_well, n=27, sr=0.2963) \u2014 see source_note on row.",
+    "2026-07-23: Thirsk added (caution, n=22, sr=0.1818) \u2014 see source_note on row.",
+    "2026-07-23: Ascot added (baseline, n=41, sr=0.2683) \u2014 see source_note on row.",
+    "2026-07-23: Sandown added (observation_only, n=7, sr=0.2857) \u2014 see source_note on row."
+  ],
+  "baseline": [
+    {
+      "course": "Ascot",
+      "n": 41,
+      "wins": 11,
+      "placed": 13,
+      "sr": 0.2683,
+      "avg_vp": 0.3109,
+      "vp40_n": 14,
+      "vp40_sr": 0.3571,
+      "avg_winner_sp": 3.61,
+      "sample_tier": "MEANINGFUL",
+      "course_tier": "OK",
+      "source_note": "Backfilled 2026-07-23 from data/sigma_results/*.json (dates 2026-06-16 to 2026-07-10), outside the table's original CURRENT_ERA window (2026-05-08 to 2026-06-13) because this course had zero rows in that window. Sigma strike-rate history only -- this is NOT the same signal as the Deep Race Agent ROI verdict for this course, which may disagree (profitability vs pick-accuracy are different metrics)."
+    }
   ]
 }
