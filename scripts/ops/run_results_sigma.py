@@ -82,6 +82,7 @@ COURSE_ALIASES = {
     "thi": "thirsk",
     "yor": "york",
     "chs": "chester",
+    "ncs": "newcastle",
     "klb": "kilbeggan",
     "nmk": "newmarketjuly",
     # Short venue codes used in verdict race_ids → full RP course names
