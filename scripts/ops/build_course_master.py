@@ -52,6 +52,7 @@ COURSE_ALIASES = {
     "newmarket": "newmarket",
     "utt": "uttoxeter",
     "nby": "newbury",
+    "ncs": "newcastleaw",
 }
 
 
