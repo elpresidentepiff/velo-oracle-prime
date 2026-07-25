@@ -24,7 +24,6 @@ from __future__ import annotations
 import argparse
 import os
 import sys
-import json
 from datetime import date
 from pathlib import Path
 
@@ -35,11 +34,9 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 from src.velo.race_metadata_resolver import RaceMetadataResolver
+from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
 
 load_dotenv(ROOT / ".env")
-
-VP_THRESHOLD = 0.30
-MDS_THRESHOLD = 0.50
 
 
 def _sb():
@@ -48,77 +45,30 @@ def _sb():
         os.getenv("SUPABASE_SERVICE_ROLE_KEY"),
     )
 
+VP_THRESHOLD = 0.30
+MDS_THRESHOLD = 0.50
 
-def _known_race_ids_for_date(date_str: str) -> list:
-    """race_ids from the standard racecard cache for this date, if it exists.
+_SELECT_COLS = (
+    "race_id,velo_prime_prob,market_deception_score,decision_tier,"
+    "assigned_product,execution_allowed,full_analysis,generated_at"
+)
 
-    generated_at is write-time, not race-date -- scoring the evening before
-    race day stamps generated_at under the wrong calendar day and silently
-    zeroes out any date-range query. race_id reliably correlates to the
-    actual race date, so prefer it when the cache is available.
+
+def load_verdicts(date_str: str) -> list[dict]:
+    """Load verdicts for date_str via the shared, bug-fixed loader.
+
+    See src/velo/verdict_loader.py for why this can't be a hand-rolled
+    generated_at query -- this script had exactly that bug until 2026-07-23.
     """
-    path = ROOT / "data" / f"racecards_{date_str.replace('-', '_')}_standard.json"
-    if not path.exists():
-        return []
-    try:
-        races = json.loads(path.read_text())
-    except Exception:
-        return []
-    return [r["race_id"] for r in races if r.get("race_id")]
-
-
-def load_verdicts(sb, date_str: str) -> list[dict]:
-    select_cols = (
-        "race_id,velo_prime_prob,market_deception_score,decision_tier,"
-        "assigned_product,execution_allowed,full_analysis,generated_at"
-    )
-    known_race_ids = _known_race_ids_for_date(date_str)
-    rows = []
-    if known_race_ids:
-        rows = (
-            sb.table("velo_verdicts")
-            .select(select_cols)
-            .in_("race_id", known_race_ids)
-            .order("velo_prime_prob", desc=True)
-            .execute()
-            .data
-        )
-    if not rows:
-        rows = (
-            sb.table("velo_verdicts")
-            .select(select_cols)
-            .gte("generated_at", f"{date_str}T00:00:00")
-            .lt("generated_at", f"{date_str}T23:59:59")
-            .order("velo_prime_prob", desc=True)
-            .execute()
-            .data
-        )
-
-    if not rows:
-        # Fallback to local file
-        date_under = date_str.replace("-", "_")
-        DATA = ROOT / "data"
-        local_path1 = DATA / f"velo_prime_verdicts_{date_under}.json"
-        local_path2 = DATA / f"velo_prime_verdicts_{date_str}.json"
-        local_path = local_path1 if local_path1.exists() else (local_path2 if local_path2.exists() else None)
-
-        if local_path:
-            try:
-                with open(local_path, "r") as f:
-                    local_data = json.load(f)
-                    if isinstance(local_data, dict) and "verdicts" in local_data:
-                        rows = local_data["verdicts"]
-                    elif isinstance(local_data, list):
-                        rows = local_data
-            except Exception as e:
-                print(f"Failed to read local verdicts: {e}")
-
-    return rows
+    rows, method = _shared_load_verdicts(date_str, select=_SELECT_COLS, root=ROOT)
+    if method != "race_id":
+        print(f"  [vp30_operator_card] verdict load used fallback method: {method}")
+    return sorted(rows, key=lambda r: r.get("velo_prime_prob") or 0.0, reverse=True)
 
 
 def build_card(date_str: str) -> None:
     sb = _sb()
-    verdicts = load_verdicts(sb, date_str)
+    verdicts = load_verdicts(date_str)
 
     vp30 = []
     mds_high = []
