@@ -1373,6 +1373,7 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
     builder + numeric-race_id remap as the other server rather than
     duplicating the join logic."""
     import datetime as _dt
+
     from scripts.ops.model_suggestions_builder import build_model_suggestions
     from scripts.ops.new_build_dashboard_server import _remap_numeric_race_ids
 
@@ -1384,6 +1385,7 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
 async def model_suggestions_race_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Same as /api/model-suggestions, filtered to a single race_id."""
     import datetime as _dt
+
     from scripts.ops.model_suggestions_builder import build_model_suggestions
 
     target = date or _dt.date.today().isoformat()
@@ -1417,6 +1419,7 @@ async def doctrine_scorecard_proxy():
 async def canonical_scorecard_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
+
     from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
@@ -1436,6 +1439,7 @@ async def canonical_scorecard_proxy(date: str = Query(default=None)):
 async def canonical_learning_events_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
+
     from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events
 
     target = date or _dt.date.today().isoformat()
@@ -1455,6 +1459,7 @@ async def canonical_learning_events_proxy(date: str = Query(default=None)):
 async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
+
     from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events, fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
