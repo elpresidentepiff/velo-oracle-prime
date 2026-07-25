@@ -193,6 +193,12 @@ class HorsePassport:
     pp_ts_trajectory: Optional[float] = None
     ts_last6_array: List[float] = field(default_factory=list)
 
+    # RP in-running comment + trainer-intent tags (2026-07-10) — raw context
+    # only, never scored. Populated post-hoc from parse_runner_notes.py output
+    # in new_build_horse_passports.py, not derived within HorsePassportBuilder.
+    recent_in_running_comments: List[str] = field(default_factory=list)
+    recent_trainer_intent_tags: List[str] = field(default_factory=list)
+
     trust_policy: str = "ARCHIVE_CONTEXT_ONLY_NOT_SCORING"
     velo_scoring_allowed: bool = False
     built_at: str = ""

@@ -1,0 +1,105 @@
+{
+  "date": "2026-06-28",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "sigma": {
+    "races_studied": 29,
+    "predictions_matched": 30,
+    "results_matched": 29,
+    "winners_found": 4,
+    "strike_rate": 0.13793103448275862,
+    "top_1_accuracy": 0.13793103448275862,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.21836687931034482,
+    "calibration_error": 0.31060689655172413,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 9,
+    "calibration_error_count": 16,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 1,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "rp_WOL_20260628_3.47",
+        "horse": "Qaaeadd",
+        "prob": 0.7091,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "rp_UTT_20260628_5.20",
+        "horse": "Ballygeary",
+        "prob": 0.6583,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "rp_UTT_20260628_1.47",
+        "horse": "Sony Bill",
+        "prob": 0.6415,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "rp_WOL_20260628_5.03",
+        "horse": "The Fixer",
+        "prob": 0.8078,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rp_UTT_20260628_2.17",
+        "horse": "Flying Ace",
+        "prob": 0.4019,
+        "result": "WIN"
+      },
+      {
+        "race_id": "rp_CUR_20260628_1.10",
+        "horse": "Alpha",
+        "prob": 0.3622,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "WEAK_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 29 races today",
+    "shadow_state_after_summary": "Evolved to 479 races",
+    "events_studied": 29,
+    "updates_applied": 0,
+    "duplicates_skipped": 29,
+    "loss_count_by_type": {
+      "WRONG_HORSE": 9,
+      "CALIBRATION_ERROR": 16,
+      "NONE": 4,
+      "DATA_ERROR": 1
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": false,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

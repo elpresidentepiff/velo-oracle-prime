@@ -1,16 +1,14 @@
-# VELO Sigma Results — 2026-06-09
+# VELO Supported RP Sigma - 2026-06-09
 
-**Status:** PASS — BELOW BASELINE — check miss_class distribution
+Status: PARTIAL_RESULTS_DIAGNOSTIC_ONLY
+Source: racing_post_supported_sigma
 
 | Metric | Value |
-|---|---|
-| Evaluated | 29 |
-| Wins | 4 (13.8%) |
-| Frames | 7 |
-| Misses | 18 |
+|---|---:|
+| Evaluated | 19 |
+| Wins | 4 |
+| Frames | 5 |
+| SR | 21.1% |
+| Frame rate | 47.4% |
 | Non-runners excluded | 4 |
-| No-result | 0 |
-| High-conf (VP≥0.30) | 19 picks, 21.1% SR |
-| sigma_audits written | 29/29 |
-
-**raw_sigma_audits_preserved:** true
+| No-result | 3 |

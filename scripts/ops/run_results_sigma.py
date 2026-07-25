@@ -48,6 +48,7 @@ from src.constants import (  # noqa: E402
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+NO_NOTIFY = False  # set from --no-notify in main(); suppresses all tg() sends
 TODAY = date.today().strftime("%Y-%m-%d")
 TODAY_DISPLAY = date.today().strftime("%d %b %Y")
 
@@ -80,9 +81,13 @@ COURSE_ALIASES = {
     "rip": "ripon",
     "thi": "thirsk",
     "yor": "york",
+    "chs": "chester",
+    "klb": "kilbeggan",
+    "nmk": "newmarketjuly",
     # Short venue codes used in verdict race_ids → full RP course names
     "crt": "cartmel",
     "cur": "curragh",
+    "trm": "tramore",
     "utt": "uttoxeter",
     "wol": "wolverhampton",
     "woa": "wolverhampton",
@@ -107,6 +112,9 @@ COURSE_ALIASES = {
     "sal": "salisbury",
     "bri": "brighton",
     "cat": "catterick",
+    "chp": "chepstow",
+    "fai": "fairyhouse",
+    "yar": "yarmouth",
     "car": "carlisle",
     "cht": "chepstow",
     "dev": "devon",
@@ -252,6 +260,9 @@ def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = Non
 
 
 def tg(text: str) -> bool:
+    if NO_NOTIFY:
+        print(f"[TG SUPPRESSED --no-notify]: {text[:60]}")
+        return False
     if not TOKEN or not CHAT_ID:
         print(f"[TG SKIP]: {text[:60]}")
         return False
@@ -490,7 +501,13 @@ def main():
     parser.add_argument("--date", default=None)
     parser.add_argument("--min-coverage", type=float, default=None,
                         help="Override completeness gate threshold (0-1). Use when Irish/blocked venues are known to be inaccessible.")
+    parser.add_argument("--no-notify", action="store_true",
+                        help="Suppress all Telegram sends (abort/gate/hits/misses/frames/final reports). "
+                             "Runs the full official Sigma reconciliation, writes all local/Supabase "
+                             "artifacts exactly as normal; only the Telegram send is skipped.")
     args = parser.parse_args()
+    global NO_NOTIFY
+    NO_NOTIFY = args.no_notify
     race_date = args.date or TODAY
     _display_date = datetime.strptime(race_date, "%Y-%m-%d").strftime("%d %b %Y")
     run_id = _open_sigma_run(race_date)
@@ -1293,19 +1310,15 @@ def main():
             continue
 
         stake = STAKE[tier]
-        # Find predicted horse's SP from the canonical RP runner list.
-        _result_race = results_by_id.get(rid, {})
-        full_runners = _result_race.get("full_runners") or _result_race.get("runners") or []
+        # Step 3 already reconciled this row against the correct result race
+        # (results_by_id is keyed on raw RP numeric race_id, not the rid scheme
+        # used here, so re-deriving pred_sp via that map always misses).
         pred_sp = None
-        horse_in_results = False
-        for runner in full_runners:
-            if str(runner.get("horse_id")) == str(row["predicted_id"]):
-                horse_in_results = True
-                try:
-                    pred_sp = float(runner.get("sp_dec") or 0) or None
-                except (ValueError, TypeError):
-                    pass
-                break
+        try:
+            pred_sp = float(row.get("predicted_sp") or 0) or None
+        except (ValueError, TypeError):
+            pass
+        horse_in_results = not str(row.get("reconciliation_provenance", "")).endswith("HORSE_ABSENT")
 
         if not pred_sp or pred_sp <= 1.0:
             if not horse_in_results:

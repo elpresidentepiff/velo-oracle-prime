@@ -516,6 +516,30 @@ def _agent_judgement(card: dict[str, Any], evidence: dict[str, Any]) -> dict[str
     if state.get("market_state") in {"quiet", "cold"}:
         risk_score += 1
 
+    # RP PDF ratings-sheet signals (postdata_score, plot_conviction), sourced
+    # from racecard_merged via evidence["live_identity"]. Wired 2026-07-18 --
+    # previously loaded into the evidence snapshot but never read by this
+    # function, so a day's PDF ingestion never actually moved a verdict.
+    # postdata_score is a composite -1..+1 signal (trainer/going/course/draw/
+    # ability flags from the RP Postdata grid). plot_conviction is 0..1;
+    # >=0.7 is the codebase's established "plot candidate" threshold (see
+    # ingest_racecard_pdfs.py's own PLOT CANDIDATES summary) and lines up
+    # directly with tri_action's TRI_CASH_RUN classification below.
+    live_identity = evidence.get("live_identity") or {}
+    postdata_score_raw = live_identity.get("postdata_score")
+    plot_conviction_raw = live_identity.get("plot_conviction")
+    postdata_score = postdata_score_raw if isinstance(postdata_score_raw, (int, float)) else None
+    plot_conviction = plot_conviction_raw if isinstance(plot_conviction_raw, (int, float)) else None
+    if postdata_score is not None and postdata_score >= 0.3:
+        support_score += 1
+        support.append(f"PDF_POSTDATA_POSITIVE:{postdata_score}")
+    elif postdata_score is not None and postdata_score <= -0.3:
+        risk_score += 1
+        risk.append(f"PDF_POSTDATA_NEGATIVE:{postdata_score}")
+    if plot_conviction is not None and plot_conviction >= 0.7:
+        support_score += 1
+        support.append(f"PDF_PLOT_CONVICTION_HIGH:{plot_conviction}")
+
     if tri_action == "TRI_CASH_RUN" and support_score >= risk_score:
         verdict = "CASH_RUN_REVIEW"
     elif tri_action == "TRI_WATCH" and support_score >= risk_score + 2:

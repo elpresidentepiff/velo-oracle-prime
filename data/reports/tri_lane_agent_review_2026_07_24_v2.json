@@ -1,0 +1,4661 @@
+{
+  "generated_at": "2026-07-23T21:02:38.293165Z",
+  "source_packet": "data/reports/tri_lane_stress_test_2026_07_24_v2.json",
+  "status": "AGENT_REVIEW_BOARD_PAPER_ONLY",
+  "live_writes": false,
+  "racing_api_used": false,
+  "summary": {
+    "review_cards": 40,
+    "priority_counts": {
+      "EXECUTION_REVIEW": 14,
+      "TIER_A_SIGNAL_REVIEW": 13,
+      "PASS_WITH_SUPPORT_REVIEW": 13
+    }
+  },
+  "review_cards": [
+    {
+      "date": "2026-07-24",
+      "race_id": "923310",
+      "course": "Thirsk",
+      "off_time": "2.00",
+      "race_name": "Sky Bet Go-Racing-In-Yorkshire Summer Festival EBF Fillies' Novice Stakes (GBB/I",
+      "horse": "Little Lady Karen",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.509",
+        "MDS_GOLD:0.353",
+        "PLACE_FRAME:0.994",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:4.30",
+        "FRAME_GATE:0.734",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.51"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5092,
+        "mds": 0.3527,
+        "place_prob": 0.9943,
+        "sp_dec": 3.5,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 4.3,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 0.0,
+        "win_gate_probability": 0.3941,
+        "frame_gate_probability": 0.7341
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "1/7",
+        "passport_coverage_pct": 14.3,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Little Lady Karen",
+        "lane_b_top": "Little Lady Karen",
+        "lane_a_top3": [
+          "Little Lady Karen",
+          "Isabella De Vega",
+          "Martinet"
+        ],
+        "lane_b_top3": [
+          "Little Lady Karen",
+          "Isabella De Vega",
+          "Martinet"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.3941,
+        "frame_gate_probability": 0.7341,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "drifting",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:decoy_flag=False mkt_decep=0.35",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923317",
+      "course": "Ascot",
+      "off_time": "2.55",
+      "race_name": "Flexjet Pat Eddery Stakes (Listed Race)",
+      "horse": "Silver Dominion",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.750",
+        "RPDC_RELEASE:2.50",
+        "PASSPORT_SUPPORT:3.55",
+        "FRAME_GATE:0.740",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.44"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "FIELD_TRAP:FS_9_12"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.4359,
+        "mds": 0.0943,
+        "place_prob": 0.75,
+        "sp_dec": 3.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 3.55,
+        "win_gate_probability": 0.441,
+        "frame_gate_probability": 0.74
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/10",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Time For The Moon",
+        "lane_b_top": "Time For The Moon",
+        "lane_a_top3": [
+          "Time For The Moon",
+          "Treasurer",
+          "Gymbaazy"
+        ],
+        "lane_b_top3": [
+          "Time For The Moon",
+          "Treasurer",
+          "Kach Above"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.441,
+        "frame_gate_probability": 0.74,
+        "passport_available": true,
+        "passport_strength_score": 3.55,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 1,
+          "pp_win_rate": 1.0,
+          "pp_place_rate": 1.0,
+          "pp_days_since_last": 43.0,
+          "pp_avg_sp_last5": 15.0,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923319",
+      "course": "Ascot",
+      "off_time": "3.30",
+      "race_name": "John Guest Racing Brown Jack Handicap (GBBPlus Race)",
+      "horse": "Kirchner",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.522",
+        "PLACE_FRAME:0.938",
+        "RPDC_RELEASE:1.80",
+        "BHA_OR_DIFF:LOWERED:1",
+        "FRAME_GATE:0.901",
+        "WIN_GATE:0.862"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5216,
+        "mds": 0.1418,
+        "place_prob": 0.9376,
+        "sp_dec": 1.5,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": -1,
+        "bha_or_diff_flag": "LOWERED",
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.8618,
+        "frame_gate_probability": 0.9013
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/4",
+        "passport_coverage_pct": 75.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Synergism",
+        "lane_b_top": "Synergism",
+        "lane_a_top3": [
+          "Synergism",
+          "Ghaiyya",
+          "Fireblade"
+        ],
+        "lane_b_top3": [
+          "Synergism",
+          "Ghaiyya",
+          "Kirchner"
+        ],
+        "lane_a_decision": "WIN_TRUST",
+        "lane_b_decision": "WIN_TRUST"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.8618,
+        "frame_gate_probability": 0.9013,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923314",
+      "course": "Thirsk",
+      "off_time": "4.53",
+      "race_name": "JW4X4 Northallerton Handicap",
+      "horse": "Dubai Venture",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.526",
+        "PLACE_FRAME:0.924",
+        "RPDC_RELEASE:2.50",
+        "PASSPORT_SUPPORT:3.35",
+        "FRAME_GATE:0.869",
+        "WIN_GATE:0.638",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.53"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [
+        "Cash-run has win-gate plus passport: check if upgraded WIN is justified."
+      ],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5262,
+        "mds": 0.0968,
+        "place_prob": 0.9244,
+        "sp_dec": 2.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 3.35,
+        "win_gate_probability": 0.6382,
+        "frame_gate_probability": 0.8686
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/5",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Dubai Venture",
+        "lane_b_top": "Dubai Venture",
+        "lane_a_top3": [
+          "Dubai Venture",
+          "Educate",
+          "Sixty Plus"
+        ],
+        "lane_b_top3": [
+          "Dubai Venture",
+          "Educate",
+          "Wolf Of Badenoch"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.6382,
+        "frame_gate_probability": 0.8686,
+        "passport_available": true,
+        "passport_strength_score": 3.35,
+        "passport_reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.4,
+          "pp_place_rate": 1.0,
+          "pp_days_since_last": 63.0,
+          "pp_avg_sp_last5": 13.45,
+          "pp_jockey_continuity": 1.0,
+          "pp_or_change_3": 3.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925309",
+      "course": "Kilbeggan",
+      "off_time": "5.05",
+      "race_name": "Tom McCormack Memorial Cup Maiden Hurdle",
+      "horse": "Mysilverriverfeale",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "PLACE_FRAME:0.993",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:1.00",
+        "FRAME_GATE:0.641",
+        "WIN_GATE:0.645"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.2801,
+        "mds": 0.1865,
+        "place_prob": 0.9931,
+        "sp_dec": 2.25,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.0,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 0.75,
+        "win_gate_probability": 0.6449,
+        "frame_gate_probability": 0.6413
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/19",
+        "passport_coverage_pct": 26.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Press The Button",
+        "lane_b_top": "Press The Button",
+        "lane_a_top3": [
+          "Press The Button",
+          "Fairy Meadow",
+          "Facile Ocean"
+        ],
+        "lane_b_top3": [
+          "Press The Button",
+          "Tell Me See",
+          "G N Jefferson"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.6449,
+        "frame_gate_probability": 0.6413,
+        "passport_available": true,
+        "passport_strength_score": 0.75,
+        "passport_reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": 74.0,
+          "pp_avg_sp_last5": 38.4,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 44.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [],
+        "reasons": [
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923309",
+      "course": "Chepstow",
+      "off_time": "5.18",
+      "race_name": "On The River Ball+Chain Nursery Handicap",
+      "horse": "Devon Angel",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.555",
+        "PLACE_FRAME:0.785",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.674",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.56"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5552,
+        "mds": 0.0551,
+        "place_prob": 0.7855,
+        "sp_dec": 4.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.3305,
+        "frame_gate_probability": 0.6741
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/7",
+        "passport_coverage_pct": 42.9,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Absolute Diamond",
+        "lane_b_top": "So Tempting",
+        "lane_a_top3": [
+          "Absolute Diamond",
+          "So Tempting",
+          "Il Capo"
+        ],
+        "lane_b_top3": [
+          "So Tempting",
+          "Il Capo",
+          "Dreams Galore"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.3305,
+        "frame_gate_probability": 0.6741,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925319",
+      "course": "Cork",
+      "off_time": "5.22",
+      "race_name": "Irish Stallion Farms EBF Rated Race",
+      "horse": "Sirocco Sands",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.605",
+        "PLACE_FRAME:0.692",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:0.80",
+        "PASSPORT_SUPPORT:2.05",
+        "FRAME_GATE:0.794",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.60"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.605,
+        "mds": 0.1097,
+        "place_prob": 0.6915,
+        "sp_dec": 2.75,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 0.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 2.05,
+        "win_gate_probability": 0.4736,
+        "frame_gate_probability": 0.7936
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "7/8",
+        "passport_coverage_pct": 87.5,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Sirocco Sands",
+        "lane_b_top": "Sirocco Sands",
+        "lane_a_top3": [
+          "Sirocco Sands",
+          "Celestial Crown",
+          "Hi Corbett Court"
+        ],
+        "lane_b_top3": [
+          "Sirocco Sands",
+          "Grayrobin",
+          "Belle Island"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.4736,
+        "frame_gate_probability": 0.7936,
+        "passport_available": true,
+        "passport_strength_score": 2.05,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 1,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 1.0,
+          "pp_days_since_last": 66.0,
+          "pp_avg_sp_last5": 11.0,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923316",
+      "course": "Thirsk",
+      "off_time": "5.27",
+      "race_name": "Racing Excellence Apprentice Handicap (Apprentice Training Race - Racing Excelle",
+      "horse": "So Grateful",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.635",
+        "PLACE_FRAME:0.756",
+        "RPDC_RELEASE:2.00",
+        "BHA_OR_DIFF:LOWERED:2",
+        "FRAME_GATE:0.673",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.64"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "FIELD_TRAP:FS_9_12"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.6353,
+        "mds": 0.0634,
+        "place_prob": 0.7559,
+        "sp_dec": 3.5,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.0,
+        "bha_or_diff": -2,
+        "bha_or_diff_flag": "LOWERED",
+        "passport_strength_score": 0.0,
+        "win_gate_probability": 0.3422,
+        "frame_gate_probability": 0.6727
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/9",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Irish Dancer",
+        "lane_b_top": "Irish Dancer",
+        "lane_a_top3": [
+          "Irish Dancer",
+          "Dabbling",
+          "Midnight Lir"
+        ],
+        "lane_b_top3": [
+          "Irish Dancer",
+          "Dabbling",
+          "Midnight Lir"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.3422,
+        "frame_gate_probability": 0.6727,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923305",
+      "course": "Chepstow",
+      "off_time": "6.26",
+      "race_name": "Cheeseburger Aaron Handicap",
+      "horse": "Prefer The Sister",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.624",
+        "PLACE_FRAME:0.857",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:2.50",
+        "FRAME_GATE:0.819",
+        "WIN_GATE:0.764"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.624,
+        "mds": 0.1551,
+        "place_prob": 0.8568,
+        "sp_dec": 1.75,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 0.65,
+        "win_gate_probability": 0.7638,
+        "frame_gate_probability": 0.8185
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/7",
+        "passport_coverage_pct": 85.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Francisco",
+        "lane_b_top": "Francisco",
+        "lane_a_top3": [
+          "Francisco",
+          "Auburn Avenue",
+          "Too Much Trevor"
+        ],
+        "lane_b_top3": [
+          "Francisco",
+          "Auburn Avenue",
+          "Sioux Warrior"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.7638,
+        "frame_gate_probability": 0.8185,
+        "passport_available": true,
+        "passport_strength_score": 0.65,
+        "passport_reason_codes": [
+          "OR_FALLING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.2,
+          "pp_days_since_last": 144.0,
+          "pp_avg_sp_last5": 12.5,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": -1.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923334",
+      "course": "York",
+      "off_time": "6.40",
+      "race_name": "Ire-Incentive, It Pays To Buy Irish EBF Restricted Novice (Bands C-D) (EBF Qual)",
+      "horse": "Coral Cove",
+      "tri_action": "TRI_WIN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.656",
+        "MDS_GOLD:0.572",
+        "PLACE_FRAME:0.993",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:1.80",
+        "PASSPORT_SUPPORT:2.55",
+        "FRAME_GATE:0.946",
+        "WIN_GATE:0.851"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.6559,
+        "mds": 0.5723,
+        "place_prob": 0.9928,
+        "sp_dec": 1.25,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 2.55,
+        "win_gate_probability": 0.8506,
+        "frame_gate_probability": 0.9456
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/8",
+        "passport_coverage_pct": 25.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Coral Cove",
+        "lane_b_top": "Coral Cove",
+        "lane_a_top3": [
+          "Coral Cove",
+          "Diplomacy",
+          "The Resdev Rocket"
+        ],
+        "lane_b_top3": [
+          "Coral Cove",
+          "Diplomacy",
+          "Travellers Girl"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "WIN_CANDIDATE_SHADOW",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.8506,
+        "frame_gate_probability": 0.9456,
+        "passport_available": true,
+        "passport_strength_score": 2.55,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE",
+          "STRONG_PLACE_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 1,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 1.0,
+          "pp_days_since_last": 34.0,
+          "pp_avg_sp_last5": 7.0,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_EDGE_REGIME"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "drifting",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:decoy_flag=False mkt_decep=0.57",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923298",
+      "course": "Sandown",
+      "off_time": "6.55",
+      "race_name": "Close Brothers Handicap",
+      "horse": "Cyrano De Bergerac",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.459",
+        "RPDC_RELEASE:2.80",
+        "PASSPORT_SUPPORT:3.90",
+        "FRAME_GATE:0.932",
+        "WIN_GATE:0.917"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [
+        "Cash-run has win-gate plus passport: check if upgraded WIN is justified."
+      ],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.4592,
+        "mds": 0.1384,
+        "place_prob": 0.55,
+        "sp_dec": 1.25,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 3.9,
+        "win_gate_probability": 0.9175,
+        "frame_gate_probability": 0.9322
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/5",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Cyrano De Bergerac",
+        "lane_b_top": "Cyrano De Bergerac",
+        "lane_a_top3": [
+          "Cyrano De Bergerac",
+          "Blue Noon",
+          "Hot And Cold"
+        ],
+        "lane_b_top3": [
+          "Cyrano De Bergerac",
+          "Blue Noon",
+          "Knightsail"
+        ],
+        "lane_a_decision": "WIN_TRUST",
+        "lane_b_decision": "WIN_TRUST"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_2_5",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9175,
+        "frame_gate_probability": 0.9322,
+        "passport_available": true,
+        "passport_strength_score": 3.9,
+        "passport_reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 3,
+          "pp_win_rate": 0.3333,
+          "pp_place_rate": 1.0,
+          "pp_days_since_last": 34.0,
+          "pp_avg_sp_last5": 2.07,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 1.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": [
+          "EDGE_REGIME:CLASS_4_FS_2_5"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925312",
+      "course": "Kilbeggan",
+      "off_time": "7.21",
+      "race_name": "Hurley Family Maiden Hurdle",
+      "horse": "Rusty Harkness",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.839",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.864",
+        "WIN_GATE:0.831"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "FIELD_TRAP:FS_9_12",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.4102,
+        "mds": 0.0758,
+        "place_prob": 0.8386,
+        "sp_dec": 1.62,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.8312,
+        "frame_gate_probability": 0.8642
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/9",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Lord Lackendarra",
+        "lane_b_top": "Ruled By The Sun",
+        "lane_a_top3": [
+          "Lord Lackendarra",
+          "Barton Sky",
+          "Ruled By The Sun"
+        ],
+        "lane_b_top3": [
+          "Ruled By The Sun",
+          "Installment",
+          "O'Callaghan Can"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.8312,
+        "frame_gate_probability": 0.8642,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923308",
+      "course": "Chepstow",
+      "off_time": "7.36",
+      "race_name": "3A's Caravan & Motorhome Classified Stakes",
+      "horse": "Knightmare",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.516",
+        "PLACE_FRAME:0.655",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.50",
+        "PASSPORT_SUPPORT:1.30",
+        "FRAME_GATE:0.769",
+        "WIN_GATE:0.728"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "FIELD_TRAP:FS_9_12"
+      ],
+      "agent_questions": [
+        "Cash-run has win-gate plus passport: check if upgraded WIN is justified."
+      ],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5165,
+        "mds": 0.1245,
+        "place_prob": 0.6549,
+        "sp_dec": 1.88,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 1.3,
+        "win_gate_probability": 0.7281,
+        "frame_gate_probability": 0.7686
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/10",
+        "passport_coverage_pct": 80.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Judge Frank",
+        "lane_b_top": "Judge Frank",
+        "lane_a_top3": [
+          "Judge Frank",
+          "Fighting Queen",
+          "Lady Margret"
+        ],
+        "lane_b_top3": [
+          "Judge Frank",
+          "Fighting Queen",
+          "Star Of Atlantis"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.7281,
+        "frame_gate_probability": 0.7686,
+        "passport_available": true,
+        "passport_strength_score": 1.3,
+        "passport_reason_codes": [
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.4,
+          "pp_days_since_last": 59.0,
+          "pp_avg_sp_last5": 15.1,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 7.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923306",
+      "course": "Chepstow",
+      "off_time": "8.11",
+      "race_name": "Sophie Busson Memorial Handicap",
+      "horse": "So Smart",
+      "tri_action": "TRI_CASH_RUN",
+      "priority": "EXECUTION_REVIEW",
+      "priority_num": 1,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.585",
+        "PLACE_FRAME:0.690",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.50",
+        "BHA_OR_DIFF:RAISED:1",
+        "PASSPORT_SUPPORT:2.76",
+        "FRAME_GATE:0.793",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.58"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5846,
+        "mds": 0.0651,
+        "place_prob": 0.6904,
+        "sp_dec": 2.5,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.5,
+        "bha_or_diff": 1,
+        "bha_or_diff_flag": "RAISED",
+        "passport_strength_score": 2.7575,
+        "win_gate_probability": 0.5,
+        "frame_gate_probability": 0.7933
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/7",
+        "passport_coverage_pct": 57.1,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Son Of Astar",
+        "lane_b_top": "Son Of Astar",
+        "lane_a_top3": [
+          "Son Of Astar",
+          "Sundiata Keita",
+          "Level Up"
+        ],
+        "lane_b_top3": [
+          "Son Of Astar",
+          "Sundiata Keita",
+          "Trafalger"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5,
+        "frame_gate_probability": 0.7933,
+        "passport_available": true,
+        "passport_strength_score": 2.7575,
+        "passport_reason_codes": [
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 67,
+          "pp_win_rate": 0.0746,
+          "pp_place_rate": 0.4478,
+          "pp_days_since_last": 64.0,
+          "pp_avg_sp_last5": 9.7,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 9.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923037",
+      "course": "Uttoxeter",
+      "off_time": "1.40",
+      "race_name": "Chloe Mediumship Novices' Hurdle (GBB Race)",
+      "horse": "Likewhatyousee",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.975",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.874",
+        "WIN_GATE:0.855"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "FIELD_TRAP:FS_13_PLUS",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.4143,
+        "mds": 0.1751,
+        "place_prob": 0.9752,
+        "sp_dec": 1.5,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.8553,
+        "frame_gate_probability": 0.8739
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/13",
+        "passport_coverage_pct": 46.2,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Biggles",
+        "lane_b_top": "Biggles",
+        "lane_a_top3": [
+          "Biggles",
+          "Letmeseethecolts",
+          "Tracker Issue"
+        ],
+        "lane_b_top3": [
+          "Biggles",
+          "Letmeseethecolts",
+          "Don De La Frontera"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.8553,
+        "frame_gate_probability": 0.8739,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "rp_UTT_20260724_2.10",
+      "course": "UTT",
+      "off_time": "2.10",
+      "race_name": "1m 7f 168y (Class 5) Last 8 outings",
+      "horse": "Littletown Lad",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.691",
+        "RPDC_RELEASE:2.20"
+      ],
+      "risk": [
+        "MIDPRICE_SUPPRESS_TOP",
+        "FIELD_TRAP:FS_9_12",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.3554,
+        "mds": 0.0698,
+        "place_prob": 0.691,
+        "sp_dec": 6.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.2,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": null,
+        "win_gate_probability": 0.2426,
+        "frame_gate_probability": 0.5368
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.2426,
+        "frame_gate_probability": 0.5368,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "passport_reason_codes": [],
+        "passport_live_features": {},
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923322",
+      "course": "Ascot",
+      "off_time": "2.20",
+      "race_name": "Sports4Causes October Club EBF Fillies' Novice Stakes (GBB Race)",
+      "horse": "Sorrengail",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.694",
+        "RPDC_RELEASE:2.00",
+        "FRAME_GATE:0.901",
+        "WIN_GATE:0.887"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.384,
+        "mds": 0.1791,
+        "place_prob": 0.6941,
+        "sp_dec": 1.38,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.0,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 0.0,
+        "win_gate_probability": 0.8871,
+        "frame_gate_probability": 0.9013
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/8",
+        "passport_coverage_pct": 62.5,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Blue Flight",
+        "lane_b_top": "Blue Flight",
+        "lane_a_top3": [
+          "Blue Flight",
+          "Cut And Sew",
+          "Ash Tree"
+        ],
+        "lane_b_top3": [
+          "Blue Flight",
+          "Cut And Sew",
+          "Sorrengail"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_6_8",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.8871,
+        "frame_gate_probability": 0.9013,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923311",
+      "course": "Thirsk",
+      "off_time": "2.30",
+      "race_name": "Sky Bet For The Fans EBF Novice Stakes (GBB Race)",
+      "horse": "Blessed Voyager",
+      "tri_action": "TRI_WATCH_STRONG",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.558",
+        "MDS_GOLD:0.467",
+        "PLACE_FRAME:0.964",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.940",
+        "WIN_GATE:0.925"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5582,
+        "mds": 0.467,
+        "place_prob": 0.9643,
+        "sp_dec": 1.2,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.9254,
+        "frame_gate_probability": 0.9402
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/9",
+        "passport_coverage_pct": 44.4,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Blakey Ridge",
+        "lane_b_top": "Blakey Ridge",
+        "lane_a_top3": [
+          "Blakey Ridge",
+          "Dodgem",
+          "Blessed Voyager"
+        ],
+        "lane_b_top3": [
+          "Blakey Ridge",
+          "Dodgem",
+          "Statten Island"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9254,
+        "frame_gate_probability": 0.9402,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "drifting",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:decoy_flag=False mkt_decep=0.47",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "rp_UTT_20260724_3.15",
+      "course": "UTT",
+      "off_time": "3.15",
+      "race_name": "3m 10y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Izzy'S Grey",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.938",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.30"
+      ],
+      "risk": [
+        "MIDPRICE_SUPPRESS_TOP",
+        "FIELD_TRAP:FS_9_12",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.3824,
+        "mds": 0.1402,
+        "place_prob": 0.9383,
+        "sp_dec": 5.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.3,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": null,
+        "win_gate_probability": 0.2711,
+        "frame_gate_probability": 0.5633
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.2711,
+        "frame_gate_probability": 0.5633,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "passport_reason_codes": [],
+        "passport_live_features": {},
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923312",
+      "course": "Thirsk",
+      "off_time": "3.40",
+      "race_name": "Graham Lee Injured Jockeys' Fund Donate Today Handicap",
+      "horse": "Tupero",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.642",
+        "PLACE_FRAME:0.859",
+        "RPDC_RELEASE:0.80",
+        "PASSPORT_SUPPORT:3.45",
+        "FRAME_GATE:0.948",
+        "WIN_GATE:0.938"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.6419,
+        "mds": 0.2354,
+        "place_prob": 0.8588,
+        "sp_dec": 1.1,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 0.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 3.45,
+        "win_gate_probability": 0.9379,
+        "frame_gate_probability": 0.9481
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/5",
+        "passport_coverage_pct": 80.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Tupero",
+        "lane_b_top": "Tupero",
+        "lane_a_top3": [
+          "Tupero",
+          "Gaelic Approach",
+          "Port George"
+        ],
+        "lane_b_top3": [
+          "Tupero",
+          "Gaelic Approach",
+          "Twilight Safari"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_2_5",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.9379,
+        "frame_gate_probability": 0.9481,
+        "passport_available": true,
+        "passport_strength_score": 3.45,
+        "passport_reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.4,
+          "pp_place_rate": 0.8,
+          "pp_days_since_last": 78.0,
+          "pp_avg_sp_last5": 4.75,
+          "pp_jockey_continuity": 1.0,
+          "pp_or_change_3": 9.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "rp_UTT_20260724_4.25",
+      "course": "UTT",
+      "off_time": "4.25",
+      "race_name": "2m 3f 207y (Class 4) Last 8 outings",
+      "horse": "Jammy Jay",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.560",
+        "PLACE_FRAME:0.930",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:0.80"
+      ],
+      "risk": [
+        "FIELD_TRAP:FS_9_12",
+        "ODDS_RISK:LONGSHOT_15_PLUS",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.5596,
+        "mds": 0.0708,
+        "place_prob": 0.9305,
+        "sp_dec": 17.0,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 0.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": null,
+        "win_gate_probability": 0.1227,
+        "frame_gate_probability": 0.1935
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "LONGSHOT_15_PLUS",
+        "win_gate_probability": 0.1227,
+        "frame_gate_probability": 0.1935,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "passport_reason_codes": [],
+        "passport_live_features": {},
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:longshot_15_plus",
+          "HARD_PASS:longshot_15_plus_field_9_12",
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "medium",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33",
+          "chaos_exposure:field=10 sp_rank=10"
+        ],
+        "live_signals": 4
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925318",
+      "course": "Cork",
+      "off_time": "4.48",
+      "race_name": "Irish EBF Auction Series Maiden (IRE Incentive Race)",
+      "horse": "Hanney Boy",
+      "tri_action": "TRI_WATCH_STRONG",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.848",
+        "MDS_GOLD:0.612",
+        "PLACE_FRAME:0.999",
+        "RPDC_RELEASE:2.00",
+        "FRAME_GATE:0.959",
+        "WIN_GATE:0.886"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.8481,
+        "mds": 0.6119,
+        "place_prob": 0.9987,
+        "sp_dec": 1.1,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.0,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 0.0,
+        "win_gate_probability": 0.8857,
+        "frame_gate_probability": 0.959
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/10",
+        "passport_coverage_pct": 30.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Capital Of Pride",
+        "lane_b_top": "Capital Of Pride",
+        "lane_a_top3": [
+          "Capital Of Pride",
+          "Letmeentertainyou",
+          "Walk On Harry"
+        ],
+        "lane_b_top3": [
+          "Capital Of Pride",
+          "Letmeentertainyou",
+          "Hanney Boy"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "win_gate_probability": 0.8857,
+        "frame_gate_probability": 0.959,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "drifting",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:decoy_flag=False mkt_decep=0.61",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923301",
+      "course": "Sandown",
+      "off_time": "5.15",
+      "race_name": "Close Brothers Asset Finance Apprentice Handicap",
+      "horse": "Mrembo",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.690",
+        "RPDC_RELEASE:2.50",
+        "BHA_OR_DIFF:RAISED:1",
+        "PASSPORT_SUPPORT:2.61"
+      ],
+      "risk": [
+        "MDS_FLAT:0.041",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.3747,
+        "mds": 0.0405,
+        "place_prob": 0.6901,
+        "sp_dec": 6.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.5,
+        "bha_or_diff": 1,
+        "bha_or_diff_flag": "RAISED",
+        "passport_strength_score": 2.6147,
+        "win_gate_probability": 0.2647,
+        "frame_gate_probability": 0.6005
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/7",
+        "passport_coverage_pct": 57.1,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Harlington",
+        "lane_b_top": "Harlington",
+        "lane_a_top3": [
+          "Harlington",
+          "Golden Phase",
+          "Mrembo"
+        ],
+        "lane_b_top3": [
+          "Harlington",
+          "Golden Phase",
+          "Imperial Cult"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_6_8",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.2647,
+        "frame_gate_probability": 0.6005,
+        "passport_available": true,
+        "passport_strength_score": 2.6147,
+        "passport_reason_codes": [
+          "OR_FALLING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 48,
+          "pp_win_rate": 0.1042,
+          "pp_place_rate": 0.4792,
+          "pp_days_since_last": 74.0,
+          "pp_avg_sp_last5": 15.3,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": -5.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 1.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=3",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923041",
+      "course": "Uttoxeter",
+      "off_time": "5.35",
+      "race_name": "QuinnBet Mares' Open National Hunt Flat Race (Category 1 Elimination) (GBB Race)",
+      "horse": "Sparkling Water",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.456",
+        "PLACE_FRAME:0.862",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.727",
+        "WIN_GATE:0.696",
+        "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "FIELD_TRAP:FS_13_PLUS",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.4558,
+        "mds": 0.1436,
+        "place_prob": 0.8616,
+        "sp_dec": 2.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.6963,
+        "frame_gate_probability": 0.7266
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/13",
+        "passport_coverage_pct": 15.4,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Thetype Istitle",
+        "lane_b_top": "Thetype Istitle",
+        "lane_a_top3": [
+          "Thetype Istitle",
+          "Lucy Glitters",
+          "Ebarayna"
+        ],
+        "lane_b_top3": [
+          "Thetype Istitle",
+          "Lucy Glitters",
+          "Eagles Promise"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.6963,
+        "frame_gate_probability": 0.7266,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925323",
+      "course": "Cork",
+      "off_time": "7.43",
+      "race_name": "Buy Tickets Online At www.corkracecourse.ie Median Auction Race",
+      "horse": "Alphonsus Liguori",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.822",
+        "PLACE_FRAME:0.952",
+        "SPOTLIGHT_POSITIVE:1.00",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.675"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.8218,
+        "mds": 0.2827,
+        "place_prob": 0.9516,
+        "sp_dec": 5.0,
+        "spotlight_score": 1.0,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.2661,
+        "frame_gate_probability": 0.6754
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/5",
+        "passport_coverage_pct": 40.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Fate's Gambit",
+        "lane_b_top": "Fate's Gambit",
+        "lane_a_top3": [
+          "Fate's Gambit",
+          "Holy Lettuce",
+          "Lady In The Gods"
+        ],
+        "lane_b_top3": [
+          "Fate's Gambit",
+          "Holy Lettuce",
+          "Lady In The Gods"
+        ],
+        "lane_a_decision": "WIN_TRUST",
+        "lane_b_decision": "WIN_TRUST"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_2_5",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.2661,
+        "frame_gate_probability": 0.6754,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923329",
+      "course": "York",
+      "off_time": "7.50",
+      "race_name": "British EBF Lyric Fillies' Stakes (Listed Race)",
+      "horse": "Diamond Rain",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "VP_HIGH:0.801",
+        "PLACE_FRAME:0.999",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:4.30",
+        "PASSPORT_SUPPORT:3.90",
+        "FRAME_GATE:0.904",
+        "WIN_GATE:0.706"
+      ],
+      "risk": [
+        "MIDPRICE_SUPPRESS_TOP"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.8011,
+        "mds": 0.2827,
+        "place_prob": 0.9987,
+        "sp_dec": 1.63,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 4.3,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 3.9,
+        "win_gate_probability": 0.7059,
+        "frame_gate_probability": 0.9045
+      },
+      "new_build": {
+        "weak_data": false,
+        "passport_coverage": "6/6",
+        "passport_coverage_pct": 100.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "On Message",
+        "lane_b_top": "Miss Justice",
+        "lane_a_top3": [
+          "On Message",
+          "Miss Justice",
+          "Diamond Rain"
+        ],
+        "lane_b_top3": [
+          "Miss Justice",
+          "Diamond Rain",
+          "Estissa"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_6_8",
+        "odds_band": "EVS_TO_6_4",
+        "win_gate_probability": 0.7059,
+        "frame_gate_probability": 0.9045,
+        "passport_available": true,
+        "passport_strength_score": 3.9,
+        "passport_reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_FALLING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 8,
+          "pp_win_rate": 0.5,
+          "pp_place_rate": 0.75,
+          "pp_days_since_last": 28.0,
+          "pp_avg_sp_last5": 3.45,
+          "pp_jockey_continuity": 1.0,
+          "pp_or_change_3": -1.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923302",
+      "course": "Sandown",
+      "off_time": "8.05",
+      "race_name": "Close Brothers Motor Finance Handicap",
+      "horse": "Norfolk Blue",
+      "tri_action": "TRI_PASS",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "priority_num": 2,
+      "support": [
+        "OLD_TIER_A",
+        "PLACE_FRAME:0.821",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.50",
+        "FRAME_GATE:0.800",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.38"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "A",
+        "vp": 0.3789,
+        "mds": 0.0567,
+        "place_prob": 0.8214,
+        "sp_dec": 2.75,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.5116,
+        "frame_gate_probability": 0.8
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/6",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Unionville",
+        "lane_b_top": "Unionville",
+        "lane_a_top3": [
+          "Unionville",
+          "Berkshire Boom",
+          "Decalogue"
+        ],
+        "lane_b_top3": [
+          "Unionville",
+          "King Cherry",
+          "Norfolk Blue"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5116,
+        "frame_gate_probability": 0.8,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "rp_UTT_20260724_1.40",
+      "course": "UTT",
+      "off_time": "1.40",
+      "race_name": "1m 7f 168y (Class 4) Last 8 outings",
+      "horse": "Likewhatyousee",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.662",
+        "WIN_GATE:0.631",
+        "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+      ],
+      "risk": [
+        "MDS_FLAT:0.031",
+        "MIDPRICE_NO_EDGE",
+        "FIELD_TRAP:FS_13_PLUS",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.2544,
+        "mds": 0.0306,
+        "place_prob": 0.4903,
+        "sp_dec": 2.5,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": null,
+        "win_gate_probability": 0.6308,
+        "frame_gate_probability": 0.6618
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.6308,
+        "frame_gate_probability": 0.6618,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "passport_reason_codes": [],
+        "passport_live_features": {},
+        "warnings": [
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925371",
+      "course": "Uttoxeter",
+      "off_time": "2.40",
+      "race_name": "Bridal Rooms Uttoxeter Handicap Hurdle (Div II)",
+      "horse": "Cawthorne Banker",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:4.30",
+        "BHA_OR_DIFF:LOWERED:3",
+        "PASSPORT_SUPPORT:2.74",
+        "FRAME_GATE:0.642",
+        "WIN_GATE:0.584",
+        "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+      ],
+      "risk": [
+        "MDS_FLAT:0.024",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_NO_EDGE",
+        "FIELD_TRAP:FS_9_12"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.2072,
+        "mds": 0.0244,
+        "place_prob": 0.4543,
+        "sp_dec": 3.0,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 4.3,
+        "bha_or_diff": -3,
+        "bha_or_diff_flag": "LOWERED",
+        "passport_strength_score": 2.7355,
+        "win_gate_probability": 0.5841,
+        "frame_gate_probability": 0.6422
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/10",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Four Decades",
+        "lane_b_top": "Four Decades",
+        "lane_a_top3": [
+          "Four Decades",
+          "Thickthorn Tom",
+          "Belcamo"
+        ],
+        "lane_b_top3": [
+          "Four Decades",
+          "Belcamo",
+          "Jet Patrol"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5841,
+        "frame_gate_probability": 0.6422,
+        "passport_available": true,
+        "passport_strength_score": 2.7355,
+        "passport_reason_codes": [
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 34,
+          "pp_win_rate": 0.1471,
+          "pp_place_rate": 0.3824,
+          "pp_days_since_last": 17.0,
+          "pp_avg_sp_last5": 21.27,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 35.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12",
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923042",
+      "course": "Uttoxeter",
+      "off_time": "3.15",
+      "race_name": "Craig Reid Retirement Handicap Chase (ARC Summer Chase Series Qualifier)",
+      "horse": "Izzy's Grey",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.30",
+        "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+      ],
+      "risk": [
+        "MDS_FLAT:0.037",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_NO_EDGE",
+        "FIELD_TRAP:FS_13_PLUS",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.2362,
+        "mds": 0.0367,
+        "place_prob": 0.5936,
+        "sp_dec": 4.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.3,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.4424,
+        "frame_gate_probability": 0.4861
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/14",
+        "passport_coverage_pct": 42.9,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Betty's Tiara",
+        "lane_b_top": "Queens Wish",
+        "lane_a_top3": [
+          "Betty's Tiara",
+          "Queens Wish",
+          "Jongleur d'Etoiles"
+        ],
+        "lane_b_top3": [
+          "Queens Wish",
+          "Jongleur d'Etoiles",
+          "Kenzo Des Bruyeres"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "THREE_TO_FIVE",
+        "win_gate_probability": 0.4424,
+        "frame_gate_probability": 0.4861,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "TOXIC_REGIME:class_5",
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923038",
+      "course": "Uttoxeter",
+      "off_time": "5.00",
+      "race_name": "Eleven Eleven Handicap Chase (ARC Summer Chase Series Qualifier)",
+      "horse": "Ghasham",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "PLACE_FRAME:0.730",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.70"
+      ],
+      "risk": [
+        "MDS_FLAT:0.026",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_NO_EDGE",
+        "FIELD_TRAP:FS_9_12",
+        "ODDS_RISK:EIGHT_TO_FOURTEEN",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "C",
+        "vp": 0.2399,
+        "mds": 0.026,
+        "place_prob": 0.7304,
+        "sp_dec": 10.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.7,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.2566,
+        "frame_gate_probability": 0.3503
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/9",
+        "passport_coverage_pct": 55.6,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Seeyouinmydreams",
+        "lane_b_top": "Seeyouinmydreams",
+        "lane_a_top3": [
+          "Seeyouinmydreams",
+          "Schmilsson",
+          "Rocks Up Late"
+        ],
+        "lane_b_top3": [
+          "Seeyouinmydreams",
+          "Schmilsson",
+          "Rocks Up Late"
+        ],
+        "lane_a_decision": "FRAME_TRUST",
+        "lane_b_decision": "FRAME_TRUST"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "EIGHT_TO_FOURTEEN",
+        "win_gate_probability": 0.2566,
+        "frame_gate_probability": 0.3503,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 4
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "rp_UTT_20260724_5.00",
+      "course": "UTT",
+      "off_time": "5.00",
+      "race_name": "1m 7f 214y (Class 4) Last 8 outings",
+      "horse": "Ice Jet",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "PLACE_FRAME:0.998",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.70",
+        "FRAME_GATE:0.772",
+        "WIN_GATE:0.675",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.33"
+      ],
+      "risk": [
+        "MIDPRICE_SUPPRESS_TOP",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.3339,
+        "mds": 0.258,
+        "place_prob": 0.9983,
+        "sp_dec": 2.62,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.7,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": null,
+        "win_gate_probability": 0.6746,
+        "frame_gate_probability": 0.7724
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.6746,
+        "frame_gate_probability": 0.7724,
+        "passport_available": false,
+        "passport_strength_score": null,
+        "passport_reason_codes": [],
+        "passport_live_features": {},
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923300",
+      "course": "Sandown",
+      "off_time": "5.47",
+      "race_name": "Chasemore Farm EBF Maiden Fillies' Stakes (GBB Race)",
+      "horse": "Not My Type",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.724",
+        "WIN_GATE:0.618",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.32"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "FIELD_TRAP:FS_9_12",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.3188,
+        "mds": 0.1242,
+        "place_prob": 0.3069,
+        "sp_dec": 3.0,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.6176,
+        "frame_gate_probability": 0.7241
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/9",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Elpeeare",
+        "lane_b_top": "Elpeeare",
+        "lane_a_top3": [
+          "Elpeeare",
+          "Sarasota Blue Blue",
+          "Duty's Call"
+        ],
+        "lane_b_top3": [
+          "Elpeeare",
+          "Duty's Call",
+          "Delighfully Hot"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.6176,
+        "frame_gate_probability": 0.7241,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923304",
+      "course": "Chepstow",
+      "off_time": "5.52",
+      "race_name": "Apex Transport Planning Summer Sunset EBF Restricted Maiden (Band D) (EBF Qual')",
+      "horse": "Forest Berry",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "RPDC_RELEASE:2.80",
+        "PASSPORT_SUPPORT:1.60",
+        "FRAME_GATE:0.638",
+        "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+      ],
+      "risk": [
+        "MDS_FLAT:0.047",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_NO_EDGE",
+        "FIELD_TRAP:FS_9_12"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.2578,
+        "mds": 0.0466,
+        "place_prob": 0.2743,
+        "sp_dec": 3.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 1.6,
+        "win_gate_probability": 0.5742,
+        "frame_gate_probability": 0.6376
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/10",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Temple Court",
+        "lane_b_top": "Temple Court",
+        "lane_a_top3": [
+          "Temple Court",
+          "Forest Berry",
+          "Zonneveld"
+        ],
+        "lane_b_top3": [
+          "Temple Court",
+          "Dissenter",
+          "Bossy Angel"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_9_12",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5742,
+        "frame_gate_probability": 0.6376,
+        "passport_available": true,
+        "passport_strength_score": 1.6,
+        "passport_reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 2,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.5,
+          "pp_days_since_last": 64.0,
+          "pp_avg_sp_last5": 10.5,
+          "pp_jockey_continuity": 1.0,
+          "pp_or_change_3": 10.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:class_5_field_9_12",
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923297",
+      "course": "Sandown",
+      "off_time": "6.20",
+      "race_name": "Close Brothers Premium Finance Handicap (GBBPlus Race)",
+      "horse": "Mister Daydream",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "PLACE_FRAME:0.625",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:2.20",
+        "BHA_OR_DIFF:LOWERED:2",
+        "FRAME_GATE:0.658",
+        "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+      ],
+      "risk": [
+        "MDS_FLAT:0.043",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_NO_EDGE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "C",
+        "vp": 0.2875,
+        "mds": 0.043,
+        "place_prob": 0.6251,
+        "sp_dec": 3.5,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.2,
+        "bha_or_diff": -2,
+        "bha_or_diff_flag": "LOWERED",
+        "passport_strength_score": 0.9,
+        "win_gate_probability": 0.5482,
+        "frame_gate_probability": 0.6584
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/6",
+        "passport_coverage_pct": 83.3,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": true,
+        "lane_a_top": "Mister Daydream",
+        "lane_b_top": "Mister Daydream",
+        "lane_a_top3": [
+          "Mister Daydream",
+          "Ludo's Landing",
+          "Knight Templar"
+        ],
+        "lane_b_top3": [
+          "Mister Daydream",
+          "Knight Templar",
+          "Personal Best"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.5482,
+        "frame_gate_probability": 0.6584,
+        "passport_available": true,
+        "passport_strength_score": 0.9,
+        "passport_reason_codes": [
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.2,
+          "pp_days_since_last": 281.0,
+          "pp_avg_sp_last5": 9.8,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 1.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=3",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925321",
+      "course": "Cork",
+      "off_time": "6.33",
+      "race_name": "Navigation Road Maiden",
+      "horse": "Stooked",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "PLACE_FRAME:0.782",
+        "SPOTLIGHT_POSITIVE:0.75",
+        "RPDC_RELEASE:1.80",
+        "FRAME_GATE:0.644",
+        "WIN_GATE:0.614",
+        "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "FIELD_TRAP:FS_13_PLUS",
+        "PASSPORT_NOT_AVAILABLE"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.3142,
+        "mds": 0.1949,
+        "place_prob": 0.7821,
+        "sp_dec": 2.5,
+        "spotlight_score": 0.75,
+        "rpd_tag": "S",
+        "rpdc_release_score": 1.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": -1.0,
+        "win_gate_probability": 0.6141,
+        "frame_gate_probability": 0.6445
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/16",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Grande Cuvee",
+        "lane_b_top": "Grande Cuvee",
+        "lane_a_top3": [
+          "Grande Cuvee",
+          "Lohoobb",
+          "Feel Happy"
+        ],
+        "lane_b_top3": [
+          "Grande Cuvee",
+          "Lohoobb",
+          "Feel Happy"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.6141,
+        "frame_gate_probability": 0.6445,
+        "passport_available": false,
+        "passport_strength_score": -1.0,
+        "passport_reason_codes": [
+          "MISSING_PASSPORT"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": null,
+          "pp_win_rate": null,
+          "pp_place_rate": null,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": null,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": null,
+          "pp_class_moved_down": null
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925311",
+      "course": "Kilbeggan",
+      "off_time": "6.46",
+      "race_name": "Tote Handicap Hurdle",
+      "horse": "Marlpark",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "PLACE_FRAME:0.708",
+        "RPDC_RELEASE:0.80",
+        "PASSPORT_SUPPORT:1.15"
+      ],
+      "risk": [
+        "MDS_FLAT:0.042",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_NO_EDGE",
+        "FIELD_TRAP:FS_9_12"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "C",
+        "vp": 0.229,
+        "mds": 0.0419,
+        "place_prob": 0.7078,
+        "sp_dec": 7.5,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 0.8,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 1.15,
+        "win_gate_probability": 0.3288,
+        "frame_gate_probability": 0.4387
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "8/10",
+        "passport_coverage_pct": 80.0,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "You Done Well",
+        "lane_b_top": "You Done Well",
+        "lane_a_top3": [
+          "You Done Well",
+          "Mon Sheriffe",
+          "In The Trenches"
+        ],
+        "lane_b_top3": [
+          "You Done Well",
+          "Mon Sheriffe",
+          "In The Trenches"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "shadow": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "field_band": "FS_9_12",
+        "odds_band": "FIVE_TO_EIGHT",
+        "win_gate_probability": 0.3288,
+        "frame_gate_probability": 0.4387,
+        "passport_available": true,
+        "passport_strength_score": 1.15,
+        "passport_reason_codes": [
+          "SETUP_RUN_CANDIDATE",
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.2,
+          "pp_days_since_last": 57.0,
+          "pp_avg_sp_last5": 24.2,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 54.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 4
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923303",
+      "course": "Chepstow",
+      "off_time": "7.01",
+      "race_name": "LSL Racing Horse Sales Handicap (Chepstow Mile Series Qualifier)",
+      "horse": "Nammos",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "PLACE_FRAME:0.778",
+        "RPDC_RELEASE:2.50",
+        "PASSPORT_SUPPORT:2.50"
+      ],
+      "risk": [
+        "MDS_FLAT:0.031",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "ODDS_RISK:EIGHT_TO_FOURTEEN"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.3837,
+        "mds": 0.0312,
+        "place_prob": 0.7784,
+        "sp_dec": 10.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 2.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 2.5,
+        "win_gate_probability": 0.1732,
+        "frame_gate_probability": 0.475
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/7",
+        "passport_coverage_pct": 85.7,
+        "old_in_lane_a_top3": true,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Nammos",
+        "lane_b_top": "Dapper Gee Gee",
+        "lane_a_top3": [
+          "Nammos",
+          "Dapper Gee Gee",
+          "Rating"
+        ],
+        "lane_b_top3": [
+          "Dapper Gee Gee",
+          "Rating",
+          "Kodi Fire"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_6_8",
+        "odds_band": "EIGHT_TO_FOURTEEN",
+        "win_gate_probability": 0.1732,
+        "frame_gate_probability": 0.475,
+        "passport_available": true,
+        "passport_strength_score": 2.5,
+        "passport_reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.2,
+          "pp_place_rate": 0.6,
+          "pp_days_since_last": 59.0,
+          "pp_avg_sp_last5": 7.53,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 7.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "TOXIC_REGIME:class_5",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "DISCOVERY_LONGSHOT:8_to_14_field_6_8_shadow_only"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 4
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "923299",
+      "course": "Sandown",
+      "off_time": "7.30",
+      "race_name": "Close Brothers Invoice Finance Handicap",
+      "horse": "Cristo",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.50",
+        "PASSPORT_SUPPORT:1.30",
+        "FRAME_GATE:0.782",
+        "WIN_GATE:0.668",
+        "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.35"
+      ],
+      "risk": [
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.3465,
+        "mds": 0.0585,
+        "place_prob": 0.5848,
+        "sp_dec": 2.75,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 1.3,
+        "win_gate_probability": 0.6683,
+        "frame_gate_probability": 0.7821
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/6",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Sea Suite",
+        "lane_b_top": "Sea Suite",
+        "lane_a_top3": [
+          "Sea Suite",
+          "Winston's Warrior",
+          "Swiped"
+        ],
+        "lane_b_top3": [
+          "Sea Suite",
+          "Winston's Warrior",
+          "Swiped"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_6_8",
+        "odds_band": "TWO_TO_THREE",
+        "win_gate_probability": 0.6683,
+        "frame_gate_probability": 0.7821,
+        "passport_available": true,
+        "passport_strength_score": 1.3,
+        "passport_reason_codes": [
+          "OR_RISING"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 5,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.4,
+          "pp_days_since_last": 62.0,
+          "pp_avg_sp_last5": 13.2,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 28.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8"
+        ]
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "race_id": "925324",
+      "course": "Cork",
+      "off_time": "8.18",
+      "race_name": "Racing Again August 3rd Handicap",
+      "horse": "Borora Aura",
+      "tri_action": "TRI_PASS",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "priority_num": 4,
+      "support": [
+        "VP_HIGH:0.475",
+        "RPDC_CASH_WINDOW",
+        "RPDC_RELEASE:3.50"
+      ],
+      "risk": [
+        "MDS_FLAT:0.033",
+        "NEW_BUILD_WEAK_DATA",
+        "MIDPRICE_SUPPRESS_TOP",
+        "FIELD_TRAP:FS_13_PLUS",
+        "ODDS_RISK:EIGHT_TO_FOURTEEN"
+      ],
+      "agent_questions": [],
+      "agent_instruction": "Review this race using BHA/OR movement, Spotlight/RPD/RPDC, passport strength, MDS, field/odds regime, and outcome if available. Do not change live execution.",
+      "core_numbers": {
+        "tier": "B",
+        "vp": 0.4753,
+        "mds": 0.0325,
+        "place_prob": 0.4728,
+        "sp_dec": 12.0,
+        "spotlight_score": 0.5,
+        "rpd_tag": "S",
+        "rpdc_release_score": 3.5,
+        "bha_or_diff": null,
+        "bha_or_diff_flag": null,
+        "passport_strength_score": 0.0,
+        "win_gate_probability": 0.1817,
+        "frame_gate_probability": 0.2642
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "9/13",
+        "passport_coverage_pct": 69.2,
+        "old_in_lane_a_top3": false,
+        "old_in_lane_b_top3": false,
+        "lane_a_top": "Guildhall Graduate",
+        "lane_b_top": "Guildhall Graduate",
+        "lane_a_top3": [
+          "Guildhall Graduate",
+          "Point Cartwright",
+          "Millhone"
+        ],
+        "lane_b_top3": [
+          "Guildhall Graduate",
+          "Point Cartwright",
+          "Connecteo"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "shadow": {
+        "action": "PASS",
+        "confidence": "high",
+        "field_band": "FS_13_PLUS",
+        "odds_band": "EIGHT_TO_FOURTEEN",
+        "win_gate_probability": 0.1817,
+        "frame_gate_probability": 0.2642,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "passport_reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        },
+        "warnings": [
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "reasons": []
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "medium",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33",
+          "chaos_exposure:field=13 sp_rank=9"
+        ],
+        "live_signals": 4
+      },
+      "outcome": {
+        "available": false,
+        "actual_winner": null,
+        "winner_sp": null,
+        "old_pick_outcome": null,
+        "tri_win_hit": false,
+        "tri_frame_hit": false
+      }
+    }
+  ]
+}

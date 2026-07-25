@@ -1,16 +1,16 @@
 {
-  "date": "2026-06-30",
-  "generated_at": "2026-06-30T22:26:11.174267+00:00",
+  "date": "2026-07-24",
+  "generated_at": "2026-07-25T04:14:30.714073+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
-    "ede88e6e"
+    "94cc3e22"
   ],
   "flatline_count": 0,
   "fully_uniform_count": 0,
   "fully_uniform_races": [],
   "majority_tied_count": 0,
   "identity_failure_count": 0,
-  "runners_snapshotted": 424,
+  "runners_snapshotted": 679,
   "council_verdict": "PASS_TO_LEARNING",
   "learning_gate_status": "BLOCKED",
   "promotion_gate_status": "BLOCKED",
@@ -19,29 +19,29 @@
   ],
   "sigma_artifact": {
     "status": "PRESENT",
-    "path": "data/sigma_results/sigma_results_2026_06_30.json",
-    "sr": 0.2391,
-    "wins": 11,
-    "evaluated_count": 46,
+    "path": "data/sigma_results/sigma_results_2026_07_24.json",
+    "sr": 0.3,
+    "wins": 15,
+    "evaluated_count": 50,
     "sigma_status": "PASS",
     "completeness_gate": null,
     "learning_blocked": null,
-    "expected_predictions": 46,
+    "expected_predictions": 55,
     "result_races_available": null,
     "matched": null,
     "coverage_ratio": null,
-    "no_result_count": 0
+    "no_result_count": 1
   },
   "run_truth": {
     "status": "FALSE_PASS_NO_VERDICTS",
-    "path": "data/velo_daily_run_truth_2026_06_30.json",
+    "path": "data/velo_daily_run_truth_2026_07_24.json",
     "alert_required": true,
     "issues": [
       "FALSE_PASS_NO_VERDICTS"
     ],
     "cron_truth_status": "FAIL_OR_UNPROVEN",
     "deploy_truth_status": "UNKNOWN_UNLESS_RAILWAY_COMMIT_EXPOSED",
-    "pipeline_run_count": 2
+    "pipeline_run_count": 1
   },
   "council_artifact_visibility": {
     "council_run": "MISSING",

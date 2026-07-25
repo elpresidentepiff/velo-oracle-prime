@@ -207,7 +207,7 @@ class CashrunDetector:
         score, phrases = 0.0, []
         if horse.get("is_postdata_pick"): score += 7.5; phrases.append("POSTDATA_PICK")
         if horse.get("is_topspeed_pick"): score += 7.5; phrases.append("TS_PICK")
-        spotlight = horse.get("spotlight_comment", "").lower()
+        spotlight = (horse.get("spotlight_comment") or "").lower()
         targets = ["down in trip", "well treated", "dropped in grade", "bold show", "big run", "strong claims", "interesting", "career low", "unexposed", "leading contender"]
         for p in targets:
             if p in spotlight: score += 2.0; phrases.append(p.upper().replace(" ", "_"))

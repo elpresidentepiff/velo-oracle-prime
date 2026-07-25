@@ -25,10 +25,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.services.velo_prime_service import score_race_velo_prime
-from scripts.run_prime_today import _bootstrap_runtime, load_racecards
+from scripts.ops.run_prime_today import _bootstrap_runtime, load_racecards
 from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
 from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble, _WEIGHTS
 from src.velo.race_metadata_resolver import rest_fetch
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts
 from workers.racing_api_normalizer import normalize_race
 
 COMPONENTS = [
@@ -152,15 +153,18 @@ def _race_component_summary(inputs: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _latest_verdict_rows(target_date: str) -> list[dict[str, Any]]:
-    rows = rest_fetch(
-        "velo_verdicts",
-        "race_id,generated_at,full_analysis,top_rank_horse_id,velo_prime_prob",
-    )
+    # Shared, bug-fixed loader -- see src/velo/verdict_loader.py for why this
+    # can't be a hand-rolled generated_at query. This script had exactly that
+    # bug until 2026-07-23.
+    select = "race_id,generated_at,full_analysis,top_rank_horse_id,velo_prime_prob"
+    rows, method = shared_load_verdicts(target_date, select=select, root=ROOT, local_fallback=False)
+    if method != "race_id":
+        print(f"  [audit_live_weight_contract] verdict load used fallback method: {method}")
     latest: dict[str, dict[str, Any]] = {}
     for row in rows:
         race_id = row.get("race_id")
         generated_at = str(row.get("generated_at") or "")
-        if not race_id or not generated_at.startswith(target_date):
+        if not race_id:
             continue
         current = latest.get(race_id)
         if current is None or generated_at > str(current.get("generated_at") or ""):

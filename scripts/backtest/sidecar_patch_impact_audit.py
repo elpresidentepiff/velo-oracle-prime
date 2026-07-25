@@ -10,6 +10,8 @@ from supabase import create_client
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, field
 
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts
+
 # --- Ensemble Mirror Logic ---
 WEIGHTS = {
     "sqpe_v17": 0.45,
@@ -76,18 +78,24 @@ def predict_race_mock(runners: List[MockRunner]) -> None:
         if total_b > 0: r.vp_design_b = r.raw_b / total_b
 
 def run_impact_audit(target_date: str):
-    ROOT = Path(__file__).resolve().parent.parent
+    ROOT = Path(__file__).resolve().parents[2]
     load_dotenv(ROOT / ".env")
     sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
-    
+
     print(f"Running Patch Impact Audit for {target_date}...")
-    v_resp = sb.table("velo_verdicts").select("*").gte("generated_at", f"{target_date}T00:00:00").lt("generated_at", f"{target_date}T23:59:59").execute()
-    if not v_resp.data: return
+    # Shared, bug-fixed loader -- see src/velo/verdict_loader.py for why this
+    # can't be a hand-rolled generated_at query. This script had exactly that
+    # bug until 2026-07-24.
+    rows, method = shared_load_verdicts(target_date, select="*", root=ROOT)
+    if method != "race_id":
+        print(f"  [sidecar_patch_impact_audit] verdict load used fallback method: {method}")
+    if not rows:
+        return
     s_resp = sb.table("sigma_audits").select("race_id,outcome,actual_winner_id,actual_winner_sp").eq("date", target_date).execute()
     results = {r["race_id"]: r for r in s_resp.data}
 
     comparison = []
-    for v in v_resp.data:
+    for v in rows:
         rid = v["race_id"]
         fa = v.get("full_analysis") or []
         if isinstance(fa, dict): fa = list(fa.values())

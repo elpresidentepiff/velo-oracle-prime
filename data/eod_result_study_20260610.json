@@ -1,0 +1,104 @@
+{
+  "date": "2026-06-10",
+  "overall_verdict": "PASS",
+  "sigma": {
+    "races_studied": 26,
+    "predictions_matched": 26,
+    "results_matched": 26,
+    "winners_found": 5,
+    "strike_rate": 0.19230769230769232,
+    "top_1_accuracy": 0.19230769230769232,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.17271995423076925,
+    "calibration_error": 0.1485346153846154,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 13,
+    "calibration_error_count": 8,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "919922",
+        "horse": "Muskerry Rock",
+        "prob": 0.6583,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "920280",
+        "horse": "Velvet Vega",
+        "prob": 0.4931,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "920279",
+        "horse": "Club Class",
+        "prob": 0.4452,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "919920",
+        "horse": "A Little Something",
+        "prob": 0.4988,
+        "result": "WIN"
+      },
+      {
+        "race_id": "920136",
+        "horse": "Glory Of The Seas",
+        "prob": 0.4467,
+        "result": "WIN"
+      },
+      {
+        "race_id": "919919",
+        "horse": "Almuhit",
+        "prob": 0.429,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "ACCEPTABLE_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 26 races today",
+    "shadow_state_after_summary": "Evolved to 450 races",
+    "events_studied": 26,
+    "updates_applied": 26,
+    "duplicates_skipped": 26,
+    "loss_count_by_type": {
+      "CALIBRATION_ERROR": 8,
+      "NONE": 5,
+      "WRONG_HORSE": 13
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": true,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

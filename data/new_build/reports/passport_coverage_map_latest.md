@@ -1,13 +1,13 @@
 # Passport Coverage Map
-Generated: 2026-06-05T00:31:49.657382Z
+Generated: 2026-06-25T20:42:25.933595Z
 
 ## Summary
-- **Total passports**: 6168
-- **Active racecard horses**: 6891
-- **Active racecard coverage**: 5966 / 6891 (86.58%)
-- **Upcoming racecard coverage**: 5430 / 6355 (85.44%)
+- **Total passports**: 6186
+- **Active racecard horses**: 9552
+- **Active racecard coverage**: 5999 / 9552 (62.8%)
+- **Upcoming racecard coverage**: 5697 / 9250 (61.59%)
 - **Big Race Entries coverage**: 698 / 698 (100.0%)
-- **Missing high-priority horses**: 925
+- **Missing high-priority horses**: 3553
 - **Unraced/no-form horses**: 0
 - **Duplicate passport UIDs**: 0
 - **RPR violations**: 0
@@ -17,15 +17,33 @@ Generated: 2026-06-05T00:31:49.657382Z
 |---|---:|
 | big_race_entries | 698 |
 | current_racecard | 428 |
-| upcoming_racecard | 6355 |
+| upcoming_racecard | 9250 |
 
 ## Missing High-Priority Horses (Top 30)
 | RP UID | Horse | Sources | Trainer |
 |---|---|---|---|
 | 8236275 | Blanche De Medicis | upcoming_racecard | A Fabre |
+| 5309169 | Casapueblo | upcoming_racecard | A Fabre |
+| 6482573 | Nitoi | upcoming_racecard | A Fabre |
 | 7653182 | Segall | upcoming_racecard | A Fabre |
+| 7355954 | Sinileo | upcoming_racecard | A Fabre |
 | 8144013 | Zlata | upcoming_racecard | A Fabre |
+| 5887312 | Bruant | upcoming_racecard | A J Martin |
+| 7503734 | Monroe Dasher | upcoming_racecard | A J Martin |
+| 5202330 | Westminster Moon | upcoming_racecard | A J Martin |
+| 4484948 | Ringdufferin | upcoming_racecard | A L T Moore |
+| 5396360 | Apercu | upcoming_racecard | A Oliver |
+| 8268293 | Charm Of Venice | upcoming_racecard | A Oliver |
 | 8309317 | Connecteo | upcoming_racecard | A Oliver |
+| 8120548 | In The Gloaming | upcoming_racecard | A Oliver |
+| 7588067 | Killyclogher Rose | upcoming_racecard | A Oliver |
+| 9148126 | Youcansaythatagain | upcoming_racecard | A Oliver |
+| 9326716 | Anthony Of Lisbon | upcoming_racecard | A P O'Brien |
+| 9046182 | Confucius | upcoming_racecard | A P O'Brien |
+| 8236315 | Monmouth | upcoming_racecard | A P O'Brien |
+| 9046188 | New Yorker | upcoming_racecard | A P O'Brien |
+| 8205598 | Pink Coral | upcoming_racecard | A P O'Brien |
+| 7780520 | Wedding | upcoming_racecard | A P O'Brien |
 | 3358488 | Beauty Joy | upcoming_racecard | A S Cruz |
 | 4628818 | Beauty Waves | upcoming_racecard | A S Cruz |
 | 8632755 | Comet Radiance | upcoming_racecard | A S Cruz |
@@ -34,58 +52,40 @@ Generated: 2026-06-05T00:31:49.657382Z
 | 9326643 | Quantum Wukong | upcoming_racecard | A S Cruz |
 | 4676244 | Serangoon | upcoming_racecard | A S Cruz |
 | 7258517 | Shamz | upcoming_racecard | A S Cruz |
-| 5104229 | Stunning Peach | upcoming_racecard | A S Cruz |
-| 3346503 | Winning Dragon | upcoming_racecard | A S Cruz |
-| 5708876 | Winning Ovation | upcoming_racecard | A S Cruz |
-| 8406201 | Love Me Bae | upcoming_racecard | Adam Kirby |
-| 8656392 | Granlahan | current_racecard, upcoming_racecard | Adrian McGuinness |
-| 8401627 | Point Cartwright | upcoming_racecard | Adrian McGuinness |
-| 9317870 | Scarlet Dream | upcoming_racecard | Adrian McGuinness |
-| 7395175 | Euro Maker | current_racecard, upcoming_racecard | Adrian Murray |
-| 9350222 | Ma Blushin Rosie | upcoming_racecard | Adrian Paul Keatley |
-| 4904815 | Tasmanian Girl | current_racecard, upcoming_racecard | Aengus King |
-| 8299902 | Dearg Mor | current_racecard, upcoming_racecard | Aidan Anthony Howard |
-| 8849053 | The Cyprus Pearl | upcoming_racecard | Alan Brown |
-| 9227217 | Bontessony Doll | current_racecard, upcoming_racecard | Alan Jones |
-| 7922010 | Atlas Mountain | upcoming_racecard | Alan King |
-| 9331767 | Salve Allegra | upcoming_racecard | Alan King |
-| 8991595 | Sevenkingsmustdie | upcoming_racecard | Alan King |
-| 5418908 | Belcamo | upcoming_racecard | Alex Hales |
-| 9322105 | Arborea | upcoming_racecard | Alicia Baum |
 
 ## Trainer Coverage (Top 30)
 | Trainer | Active | Passport | Missing | Coverage |
 |---|---:|---:|---:|---:|
-| Joseph Patrick O'Brien | 100 | 92 | 8 | 92.0% |
-| Tim Easterby | 93 | 79 | 14 | 84.95% |
-| Andrew Balding | 83 | 71 | 12 | 85.54% |
-| A P O'Brien | 82 | 82 | 0 | 100.0% |
-| K R Burke | 75 | 67 | 8 | 89.33% |
-| Ralph Beckett | 69 | 57 | 12 | 82.61% |
-| Richard Hannon | 67 | 61 | 6 | 91.04% |
-| Charlie Johnston | 62 | 56 | 6 | 90.32% |
-| Tony Carroll | 60 | 59 | 1 | 98.33% |
-| David O'Meara | 57 | 54 | 3 | 94.74% |
-| James Owen | 55 | 51 | 4 | 92.73% |
-| Richard & Peter Fahey | 55 | 49 | 6 | 89.09% |
-| William Haggas | 55 | 48 | 7 | 87.27% |
-| Gordon Elliott | 49 | 43 | 6 | 87.76% |
-| Mrs John Harrington | 49 | 48 | 1 | 97.96% |
-| Ed Walker | 47 | 39 | 8 | 82.98% |
-| George Boughey | 46 | 44 | 2 | 95.65% |
-| Gavin Cromwell | 45 | 38 | 7 | 84.44% |
-| Hugo Palmer | 44 | 38 | 6 | 86.36% |
-| Kevin Ryan | 43 | 39 | 4 | 90.7% |
-| Gary & Josh Moore | 42 | 40 | 2 | 95.24% |
-| Jim Goldie | 41 | 39 | 2 | 95.12% |
-| Roger Varian | 41 | 33 | 8 | 80.49% |
-| Edward Bethell | 39 | 37 | 2 | 94.87% |
-| Ian Williams | 39 | 38 | 1 | 97.44% |
-| Archie Watson | 38 | 35 | 3 | 92.11% |
-| Eve Johnson Houghton | 37 | 34 | 3 | 91.89% |
-| Andrew Slattery | 36 | 32 | 4 | 88.89% |
-| John & Thady Gosden | 36 | 30 | 6 | 83.33% |
-| Iain Jardine | 35 | 33 | 2 | 94.29% |
+| Joseph Patrick O'Brien | 129 | 92 | 37 | 71.32% |
+| Tim Easterby | 120 | 80 | 40 | 66.67% |
+| Andrew Balding | 116 | 71 | 45 | 61.21% |
+| K R Burke | 97 | 68 | 29 | 70.1% |
+| Ralph Beckett | 97 | 58 | 39 | 59.79% |
+| Richard Hannon | 95 | 63 | 32 | 66.32% |
+| Richard & Peter Fahey | 94 | 49 | 45 | 52.13% |
+| A P O'Brien | 90 | 84 | 6 | 93.33% |
+| William Haggas | 83 | 52 | 31 | 62.65% |
+| Charlie Johnston | 80 | 56 | 24 | 70.0% |
+| Tony Carroll | 79 | 60 | 19 | 75.95% |
+| James Owen | 77 | 52 | 25 | 67.53% |
+| David O'Meara | 76 | 54 | 22 | 71.05% |
+| Ed Walker | 75 | 39 | 36 | 52.0% |
+| Gordon Elliott | 72 | 43 | 29 | 59.72% |
+| Mrs John Harrington | 70 | 48 | 22 | 68.57% |
+| Hugo Palmer | 66 | 38 | 28 | 57.58% |
+| John & Thady Gosden | 65 | 30 | 35 | 46.15% |
+| Ian Williams | 62 | 38 | 24 | 61.29% |
+| Kevin Ryan | 61 | 39 | 22 | 63.93% |
+| Richard Hughes | 61 | 31 | 30 | 50.82% |
+| Roger Varian | 60 | 33 | 27 | 55.0% |
+| George Boughey | 58 | 44 | 14 | 75.86% |
+| Gavin Cromwell | 57 | 38 | 19 | 66.67% |
+| Henry De Bromhead | 57 | 31 | 26 | 54.39% |
+| Michael & David Easterby | 56 | 30 | 26 | 53.57% |
+| Eve Johnson Houghton | 54 | 35 | 19 | 64.81% |
+| Edward Bethell | 53 | 38 | 15 | 71.7% |
+| Gary & Josh Moore | 53 | 40 | 13 | 75.47% |
+| Jim Goldie | 53 | 40 | 13 | 75.47% |
 
 ## Course/Date Coverage
 | Date | Course | Source | Runners | Passport | Missing | Coverage |
@@ -161,7 +161,7 @@ Generated: 2026-06-05T00:31:49.657382Z
 | 2026-06-04 | Uttoxeter | upcoming_racecard | 45 | 44 | 1 | 97.78% |
 | 2026-06-04 | Wetherby | upcoming_racecard | 84 | 79 | 5 | 94.05% |
 | 2026-06-05 | Bath | upcoming_racecard | 125 | 125 | 0 | 100.0% |
-| 2026-06-05 | Clonmel | upcoming_racecard | 150 | 150 | 0 | 100.0% |
+| 2026-06-05 | Clonmel | upcoming_racecard | 157 | 150 | 7 | 95.54% |
 | 2026-06-05 | Doncaster | upcoming_racecard | 179 | 179 | 0 | 100.0% |
 | 2026-06-05 | Epsom | big_race_entries | 16 | 16 | 0 | 100.0% |
 | 2026-06-05 | Epsom | upcoming_racecard | 145 | 145 | 0 | 100.0% |

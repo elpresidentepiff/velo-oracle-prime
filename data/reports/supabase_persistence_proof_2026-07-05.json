@@ -1,0 +1,81 @@
+{
+  "date": "2026-07-05",
+  "generated_at": "2026-07-05T18:50:14.036160+00:00",
+  "read_only_confirmed": true,
+  "checks": {
+    "verdict_count": 22,
+    "null_decision_tier": 0,
+    "null_git_commit_sha": 0,
+    "rpdc_primary_tag_present": 22,
+    "active_components_present": 22,
+    "rpdc_candidates_for_date": 193,
+    "latest_verdict": {
+      "generated_at": "2026-07-05T12:16:44.178433+00:00",
+      "git_commit_sha": "5f269b49cf8e6e75cc4d8ffafd9394c55cd5bb38",
+      "engine_version": "velo_prime_v1"
+    },
+    "sample": [
+      {
+        "race_id": "921918",
+        "decision_tier": "B",
+        "active_components": [
+          "improvement_score",
+          "market_deception_score",
+          "sqpe_v17"
+        ],
+        "excluded_from_ensemble": [
+          "comment_intel_score",
+          "longshot_score",
+          "place_prob",
+          "release_window_score"
+        ],
+        "rpdc_primary_tag": "CYCLE_RUN_1",
+        "rpdc_tag_count": 3
+      },
+      {
+        "race_id": "921920",
+        "decision_tier": "D",
+        "active_components": [
+          "improvement_score",
+          "market_deception_score",
+          "sqpe_v17"
+        ],
+        "excluded_from_ensemble": [
+          "comment_intel_score",
+          "longshot_score",
+          "place_prob",
+          "release_window_score"
+        ],
+        "rpdc_primary_tag": "CYCLE_RUN_1",
+        "rpdc_tag_count": 1
+      },
+      {
+        "race_id": "921916",
+        "decision_tier": "B",
+        "active_components": [
+          "improvement_score",
+          "market_deception_score",
+          "sqpe_v17"
+        ],
+        "excluded_from_ensemble": [
+          "comment_intel_score",
+          "longshot_score",
+          "place_prob",
+          "release_window_score"
+        ],
+        "rpdc_primary_tag": "PLACE_FORM",
+        "rpdc_tag_count": 1
+      }
+    ],
+    "schema_missing_columns": [
+      "source_truth",
+      "feature_degraded"
+    ],
+    "expected_race_count_local_backup": 22,
+    "local_backup_rpdc_attached": 22
+  },
+  "gaps": [
+    "SCHEMA_MISSING=source_truth,feature_degraded (migration pending)"
+  ],
+  "status": "PASS"
+}

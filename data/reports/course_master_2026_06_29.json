@@ -1,0 +1,2344 @@
+{
+  "generated_at": "2026-06-29T01:25:17.768326Z",
+  "date": "2026-06-29",
+  "status": "COURSE_MASTER_PAPER_ONLY",
+  "racing_api_used": false,
+  "ruleset": "COURSE_MASTER_V1_SIGMA_PLUS_DEEP_AGENT",
+  "source_files": {
+    "sigma_course_table": "data/reports/current_era_course_excellence_table.json",
+    "deep_agent_eval": "data/reports/deep_race_agent_v1_eval_2026_06_01_to_2026_06_20_v2.json",
+    "today_racecards": "data/racecard_merged/*2026-06-29*.json"
+  },
+  "summary": {
+    "course_profiles": 63,
+    "today_courses": 5,
+    "today_race_count": 34,
+    "today_action_counts": {
+      "COURSE_BOOST": 1,
+      "COURSE_NEUTRAL": 3,
+      "COURSE_SUPPORT": 1
+    }
+  },
+  "today_courses": {
+    "ffoslas": {
+      "course": "Ffos Las",
+      "key": "ffoslas",
+      "master_action": "COURSE_BOOST",
+      "master_score": 3,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_POSITIVE_ROI_0.670_N10",
+        "DEEP_FRAME_SUPPORT_0.900"
+      ],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Ffos Las",
+        "n": 10,
+        "wins": 5,
+        "frames": 9,
+        "sr": 0.5,
+        "frame_rate": 0.9,
+        "profit": 67.0,
+        "roi": 0.67,
+        "identity_misses": 1,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "course": "Ffos Las",
+        "venue": "Ffos Las",
+        "venue_code": "FFO",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FFO_2026-06-29.json"
+      }
+    },
+    "kemptonaw": {
+      "course": "Kempton (AW)",
+      "key": "kemptonaw",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Kempton (AW)",
+        "source_section": "drain",
+        "course_tier": "DRAIN_CAUTION",
+        "n": 16,
+        "wins": 1,
+        "sr": 0.0625,
+        "avg_vp": 0.2738,
+        "vp40_n": 2,
+        "vp40_sr": 0.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Kempton (AW)",
+        "n": 4,
+        "wins": 0,
+        "frames": 2,
+        "sr": 0.0,
+        "frame_rate": 0.5,
+        "profit": -40.0,
+        "roi": -1.0,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Kempton (AW)",
+        "venue": "Kempton (AW)",
+        "venue_code": "KEM",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-06-29.json"
+      }
+    },
+    "pontefract": {
+      "course": "Pontefract",
+      "key": "pontefract",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "IDENTITY_MISS_HEAVY_SAMPLE"
+      ],
+      "sigma": {
+        "course": "Pontefract",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL_CAUTION",
+        "n": 17,
+        "wins": 6,
+        "sr": 0.3529,
+        "avg_vp": 0.2527,
+        "vp40_n": 3,
+        "vp40_sr": 1.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Pontefract",
+        "n": 5,
+        "wins": 4,
+        "frames": 4,
+        "sr": 0.8,
+        "frame_rate": 0.8,
+        "profit": 91.3,
+        "roi": 1.826,
+        "identity_misses": 10,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Pontefract",
+        "venue": "Pontefract",
+        "venue_code": "PON",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_PON_2026-06-29.json"
+      }
+    },
+    "stratford": {
+      "course": "Stratford",
+      "key": "stratford",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Stratford",
+        "n": 5,
+        "wins": 1,
+        "frames": 3,
+        "sr": 0.2,
+        "frame_rate": 0.6,
+        "profit": -31.7,
+        "roi": -0.634,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Stratford",
+        "venue": "Stratford",
+        "venue_code": "STR",
+        "race_count": 6,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_STR_2026-06-29.json"
+      }
+    },
+    "windsor": {
+      "course": "Windsor",
+      "key": "windsor",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 2,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N29"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Windsor",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 29,
+        "wins": 9,
+        "sr": 0.3103,
+        "avg_vp": 0.2567,
+        "vp40_n": 4,
+        "vp40_sr": 0.5,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Windsor",
+        "n": 7,
+        "wins": 5,
+        "frames": 6,
+        "sr": 0.7143,
+        "frame_rate": 0.8571,
+        "profit": 33.0,
+        "roi": 0.4714,
+        "identity_misses": 2,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Windsor",
+        "venue": "Windsor",
+        "venue_code": "WIN",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_WIN_2026-06-29.json"
+      }
+    }
+  },
+  "courses": {
+    "ascot": {
+      "course": "Ascot",
+      "key": "ascot",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.254_N18"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Ascot",
+        "n": 18,
+        "wins": 6,
+        "frames": 11,
+        "sr": 0.3333,
+        "frame_rate": 0.6111,
+        "profit": -45.7,
+        "roi": -0.2539,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "ayr": {
+      "course": "Ayr",
+      "key": "ayr",
+      "master_action": "COURSE_SUPPRESS",
+      "master_score": -3,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.571_N11",
+        "DEEP_LOW_STRIKE_0.182"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Ayr",
+        "n": 11,
+        "wins": 2,
+        "frames": 8,
+        "sr": 0.1818,
+        "frame_rate": 0.7273,
+        "profit": -62.8,
+        "roi": -0.5709,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "bath": {
+      "course": "Bath",
+      "key": "bath",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.876_N11"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Bath",
+        "n": 11,
+        "wins": 4,
+        "frames": 5,
+        "sr": 0.3636,
+        "frame_rate": 0.4545,
+        "profit": -96.4,
+        "roi": -0.8764,
+        "identity_misses": 7,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "beverley": {
+      "course": "Beverley",
+      "key": "beverley",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "HIGH",
+      "reasons": [],
+      "warnings": [
+        "SIGMA_DRAIN_N20"
+      ],
+      "sigma": {
+        "course": "Beverley",
+        "source_section": "drain",
+        "course_tier": "DRAIN",
+        "n": 20,
+        "wins": 2,
+        "sr": 0.1,
+        "avg_vp": 0.2667,
+        "vp40_n": 5,
+        "vp40_sr": 0.2,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Beverley",
+        "n": 4,
+        "wins": 1,
+        "frames": 1,
+        "sr": 0.25,
+        "frame_rate": 0.25,
+        "profit": -2.5,
+        "roi": -0.0625,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "brighton": {
+      "course": "BRIGHTON",
+      "key": "brighton",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "BRIGHTON",
+        "n": 2,
+        "wins": 0,
+        "frames": 1,
+        "sr": 0.0,
+        "frame_rate": 0.5,
+        "profit": -20.0,
+        "roi": -1.0,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "carlisle": {
+      "course": "Carlisle",
+      "key": "carlisle",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Carlisle",
+        "n": 7,
+        "wins": 1,
+        "frames": 4,
+        "sr": 0.1429,
+        "frame_rate": 0.5714,
+        "profit": -70.0,
+        "roi": -1.0,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "catterick": {
+      "course": "Catterick",
+      "key": "catterick",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 2,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N20"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Catterick",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 20,
+        "wins": 6,
+        "sr": 0.3,
+        "avg_vp": 0.2787,
+        "vp40_n": 3,
+        "vp40_sr": 0.3333,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Catterick",
+        "n": 6,
+        "wins": 3,
+        "frames": 5,
+        "sr": 0.5,
+        "frame_rate": 0.8333,
+        "profit": 93.0,
+        "roi": 1.55,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "chepstow": {
+      "course": "Chepstow",
+      "key": "chepstow",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.500_N9"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Chepstow",
+        "n": 9,
+        "wins": 2,
+        "frames": 4,
+        "sr": 0.2222,
+        "frame_rate": 0.4444,
+        "profit": -45.0,
+        "roi": -0.5,
+        "identity_misses": 7,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "chester": {
+      "course": "Chester",
+      "key": "chester",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 1,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N28"
+      ],
+      "warnings": [
+        "DEEP_NEGATIVE_ROI_-0.023_N9"
+      ],
+      "sigma": {
+        "course": "Chester",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 28,
+        "wins": 8,
+        "sr": 0.2857,
+        "avg_vp": 0.2547,
+        "vp40_n": 5,
+        "vp40_sr": 0.6,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Chester",
+        "n": 9,
+        "wins": 3,
+        "frames": 5,
+        "sr": 0.3333,
+        "frame_rate": 0.5556,
+        "profit": -2.1,
+        "roi": -0.0233,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "clonmel": {
+      "course": "Clonmel",
+      "key": "clonmel",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [
+        "IDENTITY_MISS_HEAVY_SAMPLE"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Clonmel",
+        "n": 4,
+        "wins": 0,
+        "frames": 1,
+        "sr": 0.0,
+        "frame_rate": 0.25,
+        "profit": -40.0,
+        "roi": -1.0,
+        "identity_misses": 6,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "cork": {
+      "course": "Cork",
+      "key": "cork",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Cork",
+        "n": 5,
+        "wins": 2,
+        "frames": 3,
+        "sr": 0.4,
+        "frame_rate": 0.6,
+        "profit": 53.0,
+        "roi": 1.06,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "curragh": {
+      "course": "Curragh",
+      "key": "curragh",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Curragh",
+        "n": 4,
+        "wins": 2,
+        "frames": 4,
+        "sr": 0.5,
+        "frame_rate": 1.0,
+        "profit": 23.8,
+        "roi": 0.595,
+        "identity_misses": 4,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "doncaster": {
+      "course": "Doncaster",
+      "key": "doncaster",
+      "master_action": "COURSE_WARNING",
+      "master_score": -1,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_FRAME_SUPPORT_0.842"
+      ],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.564_N19"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Doncaster",
+        "n": 19,
+        "wins": 6,
+        "frames": 16,
+        "sr": 0.3158,
+        "frame_rate": 0.8421,
+        "profit": -107.2,
+        "roi": -0.5642,
+        "identity_misses": 14,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "downpatrick": {
+      "course": "Downpatrick",
+      "key": "downpatrick",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_NEGATIVE_ROI_-0.012_N10",
+        "DEEP_LOW_STRIKE_0.200"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Downpatrick",
+        "n": 10,
+        "wins": 2,
+        "frames": 5,
+        "sr": 0.2,
+        "frame_rate": 0.5,
+        "profit": -1.2,
+        "roi": -0.012,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "downroyal": {
+      "course": "Down Royal",
+      "key": "downroyal",
+      "master_action": "COURSE_SUPPRESS",
+      "master_score": -3,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.600_N10",
+        "DEEP_LOW_STRIKE_0.100"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Down Royal",
+        "n": 10,
+        "wins": 1,
+        "frames": 6,
+        "sr": 0.1,
+        "frame_rate": 0.6,
+        "profit": -60.0,
+        "roi": -0.6,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "epsom": {
+      "course": "Epsom",
+      "key": "epsom",
+      "master_action": "COURSE_SUPPRESS",
+      "master_score": -3,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-1.000_N15",
+        "DEEP_LOW_STRIKE_0.200",
+        "IDENTITY_MISS_HEAVY_SAMPLE"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Epsom",
+        "n": 15,
+        "wins": 3,
+        "frames": 5,
+        "sr": 0.2,
+        "frame_rate": 0.3333,
+        "profit": -150.0,
+        "roi": -1.0,
+        "identity_misses": 16,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "fairyhouse": {
+      "course": "Fairyhouse",
+      "key": "fairyhouse",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.694_N9"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Fairyhouse",
+        "n": 9,
+        "wins": 4,
+        "frames": 5,
+        "sr": 0.4444,
+        "frame_rate": 0.5556,
+        "profit": -62.5,
+        "roi": -0.6944,
+        "identity_misses": 7,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "ffoslas": {
+      "course": "Ffos Las",
+      "key": "ffoslas",
+      "master_action": "COURSE_BOOST",
+      "master_score": 3,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_POSITIVE_ROI_0.670_N10",
+        "DEEP_FRAME_SUPPORT_0.900"
+      ],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Ffos Las",
+        "n": 10,
+        "wins": 5,
+        "frames": 9,
+        "sr": 0.5,
+        "frame_rate": 0.9,
+        "profit": 67.0,
+        "roi": 0.67,
+        "identity_misses": 1,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "course": "Ffos Las",
+        "venue": "Ffos Las",
+        "venue_code": "FFO",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FFO_2026-06-29.json"
+      }
+    },
+    "fontwell": {
+      "course": "Fontwell",
+      "key": "fontwell",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Fontwell",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL_CAUTION",
+        "n": 11,
+        "wins": 4,
+        "sr": 0.3636,
+        "avg_vp": 0.3298,
+        "vp40_n": 3,
+        "vp40_sr": 0.6667,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Fontwell",
+        "n": 6,
+        "wins": 3,
+        "frames": 5,
+        "sr": 0.5,
+        "frame_rate": 0.8333,
+        "profit": 3.4,
+        "roi": 0.0567,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "goodwood": {
+      "course": "Goodwood",
+      "key": "goodwood",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "HIGH",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.487_N21"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Goodwood",
+        "n": 21,
+        "wins": 6,
+        "frames": 13,
+        "sr": 0.2857,
+        "frame_rate": 0.619,
+        "profit": -102.2,
+        "roi": -0.4867,
+        "identity_misses": 6,
+        "missing_results": 0,
+        "sample_tier": "MEANINGFUL"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "gowranpark": {
+      "course": "Gowran Park",
+      "key": "gowranpark",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Gowran Park",
+        "n": 4,
+        "wins": 3,
+        "frames": 3,
+        "sr": 0.75,
+        "frame_rate": 0.75,
+        "profit": 80.2,
+        "roi": 2.005,
+        "identity_misses": 2,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "hamilton": {
+      "course": "Hamilton",
+      "key": "hamilton",
+      "master_action": "COURSE_SUPPRESS",
+      "master_score": -3,
+      "master_confidence": "HIGH",
+      "reasons": [],
+      "warnings": [
+        "SIGMA_CAUTION_N31",
+        "DEEP_NEGATIVE_ROI_-0.079_N19"
+      ],
+      "sigma": {
+        "course": "Hamilton",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 31,
+        "wins": 5,
+        "sr": 0.1613,
+        "avg_vp": 0.3275,
+        "vp40_n": 7,
+        "vp40_sr": 0.4286,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Hamilton",
+        "n": 19,
+        "wins": 6,
+        "frames": 13,
+        "sr": 0.3158,
+        "frame_rate": 0.6842,
+        "profit": -15.0,
+        "roi": -0.0789,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "hexham": {
+      "course": "Hexham",
+      "key": "hexham",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 2,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_POSITIVE_ROI_0.252_N13"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Hexham",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL_CAUTION",
+        "n": 19,
+        "wins": 7,
+        "sr": 0.3684,
+        "avg_vp": 0.3951,
+        "vp40_n": 10,
+        "vp40_sr": 0.5,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Hexham",
+        "n": 13,
+        "wins": 6,
+        "frames": 9,
+        "sr": 0.4615,
+        "frame_rate": 0.6923,
+        "profit": 32.8,
+        "roi": 0.2523,
+        "identity_misses": 6,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "kemptonaw": {
+      "course": "Kempton (AW)",
+      "key": "kemptonaw",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Kempton (AW)",
+        "source_section": "drain",
+        "course_tier": "DRAIN_CAUTION",
+        "n": 16,
+        "wins": 1,
+        "sr": 0.0625,
+        "avg_vp": 0.2738,
+        "vp40_n": 2,
+        "vp40_sr": 0.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Kempton (AW)",
+        "n": 4,
+        "wins": 0,
+        "frames": 2,
+        "sr": 0.0,
+        "frame_rate": 0.5,
+        "profit": -40.0,
+        "roi": -1.0,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Kempton (AW)",
+        "venue": "Kempton (AW)",
+        "venue_code": "KEM",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-06-29.json"
+      }
+    },
+    "kilbeggan": {
+      "course": "Kilbeggan",
+      "key": "kilbeggan",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Kilbeggan",
+        "n": 2,
+        "wins": 1,
+        "frames": 1,
+        "sr": 0.5,
+        "frame_rate": 0.5,
+        "profit": 0.0,
+        "roi": 0.0,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "killarneyire": {
+      "course": "Killarney (IRE)",
+      "key": "killarneyire",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Killarney (IRE)",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL_CAUTION",
+        "n": 14,
+        "wins": 5,
+        "sr": 0.3571,
+        "avg_vp": 0.2433,
+        "vp40_n": 0,
+        "vp40_sr": 0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "leicester": {
+      "course": "Leicester",
+      "key": "leicester",
+      "master_action": "COURSE_BOOST",
+      "master_score": 3,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_POSITIVE_ROI_1.346_N11",
+        "DEEP_FRAME_SUPPORT_0.818"
+      ],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Leicester",
+        "n": 11,
+        "wins": 5,
+        "frames": 9,
+        "sr": 0.4545,
+        "frame_rate": 0.8182,
+        "profit": 148.1,
+        "roi": 1.3464,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "leopardstown": {
+      "course": "Leopardstown",
+      "key": "leopardstown",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.523_N11"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Leopardstown",
+        "n": 11,
+        "wins": 3,
+        "frames": 7,
+        "sr": 0.2727,
+        "frame_rate": 0.6364,
+        "profit": -57.5,
+        "roi": -0.5227,
+        "identity_misses": 1,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "limerick": {
+      "course": "Limerick",
+      "key": "limerick",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.520_N9"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Limerick",
+        "n": 9,
+        "wins": 2,
+        "frames": 3,
+        "sr": 0.2222,
+        "frame_rate": 0.3333,
+        "profit": -46.8,
+        "roi": -0.52,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "lingfield": {
+      "course": "Lingfield",
+      "key": "lingfield",
+      "master_action": "COURSE_WARNING",
+      "master_score": -1,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_NEGATIVE_ROI_-0.154_N11"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Lingfield",
+        "n": 11,
+        "wins": 4,
+        "frames": 7,
+        "sr": 0.3636,
+        "frame_rate": 0.6364,
+        "profit": -17.0,
+        "roi": -0.1545,
+        "identity_misses": 8,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "lingfieldaw": {
+      "course": "Lingfield (AW)",
+      "key": "lingfieldaw",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Lingfield (AW)",
+        "n": 7,
+        "wins": 2,
+        "frames": 6,
+        "sr": 0.2857,
+        "frame_rate": 0.8571,
+        "profit": -35.4,
+        "roi": -0.5057,
+        "identity_misses": 1,
+        "missing_results": 2,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "listowel": {
+      "course": "Listowel",
+      "key": "listowel",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Listowel",
+        "n": 0,
+        "wins": 0,
+        "frames": 0,
+        "sr": null,
+        "frame_rate": null,
+        "profit": 0.0,
+        "roi": null,
+        "identity_misses": 0,
+        "missing_results": 7,
+        "sample_tier": "NONE"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "marketrasen": {
+      "course": "Market Rasen",
+      "key": "marketrasen",
+      "master_action": "COURSE_BOOST",
+      "master_score": 3,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_POSITIVE_ROI_0.537_N12",
+        "DEEP_FRAME_SUPPORT_0.917"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Market Rasen",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL_CAUTION",
+        "n": 11,
+        "wins": 5,
+        "sr": 0.4545,
+        "avg_vp": 0.3608,
+        "vp40_n": 3,
+        "vp40_sr": 0.3333,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Market Rasen",
+        "n": 12,
+        "wins": 4,
+        "frames": 11,
+        "sr": 0.3333,
+        "frame_rate": 0.9167,
+        "profit": 64.4,
+        "roi": 0.5367,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "musselburgh": {
+      "course": "Musselburgh",
+      "key": "musselburgh",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 1,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_EXCELLING_N20"
+      ],
+      "warnings": [
+        "DEEP_NEGATIVE_ROI_-0.048_N13"
+      ],
+      "sigma": {
+        "course": "Musselburgh",
+        "source_section": "excelling",
+        "course_tier": "EXCELLING",
+        "n": 20,
+        "wins": 11,
+        "sr": 0.55,
+        "avg_vp": 0.3436,
+        "vp40_n": 7,
+        "vp40_sr": 0.4286,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Musselburgh",
+        "n": 13,
+        "wins": 5,
+        "frames": 9,
+        "sr": 0.3846,
+        "frame_rate": 0.6923,
+        "profit": -6.2,
+        "roi": -0.0477,
+        "identity_misses": 13,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "navan": {
+      "course": "Navan",
+      "key": "navan",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Navan",
+        "n": 2,
+        "wins": 1,
+        "frames": 1,
+        "sr": 0.5,
+        "frame_rate": 0.5,
+        "profit": 3.8,
+        "roi": 0.19,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "nby": {
+      "course": "NBY",
+      "key": "nby",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "NBY",
+        "n": 0,
+        "wins": 0,
+        "frames": 0,
+        "sr": null,
+        "frame_rate": null,
+        "profit": 0.0,
+        "roi": null,
+        "identity_misses": 0,
+        "missing_results": 1,
+        "sample_tier": "NONE"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "newbury": {
+      "course": "Newbury",
+      "key": "newbury",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Newbury",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL_CAUTION",
+        "n": 19,
+        "wins": 7,
+        "sr": 0.3684,
+        "avg_vp": 0.2591,
+        "vp40_n": 2,
+        "vp40_sr": 0.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Newbury",
+        "n": 2,
+        "wins": 1,
+        "frames": 1,
+        "sr": 0.5,
+        "frame_rate": 0.5,
+        "profit": -0.9,
+        "roi": -0.045,
+        "identity_misses": 0,
+        "missing_results": 5,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "newcastleaw": {
+      "course": "Newcastle (AW)",
+      "key": "newcastleaw",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Newcastle (AW)",
+        "n": 0,
+        "wins": 0,
+        "frames": 0,
+        "sr": null,
+        "frame_rate": null,
+        "profit": 0.0,
+        "roi": null,
+        "identity_misses": 0,
+        "missing_results": 12,
+        "sample_tier": "NONE"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "newmarketjuly": {
+      "course": "Newmarket (July)",
+      "key": "newmarketjuly",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 1,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_MODEST_POSITIVE_ROI_0.152_N14"
+      ],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Newmarket (July)",
+        "n": 14,
+        "wins": 6,
+        "frames": 10,
+        "sr": 0.4286,
+        "frame_rate": 0.7143,
+        "profit": 21.3,
+        "roi": 0.1521,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "newtonabbot": {
+      "course": "Newton Abbot",
+      "key": "newtonabbot",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Newton Abbot",
+        "n": 1,
+        "wins": 1,
+        "frames": 1,
+        "sr": 1.0,
+        "frame_rate": 1.0,
+        "profit": -10.0,
+        "roi": -1.0,
+        "identity_misses": 0,
+        "missing_results": 6,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "nottingham": {
+      "course": "Nottingham",
+      "key": "nottingham",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 1,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "DEEP_POSITIVE_ROI_0.538_N13",
+        "DEEP_FRAME_SUPPORT_0.769"
+      ],
+      "warnings": [
+        "SIGMA_CAUTION_N27"
+      ],
+      "sigma": {
+        "course": "Nottingham",
+        "source_section": "caution",
+        "course_tier": "CAUTION",
+        "n": 27,
+        "wins": 5,
+        "sr": 0.1852,
+        "avg_vp": 0.3335,
+        "vp40_n": 7,
+        "vp40_sr": 0.2857,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Nottingham",
+        "n": 13,
+        "wins": 5,
+        "frames": 10,
+        "sr": 0.3846,
+        "frame_rate": 0.7692,
+        "profit": 70.0,
+        "roi": 0.5385,
+        "identity_misses": 4,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "perth": {
+      "course": "Perth",
+      "key": "perth",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Perth",
+        "source_section": "drain",
+        "course_tier": "DRAIN_CAUTION",
+        "n": 16,
+        "wins": 0,
+        "sr": 0.0,
+        "avg_vp": 0.2757,
+        "vp40_n": 3,
+        "vp40_sr": 0.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Perth",
+        "n": 5,
+        "wins": 0,
+        "frames": 2,
+        "sr": 0.0,
+        "frame_rate": 0.4,
+        "profit": -50.0,
+        "roi": -1.0,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "pontefract": {
+      "course": "Pontefract",
+      "key": "pontefract",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "IDENTITY_MISS_HEAVY_SAMPLE"
+      ],
+      "sigma": {
+        "course": "Pontefract",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL_CAUTION",
+        "n": 17,
+        "wins": 6,
+        "sr": 0.3529,
+        "avg_vp": 0.2527,
+        "vp40_n": 3,
+        "vp40_sr": 1.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Pontefract",
+        "n": 5,
+        "wins": 4,
+        "frames": 4,
+        "sr": 0.8,
+        "frame_rate": 0.8,
+        "profit": 91.3,
+        "roi": 1.826,
+        "identity_misses": 10,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Pontefract",
+        "venue": "Pontefract",
+        "venue_code": "PON",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_PON_2026-06-29.json"
+      }
+    },
+    "punchestown": {
+      "course": "Punchestown",
+      "key": "punchestown",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Punchestown",
+        "n": 6,
+        "wins": 1,
+        "frames": 5,
+        "sr": 0.1667,
+        "frame_rate": 0.8333,
+        "profit": -41.7,
+        "roi": -0.695,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "redcar": {
+      "course": "Redcar",
+      "key": "redcar",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 1,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_MODEST_POSITIVE_ROI_0.105_N8"
+      ],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Redcar",
+        "n": 8,
+        "wins": 4,
+        "frames": 5,
+        "sr": 0.5,
+        "frame_rate": 0.625,
+        "profit": 8.4,
+        "roi": 0.105,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "ripon": {
+      "course": "Ripon",
+      "key": "ripon",
+      "master_action": "COURSE_WARNING",
+      "master_score": -2,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.357_N15"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Ripon",
+        "n": 15,
+        "wins": 5,
+        "frames": 11,
+        "sr": 0.3333,
+        "frame_rate": 0.7333,
+        "profit": -53.5,
+        "roi": -0.3567,
+        "identity_misses": 3,
+        "missing_results": 1,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "roscommon": {
+      "course": "Roscommon",
+      "key": "roscommon",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Roscommon",
+        "n": 4,
+        "wins": 2,
+        "frames": 4,
+        "sr": 0.5,
+        "frame_rate": 1.0,
+        "profit": 7.2,
+        "roi": 0.18,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "salisbury": {
+      "course": "Salisbury",
+      "key": "salisbury",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 2,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N28"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Salisbury",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 28,
+        "wins": 9,
+        "sr": 0.3214,
+        "avg_vp": 0.286,
+        "vp40_n": 5,
+        "vp40_sr": 0.6,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Salisbury",
+        "n": 4,
+        "wins": 2,
+        "frames": 2,
+        "sr": 0.5,
+        "frame_rate": 0.5,
+        "profit": 50.0,
+        "roi": 1.25,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "sandown": {
+      "course": "Sandown",
+      "key": "sandown",
+      "master_action": "COURSE_SUPPRESS",
+      "master_score": -3,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-0.350_N10",
+        "DEEP_LOW_STRIKE_0.200"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Sandown",
+        "n": 10,
+        "wins": 2,
+        "frames": 7,
+        "sr": 0.2,
+        "frame_rate": 0.7,
+        "profit": -35.0,
+        "roi": -0.35,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "sligo": {
+      "course": "SLIGO",
+      "key": "sligo",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "SLIGO",
+        "n": 1,
+        "wins": 0,
+        "frames": 0,
+        "sr": 0.0,
+        "frame_rate": 0.0,
+        "profit": -10.0,
+        "roi": -1.0,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "southwell": {
+      "course": "Southwell",
+      "key": "southwell",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [
+        "IDENTITY_MISS_HEAVY_SAMPLE"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Southwell",
+        "n": 3,
+        "wins": 2,
+        "frames": 3,
+        "sr": 0.6667,
+        "frame_rate": 1.0,
+        "profit": 46.2,
+        "roi": 1.54,
+        "identity_misses": 11,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "southwellaw": {
+      "course": "Southwell (AW)",
+      "key": "southwellaw",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Southwell (AW)",
+        "n": 6,
+        "wins": 4,
+        "frames": 5,
+        "sr": 0.6667,
+        "frame_rate": 0.8333,
+        "profit": 64.3,
+        "roi": 1.0717,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "stratford": {
+      "course": "Stratford",
+      "key": "stratford",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Stratford",
+        "n": 5,
+        "wins": 1,
+        "frames": 3,
+        "sr": 0.2,
+        "frame_rate": 0.6,
+        "profit": -31.7,
+        "roi": -0.634,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Stratford",
+        "venue": "Stratford",
+        "venue_code": "STR",
+        "race_count": 6,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_STR_2026-06-29.json"
+      }
+    },
+    "thirsk": {
+      "course": "Thirsk",
+      "key": "thirsk",
+      "master_action": "COURSE_SUPPRESS",
+      "master_score": -3,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [
+        "DEEP_DRAIN_ROI_-1.000_N11",
+        "DEEP_LOW_STRIKE_0.182"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Thirsk",
+        "n": 11,
+        "wins": 2,
+        "frames": 3,
+        "sr": 0.1818,
+        "frame_rate": 0.2727,
+        "profit": -110.0,
+        "roi": -1.0,
+        "identity_misses": 6,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "uttoxeter": {
+      "course": "Uttoxeter",
+      "key": "uttoxeter",
+      "master_action": "COURSE_BOOST",
+      "master_score": 5,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_EXCELLING_N27",
+        "DEEP_POSITIVE_ROI_0.208_N11",
+        "DEEP_FRAME_SUPPORT_0.909"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Uttoxeter",
+        "source_section": "excelling",
+        "course_tier": "EXCELLING",
+        "n": 27,
+        "wins": 12,
+        "sr": 0.4444,
+        "avg_vp": 0.3505,
+        "vp40_n": 10,
+        "vp40_sr": 0.6,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Uttoxeter",
+        "n": 11,
+        "wins": 7,
+        "frames": 10,
+        "sr": 0.6364,
+        "frame_rate": 0.9091,
+        "profit": 22.9,
+        "roi": 0.2082,
+        "identity_misses": 1,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "warwick": {
+      "course": "Warwick",
+      "key": "warwick",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [
+        "IDENTITY_MISS_HEAVY_SAMPLE"
+      ],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Warwick",
+        "n": 1,
+        "wins": 1,
+        "frames": 1,
+        "sr": 1.0,
+        "frame_rate": 1.0,
+        "profit": 2.2,
+        "roi": 0.22,
+        "identity_misses": 5,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "wetherby": {
+      "course": "Wetherby",
+      "key": "wetherby",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "course": "Wetherby",
+        "n": 6,
+        "wins": 1,
+        "frames": 4,
+        "sr": 0.1667,
+        "frame_rate": 0.6667,
+        "profit": -39.0,
+        "roi": -0.65,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "wexford": {
+      "course": "Wexford",
+      "key": "wexford",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "MEDIUM",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "course": "Wexford",
+        "source_section": "drain",
+        "course_tier": "DRAIN_CAUTION",
+        "n": 13,
+        "wins": 0,
+        "sr": 0.0,
+        "avg_vp": 0.2235,
+        "vp40_n": 1,
+        "vp40_sr": 0.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "windsor": {
+      "course": "Windsor",
+      "key": "windsor",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 2,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N29"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Windsor",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 29,
+        "wins": 9,
+        "sr": 0.3103,
+        "avg_vp": 0.2567,
+        "vp40_n": 4,
+        "vp40_sr": 0.5,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Windsor",
+        "n": 7,
+        "wins": 5,
+        "frames": 6,
+        "sr": 0.7143,
+        "frame_rate": 0.8571,
+        "profit": 33.0,
+        "roi": 0.4714,
+        "identity_misses": 2,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "course": "Windsor",
+        "venue": "Windsor",
+        "venue_code": "WIN",
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_WIN_2026-06-29.json"
+      }
+    },
+    "wolverhamptonaw": {
+      "course": "Wolverhampton (AW)",
+      "key": "wolverhamptonaw",
+      "master_action": "COURSE_BOOST",
+      "master_score": 3,
+      "master_confidence": "MEDIUM",
+      "reasons": [
+        "DEEP_POSITIVE_ROI_0.491_N10",
+        "DEEP_FRAME_SUPPORT_0.800"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Wolverhampton (AW)",
+        "source_section": "drain",
+        "course_tier": "DRAIN_CAUTION",
+        "n": 13,
+        "wins": 1,
+        "sr": 0.0769,
+        "avg_vp": 0.243,
+        "vp40_n": 2,
+        "vp40_sr": 0.0,
+        "sample_tier": "CAUTION"
+      },
+      "deep_agent": {
+        "course": "Wolverhampton (AW)",
+        "n": 10,
+        "wins": 5,
+        "frames": 8,
+        "sr": 0.5,
+        "frame_rate": 0.8,
+        "profit": 49.1,
+        "roi": 0.491,
+        "identity_misses": 2,
+        "missing_results": 12,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "worcester": {
+      "course": "Worcester",
+      "key": "worcester",
+      "master_action": "COURSE_BOOST",
+      "master_score": 5,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_EXCELLING_N21",
+        "DEEP_POSITIVE_ROI_0.214_N18",
+        "DEEP_FRAME_SUPPORT_0.778"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "Worcester",
+        "source_section": "excelling",
+        "course_tier": "EXCELLING",
+        "n": 21,
+        "wins": 10,
+        "sr": 0.4762,
+        "avg_vp": 0.313,
+        "vp40_n": 3,
+        "vp40_sr": 1.0,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Worcester",
+        "n": 18,
+        "wins": 8,
+        "frames": 14,
+        "sr": 0.4444,
+        "frame_rate": 0.7778,
+        "profit": 38.6,
+        "roi": 0.2144,
+        "identity_misses": 7,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "yarmouth": {
+      "course": "Yarmouth",
+      "key": "yarmouth",
+      "master_action": "COURSE_SUPPRESS",
+      "master_score": -3,
+      "master_confidence": "HIGH",
+      "reasons": [],
+      "warnings": [
+        "SIGMA_DRAIN_N22",
+        "DEEP_NEGATIVE_ROI_-0.145_N13"
+      ],
+      "sigma": {
+        "course": "Yarmouth",
+        "source_section": "drain",
+        "course_tier": "DRAIN",
+        "n": 22,
+        "wins": 2,
+        "sr": 0.0909,
+        "avg_vp": 0.3202,
+        "vp40_n": 4,
+        "vp40_sr": 0.0,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "Yarmouth",
+        "n": 13,
+        "wins": 3,
+        "frames": 9,
+        "sr": 0.2308,
+        "frame_rate": 0.6923,
+        "profit": -18.8,
+        "roi": -0.1446,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "CAUTION"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    },
+    "york": {
+      "course": "York",
+      "key": "york",
+      "master_action": "COURSE_SUPPORT",
+      "master_score": 2,
+      "master_confidence": "HIGH",
+      "reasons": [
+        "SIGMA_DOING_WELL_N33"
+      ],
+      "warnings": [],
+      "sigma": {
+        "course": "York",
+        "source_section": "doing_well",
+        "course_tier": "DOING_WELL",
+        "n": 33,
+        "wins": 11,
+        "sr": 0.3333,
+        "avg_vp": 0.2737,
+        "vp40_n": 6,
+        "vp40_sr": 0.3333,
+        "sample_tier": "MEANINGFUL"
+      },
+      "deep_agent": {
+        "course": "York",
+        "n": 4,
+        "wins": 2,
+        "frames": 3,
+        "sr": 0.5,
+        "frame_rate": 0.75,
+        "profit": 24.1,
+        "roi": 0.6025,
+        "identity_misses": 0,
+        "missing_results": 0,
+        "sample_tier": "OBSERVATION_ONLY"
+      },
+      "today": {
+        "available": false,
+        "race_count": 0
+      }
+    }
+  }
+}

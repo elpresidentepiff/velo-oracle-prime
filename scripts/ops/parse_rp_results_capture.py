@@ -543,6 +543,7 @@ def _parse_runner(
         "draw": runner.get("draw", "") or card_horse.get("draw", ""),
         "jockey": runner.get("jockeyName") or runner.get("jockey") or card_horse.get("jockey_name") or card_horse.get("jockey") or "",
         "trainer": runner.get("trainerName") or runner.get("trainer") or card_horse.get("trainer_name") or card_horse.get("trainer") or "",
+        "in_running_comment": card_horse.get("in_running_comment") or "",
     }
 
 
@@ -573,12 +574,15 @@ def _scrape_table_horse_lookup(html_path: Path) -> dict[str, dict[str, Any]]:
         jockey = row.select_one('[data-test-selector="link-jockeyName"]')
         trainer = row.select_one('[data-test-selector="link-trainerName"]')
         draw = row.select_one(".rp-horseTable__pos__draw")
+        comment_row = row.find_next_sibling("tr", class_="rp-horseTable__commentRow")
+        comment_cell = comment_row.find("td") if comment_row else None
         lookup[uid] = {
             "horse_name": clean(link.get_text(" ", strip=True)),
             "sp": clean(price.get_text(" ", strip=True)) if price else "",
             "jockey_name": clean(jockey.get_text(" ", strip=True)) if jockey else "",
             "trainer_name": clean(trainer.get_text(" ", strip=True)) if trainer else "",
             "draw": re.sub(r"[^0-9]", "", draw.get_text(" ", strip=True)) if draw else "",
+            "in_running_comment": clean(comment_cell.get_text(" ", strip=True)) if comment_cell else "",
         }
     return lookup
 

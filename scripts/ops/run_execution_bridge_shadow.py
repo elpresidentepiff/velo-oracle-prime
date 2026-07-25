@@ -43,6 +43,7 @@ from src.velo.execution_bridge import (
     DEFAULT_PAPER_LEDGER,
     VeloExecutionBridge,
 )
+from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
 from scripts.ops.run_results_sigma import _duplicate_alias_race_ids
 
 
@@ -58,34 +59,24 @@ def _sb_headers() -> tuple[str, dict]:
 
 def load_verdicts(date_str: str) -> list[dict]:
     """
-    Load all velo_verdicts for date_str (YYYY-MM-DD).
-    Filters by generated_at prefix so Railway-cron records are included.
+    Load all velo_verdicts for date_str (YYYY-MM-DD) via the shared,
+    bug-fixed loader. See src/velo/verdict_loader.py for why this can't be
+    a hand-rolled generated_at query -- this script had exactly that bug
+    until 2026-07-23.
     """
-    url, hdrs = _sb_headers()
-    resp = requests.get(
-        f"{url}/rest/v1/velo_verdicts",
-        headers=hdrs,
-        params={
-            "select": (
-                "race_id,generated_at,decision_tier,velo_prime_prob,"
-                "market_deception_score,improvement_score,rpdc_release_score,"
-                "place_prob,race_archetype,archetype_suppression,"
-                "execution_allowed,assigned_product,router_reasons,full_analysis"
-            ),
-            "generated_at": f"gte.{date_str}T00:00:00",
-            "order": "generated_at.asc",
-            "limit": "500",
-        },
-        timeout=30,
+    select_cols = (
+        "race_id,generated_at,decision_tier,velo_prime_prob,"
+        "market_deception_score,improvement_score,rpdc_release_score,"
+        "place_prob,race_archetype,archetype_suppression,"
+        "execution_allowed,assigned_product,router_reasons,full_analysis"
     )
-    resp.raise_for_status()
-    data = resp.json()
-    if isinstance(data, dict):
-        raise RuntimeError(f"Supabase error loading verdicts: {data}")
-    filtered = [v for v in data if _s(v.get("generated_at")).startswith(date_str)]
+    filtered, method = _shared_load_verdicts(date_str, select=select_cols, root=ROOT, local_fallback=False)
+    if method != "race_id":
+        print(f"  [run_execution_bridge_shadow] verdict load used fallback method: {method}")
+
     backup_path = ROOT / "data" / f"velo_prime_verdicts_{date_str.replace('-', '_')}.json"
-    if backup_path.exists():
-        backup_rows = json.loads(backup_path.read_text())
+    backup_rows = json.loads(backup_path.read_text()) if backup_path.exists() else []
+    if backup_rows:
         backup = {
             str(row.get("race_id", "")): {
                 "course": row.get("course", ""),
@@ -97,6 +88,12 @@ def load_verdicts(date_str: str) -> list[dict]:
         if duplicate_alias_ids:
             filtered = [row for row in filtered if str(row.get("race_id", "")) not in duplicate_alias_ids]
             print(f"  Excluded {len(duplicate_alias_ids)} synthetic aliases shadowed by canonical RP races.")
+    # _map_verdict() falls back to generated_at's date for the ledger's "date" column
+    # when a verdict has no explicit "date" field -- that's write-time, not race-date,
+    # and produces a wrong-dated ledger row (breaks --audit-results lookups by date).
+    # Stamp the real race date explicitly so that fallback never triggers.
+    for v in filtered:
+        v["date"] = date_str
     return filtered
 
 

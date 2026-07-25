@@ -50,6 +50,8 @@ COURSE_ALIASES = {
     "wolverhampton": "wolverhamptonaw",
     "newmarketjuly": "newmarketjuly",
     "newmarket": "newmarket",
+    "utt": "uttoxeter",
+    "nby": "newbury",
 }
 
 

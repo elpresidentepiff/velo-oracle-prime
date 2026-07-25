@@ -317,6 +317,12 @@ If any of these three go back to synthetic IDs, RPDC breaks silently.
 
 ## STEP 9 — SCORE WITH OLD VELO
 
+**Gate (hard law, see HARD RULES #8):** `run_prime_today.py` will not score at all
+until `scripts/ops/check_scoring_readiness_gate.py` passes — passport feed (Step 6)
+present, and every GB/IRE venue's RP PDF ratings-sheets ingested into
+`racecard_merged`. Fails loudly with `sys.exit(1)` if not, naming exactly what's
+missing. Override PDF-only with `--allow-missing-pdfs`.
+
 **Why:** Old VELO reads the RP files and runs every horse through a chain of systems. The SQPE Specialist Ensemble is the main scorer — a trained gradient boosting model. But multiple other systems fire alongside it:
 
 **Systems that run during scoring:**
@@ -447,9 +453,10 @@ It is designed to challenge RPR dependence and expose mid-price opportunities.
 
 ### Step 9.2: Tri-Lane Stress Test
 
-Command:
+Command (`--version` corrected to `--ruleset` 2026-07-08 — the flag never existed under
+the old name; verified against the script's actual argparse, not assumed):
 ```
-PYTHONPATH=. python scripts/ops/run_tri_lane_stress_test.py --date YYYY-MM-DD --version v2
+PYTHONPATH=. python scripts/ops/run_tri_lane_stress_test.py --date YYYY-MM-DD --ruleset v2
 ```
 
 Outputs:
@@ -462,9 +469,10 @@ is a stress test only. `live_execution_allowed` must remain false.
 
 ### Step 9.3: Tri-Lane Agent Review
 
-Command:
+Command (corrected 2026-07-08 — this script takes `--packet <path>`, not `--date`/
+`--version`; verified against the script's actual argparse):
 ```
-PYTHONPATH=. python scripts/ops/build_tri_lane_agent_review.py --date YYYY-MM-DD --version v2
+PYTHONPATH=. python scripts/ops/build_tri_lane_agent_review.py --packet data/reports/tri_lane_stress_test_YYYY_MM_DD_v2.json
 ```
 
 Outputs:
@@ -491,6 +499,17 @@ Purpose: paper-only analyst layer using RP race evidence, local gold, identity
 checks, support/risk scoring, and "why VELO may be wrong" explanations. The
 agent can mark `GREEN_CASH_REVIEW`, `AMBER_UPGRADE_REVIEW`,
 `SUPPRESS_OR_STUDY`, or `STUDY_ONLY`, but it cannot alter Step 9.
+
+**RP PDF signal wiring (2026-07-18):** `_agent_judgement()` reads
+`postdata_score` (composite -1..+1 from the RP Postdata grid) and
+`plot_conviction` (0..1, the codebase's existing "plot candidate" concept)
+from `evidence["live_identity"]`, sourced from `racecard_merged`. These
+fields were loaded into the evidence snapshot from day one but never read
+again — a day's PDF ingestion never moved a verdict until this was wired.
+`postdata_score >= 0.3` (or `<= -0.3`) nudges support/risk by 1;
+`plot_conviction >= 0.7` adds support and lines up directly with
+`tri_action == "TRI_CASH_RUN"`. See HARD RULES #8-9 for the ingestion gate
+this depends on.
 
 Backfill/evaluation:
 ```
@@ -563,6 +582,32 @@ The dashboard endpoint `/api/governed-card?date=YYYY-MM-DD` must expose:
 The dashboard page must show Old VELO, New Build, No-RPR/Shadow, Tri-Lane,
 Deep Agent, and Course Master in separate lanes. Missing overlay data must show
 as missing. It must never borrow numbers from another lane.
+
+**New Build join bug, fixed 2026-07-18:** `_build_governed_card_from_live_snapshots()`
+in `scripts/ops/new_build_dashboard_server.py` was remapping New Build's
+`race_day_scorecards` race_id from plain numeric to the `rp_COURSE_DATE_TIME`
+scheme before joining against the live runner snapshot rows — but those rows
+already use plain numeric race_id (60/60 confirmed matching with no remap).
+That remap only belongs to `/api/model-suggestions`'s CHAMPION_INTENT_SHADOW
+join (a different endpoint, different row source); copied into this function
+it broke the New Build join 100% of the time regardless of whether New Build
+had actually scored, showing "No New Build data for this date" every day.
+Fixed by removing the remap in that one function. `app/main.py`'s own
+governed-card implementation (the production entrypoint per `railway.toml`)
+was never affected — it already indexes by both numeric and velo-scheme IDs.
+
+**High-Conviction PDF Picks panel, wired 2026-07-18:** `/api/plot-conviction`
+(also ported into `app/main.py`) reads `postdata_score`/`plot_conviction`
+straight from `racecard_merged`, cross-joined with Deep Race Agent V1's
+verdict where available. Thresholds: `plot_conviction >= 0.7` or
+`|postdata_score| >= 0.5` (tighter than the 0.3/0.7 bar that moves a verdict
+in `_agent_judgement` — this panel is a visual shortlist for the operator,
+capped at the top 30 by combined signal strength). The frontend panel
+(`plot-conviction-panel` / `pc-list` in `app/static/dashboard/index.html`)
+existed as a scaffolded placeholder with no backend behind it before this;
+now it renders horse, venue/time, plot_conviction %, postdata_score, and the
+agent verdict + support/risk score where Deep Race Agent has reviewed that
+horse.
 
 ---
 
@@ -785,6 +830,30 @@ EVENING (after 21:00 BST)
 5. Do not touch anything without saying what you are doing first.
 6. If you find a problem you stop and state it. You do not patch. You fix the source.
 7. Brutal truth always. A problem stated is fixable. A problem hidden kills the system.
+8. **No scoring until passport + RP PDF ingestion are confirmed complete for the date.**
+   Enforced by `scripts/ops/check_scoring_readiness_gate.py`, hard-wired into both
+   `run_full_raceday.py` (before Step 9) and `run_prime_today.py` (its own entry
+   point, so no invocation path can bypass it). Checks: (1) New Build's passport
+   feed (Step 6) exists and is non-empty for the date — never overridable; (2)
+   every GB/IRE venue racing today has RP PDF ratings-sheet fields
+   (postdata_score/plot_conviction/or_compression_score) merged into its
+   `racecard_merged/racecard_{venue}_{date}.json` — non-GB/IRE venues (USA etc.,
+   RP never publishes PDFs for these) are auto-exempted via the standard cache's
+   region field. Override only with `--allow-missing-pdfs`, and only for venues
+   that genuinely have no PDFs today.
+   **Why:** the same failure repeated every day — scoring and the whole downstream
+   report chain ran before the operator's PDFs landed, forcing a manual re-run of
+   6+ reports every time PDFs arrived late, and repeatedly opened the door to
+   phantom-race/ID-mismatch bugs (2026-07-17 Hamilton incident: a stale PDF batch
+   minted 7 synthetic race_ids that could never resolve a result).
+9. **The four core models score together, every day, without exception — Old
+   VELO, New Build, No-RPR (SQPE Shadow), Champion Intent Shadow.** Their steps
+   in `run_full_raceday.py` (Step 9.1 Radical Shadow, Step 9.6 Old VELO
+   Three-Option Card, New Build Two-Lane Score, Champion Intent Shadow Scorecard)
+   are `critical=True`: a failure in any one of them stops the run and fails the
+   day — no silent partial pass. Added 2026-07-18 after these steps ran as
+   `critical=False` and could fail quietly with the rest of the pipeline still
+   reporting an overall PASS.
 
 ---
 

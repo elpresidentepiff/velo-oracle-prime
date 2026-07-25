@@ -502,7 +502,9 @@ def main():
         new_dates = {args.date}
         # A targeted date run replaces that date's evidence instead of retaining
         # stale rows from an earlier, potentially contaminated build.
+        _prior_rows_for_date = 0
         if not base_df.empty:
+            _prior_rows_for_date = int((base_df["date"].astype(str) == args.date).sum())
             base_df = base_df[base_df["date"].astype(str) != args.date].copy()
     elif args.rebuild:
         verdict_files = all_verdict_files
@@ -530,6 +532,24 @@ def main():
     # ── Build new rows ────────────────────────────────────────────────────────
     new_rows = load_verdict_rows(verdict_files, result_lookup)
     log.info(f"New verdict rows built: {len(new_rows)}")
+
+    # Safety guard (added 2026-07-25 after a real incident): a --date run
+    # unconditionally removes that date's existing rows above, on the
+    # assumption load_verdict_rows() will always successfully rebuild them.
+    # It doesn't always -- e.g. if data/velo_prime_verdicts_{date}.json gets
+    # overwritten by some other script with a schema lacking the nested
+    # "top" object (which load_verdict_rows requires per-row), every row is
+    # silently skipped and this date's evidence would otherwise vanish from
+    # the deduped dataset entirely with no error. Refuse to write a smaller
+    # dataset than before instead of silently discarding real data.
+    if args.date and _prior_rows_for_date > 0 and len(new_rows) == 0:
+        raise SystemExit(
+            f"REFUSING TO WRITE: --date {args.date} previously had {_prior_rows_for_date} rows in "
+            f"{DEDUPED_PATH.name}, but rebuilding from {len(verdict_files)} verdict file(s) produced "
+            f"0 new rows. This would silently delete that date's evidence. Check "
+            f"data/velo_prime_verdicts_{date_tag}.json has the expected schema (each row needs a "
+            f"non-empty 'top' object with a 'horse' field) before rerunning."
+        )
 
     new_df = pd.DataFrame(new_rows)
 

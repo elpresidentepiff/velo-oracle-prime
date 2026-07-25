@@ -1,0 +1,104 @@
+{
+  "date": "2026-06-19",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "sigma": {
+    "races_studied": 41,
+    "predictions_matched": 41,
+    "results_matched": 41,
+    "winners_found": 9,
+    "strike_rate": 0.21951219512195122,
+    "top_1_accuracy": 0.21951219512195122,
+    "top_3_accuracy": null,
+    "top_3_accuracy_status": "UNAVAILABLE_MISSING_RANKING_DATA",
+    "brier_score": 0.20416794341463415,
+    "calibration_error": 0.23770243902439026,
+    "calibration_error_status": "CALCULATED",
+    "wrong_horse_count": 11,
+    "calibration_error_count": 21,
+    "market_lied_count": 0,
+    "chaos_race_count": 0,
+    "data_error_count": 0,
+    "biggest_confidence_misses": [
+      {
+        "race_id": "921028",
+        "horse": "Bunker Bay",
+        "prob": 0.7561,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "921183",
+        "horse": "Stoneacre Joe",
+        "prob": 0.7037,
+        "result": "LOSS"
+      },
+      {
+        "race_id": "921182",
+        "horse": "Approaching Dawn",
+        "prob": 0.6814,
+        "result": "LOSS"
+      }
+    ],
+    "strongest_correct_predictions": [
+      {
+        "race_id": "921195",
+        "horse": "Superior Choice",
+        "prob": 0.814,
+        "result": "WIN"
+      },
+      {
+        "race_id": "921208",
+        "horse": "Room Fourteen",
+        "prob": 0.6964,
+        "result": "WIN"
+      },
+      {
+        "race_id": "921029",
+        "horse": "Beorma",
+        "prob": 0.6268,
+        "result": "WIN"
+      }
+    ],
+    "sigma_verdict": "WEAK_DAY"
+  },
+  "playbook_g": {
+    "shadow_state_delta_summary": "Observed 41 races today",
+    "shadow_state_after_summary": "Evolved to 450 races",
+    "events_studied": 41,
+    "updates_applied": 41,
+    "duplicates_skipped": 41,
+    "loss_count_by_type": {
+      "CALIBRATION_ERROR": 21,
+      "NONE": 9,
+      "WRONG_HORSE": 11
+    },
+    "recurring_failure_patterns": [
+      "High-prob volatility"
+    ],
+    "protected_patterns": [
+      "favourites_protected",
+      "favourites_abandoned",
+      "market_lies_detected",
+      "safe_bets_imploded",
+      "recurring_setups"
+    ],
+    "confidence_warnings": [
+      "Elevated"
+    ],
+    "market_warnings": [],
+    "data_quality_warnings": [
+      "Green"
+    ],
+    "tomorrow_watchlist": [
+      "Forensic review of high-prob losses"
+    ],
+    "learning_allowed_mode": "OUTCOME_ONLY_EOD_REPLAY",
+    "playbook_g_shadow_verdict": "SHADOW_ONLY_OK"
+  },
+  "learning_loop_status": "CONNECTED",
+  "shadow_state_changed": true,
+  "live_state_touched": false,
+  "council_audit_verdict": "PASS",
+  "tomorrow_actions": [
+    "Forensic review of high-prob losses"
+  ]
+}

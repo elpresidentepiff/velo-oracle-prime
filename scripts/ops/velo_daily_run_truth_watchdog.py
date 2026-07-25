@@ -32,6 +32,8 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).parent))
 load_dotenv(ROOT / ".env")
 
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts  # noqa: E402
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -250,16 +252,19 @@ def build_report(target: str) -> dict:
             "limit": "10",
         },
     )
-    verdict_rows = _get(
-        "velo_verdicts",
-        {
-            "select": "race_id,generated_at,engine_version,git_commit_sha,environment",
-            "generated_at": f"gte.{start_utc}",
-            "order": "generated_at.asc",
-            "limit": "1000",
-        },
+    # This watchdog's whole job is "prove whether the day actually scored" --
+    # it MUST use the shared, race_id-first loader (src/velo/verdict_loader.py),
+    # not a hand-rolled generated_at query, or it will falsely report every
+    # evening-before-scored race day (VELO's normal manual operating pattern)
+    # as unscored.
+    verdict_rows, _verdict_method = shared_load_verdicts(
+        target,
+        select="race_id,generated_at,engine_version,git_commit_sha,environment",
+        root=ROOT,
+        local_fallback=False,
     )
-    verdict_rows = [row for row in verdict_rows if row.get("generated_at", "") < end_utc]
+    if _verdict_method == "generated_at":
+        verdict_rows = [row for row in verdict_rows if row.get("generated_at", "") < end_utc]
 
     local_exists, local_count, local_file = _load_local_verdict_file(target)
     status, issues, warnings = _classify(pipeline_rows, verdict_rows, local_exists, local_count)

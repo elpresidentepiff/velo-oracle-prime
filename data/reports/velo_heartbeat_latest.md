@@ -1,16 +1,16 @@
 # VÉLØ HEARTBEAT
-**2026-07-01T02:20:08.164191+00:00** | HEAD `a8b3e8a` | `velo_heartbeat_v1`
+**2026-06-29T23:56:59.758639+00:00** | HEAD `e5b259b` | `velo_heartbeat_v1`
 
 ---
 
 ## 1. System Status
 - Truth lock: **LOCKED**
-- docs/current/ spine: 26 files
-- Repo HEAD: `a8b3e8a`
+- docs/current/ spine: 25 files
+- Repo HEAD: `e5b259b`
 
 ## 2. Source Truth
-- Status: **RP_MERGED_CLEAN**
-- Source verified — promotion eligible if council agrees.
+- Status: **LOCAL_JSON_FALLBACK**
+- Not RP_MERGED_CLEAN — promotion gated until source is verified.
 
 ## 3. VFU Status
 - Latest: **VFU-20**  Signed off: **True** (2026-06-29)
@@ -23,20 +23,22 @@
 - Regression tests: 4 passing
 
 ## 5. Council Verdict
-- Verdict: **PASS_TO_LEARNING**
+- Verdict: **WATCH_ONLY**
 - Learning gate: `BLOCKED`
 - Promotion gate: `BLOCKED`
-  - GATE_PIPELINE_TRUTH_FALSE_PASS_NO_VERDICTS
-- Sigma (2026-06-30): `PASS` SR=23.9%  Identity failures: 0
+  - GATE_COUNCIL_WATCH_ONLY
+  - GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY
+- Sigma (2026-06-29): `PASS` SR=36.4%  Identity failures: 0
 
 ## 6. Learning Routes
 - Memory capture:   **OPEN**
 - Failure learning: **OPEN**
-- Promotion:        **ELIGIBLE**
+- Promotion:        **GATED**
+  - source_truth=LOCAL_JSON_FALLBACK
+  - council_verdict=WATCH_ONLY
 
 ## 7. Contradictions
-- Count: **1**
-- [WARN] C-01: Mission Control reports RP_MERGED_CLEAN source but learning gate is BLOCKED
+- Count: **0**
 
 ## 8. Playbook G Shadow
 - Status: **SHADOW_ONLY**

@@ -1,0 +1,154 @@
+{
+  "date": "2026-07-24",
+  "generated_at": "2026-07-25T09:41:08.552610Z",
+  "results": [
+    {
+      "step": "Step 12: Results + sigma reconciliation",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/run_results_sigma.py",
+        "--date",
+        "2026-07-24",
+        "--source",
+        "cache"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": true
+    },
+    {
+      "step": "Step 12B: Multi-model sigma",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/run_multimodel_sigma.py",
+        "--date",
+        "2026-07-24",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 13: Ingest results to horse runs",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/ingest_results_to_horse_runs.py",
+        "--date",
+        "2026-07-24"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 14a: Refresh sigma audits dump",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/dump_sigma_audits.py"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 14b: Rebuild sigma retrieval corpus",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/build_sigma_retrieval_corpus.py",
+        "--require-through-date",
+        "2026-07-24"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 15: Update Mission Control",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/update_mission_control.py",
+        "--date",
+        "2026-07-24"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 16a: VP30 operator card",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/audit/vp30_operator_card.py",
+        "--date",
+        "2026-07-24"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 16b: VELO Council",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/audit/run_velo_council.py",
+        "--date",
+        "2026-07-24"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 17: Execution bridge shadow (paper close)",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/run_execution_bridge_shadow.py",
+        "--date",
+        "2026-07-24",
+        "--mode",
+        "SIM",
+        "--audit-results"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 18: Build innovation protocol",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/build_innovation_protocol.py",
+        "--date",
+        "2026-07-24"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 19: Router shadow audit",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/router_shadow_audit.py",
+        "--prev-csv",
+        "data/router_shadow_audit_latest.csv"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    },
+    {
+      "step": "Step 20: Nightly EOD learning runner",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python3",
+        "scripts/ops/nightly_eod_learning_runner.py",
+        "--date",
+        "2026-07-24"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": false
+    }
+  ]
+}
