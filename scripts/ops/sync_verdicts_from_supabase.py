@@ -57,8 +57,18 @@ def _fetch_verdicts(target: str) -> tuple[list[dict], str]:
         if rows:
             return rows, label
 
-    race_rows = _get("races", {"select": "id", "date": f"eq.{target}", "limit": "1000"})
-    race_ids = [str(row["id"]) for row in race_rows if row.get("id")]
+    # The `races` table is fed by the (permanently decommissioned) Racing API and
+    # hasn't been populated since 2026-05-06 -- it cannot be used as a race_id
+    # source for any current date. Use the local RP-sourced racecard cache instead,
+    # same pattern as the other generated_at-bug fixes this week.
+    racecard_path = DATA / f"racecards_{target.replace('-', '_')}_standard.json"
+    race_ids: list[str] = []
+    if racecard_path.exists():
+        try:
+            cards = json.loads(racecard_path.read_text())
+            race_ids = [str(r["race_id"]) for r in cards if isinstance(r, dict) and r.get("race_id")]
+        except Exception:
+            race_ids = []
     rows: list[dict] = []
     for offset in range(0, len(race_ids), 50):
         rows.extend(

@@ -49,20 +49,51 @@ def _sb():
     )
 
 
+def _known_race_ids_for_date(date_str: str) -> list:
+    """race_ids from the standard racecard cache for this date, if it exists.
+
+    generated_at is write-time, not race-date -- scoring the evening before
+    race day stamps generated_at under the wrong calendar day and silently
+    zeroes out any date-range query. race_id reliably correlates to the
+    actual race date, so prefer it when the cache is available.
+    """
+    path = ROOT / "data" / f"racecards_{date_str.replace('-', '_')}_standard.json"
+    if not path.exists():
+        return []
+    try:
+        races = json.loads(path.read_text())
+    except Exception:
+        return []
+    return [r["race_id"] for r in races if r.get("race_id")]
+
+
 def load_verdicts(sb, date_str: str) -> list[dict]:
-    rows = (
-        sb.table("velo_verdicts")
-        .select(
-            "race_id,velo_prime_prob,market_deception_score,decision_tier,"
-            "assigned_product,execution_allowed,full_analysis,generated_at"
-        )
-        .gte("generated_at", f"{date_str}T00:00:00")
-        .lt("generated_at", f"{date_str}T23:59:59")
-        .order("velo_prime_prob", desc=True)
-        .execute()
-        .data
+    select_cols = (
+        "race_id,velo_prime_prob,market_deception_score,decision_tier,"
+        "assigned_product,execution_allowed,full_analysis,generated_at"
     )
-    
+    known_race_ids = _known_race_ids_for_date(date_str)
+    rows = []
+    if known_race_ids:
+        rows = (
+            sb.table("velo_verdicts")
+            .select(select_cols)
+            .in_("race_id", known_race_ids)
+            .order("velo_prime_prob", desc=True)
+            .execute()
+            .data
+        )
+    if not rows:
+        rows = (
+            sb.table("velo_verdicts")
+            .select(select_cols)
+            .gte("generated_at", f"{date_str}T00:00:00")
+            .lt("generated_at", f"{date_str}T23:59:59")
+            .order("velo_prime_prob", desc=True)
+            .execute()
+            .data
+        )
+
     if not rows:
         # Fallback to local file
         date_under = date_str.replace("-", "_")
@@ -70,7 +101,7 @@ def load_verdicts(sb, date_str: str) -> list[dict]:
         local_path1 = DATA / f"velo_prime_verdicts_{date_under}.json"
         local_path2 = DATA / f"velo_prime_verdicts_{date_str}.json"
         local_path = local_path1 if local_path1.exists() else (local_path2 if local_path2.exists() else None)
-        
+
         if local_path:
             try:
                 with open(local_path, "r") as f:
@@ -81,7 +112,7 @@ def load_verdicts(sb, date_str: str) -> list[dict]:
                         rows = local_data
             except Exception as e:
                 print(f"Failed to read local verdicts: {e}")
-                
+
     return rows
 
 

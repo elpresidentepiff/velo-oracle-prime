@@ -235,6 +235,25 @@ def _markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _known_race_ids_for_date(target: str) -> list:
+    """race_ids from the standard racecard cache for this date, if it exists.
+
+    generated_at is write-time, not race-date -- scoring the evening before
+    race day stamps generated_at under the wrong calendar day and silently
+    zeroes out any date-range query, which would falsely tell this watchdog
+    "the day never scored" for VELO's normal evening-before operating pattern.
+    race_id reliably correlates to the actual race date instead.
+    """
+    path = ROOT / "data" / f"racecards_{target.replace('-', '_')}_standard.json"
+    if not path.exists():
+        return []
+    try:
+        races = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    return [r["race_id"] for r in races if r.get("race_id")]
+
+
 def build_report(target: str) -> dict:
     next_day = date.fromisoformat(target) + timedelta(days=1)
     start_utc = f"{target}T00:00:00Z"
@@ -250,16 +269,32 @@ def build_report(target: str) -> dict:
             "limit": "10",
         },
     )
-    verdict_rows = _get(
-        "velo_verdicts",
-        {
-            "select": "race_id,generated_at,engine_version,git_commit_sha,environment",
-            "generated_at": f"gte.{start_utc}",
-            "order": "generated_at.asc",
-            "limit": "1000",
-        },
-    )
-    verdict_rows = [row for row in verdict_rows if row.get("generated_at", "") < end_utc]
+    known_race_ids = _known_race_ids_for_date(target)
+    verdict_rows = []
+    if known_race_ids:
+        for offset in range(0, len(known_race_ids), 50):
+            verdict_rows.extend(
+                _get(
+                    "velo_verdicts",
+                    {
+                        "select": "race_id,generated_at,engine_version,git_commit_sha,environment",
+                        "race_id": f"in.({','.join(known_race_ids[offset:offset + 50])})",
+                        "order": "generated_at.asc",
+                        "limit": "1000",
+                    },
+                )
+            )
+    if not verdict_rows:
+        verdict_rows = _get(
+            "velo_verdicts",
+            {
+                "select": "race_id,generated_at,engine_version,git_commit_sha,environment",
+                "generated_at": f"gte.{start_utc}",
+                "order": "generated_at.asc",
+                "limit": "1000",
+            },
+        )
+        verdict_rows = [row for row in verdict_rows if row.get("generated_at", "") < end_utc]
 
     local_exists, local_count, local_file = _load_local_verdict_file(target)
     status, issues, warnings = _classify(pipeline_rows, verdict_rows, local_exists, local_count)
