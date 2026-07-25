@@ -25,7 +25,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.services.velo_prime_service import score_race_velo_prime
-from scripts.run_prime_today import _bootstrap_runtime, load_racecards
+from scripts.ops.run_prime_today import _bootstrap_runtime, load_racecards
 from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
 from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble, _WEIGHTS
 from src.velo.race_metadata_resolver import rest_fetch

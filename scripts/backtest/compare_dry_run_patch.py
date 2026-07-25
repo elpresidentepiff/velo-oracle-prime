@@ -61,13 +61,13 @@ def run_diff():
         top = fa[0]
         persisted[race_id] = {
             "horse": top.get("horse"),
-            "prob": v.get("velo_prime_prob", 0),
+            "prob": v.get("velo_prime_prob") or 0.0,
             "tier": v.get("decision_tier"),
-            "sqpe": top.get("sqpe_v17_prob"),
-            "mds": top.get("market_deception_score"),
-            "place_prob": top.get("place_prob")
+            "sqpe": top.get("sqpe_v17_prob") or 0.0,
+            "mds": top.get("market_deception_score") or 0.0,
+            "place_prob": top.get("place_prob") or 0.0,
         }
-        if v.get("velo_prime_prob", 0) >= 0.3:
+        if (v.get("velo_prime_prob") or 0.0) >= 0.3:
             vp30_before += 1
             
     # 2. Parse dry-run log
