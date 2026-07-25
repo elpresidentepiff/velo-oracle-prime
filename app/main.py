@@ -2317,6 +2317,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     course_aliases = {
         "NBY": "NEWBURY",
         "UTT": "UTTOXETER",
+        "NCS": "NEWCASTLE",
     }
     def _course_time_key(row: dict) -> tuple[str, str]:
         return (
