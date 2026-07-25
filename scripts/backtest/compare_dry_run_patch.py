@@ -5,15 +5,47 @@ from pathlib import Path
 from dotenv import load_dotenv
 from supabase import create_client
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
+
+TARGET_DATE = "2026-05-01"
+
+
+def _known_race_ids_for_date(date_str: str) -> list:
+    """race_ids from the standard racecard cache for this date, if it exists.
+
+    generated_at is write-time, not race-date -- scoring the evening before
+    race day stamps generated_at under the wrong calendar day and silently
+    zeroes out any date-range query. race_id reliably correlates to the
+    actual race date, so prefer it when the cache is available.
+    """
+    path = ROOT / "data" / f"racecards_{date_str.replace('-', '_')}_standard.json"
+    if not path.exists():
+        return []
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    races = payload.get("racecards", []) if isinstance(payload, dict) else payload
+    return [r["race_id"] for r in races if isinstance(r, dict) and r.get("race_id")]
+
 
 def run_diff():
     sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
-    
-    # 1. Fetch live persisted verdicts for 2026-05-01
-    v_resp = sb.table("velo_verdicts").select("race_id,full_analysis,decision_tier,velo_prime_prob").gte("generated_at", "2026-05-01T00:00:00").lt("generated_at", "2026-05-01T23:59:59").execute()
-    
+
+    # 1. Fetch live persisted verdicts for TARGET_DATE
+    known_race_ids = _known_race_ids_for_date(TARGET_DATE)
+    v_resp = None
+    if known_race_ids:
+        v_resp = (
+            sb.table("velo_verdicts")
+            .select("race_id,full_analysis,decision_tier,velo_prime_prob")
+            .in_("race_id", known_race_ids)
+            .execute()
+        )
+    if not (v_resp and v_resp.data):
+        v_resp = sb.table("velo_verdicts").select("race_id,full_analysis,decision_tier,velo_prime_prob").gte("generated_at", f"{TARGET_DATE}T00:00:00").lt("generated_at", f"{TARGET_DATE}T23:59:59").execute()
+
     if not v_resp.data:
         print("No persisted verdicts found for 2026-05-01.")
         return

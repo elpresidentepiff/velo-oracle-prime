@@ -151,16 +151,43 @@ def _race_component_summary(inputs: list[dict[str, Any]]) -> dict[str, Any]:
     return summary
 
 
+def _known_race_ids_for_date(target_date: str) -> list[str]:
+    """race_ids from the standard racecard cache for this date, if it exists.
+
+    generated_at is write-time, not race-date -- scoring the evening before
+    race day stamps generated_at under the wrong calendar day and silently
+    excludes every row here. race_id reliably correlates to the actual race
+    date, so prefer it when the cache is available.
+    """
+    path = ROOT / "data" / f"racecards_{target_date.replace('-', '_')}_standard.json"
+    if not path.exists():
+        return []
+    try:
+        races = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    return [str(r["race_id"]) for r in races if r.get("race_id")]
+
+
 def _latest_verdict_rows(target_date: str) -> list[dict[str, Any]]:
-    rows = rest_fetch(
-        "velo_verdicts",
-        "race_id,generated_at,full_analysis,top_rank_horse_id,velo_prime_prob",
-    )
+    select = "race_id,generated_at,full_analysis,top_rank_horse_id,velo_prime_prob"
+    known_race_ids = _known_race_ids_for_date(target_date)
+    rows: list[dict[str, Any]] = []
+    if known_race_ids:
+        rows = rest_fetch(
+            "velo_verdicts", select, {"race_id": f"in.({','.join(known_race_ids)})"}
+        )
+    if not rows:
+        rows = rest_fetch("velo_verdicts", select)
+        rows = [
+            row for row in rows
+            if row.get("race_id") and str(row.get("generated_at") or "").startswith(target_date)
+        ]
     latest: dict[str, dict[str, Any]] = {}
     for row in rows:
         race_id = row.get("race_id")
         generated_at = str(row.get("generated_at") or "")
-        if not race_id or not generated_at.startswith(target_date):
+        if not race_id:
             continue
         current = latest.get(race_id)
         if current is None or generated_at > str(current.get("generated_at") or ""):
