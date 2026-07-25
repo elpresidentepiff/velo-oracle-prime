@@ -25,6 +25,7 @@ import json
 import os
 import sys
 from collections import Counter
+from datetime import datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent.parent
@@ -72,7 +73,10 @@ def load_verdicts(date_str: str) -> list[dict]:
                 "place_prob,race_archetype,archetype_suppression,"
                 "execution_allowed,assigned_product,router_reasons,full_analysis"
             ),
-            "generated_at": f"gte.{date_str}T00:00:00",
+            # Lower bound is generous (1 day early) because generated_at is write-time,
+            # not race-date -- scoring the evening before race day stamps generated_at
+            # under the previous calendar day. Real filtering happens below by race_id.
+            "generated_at": f"gte.{(datetime.fromisoformat(date_str) - timedelta(days=1)).date()}T00:00:00",
             "order": "generated_at.asc",
             "limit": "500",
         },
@@ -82,10 +86,17 @@ def load_verdicts(date_str: str) -> list[dict]:
     data = resp.json()
     if isinstance(data, dict):
         raise RuntimeError(f"Supabase error loading verdicts: {data}")
-    filtered = [v for v in data if _s(v.get("generated_at")).startswith(date_str)]
     backup_path = ROOT / "data" / f"velo_prime_verdicts_{date_str.replace('-', '_')}.json"
-    if backup_path.exists():
-        backup_rows = json.loads(backup_path.read_text())
+    backup_rows = json.loads(backup_path.read_text()) if backup_path.exists() else []
+    # generated_at is write-time, not race-date -- scoring the evening before race day
+    # stamps generated_at under the wrong calendar day and silently zeroes this filter.
+    # Prefer known race_ids from the local verdict backup (race-date-correlated) when present.
+    known_race_ids = {str(row.get("race_id", "")) for row in backup_rows if row.get("race_id")}
+    if known_race_ids:
+        filtered = [v for v in data if str(v.get("race_id", "")) in known_race_ids]
+    else:
+        filtered = [v for v in data if _s(v.get("generated_at")).startswith(date_str)]
+    if backup_rows:
         backup = {
             str(row.get("race_id", "")): {
                 "course": row.get("course", ""),
@@ -97,6 +108,12 @@ def load_verdicts(date_str: str) -> list[dict]:
         if duplicate_alias_ids:
             filtered = [row for row in filtered if str(row.get("race_id", "")) not in duplicate_alias_ids]
             print(f"  Excluded {len(duplicate_alias_ids)} synthetic aliases shadowed by canonical RP races.")
+    # _map_verdict() falls back to generated_at's date for the ledger's "date" column
+    # when a verdict has no explicit "date" field -- that's write-time, not race-date,
+    # and produces a wrong-dated ledger row (breaks --audit-results lookups by date).
+    # Stamp the real race date explicitly so that fallback never triggers.
+    for v in filtered:
+        v["date"] = date_str
     return filtered
 
 

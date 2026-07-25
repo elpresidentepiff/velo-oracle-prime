@@ -1,20 +1,20 @@
 {
-  "total_records": 2977,
-  "retrieval_eligible_records": 2890,
+  "total_records": 3673,
+  "retrieval_eligible_records": 3586,
   "outcome_counts": {
-    "FRAME": 823,
-    "MISS": 1460,
-    "WIN": 694
+    "FRAME": 1046,
+    "MISS": 1751,
+    "WIN": 876
   },
   "regime_confidence_counts": {
-    "HIGH": 651,
-    "LOW_REGIME_INFERRED": 2326
+    "HIGH": 1403,
+    "LOW_REGIME_INFERRED": 2270
   },
   "retrieval_blocker_counts": {
-    "NONE": 2890,
+    "NONE": 3586,
     "OUTCOME_OR_DATE_MISSING": 87
   },
-  "regime_count": 27,
+  "regime_count": 38,
   "top_regimes": [
     [
       "e895f31903a5",
@@ -22,11 +22,19 @@
     ],
     [
       "cfea4e2dd1c9",
-      610
+      554
     ],
     [
       "87024d85a8e7",
       522
+    ],
+    [
+      "01b69fb1ac6d",
+      189
+    ],
+    [
+      "e5623e386fd8",
+      132
     ],
     [
       "99eaf1ff8596",
@@ -37,38 +45,32 @@
       82
     ],
     [
+      "780e9f708338",
+      65
+    ],
+    [
       "a56148362a70",
       59
     ],
     [
-      "1053c681ede1",
-      54
-    ],
-    [
-      "cb2682550252",
-      52
-    ],
-    [
-      "6c8a9f3f6b05",
-      46
-    ],
-    [
-      "38c6bdaf1f37",
-      46
+      "eb59aea1ef60",
+      56
     ]
   ],
   "date_min": "2026-01-09",
-  "date_max": "2026-06-23",
-  "date_count": 99,
+  "date_max": "2026-07-24",
+  "date_count": 117,
   "rpr_violations": 0,
   "forbidden_model_field_violations": 0,
   "classification": "SIGMA_RETRIEVAL_CORPUS_READY_SHADOW_ONLY",
-  "generated_at": "2026-06-29T20:32:10.814358+00:00",
+  "generated_at": "2026-07-25T04:14:25.025271+00:00",
   "schema_version": "sigma_retrieval_corpus_v1",
   "input_sigma_dump": "data/sigma_audits_dump.json",
   "output_jsonl": "data/sigma_memory/sigma_retrieval_corpus_v1.jsonl",
   "shadow_only": true,
   "live_velo_impact": false,
-  "sp_enrichment_applied": 1351,
-  "sp_enrichment_source": "data/velo_innovation_protocol_1k_deduped.csv"
+  "sp_enrichment_applied": 1887,
+  "sp_enrichment_source": "data/velo_innovation_protocol_1k_deduped.csv",
+  "required_through_date": "2026-07-24",
+  "freshness_gate_passed": true
 }
