@@ -1399,6 +1399,7 @@ async def doctrine_scorecard_proxy():
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation
     to a single server — see docs/current/ONE_TRUTH.md)."""
     import json as _json
+
     path = pathlib.Path(__file__).parent.parent / "data" / "doctrine_scorecard_latest.json"
     if not path.exists():
         return JSONResponse(
@@ -1488,6 +1489,7 @@ async def plot_conviction_proxy(date: str = Query(default=None)):
     picks (postdata_score / plot_conviction), enriched with Deep Race Agent V1's
     verdict where available. See HARD RULES #8-9 in THE_ONE_TRUTH.md."""
     from scripts.ops.new_build_dashboard_server import plot_conviction as _plot_conviction
+
     return await _plot_conviction(date=date)
 
 
@@ -2335,15 +2337,14 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "NBY": "NEWBURY",
         "UTT": "UTTOXETER",
     }
+
     def _course_time_key(row: dict) -> tuple[str, str]:
         return (
             course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
             _norm_time(row.get("off_time", "")),
         )
 
-    canonical_numeric_keys = {
-        _course_time_key(row) for row in verdicts if str(row.get("race_id", "")).isdigit()
-    }
+    canonical_numeric_keys = {_course_time_key(row) for row in verdicts if str(row.get("race_id", "")).isdigit()}
     verdicts = [
         row
         for row in verdicts
