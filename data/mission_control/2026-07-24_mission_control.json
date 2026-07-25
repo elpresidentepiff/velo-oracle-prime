@@ -1,6 +1,6 @@
 {
   "date": "2026-07-24",
-  "generated_at": "2026-07-25T04:14:30.714073+00:00",
+  "generated_at": "2026-07-25T09:40:45.487046+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
     "94cc3e22"
@@ -12,10 +12,10 @@
   "identity_failure_count": 0,
   "runners_snapshotted": 679,
   "council_verdict": "PASS_TO_LEARNING",
-  "learning_gate_status": "BLOCKED",
+  "learning_gate_status": "OPEN",
   "promotion_gate_status": "BLOCKED",
   "gate_reasons": [
-    "GATE_PIPELINE_TRUTH_FALSE_PASS_NO_VERDICTS"
+    "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
   ],
   "sigma_artifact": {
     "status": "PRESENT",
@@ -33,35 +33,44 @@
     "no_result_count": 1
   },
   "run_truth": {
-    "status": "FALSE_PASS_NO_VERDICTS",
+    "status": "MANUAL_RECOVERY_ONLY",
     "path": "data/velo_daily_run_truth_2026_07_24.json",
     "alert_required": true,
     "issues": [
-      "FALSE_PASS_NO_VERDICTS"
+      "MANUAL_RUN_ONLY"
     ],
     "cron_truth_status": "FAIL_OR_UNPROVEN",
     "deploy_truth_status": "UNKNOWN_UNLESS_RAILWAY_COMMIT_EXPOSED",
     "pipeline_run_count": 1
   },
   "council_artifact_visibility": {
-    "council_run": "MISSING",
-    "council_packet": "MISSING",
-    "council_report": "MISSING"
+    "council_run": "PRESENT",
+    "council_packet": "PRESENT",
+    "council_report": "PRESENT"
   },
   "runner_calibration_gate_status": "REVIEW_THRESHOLD_MET",
   "runner_calibration_gate_runners": 786,
   "decision_policy_gate_status": "NEEDS_MORE_DAYS",
   "decision_policy_gate_top_picks": 87,
   "learning_admission": {
-    "eligibility_status": "NOT_RUN",
-    "eligible_rows": 0,
-    "excluded_rows": 0,
+    "eligibility_status": "OUTCOME_ONLY_EOD_REPLAY_PASS",
+    "eligible_rows": 54,
+    "excluded_rows": 1,
     "consumed_shadow_before": 0,
     "consumed_live_before": 0,
     "live_state_hash": "UNKNOWN",
-    "build_events_result": {},
+    "build_events_result": {
+      "phase": "OUTCOME_ONLY_EOD_REPLAY",
+      "events_built": 54,
+      "events_written": 54,
+      "status": "PASS",
+      "sentient_state_touched": false,
+      "shadow_state_touched": true,
+      "duplicates_skipped_second_run": 54,
+      "consumed_live": false
+    },
     "admission_packet": "PRESENT",
-    "recommendation": "PENDING"
+    "recommendation": "OUTCOME_ONLY_EOD_REPLAY_COMPLETE"
   },
   "race_shape_v1": {
     "race_shape_model_v1": "DESIGN_PENDING",

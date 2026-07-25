@@ -1,13 +1,13 @@
 VÉLØ PRIME OPERATOR CARD — 2026-07-24
 ========================================
-Total races scanned: 63
+Total races scanned: 55
 
 1. VP30 + MDS CONFLUENCE — LIVE CONFIDENCE STACK (2)
 ----------------------------------------
   16:48 Cork         | Hanney Boy           | VP=0.848 MDS=0.612 | A
   18:40 York         | Coral Cove           | VP=0.656 MDS=0.572 | A
 
-2. VP30 — LIVE SIGNAL (41)
+2. VP30 — LIVE SIGNAL (35)
 ----------------------------------------
   13:40 Uttoxeter    | Likewhatyousee       | VP=0.414 | A
   14:00 Thirsk       | Little Lady Karen    | VP=0.509 | A
@@ -44,12 +44,6 @@ Total races scanned: 63
   20:11 Chepstow     | So Smart             | VP=0.585 | A
   20:18 Cork         | Borora Aura          | VP=0.475 | B
   20:46 Chepstow     | City Escape          | VP=0.353 | B
-  2:10 UTT          | Littletown Lad       | VP=0.355 | A
-  2:40 UTT          | Fond Farewell        | VP=0.416 | B
-  3:15 UTT          | Izzy'S Grey          | VP=0.382 | A
-  3:50 UTT          | Billy Boi Blue       | VP=0.324 | B
-  4:25 UTT          | Jammy Jay            | VP=0.560 | A
-  5:00 UTT          | Ice Jet              | VP=0.334 | B
 
 3. MDS_HIGH — LIVE SIDECAR (2)
 ----------------------------------------
