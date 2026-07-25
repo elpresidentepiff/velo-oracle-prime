@@ -321,14 +321,17 @@ def _load_supabase_predictions(date_str: str) -> tuple[dict, dict, str]:
         from supabase import create_client
 
         db = create_client(sb_url, sb_key)
-        resp = (
-            db.table("velo_verdicts")
-            .select("race_id, decision_tier, generated_at, full_analysis")
-            .gte("generated_at", f"{date_str}T00:00:00")
-            .lte("generated_at", f"{date_str}T23:59:59")
-            .execute()
+
+        # Shared, bug-fixed loader -- see src/velo/verdict_loader.py for why
+        # this can't be a hand-rolled generated_at query. Scoring frequently
+        # happens the evening BEFORE the race date (an operator scoring
+        # tonight for tomorrow's card), which writes generated_at under the
+        # wrong calendar day.
+        from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
+
+        rows, _method = _shared_load_verdicts(
+            date_str, select="race_id, decision_tier, generated_at, full_analysis", root=ROOT
         )
-        rows = resp.data or []
         result: dict = {}
         race_ids: list = []
         for row in rows:

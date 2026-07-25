@@ -2,7 +2,7 @@
 
 **Verdict:** PASS  
 **Source:** rp_merged  
-**Run at:** 2026-07-01T03:51:22.934147Z  
+**Run at:** 2026-06-29T22:57:29.857559Z  
 **Races (UK/IRE):** 46  
 **Runners:** 424  
 **Courses:** Brighton, Ffos Las, Musselburgh, Roscommon, Salisbury, Stratford, Wexford

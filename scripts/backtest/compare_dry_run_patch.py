@@ -1,26 +1,35 @@
 
-import os
-import json
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
-from supabase import create_client
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env")
 
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts  # noqa: E402
+
+TARGET_DATE = "2026-05-01"
+
+
 def run_diff():
-    sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
-    
-    # 1. Fetch live persisted verdicts for 2026-05-01
-    v_resp = sb.table("velo_verdicts").select("race_id,full_analysis,decision_tier,velo_prime_prob").gte("generated_at", "2026-05-01T00:00:00").lt("generated_at", "2026-05-01T23:59:59").execute()
-    
-    if not v_resp.data:
-        print("No persisted verdicts found for 2026-05-01.")
+    # 1. Fetch live persisted verdicts for TARGET_DATE via the shared,
+    # bug-fixed loader. See src/velo/verdict_loader.py for why this can't be
+    # a hand-rolled generated_at query -- this script had exactly that bug
+    # until 2026-07-24.
+    rows, method = shared_load_verdicts(
+        TARGET_DATE, select="race_id,full_analysis,decision_tier,velo_prime_prob", root=ROOT
+    )
+    if method != "race_id":
+        print(f"  [compare_dry_run_patch] verdict load used fallback method: {method}")
+
+    if not rows:
+        print(f"No persisted verdicts found for {TARGET_DATE}.")
         return
-        
+
     persisted = {}
     vp30_before = 0
-    for v in v_resp.data:
+    for v in rows:
         race_id = v["race_id"]
         fa = v.get("full_analysis") or []
         if isinstance(fa, dict): fa = list(fa.values())
@@ -29,13 +38,13 @@ def run_diff():
         top = fa[0]
         persisted[race_id] = {
             "horse": top.get("horse"),
-            "prob": v.get("velo_prime_prob", 0),
+            "prob": v.get("velo_prime_prob") or 0.0,
             "tier": v.get("decision_tier"),
-            "sqpe": top.get("sqpe_v17_prob"),
-            "mds": top.get("market_deception_score"),
-            "place_prob": top.get("place_prob")
+            "sqpe": top.get("sqpe_v17_prob") or 0.0,
+            "mds": top.get("market_deception_score") or 0.0,
+            "place_prob": top.get("place_prob") or 0.0,
         }
-        if v.get("velo_prime_prob", 0) >= 0.3:
+        if (v.get("velo_prime_prob") or 0.0) >= 0.3:
             vp30_before += 1
             
     # 2. Parse dry-run log

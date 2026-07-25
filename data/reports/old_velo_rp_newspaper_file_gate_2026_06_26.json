@@ -1,0 +1,121 @@
+{
+  "schema_version": "old_velo_rp_newspaper_file_gate_v1",
+  "generated_at": "2026-06-26T07:19:44.783196+00:00",
+  "date": "2026-06-26",
+  "status": "BLOCKED",
+  "execute": true,
+  "required_keys": {
+    "0011_XX": "Postdata grid",
+    "0012_XX": "Colour racecard",
+    "0015_OR": "Official ratings/history",
+    "0016_XX": "Spotlight comments",
+    "0032_TS": "Topspeed ratings"
+  },
+  "excluded_keys": {
+    "0010_XX": "Selection box / competitor consensus"
+  },
+  "expected_venues": [
+    "BAN",
+    "CAR",
+    "CUR",
+    "DON",
+    "NCS",
+    "NMK",
+    "YAR"
+  ],
+  "search_dirs": [
+    "C:\\Users\\puror\\Downloads",
+    "C:\\Users\\puror\\velo-oracle-prime\\data\\incoming_pdfs",
+    "C:\\Users\\puror\\velo-oracle-prime\\data\\incoming_pdfs\\2026-06-26"
+  ],
+  "stage_dir": "C:\\Users\\puror\\velo-oracle-prime\\data\\incoming_pdfs\\2026-06-26",
+  "venues": {
+    "BAN": {
+      "complete": false,
+      "missing": [
+        "0011_XX",
+        "0012_XX",
+        "0015_OR",
+        "0016_XX",
+        "0032_TS"
+      ],
+      "found": {},
+      "staged": {}
+    },
+    "CAR": {
+      "complete": false,
+      "missing": [
+        "0011_XX",
+        "0012_XX",
+        "0015_OR",
+        "0016_XX",
+        "0032_TS"
+      ],
+      "found": {},
+      "staged": {}
+    },
+    "CUR": {
+      "complete": false,
+      "missing": [
+        "0011_XX",
+        "0012_XX",
+        "0015_OR",
+        "0016_XX",
+        "0032_TS"
+      ],
+      "found": {},
+      "staged": {}
+    },
+    "DON": {
+      "complete": false,
+      "missing": [
+        "0011_XX",
+        "0012_XX",
+        "0015_OR",
+        "0016_XX",
+        "0032_TS"
+      ],
+      "found": {},
+      "staged": {}
+    },
+    "NCS": {
+      "complete": false,
+      "missing": [
+        "0011_XX",
+        "0012_XX",
+        "0015_OR",
+        "0016_XX",
+        "0032_TS"
+      ],
+      "found": {},
+      "staged": {}
+    },
+    "NMK": {
+      "complete": false,
+      "missing": [
+        "0011_XX",
+        "0012_XX",
+        "0015_OR",
+        "0016_XX",
+        "0032_TS"
+      ],
+      "found": {},
+      "staged": {}
+    },
+    "YAR": {
+      "complete": false,
+      "missing": [
+        "0011_XX",
+        "0012_XX",
+        "0015_OR",
+        "0016_XX",
+        "0032_TS"
+      ],
+      "found": {},
+      "staged": {}
+    }
+  },
+  "excluded_files_seen": [],
+  "ingestion_results": [],
+  "blocked_reason": "Missing required RP Newspaper Form engine PDFs for: BAN, CAR, CUR, DON, NCS, NMK, YAR. Old VELO scoring must not run from injection fallback."
+}

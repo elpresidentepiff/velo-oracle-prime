@@ -10,9 +10,10 @@ from typing import List, Dict, Any
 
 # Ensure policy registry is available
 import sys
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from src.velo.weight_policy_registry import POLICIES, WeightPolicy
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts
 
 load_dotenv(ROOT / ".env")
 
@@ -43,17 +44,21 @@ def calculate_vp(runner: Dict, policy: WeightPolicy) -> float:
 
 def run_comparison(target_date: str):
     sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
-    
+
     print(f"Shadow Comparing Weight Policies for {target_date}...")
-    
-    # 1. Fetch verdicts for date
-    # We need full_analysis to see all runners
-    v_resp = sb.table("velo_verdicts").select("race_id,full_analysis,decision_tier").eq("date", target_date).execute()
-    if not v_resp.data:
-        # Fallback: check by generated_at
-        v_resp = sb.table("velo_verdicts").select("race_id,full_analysis,decision_tier").gte("generated_at", target_date).lt("generated_at", target_date + "T23:59:59").execute()
-        
-    if not v_resp.data:
+
+    # 1. Fetch verdicts for date via the shared, bug-fixed loader.
+    # We need full_analysis to see all runners. See src/velo/verdict_loader.py
+    # for why this can't be a hand-rolled generated_at query -- this script
+    # had exactly that bug (plus a primary query against a nonexistent
+    # velo_verdicts.date column) until 2026-07-24.
+    rows, method = shared_load_verdicts(
+        target_date, select="race_id,full_analysis,decision_tier", root=ROOT
+    )
+    if method != "race_id":
+        print(f"  [run_weight_policy_shadow_compare] verdict load used fallback method: {method}")
+
+    if not rows:
         print(f"No verdicts found for {target_date}.")
         return
 
@@ -63,7 +68,7 @@ def run_comparison(target_date: str):
     
     comparison_data = []
     
-    for v in v_resp.data:
+    for v in rows:
         race_id = v["race_id"]
         res = results_map.get(race_id)
         fa = v.get("full_analysis") or []

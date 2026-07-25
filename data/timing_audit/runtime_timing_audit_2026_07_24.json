@@ -1,0 +1,706 @@
+{
+  "date": "2026-07-24",
+  "commit_sha": "94cc3e2258f609351ce292749d91a873492d7fd0",
+  "source": "rp_merged",
+  "total_runtime_sec": 90.7117,
+  "spotlight_runners_parsed": 679,
+  "pdf_intel_runners_attached": 675,
+  "stages": [
+    {
+      "stage": "preflight",
+      "duration_sec": 9.3369,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "racecard_load",
+      "duration_sec": 5.8662,
+      "races": 63,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "normalize",
+      "duration_sec": 0.2875,
+      "races": 63,
+      "runners": 679,
+      "notes": ""
+    },
+    {
+      "stage": "pdf_intel_preload",
+      "duration_sec": 0.2027,
+      "races": 8,
+      "runners": 0,
+      "notes": "8/8 courses with RP-merged data"
+    },
+    {
+      "stage": "persist",
+      "duration_sec": 73.4713,
+      "races": 63,
+      "runners": 679,
+      "notes": ""
+    },
+    {
+      "stage": "telegram",
+      "duration_sec": 0.4266,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "local_backup",
+      "duration_sec": 0.0182,
+      "races": 0,
+      "runners": 0,
+      "notes": ""
+    },
+    {
+      "stage": "runner_snapshots",
+      "duration_sec": 1.1023,
+      "races": 63,
+      "runners": 679,
+      "notes": ""
+    }
+  ],
+  "race_timings": [
+    {
+      "race_id": "923322",
+      "course": "Ascot",
+      "off_time": "2.20",
+      "runners": 8,
+      "score_race_velo_prime_sec": 1.5162,
+      "per_runner_avg_ms": 189.523,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "923317",
+      "course": "Ascot",
+      "off_time": "2.55",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.8109,
+      "per_runner_avg_ms": 81.092,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "923319",
+      "course": "Ascot",
+      "off_time": "3.30",
+      "runners": 4,
+      "score_race_velo_prime_sec": 0.3122,
+      "per_runner_avg_ms": 78.045,
+      "pdf_intel_attached_count": 4,
+      "spotlight_parsed_count": 4
+    },
+    {
+      "race_id": "923318",
+      "course": "Ascot",
+      "off_time": "4.05",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.7126,
+      "per_runner_avg_ms": 79.175,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "923320",
+      "course": "Ascot",
+      "off_time": "4.40",
+      "runners": 13,
+      "score_race_velo_prime_sec": 0.9536,
+      "per_runner_avg_ms": 73.355,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "923321",
+      "course": "Ascot",
+      "off_time": "5.12",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.7542,
+      "per_runner_avg_ms": 83.802,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "923309",
+      "course": "Chepstow",
+      "off_time": "5.18",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.5654,
+      "per_runner_avg_ms": 80.778,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "923304",
+      "course": "Chepstow",
+      "off_time": "5.52",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7331,
+      "per_runner_avg_ms": 73.309,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "923305",
+      "course": "Chepstow",
+      "off_time": "6.26",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.5788,
+      "per_runner_avg_ms": 82.682,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "923303",
+      "course": "Chepstow",
+      "off_time": "7.01",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.4955,
+      "per_runner_avg_ms": 70.78,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "923308",
+      "course": "Chepstow",
+      "off_time": "7.36",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7619,
+      "per_runner_avg_ms": 76.194,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "923306",
+      "course": "Chepstow",
+      "off_time": "8.11",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.6198,
+      "per_runner_avg_ms": 88.549,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "923307",
+      "course": "Chepstow",
+      "off_time": "8.46",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.6541,
+      "per_runner_avg_ms": 72.673,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "925318",
+      "course": "Cork",
+      "off_time": "4.48",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.693,
+      "per_runner_avg_ms": 69.3,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "925319",
+      "course": "Cork",
+      "off_time": "5.22",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5828,
+      "per_runner_avg_ms": 72.853,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "925320",
+      "course": "Cork",
+      "off_time": "5.58",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.7482,
+      "per_runner_avg_ms": 68.016,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "925321",
+      "course": "Cork",
+      "off_time": "6.33",
+      "runners": 16,
+      "score_race_velo_prime_sec": 1.0418,
+      "per_runner_avg_ms": 65.112,
+      "pdf_intel_attached_count": 16,
+      "spotlight_parsed_count": 16
+    },
+    {
+      "race_id": "925322",
+      "course": "Cork",
+      "off_time": "7.08",
+      "runners": 21,
+      "score_race_velo_prime_sec": 1.6465,
+      "per_runner_avg_ms": 78.406,
+      "pdf_intel_attached_count": 21,
+      "spotlight_parsed_count": 21
+    },
+    {
+      "race_id": "925323",
+      "course": "Cork",
+      "off_time": "7.43",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.3287,
+      "per_runner_avg_ms": 65.734,
+      "pdf_intel_attached_count": 5,
+      "spotlight_parsed_count": 5
+    },
+    {
+      "race_id": "925324",
+      "course": "Cork",
+      "off_time": "8.18",
+      "runners": 13,
+      "score_race_velo_prime_sec": 0.9433,
+      "per_runner_avg_ms": 72.563,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "925308",
+      "course": "Kilbeggan",
+      "off_time": "4.30",
+      "runners": 15,
+      "score_race_velo_prime_sec": 1.0725,
+      "per_runner_avg_ms": 71.502,
+      "pdf_intel_attached_count": 15,
+      "spotlight_parsed_count": 15
+    },
+    {
+      "race_id": "925309",
+      "course": "Kilbeggan",
+      "off_time": "5.05",
+      "runners": 19,
+      "score_race_velo_prime_sec": 1.3271,
+      "per_runner_avg_ms": 69.847,
+      "pdf_intel_attached_count": 19,
+      "spotlight_parsed_count": 19
+    },
+    {
+      "race_id": "925310",
+      "course": "Kilbeggan",
+      "off_time": "5.40",
+      "runners": 19,
+      "score_race_velo_prime_sec": 1.2939,
+      "per_runner_avg_ms": 68.101,
+      "pdf_intel_attached_count": 19,
+      "spotlight_parsed_count": 19
+    },
+    {
+      "race_id": "925370",
+      "course": "Kilbeggan",
+      "off_time": "6.11",
+      "runners": 19,
+      "score_race_velo_prime_sec": 1.3386,
+      "per_runner_avg_ms": 70.45,
+      "pdf_intel_attached_count": 19,
+      "spotlight_parsed_count": 19
+    },
+    {
+      "race_id": "925311",
+      "course": "Kilbeggan",
+      "off_time": "6.46",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.7302,
+      "per_runner_avg_ms": 73.023,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "925312",
+      "course": "Kilbeggan",
+      "off_time": "7.21",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.7074,
+      "per_runner_avg_ms": 78.602,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "925313",
+      "course": "Kilbeggan",
+      "off_time": "7.56",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.9252,
+      "per_runner_avg_ms": 77.098,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 12
+    },
+    {
+      "race_id": "925314",
+      "course": "Kilbeggan",
+      "off_time": "8.30",
+      "runners": 17,
+      "score_race_velo_prime_sec": 1.4175,
+      "per_runner_avg_ms": 83.382,
+      "pdf_intel_attached_count": 17,
+      "spotlight_parsed_count": 17
+    },
+    {
+      "race_id": "923301",
+      "course": "Sandown",
+      "off_time": "5.15",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.5396,
+      "per_runner_avg_ms": 77.092,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "923300",
+      "course": "Sandown",
+      "off_time": "5.47",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.7155,
+      "per_runner_avg_ms": 79.499,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "923297",
+      "course": "Sandown",
+      "off_time": "6.20",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.5159,
+      "per_runner_avg_ms": 85.992,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "923298",
+      "course": "Sandown",
+      "off_time": "6.55",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.378,
+      "per_runner_avg_ms": 75.609,
+      "pdf_intel_attached_count": 5,
+      "spotlight_parsed_count": 5
+    },
+    {
+      "race_id": "923299",
+      "course": "Sandown",
+      "off_time": "7.30",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.4702,
+      "per_runner_avg_ms": 78.36,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "923302",
+      "course": "Sandown",
+      "off_time": "8.05",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.4644,
+      "per_runner_avg_ms": 77.404,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "923310",
+      "course": "Thirsk",
+      "off_time": "2.00",
+      "runners": 7,
+      "score_race_velo_prime_sec": 0.6187,
+      "per_runner_avg_ms": 88.38,
+      "pdf_intel_attached_count": 7,
+      "spotlight_parsed_count": 7
+    },
+    {
+      "race_id": "923311",
+      "course": "Thirsk",
+      "off_time": "2.30",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.769,
+      "per_runner_avg_ms": 85.441,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "923315",
+      "course": "Thirsk",
+      "off_time": "3.05",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.9615,
+      "per_runner_avg_ms": 80.124,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 12
+    },
+    {
+      "race_id": "923312",
+      "course": "Thirsk",
+      "off_time": "3.40",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.4047,
+      "per_runner_avg_ms": 80.934,
+      "pdf_intel_attached_count": 5,
+      "spotlight_parsed_count": 5
+    },
+    {
+      "race_id": "923313",
+      "course": "Thirsk",
+      "off_time": "4.18",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.7133,
+      "per_runner_avg_ms": 79.256,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "923314",
+      "course": "Thirsk",
+      "off_time": "4.53",
+      "runners": 5,
+      "score_race_velo_prime_sec": 0.4072,
+      "per_runner_avg_ms": 81.44,
+      "pdf_intel_attached_count": 5,
+      "spotlight_parsed_count": 5
+    },
+    {
+      "race_id": "923316",
+      "course": "Thirsk",
+      "off_time": "5.27",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.6039,
+      "per_runner_avg_ms": 67.099,
+      "pdf_intel_attached_count": 9,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "923037",
+      "course": "Uttoxeter",
+      "off_time": "1.40",
+      "runners": 13,
+      "score_race_velo_prime_sec": 1.0673,
+      "per_runner_avg_ms": 82.102,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "923043",
+      "course": "Uttoxeter",
+      "off_time": "2.10",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.7549,
+      "per_runner_avg_ms": 68.627,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "925371",
+      "course": "Uttoxeter",
+      "off_time": "2.40",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6875,
+      "per_runner_avg_ms": 68.747,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "923042",
+      "course": "Uttoxeter",
+      "off_time": "3.15",
+      "runners": 14,
+      "score_race_velo_prime_sec": 0.9413,
+      "per_runner_avg_ms": 67.233,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 14
+    },
+    {
+      "race_id": "923039",
+      "course": "Uttoxeter",
+      "off_time": "3.50",
+      "runners": 16,
+      "score_race_velo_prime_sec": 1.3544,
+      "per_runner_avg_ms": 84.651,
+      "pdf_intel_attached_count": 16,
+      "spotlight_parsed_count": 16
+    },
+    {
+      "race_id": "923040",
+      "course": "Uttoxeter",
+      "off_time": "4.25",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.7452,
+      "per_runner_avg_ms": 67.747,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "923038",
+      "course": "Uttoxeter",
+      "off_time": "5.00",
+      "runners": 9,
+      "score_race_velo_prime_sec": 0.5304,
+      "per_runner_avg_ms": 58.936,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 9
+    },
+    {
+      "race_id": "923041",
+      "course": "Uttoxeter",
+      "off_time": "5.35",
+      "runners": 13,
+      "score_race_velo_prime_sec": 0.9727,
+      "per_runner_avg_ms": 74.824,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "rp_UTT_20260724_1.40",
+      "course": "UTT",
+      "off_time": "1.40",
+      "runners": 13,
+      "score_race_velo_prime_sec": 1.021,
+      "per_runner_avg_ms": 78.536,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "rp_UTT_20260724_2.10",
+      "course": "UTT",
+      "off_time": "2.10",
+      "runners": 11,
+      "score_race_velo_prime_sec": 0.65,
+      "per_runner_avg_ms": 59.087,
+      "pdf_intel_attached_count": 11,
+      "spotlight_parsed_count": 11
+    },
+    {
+      "race_id": "rp_UTT_20260724_2.40",
+      "course": "UTT",
+      "off_time": "2.40",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6605,
+      "per_runner_avg_ms": 66.054,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "rp_UTT_20260724_3.15",
+      "course": "UTT",
+      "off_time": "3.15",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.8295,
+      "per_runner_avg_ms": 69.122,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 12
+    },
+    {
+      "race_id": "rp_UTT_20260724_3.50",
+      "course": "UTT",
+      "off_time": "3.50",
+      "runners": 16,
+      "score_race_velo_prime_sec": 1.0285,
+      "per_runner_avg_ms": 64.283,
+      "pdf_intel_attached_count": 16,
+      "spotlight_parsed_count": 16
+    },
+    {
+      "race_id": "rp_UTT_20260724_4.25",
+      "course": "UTT",
+      "off_time": "4.25",
+      "runners": 10,
+      "score_race_velo_prime_sec": 0.6711,
+      "per_runner_avg_ms": 67.108,
+      "pdf_intel_attached_count": 10,
+      "spotlight_parsed_count": 10
+    },
+    {
+      "race_id": "rp_UTT_20260724_5.00",
+      "course": "UTT",
+      "off_time": "5.00",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.7201,
+      "per_runner_avg_ms": 90.01,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "rp_UTT_20260724_5.35",
+      "course": "UTT",
+      "off_time": "5.35",
+      "runners": 14,
+      "score_race_velo_prime_sec": 1.1973,
+      "per_runner_avg_ms": 85.525,
+      "pdf_intel_attached_count": 14,
+      "spotlight_parsed_count": 14
+    },
+    {
+      "race_id": "923331",
+      "course": "York",
+      "off_time": "5.32",
+      "runners": 18,
+      "score_race_velo_prime_sec": 1.4909,
+      "per_runner_avg_ms": 82.827,
+      "pdf_intel_attached_count": 18,
+      "spotlight_parsed_count": 18
+    },
+    {
+      "race_id": "923330",
+      "course": "York",
+      "off_time": "6.05",
+      "runners": 13,
+      "score_race_velo_prime_sec": 0.902,
+      "per_runner_avg_ms": 69.381,
+      "pdf_intel_attached_count": 13,
+      "spotlight_parsed_count": 13
+    },
+    {
+      "race_id": "923334",
+      "course": "York",
+      "off_time": "6.40",
+      "runners": 8,
+      "score_race_velo_prime_sec": 0.5419,
+      "per_runner_avg_ms": 67.741,
+      "pdf_intel_attached_count": 8,
+      "spotlight_parsed_count": 8
+    },
+    {
+      "race_id": "923332",
+      "course": "York",
+      "off_time": "7.15",
+      "runners": 22,
+      "score_race_velo_prime_sec": 1.5141,
+      "per_runner_avg_ms": 68.821,
+      "pdf_intel_attached_count": 22,
+      "spotlight_parsed_count": 22
+    },
+    {
+      "race_id": "923329",
+      "course": "York",
+      "off_time": "7.50",
+      "runners": 6,
+      "score_race_velo_prime_sec": 0.3507,
+      "per_runner_avg_ms": 58.449,
+      "pdf_intel_attached_count": 6,
+      "spotlight_parsed_count": 6
+    },
+    {
+      "race_id": "923333",
+      "course": "York",
+      "off_time": "8.25",
+      "runners": 12,
+      "score_race_velo_prime_sec": 0.7752,
+      "per_runner_avg_ms": 64.603,
+      "pdf_intel_attached_count": 12,
+      "spotlight_parsed_count": 12
+    }
+  ],
+  "flatline_summary": {
+    "flatline_count": 0,
+    "total_races": 63,
+    "flatline_pct": 0.0,
+    "fully_uniform_count": 0,
+    "majority_tied_count": 0,
+    "races": []
+  }
+}

@@ -1,5 +1,24 @@
 """
 new_build_dashboard_server.py
+
+DEPRECATED AS A STANDALONE SERVER (2026-07-08). app/main.py is now the one
+canonical dashboard server -- it has every route this file defines (verified
+via route-set diff 2026-07-08; the only gap is /api/health vs app/main.py's
+equivalent /health). Running BOTH servers on the same port at different
+times is exactly what caused the Champion Intent Shadow panel to silently
+show "No Champion Intent data" for a full session on 2026-07-08: the
+frontend always calls /api/model-suggestions, but whichever of these two
+apps happened to be running that hour may not have had the route. See
+docs/current/ONE_TRUTH.md.
+
+This module is kept because app/main.py imports fetch_canonical_scorecard,
+fetch_canonical_learning_events, and _remap_numeric_race_ids from it
+directly -- do not delete. Do not run this file's __main__ block in
+production; use app/main.py (or .local_salvage/run_dashboard.py-style
+`from dotenv import load_dotenv; load_dotenv(); import uvicorn;
+uvicorn.run("app.main:app", ...)` launcher) instead.
+
+Original docstring (routes now mirrored on app/main.py):
 Minimal dashboard server for New Build paper-only reads.
 
 Serves:
@@ -30,8 +49,8 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from fastapi import FastAPI, Query
-    from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+    from fastapi import FastAPI, HTTPException, Query
+    from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
     from fastapi.staticfiles import StaticFiles
     import uvicorn
 except ImportError:
@@ -68,7 +87,14 @@ def _read_jsonl(path: Path) -> list[dict]:
 
 
 def _sb_get(path: str) -> list[dict]:
-    """Read-only Supabase REST fetch. No write path exists in this file."""
+    """Read-only Supabase REST fetch. No write path exists in this file.
+
+    Paginates via PostgREST Range headers -- the default max-rows (1000)
+    was silently truncating canonical_model_scorecards on any date with
+    >1000 rows (found 2026-07-16: a single day's canonical scorecard is
+    1236 rows once all four models + roles are persisted). Loops until a
+    page returns fewer rows than requested, or a fetched page is empty.
+    """
     try:
         from dotenv import load_dotenv
         load_dotenv(str(ROOT / ".env"))
@@ -78,15 +104,31 @@ def _sb_get(path: str) -> list[dict]:
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
     if not url or not key:
         return []
-    req = urllib.request.Request(
-        url + "/rest/v1" + path,
-        headers={"apikey": key, "Authorization": f"Bearer {key}"},
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            return json.loads(r.read().decode())
-    except Exception:
-        return []
+    page_size = 1000
+    all_rows: list[dict] = []
+    offset = 0
+    while True:
+        req = urllib.request.Request(
+            url + "/rest/v1" + path,
+            headers={
+                "apikey": key,
+                "Authorization": f"Bearer {key}",
+                "Range-Unit": "items",
+                "Range": f"{offset}-{offset + page_size - 1}",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                page = json.loads(r.read().decode())
+        except Exception:
+            break
+        if not page:
+            break
+        all_rows.extend(page)
+        if len(page) < page_size:
+            break
+        offset += page_size
+    return all_rows
 
 
 def fetch_canonical_scorecard(date: str) -> list[dict]:
@@ -507,6 +549,58 @@ def _build_no_rpr_race_map(rows: list[dict]) -> dict:
     return result
 
 
+_COURSE_ABBR = {
+    "Curragh": "CUR", "Uttoxeter": "UTT", "Cartmel": "CRT",
+    "Wolverhampton": "WOL", "Wolverhampton (AW)": "WOL",
+    "Kempton": "KEM", "Kempton (AW)": "KEM",
+    "Chelmsford": "CHE", "Chelmsford City": "CHE",
+    "Lingfield": "LIN", "Lingfield (AW)": "LIN",
+    "Southwell": "SOW", "Southwell (AW)": "SOW",
+    "Newcastle": "NCS", "Newcastle (AW)": "NCS",
+    "Dundalk": "DUN", "Dundalk (AW)": "DUN",
+    "Tramore": "TRM", "Brighton": "BRI", "Pontefract": "PON",
+    "Newmarket": "NMK", "Newmarket (July)": "NMK", "Newmarket (Rowley Mile)": "NMK",
+    "Worcester": "WOR", "Cork": "COR", "Chester": "CHS",
+    "Kilbeggan": "KLB", "Ascot": "ASC", "York": "YOR",
+    "Downpatrick": "DPT", "Killarney": "KLN",
+}
+
+
+def _load_injection_numeric_to_velo_race_id(date_str: str) -> dict[str, str]:
+    """Map RP numeric race_id (used by New Build) → rp_CRS_YYYYMMDD_H.MM (used by Live VÉLØ).
+
+    New Build's two-lane readiness keys races by the raw RP numeric race_id.
+    Live VÉLØ verdicts/snapshots key races by rp_{course}_{date}_{dot_time}.
+    Without this bridge the two never join and New Build always reads empty.
+    """
+    date_tag = date_str.replace("-", "_")
+    mapping: dict[str, str] = {}
+    inj_matches = sorted((ROOT / "data" / "racing_post_account_parsed").glob(
+        f"*{date_str}*/racecard_injection.json"
+    )) + sorted((ROOT / "data" / "racing_post_account_parsed").glob(
+        f"*{date_tag}*/racecard_injection.json"
+    ))
+    if not inj_matches:
+        return mapping
+    inj = _load_json(inj_matches[-1], {})
+    for race in (inj.get("races") or []):
+        num = str(race.get("race_id", ""))
+        if not num:
+            continue
+        course_full = race.get("course", "")
+        course_code = _COURSE_ABBR.get(course_full, course_full[:3].upper())
+        off_raw = race.get("off_time", "")
+        if ":" in off_raw:
+            h, m = map(int, off_raw.split(":"))
+            if h >= 13:
+                h -= 12
+            dot = f"{h}.{m:02d}"
+        else:
+            dot = off_raw
+        mapping[num] = f"rp_{course_code}_{date_str.replace('-', '')}_{dot}"
+    return mapping
+
+
 def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
     """Serve the official local Live VÉLØ runner snapshot in dashboard shape.
 
@@ -522,6 +616,15 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
     shadow_map = _load_radical_shadow_for_date(date_str)
 
     # Load New Build two-lane Lane A top3 per race
+    #
+    # No numeric_to_velo remap here (2026-07-18 fix): New Build's own
+    # race_day_scorecards use plain RP numeric race_id, and so do these live
+    # runner snapshot rows (`row.get("race_id")` below) -- they match directly,
+    # 60/60 confirmed. Remapping numeric->rp_COURSE_DATE_TIME here (that scheme
+    # only applies to /api/model-suggestions's CHAMPION_INTENT_SHADOW rows, per
+    # the frontend's own comment on this exact confusion) silently broke the
+    # join 100% of the time, showing "No New Build data for this date" every
+    # single day regardless of whether New Build actually ran.
     tl_data, _ = _load_new_build_readiness(date_str)
     nb_lane_a_map: dict[str, dict] = {}
     for card in tl_data.get("race_day_scorecards", []):
@@ -951,6 +1054,20 @@ async def canonical_race_truth(date: str = Query(default=None), race_id: str = Q
     })
 
 
+def _remap_numeric_race_ids(payload: dict, date_str: str) -> dict:
+    """New Build / Champion Intent Shadow lanes key rows by RP's raw numeric
+    race_id; every other lane (and the dashboard's own race grouping) uses
+    rp_{course}_{date}_{dot_time}. Without this, those lanes never join to
+    a race in the UI regardless of date."""
+    numeric_to_velo = _load_injection_numeric_to_velo_race_id(date_str)
+    if not numeric_to_velo:
+        return payload
+    for row in payload.get("rows", []) or []:
+        rid = str(row.get("race_id") or "")
+        if rid in numeric_to_velo:
+            row["race_id"] = numeric_to_velo[rid]
+    return payload
+
 @app.get("/api/model-suggestions")
 async def model_suggestions(date: str = Query(default=None)):
     """Read-only, current-day pre-race suggestions across all model lanes.
@@ -964,7 +1081,7 @@ async def model_suggestions(date: str = Query(default=None)):
     """
     from scripts.ops.model_suggestions_builder import build_model_suggestions
     target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    return JSONResponse(build_model_suggestions(target))
+    return JSONResponse(_remap_numeric_race_ids(build_model_suggestions(target), target))
 
 
 @app.get("/api/model-suggestions-race")
@@ -976,6 +1093,100 @@ async def model_suggestions_race(date: str = Query(default=None), race_id: str =
         return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
     return JSONResponse(build_model_suggestions(target, race_id=race_id))
 
+
+def _load_agent_verdicts_for_date(date_str: str) -> dict[str, dict]:
+    """race_id|normalized_horse -> agent card, from Deep Race Agent V1's dated
+    report. Best-effort: returns {} if the report hasn't run for this date."""
+    path = ROOT / "data" / "reports" / f"deep_race_agent_v1_{date_str.replace('-', '_')}_v2.json"
+    data = _load_json(path, {})
+    out: dict[str, dict] = {}
+    for card in data.get("agent_cards", []) if isinstance(data, dict) else []:
+        horse_key = re.sub(r"[^a-z0-9]", "", str(card.get("horse", "")).lower())
+        race_id = str(card.get("race_id") or "")
+        out[f"{race_id}|{horse_key}"] = card.get("agent", {})
+    return out
+
+
+@app.get("/api/plot-conviction")
+async def plot_conviction(date: str = Query(default=None)):
+    """RP PDF ratings-sheet high-conviction picks (postdata_score / plot_conviction),
+    read straight from racecard_merged, enriched with Deep Race Agent's verdict
+    where that report has run for the date. Read-only -- joins whatever's on
+    disk, never scores/writes. Wired 2026-07-18 alongside the postdata_score/
+    plot_conviction -> verdict logic in build_deep_race_agent_v1.py; this panel
+    is how the operator actually sees which horses those PDF signals fired on.
+    """
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    agent_verdicts = _load_agent_verdicts_for_date(target)
+
+    picks: list[dict] = []
+    for path in sorted((ROOT / "data" / "racecard_merged").glob(f"racecard_*_{target}.json")):
+        payload = _load_json(path, {})
+        races = payload.get("races") if isinstance(payload, dict) else None
+        if not isinstance(races, dict):
+            continue
+        venue = payload.get("venue")
+        for race_key, race in races.items():
+            if not isinstance(race, dict):
+                continue
+            race_id = str(race.get("race_id") or "")
+            off_time = race.get("off") or race.get("off_time") or race_key
+            for h in race.get("horses") or []:
+                if not isinstance(h, dict):
+                    continue
+                postdata_score = h.get("postdata_score")
+                plot_conv = h.get("plot_conviction")
+                # Deliberately tighter than _agent_judgement's 0.3/0.7 thresholds
+                # (which just need to move a verdict) -- this panel is a visual
+                # shortlist for the operator, so the bar is "genuinely strong",
+                # not "any signal at all".
+                strong_postdata = isinstance(postdata_score, (int, float)) and abs(postdata_score) >= 0.5
+                strong_plot = isinstance(plot_conv, (int, float)) and plot_conv >= 0.7
+                if not (strong_postdata or strong_plot):
+                    continue
+                horse_key = re.sub(r"[^a-z0-9]", "", str(h.get("horse_name", "")).lower())
+                agent = agent_verdicts.get(f"{race_id}|{horse_key}", {})
+                picks.append({
+                    "venue": venue,
+                    "off_time": off_time,
+                    "race_id": race_id,
+                    "horse": h.get("horse_name"),
+                    "postdata_score": postdata_score,
+                    "plot_conviction": plot_conv,
+                    "spotlight_comment": h.get("spotlight_comment"),
+                    "agent_verdict": agent.get("agent_verdict"),
+                    "support_score": agent.get("support_score"),
+                    "risk_score": agent.get("risk_score"),
+                })
+
+    picks.sort(key=lambda p: (p.get("plot_conviction") or 0) + abs(p.get("postdata_score") or 0), reverse=True)
+    total_found = len(picks)
+    picks = picks[:30]
+    return JSONResponse({
+        "date": target,
+        "source": "racecard_merged (PDF ratings-sheet fields) + deep_race_agent_v1 verdict join",
+        "thresholds": {"postdata_score_abs_gte": 0.5, "plot_conviction_gte": 0.7},
+        "total_found": total_found,
+        "count": len(picks),
+        "picks": picks,
+    })
+
+
+@app.get("/old_velo_three_option_card_latest.json", include_in_schema=False)
+async def old_velo_three_option_card():
+    """Serve the Old VELO WIN/PLACE/LONGSHOT operator card for the dashboard.
+
+    Ported from app/main.py 2026-07-18 -- that route existed in production
+    but was never added here, so this (local dev) server 404'd on the exact
+    path the frontend fetches, and the WIN/PLACE/LONGSHOT lane silently
+    showed nothing regardless of whether Step 9.6 had actually run. Same
+    recurring pattern as the /api/plot-conviction and /api/model-suggestions
+    parity gaps between these two servers.
+    """
+    card_path = ROOT / "data" / "reports" / "old_velo_three_option_card_latest.json"
+    if not card_path.exists():
+        raise HTTPException(status_code=404, detail="Three-option card not found")
+    return FileResponse(str(card_path), media_type="application/json")
 
 @app.get("/api/health")
 async def health():

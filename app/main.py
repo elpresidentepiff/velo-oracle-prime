@@ -1373,7 +1373,6 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
     builder + numeric-race_id remap as the other server rather than
     duplicating the join logic."""
     import datetime as _dt
-
     from scripts.ops.model_suggestions_builder import build_model_suggestions
     from scripts.ops.new_build_dashboard_server import _remap_numeric_race_ids
 
@@ -1385,7 +1384,6 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
 async def model_suggestions_race_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Same as /api/model-suggestions, filtered to a single race_id."""
     import datetime as _dt
-
     from scripts.ops.model_suggestions_builder import build_model_suggestions
 
     target = date or _dt.date.today().isoformat()
@@ -1399,7 +1397,6 @@ async def doctrine_scorecard_proxy():
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation
     to a single server — see docs/current/ONE_TRUTH.md)."""
     import json as _json
-
     path = pathlib.Path(__file__).parent.parent / "data" / "doctrine_scorecard_latest.json"
     if not path.exists():
         return JSONResponse(
@@ -1420,7 +1417,6 @@ async def doctrine_scorecard_proxy():
 async def canonical_scorecard_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
-
     from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
@@ -1440,7 +1436,6 @@ async def canonical_scorecard_proxy(date: str = Query(default=None)):
 async def canonical_learning_events_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
-
     from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events
 
     target = date or _dt.date.today().isoformat()
@@ -1460,7 +1455,6 @@ async def canonical_learning_events_proxy(date: str = Query(default=None)):
 async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
-
     from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events, fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
@@ -1480,6 +1474,16 @@ async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: s
             "no_supabase_write": True,
         }
     )
+
+
+@app.get("/api/plot-conviction")
+async def plot_conviction_proxy(date: str = Query(default=None)):
+    """Ported from new_build_dashboard_server.py 2026-07-18 (dashboard consolidation,
+    same pattern as canonical-scorecard etc.). High-conviction RP PDF ratings-sheet
+    picks (postdata_score / plot_conviction), enriched with Deep Race Agent V1's
+    verdict where available. See HARD RULES #8-9 in THE_ONE_TRUTH.md."""
+    from scripts.ops.new_build_dashboard_server import plot_conviction as _plot_conviction
+    return await _plot_conviction(date=date)
 
 
 @app.get("/api/old-velo-verdicts")
@@ -1514,6 +1518,7 @@ async def old_velo_verdicts(date: str = Query(default=None)):
                 "router_reasons": top.get("router_reasons") or [],
                 "execution_allowed": top.get("execution_allowed"),
                 "place_prob": top.get("place_prob"),
+                "longshot_prob": top.get("longshot_prob"),
                 "archetype_label": top.get("race_archetype") or "",
             }
         )
@@ -1697,18 +1702,26 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             from supabase import create_client as _sb_create
 
             db = _sb_create(sb_url, sb_key)
-            resp = (
-                db.table("velo_verdicts")
-                .select(
-                    "race_id, generated_at, decision_tier, velo_prime_prob, "
-                    "market_deception_score, improvement_score, place_prob, "
-                    "execution_allowed, assigned_product, router_reasons, full_analysis"
-                )
-                .gte("generated_at", f"{target_date}T00:00:00")
-                .lt("generated_at", f"{target_date}T23:59:59")
-                .execute()
+
+            # Shared, bug-fixed loader -- see src/velo/verdict_loader.py for
+            # why this can't be a hand-rolled generated_at query. Prefer the
+            # race_ids already loaded from the local verdict file (reliable
+            # regardless of when scoring actually happened) over letting the
+            # loader re-derive from the racecard cache.
+            from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
+
+            _known_race_ids = [v.get("race_id") for v in raw_verdicts if v.get("race_id")]
+            _select_cols = (
+                "race_id, generated_at, decision_tier, velo_prime_prob, "
+                "market_deception_score, improvement_score, place_prob, "
+                "execution_allowed, assigned_product, router_reasons, full_analysis"
             )
-            sb_verdict_rows = resp.data or []
+            sb_verdict_rows, _ = _shared_load_verdicts(
+                target_date,
+                select=_select_cols,
+                race_ids=_known_race_ids or None,
+                local_fallback=False,
+            )
             for row in sb_verdict_rows:
                 gov_by_race[row["race_id"]] = row
                 # Extract No-RPR top pick from full_analysis.predictions
@@ -1819,6 +1832,8 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "Wetherby": "WET",
         "Wincanton": "WIN",
         "Worcester": "WOR",
+        "Downpatrick": "DPT",
+        "Killarney": "KLN",
     }
     _gc_num_to_velo: dict[str, str] = {}
     _parsed_root_gc = root / "data" / "racing_post_account_parsed"
@@ -1890,6 +1905,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 _num = str(row.get("race_id", ""))
                 _vrid = _gc_num_to_velo.get(_num, _num)
                 tri_lane_by_race[_vrid] = row
+                tri_lane_by_race[_num] = row  # always index by numeric RP race_id too
         except Exception as e:
             logger.warning("Could not read Tri-Lane stress test file %s: %s", tri_lane_path, e)
 
@@ -2072,6 +2088,10 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         key = re.sub(r"[^a-z0-9]+", "", str(value or "").lower())
         if key == "wolverhampton":
             return "wolverhamptonaw"
+        if key == "utt":
+            return "uttoxeter"
+        if key == "nby":
+            return "newbury"
         return key
 
     verdicts = []
@@ -2308,24 +2328,21 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     # the canonical course/time row.
     course_aliases = {
         "NBY": "NEWBURY",
+        "UTT": "UTTOXETER",
     }
-    canonical_new_build_keys = {
-        (
+    def _course_time_key(row: dict) -> tuple[str, str]:
+        return (
             course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
             _norm_time(row.get("off_time", "")),
         )
-        for row in verdicts
-        if row.get("new_build_top3")
+
+    canonical_numeric_keys = {
+        _course_time_key(row) for row in verdicts if str(row.get("race_id", "")).isdigit()
     }
     verdicts = [
         row
         for row in verdicts
-        if row.get("new_build_top3")
-        or (
-            course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
-            _norm_time(row.get("off_time", "")),
-        )
-        not in canonical_new_build_keys
+        if str(row.get("race_id", "")).isdigit() or _course_time_key(row) not in canonical_numeric_keys
     ]
 
     # Sort by off_time

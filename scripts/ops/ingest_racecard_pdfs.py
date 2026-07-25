@@ -979,9 +979,80 @@ def print_summary(merged: dict, venue: str, date: str):
 
 
 def save_output(merged: dict, venue: str, date: str, output_dir: Path):
-    """Save merged data as JSON."""
+    """Save merged data as JSON.
+
+    If racecard_merged/racecard_{venue}_{date}.json already exists (built by
+    Step 5.5 build_racecard_merged_from_injection.py from the real RP HTML
+    capture — carrying real race_id + real numeric horse_id), MERGE the
+    PDF-derived fields into that existing structure per-horse (matched by
+    horse_name) instead of overwriting it wholesale. A wholesale overwrite
+    destroys race_id/horse_id (PDFs never carry RP's internal numeric IDs),
+    which causes run_prime_today.py --source rp to mint synthetic IDs on the
+    next scoring pass and produce a second, conflicting verdict for the same
+    race (found 2026-07-14: Downpatrick/Killarney double-scored this way).
+
+    Two additional guards (2026-07-17 — Hamilton 14-race phantom-card incident,
+    caused by a stale/mismatched PDF batch merging in under today's file):
+      - Refuse to merge into an existing file whose own `date` field doesn't
+        match the `date` argument. A file is keyed by date for a reason.
+      - Never let PDF-only data mint a brand-new race_time key into an
+        existing (real HTML-sourced) file. PDFs cannot carry race_id, so any
+        such entry can never resolve a result and silently corrupts today's
+        card with a phantom race. Only merge into race_time keys that already
+        exist; unmatched incoming race_times are dropped with a warning.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     out_path = output_dir / f"racecard_{venue}_{date}.json"
+
+    existing = None
+    if out_path.exists():
+        try:
+            existing = json.loads(out_path.read_text())
+        except Exception:
+            existing = None
+
+    if existing is not None and existing.get("date") and existing.get("date") != date:
+        raise RuntimeError(
+            f"Refusing to merge: {out_path} is dated {existing.get('date')!r}, "
+            f"but this ingestion run is for {date!r}. Stale/mismatched file — "
+            "investigate before overwriting."
+        )
+
+    if existing and isinstance(existing.get("races"), dict):
+        existing_races = existing["races"]
+        for race_time, race_data in merged.items():
+            if race_time not in existing_races:
+                print(
+                    f"  WARNING: dropping PDF-only race at {race_time} — no matching "
+                    f"race_id in existing {out_path.name} (would mint a synthetic ID "
+                    "and can never resolve a result). Not merged."
+                )
+                continue
+            existing_race = existing_races[race_time]
+            existing_horses_by_name = {
+                (h.get("horse_name") or "").strip().lower(): h
+                for h in existing_race.get("horses", [])
+                if h.get("horse_name")
+            }
+            merged_horses = []
+            for new_horse in race_data.get("horses", []):
+                key = (new_horse.get("horse_name") or "").strip().lower()
+                base = existing_horses_by_name.get(key)
+                if base is not None:
+                    base.update(new_horse)
+                    merged_horses.append(base)
+                else:
+                    merged_horses.append(new_horse)
+            existing_race["horses"] = merged_horses
+            # Only fill in race-level PDF fields where the existing (real HTML
+            # capture) value is missing — never clobber real data with a PDF fallback.
+            for key in ("postdata_pick", "topspeed_pick", "betting_forecast", "spotlight_verdict"):
+                if not existing_race.get(key) and race_data.get(key):
+                    existing_race[key] = race_data[key]
+        existing["generated_at"] = datetime.utcnow().isoformat()
+        out_path.write_text(json.dumps(existing, indent=2, default=str))
+        print(f"\n  Merged into existing (real race_id/horse_id preserved): {out_path}")
+        return out_path
 
     output = {
         "venue": venue,

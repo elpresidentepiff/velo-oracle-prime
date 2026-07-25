@@ -6,6 +6,38 @@ from typing import Dict, List, Optional
 
 FORBIDDEN_COUNCIL_EVIDENCE_TERMS = ("racing api",)
 
+# Phrases that, near a "racing api" mention, indicate the text is declaring
+# the ban rather than citing Racing API as a live evidence/data source.
+# Confirmed 2026-07-11: a bare substring match on "racing api" false-positived
+# on docs/current/ONE_TRUTH.md itself ("Racing API is PERMANENTLY DECOMMISSIONED
+# for live use"), which would make the current canonical truth file permanently
+# fail this gate. The hard law only forbids Racing API as a live evidence
+# SOURCE (see CLAUDE.md/THE_ONE_TRUTH.md), not documentation stating the ban.
+_BANNING_LANGUAGE_WINDOW = 120
+_BANNING_LANGUAGE_TERMS = (
+    "decommission", "permanently", "no longer", "not live", "is not connected",
+    "must not", "banned", "ban ", "must never", "never call", "never depend",
+    "blocker", "archived legacy", "deleted", "do not use", "does not exist",
+    "is stale", "client files deleted",
+)
+
+
+def _forbidden_term_is_live_usage(content_lower: str, term: str) -> bool:
+    """True if `term` appears in `content_lower` outside the context window
+    of banning/deprecation language -- i.e. looks like a live evidence
+    source citation, not a statement that the source is forbidden."""
+    start = 0
+    while True:
+        idx = content_lower.find(term, start)
+        if idx == -1:
+            return False
+        window = content_lower[
+            max(0, idx - _BANNING_LANGUAGE_WINDOW): idx + len(term) + _BANNING_LANGUAGE_WINDOW
+        ]
+        if not any(b in window for b in _BANNING_LANGUAGE_TERMS):
+            return True
+        start = idx + len(term)
+
 
 class EvidencePacket:
     def __init__(self, date_str: str):
@@ -81,10 +113,16 @@ class EvidencePacket:
             repo_root
         )
 
-        # One Truth
+        # One Truth — docs/current/ONE_TRUTH.md is the actual canonical truth
+        # per CLAUDE.md's own header ("SINGLE SOURCE OF TRUTH"). The old
+        # wiring map doc predates the Racing API decommission and still
+        # documents that dead architecture verbatim, which legitimately
+        # trips the forbidden-evidence check below. Try the canonical file
+        # first; keep the old doc only as a fallback if it's ever missing.
         self._find_evidence(
             "one_truth_file",
             [
+                "docs/current/ONE_TRUTH.md",
                 "docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md"
             ],
             repo_root,
@@ -98,7 +136,10 @@ class EvidencePacket:
         ]
         forbidden_sources = [
             name for name, info in self.data["evidence_sources"].items()
-            if any(term in str(info.get("content") or "").lower() for term in FORBIDDEN_COUNCIL_EVIDENCE_TERMS)
+            if any(
+                _forbidden_term_is_live_usage(str(info.get("content") or "").lower(), term)
+                for term in FORBIDDEN_COUNCIL_EVIDENCE_TERMS
+            )
         ]
         
         if required_missing or forbidden_sources:

@@ -1,6 +1,6 @@
 {
   "date": "2026-06-10",
-  "generated_at": "2026-06-10T22:14:33.667494+00:00",
+  "generated_at": "2026-06-27T00:50:26.208101+00:00",
   "source_truth": "RP_MERGED_DEGRADED",
   "run_ids_seen": [
     "e04647db"
@@ -21,13 +21,13 @@
   "sigma_artifact": {
     "status": "PRESENT",
     "path": "data/sigma_results/sigma_results_2026_06_10.json",
-    "sr": 0.2069,
-    "wins": 6,
-    "evaluated_count": 29,
+    "sr": 0.2273,
+    "wins": 5,
+    "evaluated_count": 22,
     "sigma_status": "PASS",
     "completeness_gate": null,
     "learning_blocked": null,
-    "expected_predictions": 34,
+    "expected_predictions": 26,
     "result_races_available": null,
     "matched": null,
     "coverage_ratio": null,
@@ -54,15 +54,24 @@
   "decision_policy_gate_status": "NEEDS_MORE_DAYS",
   "decision_policy_gate_top_picks": 87,
   "learning_admission": {
-    "eligibility_status": "NOT_RUN",
-    "eligible_rows": 0,
+    "eligibility_status": "OUTCOME_ONLY_EOD_REPLAY_PASS",
+    "eligible_rows": 26,
     "excluded_rows": 0,
     "consumed_shadow_before": 0,
     "consumed_live_before": 0,
     "live_state_hash": "UNKNOWN",
-    "build_events_result": {},
+    "build_events_result": {
+      "phase": "OUTCOME_ONLY_EOD_REPLAY",
+      "events_built": 26,
+      "events_written": 26,
+      "status": "PASS",
+      "sentient_state_touched": false,
+      "shadow_state_touched": true,
+      "duplicates_skipped_second_run": 26,
+      "consumed_live": false
+    },
     "admission_packet": "PRESENT",
-    "recommendation": "PENDING"
+    "recommendation": "OUTCOME_ONLY_EOD_REPLAY_COMPLETE"
   },
   "race_shape_v1": {
     "race_shape_model_v1": "DESIGN_PENDING",
@@ -190,5 +199,5 @@
     "promotion eligibility: BLOCKED if flatline_count > 0 OR identity_failure_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
     "shadow consume: BLOCKED if council_verdict not PASS_TO_LEARNING"
   ],
-  "next_safe_command": "Source truth contaminated \u2014 do not consume for learning. Run council audit first."
+  "next_safe_command": "Manual recovery learning is recorded; keep promotion blocked until an automated run proves pipeline truth."
 }

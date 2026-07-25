@@ -1,16 +1,14 @@
-# VELO Sigma Results — 2026-06-17
+# VELO Supported RP Sigma - 2026-06-17
 
-**Status:** PASS — ABOVE BASELINE — model calibration healthy
+Status: PARTIAL_RESULTS_DIAGNOSTIC_ONLY
+Source: racing_post_supported_sigma
 
 | Metric | Value |
-|---|---|
-| Evaluated | 35 |
-| Wins | 16 (45.7%) |
+|---|---:|
+| Evaluated | 34 |
+| Wins | 16 |
 | Frames | 10 |
-| Misses | 9 |
+| SR | 47.1% |
+| Frame rate | 76.5% |
 | Non-runners excluded | 0 |
-| No-result | 0 |
-| High-conf (VP≥0.30) | 8 picks, 37.5% SR |
-| sigma_audits written | 20/35 |
-
-**raw_sigma_audits_preserved:** true
+| No-result | 1 |

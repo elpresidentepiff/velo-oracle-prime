@@ -1,0 +1,59 @@
+{
+  "schema_version": "old_velo_rp_newspaper_file_gate_v1",
+  "generated_at": "2026-06-28T13:46:50.574257+00:00",
+  "date": "2026-06-28",
+  "status": "PASS",
+  "execute": true,
+  "required_keys": {
+    "0011_XX": "Postdata grid",
+    "0012_XX": "Colour racecard",
+    "0015_OR": "Official ratings/history",
+    "0016_XX": "Spotlight comments",
+    "0032_TS": "Topspeed ratings"
+  },
+  "excluded_keys": {
+    "0010_XX": "Selection box / competitor consensus"
+  },
+  "expected_venues": [
+    "CRT"
+  ],
+  "search_dirs": [
+    "data/incoming_pdfs"
+  ],
+  "stage_dir": "/mnt/c/Users/puror/velo-oracle-prime/data/incoming_pdfs/2026-06-28",
+  "venues": {
+    "CRT": {
+      "complete": true,
+      "missing": [],
+      "found": {
+        "0011_XX": "data/incoming_pdfs/CRT_20260628_00_00_F_0011_XX_Cartmel.pdf",
+        "0012_XX": "data/incoming_pdfs/CRT_20260628_00_00_F_0012_XX_Cartmel.pdf",
+        "0015_OR": "data/incoming_pdfs/CRT_20260628_00_00_F_0015_OR_Cartmel.pdf",
+        "0016_XX": "data/incoming_pdfs/CRT_20260628_00_00_F_0016_XX_Cartmel.pdf",
+        "0032_TS": "data/incoming_pdfs/CRT_20260628_00_00_F_0032_TS_Cartmel.pdf"
+      },
+      "staged": {
+        "0011_XX": "/mnt/c/Users/puror/velo-oracle-prime/data/incoming_pdfs/2026-06-28/CRT_20260628_00_00_F_0011_XX_Cartmel.pdf",
+        "0012_XX": "/mnt/c/Users/puror/velo-oracle-prime/data/incoming_pdfs/2026-06-28/CRT_20260628_00_00_F_0012_XX_Cartmel.pdf",
+        "0015_OR": "/mnt/c/Users/puror/velo-oracle-prime/data/incoming_pdfs/2026-06-28/CRT_20260628_00_00_F_0015_OR_Cartmel.pdf",
+        "0016_XX": "/mnt/c/Users/puror/velo-oracle-prime/data/incoming_pdfs/2026-06-28/CRT_20260628_00_00_F_0016_XX_Cartmel.pdf",
+        "0032_TS": "/mnt/c/Users/puror/velo-oracle-prime/data/incoming_pdfs/2026-06-28/CRT_20260628_00_00_F_0032_TS_Cartmel.pdf"
+      }
+    }
+  },
+  "excluded_files_seen": [
+    "data/incoming_pdfs/CRT_20260628_00_00_F_0010_XX_Cartmel.pdf",
+    "data/incoming_pdfs/CUR_20260628_00_00_F_0010_XX_Curragh.pdf",
+    "data/incoming_pdfs/UTT_20260628_00_00_F_0010_XX_Uttoxeter.pdf",
+    "data/incoming_pdfs/WOL_20260628_00_00_F_0010_XX_Wolverhampton.pdf"
+  ],
+  "ingestion_results": [
+    {
+      "venue": "CRT",
+      "returncode": 0,
+      "stdout_tail": "106  111  0.50       0.580      \n  Fiveonefive                127  129   -2 9711  109  124  1.00  0.47 0.868       [PLOT]\n  Goodwin Face               110  103    7        95   95  0.50       0.540      \n  High Court Cave            123             50   91                  0.240      \n  Miss Maverick              122  118    4  101   90  106  0.65  0.13 0.542      \n  Nap Hand                   112           11113  109             0.40 0.400      \n  Winds Of Winter            108  106    2 8412  103   88  0.80  0.47 0.758       [NEAR]\n  Zillow                                   2810  107                  0.050      \n\n  4.15 - 2m 5f 34y (Class 2) Last 9 outings(pos,rating,beaten/winning distance)\n  Horse                       OR  BWL  dOR   TS  TSM  RPR  Plot  Comp  Conv  Spot\n  --------------------------------------------------------------------------------------\n  Breizh River               127  131   -4   83  103  107  1.00  0.40 0.850       [PLOT]\n  Buy Some Time              114  107    7   71   55  107  0.50       0.550      \n  Got Grey                   111  112   -1  128  109  112  1.00  0.33 0.583       [PLOT]\n  Light N Strike             130  135   -5   69  115  116  1.00  0.87 0.608       [PLOT]\n  Pour Les Filles            130  130    0 10610  106  130  1.00  0.27 0.668       [PLOT]\n  Sean Og                    108  104    4  106  104   93  0.65       0.510      \n\n  4.55 - 3m 1f 107y (Class 5) Last 8 outings\n  Horse                       OR  BWL  dOR   TS  TSM  RPR  Plot  Comp  Conv  Spot\n  --------------------------------------------------------------------------------------\n  Aill Dubh                   76   74    2  668   62   74  0.80  0.67 0.438       [NEAR]\n  Blazing Court               83   94  -11        46   94  1.00  0.80 0.880       [PLOT]\n  Croagh Patrick              78   95  -17  100   79   78  1.00  1.00 0.680       [PLOT]\n  Halfway House Lad           89   82    7  979   86   70  0.50  1.00 0.750      \n  Judicial Review             84   87   -3        64   79  1.00  0.73 0.963       [PLOT]\n  Kingofthegame               75            918   61             0.47 0.067      \n  Lights Are Green            83   91   -8        85   85  1.00  1.00 0.700       [PLOT]\n  Shantou Show               100            838   86                  0.200      \n  Star Turn                   82             97                  0.47 0.417      \n  You Did                     90                                      0.050      \n\n  5.28 - 2m 1f 61y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)\n  Horse                       OR  BWL  dOR   TS  TSM  RPR  Plot  Comp  Conv  Spot\n  --------------------------------------------------------------------------------------\n  Bentley Road                96            616   52                  0.200      \n  Blue Reed                   97            379   83             0.53 0.333      \n  Clean Getaway               89   90   -1   94   88   72  1.00  0.60 0.790       [PLOT]\n  Conquer The Breeze         109  102    7  989  102   78  0.50       0.330      \n  Cuzco Du Mathan             95  107  -12  759   86  102  1.00  1.00 0.740       [PLOT]\n  Dexter                      93   92    1 7610   92   92  0.90  0.47 0.828       [PLOT]\n  Dream Jet                   99  106   -7  606   54   93  1.00  0.67 0.768       [PLOT]\n  Fort Randall               105             93                       0.100      \n  Ghasham                    102   98    4  619   92   98  0.65       0.610      \n  Intenzo                     99            949   88             0.13 0.233      \n  Zumbi                      103   96    7        87   88  0.50  0.60 0.300      \n\n==========================================================================================\n  TOTAL: 70 horses across 7 races\n  PLOT CANDIDATES (score >= 0.7): 22\n==========================================================================================\n\n  Saved: /mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CRT_2026-06-28.json\n",
+      "stderr_tail": "/mnt/c/Users/puror/velo-oracle-prime/scripts/ops/ingest_racecard_pdfs.py:989: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n  \"generated_at\": datetime.utcnow().isoformat(),\n"
+    }
+  ],
+  "blocked_reason": null
+}

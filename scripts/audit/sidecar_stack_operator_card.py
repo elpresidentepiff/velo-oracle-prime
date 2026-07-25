@@ -36,6 +36,7 @@ from supabase import create_client
 
 from src.velo.place_signal_classifier import VP30_T, MDS_HIGH_T, IMPROVE_HIGH_T
 from src.velo.race_metadata_resolver import RaceMetadataResolver
+from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
 
 load_dotenv(ROOT / ".env")
 
@@ -90,21 +91,23 @@ def detect_latest_date(sb) -> str:
     return rows[0]["generated_at"][:10]
 
 
+_SELECT_COLS = (
+    "race_id,decision_tier,velo_prime_prob,market_deception_score,"
+    "improvement_score,place_prob,full_analysis,execution_allowed,generated_at"
+)
+
+
 def load_verdicts(sb, date_str: str) -> list[dict]:
-    """Load all verdicts for a given date from velo_verdicts."""
-    rows = (
-        sb.table("velo_verdicts")
-        .select(
-            "race_id,decision_tier,velo_prime_prob,market_deception_score,"
-            "improvement_score,place_prob,full_analysis,execution_allowed,generated_at"
-        )
-        .gte("generated_at", f"{date_str}T00:00:00")
-        .lt("generated_at", f"{date_str}T23:59:59")
-        .order("velo_prime_prob", desc=True)
-        .execute()
-        .data
-    )
-    return rows
+    """Load all verdicts for a given date via the shared, bug-fixed loader.
+
+    `sb` is unused here now (kept for call-site compatibility) -- see
+    src/velo/verdict_loader.py for why this can't be a hand-rolled
+    generated_at query. This script had exactly that bug until 2026-07-23.
+    """
+    rows, method = _shared_load_verdicts(date_str, select=_SELECT_COLS, root=ROOT)
+    if method != "race_id":
+        print(f"  [sidecar_stack_operator_card] verdict load used fallback method: {method}")
+    return sorted(rows, key=lambda r: r.get("velo_prime_prob") or 0.0, reverse=True)
 
 
 def extract_top_runner(verdict: dict) -> dict:

@@ -1,0 +1,5008 @@
+{
+  "generated_at": "2026-07-08T16:15:37.518006Z",
+  "status": "DEEP_RACE_AGENT_V1_PAPER_ONLY",
+  "live_writes": false,
+  "racing_api_used": false,
+  "source_review": "/mnt/c/Users/puror/velo-oracle-prime/data/reports/tri_lane_agent_review_2026_07_08_v2.json",
+  "downloads": "/home/purorpurorestrepo1981/Downloads",
+  "summary": {
+    "cards": 42,
+    "raw_cards": 42,
+    "excluded_non_uk_ire_cards": 0,
+    "excluded_non_uk_ire_courses": [],
+    "agent_verdict_counts": {
+      "CASH_RUN_REVIEW": 4,
+      "NO_BET": 38
+    },
+    "identity_confidence_counts": {
+      "LIVE_ONLY": 21,
+      "NO_LOCAL_IDENTITY_EVIDENCE": 21
+    },
+    "ratings_rows": 0,
+    "performance_rows": 0,
+    "raceform_loaded": true,
+    "race_pdf_files": 0,
+    "race_pdf_sets": 0,
+    "live_identity_files_loaded": 5,
+    "live_identity_runners_loaded": 260,
+    "live_identity_duplicates_removed": 0
+  },
+  "pdf_inventory": {
+    "race_pdf_files": 0,
+    "race_pdf_sets": 0
+  },
+  "agent_cards": [
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CHP_20260708_7.01",
+      "off_time": "7.01",
+      "course": "CHP",
+      "race_name": "7f 16y (Class 6) Last 8 outings",
+      "horse": "Escape Magic",
+      "priority": "EXECUTION_REVIEW",
+      "tri_action": "TRI_CASH_RUN",
+      "agent": {
+        "agent_verdict": "CASH_RUN_REVIEW",
+        "support_score": 7,
+        "risk_score": 3,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.637",
+          "SPOTLIGHT_POSITIVE:0.75",
+          "BHA_OR_DIFF:RAISED:5",
+          "FRAME_GATE:0.814",
+          "WIN_GATE:0.748",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "cash-run shortlist only; paper until Sigma confirms",
+        "key_numbers": {
+          "vp": 0.6366,
+          "mds": 0.0879,
+          "frame_gate": 0.8138,
+          "win_gate": 0.7476,
+          "passport_strength": 0.0,
+          "shadow_action": "CASH_RUN",
+          "tri_action": "TRI_CASH_RUN"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CHP",
+          "venue": "CHP",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "7.01",
+          "horse": "Escape Magic",
+          "horse_id": null,
+          "age": 3,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Callum Rodriguez",
+          "jockey_name": "Callum Rodriguez",
+          "current_or": null,
+          "rpr_master": 70,
+          "ts_master": 45,
+          "days_since_last_run": 43,
+          "form_figures": null,
+          "spotlight_comment": "Showed little in three AW novices last back-end but much improved when making a winning turf/handicap debut at Leicester (7f, good to firm) in May; she should be able to cope with a 5lb rise and looks the one to beat.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.455,
+          "or_compression_score": 0.0,
+          "plot_conviction": -0.05
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Escape Magic",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Callum Rodriguez",
+            "age": 3,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_FAI_20260708_8.00",
+      "off_time": "8.00",
+      "course": "FAI",
+      "race_name": "7f Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Glory To Be",
+      "priority": "EXECUTION_REVIEW",
+      "tri_action": "TRI_CASH_RUN",
+      "agent": {
+        "agent_verdict": "CASH_RUN_REVIEW",
+        "support_score": 7,
+        "risk_score": 3,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.645",
+          "PLACE_FRAME:0.972",
+          "SPOTLIGHT_POSITIVE:0.75",
+          "FRAME_GATE:0.774",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.64",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "cash-run shortlist only; paper until Sigma confirms",
+        "key_numbers": {
+          "vp": 0.6449,
+          "mds": 0.0979,
+          "frame_gate": 0.7745,
+          "win_gate": 0.4159,
+          "passport_strength": 0.0,
+          "shadow_action": "CASH_RUN",
+          "tri_action": "TRI_CASH_RUN"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "FAI",
+          "venue": "FAI",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "8.00",
+          "horse": "Glory To Be",
+          "horse_id": null,
+          "age": 4,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Wayne Lordan",
+          "jockey_name": "Wayne Lordan",
+          "current_or": 79,
+          "rpr_master": 105,
+          "ts_master": 79,
+          "days_since_last_run": 7,
+          "form_figures": null,
+          "spotlight_comment": "Generally consistent filly; won for a second time at Leopardstown in April (7f, yld-sft); almost added to her tally over 6f (good) here on latest when denied by a head; the step back up to 7f is fine and ground versatile so she has to enter calculations off just 2lb higher.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.515,
+          "or_compression_score": 0.0,
+          "plot_conviction": -0.01
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Glory To Be",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Wayne Lordan",
+            "age": 4,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CHP_20260708_8.11",
+      "off_time": "8.11",
+      "course": "CHP",
+      "race_name": "7f 16y (Class 6) Last 8 outings",
+      "horse": "Just Typical",
+      "priority": "EXECUTION_REVIEW",
+      "tri_action": "TRI_CASH_RUN",
+      "agent": {
+        "agent_verdict": "CASH_RUN_REVIEW",
+        "support_score": 6,
+        "risk_score": 3,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.515",
+          "PLACE_FRAME:0.858",
+          "FRAME_GATE:0.830",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.51",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "cash-run shortlist only; paper until Sigma confirms",
+        "key_numbers": {
+          "vp": 0.5146,
+          "mds": 0.1446,
+          "frame_gate": 0.8301,
+          "win_gate": 0.5535,
+          "passport_strength": 0.0,
+          "shadow_action": "CASH_RUN",
+          "tri_action": "TRI_CASH_RUN"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CHP",
+          "venue": "CHP",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "8.11",
+          "horse": "Just Typical",
+          "horse_id": null,
+          "age": 5,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Ryan Kavanagh",
+          "jockey_name": "Ryan Kavanagh",
+          "current_or": null,
+          "rpr_master": 77,
+          "ts_master": 63,
+          "days_since_last_run": 12,
+          "form_figures": null,
+          "spotlight_comment": "Five of his six wins have come on AW; didn't look straightforward without usual hood or tongue-tie (back on here) when fourth of seven at Newmarket (1m, good to firm) 12 days ago; two things in his favour here are that he is the only distance winner in the field and this represents a drop in grade, so he needs to be considered seriously.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.695,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.2
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Just Typical",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Ryan Kavanagh",
+            "age": 5,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CHP_20260708_8.46",
+      "off_time": "8.46",
+      "course": "CHP",
+      "race_name": "1m 4f (Class 6) Last 8 outings",
+      "horse": "Ataturk",
+      "priority": "EXECUTION_REVIEW",
+      "tri_action": "TRI_CASH_RUN",
+      "agent": {
+        "agent_verdict": "CASH_RUN_REVIEW",
+        "support_score": 7,
+        "risk_score": 3,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.659",
+          "PLACE_FRAME:0.675",
+          "FRAME_GATE:0.846",
+          "WIN_GATE:0.598",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.66",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "cash-run shortlist only; paper until Sigma confirms",
+        "key_numbers": {
+          "vp": 0.659,
+          "mds": 0.1207,
+          "frame_gate": 0.8458,
+          "win_gate": 0.5976,
+          "passport_strength": 0.0,
+          "shadow_action": "CASH_RUN",
+          "tri_action": "TRI_CASH_RUN"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CHP",
+          "venue": "CHP",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "8.46",
+          "horse": "Ataturk",
+          "horse_id": null,
+          "age": 3,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Rob Hornby",
+          "jockey_name": "Rob Hornby",
+          "current_or": null,
+          "rpr_master": 73,
+          "ts_master": 28,
+          "days_since_last_run": 9,
+          "form_figures": null,
+          "spotlight_comment": "Ran his best race when beaten a nose at Ffos Las (upped to 1m4f, good) nine days ago on his handicap debut; there should be better to come and he's an obvious contender here off the same mark.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.395,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.2
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Ataturk",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Rob Hornby",
+            "age": 3,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CAT_20260708_2.00",
+      "off_time": "2.00",
+      "course": "CAT",
+      "race_name": "7f 6y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Indy'S Angel",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 5,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.675",
+          "PLACE_FRAME:0.975",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "ODDS_RISK:EIGHT_TO_FOURTEEN",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.6749,
+          "mds": 0.0989,
+          "frame_gate": 0.4206,
+          "win_gate": 0.1361,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CAT",
+          "venue": "CAT",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "2.00",
+          "horse": "Indy'S Angel",
+          "horse_id": null,
+          "age": 4,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Aiden Brookes",
+          "jockey_name": "Aiden Brookes",
+          "current_or": 46,
+          "rpr_master": 72,
+          "ts_master": 46,
+          "days_since_last_run": 7,
+          "form_figures": null,
+          "spotlight_comment": "Returned to form with 25-1 second of 18 at Thirsk (6f, good to firm) last week; she can't be dismissed today but she's very inconsistent and has won just one of her 21 races, while the return to 7f also poses a question.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.695,
+          "or_compression_score": 1.0,
+          "plot_conviction": 0.45
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Indy'S Angel",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Aiden Brookes",
+            "age": 4,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=4",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CAT_20260708_2.30",
+      "off_time": "2.30",
+      "course": "CAT",
+      "race_name": "5f (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Explainingislosing",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_WATCH_STRONG",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 3,
+        "risk_score": 5,
+        "support": [
+          "OLD_TIER_A",
+          "PLACE_FRAME:0.877",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MDS_FLAT:0.036",
+          "ODDS_RISK:EIGHT_TO_FOURTEEN",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4384,
+          "mds": 0.036,
+          "frame_gate": 0.4358,
+          "win_gate": 0.1509,
+          "passport_strength": 0.0,
+          "shadow_action": "WATCHLIST_SHADOW",
+          "tri_action": "TRI_WATCH_STRONG"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CAT",
+          "venue": "CAT",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "2.30",
+          "horse": "Explainingislosing",
+          "horse_id": null,
+          "age": 2,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Oisin Orr",
+          "jockey_name": "Oisin Orr",
+          "current_or": 54,
+          "rpr_master": 74,
+          "ts_master": 21,
+          "days_since_last_run": 26,
+          "form_figures": null,
+          "spotlight_comment": "Some promise could be gleaned from his first two runs but he has been well beaten in 6f sellers on his last two starts (poor draw at Chester on first of them); drawn widest and others look safer.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.635,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.24
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Explainingislosing",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Oisin Orr",
+            "age": 2,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 4
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_YAR_20260708_3.15",
+      "off_time": "3.15",
+      "course": "YAR",
+      "race_name": "1m 3y (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Starlight Lass",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 6,
+        "risk_score": 4,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.540",
+          "PLACE_FRAME:0.833",
+          "FRAME_GATE:0.872",
+          "WIN_GATE:0.817",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.5401,
+          "mds": 0.2954,
+          "frame_gate": 0.8718,
+          "win_gate": 0.8173,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YAR_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "YAR",
+          "venue": "YAR",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "3.15",
+          "horse": "Starlight Lass",
+          "horse_id": null,
+          "age": null,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": null,
+          "jockey_name": null,
+          "current_or": null,
+          "rpr_master": null,
+          "ts_master": 16,
+          "days_since_last_run": null,
+          "form_figures": null,
+          "spotlight_comment": "Caught the eye when runner-up at this track (7f, good to soft) last month; improved when making all to beat her only two rivals at Newmarket (1m, good to firm) and looks a cracking prospect.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": null,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.2
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Starlight Lass",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": null,
+            "age": null,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YAR_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CAT_20260708_4.00",
+      "off_time": "4.00",
+      "course": "CAT",
+      "race_name": "1m 7f 189y (Class 6) Last 8 outings",
+      "horse": "Speechman",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_WATCH_STRONG",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 3,
+        "risk_score": 4,
+        "support": [
+          "OLD_TIER_A",
+          "PLACE_FRAME:0.972",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "ODDS_RISK:EIGHT_TO_FOURTEEN",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4303,
+          "mds": 0.0907,
+          "frame_gate": 0.5044,
+          "win_gate": 0.186,
+          "passport_strength": 0.0,
+          "shadow_action": "WATCHLIST_SHADOW",
+          "tri_action": "TRI_WATCH_STRONG"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CAT",
+          "venue": "CAT",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "4.00",
+          "horse": "Speechman",
+          "horse_id": null,
+          "age": 6,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Cam Hardie",
+          "jockey_name": "Cam Hardie",
+          "current_or": 49,
+          "rpr_master": 70,
+          "ts_master": 46,
+          "days_since_last_run": 5,
+          "form_figures": null,
+          "spotlight_comment": "His losing sequence continues but he's dropped down the weights and his third of five at Beverley (1m4f, good to firm) last Friday in a first-time visor (retained) was slightly more encouraging; could build on that.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.635,
+          "or_compression_score": 1.0,
+          "plot_conviction": 0.34
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Speechman",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Cam Hardie",
+            "age": 6,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=3",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_YAR_20260708_4.15",
+      "off_time": "4.15",
+      "course": "YAR",
+      "race_name": "1m 3y (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Rokuni",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 5,
+        "risk_score": 5,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.491",
+          "PLACE_FRAME:0.916",
+          "BHA_OR_DIFF:LOWERED:2",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "ODDS_RISK:LONGSHOT_15_PLUS",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4908,
+          "mds": 0.0718,
+          "frame_gate": 0.0793,
+          "win_gate": 0.0468,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YAR_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "YAR",
+          "venue": "YAR",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "4.15",
+          "horse": "Rokuni",
+          "horse_id": null,
+          "age": 4,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Christian Howarth",
+          "jockey_name": "Christian Howarth",
+          "current_or": 45,
+          "rpr_master": 67,
+          "ts_master": 36,
+          "days_since_last_run": 12,
+          "form_figures": null,
+          "spotlight_comment": "Poor strike-rate and his three runs for his new trainer haven't suggested he was primed to double his tally.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.29,
+          "or_compression_score": 1.0,
+          "plot_conviction": 0.45
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Rokuni",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Christian Howarth",
+            "age": 4,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YAR_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 4
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_KEM_20260708_7.13",
+      "off_time": "7.13",
+      "course": "KEM",
+      "race_name": "1m 7f 218y (Class 4) Last 8 outings",
+      "horse": "One Cool Dreamer",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 5,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.753",
+          "PLACE_FRAME:0.992",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "ODDS_RISK:EIGHT_TO_FOURTEEN",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.7534,
+          "mds": 0.2013,
+          "frame_gate": 0.3928,
+          "win_gate": 0.2203,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "KEM",
+          "venue": "KEM",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "7.13",
+          "horse": "One Cool Dreamer",
+          "horse_id": null,
+          "age": 5,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Luke Morris",
+          "jockey_name": "Luke Morris",
+          "current_or": 69,
+          "rpr_master": 91,
+          "ts_master": 58,
+          "days_since_last_run": 110,
+          "form_figures": null,
+          "spotlight_comment": "A dual 1m4f scorer who signed off for Alan King with a solid fourth of ten in 1m4f handicap at Wolverhampton in March; has since changed hands for 10,000gns and needs to hit the ground running for his new yard.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.625,
+          "or_compression_score": 0.2,
+          "plot_conviction": 0.14
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "One Cool Dreamer",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Luke Morris",
+            "age": 5,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=4",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_FAI_20260708_7.25",
+      "off_time": "7.25",
+      "course": "FAI",
+      "race_name": "7f Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Bamako Beach",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 7,
+        "risk_score": 5,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.456",
+          "PLACE_FRAME:0.786",
+          "FRAME_GATE:0.647",
+          "WIN_GATE:0.595",
+          "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "FIELD_TRAP:FS_13_PLUS",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4562,
+          "mds": 0.1149,
+          "frame_gate": 0.6468,
+          "win_gate": 0.5948,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "FAI",
+          "venue": "FAI",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "7.25",
+          "horse": "Bamako Beach",
+          "horse_id": null,
+          "age": 3,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Colin Keane",
+          "jockey_name": "Colin Keane",
+          "current_or": 102,
+          "rpr_master": 104,
+          "ts_master": 84,
+          "days_since_last_run": 46,
+          "form_figures": null,
+          "spotlight_comment": "Narrowly denied on first two starts in 7f maidens at Naas (yld-sft) and Gowran (yld); not disgraced when pitched into Group 1 company at the Curragh last time (1m, good); rated 102 and the one to beat back in these calmer waters.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": null,
+          "or_compression_score": 0.0,
+          "plot_conviction": -0.05
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Bamako Beach",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Colin Keane",
+            "age": 3,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_FAI_20260708_8.30",
+      "off_time": "8.30",
+      "course": "FAI",
+      "race_name": "7f Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Green Kite",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_WATCH_STRONG",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 4,
+        "support": [
+          "OLD_TIER_A",
+          "PLACE_FRAME:0.745",
+          "SPOTLIGHT_POSITIVE:0.75",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "FIELD_TRAP:FS_9_12",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4453,
+          "mds": 0.0765,
+          "frame_gate": 0.5121,
+          "win_gate": 0.4044,
+          "passport_strength": 0.0,
+          "shadow_action": "WATCHLIST_SHADOW",
+          "tri_action": "TRI_WATCH_STRONG"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "FAI",
+          "venue": "FAI",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "8.30",
+          "horse": "Green Kite",
+          "horse_id": null,
+          "age": 4,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Colin Keane",
+          "jockey_name": "Colin Keane",
+          "current_or": 64,
+          "rpr_master": 81,
+          "ts_master": 61,
+          "days_since_last_run": 27,
+          "form_figures": null,
+          "spotlight_comment": "Second to a clear winner in Killarney maiden last October and similar level of form on latest when chasing home a progressive sort (winner again since) over this trip in Leopardstown handicap last month; both those efforts on much softer ground, untried on ground this quick but big player if handling it, although draw a negative.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.59,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.3
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Green Kite",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Colin Keane",
+            "age": 4,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_KEM_20260708_8.55",
+      "off_time": "8.55",
+      "course": "KEM",
+      "race_name": "1m (Class 6) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Hawaiian King",
+      "priority": "TIER_A_SIGNAL_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 6,
+        "support": [
+          "OLD_TIER_A",
+          "VP_HIGH:0.471",
+          "PLACE_FRAME:0.984",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "FIELD_TRAP:FS_9_12",
+          "ODDS_RISK:EIGHT_TO_FOURTEEN",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4715,
+          "mds": 0.091,
+          "frame_gate": 0.4078,
+          "win_gate": 0.1479,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "KEM",
+          "venue": "KEM",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "8.55",
+          "horse": "Hawaiian King",
+          "horse_id": null,
+          "age": 4,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Gina Mangan",
+          "jockey_name": "Gina Mangan",
+          "current_or": 46,
+          "rpr_master": 79,
+          "ts_master": 41,
+          "days_since_last_run": 20,
+          "form_figures": null,
+          "spotlight_comment": "Yet to score but he arrives in decent nick, sixth of ten in 1m2f classified event at Lingfield 20 days ago; possibilities.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.39,
+          "or_compression_score": 0.93,
+          "plot_conviction": 0.473
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Hawaiian King",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Gina Mangan",
+            "age": 4,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 4
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924337",
+      "off_time": "2026-07-08T16:38:00",
+      "course": "Fairyhouse",
+      "race_name": "Dino Family Day @ fairyhouse Optional Claiming Race",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Music And Song",
+          "Pass The Buck",
+          "Tenacious"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/9",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Music And Song",
+        "lane_b_top": "Music And Song",
+        "lane_a_top3": [
+          "Music And Song",
+          "Pass The Buck",
+          "Tenacious"
+        ],
+        "lane_b_top3": [
+          "Music And Song",
+          "Zitkala Sa",
+          "Borora Aura"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924338",
+      "off_time": "2026-07-08T17:08:00",
+      "course": "Fairyhouse",
+      "race_name": "Irish Stallion Farms EBF Fillies Maiden (IRE Incentive Race)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Livenka",
+          "Silver Kiss",
+          "Film Set"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "1/9",
+        "passport_coverage_pct": 11.1,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Livenka",
+        "lane_b_top": "Livenka",
+        "lane_a_top3": [
+          "Livenka",
+          "Silver Kiss",
+          "Film Set"
+        ],
+        "lane_b_top3": [
+          "Livenka",
+          "Silver Kiss",
+          "Dropping Dimes"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922477",
+      "off_time": "2026-07-08T17:28:00",
+      "course": "Kempton (AW)",
+      "race_name": "Industry Leading In-Play Markets At Unibet Apprentice Handicap (Training Series) (Qualifier)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Valentine Boy",
+          "Maywedance",
+          "Brodie's Boy"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/7",
+        "passport_coverage_pct": 85.7,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Valentine Boy",
+        "lane_b_top": "Brodie's Boy",
+        "lane_a_top3": [
+          "Valentine Boy",
+          "Maywedance",
+          "Brodie's Boy"
+        ],
+        "lane_b_top3": [
+          "Brodie's Boy",
+          "Sarangpur",
+          "Sonnerie Power"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924339",
+      "off_time": "2026-07-08T17:40:00",
+      "course": "Fairyhouse",
+      "race_name": "Irish Stallion Farms EBF (C & G) Maiden",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Nail House",
+          "Mutamarid Lsk",
+          "City Of Gold"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/8",
+        "passport_coverage_pct": 62.5,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Nail House",
+        "lane_b_top": "Captain James Cook",
+        "lane_a_top3": [
+          "Nail House",
+          "Mutamarid Lsk",
+          "City Of Gold"
+        ],
+        "lane_b_top3": [
+          "Captain James Cook",
+          "Banks Of The Boyne",
+          "Supreme Lord"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922331",
+      "off_time": "2026-07-08T17:51:00",
+      "course": "Chepstow",
+      "race_name": "bet365 Nursery Handicap Nursery Handicap",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Jazzy Bay",
+          "Romidijo",
+          "Cavan Lady"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/7",
+        "passport_coverage_pct": 57.1,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Jazzy Bay",
+        "lane_b_top": "Jazzy Bay",
+        "lane_a_top3": [
+          "Jazzy Bay",
+          "Romidijo",
+          "Cavan Lady"
+        ],
+        "lane_b_top3": [
+          "Jazzy Bay",
+          "Cavan Lady",
+          "The Kalonji Man"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922476",
+      "off_time": "2026-07-08T18:03:00",
+      "course": "Kempton (AW)",
+      "race_name": "Unibet/British Stallion Studs EBF Fillies' Novice Stakes (GBB Race)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Meennaa",
+          "Mohangel",
+          "Clarity"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/9",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Meennaa",
+        "lane_b_top": "Meennaa",
+        "lane_a_top3": [
+          "Meennaa",
+          "Mohangel",
+          "Clarity"
+        ],
+        "lane_b_top3": [
+          "Meennaa",
+          "Clarity",
+          "Spirit Tango"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924340",
+      "off_time": "2026-07-08T18:15:00",
+      "course": "Fairyhouse",
+      "race_name": "Fairyhouse Winter Festival 28th & 29th November Rated Race",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Sir Callisto",
+          "Pavilion End",
+          "Chutzpal"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/8",
+        "passport_coverage_pct": 37.5,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Sir Callisto",
+        "lane_b_top": "Sir Callisto",
+        "lane_a_top3": [
+          "Sir Callisto",
+          "Pavilion End",
+          "Chutzpal"
+        ],
+        "lane_b_top3": [
+          "Sir Callisto",
+          "Pavilion End",
+          "Not Just Any Eagle"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922327",
+      "off_time": "2026-07-08T18:26:00",
+      "course": "Chepstow",
+      "race_name": "bet365 GBB Restricted Maiden Stakes (For Horses In Band D) (GBB Race)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Temple Court",
+          "Hailstones In May",
+          "Lushill"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/7",
+        "passport_coverage_pct": 42.9,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Temple Court",
+        "lane_b_top": "Temple Court",
+        "lane_a_top3": [
+          "Temple Court",
+          "Hailstones In May",
+          "Lushill"
+        ],
+        "lane_b_top3": [
+          "Temple Court",
+          "Golden Oasis",
+          "Ten Year Stretch"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922475",
+      "off_time": "2026-07-08T18:38:00",
+      "course": "Kempton (AW)",
+      "race_name": "Unibet/EBF Fillies' Novice Stakes (GBB/GBBPlus Race)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Cracking Beauty",
+          "Tide Lines",
+          "Skittish"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/12",
+        "passport_coverage_pct": 16.7,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Cracking Beauty",
+        "lane_b_top": "Cracking Beauty",
+        "lane_a_top3": [
+          "Cracking Beauty",
+          "Tide Lines",
+          "Skittish"
+        ],
+        "lane_b_top3": [
+          "Cracking Beauty",
+          "Tide Lines",
+          "Kashooda"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "923465",
+      "off_time": "2026-07-08T18:50:00",
+      "course": "Fairyhouse",
+      "race_name": "Darley Irish EBF Stanerra Stakes (Group 3) (Fillies & Mares)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Ice Dancer",
+          "Bloom",
+          "Perfect Your Craft"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/9",
+        "passport_coverage_pct": 44.4,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Ice Dancer",
+        "lane_b_top": "Ice Dancer",
+        "lane_a_top3": [
+          "Ice Dancer",
+          "Bloom",
+          "Perfect Your Craft"
+        ],
+        "lane_b_top3": [
+          "Ice Dancer",
+          "Bloom",
+          "Perfect Your Craft"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922330",
+      "off_time": "2026-07-08T19:01:00",
+      "course": "Chepstow",
+      "race_name": "bet365 Handicap (Chepstow Mile Series Qualifier)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Luna Beaux",
+          "Musical Soldier",
+          "Escape Magic"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "4/6",
+        "passport_coverage_pct": 66.7,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Luna Beaux",
+        "lane_b_top": "Luna Beaux",
+        "lane_a_top3": [
+          "Luna Beaux",
+          "Musical Soldier",
+          "Escape Magic"
+        ],
+        "lane_b_top3": [
+          "Luna Beaux",
+          "Grand Vista",
+          "Who Is Alice"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922474",
+      "off_time": "2026-07-08T19:13:00",
+      "course": "Kempton (AW)",
+      "race_name": "Unibet More Extra Place Races Handicap (London Stayers' Series Qualifier) (GBBPlus Race)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Caprelo",
+          "Dust Cover",
+          "Nunc Est Bibendum"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/9",
+        "passport_coverage_pct": 33.3,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Caprelo",
+        "lane_b_top": "Dust Cover",
+        "lane_a_top3": [
+          "Caprelo",
+          "Dust Cover",
+          "Nunc Est Bibendum"
+        ],
+        "lane_b_top3": [
+          "Dust Cover",
+          "Nunc Est Bibendum",
+          "Baileys Khelstar"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924341",
+      "off_time": "2026-07-08T19:25:00",
+      "course": "Fairyhouse",
+      "race_name": "Irish Stallion Farms EBF Maiden",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Chloe's Boy",
+          "Shay's Dream",
+          "Farewell To Arms"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/15",
+        "passport_coverage_pct": 20.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Chloe's Boy",
+        "lane_b_top": "Chloe's Boy",
+        "lane_a_top3": [
+          "Chloe's Boy",
+          "Shay's Dream",
+          "Farewell To Arms"
+        ],
+        "lane_b_top3": [
+          "Chloe's Boy",
+          "Shay's Dream",
+          "Farewell To Arms"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922329",
+      "off_time": "2026-07-08T19:36:00",
+      "course": "Chepstow",
+      "race_name": "Each Way Extra At bet365 Handicap (Chepstow Mile Series Qualifier)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Nammos",
+          "D Day Major Winter",
+          "Mr Tony"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/8",
+        "passport_coverage_pct": 62.5,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Nammos",
+        "lane_b_top": "Nammos",
+        "lane_a_top3": [
+          "Nammos",
+          "D Day Major Winter",
+          "Mr Tony"
+        ],
+        "lane_b_top3": [
+          "Nammos",
+          "D Day Major Winter",
+          "Fozzy Osbourne"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922479",
+      "off_time": "2026-07-08T19:48:00",
+      "course": "Kempton (AW)",
+      "race_name": "Unibet Supporting Safer Gambling Handicap (London Mile Series Qualifier)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Tales Old As Time",
+          "Sports Day",
+          "Betty Lemon"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "6/13",
+        "passport_coverage_pct": 46.2,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Tales Old As Time",
+        "lane_b_top": "Tales Old As Time",
+        "lane_a_top3": [
+          "Tales Old As Time",
+          "Sports Day",
+          "Betty Lemon"
+        ],
+        "lane_b_top3": [
+          "Tales Old As Time",
+          "Sports Day",
+          "Roccobear"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924342",
+      "off_time": "2026-07-08T20:00:00",
+      "course": "Fairyhouse",
+      "race_name": "Winter Festival Early Bird Tickets From 20 Euros Handicap",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "I Bid You Ajou",
+          "Glory To Be",
+          "Indigo Dream"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "2/7",
+        "passport_coverage_pct": 28.6,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "I Bid You Ajou",
+        "lane_b_top": "I Bid You Ajou",
+        "lane_a_top3": [
+          "I Bid You Ajou",
+          "Glory To Be",
+          "Indigo Dream"
+        ],
+        "lane_b_top3": [
+          "I Bid You Ajou",
+          "Glory To Be",
+          "Indigo Dream"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922332",
+      "off_time": "2026-07-08T20:11:00",
+      "course": "Chepstow",
+      "race_name": "Never Ordinary At bet365 Handicap",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Just Typical",
+          "Too Much Trevor",
+          "Sioux Warrior"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "3/5",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Just Typical",
+        "lane_b_top": "Just Typical",
+        "lane_a_top3": [
+          "Just Typical",
+          "Too Much Trevor",
+          "Sioux Warrior"
+        ],
+        "lane_b_top3": [
+          "Just Typical",
+          "Too Much Trevor",
+          "Sundiata Keita"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922478",
+      "off_time": "2026-07-08T20:20:00",
+      "course": "Kempton (AW)",
+      "race_name": "Try Unibet's New Improved Acca Boosts Handicap (Div I)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Gladiadora",
+          "Chico Dulce",
+          "Summer Evening"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/10",
+        "passport_coverage_pct": 50.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Gladiadora",
+        "lane_b_top": "Gladiadora",
+        "lane_a_top3": [
+          "Gladiadora",
+          "Chico Dulce",
+          "Summer Evening"
+        ],
+        "lane_b_top3": [
+          "Gladiadora",
+          "Luminous Approach",
+          "Volto Di Medusa"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924343",
+      "off_time": "2026-07-08T20:30:00",
+      "course": "Fairyhouse",
+      "race_name": "Racing Again September 21st Handicap",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Carrigans Grove",
+          "Contrary To Law",
+          "Rappell"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "9/15",
+        "passport_coverage_pct": 60.0,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Carrigans Grove",
+        "lane_b_top": "Carrigans Grove",
+        "lane_a_top3": [
+          "Carrigans Grove",
+          "Contrary To Law",
+          "Rappell"
+        ],
+        "lane_b_top3": [
+          "Carrigans Grove",
+          "Contrary To Law",
+          "Hugo's Girl"
+        ],
+        "lane_a_decision": "SUPPRESS",
+        "lane_b_decision": "SUPPRESS"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "922328",
+      "off_time": "2026-07-08T20:46:00",
+      "course": "Chepstow",
+      "race_name": "Position Payout At bet365 Handicap",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Houndswood Willow",
+          "Captain Cairney",
+          "Dash Of Class"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "5/7",
+        "passport_coverage_pct": 71.4,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Houndswood Willow",
+        "lane_b_top": "Houndswood Willow",
+        "lane_a_top3": [
+          "Houndswood Willow",
+          "Captain Cairney",
+          "Dash Of Class"
+        ],
+        "lane_b_top3": [
+          "Houndswood Willow",
+          "Captain Cairney",
+          "Aravalli"
+        ],
+        "lane_a_decision": "LOW_DATA",
+        "lane_b_decision": "LOW_DATA"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "924435",
+      "off_time": "2026-07-08T20:55:00",
+      "course": "Kempton (AW)",
+      "race_name": "Try Unibet's New Improved Acca Boosts Handicap (Div II)",
+      "horse": "",
+      "priority": "CONFLICT_REVIEW",
+      "tri_action": "TRI_INCOMPLETE",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 0,
+        "risk_score": 5,
+        "support": [],
+        "risk": [
+          "MDS_FLAT:0.000",
+          "NEW_BUILD_WEAK_DATA",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [
+          "Spotlight missing: check RP parser coverage."
+        ],
+        "danger_horses": [
+          "Opening Bat",
+          "Between Me And U",
+          "Look Back Smiling"
+        ],
+        "why_velo_may_be_wrong": [
+          "New Build passport coverage is weak, so confirmation may be thin.",
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.0,
+          "mds": 0.0,
+          "frame_gate": 0.0,
+          "win_gate": 0.0,
+          "passport_strength": 0.0,
+          "shadow_action": null,
+          "tri_action": "TRI_INCOMPLETE"
+        },
+        "identity_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": false
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "",
+          "overall_confidence": "NO_LOCAL_IDENTITY_EVIDENCE",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": false
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "No exact identity unless live card carries trainer/age/sire/horse_id into agent card."
+        }
+      },
+      "new_build": {
+        "weak_data": true,
+        "passport_coverage": "10/11",
+        "passport_coverage_pct": 90.9,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": "Opening Bat",
+        "lane_b_top": "Opening Bat",
+        "lane_a_top3": [
+          "Opening Bat",
+          "Between Me And U",
+          "Look Back Smiling"
+        ],
+        "lane_b_top3": [
+          "Opening Bat",
+          "Between Me And U",
+          "Look Back Smiling"
+        ],
+        "lane_a_decision": "NO_EDGE",
+        "lane_b_decision": "NO_EDGE"
+      },
+      "horse_state": {}
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_YAR_20260708_3.45",
+      "off_time": "3.45",
+      "course": "YAR",
+      "race_name": "1m 2f 23y (Class 3) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Kokbastau",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 5,
+        "risk_score": 4,
+        "support": [
+          "OLD_TIER_A",
+          "SPOTLIGHT_POSITIVE:0.75",
+          "FRAME_GATE:0.729",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.35",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.3456,
+          "mds": 0.1036,
+          "frame_gate": 0.7288,
+          "win_gate": 0.3896,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YAR_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "YAR",
+          "venue": "YAR",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "3.45",
+          "horse": "Kokbastau",
+          "horse_id": null,
+          "age": null,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": null,
+          "jockey_name": null,
+          "current_or": null,
+          "rpr_master": null,
+          "ts_master": 17,
+          "days_since_last_run": null,
+          "form_figures": null,
+          "spotlight_comment": "In at the deep end when sixth on his debut last September, in a 1m Newbury conditions event, and it spoke in his favour that he started among the favourites; it will be interesting to see how this 300,00gns foal goes in the market this time after ten months off.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.47,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.15
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Kokbastau",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": null,
+            "age": null,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YAR_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CAT_20260708_4.30",
+      "off_time": "4.30",
+      "course": "CAT",
+      "race_name": "7f 6y (Class 5) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Rogue Citation",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 5,
+        "support": [
+          "VP_HIGH:0.483",
+          "PLACE_FRAME:0.876",
+          "SPOTLIGHT_POSITIVE:0.75",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "ODDS_RISK:EIGHT_TO_FOURTEEN",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.483,
+          "mds": 0.1233,
+          "frame_gate": 0.3813,
+          "win_gate": 0.2415,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CAT",
+          "venue": "CAT",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "4.30",
+          "horse": "Rogue Citation",
+          "horse_id": null,
+          "age": 3,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "P J McDonald",
+          "jockey_name": "P J McDonald",
+          "current_or": 72,
+          "rpr_master": 78,
+          "ts_master": 15,
+          "days_since_last_run": 84,
+          "form_figures": null,
+          "spotlight_comment": "She made a promising debut at Carlisle (6f, good to firm) last summer and then scrambled home in a 6f novice at Southwell in October; disappointed at Southwell on her seasonal/handicap debut 12 weeks ago (trainer's representative reported that she failed to stay 7f on her first run after a six-month break); possible there will be stronger stayers in today's field but she's unexposed and wears a first-time tongue-tie.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.59,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.3
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Rogue Citation",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "P J McDonald",
+            "age": 3,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CAT_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "ignored",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 4
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_FAI_20260708_5.40",
+      "off_time": "5.40",
+      "course": "FAI",
+      "race_name": "6f Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "City Of Gold",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 4,
+        "support": [
+          "SPOTLIGHT_POSITIVE:1.00",
+          "FRAME_GATE:0.796",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.41",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4054,
+          "mds": 0.1233,
+          "frame_gate": 0.7958,
+          "win_gate": 0.4941,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "FAI",
+          "venue": "FAI",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "5.40",
+          "horse": "City Of Gold",
+          "horse_id": null,
+          "age": null,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": null,
+          "jockey_name": null,
+          "current_or": null,
+          "rpr_master": null,
+          "ts_master": null,
+          "days_since_last_run": null,
+          "form_figures": null,
+          "spotlight_comment": "Wootton Bassett colt; E400,000 yearling; dam French 1m/1m1f winner (inc Listed; RPR 106), out of maiden sister to 1m3f Listed winner Parthenon, half-sister to Group 3 winners Magna Graecia (15.5f) and Graikos (1m1f); preferred by Lordan and should go well on debut for top yard.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": null,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.05
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "City Of Gold",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": null,
+            "age": null,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CHP_20260708_5.51",
+      "off_time": "5.51",
+      "course": "CHP",
+      "race_name": "6f 16y (Class 6) Last 8 outings",
+      "horse": "Jazzy Bay",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 4,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "FRAME_GATE:0.707",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.36",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.362,
+          "mds": 0.0545,
+          "frame_gate": 0.7067,
+          "win_gate": 0.3857,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CHP",
+          "venue": "CHP",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "5.51",
+          "horse": "Jazzy Bay",
+          "horse_id": null,
+          "age": 2,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Charles Bishop",
+          "jockey_name": "Charles Bishop",
+          "current_or": null,
+          "rpr_master": 71,
+          "ts_master": 17,
+          "days_since_last_run": 30,
+          "form_figures": null,
+          "spotlight_comment": "Has shown ability on all three starts, latest when third of nine in a Leicester maiden (7f, good) last month; drops back in trip and should run well.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.635,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.3
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Jazzy Bay",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Charles Bishop",
+            "age": 2,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_KEM_20260708_6.03",
+      "off_time": "6.03",
+      "course": "KEM",
+      "race_name": "6f (Class 4) Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Speed Nation",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 5,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "FRAME_GATE:0.699",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.36",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "FIELD_TRAP:FS_9_12",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.3598,
+          "mds": 0.1088,
+          "frame_gate": 0.6987,
+          "win_gate": 0.5799,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "KEM",
+          "venue": "KEM",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "6.03",
+          "horse": "Speed Nation",
+          "horse_id": null,
+          "age": null,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": null,
+          "jockey_name": null,
+          "current_or": null,
+          "rpr_master": null,
+          "ts_master": null,
+          "days_since_last_run": null,
+          "form_figures": null,
+          "spotlight_comment": "and Spiritofhayton (Italian 2m/2m2f hurdle), out of unraced half-sister to Group-placed 6f 2yo winner Remember You; yard took this 12 months ago; interesting newcomer.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": null,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.05
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Speed Nation",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": null,
+            "age": null,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KEM_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CHP_20260708_6.26",
+      "off_time": "6.26",
+      "course": "CHP",
+      "race_name": "7f 16y (Class 4) Last 8 outings",
+      "horse": "Temple Court",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 4,
+        "support": [
+          "SPOTLIGHT_POSITIVE:0.75",
+          "FRAME_GATE:0.695",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.33",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.3347,
+          "mds": 0.0863,
+          "frame_gate": 0.695,
+          "win_gate": 0.5663,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CHP",
+          "venue": "CHP",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "6.26",
+          "horse": "Temple Court",
+          "horse_id": null,
+          "age": null,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": null,
+          "jockey_name": null,
+          "current_or": null,
+          "rpr_master": null,
+          "ts_master": 18,
+          "days_since_last_run": null,
+          "form_figures": null,
+          "spotlight_comment": "Gelded prior to showing improved form when fourth on his second start at Bath (5.5f, good) last month; steps up in trip and should run well.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": null,
+          "or_compression_score": 0.0,
+          "plot_conviction": -0.05
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Temple Court",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": null,
+            "age": null,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=2",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_FAI_20260708_6.50",
+      "off_time": "6.50",
+      "course": "FAI",
+      "race_name": "1m 5f 200y Last 9 outings(pos,rating,beaten/winning distance)",
+      "horse": "Goodie Two Shoes",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 5,
+        "risk_score": 4,
+        "support": [
+          "PLACE_FRAME:0.954",
+          "SPOTLIGHT_POSITIVE:1.00",
+          "FRAME_GATE:0.828",
+          "OLD_CANDIDATE_LANE:CL4_STRUCTURE_VP0.41",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MIDPRICE_SUPPRESS_TOP",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "Old Velo is confident but Shadow win gate is not strong.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.4123,
+          "mds": 0.1547,
+          "frame_gate": 0.8276,
+          "win_gate": 0.5543,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "FAI",
+          "venue": "FAI",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "6.50",
+          "horse": "Goodie Two Shoes",
+          "horse_id": null,
+          "age": 7,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "J M Sheridan",
+          "jockey_name": "J M Sheridan",
+          "current_or": 108,
+          "rpr_master": 113,
+          "ts_master": 83,
+          "days_since_last_run": 19,
+          "form_figures": null,
+          "spotlight_comment": "Last year's winner who went on to post a career-best when second of 24 in Group 1 Melbourne Cup (2m, good-to-soft); last month's Limerick comeback run well below her best but entitled to come on for that and major chance on ratings.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.485,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.28
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Goodie Two Shoes",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "J M Sheridan",
+            "age": 7,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_FAI_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "quietly_backed",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=3/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:odds_resilience=3.00 sp_rank=1",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "race_id": "rp_CHP_20260708_7.36",
+      "off_time": "7.36",
+      "course": "CHP",
+      "race_name": "1m 14y (Class 6) Last 8 outings",
+      "horse": "Mr Tony",
+      "priority": "PASS_WITH_SUPPORT_REVIEW",
+      "tri_action": "TRI_PASS",
+      "agent": {
+        "agent_verdict": "NO_BET",
+        "support_score": 4,
+        "risk_score": 6,
+        "support": [
+          "FRAME_GATE:0.628",
+          "WIN_GATE:0.581",
+          "OLD_CANDIDATE_LANE:ATTACK_LANE_MISS",
+          "LIVE_RACECARD_IDENTITY_ONLY"
+        ],
+        "risk": [
+          "MDS_FLAT:0.036",
+          "MIDPRICE_NO_EDGE",
+          "FIELD_TRAP:FS_9_12",
+          "PASSPORT_NOT_AVAILABLE",
+          "OLD_NOT_IN_NEW_BUILD_TOP3"
+        ],
+        "questions": [],
+        "danger_horses": [],
+        "why_velo_may_be_wrong": [
+          "Old Velo horse is not supported by New Build top-three lanes.",
+          "MDS is low, so this may be obvious/flat rather than hidden value.",
+          "Passport strength is weak or missing.",
+          "Horse-state race fit is weak."
+        ],
+        "recommended_use": "no bet / no acca",
+        "key_numbers": {
+          "vp": 0.2421,
+          "mds": 0.0363,
+          "frame_gate": 0.6281,
+          "win_gate": 0.5808,
+          "passport_strength": 0.0,
+          "shadow_action": "PASS_OR_WATCH",
+          "tri_action": "TRI_PASS"
+        },
+        "identity_confidence": "LIVE_ONLY",
+        "identity_warnings": []
+      },
+      "evidence": {
+        "live_identity": {
+          "available": true,
+          "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json",
+          "date": "2026-07-08",
+          "course": "CHP",
+          "venue": "CHP",
+          "venue_code": null,
+          "race_id": "",
+          "off_time": "7.36",
+          "horse": "Mr Tony",
+          "horse_id": null,
+          "age": 3,
+          "trainer": null,
+          "trainer_name": null,
+          "jockey": "Callum Rodriguez",
+          "jockey_name": "Callum Rodriguez",
+          "current_or": null,
+          "rpr_master": 67,
+          "ts_master": 36,
+          "days_since_last_run": 254,
+          "form_figures": null,
+          "spotlight_comment": "Landed a nursery for Joseph O'Brien last October in first-time blinkers (absent here); gelded since and makes British/stable debut for yard that knows the time of day; raced on no firmer than good but may be way ahead of the handicapper; market will reveal more.",
+          "diomed_comment": null,
+          "newspaper_tip_count": null,
+          "postdata_score": 0.23,
+          "or_compression_score": 0.0,
+          "plot_conviction": 0.2
+        },
+        "rating": {
+          "available": false
+        },
+        "performance": {
+          "available": false
+        },
+        "history": {
+          "available": false
+        },
+        "identity": {
+          "horse": "Mr Tony",
+          "overall_confidence": "LIVE_ONLY",
+          "source_confidence": {
+            "rating": "MISSING",
+            "performance": "MISSING",
+            "history": "MISSING"
+          },
+          "live_identity": {
+            "available": true,
+            "horse_id": null,
+            "trainer": null,
+            "jockey": "Callum Rodriguez",
+            "age": 3,
+            "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-08.json"
+          },
+          "corroborated_trainers": [],
+          "warnings": [],
+          "rule": "RP merged racecard identity is the live spine; local files must match trainer to become exact."
+        }
+      },
+      "new_build": {
+        "weak_data": null,
+        "passport_coverage": null,
+        "passport_coverage_pct": null,
+        "old_in_lane_a_top3": null,
+        "old_in_lane_b_top3": null,
+        "lane_a_top": null,
+        "lane_b_top": null,
+        "lane_a_top3": [],
+        "lane_b_top3": [],
+        "lane_a_decision": null,
+        "lane_b_decision": null
+      },
+      "horse_state": {
+        "readiness_state": "warming",
+        "release_state": "hidden",
+        "rest_pattern": "fresh",
+        "class_move_state": "neutral",
+        "stable_heat": "cold",
+        "jockey_signal": "neutral",
+        "market_state": "obvious",
+        "race_fit_state": "weak",
+        "chaos_exposure": "low",
+        "state_evidence": [
+          "rest_pattern:days_since_run=14 (14-28 = deliberate rest)",
+          "readiness_state:score=2/5 (warming)",
+          "release_state:score=2/5 (being set up)",
+          "market_state:is_fav with low deception = public trap candidate",
+          "race_fit_state:avg_fit=0.33"
+        ],
+        "live_signals": 5
+      }
+    }
+  ]
+}

@@ -3,21 +3,21 @@
 ## Overall Verdict: PASS
 
 ### 1. Sigma Study (Performance Audit)
-- **Races Studied**: 29
-- **Strike Rate**: 27.59%
-- **Brier Score**: 0.2109
-- **Calibration Error**: 0.1272 (CALCULATED)
-- **Winners Found**: 8
+- **Races Studied**: 15
+- **Strike Rate**: 33.33%
+- **Brier Score**: 0.2008
+- **Calibration Error**: 0.0830 (CALCULATED)
+- **Winners Found**: 5
 - **Losses by Type**:
-  - Wrong Horse: 4
-  - Calibration Error: 17
+  - Wrong Horse: 3
+  - Calibration Error: 7
   - Market Lied: 0
   - Chaos Race: 0
-- **Sigma Verdict**: ACCEPTABLE_DAY
+- **Sigma Verdict**: STRONG_DAY
 
 ### 2. Playbook G Shadow Critique
-- **Updates Applied**: 29
-- **Shadow State Evolution**: Evolved to 335 races
+- **Updates Applied**: 0
+- **Shadow State Evolution**: Evolved to 450 races
 - **Recurring Patterns**: High-prob volatility
 - **Watchlist**: Forensic review of high-prob losses
 - **G Verdict**: SHADOW_ONLY_OK

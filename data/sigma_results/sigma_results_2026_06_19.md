@@ -1,16 +1,14 @@
-# VELO Sigma Results — 2026-06-19
+# VELO Supported RP Sigma - 2026-06-19
 
-**Status:** PASS — AT BASELINE — review miss classes for pattern
+Status: PASS
+Source: racing_post_supported_sigma
 
 | Metric | Value |
-|---|---|
-| Evaluated | 56 |
-| Wins | 11 (19.6%) |
-| Frames | 22 |
-| Misses | 23 |
+|---|---:|
+| Evaluated | 41 |
+| Wins | 9 |
+| Frames | 17 |
+| SR | 21.9% |
+| Frame rate | 63.4% |
 | Non-runners excluded | 0 |
 | No-result | 0 |
-| High-conf (VP≥0.30) | 47 picks, 23.4% SR |
-| sigma_audits written | 52/56 |
-
-**raw_sigma_audits_preserved:** true

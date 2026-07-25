@@ -78,6 +78,57 @@ def test_no_known_aw_track_missing_its_aw_variant():
         assert f"{track}-aw" in UK_IRE_VENUES, f"{track}-aw missing from UK_IRE_VENUES"
 
 
+def test_dundalk_aw_is_classified_uk_ire():
+    """Same bug class, third occurrence: Dundalk-AW was missing from
+    UK_IRE_VENUES (only "dundalk" was present, not the actual "dundalk-aw"
+    slug RP uses), silently dropping the entire Dundalk-AW card from the
+    UK/IRE URL list on 2026-07-12 until an operator manually recovered it."""
+    assert "dundalk-aw" in UK_IRE_VENUES
+    url = "https://www.racingpost.com/racecards/1138/dundalk-aw/2026-07-12/924518"
+    slug = _venue_slug_from_url(url)
+    assert slug is not None
+    assert slug.lower() in UK_IRE_VENUES
+
+
+def test_newton_abbot_is_classified_uk_ire():
+    """Same bug class, fourth occurrence: Newton Abbot (an English course)
+    was entirely absent from UK_IRE_VENUES, silently dropping its card on
+    2026-07-13 until an operator manually recovered it."""
+    assert "newton-abbot" in UK_IRE_VENUES
+    url = "https://www.racingpost.com/racecards/39/newton-abbot/2026-07-13/922979"
+    slug = _venue_slug_from_url(url)
+    assert slug is not None
+    assert slug.lower() in UK_IRE_VENUES
+
+
+def test_aintree_is_classified_uk_ire():
+    """Aintree (Grand National course) was also absent from UK_IRE_VENUES --
+    caught during the Newton Abbot fix audit, fixed proactively before it
+    could cause a live incident."""
+    assert "aintree" in UK_IRE_VENUES
+
+
+def test_run_full_raceday_captures_intl_list_as_safety_net():
+    """Architectural fix, not another allowlist patch: this exact class of
+    bug (a genuine UK/IRE course missing from UK_IRE_VENUES, silently
+    dropped from the day's card) has now recurred four times. Patching the
+    allowlist each time it's caught does not prevent the *next* unknown
+    venue from being silently dropped. run_full_raceday.py must therefore
+    also capture the "_intl" URL list as a supplementary batch, so nothing
+    RP shows for the date is silently lost before the real, independent
+    per-race jurisdiction check (workers/racing_api_normalizer.py, keyed
+    off each race's own RP-supplied country field) decides inclusion."""
+    script_path = ROOT / "scripts" / "ops" / "run_full_raceday.py"
+    source = script_path.read_text(encoding="utf-8")
+    assert "_intl.txt" in source, (
+        "run_full_raceday.py no longer references the _intl URL list -- "
+        "the supplementary capture safety net appears to have been removed"
+    )
+    assert "Step 3.5" in source, (
+        "run_full_raceday.py no longer has a Step 3.5 supplementary capture step"
+    )
+
+
 JULY06_INDEX_CAPTURE_DATE = "index-2026-07-06-FINAL"
 JULY06_INJECTION_PATH = (
     ROOT / "data" / "racing_post_account_parsed" / "live-full-racepages-2026-07-06" / "racecard_injection.json"

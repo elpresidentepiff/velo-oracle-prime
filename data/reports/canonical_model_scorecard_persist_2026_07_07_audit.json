@@ -1,0 +1,34 @@
+{
+  "date": "2026-07-07",
+  "generated_at": "2026-07-07T21:58:05.401374+00:00",
+  "csv_path": "data/reports/canonical_model_scorecard_2026_07_07.csv",
+  "row_count": 490,
+  "unique_races": 70,
+  "model_counts": {
+    "MAIN_VELO_PRIME": 35,
+    "SQPE_NO_RPR_SHADOW": 35,
+    "NEW_BUILD_LANE_A_MODEL": 105,
+    "NEW_BUILD_LANE_B_MODEL": 105,
+    "NEW_BUILD_LANE_C_MODEL": 105,
+    "PASSPORT_STRENGTH_SCORE_PROXY": 105
+  },
+  "win_counts": {
+    "PASSPORT_STRENGTH_SCORE_PROXY": 21,
+    "NEW_BUILD_LANE_C_MODEL": 11,
+    "NEW_BUILD_LANE_B_MODEL": 19,
+    "NEW_BUILD_LANE_A_MODEL": 16
+  },
+  "learning_class_counts": {
+    "MODEL_MISS": 328,
+    "TIE_UNRESOLVED": 11,
+    "PROXY_NOT_A_MODEL_CLAIM": 105,
+    "MODEL_HIT_POLICY_BLOCKED": 42,
+    "MODEL_HIT_POLICY_CLEARED": 4
+  },
+  "regression_check": "PASS",
+  "mode": "EXECUTE",
+  "generated_from_commit": "5f269b49cf8e6e75cc4d8ffafd9394c55cd5bb38",
+  "table": "public.canonical_model_scorecards",
+  "rows_written": 490,
+  "write_error": null
+}
