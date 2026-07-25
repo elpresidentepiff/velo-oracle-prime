@@ -189,11 +189,12 @@ async def trpc_new_endpoint(request: Request):
         input_data = await parse_trpc_request(request)
         # Extract parameters
         param = input_data.get("param")
-        
+
         # Call existing endpoint
         from .main import existing_endpoint
+
         result = await existing_endpoint(param)
-        
+
         # Return tRPC format
         return format_trpc_response(serialize_result(result))
     except HTTPException as e:
