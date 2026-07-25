@@ -299,18 +299,6 @@ def _load_local_json(date_tag: str) -> list[dict]:
         return []
 
 
-def _known_race_ids_for_date(date_str: str) -> list:
-    """race_ids from the standard racecard cache for this date, if it exists."""
-    path = ROOT / "data" / f"racecards_{date_str.replace('-', '_')}_standard.json"
-    if not path.exists():
-        return []
-    try:
-        races = json.loads(path.read_text())
-    except Exception:
-        return []
-    return [r["race_id"] for r in races if r.get("race_id")]
-
-
 def _load_supabase_predictions(date_str: str) -> tuple[dict, dict, str]:
     """
     Load all runner predictions from Supabase velo_verdicts.full_analysis
@@ -334,30 +322,16 @@ def _load_supabase_predictions(date_str: str) -> tuple[dict, dict, str]:
 
         db = create_client(sb_url, sb_key)
 
-        # Prefer querying by this date's known race_ids (from the standard racecard
-        # cache) rather than generated_at. Scoring frequently happens the evening
-        # BEFORE the race date (an operator scoring tonight for tomorrow's card),
-        # which writes generated_at under the wrong calendar day and makes a
-        # generated_at date-range filter silently return zero rows even though the
-        # verdicts are correctly persisted -- race_id is the true correlating key to
-        # the race date, generated_at is only ever the write time.
-        known_race_ids = _known_race_ids_for_date(date_str)
-        if known_race_ids:
-            resp = (
-                db.table("velo_verdicts")
-                .select("race_id, decision_tier, generated_at, full_analysis")
-                .in_("race_id", known_race_ids)
-                .execute()
-            )
-        else:
-            resp = (
-                db.table("velo_verdicts")
-                .select("race_id, decision_tier, generated_at, full_analysis")
-                .gte("generated_at", f"{date_str}T00:00:00")
-                .lte("generated_at", f"{date_str}T23:59:59")
-                .execute()
-            )
-        rows = resp.data or []
+        # Shared, bug-fixed loader -- see src/velo/verdict_loader.py for why
+        # this can't be a hand-rolled generated_at query. Scoring frequently
+        # happens the evening BEFORE the race date (an operator scoring
+        # tonight for tomorrow's card), which writes generated_at under the
+        # wrong calendar day.
+        from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
+
+        rows, _method = _shared_load_verdicts(
+            date_str, select="race_id, decision_tier, generated_at, full_analysis", root=ROOT
+        )
         result: dict = {}
         race_ids: list = []
         for row in rows:

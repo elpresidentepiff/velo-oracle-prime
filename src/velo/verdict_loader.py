@@ -149,16 +149,20 @@ def load_verdicts(
     select: str = "*",
     root: Path | None = None,
     local_fallback: bool = True,
+    race_ids: list[str] | None = None,
 ) -> tuple[list[dict], str]:
     """Load velo_verdicts rows for a given race date, the correct way.
 
     Tries, in order:
-      1. race_id membership against the locally cached racecard for date_str
-         (correct regardless of when scoring actually happened).
-      2. generated_at date-range filtering (only reached if no local racecard
-         cache exists -- this is the degraded, bug-prone path; treat a run
-         that falls back to it as a signal the racecard cache is missing and
-         worth restoring, not as a normal outcome).
+      1. race_id membership -- against `race_ids` if the caller already has a
+         reliable race-id list for this date (e.g. from verdicts it already
+         loaded some other way), otherwise against the locally cached
+         racecard for date_str. Correct regardless of when scoring actually
+         happened.
+      2. generated_at date-range filtering (only reached if no race_ids are
+         available from either source -- this is the degraded, bug-prone
+         path; treat a run that falls back to it as a signal worth
+         investigating, not as a normal outcome).
       3. local JSON backup file, if local_fallback is True.
 
     Returns (rows, method) where method is one of "race_id", "generated_at",
@@ -166,7 +170,7 @@ def load_verdicts(
     """
     root = root or ROOT
 
-    race_ids = known_race_ids_for_date(date_str, root=root)
+    race_ids = race_ids or known_race_ids_for_date(date_str, root=root)
     if race_ids:
         rows = _load_verdicts_by_race_id(select, race_ids)
         if rows:

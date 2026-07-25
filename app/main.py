@@ -1730,33 +1730,26 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             from supabase import create_client as _sb_create
 
             db = _sb_create(sb_url, sb_key)
-            # Prefer the race_ids already loaded from the local verdict file over a
-            # generated_at date-range filter -- scoring frequently happens the evening
-            # BEFORE the race date, which stamps generated_at under the wrong calendar
-            # day and silently returns zero rows here even though the verdicts (and the
-            # No-RPR data this block exists to extract) are correctly persisted.
+
+            # Shared, bug-fixed loader -- see src/velo/verdict_loader.py for
+            # why this can't be a hand-rolled generated_at query. Prefer the
+            # race_ids already loaded from the local verdict file (reliable
+            # regardless of when scoring actually happened) over letting the
+            # loader re-derive from the racecard cache.
+            from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
+
             _known_race_ids = [v.get("race_id") for v in raw_verdicts if v.get("race_id")]
             _select_cols = (
                 "race_id, generated_at, decision_tier, velo_prime_prob, "
                 "market_deception_score, improvement_score, place_prob, "
                 "execution_allowed, assigned_product, router_reasons, full_analysis"
             )
-            if _known_race_ids:
-                resp = (
-                    db.table("velo_verdicts")
-                    .select(_select_cols)
-                    .in_("race_id", _known_race_ids)
-                    .execute()
-                )
-            else:
-                resp = (
-                    db.table("velo_verdicts")
-                    .select(_select_cols)
-                    .gte("generated_at", f"{target_date}T00:00:00")
-                    .lt("generated_at", f"{target_date}T23:59:59")
-                    .execute()
-                )
-            sb_verdict_rows = resp.data or []
+            sb_verdict_rows, _ = _shared_load_verdicts(
+                target_date,
+                select=_select_cols,
+                race_ids=_known_race_ids or None,
+                local_fallback=False,
+            )
             for row in sb_verdict_rows:
                 gov_by_race[row["race_id"]] = row
                 # Extract No-RPR top pick from full_analysis.predictions

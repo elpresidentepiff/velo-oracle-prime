@@ -34,6 +34,7 @@ from supabase import create_client
 
 from src.velo.place_signal_classifier import classify_from_verdict, PlaceSignal
 from src.velo.race_metadata_resolver import RaceMetadataResolver
+from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
 
 load_dotenv(ROOT / ".env")
 DATA = ROOT / "data"
@@ -76,71 +77,22 @@ def _sb():
     )
 
 
-def _known_race_ids_for_date(date_str: str) -> list:
-    """race_ids from the standard racecard cache for this date, if it exists.
-
-    generated_at is write-time, not race-date -- scoring the evening before
-    race day stamps generated_at under the wrong calendar day and silently
-    zeroes out any date-range query. race_id reliably correlates to the
-    actual race date, so prefer it when the cache is available.
-    """
-    path = DATA / f"racecards_{date_str.replace('-', '_')}_standard.json"
-    if not path.exists():
-        return []
-    try:
-        races = json.loads(path.read_text())
-    except Exception:
-        return []
-    return [r["race_id"] for r in races if r.get("race_id")]
+_SELECT_COLS = (
+    "race_id,velo_prime_prob,improvement_score,market_deception_score,"
+    "place_prob,decision_tier,full_analysis,generated_at"
+)
 
 
 def load_verdicts(date_str: str) -> list[dict]:
-    sb = _sb()
-    select_cols = (
-        "race_id,velo_prime_prob,improvement_score,market_deception_score,"
-        "place_prob,decision_tier,full_analysis,generated_at"
-    )
-    known_race_ids = _known_race_ids_for_date(date_str)
-    rows = []
-    if known_race_ids:
-        rows = (
-            sb.table("velo_verdicts")
-            .select(select_cols)
-            .in_("race_id", known_race_ids)
-            .order("velo_prime_prob", desc=True)
-            .execute()
-            .data
-        )
-    if not rows:
-        rows = (
-            sb.table("velo_verdicts")
-            .select(select_cols)
-            .gte("generated_at", f"{date_str}T00:00:00")
-            .lt("generated_at", f"{date_str}T23:59:59")
-            .order("velo_prime_prob", desc=True)
-            .execute()
-            .data
-        )
+    """Load verdicts for date_str via the shared, bug-fixed loader.
 
-    if not rows:
-        # Fallback to local file
-        date_under = date_str.replace("-", "_")
-        local_path1 = DATA / f"velo_prime_verdicts_{date_under}.json"
-        local_path2 = DATA / f"velo_prime_verdicts_{date_str}.json"
-        local_path = local_path1 if local_path1.exists() else (local_path2 if local_path2.exists() else None)
-        
-        if local_path:
-            try:
-                with open(local_path, "r") as f:
-                    local_data = json.load(f)
-                    if isinstance(local_data, dict) and "verdicts" in local_data:
-                        rows = local_data["verdicts"]
-                    elif isinstance(local_data, list):
-                        rows = local_data
-            except Exception as e:
-                print(f"Failed to read local verdicts: {e}")
-
-    return rows
+    See src/velo/verdict_loader.py for why this can't be a hand-rolled
+    generated_at query -- this script had exactly that bug until 2026-07-23.
+    """
+    rows, method = _shared_load_verdicts(date_str, select=_SELECT_COLS, root=ROOT)
+    if method != "race_id":
+        print(f"  [place_signal_operator_card] verdict load used fallback method: {method}")
+    return sorted(rows, key=lambda r: r.get("velo_prime_prob") or 0.0, reverse=True)
 
 
 def _extract_top(verdict: dict) -> dict:

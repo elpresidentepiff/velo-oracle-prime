@@ -25,7 +25,6 @@ import json
 import os
 import sys
 from collections import Counter
-from datetime import datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent.parent
@@ -44,6 +43,7 @@ from src.velo.execution_bridge import (
     DEFAULT_PAPER_LEDGER,
     VeloExecutionBridge,
 )
+from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
 from scripts.ops.run_results_sigma import _duplicate_alias_race_ids
 
 
@@ -59,43 +59,23 @@ def _sb_headers() -> tuple[str, dict]:
 
 def load_verdicts(date_str: str) -> list[dict]:
     """
-    Load all velo_verdicts for date_str (YYYY-MM-DD).
-    Filters by generated_at prefix so Railway-cron records are included.
+    Load all velo_verdicts for date_str (YYYY-MM-DD) via the shared,
+    bug-fixed loader. See src/velo/verdict_loader.py for why this can't be
+    a hand-rolled generated_at query -- this script had exactly that bug
+    until 2026-07-23.
     """
-    url, hdrs = _sb_headers()
-    resp = requests.get(
-        f"{url}/rest/v1/velo_verdicts",
-        headers=hdrs,
-        params={
-            "select": (
-                "race_id,generated_at,decision_tier,velo_prime_prob,"
-                "market_deception_score,improvement_score,rpdc_release_score,"
-                "place_prob,race_archetype,archetype_suppression,"
-                "execution_allowed,assigned_product,router_reasons,full_analysis"
-            ),
-            # Lower bound is generous (1 day early) because generated_at is write-time,
-            # not race-date -- scoring the evening before race day stamps generated_at
-            # under the previous calendar day. Real filtering happens below by race_id.
-            "generated_at": f"gte.{(datetime.fromisoformat(date_str) - timedelta(days=1)).date()}T00:00:00",
-            "order": "generated_at.asc",
-            "limit": "500",
-        },
-        timeout=30,
+    select_cols = (
+        "race_id,generated_at,decision_tier,velo_prime_prob,"
+        "market_deception_score,improvement_score,rpdc_release_score,"
+        "place_prob,race_archetype,archetype_suppression,"
+        "execution_allowed,assigned_product,router_reasons,full_analysis"
     )
-    resp.raise_for_status()
-    data = resp.json()
-    if isinstance(data, dict):
-        raise RuntimeError(f"Supabase error loading verdicts: {data}")
+    filtered, method = _shared_load_verdicts(date_str, select=select_cols, root=ROOT, local_fallback=False)
+    if method != "race_id":
+        print(f"  [run_execution_bridge_shadow] verdict load used fallback method: {method}")
+
     backup_path = ROOT / "data" / f"velo_prime_verdicts_{date_str.replace('-', '_')}.json"
     backup_rows = json.loads(backup_path.read_text()) if backup_path.exists() else []
-    # generated_at is write-time, not race-date -- scoring the evening before race day
-    # stamps generated_at under the wrong calendar day and silently zeroes this filter.
-    # Prefer known race_ids from the local verdict backup (race-date-correlated) when present.
-    known_race_ids = {str(row.get("race_id", "")) for row in backup_rows if row.get("race_id")}
-    if known_race_ids:
-        filtered = [v for v in data if str(v.get("race_id", "")) in known_race_ids]
-    else:
-        filtered = [v for v in data if _s(v.get("generated_at")).startswith(date_str)]
     if backup_rows:
         backup = {
             str(row.get("race_id", "")): {

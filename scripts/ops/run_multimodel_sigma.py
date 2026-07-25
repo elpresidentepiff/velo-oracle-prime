@@ -117,55 +117,20 @@ def _load_rp_results(date_str: str) -> dict[str, dict]:
     return index
 
 
-def _known_race_ids_for_date(date_str: str) -> list:
-    """race_ids from the standard racecard cache for this date, if it exists.
-
-    generated_at is write-time, not race-date -- scoring the evening before
-    race day stamps generated_at under the wrong calendar day and silently
-    zeroes out any date-range query. race_id reliably correlates to the
-    actual race date, so prefer it when the cache is available.
-    """
-    path = ROOT / "data" / f"racecards_{date_str.replace('-', '_')}_standard.json"
-    if not path.exists():
-        return []
-    try:
-        races = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return []
-    return [r["race_id"] for r in races if r.get("race_id")]
-
-
 def _load_supabase_predictions(date_str: str) -> dict[str, list[dict]]:
-    """Returns {race_id: [runner_pred_dicts]} from Supabase velo_verdicts."""
+    """Returns {race_id: [runner_pred_dicts]} from Supabase velo_verdicts.
+
+    Uses the shared, bug-fixed loader -- see src/velo/verdict_loader.py for
+    why this can't be a hand-rolled generated_at query. This script had
+    exactly that bug until 2026-07-23.
+    """
     try:
-        from supabase import create_client
-        sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
-        known_race_ids = _known_race_ids_for_date(date_str)
-        if known_race_ids:
-            rows = (
-                sb.table("velo_verdicts")
-                .select("race_id, full_analysis")
-                .in_("race_id", known_race_ids)
-                .execute()
-            )
-            if not rows.data:
-                rows = (
-                    sb.table("velo_verdicts")
-                    .select("race_id, full_analysis")
-                    .gte("generated_at", f"{date_str}T00:00:00")
-                    .lte("generated_at", f"{date_str}T23:59:59")
-                    .execute()
-                )
-        else:
-            rows = (
-                sb.table("velo_verdicts")
-                .select("race_id, full_analysis")
-                .gte("generated_at", f"{date_str}T00:00:00")
-                .lte("generated_at", f"{date_str}T23:59:59")
-                .execute()
-            )
+        from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts
+        rows, method = _shared_load_verdicts(date_str, select="race_id, full_analysis", root=ROOT)
+        if method != "race_id":
+            print(f"  [run_multimodel_sigma] verdict load used fallback method: {method}")
         result: dict[str, list[dict]] = {}
-        for row in rows.data or []:
+        for row in rows:
             rid = str(row.get("race_id", ""))
             fa = row.get("full_analysis") or {}
             preds = fa.get("predictions", []) if isinstance(fa, dict) else []

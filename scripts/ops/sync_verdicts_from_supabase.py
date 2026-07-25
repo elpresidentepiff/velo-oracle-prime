@@ -4,10 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
-import urllib.parse
-import urllib.request
-from datetime import date, timedelta
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -16,73 +13,33 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 DATA = ROOT / "data"
 load_dotenv(ROOT / ".env")
 
-SB_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
-SB_KEY = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
-HEADERS = {"apikey": SB_KEY, "Authorization": f"Bearer {SB_KEY}", "Accept": "application/json"}
+sys.path.insert(0, str(ROOT))
+from src.velo.verdict_loader import load_verdicts as _shared_load_verdicts  # noqa: E402
 
-
-def _get(table: str, params: dict[str, str]) -> list[dict]:
-    if not SB_URL or not SB_KEY:
-        raise RuntimeError("Supabase credentials are not configured")
-    query = urllib.parse.urlencode(params, safe="(),.*")
-    req = urllib.request.Request(f"{SB_URL}/rest/v1/{table}?{query}", headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=30) as response:
-        return json.loads(response.read())
+_COLUMNS = (
+    "race_id,generated_at,engine_version,git_commit_sha,environment,"
+    "velo_prime_prob,improvement_score,market_deception_score,place_prob,"
+    "longshot_prob,release_day_prob,decision_tier,confidence_level,"
+    "assigned_product,router_reasons,execution_allowed,top_rank_horse_id,"
+    "selections,full_analysis,active_components,excluded_from_ensemble,"
+    "g_shadow_multiplier,g_shadow_flags"
+)
 
 
 def _fetch_verdicts(target: str) -> tuple[list[dict], str]:
-    next_day = date.fromisoformat(target) + timedelta(days=1)
-    columns = (
-        "race_id,generated_at,engine_version,git_commit_sha,environment,"
-        "velo_prime_prob,improvement_score,market_deception_score,place_prob,"
-        "longshot_prob,release_day_prob,decision_tier,confidence_level,"
-        "assigned_product,router_reasons,execution_allowed,top_rank_horse_id,"
-        "selections,full_analysis,active_components,excluded_from_ensemble,"
-        "g_shadow_multiplier,g_shadow_flags"
-    )
-    for label, start, end in (
-        ("uk_window", f"{target}T03:00:00Z", f"{next_day.isoformat()}T03:00:00Z"),
-        ("utc_day", f"{target}T00:00:00Z", f"{next_day.isoformat()}T00:00:00Z"),
-    ):
-        rows = _get(
-            "velo_verdicts",
-            {
-                "select": columns,
-                "generated_at": f"gte.{start}",
-                "and": f"(generated_at.lt.{end})",
-                "order": "velo_prime_prob.desc",
-                "limit": "1000",
-            },
-        )
-        if rows:
-            return rows, label
+    """Fetch verdicts for target date via the shared, bug-fixed loader.
 
-    # The `races` table is fed by the (permanently decommissioned) Racing API and
-    # hasn't been populated since 2026-05-06 -- it cannot be used as a race_id
-    # source for any current date. Use the local RP-sourced racecard cache instead,
-    # same pattern as the other generated_at-bug fixes this week.
-    racecard_path = DATA / f"racecards_{target.replace('-', '_')}_standard.json"
-    race_ids: list[str] = []
-    if racecard_path.exists():
-        try:
-            cards = json.loads(racecard_path.read_text())
-            race_ids = [str(r["race_id"]) for r in cards if isinstance(r, dict) and r.get("race_id")]
-        except Exception:
-            race_ids = []
-    rows: list[dict] = []
-    for offset in range(0, len(race_ids), 50):
-        rows.extend(
-            _get(
-                "velo_verdicts",
-                {
-                    "select": columns,
-                    "race_id": f"in.({','.join(race_ids[offset:offset + 50])})",
-                    "order": "velo_prime_prob.desc",
-                    "limit": "1000",
-                },
-            )
-        )
-    return rows, "race_id_join" if rows else "none"
+    See src/velo/verdict_loader.py for why this can't be a hand-rolled
+    generated_at query. This script used to try two separate generated_at
+    windows (uk_window, utc_day) before a race_id fallback that queried a
+    `races` table which turned out to be dead (fed by the decommissioned
+    Racing API, last populated 2026-05-06) -- both of those were symptoms of
+    not having race_id-first querying as the default. The shared loader
+    supersedes all of that.
+    """
+    rows, method = _shared_load_verdicts(target, select=_COLUMNS, root=ROOT)
+    rows.sort(key=lambda r: r.get("velo_prime_prob") or 0.0, reverse=True)
+    return rows, method
 
 
 def sync_local_verdict_archive(target: str) -> dict:

@@ -29,6 +29,7 @@ from scripts.ops.run_prime_today import _bootstrap_runtime, load_racecards
 from src.intelligence.macro_regime.bha_macro_context import get_macro_context_for_race
 from src.intelligence.velo_prime_ensemble import VeloPrimeEnsemble, _WEIGHTS
 from src.velo.race_metadata_resolver import rest_fetch
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts
 from workers.racing_api_normalizer import normalize_race
 
 COMPONENTS = [
@@ -151,38 +152,14 @@ def _race_component_summary(inputs: list[dict[str, Any]]) -> dict[str, Any]:
     return summary
 
 
-def _known_race_ids_for_date(target_date: str) -> list[str]:
-    """race_ids from the standard racecard cache for this date, if it exists.
-
-    generated_at is write-time, not race-date -- scoring the evening before
-    race day stamps generated_at under the wrong calendar day and silently
-    excludes every row here. race_id reliably correlates to the actual race
-    date, so prefer it when the cache is available.
-    """
-    path = ROOT / "data" / f"racecards_{target_date.replace('-', '_')}_standard.json"
-    if not path.exists():
-        return []
-    try:
-        races = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return []
-    return [str(r["race_id"]) for r in races if r.get("race_id")]
-
-
 def _latest_verdict_rows(target_date: str) -> list[dict[str, Any]]:
+    # Shared, bug-fixed loader -- see src/velo/verdict_loader.py for why this
+    # can't be a hand-rolled generated_at query. This script had exactly that
+    # bug until 2026-07-23.
     select = "race_id,generated_at,full_analysis,top_rank_horse_id,velo_prime_prob"
-    known_race_ids = _known_race_ids_for_date(target_date)
-    rows: list[dict[str, Any]] = []
-    if known_race_ids:
-        rows = rest_fetch(
-            "velo_verdicts", select, {"race_id": f"in.({','.join(known_race_ids)})"}
-        )
-    if not rows:
-        rows = rest_fetch("velo_verdicts", select)
-        rows = [
-            row for row in rows
-            if row.get("race_id") and str(row.get("generated_at") or "").startswith(target_date)
-        ]
+    rows, method = shared_load_verdicts(target_date, select=select, root=ROOT, local_fallback=False)
+    if method != "race_id":
+        print(f"  [audit_live_weight_contract] verdict load used fallback method: {method}")
     latest: dict[str, dict[str, Any]] = {}
     for row in rows:
         race_id = row.get("race_id")

@@ -1,58 +1,35 @@
 
-import os
-import json
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
-from supabase import create_client
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env")
+
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts  # noqa: E402
 
 TARGET_DATE = "2026-05-01"
 
 
-def _known_race_ids_for_date(date_str: str) -> list:
-    """race_ids from the standard racecard cache for this date, if it exists.
-
-    generated_at is write-time, not race-date -- scoring the evening before
-    race day stamps generated_at under the wrong calendar day and silently
-    zeroes out any date-range query. race_id reliably correlates to the
-    actual race date, so prefer it when the cache is available.
-    """
-    path = ROOT / "data" / f"racecards_{date_str.replace('-', '_')}_standard.json"
-    if not path.exists():
-        return []
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return []
-    races = payload.get("racecards", []) if isinstance(payload, dict) else payload
-    return [r["race_id"] for r in races if isinstance(r, dict) and r.get("race_id")]
-
-
 def run_diff():
-    sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_ROLE_KEY"))
+    # 1. Fetch live persisted verdicts for TARGET_DATE via the shared,
+    # bug-fixed loader. See src/velo/verdict_loader.py for why this can't be
+    # a hand-rolled generated_at query -- this script had exactly that bug
+    # until 2026-07-24.
+    rows, method = shared_load_verdicts(
+        TARGET_DATE, select="race_id,full_analysis,decision_tier,velo_prime_prob", root=ROOT
+    )
+    if method != "race_id":
+        print(f"  [compare_dry_run_patch] verdict load used fallback method: {method}")
 
-    # 1. Fetch live persisted verdicts for TARGET_DATE
-    known_race_ids = _known_race_ids_for_date(TARGET_DATE)
-    v_resp = None
-    if known_race_ids:
-        v_resp = (
-            sb.table("velo_verdicts")
-            .select("race_id,full_analysis,decision_tier,velo_prime_prob")
-            .in_("race_id", known_race_ids)
-            .execute()
-        )
-    if not (v_resp and v_resp.data):
-        v_resp = sb.table("velo_verdicts").select("race_id,full_analysis,decision_tier,velo_prime_prob").gte("generated_at", f"{TARGET_DATE}T00:00:00").lt("generated_at", f"{TARGET_DATE}T23:59:59").execute()
-
-    if not v_resp.data:
-        print("No persisted verdicts found for 2026-05-01.")
+    if not rows:
+        print(f"No persisted verdicts found for {TARGET_DATE}.")
         return
-        
+
     persisted = {}
     vp30_before = 0
-    for v in v_resp.data:
+    for v in rows:
         race_id = v["race_id"]
         fa = v.get("full_analysis") or []
         if isinstance(fa, dict): fa = list(fa.values())

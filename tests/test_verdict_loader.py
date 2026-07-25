@@ -89,3 +89,16 @@ def test_load_verdicts_chunks_large_race_id_lists(tmp_path):
         load_verdicts("2026-07-24", root=tmp_path)
     # 120 race_ids at chunk size 50 -> 3 calls
     assert mock_get.call_count == 3
+
+
+def test_load_verdicts_uses_caller_supplied_race_ids_over_cache(tmp_path):
+    # Cache says one thing, caller explicitly supplies a different (already
+    # known-reliable) race_id list -- the caller-supplied list should win.
+    _write_racecard(tmp_path, "2026-07-24", ["999999"])
+    with patch("src.velo.verdict_loader._get") as mock_get:
+        mock_get.return_value = [{"race_id": "923037"}]
+        rows, method = load_verdicts("2026-07-24", root=tmp_path, race_ids=["923037"])
+    assert method == "race_id"
+    assert rows == [{"race_id": "923037"}]
+    called_params = mock_get.call_args_list[0][0][1]
+    assert called_params["race_id"] == "in.(923037)"

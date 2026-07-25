@@ -32,6 +32,8 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).parent))
 load_dotenv(ROOT / ".env")
 
+from src.velo.verdict_loader import load_verdicts as shared_load_verdicts  # noqa: E402
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -235,25 +237,6 @@ def _markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _known_race_ids_for_date(target: str) -> list:
-    """race_ids from the standard racecard cache for this date, if it exists.
-
-    generated_at is write-time, not race-date -- scoring the evening before
-    race day stamps generated_at under the wrong calendar day and silently
-    zeroes out any date-range query, which would falsely tell this watchdog
-    "the day never scored" for VELO's normal evening-before operating pattern.
-    race_id reliably correlates to the actual race date instead.
-    """
-    path = ROOT / "data" / f"racecards_{target.replace('-', '_')}_standard.json"
-    if not path.exists():
-        return []
-    try:
-        races = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return []
-    return [r["race_id"] for r in races if r.get("race_id")]
-
-
 def build_report(target: str) -> dict:
     next_day = date.fromisoformat(target) + timedelta(days=1)
     start_utc = f"{target}T00:00:00Z"
@@ -269,31 +252,18 @@ def build_report(target: str) -> dict:
             "limit": "10",
         },
     )
-    known_race_ids = _known_race_ids_for_date(target)
-    verdict_rows = []
-    if known_race_ids:
-        for offset in range(0, len(known_race_ids), 50):
-            verdict_rows.extend(
-                _get(
-                    "velo_verdicts",
-                    {
-                        "select": "race_id,generated_at,engine_version,git_commit_sha,environment",
-                        "race_id": f"in.({','.join(known_race_ids[offset:offset + 50])})",
-                        "order": "generated_at.asc",
-                        "limit": "1000",
-                    },
-                )
-            )
-    if not verdict_rows:
-        verdict_rows = _get(
-            "velo_verdicts",
-            {
-                "select": "race_id,generated_at,engine_version,git_commit_sha,environment",
-                "generated_at": f"gte.{start_utc}",
-                "order": "generated_at.asc",
-                "limit": "1000",
-            },
-        )
+    # This watchdog's whole job is "prove whether the day actually scored" --
+    # it MUST use the shared, race_id-first loader (src/velo/verdict_loader.py),
+    # not a hand-rolled generated_at query, or it will falsely report every
+    # evening-before-scored race day (VELO's normal manual operating pattern)
+    # as unscored.
+    verdict_rows, _verdict_method = shared_load_verdicts(
+        target,
+        select="race_id,generated_at,engine_version,git_commit_sha,environment",
+        root=ROOT,
+        local_fallback=False,
+    )
+    if _verdict_method == "generated_at":
         verdict_rows = [row for row in verdict_rows if row.get("generated_at", "") < end_utc]
 
     local_exists, local_count, local_file = _load_local_verdict_file(target)
