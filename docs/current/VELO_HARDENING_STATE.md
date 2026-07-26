@@ -453,6 +453,8 @@ NOT in champion model feature matrix. Shadow sidecar only.
 
 Release score ≥ 1.5 → SR=44.7% (n=38) vs 26.7% base. Advisory signal. Not yet promoted to active.
 
+**Verified clean of the 2026-07-27 RPDC look-ahead leak** (see `docs/current/ONE_TRUTH.md` Phase A-D section): traced all 13 dates behind the qualifying races against every historical rescore/backfill run — zero overlap, every qualifying race was scored same-day. This figure is not affected by the leak.
+
 ### RPDC Missing Tags Warning (OPEN)
 
 STABLE_WARM, MARK_READY, MARK_NEAR, COURSE_RETURN absent from all May–Jun 2026 sigma corpus rows.  
