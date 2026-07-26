@@ -28,6 +28,7 @@ An auditable UK/IRE horse-racing prediction system. It captures Racing Post HTML
 | Scoring entrypoint | `scripts/ops/run_prime_today.py --date YYYY-MM-DD --source rp --no-notify` (manual; Railway cron is FAIL_OR_UNPROVEN) |
 | Live formula | Profile `SQPE_IMPROVEMENT_MDS_V1`: `VP = (0.45·sqpe_v17 + 0.12·improvement_score + 0.10·market_deception_score) / 0.67` (`src/intelligence/velo_prime_ensemble.py:175-235`) |
 | Live model files | `models/sqpe_v17/sqpe_v17.pkl` (retrained as v17.1 on 1.54M rows, 2025 holdout AUC=0.9296, promoted 2026-06-19), `models/specialist/improvement_model/`, `models/specialist/market_deception_model/` |
+| RPR in the live model | `sqpe_v17.pkl` genuinely uses RPR (`rpr_num`+`rpr_vs_field` ≈ 50% of its real feature importance) — grandfathered by deliberate 2026-06-19 design, not a leak. See `docs/engineering/SOURCE_INCLUSION_POLICY_V1.md` for the full rationale and the empirical mid-price/short-fav band split that justifies it. New Build, Champion Intent Shadow, and No-RPR Shadow genuinely exclude it. |
 | Stored but NOT weighted | `place_prob` (badge), `longshot_score` (frozen), `release_window_score`, `comment_intel_score` (stored-only) |
 | Data source | Racing Post HTML via logged-in Playwright capture (`racing_post_account_collector.py`). UK/IRE only. |
 | System of record | Supabase `velo_verdicts`; local backup `data/velo_prime_verdicts_YYYY_MM_DD.json` |
