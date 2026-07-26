@@ -1246,7 +1246,7 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     # 4. Supabase Status
     sb_url, sb_key = _pipeline_run_api_config()
     if sb_url and sb_key:
-        status_code, _ = _pipeline_request("GET", f"/pipeline_runs?target_date=eq.{target_date}&limit=1")
+        status_code, _ = _pipeline_request("GET", f"/pipeline_runs?source_date=eq.{target_date}&limit=1")
         if status_code == 200:
             res["supabase_persistence_status"] = "CONNECTED"
             res["supabase_readback_verified"] = "PASS"
@@ -1335,13 +1335,24 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     return res
 
 
+_NO_STORE_HEADERS = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
+
+
 @app.get("/dashboard", include_in_schema=False)
 async def dashboard():
-    """Serve the Governed Card Dashboard UI."""
+    """Serve the Governed Card Dashboard UI.
+
+    Explicit no-store: this HTML and every dashboard data endpoint below
+    change throughout race day, but FileResponse only ever sent ETag/
+    Last-Modified with no Cache-Control -- browsers are then free to serve
+    a stale cached copy indefinitely under heuristic caching without ever
+    re-checking the server, which silently hides every fix made after the
+    first load (found 2026-07-26: operator kept seeing pre-fix dashboard
+    state no matter how many server-side bugs were fixed and verified)."""
     html_path = pathlib.Path(__file__).parent / "static" / "dashboard" / "index.html"
     if not html_path.exists():
         raise HTTPException(status_code=404, detail="Dashboard not found")
-    return FileResponse(str(html_path), media_type="text/html")
+    return FileResponse(str(html_path), media_type="text/html", headers=_NO_STORE_HEADERS)
 
 
 @app.get("/sidecar_stack_latest.json", include_in_schema=False)
@@ -1350,16 +1361,50 @@ async def dashboard_sidecar_stack():
     sidecar_path = pathlib.Path(__file__).parent / "static" / "dashboard" / "sidecar_stack_latest.json"
     if not sidecar_path.exists():
         raise HTTPException(status_code=404, detail="Dashboard sidecar stack not found")
-    return FileResponse(str(sidecar_path), media_type="application/json")
+    return FileResponse(str(sidecar_path), media_type="application/json", headers=_NO_STORE_HEADERS)
+
+
+@app.get("/rpdc_gate_card_latest.json", include_in_schema=False)
+async def rpdc_gate_card(date: str = Query(default=None)):
+    """Serve the RPDC RS>=1.5 advisory gate card for the dashboard.
+
+    Verified clean of the 2026-07-27 RPDC look-ahead leak (see
+    docs/current/ONE_TRUTH.md Phase A-D section) -- the calibration figure
+    baked into the response was traced against every historical
+    rescore/backfill run with zero overlap. Advisory only, no scoring or
+    staking impact. Same dated-file-first pattern as the three-option card."""
+    reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
+    if date:
+        dated_path = reports_dir / f"rpdc_gate_card_{date.replace('-', '_')}.json"
+        if dated_path.exists():
+            return FileResponse(str(dated_path), media_type="application/json", headers=_NO_STORE_HEADERS)
+    card_path = reports_dir / "rpdc_gate_card_latest.json"
+    if not card_path.exists():
+        raise HTTPException(status_code=404, detail="RPDC gate card not found")
+    return FileResponse(str(card_path), media_type="application/json", headers=_NO_STORE_HEADERS)
 
 
 @app.get("/old_velo_three_option_card_latest.json", include_in_schema=False)
-async def old_velo_three_option_card():
-    """Serve the Old VELO WIN/PLACE/LONGSHOT operator card for the dashboard."""
-    card_path = pathlib.Path(__file__).parent.parent / "data" / "reports" / "old_velo_three_option_card_latest.json"
+async def old_velo_three_option_card(date: str = Query(default=None)):
+    """Serve the Old VELO WIN/PLACE/LONGSHOT operator card for the dashboard.
+
+    The frontend always sends ?date=<requested card date>, but this route used
+    to ignore it and unconditionally serve whichever day's run last overwrote
+    _latest.json -- e.g. viewing 2026-07-25 after a 2026-07-26 run had already
+    regenerated _latest.json silently showed no three-option data at all for
+    2026-07-25, since the frontend's own course+time join key never matches
+    across dates. Prefer the exact dated file; fall back to _latest.json only
+    when no dated file exists (e.g. old data captured before this file was
+    split, or dashboard viewed with no date param at all)."""
+    reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
+    if date:
+        dated_path = reports_dir / f"old_velo_three_option_card_{date.replace('-', '_')}.json"
+        if dated_path.exists():
+            return FileResponse(str(dated_path), media_type="application/json", headers=_NO_STORE_HEADERS)
+    card_path = reports_dir / "old_velo_three_option_card_latest.json"
     if not card_path.exists():
         raise HTTPException(status_code=404, detail="Three-option card not found")
-    return FileResponse(str(card_path), media_type="application/json")
+    return FileResponse(str(card_path), media_type="application/json", headers=_NO_STORE_HEADERS)
 
 
 @app.get("/api/model-suggestions")
@@ -2765,40 +2810,6 @@ async def predict_full(race_data: dict, authorized: bool = Depends(verify_api_ke
     """
     raise HTTPException(status_code=501, detail="Not implemented — use /api/v1/predict/race for live scoring")
 
-
-# Intelligence endpoints
-@app.get("/api/v1/intel/narrative/{race_id}")
-async def get_narrative(race_id: str, authorized: bool = Depends(verify_api_key)):
-    """Get narrative intelligence for race"""
-    try:
-        from workers.racing_api_fetcher import RacingAPIFetcher
-
-        from app.intelligence.chains.narrative_chain import run_narrative_chain
-
-        fetcher = RacingAPIFetcher()
-        race = fetcher.get_race(race_id)
-        result = await run_narrative_chain(race)
-        return result
-    except Exception as e:
-        logger.error(f"Narrative analysis failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
-
-
-@app.get("/api/v1/intel/market/{race_id}")
-async def get_market_intel(race_id: str, authorized: bool = Depends(verify_api_key)):
-    """Get market manipulation intelligence"""
-    try:
-        from workers.racing_api_fetcher import RacingAPIFetcher
-
-        from app.intelligence.chains.market_chain import run_market_chain
-
-        fetcher = RacingAPIFetcher()
-        race = fetcher.get_race(race_id)
-        result = await run_market_chain(race, odds_history=[])
-        return result
-    except Exception as e:
-        logger.error(f"Market analysis failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 # System endpoints

@@ -2957,6 +2957,24 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
 </div>
 <style>#cmp-body { display: none; } #cmp-body.open { display: block; }</style>
 
+<!-- RPDC RS>=1.5 Advisory Gate (added 2026-07-27) -- verified clean of the
+     2026-07-27 RPDC look-ahead leak: every date behind the calibration figure
+     was traced against all historical rescore/backfill runs, zero overlap.
+     See docs/current/ONE_TRUTH.md Phase A-D section. Advisory only -- no
+     scoring, tier, or staking impact. -->
+<div id="rpdc-wrap" style="margin:8px 12px;border:1px solid var(--border);border-radius:6px;background:#111;">
+  <div id="rpdc-header" style="padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;color:var(--fg-secondary);display:flex;justify-content:space-between;align-items:center;"
+       onclick="document.getElementById('rpdc-body').classList.toggle('open')">
+    <span>RPDC RS≥1.5 ADVISORY GATE — <span id="rpdc-calib-summary">…</span></span>
+    <span class="sib-toggle">[ EXPAND ]</span>
+  </div>
+  <div id="rpdc-body" style="padding:6px 14px 12px;">
+    <div id="rpdc-calib-note" style="font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-bottom:8px;"></div>
+    <div id="rpdc-table" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);"></div>
+  </div>
+</div>
+<style>#rpdc-body { display: none; } #rpdc-body.open { display: block; }</style>
+
 <!-- Race Cards -->
 <div id="race-table-wrap">
   <div id="loading">LOADING GOVERNED CARD</div>
@@ -3378,6 +3396,7 @@ async function loadCard() {
     badge.className = 'live-badge cache';
   }
   loadCanonicalPerformance(dateParam);
+  loadRpdcGateCard(dateParam);
 }
 
 // Canonical model performance -- added 2026-07-16. Reads public.canonical_model_scorecards
@@ -3418,6 +3437,57 @@ async function loadCanonicalPerformance(dateParam) {
     tableEl.innerHTML = html;
   } catch (e) {
     tableEl.innerHTML = `<div style="color:var(--fg-muted)">Canonical performance unavailable: ${esc(String(e))}</div>`;
+  }
+}
+
+// RPDC RS>=1.5 advisory gate -- added 2026-07-27. Reads today's per-race
+// rpdc_release_score/tags (already attached to verdicts at scoring time)
+// plus the verified-clean calibration figure. Advisory only -- no scoring,
+// tier, or staking impact. See docs/current/ONE_TRUTH.md Phase A-D section
+// for how the calibration was verified clean of the same-day RPDC leak fix.
+async function loadRpdcGateCard(dateParam) {
+  const summaryEl = document.getElementById('rpdc-calib-summary');
+  const noteEl = document.getElementById('rpdc-calib-note');
+  const tableEl = document.getElementById('rpdc-table');
+  if (!tableEl) return;
+  try {
+    const res = await fetch(`/rpdc_gate_card_latest.json?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`rpdc_gate_card ${res.status}`);
+    const data = await res.json();
+    const c = data.calibration || {};
+    if (summaryEl) {
+      summaryEl.textContent = `SR=${c.current_sr ?? c.documented_sr}% (n=${c.current_n ?? c.documented_n}) `
+        + `vs ${c.base_rate_sr}% base — today: ${data.today_gate_qualified_count}/${data.today_races_total} qualify`;
+    }
+    if (noteEl) {
+      noteEl.textContent = c.verified_clean_of_rpdc_leak
+        ? `Verified clean of the RPDC look-ahead leak (${c.verified_at}) -- every calibration date checked against all historical rescore/backfill runs, zero overlap. ${c.status || ''}`
+        : (c.status || '');
+    }
+    const races = (data.races || []).filter(r => r.gate_qualified);
+    if (!races.length) {
+      tableEl.innerHTML = '<div style="color:var(--fg-muted)">No races qualify RS≥1.5 today.</div>';
+      return;
+    }
+    let html = '<table style="width:100%;border-collapse:collapse;">';
+    html += '<tr style="color:var(--fg-muted);text-align:left;"><th style="padding:2px 8px 2px 0;">COURSE</th><th style="padding:2px 8px;">OFF</th>'
+      + '<th style="padding:2px 8px;">HORSE</th><th style="padding:2px 8px;">RS</th><th style="padding:2px 8px;">VP</th><th style="padding:2px 8px;">TAGS</th></tr>';
+    races.sort((a, b) => (b.rpdc_release_score || 0) - (a.rpdc_release_score || 0));
+    races.forEach(r => {
+      const vp = (typeof r.velo_prime_prob === 'number') ? r.velo_prime_prob.toFixed(3) : '—';
+      const tags = (r.rpdc_tags || []).join(', ');
+      html += `<tr><td style="padding:2px 8px 2px 0;color:var(--fg-primary);">${esc(r.course || '')}</td>`
+        + `<td style="padding:2px 8px;">${esc(r.off_time || '')}</td>`
+        + `<td style="padding:2px 8px;color:var(--fg-primary);">${esc(r.horse || '')}</td>`
+        + `<td style="padding:2px 8px;color:var(--gold);">${(r.rpdc_release_score || 0).toFixed(1)}</td>`
+        + `<td style="padding:2px 8px;">${vp}</td>`
+        + `<td style="padding:2px 8px;color:#5599ff;font-size:10px;">${esc(tags)}</td></tr>`;
+    });
+    html += '</table>';
+    tableEl.innerHTML = html;
+  } catch (e) {
+    if (summaryEl) summaryEl.textContent = 'unavailable';
+    tableEl.innerHTML = `<div style="color:var(--fg-muted)">RPDC gate card unavailable: ${esc(String(e))}</div>`;
   }
 }
 
