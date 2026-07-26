@@ -286,6 +286,15 @@ class NightlyEODRunner:
             self.failures.append({"type": "DUPLICATE_REPLAY_MUTATED_STATE", "updates": updates_2})
             return self._finalize("FAIL")
 
+        if audit_1.get("doctrines_fired_dropped", 0) > 0 or audit_2.get("doctrines_fired_dropped", 0) > 0:
+            self.failures.append({
+                "type": "DOCTRINE_REGRESSION",
+                "detail": "Raw events carried doctrines_fired that the adapter dropped -- "
+                          "this is the 2026-04-25..2026-07-26 hardcoded-[] bug class recurring. "
+                          "Fix scripts/playbook_g_shadow_adapter.py before trusting doctrine_strengths.",
+            })
+            return self._finalize("FAIL")
+
         live_hash_after = self._get_file_hash(self.live_state_path)
         if live_hash_before != live_hash_after:
             self.failures.append({"type": "LIVE_STATE_TOUCHED"})
@@ -295,8 +304,34 @@ class NightlyEODRunner:
         self.stats["updates_1"] = updates_1
         self.stats["updates_2"] = updates_2
         self.stats["dups"] = duplicates_skipped
-        
+
         verdict = self._finalize("PASS")
+
+        # 4b. Apply the SAME night's events to the LIVE state.
+        # Authorized 2026-07-26 (operator sign-off) after the doctrines_fired
+        # bug was fixed and both the shadow backfill and a full live catch-up
+        # (2026-04-26..2026-07-26, 1714 races) were run and cross-checked for
+        # consistency. Only runs after the shadow pass above has PASSED and
+        # proven idempotency + no doctrine-drop regression on tonight's own
+        # events, using the identical event file -- so this is not a blind
+        # extra write, it's gated behind tonight's own shadow verification.
+        if verdict == "PASS":
+            try:
+                from scripts.playbook_g_live_adapter import PlaybookGLiveAdapter
+                live_audit_path = ROOT / "data" / f"playbook_g_live_nightly_audit_{self.date_tag}.json"
+                live_adapter = PlaybookGLiveAdapter(
+                    str(self.events_path), str(self.live_state_path), str(live_audit_path),
+                    authorized=True,
+                )
+                live_adapter.run()
+                live_audit = json.loads(live_audit_path.read_text())
+                if live_audit.get("doctrines_fired_dropped", 0) > 0:
+                    logger.error("LIVE playbook G update had doctrine-drop regression -- see %s", live_audit_path)
+                else:
+                    logger.info("LIVE playbook G state updated: verdict=%s updates=%s",
+                                live_audit.get("verdict"), live_audit.get("engine_updates_applied"))
+            except Exception as e:
+                logger.error(f"LIVE playbook G update failed (shadow state is unaffected): {e}")
         
         # 5. Trigger Study Layer
         if verdict == "PASS":
