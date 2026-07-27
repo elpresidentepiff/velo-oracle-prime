@@ -1,16 +1,16 @@
 {
-  "date": "2026-07-26",
-  "generated_at": "2026-07-27T21:45:54.907274+00:00",
+  "date": "2026-07-25",
+  "generated_at": "2026-07-27T21:44:57.599854+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
-    "87b99355"
+    "9677724a"
   ],
   "flatline_count": 0,
   "fully_uniform_count": 0,
   "fully_uniform_races": [],
   "majority_tied_count": 0,
   "identity_failure_count": 0,
-  "runners_snapshotted": 209,
+  "runners_snapshotted": 605,
   "council_verdict": "WATCH_ONLY",
   "learning_gate_status": "BLOCKED",
   "promotion_gate_status": "BLOCKED",
@@ -20,14 +20,14 @@
   ],
   "sigma_artifact": {
     "status": "PRESENT",
-    "path": "data/sigma_results/sigma_results_2026_07_26.json",
-    "sr": 0.1176,
-    "wins": 2,
-    "evaluated_count": 17,
+    "path": "data/sigma_results/sigma_results_2026_07_25.json",
+    "sr": 0.1698,
+    "wins": 9,
+    "evaluated_count": 53,
     "sigma_status": "PASS",
     "completeness_gate": null,
     "learning_blocked": null,
-    "expected_predictions": 17,
+    "expected_predictions": 53,
     "result_races_available": null,
     "matched": null,
     "coverage_ratio": null,
@@ -35,7 +35,7 @@
   },
   "run_truth": {
     "status": "MANUAL_RECOVERY_ONLY",
-    "path": "data/velo_daily_run_truth_2026_07_26.json",
+    "path": "data/velo_daily_run_truth_2026_07_25.json",
     "alert_required": true,
     "issues": [
       "MANUAL_RUN_ONLY"
@@ -54,24 +54,15 @@
   "decision_policy_gate_status": "NEEDS_MORE_DAYS",
   "decision_policy_gate_top_picks": 87,
   "learning_admission": {
-    "eligibility_status": "OUTCOME_ONLY_EOD_REPLAY_PASS",
-    "eligible_rows": 17,
+    "eligibility_status": "NOT_RUN",
+    "eligible_rows": 0,
     "excluded_rows": 0,
     "consumed_shadow_before": 0,
     "consumed_live_before": 0,
     "live_state_hash": "UNKNOWN",
-    "build_events_result": {
-      "phase": "OUTCOME_ONLY_EOD_REPLAY",
-      "events_built": 17,
-      "events_written": 17,
-      "status": "PASS",
-      "sentient_state_touched": false,
-      "shadow_state_touched": true,
-      "duplicates_skipped_second_run": 17,
-      "consumed_live": false
-    },
+    "build_events_result": {},
     "admission_packet": "PRESENT",
-    "recommendation": "OUTCOME_ONLY_EOD_REPLAY_COMPLETE"
+    "recommendation": "PENDING"
   },
   "race_shape_v1": {
     "race_shape_model_v1": "DESIGN_PENDING",
