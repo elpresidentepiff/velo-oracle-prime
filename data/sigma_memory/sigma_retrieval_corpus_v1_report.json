@@ -1,20 +1,20 @@
 {
-  "total_records": 3673,
-  "retrieval_eligible_records": 3586,
+  "total_records": 3775,
+  "retrieval_eligible_records": 3688,
   "outcome_counts": {
-    "FRAME": 1046,
-    "MISS": 1751,
-    "WIN": 876
+    "FRAME": 1078,
+    "MISS": 1805,
+    "WIN": 892
   },
   "regime_confidence_counts": {
-    "HIGH": 1403,
+    "HIGH": 1505,
     "LOW_REGIME_INFERRED": 2270
   },
   "retrieval_blocker_counts": {
-    "NONE": 3586,
+    "NONE": 3688,
     "OUTCOME_OR_DATE_MISSING": 87
   },
-  "regime_count": 38,
+  "regime_count": 40,
   "top_regimes": [
     [
       "e895f31903a5",
@@ -58,19 +58,19 @@
     ]
   ],
   "date_min": "2026-01-09",
-  "date_max": "2026-07-24",
-  "date_count": 117,
+  "date_max": "2026-07-27",
+  "date_count": 120,
   "rpr_violations": 0,
   "forbidden_model_field_violations": 0,
   "classification": "SIGMA_RETRIEVAL_CORPUS_READY_SHADOW_ONLY",
-  "generated_at": "2026-07-25T04:14:25.025271+00:00",
+  "generated_at": "2026-07-27T21:33:54.005627+00:00",
   "schema_version": "sigma_retrieval_corpus_v1",
   "input_sigma_dump": "data/sigma_audits_dump.json",
   "output_jsonl": "data/sigma_memory/sigma_retrieval_corpus_v1.jsonl",
   "shadow_only": true,
   "live_velo_impact": false,
-  "sp_enrichment_applied": 1887,
+  "sp_enrichment_applied": 1954,
   "sp_enrichment_source": "data/velo_innovation_protocol_1k_deduped.csv",
-  "required_through_date": "2026-07-24",
+  "required_through_date": "2026-07-27",
   "freshness_gate_passed": true
 }
