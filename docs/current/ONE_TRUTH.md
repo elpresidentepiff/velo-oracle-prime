@@ -215,6 +215,76 @@ EW_CANDIDATE flag now tracked in sigma and multimodel ledger. `run_results_sigma
   postdata_score/plot_conviction from `racecard_merged`, joined with Deep Race Agent's
   verdict. Frontend panel existed as a dead placeholder before this.
 
+## LEARNING LOOP AUDIT — 2026-07-28 (7-Block Analysis)
+
+Full deep-dive into why the learning loop does not affect predictions. Root causes, current state, and ordered fix queue. **Do not implement fixes out of order** — dependencies run bottom-up (calibration → VCP-03 → gates → council → shadow mode lift).
+
+### Block 1 — Runner Blast Radius
+`nightly_eod_learning_runner.py` is called ONLY from `run_full_raceday_eod.py` Step 20 as a non-critical subprocess. Risk of changing it: **LOW**.
+
+### Block 2 — Sentient State → Scoring Path
+The path EXISTS and is wired — but gated off by env var.
+
+`velo_prime_ensemble.py` loads `data/sentient_state.json` at module import. `_g_shadow_adjustment()` computes a probability multiplier per runner using `doctrine_strengths`, `appetite_state`, and `emotion_laws`. At line 419: `if not _G_SHADOW_MODE: self.velo_prime_prob *= g_mult` — the live path exists but never fires.
+
+**Gate:** `_G_SHADOW_MODE = os.getenv("VELO_G_SHADOW_MODE", "shadow").lower() != "live"` — defaults to `True` forever. Nothing currently sets `VELO_G_SHADOW_MODE=live`.
+
+**G has been evolving** (3,466 races observed, authorized live state update 2026-07-26):
+```
+LAY_THE_STORY:  0.080  (hammered down from 1.0)
+SHADOW_TRACKING: 0.080
+ENGINE_SUPREMACY: 1.000  (never fired — no code path triggers it)
+TOP_4_ON_DANGER: 8e-20  (dead)
+VETP_ECHO:      0.161
+[6 other doctrines at 1e-3 to 1e-13 — effectively dead]
+aggression_level: 0.30  (floor — repeated losses)
+recent_profit[-5]: [-1,-1,-1,-1,-1]
+emotion_laws: 50 pain + 50 anger + 50 triumph rules
+```
+**To flip live:** set `VELO_G_SHADOW_MODE=live` in `.env` + remove startup assertion in `app/main.py`. Do NOT do this without first backtesting shadow multipliers — every verdict already has `g_shadow_multiplier` and `g_shadow_flags` logged in runner snapshots.
+
+### Block 3 — Council Independence
+The council (`src/velo/council/agents.py`) is deterministic rule-based — 5 agents checking flatline, contamination, sigma SR, run IDs, mid-price — **with zero LLM calls**. It is genuinely independent of the learning runner. PrimeChair synthesizes to `PASS_TO_LEARNING` / `QUARANTINE_DAY` / `WATCH_ONLY`.
+
+**Bug:** `_finalize()` in `nightly_eod_learning_runner.py` line 389 writes:
+```python
+"council_verdict": verdict,  # Default to runner
+```
+The runner copies its own PASS/FAIL into the council audit. It **never reads** the Step 16b council output file. Gate condition 11 ("Council verdict is `PASS_TO_LEARNING`") is self-fulfilled. **Fix: runner must read `data/council_runs/council_run_{date}.json` and extract `council_verdict` before proceeding.**
+
+### Block 4 — Gate Enforcement
+Zero of 12 gate conditions (LEARNING_ADMISSION_GATE.md) are enforced in runner startup code. The runner opens `run()` with no gate check. `learning_allowed: True` hardcoded on every event. The gate document itself acknowledges this: "Today this gate is procedural."
+
+**Fix: add pre-flight at top of `run()` in `nightly_eod_learning_runner.py` checking:**
+1. `data/council_runs/council_run_{date}.json` → `council_verdict == "PASS_TO_LEARNING"`
+2. `data/mission_control/{date}_mission_control.json` → `learning_gate == "OPEN"`
+3. Sigma artifact exists and has `sigma_status: PASS`
+
+### Block 5 — VCP-03 Burn-In
+**FIXED 2026-07-28.** `build_vcp03_burn_in_log.py` was never wired into daily pipeline. Now runs as Step 20B in `run_full_raceday_eod.py`. Days 2–28 (July 2–27) are permanently lost — heartbeat file overwrites daily, no history. Count restarts from July 28 at 0/10.
+
+### Block 6 — Calibration Threshold
+`_classify_loss()` in `nightly_eod_learning_runner.py` line 105:
+```python
+if prob > 0.35: return "CALIBRATION_ERROR"
+```
+VP ≥ 0.30 is the system's definition of "high confidence". Classifying all VP > 0.35 losses as `CALIBRATION_ERROR` catches 57–85% of all losses — most normal picks, not genuinely overconfident ones. This floods G's pain rules with calibration signals that aren't meaningful.
+
+**Fix: raise threshold to VP > 0.55.** At VP > 0.55 the model is making a genuinely high-conviction claim. Losses there are true calibration errors.
+
+### Block 7 — Idempotency
+**NOT BROKEN.** Separate audit files for shadow (`playbook_g_nightly_audit_{date}.json`) and live (`playbook_g_live_nightly_audit_{date}.json`) are intentional. Both adapters correctly block duplicate runs for the same date using date-scoped key files. No action needed.
+
+### Fix Order (dependency-safe)
+| Priority | Fix | File | Risk |
+|---|---|---|---|
+| 1 | VCP-03 wire-in | `run_full_raceday_eod.py` | **DONE** |
+| 2 | Calibration threshold 0.35→0.55 | `nightly_eod_learning_runner.py` line 105 | Low |
+| 3 | Gate pre-flight (council + MC + sigma) | `nightly_eod_learning_runner.py` top of `run()` | Medium |
+| 4 | Runner reads actual council verdict | `nightly_eod_learning_runner.py` `_finalize()` | Medium |
+| 5 | Backtest G shadow multipliers vs sigma | Analysis only — read verdict snapshots | Analysis |
+| 6 | Flip `VELO_G_SHADOW_MODE=live` + remove assertion | `.env`, `app/main.py` | High — last |
+
 ## What is DEPRECATED
 Racing API as a data source (decommissioned 2026-05-14; client files deleted) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.
 
@@ -255,11 +325,11 @@ only, no external NLP/sentiment service.
 - **VFU-01 to VFU-12:** See `docs/current/VELO_VFU_TIMELINE_APPENDIX.md` (archived timeline).
 - **VFU-13 to VFU-19:** COMPLETE — contamination catches (Kakirra=CONTAMINATED, MiK=PARTIAL), sigma master ledger, pattern tribunal. No pending operator gates.
 
-## VÉLØ Coherence Protocol (VCP) State (added 2026-06-29)
+## VÉLØ Coherence Protocol (VCP) State (updated 2026-07-28)
 - **VCP-00 — Truth Lock:** IN PROGRESS (2026-06-29). Stale root docs archived. CLAUDE.md rewritten as pointer-only. docs/current/ thinned to operational spine. ONE_TRUTH HEAD updated.
 - **VCP-01 — Living State Packet:** COMPLETE (`ff86674`). `data/current/velo_living_state.json` (gitignored runtime state). Operator signed off 2026-06-29. Builder: `scripts/ops/build_velo_living_state.py`.
 - **VCP-02 — Heartbeat V1:** COMPLETE (`5f83fec`). Reads living state only. 25 tests pass. Operator signed off 2026-06-29. Builder: `scripts/ops/build_velo_heartbeat.py`.
-- **VCP-03 — Ten-Day Coherence Burn-In:** IN PROGRESS (started 2026-06-29). Day 1: PASS. 1/10 days. Log: `data/reports/vcp_03_burn_in_log.md`. Daily commands: `build_velo_living_state.py` → `build_velo_heartbeat.py` → `build_vcp03_burn_in_log.py`. Protocol: `docs/current/VCP_03_COHERENCE_BURN_IN_PROTOCOL.md`.
+- **VCP-03 — Ten-Day Coherence Burn-In:** IN PROGRESS. 2/10 passing days (June 30 + July 1). Log stuck because `build_vcp03_burn_in_log.py` was never wired into the daily pipeline — **FIXED 2026-07-28**: now runs as Step 20B in `run_full_raceday_eod.py`. Days 3–28 (July 2–27) are permanently lost (heartbeat overwrites daily, no history kept). Count restarts from July 28. Log: `data/reports/vcp_03_burn_in_log.md`. Protocol: `docs/current/VCP_03_COHERENCE_BURN_IN_PROTOCOL.md`.
 - **VCP-04 — Shadow Judgment:** NOT STARTED. Requires 10 passing burn-in days + operator sign-off.
 - **Learning doctrine:** VÉLØ learns from every event. Only clean, verified events are allowed to train or promote predictive rules. Dirty events become failure-memory, not model-food. Three lanes: MEMORY_CAPTURE_OPEN (always) · FAILURE_LEARNING_OPEN (always) · PROMOTION_LEARNING_GATED (clean evidence only).
 
@@ -271,11 +341,27 @@ only, no external NLP/sentiment service.
 - **RPDC missing tags:** STABLE_WARM / MARK_READY / MARK_NEAR / COURSE_RETURN absent from all May–Jun 2026 data. Investigate Supabase `runner_release_candidates`.
 - **New scrapers/parsers:** `scripts/ops/scrape_bha_going_stick.py` (D-1, shell ready) · `scripts/ops/parse_runner_notes.py` (D-3, verdict intel only)
 
-## What is BLOCKED / KNOWN ISSUES (as of 2026-06-28)
+## Railway — What It Actually Does (audited 2026-07-28)
+
+Railway (`railway.toml`) runs ONE thing: `uvicorn app.main:app --host 0.0.0.0 --port $PORT` — the FastAPI dashboard server. That's it. Everything else is either dead or never wired.
+
+| Railway service | Status | Verdict |
+|---|---|---|
+| Dashboard (`app.main:app`) | RUNNING | Only working Railway use. Reads Supabase. Accessible remotely. |
+| Scoring cron (`run_prime_today.py @ 09:00 UTC Mon-Sat`) | FAIL_OR_UNPROVEN | Cannot work — needs logged-in local RP browser session (Playwright + Firefox profile). Railway has no access to this. |
+| EOD/sigma chain | NOT DEPLOYED | Also cannot work remotely — depends on local result capture files. |
+
+**Cost verdict:** You are paying Railway to host a dashboard that reads Supabase. If remote access to the dashboard matters, keep it. If you only use it locally, shut down Railway and run `app.main:app` locally — saves the subscription entirely. Do NOT attempt to wire the scoring cron on Railway: it structurally requires a local browser session that cannot exist in a cloud container.
+
+## What is BLOCKED / KNOWN ISSUES (updated 2026-07-28)
 - **Telegram scoring alerts:** DISABLED (`--no-notify`).
-- **Railway cron:** FAIL_OR_UNPROVEN — every run is manual.
+- **Railway cron:** FAIL_OR_UNPROVEN — every scoring run is manual. See Railway section above.
 - **Local test suite:** pytest 6.2.5 incompatible with pytest-asyncio 1.3.0; 3 test modules have import drift. **30/30 governance tests pass** (governance-v1-hardened tag @ `2cc135a`).
 - **Learning gate:** Check daily — blocked on DEGRADED/UNKNOWN source or Council verdict not `PASS_TO_LEARNING`.
+- **Calibration threshold:** `nightly_eod_learning_runner.py` classifies any VP > 0.35 loss as `CALIBRATION_ERROR` — too aggressive (catches ~57-85% of all losses). Fix: raise to VP > 0.55. Queued.
+- **Gate enforcement:** 12 learning admission gate conditions (LEARNING_ADMISSION_GATE.md) are procedural only — none enforced in runner startup code. Runner auto-sets `learning_allowed=True`. Queued.
+- **Council verdict not read by runner:** Runner writes `council_verdict = runner_verdict` in its own audit (line 389 `_finalize()`), never reads the actual Step 16b council output. Queued.
+- **`_G_SHADOW_MODE`:** Playbook G multiplier computed every scoring run but never applied to VP. Env var `VELO_G_SHADOW_MODE` defaults to `shadow`. G has evolved over 3,466 races — most doctrines near 0.0 strength, aggression at floor 0.3. Before flipping to `live`: backtest shadow multipliers against sigma to verify lift. Queued after gate enforcement fix.
 - **`build_rp_results_url_list.py`:** Requires a manifest in `racing_post_account_raw/live-full-racepages-YYYY-MM-DD*/`. If raw capture directory is absent, build the URL list directly from `racecard_injection.json` source_urls (replace `/racecards/` → `/results/`).
 
 ## What must happen BEFORE scoring
