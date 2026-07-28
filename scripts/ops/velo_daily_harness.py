@@ -135,14 +135,17 @@ def _check_verdicts(date_str: str) -> tuple[bool, int]:
 
 
 def _check_results(date_str: str) -> bool:
-    """Check if results file exists for the given date (US format YYYYMMDD)."""
-    date_us = date_str.replace("-", "")
-    candidates = [
-        DATA / f"results_{date_us}.json",
-        DATA / f"results_{date_str}.json",
-        DATA / f"racing_api_results_{date_str}.json",
-    ]
-    return any(p.exists() for p in candidates)
+    """Check if the canonical RP results file exists for the given date.
+
+    Fixed 2026-07-11 (ROLE-EVAL-01): the previous candidate paths
+    (data/results_{date}.json, data/racing_api_results_{date}.json) never
+    matched anything -- parse_rp_results_capture.py always writes to
+    data/results/rp_results_{date_tag}.json. This check silently reported
+    "no results" every day regardless of whether results actually existed,
+    and the racing_api_results_ path referenced a source that must never be
+    live per THE_ONE_TRUTH.md (Racing API is permanently decommissioned).
+    """
+    return (DATA / "results" / f"rp_results_{date_str.replace('-', '_')}.json").exists()
 
 
 def _load_sidecar(date_str: str) -> dict | None:
@@ -378,7 +381,7 @@ def run_close(date_str: str) -> dict:
     """Run post-race close mode."""
     print(f"\n[HARNESS] CLOSE MODE — {date_str} — {_ts()}")
 
-    total_steps = 7
+    total_steps = 8
     step = 0
     step_results = []
 
@@ -402,14 +405,30 @@ def run_close(date_str: str) -> dict:
     )
     step_results.append(("run_results_sigma", ok2, out2))
 
-    # Step 2b: Old VELO three-option card with outcomes
+    # Step 2c: Post-race truth loop (Layer 4 — state tag truth, archetype truth,
+    # gate truth per race; feeds weekly rollup for self-correction)
+    step += 1
+    ok_tl, out_tl = _run_step(
+        "post_race_truth_loop",
+        step, total_steps,
+        _python("ops/run_post_race_truth_loop.py", ["--date", date_str]),
+    )
+    step_results.append(("post_race_truth_loop", ok_tl, out_tl))
+
+    # Step 2b: Old VELO role evaluation (WIN/PLACE/LONGSHOT vs results)
+    # ROLE-EVAL-01 (2026-07-11): previously re-ran build_old_velo_three_option_card.py
+    # here, which only ever rebuilds pre-race selections from runner snapshots and
+    # never evaluates them against results -- role_metrics stayed zero regardless of
+    # whether results existed. The morning card is now frozen (see that script's
+    # --force-rebuild guard) and evaluated here instead, read-only, with a strict
+    # join so an unresolved/ambiguous race blocks rather than silently passing.
     step += 1
     ok_3opt, out_3opt = _run_step(
-        "build_old_velo_three_option_card (outcomes)",
+        "evaluate_old_velo_three_option_card",
         step, total_steps,
-        _python("ops/build_old_velo_three_option_card.py", ["--date", date_str]),
+        _python("ops/evaluate_old_velo_three_option_card.py", ["--date", date_str, "--strict"]),
     )
-    step_results.append(("build_old_velo_three_option_card_outcomes", ok_3opt, out_3opt))
+    step_results.append(("evaluate_old_velo_three_option_card", ok_3opt, out_3opt))
 
     # Step 3: execution bridge close
     step += 1
