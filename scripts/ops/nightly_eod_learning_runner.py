@@ -428,11 +428,20 @@ class NightlyEODRunner:
         self.status_path.write_text(json.dumps(status, indent=2))
         self.failures_path.write_text(json.dumps(self.failures, indent=2))
         
-        # Create Council Audit
+        # Create Council Audit — read actual Step 16b output, never copy runner verdict
+        _council_run_path = ROOT / "data" / "council_runs" / f"council_run_{self.date_str}.json"
+        _actual_council_verdict = "NOT_RUN"
+        if _council_run_path.exists():
+            try:
+                _actual_council_verdict = json.loads(_council_run_path.read_text()).get("council_verdict", "NOT_RUN")
+            except Exception:
+                _actual_council_verdict = "READ_ERROR"
+
         council = {
             "date": self.date_str,
             "runner_verdict": verdict,
-            "council_verdict": verdict, # Default to runner
+            "council_verdict": _actual_council_verdict,
+            "council_source": str(_council_run_path),
             "files_verified": [str(self.status_path), str(self.failures_path), str(self.events_path)],
             "forbidden_files_changed": False,
             "live_sentient_state_touched": status["live_sentient_state_touched"],
