@@ -241,24 +241,24 @@ aggression_level: 0.30  (floor — repeated losses)
 recent_profit[-5]: [-1,-1,-1,-1,-1]
 emotion_laws: 50 pain + 50 anger + 50 triumph rules
 ```
-**To flip live:** set `VELO_G_SHADOW_MODE=live` in `.env` + remove startup assertion in `app/main.py`. Do NOT do this without first backtesting shadow multipliers — every verdict already has `g_shadow_multiplier` and `g_shadow_flags` logged in runner snapshots.
+**Backtest result (Fix 5, 2026-07-28):** 1,746 races analysed across all dates with overlapping sigma + verdict files. **100% in STRONG_DAMPEN (<0.80)** — zero amplify cases. G multiplier is uniformly ~0.516 because LAY_THE_STORY (strength=0.08) and SHADOW_TRACKING (strength=0.08) fire on every race, both below the 0.5 strength threshold that triggers STRONG_DOCTRINES discount. Flipping live would halve every VP score (avg 0.380 → 0.196), killing all Tier A picks.
+
+**Fix 6 is BLOCKED** until: doctrine strength collapse is diagnosed and reset; at least 3+ months of post-reset data with multiplier variation across buckets exists. Backtest script: `scripts/analysis/g_shadow_backtest.py`.
 
 ### Block 3 — Council Independence
 The council (`src/velo/council/agents.py`) is deterministic rule-based — 5 agents checking flatline, contamination, sigma SR, run IDs, mid-price — **with zero LLM calls**. It is genuinely independent of the learning runner. PrimeChair synthesizes to `PASS_TO_LEARNING` / `QUARANTINE_DAY` / `WATCH_ONLY`.
 
-**Bug:** `_finalize()` in `nightly_eod_learning_runner.py` line 389 writes:
-```python
-"council_verdict": verdict,  # Default to runner
-```
-The runner copies its own PASS/FAIL into the council audit. It **never reads** the Step 16b council output file. Gate condition 11 ("Council verdict is `PASS_TO_LEARNING`") is self-fulfilled. **Fix: runner must read `data/council_runs/council_run_{date}.json` and extract `council_verdict` before proceeding.**
+**Bug fixed (Fix 4, 2026-07-28):** `_finalize()` in `nightly_eod_learning_runner.py` previously wrote `"council_verdict": verdict` — copying its own PASS/FAIL into the council audit file. Now reads `data/council_runs/council_run_{self.date_str}.json` and extracts the actual `council_verdict`. Also adds `council_source` field to the audit trail. Combined with Fix 3 (gate pre-flight), the runner now cannot proceed unless the real council file exists and reads `PASS_TO_LEARNING`.
 
 ### Block 4 — Gate Enforcement
 Zero of 12 gate conditions (LEARNING_ADMISSION_GATE.md) are enforced in runner startup code. The runner opens `run()` with no gate check. `learning_allowed: True` hardcoded on every event. The gate document itself acknowledges this: "Today this gate is procedural."
 
-**Fix: add pre-flight at top of `run()` in `nightly_eod_learning_runner.py` checking:**
-1. `data/council_runs/council_run_{date}.json` → `council_verdict == "PASS_TO_LEARNING"`
-2. `data/mission_control/{date}_mission_control.json` → `learning_gate == "OPEN"`
-3. Sigma artifact exists and has `sigma_status: PASS`
+**Fixed (Fix 3, 2026-07-28):** Pre-flight added at top of `run()` in `nightly_eod_learning_runner.py`. Checks:
+1. `data/sigma_results/sigma_results_{date}.json` exists and `sigma_status == "PASS"`
+2. `data/council_runs/council_run_{date}.json` exists and `council_verdict == "PASS_TO_LEARNING"`
+3. `data/mission_control/{date}_mission_control.json` exists and `learning_gate == "OPEN"`
+
+Any failure returns `FAIL_GATE_BLOCKED` without touching sentient state.
 
 ### Block 5 — VCP-03 Burn-In
 **FIXED 2026-07-28.** `build_vcp03_burn_in_log.py` was never wired into daily pipeline. Now runs as Step 20B in `run_full_raceday_eod.py`. Days 2–28 (July 2–27) are permanently lost — heartbeat file overwrites daily, no history. Count restarts from July 28 at 0/10.
@@ -276,14 +276,14 @@ VP ≥ 0.30 is the system's definition of "high confidence". Classifying all VP 
 **NOT BROKEN.** Separate audit files for shadow (`playbook_g_nightly_audit_{date}.json`) and live (`playbook_g_live_nightly_audit_{date}.json`) are intentional. Both adapters correctly block duplicate runs for the same date using date-scoped key files. No action needed.
 
 ### Fix Order (dependency-safe)
-| Priority | Fix | File | Risk |
+| Priority | Fix | File | Status |
 |---|---|---|---|
-| 1 | VCP-03 wire-in | `run_full_raceday_eod.py` | **DONE** |
-| 2 | Calibration threshold 0.35→0.55 | `nightly_eod_learning_runner.py` line 105 | Low |
-| 3 | Gate pre-flight (council + MC + sigma) | `nightly_eod_learning_runner.py` top of `run()` | Medium |
-| 4 | Runner reads actual council verdict | `nightly_eod_learning_runner.py` `_finalize()` | Medium |
-| 5 | Backtest G shadow multipliers vs sigma | Analysis only — read verdict snapshots | Analysis |
-| 6 | Flip `VELO_G_SHADOW_MODE=live` + remove assertion | `.env`, `app/main.py` | High — last |
+| 1 | VCP-03 wire-in | `run_full_raceday_eod.py` Step 20B | **DONE** `1f39fcf` |
+| 2 | Calibration threshold 0.35→0.55 | `nightly_eod_learning_runner.py` line 105 | **DONE** `f8fe12f` |
+| 3 | Gate pre-flight (sigma + council + MC) | `nightly_eod_learning_runner.py` top of `run()` | **DONE** `38023e6` |
+| 4 | Runner reads actual council verdict | `nightly_eod_learning_runner.py` `_finalize()` | **DONE** `6f6b073` |
+| 5 | Backtest G shadow multipliers vs sigma | `scripts/analysis/g_shadow_backtest.py` | **DONE** `c57e555` — VERDICT: all 1,746 races in STRONG_DAMPEN, Fix 6 BLOCKED |
+| 6 | Flip `VELO_G_SHADOW_MODE=live` + reset doctrine strengths | `.env`, `app/main.py`, doctrine reset | **BLOCKED** — doctrine collapse must be diagnosed first |
 
 ## What is DEPRECATED
 Racing API as a data source (decommissioned 2026-05-14; client files deleted) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.

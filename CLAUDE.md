@@ -33,7 +33,13 @@ Full audit findings in ONE_TRUTH.md "LEARNING LOOP AUDIT" section. Summary for s
 - **Council verdict faked** — runner copies its own verdict into `council_audit` file; never reads Step 16b output.
 - **Calibration threshold too low** — VP > 0.35 = CALIBRATION_ERROR catches 57–85% of losses. Fix: raise to 0.55.
 
-Fix order (must be in this sequence): calibration → gate pre-flight → council read → shadow backtest → `VELO_G_SHADOW_MODE=live`.
+Fix order and status (2026-07-28):
+- Fix 1 VCP-03 wire-in: **DONE** (`1f39fcf`) — Step 20B in `run_full_raceday_eod.py`
+- Fix 2 Calibration 0.35→0.55: **DONE** (`f8fe12f`)
+- Fix 3 Gate pre-flight: **DONE** (`38023e6`) — sigma PASS + council PASS_TO_LEARNING + MC OPEN enforced before learning
+- Fix 4 Council verdict de-forged: **DONE** (`6f6b073`) — reads real `data/council_runs/council_run_{date}.json`
+- Fix 5 G shadow backtest: **DONE** (`c57e555`) — `scripts/analysis/g_shadow_backtest.py` — 1,746 races ALL in STRONG_DAMPEN (~0.516×); zero amplify cases
+- Fix 6 `VELO_G_SHADOW_MODE=live`: **BLOCKED** — G uniformly halves VP (avg 0.380→0.196); flipping live would kill Tier A picks. Doctrine strength collapse must be diagnosed and reset first.
 
 ## Railway Status (audited 2026-07-28)
 
