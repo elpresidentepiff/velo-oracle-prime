@@ -241,9 +241,11 @@ aggression_level: 0.30  (floor — repeated losses)
 recent_profit[-5]: [-1,-1,-1,-1,-1]
 emotion_laws: 50 pain + 50 anger + 50 triumph rules
 ```
-**Backtest result (Fix 5, 2026-07-28):** 1,746 races analysed across all dates with overlapping sigma + verdict files. **100% in STRONG_DAMPEN (<0.80)** — zero amplify cases. G multiplier is uniformly ~0.516 because LAY_THE_STORY (strength=0.08) and SHADOW_TRACKING (strength=0.08) fire on every race, both below the 0.5 strength threshold that triggers STRONG_DOCTRINES discount. Flipping live would halve every VP score (avg 0.380 → 0.196), killing all Tier A picks.
+**Backtest result (Fix 5, 2026-07-28):** 1,746 races analysed. **100% in STRONG_DAMPEN (<0.80)** — zero amplify cases. Root cause: STRONG_DOCTRINES loop fired on EVERY race when strength < 0.5 (no race condition), adding "LAY_THE_STORY"+"SHADOW_TRACKING" to doctrines_fired unconditionally, trapping them in a death spiral to 0.08.
 
-**Fix 6 is BLOCKED** until: doctrine strength collapse is diagnosed and reset; at least 3+ months of post-reset data with multiplier variation across buckets exists. Backtest script: `scripts/analysis/g_shadow_backtest.py`.
+**Doctrine collapse fixed (2026-07-28, commit `de0c2ea`):** `_g_shadow_adjustment()` rewritten with principled firing conditions: LAY_THE_STORY fires only when MDS > 0.55; SHADOW_TRACKING fires only when SP ≥ 10.0. Both state files reset to 0.5 (neutral). Multiplier distribution immediately after fix: 32/35 races at 1.0x, 3/35 at 0.93x (high-MDS favs), avg 0.994x — vs 35/35 at 0.516x before.
+
+**Fix 6 condition:** `VELO_G_SHADOW_MODE=live` requires 3+ months of post-reset sigma data showing doctrinemultiplier variation with positive win-rate signal. Not before 2026-10-28 at earliest. Backtest script: `scripts/analysis/g_shadow_backtest.py`.
 
 ### Block 3 — Council Independence
 The council (`src/velo/council/agents.py`) is deterministic rule-based — 5 agents checking flatline, contamination, sigma SR, run IDs, mid-price — **with zero LLM calls**. It is genuinely independent of the learning runner. PrimeChair synthesizes to `PASS_TO_LEARNING` / `QUARANTINE_DAY` / `WATCH_ONLY`.
@@ -283,7 +285,8 @@ VP ≥ 0.30 is the system's definition of "high confidence". Classifying all VP 
 | 3 | Gate pre-flight (sigma + council + MC) | `nightly_eod_learning_runner.py` top of `run()` | **DONE** `38023e6` |
 | 4 | Runner reads actual council verdict | `nightly_eod_learning_runner.py` `_finalize()` | **DONE** `6f6b073` |
 | 5 | Backtest G shadow multipliers vs sigma | `scripts/analysis/g_shadow_backtest.py` | **DONE** `c57e555` — VERDICT: all 1,746 races in STRONG_DAMPEN, Fix 6 BLOCKED |
-| 6 | Flip `VELO_G_SHADOW_MODE=live` + reset doctrine strengths | `.env`, `app/main.py`, doctrine reset | **BLOCKED** — doctrine collapse must be diagnosed first |
+| 6 | Flip `VELO_G_SHADOW_MODE=live` + reset doctrine strengths | `.env`, `app/main.py`, doctrine reset | **BLOCKED** — post-reset, needs 3+ months data (earliest 2026-10-28) |
+| 7 | Fix doctrine collapse + state reset | `src/intelligence/velo_prime_ensemble.py`, `data/sentient_state*.json` | **DONE** `de0c2ea` — multiplier 0.516→0.994, doctrines fire on principled conditions |
 
 ## What is DEPRECATED
 Racing API as a data source (decommissioned 2026-05-14; client files deleted) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.

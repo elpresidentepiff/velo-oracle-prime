@@ -39,7 +39,8 @@ Fix order and status (2026-07-28):
 - Fix 3 Gate pre-flight: **DONE** (`38023e6`) — sigma PASS + council PASS_TO_LEARNING + MC OPEN enforced before learning
 - Fix 4 Council verdict de-forged: **DONE** (`6f6b073`) — reads real `data/council_runs/council_run_{date}.json`
 - Fix 5 G shadow backtest: **DONE** (`c57e555`) — `scripts/analysis/g_shadow_backtest.py` — 1,746 races ALL in STRONG_DAMPEN (~0.516×); zero amplify cases
-- Fix 6 `VELO_G_SHADOW_MODE=live`: **BLOCKED** — G uniformly halves VP (avg 0.380→0.196); flipping live would kill Tier A picks. Doctrine strength collapse must be diagnosed and reset first.
+- Fix 7 Doctrine collapse: **DONE** (`de0c2ea`) — LAY_THE_STORY now fires only MDS>0.55; SHADOW_TRACKING only SP>=10; both state files reset to 0.5 neutral. Multiplier 0.516→0.994 avg.
+- Fix 6 `VELO_G_SHADOW_MODE=live`: **BLOCKED** — needs 3+ months post-reset data showing positive signal. Earliest 2026-10-28.
 
 ## Railway Status (audited 2026-07-28)
 
