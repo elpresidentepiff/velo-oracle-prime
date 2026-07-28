@@ -108,7 +108,53 @@ class NightlyEODRunner:
 
     def run(self):
         logger.info(f"Starting Nightly EOD Runner for {self.date_str} [Run: {self.run_id}]")
-        
+
+        # 0. Learning Admission Gate pre-flight (LEARNING_ADMISSION_GATE.md conditions 8, 11, MC)
+        # Condition 12 (operator approval) is not automatable — operator must not invoke
+        # this script on a blocked day. All other automatable conditions checked here.
+        _gate_blocks = []
+
+        _sigma_path = ROOT / "data" / "sigma_results" / f"sigma_results_{self.date_tag}.json"
+        if not _sigma_path.exists():
+            _gate_blocks.append("SIGMA_ARTIFACT_MISSING")
+        else:
+            try:
+                _sigma_status = json.loads(_sigma_path.read_text()).get("sigma_status", "UNKNOWN")
+                if _sigma_status != "PASS":
+                    _gate_blocks.append(f"SIGMA_NOT_PASS:{_sigma_status}")
+            except Exception as _e:
+                _gate_blocks.append(f"SIGMA_READ_ERROR:{_e}")
+
+        _council_path = ROOT / "data" / "council_runs" / f"council_run_{self.date_str}.json"
+        if not _council_path.exists():
+            _gate_blocks.append("COUNCIL_RUN_MISSING")
+        else:
+            try:
+                _cv = json.loads(_council_path.read_text()).get("council_verdict", "NOT_RUN")
+                if _cv != "PASS_TO_LEARNING":
+                    _gate_blocks.append(f"COUNCIL_VERDICT:{_cv}")
+            except Exception as _e:
+                _gate_blocks.append(f"COUNCIL_READ_ERROR:{_e}")
+
+        _mc_path = ROOT / "data" / "mission_control" / f"{self.date_str}_mission_control.json"
+        if not _mc_path.exists():
+            _gate_blocks.append("MISSION_CONTROL_MISSING")
+        else:
+            try:
+                _lg = json.loads(_mc_path.read_text()).get("learning_gate", "UNKNOWN")
+                if _lg != "OPEN":
+                    _gate_blocks.append(f"LEARNING_GATE:{_lg}")
+            except Exception as _e:
+                _gate_blocks.append(f"MC_READ_ERROR:{_e}")
+
+        if _gate_blocks:
+            logger.error("GATE BLOCKED — learning cannot proceed: %s", _gate_blocks)
+            for _block in _gate_blocks:
+                self.failures.append({"type": "GATE_BLOCKED", "reason": _block})
+            return self._finalize("FAIL_GATE_BLOCKED")
+
+        logger.info("Gate pre-flight PASS — sigma=PASS, council=PASS_TO_LEARNING, learning_gate=OPEN")
+
         # 1. Data Integrity Check
         if not self.pred_file.exists():
             self.failures.append({"type": "MISSING_PREDICTIONS", "file": str(self.pred_file)})
