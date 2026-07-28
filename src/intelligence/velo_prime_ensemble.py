@@ -136,17 +136,33 @@ def _g_shadow_adjustment(
                 doctrine_fired.append("TRIUMPH_RULE")
 
     # ── Doctrine strength discounts ────────────────────────────────────────────
-    # If a doctrine has low strength (< 0.5), G has lost on it repeatedly.
-    # Apply a discount proportional to how weak it is.
-    STRONG_DOCTRINES = ["LAY_THE_STORY", "SHADOW_TRACKING", "NARRATIVE_FRACTURE"]
-    for doc in STRONG_DOCTRINES:
-        strength = doctrine_strengths.get(doc, 1.0)
-        if 0 < strength < 0.5:
-            # Progressive discount: strength 0.3 → 0.9x multiplier
-            discount = 0.7 + (strength * 0.67)  # 0.3→0.9x, 0.4→0.97x
-            multiplier *= discount
-            flags.append(f"g_{doc.lower()}_weak:{strength:.2f}x")
-            doctrine_fired.append(doc)
+    # Each doctrine fires ONLY when its specific race condition is met.
+    # Tracking (doctrines_fired) and discounting happen together so the loopback
+    # EMA only penalises the doctrine on races it actually claimed to know about.
+    # Previous design fired on ALL races when strength < 0.5, causing a death
+    # spiral: weak → always fires → penalised every loss → stays weak forever.
+
+    # LAY_THE_STORY: market deception narrative — fires when MDS > 0.55
+    _lay_str = doctrine_strengths.get("LAY_THE_STORY", 1.0)
+    if market_deception_score is not None and market_deception_score > 0.55:
+        doctrine_fired.append("LAY_THE_STORY")
+        if 0 < _lay_str < 0.5:
+            _disc = 0.7 + (_lay_str * 0.67)
+            multiplier *= _disc
+            flags.append(f"g_lay_the_story_weak:{_lay_str:.2f}x")
+        else:
+            flags.append(f"g_lay_the_story:{_lay_str:.2f}x")
+
+    # SHADOW_TRACKING: outsider territory — fires when SP >= 10.0 (9/1+)
+    _shad_str = doctrine_strengths.get("SHADOW_TRACKING", 1.0)
+    if sp_dec is not None and sp_dec >= 10.0:
+        doctrine_fired.append("SHADOW_TRACKING")
+        if 0 < _shad_str < 0.5:
+            _disc = 0.7 + (_shad_str * 0.67)
+            multiplier *= _disc
+            flags.append(f"g_shadow_tracking_weak:{_shad_str:.2f}x")
+        else:
+            flags.append(f"g_shadow_tracking:{_shad_str:.2f}x")
 
     # ── Favourite liability doctrine ───────────────────────────────────────────
     # G's FAVOURITE_LIABILITY fires when story ≠ power.
