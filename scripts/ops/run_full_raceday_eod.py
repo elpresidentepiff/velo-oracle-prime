@@ -220,6 +220,18 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 16d: Mission Control FINAL refresh (2026-07-29) ─────────────
+    # Step 15 runs before the council (16b), so its MC write carries
+    # YESTERDAY'S council verdict — on 2026-07-29 this made Step 20's gate
+    # pre-flight read a stale BLOCKED while tonight's council said
+    # PASS_TO_LEARNING. ONE_TRUTH's DAY COMPLETE definition requires a
+    # final Council + Mission Control refresh; this is it.
+    run(
+        "Step 16d: Mission Control final refresh (post-council)",
+        [PY, "scripts/ops/update_mission_control.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 17: paper execution bridge close (SIM only) ──────────────────
     run(
         "Step 17: Execution bridge shadow (paper close)",
