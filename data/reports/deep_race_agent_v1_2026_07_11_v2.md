@@ -1,5 +1,5 @@
 # Deep Race Agent V1
-Generated: 2026-07-11T00:07:44.806994Z
+Generated: 2026-07-11T14:05:26.781226Z
 
 - Status: `DEEP_RACE_AGENT_V1_PAPER_ONLY`
 - Live writes: `False`
@@ -16,8 +16,8 @@ Generated: 2026-07-11T00:07:44.806994Z
 - Raceform loaded: True
 - Race PDF files indexed: 0
 - Race PDF sets indexed: 0
-- Live identity files loaded: 8
-- Live identity runners loaded: 560
+- Live identity files loaded: 9
+- Live identity runners loaded: 633
 
 ## Verdict Counts
 | Verdict | Count |

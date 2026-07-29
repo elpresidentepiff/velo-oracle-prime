@@ -1,6 +1,6 @@
 # VCP-02 — VÉLØ Heartbeat V1 — Operator Brief
-**Generated:** 2026-06-29T23:56:59.758639+00:00  
-**Repo HEAD:** `e5b259b`
+**Generated:** 2026-07-01T02:20:08.164191+00:00  
+**Repo HEAD:** `a8b3e8a`
 
 ---
 
@@ -12,10 +12,10 @@
 ## Learning Routes (summary)
 - Memory capture: **OPEN**
 - Failure learning: **OPEN**
-- Promotion: **GATED**
+- Promotion: **ELIGIBLE**
 
 ## Contradictions
-- Count: **0**
+- Count: **1**
 
 ## Next Safe Action
 - **VCP-01-REVIEW**: Operator review of velo_living_state_v1 before VCP-02 Heartbeat

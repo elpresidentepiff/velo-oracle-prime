@@ -1,6 +1,6 @@
 {
   "validation_version": "VFU_17_WIN_PLACE_POSITION_ENGINE_V1",
-  "generated_at": "2026-06-15T21:56:25.238826Z",
+  "generated_at": "2026-07-12T15:58:57.721643Z",
   "vp_threshold": 0.4,
   "data_source": "vfu_11_sigma_master_ledger.jsonl (CURRENT_ERA_VALIDATED)",
   "total_current_era_rows": 3052,
@@ -51,16 +51,16 @@
       "interpretation": "WIN avg VP=0.3601, PLACE avg VP=0.3083, MISS avg VP=0.271. VP fires for wins (rate=0.24) AND places (rate=0.145) \u2014 confirms VP is not win-discriminating enough."
     },
     "Q10_sp_shortening_win_vs_place": {
-      "sp_shortening_win_count": 221,
-      "sp_shortening_place_count": 162,
-      "sp_shortening_miss_count": 331,
-      "total_sp_shortening_rows": 714,
-      "interpretation": "SP shortening signal present in 714 rows: 221 WIN, 162 PLACE, 331 MISS."
+      "sp_shortening_win_count": 250,
+      "sp_shortening_place_count": 190,
+      "sp_shortening_miss_count": 380,
+      "total_sp_shortening_rows": 820,
+      "interpretation": "SP shortening signal present in 820 rows: 250 WIN, 190 PLACE, 380 MISS."
     },
     "Q11_passport_place_specialist_signal": {
-      "specialists_with_passport": 11,
+      "specialists_with_passport": 13,
       "specialists_total": 16,
-      "interpretation": "11/16 place specialists confirmed by passport place_rate. Passport is a reliable place specialist discriminator."
+      "interpretation": "13/16 place specialists confirmed by passport place_rate. Passport is a reliable place specialist discriminator."
     },
     "Q12_human_review_horses": {
       "answer": "16 place specialists + 75 downgrades + 5 upgrades = 96 horses"

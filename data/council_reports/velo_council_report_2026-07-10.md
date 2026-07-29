@@ -1,7 +1,7 @@
 # VÉLØ LLM Council Operator Report - 2026-07-10
 
-**Run Date:** 2026-07-10T13:40:14.098541
-**Council Status:** EVIDENCE_INCOMPLETE
+**Run Date:** 2026-07-11T13:32:40.210821
+**Council Status:** READY
 **Status:** SHADOW / OPERATOR ONLY
 
 ## 1. Executive Summary (Prime Chair)
@@ -34,8 +34,10 @@ PASS_TO_LEARNING — 2026-07-10. All gates clear. Learning consume permitted if 
 **Read:** Mid-price delta: 36 races, 2 rescuable by sidecar (5.6%). Shadow audit only.
 
 ## 3. Evidence Status
-- **vp30_operator_card**: MISSING [REQUIRED]
-- **cashrun_report**: MISSING 
+- **vp30_operator_card**: FOUND [REQUIRED]
+  - Path: `data/vp30_operator_card_2026-07-10.md`
+- **cashrun_report**: FOUND 
+  - Path: `data/cashrun_report_2026-07-10.md`
 - **live_sidecar_audit**: FOUND 
   - Path: `data/live_sidecar_ablation_audit_latest.md`
 - **router_shadow_audit**: FOUND 
@@ -43,7 +45,7 @@ PASS_TO_LEARNING — 2026-07-10. All gates clear. Learning consume permitted if 
 - **execution_bridge_ledger**: FOUND 
   - Path: `data/velo_execution_bridge_paper_ledger.csv`
 - **one_truth_file**: FOUND [REQUIRED]
-  - Path: `docs/engineering/VELO_PROCESS_WIRING_MAP_V1.md`
+  - Path: `docs/current/ONE_TRUTH.md`
 
 ## 4. Safety Audit
 - NO staking impact confirmed: YES

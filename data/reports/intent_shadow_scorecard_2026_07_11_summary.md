@@ -1,5 +1,5 @@
 # 2026-07-11 Intent Shadow Scorecard — CHAMPION_INTENT_SHADOW
-Generated: 2026-07-11T00:08:01.607561Z
+Generated: 2026-07-11T14:05:44.094495Z
 
 **stake_authorised: false | promotion_eligible: false | dashboard_visible: true**
 

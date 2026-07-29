@@ -1,7 +1,65 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-11T00:08:01.836248Z",
+  "generated_at": "2026-07-11T14:05:44.325166Z",
   "results": [
+    {
+      "step": "Step 1: Capture racecard index",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/racing_post_account_collector.py",
+        "manual-capture",
+        "--date",
+        "2026-07-11",
+        "--start-url",
+        "https://www.racingpost.com/racecards/2026-07-11",
+        "--label",
+        "racecard_index",
+        "--profile-dir",
+        "/mnt/c/Users/puror/velo-oracle-prime/data/browser_profiles/racing_post_account_firefox",
+        "--headless",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": true
+    },
+    {
+      "step": "Step 2: Build racecard URL list",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/build_racing_post_racecard_url_list.py",
+        "--date",
+        "2026-07-11",
+        "--target-date",
+        "2026-07-11",
+        "--execute"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": true
+    },
+    {
+      "step": "Step 3: Capture individual racecard pages",
+      "cmd": [
+        "/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python",
+        "scripts/ops/racing_post_account_collector.py",
+        "capture",
+        "--date",
+        "2026-07-11",
+        "--url-list",
+        "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_url_lists/rp_racecards_2026-07-11.txt",
+        "--profile-dir",
+        "/mnt/c/Users/puror/velo-oracle-prime/data/browser_profiles/racing_post_account_firefox",
+        "--delay-seconds",
+        "1.5",
+        "--execute",
+        "--batch-size",
+        "0"
+      ],
+      "returncode": 0,
+      "ok": true,
+      "critical": true
+    },
     {
       "step": "Step 4: Parse racecard captures",
       "cmd": [

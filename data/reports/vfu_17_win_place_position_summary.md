@@ -1,7 +1,7 @@
 # VFU-17 — Win / Place Position Engine
 
 **Version:** VFU_17_WIN_PLACE_POSITION_ENGINE_V1
-**Generated:** 2026-06-15T21:56:25.245105Z
+**Generated:** 2026-07-12T15:58:57.727680Z
 **VP_THRESHOLD:** 0.40 (UNCHANGED)
 **Data source:** sigma master ledger, CURRENT_ERA_VALIDATED only
 
@@ -56,8 +56,8 @@
 | Q7 Win-to-place downgrades | 75 |
 | Q8 Place-to-win upgrades | 5 |
 | Q9 VP win vs place | WIN avg=0.3601, PLACE avg=0.3083 |
-| Q10 SP shortening | 714 shortening rows |
-| Q11 Passport specialist signal | 11 confirmed |
+| Q10 SP shortening | 820 shortening rows |
+| Q11 Passport specialist signal | 13 confirmed |
 | Q12 Human review horses | 16 place specialists + 75 downgrades + 5 upgrades = 96 horses |
 | Q13 VFU-18 focus | PLACE_DATA_ENRICHMENT |
 

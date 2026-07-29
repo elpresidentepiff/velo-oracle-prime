@@ -18,8 +18,8 @@
     "recovered_total_count": 1837,
     "unrecoverable_count": 152,
     "recovery_rate_pct": 92.36,
-    "tier1_ambiguous_key_count": 109,
-    "tier2_ambiguous_key_count": 97,
+    "tier1_ambiguous_key_count": 157,
+    "tier2_ambiguous_key_count": 220,
     "missing_rows_breakdown_before_repair": {
       "by_dual_lane_label": {
         "INSUFFICIENT_PLACE_DATA": 1128,
@@ -93,16 +93,16 @@
     "rows_with_label_changed_by_repair": 30,
     "all_rows_still_valid_label": true,
     "label_count_delta": {
-      "WIN_SIGNAL_PLACE_OUTCOME": -30,
-      "PLACE_SIGNAL_WIN_OUTCOME": 0,
       "FALSE_PLACE_SIGNAL": 0,
+      "WIN_SIGNAL_PLACE_OUTCOME": -30,
       "INSUFFICIENT_PLACE_DATA": 0,
-      "EACH_WAY_REVIEW": 30,
-      "WIN_LANE_CONFIRMED": 0,
-      "FALSE_WIN_SIGNAL": 0,
       "EVENT_ONLY_UNUSABLE": 0,
-      "PLACE_SPECIALIST": 0,
-      "PLACE_LANE_CONFIRMED": 0
+      "WIN_LANE_CONFIRMED": 0,
+      "PLACE_SIGNAL_WIN_OUTCOME": 0,
+      "FALSE_WIN_SIGNAL": 0,
+      "PLACE_LANE_CONFIRMED": 0,
+      "EACH_WAY_REVIEW": 30,
+      "PLACE_SPECIALIST": 0
     }
   },
   "S05_ew_evidence_audit_after_repair": {
