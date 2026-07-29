@@ -797,8 +797,12 @@ def main() -> int:
     else:
         if not args.date:
             raise SystemExit("--date or --review is required")
-        suffix = f"{_slug(args.date)}_v2"
-        review_path = REPORT_DIR / f"tri_lane_agent_review_{suffix}.json"
+        date_slug = _slug(args.date)
+        # prefer _v1 if it exists, fall back to _v2
+        review_path = REPORT_DIR / f"tri_lane_agent_review_{date_slug}_v1.json"
+        if not review_path.exists():
+            review_path = REPORT_DIR / f"tri_lane_agent_review_{date_slug}_v2.json"
+        suffix = review_path.stem.replace("tri_lane_agent_review_", "")
 
     report = build_report(
         review_path=review_path,
