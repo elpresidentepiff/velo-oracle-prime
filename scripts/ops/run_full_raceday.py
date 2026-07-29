@@ -343,6 +343,10 @@ def main() -> int:
     if not run("Step 9.1: Radical Shadow (No-RPR)",
         [PY, "scripts/ops/run_radical_shadow_today.py", "--date", date], critical=True, results=results):
         return 1
+    # Mid-Price Specialist shadow lane (2026-07-29): paper-only, non-critical —
+    # a new lane must never block the day. Feeds mp_* ledger columns via Step 12B.
+    run("Step 9.1b: Mid-Price Specialist Shadow",
+        [PY, "scripts/ops/run_midprice_shadow_today.py", "--date", date], critical=False, results=results)
     run("Step 9.2: Tri-Lane Stress Test",
         [PY, "scripts/ops/run_tri_lane_stress_test.py", "--date", date, "--ruleset", "v2"], critical=False, results=results)
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"

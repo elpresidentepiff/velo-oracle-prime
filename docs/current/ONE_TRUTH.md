@@ -74,6 +74,26 @@ loaded model joins zero races, and 13 dates (May 30 – Jul 27) were backfilled.
 First honest cumulative table: Old VELO 25.9% (n=1527) · No-RPR 25.3% (n=1167) ·
 New Build 15.8% (n=1152) · Champion 22.2% (n=383).
 
+**Two lanes added 2026-07-29 (operator-approved):** `mp_*` = Mid-Price Specialist
+shadow (scorer `run_midprice_shadow_today.py`, Step 9.1b, non-critical, band 3.0-10.0,
+market-blind staging model) · `nbc_*` = New Build Lane C soft-label challenger (read
+from the same two_lane_readiness report as Lane A). Both backfilled over 39 cached
+pre-race racecard dates (retrospective scoring of pre-race data — clean, but labelled:
+forward rows begin 2026-07-30). Honest first table (flat-stake top-pick, NO gate):
+Old VELO -33.9% ROI · Midprice n=1296 SR=14.4% ROI=-32.8% · Lane C n=661 SR=16.9%
+ROI=-15.7% · Champion -14.8%. Specialist v1 catches only 11% of VELO's mid-priced
+misses (weak as a cure, genuinely independent: 16% pick overlap). Watch-gate:
+**mp_prob>=0.30 → n=27 SR=48.1% ROI=-0.1%** (breakeven, tiny n — accumulate forward).
+
+**Lane C promotion gate (operator-set 2026-07-29):** no promotion talk before
+n>=1000 Lane C ledger races AND Lane C win-SR beats Lane A by >=2ppts on the same
+races AND flat-stake ROI gap confirmed. Check with the cumulative table in Step 12B
+output. Backtest AUC (0.7028) is NOT promotion evidence on its own.
+
+**Midprice lane gate:** mp_prob>=0.30 subset must reach n>=150 before any verdict.
+If SR>=40% holds there, escalate to operator for an EW-overlay decision; if it decays
+toward base rate, retire the lane and return to feature work (issues #78/#80).
+
 ## SUBSYSTEM TRUTH BOARD (audited 2026-07-29, all claims reproduced not assumed)
 
 | Subsystem | Truth |

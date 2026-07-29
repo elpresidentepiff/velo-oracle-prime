@@ -35,6 +35,8 @@ LEDGER_COLS = [
     "norpr_top_pick", "norpr_prob", "norpr_outcome", "norpr_miss_class",
     "nb_top_pick", "nb_prob", "nb_outcome", "nb_miss_class",
     "champion_top_pick", "champion_prob", "champion_outcome", "champion_miss_class",
+    "mp_top_pick", "mp_prob", "mp_outcome", "mp_miss_class",
+    "nbc_top_pick", "nbc_prob", "nbc_outcome", "nbc_miss_class",
     "winner", "winner_sp", "top3",
 ]
 
@@ -183,6 +185,45 @@ def _load_champion_scorecards(date_str: str) -> dict[str, dict]:
     return result
 
 
+def _load_midprice_scorecards(date_str: str) -> dict[str, dict]:
+    """{race_id: {horse, prob}} — Mid-Price Specialist shadow lane top pick
+    per race, from run_midprice_shadow_today.py's daily packet. Lane added
+    2026-07-29 after the mid-price blind-spot proof (62% of mid_priced_won
+    misses had the winner at VELO rank 4+): this measures whether the
+    market-blind specialist actually sees those runners."""
+    date_tag = date_str.replace("-", "_")
+    path = ROOT / "data" / "reports" / f"midprice_shadow_{date_tag}.json"
+    if not path.exists():
+        return {}
+    d = json.loads(path.read_text(encoding="utf-8"))
+    result: dict[str, dict] = {}
+    for race in d.get("races", []):
+        rid = str(race.get("race_id", ""))
+        pick = race.get("top_pick")
+        if rid and pick:
+            result[rid] = {"horse": pick.get("horse"), "prob": pick.get("midprice_prob")}
+    return result
+
+
+def _load_lane_c_scorecards(date_str: str) -> dict[str, dict]:
+    """{race_id: {horse, prob}} — New Build Lane C (soft-label challenger)
+    top pick per race, from the same two_lane_readiness report Lane A uses.
+    Tracked separately from 2026-07-29 so the Lane C promotion gate
+    (operator decision) reads live honest-ledger evidence, not backtest."""
+    date_tag = date_str.replace("-", "_")
+    path = ROOT / "data" / "new_build" / "reports" / f"two_lane_readiness_{date_tag}.json"
+    if not path.exists():
+        return {}
+    d = json.loads(path.read_text(encoding="utf-8"))
+    result: dict[str, dict] = {}
+    for sc in d.get("race_day_scorecards", []):
+        rid = str(sc.get("race_id", ""))
+        top3 = sc.get("lane_c_top3", [])
+        if rid and top3:
+            result[rid] = {"horse": top3[0].get("horse"), "prob": top3[0].get("prob")}
+    return result
+
+
 def _build_numeric_to_velo_map(date_str: str) -> dict[str, str]:
     """Maps raw numeric RP race_id (e.g. "921398") -> VELO race_id (e.g.
     "rp_NMK_20260710_1.50"), from the same results file _load_rp_results
@@ -227,6 +268,8 @@ def _print_summary(rows: list[dict]) -> None:
         ("No-RPR",   "norpr_outcome", "norpr_miss_class"),
         ("New Build","nb_outcome", "nb_miss_class"),
         ("Champion", "champion_outcome", "champion_miss_class"),
+        ("Midprice", "mp_outcome", "mp_miss_class"),
+        ("Lane C",   "nbc_outcome", "nbc_miss_class"),
     ]
     print("\n  +-----------------------------------------------------+")
     print(  "  |  MULTI-MODEL SIGMA SUMMARY                          |")
@@ -298,6 +341,10 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
     nb_cards = {_join_key(rid): card for rid, card in nb_cards_raw.items()}
     champion_cards_raw = _load_champion_scorecards(date_str)
     champion_cards = {_join_key(rid): card for rid, card in champion_cards_raw.items()}
+    mp_cards_raw = _load_midprice_scorecards(date_str)
+    mp_cards = {_join_key(rid): card for rid, card in mp_cards_raw.items()}
+    nbc_cards_raw = _load_lane_c_scorecards(date_str)
+    nbc_cards = {_join_key(rid): card for rid, card in nbc_cards_raw.items()}
 
     print(f"  Sigma rows : {len(sigma_rows)}")
     print(f"  RP results : {len(rp_results)} races")
@@ -349,6 +396,24 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             champion_outcome = _outcome(champion_pick, winner, top3)
         champion_miss_class = _classify_miss(winner_sp) if champion_outcome == "MISS" else ""
 
+        # Mid-Price Specialist shadow lane (added 2026-07-29)
+        mp_entry = mp_cards.get(race_id, {})
+        mp_pick = mp_entry.get("horse")
+        mp_prob = mp_entry.get("prob")
+        mp_outcome = "NO_DATA"
+        if mp_pick and winner:
+            mp_outcome = _outcome(mp_pick, winner, top3)
+        mp_miss_class = _classify_miss(winner_sp) if mp_outcome == "MISS" else ""
+
+        # New Build Lane C — soft-label challenger (added 2026-07-29)
+        nbc_entry = nbc_cards.get(race_id, {})
+        nbc_pick = nbc_entry.get("horse")
+        nbc_prob = nbc_entry.get("prob")
+        nbc_outcome = "NO_DATA"
+        if nbc_pick and winner:
+            nbc_outcome = _outcome(nbc_pick, winner, top3)
+        nbc_miss_class = _classify_miss(winner_sp) if nbc_outcome == "MISS" else ""
+
         row = {
             "date":          date_str,
             "race_id":       race_id,
@@ -371,6 +436,14 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             "champion_prob": round(float(champion_prob), 4) if champion_prob else "",
             "champion_outcome": champion_outcome,
             "champion_miss_class": champion_miss_class,
+            "mp_top_pick":   mp_pick or "",
+            "mp_prob":       round(float(mp_prob), 4) if mp_prob else "",
+            "mp_outcome":    mp_outcome,
+            "mp_miss_class": mp_miss_class,
+            "nbc_top_pick":  nbc_pick or "",
+            "nbc_prob":      round(float(nbc_prob), 4) if nbc_prob else "",
+            "nbc_outcome":   nbc_outcome,
+            "nbc_miss_class": nbc_miss_class,
             "winner":        winner,
             "winner_sp":     winner_sp if winner_sp is not None else "",
             "top3":          "|".join(top3),
@@ -382,7 +455,10 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
             _norm(velo_pick) == _norm(nb_pick) if nb_pick else False,
             _norm(norpr_pick) == _norm(nb_pick) if (norpr_pick and nb_pick) else False,
         ])
-        status = f"V:{velo_outcome[0]} N:{norpr_outcome[0]} B:{nb_outcome[0]} C:{champion_outcome[0]}"
+        status = (
+            f"V:{velo_outcome[0]} N:{norpr_outcome[0]} B:{nb_outcome[0]} "
+            f"C:{champion_outcome[0]} M:{mp_outcome[0]} L:{nbc_outcome[0]}"
+        )
         print(f"  {race_id} {sr.get('course',''):12} {sr.get('off',''):5}  {status}")
 
     # Join tripwire: a model whose scorecards LOADED but joined zero sigma
@@ -392,6 +468,8 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
     _join_checks = [
         ("New Build", nb_cards_raw, "nb_outcome"),
         ("Champion", champion_cards_raw, "champion_outcome"),
+        ("Midprice", mp_cards_raw, "mp_outcome"),
+        ("Lane C", nbc_cards_raw, "nbc_outcome"),
     ]
     _broken = [
         label
