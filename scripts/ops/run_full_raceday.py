@@ -61,20 +61,57 @@ def run(label: str, cmd: list[str], *, critical: bool, results: list[dict]) -> b
     return ok
 
 
-def verdicts_already_persisted(date: str) -> bool:
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(str(ROOT / ".env"))
-        import os
-        from supabase import create_client
+class IdempotenceCheckError(RuntimeError):
+    """The already-scored check could not be completed and must block the run."""
 
-        sb = create_client(os.environ["SUPABASE_URL"], os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY"))
-        date_tag = date.replace("-", "")
-        r = sb.table("velo_verdicts").select("race_id", count="exact").like("race_id", f"%{date_tag}%").execute()
-        return (r.count or 0) > 0
+
+def verdicts_already_persisted(date: str) -> bool:
+    """True if a completed, PASS-status "velo-prime-scoring" pipeline_runs row already
+    exists for this date -- i.e. today has already been scored and must not be rescored.
+
+    Queries pipeline_runs (source_date/run_state/status), not velo_verdicts.race_id --
+    real RP race_ids are plain numeric (e.g. 924613) and do not encode the date, so the
+    previous `race_id LIKE '%YYYYMMDD%'` check almost never matched real data (confirmed
+    mechanism behind the 2026-07-15 double-scoring overwrite; salvaged 2026-07-29 from
+    fix/canonical-daily-run-p0-gaps bb35c69). pipeline_runs is the same table
+    run_prime_today.py's own _open_pipeline_run()/_close_pipeline_run() already write to
+    for this exact service_name, so this reuses existing, proven state.
+
+    Raises IdempotenceCheckError instead of returning a guess when the check cannot be
+    completed. A broken idempotence check must block the run, not silently permit a
+    second scoring pass for a date that may already be scored.
+    """
+    from dotenv import load_dotenv
+    load_dotenv(str(ROOT / ".env"))
+    import os
+    from supabase import create_client
+
+    try:
+        sb = create_client(
+            os.environ["SUPABASE_URL"],
+            os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY"),
+        )
     except Exception as e:
-        print(f"  [WARN] Could not check existing verdicts ({e}) — assuming none, will attempt scoring.")
-        return False
+        raise IdempotenceCheckError(
+            f"Could not connect to Supabase to check prior scoring state for {date}: {e}"
+        ) from e
+
+    try:
+        r = (
+            sb.table("pipeline_runs")
+            .select("id", count="exact")
+            .eq("service_name", "velo-prime-scoring")
+            .eq("source_date", date)
+            .eq("run_state", "completed")
+            .eq("status", "PASS")
+            .execute()
+        )
+    except Exception as e:
+        raise IdempotenceCheckError(
+            f"Could not query pipeline_runs to check prior scoring state for {date}: {e}"
+        ) from e
+
+    return (r.count or 0) > 0
 
 
 def rp_session_healthy() -> bool:
@@ -282,8 +319,13 @@ def main() -> int:
         return 1
 
     # ── Step 9: live scoring (idempotent — never overwrite an already-scored day) ──
-    if verdicts_already_persisted(date):
-        print(f"\n[SKIP] Step 9: velo_verdicts already exist for {date} — not re-scoring/overwriting.")
+    try:
+        already_scored = verdicts_already_persisted(date)
+    except IdempotenceCheckError as e:
+        print(f"\n[CRITICAL] Idempotence check failed — refusing to risk a double scoring pass: {e}")
+        return 1
+    if already_scored:
+        print(f"\n[SKIP] Step 9: {date} already scored (completed PASS pipeline_runs row) — not re-scoring/overwriting.")
     else:
         if not run(
             "Step 9: Live scoring (run_prime_today.py)",
