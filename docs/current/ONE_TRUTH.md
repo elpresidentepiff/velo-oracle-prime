@@ -2,10 +2,11 @@
 
 > **IF THIS FILE CONFLICTS WITH ANY OTHER DOC, THIS FILE WINS UNTIL OPERATOR SAYS OTHERWISE.**
 
-**Effective:** 2026-07-08 (updated from 2026-06-29 baseline; see STANDARD DAILY OPERATION section below) · **Branch:** `audit/local-01-truth-reconciliation` (working tree; `main` HEAD `8753b4f` is stale — see `data/reports/local_salvage_01_*` and `data/reports/repo_01_*` for reconciliation state) · **Verified against code, not docs.**
+**Effective:** 2026-07-25 (post audit/local-01-truth-reconciliation merge to main; prior baseline 2026-07-08) · **Branch:** `main` · **Verified against code, not docs.**
 
 **This file supersedes:** `THE_NEW_TRUTH.md`, `CURRENT_RUNTIME_TRUTH.md`, root `CLAUDE.md` state claims, all numbered docs in `docs/` flat directory.
 **This file defers to:** root `THE_ONE_TRUTH.md` for step-by-step command detail (Steps 1–20), `docs/current/RACE_DAY_RUNBOOK.md` for the lifecycle.
+**Agent wiki (added 2026-07-06, DOCS-01):** `docs/current/SYSTEM_MAP.md` (architecture), `docs/current/AGENTS.md` (roles), `docs/current/VFU_INDEX.md` (VFU-01 to VFU-21 index), `docs/current/CURRENT_STATE.md` (fast orientation), `docs/current/FORBIDDEN_ACTIONS.md` / `docs/current/LIVE_VS_DRY_RUN.md` (safety vocabulary), `docs/current/ARTIFACT_REGISTRY.md` (output index). This file remains the single source of truth for state; the wiki is navigation, not a second truth file.
 
 ## Law (operator-decided, permanent unless stated otherwise)
 1. VÉLØ is a behavioural prediction engine for racing. Live weights are **frozen**.
@@ -211,6 +212,58 @@ will fail Supabase schema verification at startup — neither the module nor its
   omit it for the real nightly Step 12, which is the one case the locked Telegram format
   is meant to fire for.
 
+## THE ONE COMMAND, MORNING AND EVENING (added 2026-07-25 — closes the entrypoint census)
+
+Two canonical scripts now cover the entire race day, chosen after live-testing every
+candidate against real 2026-07-24 data (see `data/reports/runtime_entrypoint_census_*`
+and project memory for the full comparison):
+
+- **Morning:** `scripts/ops/run_full_raceday.py` — Steps 1-9.6 (capture, RPDC, live
+  scoring, paper intelligence overlays). Live-tested: 17/17 steps PASS.
+- **Evening:** `scripts/ops/run_full_raceday_eod.py` — Steps 10A-20 (results capture,
+  sigma reconciliation, full learning loop). New, built 2026-07-25 as the companion to
+  the morning script — codifies the exact sequence already run by hand, successfully,
+  twice the same week. Live-tested: 12/12 steps PASS.
+
+`scripts/ops/velo_daily_harness.py` is confirmed **BROKEN — DO NOT USE**: its `ROOT`
+path resolves one directory too high, silently pointing `DATA`/`SCRIPTS` at the wrong
+location. `velo_race_day_button.py`, `run_velo_closed_loop_daily.py`, and
+`new_build_race_day_readiness.py` each cover only a partial slice of the day (morning-only,
+EOD-audit-only, and read-only readiness-check respectively) — none of them is a real
+alternative to the two scripts above.
+
+**One hard caveat on the morning script, found only by actually running it twice on the
+same day**: do not rerun `run_full_raceday.py` after race results already exist. Its
+Radical Shadow and Tri-Lane Agent Review steps silently degrade into uniform, wrong
+output (an entire day's decisions collapsing into one repeated label) while still
+reporting PASS — likely because they depend on live market/odds-band data that's no
+longer available once results are in. Caught, reverted, not yet fixed at the source; if
+you need to re-verify a day, use `run_full_raceday_eod.py`'s steps (all confirmed
+idempotent-safe) or check individual report files by hand, not a second morning-script run.
+
+### The `generated_at` write-date-vs-race-date bug class (fixed everywhere, 2026-07-23/25)
+
+`velo_verdicts.generated_at` is write-time, not race-date. Scoring the evening before
+race day (the normal, manual operating pattern — see STANDARD DAILY OPERATION above)
+stamps `generated_at` under the wrong calendar day, so any query filtering by
+`generated_at` for "today's" date silently returns nothing. `race_id` correlates to the
+actual race date instead, via the local RP racecard cache for that date.
+
+This exact bug was independently hand-copied into **12 separate scripts** across this
+codebase before anyone noticed the pattern — dashboard endpoints, operator cards, sigma
+variants, audit/backtest tools, and the daily truth watchdog whose entire job is proving
+whether a day scored (which it couldn't, correctly, until fixed). All 12 are fixed.
+
+**Use `src/velo/verdict_loader.load_verdicts(date_str, select=...)` for any new code that
+needs "today's verdicts."** It tries race_id membership first, falls back to
+`generated_at` only if the local racecard cache is missing (treat that as a signal
+something else is wrong, not a normal path), then a local JSON backup as a last resort.
+Returns `(rows, method)` so callers can tell when they hit a degraded path. Tested
+(`tests/test_verdict_loader.py`, 9 tests) specifically to catch a regression back to
+`generated_at`-first querying before it ships again. If you are about to write
+`.gte("generated_at", ...)` or `generated_at.startswith(date_str)` — stop, that is the
+bug signature, use the shared module instead.
+
 ## EW Tracking (added 2026-06-22)
 EW_CANDIDATE flag now tracked in sigma and multimodel ledger. `run_results_sigma.py` emits `ew_outcome` per verdict. `run_multimodel_sigma.py` includes `velo_ew_outcome` column.
 
@@ -338,6 +391,12 @@ only, no external NLP/sentiment service.
 - **VFU-20 — OPERATOR SIGN-OFF GRANTED 2026-06-29:** Field-size remediation complete. 1,989 missing → 152 remaining (92.36% recovery accepted). 749 EW label changes accepted. EW profitability = `PARTIAL_EW_SIGNAL_NOT_PROFIT_PROOF` — no EW profitability claim authorised. No VP change, no model promotion, no Supabase write. VFU-21 NOT started — awaiting VCP-00 truth lock completion. Output: `data/reports/vfu_20_operator_brief.md`.
 - **VFU-01 to VFU-12:** See `docs/current/VELO_VFU_TIMELINE_APPENDIX.md` (archived timeline).
 - **VFU-13 to VFU-19:** COMPLETE — contamination catches (Kakirra=CONTAMINATED, MiK=PARTIAL), sigma master ledger, pattern tribunal. No pending operator gates.
+- **DOCS-01 — ACCEPTED 2026-07-06** (operator ruling): PR #136 merged (`868dff3`). Agent wiki + system map spine live at `docs/current/`. Numbering ruling issued in the same decision: **VFU-13 is retired and must never be reused** — the next forensic mission is **VFU-22 — False-GREEN Feature Autopsy** (formerly proposed as VFU-13 before DOCS-01 index reconciliation).
+- **VFU-22 — COMPLETE 2026-07-06:** PR #137 merged (`4f789b1`). 6 of 16 GREEN-gated days (37.5%) confirmed false-green across 31 available `sigma_results_*.json` dates. Class identified: `CONFIDENCE_FLOOD_FALSE_GREEN` (VP elevated broadly across the field without matching hit/miss discrimination — mean gap 0.039 vs 0.116 on true-green days; 2/6 false-green days show VP inverted, higher on losers than winners). Structural finding, not a fixable oversight — no VP Gatekeeper criteria change made. Output: `data/reports/vfu_22_false_green_feature_autopsy.md`.
+- **VFU-23 — COMPLETE 2026-07-06:** PR #138 merged (`797cdef`). Confidence Flood Retrospective Diagnostic. Builds the thermometer, not the cure — a tested, reusable post-Sigma diagnostic (`scripts/ops/build_confidence_flood_diagnostic.py`, 21 tests pass) that reproduces the VFU-22 false-green set 6/6 with zero extras. Retrospective only; no pre-race gate change. See `docs/current/CONFIDENCE_FLOOD_DIAGNOSTIC.md`.
+- **VFU-24 — COMPLETE 2026-07-06:** PR #139 merged (`ad1a4aa`). Confidence Flood Root-Cause Split. Splits the six confirmed false-green days into root-cause subtypes: 4 `GAP_COLLAPSE_FALSE_GREEN` (06-09, 06-16, 06-23, 06-30), 2 `HEALTHY_GAP_FALSE_GREEN` (06-18, 06-19) — both of which also carry `THRESHOLD_FLOOD_FALSE_GREEN` as a secondary subtype, explaining why they were false-green despite a healthy discrimination gap. Proposed no cure, no VP Gatekeeper change. See `docs/current/CONFIDENCE_FLOOD_ROOT_CAUSE_SPLIT.md`.
+- **VFU-25 — COMPLETE 2026-07-07:** PR #140 merged (`92446ee`). Confidence Flood Cure Design Sandbox. Designed (did not implement) 5 candidate mitigations for the two VFU-24 variants: Gap-Collapse Guard, Threshold-Flood Guard, Green-Day Risk Overlay, Same-Day Post-Sigma Reporting Enhancement, Promotion/Rejection Criteria. All rated `DESIGN_ONLY`/`NEEDS_MORE_EVIDENCE`/`SHADOW_TEST_NEXT` — none left the sandbox. No cure implemented, no VP Gatekeeper change. See `docs/current/CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX.md`.
+- **VFU-26 — IN PROGRESS (opened 2026-07-07):** Confidence Flood Evidence Expansion. Expanded the sigma_results corpus 31→42 dates (11 new, from this project's own sister worktree local artifacts). Reproduced the known 6-date false-green set exactly; found 4 new false-green dates; false-green rate held/increased (37.5%→43.5%); a new `WEAK`-gap-band `UNRESOLVED_FALSE_GREEN` case appeared, not fitting either VFU-24 primary subtype; Threshold-Flood Guard's measured false-positive rate rose from an unmeasurable 0/10 to a real 30.8% (4/13) with a larger true-green cohort. Verdict: `EVIDENCE_EXPANDED_MIXED_RESULT` — disease confirmed/strengthened, cure candidates not promoted (still `DESIGN_ONLY`/`NEEDS_MORE_EVIDENCE`/reporting-only `SHADOW_TEST_NEXT`). No cure implemented, no VP Gatekeeper change. Task contract `ops/task_contracts/VFU-26.json`, branch `vfu-26-confidence-flood-evidence-expansion`. See `docs/current/CONFIDENCE_FLOOD_EVIDENCE_EXPANSION.md`.
 
 ## VÉLØ Coherence Protocol (VCP) State (updated 2026-07-28)
 - **VCP-00 — Truth Lock:** IN PROGRESS (2026-06-29). Stale root docs archived. CLAUDE.md rewritten as pointer-only. docs/current/ thinned to operational spine. ONE_TRUTH HEAD updated.

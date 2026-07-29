@@ -1,6 +1,5 @@
 """
 VÉLØ Daily Harness
-==================
 
 Single orchestration script that runs the full daily intelligence pipeline
 in the correct order. Read-only for scoring — does NOT change any verdict,

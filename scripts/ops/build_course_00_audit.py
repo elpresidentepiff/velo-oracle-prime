@@ -10,7 +10,7 @@ import csv
 import json
 import os
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from datetime import datetime
 
 # ---------------------------------------------------------------------------
@@ -660,8 +660,12 @@ _COURSE_EYES = {
 }
 
 _AW_CLUSTER_TRACKS = [
-    "Southwell (AW)", "Kempton (AW)", "Wolverhampton (AW)",
-    "Lingfield (AW)", "Newcastle (Aw)", "Chelmsford (Aw)",
+    "Southwell (AW)",
+    "Kempton (AW)",
+    "Wolverhampton (AW)",
+    "Lingfield (AW)",
+    "Newcastle (Aw)",
+    "Chelmsford (Aw)",
 ]
 
 # ---------------------------------------------------------------------------
@@ -1232,31 +1236,33 @@ def _s1_course_registry(sigma, course_table, drain_roots, edge_roots):
         has_draw = "DRAW_EYES_REQUIRED" in required
         has_pace = "PACE_EYES_REQUIRED" in required
 
-        registry.append({
-            "course": course,
-            "n": n,
-            "wins": wins,
-            "sr": sr,
-            "label": label,
-            "avg_winner_sp": avg_winner_sp if avg_winner_sp else "unknown",
-            "watchlist_status": watchlist_status,
-            "draw_bias_known": eye["draw_bias_known"],
-            "draw_bias_side": eye["draw_bias_side"],
-            "draw_bias_distances": ",".join(eye["draw_bias_distances"]),
-            "pace_bias_known": eye["pace_bias_known"],
-            "front_runner_advantage": eye["front_runner_advantage"],
-            "circuit_type": eye["circuit_type"],
-            "run_in": eye["run_in"],
-            "sprint_chute": eye["sprint_chute"],
-            "aw_surface_subtype": eye["aw_surface_subtype"],
-            "required_features": "|".join(required),
-            "draw_eyes_required": "yes" if has_draw else "no",
-            "pace_eyes_required": "yes" if has_pace else "no",
-            "source_confidence": eye["source_confidence"],
-            "root_cause": root_cause,
-            "why_working": why_working,
-            "notes": eye.get("notes", ""),
-        })
+        registry.append(
+            {
+                "course": course,
+                "n": n,
+                "wins": wins,
+                "sr": sr,
+                "label": label,
+                "avg_winner_sp": avg_winner_sp if avg_winner_sp else "unknown",
+                "watchlist_status": watchlist_status,
+                "draw_bias_known": eye["draw_bias_known"],
+                "draw_bias_side": eye["draw_bias_side"],
+                "draw_bias_distances": ",".join(eye["draw_bias_distances"]),
+                "pace_bias_known": eye["pace_bias_known"],
+                "front_runner_advantage": eye["front_runner_advantage"],
+                "circuit_type": eye["circuit_type"],
+                "run_in": eye["run_in"],
+                "sprint_chute": eye["sprint_chute"],
+                "aw_surface_subtype": eye["aw_surface_subtype"],
+                "required_features": "|".join(required),
+                "draw_eyes_required": "yes" if has_draw else "no",
+                "pace_eyes_required": "yes" if has_pace else "no",
+                "source_confidence": eye["source_confidence"],
+                "root_cause": root_cause,
+                "why_working": why_working,
+                "notes": eye.get("notes", ""),
+            }
+        )
     return registry
 
 
@@ -1277,22 +1283,24 @@ def _s2_draw_priority(sigma, course_table):
 
         distances = eye["draw_bias_distances"] if eye["draw_bias_distances"] else ["all"]
         for dist in distances:
-            rows.append({
-                "course": course,
-                "distance": dist,
-                "draw_bias_known": "yes",
-                "draw_bias_side": eye["draw_bias_side"],
-                "front_runner_advantage": eye["front_runner_advantage"],
-                "circuit_type": eye["circuit_type"],
-                "course_n": n,
-                "course_sr": sr,
-                "aw_surface_subtype": eye["aw_surface_subtype"],
-                "source_confidence": eye["source_confidence"],
-                "priority": "CRITICAL" if n >= 20 else "WATCH_LOW_SAMPLE",
-                "status": "WATCHLIST_ONLY",
-                "required_feature": "draw_bias_by_course_distance",
-                "recommended_phase": "COURSE-01",
-            })
+            rows.append(
+                {
+                    "course": course,
+                    "distance": dist,
+                    "draw_bias_known": "yes",
+                    "draw_bias_side": eye["draw_bias_side"],
+                    "front_runner_advantage": eye["front_runner_advantage"],
+                    "circuit_type": eye["circuit_type"],
+                    "course_n": n,
+                    "course_sr": sr,
+                    "aw_surface_subtype": eye["aw_surface_subtype"],
+                    "source_confidence": eye["source_confidence"],
+                    "priority": "CRITICAL" if n >= 20 else "WATCH_LOW_SAMPLE",
+                    "status": "WATCHLIST_ONLY",
+                    "required_feature": "draw_bias_by_course_distance",
+                    "recommended_phase": "COURSE-01",
+                }
+            )
     # Also add rows for courses where draw_bias_known='unknown' and n >= 20
     for course, eye in sorted(_COURSE_EYES.items()):
         if eye["draw_bias_known"] != "unknown":
@@ -1301,22 +1309,24 @@ def _s2_draw_priority(sigma, course_table):
         n = _safe_int(ct.get("n", 0))
         if n < 20:
             continue
-        rows.append({
-            "course": course,
-            "distance": "unknown",
-            "draw_bias_known": "unknown",
-            "draw_bias_side": "unknown",
-            "front_runner_advantage": eye["front_runner_advantage"],
-            "circuit_type": eye["circuit_type"],
-            "course_n": n,
-            "course_sr": _safe_float(ct.get("sr", 0)),
-            "aw_surface_subtype": eye["aw_surface_subtype"],
-            "source_confidence": "UNKNOWN",
-            "priority": "INVESTIGATE",
-            "status": "WATCHLIST_ONLY",
-            "required_feature": "draw_bias_by_course_distance",
-            "recommended_phase": "COURSE-01",
-        })
+        rows.append(
+            {
+                "course": course,
+                "distance": "unknown",
+                "draw_bias_known": "unknown",
+                "draw_bias_side": "unknown",
+                "front_runner_advantage": eye["front_runner_advantage"],
+                "circuit_type": eye["circuit_type"],
+                "course_n": n,
+                "course_sr": _safe_float(ct.get("sr", 0)),
+                "aw_surface_subtype": eye["aw_surface_subtype"],
+                "source_confidence": "UNKNOWN",
+                "priority": "INVESTIGATE",
+                "status": "WATCHLIST_ONLY",
+                "required_feature": "draw_bias_by_course_distance",
+                "recommended_phase": "COURSE-01",
+            }
+        )
     return rows
 
 
@@ -1341,22 +1351,24 @@ def _s3_pace_priority(sigma, course_table):
         else:
             pace_priority = "MONITOR"
 
-        rows.append({
-            "course": course,
-            "front_runner_advantage": eye["front_runner_advantage"],
-            "pace_bias_known": eye["pace_bias_known"],
-            "circuit_type": eye["circuit_type"],
-            "run_in": eye["run_in"],
-            "aw_surface_subtype": eye["aw_surface_subtype"],
-            "course_n": n,
-            "course_sr": sr,
-            "avg_winner_sp": avg_sp if avg_sp else "unknown",
-            "pace_priority": pace_priority,
-            "status": "WATCHLIST_ONLY",
-            "required_feature": "pace_map_front_runner_flag",
-            "recommended_phase": "COURSE-01",
-            "source_confidence": eye["source_confidence"],
-        })
+        rows.append(
+            {
+                "course": course,
+                "front_runner_advantage": eye["front_runner_advantage"],
+                "pace_bias_known": eye["pace_bias_known"],
+                "circuit_type": eye["circuit_type"],
+                "run_in": eye["run_in"],
+                "aw_surface_subtype": eye["aw_surface_subtype"],
+                "course_n": n,
+                "course_sr": sr,
+                "avg_winner_sp": avg_sp if avg_sp else "unknown",
+                "pace_priority": pace_priority,
+                "status": "WATCHLIST_ONLY",
+                "required_feature": "pace_map_front_runner_flag",
+                "recommended_phase": "COURSE-01",
+                "source_confidence": eye["source_confidence"],
+            }
+        )
     return sorted(rows, key=lambda r: (r["pace_priority"] != "CRITICAL", r["course_n"] == 0, r["course"]))
 
 
@@ -1469,21 +1481,23 @@ def _s5_beverley_war_book(sigma, mp_misses, drain_roots):
     # Full row list from mp_misses for the war book table
     war_rows = []
     for r in bev_mp:
-        war_rows.append({
-            "date": r.get("date", "unknown"),
-            "off_time": r.get("off_time", "unknown"),
-            "race_type": r.get("race_type", "unknown"),
-            "distance": r.get("distance", "unknown"),
-            "going": r.get("going", "unknown"),
-            "actual_winner": r.get("actual_winner", "unknown"),
-            "winner_sp_dec": r.get("winner_sp_dec", "unknown"),
-            "mp_band": r.get("mp_band", "unknown"),
-            "decision_tier": r.get("decision_tier", "unknown"),
-            "pick_sp_dec": r.get("pick_sp_dec", "unknown"),
-            "front_runner_bias": r.get("front_runner_bias", "unknown"),
-            "uphill_finish": r.get("uphill_finish", "unknown"),
-            "turn_severity": r.get("turn_severity", "unknown"),
-        })
+        war_rows.append(
+            {
+                "date": r.get("date", "unknown"),
+                "off_time": r.get("off_time", "unknown"),
+                "race_type": r.get("race_type", "unknown"),
+                "distance": r.get("distance", "unknown"),
+                "going": r.get("going", "unknown"),
+                "actual_winner": r.get("actual_winner", "unknown"),
+                "winner_sp_dec": r.get("winner_sp_dec", "unknown"),
+                "mp_band": r.get("mp_band", "unknown"),
+                "decision_tier": r.get("decision_tier", "unknown"),
+                "pick_sp_dec": r.get("pick_sp_dec", "unknown"),
+                "front_runner_bias": r.get("front_runner_bias", "unknown"),
+                "uphill_finish": r.get("uphill_finish", "unknown"),
+                "turn_severity": r.get("turn_severity", "unknown"),
+            }
+        )
 
     return {
         "course": "Beverley",
@@ -1534,41 +1548,45 @@ def _s6_midprice_6_10(sigma, mp_misses):
         if sp is None:
             continue
         if 6.0 <= sp < 10.0:
-            seen_from_sigma.append({
-                "date": _extract_date(r),
-                "course": r.get("track", "unknown") or "unknown",
-                "off_time": r.get("off_time", "unknown") or "unknown",
-                "race_type": r.get("race_type", "unknown") or "unknown",
-                "distance": r.get("distance", "unknown") or "unknown",
-                "going": r.get("going", "unknown") or "unknown",
-                "actual_winner": r.get("actual_winner_name", "unknown") or "unknown",
-                "winner_sp_dec": sp,
-                "mp_band": "6-10",
-                "decision_tier": r.get("decision_tier", "unknown") or "unknown",
-                "pick_sp_dec": _safe_float(r.get("pick_sp")) or "unknown",
-                "source": "sigma_direct",
-            })
+            seen_from_sigma.append(
+                {
+                    "date": _extract_date(r),
+                    "course": r.get("track", "unknown") or "unknown",
+                    "off_time": r.get("off_time", "unknown") or "unknown",
+                    "race_type": r.get("race_type", "unknown") or "unknown",
+                    "distance": r.get("distance", "unknown") or "unknown",
+                    "going": r.get("going", "unknown") or "unknown",
+                    "actual_winner": r.get("actual_winner_name", "unknown") or "unknown",
+                    "winner_sp_dec": sp,
+                    "mp_band": "6-10",
+                    "decision_tier": r.get("decision_tier", "unknown") or "unknown",
+                    "pick_sp_dec": _safe_float(r.get("pick_sp")) or "unknown",
+                    "source": "sigma_direct",
+                }
+            )
 
     # Annotate CSV rows
     output_rows = []
     for r in from_csv:
-        output_rows.append({
-            "date": r.get("date", "unknown"),
-            "course": r.get("course", "unknown"),
-            "off_time": r.get("off_time", "unknown"),
-            "race_type": r.get("race_type", "unknown"),
-            "distance": r.get("distance", "unknown"),
-            "going": r.get("going", "unknown"),
-            "actual_winner": r.get("actual_winner", "unknown"),
-            "winner_sp_dec": r.get("winner_sp_dec", "unknown"),
-            "mp_band": "6-10",
-            "decision_tier": r.get("decision_tier", "unknown"),
-            "pick_sp_dec": r.get("pick_sp_dec", "unknown"),
-            "front_runner_bias": r.get("front_runner_bias", "unknown"),
-            "uphill_finish": r.get("uphill_finish", "unknown"),
-            "turn_severity": r.get("turn_severity", "unknown"),
-            "source": "midprice_misses_csv",
-        })
+        output_rows.append(
+            {
+                "date": r.get("date", "unknown"),
+                "course": r.get("course", "unknown"),
+                "off_time": r.get("off_time", "unknown"),
+                "race_type": r.get("race_type", "unknown"),
+                "distance": r.get("distance", "unknown"),
+                "going": r.get("going", "unknown"),
+                "actual_winner": r.get("actual_winner", "unknown"),
+                "winner_sp_dec": r.get("winner_sp_dec", "unknown"),
+                "mp_band": "6-10",
+                "decision_tier": r.get("decision_tier", "unknown"),
+                "pick_sp_dec": r.get("pick_sp_dec", "unknown"),
+                "front_runner_bias": r.get("front_runner_bias", "unknown"),
+                "uphill_finish": r.get("uphill_finish", "unknown"),
+                "turn_severity": r.get("turn_severity", "unknown"),
+                "source": "midprice_misses_csv",
+            }
+        )
 
     # Sort by date desc
     output_rows.sort(key=lambda x: str(x.get("date", "")), reverse=True)
@@ -1876,6 +1894,7 @@ Implementation requires VCP-03 completion and operator gate.
 # MARKDOWN GENERATORS
 # ---------------------------------------------------------------------------
 
+
 def _md_course_eyes_pack(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11):
     bev = s5
     aw = s4
@@ -1959,9 +1978,9 @@ def _md_course_eyes_pack(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11):
         ts = aw["track_stats"].get(t, {})
         sr_val = f"{ts.get('sr', 0):.3f}" if ts.get("sr") is not None else "unknown"
         lines.append(
-            f"| {t} | {ts.get('surface','?')} | {ts.get('draw_bias_known','?')} "
-            f"| {ts.get('front_runner_advantage','?')} | {ts.get('n',0)} "
-            f"| {sr_val} | {ts.get('mp_misses_total',0)} |"
+            f"| {t} | {ts.get('surface', '?')} | {ts.get('draw_bias_known', '?')} "
+            f"| {ts.get('front_runner_advantage', '?')} | {ts.get('n', 0)} "
+            f"| {sr_val} | {ts.get('mp_misses_total', 0)} |"
         )
     lines += [
         "",
@@ -1973,8 +1992,8 @@ def _md_course_eyes_pack(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11):
         f"at {', '.join(bev['draw_bias_distances'])}",
         f"Front runner advantage: {bev['front_runner_advantage']} | Run-in: {bev['run_in']}",
         f"Sigma rows: {bev['sigma_n']} | MP misses: {bev['mp_misses_total']}",
-        f"Drain SR: {bev.get('drain_sr', 'unknown')} | Avg winner SP: {bev.get('drain_avg_winner_sp','unknown')}",
-        f"Avg pick SP: {bev.get('drain_avg_pick_sp','unknown')} | SP gap: {bev.get('drain_sp_gap','unknown')}",
+        f"Drain SR: {bev.get('drain_sr', 'unknown')} | Avg winner SP: {bev.get('drain_avg_winner_sp', 'unknown')}",
+        f"Avg pick SP: {bev.get('drain_avg_pick_sp', 'unknown')} | SP gap: {bev.get('drain_sp_gap', 'unknown')}",
         "",
         f"Root cause: {bev['root_cause_hypotheses']}",
         "",
@@ -2024,13 +2043,13 @@ def _md_course_eyes_pack(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11):
         "",
         "## Section 9 — Course Watchlist",
         "",
-        f"DRAIN: {len(s9.get('DRAIN',[]))} | EDGE: {len(s9.get('EDGE',[]))} "
-        f"| NEUTRAL: {len(s9.get('NEUTRAL',[]))} | UNKNOWN: {len(s9.get('UNKNOWN_STATUS',[]))}",
+        f"DRAIN: {len(s9.get('DRAIN', []))} | EDGE: {len(s9.get('EDGE', []))} "
+        f"| NEUTRAL: {len(s9.get('NEUTRAL', []))} | UNKNOWN: {len(s9.get('UNKNOWN_STATUS', []))}",
         "",
         "### DRAIN Courses",
     ]
     for r in s9.get("DRAIN", []):
-        lines.append(f"- **{r['course']}** (n={r['n']}, SR={r['sr']}) — {r.get('root_cause','unknown')[:80]}")
+        lines.append(f"- **{r['course']}** (n={r['n']}, SR={r['sr']}) — {r.get('root_cause', 'unknown')[:80]}")
     lines += ["", "### EDGE Courses"]
     for r in s9.get("EDGE", []):
         lines.append(f"- **{r['course']}** (n={r['n']}, SR={r['sr']})")
@@ -2074,19 +2093,19 @@ def _md_aw_cluster(s4):
             "",
             f"## {t}",
             "",
-            f"- **Surface:** {ts.get('surface','unknown')}",
-            f"- **Circuit:** {ts.get('circuit_type','unknown')}",
-            f"- **Draw bias:** {ts.get('draw_bias_known','unknown')} — side: {ts.get('draw_bias_side','unknown')} at {', '.join(ts.get('draw_bias_distances',[]))}",
-            f"- **Front runner advantage:** {ts.get('front_runner_advantage','unknown')}",
-            f"- **Run-in:** {ts.get('run_in','unknown')} | Sprint chute: {ts.get('sprint_chute','unknown')}",
-            f"- **N:** {ts.get('n',0)} | **Wins:** {ts.get('wins',0)} | **SR:** {ts.get('sr','unknown')}",
-            f"- **Avg winner SP:** {ts.get('avg_winner_sp','unknown')} | **Avg pick SP:** {ts.get('avg_pick_sp','unknown')}",
-            f"- **SP gap:** {ts.get('sp_gap','unknown')}",
-            f"- **MP misses total:** {ts.get('mp_misses_total',0)} | **6-10 band:** {ts.get('mp_misses_6_10',0)} | **4-6 band:** {ts.get('mp_misses_4_6',0)}",
-            f"- **Root cause:** {ts.get('root_cause','unknown')}",
-            f"- **Watchlist status:** {ts.get('watchlist_status','WATCHLIST_ONLY')}",
-            f"- **Required features:** {', '.join(ts.get('required_features',[]))}",
-            f"- **Notes:** {eye.get('notes','')}",
+            f"- **Surface:** {ts.get('surface', 'unknown')}",
+            f"- **Circuit:** {ts.get('circuit_type', 'unknown')}",
+            f"- **Draw bias:** {ts.get('draw_bias_known', 'unknown')} — side: {ts.get('draw_bias_side', 'unknown')} at {', '.join(ts.get('draw_bias_distances', []))}",
+            f"- **Front runner advantage:** {ts.get('front_runner_advantage', 'unknown')}",
+            f"- **Run-in:** {ts.get('run_in', 'unknown')} | Sprint chute: {ts.get('sprint_chute', 'unknown')}",
+            f"- **N:** {ts.get('n', 0)} | **Wins:** {ts.get('wins', 0)} | **SR:** {ts.get('sr', 'unknown')}",
+            f"- **Avg winner SP:** {ts.get('avg_winner_sp', 'unknown')} | **Avg pick SP:** {ts.get('avg_pick_sp', 'unknown')}",
+            f"- **SP gap:** {ts.get('sp_gap', 'unknown')}",
+            f"- **MP misses total:** {ts.get('mp_misses_total', 0)} | **6-10 band:** {ts.get('mp_misses_6_10', 0)} | **4-6 band:** {ts.get('mp_misses_4_6', 0)}",
+            f"- **Root cause:** {ts.get('root_cause', 'unknown')}",
+            f"- **Watchlist status:** {ts.get('watchlist_status', 'WATCHLIST_ONLY')}",
+            f"- **Required features:** {', '.join(ts.get('required_features', []))}",
+            f"- **Notes:** {eye.get('notes', '')}",
         ]
     lines += [
         "",
@@ -2229,7 +2248,7 @@ def _md_course_watchlist(s9):
         "",
         "## DRAIN Courses",
         "",
-        f"*{len(s9.get('DRAIN',[]))} courses where SR is below expectation.*",
+        f"*{len(s9.get('DRAIN', []))} courses where SR is below expectation.*",
         "",
         "| Course | N | SR | Eyes Required | Root Cause |",
         "|--------|---|----|----|---|",
@@ -2237,7 +2256,7 @@ def _md_course_watchlist(s9):
     for r in s9.get("DRAIN", []):
         lines.append(
             f"| {r['course']} | {r['n']} | {r['sr']} | {r['eyes_required'][:40]} "
-            f"| {str(r.get('root_cause','unknown'))[:60]} |"
+            f"| {str(r.get('root_cause', 'unknown'))[:60]} |"
         )
     lines += [
         "",
@@ -2245,15 +2264,13 @@ def _md_course_watchlist(s9):
         "",
         "## EDGE Courses",
         "",
-        f"*{len(s9.get('EDGE',[]))} courses where model is performing well.*",
+        f"*{len(s9.get('EDGE', []))} courses where model is performing well.*",
         "",
         "| Course | N | SR | Eyes Required |",
         "|--------|---|---|---|",
     ]
     for r in s9.get("EDGE", []):
-        lines.append(
-            f"| {r['course']} | {r['n']} | {r['sr']} | {r['eyes_required'][:40]} |"
-        )
+        lines.append(f"| {r['course']} | {r['n']} | {r['sr']} | {r['eyes_required'][:40]} |")
     lines += [
         "",
         "---",
@@ -2264,9 +2281,7 @@ def _md_course_watchlist(s9):
         "|--------|---|---|---|",
     ]
     for r in s9.get("NEUTRAL", []):
-        lines.append(
-            f"| {r['course']} | {r['n']} | {r['sr']} | {r['eyes_required'][:40]} |"
-        )
+        lines.append(f"| {r['course']} | {r['n']} | {r['sr']} | {r['eyes_required'][:40]} |")
     lines += [
         "",
         "---",
@@ -2310,21 +2325,15 @@ def main():
     print(f"  Loaded {len(sigma)} sigma rows")
 
     print("Loading RESULTS-01 course performance table ...")
-    course_table = _load_csv_dict(
-        "data/reports/results_01_course_performance_table.csv", "course"
-    )
+    course_table = _load_csv_dict("data/reports/results_01_course_performance_table.csv", "course")
     print(f"  Loaded {len(course_table)} course rows")
 
     print("Loading RESULTS-02 drain root causes ...")
-    drain_roots = _load_csv_dict(
-        "data/reports/results_02_course_drain_root_causes.csv", "course"
-    )
+    drain_roots = _load_csv_dict("data/reports/results_02_course_drain_root_causes.csv", "course")
     print(f"  Loaded {len(drain_roots)} drain courses")
 
     print("Loading RESULTS-02 edge root causes ...")
-    edge_roots = _load_csv_dict(
-        "data/reports/results_02_course_edge_root_causes.csv", "course"
-    )
+    edge_roots = _load_csv_dict("data/reports/results_02_course_edge_root_causes.csv", "course")
     print(f"  Loaded {len(edge_roots)} edge courses")
 
     print("Loading RESULTS-02 midprice misses table ...")
@@ -2332,15 +2341,14 @@ def main():
     print(f"  Loaded {len(mp_misses)} mid-price miss rows")
 
     print("Loading RESULTS-02 course model gap matrix ...")
-    gap_matrix = _load_csv_dict(
-        "data/reports/results_02_course_model_gap_matrix.csv", "course"
-    )
+    gap_matrix = _load_csv_dict("data/reports/results_02_course_model_gap_matrix.csv", "course")
     print(f"  Loaded {len(gap_matrix)} gap matrix rows")
 
     # Import base profiles from build_results_02_audit if available
     sys.path.insert(0, "scripts/ops")
     try:
         from build_results_02_audit import _COURSE_PROFILES as _BASE_PROFILES
+
         print(f"  Imported {len(_BASE_PROFILES)} base course profiles")
     except ImportError:
         _BASE_PROFILES = {}
@@ -2393,38 +2401,37 @@ def main():
 
     # File 2 — Structured JSON
     p = os.path.join(_REPORTS_DIR, "course_00_course_eyes_completion_pack.json")
-    _write_json(p, {
-        "meta": {
-            "script": "build_course_00_audit.py",
-            "generated": datetime.utcnow().isoformat(),
-            "constraints": _HARD_CONSTRAINTS,
-            "final_classifications": _FINAL_CLASSIFICATIONS,
-            "status": "REPORT_ONLY",
+    _write_json(
+        p,
+        {
+            "meta": {
+                "script": "build_course_00_audit.py",
+                "generated": datetime.utcnow().isoformat(),
+                "constraints": _HARD_CONSTRAINTS,
+                "final_classifications": _FINAL_CLASSIFICATIONS,
+                "status": "REPORT_ONLY",
+            },
+            "s1_course_registry": s1,
+            "s2_draw_priority": s2,
+            "s3_pace_priority": s3,
+            "s4_aw_cluster": {k: v for k, v in s4.items() if k != "track_stats"},
+            "s4_aw_track_stats": s4.get("track_stats", {}),
+            "s5_beverley": {k: v for k, v in s5.items() if k != "war_rows"},
+            "s5_beverley_war_rows": s5.get("war_rows", []),
+            "s6_midprice_6_10_summary": {
+                "n_total": s6["n_total"],
+                "n_from_csv": s6["n_from_csv"],
+                "top_courses": s6["top_courses"],
+                "status": s6["status"],
+            },
+            "s6_midprice_6_10_rows": s6["rows"],
+            "s7_feature_matrix": s7,
+            "s8_external_source_map": s8,
+            "s9_watchlist": s9,
+            "s10_course01_spec": s10,
+            "s11_operator_brief": s11,
         },
-        "s1_course_registry": s1,
-        "s2_draw_priority": s2,
-        "s3_pace_priority": s3,
-        "s4_aw_cluster": {
-            k: v for k, v in s4.items() if k != "track_stats"
-        },
-        "s4_aw_track_stats": s4.get("track_stats", {}),
-        "s5_beverley": {
-            k: v for k, v in s5.items() if k != "war_rows"
-        },
-        "s5_beverley_war_rows": s5.get("war_rows", []),
-        "s6_midprice_6_10_summary": {
-            "n_total": s6["n_total"],
-            "n_from_csv": s6["n_from_csv"],
-            "top_courses": s6["top_courses"],
-            "status": s6["status"],
-        },
-        "s6_midprice_6_10_rows": s6["rows"],
-        "s7_feature_matrix": s7,
-        "s8_external_source_map": s8,
-        "s9_watchlist": s9,
-        "s10_course01_spec": s10,
-        "s11_operator_brief": s11,
-    })
+    )
     print(f"  [2/12] {p}")
 
     # File 3 — Draw bias priority CSV

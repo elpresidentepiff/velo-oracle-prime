@@ -23,6 +23,7 @@ Outputs:
 
 REPORT_ONLY. No scoring changes. No Supabase writes. No Telegram.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -30,7 +31,7 @@ import csv
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -55,6 +56,7 @@ def _prov(value: str | None, missing_status: str = LOCAL_CAPTURED_FIELD_MISSING)
 
 # ── Page classification ───────────────────────────────────────────────────────
 
+
 def _classify_page(html: str, http_status: int | None) -> str:
     """Classify what kind of page this is before parsing content."""
     # HTTP status takes priority — check this first, before inspecting HTML
@@ -76,10 +78,18 @@ def _classify_page(html: str, http_status: int | None) -> str:
 
     # Login wall / paywall detection
     login_signals = [
-        "log in to view", "sign in to view", "subscribe to view",
-        "login required", "please log in", "members only",
-        "create a free account", "sign up to see", "you need to be logged in",
-        "class=\"rp-login\"", "class=\"login-wall\"", "id=\"login-modal\"",
+        "log in to view",
+        "sign in to view",
+        "subscribe to view",
+        "login required",
+        "please log in",
+        "members only",
+        "create a free account",
+        "sign up to see",
+        "you need to be logged in",
+        'class="rp-login"',
+        'class="login-wall"',
+        'id="login-modal"',
     ]
     if any(sig in text_sample for sig in login_signals):
         return LOGIN_REQUIRED_OR_BLOCKED
@@ -87,8 +97,10 @@ def _classify_page(html: str, http_status: int | None) -> str:
     # 404 / error signals in HTML body (from pages without HTTP status metadata)
     # Only check for actual error *content*, not CSS class names for error pages
     error_signals = [
-        "page not found", "404 not found",
-        "we can't find that page", "something went wrong",
+        "page not found",
+        "404 not found",
+        "we can't find that page",
+        "something went wrong",
     ]
     if any(sig in text_sample for sig in error_signals):
         return SOURCE_404
@@ -97,6 +109,7 @@ def _classify_page(html: str, http_status: int | None) -> str:
 
 
 # ── Text helpers ──────────────────────────────────────────────────────────────
+
 
 def _strip_tags(html: str) -> str:
     text = re.sub(r"<[^>]+>", " ", html)
@@ -118,15 +131,26 @@ def _extract_course_id_and_name(source_url: str, html: str) -> tuple[str, str]:
 
 # ── course-map parser ─────────────────────────────────────────────────────────
 
+
 def _parse_course_map(html: str, page_status: str) -> dict:
     """Extract track facts from course-map page. Each field carries own provenance."""
 
     if page_status != "OK":
         # Page not usable — all fields get page-level block status
-        return {f: {"value": "UNKNOWN", "source_status": page_status, "confidence": 0.0}
-                for f in ("handedness", "circuit_character", "surface",
-                           "straight_furlongs", "run_in_furlongs", "uphill_finish",
-                           "sprint_chute", "pace_notes_present", "raw_description")}
+        return {
+            f: {"value": "UNKNOWN", "source_status": page_status, "confidence": 0.0}
+            for f in (
+                "handedness",
+                "circuit_character",
+                "surface",
+                "straight_furlongs",
+                "run_in_furlongs",
+                "uphill_finish",
+                "sprint_chute",
+                "pace_notes_present",
+                "raw_description",
+            )
+        }
 
     text = _strip_tags(html)
     facts: dict = {}
@@ -148,7 +172,11 @@ def _parse_course_map(html: str, page_status: str) -> dict:
     if char_found:
         facts["circuit_character"] = {"value": char_found, "source_status": VERIFIED_LOCAL, "confidence": 0.9}
     else:
-        facts["circuit_character"] = {"value": "UNKNOWN", "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
+        facts["circuit_character"] = {
+            "value": "UNKNOWN",
+            "source_status": LOCAL_CAPTURED_FIELD_MISSING,
+            "confidence": 0.0,
+        }
 
     # Surface — must match actual content word, not course name
     surface_found = None
@@ -168,7 +196,11 @@ def _parse_course_map(html: str, page_status: str) -> dict:
     if sm:
         facts["straight_furlongs"] = {"value": sm.group(1), "source_status": VERIFIED_LOCAL, "confidence": 0.9}
     else:
-        facts["straight_furlongs"] = {"value": "UNKNOWN", "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
+        facts["straight_furlongs"] = {
+            "value": "UNKNOWN",
+            "source_status": LOCAL_CAPTURED_FIELD_MISSING,
+            "confidence": 0.0,
+        }
 
     # Run-in furlongs
     rim = re.search(r"(\d+(?:\.\d+)?)\s*f(?:urlong)?\s*run.in", text, re.I)
@@ -177,7 +209,11 @@ def _parse_course_map(html: str, page_status: str) -> dict:
     if rim:
         facts["run_in_furlongs"] = {"value": rim.group(1), "source_status": VERIFIED_LOCAL, "confidence": 0.9}
     else:
-        facts["run_in_furlongs"] = {"value": "UNKNOWN", "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
+        facts["run_in_furlongs"] = {
+            "value": "UNKNOWN",
+            "source_status": LOCAL_CAPTURED_FIELD_MISSING,
+            "confidence": 0.0,
+        }
 
     # Uphill finish
     if re.search(r"uphill\s+finish|finishes?\s+uphill|rises?\s+to\s+finish", text, re.I):
@@ -201,23 +237,35 @@ def _parse_course_map(html: str, page_status: str) -> dict:
 
     # Raw description — first meaningful paragraph
     desc_m = re.search(
-        r"(?:Course Description|About the Course|Circuit|racecourse)[^.]*\.\s*(.{80,600}?)(?:\s{2,}|<|\Z)",
-        text, re.I
+        r"(?:Course Description|About the Course|Circuit|racecourse)[^.]*\.\s*(.{80,600}?)(?:\s{2,}|<|\Z)", text, re.I
     )
     if desc_m:
-        facts["raw_description"] = {"value": desc_m.group(1).strip(), "source_status": VERIFIED_LOCAL, "confidence": 0.9}
+        facts["raw_description"] = {
+            "value": desc_m.group(1).strip(),
+            "source_status": VERIFIED_LOCAL,
+            "confidence": 0.9,
+        }
     else:
         # Use a slice of stripped text — mark as LOCAL_CAPTURED not verified description
         snippet = text[300:700].strip()
         if len(snippet) > 50:
-            facts["raw_description"] = {"value": snippet, "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
+            facts["raw_description"] = {
+                "value": snippet,
+                "source_status": LOCAL_CAPTURED_FIELD_MISSING,
+                "confidence": 0.0,
+            }
         else:
-            facts["raw_description"] = {"value": "UNKNOWN", "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
+            facts["raw_description"] = {
+                "value": "UNKNOWN",
+                "source_status": LOCAL_CAPTURED_FIELD_MISSING,
+                "confidence": 0.0,
+            }
 
     return facts
 
 
 # ── statistics parser ─────────────────────────────────────────────────────────
+
 
 def _parse_statistics(html: str, page_status: str) -> dict:
     """Extract draw bias and going stats from statistics page. Per-field provenance."""
@@ -243,11 +291,19 @@ def _parse_statistics(html: str, page_status: str) -> dict:
         r"H\s*\[([\d-]+)\]\s*(\d+)\s*\((\d+)%\)"
     )
     for m in stall_pattern.finditer(html):
-        stats["stall_zone_stats"].append({
-            "low_range": m.group(1), "low_wins": int(m.group(2)), "low_pct": int(m.group(3)),
-            "mid_range": m.group(4), "mid_wins": int(m.group(5)), "mid_pct": int(m.group(6)),
-            "high_range": m.group(7), "high_wins": int(m.group(8)), "high_pct": int(m.group(9)),
-        })
+        stats["stall_zone_stats"].append(
+            {
+                "low_range": m.group(1),
+                "low_wins": int(m.group(2)),
+                "low_pct": int(m.group(3)),
+                "mid_range": m.group(4),
+                "mid_wins": int(m.group(5)),
+                "mid_pct": int(m.group(6)),
+                "high_range": m.group(7),
+                "high_wins": int(m.group(8)),
+                "high_pct": int(m.group(9)),
+            }
+        )
 
     if stats["stall_zone_stats"]:
         zone_wins = {"low": 0, "mid": 0, "high": 0}
@@ -258,11 +314,19 @@ def _parse_statistics(html: str, page_status: str) -> dict:
         dominant = max(zone_wins, key=lambda z: zone_wins[z])
         total = sum(zone_wins.values())
         stats["draw_dominant_zone"] = {"value": dominant.upper(), "source_status": VERIFIED_LOCAL, "confidence": 0.9}
-        stats["draw_dominant_pct"] = {"value": round(zone_wins[dominant] / total * 100, 1), "source_status": VERIFIED_LOCAL, "confidence": 0.9}
+        stats["draw_dominant_pct"] = {
+            "value": round(zone_wins[dominant] / total * 100, 1),
+            "source_status": VERIFIED_LOCAL,
+            "confidence": 0.9,
+        }
         stats["draw_sample_n"] = {"value": total, "source_status": VERIFIED_LOCAL, "confidence": 0.9}
         stats["draw_zone_totals"] = zone_wins
     else:
-        stats["draw_dominant_zone"] = {"value": "UNKNOWN", "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
+        stats["draw_dominant_zone"] = {
+            "value": "UNKNOWN",
+            "source_status": LOCAL_CAPTURED_FIELD_MISSING,
+            "confidence": 0.0,
+        }
         stats["draw_dominant_pct"] = {"value": 0, "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
         stats["draw_sample_n"] = {"value": 0, "source_status": LOCAL_CAPTURED_FIELD_MISSING, "confidence": 0.0}
 
@@ -271,19 +335,23 @@ def _parse_statistics(html: str, page_status: str) -> dict:
     for m in re.finditer(
         r"(Firm|Good to Firm|Good|Good to Soft|Soft|Heavy|Standard|Fast|Slow)"
         r"[^:]*:\s*(\d+)\s*(?:runs?|races?)[,\s]+(\d+)%",
-        text, re.I
+        text,
+        re.I,
     ):
-        stats["going_performance"].append({
-            "going": m.group(1).strip(),
-            "n": int(m.group(2)),
-            "sr_pct": int(m.group(3)),
-            "source_status": VERIFIED_LOCAL,
-        })
+        stats["going_performance"].append(
+            {
+                "going": m.group(1).strip(),
+                "n": int(m.group(2)),
+                "sr_pct": int(m.group(3)),
+                "source_status": VERIFIED_LOCAL,
+            }
+        )
 
     return stats
 
 
 # ── File parser ───────────────────────────────────────────────────────────────
+
 
 def parse_html_file(path: Path) -> dict | None:
     """Parse one captured HTML file. Returns structured result with per-field provenance."""
@@ -333,7 +401,7 @@ def parse_html_file(path: Path) -> dict | None:
         "page_status": page_status,
         "http_status": http_status,
         "tab": tab,
-        "parsed_at": datetime.now(timezone.utc).isoformat(),
+        "parsed_at": datetime.now(UTC).isoformat(),
     }
 
     if page_status != "OK":
@@ -354,6 +422,7 @@ def parse_html_file(path: Path) -> dict | None:
 
 # ── Writers ───────────────────────────────────────────────────────────────────
 
+
 def _write_draw_csv(all_parsed: list[dict], out: Path) -> int:
     rows = []
     for p in all_parsed:
@@ -362,16 +431,18 @@ def _write_draw_csv(all_parsed: list[dict], out: Path) -> int:
             continue
         dz = stats.get("draw_dominant_zone", {})
         if isinstance(dz, dict) and dz.get("source_status") == VERIFIED_LOCAL:
-            rows.append({
-                "course_id": p["course_id"],
-                "course": p["course_name"],
-                "draw_dominant_zone": dz["value"],
-                "draw_dominant_pct": stats.get("draw_dominant_pct", {}).get("value", 0),
-                "draw_sample_n": stats.get("draw_sample_n", {}).get("value", 0),
-                "source_status": VERIFIED_LOCAL,
-                "confidence": 0.9,
-                "last_checked": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-            })
+            rows.append(
+                {
+                    "course_id": p["course_id"],
+                    "course": p["course_name"],
+                    "draw_dominant_zone": dz["value"],
+                    "draw_dominant_pct": stats.get("draw_dominant_pct", {}).get("value", 0),
+                    "draw_sample_n": stats.get("draw_sample_n", {}).get("value", 0),
+                    "source_status": VERIFIED_LOCAL,
+                    "confidence": 0.9,
+                    "last_checked": datetime.now(UTC).strftime("%Y-%m-%d"),
+                }
+            )
     if rows:
         with open(out, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
@@ -387,39 +458,38 @@ def _write_facts_csv(all_parsed: list[dict], out: Path) -> int:
         if not facts:
             continue
         # Only include courses where at least one field was VERIFIED_LOCAL
-        if not any(
-            isinstance(v, dict) and v.get("source_status") == VERIFIED_LOCAL
-            for v in facts.values()
-        ):
+        if not any(isinstance(v, dict) and v.get("source_status") == VERIFIED_LOCAL for v in facts.values()):
             continue
 
-        def _val(field: str) -> str:
+        def _val(field: str, facts=facts) -> str:
             f = facts.get(field, {})
             return f.get("value", "UNKNOWN") if isinstance(f, dict) else "UNKNOWN"
 
-        def _status(field: str) -> str:
+        def _status(field: str, facts=facts) -> str:
             f = facts.get(field, {})
             return f.get("source_status", "UNKNOWN") if isinstance(f, dict) else "UNKNOWN"
 
-        rows.append({
-            "course_id": p["course_id"],
-            "course": p["course_name"],
-            "handedness": _val("handedness"),
-            "handedness_status": _status("handedness"),
-            "circuit_character": _val("circuit_character"),
-            "circuit_status": _status("circuit_character"),
-            "surface": _val("surface"),
-            "surface_status": _status("surface"),
-            "straight_furlongs": _val("straight_furlongs"),
-            "straight_status": _status("straight_furlongs"),
-            "run_in_furlongs": _val("run_in_furlongs"),
-            "run_in_status": _status("run_in_furlongs"),
-            "uphill_finish": _val("uphill_finish"),
-            "uphill_status": _status("uphill_finish"),
-            "sprint_chute": _val("sprint_chute"),
-            "pace_notes_present": _val("pace_notes_present"),
-            "last_checked": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-        })
+        rows.append(
+            {
+                "course_id": p["course_id"],
+                "course": p["course_name"],
+                "handedness": _val("handedness"),
+                "handedness_status": _status("handedness"),
+                "circuit_character": _val("circuit_character"),
+                "circuit_status": _status("circuit_character"),
+                "surface": _val("surface"),
+                "surface_status": _status("surface"),
+                "straight_furlongs": _val("straight_furlongs"),
+                "straight_status": _status("straight_furlongs"),
+                "run_in_furlongs": _val("run_in_furlongs"),
+                "run_in_status": _status("run_in_furlongs"),
+                "uphill_finish": _val("uphill_finish"),
+                "uphill_status": _status("uphill_finish"),
+                "sprint_chute": _val("sprint_chute"),
+                "pace_notes_present": _val("pace_notes_present"),
+                "last_checked": datetime.now(UTC).strftime("%Y-%m-%d"),
+            }
+        )
     if rows:
         with open(out, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
@@ -453,7 +523,7 @@ def _write_summary_md(
     capture_dir: Path,
     url_list_count: int,
 ) -> str:
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     # Page status counts
     status_counts: dict[str, int] = {}
@@ -468,10 +538,7 @@ def _write_summary_md(
     courses_with_map = sum(1 for p in all_parsed if "facts" in p and p.get("page_status") == "OK")
     courses_with_stats = sum(1 for p in all_parsed if "stats" in p and p.get("page_status") == "OK")
     courses_with_draw = draw_n
-    courses_with_going = sum(
-        1 for p in all_parsed
-        if p.get("stats", {}).get("going_performance")
-    )
+    courses_with_going = sum(1 for p in all_parsed if p.get("stats", {}).get("going_performance"))
 
     prov_tally = _build_provenance_tally(all_parsed)
 
@@ -490,7 +557,7 @@ def _write_summary_md(
             return "NOT_CAPTURED"
         f = p.get("facts", {}).get(field, {})
         if isinstance(f, dict):
-            return f"{f.get('value','?')} [{f.get('source_status','?')}]"
+            return f"{f.get('value', '?')} [{f.get('source_status', '?')}]"
         return "MISSING"
 
     lines = [
@@ -528,7 +595,7 @@ def _write_summary_md(
         "## Section 4 — Southwell Surface",
         "",
         f"  Surface: {_fact_val(southwell, 'surface')}",
-        f"  Expected: TAPETA [VERIFIED_LOCAL]",
+        "  Expected: TAPETA [VERIFIED_LOCAL]",
         "",
         "## Section 5 — Beverley Facts",
         "",
@@ -541,9 +608,13 @@ def _write_summary_md(
         "## Section 6 — AW Cluster Facts",
         "",
     ]
-    aw_ids = {"394": "Southwell (AW)", "513": "Wolverhampton (AW)",
-               "1079": "Kempton (AW)", "1083": "Chelmsford (AW)",
-               "1353": "Newcastle (AW)"}
+    aw_ids = {
+        "394": "Southwell (AW)",
+        "513": "Wolverhampton (AW)",
+        "1079": "Kempton (AW)",
+        "1083": "Chelmsford (AW)",
+        "1353": "Newcastle (AW)",
+    }
     for cid, cname in aw_ids.items():
         p = _get_course(cid)
         lines.append(f"  {cname}:")
@@ -555,7 +626,7 @@ def _write_summary_md(
         "## Section 7 — All Courses Parsed",
         "",
         f"  {'Course':<30} {'ID':<6} {'Tab':<14} {'Status':<26} {'Hand':<14} {'Surface'}",
-        f"  {'-'*30} {'-'*6} {'-'*14} {'-'*26} {'-'*14} {'-'*12}",
+        f"  {'-' * 30} {'-' * 6} {'-' * 14} {'-' * 26} {'-' * 14} {'-' * 12}",
     ]
     for p in sorted(all_parsed, key=lambda x: x.get("course_name", "")):
         facts = p.get("facts", {})
@@ -565,10 +636,10 @@ def _write_summary_md(
         surf = facts.get("surface", {})
         surf_val = surf.get("value", "?") if isinstance(surf, dict) else "?"
         lines.append(
-            f"  {p.get('course_name','?'):<30} "
-            f"{p.get('course_id','?'):<6} "
-            f"{p.get('tab','?'):<14} "
-            f"{p.get('page_status','?'):<26} "
+            f"  {p.get('course_name', '?'):<30} "
+            f"{p.get('course_id', '?'):<6} "
+            f"{p.get('tab', '?'):<14} "
+            f"{p.get('page_status', '?'):<26} "
             f"{hand_val}/{hand_status[:12]:<14} "
             f"{surf_val}"
         )
@@ -600,8 +671,9 @@ def _write_summary_md(
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+
 def main(capture_dir: Path) -> None:
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     print(f"── parse_rp_course_profiles — {now} ──")
     print(f"  Capture dir: {capture_dir}")
 
@@ -620,8 +692,7 @@ def main(capture_dir: Path) -> None:
     url_list_count = 0
     if url_list_path.exists():
         url_list_count = sum(
-            1 for line in url_list_path.read_text().splitlines()
-            if line.strip() and not line.startswith("#")
+            1 for line in url_list_path.read_text().splitlines() if line.strip() and not line.startswith("#")
         )
 
     html_files = sorted(capture_dir.glob("*.html"))
@@ -649,7 +720,9 @@ def main(capture_dir: Path) -> None:
         status_counts[s] = status_counts.get(s, 0) + 1
 
     print(f"  Parsed: {len(all_parsed)}")
-    print(f"  OK: {status_counts.get('OK', 0)} | 404: {status_counts.get(SOURCE_404, 0)} | Login/Block: {status_counts.get(LOGIN_REQUIRED_OR_BLOCKED, 0)}")
+    print(
+        f"  OK: {status_counts.get('OK', 0)} | 404: {status_counts.get(SOURCE_404, 0)} | Login/Block: {status_counts.get(LOGIN_REQUIRED_OR_BLOCKED, 0)}"
+    )
 
     REPORTS.mkdir(parents=True, exist_ok=True)
 

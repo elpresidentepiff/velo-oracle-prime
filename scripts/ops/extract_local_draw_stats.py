@@ -14,14 +14,13 @@ Outputs:
 source_status: VERIFIED_LOCAL for all outputs.
 REPORT_ONLY. No scoring changes. No Supabase writes.
 """
+
 from __future__ import annotations
 
 import csv
-import json
 import re
-import glob
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,13 +35,9 @@ _STALL_RE = re.compile(
     r"H\s*\[([\d-]+)\]\s*(\d+)\s*\((\d+)%\)"
 )
 
-_COURSE_FROM_FNAME = re.compile(
-    r"results_(\d+)_([a-z][a-z_]+)_(\d{4}_\d{2}_\d{2})_(\d+)"
-)
+_COURSE_FROM_FNAME = re.compile(r"results_(\d+)_([a-z][a-z_]+)_(\d{4}_\d{2}_\d{2})_(\d+)")
 
-_DIST_RE = re.compile(
-    r"(?:class=[\"'][^\"']*distance[^\"']*[\"'][^>]*>|\"distance\"\s*:\s*\")([^<\"]{3,20})"
-)
+_DIST_RE = re.compile(r"(?:class=[\"'][^\"']*distance[^\"']*[\"'][^>]*>|\"distance\"\s*:\s*\")([^<\"]{3,20})")
 _GOING_RE = re.compile(r"\b(Firm|Good to Firm|Good|Good to Soft|Soft|Heavy|Standard|Slow|Fast)\b")
 _FIELD_SIZE_RE = re.compile(r"(\d+)\s*runners?", re.I)
 
@@ -69,7 +64,7 @@ def _parse_file(path: Path) -> dict | None:
     distance = dm.group(1).strip() if dm else ""
 
     # Going
-    gm = _GOING_RE.search(html[html.find("Going"):html.find("Going") + 200] if "Going" in html else "")
+    gm = _GOING_RE.search(html[html.find("Going") : html.find("Going") + 200] if "Going" in html else "")
     going = gm.group(1) if gm else ""
 
     # Field size
@@ -85,8 +80,7 @@ def _parse_file(path: Path) -> dict | None:
 
     total = low_wins + mid_wins + high_wins
     dominant = max(
-        [("LOW", low_wins, low_pct), ("MID", mid_wins, mid_pct), ("HIGH", high_wins, high_pct)],
-        key=lambda x: x[1]
+        [("LOW", low_wins, low_pct), ("MID", mid_wins, mid_pct), ("HIGH", high_wins, high_pct)], key=lambda x: x[1]
     )
 
     return {
@@ -116,14 +110,16 @@ def _parse_file(path: Path) -> dict | None:
 
 
 def _aggregate_by_course(rows: list[dict]) -> list[dict]:
-    by_course: dict[str, dict] = defaultdict(lambda: {
-        "course_id": "",
-        "course": "",
-        "n_races": 0,
-        "low_wins_total": 0,
-        "mid_wins_total": 0,
-        "high_wins_total": 0,
-    })
+    by_course: dict[str, dict] = defaultdict(
+        lambda: {
+            "course_id": "",
+            "course": "",
+            "n_races": 0,
+            "low_wins_total": 0,
+            "mid_wins_total": 0,
+            "high_wins_total": 0,
+        }
+    )
 
     for r in rows:
         key = r["course_id"]
@@ -143,29 +139,28 @@ def _aggregate_by_course(rows: list[dict]) -> list[dict]:
         low_share = round(agg["low_wins_total"] / total * 100, 1)
         mid_share = round(agg["mid_wins_total"] / total * 100, 1)
         high_share = round(agg["high_wins_total"] / total * 100, 1)
-        dominant = max(
-            [("LOW", low_share), ("MID", mid_share), ("HIGH", high_share)],
-            key=lambda x: x[1]
-        )
+        dominant = max([("LOW", low_share), ("MID", mid_share), ("HIGH", high_share)], key=lambda x: x[1])
         tier = "MEANINGFUL" if agg["n_races"] >= 20 else "CAUTION" if agg["n_races"] >= 5 else "OBSERVATION_ONLY"
-        result.append({
-            "course_id": agg["course_id"],
-            "course": agg["course"],
-            "n_races": agg["n_races"],
-            "low_win_pct": low_share,
-            "mid_win_pct": mid_share,
-            "high_win_pct": high_share,
-            "dominant_zone": dominant[0],
-            "dominant_zone_pct": dominant[1],
-            "draw_bias_verdict": f"{dominant[0]}_FAVOURED" if dominant[1] >= 40 else "MIXED",
-            "tier": tier,
-            "source_status": "VERIFIED_LOCAL",
-        })
+        result.append(
+            {
+                "course_id": agg["course_id"],
+                "course": agg["course"],
+                "n_races": agg["n_races"],
+                "low_win_pct": low_share,
+                "mid_win_pct": mid_share,
+                "high_win_pct": high_share,
+                "dominant_zone": dominant[0],
+                "dominant_zone_pct": dominant[1],
+                "draw_bias_verdict": f"{dominant[0]}_FAVOURED" if dominant[1] >= 40 else "MIXED",
+                "tier": tier,
+                "source_status": "VERIFIED_LOCAL",
+            }
+        )
     return result
 
 
 def _write_summary(rows: list[dict], agg: list[dict]) -> str:
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     lines = [
         "# Local Draw Statistics — Extracted from Captured RP Results HTML",
         f"Generated: {now}",
@@ -178,7 +173,7 @@ def _write_summary(rows: list[dict], agg: list[dict]) -> str:
         "## Draw Bias By Course (aggregated)",
         "",
         f"  {'Course':<30} {'N':<5} {'LOW%':<7} {'MID%':<7} {'HIGH%':<7} {'Dominant':<14} {'Tier'}",
-        f"  {'-'*30} {'-'*5} {'-'*7} {'-'*7} {'-'*7} {'-'*14} {'-'*12}",
+        f"  {'-' * 30} {'-' * 5} {'-' * 7} {'-' * 7} {'-' * 7} {'-' * 14} {'-' * 12}",
     ]
     for a in sorted(agg, key=lambda x: -x["n_races"]):
         lines.append(
@@ -208,7 +203,7 @@ def _write_summary(rows: list[dict], agg: list[dict]) -> str:
 
 
 def main() -> None:
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     print(f"── extract_local_draw_stats — {now} ──")
 
     html_files = sorted(RAW_ROOT.glob("rp-results-*/*.html"))

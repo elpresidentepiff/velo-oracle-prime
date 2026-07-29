@@ -1172,7 +1172,6 @@ def _remap_numeric_race_ids(payload: dict, date_str: str) -> dict:
             row["race_id"] = numeric_to_velo[rid]
     return payload
 
-
 @app.get("/api/model-suggestions")
 async def model_suggestions(date: str = Query(default=None)):
     """Read-only, current-day pre-race suggestions across all model lanes.

@@ -1,0 +1,19 @@
+step,output_path,type,location
+12,Supabase sigma_audits (21 rows) + data/sigma_results/sigma_results_2026_07_05.json,supabase_table+local_file,shared+dirty_repo
+13,Supabase racing_horse_runs (193 rows/22 races),supabase_table,shared
+14,data/sigma_memory/sigma_retrieval_corpus_v1.jsonl,local_file,dirty_repo (gitignored)
+15,data/mission_control/2026-07-05_mission_control.json + latest.json,local_file,dirty_repo (gitignored)
+16A,data/vp30_operator_card_2026-07-05.md,local_file,dirty_repo (gitignored)
+16B,council run/packet/report artifacts,local_file,dirty_repo (gitignored)
+17,execution bridge paper ledger report,local_file,dirty_repo (gitignored)
+18,data/velo_innovation_protocol_1k_deduped.csv,local_file,dirty_repo (gitignored)
+19,data/router_shadow_audit_latest.csv + .md + snapshot + ledger,local_file,dirty_repo (gitignored)
+20,data/nightly_eod_learning_events_2026_07_05.jsonl + status.json,local_file,dirty_repo (gitignored)
+report,data/reports/july05_full_eod_learning_operator_brief.md,committed_report,clean_worktree (this mission)
+report,data/reports/july05_step13_20_consistency_matrix.csv,committed_report,clean_worktree (this mission)
+report,data/reports/july05_learning_connection_map.csv,committed_report,clean_worktree (this mission)
+report,data/reports/july05_mission_control_summary.md,committed_report,clean_worktree (this mission)
+report,data/reports/july05_council_learning_verdict.md,committed_report,clean_worktree (this mission)
+report,data/reports/july05_shadow_learning_events_summary.csv,committed_report,clean_worktree (this mission)
+report,data/reports/july05_eod_side_effect_diff.csv,committed_report,clean_worktree (this mission)
+report,data/reports/july05_eod_outputs_inventory.csv,committed_report,clean_worktree (this mission)

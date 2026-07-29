@@ -1418,6 +1418,7 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
     builder + numeric-race_id remap as the other server rather than
     duplicating the join logic."""
     import datetime as _dt
+
     from scripts.ops.model_suggestions_builder import build_model_suggestions
     from scripts.ops.new_build_dashboard_server import _remap_numeric_race_ids
 
@@ -1429,6 +1430,7 @@ async def model_suggestions_proxy(date: str = Query(default=None)):
 async def model_suggestions_race_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Same as /api/model-suggestions, filtered to a single race_id."""
     import datetime as _dt
+
     from scripts.ops.model_suggestions_builder import build_model_suggestions
 
     target = date or _dt.date.today().isoformat()
@@ -1437,56 +1439,12 @@ async def model_suggestions_race_proxy(date: str = Query(default=None), race_id:
     return JSONResponse(build_model_suggestions(target, race_id=race_id))
 
 
-@app.get("/api/plot-conviction")
-async def plot_conviction_picks(date: str = Query(default=None), threshold: float = Query(default=0.7)):
-    """Today's RP-PDF-derived plot conviction picks (handicap-plot/OR-
-    compression/TS-trend composite), read directly from
-    data/racecard_merged/racecard_{VENUE}_{date}.json. This field is
-    PDF-only -- it does not exist in the live RP HTML capture, so it is
-    computed by scripts/ops/ingest_racecard_pdfs.py /
-    merge_pdf_intel_into_racecard_merged.py, not by the live scorer."""
-    import datetime as _dt
-    import glob as _glob
-
-    target = date or _dt.date.today().isoformat()
-    target_compact = target.replace("-", "")
-    picks: list[dict] = []
-    pattern = str(pathlib.Path("data") / "racecard_merged" / "racecard_*.json")
-    for fp in sorted(_glob.glob(pattern)):
-        name = pathlib.Path(fp).name
-        if target not in name and target_compact not in name:
-            continue
-        try:
-            data = json.loads(pathlib.Path(fp).read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        venue = data.get("venue", "")
-        for off_time, race in (data.get("races") or {}).items():
-            race_id = race.get("race_id")
-            for h in race.get("horses", []):
-                pc = h.get("plot_conviction") or 0.0
-                if pc >= threshold:
-                    picks.append(
-                        {
-                            "venue": venue,
-                            "race_id": race_id,
-                            "off_time": off_time,
-                            "horse": h.get("horse_name"),
-                            "plot_conviction": pc,
-                            "postdata_score": h.get("postdata_score"),
-                            "or_compression_score": h.get("or_compression_score"),
-                            "spotlight_comment": (h.get("spotlight_comment") or "")[:280],
-                        }
-                    )
-    picks.sort(key=lambda p: -p["plot_conviction"])
-    return JSONResponse({"date": target, "threshold": threshold, "count": len(picks), "picks": picks})
-
-
 @app.get("/api/doctrine-scorecard")
 async def doctrine_scorecard_proxy():
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation
     to a single server — see docs/current/ONE_TRUTH.md)."""
     import json as _json
+
     path = pathlib.Path(__file__).parent.parent / "data" / "doctrine_scorecard_latest.json"
     if not path.exists():
         return JSONResponse(
@@ -1494,7 +1452,9 @@ async def doctrine_scorecard_proxy():
                 "status": "NOT_FOUND",
                 "message": "doctrine_scorecard_latest.json not found — run build_doctrine_market_scorecard.py first",
                 "generated_at": utc_now_iso(),
-                "no_scoring": True, "no_model_calls": True, "no_live_writes": True,
+                "no_scoring": True,
+                "no_model_calls": True,
+                "no_live_writes": True,
             },
             status_code=404,
         )
@@ -1505,48 +1465,66 @@ async def doctrine_scorecard_proxy():
 async def canonical_scorecard_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
+
     from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
     rows = fetch_canonical_scorecard(target)
-    return JSONResponse({
-        "date": target, "source_table": "public.canonical_model_scorecards",
-        "count": len(rows), "rows": rows, "no_supabase_write": True,
-    })
+    return JSONResponse(
+        {
+            "date": target,
+            "source_table": "public.canonical_model_scorecards",
+            "count": len(rows),
+            "rows": rows,
+            "no_supabase_write": True,
+        }
+    )
 
 
 @app.get("/api/canonical-learning-events")
 async def canonical_learning_events_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
+
     from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events
 
     target = date or _dt.date.today().isoformat()
     rows = fetch_canonical_learning_events(target)
-    return JSONResponse({
-        "date": target, "source_table": "public.canonical_learning_events",
-        "count": len(rows), "rows": rows, "no_supabase_write": True,
-    })
+    return JSONResponse(
+        {
+            "date": target,
+            "source_table": "public.canonical_learning_events",
+            "count": len(rows),
+            "rows": rows,
+            "no_supabase_write": True,
+        }
+    )
 
 
 @app.get("/api/canonical-race-truth")
 async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""
     import datetime as _dt
-    from scripts.ops.new_build_dashboard_server import fetch_canonical_scorecard, fetch_canonical_learning_events
+
+    from scripts.ops.new_build_dashboard_server import fetch_canonical_learning_events, fetch_canonical_scorecard
 
     target = date or _dt.date.today().isoformat()
     if not race_id:
         return JSONResponse({"status": "ERROR", "message": "race_id is required"}, status_code=400)
     scorecard_rows = [r for r in fetch_canonical_scorecard(target) if r.get("race_id") == race_id]
     learning_rows = [r for r in fetch_canonical_learning_events(target) if r.get("race_id") == race_id]
-    return JSONResponse({
-        "date": target, "race_id": race_id,
-        "source_tables": ["public.canonical_model_scorecards", "public.canonical_learning_events"],
-        "scorecard_count": len(scorecard_rows), "learning_event_count": len(learning_rows),
-        "scorecard_rows": scorecard_rows, "learning_events": learning_rows,
-        "no_supabase_write": True,
-    })
+    return JSONResponse(
+        {
+            "date": target,
+            "race_id": race_id,
+            "source_tables": ["public.canonical_model_scorecards", "public.canonical_learning_events"],
+            "scorecard_count": len(scorecard_rows),
+            "learning_event_count": len(learning_rows),
+            "scorecard_rows": scorecard_rows,
+            "learning_events": learning_rows,
+            "no_supabase_write": True,
+        }
+    )
 
 
 @app.get("/api/plot-conviction")
@@ -1556,6 +1534,7 @@ async def plot_conviction_proxy(date: str = Query(default=None)):
     picks (postdata_score / plot_conviction), enriched with Deep Race Agent V1's
     verdict where available. See HARD RULES #8-9 in THE_ONE_TRUTH.md."""
     from scripts.ops.new_build_dashboard_server import plot_conviction as _plot_conviction
+
     return await _plot_conviction(date=date)
 
 
@@ -1841,31 +1820,72 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     # Build numeric RP race_id → velo race_id map for this date.
     # NB and Tri-Lane reports use numeric race IDs; verdicts use rp_CRS_YYYYMMDD_H.MM.
     _COURSE_ABBR_GC = {
-        "Curragh": "CUR", "Uttoxeter": "UTT", "Cartmel": "CRT",
-        "Wolverhampton": "WOL", "Wolverhampton (AW)": "WOL",
-        "Kempton": "KEM", "Kempton (AW)": "KEM",
-        "Chelmsford": "CHE", "Chelmsford City": "CHE",
-        "Lingfield": "LIN", "Lingfield (AW)": "LIN",
-        "Southwell": "SOW", "Southwell (AW)": "SOW",
-        "Newcastle": "NCS", "Newcastle (AW)": "NCS",
-        "Dundalk": "DUN", "Dundalk (AW)": "DUN",
-        "Chester": "CHS", "Chepstow": "CHP", "Windsor": "WIN",
-        "Newmarket": "NMK", "Ascot": "ASC", "Goodwood": "GOO",
-        "York": "YOR", "Haydock": "HAY", "Sandown": "SAN",
-        "Nottingham": "NOT", "Leicester": "LEI", "Salisbury": "SAL",
-        "Thirsk": "THI", "Beverley": "BEV", "Ripon": "RIP",
-        "Epsom": "EPS", "Brighton": "BRI", "Yarmouth": "YAR",
-        "Naas": "NAA", "Leopardstown": "LEO", "Navan": "NAV",
-        "Galway": "GAL", "Cork": "COR", "Tipperary": "TIP",
-        "Punchestown": "PUN", "Fairyhouse": "FAI", "Gowran": "GOW",
-        "Bangor": "BAN", "Cartmel": "CRT", "Catterick": "CAT",
-        "Cheltenham": "CHE", "Exeter": "EXE", "Ffos Las": "FFO",
-        "Hereford": "HER", "Huntingdon": "HUN", "Kelso": "KEL",
-        "Ludlow": "LUD", "Market Rasen": "MAR", "Musselburgh": "MUS",
-        "Perth": "PER", "Plumpton": "PLU", "Sedgefield": "SED",
-        "Stratford": "STR", "Taunton": "TAU", "Uttoxeter": "UTT",
-        "Warwick": "WAR", "Wetherby": "WET", "Wincanton": "WIN",
-        "Worcester": "WOR", "Downpatrick": "DPT", "Killarney": "KLN",
+        "Curragh": "CUR",
+        "Uttoxeter": "UTT",
+        "Cartmel": "CRT",
+        "Wolverhampton": "WOL",
+        "Wolverhampton (AW)": "WOL",
+        "Kempton": "KEM",
+        "Kempton (AW)": "KEM",
+        "Chelmsford": "CHE",
+        "Chelmsford City": "CHE",
+        "Lingfield": "LIN",
+        "Lingfield (AW)": "LIN",
+        "Southwell": "SOW",
+        "Southwell (AW)": "SOW",
+        "Newcastle": "NCS",
+        "Newcastle (AW)": "NCS",
+        "Dundalk": "DUN",
+        "Dundalk (AW)": "DUN",
+        "Chester": "CHS",
+        "Chepstow": "CHP",
+        "Windsor": "WIN",
+        "Newmarket": "NMK",
+        "Ascot": "ASC",
+        "Goodwood": "GOO",
+        "York": "YOR",
+        "Haydock": "HAY",
+        "Sandown": "SAN",
+        "Nottingham": "NOT",
+        "Leicester": "LEI",
+        "Salisbury": "SAL",
+        "Thirsk": "THI",
+        "Beverley": "BEV",
+        "Ripon": "RIP",
+        "Epsom": "EPS",
+        "Brighton": "BRI",
+        "Yarmouth": "YAR",
+        "Naas": "NAA",
+        "Leopardstown": "LEO",
+        "Navan": "NAV",
+        "Galway": "GAL",
+        "Cork": "COR",
+        "Tipperary": "TIP",
+        "Punchestown": "PUN",
+        "Fairyhouse": "FAI",
+        "Gowran": "GOW",
+        "Bangor": "BAN",
+        "Catterick": "CAT",
+        "Cheltenham": "CHE",
+        "Exeter": "EXE",
+        "Ffos Las": "FFO",
+        "Hereford": "HER",
+        "Huntingdon": "HUN",
+        "Kelso": "KEL",
+        "Ludlow": "LUD",
+        "Market Rasen": "MAR",
+        "Musselburgh": "MUS",
+        "Perth": "PER",
+        "Plumpton": "PLU",
+        "Sedgefield": "SED",
+        "Stratford": "STR",
+        "Taunton": "TAU",
+        "Warwick": "WAR",
+        "Wetherby": "WET",
+        "Wincanton": "WIN",
+        "Worcester": "WOR",
+        "Downpatrick": "DPT",
+        "Killarney": "KLN",
     }
     _gc_num_to_velo: dict[str, str] = {}
     _parsed_root_gc = root / "data" / "racing_post_account_parsed"
@@ -1882,11 +1902,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 _off = _r.get("off_time", "")
                 if ":" in _off:
                     _h, _m = map(int, _off.split(":"))
-                    if _h >= 13: _h -= 12
+                    if _h >= 13:
+                        _h -= 12
                     _dot = f"{_h}.{_m:02d}"
                 else:
                     _dot = _off
-                _gc_num_to_velo[_num] = f"rp_{_crs}_{date_tag.replace('_','')}_{_dot}"
+                _gc_num_to_velo[_num] = f"rp_{_crs}_{date_tag.replace('_', '')}_{_dot}"
         except Exception:
             pass
     # Fallback: pre-exported race ID map in data/reports/ (committed to git, available on Railway)
@@ -1922,9 +1943,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         try:
             shadow_payload = _json.loads(shadow_path.read_text(encoding="utf-8"))
             shadow_by_race = {
-                str(row.get("race_id")): row
-                for row in shadow_payload.get("decisions") or []
-                if row.get("race_id")
+                str(row.get("race_id")): row for row in shadow_payload.get("decisions") or [] if row.get("race_id")
             }
         except Exception as e:
             logger.warning("Could not read Shadow VELO file %s: %s", shadow_path, e)
@@ -2364,15 +2383,14 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         "UTT": "UTTOXETER",
         "NCS": "NEWCASTLE",
     }
+
     def _course_time_key(row: dict) -> tuple[str, str]:
         return (
             course_aliases.get(_norm_course(row.get("course", "")), _norm_course(row.get("course", ""))),
             _norm_time(row.get("off_time", "")),
         )
 
-    canonical_numeric_keys = {
-        _course_time_key(row) for row in verdicts if str(row.get("race_id", "")).isdigit()
-    }
+    canonical_numeric_keys = {_course_time_key(row) for row in verdicts if str(row.get("race_id", "")).isdigit()}
     verdicts = [
         row
         for row in verdicts

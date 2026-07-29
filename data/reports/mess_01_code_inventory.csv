@@ -1,0 +1,42 @@
+file,role (LIVE_DAILY / SHADOW_ONLY / OBSOLETE_CANDIDATE / INFRA),writes_supabase_tables,writes_local_files,notes
+scripts/ops/racing_post_account_collector.py,LIVE_DAILY,none,data/racing_post_account_raw/**,Steps 1/3/10B capture; gitignored output
+scripts/ops/build_racing_post_racecard_url_list.py,LIVE_DAILY,none,data/racing_post_url_lists/*.txt,Step 2; gitignored output
+scripts/ops/parse_racing_post_racecard_capture.py,LIVE_DAILY,none,data/racing_post_account_parsed/**; data/racecards_*_standard.json,Step 4; both outputs gitignored
+scripts/ops/validate_rp_injection.py,LIVE_DAILY,none,data/reports/ (gate report),Step 5 hard preflight gate
+scripts/ops/new_build_current_card_feed.py,LIVE_DAILY,none,data/new_build/current_cards/*.jsonl,Step 6; data/new_build/ gitignored
+scripts/ops/new_build_two_lane_score.py,LIVE_DAILY,none,data/new_build/reports/two_lane_readiness_*.json/.md,Step 7
+scripts/ops/ensure_old_velo_rp_newspaper_files.py,LIVE_DAILY,none,data/incoming_pdfs/**; data/racecard_merged/*.json; data/reports/*gate*,Step 8 hard source gate
+scripts/ops/build_rpdc_daily.py,LIVE_DAILY,runner_release_candidates (delete+upsert),none,Step 8.5; must run before Step 9; verified deep dive
+scripts/ops/run_prime_today.py,LIVE_DAILY,"pipeline_runs, velo_verdicts, runner_derived_features, runner_prediction_snapshots",data/velo_prime_verdicts_*.json; data/timing_audit/*.json; data/velo_run_observability_*.json; data/runner_snapshots_*.jsonl,Step 9 main scorer; 2759 lines; verified deep dive
+scripts/ops/build_rp_results_url_list.py,LIVE_DAILY,none,data/racing_post_url_lists/rp_results_*.txt,Step 10A
+scripts/ops/parse_rp_results_capture.py,LIVE_DAILY,racing_horse_runs (indirect via later ingest; parses only),data/results/rp_results_*.json,Step 11
+scripts/ops/run_results_sigma.py,LIVE_DAILY,velo_verdicts (read); sigma_audits (per prior memory - not re-verified this audit),data/sigma_results/*.json,Step 12; Telegram format LOCKED per CLAUDE.md
+scripts/ops/ingest_results_to_horse_runs.py,LIVE_DAILY,racing_horse_runs (write),none,Step 13; feeds tomorrow's RPDC and passports
+scripts/ops/build_sigma_retrieval_corpus.py,LIVE_DAILY,none,data/sigma_memory/sigma_retrieval_corpus_v1.jsonl,Step 14
+scripts/ops/update_mission_control.py,LIVE_DAILY,none,data/mission_control/*.json,Step 15
+scripts/audit/vp30_operator_card.py,LIVE_DAILY,none,data/vp30_operator_card_*.md,Step 16A
+scripts/audit/run_velo_council.py,LIVE_DAILY,none,data/council_packets/**; data/council_runs/**; data/council_reports/**,Step 16B
+scripts/ops/run_execution_bridge_shadow.py,LIVE_DAILY,velo_verdicts (read for reconciliation),data/velo_execution_bridge_paper_ledger.csv,Step 17; SIM/PAPER only - hard runtime guard
+scripts/ops/build_innovation_protocol.py,LIVE_DAILY,none,data/velo_innovation_protocol_1k_deduped.csv,Step 18
+scripts/ops/router_shadow_audit.py,LIVE_DAILY,none,data/router_shadow_audit_latest.csv/.md; data/router_shadow_audit_ledger.csv,Step 19
+scripts/ops/nightly_eod_learning_runner.py,SHADOW_ONLY,none (writes local shadow state only),data/sentient_state_shadow.json; data/nightly_eod_learning_*.json,Step 20; doctrine requires live_sentient_state_touched=false
+scripts/ops/publish_daily_predictions_to_dashboard.py,LIVE_DAILY,velo_verdicts (read only via supabase-py select),data/dashboard_daily_predictions_*.json; data/dashboard_daily_predictions_publish_audit_v1.json,Both writes unconditional; VELO_DASHBOARD_PUBLISH_ENABLED env var mentioned in docstring is never actually read in code
+scripts/ops/new_build_dashboard_server.py,INFRA,none - confirmed no Supabase SDK import anywhere,none (read-only server),FastAPI server; every endpoint reads pre-built local JSON/JSONL/CSV; self-description stale re "paper-only"/"no Live VELO" - see dashboard_truth_map.csv
+scripts/ops/run_radical_shadow_today.py,SHADOW_ONLY,none,data/reports/radical_shadow_*.json/.md,Step 9.1; paper-only per THE_ONE_TRUTH.md
+scripts/ops/run_tri_lane_stress_test.py,SHADOW_ONLY,none,data/reports/tri_lane_stress_test_*.json/.md,Step 9.2; stress test only, live_execution_allowed must stay false
+scripts/ops/build_tri_lane_agent_review.py,SHADOW_ONLY,none,data/reports/tri_lane_agent_review_*.json/.md,Step 9.3
+scripts/ops/build_deep_race_agent_v1.py,SHADOW_ONLY,none,data/reports/deep_race_agent_v1_*.json/.md,Step 9.4
+scripts/ops/build_course_master.py,SHADOW_ONLY,none,data/reports/course_master_*.json/.md,Step 9.5; context only, never selects horses
+scripts/ops/build_old_velo_three_option_card.py,SHADOW_ONLY,none,data/reports/old_velo_three_option_card_*.json/.md,Step 9.6; operator/shadow card only
+scripts/ops/velo_race_day_button.py,OBSOLETE_CANDIDATE,none directly (chains other scripts which write),data/*(via chained scripts),"Explicitly disclaimed by THE_ONE_TRUTH.md line 571 as ""not the operational authority""; hardcodes VELO_FORCE_CARD=1 on every run_prime_today.py invocation (line 312) - downgrades all cache/RPDC gate failures to warnings unconditionally"
+scripts/ops/run_international_sigma.py,OBSOLETE_CANDIDATE,unknown (not in this audit's core 10-file scope),unknown,Still defines/uses RACING_HEADERS (Racing-API Basic Auth) - unarchived despite CLAUDE.md hard law that Racing API is permanently decommissioned for live use
+archive/dead_scripts/*.py (100+ files),OBSOLETE_CANDIDATE,n/a - archived,n/a - archived,Directory-name convention is the only labelling; includes former Racing-API era scripts (post_race_truth_loop.py, close_sigma_loops.py, enrich_trainer_analysis.py, enrich_horse_history.py, ingest_racing_profiles.py, cache_bha_macro_features.py referenced as still-used-by-reference in THE_ONE_TRUTH.md line 378 despite living under dead_scripts/)
+archive/dead_workers/*.py,OBSOLETE_CANDIDATE,n/a - archived,n/a - archived,fr_daily_ingest.py, hk_daily_ingest.py, daily_pipeline.py - international/Racing-API era workers
+archive/legacy/2026-05-19-cleanup/*.py,OBSOLETE_CANDIDATE,n/a - archived,n/a - archived,explore_racing_api.py and other Racing-API era exploration scripts
+archive/new_build_velo_DEAD.py,OBSOLETE_CANDIDATE,n/a - archived,n/a - archived,Self-describing filename
+src/velo/racecard_loader.py,INFRA,n/a (no direct writes; library),n/a,"Loader with source priority cache -> rp_merged; contains the synthetic rp_{venue}_{name} horse_id fallback at line 187 - see write_surface_map and dashboard_truth_map for downstream effects"
+src/velo/source_truth_enforcer.py,INFRA,n/a,n/a,Read-only label translation layer; blocks RACING_API_BLOCKED / SOURCE_UNKNOWN_BLOCK
+src/velo/racecard_cache_gate.py,INFRA,n/a (reads runner_release_candidates for sidecar check only),data/reports/racecard_cache_gate_latest.json/.md,Contains VELO_FORCE_CARD override and cert-file implicit bypass - see cleanup_sequence.md OPS items
+tests/test_run_prime_bootstrap.py,INFRA,n/a,n/a,"Contains stale RACING_HEADERS assertion (line 34) that would raise AttributeError if run - never executed by any CI workflow"
+.github/workflows/ci.yml,INFRA,n/a,n/a,Covers workers/ingestion_spine/ and app/ (lint/type-check) only - 0 raceday ops scripts covered
+.github/workflows/governed-safety.yml,INFRA,n/a,n/a,Covers 6 named governance/safety-harness test files only - not the general tests/ suite, not raceday ops scripts

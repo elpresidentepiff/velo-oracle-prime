@@ -1,0 +1,5 @@
+option,target,description,risk,approved
+A,scripts/ops/run_results_sigma.py sigma_row payload,add pick_sp/field_size/race_type to the live write payload from data already available in row/predictions at write time,LOCKED script — requires explicit operator sign-off before any change,NOT_APPROVED
+B,new scheduled enrichment job,build a separate job that back-fills these 4 fields onto existing sigma_audits rows post-hoc using local result archives,lower risk to the LOCKED script but adds a second writer to reason about,NOT_APPROVED
+C,VFU-21 ledger write to Supabase,write the existing local VFU-21 ledger's recovered pick_sp values for the historical window it covers (~through 2026-06-17),does not fix the live pipeline; EW ROI on recovered rows is -12.5% so coverage-repair and staking-trust remain separate decisions,NOT_APPROVED
+D,verdict_id backfill via join design,design a race_id+date join between sigma_audits and velo_verdicts to populate verdict_id retroactively,no local join-key file exists yet; needs design work first,NOT_APPROVED

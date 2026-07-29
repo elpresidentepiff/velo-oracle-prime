@@ -1135,9 +1135,7 @@ def _s2_surface_audit(claims: list) -> dict:
     stale = [c for c in surface_claims if c["evidence_status"] == "STALE"]
     corrected = [c for c in stale if c["action"] == "CORRECT"]
     southwell_stale = any(
-        c["course"] == "Southwell (AW)"
-        and c["claim_type"] == "surface"
-        and c["evidence_status"] == "STALE"
+        c["course"] == "Southwell (AW)" and c["claim_type"] == "surface" and c["evidence_status"] == "STALE"
         for c in surface_claims
     )
     southwell_corrected_to = next(
@@ -1162,11 +1160,7 @@ def _s3_draw_audit(claims: list) -> dict:
     """Filter draw bias claims, assess provenance."""
     draw_claims = [c for c in claims if c["claim_type"] == "draw_bias_direction"]
     hypothesis = [c for c in draw_claims if "DOWNGRADE" in c["action"]]
-    verified = [
-        c
-        for c in draw_claims
-        if c["action"] == "KEEP" and c["evidence_status"] == "VERIFIED_LOCAL"
-    ]
+    verified = [c for c in draw_claims if c["action"] == "KEEP" and c["evidence_status"] == "VERIFIED_LOCAL"]
     return {
         "total_draw_claims": len(draw_claims),
         "hypothesis_count": len(hypothesis),
@@ -1209,9 +1203,7 @@ def _s6_corrections(claims: list) -> dict:
         "downgrade": downgrade,
         "quarantine": quarantine,
         "summary": (
-            f"{correct} stale facts corrected. "
-            f"{downgrade} unsourced claims downgraded. "
-            f"{quarantine} quarantined."
+            f"{correct} stale facts corrected. {downgrade} unsourced claims downgraded. {quarantine} quarantined."
         ),
     }
 
@@ -1317,8 +1309,8 @@ def _build_main_md(claims, s2, s3, s4, s6, s7) -> str:
         "---",
         "",
         "## Critical Stale Fact: Southwell Surface",
-        f"- COURSE-00 claim: Fibresand",
-        f"- Evidence status: STALE (changed 2021)",
+        "- COURSE-00 claim: Fibresand",
+        "- Evidence status: STALE (changed 2021)",
         f"- Corrected value: {s2['southwell_corrected_to']}",
         "- Action: CORRECT",
         "- All 2026 audit data must use Tapeta for Southwell AW.",
@@ -1331,9 +1323,7 @@ def _build_main_md(claims, s2, s3, s4, s6, s7) -> str:
     ]
     surface_claims = s2["claims"]
     for c in surface_claims:
-        lines.append(
-            f"| {c['course']} | {c['corrected_value']} | {c['evidence_status']} | {c['action_note']} |"
-        )
+        lines.append(f"| {c['course']} | {c['corrected_value']} | {c['evidence_status']} | {c['action_note']} |")
     lines += [
         "",
         "---",
@@ -1442,11 +1432,7 @@ def main():
     )
 
     # 5. Unsourced / downgraded quarantine CSV
-    unsourced = [
-        c
-        for c in claims
-        if c["action"] in ("DOWNGRADE_TO_UNKNOWN", "DOWNGRADE_TO_HYPOTHESIS", "QUARANTINE")
-    ]
+    unsourced = [c for c in claims if c["action"] in ("DOWNGRADE_TO_UNKNOWN", "DOWNGRADE_TO_HYPOTHESIS", "QUARANTINE")]
     _write_csv(
         "data/reports/course_00a_unsourced_claims_quarantine.csv",
         unsourced,

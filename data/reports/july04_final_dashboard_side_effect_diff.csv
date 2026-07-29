@@ -1,0 +1,8 @@
+check,before_value,after_value,changed,note
+velo_verdicts rows with generated_at > 2026-07-04T00:00:00,51,51,no,no re-scoring performed in this mission
+runner_release_candidates rows for run_date=2026-07-04,453,453,no,unchanged - this mission did not touch RPDC
+runner_prediction_snapshots rows for 2026-07-04+,0,0,no,confirmed via read-only count before and after
+sigma_audits rows for 2026-07-03+,0,0,no,run_results_sigma.py never invoked
+local runner_snapshots_*.jsonl file count,116,116,no,confirmed via find before and after
+Telegram sends,0,0,no,no command capable of sending Telegram was executed
+dashboard_daily_predictions_2026_07_04.json (dirty repo),stale (pre-RPDC, generated_at 13:51:32),current (synced from clean worktree, generated_at 14:39:24),yes - local file sync only,plain file copy from clean worktree to dirty repo; not a re-score, not a Supabase write

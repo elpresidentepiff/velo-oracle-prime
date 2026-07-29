@@ -1,0 +1,2884 @@
+{
+  "audit_id": "RESULTS-01",
+  "generated_at": "2026-07-01T00:05:31.762665Z",
+  "hard_constraints": [
+    "REPORT_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_VFU_21_START",
+    "NO_VCP_04_START",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "DO_NOT_SUPPRESS_CONTRADICTIONS",
+    "MISSING_ARTIFACTS_RESOLVE_UNKNOWN_NOT_CLEAN",
+    "CONTAINMENT_IS_NOT_PROFIT",
+    "SP_PROXY_IS_NOT_DIVIDEND_PROOF"
+  ],
+  "final_classifications": [
+    "RESULTS_01_FULL_RESULTS_TRUTH_AUDIT_COMPLETE",
+    "HORSES_LANDED_TABLE_WRITTEN",
+    "ODDS_LANDED_TABLE_WRITTEN",
+    "BIGGEST_PRICE_WINNERS_WRITTEN",
+    "BIGGEST_PRICE_PLACERS_WRITTEN",
+    "COURSE_PERFORMANCE_AUDITED",
+    "ODDS_BAND_PERFORMANCE_AUDITED",
+    "LANE_PERFORMANCE_AUDITED",
+    "RPR_DEPENDENCY_FULL_CORPUS_AUDITED",
+    "NEW_BUILD_VALUE_SCOUT_AUDITED",
+    "EW_CANDIDATE_REALITY_AUDITED",
+    "MIDPRICE_MISS_RECOVERY_AUDITED",
+    "EXOTICS_SIGNAL_AUDITED",
+    "EXOTICS_PROFIT_NOT_CLAIMED_WITHOUT_DIVIDENDS",
+    "TRAINING_SIGMA_GAP_AUDITED",
+    "EXTERNAL_BACKFILL_SOURCE_MAP_WRITTEN",
+    "BHA_RP_SOURCE_SECTIONS_CHECKED",
+    "MEMORY_CAPTURE_OPEN",
+    "FAILURE_LEARNING_OPEN",
+    "PROMOTION_LEARNING_GATED",
+    "NO_VFU_21_START",
+    "NO_VCP_04_START",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "CANONICAL_HORSE_PASSPORT_NOT_MUTATED",
+    "REPORT_ONLY"
+  ],
+  "sections": {
+    "inventory": {
+      "sigma_dump_rows": 2977,
+      "sigma_dump_dates": [
+        "2026-01-09",
+        "2026-01-15",
+        "2026-01-20",
+        "2026-01-25",
+        "2026-01-30",
+        "2026-02-05",
+        "2026-02-10",
+        "2026-02-15",
+        "2026-02-18",
+        "2026-02-20",
+        "2026-02-22",
+        "2026-02-25",
+        "2026-03-15",
+        "2026-03-17",
+        "2026-03-18",
+        "2026-03-19",
+        "2026-03-20",
+        "2026-03-21",
+        "2026-03-22",
+        "2026-03-23",
+        "2026-03-24",
+        "2026-03-25",
+        "2026-03-26",
+        "2026-03-27",
+        "2026-03-28",
+        "2026-03-29",
+        "2026-03-31",
+        "2026-04-01",
+        "2026-04-02",
+        "2026-04-03",
+        "2026-04-04",
+        "2026-04-06",
+        "2026-04-07",
+        "2026-04-08",
+        "2026-04-09",
+        "2026-04-10",
+        "2026-04-11",
+        "2026-04-12",
+        "2026-04-13",
+        "2026-04-14",
+        "2026-04-15",
+        "2026-04-16",
+        "2026-04-17",
+        "2026-04-18",
+        "2026-04-19",
+        "2026-04-20",
+        "2026-04-21",
+        "2026-04-22",
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25",
+        "2026-04-27",
+        "2026-04-28",
+        "2026-04-29",
+        "2026-04-30",
+        "2026-05-01",
+        "2026-05-02",
+        "2026-05-03",
+        "2026-05-04",
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08",
+        "2026-05-09",
+        "2026-05-10",
+        "2026-05-12",
+        "2026-05-13",
+        "2026-05-14",
+        "2026-05-15",
+        "2026-05-16",
+        "2026-05-17",
+        "2026-05-18",
+        "2026-05-19",
+        "2026-05-20",
+        "2026-05-21",
+        "2026-05-22",
+        "2026-05-24",
+        "2026-05-25",
+        "2026-05-27",
+        "2026-05-29",
+        "2026-05-30",
+        "2026-06-02",
+        "2026-06-03",
+        "2026-06-04",
+        "2026-06-05",
+        "2026-06-06",
+        "2026-06-07",
+        "2026-06-08",
+        "2026-06-09",
+        "2026-06-10",
+        "2026-06-11",
+        "2026-06-12",
+        "2026-06-13",
+        "2026-06-14",
+        "2026-06-15",
+        "2026-06-16",
+        "2026-06-17",
+        "2026-06-18",
+        "2026-06-19",
+        "2026-06-20",
+        "2026-06-22",
+        "2026-06-23"
+      ],
+      "sigma_dump_date_count": 102,
+      "pick_sp_present": 1212,
+      "winner_sp_present": 2876,
+      "winner_name_present": 2577,
+      "ledger_rows": 1125,
+      "ledger_dates": [
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25",
+        "2026-05-26",
+        "2026-05-27",
+        "2026-05-30",
+        "2026-05-31",
+        "2026-06-01",
+        "2026-06-02",
+        "2026-06-03",
+        "2026-06-04",
+        "2026-06-05",
+        "2026-06-06",
+        "2026-06-07",
+        "2026-06-08",
+        "2026-06-09",
+        "2026-06-10",
+        "2026-06-11",
+        "2026-06-12",
+        "2026-06-13",
+        "2026-06-14",
+        "2026-06-16",
+        "2026-06-17",
+        "2026-06-18",
+        "2026-06-19",
+        "2026-06-20",
+        "2026-06-22",
+        "2026-06-23",
+        "2026-06-25",
+        "2026-06-26",
+        "2026-06-28",
+        "2026-06-29",
+        "2026-06-30"
+      ],
+      "ledger_date_count": 33,
+      "sigma_results_files": 40,
+      "sigma_results_dates": [
+        "2026-05-21",
+        "2026-05-22",
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25",
+        "2026-05-26",
+        "2026-05-27",
+        "2026-05-28",
+        "2026-05-29",
+        "2026-05-30",
+        "2026-05-31",
+        "2026-06-01",
+        "2026-06-02",
+        "2026-06-03",
+        "2026-06-04",
+        "2026-06-05",
+        "2026-06-06",
+        "2026-06-07",
+        "2026-06-08",
+        "2026-06-09",
+        "2026-06-10",
+        "2026-06-11",
+        "2026-06-12",
+        "2026-06-13",
+        "2026-06-14",
+        "2026-06-15",
+        "2026-06-16",
+        "2026-06-17",
+        "2026-06-18",
+        "2026-06-19",
+        "2026-06-20",
+        "2026-06-22",
+        "2026-06-23",
+        "2026-06-24",
+        "2026-06-25",
+        "2026-06-26",
+        "2026-06-27",
+        "2026-06-28",
+        "2026-06-29",
+        "2026-06-30"
+      ],
+      "rp_results_races": 1392,
+      "rp_results_dates_count": 8,
+      "verdict_races": 3173,
+      "outcome_counts": {
+        "PLACED": 823,
+        "MISS": 1444,
+        "WIN": 673,
+        "None": 37
+      },
+      "tier_counts": {
+        "X": 142,
+        "C": 828,
+        "proof_run": 1,
+        "B": 998,
+        "D": 183,
+        "A": 550,
+        "None": 275
+      },
+      "miss_reason_top5": [
+        [
+          "mid_priced_won",
+          803
+        ],
+        [
+          "outsider_won",
+          245
+        ],
+        [
+          "short_fav_won",
+          213
+        ],
+        [
+          "market_decoy_followed",
+          187
+        ],
+        [
+          "outsider_hedge_omitted",
+          40
+        ]
+      ],
+      "field_coverage": {
+        "actual_winner_sp": "2876/2977",
+        "pick_sp": "1212/2977",
+        "actual_winner_name": "2577/2977"
+      }
+    },
+    "horses_landed_count": 673,
+    "biggest_price": {
+      "wins": 50,
+      "placers": 50
+    },
+    "course_performance": {
+      "UNKNOWN": {
+        "n": 153,
+        "wins": 36,
+        "places": 82,
+        "sr": 0.2353,
+        "frame_rate": 0.5359,
+        "avg_winner_sp": 4.06,
+        "median_winner_sp": 3.25,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "market_decoy_followed": 70,
+          "non_runner_or_untracked": 16,
+          "outsider_hedge_omitted": 18,
+          "signal_underweighted_longshot_prob": 1,
+          "signal_underweighted_place_prob": 2,
+          "signal_underweighted_market_deception_score": 1,
+          "high_confidence_miss": 9
+        },
+        "tier_breakdown": {
+          "X": 23,
+          "C": 43,
+          "proof_run": 1,
+          "B": 28,
+          "D": 10,
+          "A": 4
+        }
+      },
+      "Ffos Las": {
+        "n": 38,
+        "wins": 12,
+        "places": 19,
+        "sr": 0.3158,
+        "frame_rate": 0.5,
+        "avg_winner_sp": 2.64,
+        "median_winner_sp": 2.2,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "outsider_won": 7,
+          "mid_priced_won": 9,
+          "short_fav_won": 3
+        },
+        "tier_breakdown": {
+          "A": 6,
+          "B": 13,
+          "C": 11,
+          "D": 2
+        }
+      },
+      "Beverley": {
+        "n": 50,
+        "wins": 2,
+        "places": 19,
+        "sr": 0.04,
+        "frame_rate": 0.38,
+        "avg_winner_sp": 3.38,
+        "median_winner_sp": 3.75,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "mid_priced_won": 19,
+          "outsider_won": 4,
+          "short_fav_won": 4,
+          "market_decoy_followed": 5,
+          "horse_absent_from_result": 1,
+          "horse_set_divergence (1 non-runners)": 2
+        },
+        "tier_breakdown": {
+          "A": 12,
+          "B": 17,
+          "C": 16,
+          "D": 2,
+          "X": 2
+        }
+      },
+      "Newbury": {
+        "n": 41,
+        "wins": 11,
+        "places": 21,
+        "sr": 0.2683,
+        "frame_rate": 0.5122,
+        "avg_winner_sp": 6.99,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "short_fav_won": 3,
+          "outsider_won": 8
+        },
+        "tier_breakdown": {
+          "C": 10,
+          "B": 25,
+          "A": 2,
+          "X": 1
+        }
+      },
+      "Windsor": {
+        "n": 37,
+        "wins": 9,
+        "places": 20,
+        "sr": 0.2432,
+        "frame_rate": 0.5405,
+        "avg_winner_sp": 2.85,
+        "median_winner_sp": 2.38,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 14,
+          "outsider_won": 2,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "B": 24,
+          "A": 5,
+          "C": 8
+        }
+      },
+      "Musselburgh": {
+        "n": 46,
+        "wins": 17,
+        "places": 29,
+        "sr": 0.3696,
+        "frame_rate": 0.6304,
+        "avg_winner_sp": 3.0,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 14,
+          "short_fav_won": 1,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "A": 14,
+          "B": 8,
+          "D": 5,
+          "C": 12
+        }
+      },
+      "Catterick": {
+        "n": 35,
+        "wins": 11,
+        "places": 16,
+        "sr": 0.3143,
+        "frame_rate": 0.4571,
+        "avg_winner_sp": 3.21,
+        "median_winner_sp": 2.2,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 14,
+          "short_fav_won": 3,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "C": 12,
+          "A": 7,
+          "B": 4,
+          "D": 4,
+          "X": 1
+        }
+      },
+      "Brighton": {
+        "n": 16,
+        "wins": 5,
+        "places": 13,
+        "sr": 0.3125,
+        "frame_rate": 0.8125,
+        "avg_winner_sp": 3.5,
+        "median_winner_sp": 3.25,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 3
+        },
+        "tier_breakdown": {
+          "C": 4,
+          "A": 6,
+          "B": 5,
+          "D": 1
+        }
+      },
+      "Ballinrobe": {
+        "n": 5,
+        "wins": 1,
+        "places": 3,
+        "sr": 0.2,
+        "frame_rate": 0.6,
+        "avg_winner_sp": 6.0,
+        "median_winner_sp": 6.0,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "mid_priced_won": 2
+        },
+        "tier_breakdown": {
+          "B": 3,
+          "A": 1,
+          "C": 1
+        }
+      },
+      "Redcar": {
+        "n": 41,
+        "wins": 11,
+        "places": 22,
+        "sr": 0.2683,
+        "frame_rate": 0.5366,
+        "avg_winner_sp": 3.63,
+        "median_winner_sp": 2.1,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "outsider_won": 3,
+          "mid_priced_won": 12,
+          "short_fav_won": 4
+        },
+        "tier_breakdown": {
+          "B": 15,
+          "C": 15,
+          "A": 11
+        }
+      },
+      "Nottingham": {
+        "n": 40,
+        "wins": 5,
+        "places": 17,
+        "sr": 0.125,
+        "frame_rate": 0.425,
+        "avg_winner_sp": 3.05,
+        "median_winner_sp": 3.25,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "short_fav_won": 3,
+          "mid_priced_won": 18,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "A": 10,
+          "C": 10,
+          "B": 15,
+          "D": 3,
+          "X": 2
+        }
+      },
+      "Newmarket (July)": {
+        "n": 15,
+        "wins": 6,
+        "places": 11,
+        "sr": 0.4,
+        "frame_rate": 0.7333,
+        "avg_winner_sp": 2.69,
+        "median_winner_sp": 2.88,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 3,
+          "outsider_won": 1
+        },
+        "tier_breakdown": {
+          "A": 4,
+          "B": 10,
+          "D": 1
+        }
+      },
+      "Down Royal": {
+        "n": 15,
+        "wins": 1,
+        "places": 7,
+        "sr": 0.0667,
+        "frame_rate": 0.4667,
+        "avg_winner_sp": 4.0,
+        "median_winner_sp": 4.0,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "B": 5,
+          "D": 1,
+          "A": 8,
+          "C": 1
+        }
+      },
+      "Doncaster": {
+        "n": 67,
+        "wins": 12,
+        "places": 31,
+        "sr": 0.1791,
+        "frame_rate": 0.4627,
+        "avg_winner_sp": 3.32,
+        "median_winner_sp": 2.25,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 20,
+          "short_fav_won": 8,
+          "outsider_won": 5
+        },
+        "tier_breakdown": {
+          "A": 16,
+          "C": 14,
+          "B": 23,
+          "D": 8,
+          "X": 3
+        }
+      },
+      "Ayr": {
+        "n": 41,
+        "wins": 4,
+        "places": 18,
+        "sr": 0.0976,
+        "frame_rate": 0.439,
+        "avg_winner_sp": 7.01,
+        "median_winner_sp": 4.33,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "mid_priced_won": 13,
+          "short_fav_won": 4,
+          "outsider_won": 6
+        },
+        "tier_breakdown": {
+          "B": 9,
+          "A": 7,
+          "D": 2,
+          "C": 10,
+          "X": 5
+        }
+      },
+      "Ascot": {
+        "n": 54,
+        "wins": 13,
+        "places": 26,
+        "sr": 0.2407,
+        "frame_rate": 0.4815,
+        "avg_winner_sp": 4.7,
+        "median_winner_sp": 2.62,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "short_fav_won": 4,
+          "mid_priced_won": 14,
+          "outsider_won": 7
+        },
+        "tier_breakdown": {
+          "C": 18,
+          "B": 14,
+          "A": 15,
+          "D": 3,
+          "X": 1
+        }
+      },
+      "Goodwood": {
+        "n": 42,
+        "wins": 11,
+        "places": 21,
+        "sr": 0.2619,
+        "frame_rate": 0.5,
+        "avg_winner_sp": 2.94,
+        "median_winner_sp": 2.38,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "outsider_won": 3,
+          "mid_priced_won": 15,
+          "short_fav_won": 3
+        },
+        "tier_breakdown": {
+          "A": 14,
+          "C": 12,
+          "B": 9
+        }
+      },
+      "Limerick": {
+        "n": 21,
+        "wins": 3,
+        "places": 6,
+        "sr": 0.1429,
+        "frame_rate": 0.2857,
+        "avg_winner_sp": 3.61,
+        "median_winner_sp": 3.12,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 1,
+          "mid_priced_won": 11,
+          "short_fav_won": 3
+        },
+        "tier_breakdown": {
+          "B": 3,
+          "C": 4,
+          "A": 6
+        }
+      },
+      "Market Rasen": {
+        "n": 26,
+        "wins": 7,
+        "places": 22,
+        "sr": 0.2692,
+        "frame_rate": 0.8462,
+        "avg_winner_sp": 4.19,
+        "median_winner_sp": 5.0,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 4
+        },
+        "tier_breakdown": {
+          "C": 5,
+          "A": 11,
+          "B": 10
+        }
+      },
+      "Leopardstown": {
+        "n": 18,
+        "wins": 5,
+        "places": 11,
+        "sr": 0.2778,
+        "frame_rate": 0.6111,
+        "avg_winner_sp": 6.49,
+        "median_winner_sp": 1.5,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "short_fav_won": 1,
+          "mid_priced_won": 5,
+          "outsider_won": 1
+        },
+        "tier_breakdown": {
+          "A": 7,
+          "B": 7,
+          "C": 3,
+          "D": 1
+        }
+      },
+      "Lingfield": {
+        "n": 35,
+        "wins": 12,
+        "places": 20,
+        "sr": 0.3429,
+        "frame_rate": 0.5714,
+        "avg_winner_sp": 3.51,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 7,
+          "short_fav_won": 5
+        },
+        "tier_breakdown": {
+          "A": 12,
+          "B": 12,
+          "C": 6,
+          "D": 2
+        }
+      },
+      "Ripon": {
+        "n": 39,
+        "wins": 11,
+        "places": 22,
+        "sr": 0.2821,
+        "frame_rate": 0.5641,
+        "avg_winner_sp": 3.88,
+        "median_winner_sp": 2.4,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 12,
+          "outsider_won": 3,
+          "short_fav_won": 2
+        },
+        "tier_breakdown": {
+          "B": 13,
+          "C": 11,
+          "D": 4,
+          "A": 10,
+          "X": 1
+        }
+      },
+      "Southwell (Aw)": {
+        "n": 99,
+        "wins": 18,
+        "places": 37,
+        "sr": 0.1818,
+        "frame_rate": 0.3737,
+        "avg_winner_sp": 3.72,
+        "median_winner_sp": 3.25,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 15,
+          "mid_priced_won": 30,
+          "short_fav_won": 9,
+          "horse_set_divergence (1 non-runners)": 2,
+          "market_decoy_followed": 8,
+          "non_runner_or_untracked": 1
+        },
+        "tier_breakdown": {
+          "B": 26,
+          "A": 20,
+          "C": 41,
+          "D": 6,
+          "X": 6
+        }
+      },
+      "Yarmouth": {
+        "n": 54,
+        "wins": 13,
+        "places": 35,
+        "sr": 0.2407,
+        "frame_rate": 0.6481,
+        "avg_winner_sp": 3.28,
+        "median_winner_sp": 1.91,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 14,
+          "short_fav_won": 4,
+          "outsider_won": 1
+        },
+        "tier_breakdown": {
+          "B": 15,
+          "C": 14,
+          "A": 15,
+          "D": 1,
+          "X": 3
+        }
+      },
+      "Worcester": {
+        "n": 24,
+        "wins": 12,
+        "places": 19,
+        "sr": 0.5,
+        "frame_rate": 0.7917,
+        "avg_winner_sp": 2.79,
+        "median_winner_sp": 2.5,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 2,
+          "outsider_won": 3
+        },
+        "tier_breakdown": {
+          "C": 7,
+          "D": 1,
+          "B": 3,
+          "A": 5
+        }
+      },
+      "Hamilton": {
+        "n": 37,
+        "wins": 9,
+        "places": 20,
+        "sr": 0.2432,
+        "frame_rate": 0.5405,
+        "avg_winner_sp": 2.46,
+        "median_winner_sp": 2.38,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 13,
+          "outsider_won": 4
+        },
+        "tier_breakdown": {
+          "B": 17,
+          "C": 6,
+          "A": 10,
+          "D": 4
+        }
+      },
+      "Stratford": {
+        "n": 24,
+        "wins": 7,
+        "places": 14,
+        "sr": 0.2917,
+        "frame_rate": 0.5833,
+        "avg_winner_sp": 2.59,
+        "median_winner_sp": 2.1,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "short_fav_won": 4
+        },
+        "tier_breakdown": {
+          "B": 7,
+          "A": 7,
+          "C": 7,
+          "D": 3
+        }
+      },
+      "Thirsk": {
+        "n": 39,
+        "wins": 4,
+        "places": 15,
+        "sr": 0.1026,
+        "frame_rate": 0.3846,
+        "avg_winner_sp": 4.39,
+        "median_winner_sp": 7.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 19,
+          "outsider_won": 5
+        },
+        "tier_breakdown": {
+          "B": 17,
+          "A": 7,
+          "C": 9,
+          "D": 2,
+          "X": 4
+        }
+      },
+      "Wolverhampton (Aw)": {
+        "n": 104,
+        "wins": 26,
+        "places": 63,
+        "sr": 0.25,
+        "frame_rate": 0.6058,
+        "avg_winner_sp": 3.48,
+        "median_winner_sp": 2.38,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "short_fav_won": 11,
+          "outsider_won": 6,
+          "mid_priced_won": 20,
+          "market_decoy_followed": 11
+        },
+        "tier_breakdown": {
+          "A": 13,
+          "B": 33,
+          "C": 39,
+          "D": 5,
+          "X": 5
+        }
+      },
+      "Carlisle": {
+        "n": 32,
+        "wins": 5,
+        "places": 17,
+        "sr": 0.1562,
+        "frame_rate": 0.5312,
+        "avg_winner_sp": 3.42,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 10,
+          "short_fav_won": 2,
+          "outsider_won": 3
+        },
+        "tier_breakdown": {
+          "B": 17,
+          "D": 2,
+          "A": 4,
+          "C": 8,
+          "X": 1
+        }
+      },
+      "Chepstow": {
+        "n": 53,
+        "wins": 12,
+        "places": 27,
+        "sr": 0.2264,
+        "frame_rate": 0.5094,
+        "avg_winner_sp": 2.48,
+        "median_winner_sp": 2.88,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 14,
+          "outsider_won": 4,
+          "short_fav_won": 4,
+          "market_decoy_followed": 4,
+          "non_runner_or_untracked": 1,
+          "outsider_hedge_omitted": 1
+        },
+        "tier_breakdown": {
+          "A": 14,
+          "B": 12,
+          "C": 14,
+          "D": 5,
+          "X": 1
+        }
+      },
+      "Kilbeggan": {
+        "n": 13,
+        "wins": 1,
+        "places": 6,
+        "sr": 0.0769,
+        "frame_rate": 0.4615,
+        "avg_winner_sp": 2.0,
+        "median_winner_sp": 2.0,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "mid_priced_won": 3,
+          "outsider_won": 4
+        },
+        "tier_breakdown": {
+          "A": 3,
+          "B": 9,
+          "C": 1
+        }
+      },
+      "Wetherby": {
+        "n": 23,
+        "wins": 7,
+        "places": 17,
+        "sr": 0.3043,
+        "frame_rate": 0.7391,
+        "avg_winner_sp": 2.49,
+        "median_winner_sp": 2.1,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 3,
+          "market_decoy_followed": 4,
+          "non_runner_or_untracked": 1
+        },
+        "tier_breakdown": {
+          "C": 4,
+          "A": 5,
+          "B": 7,
+          "D": 1
+        }
+      },
+      "Salisbury": {
+        "n": 28,
+        "wins": 10,
+        "places": 17,
+        "sr": 0.3571,
+        "frame_rate": 0.6071,
+        "avg_winner_sp": 2.43,
+        "median_winner_sp": 2.1,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "short_fav_won": 3,
+          "outsider_won": 4,
+          "mid_priced_won": 4
+        },
+        "tier_breakdown": {
+          "B": 18,
+          "D": 2,
+          "A": 4,
+          "C": 4
+        }
+      },
+      "Cork": {
+        "n": 18,
+        "wins": 5,
+        "places": 10,
+        "sr": 0.2778,
+        "frame_rate": 0.5556,
+        "avg_winner_sp": 4.36,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 2,
+          "outsider_won": 1,
+          "outsider_hedge_omitted": 2,
+          "market_decoy_followed": 2,
+          "non_runner_or_untracked": 1
+        },
+        "tier_breakdown": {
+          "A": 4,
+          "B": 8,
+          "C": 1,
+          "X": 5
+        }
+      },
+      "Downpatrick": {
+        "n": 15,
+        "wins": 2,
+        "places": 6,
+        "sr": 0.1333,
+        "frame_rate": 0.4,
+        "avg_winner_sp": 4.94,
+        "median_winner_sp": 7.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "outsider_won": 3,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "B": 4,
+          "A": 8,
+          "C": 3
+        }
+      },
+      "Hexham": {
+        "n": 45,
+        "wins": 13,
+        "places": 23,
+        "sr": 0.2889,
+        "frame_rate": 0.5111,
+        "avg_winner_sp": 6.31,
+        "median_winner_sp": 2.1,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 11,
+          "short_fav_won": 5,
+          "outsider_won": 2,
+          "market_decoy_followed": 3,
+          "non_runner_or_untracked": 2
+        },
+        "tier_breakdown": {
+          "C": 15,
+          "B": 13,
+          "A": 13,
+          "D": 2,
+          "X": 2
+        }
+      },
+      "Uttoxeter": {
+        "n": 36,
+        "wins": 13,
+        "places": 19,
+        "sr": 0.3611,
+        "frame_rate": 0.5278,
+        "avg_winner_sp": 4.18,
+        "median_winner_sp": 3.2,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "outsider_won": 6,
+          "short_fav_won": 5
+        },
+        "tier_breakdown": {
+          "A": 13,
+          "C": 8,
+          "B": 8
+        }
+      },
+      "Chester": {
+        "n": 37,
+        "wins": 11,
+        "places": 20,
+        "sr": 0.2973,
+        "frame_rate": 0.5405,
+        "avg_winner_sp": 2.6,
+        "median_winner_sp": 2.62,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 10,
+          "outsider_won": 4,
+          "short_fav_won": 3
+        },
+        "tier_breakdown": {
+          "C": 18,
+          "B": 8,
+          "A": 6,
+          "D": 5
+        }
+      },
+      "Sandown": {
+        "n": 30,
+        "wins": 4,
+        "places": 13,
+        "sr": 0.1333,
+        "frame_rate": 0.4333,
+        "avg_winner_sp": 4.62,
+        "median_winner_sp": 4.0,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 3,
+          "mid_priced_won": 8,
+          "short_fav_won": 3
+        },
+        "tier_breakdown": {
+          "B": 16,
+          "A": 4,
+          "C": 3,
+          "D": 4
+        }
+      },
+      "York": {
+        "n": 30,
+        "wins": 9,
+        "places": 18,
+        "sr": 0.3,
+        "frame_rate": 0.6,
+        "avg_winner_sp": 5.68,
+        "median_winner_sp": 4.5,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "short_fav_won": 2,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "B": 20,
+          "A": 4,
+          "C": 3
+        }
+      },
+      "Leicester": {
+        "n": 40,
+        "wins": 8,
+        "places": 17,
+        "sr": 0.2,
+        "frame_rate": 0.425,
+        "avg_winner_sp": 5.18,
+        "median_winner_sp": 5.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 2,
+          "mid_priced_won": 14,
+          "short_fav_won": 7
+        },
+        "tier_breakdown": {
+          "A": 6,
+          "C": 12,
+          "B": 18,
+          "D": 4
+        }
+      },
+      "Bath": {
+        "n": 65,
+        "wins": 16,
+        "places": 34,
+        "sr": 0.2462,
+        "frame_rate": 0.5231,
+        "avg_winner_sp": 2.93,
+        "median_winner_sp": 2.5,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 21,
+          "outsider_won": 6,
+          "short_fav_won": 4
+        },
+        "tier_breakdown": {
+          "C": 17,
+          "B": 24,
+          "A": 11,
+          "D": 3,
+          "X": 2
+        }
+      },
+      "Fairyhouse": {
+        "n": 9,
+        "wins": 3,
+        "places": 5,
+        "sr": 0.3333,
+        "frame_rate": 0.5556,
+        "avg_winner_sp": 2.75,
+        "median_winner_sp": 2.75,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "mid_priced_won": 4
+        },
+        "tier_breakdown": {
+          "C": 1,
+          "A": 5,
+          "B": 3
+        }
+      },
+      "Gowran Park": {
+        "n": 13,
+        "wins": 3,
+        "places": 7,
+        "sr": 0.2308,
+        "frame_rate": 0.5385,
+        "avg_winner_sp": 2.67,
+        "median_winner_sp": 1.44,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "outsider_won": 1,
+          "mid_priced_won": 4,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "A": 2,
+          "C": 3,
+          "B": 2
+        }
+      },
+      "Fontwell": {
+        "n": 35,
+        "wins": 8,
+        "places": 20,
+        "sr": 0.2286,
+        "frame_rate": 0.5714,
+        "avg_winner_sp": 4.4,
+        "median_winner_sp": 2.62,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 8,
+          "outsider_won": 4,
+          "short_fav_won": 1,
+          "market_decoy_followed": 2,
+          "non_runner_or_untracked": 2,
+          "outsider_hedge_omitted": 1
+        },
+        "tier_breakdown": {
+          "A": 7,
+          "B": 13,
+          "C": 9,
+          "D": 5,
+          "X": 1
+        }
+      },
+      "Kempton (Aw)": {
+        "n": 63,
+        "wins": 13,
+        "places": 26,
+        "sr": 0.2063,
+        "frame_rate": 0.4127,
+        "avg_winner_sp": 3.53,
+        "median_winner_sp": 2.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 20,
+          "short_fav_won": 7,
+          "outsider_won": 7,
+          "market_decoy_followed": 3,
+          "outsider_hedge_omitted": 2
+        },
+        "tier_breakdown": {
+          "A": 7,
+          "B": 27,
+          "C": 21,
+          "D": 6,
+          "X": 2
+        }
+      },
+      "Sligo": {
+        "n": 7,
+        "wins": 0,
+        "places": 2,
+        "sr": 0.0,
+        "frame_rate": 0.2857,
+        "avg_winner_sp": null,
+        "median_winner_sp": null,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "outsider_won": 3,
+          "mid_priced_won": 2
+        },
+        "tier_breakdown": {
+          "B": 3,
+          "C": 2,
+          "D": 1,
+          "A": 1
+        }
+      },
+      "Southwell": {
+        "n": 28,
+        "wins": 9,
+        "places": 17,
+        "sr": 0.3214,
+        "frame_rate": 0.6071,
+        "avg_winner_sp": 3.53,
+        "median_winner_sp": 2.0,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 7,
+          "short_fav_won": 1,
+          "market_decoy_followed": 2,
+          "non_runner_or_untracked": 1,
+          "outsider_hedge_omitted": 1
+        },
+        "tier_breakdown": {
+          "A": 5,
+          "C": 12,
+          "B": 2,
+          "X": 1
+        }
+      },
+      "Pontefract": {
+        "n": 35,
+        "wins": 10,
+        "places": 17,
+        "sr": 0.2857,
+        "frame_rate": 0.4857,
+        "avg_winner_sp": 3.24,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 16,
+          "short_fav_won": 2
+        },
+        "tier_breakdown": {
+          "C": 14,
+          "B": 8,
+          "A": 5,
+          "D": 1,
+          "X": 1
+        }
+      },
+      "Roscommon": {
+        "n": 12,
+        "wins": 3,
+        "places": 6,
+        "sr": 0.25,
+        "frame_rate": 0.5,
+        "avg_winner_sp": 3.02,
+        "median_winner_sp": 2.62,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 3,
+          "outsider_won": 2,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "A": 4,
+          "B": 6,
+          "C": 2
+        }
+      },
+      "Navan": {
+        "n": 11,
+        "wins": 2,
+        "places": 3,
+        "sr": 0.1818,
+        "frame_rate": 0.2727,
+        "avg_winner_sp": 4.44,
+        "median_winner_sp": 6.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "outsider_won": 2,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "A": 2,
+          "C": 4,
+          "D": 1,
+          "B": 4
+        }
+      },
+      "Perth": {
+        "n": 39,
+        "wins": 2,
+        "places": 16,
+        "sr": 0.0513,
+        "frame_rate": 0.4103,
+        "avg_winner_sp": 1.52,
+        "median_winner_sp": 1.73,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "short_fav_won": 4,
+          "mid_priced_won": 7,
+          "outsider_won": 5,
+          "horse_absent_from_result": 1,
+          "market_decoy_followed": 3,
+          "horse_set_divergence (1 non-runners)": 1,
+          "horse_set_divergence (2 non-runners)": 2,
+          "horse_set_divergence (3 non-runners)": 1
+        },
+        "tier_breakdown": {
+          "A": 6,
+          "D": 3,
+          "B": 14,
+          "C": 16
+        }
+      },
+      "Punchestown": {
+        "n": 8,
+        "wins": 2,
+        "places": 6,
+        "sr": 0.25,
+        "frame_rate": 0.75,
+        "avg_winner_sp": 5.92,
+        "median_winner_sp": 10.0,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "mid_priced_won": 2
+        },
+        "tier_breakdown": {
+          "C": 2,
+          "A": 2,
+          "B": 3,
+          "D": 1
+        }
+      },
+      "Epsom": {
+        "n": 20,
+        "wins": 4,
+        "places": 7,
+        "sr": 0.2,
+        "frame_rate": 0.35,
+        "avg_winner_sp": 1.08,
+        "median_winner_sp": 1.08,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 13
+        },
+        "tier_breakdown": {
+          "A": 7,
+          "C": 8,
+          "B": 5
+        }
+      },
+      "Clonmel": {
+        "n": 11,
+        "wins": 0,
+        "places": 2,
+        "sr": 0.0,
+        "frame_rate": 0.1818,
+        "avg_winner_sp": null,
+        "median_winner_sp": null,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "mid_priced_won": 2,
+          "market_decoy_followed": 7,
+          "outsider_hedge_omitted": 1
+        },
+        "tier_breakdown": {
+          "B": 4,
+          "C": 5,
+          "X": 1,
+          "A": 1
+        }
+      },
+      "Curragh": {
+        "n": 10,
+        "wins": 3,
+        "places": 6,
+        "sr": 0.3,
+        "frame_rate": 0.6,
+        "avg_winner_sp": 2.13,
+        "median_winner_sp": 1.53,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "short_fav_won": 1,
+          "mid_priced_won": 2,
+          "outsider_won": 1
+        },
+        "tier_breakdown": {
+          "D": 1,
+          "C": 1
+        }
+      },
+      "Wolverhampton": {
+        "n": 19,
+        "wins": 5,
+        "places": 8,
+        "sr": 0.2632,
+        "frame_rate": 0.4211,
+        "avg_winner_sp": 3.15,
+        "median_winner_sp": 3.12,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 1,
+          "outsider_won": 1,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "C": 5,
+          "B": 5,
+          "A": 1
+        }
+      },
+      "Cartmel": {
+        "n": 8,
+        "wins": 1,
+        "places": 1,
+        "sr": 0.125,
+        "frame_rate": 0.125,
+        "avg_winner_sp": 4.0,
+        "median_winner_sp": 4.0,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "short_fav_won": 2
+        },
+        "tier_breakdown": {
+          "C": 4,
+          "A": 1,
+          "B": 3
+        }
+      },
+      "Newton Abbot": {
+        "n": 28,
+        "wins": 7,
+        "places": 14,
+        "sr": 0.25,
+        "frame_rate": 0.5,
+        "avg_winner_sp": 3.19,
+        "median_winner_sp": 2.75,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 10,
+          "short_fav_won": 3,
+          "outsider_won": 1
+        },
+        "tier_breakdown": {
+          "B": 14,
+          "C": 6,
+          "A": 6,
+          "X": 1,
+          "D": 1
+        }
+      },
+      "Wexford": {
+        "n": 13,
+        "wins": 0,
+        "places": 2,
+        "sr": 0.0,
+        "frame_rate": 0.1538,
+        "avg_winner_sp": null,
+        "median_winner_sp": null,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "mid_priced_won": 10,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "C": 3,
+          "B": 8,
+          "A": 1,
+          "D": 1
+        }
+      },
+      "Huntingdon": {
+        "n": 19,
+        "wins": 7,
+        "places": 10,
+        "sr": 0.3684,
+        "frame_rate": 0.5263,
+        "avg_winner_sp": 2.85,
+        "median_winner_sp": 2.38,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "outsider_won": 2,
+          "short_fav_won": 2,
+          "mid_priced_won": 5
+        },
+        "tier_breakdown": {
+          "B": 8,
+          "A": 8,
+          "C": 2,
+          "X": 1
+        }
+      },
+      "Kelso": {
+        "n": 28,
+        "wins": 8,
+        "places": 18,
+        "sr": 0.2857,
+        "frame_rate": 0.6429,
+        "avg_winner_sp": 5.08,
+        "median_winner_sp": 5.0,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "short_fav_won": 5
+        },
+        "tier_breakdown": {
+          "B": 13,
+          "A": 1,
+          "X": 3,
+          "D": 2,
+          "C": 2
+        }
+      },
+      "Haydock": {
+        "n": 42,
+        "wins": 8,
+        "places": 19,
+        "sr": 0.1905,
+        "frame_rate": 0.4524,
+        "avg_winner_sp": 2.79,
+        "median_winner_sp": 2.75,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 2,
+          "short_fav_won": 3,
+          "mid_priced_won": 15
+        },
+        "tier_breakdown": {
+          "D": 5,
+          "C": 9,
+          "B": 6,
+          "A": 3,
+          "X": 2
+        }
+      },
+      "Warwick": {
+        "n": 35,
+        "wins": 5,
+        "places": 21,
+        "sr": 0.1429,
+        "frame_rate": 0.6,
+        "avg_winner_sp": 4.57,
+        "median_winner_sp": 4.0,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "short_fav_won": 2,
+          "outsider_won": 1,
+          "market_decoy_followed": 9,
+          "horse_absent_from_result": 2,
+          "horse_set_divergence (4 non-runners)": 1,
+          "horse_set_divergence (2 non-runners)": 1,
+          "outsider_hedge_omitted": 1
+        },
+        "tier_breakdown": {
+          "A": 9,
+          "C": 8,
+          "B": 8,
+          "D": 2,
+          "X": 2
+        }
+      },
+      "Newcastle": {
+        "n": 16,
+        "wins": 5,
+        "places": 7,
+        "sr": 0.3125,
+        "frame_rate": 0.4375,
+        "avg_winner_sp": 2.49,
+        "median_winner_sp": 2.5,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "outsider_won": 1,
+          "mid_priced_won": 6,
+          "short_fav_won": 2
+        },
+        "tier_breakdown": {
+          "B": 9,
+          "C": 4,
+          "A": 2,
+          "D": 1
+        }
+      },
+      "Naas": {
+        "n": 7,
+        "wins": 2,
+        "places": 2,
+        "sr": 0.2857,
+        "frame_rate": 0.2857,
+        "avg_winner_sp": 2.96,
+        "median_winner_sp": 4.0,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "outsider_won": 3,
+          "short_fav_won": 1,
+          "mid_priced_won": 1
+        },
+        "tier_breakdown": {
+          "B": 6,
+          "A": 1
+        }
+      },
+      "Newmarket": {
+        "n": 52,
+        "wins": 13,
+        "places": 23,
+        "sr": 0.25,
+        "frame_rate": 0.4423,
+        "avg_winner_sp": 4.03,
+        "median_winner_sp": 3.25,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "outsider_won": 9,
+          "mid_priced_won": 16,
+          "short_fav_won": 4
+        },
+        "tier_breakdown": {
+          "B": 18,
+          "A": 8,
+          "C": 19,
+          "D": 3,
+          "X": 4
+        }
+      },
+      "Bangor-On-Dee": {
+        "n": 19,
+        "wins": 4,
+        "places": 8,
+        "sr": 0.2105,
+        "frame_rate": 0.4211,
+        "avg_winner_sp": 12.41,
+        "median_winner_sp": 10.0,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "outsider_won": 1,
+          "short_fav_won": 4
+        },
+        "tier_breakdown": {
+          "A": 7,
+          "B": 7,
+          "C": 2,
+          "X": 1,
+          "D": 2
+        }
+      },
+      "Aintree": {
+        "n": 26,
+        "wins": 5,
+        "places": 10,
+        "sr": 0.1923,
+        "frame_rate": 0.3846,
+        "avg_winner_sp": 3.48,
+        "median_winner_sp": 2.62,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 8,
+          "mid_priced_won": 7,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "B": 10,
+          "C": 3,
+          "X": 9,
+          "D": 2,
+          "A": 2
+        }
+      },
+      "Clonmel (Ire)": {
+        "n": 20,
+        "wins": 2,
+        "places": 6,
+        "sr": 0.1,
+        "frame_rate": 0.3,
+        "avg_winner_sp": 1.94,
+        "median_winner_sp": 2.38,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "short_fav_won": 3,
+          "outsider_won": 4,
+          "mid_priced_won": 7
+        },
+        "tier_breakdown": {
+          "C": 8,
+          "B": 11,
+          "A": 1
+        }
+      },
+      "Punchestown (Ire)": {
+        "n": 23,
+        "wins": 6,
+        "places": 14,
+        "sr": 0.2609,
+        "frame_rate": 0.6087,
+        "avg_winner_sp": 1.61,
+        "median_winner_sp": 1.73,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "short_fav_won": 2,
+          "outsider_won": 1
+        },
+        "tier_breakdown": {
+          "A": 5,
+          "B": 7,
+          "C": 7,
+          "D": 4
+        }
+      },
+      "Lingfield (Aw)": {
+        "n": 64,
+        "wins": 10,
+        "places": 29,
+        "sr": 0.1562,
+        "frame_rate": 0.4531,
+        "avg_winner_sp": 4.36,
+        "median_winner_sp": 2.88,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "short_fav_won": 6,
+          "mid_priced_won": 16,
+          "outsider_won": 3,
+          "market_decoy_followed": 12,
+          "outsider_hedge_omitted": 4
+        },
+        "tier_breakdown": {
+          "B": 19,
+          "C": 23,
+          "A": 7,
+          "D": 7,
+          "X": 8
+        }
+      },
+      "Hereford": {
+        "n": 29,
+        "wins": 8,
+        "places": 18,
+        "sr": 0.2759,
+        "frame_rate": 0.6207,
+        "avg_winner_sp": 3.65,
+        "median_winner_sp": 3.5,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "short_fav_won": 4,
+          "mid_priced_won": 2,
+          "outsider_won": 1,
+          "market_decoy_followed": 3,
+          "non_runner_or_untracked": 1
+        },
+        "tier_breakdown": {
+          "B": 14,
+          "A": 8,
+          "C": 7
+        }
+      },
+      "Sligo (Ire)": {
+        "n": 12,
+        "wins": 5,
+        "places": 8,
+        "sr": 0.4167,
+        "frame_rate": 0.6667,
+        "avg_winner_sp": 3.02,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 4
+        },
+        "tier_breakdown": {
+          "B": 8,
+          "C": 3,
+          "A": 1
+        }
+      },
+      "Killarney (Ire)": {
+        "n": 14,
+        "wins": 5,
+        "places": 7,
+        "sr": 0.3571,
+        "frame_rate": 0.5,
+        "avg_winner_sp": 3.31,
+        "median_winner_sp": 2.0,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "short_fav_won": 3,
+          "outsider_won": 1,
+          "mid_priced_won": 3
+        },
+        "tier_breakdown": {
+          "B": 8,
+          "A": 1,
+          "D": 1,
+          "C": 3
+        }
+      },
+      "Ludlow": {
+        "n": 18,
+        "wins": 1,
+        "places": 11,
+        "sr": 0.0556,
+        "frame_rate": 0.6111,
+        "avg_winner_sp": 3.75,
+        "median_winner_sp": 3.75,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "short_fav_won": 1,
+          "mid_priced_won": 3,
+          "outsider_won": 1,
+          "market_decoy_followed": 4,
+          "non_runner_or_untracked": 1,
+          "outsider_hedge_omitted": 1
+        },
+        "tier_breakdown": {
+          "C": 3,
+          "B": 7,
+          "X": 2
+        }
+      },
+      "Cork (Ire)": {
+        "n": 34,
+        "wins": 6,
+        "places": 12,
+        "sr": 0.1765,
+        "frame_rate": 0.3529,
+        "avg_winner_sp": 2.58,
+        "median_winner_sp": 2.62,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "short_fav_won": 2,
+          "outsider_won": 8,
+          "mid_priced_won": 12
+        },
+        "tier_breakdown": {
+          "C": 13,
+          "D": 3,
+          "B": 7,
+          "A": 4
+        }
+      },
+      "Leopardstown (Ire)": {
+        "n": 23,
+        "wins": 7,
+        "places": 10,
+        "sr": 0.3043,
+        "frame_rate": 0.4348,
+        "avg_winner_sp": 2.77,
+        "median_winner_sp": 2.75,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 11,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "X": 1,
+          "C": 6,
+          "D": 3,
+          "B": 4,
+          "A": 1
+        }
+      },
+      "Naas (Ire)": {
+        "n": 14,
+        "wins": 4,
+        "places": 9,
+        "sr": 0.2857,
+        "frame_rate": 0.6429,
+        "avg_winner_sp": 1.58,
+        "median_winner_sp": 1.44,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "outsider_won": 1,
+          "mid_priced_won": 4
+        },
+        "tier_breakdown": {
+          "A": 5,
+          "C": 4,
+          "B": 4,
+          "D": 1
+        }
+      },
+      "Ballinrobe (Ire)": {
+        "n": 7,
+        "wins": 2,
+        "places": 3,
+        "sr": 0.2857,
+        "frame_rate": 0.4286,
+        "avg_winner_sp": 4.5,
+        "median_winner_sp": 5.5,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "outsider_won": 1,
+          "mid_priced_won": 3
+        },
+        "tier_breakdown": {
+          "C": 5,
+          "A": 1,
+          "B": 1
+        }
+      },
+      "Downpatrick (Ire)": {
+        "n": 14,
+        "wins": 3,
+        "places": 8,
+        "sr": 0.2143,
+        "frame_rate": 0.5714,
+        "avg_winner_sp": 2.65,
+        "median_winner_sp": 1.83,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "C": 8,
+          "B": 3,
+          "X": 2,
+          "A": 1
+        }
+      },
+      "Wexford (Ire)": {
+        "n": 20,
+        "wins": 7,
+        "places": 13,
+        "sr": 0.35,
+        "frame_rate": 0.65,
+        "avg_winner_sp": 3.11,
+        "median_winner_sp": 2.75,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "B": 5,
+          "C": 5,
+          "D": 2,
+          "X": 1
+        }
+      },
+      "Gowran Park (Ire)": {
+        "n": 27,
+        "wins": 3,
+        "places": 8,
+        "sr": 0.1111,
+        "frame_rate": 0.2963,
+        "avg_winner_sp": 2.68,
+        "median_winner_sp": 1.91,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 13,
+          "short_fav_won": 1,
+          "outsider_won": 5
+        },
+        "tier_breakdown": {
+          "C": 11,
+          "B": 10,
+          "D": 2,
+          "A": 3,
+          "X": 1
+        }
+      },
+      "Fakenham": {
+        "n": 18,
+        "wins": 3,
+        "places": 12,
+        "sr": 0.1667,
+        "frame_rate": 0.6667,
+        "avg_winner_sp": 2.26,
+        "median_winner_sp": 2.1,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 4,
+          "short_fav_won": 2
+        },
+        "tier_breakdown": {
+          "C": 6,
+          "B": 8,
+          "A": 4
+        }
+      },
+      "Curragh (Ire)": {
+        "n": 28,
+        "wins": 2,
+        "places": 15,
+        "sr": 0.0714,
+        "frame_rate": 0.5357,
+        "avg_winner_sp": 2.33,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_DRAIN",
+        "miss_class_breakdown": {
+          "mid_priced_won": 8,
+          "outsider_won": 4,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "B": 9,
+          "D": 6,
+          "C": 10,
+          "A": 1,
+          "X": 2
+        }
+      },
+      "Down Royal (Ire)": {
+        "n": 20,
+        "wins": 3,
+        "places": 10,
+        "sr": 0.15,
+        "frame_rate": 0.5,
+        "avg_winner_sp": 4.7,
+        "median_winner_sp": 3.0,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 4,
+          "mid_priced_won": 5,
+          "short_fav_won": 1
+        },
+        "tier_breakdown": {
+          "B": 3,
+          "D": 1,
+          "A": 3,
+          "C": 3,
+          "X": 2
+        }
+      },
+      "Newcastle (Aw)": {
+        "n": 44,
+        "wins": 9,
+        "places": 18,
+        "sr": 0.2045,
+        "frame_rate": 0.4091,
+        "avg_winner_sp": 8.86,
+        "median_winner_sp": 5.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "short_fav_won": 5,
+          "mid_priced_won": 9,
+          "outsider_won": 3,
+          "market_decoy_followed": 10,
+          "outsider_hedge_omitted": 3,
+          "signal_underweighted_improvement_score": 1
+        },
+        "tier_breakdown": {
+          "B": 14,
+          "C": 18,
+          "D": 4,
+          "A": 2,
+          "X": 6
+        }
+      },
+      "Navan (Ire)": {
+        "n": 7,
+        "wins": 3,
+        "places": 5,
+        "sr": 0.4286,
+        "frame_rate": 0.7143,
+        "avg_winner_sp": 2.31,
+        "median_winner_sp": 1.83,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "mid_priced_won": 2
+        },
+        "tier_breakdown": {
+          "D": 2,
+          "A": 2,
+          "B": 2,
+          "C": 1
+        }
+      },
+      "Limerick (Ire)": {
+        "n": 20,
+        "wins": 5,
+        "places": 11,
+        "sr": 0.25,
+        "frame_rate": 0.55,
+        "avg_winner_sp": 2.86,
+        "median_winner_sp": 2.25,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 7,
+          "outsider_won": 2
+        },
+        "tier_breakdown": {
+          "C": 5,
+          "A": 4,
+          "X": 2,
+          "B": 8,
+          "D": 1
+        }
+      },
+      "Kilbeggan (Ire)": {
+        "n": 3,
+        "wins": 1,
+        "places": 2,
+        "sr": 0.3333,
+        "frame_rate": 0.6667,
+        "avg_winner_sp": 1.36,
+        "median_winner_sp": 1.36,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "mid_priced_won": 1
+        },
+        "tier_breakdown": {
+          "B": 2,
+          "C": 1
+        }
+      },
+      "Dundalk (Aw)": {
+        "n": 14,
+        "wins": 2,
+        "places": 4,
+        "sr": 0.1429,
+        "frame_rate": 0.2857,
+        "avg_winner_sp": 4.47,
+        "median_winner_sp": 7.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "market_decoy_followed": 7,
+          "outsider_hedge_omitted": 3,
+          "horse_set_divergence (1 non-runners)": 2
+        },
+        "tier_breakdown": {
+          "B": 6,
+          "C": 5,
+          "X": 2,
+          "D": 1
+        }
+      },
+      "Taunton": {
+        "n": 20,
+        "wins": 5,
+        "places": 8,
+        "sr": 0.25,
+        "frame_rate": 0.4,
+        "avg_winner_sp": 1.89,
+        "median_winner_sp": 1.83,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "short_fav_won": 2,
+          "mid_priced_won": 3,
+          "outsider_won": 1,
+          "market_decoy_followed": 4,
+          "non_runner_or_untracked": 2
+        },
+        "tier_breakdown": {
+          "B": 9,
+          "C": 10,
+          "D": 1
+        }
+      },
+      "Tramore (Ire)": {
+        "n": 15,
+        "wins": 2,
+        "places": 4,
+        "sr": 0.1333,
+        "frame_rate": 0.2667,
+        "avg_winner_sp": 1.86,
+        "median_winner_sp": 2.0,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "outsider_won": 2,
+          "short_fav_won": 3
+        },
+        "tier_breakdown": {
+          "B": 6,
+          "A": 2,
+          "X": 2,
+          "C": 4,
+          "D": 1
+        }
+      },
+      "Plumpton": {
+        "n": 13,
+        "wins": 2,
+        "places": 5,
+        "sr": 0.1538,
+        "frame_rate": 0.3846,
+        "avg_winner_sp": 3.25,
+        "median_winner_sp": 4.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "short_fav_won": 2,
+          "mid_priced_won": 6
+        },
+        "tier_breakdown": {
+          "B": 5,
+          "A": 3,
+          "D": 1,
+          "C": 4
+        }
+      },
+      "Bellewstown (Ire)": {
+        "n": 14,
+        "wins": 4,
+        "places": 5,
+        "sr": 0.2857,
+        "frame_rate": 0.3571,
+        "avg_winner_sp": 7.52,
+        "median_winner_sp": 3.75,
+        "label": "COURSE_EDGE_CONFIRMED",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "short_fav_won": 1,
+          "outsider_won": 3
+        },
+        "tier_breakdown": {
+          "B": 9,
+          "C": 4,
+          "A": 1
+        }
+      },
+      "Exeter": {
+        "n": 20,
+        "wins": 5,
+        "places": 15,
+        "sr": 0.25,
+        "frame_rate": 0.75,
+        "avg_winner_sp": 3.38,
+        "median_winner_sp": 3.5,
+        "label": "COURSE_DOING_WELL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5
+        },
+        "tier_breakdown": {
+          "A": 7,
+          "B": 4,
+          "D": 2
+        }
+      },
+      "Wincanton": {
+        "n": 22,
+        "wins": 4,
+        "places": 12,
+        "sr": 0.1818,
+        "frame_rate": 0.5455,
+        "avg_winner_sp": 3.15,
+        "median_winner_sp": 3.75,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 6,
+          "outsider_won": 1,
+          "outsider_hedge_omitted": 1,
+          "non_runner_or_untracked": 1,
+          "market_decoy_followed": 3
+        },
+        "tier_breakdown": {
+          "A": 6,
+          "B": 7,
+          "C": 7,
+          "X": 1,
+          "D": 1
+        }
+      },
+      "Dundalk (Aw) (Ire)": {
+        "n": 14,
+        "wins": 3,
+        "places": 7,
+        "sr": 0.2143,
+        "frame_rate": 0.5,
+        "avg_winner_sp": 1.78,
+        "median_winner_sp": 1.57,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 4,
+          "short_fav_won": 2,
+          "outsider_won": 1
+        },
+        "tier_breakdown": {
+          "C": 6,
+          "A": 2,
+          "B": 4,
+          "X": 2
+        }
+      },
+      "Sedgefield": {
+        "n": 17,
+        "wins": 3,
+        "places": 8,
+        "sr": 0.1765,
+        "frame_rate": 0.4706,
+        "avg_winner_sp": 1.96,
+        "median_winner_sp": 1.73,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "mid_priced_won": 5,
+          "short_fav_won": 1,
+          "non_runner_or_untracked": 2,
+          "market_decoy_followed": 2
+        },
+        "tier_breakdown": {
+          "B": 8,
+          "A": 3,
+          "X": 3,
+          "C": 3
+        }
+      },
+      "Fairyhouse (Ire)": {
+        "n": 13,
+        "wins": 2,
+        "places": 5,
+        "sr": 0.1538,
+        "frame_rate": 0.3846,
+        "avg_winner_sp": 7.5,
+        "median_winner_sp": 8.5,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "outsider_won": 3,
+          "short_fav_won": 1,
+          "mid_priced_won": 4
+        },
+        "tier_breakdown": {
+          "X": 8,
+          "C": 3,
+          "D": 1,
+          "B": 1
+        }
+      },
+      "Chelmsford (Aw)": {
+        "n": 7,
+        "wins": 2,
+        "places": 4,
+        "sr": 0.2857,
+        "frame_rate": 0.5714,
+        "avg_winner_sp": 12.0,
+        "median_winner_sp": 15.0,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {
+          "market_decoy_followed": 4,
+          "outsider_hedge_omitted": 1
+        },
+        "tier_breakdown": {
+          "C": 3,
+          "D": 1,
+          "B": 2,
+          "A": 1
+        }
+      },
+      "Kempton": {
+        "n": 12,
+        "wins": 2,
+        "places": 4,
+        "sr": 0.1667,
+        "frame_rate": 0.3333,
+        "avg_winner_sp": 2.17,
+        "median_winner_sp": 3.25,
+        "label": "COURSE_NEUTRAL",
+        "miss_class_breakdown": {
+          "market_decoy_followed": 5
+        },
+        "tier_breakdown": {
+          "C": 2,
+          "B": 2,
+          "A": 3
+        }
+      },
+      "Cheltenham": {
+        "n": 3,
+        "wins": 0,
+        "places": 0,
+        "sr": 0.0,
+        "frame_rate": 0.0,
+        "avg_winner_sp": null,
+        "median_winner_sp": null,
+        "label": "COURSE_NOISE_LOW_SAMPLE",
+        "miss_class_breakdown": {},
+        "tier_breakdown": {}
+      }
+    },
+    "odds_band": {
+      "by_pick_sp": {
+        "<2.5": {
+          "n_picks": 212,
+          "wins": 111,
+          "places": 181,
+          "sr": 0.5236,
+          "place_rate": 0.8538
+        },
+        "2.5-4": {
+          "n_picks": 230,
+          "wins": 75,
+          "places": 166,
+          "sr": 0.3261,
+          "place_rate": 0.7217
+        },
+        "4-6": {
+          "n_picks": 210,
+          "wins": 35,
+          "places": 118,
+          "sr": 0.1667,
+          "place_rate": 0.5619
+        },
+        "6-10": {
+          "n_picks": 190,
+          "wins": 19,
+          "places": 74,
+          "sr": 0.1,
+          "place_rate": 0.3895
+        },
+        "10-16": {
+          "n_picks": 180,
+          "wins": 7,
+          "places": 42,
+          "sr": 0.0389,
+          "place_rate": 0.2333
+        },
+        "16-25": {
+          "n_picks": 88,
+          "wins": 3,
+          "places": 14,
+          "sr": 0.0341,
+          "place_rate": 0.1591
+        },
+        "25+": {
+          "n_picks": 102,
+          "wins": 3,
+          "places": 10,
+          "sr": 0.0294,
+          "place_rate": 0.098
+        },
+        "UNKNOWN": {
+          "n_picks": 1765,
+          "wins": 420,
+          "places": 891,
+          "sr": 0.238,
+          "place_rate": 0.5048
+        }
+      },
+      "by_winner_sp": {
+        "<2.5": {
+          "wins_at_this_price": 295
+        },
+        "2.5-4": {
+          "wins_at_this_price": 178
+        },
+        "4-6": {
+          "wins_at_this_price": 92
+        },
+        "6-10": {
+          "wins_at_this_price": 56
+        },
+        "10-16": {
+          "wins_at_this_price": 19
+        },
+        "16-25": {
+          "wins_at_this_price": 6
+        },
+        "25+": {
+          "wins_at_this_price": 5
+        },
+        "UNKNOWN": {
+          "wins_at_this_price": 22
+        }
+      }
+    },
+    "lane_performance": {
+      "PRODUCT_UNKNOWN": {
+        "n": 2977,
+        "wins": 673,
+        "places": 1496,
+        "sr": 0.2261,
+        "place_rate": 0.5025,
+        "source": "sigma_dump"
+      },
+      "TIER_X": {
+        "n": 142,
+        "wins": 18,
+        "places": 49,
+        "sr": 0.1268,
+        "place_rate": 0.3451,
+        "source": "sigma_dump"
+      },
+      "TIER_C": {
+        "n": 828,
+        "wins": 132,
+        "places": 351,
+        "sr": 0.1594,
+        "place_rate": 0.4239,
+        "source": "sigma_dump"
+      },
+      "TIER_proof_run": {
+        "n": 1,
+        "wins": 0,
+        "places": 0,
+        "sr": 0.0,
+        "place_rate": 0.0,
+        "source": "sigma_dump"
+      },
+      "TIER_B": {
+        "n": 998,
+        "wins": 231,
+        "places": 514,
+        "sr": 0.2315,
+        "place_rate": 0.515,
+        "source": "sigma_dump"
+      },
+      "TIER_D": {
+        "n": 183,
+        "wins": 29,
+        "places": 71,
+        "sr": 0.1585,
+        "place_rate": 0.388,
+        "source": "sigma_dump"
+      },
+      "TIER_A": {
+        "n": 550,
+        "wins": 210,
+        "places": 396,
+        "sr": 0.3818,
+        "place_rate": 0.72,
+        "source": "sigma_dump"
+      },
+      "TIER_UNKNOWN": {
+        "n": 275,
+        "wins": 53,
+        "places": 115,
+        "sr": 0.1927,
+        "place_rate": 0.4182,
+        "source": "sigma_dump"
+      },
+      "VP_HIGH": {
+        "n": 34,
+        "wins": 12,
+        "places": 31,
+        "sr": 0.3529,
+        "place_rate": 0.9118,
+        "source": "sigma_dump",
+        "note": "verdict_score>=0.4"
+      },
+      "LEDGER_PRODUCT_PASS": {
+        "n": 527,
+        "wins": 124,
+        "places": 240,
+        "sr": 0.2353,
+        "place_rate": 0.4554,
+        "source": "ledger"
+      },
+      "LEDGER_PRODUCT_VISION_ONLY": {
+        "n": 412,
+        "wins": 110,
+        "places": 187,
+        "sr": 0.267,
+        "place_rate": 0.4539,
+        "source": "ledger"
+      },
+      "LEDGER_PRODUCT_WIN_ONLY": {
+        "n": 87,
+        "wins": 43,
+        "places": 67,
+        "sr": 0.4943,
+        "place_rate": 0.7701,
+        "source": "ledger"
+      },
+      "LEDGER_PRODUCT_UNKNOWN": {
+        "n": 40,
+        "wins": 9,
+        "places": 14,
+        "sr": 0.225,
+        "place_rate": 0.35,
+        "source": "ledger"
+      },
+      "LEDGER_PRODUCT_EW_CANDIDATE": {
+        "n": 59,
+        "wins": 3,
+        "places": 22,
+        "sr": 0.0508,
+        "place_rate": 0.3729,
+        "source": "ledger"
+      },
+      "NEW_BUILD": {
+        "n": 669,
+        "wins": 103,
+        "places": 278,
+        "sr": 0.154,
+        "place_rate": 0.4155,
+        "source": "ledger"
+      },
+      "NO_RPR": {
+        "n": 1041,
+        "wins": 172,
+        "places": 353,
+        "sr": 0.1652,
+        "place_rate": 0.3391,
+        "source": "ledger"
+      }
+    },
+    "rpr_dependency": {
+      "verdict": "RPR_HELPED",
+      "n_with_gap": 144,
+      "n_rpr_boosted": 128,
+      "n_rpr_dragged": 10,
+      "n_rpr_neutral": 6,
+      "boost_sr": 0.2422,
+      "drag_sr": 0.2,
+      "neutral_sr": 0.1667,
+      "avg_gap": 0.2484,
+      "note": "Gap = sqpe_v17_prob - sqpe_no_rpr_shadow_prob per verdict"
+    },
+    "new_build": {
+      "n": 669,
+      "wins": 103,
+      "places": 278,
+      "sr": 0.154,
+      "place_rate": 0.4155,
+      "top3_hit_rate": 0.4413,
+      "top3_knowable": 630,
+      "note": "Top3 containment is NOT profit \u2014 SP_PROXY_IS_NOT_DIVIDEND_PROOF",
+      "containment_is_not_profit": true
+    },
+    "ew_candidate": {
+      "n": 59,
+      "ew_wins": 3,
+      "ew_places": 22,
+      "place_rate": 0.3729,
+      "unknown_field_size": 15,
+      "unknown_sp": 15,
+      "profit_claimable": false,
+      "verdict": "EW_PARTIAL_DATA_NO_PROFIT_CLAIM",
+      "note": "EW profit cannot be claimed without SP and field size \u2014 SP_PROXY_IS_NOT_DIVIDEND_PROOF"
+    },
+    "midprice_miss": {
+      "n_midprice_misses": 803,
+      "nb_recovery_wins": 12,
+      "norpr_recovery_wins": 15,
+      "nb_recovery_rate": 0.0149,
+      "norpr_recovery_rate": 0.0187
+    },
+    "exotics": {
+      "knowable_races": 718,
+      "exacta_box_hits": 63,
+      "trifecta_box_hits": 7,
+      "exacta_box_rate": 0.0877,
+      "trifecta_box_rate": 0.0097,
+      "containment_is_not_profit": true,
+      "dividend_status": "DIVIDEND_UNKNOWN",
+      "note": "Containment in top3 does NOT equal profit. No dividend data available. SP_PROXY_IS_NOT_DIVIDEND_PROOF."
+    },
+    "training_gap": {
+      "sigma_corpus_status": "LOADED_PYARROW_PANDAS",
+      "sigma_corpus_rows": 1079,
+      "sigma_corpus_dates_count": 35,
+      "sigma2k_status": "LOADED_PYARROW_PANDAS",
+      "sigma2k_rows": 1521,
+      "audit_date_count": 102,
+      "training_date_count": 35,
+      "gap_dates_not_in_training": [
+        "2026-01-09",
+        "2026-01-15",
+        "2026-01-20",
+        "2026-01-25",
+        "2026-01-30",
+        "2026-02-05",
+        "2026-02-10",
+        "2026-02-15",
+        "2026-02-18",
+        "2026-02-20",
+        "2026-02-22",
+        "2026-02-25",
+        "2026-03-15",
+        "2026-03-17",
+        "2026-03-18",
+        "2026-03-19",
+        "2026-03-20",
+        "2026-03-21",
+        "2026-03-22",
+        "2026-03-23",
+        "2026-03-24",
+        "2026-03-25",
+        "2026-03-26",
+        "2026-03-27",
+        "2026-03-28",
+        "2026-03-29",
+        "2026-03-31",
+        "2026-04-01",
+        "2026-04-02",
+        "2026-04-03",
+        "2026-04-04",
+        "2026-04-06",
+        "2026-04-07",
+        "2026-04-08",
+        "2026-04-09",
+        "2026-04-10",
+        "2026-04-11",
+        "2026-04-12",
+        "2026-04-13",
+        "2026-04-14",
+        "2026-04-15",
+        "2026-04-16",
+        "2026-04-17",
+        "2026-04-18",
+        "2026-04-19",
+        "2026-04-20",
+        "2026-04-21",
+        "2026-04-22",
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25",
+        "2026-04-27",
+        "2026-04-28",
+        "2026-04-29",
+        "2026-04-30",
+        "2026-05-01",
+        "2026-05-02",
+        "2026-05-03",
+        "2026-05-04",
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08",
+        "2026-05-09",
+        "2026-05-10",
+        "2026-05-12",
+        "2026-05-13",
+        "2026-05-14",
+        "2026-05-15",
+        "2026-05-16",
+        "2026-05-17",
+        "2026-05-18",
+        "2026-05-19",
+        "2026-05-20",
+        "2026-05-21",
+        "2026-05-22"
+      ],
+      "gap_count": 76
+    },
+    "external_sources": {
+      "BHA_OFFICIAL_RATINGS": {
+        "url": "https://www.britishhorseracing.com/racing/horses/ratings/",
+        "content": "Official Ratings (OR) for all flat/NH horses, updated weekly",
+        "status": "PUBLIC",
+        "proven": true,
+        "coverage": "All licensed UK racehorses",
+        "note": "Downloadable as CSV. Use for OR verification and training data enrichment."
+      },
+      "RP_RACE_CARDS": {
+        "url": "https://www.racingpost.com/racecards/",
+        "content": "Daily racecards with form, RPR, trainer/jockey stats",
+        "status": "PAYWALLED_PARTIAL",
+        "proven": true,
+        "coverage": "UK+IRE+International",
+        "note": "F_0010 PDF workflow active. HTML racecards parse with RP ingestion layer."
+      },
+      "RP_RESULTS": {
+        "url": "https://www.racingpost.com/results/",
+        "content": "Full result history with SP, position, weight, form figures",
+        "status": "PAYWALLED_PARTIAL",
+        "proven": true,
+        "coverage": "UK+IRE \u2014 primary results source from 2026-05-23 onwards",
+        "note": "rp_results_YYYY_MM_DD.json available for 39 dates. Winner SP and top3 present."
+      },
+      "BHA_WEIGHTS_AND_CONDITIONS": {
+        "url": "https://www.britishhorseracing.com/racing/",
+        "content": "Race conditions, weight allowances, NH/Flat categories",
+        "status": "PUBLIC",
+        "proven": true,
+        "coverage": "UK flat and jumps",
+        "note": "Used for race_class validation and field size sanity checks."
+      },
+      "RP_TIPSTER_F0010_PDF": {
+        "url": "Internal \u2014 data/reports/F_0010_*.pdf",
+        "content": "Racing Post daily tipster selections and analysis",
+        "status": "LOCAL_ARTIFACT",
+        "proven": true,
+        "coverage": "Used in dashboard pipeline from 2026-05-14",
+        "note": "parse_industry_selections.py extracts tipster picks. Primary industry comparison source."
+      },
+      "RACING_API": {
+        "url": "https://api.theracingapi.com/",
+        "content": "Historical race data, trainer/jockey stats",
+        "status": "DECOMMISSIONED_2026_05_14",
+        "proven": false,
+        "coverage": "N/A \u2014 API 401 errors. Decommissioned.",
+        "note": "PERMANENTLY DECOMMISSIONED for live use. RP HTML is only live source."
+      }
+    }
+  }
+}

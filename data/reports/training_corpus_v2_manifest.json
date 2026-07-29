@@ -1,0 +1,89 @@
+{
+  "run_ts": "2026-07-12T18:08:51.592152Z",
+  "mission": "LEARNING-LOOP-01A",
+  "phase": 4,
+  "read_only": true,
+  "corrections_applied": [
+    "P0-1",
+    "P0-2",
+    "P0-3",
+    "P0-4",
+    "P0-5",
+    "P0-6",
+    "P0-7",
+    "P0-8",
+    "P0-9",
+    "P0-10",
+    "P1"
+  ],
+  "raw_snapshot_rows": 26425,
+  "distinct_snapshot_runs": 70,
+  "selected_canonical_run_rows": 10861,
+  "duplicate_rows_excluded": 127,
+  "canonical_prediction_races": 1087,
+  "no_pre_race_run_exclusions": 266,
+  "proven_pre_race_races": 915,
+  "timezone_unproven_races": 136,
+  "general_unproven_races": 36,
+  "shadow_evaluation_eligible_races": 306,
+  "shadow_evaluation_eligible_rows": 3143,
+  "source_races": 1360,
+  "resolved_races": 682,
+  "unresolved_races": 678,
+  "ambiguous_races": 6,
+  "full_result_races": 318,
+  "partial_result_races": 364,
+  "resolved_horse_rows": 4595,
+  "horse_rows_with_known_outcome": 4472,
+  "terminal_outcome_rows": 114,
+  "non_runner_rows": 220,
+  "unresolved_horse_rows": 2075,
+  "result_labelled_rows": 4472,
+  "event_rows_built": 4595,
+  "analysis_eligible_rows": 4595,
+  "state_learning_eligible_rows": 0,
+  "model_training_safe_rows": 0,
+  "promotion_eligible_rows": 0,
+  "full_feature_rows": 0,
+  "safe_rows": 0,
+  "exclusions_by_reason": {
+    "RUN_NO_PRE_RACE_RUN": 266,
+    "RUN_NO_COMPLETE_RUN": 7,
+    "RACE_UNRESOLVED": 4122,
+    "HORSE_UNRESOLVED": 2075,
+    "RACE_AMBIGUOUS": 69
+  },
+  "time_safety_distribution": {
+    "EXCLUDED_INCOMPLETE_RESULT": 1353,
+    "EXCLUDED_UNTIMED_ODDS": 3143,
+    "EXCLUDED_PREDICTION_TIME_UNPROVEN": 99
+  },
+  "result_source_distribution": {
+    "RESULT_SOURCE_UNAVAILABLE": 3,
+    "RP_LOCAL_JSON": 23
+  },
+  "result_source_classification_distribution": {
+    "RESULT_SOURCE_MISSING": 3,
+    "RESULT_SOURCE_PARTIAL": 20,
+    "RESULT_SOURCE_RP_LOCAL_PRIMARY": 3
+  },
+  "date_range": {
+    "min": "2026-05-20",
+    "max": "2026-06-18"
+  },
+  "distinct_source_hashes": 23,
+  "classifications": [
+    "RICH_SNAPSHOT_RESULT_JOIN_MEASURED",
+    "TRAINING_SAFE_SUBSET_MEASURED",
+    "AMBIGUITY_BLOCKING_PROVEN",
+    "PREDICTION_RUN_CONTAMINATION_CORRECTED",
+    "RESULT_COMPLETENESS_PROVEN_AGAINST_EXPECTED_UNIVERSE",
+    "NO_HFS_MUTATION",
+    "NO_PLAYBOOK_G_MUTATION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_TRAINING",
+    "NO_MODEL_PROMOTION",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND"
+  ]
+}

@@ -1,0 +1,4 @@
+join,key,rationale,risk
+sigma_audits to velo_verdicts,race_id + date (generated_at::date),race_id alone risks matching duplicate/re-run verdicts for the same race,ambiguous matches (>1 candidate) must resolve to NULL not a guess
+sigma_audits to VFU-21 ledger,race_id,ledger already keyed this way per LOCAL-01 findings,ledger only covers through ~2026-06-17, does not extend to full gap
+sigma_audits to racecard_merged,race_id + date,racecard files are named by course+date; race_id needed to pick specific race within file,requires confirming racecard_merged retains this race's file for the target date

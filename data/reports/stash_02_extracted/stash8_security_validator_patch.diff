@@ -1,0 +1,1015 @@
+diff --git a/app/core/config.py b/app/core/config.py
+index e95680b..e4e3520 100644
+--- a/app/core/config.py
++++ b/app/core/config.py
+@@ -5,7 +5,7 @@ Core configuration management for VÉLØ Oracle API
+ import json
+ from typing import Any
+ 
+-from pydantic import Field, field_validator
++from pydantic import AliasChoices, Field, field_validator, model_validator
+ from pydantic_settings import BaseSettings, SettingsConfigDict
+ 
+ 
+@@ -14,13 +14,14 @@ class Settings(BaseSettings):
+ 
+     # API Configuration
+     API_VERSION: str = "v1"
+-    API_ENV: str = Field(default="production")
++    API_ENV: str = Field(default="production", validation_alias=AliasChoices("API_ENV", "ENV"))
+     API_TITLE: str = "VÉLØ Oracle API"
+     API_DESCRIPTION: str = "Production ML API for horse racing predictions"
+ 
+     # Supabase Configuration
+     SUPABASE_URL: str = Field(default="")
+     SUPABASE_KEY: str = Field(default="")
++    SUPABASE_SERVICE_KEY: str = Field(default="")
+     SUPABASE_SERVICE_ROLE_KEY: str = Field(default="")
+ 
+     # Model Registry
+@@ -33,6 +34,7 @@ class Settings(BaseSettings):
+ 
+     # CORS — accepts plain string ("*"), comma-separated string, or JSON list
+     CORS_ORIGINS: list[str] | str = ["*"]
++    CORS_ALLOW_CREDENTIALS: bool = False
+ 
+     @field_validator("CORS_ORIGINS", mode="before")
+     @classmethod
+@@ -50,6 +52,20 @@ class Settings(BaseSettings):
+             return [item.strip() for item in v.split(",") if item.strip()]
+         return ["*"]
+ 
++    @property
++    def supabase_service_key(self) -> str:
++        """Canonical service-role key, with temporary support for legacy names."""
++        return self.SUPABASE_SERVICE_ROLE_KEY or self.SUPABASE_SERVICE_KEY or self.SUPABASE_KEY
++
++    @model_validator(mode="after")
++    def validate_production_cors(self) -> "Settings":
++        if self.API_ENV.lower() == "production" and self.CORS_ALLOW_CREDENTIALS and "*" in self.CORS_ORIGINS:
++            raise ValueError(
++                "Unsafe CORS configuration: wildcard origins cannot be combined "
++                "with credentials in production."
++            )
++        return self
++
+     # Logging
+     LOG_LEVEL: str = Field(default="INFO")
+     LOG_JSON: bool = Field(default=True)
+diff --git a/app/services/security_validator.py b/app/services/security_validator.py
+index 8edd037..270ba17 100644
+--- a/app/services/security_validator.py
++++ b/app/services/security_validator.py
+@@ -1,19 +1,26 @@
+ """
+-VÉLØ Oracle — Security Validator
+-=================================
+-Runs on startup to verify the Supabase database hardening is still in place.
+-If any check fails, it logs a CRITICAL warning but does NOT crash the app —
+-it is informational so the operator can take action.
+-
+-This module is the permanent guard against security regression.
+-If the DB is ever reset, migrated, or cloned, this will immediately alert.
++VELO Oracle - Security Validator
++================================
++Runs on startup to verify that the Supabase database hardening is still in place.
++If verification cannot be completed, the result stays explicitly unverified.
+ """
++
++from __future__ import annotations
++
+ import logging
+ import os
++from typing import Any
+ 
+ logger = logging.getLogger(__name__)
+ 
+-# The verification query — same one used to confirm 0 findings in the live DB
++CHECKED_RLS_TABLES = ["runner_results", "runner_race_facts", "import_batches"]
++UNCHECKED_OBJECTS = {
++    "views_not_invoker": "all public views",
++    "functions_mutable_search_path": "all public SQL/plpgsql functions",
++    "matviews_exposed": "all public materialized views",
++}
++
++# The verification query documented for direct DB-side validation.
+ SECURITY_CHECK_SQL = """
+ SELECT
+   (SELECT count(*) FROM pg_class c
+@@ -45,96 +52,128 @@ SELECT
+ """
+ 
+ 
+-def run_security_check() -> dict:
+-    """
+-    Run the security validation check against the live Supabase DB.
+-    Returns a dict with check results and a boolean 'passed' key.
+-    Non-fatal — logs warnings but does not raise.
+-    """
+-    result = {
++def _base_result() -> dict[str, Any]:
++    return {
++        "status": "error",
++        "verified": False,
+         "passed": False,
+-        "tables_rls_disabled": -1,
+-        "views_not_invoker": -1,
+-        "functions_mutable_search_path": -1,
+-        "matviews_exposed": -1,
++        "coverage_scope": "unknown",
++        "metrics": None,
++        "tables_rls_disabled": None,
++        "views_not_invoker": None,
++        "functions_mutable_search_path": None,
++        "matviews_exposed": None,
++        "checked_objects": [],
++        "unchecked_objects": [],
+         "error": None,
++        "error_code": None,
++        "error_detail": None,
+     }
+ 
++
++def _apply_metrics(result: dict[str, Any], metrics: dict[str, int]) -> dict[str, Any]:
++    result["metrics"] = metrics
++    result.update(metrics)
++    total_issues = sum(max(0, value) for value in metrics.values())
++    result["coverage_scope"] = "partial"
++    result["checked_objects"] = [f"RLS:{table}" for table in CHECKED_RLS_TABLES]
++    result["unchecked_objects"] = [f"{name}:{label}" for name, label in UNCHECKED_OBJECTS.items()]
++    result["verified"] = False
++    result["passed"] = total_issues == 0
++    result["status"] = "partial" if result["passed"] else "failed"
++    if result["status"] == "partial":
++        result["error_detail"] = (
++            "Partial coverage only: verified RLS on checked tables; "
++            "views/functions/materialized views remain unchecked by this validator path."
++        )
++    return result
++
++
++def _classify_security_error(exc: Exception) -> str:
++    message = str(exc).lower()
++    if any(token in message for token in ("permission", "not authorized", "forbidden", "401", "403")):
++        return "permission_denied"
++    if any(token in message for token in ("connection", "network", "timeout", "timed out", "dns", "name resolution")):
++        return "transport_error"
++    if any(token in message for token in ("relation", "schema cache", "does not exist", "column", "pg_class")):
++        return "relation_inaccessible"
++    if any(token in message for token in ("postgrest", "json object requested", "decode", "unexpected response")):
++        return "postgrest_api_mismatch"
++    return "verification_query_failed"
++
++
++def _error_result(error_code: str, error_detail: str, *, status: str = "error") -> dict[str, Any]:
++    result = _base_result()
++    result["status"] = status
++    result["error"] = error_detail
++    result["error_code"] = error_code
++    result["error_detail"] = error_detail
++    return result
++
++
++def run_security_check() -> dict[str, Any]:
++    """
++    Run the security validation check against the live Supabase DB.
++    Returns a dict with explicit verification status.
++    """
++    result = _base_result()
++
+     supabase_url = os.getenv("SUPABASE_URL", "")
+-    service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
++    service_key = (
++        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
++        or os.getenv("SUPABASE_SERVICE_KEY", "")
++        or os.getenv("SUPABASE_KEY", "")
++    )
+ 
+     if not supabase_url or not service_key:
+-        result["error"] = "SUPABASE_URL or service role key not set — skipping security check"
+-        logger.warning("[security_validator] %s", result["error"])
++        result = _error_result(
++            "missing_credentials",
++            "SUPABASE_URL or service role key not set - skipping security check",
++            status="skipped",
++        )
++        logger.warning("[security_validator] %s", result["error_detail"])
+         return result
+ 
+     try:
+         from supabase import create_client
++
+         client = create_client(supabase_url, service_key)
++        tables_to_check = list(CHECKED_RLS_TABLES)
+ 
+-        # Use rpc to execute raw SQL via the postgres function
+-        # We call the pg_stat_user_tables approach via a direct query
+-        # Supabase Python client doesn't support raw SQL directly,
+-        # so we use the REST API with the postgres extension
+-        import urllib.request
+-        import urllib.error
+-        import json
+-
+-        db_url = supabase_url.rstrip("/")
+-        endpoint = f"{db_url}/rest/v1/rpc/exec_security_check"
+-
+-        # Try the direct approach via supabase-js compatible REST
+-        # Fall back to a simpler per-table check if exec_security_check doesn't exist
+-        try:
+-            # Check RLS on the three key tables directly
+-            tables_to_check = ["runner_results", "runner_race_facts", "import_batches"]
+-            rls_failures = []
+-
+-            for table in tables_to_check:
+-                res = client.table(table).select("*", count="exact").limit(0).execute()
+-                # If we get here without error, the table is accessible — check RLS via pg_class
+-            
+-            # Use a simpler check: try to query pg_class via the service role
+-            # This works because service_role bypasses RLS
+-            check_result = (
+-                client.table("pg_class")
+-                .select("relname, relrowsecurity")
+-                .eq("relnamespace", "2200")  # public schema OID
+-                .in_("relname", tables_to_check)
+-                .execute()
+-            )
++        for table in tables_to_check:
++            client.table(table).select("*", count="exact").limit(0).execute()
+ 
+-            if check_result.data:
+-                for row in check_result.data:
+-                    if not row.get("relrowsecurity", False):
+-                        rls_failures.append(row["relname"])
+-
+-            result["tables_rls_disabled"] = len(rls_failures)
+-            result["views_not_invoker"] = 0   # Confirmed by direct DB check
+-            result["functions_mutable_search_path"] = 0  # Confirmed by direct DB check
+-            result["matviews_exposed"] = 0    # Confirmed by direct DB check
+-
+-        except Exception:
+-            # pg_class not accessible via REST — use the known-good state
+-            # The DB was confirmed clean by direct SQL verification
+-            result["tables_rls_disabled"] = 0
+-            result["views_not_invoker"] = 0
+-            result["functions_mutable_search_path"] = 0
+-            result["matviews_exposed"] = 0
+-
+-        # Evaluate pass/fail
+-        total_issues = (
+-            max(0, result["tables_rls_disabled"])
+-            + max(0, result["views_not_invoker"])
+-            + max(0, result["functions_mutable_search_path"])
+-            + max(0, result["matviews_exposed"])
++        check_result = (
++            client.table("pg_class")
++            .select("relname, relrowsecurity")
++            .eq("relnamespace", "2200")
++            .in_("relname", tables_to_check)
++            .execute()
+         )
+ 
+-        result["passed"] = total_issues == 0
++        if check_result.data is None:
++            raise RuntimeError("pg_class query returned no data; verification state is unknown")
++
++        rls_failures = [row["relname"] for row in check_result.data if not row.get("relrowsecurity", False)]
++        result = _apply_metrics(
++            result,
++            {
++                "tables_rls_disabled": len(rls_failures),
++                "views_not_invoker": 0,
++                "functions_mutable_search_path": 0,
++                "matviews_exposed": 0,
++            },
++        )
+ 
+-        if result["passed"]:
++        if result["status"] == "partial":
++            logger.warning(
++                "[security_validator] PARTIAL - verified RLS only for checked tables=%s; unchecked=%s",
++                result["checked_objects"],
++                result["unchecked_objects"],
++            )
++        elif result["verified"]:
+             logger.info(
+-                "[security_validator] ✅ PASS — DB hardening verified: "
++                "[security_validator] PASS - DB hardening verified: "
+                 "RLS=%d views=%d functions=%d matviews=%d",
+                 result["tables_rls_disabled"],
+                 result["views_not_invoker"],
+@@ -143,18 +182,25 @@ def run_security_check() -> dict:
+             )
+         else:
+             logger.critical(
+-                "[security_validator] ❌ FAIL — Security regression detected! "
++                "[security_validator] FAIL - Security regression detected! "
+                 "tables_rls_disabled=%d views_not_invoker=%d "
+                 "functions_mutable_search_path=%d matviews_exposed=%d "
+-                "— Run scripts/migrations/002_full_security_hardening.sql immediately",
++                "- Run scripts/migrations/002_full_security_hardening.sql immediately",
+                 result["tables_rls_disabled"],
+                 result["views_not_invoker"],
+                 result["functions_mutable_search_path"],
+                 result["matviews_exposed"],
+             )
+ 
+-    except Exception as e:
+-        result["error"] = str(e)
+-        logger.warning("[security_validator] Could not complete security check (non-fatal): %s", e)
++    except Exception as exc:
++        error_code = _classify_security_error(exc)
++        result = _error_result(error_code, str(exc))
++        logger.warning(
++            "[security_validator] Could not verify DB hardening - "
++            "status=%s error_code=%s detail=%s",
++            result["status"],
++            error_code,
++            result["error_detail"],
++        )
+ 
+     return result
+diff --git a/app/services/velo_prime_service.py b/app/services/velo_prime_service.py
+index da6eb7d..9a1d4bf 100644
+--- a/app/services/velo_prime_service.py
++++ b/app/services/velo_prime_service.py
+@@ -27,9 +27,7 @@ import os
+ import re
+ from datetime import datetime, timedelta
+ 
+-from dotenv import load_dotenv
+-
+-load_dotenv()
++from app.core.runtime_env import utc_now, utc_now_iso
+ 
+ # from src.intelligence.track_context import get_track_context, resolve_draw_bias  # module not yet present — disabled until src/intelligence/track_context.py is added
+ 
+@@ -531,11 +529,11 @@ def _enrich_full_analysis_from_warehouse(
+             # Last resort: raw distance string (old behaviour — may miss on yard-suffixed strings)
+             race_dist = (race.get("distance") or race.get("dist") or "").strip()
+ 
+-        race_date_str = race.get("date") or datetime.utcnow().strftime("%Y-%m-%d")
++        race_date_str = race.get("date") or utc_now().strftime("%Y-%m-%d")
+         try:
+             race_date = datetime.strptime(race_date_str[:10], "%Y-%m-%d").date()
+         except Exception:
+-            race_date = datetime.utcnow().date()
++            race_date = utc_now().date()
+         cutoff_90d = (race_date - timedelta(days=90)).isoformat()
+ 
+         # Build horse_id -> normalized runner lookup for trainer_id resolution
+@@ -729,6 +727,41 @@ def _enrich_full_analysis_from_warehouse(
+ # ── Supabase persistence ──────────────────────────────────────────────────────
+ 
+ 
++def _stringify_upsert_error(exc: Exception) -> str:
++    parts = [str(exc)]
++    for attr in ("message", "details", "hint"):
++        value = getattr(exc, attr, None)
++        if value:
++            parts.append(str(value))
++    return " | ".join(part for part in parts if part)
++
++
++def _is_schema_error(error_text: str) -> bool:
++    lowered = error_text.lower()
++    return any(token in lowered for token in ("column", "schema cache", "does not exist", "could not find"))
++
++
++def _match_optional_group_from_error(
++    exc: Exception,
++    optional_groups: list[tuple[str, list[str], str]],
++    removed_groups: set[str],
++) -> tuple[str, list[str], str] | None:
++    error_text = _stringify_upsert_error(exc)
++    if not _is_schema_error(error_text):
++        return None
++
++    matches = []
++    for group_name, group_cols, group_hint in optional_groups:
++        if group_name in removed_groups:
++            continue
++        if any(re.search(rf"\b{re.escape(col)}\b", error_text, re.IGNORECASE) for col in group_cols):
++            matches.append((group_name, group_cols, group_hint))
++
++    if len(matches) == 1:
++        return matches[0]
++    return None
++
++
+ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier: str | None = None) -> bool:
+     """
+     Write top verdict + specialist scores to velo_verdicts.
+@@ -739,12 +772,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
+ 
+     # Validate tier before any DB write — non-canonical tier rejected
+     if decision_tier is None:
+-        log.warning(
+-            "persist_race_predictions: decision_tier is None for race %s — "
+-            "verdict will be written without a tier (audit gap). "
+-            "Caller must pass decision_tier from synthesize_decision().",
++        log.error(
++            "persist_race_predictions: decision_tier is required for race %s — refusing write with incomplete audit fields",
+             race.get("race_id"),
+         )
++        return False
+     else:
+         from src.constants import validate_tier
+ 
+@@ -755,7 +787,11 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
+             return False
+ 
+     url = os.getenv("SUPABASE_URL")
+-    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY")
++    key = (
++        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
++        or os.getenv("SUPABASE_SERVICE_KEY")
++        or os.getenv("SUPABASE_KEY")
++    )
+     if not url or not key:
+         log.warning("Supabase credentials missing — skipping persist")
+         return False
+@@ -790,7 +826,7 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
+         row = {
+             "race_id": race.get("race_id"),
+             "region": race.get("region", ""),  # UK/IRE filter verification — persisted at scoring time
+-            "generated_at": datetime.utcnow().isoformat(),
++            "generated_at": utc_now_iso(),
+             "engine_version": "velo_prime_v1",
+             "doctrine_version": "d010",
+             "ensemble_version": top.get("ensemble_version", ENSEMBLE_VERSION),
+@@ -869,6 +905,31 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
+         # enriched = _enrich_full_analysis_with_track_context(enriched, race)
+         row["full_analysis"] = enriched
+ 
++        required_fields = {
++            "race_id": row.get("race_id"),
++            "generated_at": row.get("generated_at"),
++            "engine_version": row.get("engine_version"),
++            "doctrine_version": row.get("doctrine_version"),
++            "ensemble_version": row.get("ensemble_version"),
++            "top_rank_horse_id": row.get("top_rank_horse_id"),
++            "top_rank_score": row.get("top_rank_score"),
++            "confidence_level": row.get("confidence_level"),
++            "decision_tier": row.get("decision_tier"),
++            "velo_prime_prob": row.get("velo_prime_prob"),
++            "full_analysis": row.get("full_analysis"),
++        }
++        missing_required = [
++            name for name, value in required_fields.items()
++            if value in (None, "") or (name == "full_analysis" and not value)
++        ]
++        if missing_required:
++            log.error(
++                "persist_race_predictions: required audit fields missing for race %s fields=%s",
++                race.get("race_id"),
++                missing_required,
++            )
++            return False
++
+         # Upsert with graceful degradation for optional column groups.
+         # Each group is stripped on its first error so scoring is never blocked
+         # by a missing migration. Core fields (race_id, velo_prime_prob etc.) always persist.
+@@ -917,29 +978,59 @@ def persist_race_predictions(race: dict, predictions: list[dict], decision_tier:
+                 "Apply supabase/migrations/20260412_003_a_tier_suspect_cohort.sql",
+             ),
+         ]
+-        for _attempt, (_grp_name, _grp_cols, _grp_hint) in enumerate(
+-            [(None, [], None)] + _optional_col_groups  # attempt 0 = full row
+-        ):
+-            if _grp_name is not None:
+-                log.warning(
+-                    "velo_verdicts upsert: %s columns missing, retrying without them. %s",
+-                    _grp_name, _grp_hint,
+-                )
+-                for _col in _grp_cols:
+-                    row.pop(_col, None)
++        original_payload_keys = set(row.keys())
++        removed_groups: list[str] = []
++        removed_group_set: set[str] = set()
++        while True:
+             try:
+                 sb.table("velo_verdicts").upsert(row, on_conflict="race_id").execute()
+-                break  # success
++                break
+             except Exception as _upsert_err:
+-                if _attempt < len(_optional_col_groups):
+-                    continue  # strip next group and retry
+-                raise  # all groups stripped, propagate
++                matched_group = _match_optional_group_from_error(
++                    _upsert_err,
++                    _optional_col_groups,
++                    removed_group_set,
++                )
++                if matched_group is None:
++                    log.error(
++                        "velo_verdicts upsert failed without a provable optional-column match. "
++                        "race_id=%s original_keys=%s removed_groups=%s final_keys=%s error=%s",
++                        race.get("race_id"),
++                        sorted(original_payload_keys),
++                        removed_groups,
++                        sorted(row.keys()),
++                        _stringify_upsert_error(_upsert_err),
++                    )
++                    raise
++
++                _grp_name, _grp_cols, _grp_hint = matched_group
++                removed_groups.append(_grp_name)
++                removed_group_set.add(_grp_name)
++                for _col in _grp_cols:
++                    row.pop(_col, None)
++                log.warning(
++                    "velo_verdicts upsert retry: removing proven-bad group=%s cols=%s race_id=%s "
++                    "remaining_keys=%s hint=%s error=%s",
++                    _grp_name,
++                    _grp_cols,
++                    race.get("race_id"),
++                    sorted(row.keys()),
++                    _grp_hint,
++                    _stringify_upsert_error(_upsert_err),
++                )
+         log.info(
+             "Persisted verdict for race %s — top: %s (%.4f)",
+             race.get("race_id"),
+             top.get("horse"),
+             top.get("velo_prime_prob"),
+         )
++        if removed_groups:
++            log.error(
++                "Persisted verdict for race %s with optional observability degradation. removed_groups=%s",
++                race.get("race_id"),
++                removed_groups,
++            )
++            return False
+         return True
+ 
+     except Exception as e:
+@@ -957,7 +1048,11 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
+         return 0
+ 
+     url = os.getenv("SUPABASE_URL")
+-    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY")
++    key = (
++        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
++        or os.getenv("SUPABASE_SERVICE_KEY")
++        or os.getenv("SUPABASE_KEY")
++    )
+     if not url or not key:
+         return 0
+ 
+@@ -967,7 +1062,7 @@ def persist_runner_derived_features(race: dict, predictions: list[dict]) -> int:
+         sb = create_client(url, key)
+ 
+         race_id = race.get("race_id")
+-        computed_at = datetime.utcnow().isoformat()
++        computed_at = utc_now_iso()
+         rows = []
+ 
+         for pred in predictions:
+diff --git a/reports/daily/longshot_regime_simulation_2026-04-15.md b/reports/daily/longshot_regime_simulation_2026-04-15.md
+index 18deebf..07d1aa7 100644
+--- a/reports/daily/longshot_regime_simulation_2026-04-15.md
++++ b/reports/daily/longshot_regime_simulation_2026-04-15.md
+@@ -30,10 +30,13 @@ Model: sidecar doctrine simulation only
+ | Southwell (AW) | 3 |
+ | Kempton (AW) | 2 |
+ | Dundalk (AW) (IRE) | 2 |
+-| Wolverhampton (AW) | 1 |
+ | Lingfield (AW) | 1 |
++| Wolverhampton (AW) | 1 |
+ 
+ ## Notes
++- doctrine review clock: `sigma_audits.created_at`
++- truth rows are mapped onto the reviewed sigma races with `doctrine_event_id` first; `race_id` fallback is used only when doctrine lineage is missing.
++- truth lineage matches: event_id=769 fallback_race_id=0 unmatched=141
+ - `winner_recovery_count` is the number of blocker-fired regime rows whose observed outcome was `WIN`.
+ - `false_positive_increase` is the number of regime rows whose observed outcome was `MISS` and would be re-admitted under the relaxed regime proxy.
+ - `net_a_tier_precision_change_pct_points` compares the regime proxy win rate against the observed base A-tier win rate over the same window.
+diff --git a/scripts/run_daily_pipeline.py b/scripts/run_daily_pipeline.py
+index f56603b..493badd 100644
+--- a/scripts/run_daily_pipeline.py
++++ b/scripts/run_daily_pipeline.py
+@@ -44,6 +44,7 @@ def main():
+     parser = argparse.ArgumentParser()
+     parser.add_argument("--skip-sigma",  action="store_true", help="Skip yesterday's sigma results")
+     parser.add_argument("--rpdc-only",   action="store_true", help="Only run RPDC refresh")
++    parser.add_argument("--rp-stats",    action="store_true", help="Also refresh RP trainer/jockey stats (Phase A, ~5 min)")
+     parser.add_argument("--date",        type=str, default="", help="Override scoring date YYYY-MM-DD")
+     args = parser.parse_args()
+ 
+@@ -85,6 +86,13 @@ def main():
+                 f"Step 4: Sigma results for {yesterday}"
+             )
+ 
++        # Step 5 (optional): RP trainer/jockey stats refresh — run weekly not daily
++        if args.rp_stats:
++            results["rp_stats"] = run(
++                ["scripts/ingest_rp_stats.py", "--top", "20"],
++                "Step 5: RP trainer/jockey stats (Phase A)"
++            )
++
+     # Summary
+     print(f"\n{'='*60}")
+     print("  DAILY PIPELINE SUMMARY")
+diff --git a/scripts/run_longshot_regime_simulation.py b/scripts/run_longshot_regime_simulation.py
+index 2fcaa6f..d7e5df8 100644
+--- a/scripts/run_longshot_regime_simulation.py
++++ b/scripts/run_longshot_regime_simulation.py
+@@ -3,6 +3,10 @@ VÉLØ Longshot Regime Simulation
+ ===============================
+ Read-only sidecar simulation for the identified longshot blocker regime.
+ 
++Doctrine review clock:
++  - sigma_audits.created_at
++  - truth rows are supporting evidence mapped onto the reviewed sigma set
++
+ Current focus:
+   - blocker_type = longshot_block_allowed
+   - decision_tier = A
+@@ -17,15 +21,31 @@ from __future__ import annotations
+ import argparse
+ import json
+ import os
+-from collections import Counter, defaultdict
++import sys
++from collections import Counter
+ from datetime import datetime, timedelta, timezone
+ from pathlib import Path
+ from typing import Any
+ 
++ROOT = Path(__file__).resolve().parent.parent
++if str(ROOT) not in sys.path:
++    sys.path.insert(0, str(ROOT))
++
+ import requests
+ from dotenv import load_dotenv
+ 
+-load_dotenv(Path(__file__).parent.parent / ".env")
++from app.runtime.doctrine_sidecar_common import (
++    chunked,
++    dedupe_latest_sigma_rows,
++    dedupe_latest_truth_rows,
++    review_race_ids,
++    sp_bucket,
++    surface_bucket,
++    truth_for_sigma_row,
++    truth_lookup,
++)
++
++load_dotenv(ROOT / ".env")
+ 
+ 
+ class ReadPathUnavailable(RuntimeError):
+@@ -94,7 +114,7 @@ def _fetch_sigma_window(start_date: str, end_date: str) -> list[dict]:
+     start_ts = f"{start_date}T00:00:00+00:00"
+     end_ts = f"{end_date}T23:59:59+00:00"
+     sql_rows = _management_sql(f"""
+-        SELECT race_id, outcome, decision_tier, miss_reason, track, created_at
++        SELECT race_id, doctrine_event_id, outcome, decision_tier, miss_reason, track, created_at, horse_id
+         FROM sigma_audits
+         WHERE created_at >= '{start_ts}' AND created_at <= '{end_ts}' AND outcome IS NOT NULL
+         ORDER BY created_at ASC
+@@ -103,14 +123,14 @@ def _fetch_sigma_window(start_date: str, end_date: str) -> list[dict]:
+         return sql_rows
+     return _rest_fetch(
+         "sigma_audits",
+-        "race_id,outcome,decision_tier,miss_reason,track,created_at",
++        "race_id,doctrine_event_id,outcome,decision_tier,miss_reason,track,created_at,horse_id",
+         [f"created_at=gte.{start_ts}", f"created_at=lte.{end_ts}", "outcome=not.is.null"],
+     )
+ 
+ 
+ def _fetch_truth_window(start_date: str, end_date: str) -> list[dict]:
+     sql_rows = _management_sql(f"""
+-        SELECT race_id, race_date, blocker_fired, blocker_type, actual_winner_sp
++        SELECT race_id, doctrine_event_id, race_date, generated_at, blocker_fired, blocker_type, actual_winner_sp
+         FROM race_truth_audits
+         WHERE race_date >= '{start_date}' AND race_date <= '{end_date}'
+     """)
+@@ -118,41 +138,39 @@ def _fetch_truth_window(start_date: str, end_date: str) -> list[dict]:
+         return sql_rows
+     return _rest_fetch(
+         "race_truth_audits",
+-        "race_id,race_date,blocker_fired,blocker_type,actual_winner_sp",
++        "race_id,doctrine_event_id,race_date,generated_at,blocker_fired,blocker_type,actual_winner_sp",
+         [f"race_date=gte.{start_date}", f"race_date=lte.{end_date}"],
+     )
+ 
+ 
+-def _surface_bucket(track: str | None) -> str:
+-    if not track:
+-        return "unknown"
+-    aw_markers = [
+-        "(AW)",
+-        "Dundalk",
+-        "Kempton (AW)",
+-        "Southwell (AW)",
+-        "Wolverhampton",
+-        "Newcastle (AW)",
+-        "Lingfield (AW)",
+-        "Chelmsford",
+-    ]
+-    if any(marker in track for marker in aw_markers):
+-        return "AW"
+-    return "non_AW_or_unknown"
+-
+-
+-def _sp_bucket(price: Any) -> str:
+-    if price is None:
+-        return "unknown"
+-    try:
+-        value = float(price)
+-    except (TypeError, ValueError):
+-        return "unknown"
+-    if value <= 3.0:
+-        return "short_<=3.0"
+-    if value <= 6.0:
+-        return "mid_3.01_6.0"
+-    return "outsider_>6.0"
++def _sql_in_list(values: list[str]) -> str:
++    return ",".join("'" + value.replace("'", "''") + "'" for value in values)
++
++
++def _fetch_truth_for_sigma_rows(sigma_rows: list[dict[str, Any]]) -> list[dict]:
++    race_ids = review_race_ids(sigma_rows)
++    if not race_ids:
++        return []
++    rows: list[dict] = []
++    for race_chunk in chunked(race_ids):
++        sql_rows = _management_sql(
++            f"""
++            SELECT race_id, doctrine_event_id, race_date, generated_at, blocker_fired, blocker_type, actual_winner_sp
++            FROM race_truth_audits
++            WHERE race_id IN ({_sql_in_list(race_chunk)})
++            """
++        )
++        if sql_rows is not None:
++            rows.extend(sql_rows)
++            continue
++        rows.extend(
++            _rest_fetch(
++                "race_truth_audits",
++                "race_id,doctrine_event_id,race_date,generated_at,blocker_fired,blocker_type,actual_winner_sp",
++                [f"race_id=in.({','.join(race_chunk)})"],
++            )
++        )
++    return dedupe_latest_truth_rows(rows)
+ 
+ 
+ def _window_bounds(target_date: str, days: int) -> tuple[str, str]:
+@@ -167,12 +185,10 @@ def _rate(numerator: int, denominator: int) -> float:
+ 
+ def generate(target_date: str, days: int) -> Path:
+     start_date, end_date = _window_bounds(target_date, days)
+-    sigma_rows = _fetch_sigma_window(start_date, end_date)
+-    truth_rows = _fetch_truth_window(start_date, end_date)
+-
+-    sigma_by_race: dict[str, list[dict[str, Any]]] = defaultdict(list)
+-    for row in sigma_rows:
+-        sigma_by_race[row.get("race_id")].append(row)
++    lineage_stats: dict[str, int] = {}
++    sigma_rows = dedupe_latest_sigma_rows(_fetch_sigma_window(start_date, end_date))
++    truth_rows = _fetch_truth_for_sigma_rows(sigma_rows)
++    truth_map = truth_lookup(truth_rows)
+ 
+     base_a_tier_rows = [row for row in sigma_rows if row.get("decision_tier") == "A"]
+     base_outcomes = Counter((row.get("outcome") or "unknown") for row in base_a_tier_rows)
+@@ -180,28 +196,28 @@ def generate(target_date: str, days: int) -> Path:
+     base_place_rate = _rate(base_outcomes.get("PLACED", 0), len(base_a_tier_rows))
+ 
+     regime_rows: list[dict[str, Any]] = []
+-    for truth_row in truth_rows:
++    for sigma_row in sigma_rows:
++        truth_row = truth_for_sigma_row(sigma_row, truth_map, stats=lineage_stats)
+         if not truth_row.get("blocker_fired"):
+             continue
+         if truth_row.get("blocker_type") != "longshot_block_allowed":
+             continue
+-        if _sp_bucket(truth_row.get("actual_winner_sp")) != "short_<=3.0":
++        if sp_bucket(truth_row.get("actual_winner_sp")) != "short_<=3.0":
+             continue
+-        for sigma_row in sigma_by_race.get(truth_row.get("race_id"), []):
+-            if sigma_row.get("decision_tier") != "A":
+-                continue
+-            if _surface_bucket(sigma_row.get("track")) != "AW":
+-                continue
+-            regime_rows.append(
+-                {
+-                    "race_id": truth_row.get("race_id"),
+-                    "track": sigma_row.get("track"),
+-                    "outcome": sigma_row.get("outcome"),
+-                    "miss_reason": sigma_row.get("miss_reason"),
+-                    "actual_winner_sp": truth_row.get("actual_winner_sp"),
+-                    "actual_winner_bucket": "short_<=3.0",
+-                }
+-            )
++        if sigma_row.get("decision_tier") != "A":
++            continue
++        if surface_bucket(sigma_row.get("track")) != "AW":
++            continue
++        regime_rows.append(
++            {
++                "race_id": truth_row.get("race_id"),
++                "track": sigma_row.get("track"),
++                "outcome": sigma_row.get("outcome"),
++                "miss_reason": sigma_row.get("miss_reason"),
++                "actual_winner_sp": truth_row.get("actual_winner_sp"),
++                "actual_winner_bucket": "short_<=3.0",
++            }
++        )
+ 
+     regime_outcomes = Counter((row.get("outcome") or "unknown") for row in regime_rows)
+     admitted = len(regime_rows)
+@@ -252,6 +268,9 @@ def generate(target_date: str, days: int) -> Path:
+         lines.append("| none | 0 |")
+     lines.append("")
+     lines.append("## Notes")
++    lines.append("- doctrine review clock: `sigma_audits.created_at`")
++    lines.append("- truth rows are mapped onto the reviewed sigma races with `doctrine_event_id` first; `race_id` fallback is used only when doctrine lineage is missing.")
++    lines.append(f"- truth lineage matches: event_id={lineage_stats.get('truth_event_matches', 0)} fallback_race_id={lineage_stats.get('truth_fallback_matches', 0)} unmatched={lineage_stats.get('truth_unmatched', 0)}")
+     lines.append("- `winner_recovery_count` is the number of blocker-fired regime rows whose observed outcome was `WIN`.")
+     lines.append("- `false_positive_increase` is the number of regime rows whose observed outcome was `MISS` and would be re-admitted under the relaxed regime proxy.")
+     lines.append("- `net_a_tier_precision_change_pct_points` compares the regime proxy win rate against the observed base A-tier win rate over the same window.")
+diff --git a/scripts/shadow_lab.py b/scripts/shadow_lab.py
+index bf0f729..a095fcd 100644
+--- a/scripts/shadow_lab.py
++++ b/scripts/shadow_lab.py
+@@ -29,8 +29,9 @@ from typing import Optional
+ ROOT = Path(__file__).parent.parent
+ sys.path.insert(0, str(ROOT))
+ 
+-from dotenv import load_dotenv
+-load_dotenv(ROOT / ".env")
++from app.core.runtime_env import load_optional_env_file
++
++load_optional_env_file(ROOT / ".env")
+ 
+ # ── Supabase ─────────────────────────────────────────────────────────────────
+ SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+diff --git a/tests/test_doctrine_sidecars.py b/tests/test_doctrine_sidecars.py
+index 4c9f7c1..c4a8397 100644
+--- a/tests/test_doctrine_sidecars.py
++++ b/tests/test_doctrine_sidecars.py
+@@ -290,12 +290,15 @@ def test_board_and_miner_align_on_deduped_contradiction_counts(monkeypatch):
+     assert "| 2 |" in board_text
+     assert "| reviewed_sigma_rows | reviewed_sigma_rows_with_horse_id | reviewed_sigma_rows_in_rpdc_covered_events | reviewed_sigma_rows_with_exact_event_horse_match |" in board_text
+     assert "| 3 | 3 | 2 | 1 |" in board_text
++    assert "RPDC is currently a sparse candidate surface, not full reviewed-selection coverage." in board_text
+     assert "| a_tier_weak_place_support | 1 |" in miner_text
+     assert "| weak_model_strong_doctrine | 1 |" in miner_text
+     assert "wrong_horse_should_not_attach_rpdc" not in miner_text
+     assert "| 3 | 3 | 2 | 1 |" in miner_text
++    assert "RPDC is currently a sparse candidate surface, not full reviewed-selection coverage." in miner_text
+     assert "| 7d | a_tier_weak_place_support | 1 | 100.0 | 0.0 | 0.0 |" in board_text
+     assert "| 7d | weak_model_strong_doctrine | 1 | 0.0 | 100.0 | 0.0 |" in board_text
++    assert "## Longshot Block Allowed Regime Split" in board_text
+ 
+ 
+ def test_longshot_regime_simulation_uses_latest_truth_and_aw_filter(monkeypatch):
+@@ -360,3 +363,12 @@ def test_longshot_regime_simulation_uses_latest_truth_and_aw_filter(monkeypatch)
+     assert payload["regime_count"] == 1
+     assert payload["winner_recovery_count"] == 1
+     assert payload["false_positive_increase"] == 0
++
++
++def test_lineage_backfill_migration_stays_strictly_provable():
++    sql = (Path(__file__).resolve().parents[1] / "supabase" / "migrations" / "20260415_003_backfill_sigma_audits_horse_id.sql").read_text(encoding="utf-8")
++
++    assert "velo_verdicts" in sql
++    assert "top_rank_horse_id" in sql
++    assert "COUNT(DISTINCT top_rank_horse_id) = 1" in sql
++    assert "actual_winner" not in sql
+diff --git a/workers/daily_pipeline.py b/workers/daily_pipeline.py
+index 07ca569..9ec449f 100644
+--- a/workers/daily_pipeline.py
++++ b/workers/daily_pipeline.py
+@@ -38,8 +38,9 @@ from pathlib import Path
+ ROOT = Path(__file__).parent.parent
+ sys.path.insert(0, str(ROOT))
+ 
+-from dotenv import load_dotenv
+-load_dotenv(ROOT / ".env")
++from app.core.runtime_env import load_optional_env_file, utc_now_iso
++
++load_optional_env_file(ROOT / ".env")
+ 
+ logging.basicConfig(
+     level=logging.INFO,
+@@ -254,7 +255,7 @@ def close_pipeline_run(run_id, status, stats, error_msg=None, error_trace=None):
+         return
+     patch = {
+         "run_state":   "completed",
+-        "finished_at": datetime.utcnow().isoformat() + "Z",
++        "finished_at": utc_now_iso(),
+         "status":      status,
+         "races_processed":   stats.get("races_ok", 0),
+         "runners_processed": stats.get("runners_ok", 0),
+@@ -331,7 +332,7 @@ def upsert_horse_profile(runner, race_date, run_id, stats):
+         "dam_name": runner.get("dam", ""), "damsire_id": runner.get("damsire_id", ""),
+         "damsire_name": runner.get("damsire", ""), "silk_url": runner.get("silk_url", ""),
+         "first_seen_date": race_date,
+-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
++        "last_updated_at": utc_now_iso(),
+     }, run_id=run_id, stats=stats)
+ 
+ 
+@@ -343,7 +344,7 @@ def upsert_trainer_profile(runner, race_date, run_id, stats):
+         "id": tid, "name": runner.get("trainer", ""),
+         "location": runner.get("trainer_location", ""),
+         "first_seen_date": race_date,
+-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
++        "last_updated_at": utc_now_iso(),
+     }, run_id=run_id, stats=stats)
+ 
+ 
+@@ -354,7 +355,7 @@ def upsert_jockey_profile(runner, race_date, run_id, stats):
+     supabase_upsert("jockey_profiles", {
+         "id": jid, "name": runner.get("jockey", ""),
+         "first_seen_date": race_date,
+-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
++        "last_updated_at": utc_now_iso(),
+     }, run_id=run_id, stats=stats)
+ 
+ 
+@@ -365,7 +366,7 @@ def upsert_owner_profile(runner, race_date, run_id, stats):
+     supabase_upsert("owner_profiles", {
+         "id": oid, "name": runner.get("owner", ""),
+         "first_seen_date": race_date,
+-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
++        "last_updated_at": utc_now_iso(),
+     }, run_id=run_id, stats=stats)
+ 
+ 
+@@ -377,7 +378,7 @@ def upsert_course_profile(race, run_id, stats):
+         "id": cid, "name": race.get("course", ""),
+         "region": race.get("region", ""), "surface": race.get("surface", ""),
+         "country": race.get("region", ""),
+-        "last_updated_at": datetime.utcnow().isoformat() + "Z",
++        "last_updated_at": utc_now_iso(),
+     }, run_id=run_id, stats=stats)
+ 
+ 
+@@ -450,7 +451,7 @@ def upsert_runner_race_fact(race, runner, race_date, run_id, stats):
+         "quotes_text": runner.get("quotes"),
+         "betting_forecast": race.get("betting_forecast"),
+         "morning_odds_dec": morning_odds,
+-        "updated_at": datetime.utcnow().isoformat() + "Z",
++        "updated_at": utc_now_iso(),
+     }
+     supabase_upsert("runner_race_facts", row, conflict_keys=["race_id", "horse_id"], run_id=run_id, stats=stats)
+ 
+@@ -576,7 +577,7 @@ def reconcile_results_for_date(target_date: str, known_race_ids: set, run_id, st
+                         "in_running_comment":  runner.get("comment"),
+                         "prize_won": safe_float(runner.get("prize")),
+                         "is_winner": pos_int == 1,
+-                        "updated_at": datetime.utcnow().isoformat() + "Z",
++        "updated_at": utc_now_iso(),
+                     })
+ 
+             # Batch write runner_results
+diff --git a/workers/racing_api_fetcher.py b/workers/racing_api_fetcher.py
+index 3fdf7a9..5736f86 100644
+--- a/workers/racing_api_fetcher.py
++++ b/workers/racing_api_fetcher.py
+@@ -21,7 +21,9 @@ Environment variables required:
+   RACING_API_PASSWORD       — HTTP Basic Auth password
+   RACING_API_BASE_URL       — Base URL (default: https://api.theracingapi.com)
+   SUPABASE_URL              — Supabase project URL
+-  SUPABASE_KEY              — Supabase service role key
++  SUPABASE_SERVICE_ROLE_KEY — Supabase service role key
++  SUPABASE_SERVICE_KEY      — Legacy fallback service key
++  SUPABASE_KEY              — Deprecated fallback name
+   MEMORY_DB_PATH            — Path to SQLite memory DB (default: data/velo_memory.db)
+ """
+ 
+@@ -59,7 +61,11 @@ RACING_API_BASE_URL: str = os.environ.get(
+ RACING_API_USERNAME: str = os.environ.get("RACING_API_USERNAME", "")
+ RACING_API_PASSWORD: str = os.environ.get("RACING_API_PASSWORD", "")
+ SUPABASE_URL: str = os.environ.get("SUPABASE_URL", "")
+-SUPABASE_KEY: str = os.environ.get("SUPABASE_KEY", "")
++SUPABASE_SERVICE_KEY: str = (
++    os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
++    or os.environ.get("SUPABASE_SERVICE_KEY", "")
++    or os.environ.get("SUPABASE_KEY", "")
++)
+ MEMORY_DB_PATH: str = os.environ.get("MEMORY_DB_PATH", "data/velo_memory.db")
+ 
+ # Rate limit: 5 req/s
+@@ -217,14 +223,14 @@ class SupabaseWriter:
+     """Thin wrapper around the Supabase REST API for upsert operations."""
+ 
+     def __init__(self) -> None:
+-        if not SUPABASE_URL or not SUPABASE_KEY:
++        if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+             raise EnvironmentError(
+-                "SUPABASE_URL and SUPABASE_KEY must be set."
++                "SUPABASE_URL and a Supabase service key must be set."
+             )
+         self._base = SUPABASE_URL.rstrip("/") + "/rest/v1"
+         self._headers = {
+-            "apikey": SUPABASE_KEY,
+-            "Authorization": f"Bearer {SUPABASE_KEY}",
++            "apikey": SUPABASE_SERVICE_KEY,
++            "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+             "Content-Type": "application/json",
+             "Prefer": "resolution=merge-duplicates",
+         }

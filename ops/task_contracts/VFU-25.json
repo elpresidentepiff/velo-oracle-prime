@@ -1,0 +1,100 @@
+{
+  "task_id": "VFU-25",
+  "title": "Confidence Flood Cure Design Sandbox",
+  "classification": "DRY_RUN_REPORT_ONLY_CURE_DESIGN_SANDBOX",
+  "allowed_paths": [
+    "docs/current/",
+    "data/reports/",
+    "ops/task_contracts/VFU-25.json"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/sqpe_v17/",
+    "models/specialist/",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/build_vp_opportunity_panel.py",
+    "scripts/ops/build_confidence_flood_diagnostic.py",
+    "scripts/ops/build_confidence_flood_root_cause_split.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_sigma_results",
+    "read_vfu_22_report",
+    "read_vfu_23_diagnostic",
+    "read_vfu_24_split",
+    "create_report",
+    "create_docs",
+    "create_task_contract",
+    "run_task_contract_audit"
+  ],
+  "forbidden_actions": [
+    "implement_cure",
+    "pre_race_gate_change",
+    "vp_gate_criteria_change",
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [
+    "supabase.table(",
+    "requests.post(supabase",
+    "telegram send",
+    "bot.send_message",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true"
+  ],
+  "required_outputs": [
+    "ops/task_contracts/VFU-25.json",
+    "docs/current/CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX.md",
+    "data/reports/vfu_25_confidence_flood_cure_design_sandbox.md"
+  ],
+  "required_classifications": [
+    "CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX_COMPLETE",
+    "CANDIDATE_MITIGATIONS_DESIGNED",
+    "GAP_COLLAPSE_GUARD_DESIGNED",
+    "THRESHOLD_FLOOD_GUARD_DESIGNED",
+    "GREEN_DAY_RISK_OVERLAY_DESIGNED",
+    "PROMOTION_CRITERIA_DEFINED",
+    "NO_CURE_IMPLEMENTED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "classification_required": [
+    "CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX_COMPLETE",
+    "CANDIDATE_MITIGATIONS_DESIGNED",
+    "GAP_COLLAPSE_GUARD_DESIGNED",
+    "THRESHOLD_FLOOD_GUARD_DESIGNED",
+    "GREEN_DAY_RISK_OVERLAY_DESIGNED",
+    "PROMOTION_CRITERIA_DEFINED",
+    "NO_CURE_IMPLEMENTED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX_COMPLETE",
+    "CANDIDATE_MITIGATIONS_DESIGNED",
+    "GAP_COLLAPSE_GUARD_DESIGNED",
+    "THRESHOLD_FLOOD_GUARD_DESIGNED",
+    "GREEN_DAY_RISK_OVERLAY_DESIGNED",
+    "PROMOTION_CRITERIA_DEFINED",
+    "NO_CURE_IMPLEMENTED",
+    "NO_PRE_RACE_GATE_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}

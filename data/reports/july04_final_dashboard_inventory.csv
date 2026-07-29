@@ -1,0 +1,25 @@
+field,value,source
+date,2026-07-04,dashboard JSON + Supabase read-only check
+races,51,dashboard JSON + velo_verdicts count
+runners,453,dashboard JSON (per-runner rows)
+verdict_rows,51,velo_verdicts count (2026-07-04+)
+rpdc_coverage,51/51,velo_verdicts.rpdc_primary_tag non-null count
+race_type_coverage,51/51,velo_verdicts.race_type non-null count
+predicted_field_size_coverage,51/51,velo_verdicts.predicted_field_size non-null count
+full_analysis_coverage,51/51,velo_verdicts.full_analysis present count
+top_rank_horse_id_coverage,51/51,velo_verdicts.top_rank_horse_id non-null count
+pick_sp_helper_dryread,51/51,PR #117 sigma helper dry-read (not re-run this mission; carried from PR #117)
+field_size_helper_dryread,51/51,PR #117 sigma helper dry-read
+race_type_helper_dryread,51/51,PR #117 sigma helper dry-read
+decision_tier_per_race,"A=4 B=25 C=13 D=3 X=6",scoring run console log (51 races total)
+decision_tier_per_runner,"A=22 B=183 C=147 D=33 X=68",dashboard JSON predictions array (453 runners total)
+supabase_velo_verdicts_status,live/current,confirmed via read-only SELECT this mission
+runner_prediction_snapshots,0,confirmed via read-only count this mission
+sigma_audits,0,confirmed via read-only count this mission
+telegram_status,no real send,pre-existing CONTAINMENT NO-OP mechanism
+sigma_run_status,not run,run_results_sigma.py never invoked
+odds_sp_coverage,0/453 (all null),pre-existing publisher limitation, disclosed not fabricated
+status,RACEDAY_LIVE_VERDICTS_READY,this mission's conclusion
+sigma_status,SIGMA_29_READY_BUT_NOT_RUN,this mission's conclusion
+dashboard_json_location_clean_worktree,current (generated_at 2026-07-04T14:39:24),/mnt/c/Users/puror/velo-oracle-prime-clean-data01/data/dashboard_daily_predictions_2026_07_04.json
+dashboard_json_location_dirty_repo,synced from clean worktree this mission (plain file copy, no re-score),/mnt/c/Users/puror/velo-oracle-prime/data/dashboard_daily_predictions_2026_07_04.json

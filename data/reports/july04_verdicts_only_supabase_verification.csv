@@ -1,0 +1,11 @@
+field,rows_checked,rows_populated,coverage_pct,note
+race_id,51,51,100.0,all 51 races represented
+race_type,51,51,100.0,SIGMA-26 persistence patch confirmed working end-to-end in production for the first time
+race_type_raw,51,51,100.0,raw pre-normalisation value persisted alongside canonical race_type
+race_type_source,51,51,100.0,all rows show scoring_race_dict as source
+race_type_recorded_at,51,51,100.0,timestamp populated on every row
+predicted_field_size,51,51,100.0,confirmed persisted (SIGMA-25 finding validated live)
+full_analysis,51,51,100.0,present on every row (JSON blob with predictions/plot_intel/governance)
+top_rank_horse_id,51,51,100.0,real RP horse_id persisted on every row
+decision_tier,51,51,100.0,populated on every row
+git_commit_sha,51,51,100.0,populated on every row

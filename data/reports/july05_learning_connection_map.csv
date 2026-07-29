@@ -1,0 +1,20 @@
+stage,artifact_or_table,race_count,status,feeds_next
+RP scrape,data/racing_post_account_raw/live-full-racepages-2026-07-05/,22,COMPLETE,standard cache
+standard cache,data/racecards_2026_07_05_standard.json,22,COMPLETE,racecard_merged + passports
+PDF intel merge,data/racecard_merged/racecard_{AYR,MAR,STH}_2026-07-05.json,22 races / 173 of 193 runners (~90%),COMPLETE (PR #123),scoring
+race_type extraction,src/velo/racecard_loader.py,22/22,COMPLETE (PR #124),velo_verdicts.race_type
+RPDC,runner_release_candidates (Supabase),193 rows / 22 races,COMPLETE,verdicts
+verdicts,velo_verdicts (Supabase),22,COMPLETE,dashboard + Sigma
+dashboard,new_build_dashboard_server.py /api/governed-card,22 races / 193 runners,LIVE,operator visibility only
+results,data/results/rp_results_2026_07_05.json,22,COMPLETE,Sigma
+Sigma,sigma_audits (Supabase) + data/sigma_results/sigma_results_2026_07_05.json,22 evaluated / 21 audit rows,COMPLETE,horse-run ingest + learning
+horse-run ingest,racing_horse_runs (Supabase),193 rows / 22 races,COMPLETE,retrieval corpus + tomorrow's RPDC
+retrieval corpus,data/sigma_memory/sigma_retrieval_corpus_v1.jsonl,date_max=2026-07-05 (107 dates total),COMPLETE,Mission Control + Council
+Mission Control,data/mission_control/2026-07-05_mission_control.json,22,COMPLETE,Council + VP30 + operator gate status
+VP30,data/vp30_operator_card_2026-07-05.md,22,COMPLETE,operator visibility only
+Council,LLM council run/packet/report artifacts,22,WATCH_ONLY (SR below baseline),blocks learning-consume
+Execution Bridge,paper ledger reports,22,SHADOW_COMPLETE,router evidence
+Innovation,data/velo_innovation_protocol_1k_deduped.csv,1976 total rows / 22 new today,COMPLETE,Router Audit
+Router Audit,data/router_shadow_audit_latest.csv,V1=226 V2=216(WATCHLIST) V6=86,2_LANES_FROZEN_1_WATCHLIST,promotion evidence (blocked)
+Nightly Learning,data/nightly_eod_learning_status_2026_07_05.json,22 matched / 22 events,PASS_EVOLVED + PASS_IDEMPOTENT,tomorrow gate
+Tomorrow gate,scripts/ops/verify_raceday_universe.py,n/a,NOT_YET_RUN_FOR_TOMORROW,next race day's Step 0 preflight

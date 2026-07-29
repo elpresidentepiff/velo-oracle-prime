@@ -1,0 +1,11 @@
+step,script,status,race_count,notes
+12,scripts/ops/run_results_sigma.py,COMPLETE,22/22,"sr=0.1818 wins=4 frames=13 frame_rate=0.5909; sigma_audits=21 (1 tier-X blocked); Telegram sent"
+13,scripts/ops/ingest_results_to_horse_runs.py,COMPLETE,22,"racing_horse_runs: 193 rows written for 2026-07-05"
+14,scripts/ops/build_sigma_retrieval_corpus.py,COMPLETE,n/a,"freshness_gate_passed=true; date_max=2026-07-05; date_count=107 (required a fresh dump_sigma_audits.py first)"
+15,scripts/ops/update_mission_control.py,COMPLETE,22,"source_truth=RP_MERGED_CLEAN (clean, no override); learning_gate BLOCKED; promotion_gate BLOCKED"
+16A,scripts/audit/vp30_operator_card.py,COMPLETE,22,"1 MDS_HIGH sidecar candidate (Way Maker, Market Rasen 14:20)"
+16B,scripts/audit/run_velo_council.py,COMPLETE,22,"verdict WATCH_ONLY; reason SIGMA_COVERAGE:SR_BELOW_BASELINE (not missing snapshots, unlike July 04)"
+17,scripts/ops/run_execution_bridge_shadow.py,COMPLETE,n/a,"1 active paper bet, 0 wins, 1 placed, ROI +0.0%; no live execution, no staking, no Telegram"
+18,scripts/ops/build_innovation_protocol.py,COMPLETE,22,"22 new rows deduped; total dataset 1976 rows, 0 duplicates; V6_GOLD_SEAM_WATCHLIST ROI +1.2%->+9.3%"
+19,scripts/ops/router_shadow_audit.py,COMPLETE,n/a,"V1_BASE LANE_FROZEN n=226; V2_CLASS4_ONLY moved LANE_FROZEN->WATCHLIST n=216 SR=34.7% ROI=+0.6%; V6_GOLD_SEAM LANE_FROZEN n=86 ROI=+9.3%"
+20,scripts/ops/nightly_eod_learning_runner.py,COMPLETE,22,"matched_races=22; events_created=22; wins=4 losses=18 (WRONG_HORSE=8 CALIBRATION_ERROR=10 data_error=0); PASS/PASS_EVOLVED/PASS_IDEMPOTENT; study layer PASS_WITH_WARNINGS"

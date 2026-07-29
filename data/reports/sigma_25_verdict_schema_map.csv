@@ -1,0 +1,8 @@
+field,in_row_dict,in_full_analysis,persisted_column_name,notes
+pick_sp,no,yes (predictions[*].sp_dec),none (must extract from full_analysis),requires matching horse_id==top_rank_horse_id inside full_analysis.predictions array
+field_size,yes,no,predicted_field_size,computed as len(race.get('runners') or []); gated behind honesty_labels optional-column group
+race_type,no,no,none,never persisted anywhere; only transient in run_prime_today.py race dict during scoring
+verdict_id,n/a (is the row itself),n/a,id (presumed PK; not directly confirmed via live query this pass),join key would be race_id + generated_at (matches sigma's own existing dedup logic)
+decision_tier,yes,no,decision_tier,confirmed working control path (already read by run_results_sigma.py)
+actual_winner_sp / winner_sp,n/a (result-side not verdict-side),n/a,n/a,known-good control field confirming the sigma write mechanism itself functions
+top_rank_horse_id,yes,no,top_rank_horse_id,already selected by sigma; used as the join key for pick_sp extraction
