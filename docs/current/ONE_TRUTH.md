@@ -63,6 +63,16 @@ Three models tracked independently via `run_multimodel_sigma.py` after sigma:
 
 Ledger: `data/model_comparison_ledger.csv` (append-only). Run: `python scripts/ops/run_multimodel_sigma.py --date YYYY-MM-DD --execute`
 
+**Ledger join fixed + backfilled 2026-07-29 (`7b9d4f2`):** sigma's switch to raw
+numeric race_ids (verdict_loader migration `ed7d4a9`, 2026-07-25) made the
+numeric→velo remap corrupt every New Build/Champion join — both models silently
+recorded NO_DATA on all dates since 2026-07-14 while their scorecards existed and
+matched 53/54. Join now matches raw ids against sigma first (remap is legacy
+fallback only), a tripwire hard-fails the run instead of writing a ledger where a
+loaded model joins zero races, and 13 dates (May 30 – Jul 27) were backfilled.
+First honest cumulative table: Old VELO 25.9% (n=1527) · No-RPR 25.3% (n=1167) ·
+New Build 15.8% (n=1152) · Champion 22.2% (n=383).
+
 ## CANONICAL MODEL TRUTH SPINE (added 2026-07-06, MODEL-TRUTH-01..04)
 
 - Dirty/local runtime artifacts are evidence, not final truth.
@@ -104,17 +114,18 @@ skips and never overwrites if today's `velo_verdicts` already exist) → Steps 9
 Non-critical step failures do not stop the chain; critical ones (capture, parse,
 validate, scoring) do.
 
-### It is scheduled — local cron, not a cloud agent
-Installed 2026-07-08 via `crontab` on the operator's own machine (not a Claude cloud
-routine — cloud routines run in a fresh sandbox with no access to the local RP browser
-session or `.env` secrets, so they cannot run this pipeline). Schedule:
-```
-CRON_TZ=Europe/London
-0 7 * * * cd <repo> && PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py --date $(date +%Y-%m-%d) --execute >> data/reports/run_full_raceday_cron.log 2>&1
-```
-07:00 UK time, every day (DST-aware via `CRON_TZ`), before racing starts. **This only
-fires while the operator's machine/WSL instance is actually running** — same limitation
-as any local scheduler, worth knowing.
+### It is scheduled — Windows Task Scheduler, not WSL cron (changed 2026-07-29)
+The 2026-07-08 WSL crontab fired ZERO times on 2026-07-28 and 2026-07-29 (WSL not
+awake at 07:00; cron never catches up a missed firing) — 2026-07-28 was permanently
+lost as a result. Replaced 2026-07-29 with Windows scheduled task `VELO_Raceday_0700`:
+daily 07:00, `StartWhenAvailable` (runs as soon as the machine is next on if 07:00 was
+missed), `WakeToRun`, 4h execution limit. It launches
+`scripts/ops/run_full_raceday_scheduled.sh` via `wsl.exe -d Ubuntu`, which logs to
+`data/reports/run_full_raceday_cron.log` as before. The old crontab line is removed
+(backup: `~/velo_crontab_backup_2026_07_29.txt`). Backstop: session-start check #12
+(`check_todays_raceday_ran`) goes CRITICAL if today has no raceday report/verdicts
+after 08:00. (Still not a cloud agent — the pipeline needs the local RP browser
+session and `.env`, which no cloud sandbox has.)
 
 ### The timing constraint is hard, not a preference
 Confirmed 2026-07-08: Racing Post's live `/racecards/{date}` index page drops a course
