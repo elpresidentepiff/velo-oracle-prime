@@ -730,6 +730,22 @@ td:last-child  { padding-right: 20px; }
   <div id="pc-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
 </div>
 
+<div id="midprice-shadow-panel" style="display:none;background:#111;border:1px solid #7e57c2;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#7e57c2;letter-spacing:0.05em;margin-bottom:6px;">
+    MID-PRICE SPECIALIST SHADOW <span id="mps-count" style="color:#888;font-weight:400"></span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">ARCHIVE_CONTEXT_ONLY · band 3.0&ndash;10.0 · shadow lane, no staking</span>
+  </div>
+  <div id="mps-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+</div>
+
+<div id="llm-brief-panel" style="display:none;background:#111;border:1px solid #26a69a;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#26a69a;letter-spacing:0.05em;margin-bottom:6px;">
+    LLM INTEL BRIEF <span id="llm-brief-mode" style="color:#888;font-weight:400"></span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">ARCHIVE_CONTEXT_ONLY · deepseek v4 pro · context, not instructions</span>
+  </div>
+  <div id="llm-brief-body" style="font-size:12.5px;line-height:1.55;color:#ccc;max-height:340px;overflow-y:auto;white-space:pre-wrap;"></div>
+</div>
+
 <!-- Top Bar -->
 <div id="topbar">
   <div>
@@ -4129,8 +4145,60 @@ async function loadPlotConviction() {
   }
 }
 
+async function loadMidpriceShadow() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('midprice-shadow-panel');
+  const list = document.getElementById('mps-list');
+  const countEl = document.getElementById('mps-count');
+  if (!panel || !list) return;
+  try {
+    const res = await fetch(`/api/midprice-shadow?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const picks = data.picks || [];
+    if (!picks.length) { panel.style.display = 'none'; return; }
+    const hi = picks.filter(p => p.high_conviction);
+    countEl.textContent = `(${picks.length} picks, ${hi.length} high-conviction)`;
+    list.innerHTML = picks.map(p => {
+      const pct = Math.round((p.midprice_prob || 0) * 100);
+      const hiBadge = p.high_conviction
+        ? `<div style="font-size:10px;font-weight:700;color:#4caf50;margin-top:2px;">MP&ge;0.30 WATCH-GATE</div>` : '';
+      return `<div style="background:#1a1a1a;border:1px solid ${p.high_conviction ? '#4caf50' : '#333'};border-radius:4px;padding:6px 10px;min-width:160px;">
+        <div style="font-size:11px;color:#888">${esc(p.course || '')} ${esc(p.off || '')}</div>
+        <div style="font-weight:600">${esc(p.horse || '—')}</div>
+        <div style="font-size:12px;color:#7e57c2">${pct}% specialist${p.odds_decimal ? ` &middot; ${p.odds_decimal}` : ''}</div>
+        ${hiBadge}
+      </div>`;
+    }).join('');
+    panel.style.display = 'block';
+  } catch (_mpsErr) { panel.style.display = 'none'; }
+}
+
+async function loadLlmBrief() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('llm-brief-panel');
+  const body = document.getElementById('llm-brief-body');
+  const modeEl = document.getElementById('llm-brief-mode');
+  if (!panel || !body) return;
+  try {
+    const res = await fetch(`/api/llm-brief?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.status !== 'OK' || !data.brief_markdown) { panel.style.display = 'none'; return; }
+    modeEl.textContent = `(${data.mode === 'eod' ? 'end of day' : 'morning suggestions'} · ${dateParam})`;
+    body.innerHTML = esc(data.brief_markdown)
+      .replace(/^## (.+)$/gm, '<div style="font-weight:700;color:#26a69a;margin-top:10px;">$1</div>')
+      .replace(/\*\*(.+?)\*\*/g, '<b style="color:#eee">$1</b>');
+    panel.style.display = 'block';
+  } catch (_llmErr) { panel.style.display = 'none'; }
+}
+
 loadCard();
 loadPlotConviction();
+loadMidpriceShadow();
+loadLlmBrief();
 </script>
 </body>
 </html>

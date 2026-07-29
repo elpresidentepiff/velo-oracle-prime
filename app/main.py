@@ -1538,6 +1538,74 @@ async def plot_conviction_proxy(date: str = Query(default=None)):
     return await _plot_conviction(date=date)
 
 
+@app.get("/api/midprice-shadow")
+async def midprice_shadow(date: str = Query(default=None)):
+    """Mid-Price Specialist shadow lane (2026-07-29): top pick per race from
+    run_midprice_shadow_today.py's daily packet. ARCHIVE_CONTEXT_ONLY —
+    display only, never staking. high_conviction flags the mp_prob>=0.30
+    watch-gate subset (48.1% SR at breakeven ROI on the first n=27)."""
+    import datetime as _dt
+
+    d = date or _dt.date.today().isoformat()
+    path = pathlib.Path(__file__).parent.parent / "data" / "reports" / f"midprice_shadow_{d.replace('-', '_')}.json"
+    if not path.exists():
+        return {"date": d, "status": "NOT_RUN", "picks": []}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    picks = []
+    for race in data.get("races", []):
+        tp = race.get("top_pick")
+        if not tp:
+            continue
+        prob = tp.get("midprice_prob") or 0
+        picks.append(
+            {
+                "race_id": race.get("race_id"),
+                "course": race.get("course"),
+                "off": race.get("off"),
+                "horse": tp.get("horse"),
+                "midprice_prob": prob,
+                "odds_decimal": tp.get("odds_decimal"),
+                "high_conviction": bool(prob >= 0.30),
+                "band_runner_count": race.get("band_runner_count"),
+            }
+        )
+    picks.sort(key=lambda p: p["midprice_prob"], reverse=True)
+    return {
+        "date": d,
+        "status": "OK",
+        "model_version": data.get("model_version"),
+        "trust_policy": data.get("trust_policy"),
+        "picks": picks,
+    }
+
+
+@app.get("/api/llm-brief")
+async def llm_brief(date: str = Query(default=None), mode: str = Query(default=None)):
+    """LLM intel brief (2026-07-29, DeepSeek v4 pro via OpenRouter).
+    ARCHIVE_CONTEXT_ONLY. mode=suggestions|eod; omitted mode returns eod when
+    available (post-race truth beats pre-race guesses), else suggestions."""
+    import datetime as _dt
+
+    d = date or _dt.date.today().isoformat()
+    tag = d.replace("-", "_")
+    reports = pathlib.Path(__file__).parent.parent / "data" / "reports"
+    modes = [mode] if mode in ("suggestions", "eod") else ["eod", "suggestions"]
+    for m in modes:
+        path = reports / f"llm_brief_{m}_{tag}.json"
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return {
+                "date": d,
+                "status": "OK",
+                "mode": m,
+                "model": data.get("model"),
+                "generated_at": data.get("generated_at"),
+                "trust_policy": data.get("trust_policy"),
+                "brief_markdown": data.get("brief_markdown"),
+            }
+    return {"date": d, "status": "NOT_RUN", "mode": mode, "brief_markdown": None}
+
+
 @app.get("/api/old-velo-verdicts")
 async def old_velo_verdicts(date: str = Query(default=None)):
     """Old VELO lane for the dashboard: top pick per race from the day's

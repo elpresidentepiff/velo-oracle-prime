@@ -37,8 +37,17 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(str(ROOT / ".env"))
 
-API_URL = "https://api.deepseek.com/chat/completions"
-MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
+# sk-or-* keys are OpenRouter keys — route there (model slug vendor/model),
+# otherwise hit DeepSeek's native API. Both are OpenAI-compatible.
+_default_url = (
+    "https://openrouter.ai/api/v1/chat/completions"
+    if _key.startswith("sk-or-")
+    else "https://api.deepseek.com/chat/completions"
+)
+_default_model = "deepseek/deepseek-v4-pro" if _key.startswith("sk-or-") else "deepseek-chat"
+API_URL = os.getenv("DEEPSEEK_API_URL", _default_url)
+MODEL = os.getenv("DEEPSEEK_MODEL", _default_model)
 OUT_DIR = ROOT / "data" / "reports"
 
 SYSTEM_PROMPT = """You are the VELO intelligence analyst. VELO is an auditable
@@ -172,14 +181,27 @@ def run_brief(date_str: str, mode: str) -> int:
                     {"role": "user", "content": user_msg},
                 ],
                 "temperature": 0.3,
-                "max_tokens": 1600,
+                # Reasoning models (deepseek v4 pro) spend tokens thinking
+                # before answering — a small cap starves the final answer
+                # (observed 2026-07-29: 1600 cap -> content=None).
+                "max_tokens": 5000,
             },
-            timeout=120,
+            timeout=180,
         )
         resp.raise_for_status()
         body = resp.json()
-        text = body["choices"][0]["message"]["content"]
+        msg = body["choices"][0]["message"]
+        text = (
+            msg.get("content")
+            or msg.get("reasoning_content")
+            or msg.get("reasoning")
+            or ""
+        ).strip()
         usage = body.get("usage", {})
+        if not text:
+            print(f"LLM BRIEF: API_FAILED — empty completion (finish_reason="
+                  f"{body['choices'][0].get('finish_reason')!r}); not writing a blank brief.")
+            return 1
     except Exception as e:
         print(f"LLM BRIEF: API_FAILED — {e}")
         return 1
