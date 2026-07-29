@@ -56,6 +56,8 @@ def is_collateral_horse(name: str) -> bool:
 VENUE_CODE_MAP: dict[str, str] = {
     "gowran park": "GOW",
     "listowel": "LIT",
+    "newcastle (aw)": "NCS",
+    "newcastle": "NCS",
     "lingfield": "LIN",
     "lingfield (aw)": "LINAW",
     "newbury": "NEW",
@@ -115,7 +117,7 @@ VENUE_CODE_MAP: dict[str, str] = {
     "leopardstown": "LEO",
     "curragh": "CUR",
     "galway": "GAL",
-    "killarney": "KIL",
+    "killarney": "KLN",
     "kilbeggan": "KLB",
     "ballinrobe": "BAL",
     "bellewstown": "BEL",
@@ -130,12 +132,74 @@ VENUE_CODE_MAP: dict[str, str] = {
     "wexford": "WEX",
     "roscommon": "ROS",
     "down royal": "DRO",
+    "downpatrick": "DPT",
     "punchestown": "PUN",
     "thurles": "THU",
     "tramore": "TRA",
     "gowran": "GOW",
     "naas (aw)": "NAA",
+    "uttoxeter": "UTT",
 }
+
+# Per-horse keys this script itself produces (runner_to_horse()'s output
+# schema). Anything else found on an existing on-disk horse dict came from
+# a later enrichment pass (ingest_racecard_pdfs.py merging RP PDF data) and
+# must survive a rebuild, not just this script's own three PDF-scoring
+# placeholders (postdata_score/or_compression_score/plot_conviction, always
+# written here as 0.0 since RP's injection JSON never carries them).
+_BASE_HORSE_SCHEMA_KEYS = {
+    "horse_name", "horse_id", "age", "weight", "draw", "current_or", "ts_master",
+    "ts_latest", "rpr_master", "trainer", "trainer_name", "jockey", "jockey_name",
+    "headgear", "headgear_first_time", "wind_surgery", "days_since_last_run",
+    "form_figures", "spotlight_comment", "diomed_comment", "newspaper_tip_count",
+    "is_collateral", "postdata_score", "or_compression_score", "plot_conviction",
+    "ts_base", "ts_adjusted", "or_run_history", "ts_run_history",
+}
+_ZERO_DEFAULT_PDF_FIELDS = ("postdata_score", "or_compression_score", "plot_conviction")
+
+
+def _load_existing_merged(out_path: Path, date: str) -> dict[str, dict] | None:
+    """Load this venue's existing racecard_merged file, keyed by off_time ->
+    {horse_name_lower: horse_dict}. Returns None if absent, unreadable, or
+    dated differently (never merge across dates)."""
+    if not out_path.exists():
+        return None
+    try:
+        existing = json.loads(out_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if existing.get("date") != date:
+        return None
+    by_race: dict[str, dict] = {}
+    for off_key, race_blob in (existing.get("races") or {}).items():
+        by_race[off_key] = {
+            (h.get("horse_name") or "").strip().lower(): h
+            for h in (race_blob.get("horses") or [])
+            if h.get("horse_name")
+        }
+    return by_race
+
+
+def _preserve_pdf_enrichment(new_horse: dict, existing_horse: dict | None) -> bool:
+    """Carry forward PDF-derived data from a previous ingest_racecard_pdfs.py
+    merge into the freshly RP-rebuilt horse dict, in place. RP-sourced core
+    identity fields (horse_id, current_or, etc.) always come from the fresh
+    rebuild -- only enrichment this script itself can't produce is preserved.
+    Returns True if anything was carried forward."""
+    if not existing_horse:
+        return False
+    changed = False
+    for key, value in existing_horse.items():
+        if key in _BASE_HORSE_SCHEMA_KEYS:
+            continue  # this script owns these; fresh RP value wins
+        new_horse[key] = value
+        changed = True
+    for field in _ZERO_DEFAULT_PDF_FIELDS:
+        existing_value = existing_horse.get(field)
+        if existing_value not in (None, 0, 0.0):
+            new_horse[field] = existing_value
+            changed = True
+    return changed
 
 
 def to_off_time_key(iso_ts: str) -> str:
@@ -343,6 +407,21 @@ def main() -> None:
 
     written = []
     for code, races_dict in sorted(by_venue.items()):
+        out_path = out_dir / f"racecard_{code}_{args.date}.json"
+
+        existing_by_race = _load_existing_merged(out_path, args.date)
+        preserved_count = 0
+        if existing_by_race:
+            for off_key, race_blob in races_dict.items():
+                existing_horses = existing_by_race.get(off_key) or {}
+                if not existing_horses:
+                    continue
+                for horse in race_blob["horses"]:
+                    key = (horse.get("horse_name") or "").strip().lower()
+                    existing_horse = existing_horses.get(key)
+                    if existing_horse and _preserve_pdf_enrichment(horse, existing_horse):
+                        preserved_count += 1
+
         payload = {
             "venue": venue_names.get(code, code),
             "venue_code": code,
@@ -350,10 +429,10 @@ def main() -> None:
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "races": races_dict,
         }
-        out_path = out_dir / f"racecard_{code}_{args.date}.json"
         out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
         written.append(str(out_path))
-        print(f"  {code}: {len(races_dict)} races -> {out_path.name}")
+        preserve_note = f" ({preserved_count} horses kept prior PDF enrichment)" if preserved_count else ""
+        print(f"  {code}: {len(races_dict)} races -> {out_path.name}{preserve_note}")
 
     print(f"\nWrote {len(written)} racecard_merged files for {args.date}")
 

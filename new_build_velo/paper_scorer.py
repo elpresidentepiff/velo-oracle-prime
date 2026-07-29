@@ -11,6 +11,7 @@ import csv as _csv
 import json
 import pickle
 import re as _re
+import shutil
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -377,7 +378,16 @@ def build_paper_predictions(
             missing_by_col[col] += 1
         missing_by_runner[row["feed_row_id"]] = missing
     X = pd.DataFrame(matrix_rows, columns=feature_cols)
-    probabilities = model.predict_proba(X)[:, 1] if len(X) else []
+    if not len(X):
+        probabilities = []
+    elif hasattr(model, "predict_proba"):
+        probabilities = model.predict_proba(X)[:, 1]
+    else:
+        # Champion model is a raw lightgbm.basic.Booster (trained via lgb.train,
+        # not the sklearn LGBMClassifier wrapper), which has no predict_proba.
+        # Its objective is cross_entropy (binary-style), so .predict() already
+        # returns the positive-class probability directly, one value per row.
+        probabilities = model.predict(X)
 
     paper_rows: list[dict[str, Any]] = []
     for row, probability in zip(feed_rows, probabilities):
@@ -498,6 +508,15 @@ def build_paper_predictions(
         _write_json(report_json_path, payload)
         report_md_path.parent.mkdir(parents=True, exist_ok=True)
         report_md_path.write_text(_markdown(payload), encoding="utf-8")
+
+        # Also write a per-date copy (new_build_predictions_{date}.jsonl).
+        # new_build_decision_policy_run.py (NEW_BUILD_POLICY_V1) reads this
+        # exact filename and has no fallback to the _latest files above --
+        # without this, that lane silently has no input for any date.
+        race_dates = {str(row.get("race_date"))[:10] for row in paper_rows if row.get("race_date")}
+        if len(race_dates) == 1:
+            date_tag = next(iter(race_dates)).replace("-", "_")
+            shutil.copyfile(jsonl_path, PAPER_ROOT / f"new_build_predictions_{date_tag}.jsonl")
     return payload
 
 

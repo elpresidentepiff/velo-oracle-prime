@@ -161,6 +161,18 @@ def test_rp_merged_preserves_real_racing_post_race_id(tmp_path):
     assert races[0]["race_id"] == "920114"
 
 
+def test_rp_merged_extracts_race_type_from_dict_race_info(tmp_path):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    content["races"]["14:00"]["race_info"] = {
+        "going": "Good", "race_class": 4, "race_type": "Hurdle",
+    }
+    _make_rp_file(tmp_path, content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert races[0]["type"] == "Hurdle"
+
+
 def test_rp_merged_empty_when_no_files(tmp_path):
     races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
     assert races == []
