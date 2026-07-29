@@ -284,14 +284,20 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
     rp_results = _load_rp_results(date_str)
     sb_preds   = _load_supabase_predictions(date_str)
     numeric_to_velo = _build_numeric_to_velo_map(date_str)
+    # Sigma switched to raw numeric race_ids (verdict_loader migration
+    # 2026-07-25, ed7d4a9) -- on numeric-keyed dates the numeric->velo remap
+    # CORRUPTS the join (every NB/Champion row went NO_DATA from 2026-07-14
+    # onward, root-caused 2026-07-29). Join on the raw id whenever sigma
+    # already knows it; only fall back to the remap for legacy velo-id dates.
+    sigma_ids = {str(sr.get("race_id", "")) for sr in sigma_rows}
+
+    def _join_key(rid: str) -> str:
+        return rid if rid in sigma_ids else numeric_to_velo.get(rid, rid)
+
     nb_cards_raw = _load_nb_scorecards(date_str)
-    nb_cards = {
-        numeric_to_velo.get(rid, rid): card for rid, card in nb_cards_raw.items()
-    }
+    nb_cards = {_join_key(rid): card for rid, card in nb_cards_raw.items()}
     champion_cards_raw = _load_champion_scorecards(date_str)
-    champion_cards = {
-        numeric_to_velo.get(rid, rid): card for rid, card in champion_cards_raw.items()
-    }
+    champion_cards = {_join_key(rid): card for rid, card in champion_cards_raw.items()}
 
     print(f"  Sigma rows : {len(sigma_rows)}")
     print(f"  RP results : {len(rp_results)} races")
@@ -378,6 +384,27 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
         ])
         status = f"V:{velo_outcome[0]} N:{norpr_outcome[0]} B:{nb_outcome[0]} C:{champion_outcome[0]}"
         print(f"  {race_id} {sr.get('course',''):12} {sr.get('off',''):5}  {status}")
+
+    # Join tripwire: a model whose scorecards LOADED but joined zero sigma
+    # races means the race_id scheme broke again -- the exact failure that
+    # silently wrote NO_DATA ledger rows for every date after 2026-07-14.
+    # Refuse to write lies; fail the step loudly instead.
+    _join_checks = [
+        ("New Build", nb_cards_raw, "nb_outcome"),
+        ("Champion", champion_cards_raw, "champion_outcome"),
+    ]
+    _broken = [
+        label
+        for label, raw, col in _join_checks
+        if raw and new_rows and all(r[col] == "NO_DATA" for r in new_rows)
+    ]
+    if _broken:
+        print(
+            f"\n  [JOIN TRIPWIRE] {', '.join(_broken)}: scorecards loaded but 0 races "
+            "joined sigma -- race_id scheme mismatch. NOT writing NO_DATA rows. "
+            "Fix the join in run_multimodel_sigma.py before rerunning."
+        )
+        sys.exit(2)
 
     _print_summary(new_rows)
 

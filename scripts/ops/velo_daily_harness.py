@@ -1,6 +1,5 @@
 """
 VÉLØ Daily Harness
-==================
 
 Single orchestration script that runs the full daily intelligence pipeline
 in the correct order. Read-only for scoring — does NOT change any verdict,
@@ -381,7 +380,7 @@ def run_close(date_str: str) -> dict:
     """Run post-race close mode."""
     print(f"\n[HARNESS] CLOSE MODE — {date_str} — {_ts()}")
 
-    total_steps = 7
+    total_steps = 8
     step = 0
     step_results = []
 
@@ -404,6 +403,16 @@ def run_close(date_str: str) -> dict:
         _python("run_results_sigma.py", ["--date", date_str]),
     )
     step_results.append(("run_results_sigma", ok2, out2))
+
+    # Step 2c: Post-race truth loop (Layer 4 — state tag truth, archetype truth,
+    # gate truth per race; feeds weekly rollup for self-correction)
+    step += 1
+    ok_tl, out_tl = _run_step(
+        "post_race_truth_loop",
+        step, total_steps,
+        _python("ops/run_post_race_truth_loop.py", ["--date", date_str]),
+    )
+    step_results.append(("post_race_truth_loop", ok_tl, out_tl))
 
     # Step 2b: Old VELO role evaluation (WIN/PLACE/LONGSHOT vs results)
     # ROLE-EVAL-01 (2026-07-11): previously re-ran build_old_velo_three_option_card.py

@@ -1,36 +1,47 @@
 {
-  "vfu": "VFU-21",
-  "generated_at": "2026-06-17T21:47:40.866254+00:00",
-  "version": "VFU_21_PICK_SP_BACKFILL_V1",
+  "vfu21_validation_version": "VFU_21_PICK_SP_BACKFILL_V1",
   "total_rows": 3052,
-  "already_had_sp": 855,
-  "recovered_rp_results_cdo": 250,
-  "recovered_results_json_rac": 903,
-  "recovered_sigma_win": 2,
-  "unrecovered": 419,
-  "total_with_sp": 2633,
-  "sp_coverage_pct": 86.27,
-  "ew_analysis": {
-    "rows_with_sp": 2633,
-    "win_rows": 715,
-    "place_rows": 524,
-    "total_stake_units": 5266.0,
-    "total_return_units": 4607.98,
-    "profit_units": -658.02,
-    "roi_pct": -12.5,
-    "basis": "1-unit EW stakes, SP from results files"
+  "backfill_candidates": 2214,
+  "recovered": 996,
+  "recovery_rate": 0.4499,
+  "unrecoverable": 1218,
+  "method_breakdown": {
+    "UNRECOVERABLE_NO_RESULTS_FILE": 931,
+    "ORIGINAL_PRESENT": 838,
+    "UNRECOVERABLE_HORSE_NOT_FOUND": 101,
+    "RECOVERED_FROM_RP_RESULTS": 996,
+    "UNRECOVERABLE_SP_NOT_IN_FILE": 186
   },
-  "classification": "VFU_21_PICK_SP_BACKFILL_COMPLETE",
-  "blocked_from_live_use": true,
-  "no_vp_threshold_change": true,
-  "no_model_change": true,
-  "no_live_scoring_change": true,
-  "operator_brief": {
-    "S01": "VFU-21 recovered pick_sp for placed and missed horses from local result archives.",
-    "S02": "SP coverage: 2633/3052 (86.3%). 419 rows remain unrecovered (June 6-14 gap).",
-    "S03": "EW P&L on 2633 rows with SP: ROI=-12.5% (-658.0 units on 5266 staked).",
-    "S04": "VFU-22 (prospective dual-lane validation) and VFU-23 (specialist watchlist) remain NOT AUTHORIZED.",
-    "S05": "STOP \u2014 operator review required before VFU-22."
+  "real_sp_coverage_before": 855,
+  "real_sp_coverage_after": 1845,
+  "real_sp_pct_after": 0.6045,
+  "evidence_tier_before": {
+    "TIER_B_GOOD_NO_PICK_SP": 800,
+    "TIER_C_LIMITED_IDENTITY": 62,
+    "TIER_A_FULL": 107,
+    "null": 1757,
+    "low": 290,
+    "normal": 31,
+    "high": 5
   },
-  "output_ledger": "/mnt/c/Users/puror/velo-oracle-prime/data/reports/vfu_21_pick_sp_backfill_ledger.jsonl"
+  "evidence_tier_after": {
+    "TIER_B_GOOD_NO_PICK_SP": 465,
+    "TIER_C_LIMITED_IDENTITY": 62,
+    "TIER_A_FULL": 430,
+    "TIER_B_GOOD": 12,
+    "null": 1757,
+    "low": 290,
+    "normal": 31,
+    "high": 5
+  },
+  "classification_codes": [
+    "VFU_21_PICK_SP_BACKFILL_COMPLETE",
+    "SP_RECOVERED_FROM_RP_RESULTS",
+    "UNRECOVERABLE_CLASSIFIED_BY_REASON",
+    "EVIDENCE_TIER_UPGRADED_WHERE_POSSIBLE",
+    "NO_VP_THRESHOLD_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "REPORT_ONLY"
+  ]
 }

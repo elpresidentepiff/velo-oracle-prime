@@ -1,0 +1,83 @@
+{
+  "period_end": "2026-07-27",
+  "dates_loaded": [
+    "2026-07-27"
+  ],
+  "races_evaluated": 32,
+  "overall_sr": 0.1562,
+  "overall_place_rate": 0.5,
+  "most_common_miss_type": [
+    "wrong_release_read",
+    16
+  ],
+  "miss_type_breakdown": {
+    "wrong_release_read": 16,
+    "right_horse_wrong_tier": 11
+  },
+  "best_archetype": [
+    "Structure",
+    {
+      "n": 30,
+      "wins": 5,
+      "placed": 16,
+      "sr": 0.1667
+    }
+  ],
+  "worst_archetype": [
+    "Chaos",
+    {
+      "n": 2,
+      "wins": 0,
+      "placed": 0,
+      "sr": 0.0
+    }
+  ],
+  "archetype_breakdown": {
+    "Structure": {
+      "n": 30,
+      "wins": 5,
+      "placed": 16,
+      "sr": 0.1667
+    },
+    "Chaos": {
+      "n": 2,
+      "wins": 0,
+      "placed": 0,
+      "sr": 0.0
+    }
+  },
+  "state_reliability": {
+    "state_truth_readiness": {
+      "n": 0,
+      "rate": null
+    },
+    "state_truth_release": {
+      "n": 32,
+      "rate": 0.5
+    },
+    "state_truth_market": {
+      "n": 21,
+      "rate": 0.5238
+    },
+    "state_truth_race_fit": {
+      "n": 32,
+      "rate": 0.5
+    },
+    "state_truth_chaos": {
+      "n": 31,
+      "rate": 0.5484
+    }
+  },
+  "most_reliable_state_tag": "state_truth_chaos",
+  "least_reliable_state_tag": "state_truth_release",
+  "gate_precision": {
+    "fired": 1,
+    "helped": 1,
+    "precision": 1.0
+  },
+  "ew_precision": {
+    "fired": 1,
+    "helped": 0,
+    "precision": 0.0
+  }
+}

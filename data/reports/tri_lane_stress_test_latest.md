@@ -1,5 +1,5 @@
-# Tri-Lane VÉLØ Stress Test - 2026-06-29
-Generated: 2026-06-29T01:24:51.358364Z
+# Tri-Lane VÉLØ Stress Test - 2026-07-29
+Generated: 2026-07-29T12:32:24.885197Z
 
 - Status: `TRI_LANE_STRESS_TEST_ONLY_V1`
 - Live writes: `False`
@@ -8,56 +8,52 @@ Generated: 2026-06-29T01:24:51.358364Z
 ## Inputs
 | Input | Races |
 |---|---:|
-| old_velo_races | 34 |
-| new_build_races | 34 |
-| shadow_races | 34 |
+| old_velo_races | 32 |
+| new_build_races | 32 |
+| shadow_races | 32 |
 | sigma_outcomes | 0 |
 
 ## Action Summary
 | Final action | Races | Evaluated | Wins | SR | Frames | Frame |
 |---|---:|---:|---:|---:|---:|---:|
-| TRI_CASH_RUN | 2 | 0 | 0 | None% | 0 | None% |
-| TRI_PASS | 18 | 0 | 0 | None% | 0 | None% |
-| TRI_WATCH | 13 | 0 | 0 | None% | 0 | None% |
-| TRI_WIN | 1 | 0 | 0 | None% | 0 | None% |
+| TRI_PASS | 15 | 0 | 0 | None% | 0 | None% |
+| TRI_WATCH | 17 | 0 | 0 | None% | 0 | None% |
 
 ## Race Decisions
 | Date | Time | Course | Old pick | New Build A/B | Shadow | Final | Outcome |
 |---|---|---|---|---|---|---|---|
-| 2026-06-29 | 4.10 | Stratford | She Is For Me Boys (A) | A:Nickelforce / B:Nickelforce | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 3.10 | Stratford | A Little Something (A) | A:A Little Something / B:A Little Something | CASH_RUN | TRI_CASH_RUN | - / - |
-| 2026-06-29 | 4.40 | Stratford | Jukebox Annie (C) | A:Best Night / B:Best Night | PASS_OR_WATCH | TRI_WATCH | - / - |
-| 2026-06-29 | 2.10 | Stratford | Tiny Riot (A) | A:Sudbury Hill / B:Sudbury Hill | CASH_RUN | TRI_WATCH | - / - |
-| 2026-06-29 | 3.40 | Stratford | Slack Alice (D) | A:Back To Cali / B:Back To Cali | CASH_RUN | TRI_WATCH | - / - |
-| 2026-06-29 | 2.40 | Stratford | Uhtred Ragnarson (A) | A:Juan Bermudez / B:Juan Bermudez | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 3.30 | Pontefract | Capichera (A) | A:Capichera / B:Capichera | NO_BET_SHADOW | TRI_WATCH | - / - |
-| 2026-06-29 | 3.00 | Pontefract | Alfred Wincham (C) | A:Camelot Champion / B:Camelot Champion | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 4.00 | Pontefract | Garden Oasis (A) | A:Sir Paul Ramsey / B:Sir Paul Ramsey | WATCHLIST_SHADOW | TRI_WATCH | - / - |
-| 2026-06-29 | 4.30 | Pontefract | Lucius Aurelius (C) | A:Betweenthesticks / B:Betweenthesticks | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 2.30 | Pontefract | Star Start (B) | A:Shimmering Sands / B:Shimmering Sands | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 5.30 | Pontefract | Far Ahead (B) | A:Shark Two One / B:Shark Two One | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 5.00 | Pontefract | Lady Bouquet (A) | A:Superstorm / B:Superstorm | WATCHLIST_SHADOW | TRI_WATCH | - / - |
-| 2026-06-29 | 7.00 | Windsor | Divine Libra (B) | A:Cindy Lou Who / B:Cindy Lou Who | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 8.00 | Windsor | Moonjid (A) | A:Moonjid / B:Moonjid | WATCHLIST_SHADOW | TRI_WATCH | - / - |
-| 2026-06-29 | 6.00 | Windsor | Tropbien (B) | A:Arklan / B:Arklan | PASS_OR_WATCH | TRI_WATCH | - / - |
-| 2026-06-29 | 6.30 | Windsor | Captaincy (A) | A:Captaincy / B:Captaincy | PASS_OR_WATCH | TRI_WATCH | - / - |
-| 2026-06-29 | 9.00 | Windsor | Monsieur Patat (A) | A:Echo Of Faith / B:Trafalger | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 8.30 | Windsor | Galactic Glow (C) | A:Aim For The Bull / B:Aim For The Bull | PASS_OR_WATCH | TRI_PASS | - / - |
-| 2026-06-29 | 7.30 | Windsor | Harry Brown (B) | A:Kento / B:Kento | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 2.22 | Ffos Las | This Moment (A) | A:This Moment / B:This Moment | WIN_CANDIDATE_SHADOW | TRI_WIN | - / - |
-| 2026-06-29 | 2.52 | Ffos Las | Beelzebub (A) | A:Jackie Brown / B:Jackie Brown | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 3.22 | Ffos Las | Zighy (A) | A:Zighy / B:Zighy | CASH_RUN | TRI_CASH_RUN | - / - |
-| 2026-06-29 | 3.52 | Ffos Las | Norfolk Blue (C) | A:Twilight Glow / B:Quick Quasar | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 4.22 | Ffos Las | Orchard (C) | A:Orchard / B:Orchard | PASS_OR_WATCH | TRI_PASS | - / - |
-| 2026-06-29 | 4.52 | Ffos Las | Marquessofanglesey (A) | A:Round The Table / B:Round The Table | CASH_RUN | TRI_WATCH | - / - |
-| 2026-06-29 | 5.22 | Ffos Las | Buck Barrow (A) | A:Beaune / B:Beaune | WATCHLIST_SHADOW | TRI_WATCH | - / - |
-| 2026-06-29 | 5.45 | Kempton (AW) | Abrahamsen (B) | A:Abrahamsen / B:Abrahamsen | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 6.45 | Kempton (AW) | Emery Down (A) | A:Show Me Gold / B:Mehmas Engine | WATCHLIST_SHADOW | TRI_WATCH | - / - |
-| 2026-06-29 | 7.15 | Kempton (AW) | Tumishi (A) | A:Kigali / B:Kigali | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 7.45 | Kempton (AW) | Sovereign View (B) | A:Arctic Thunder / B:Arctic Thunder | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 8.15 | Kempton (AW) | Golden Horse (B) | A:Naval Command / B:Naval Command | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 8.45 | Kempton (AW) | Break Point (C) | A:Apache Eagle / B:Apache Eagle | PASS | TRI_PASS | - / - |
-| 2026-06-29 | 6.15 | Kempton (AW) | Duidin (A) | A:Arlecchino's Moon / B:Arlecchino's Moon | PASS_OR_WATCH | TRI_WATCH | - / - |
+| 2026-07-29 | 16:10 | Goodwood | Bow Echo (B) | A:Opera Ballo / B:Opera Ballo | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 15:00 | Goodwood | Planet Seeker (X) | A:Zanthos / B:Zanthos | NO_BET_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 15:35 | Goodwood | Hell Of A Spin (X) | A:Flight Signal / B:Flight Signal | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 14:25 | Goodwood | Hidden Gift (C) | A:Wild Blossom / B:Wild Blossom | PASS_OR_WATCH | TRI_WATCH | - / - |
+| 2026-07-29 | 13:50 | Goodwood | Hatteen (B) | A:Infraad / B:Infraad | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 17:40 | Goodwood | Crimson Spirit (X) | A:The Liffey / B:The Liffey | NO_BET_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 17:00 | Goodwood | Ziggy's Condor (X) | A:Expert Agent / B:Supreme King | PASS_OR_WATCH | TRI_WATCH | - / - |
+| 2026-07-29 | 17:55 | Leicester | Coat Of Red (A) | A:Sioux Moon / B:Sioux Moon | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 19:02 | Leicester | Siwa Oasis (B) | A:Siwa Oasis / B:Siwa Oasis | CASH_RUN | TRI_WATCH | - / - |
+| 2026-07-29 | 20:40 | Leicester | Spiritoftheblues (B) | A:Spiritoftheblues / B:Spiritoftheblues | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 18:27 | Leicester | Amber Ocean (B) | A:My Maria / B:My Maria | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 19:37 | Leicester | Melissa Honey (A) | A:Calafrio / B:Calafrio | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 20:10 | Leicester | Captain Cairney (X) | A:Captain Cairney / B:Captain Cairney | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 15:50 | Redcar | Homestrait (B) | A:Sandy Craic / B:Sandy Craic | CASH_RUN | TRI_WATCH | - / - |
+| 2026-07-29 | 14:40 | Redcar | Areti (B) | A:Vanilla Skies / B:Vanilla Skies | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 14:05 | Redcar | Kats Bob (C) | A:Kats Bob / B:Kats Bob | WIN_CANDIDATE_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 15:15 | Redcar | Kitsune Power (B) | A:Kitsune Power / B:Kitsune Power | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 16:50 | Redcar | Elettaria (D) | A:Tees George / B:Tees George | WATCHLIST_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 16:20 | Redcar | Valsharah (B) | A:Valsharah / B:Valsharah | PASS_OR_WATCH | TRI_WATCH | - / - |
+| 2026-07-29 | 18:50 | Sandown | Lancaster Tower (B) | A:Quest For Stars / B:Lancaster Tower | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 20:30 | Sandown | Kakirra (A) | A:Boilermaker / B:Boilermaker | WIN_CANDIDATE_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 17:45 | Sandown | Best Rate (C) | A:Happy Banner / B:Happy Banner | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 18:15 | Sandown | Rage Of Thunder (B) | A:Justcallmepete / B:Atticum | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 20:00 | Sandown | Spirit Of Athene (C) | A:Enamorus / B:Enamorus | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 19:25 | Sandown | Galba (B) | A:Galba / B:Sydney Rock | PASS | TRI_PASS | - / - |
+| 2026-07-29 | 18:40 | Galway | Conyers Hill (X) | A:Maxxum / B:Rocky's Diamond | PASS_OR_WATCH | TRI_WATCH | - / - |
+| 2026-07-29 | 17:05 | Galway | Mr Hollywood (D) | A:Al Arrivee / B:C Pas Possible | CASH_RUN | TRI_WATCH | - / - |
+| 2026-07-29 | 17:35 | Galway | Lucy Wang (X) | A:Oneforgonzo / B:Oneforgonzo | NO_BET_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 18:05 | Galway | Emesteraye (X) | A:Ardeen Joy / B:Ardeen Joy | NO_BET_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 19:15 | Galway | Abbotsford (X) | A:Sunny South West / B:Sunny South West | NO_BET_SHADOW | TRI_WATCH | - / - |
+| 2026-07-29 | 19:50 | Galway | Golddream (C) | A:Krasimir / B:Krasimir | PASS_OR_WATCH | TRI_WATCH | - / - |
+| 2026-07-29 | 20:20 | Galway | Ben Hur (D) | A:Rakki / B:Rakki | NO_BET_SHADOW | TRI_WATCH | - / - |
 
 ## Boundary
 - Stress test only. No live execution, no staking, no production promotion.

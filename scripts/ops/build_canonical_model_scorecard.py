@@ -280,17 +280,26 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
         audit["sources_found"]["old_velo_three_option_card"] = old_velo_path.name
         for race in old_velo.get("races") or []:
             race_id = str(race.get("race_id") or "")
+            result_race = results.get(race_id)
             for pick in race.get("picks") or []:
-                outcome = pick.get("outcome") or {}
+                # The three-option card is deliberately frozen at pick-time (see
+                # build_old_velo_three_option_card.py's refusal to rebuild post-results
+                # -- "morning selections are frozen once made"). Its own pick["outcome"]
+                # field is therefore permanently NO_RESULT/null. Look up the real result
+                # independently instead, same as the New Build and Champion Intent blocks
+                # above -- found 2026-07-16 via this builder itself reporting 0% wins for
+                # all three Old VELO roles despite MAIN_VELO_PRIME (the identical WIN pick)
+                # showing real wins.
+                outcome = _runner_lookup(result_race, pick.get("horse"))
                 _add_row(
                     race_id=race_id, course=race.get("course"), off_time=race.get("off_time"),
                     model_name=f"OLD_VELO_{pick.get('role')}_ROLE", lane_name=pick.get("role"),
                     source_path=str(old_velo_path.relative_to(ROOT)),
                     source_field=f"picks[].{'velo_prime_prob' if pick.get('role') == 'WIN' else 'place_prob' if pick.get('role') == 'PLACE' else 'longshot_role_score'} (role={pick.get('role')})",
                     sort_direction="descending", rank=1,
-                    horse=pick.get("horse"), horse_id=pick.get("horse_id"),
+                    horse=pick.get("horse"), horse_id=outcome.get("horse_id") or pick.get("horse_id"),
                     score=pick.get("velo_prime_prob") if pick.get("role") == "WIN" else pick.get("place_prob") if pick.get("role") == "PLACE" else pick.get("longshot_role_score"),
-                    sp_dec=pick.get("sp_dec"),
+                    sp_dec=outcome.get("sp_dec") or pick.get("sp_dec"),
                     result_position=outcome.get("position"), win=outcome.get("win"), frame=outcome.get("frame"),
                     policy_decision="N/A (Old VELO has no policy layer)",
                     stake_authorised=False, dashboard_visible=False,
@@ -298,6 +307,50 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     tie_status="N/A",
                     notes="WIN role is identical to Main VELO's own pick by construction.",
                 )
+
+    # ── Champion Intent Shadow (intent_shadow_scorecard CSV) ────────────────
+    champion_path = ROOT / "data" / "reports" / f"intent_shadow_scorecard_{tag}.csv"
+    if not champion_path.exists():
+        audit["sources_missing"]["champion_intent_shadow"] = str(champion_path)
+    else:
+        audit["sources_found"]["champion_intent_shadow"] = champion_path.name
+        with champion_path.open(encoding="utf-8") as f:
+            champion_rows = list(csv.DictReader(f))
+        for crow in champion_rows:
+            race_id = str(crow.get("race_id") or "")
+            result_race = results.get(race_id)
+            horse = crow.get("horse") or ""
+            outcome = _runner_lookup(result_race, horse)
+            try:
+                rank = int(crow.get("rank_in_race")) if crow.get("rank_in_race") not in (None, "") else None
+            except ValueError:
+                rank = None
+            try:
+                score = float(crow.get("champion_intent_shadow_prob")) if crow.get("champion_intent_shadow_prob") not in (None, "") else None
+            except ValueError:
+                score = None
+            velo_scoring_allowed = str(crow.get("velo_scoring_allowed", "")).strip().lower() == "true"
+            _add_row(
+                race_id=race_id,
+                course=(result_race or {}).get("course") or crow.get("course"),
+                off_time=(result_race or {}).get("off") or crow.get("off_time"),
+                model_name="CHAMPION_INTENT_SHADOW", lane_name="shadow_only",
+                source_path=str(champion_path.relative_to(ROOT)),
+                source_field="champion_intent_shadow_prob", sort_direction="descending",
+                rank=rank, horse=horse, horse_id=outcome.get("horse_id") or crow.get("rp_uid"),
+                score=score, sp_dec=outcome.get("sp_dec"),
+                result_position=outcome.get("position"), win=outcome.get("win"), frame=outcome.get("frame"),
+                policy_decision=crow.get("trust_policy") or "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+                stake_authorised=(str(crow.get("stake_authorised", "")).strip().lower() == "true"),
+                dashboard_visible=(str(crow.get("dashboard_visible", "")).strip().lower() == "true"),
+                learning_class=crow.get("learning_class") or ("MODEL_HIT_POLICY_BLOCKED" if outcome.get("win") else "MODEL_MISS"),
+                tie_status="N/A",
+                notes=(
+                    "SHADOW_ONLY -- velo_scoring_allowed=False, no live scoring authority. "
+                    "Measurement only, not a promotable claim by this row alone."
+                    if not velo_scoring_allowed else ""
+                ),
+            )
 
     audit["row_count"] = len(rows)
     return rows, audit

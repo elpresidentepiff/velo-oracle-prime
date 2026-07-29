@@ -19,6 +19,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,6 +40,15 @@ def _utc_now() -> str:
 
 def _safe_slug(value: str) -> str:
     return "".join(ch if ch.isalnum() else "_" for ch in value.lower()).strip("_")[:80] or "page"
+
+
+def _atomic_write_json(path: Path, data: dict) -> None:
+    """Write via a temp file + os.replace so a kill signal mid-write can
+    never leave the target (e.g. manifest.json) truncated/corrupted -- a
+    plain write_text() can be interrupted partway and zero the file out."""
+    tmp_path = path.with_suffix(path.suffix + f".tmp{os.getpid()}")
+    tmp_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    os.replace(tmp_path, path)
 
 
 def _load_urls(path: Path) -> list[str]:
@@ -124,7 +135,7 @@ def _import_playwright():
     return sync_playwright
 
 
-def init_login(profile_dir: Path, login_url: str, *, execute: bool) -> dict:
+def init_login(profile_dir: Path, login_url: str, *, execute: bool, wait_seconds: int = 120) -> dict:
     profile_dir = _assert_repo_path(profile_dir, "profile_dir")
     payload = {
         "mode": "init-login",
@@ -144,14 +155,33 @@ def init_login(profile_dir: Path, login_url: str, *, execute: bool) -> dict:
             user_data_dir=str(profile_dir),
             headless=False,
             viewport={"width": 1400, "height": 1000},
+            firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
         )
         page = browser.new_page()
         page.goto(login_url, wait_until="domcontentloaded", timeout=60000)
-        input("Log in to Racing Post in the opened browser, then press Enter here to save the profile...")
+        if sys.stdin.isatty():
+            input("Log in to Racing Post in the opened browser, then press Enter here to save the profile...")
+        else:
+            # No real interactive stdin (e.g. invoked via a non-interactive
+            # pass-through session). Give the operator a fixed window to log
+            # in in the visible browser window instead of blocking on input().
+            print(
+                f"No interactive terminal detected — waiting {wait_seconds}s for you to log in "
+                "to Racing Post in the opened browser window, then saving automatically.",
+                flush=True,
+            )
+            step = 15
+            remaining = wait_seconds
+            while remaining > 0:
+                sleep_for = min(step, remaining)
+                time.sleep(sleep_for)
+                remaining -= sleep_for
+                print(f"  {remaining}s remaining before profile save...", flush=True)
         browser.close()
 
     payload["status"] = "PASS"
     payload["saved_at"] = _utc_now()
+    payload["wait_seconds_used"] = wait_seconds if not sys.stdin.isatty() else None
     return payload
 
 
@@ -221,6 +251,7 @@ def capture_urls(
                 user_data_dir=str(profile_dir),
                 headless=not headed,
                 viewport={"width": 1400, "height": 1000},
+                firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
             )
         else:
             browser = p.chromium.launch_persistent_context(
@@ -288,24 +319,34 @@ def capture_urls(
             meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
             captures.append(meta)
             batch_captured += 1
+
+            # Write the manifest after every capture, not just at the end of
+            # the whole batch. A killed/timed-out process (e.g. a wrapper
+            # tool's own timeout) used to lose all progress from this run,
+            # since dedup on the next invocation only reads what's already
+            # in manifest.json -- causing repeated re-attempts of the same
+            # URLs instead of resuming past them. Root cause of the
+            # 2026-07-08 passport-bank capture appearing stuck at a fixed
+            # count across multiple "successful" resumed runs.
+            captures_by_url = {
+                item.get("source_url"): item
+                for item in existing_captures + captures
+                if item.get("source_url")
+            }
+            all_captures = [captures_by_url[u] for u in urls if u in captures_by_url]
+            manifest = {
+                "capture_date": capture_date,
+                "generated_at": _utc_now(),
+                "url_count": len(all_captures),
+                "latest_url_count": len(urls),
+                "captures": all_captures,
+            }
+            _atomic_write_json(manifest_path, manifest)
+
             if delay_seconds > 0 and batch_captured < len(urls):
                 time.sleep(delay_seconds)
         browser.close()
 
-    captures_by_url = {
-        item.get("source_url"): item
-        for item in existing_captures + captures
-        if item.get("source_url")
-    }
-    all_captures = [captures_by_url[url] for url in urls if url in captures_by_url]
-    manifest = {
-        "capture_date": capture_date,
-        "generated_at": _utc_now(),
-        "url_count": len(all_captures),
-        "latest_url_count": len(urls),
-        "captures": all_captures,
-    }
-    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     payload.update({"status": "PASS", "manifest": str(manifest_path), "captures": captures})
     return payload
 
@@ -350,6 +391,7 @@ def manual_capture(
                 user_data_dir=str(profile_dir),
                 headless=headless,
                 viewport={"width": 1400, "height": 1000},
+                firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
             )
         else:
             browser = p.chromium.launch_persistent_context(
@@ -390,7 +432,7 @@ def manual_capture(
         "latest_url_count": 1,
         "captures": all_captures,
     }
-    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    _atomic_write_json(manifest_path, manifest)
     payload.update({"status": "PASS", "manifest": str(manifest_path), "capture": meta})
     return payload
 
@@ -403,6 +445,9 @@ def main() -> None:
     login.add_argument("--profile-dir", default=str(DEFAULT_PROFILE_DIR))
     login.add_argument("--login-url", default=DEFAULT_LOGIN_URL)
     login.add_argument("--execute", action="store_true")
+    login.add_argument("--wait-seconds", type=int, default=120,
+        help="When stdin is not a real TTY (e.g. non-interactive pass-through session), "
+             "wait this long for manual login instead of blocking on input().")
 
     capture = sub.add_parser("capture", help="Capture explicitly listed Racing Post URLs.")
     capture.add_argument("--url-list", required=True)
@@ -430,7 +475,7 @@ def main() -> None:
 
     args = parser.parse_args()
     if args.command == "init-login":
-        payload = init_login(Path(args.profile_dir), args.login_url, execute=args.execute)
+        payload = init_login(Path(args.profile_dir), args.login_url, execute=args.execute, wait_seconds=args.wait_seconds)
     elif args.command == "manual-capture":
         allowed = set(DEFAULT_ALLOWED_DOMAINS)
         allowed.update(args.allow_domain or [])

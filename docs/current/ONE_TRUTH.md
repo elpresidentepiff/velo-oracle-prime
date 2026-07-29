@@ -29,6 +29,7 @@ An auditable UK/IRE horse-racing prediction system. It captures Racing Post HTML
 | Scoring entrypoint | `scripts/ops/run_prime_today.py --date YYYY-MM-DD --source rp --no-notify` (manual; Railway cron is FAIL_OR_UNPROVEN) |
 | Live formula | Profile `SQPE_IMPROVEMENT_MDS_V1`: `VP = (0.45·sqpe_v17 + 0.12·improvement_score + 0.10·market_deception_score) / 0.67` (`src/intelligence/velo_prime_ensemble.py:175-235`) |
 | Live model files | `models/sqpe_v17/sqpe_v17.pkl` (retrained as v17.1 on 1.54M rows, 2025 holdout AUC=0.9296, promoted 2026-06-19), `models/specialist/improvement_model/`, `models/specialist/market_deception_model/` |
+| RPR in the live model | `sqpe_v17.pkl` genuinely uses RPR (`rpr_num`+`rpr_vs_field` ≈ 50% of its real feature importance) — grandfathered by deliberate 2026-06-19 design, not a leak. See `docs/engineering/SOURCE_INCLUSION_POLICY_V1.md` for the full rationale and the empirical mid-price/short-fav band split that justifies it. New Build, Champion Intent Shadow, and No-RPR Shadow genuinely exclude it. |
 | Stored but NOT weighted | `place_prob` (badge), `longshot_score` (frozen), `release_window_score`, `comment_intel_score` (stored-only) |
 | Data source | Racing Post HTML via logged-in Playwright capture (`racing_post_account_collector.py`). UK/IRE only. |
 | System of record | Supabase `velo_verdicts`; local backup `data/velo_prime_verdicts_YYYY_MM_DD.json` |
@@ -62,6 +63,16 @@ Three models tracked independently via `run_multimodel_sigma.py` after sigma:
 | New Build | `new_build_two_lane_score.py` | Passport V1 champion — shadow only |
 
 Ledger: `data/model_comparison_ledger.csv` (append-only). Run: `python scripts/ops/run_multimodel_sigma.py --date YYYY-MM-DD --execute`
+
+**Ledger join fixed + backfilled 2026-07-29 (`7b9d4f2`):** sigma's switch to raw
+numeric race_ids (verdict_loader migration `ed7d4a9`, 2026-07-25) made the
+numeric→velo remap corrupt every New Build/Champion join — both models silently
+recorded NO_DATA on all dates since 2026-07-14 while their scorecards existed and
+matched 53/54. Join now matches raw ids against sigma first (remap is legacy
+fallback only), a tripwire hard-fails the run instead of writing a ledger where a
+loaded model joins zero races, and 13 dates (May 30 – Jul 27) were backfilled.
+First honest cumulative table: Old VELO 25.9% (n=1527) · No-RPR 25.3% (n=1167) ·
+New Build 15.8% (n=1152) · Champion 22.2% (n=383).
 
 ## CANONICAL MODEL TRUTH SPINE (added 2026-07-06, MODEL-TRUTH-01..04)
 
@@ -104,17 +115,18 @@ skips and never overwrites if today's `velo_verdicts` already exist) → Steps 9
 Non-critical step failures do not stop the chain; critical ones (capture, parse,
 validate, scoring) do.
 
-### It is scheduled — local cron, not a cloud agent
-Installed 2026-07-08 via `crontab` on the operator's own machine (not a Claude cloud
-routine — cloud routines run in a fresh sandbox with no access to the local RP browser
-session or `.env` secrets, so they cannot run this pipeline). Schedule:
-```
-CRON_TZ=Europe/London
-0 7 * * * cd <repo> && PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py --date $(date +%Y-%m-%d) --execute >> data/reports/run_full_raceday_cron.log 2>&1
-```
-07:00 UK time, every day (DST-aware via `CRON_TZ`), before racing starts. **This only
-fires while the operator's machine/WSL instance is actually running** — same limitation
-as any local scheduler, worth knowing.
+### It is scheduled — Windows Task Scheduler, not WSL cron (changed 2026-07-29)
+The 2026-07-08 WSL crontab fired ZERO times on 2026-07-28 and 2026-07-29 (WSL not
+awake at 07:00; cron never catches up a missed firing) — 2026-07-28 was permanently
+lost as a result. Replaced 2026-07-29 with Windows scheduled task `VELO_Raceday_0700`:
+daily 07:00, `StartWhenAvailable` (runs as soon as the machine is next on if 07:00 was
+missed), `WakeToRun`, 4h execution limit. It launches
+`scripts/ops/run_full_raceday_scheduled.sh` via `wsl.exe -d Ubuntu`, which logs to
+`data/reports/run_full_raceday_cron.log` as before. The old crontab line is removed
+(backup: `~/velo_crontab_backup_2026_07_29.txt`). Backstop: session-start check #12
+(`check_todays_raceday_ran`) goes CRITICAL if today has no raceday report/verdicts
+after 08:00. (Still not a cloud agent — the pipeline needs the local RP browser
+session and `.env`, which no cloud sandbox has.)
 
 ### The timing constraint is hard, not a preference
 Confirmed 2026-07-08: Racing Post's live `/racecards/{date}` index page drops a course
@@ -267,6 +279,79 @@ EW_CANDIDATE flag now tracked in sigma and multimodel ledger. `run_results_sigma
   postdata_score/plot_conviction from `racecard_merged`, joined with Deep Race Agent's
   verdict. Frontend panel existed as a dead placeholder before this.
 
+## LEARNING LOOP AUDIT — 2026-07-28 (7-Block Analysis)
+
+Full deep-dive into why the learning loop does not affect predictions. Root causes, current state, and ordered fix queue. **Do not implement fixes out of order** — dependencies run bottom-up (calibration → VCP-03 → gates → council → shadow mode lift).
+
+### Block 1 — Runner Blast Radius
+`nightly_eod_learning_runner.py` is called ONLY from `run_full_raceday_eod.py` Step 20 as a non-critical subprocess. Risk of changing it: **LOW**.
+
+### Block 2 — Sentient State → Scoring Path
+The path EXISTS and is wired — but gated off by env var.
+
+`velo_prime_ensemble.py` loads `data/sentient_state.json` at module import. `_g_shadow_adjustment()` computes a probability multiplier per runner using `doctrine_strengths`, `appetite_state`, and `emotion_laws`. At line 419: `if not _G_SHADOW_MODE: self.velo_prime_prob *= g_mult` — the live path exists but never fires.
+
+**Gate:** `_G_SHADOW_MODE = os.getenv("VELO_G_SHADOW_MODE", "shadow").lower() != "live"` — defaults to `True` forever. Nothing currently sets `VELO_G_SHADOW_MODE=live`.
+
+**G has been evolving** (3,466 races observed, authorized live state update 2026-07-26):
+```
+LAY_THE_STORY:  0.080  (hammered down from 1.0)
+SHADOW_TRACKING: 0.080
+ENGINE_SUPREMACY: 1.000  (never fired — no code path triggers it)
+TOP_4_ON_DANGER: 8e-20  (dead)
+VETP_ECHO:      0.161
+[6 other doctrines at 1e-3 to 1e-13 — effectively dead]
+aggression_level: 0.30  (floor — repeated losses)
+recent_profit[-5]: [-1,-1,-1,-1,-1]
+emotion_laws: 50 pain + 50 anger + 50 triumph rules
+```
+**Backtest result (Fix 5, 2026-07-28):** 1,746 races analysed. **100% in STRONG_DAMPEN (<0.80)** — zero amplify cases. Root cause: STRONG_DOCTRINES loop fired on EVERY race when strength < 0.5 (no race condition), adding "LAY_THE_STORY"+"SHADOW_TRACKING" to doctrines_fired unconditionally, trapping them in a death spiral to 0.08.
+
+**Doctrine collapse fixed (2026-07-28, commit `de0c2ea`):** `_g_shadow_adjustment()` rewritten with principled firing conditions: LAY_THE_STORY fires only when MDS > 0.55; SHADOW_TRACKING fires only when SP ≥ 10.0. Both state files reset to 0.5 (neutral). Multiplier distribution immediately after fix: 32/35 races at 1.0x, 3/35 at 0.93x (high-MDS favs), avg 0.994x — vs 35/35 at 0.516x before.
+
+**Fix 6 condition:** `VELO_G_SHADOW_MODE=live` requires 3+ months of post-reset sigma data showing doctrinemultiplier variation with positive win-rate signal. Not before 2026-10-28 at earliest. Backtest script: `scripts/analysis/g_shadow_backtest.py`.
+
+### Block 3 — Council Independence
+The council (`src/velo/council/agents.py`) is deterministic rule-based — 5 agents checking flatline, contamination, sigma SR, run IDs, mid-price — **with zero LLM calls**. It is genuinely independent of the learning runner. PrimeChair synthesizes to `PASS_TO_LEARNING` / `QUARANTINE_DAY` / `WATCH_ONLY`.
+
+**Bug fixed (Fix 4, 2026-07-28):** `_finalize()` in `nightly_eod_learning_runner.py` previously wrote `"council_verdict": verdict` — copying its own PASS/FAIL into the council audit file. Now reads `data/council_runs/council_run_{self.date_str}.json` and extracts the actual `council_verdict`. Also adds `council_source` field to the audit trail. Combined with Fix 3 (gate pre-flight), the runner now cannot proceed unless the real council file exists and reads `PASS_TO_LEARNING`.
+
+### Block 4 — Gate Enforcement
+Zero of 12 gate conditions (LEARNING_ADMISSION_GATE.md) are enforced in runner startup code. The runner opens `run()` with no gate check. `learning_allowed: True` hardcoded on every event. The gate document itself acknowledges this: "Today this gate is procedural."
+
+**Fixed (Fix 3, 2026-07-28):** Pre-flight added at top of `run()` in `nightly_eod_learning_runner.py`. Checks:
+1. `data/sigma_results/sigma_results_{date}.json` exists and `sigma_status == "PASS"`
+2. `data/council_runs/council_run_{date}.json` exists and `council_verdict == "PASS_TO_LEARNING"`
+3. `data/mission_control/{date}_mission_control.json` exists and `learning_gate == "OPEN"`
+
+Any failure returns `FAIL_GATE_BLOCKED` without touching sentient state.
+
+### Block 5 — VCP-03 Burn-In
+**FIXED 2026-07-28.** `build_vcp03_burn_in_log.py` was never wired into daily pipeline. Now runs as Step 20B in `run_full_raceday_eod.py`. Days 2–28 (July 2–27) are permanently lost — heartbeat file overwrites daily, no history. Count restarts from July 28 at 0/10.
+
+### Block 6 — Calibration Threshold
+`_classify_loss()` in `nightly_eod_learning_runner.py` line 105:
+```python
+if prob > 0.35: return "CALIBRATION_ERROR"
+```
+VP ≥ 0.30 is the system's definition of "high confidence". Classifying all VP > 0.35 losses as `CALIBRATION_ERROR` catches 57–85% of all losses — most normal picks, not genuinely overconfident ones. This floods G's pain rules with calibration signals that aren't meaningful.
+
+**Fix: raise threshold to VP > 0.55.** At VP > 0.55 the model is making a genuinely high-conviction claim. Losses there are true calibration errors.
+
+### Block 7 — Idempotency
+**NOT BROKEN.** Separate audit files for shadow (`playbook_g_nightly_audit_{date}.json`) and live (`playbook_g_live_nightly_audit_{date}.json`) are intentional. Both adapters correctly block duplicate runs for the same date using date-scoped key files. No action needed.
+
+### Fix Order (dependency-safe)
+| Priority | Fix | File | Status |
+|---|---|---|---|
+| 1 | VCP-03 wire-in | `run_full_raceday_eod.py` Step 20B | **DONE** `1f39fcf` |
+| 2 | Calibration threshold 0.35→0.55 | `nightly_eod_learning_runner.py` line 105 | **DONE** `f8fe12f` |
+| 3 | Gate pre-flight (sigma + council + MC) | `nightly_eod_learning_runner.py` top of `run()` | **DONE** `38023e6` |
+| 4 | Runner reads actual council verdict | `nightly_eod_learning_runner.py` `_finalize()` | **DONE** `6f6b073` |
+| 5 | Backtest G shadow multipliers vs sigma | `scripts/analysis/g_shadow_backtest.py` | **DONE** `c57e555` — VERDICT: all 1,746 races in STRONG_DAMPEN, Fix 6 BLOCKED |
+| 6 | Flip `VELO_G_SHADOW_MODE=live` + reset doctrine strengths | `.env`, `app/main.py`, doctrine reset | **BLOCKED** — post-reset, needs 3+ months data (earliest 2026-10-28) |
+| 7 | Fix doctrine collapse + state reset | `src/intelligence/velo_prime_ensemble.py`, `data/sentient_state*.json` | **DONE** `de0c2ea` — multiplier 0.516→0.994, doctrines fire on principled conditions |
+
 ## What is DEPRECATED
 Racing API as a data source (decommissioned 2026-05-14; client files deleted) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.
 
@@ -313,26 +398,43 @@ only, no external NLP/sentiment service.
 - **VFU-25 — COMPLETE 2026-07-07:** PR #140 merged (`92446ee`). Confidence Flood Cure Design Sandbox. Designed (did not implement) 5 candidate mitigations for the two VFU-24 variants: Gap-Collapse Guard, Threshold-Flood Guard, Green-Day Risk Overlay, Same-Day Post-Sigma Reporting Enhancement, Promotion/Rejection Criteria. All rated `DESIGN_ONLY`/`NEEDS_MORE_EVIDENCE`/`SHADOW_TEST_NEXT` — none left the sandbox. No cure implemented, no VP Gatekeeper change. See `docs/current/CONFIDENCE_FLOOD_CURE_DESIGN_SANDBOX.md`.
 - **VFU-26 — IN PROGRESS (opened 2026-07-07):** Confidence Flood Evidence Expansion. Expanded the sigma_results corpus 31→42 dates (11 new, from this project's own sister worktree local artifacts). Reproduced the known 6-date false-green set exactly; found 4 new false-green dates; false-green rate held/increased (37.5%→43.5%); a new `WEAK`-gap-band `UNRESOLVED_FALSE_GREEN` case appeared, not fitting either VFU-24 primary subtype; Threshold-Flood Guard's measured false-positive rate rose from an unmeasurable 0/10 to a real 30.8% (4/13) with a larger true-green cohort. Verdict: `EVIDENCE_EXPANDED_MIXED_RESULT` — disease confirmed/strengthened, cure candidates not promoted (still `DESIGN_ONLY`/`NEEDS_MORE_EVIDENCE`/reporting-only `SHADOW_TEST_NEXT`). No cure implemented, no VP Gatekeeper change. Task contract `ops/task_contracts/VFU-26.json`, branch `vfu-26-confidence-flood-evidence-expansion`. See `docs/current/CONFIDENCE_FLOOD_EVIDENCE_EXPANSION.md`.
 
-## VÉLØ Coherence Protocol (VCP) State (added 2026-06-29)
+## VÉLØ Coherence Protocol (VCP) State (updated 2026-07-28)
 - **VCP-00 — Truth Lock:** IN PROGRESS (2026-06-29). Stale root docs archived. CLAUDE.md rewritten as pointer-only. docs/current/ thinned to operational spine. ONE_TRUTH HEAD updated.
 - **VCP-01 — Living State Packet:** COMPLETE (`ff86674`). `data/current/velo_living_state.json` (gitignored runtime state). Operator signed off 2026-06-29. Builder: `scripts/ops/build_velo_living_state.py`.
 - **VCP-02 — Heartbeat V1:** COMPLETE (`5f83fec`). Reads living state only. 25 tests pass. Operator signed off 2026-06-29. Builder: `scripts/ops/build_velo_heartbeat.py`.
-- **VCP-03 — Ten-Day Coherence Burn-In:** IN PROGRESS (started 2026-06-29). Day 1: PASS. 1/10 days. Log: `data/reports/vcp_03_burn_in_log.md`. Daily commands: `build_velo_living_state.py` → `build_velo_heartbeat.py` → `build_vcp03_burn_in_log.py`. Protocol: `docs/current/VCP_03_COHERENCE_BURN_IN_PROTOCOL.md`.
+- **VCP-03 — Ten-Day Coherence Burn-In:** IN PROGRESS. 2/10 passing days (June 30 + July 1). Log stuck because `build_vcp03_burn_in_log.py` was never wired into the daily pipeline — **FIXED 2026-07-28**: now runs as Step 20B in `run_full_raceday_eod.py`. Days 3–28 (July 2–27) are permanently lost (heartbeat overwrites daily, no history kept). Count restarts from July 28. Log: `data/reports/vcp_03_burn_in_log.md`. Protocol: `docs/current/VCP_03_COHERENCE_BURN_IN_PROTOCOL.md`.
 - **VCP-04 — Shadow Judgment:** NOT STARTED. Requires 10 passing burn-in days + operator sign-off.
 - **Learning doctrine:** VÉLØ learns from every event. Only clean, verified events are allowed to train or promote predictive rules. Dirty events become failure-memory, not model-food. Three lanes: MEMORY_CAPTURE_OPEN (always) · FAILURE_LEARNING_OPEN (always) · PROMOTION_LEARNING_GATED (clean evidence only).
 
 ## Phase A–D Audit Corpus (added 2026-06-28)
 - **Sigma local corpus:** `scripts/audit/build_sigma_local_corpus.py` → `data/training/sigma_local_corpus_latest.parquet` (1,050 rows, 36 dates, SR=26.7%). Run after any new sigma dates to extend.
-- **Top gates (shadow/advisory only):** VP≥0.40+HIGH_CONF SR=54.2% (n=83) · VP+IMP≥0.4 SR=55.6% (n=36) · VP+MDS≥0.3 SR=52.8% (n=53) · RS≥1.5 SR=44.7% (n=38)
+- **Top gates (shadow/advisory only):** VP≥0.40+HIGH_CONF SR=54.2% (n=83) · VP+IMP≥0.4 SR=55.6% (n=36) · VP+MDS≥0.3 SR=52.8% (n=53) · RS≥1.5 SR=44.7% (n=38, now n=44/SR=38.6% as the corpus has grown — see verification note below)
+- **RS≥1.5 gate — verified clean of the RPDC look-ahead leak (2026-07-27):** A real RPDC training-data leak was found and fixed the same day (`_fetch_horse_history`/`_trainer_stats` in `build_rpdc_daily.py` had no `run_date` cutoff, so backfilled/regenerated rows could leak a horse's own result into its own "history" — confirmed via `course_return_flag`: 87.9% win rate in contaminated data vs 16.7% in the genuinely clean same-day subset, base rate 13.0%). Traced whether this figure was affected: `build_sigma_local_corpus.py` reads `rpdc_release_score` only from immutable local verdict JSON snapshots (no Supabase, no live re-query — confirmed by reading its source). Pulled the exact dates behind every RS≥1.5-qualifying race (13 dates, 2026-06-12 to 2026-06-28) and cross-checked against all 40 historical `velo-prime-scoring` runs that scored later than their `source_date` (real rescore/backfill risk, from 266 total pipeline runs). **Zero overlap** — every RS≥1.5 qualifying race was scored same-day. This figure is genuinely clean, not an assumption.
 - **Going code bug (A-3):** FIXED (`09f3252` + `8753b4f`). Both `paper_scorer.py` and `new_build_two_lane_score.py` now use -1 to 2 scale matching raceform_v17 training (Heavy=-1, Good=1, Firm=2). Median fallback corrected to 1.0. Regression tests in `tests/test_new_build_paper_scorer.py` (6 tests, all pass). Operator approved 2026-06-29.
 - **RPDC missing tags:** STABLE_WARM / MARK_READY / MARK_NEAR / COURSE_RETURN absent from all May–Jun 2026 data. Investigate Supabase `runner_release_candidates`.
 - **New scrapers/parsers:** `scripts/ops/scrape_bha_going_stick.py` (D-1, shell ready) · `scripts/ops/parse_runner_notes.py` (D-3, verdict intel only)
 
-## What is BLOCKED / KNOWN ISSUES (as of 2026-06-28)
+## Railway — What It Actually Does (audited 2026-07-28)
+
+Railway (`railway.toml`) runs ONE thing: `uvicorn app.main:app --host 0.0.0.0 --port $PORT` — the FastAPI dashboard server. That's it. Everything else is either dead or never wired.
+
+| Railway service | Status | Verdict |
+|---|---|---|
+| Dashboard (`app.main:app`) | RUNNING | Only working Railway use. Reads Supabase. Accessible remotely. |
+| Scoring cron (`run_prime_today.py @ 09:00 UTC Mon-Sat`) | FAIL_OR_UNPROVEN | Cannot work — needs logged-in local RP browser session (Playwright + Firefox profile). Railway has no access to this. |
+| EOD/sigma chain | NOT DEPLOYED | Also cannot work remotely — depends on local result capture files. |
+
+**Cost verdict:** You are paying Railway to host a dashboard that reads Supabase. If remote access to the dashboard matters, keep it. If you only use it locally, shut down Railway and run `app.main:app` locally — saves the subscription entirely. Do NOT attempt to wire the scoring cron on Railway: it structurally requires a local browser session that cannot exist in a cloud container.
+
+## What is BLOCKED / KNOWN ISSUES (updated 2026-07-28)
 - **Telegram scoring alerts:** DISABLED (`--no-notify`).
-- **Railway cron:** FAIL_OR_UNPROVEN — every run is manual.
+- **Railway cron:** FAIL_OR_UNPROVEN — every scoring run is manual. See Railway section above.
 - **Local test suite:** pytest 6.2.5 incompatible with pytest-asyncio 1.3.0; 3 test modules have import drift. **30/30 governance tests pass** (governance-v1-hardened tag @ `2cc135a`).
 - **Learning gate:** Check daily — blocked on DEGRADED/UNKNOWN source or Council verdict not `PASS_TO_LEARNING`.
+- **Calibration threshold:** `nightly_eod_learning_runner.py` classifies any VP > 0.35 loss as `CALIBRATION_ERROR` — too aggressive (catches ~57-85% of all losses). Fix: raise to VP > 0.55. Queued.
+- **Gate enforcement:** 12 learning admission gate conditions (LEARNING_ADMISSION_GATE.md) are procedural only — none enforced in runner startup code. Runner auto-sets `learning_allowed=True`. Queued.
+- **Council verdict not read by runner:** Runner writes `council_verdict = runner_verdict` in its own audit (line 389 `_finalize()`), never reads the actual Step 16b council output. Queued.
+- **`_G_SHADOW_MODE`:** Playbook G multiplier computed every scoring run but never applied to VP. Env var `VELO_G_SHADOW_MODE` defaults to `shadow`. G has evolved over 3,466 races — most doctrines near 0.0 strength, aggression at floor 0.3. Before flipping to `live`: backtest shadow multipliers against sigma to verify lift. Queued after gate enforcement fix.
 - **`build_rp_results_url_list.py`:** Requires a manifest in `racing_post_account_raw/live-full-racepages-YYYY-MM-DD*/`. If raw capture directory is absent, build the URL list directly from `racecard_injection.json` source_urls (replace `/racecards/` → `/results/`).
 
 ## What must happen BEFORE scoring

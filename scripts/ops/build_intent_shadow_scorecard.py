@@ -26,8 +26,11 @@ Feature sourcing, in priority order, per champion feature:
      designed fallback, applied consistently and disclosed per-row via
      doctrine_features_median_filled=True.
 
-No stake_authorised, no promotion_eligible, no dashboard_visible can ever be
-set true by this script — enforced at the row-construction call site.
+No stake_authorised, no promotion_eligible can ever be set true by this
+script — enforced at the row-construction call site. dashboard_visible was
+set true 2026-07-08 by explicit operator decision (view-only research
+visibility, not a promotion decision — see docs/current/MODEL_RESULT_REPORTING_LAW.md
+and the Little Lady Rock precedent for why promotion itself stays gated).
 """
 from __future__ import annotations
 
@@ -186,7 +189,7 @@ def run(*, target_date: str, execute: bool) -> dict[str, Any]:
                 "learning_class": "SHADOW_INTENT_SIGNAL",
                 "stake_authorised": False,
                 "promotion_eligible": False,
-                "dashboard_visible": False,
+                "dashboard_visible": True,
             })
 
     total = len(scorecard_rows)
@@ -202,7 +205,7 @@ def run(*, target_date: str, execute: bool) -> dict[str, Any]:
         "learning_class": "SHADOW_INTENT_SIGNAL",
         "stake_authorised": False,
         "promotion_eligible": False,
-        "dashboard_visible": False,
+        "dashboard_visible": True,
         "races_scored": len(by_race),
         "runners_scored": total,
         "runners_with_intent_history": with_history,
@@ -217,19 +220,20 @@ def run(*, target_date: str, execute: bool) -> dict[str, Any]:
     }
 
     if execute:
+        date_tag = target_date.replace("-", "_")
         RPT_DIR.mkdir(parents=True, exist_ok=True)
-        csv_path = RPT_DIR / "july06_intent_shadow_scorecard.csv"
+        csv_path = RPT_DIR / f"intent_shadow_scorecard_{date_tag}.csv"
         with csv_path.open("w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(scorecard_rows[0].keys()))
             w.writeheader()
             w.writerows(scorecard_rows)
 
-        md_path = RPT_DIR / "july06_intent_shadow_scorecard_summary.md"
+        md_path = RPT_DIR / f"intent_shadow_scorecard_{date_tag}_summary.md"
         md_lines = [
-            "# July 06 Intent Shadow Scorecard — CHAMPION_INTENT_SHADOW",
+            f"# {target_date} Intent Shadow Scorecard — CHAMPION_INTENT_SHADOW",
             f"Generated: {summary['generated_at']}",
             "",
-            "**stake_authorised: false | promotion_eligible: false | dashboard_visible: false**",
+            "**stake_authorised: false | promotion_eligible: false | dashboard_visible: true**",
             "",
             f"- Races scored: {summary['races_scored']}",
             f"- Runners scored: {summary['runners_scored']}",
@@ -249,7 +253,7 @@ def run(*, target_date: str, execute: bool) -> dict[str, Any]:
         md_lines += ["", f"Next step: {summary['next_step']}"]
         md_path.write_text("\n".join(md_lines), encoding="utf-8")
 
-        audit_path = RPT_DIR / "july06_intent_shadow_audit.json"
+        audit_path = RPT_DIR / f"intent_shadow_audit_{date_tag}.json"
         audit_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
         summary["csv_path"] = str(csv_path.relative_to(ROOT))
         summary["md_path"] = str(md_path.relative_to(ROOT))

@@ -1,6 +1,6 @@
 # Old VELO Three-Option Card - 2026-07-11
 
-- Source snapshot: `data/runner_snapshots_2026_07_11_2026_07_11_c2205630_1783728389659.jsonl`
+- Source snapshot: `data/runner_snapshots_2026_07_11_2026_07_11_eba3ea14_1783778643781.jsonl`
 - Roles: WIN / PLACE / LONGSHOT
 - Boundary: shadow/operator card only. No scoring change, no staking.
 

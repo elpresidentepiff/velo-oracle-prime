@@ -238,6 +238,16 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 20B: VCP-03 coherence burn-in log ─────────────────────────────
+    # Wired 2026-07-28 — was never in daily pipeline, causing 26 missed days
+    # (stuck at 2/10 since 2026-07-01). Script is idempotent: skips if today
+    # already logged. Reads velo_heartbeat_latest.json + velo_living_state.json.
+    run(
+        "Step 20B: VCP-03 coherence burn-in log",
+        [PY, "scripts/ops/build_vcp03_burn_in_log.py"],
+        critical=False, results=results,
+    )
+
     # ── Summary ────────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY_EOD SUMMARY — {date}\n{'='*70}")
     n_ok = sum(1 for r in results if r["ok"])

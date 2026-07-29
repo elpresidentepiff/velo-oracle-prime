@@ -1,19 +1,19 @@
 {
   "heartbeat_version": "velo_heartbeat_v1",
-  "generated_at": "2026-06-29T23:56:59.758639+00:00",
+  "generated_at": "2026-07-01T02:20:08.164191+00:00",
   "living_state_version": "velo_living_state_v1",
-  "living_state_generated_at": "2026-06-29T23:50:27.246139+00:00",
-  "repo_head": "e5b259b",
+  "living_state_generated_at": "2026-07-01T02:19:04.805795+00:00",
+  "repo_head": "a8b3e8a",
   "sections": {
     "system_status": {
       "truth_lock": "LOCKED",
-      "spine_count": 25,
+      "spine_count": 26,
       "stale_docs_archived": true,
-      "repo_head": "e5b259b"
+      "repo_head": "a8b3e8a"
     },
     "source_truth": {
-      "status": "LOCAL_JSON_FALLBACK",
-      "note": "Not RP_MERGED_CLEAN \u2014 promotion gated until source is verified."
+      "status": "RP_MERGED_CLEAN",
+      "note": "Source verified \u2014 promotion eligible if council agrees."
     },
     "vfu_status": {
       "latest": "VFU-20",
@@ -31,30 +31,32 @@
       "regression_tests": 4
     },
     "council_verdict": {
-      "verdict": "WATCH_ONLY",
+      "verdict": "PASS_TO_LEARNING",
       "learning_gate": "BLOCKED",
       "promotion_gate": "BLOCKED",
       "gate_reasons": [
-        "GATE_COUNCIL_WATCH_ONLY",
-        "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
+        "GATE_PIPELINE_TRUTH_FALSE_PASS_NO_VERDICTS"
       ],
-      "sigma_date": "2026-06-29",
+      "sigma_date": "2026-06-30",
       "sigma_status": "PASS",
-      "sigma_sr": 0.3636,
+      "sigma_sr": 0.2391,
       "identity_failures": 0
     },
     "learning_routes": {
       "memory_capture": "OPEN",
       "failure_learning": "OPEN",
-      "promotion_learning": "GATED",
-      "promotion_blockers": [
-        "source_truth=LOCAL_JSON_FALLBACK",
-        "council_verdict=WATCH_ONLY"
-      ]
+      "promotion_learning": "ELIGIBLE",
+      "promotion_blockers": []
     },
     "contradictions": {
-      "count": 0,
-      "items": []
+      "count": 1,
+      "items": [
+        {
+          "id": "C-01",
+          "description": "Mission Control reports RP_MERGED_CLEAN source but learning gate is BLOCKED",
+          "severity": "WARN"
+        }
+      ]
     },
     "playbook_g_shadow": {
       "status": "SHADOW_ONLY",

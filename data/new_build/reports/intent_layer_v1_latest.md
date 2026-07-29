@@ -1,5 +1,5 @@
 # Intent Layer V1 — Ablation vs Champion
-Generated: 2026-05-26T00:46:10.700802Z
+Generated: 2026-07-06T11:18:04.921480Z
 
 ## Test Set
 - 2025 unseen: 2025-01-01 → 2025-07-05

@@ -1,0 +1,70 @@
+{
+  "version": "v1-midprice-specialist",
+  "classification": "LAB_EXPERIMENT",
+  "model_type": "GradientBoostingClassifier + IsotonicCalibration",
+  "trained_at": "2026-07-27T00:12:53.987208",
+  "source": "/mnt/c/Users/puror/velo-oracle-prime/data/raceform_v17_features.parquet",
+  "mid_price_band": [
+    3.0,
+    10.0
+  ],
+  "train_races": 91395,
+  "test_races": 4759,
+  "banned_features": [
+    "decoy_support_flag",
+    "implied_prob",
+    "is_fav",
+    "log_sp",
+    "odds_contraction_score",
+    "odds_resilience_score",
+    "rpr_num",
+    "rpr_vs_field",
+    "runs_since_mkt_support",
+    "sp_dec",
+    "sp_rank",
+    "ts_num"
+  ],
+  "specialist_features": [
+    "dist_f",
+    "going_code",
+    "is_aw",
+    "class_num",
+    "wgt_lbs",
+    "or_num",
+    "or_vs_field",
+    "field_size",
+    "draw_num",
+    "draw_pct",
+    "age_num",
+    "runs_since_win",
+    "runs_since_place",
+    "curr_or_minus_last_win_or",
+    "curr_or_minus_best_or",
+    "mark_compression_score",
+    "release_window_score",
+    "course_fit_score",
+    "going_fit_score",
+    "distance_fit_score",
+    "quiet_run_score",
+    "trainer_timing_score",
+    "jockey_switch_intent",
+    "setup_run_flag",
+    "cash_run_flag"
+  ],
+  "results": {
+    "auc": 0.6882,
+    "log_loss": 0.3205,
+    "top1": 0.1994,
+    "mrr": 0.4291,
+    "or_baseline_top1": 0.1469,
+    "old_velo_midprice_top1_reference": 0.24,
+    "no_rpr_midprice_top1_reference": 0.24
+  },
+  "promotion_status": "NOT_PROMOTED \u2014 LAB_EXPERIMENT only, requires n>=100 evidence gate + operator sign-off",
+  "not_wired_to": [
+    "run_prime_today.py",
+    "run_radical_shadow_today.py",
+    "new_build_two_lane_score.py",
+    "build_current_card_intent_features.py"
+  ]
+}

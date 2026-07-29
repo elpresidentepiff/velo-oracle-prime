@@ -4,7 +4,7 @@
         **Status:** DRY-RUN ONLY — blocked_from_live_use=True
 
         ## Field-Size Coverage
-        - RP results races indexed: 868
+        - RP results races indexed: 1586
         - VFU-17 rows matched: 1063 / 3052 (34.8%)
         - Rows with EW conclusion blocked: 1989
 

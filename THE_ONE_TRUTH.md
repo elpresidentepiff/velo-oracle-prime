@@ -47,7 +47,8 @@ once after Step 3 and reused everywhere; downstream steps must not rediscover it
 | 17 | `scripts/ops/run_execution_bridge_shadow.py` | READY / SIM ONLY | Verdict/result truth | SIM-only paper ledger and outcome audit |
 | 18 | `scripts/ops/build_innovation_protocol.py` | READY | Verdict/result truth | Deduplicated router evidence dataset |
 | 19 | `scripts/ops/router_shadow_audit.py` | READY | Router evidence dataset | Lane audit, freeze state and ledger |
-| 20 | `scripts/ops/nightly_eod_learning_runner.py` | READY / SHADOW ONLY | All prior gates PASS | Shadow-only learning artifacts and idempotency proof |
+| 20 | `scripts/ops/nightly_eod_learning_runner.py` | READY | All prior gates PASS | Playbook G learning artifacts and idempotency proof |
+| 20B | `scripts/ops/build_vcp03_burn_in_log.py` | READY | Step 20 PASS, velo_heartbeat_latest.json, velo_living_state.json | VCP-03 burn-in day appended to data/reports/vcp_03_burn_in_log.json |
 
 **Hard stop:** if any required script is absent from Git, any command exits
 non-zero, or any required proof is missing, stop and announce the obstacle.
@@ -876,7 +877,12 @@ below passes.
 4. Racing API enrichment is not a Council evidence source, Council tool,
    Council requirement, Council warning, or Council release gate.
 5. All execution bridge activity is SIM/paper only. No live staking.
-6. Playbook G learning is shadow-only. `data/sentient_state.json` must not change.
+6. Playbook G updates BOTH shadow (`data/sentient_state_shadow.json`) and live
+   (`data/sentient_state.json`) each night — live update authorized 2026-07-26 after
+   the doctrines_fired bug was fixed and a full backfill (3,466 races) was verified.
+   `VELO_G_SHADOW_MODE` env var (default `shadow`) controls whether G's multiplier
+   applies to VP scores in the ensemble. Do NOT flip to `live` without operator review
+   of shadow multiplier performance vs sigma (run backtest first).
 7. At the first failed gate, stop and announce the exact obstacle. Fix safely,
    rerun the failed step, and only then continue.
 
@@ -899,6 +905,7 @@ Step 17  python scripts/ops/run_execution_bridge_shadow.py --date YYYY-MM-DD --m
 Step 18  python scripts/ops/build_innovation_protocol.py --date YYYY-MM-DD
 Step 19  python scripts/ops/router_shadow_audit.py --prev-csv data/router_shadow_audit_latest.csv
 Step 20  python scripts/ops/nightly_eod_learning_runner.py --date YYYY-MM-DD
+Step 20B python scripts/ops/build_vcp03_burn_in_log.py
 Final    python scripts/audit/run_velo_council.py --date YYYY-MM-DD
 Final    python scripts/ops/update_mission_control.py --date YYYY-MM-DD
 ```
@@ -1032,9 +1039,17 @@ Required:
 - `engine_updates_applied_first_run` equals events created.
 - `engine_updates_applied_duplicate_run: 0`.
 - `duplicates_skipped_second_run` equals events created.
-- `live_sentient_state_touched: false`.
+- `live_sentient_state_touched: false` is reported by the status JSON (this field
+  only goes true on a failure — the live adapter runs after PASS and is expected).
 - `hfs_features_used: false`.
-- Hardened Playbook G verdict is `SHADOW_ONLY_OK`.
+- No `doctrines_fired_dropped` failures in shadow or live audit files.
+
+Step 20B: VCP-03 Coherence Burn-In
+
+Wired 2026-07-28. Appends one daily record to `data/reports/vcp_03_burn_in_log.json`.
+Idempotent — skips if today already logged. Target: 10 consecutive PASS days before VCP-04.
+Check `data/reports/vcp_03_burn_in_log.md` for current count. Non-blocking — does not gate
+Step 20 or daily operation.
 
 Venue aliases must reconcile before learning. Example: RP venue `PAT` and VELO
 venue `PUN` both identify Punchestown. A venue-alias miss is a matcher defect,

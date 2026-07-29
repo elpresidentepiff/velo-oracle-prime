@@ -122,11 +122,8 @@ def main() -> int:
     # ── Steps 1-3: live racecard capture ─────────────────────────────────
     if not args.skip_capture:
         if not run(
-            "Step 1: Capture racecard index",
-            [PY, "scripts/ops/racing_post_account_collector.py", "manual-capture",
-             "--date", date, "--start-url", f"https://www.racingpost.com/racecards/{date}",
-             "--label", "racecard_index", "--profile-dir", str(FIREFOX_PROFILE),
-             "--headless", "--execute"],
+            "Step 1: Capture racecard index (headless — gets ALL UK venues)",
+            [PY, "scripts/ops/capture_index_headless.py", "--date", date],
             critical=True, results=results,
         ):
             return 1
@@ -209,6 +206,20 @@ def main() -> int:
         critical=True, results=results,
     ):
         return 1
+
+    # ── Step 5.1: Backfill Supabase races metadata table ──────────────────
+    # `races` (course/time/race_name) was only ever written by the old
+    # Racing API ingestion worker, decommissioned 2026-05-14. Nothing
+    # replaced it for the RP pipeline, so the table silently stopped
+    # getting new rows on 2026-05-06 -- every dashboard publish since then
+    # joined verdicts to `races` by race_id and got nothing back, showing
+    # blank course/time/race_name for every runner, every day, undetected
+    # until 2026-07-26. This step closes that gap permanently.
+    run(
+        "Step 5.1: Backfill races metadata table",
+        [PY, "scripts/ops/backfill_races_table.py", "--date", date, "--execute"],
+        critical=False, results=results,
+    )
 
     # ── Step 5.5: Build racecard_merged from injection ───────────────────
     # Required before Step 9 -- run_prime_today.py --source rp reads
@@ -295,8 +306,9 @@ def main() -> int:
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"
     run("Step 9.3: Tri-Lane Agent Review",
         [PY, "scripts/ops/build_tri_lane_agent_review.py", "--packet", str(tri_lane_json)], critical=False, results=results)
+    pdf_dir = ROOT / "data" / "incoming_pdfs" / date
     run("Step 9.4: Deep Race Agent V1",
-        [PY, "scripts/ops/build_deep_race_agent_v1.py", "--date", date], critical=False, results=results)
+        [PY, "scripts/ops/build_deep_race_agent_v1.py", "--date", date, "--downloads", str(pdf_dir)], critical=False, results=results)
     run("Step 9.5: Course Master",
         [PY, "scripts/ops/build_course_master.py", "--date", date], critical=False, results=results)
     if not run("Step 9.6: Old VELO Three-Option Card",
@@ -313,6 +325,19 @@ def main() -> int:
     if not run("Champion Intent: Shadow Scorecard",
         [PY, "scripts/ops/build_intent_shadow_scorecard.py", "--date", date, "--execute"], critical=True, results=results):
         return 1
+
+    # ── New Build Policy V1 (paper scorer + decision policy) ──────────────
+    # Was entirely manual before 2026-07-26: paper_scorer.py called
+    # model.predict_proba() on a raw lightgbm.basic.Booster (no such method,
+    # crashed every time) and never wrote the per-date file
+    # new_build_decision_policy_run.py needs, so NEW_BUILD_POLICY_V1 had no
+    # input for any date. Both fixed same day; wiring in so it runs with
+    # everything else instead of needing a manual run each day.
+    run("New Build: Paper Score Today",
+        [PY, "scripts/ops/new_build_paper_score_today.py", "--execute",
+         "--racecard-path", str(standard_cache)], critical=False, results=results)
+    run("New Build: Decision Policy V1",
+        [PY, "scripts/ops/new_build_decision_policy_run.py", "--date", date], critical=False, results=results)
 
     # ── Canonical model scorecard: build + persist (all four models measured
     # every day -- New Build and Champion Intent were previously producing

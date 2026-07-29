@@ -1,159 +1,26 @@
 {
-  "generated_at": "2026-07-23T22:22:18.052889Z",
-  "date": "2026-07-24",
+  "generated_at": "2026-07-29T12:32:39.389628Z",
+  "date": "2026-07-29",
   "status": "COURSE_MASTER_PAPER_ONLY",
   "racing_api_used": false,
   "ruleset": "COURSE_MASTER_V1_SIGMA_PLUS_DEEP_AGENT",
   "source_files": {
     "sigma_course_table": "data/reports/current_era_course_excellence_table.json",
     "deep_agent_eval": "data/reports/deep_race_agent_v1_eval_2026_06_01_to_2026_06_20_v2.json",
-    "today_racecards": "data/racecard_merged/*2026-07-24*.json"
+    "today_racecards": "data/racecard_merged/*2026-07-29*.json"
   },
   "summary": {
-    "course_profiles": 64,
-    "today_courses": 8,
-    "today_race_count": 55,
+    "course_profiles": 69,
+    "today_courses": 5,
+    "today_race_count": 32,
     "today_action_counts": {
-      "COURSE_WARNING": 1,
-      "COURSE_NEUTRAL": 3,
-      "COURSE_SUPPRESS": 2,
-      "COURSE_BOOST": 1,
-      "COURSE_SUPPORT": 1
+      "COURSE_NEUTRAL": 5
     }
   },
   "today_courses": {
-    "ascot": {
-      "course": "Ascot",
-      "key": "ascot",
-      "master_action": "COURSE_WARNING",
-      "master_score": -2,
-      "master_confidence": "HIGH",
-      "reasons": [],
-      "warnings": [
-        "DEEP_DRAIN_ROI_-0.254_N18"
-      ],
-      "sigma": {
-        "course": "Ascot",
-        "source_section": "baseline",
-        "course_tier": "OK",
-        "n": 41,
-        "wins": 11,
-        "sr": 0.2683,
-        "avg_vp": 0.3109,
-        "vp40_n": 14,
-        "vp40_sr": 0.3571,
-        "sample_tier": "MEANINGFUL"
-      },
-      "deep_agent": {
-        "course": "Ascot",
-        "n": 18,
-        "wins": 6,
-        "frames": 11,
-        "sr": 0.3333,
-        "frame_rate": 0.6111,
-        "profit": -45.7,
-        "roi": -0.2539,
-        "identity_misses": 0,
-        "missing_results": 0,
-        "sample_tier": "CAUTION"
-      },
-      "today": {
-        "course": "Ascot",
-        "venue": "Ascot",
-        "venue_code": "ASC",
-        "race_count": 6,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_ASC_2026-07-24.json"
-      }
-    },
-    "chepstow": {
-      "course": "Chepstow",
-      "key": "chepstow",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "HIGH",
-      "reasons": [
-        "SIGMA_DOING_WELL_N35"
-      ],
-      "warnings": [
-        "DEEP_DRAIN_ROI_-0.500_N9"
-      ],
-      "sigma": {
-        "course": "Chepstow",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL",
-        "n": 35,
-        "wins": 10,
-        "sr": 0.2857,
-        "avg_vp": 0.3562,
-        "vp40_n": 11,
-        "vp40_sr": 0.2727,
-        "sample_tier": "MEANINGFUL"
-      },
-      "deep_agent": {
-        "course": "Chepstow",
-        "n": 9,
-        "wins": 2,
-        "frames": 4,
-        "sr": 0.2222,
-        "frame_rate": 0.4444,
-        "profit": -45.0,
-        "roi": -0.5,
-        "identity_misses": 7,
-        "missing_results": 0,
-        "sample_tier": "OBSERVATION_ONLY"
-      },
-      "today": {
-        "course": "Chepstow",
-        "venue": "Chepstow",
-        "venue_code": "CHP",
-        "race_count": 7,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-24.json"
-      }
-    },
-    "cork": {
-      "course": "Cork",
-      "key": "cork",
-      "master_action": "COURSE_NEUTRAL",
-      "master_score": 0,
-      "master_confidence": "MEDIUM",
-      "reasons": [],
-      "warnings": [],
-      "sigma": {
-        "course": "Cork",
-        "source_section": "caution",
-        "course_tier": "CAUTION",
-        "n": 18,
-        "wins": 4,
-        "sr": 0.2222,
-        "avg_vp": 0.3478,
-        "vp40_n": 5,
-        "vp40_sr": 0.6,
-        "sample_tier": "CAUTION"
-      },
-      "deep_agent": {
-        "course": "Cork",
-        "n": 5,
-        "wins": 2,
-        "frames": 3,
-        "sr": 0.4,
-        "frame_rate": 0.6,
-        "profit": 53.0,
-        "roi": 1.06,
-        "identity_misses": 0,
-        "missing_results": 0,
-        "sample_tier": "OBSERVATION_ONLY"
-      },
-      "today": {
-        "course": "Cork",
-        "venue": "Cork",
-        "venue_code": "COR",
-        "race_count": 7,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_COR_2026-07-24.json"
-      }
-    },
-    "kilbeggan": {
-      "course": "Kilbeggan",
-      "key": "kilbeggan",
+    "gal": {
+      "course": "GAL",
+      "key": "gal",
       "master_action": "COURSE_NEUTRAL",
       "master_score": 0,
       "master_confidence": "LOW",
@@ -163,192 +30,102 @@
         "available": false
       },
       "deep_agent": {
-        "course": "Kilbeggan",
-        "n": 2,
-        "wins": 1,
-        "frames": 1,
-        "sr": 0.5,
-        "frame_rate": 0.5,
-        "profit": 0.0,
-        "roi": 0.0,
-        "identity_misses": 0,
-        "missing_results": 0,
-        "sample_tier": "OBSERVATION_ONLY"
+        "available": false
       },
       "today": {
-        "course": "Kilbeggan",
-        "venue": "Kilbeggan",
-        "venue_code": "KLB",
-        "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KLB_2026-07-24.json"
+        "course": "GAL",
+        "venue": "GAL",
+        "venue_code": null,
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_GAL_2026-07-29.json"
       }
     },
-    "sandown": {
-      "course": "Sandown",
-      "key": "sandown",
-      "master_action": "COURSE_SUPPRESS",
-      "master_score": -3,
-      "master_confidence": "MEDIUM",
+    "goo": {
+      "course": "GOO",
+      "key": "goo",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
       "reasons": [],
-      "warnings": [
-        "DEEP_DRAIN_ROI_-0.350_N10",
-        "DEEP_LOW_STRIKE_0.200"
-      ],
+      "warnings": [],
       "sigma": {
         "available": false
       },
       "deep_agent": {
-        "course": "Sandown",
-        "n": 10,
-        "wins": 2,
-        "frames": 7,
-        "sr": 0.2,
-        "frame_rate": 0.7,
-        "profit": -35.0,
-        "roi": -0.35,
-        "identity_misses": 0,
-        "missing_results": 0,
-        "sample_tier": "CAUTION"
+        "available": false
       },
       "today": {
-        "course": "Sandown",
-        "venue": "Sandown",
-        "venue_code": "SAN",
-        "race_count": 6,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_SAN_2026-07-24.json"
-      }
-    },
-    "thirsk": {
-      "course": "Thirsk",
-      "key": "thirsk",
-      "master_action": "COURSE_SUPPRESS",
-      "master_score": -5,
-      "master_confidence": "HIGH",
-      "reasons": [],
-      "warnings": [
-        "SIGMA_CAUTION_N22",
-        "DEEP_DRAIN_ROI_-1.000_N11",
-        "DEEP_LOW_STRIKE_0.182"
-      ],
-      "sigma": {
-        "course": "Thirsk",
-        "source_section": "caution",
-        "course_tier": "CAUTION",
-        "n": 22,
-        "wins": 4,
-        "sr": 0.1818,
-        "avg_vp": 0.348,
-        "vp40_n": 7,
-        "vp40_sr": 0.5714,
-        "sample_tier": "MEANINGFUL"
-      },
-      "deep_agent": {
-        "course": "Thirsk",
-        "n": 11,
-        "wins": 2,
-        "frames": 3,
-        "sr": 0.1818,
-        "frame_rate": 0.2727,
-        "profit": -110.0,
-        "roi": -1.0,
-        "identity_misses": 6,
-        "missing_results": 0,
-        "sample_tier": "CAUTION"
-      },
-      "today": {
-        "course": "Thirsk",
-        "venue": "Thirsk",
-        "venue_code": "THI",
-        "race_count": 7,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_THI_2026-07-24.json"
-      }
-    },
-    "uttoxeter": {
-      "course": "UTT",
-      "key": "uttoxeter",
-      "master_action": "COURSE_BOOST",
-      "master_score": 5,
-      "master_confidence": "HIGH",
-      "reasons": [
-        "SIGMA_EXCELLING_N27",
-        "DEEP_POSITIVE_ROI_0.208_N11",
-        "DEEP_FRAME_SUPPORT_0.909"
-      ],
-      "warnings": [],
-      "sigma": {
-        "course": "Uttoxeter",
-        "source_section": "excelling",
-        "course_tier": "EXCELLING",
-        "n": 27,
-        "wins": 12,
-        "sr": 0.4444,
-        "avg_vp": 0.3505,
-        "vp40_n": 10,
-        "vp40_sr": 0.6,
-        "sample_tier": "MEANINGFUL"
-      },
-      "deep_agent": {
-        "course": "Uttoxeter",
-        "n": 11,
-        "wins": 7,
-        "frames": 10,
-        "sr": 0.6364,
-        "frame_rate": 0.9091,
-        "profit": 22.9,
-        "roi": 0.2082,
-        "identity_misses": 1,
-        "missing_results": 0,
-        "sample_tier": "CAUTION"
-      },
-      "today": {
-        "course": "UTT",
-        "venue": "UTT",
+        "course": "GOO",
+        "venue": "GOO",
         "venue_code": null,
-        "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTT_2026-07-24.json"
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_GOO_2026-07-29.json"
       }
     },
-    "york": {
-      "course": "York",
-      "key": "york",
-      "master_action": "COURSE_SUPPORT",
-      "master_score": 2,
-      "master_confidence": "HIGH",
-      "reasons": [
-        "SIGMA_DOING_WELL_N37"
-      ],
+    "lei": {
+      "course": "LEI",
+      "key": "lei",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
       "warnings": [],
       "sigma": {
-        "course": "York",
-        "source_section": "doing_well",
-        "course_tier": "DOING_WELL",
-        "n": 37,
-        "wins": 11,
-        "sr": 0.2973,
-        "avg_vp": 0.2963,
-        "vp40_n": 9,
-        "vp40_sr": 0.2222,
-        "sample_tier": "MEANINGFUL"
+        "available": false
       },
       "deep_agent": {
-        "course": "York",
-        "n": 4,
-        "wins": 2,
-        "frames": 3,
-        "sr": 0.5,
-        "frame_rate": 0.75,
-        "profit": 24.1,
-        "roi": 0.6025,
-        "identity_misses": 0,
-        "missing_results": 0,
-        "sample_tier": "OBSERVATION_ONLY"
+        "available": false
       },
       "today": {
-        "course": "York",
-        "venue": "York",
-        "venue_code": "YOR",
+        "course": "LEI",
+        "venue": "LEI",
+        "venue_code": null,
         "race_count": 6,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YOR_2026-07-24.json"
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_LEI_2026-07-29.json"
+      }
+    },
+    "red": {
+      "course": "RED",
+      "key": "red",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "course": "RED",
+        "venue": "RED",
+        "venue_code": null,
+        "race_count": 6,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_RED_2026-07-29.json"
+      }
+    },
+    "san": {
+      "course": "SAN",
+      "key": "san",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "course": "SAN",
+        "venue": "SAN",
+        "venue_code": null,
+        "race_count": 6,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_SAN_2026-07-29.json"
       }
     }
   },
@@ -389,11 +166,8 @@
         "sample_tier": "CAUTION"
       },
       "today": {
-        "course": "Ascot",
-        "venue": "Ascot",
-        "venue_code": "ASC",
-        "race_count": 6,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_ASC_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     },
     "ayr": {
@@ -672,11 +446,8 @@
         "sample_tier": "OBSERVATION_ONLY"
       },
       "today": {
-        "course": "Chepstow",
-        "venue": "Chepstow",
-        "venue_code": "CHP",
-        "race_count": 7,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_CHP_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     },
     "chester": {
@@ -786,11 +557,8 @@
         "sample_tier": "OBSERVATION_ONLY"
       },
       "today": {
-        "course": "Cork",
-        "venue": "Cork",
-        "venue_code": "COR",
-        "race_count": 7,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_COR_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     },
     "curragh": {
@@ -1053,6 +821,50 @@
         "race_count": 0
       }
     },
+    "gal": {
+      "course": "GAL",
+      "key": "gal",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "course": "GAL",
+        "venue": "GAL",
+        "venue_code": null,
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_GAL_2026-07-29.json"
+      }
+    },
+    "goo": {
+      "course": "GOO",
+      "key": "goo",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "course": "GOO",
+        "venue": "GOO",
+        "venue_code": null,
+        "race_count": 7,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_GOO_2026-07-29.json"
+      }
+    },
     "goodwood": {
       "course": "Goodwood",
       "key": "goodwood",
@@ -1276,11 +1088,8 @@
         "sample_tier": "OBSERVATION_ONLY"
       },
       "today": {
-        "course": "Kilbeggan",
-        "venue": "Kilbeggan",
-        "venue_code": "KLB",
-        "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_KLB_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     },
     "killarneyire": {
@@ -1311,6 +1120,28 @@
       "today": {
         "available": false,
         "race_count": 0
+      }
+    },
+    "lei": {
+      "course": "LEI",
+      "key": "lei",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "course": "LEI",
+        "venue": "LEI",
+        "venue_code": null,
+        "race_count": 6,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_LEI_2026-07-29.json"
       }
     },
     "leicester": {
@@ -1905,6 +1736,28 @@
         "race_count": 0
       }
     },
+    "red": {
+      "course": "RED",
+      "key": "red",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "course": "RED",
+        "venue": "RED",
+        "venue_code": null,
+        "race_count": 6,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_RED_2026-07-29.json"
+      }
+    },
     "redcar": {
       "course": "Redcar",
       "key": "redcar",
@@ -2045,6 +1898,28 @@
         "race_count": 0
       }
     },
+    "san": {
+      "course": "SAN",
+      "key": "san",
+      "master_action": "COURSE_NEUTRAL",
+      "master_score": 0,
+      "master_confidence": "LOW",
+      "reasons": [],
+      "warnings": [],
+      "sigma": {
+        "available": false
+      },
+      "deep_agent": {
+        "available": false
+      },
+      "today": {
+        "course": "SAN",
+        "venue": "SAN",
+        "venue_code": null,
+        "race_count": 6,
+        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_SAN_2026-07-29.json"
+      }
+    },
     "sandown": {
       "course": "Sandown",
       "key": "sandown",
@@ -2073,11 +1948,8 @@
         "sample_tier": "CAUTION"
       },
       "today": {
-        "course": "Sandown",
-        "venue": "Sandown",
-        "venue_code": "SAN",
-        "race_count": 6,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_SAN_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     },
     "sligo": {
@@ -2247,15 +2119,12 @@
         "sample_tier": "CAUTION"
       },
       "today": {
-        "course": "Thirsk",
-        "venue": "Thirsk",
-        "venue_code": "THI",
-        "race_count": 7,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_THI_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     },
     "uttoxeter": {
-      "course": "UTT",
+      "course": "Uttoxeter",
       "key": "uttoxeter",
       "master_action": "COURSE_BOOST",
       "master_score": 5,
@@ -2292,11 +2161,8 @@
         "sample_tier": "CAUTION"
       },
       "today": {
-        "course": "UTT",
-        "venue": "UTT",
-        "venue_code": null,
-        "race_count": 8,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_UTT_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     },
     "warwick": {
@@ -2548,11 +2414,8 @@
         "sample_tier": "OBSERVATION_ONLY"
       },
       "today": {
-        "course": "York",
-        "venue": "York",
-        "venue_code": "YOR",
-        "race_count": 6,
-        "source_file": "/mnt/c/Users/puror/velo-oracle-prime/data/racecard_merged/racecard_YOR_2026-07-24.json"
+        "available": false,
+        "race_count": 0
       }
     }
   }

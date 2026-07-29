@@ -176,19 +176,30 @@ def _sb_delete(path: str) -> bool:
         return False
 
 
-def _fetch_horse_history(horse_id: str, horse_name: str = "") -> list[dict]:
-    """Fetch last 20 runs for a horse, ordered newest first.
+def _fetch_horse_history(horse_id: str, horse_name: str = "", before_date: str = "") -> list[dict]:
+    """Fetch last 20 runs for a horse strictly BEFORE before_date, newest first.
 
     racing_horse_runs uses a name-based horse_id format (rp_{COURSE}_{name})
     while racecard injection uses numeric IDs — so we fall back to horse-name
     lookup when the ID query returns nothing.
+
+    before_date (today's race date) is REQUIRED and enforced with a strict
+    run_date.lt filter. Without it, any RPDC regeneration/backfill run after
+    that day's own result is already in racing_horse_runs would leak today's
+    own outcome into "history" (e.g. a horse that won today would trivially
+    match course_return_flag against its own win). Found 2026-07-27 via a
+    course_return_flag=True -> 87.9% win rate correlation in a training
+    corpus that should never have exceeded normal base rates.
     """
+    if not before_date:
+        raise ValueError("_fetch_horse_history requires before_date to prevent look-ahead leakage")
     _fields = (
         "run_date,official_rating,race_class,course,course_id"
         ",distance_f,position_int,is_win,is_place,headgear,jockey_id,trainer_id"
     )
     rows = _sb_get(
         f"/racing_horse_runs?horse_id=eq.{horse_id}"
+        f"&run_date=lt.{before_date}"
         f"&order=run_date.desc&limit=20&select={_fields}"
     )
     if not rows and horse_name:
@@ -196,6 +207,7 @@ def _fetch_horse_history(horse_id: str, horse_name: str = "") -> list[dict]:
         encoded_name = urllib.parse.quote(horse_name, safe="")
         rows = _sb_get(
             f"/racing_horse_runs?horse=ilike.{encoded_name}"
+            f"&run_date=lt.{before_date}"
             f"&order=run_date.desc&limit=20&select={_fields}"
         )
     return rows
@@ -210,14 +222,14 @@ def _trainer_stats(trainer_id: str, today_str: str, trainer_name: str = "") -> d
     cutoff = (date.fromisoformat(today_str) - timedelta(days=30)).isoformat()
     rows = _sb_get(
         f"/racing_horse_runs?trainer_id=eq.{trainer_id}"
-        f"&run_date=gte.{cutoff}"
+        f"&run_date=gte.{cutoff}&run_date=lt.{today_str}"
         f"&select=is_win,is_place"
     )
     if not rows and trainer_name:
         encoded = urllib.parse.quote(trainer_name, safe="")
         rows = _sb_get(
             f"/racing_horse_runs?trainer=ilike.{encoded}"
-            f"&run_date=gte.{cutoff}"
+            f"&run_date=gte.{cutoff}&run_date=lt.{today_str}"
             f"&select=is_win,is_place"
         )
     if not rows:
@@ -616,7 +628,7 @@ def build_rpdc_for_date(date_str: str, injection_path: str | Path | None = None)
     for runner in runners_unique:
         hid = runner["horse_id"]
         try:
-            history = _fetch_horse_history(hid, runner.get("horse", ""))
+            history = _fetch_horse_history(hid, runner.get("horse", ""), before_date=date_str)
             t_stats = trainer_cache.get(runner.get("trainer_id", ""), {"win_rate": 0.0})
             row = compute_rpdc(
                 horse_id=hid,

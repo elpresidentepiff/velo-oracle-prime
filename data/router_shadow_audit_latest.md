@@ -1,6 +1,6 @@
 # VÉLØ Execution Router Shadow Audit
-Generated: 2026-07-25 04:22 UTC
-Dataset: 2334 rows | 1759 with results
+Generated: 2026-07-27 21:46 UTC
+Dataset: 2440 rows | 1865 with results
 
 **No live betting. No staking. Shadow annotation only.**
 
@@ -8,29 +8,29 @@ Dataset: 2334 rows | 1759 with results
 
 | Lane | State | n | SR | Frame | P&L | ROI | DD | LLR | Status |
 |---|---|---|---|---|---|---|---|---|---|
-| V1_BASE | LANE_ACTIVE | 333 | 36.3% | 74.8% | £+20.22 | +6.1% (+0.7%) | £-26.24 | 16 | SHADOW_BUILDING |
-| V2_CLASS4_ONLY | WATCHLIST | 323 | 36.5% | 74.3% | £+22.24 | +6.9% (+0.7%) | £-26.24 | 16 | WATCHLIST |
-| V6_GOLD_SEAM | LANE_FROZEN | 133 | 32.3% | 66.2% | £+23.75 | +17.9% (+2.1%) | £-18.25 | 11 | LANE_FROZEN — FRAME_BELOW_70_AT_N20+ |
+| V1_BASE | LANE_ACTIVE | 357 | 35.6% | 73.9% | £+14.07 | +3.9% (+0.0%) | £-26.24 | 16 | SHADOW_BUILDING |
+| V2_CLASS4_ONLY | WATCHLIST | 347 | 35.7% | 73.5% | £+16.09 | +4.6% (-0.0%) | £-26.24 | 16 | WATCHLIST |
+| V6_GOLD_SEAM | LANE_FROZEN | 141 | 30.5% | 65.2% | £+15.75 | +11.2% (+0.0%) | £-18.25 | 11 | LANE_FROZEN — FRAME_BELOW_70_AT_N20+ |
 
 ## Change vs Previous Run
 
-**V1_BASE**: n 321 → 333 (+12) | ROI 5.4% → 6.1% (+0.7%) | P&L £17.34 → £20.22 (+2.88)
-**V2_CLASS4_ONLY**: n 311 → 323 (+12) | ROI 6.2% → 6.9% (+0.7%) | P&L £19.36 → £22.24 (+2.88)
-**V6_GOLD_SEAM**: n 125 → 133 (+8) | ROI 15.8% → 17.9% (+2.1%) | P&L £19.75 → £23.75 (+4.00)
+**V1_BASE**: n 357 → 357 (+0) | ROI 3.9% → 3.9% (+0.0%) | P&L £14.07 → £14.07 (-0.00)
+**V2_CLASS4_ONLY**: n 347 → 347 (+0) | ROI 4.6% → 4.6% (-0.0%) | P&L £16.09 → £16.09 (-0.00)
+**V6_GOLD_SEAM**: n 141 → 141 (+0) | ROI 11.2% → 11.2% (+0.0%) | P&L £15.75 → £15.75 (+0.00)
 
 ## V1_BASE
 
 | Metric | Value |
 |---|---|
 | Lane state | **LANE_ACTIVE** |
-| n (with results) | 333 |
-| Wins | 121 |
-| Strike rate | 36.3% |
-| Frame/placed rate | 74.8% |
-| Flat 1pt P&L | £+20.22 |
-| ROI | +6.1% |
-| Avg SP | 2.96 |
-| Avg VP | 0.462 |
+| n (with results) | 357 |
+| Wins | 127 |
+| Strike rate | 35.6% |
+| Frame/placed rate | 73.9% |
+| Flat 1pt P&L | £+14.07 |
+| ROI | +3.9% |
+| Avg SP | 2.95 |
+| Avg VP | 0.466 |
 | Max drawdown | £-26.24 |
 | Longest losing run | 16 |
 | Status | **SHADOW_BUILDING** |
@@ -42,134 +42,140 @@ Dataset: 2334 rows | 1759 with results
 | Class | n | SR | P&L |
 |---|---|---|---|
 | CL3 | 10 | 30% | £-2.02 |
-| CL4 | 323 | 37% | £+22.24 |
+| CL4 | 347 | 37% | £+16.09 |
 
 **Field size breakdown:**
 
 | FS | n | SR | P&L |
 |---|---|---|---|
-| 2-5 | 82 | 44% | £+13.50 |
-| 6-8 | 144 | 38% | £+13.01 |
-| 9-12 | 107 | 31% | £-6.29 |
+| 2-5 | 86 | 43% | £+12.00 |
+| 6-8 | 155 | 37% | £+8.61 |
+| 9-12 | 116 | 32% | £-6.54 |
 
 **Winners:**
 
 | Horse | Date | SP | VP | Class | FS |
 |---|---|---|---|---|---|
 | Fern Clyde | 2026-06-08 | 4.0 | 0.419 | CL4 | 11 |
-| Physique | 2026-06-19 | 4.0 | 0.496 | CL4 | 9 |
+| Baloo'S Blues | 2026-06-27 | 4.0 | 0.594 | CL4 | 6 |
 | Treasure Rose | 2026-06-19 | 4.0 | 0.584 | CL4 | 9 |
+| Physique | 2026-06-19 | 4.0 | 0.496 | CL4 | 9 |
+| Always Perfect | 2026-06-26 | 4.0 | 0.726 | CL4 | 5 |
+| Huckleberry Sting | 2026-07-05 | 4.0 | 0.411 | CL4 | 9 |
+| Silca Bay | 2026-07-18 | 4.0 | 0.524 | CL4 | 6 |
+| Cooley's Mist | 2026-07-16 | 4.0 | 0.432 | CL4 | 6 |
+| Al Aali | 2026-07-17 | 4.0 | 0.637 | CL4 | 6 |
+| Marmeladova | 2026-07-16 | 4.0 | 0.397 | CL4 | 9 |
+| Kalir | 2026-07-15 | 4.0 | 0.444 | CL4 | 9 |
 | Flora Of Bermuda | 2026-07-10 | 4.0 | 0.334 | CL4 | 11 |
 | Dottie Diamond | 2026-07-14 | 4.0 | 0.433 | CL4 | 6 |
 | Jkr Cobbler | 2026-07-05 | 4.0 | 0.366 | CL4 | 11 |
-| Huckleberry Sting | 2026-07-05 | 4.0 | 0.411 | CL4 | 9 |
-| Baloo'S Blues | 2026-06-27 | 4.0 | 0.594 | CL4 | 6 |
-| Always Perfect | 2026-06-26 | 4.0 | 0.726 | CL4 | 5 |
-| Kalir | 2026-07-15 | 4.0 | 0.444 | CL4 | 9 |
-| Marmeladova | 2026-07-16 | 4.0 | 0.397 | CL4 | 9 |
-| Cooley's Mist | 2026-07-16 | 4.0 | 0.432 | CL4 | 6 |
-| Al Aali | 2026-07-17 | 4.0 | 0.637 | CL4 | 6 |
-| Silca Bay | 2026-07-18 | 4.0 | 0.524 | CL4 | 6 |
-| Kirchner | 2026-07-24 | 3.8 | 0.522 | CL4 | 4 |
-| Doon The Glen | 2026-07-16 | 3.8 | 0.399 | CL4 | 7 |
-| Zafaan | 2026-06-26 | 3.8 | 0.514 | CL4 | 7 |
 | Thundering On | nan | 3.8 | 0.381 | CL4 | 7 |
-| Best Rate | 2026-07-10 | 3.8 | 0.520 | CL4 | 8 |
 | Applicationofcash | 2026-05-22 | 3.8 | 0.357 | CL4 | 4 |
-| The Wise Traveller | 2026-05-25 | 3.8 | 0.359 | CL4 | 5 |
 | Proposal | nan | 3.8 | 0.371 | CL4 | 11 |
 | Waasil | 2026-06-16 | 3.8 | 0.422 | CL4 | 7 |
+| Zafaan | 2026-06-26 | 3.8 | 0.514 | CL4 | 7 |
+| Kirchner | 2026-07-24 | 3.8 | 0.522 | CL4 | 4 |
+| Doon The Glen | 2026-07-16 | 3.8 | 0.399 | CL4 | 7 |
+| Best Rate | 2026-07-10 | 3.8 | 0.520 | CL4 | 8 |
+| The Wise Traveller | 2026-05-25 | 3.8 | 0.359 | CL4 | 5 |
 | Only Dream Big | 2026-06-22 | 3.5 | 0.676 | CL4 | 7 |
-| Pep Talking | nan | 3.5 | 0.330 | CL4 | 6 |
+| Battenburg Belle | 2026-06-22 | 3.5 | 0.509 | CL4 | 7 |
 | Uppercase | 2026-07-16 | 3.5 | 0.542 | CL4 | 5 |
+| Desert Shadow | 2026-07-15 | 3.5 | 0.500 | CL4 | 4 |
 | Turty Tree | 2026-06-13 | 3.5 | 0.572 | CL4 | 6 |
 | Star Of Mali | 2026-06-18 | 3.5 | 0.310 | CL4 | 10 |
-| Battenburg Belle | 2026-06-22 | 3.5 | 0.509 | CL4 | 7 |
 | Star Cast | 2026-06-12 | 3.5 | 0.489 | CL4 | 8 |
-| Desert Shadow | 2026-07-15 | 3.5 | 0.500 | CL4 | 4 |
-| King Of War | 2026-06-22 | 3.2 | 0.608 | CL4 | 6 |
-| Generic | nan | 3.2 | 0.374 | CL4 | 12 |
-| Knightmare | 2026-07-24 | 3.2 | 0.516 | CL4 | 10 |
+| Pep Talking | nan | 3.5 | 0.330 | CL4 | 6 |
 | Havana Club | 2026-07-15 | 3.2 | 0.539 | CL4 | 7 |
-| Caislean Gear | 2026-07-16 | 3.0 | 0.525 | CL4 | 8 |
+| Knightmare | 2026-07-24 | 3.2 | 0.516 | CL4 | 10 |
+| Generic | nan | 3.2 | 0.374 | CL4 | 12 |
+| King Of War | 2026-06-22 | 3.2 | 0.608 | CL4 | 6 |
+| Zumbi | 2026-06-26 | 3.0 | 0.472 | CL4 | 7 |
+| Plaid | 2026-05-17 | 3.0 | 0.448 | CL4 | 8 |
+| Naga | nan | 3.0 | 0.430 | CL3 | 7 |
+| Sticktoyourguns | 2026-06-13 | 3.0 | 0.542 | CL4 | 10 |
 | Sorrengail | 2026-07-24 | 3.0 | 0.384 | CL4 | 8 |
+| Caislean Gear | 2026-07-16 | 3.0 | 0.525 | CL4 | 8 |
+| A Daughters Love | 2026-07-04 | 3.0 | 0.533 | CL4 | 10 |
 | Regal Renaissance | 2026-07-05 | 3.0 | 0.392 | CL4 | 3 |
+| Alfred Wincham | 2026-06-29 | 3.0 | 0.383 | CL4 | 5 |
 | Lady Dublin | 2026-07-15 | 3.0 | 0.537 | CL4 | 4 |
 | Homeland | 2026-07-14 | 3.0 | 0.365 | CL4 | 9 |
 | Rosberg | 2026-07-04 | 3.0 | 0.440 | CL4 | 6 |
-| Naga | nan | 3.0 | 0.430 | CL3 | 7 |
-| Sticktoyourguns | 2026-06-13 | 3.0 | 0.542 | CL4 | 10 |
-| Plaid | 2026-05-17 | 3.0 | 0.448 | CL4 | 8 |
-| Zumbi | 2026-06-26 | 3.0 | 0.472 | CL4 | 7 |
-| Alfred Wincham | 2026-06-29 | 3.0 | 0.383 | CL4 | 5 |
-| A Daughters Love | 2026-07-04 | 3.0 | 0.533 | CL4 | 10 |
-| Betty Boop | 2026-07-10 | 2.9 | 0.373 | CL4 | 9 |
-| George Wickham | 2026-07-14 | 2.9 | 0.302 | CL4 | 11 |
-| Bridget's Baby | 2026-06-18 | 2.9 | 0.657 | CL4 | 4 |
 | Barnaby Rudge | 2026-06-27 | 2.9 | 0.431 | CL4 | 6 |
 | Worlington | 2026-06-29 | 2.9 | 0.307 | CL4 | 8 |
-| The Boola Boss | nan | 2.9 | 0.311 | CL4 | 8 |
-| Punchbowl Flyer | 2026-06-15 | 2.9 | 0.441 | CL4 | 7 |
+| Guesstimate | 2026-07-17 | 2.9 | 0.800 | CL4 | 4 |
+| Cyrano De Bergerac | 2026-07-24 | 2.9 | 0.459 | CL4 | 5 |
+| Betty Boop | 2026-07-10 | 2.9 | 0.373 | CL4 | 9 |
+| Gaoth Chuil | 2026-07-14 | 2.9 | 0.528 | CL4 | 8 |
+| South West | 2026-07-15 | 2.9 | 0.425 | CL4 | 10 |
+| George Wickham | 2026-07-14 | 2.9 | 0.302 | CL4 | 11 |
 | Blakefell | 2026-05-21 | 2.9 | 0.346 | CL4 | 5 |
+| Punchbowl Flyer | 2026-06-15 | 2.9 | 0.441 | CL4 | 7 |
+| Bridget's Baby | 2026-06-18 | 2.9 | 0.657 | CL4 | 4 |
+| The Boola Boss | nan | 2.9 | 0.311 | CL4 | 8 |
 | Inflexible | nan | 2.9 | 0.319 | CL3 | 6 |
 | Morbeh | 2026-06-12 | 2.9 | 0.418 | CL4 | 9 |
-| Cyrano De Bergerac | 2026-07-24 | 2.9 | 0.459 | CL4 | 5 |
-| Guesstimate | 2026-07-17 | 2.9 | 0.800 | CL4 | 4 |
 | Fine Thing | 2026-07-15 | 2.9 | 0.380 | CL4 | 8 |
-| South West | 2026-07-15 | 2.9 | 0.425 | CL4 | 10 |
-| Gaoth Chuil | 2026-07-14 | 2.9 | 0.528 | CL4 | 8 |
+| Cowardofthecounty | 2026-06-12 | 2.8 | 0.586 | CL4 | 9 |
+| Limestone | nan | 2.8 | 0.318 | CL4 | 4 |
+| Roc De Fer | 2026-07-27 | 2.8 | 0.376 | CL4 | 9 |
 | Melody De Vega | 2026-07-14 | 2.8 | 0.630 | CL4 | 4 |
 | Dark Whisper | 2026-06-30 | 2.8 | 0.308 | CL4 | 8 |
 | Hallandale Beach | 2026-06-27 | 2.8 | 0.338 | CL4 | 6 |
 | Regal Envoy | 2026-06-08 | 2.8 | 0.363 | CL4 | 9 |
-| Cowardofthecounty | 2026-06-12 | 2.8 | 0.586 | CL4 | 9 |
-| Limestone | nan | 2.8 | 0.318 | CL4 | 4 |
+| Dancing Saxon | 2026-07-27 | 2.6 | 0.631 | CL4 | 11 |
 | Sonic Si | 2026-06-15 | 2.6 | 0.345 | CL4 | 7 |
-| Neyva's Angel | 2026-06-11 | 2.6 | 0.364 | CL4 | 5 |
-| A Little Something | 2026-06-10 | 2.6 | 0.499 | CL4 | 5 |
 | Star Cast | 2026-06-19 | 2.6 | 0.362 | CL4 | 10 |
-| Adalida | 2026-07-15 | 2.5 | 0.698 | CL4 | 4 |
-| Liveinthelight | 2026-07-14 | 2.5 | 0.531 | CL4 | 4 |
-| Stardom Glory | 2026-06-27 | 2.5 | 0.512 | CL4 | 6 |
-| Gata Ban | 2026-06-10 | 2.5 | 0.348 | CL4 | 4 |
-| Native Warrior | 2026-06-11 | 2.5 | 0.562 | CL4 | 7 |
+| A Little Something | 2026-06-10 | 2.6 | 0.499 | CL4 | 5 |
+| Neyva's Angel | 2026-06-11 | 2.6 | 0.364 | CL4 | 5 |
 | Ladies Day | 2026-06-13 | 2.5 | 0.369 | CL4 | 6 |
+| Stardom Glory | 2026-06-27 | 2.5 | 0.512 | CL4 | 6 |
+| Liveinthelight | 2026-07-14 | 2.5 | 0.531 | CL4 | 4 |
+| Matins | 2026-07-25 | 2.5 | 0.674 | CL4 | 5 |
+| Adalida | 2026-07-15 | 2.5 | 0.698 | CL4 | 4 |
+| Native Warrior | 2026-06-11 | 2.5 | 0.562 | CL4 | 7 |
+| Gata Ban | 2026-06-10 | 2.5 | 0.348 | CL4 | 4 |
+| Colorado Del Monte | 2026-07-25 | 2.4 | 0.427 | CL4 | 8 |
 | Rizal | 2026-06-26 | 2.4 | 0.538 | CL4 | 7 |
-| Passengerontheship | 2026-06-26 | 2.4 | 0.654 | CL4 | 5 |
 | Cleodolinda | 2026-06-07 | 2.4 | 0.547 | CL4 | 10 |
-| Undercover Affair | 2026-06-07 | 2.4 | 0.635 | CL4 | 5 |
 | Kach Above | 2026-06-08 | 2.4 | 0.415 | CL4 | 10 |
-| China In Your Hand | 2026-07-18 | 2.4 | 0.572 | CL4 | 10 |
 | Jaijai | 2026-06-19 | 2.4 | 0.531 | CL4 | 5 |
+| Undercover Affair | 2026-06-07 | 2.4 | 0.635 | CL4 | 5 |
 | Saunton Surf | 2026-06-13 | 2.4 | 0.586 | CL4 | 6 |
+| Never Enough | 2026-07-25 | 2.4 | 0.499 | CL4 | 9 |
+| China In Your Hand | 2026-07-18 | 2.4 | 0.572 | CL4 | 10 |
 | Abraham Lincoln | 2026-06-26 | 2.4 | 0.324 | CL4 | 12 |
+| Passengerontheship | 2026-06-26 | 2.4 | 0.654 | CL4 | 5 |
+| Jack Langley | 2026-06-27 | 2.2 | 0.569 | CL4 | 5 |
 | Room Fourteen | 2026-06-19 | 2.2 | 0.696 | CL4 | 9 |
 | Gouken | nan | 2.2 | 0.468 | CL4 | 9 |
-| Shadow Paddy | 2026-07-17 | 2.2 | 0.379 | CL4 | 7 |
 | Bated Benevolence | 2026-07-17 | 2.2 | 0.390 | CL4 | 8 |
 | Call Nicki | 2026-07-16 | 2.2 | 0.419 | CL4 | 4 |
-| Jack Langley | 2026-06-27 | 2.2 | 0.569 | CL4 | 5 |
+| Shadow Paddy | 2026-07-17 | 2.2 | 0.379 | CL4 | 7 |
 | Probation | 2026-07-15 | 2.2 | 0.465 | CL4 | 3 |
+| It Dunt Marra | 2026-07-25 | 2.2 | 0.741 | CL4 | 7 |
 | Quillan | 2026-07-18 | 2.2 | 0.414 | CL4 | 6 |
-| Egyptian Pharaoh | 2026-06-30 | 2.2 | 0.536 | CL4 | 8 |
-| Ice Cube | 2026-07-16 | 2.2 | 0.638 | CL4 | 8 |
-| Isle Of Lismore | 2026-06-23 | 2.2 | 0.323 | CL4 | 6 |
 | Gone By | 2026-06-30 | 2.2 | 0.483 | CL4 | 3 |
-| Bradbury | 2026-06-08 | 2.1 | 0.548 | CL4 | 7 |
+| Egyptian Pharaoh | 2026-06-30 | 2.2 | 0.536 | CL4 | 8 |
+| Isle Of Lismore | 2026-06-23 | 2.2 | 0.323 | CL4 | 6 |
+| Ice Cube | 2026-07-16 | 2.2 | 0.638 | CL4 | 8 |
+| Tenability | 2026-06-07 | 2.1 | 0.310 | CL4 | 6 |
 | Mr Colonel | nan | 2.1 | 0.671 | CL3 | 4 |
 | Emerald Bay | 2026-07-04 | 2.1 | 0.540 | CL4 | 5 |
 | Town Queen | 2026-06-18 | 2.1 | 0.447 | CL4 | 11 |
+| Bradbury | 2026-06-08 | 2.1 | 0.548 | CL4 | 7 |
 | Linford | 2026-06-08 | 2.1 | 0.452 | CL4 | 9 |
-| Tenability | 2026-06-07 | 2.1 | 0.310 | CL4 | 6 |
-| Sanbona Warrior | 2026-07-18 | 2.1 | 0.650 | CL4 | 10 |
 | Newbrook Diamond | 2026-07-18 | 2.1 | 0.360 | CL4 | 7 |
+| Sanbona Warrior | 2026-07-18 | 2.1 | 0.650 | CL4 | 10 |
 | Nicely | 2026-07-17 | 2.1 | 0.481 | CL4 | 5 |
 | Pendella | 2026-07-14 | 2.1 | 0.430 | CL4 | 4 |
 | Square d'Alboni | 2026-06-30 | 2.1 | 0.445 | CL4 | 8 |
 | Saccary | 2026-05-22 | 2.0 | 0.301 | CL4 | 7 |
-| Bradbury | 2026-06-15 | 2.0 | 0.379 | CL4 | 10 |
 | Rogue Empire | 2026-06-18 | 2.0 | 0.583 | CL4 | 5 |
 | Causeway | 2026-06-19 | 2.0 | 0.487 | CL4 | 5 |
+| Bradbury | 2026-06-15 | 2.0 | 0.379 | CL4 | 10 |
 | Le Coq Hardi | 2026-06-15 | 2.0 | 0.546 | CL4 | 12 |
 | Terminology | 2026-06-27 | 2.0 | 0.486 | CL4 | 6 |
 | Purview | 2026-06-28 | 2.0 | 0.358 | CL4 | 8 |
@@ -186,6 +192,7 @@ Dataset: 2334 rows | 1759 with results
 | Belle Amie | 2026-06-26 | 4 | 2.8 | 0.774 | CL4 | 4 |
 | Vastern | 2026-07-17 | 3 | 2.6 | 0.758 | CL4 | 6 |
 | Spirit Dreamer | 2026-06-18 | 3 | 2.5 | 0.755 | CL4 | 6 |
+| Forever Glamorous | 2026-07-27 | 3 | 3.8 | 0.746 | CL4 | 6 |
 | Second Fiddle | 2026-07-17 | 3 | 3.8 | 0.738 | CL4 | 5 |
 | Farfromnowhere | 2026-06-30 | 5 | 2.4 | 0.734 | CL4 | 8 |
 | Lady Dublin | 2026-06-22 | 3 | 2.0 | 0.713 | CL4 | 6 |
@@ -193,21 +200,20 @@ Dataset: 2334 rows | 1759 with results
 | Spirit Above | 2026-06-19 | 4 | 3.5 | 0.701 | CL4 | 7 |
 | Orange Emperor | 2026-06-27 | 3 | 2.5 | 0.688 | CL4 | 4 |
 | Joycean Way | 2026-06-22 | 3 | 2.2 | 0.669 | CL4 | 6 |
-| Hello Cotai | 2026-07-16 | 4 | 3.2 | 0.668 | CL4 | 4 |
 
 ## V2_CLASS4_ONLY
 
 | Metric | Value |
 |---|---|
 | Lane state | **WATCHLIST** |
-| n (with results) | 323 |
-| Wins | 118 |
-| Strike rate | 36.5% |
-| Frame/placed rate | 74.3% |
-| Flat 1pt P&L | £+22.24 |
-| ROI | +6.9% |
+| n (with results) | 347 |
+| Wins | 124 |
+| Strike rate | 35.7% |
+| Frame/placed rate | 73.5% |
+| Flat 1pt P&L | £+16.09 |
+| ROI | +4.6% |
 | Avg SP | 2.96 |
-| Avg VP | 0.464 |
+| Avg VP | 0.468 |
 | Max drawdown | £-26.24 |
 | Longest losing run | 16 |
 | Status | **WATCHLIST** |
@@ -218,131 +224,137 @@ Dataset: 2334 rows | 1759 with results
 
 | Class | n | SR | P&L |
 |---|---|---|---|
-| CL4 | 323 | 37% | £+22.24 |
+| CL4 | 347 | 37% | £+16.09 |
 
 **Field size breakdown:**
 
 | FS | n | SR | P&L |
 |---|---|---|---|
-| 2-5 | 77 | 45% | £+16.40 |
-| 6-8 | 140 | 38% | £+11.13 |
-| 9-12 | 106 | 32% | £-5.29 |
+| 2-5 | 81 | 44% | £+14.90 |
+| 6-8 | 151 | 37% | £+6.73 |
+| 9-12 | 115 | 32% | £-5.54 |
 
 **Winners:**
 
 | Horse | Date | SP | VP | Class | FS |
 |---|---|---|---|---|---|
 | Fern Clyde | 2026-06-08 | 4.0 | 0.419 | CL4 | 11 |
+| Always Perfect | 2026-06-26 | 4.0 | 0.726 | CL4 | 5 |
+| Baloo'S Blues | 2026-06-27 | 4.0 | 0.594 | CL4 | 6 |
 | Treasure Rose | 2026-06-19 | 4.0 | 0.584 | CL4 | 9 |
 | Physique | 2026-06-19 | 4.0 | 0.496 | CL4 | 9 |
-| Huckleberry Sting | 2026-07-05 | 4.0 | 0.411 | CL4 | 9 |
-| Baloo'S Blues | 2026-06-27 | 4.0 | 0.594 | CL4 | 6 |
-| Always Perfect | 2026-06-26 | 4.0 | 0.726 | CL4 | 5 |
-| Kalir | 2026-07-15 | 4.0 | 0.444 | CL4 | 9 |
+| Al Aali | 2026-07-17 | 4.0 | 0.637 | CL4 | 6 |
 | Marmeladova | 2026-07-16 | 4.0 | 0.397 | CL4 | 9 |
+| Kalir | 2026-07-15 | 4.0 | 0.444 | CL4 | 9 |
 | Flora Of Bermuda | 2026-07-10 | 4.0 | 0.334 | CL4 | 11 |
 | Dottie Diamond | 2026-07-14 | 4.0 | 0.433 | CL4 | 6 |
+| Huckleberry Sting | 2026-07-05 | 4.0 | 0.411 | CL4 | 9 |
 | Jkr Cobbler | 2026-07-05 | 4.0 | 0.366 | CL4 | 11 |
-| Silca Bay | 2026-07-18 | 4.0 | 0.524 | CL4 | 6 |
 | Cooley's Mist | 2026-07-16 | 4.0 | 0.432 | CL4 | 6 |
-| Al Aali | 2026-07-17 | 4.0 | 0.637 | CL4 | 6 |
-| Thundering On | nan | 3.8 | 0.381 | CL4 | 7 |
+| Silca Bay | 2026-07-18 | 4.0 | 0.524 | CL4 | 6 |
 | Waasil | 2026-06-16 | 3.8 | 0.422 | CL4 | 7 |
-| Doon The Glen | 2026-07-16 | 3.8 | 0.399 | CL4 | 7 |
-| Zafaan | 2026-06-26 | 3.8 | 0.514 | CL4 | 7 |
-| Kirchner | 2026-07-24 | 3.8 | 0.522 | CL4 | 4 |
-| The Wise Traveller | 2026-05-25 | 3.8 | 0.359 | CL4 | 5 |
 | Applicationofcash | 2026-05-22 | 3.8 | 0.357 | CL4 | 4 |
-| Proposal | nan | 3.8 | 0.371 | CL4 | 11 |
+| Kirchner | 2026-07-24 | 3.8 | 0.522 | CL4 | 4 |
+| Doon The Glen | 2026-07-16 | 3.8 | 0.399 | CL4 | 7 |
 | Best Rate | 2026-07-10 | 3.8 | 0.520 | CL4 | 8 |
-| Uppercase | 2026-07-16 | 3.5 | 0.542 | CL4 | 5 |
-| Only Dream Big | 2026-06-22 | 3.5 | 0.676 | CL4 | 7 |
+| Zafaan | 2026-06-26 | 3.8 | 0.514 | CL4 | 7 |
+| Proposal | nan | 3.8 | 0.371 | CL4 | 11 |
+| The Wise Traveller | 2026-05-25 | 3.8 | 0.359 | CL4 | 5 |
+| Thundering On | nan | 3.8 | 0.381 | CL4 | 7 |
 | Battenburg Belle | 2026-06-22 | 3.5 | 0.509 | CL4 | 7 |
-| Star Cast | 2026-06-12 | 3.5 | 0.489 | CL4 | 8 |
 | Turty Tree | 2026-06-13 | 3.5 | 0.572 | CL4 | 6 |
 | Star Of Mali | 2026-06-18 | 3.5 | 0.310 | CL4 | 10 |
+| Star Cast | 2026-06-12 | 3.5 | 0.489 | CL4 | 8 |
 | Pep Talking | nan | 3.5 | 0.330 | CL4 | 6 |
+| Only Dream Big | 2026-06-22 | 3.5 | 0.676 | CL4 | 7 |
 | Desert Shadow | 2026-07-15 | 3.5 | 0.500 | CL4 | 4 |
-| Generic | nan | 3.2 | 0.374 | CL4 | 12 |
+| Uppercase | 2026-07-16 | 3.5 | 0.542 | CL4 | 5 |
 | Knightmare | 2026-07-24 | 3.2 | 0.516 | CL4 | 10 |
-| King Of War | 2026-06-22 | 3.2 | 0.608 | CL4 | 6 |
 | Havana Club | 2026-07-15 | 3.2 | 0.539 | CL4 | 7 |
-| Regal Renaissance | 2026-07-05 | 3.0 | 0.392 | CL4 | 3 |
-| Homeland | 2026-07-14 | 3.0 | 0.365 | CL4 | 9 |
+| King Of War | 2026-06-22 | 3.2 | 0.608 | CL4 | 6 |
+| Generic | nan | 3.2 | 0.374 | CL4 | 12 |
+| Zumbi | 2026-06-26 | 3.0 | 0.472 | CL4 | 7 |
 | Sorrengail | 2026-07-24 | 3.0 | 0.384 | CL4 | 8 |
 | Caislean Gear | 2026-07-16 | 3.0 | 0.525 | CL4 | 8 |
+| A Daughters Love | 2026-07-04 | 3.0 | 0.533 | CL4 | 10 |
+| Regal Renaissance | 2026-07-05 | 3.0 | 0.392 | CL4 | 3 |
+| Alfred Wincham | 2026-06-29 | 3.0 | 0.383 | CL4 | 5 |
 | Lady Dublin | 2026-07-15 | 3.0 | 0.537 | CL4 | 4 |
-| Zumbi | 2026-06-26 | 3.0 | 0.472 | CL4 | 7 |
+| Homeland | 2026-07-14 | 3.0 | 0.365 | CL4 | 9 |
+| Rosberg | 2026-07-04 | 3.0 | 0.440 | CL4 | 6 |
 | Plaid | 2026-05-17 | 3.0 | 0.448 | CL4 | 8 |
 | Sticktoyourguns | 2026-06-13 | 3.0 | 0.542 | CL4 | 10 |
-| A Daughters Love | 2026-07-04 | 3.0 | 0.533 | CL4 | 10 |
-| Alfred Wincham | 2026-06-29 | 3.0 | 0.383 | CL4 | 5 |
-| Rosberg | 2026-07-04 | 3.0 | 0.440 | CL4 | 6 |
-| Morbeh | 2026-06-12 | 2.9 | 0.418 | CL4 | 9 |
-| Bridget's Baby | 2026-06-18 | 2.9 | 0.657 | CL4 | 4 |
-| Worlington | 2026-06-29 | 2.9 | 0.307 | CL4 | 8 |
-| George Wickham | 2026-07-14 | 2.9 | 0.302 | CL4 | 11 |
-| Betty Boop | 2026-07-10 | 2.9 | 0.373 | CL4 | 9 |
-| Punchbowl Flyer | 2026-06-15 | 2.9 | 0.441 | CL4 | 7 |
-| The Boola Boss | nan | 2.9 | 0.311 | CL4 | 8 |
-| Blakefell | 2026-05-21 | 2.9 | 0.346 | CL4 | 5 |
-| Cyrano De Bergerac | 2026-07-24 | 2.9 | 0.459 | CL4 | 5 |
 | Guesstimate | 2026-07-17 | 2.9 | 0.800 | CL4 | 4 |
-| Fine Thing | 2026-07-15 | 2.9 | 0.380 | CL4 | 8 |
-| South West | 2026-07-15 | 2.9 | 0.425 | CL4 | 10 |
-| Barnaby Rudge | 2026-06-27 | 2.9 | 0.431 | CL4 | 6 |
+| Cyrano De Bergerac | 2026-07-24 | 2.9 | 0.459 | CL4 | 5 |
+| Betty Boop | 2026-07-10 | 2.9 | 0.373 | CL4 | 9 |
 | Gaoth Chuil | 2026-07-14 | 2.9 | 0.528 | CL4 | 8 |
+| South West | 2026-07-15 | 2.9 | 0.425 | CL4 | 10 |
+| George Wickham | 2026-07-14 | 2.9 | 0.302 | CL4 | 11 |
+| Barnaby Rudge | 2026-06-27 | 2.9 | 0.431 | CL4 | 6 |
+| Worlington | 2026-06-29 | 2.9 | 0.307 | CL4 | 8 |
+| Bridget's Baby | 2026-06-18 | 2.9 | 0.657 | CL4 | 4 |
+| Punchbowl Flyer | 2026-06-15 | 2.9 | 0.441 | CL4 | 7 |
+| Blakefell | 2026-05-21 | 2.9 | 0.346 | CL4 | 5 |
+| Morbeh | 2026-06-12 | 2.9 | 0.418 | CL4 | 9 |
+| The Boola Boss | nan | 2.9 | 0.311 | CL4 | 8 |
+| Fine Thing | 2026-07-15 | 2.9 | 0.380 | CL4 | 8 |
+| Cowardofthecounty | 2026-06-12 | 2.8 | 0.586 | CL4 | 9 |
+| Roc De Fer | 2026-07-27 | 2.8 | 0.376 | CL4 | 9 |
 | Melody De Vega | 2026-07-14 | 2.8 | 0.630 | CL4 | 4 |
+| Dark Whisper | 2026-06-30 | 2.8 | 0.308 | CL4 | 8 |
+| Limestone | nan | 2.8 | 0.318 | CL4 | 4 |
 | Hallandale Beach | 2026-06-27 | 2.8 | 0.338 | CL4 | 6 |
 | Regal Envoy | 2026-06-08 | 2.8 | 0.363 | CL4 | 9 |
-| Limestone | nan | 2.8 | 0.318 | CL4 | 4 |
-| Dark Whisper | 2026-06-30 | 2.8 | 0.308 | CL4 | 8 |
-| Cowardofthecounty | 2026-06-12 | 2.8 | 0.586 | CL4 | 9 |
-| Neyva's Angel | 2026-06-11 | 2.6 | 0.364 | CL4 | 5 |
+| Dancing Saxon | 2026-07-27 | 2.6 | 0.631 | CL4 | 11 |
 | Sonic Si | 2026-06-15 | 2.6 | 0.345 | CL4 | 7 |
+| Neyva's Angel | 2026-06-11 | 2.6 | 0.364 | CL4 | 5 |
 | Star Cast | 2026-06-19 | 2.6 | 0.362 | CL4 | 10 |
 | A Little Something | 2026-06-10 | 2.6 | 0.499 | CL4 | 5 |
+| Ladies Day | 2026-06-13 | 2.5 | 0.369 | CL4 | 6 |
 | Liveinthelight | 2026-07-14 | 2.5 | 0.531 | CL4 | 4 |
+| Matins | 2026-07-25 | 2.5 | 0.674 | CL4 | 5 |
+| Adalida | 2026-07-15 | 2.5 | 0.698 | CL4 | 4 |
+| Native Warrior | 2026-06-11 | 2.5 | 0.562 | CL4 | 7 |
 | Stardom Glory | 2026-06-27 | 2.5 | 0.512 | CL4 | 6 |
 | Gata Ban | 2026-06-10 | 2.5 | 0.348 | CL4 | 4 |
-| Adalida | 2026-07-15 | 2.5 | 0.698 | CL4 | 4 |
-| Ladies Day | 2026-06-13 | 2.5 | 0.369 | CL4 | 6 |
-| Native Warrior | 2026-06-11 | 2.5 | 0.562 | CL4 | 7 |
+| Colorado Del Monte | 2026-07-25 | 2.4 | 0.427 | CL4 | 8 |
 | Rizal | 2026-06-26 | 2.4 | 0.538 | CL4 | 7 |
 | Kach Above | 2026-06-08 | 2.4 | 0.415 | CL4 | 10 |
-| Undercover Affair | 2026-06-07 | 2.4 | 0.635 | CL4 | 5 |
 | Cleodolinda | 2026-06-07 | 2.4 | 0.547 | CL4 | 10 |
-| China In Your Hand | 2026-07-18 | 2.4 | 0.572 | CL4 | 10 |
-| Jaijai | 2026-06-19 | 2.4 | 0.531 | CL4 | 5 |
+| Undercover Affair | 2026-06-07 | 2.4 | 0.635 | CL4 | 5 |
 | Saunton Surf | 2026-06-13 | 2.4 | 0.586 | CL4 | 6 |
+| Never Enough | 2026-07-25 | 2.4 | 0.499 | CL4 | 9 |
+| China In Your Hand | 2026-07-18 | 2.4 | 0.572 | CL4 | 10 |
 | Abraham Lincoln | 2026-06-26 | 2.4 | 0.324 | CL4 | 12 |
+| Jaijai | 2026-06-19 | 2.4 | 0.531 | CL4 | 5 |
 | Passengerontheship | 2026-06-26 | 2.4 | 0.654 | CL4 | 5 |
-| Gouken | nan | 2.2 | 0.468 | CL4 | 9 |
-| Shadow Paddy | 2026-07-17 | 2.2 | 0.379 | CL4 | 7 |
-| Bated Benevolence | 2026-07-17 | 2.2 | 0.390 | CL4 | 8 |
-| Room Fourteen | 2026-06-19 | 2.2 | 0.696 | CL4 | 9 |
 | Jack Langley | 2026-06-27 | 2.2 | 0.569 | CL4 | 5 |
+| Gouken | nan | 2.2 | 0.468 | CL4 | 9 |
+| Bated Benevolence | 2026-07-17 | 2.2 | 0.390 | CL4 | 8 |
 | Call Nicki | 2026-07-16 | 2.2 | 0.419 | CL4 | 4 |
+| Room Fourteen | 2026-06-19 | 2.2 | 0.696 | CL4 | 9 |
 | Probation | 2026-07-15 | 2.2 | 0.465 | CL4 | 3 |
+| Shadow Paddy | 2026-07-17 | 2.2 | 0.379 | CL4 | 7 |
 | Quillan | 2026-07-18 | 2.2 | 0.414 | CL4 | 6 |
-| Ice Cube | 2026-07-16 | 2.2 | 0.638 | CL4 | 8 |
+| It Dunt Marra | 2026-07-25 | 2.2 | 0.741 | CL4 | 7 |
 | Egyptian Pharaoh | 2026-06-30 | 2.2 | 0.536 | CL4 | 8 |
-| Isle Of Lismore | 2026-06-23 | 2.2 | 0.323 | CL4 | 6 |
 | Gone By | 2026-06-30 | 2.2 | 0.483 | CL4 | 3 |
-| Bradbury | 2026-06-08 | 2.1 | 0.548 | CL4 | 7 |
+| Isle Of Lismore | 2026-06-23 | 2.2 | 0.323 | CL4 | 6 |
+| Ice Cube | 2026-07-16 | 2.2 | 0.638 | CL4 | 8 |
+| Tenability | 2026-06-07 | 2.1 | 0.310 | CL4 | 6 |
 | Emerald Bay | 2026-07-04 | 2.1 | 0.540 | CL4 | 5 |
 | Town Queen | 2026-06-18 | 2.1 | 0.447 | CL4 | 11 |
+| Bradbury | 2026-06-08 | 2.1 | 0.548 | CL4 | 7 |
 | Linford | 2026-06-08 | 2.1 | 0.452 | CL4 | 9 |
-| Tenability | 2026-06-07 | 2.1 | 0.310 | CL4 | 6 |
-| Sanbona Warrior | 2026-07-18 | 2.1 | 0.650 | CL4 | 10 |
 | Newbrook Diamond | 2026-07-18 | 2.1 | 0.360 | CL4 | 7 |
+| Sanbona Warrior | 2026-07-18 | 2.1 | 0.650 | CL4 | 10 |
 | Nicely | 2026-07-17 | 2.1 | 0.481 | CL4 | 5 |
 | Pendella | 2026-07-14 | 2.1 | 0.430 | CL4 | 4 |
 | Square d'Alboni | 2026-06-30 | 2.1 | 0.445 | CL4 | 8 |
 | Saccary | 2026-05-22 | 2.0 | 0.301 | CL4 | 7 |
-| Bradbury | 2026-06-15 | 2.0 | 0.379 | CL4 | 10 |
 | Rogue Empire | 2026-06-18 | 2.0 | 0.583 | CL4 | 5 |
 | Causeway | 2026-06-19 | 2.0 | 0.487 | CL4 | 5 |
+| Bradbury | 2026-06-15 | 2.0 | 0.379 | CL4 | 10 |
 | Le Coq Hardi | 2026-06-15 | 2.0 | 0.546 | CL4 | 12 |
 | Terminology | 2026-06-27 | 2.0 | 0.486 | CL4 | 6 |
 | Purview | 2026-06-28 | 2.0 | 0.358 | CL4 | 8 |
@@ -359,6 +371,7 @@ Dataset: 2334 rows | 1759 with results
 | Belle Amie | 2026-06-26 | 4 | 2.8 | 0.774 | CL4 | 4 |
 | Vastern | 2026-07-17 | 3 | 2.6 | 0.758 | CL4 | 6 |
 | Spirit Dreamer | 2026-06-18 | 3 | 2.5 | 0.755 | CL4 | 6 |
+| Forever Glamorous | 2026-07-27 | 3 | 3.8 | 0.746 | CL4 | 6 |
 | Second Fiddle | 2026-07-17 | 3 | 3.8 | 0.738 | CL4 | 5 |
 | Farfromnowhere | 2026-06-30 | 5 | 2.4 | 0.734 | CL4 | 8 |
 | Lady Dublin | 2026-06-22 | 3 | 2.0 | 0.713 | CL4 | 6 |
@@ -366,21 +379,20 @@ Dataset: 2334 rows | 1759 with results
 | Spirit Above | 2026-06-19 | 4 | 3.5 | 0.701 | CL4 | 7 |
 | Orange Emperor | 2026-06-27 | 3 | 2.5 | 0.688 | CL4 | 4 |
 | Joycean Way | 2026-06-22 | 3 | 2.2 | 0.669 | CL4 | 6 |
-| Hello Cotai | 2026-07-16 | 4 | 3.2 | 0.668 | CL4 | 4 |
 
 ## V6_GOLD_SEAM
 
 | Metric | Value |
 |---|---|
 | Lane state | **LANE_FROZEN** |
-| n (with results) | 133 |
+| n (with results) | 141 |
 | Wins | 43 |
-| Strike rate | 32.3% |
-| Frame/placed rate | 66.2% |
-| Flat 1pt P&L | £+23.75 |
-| ROI | +17.9% |
-| Avg SP | 3.51 |
-| Avg VP | 0.475 |
+| Strike rate | 30.5% |
+| Frame/placed rate | 65.2% |
+| Flat 1pt P&L | £+15.75 |
+| ROI | +11.2% |
+| Avg SP | 3.52 |
+| Avg VP | 0.479 |
 | Max drawdown | £-18.25 |
 | Longest losing run | 11 |
 | Status | **LANE_FROZEN — FRAME_BELOW_70_AT_N20+** |
@@ -391,15 +403,15 @@ Dataset: 2334 rows | 1759 with results
 
 | Class | n | SR | P&L |
 |---|---|---|---|
-| CL4 | 133 | 33% | £+23.75 |
+| CL4 | 141 | 31% | £+15.75 |
 
 **Field size breakdown:**
 
 | FS | n | SR | P&L |
 |---|---|---|---|
-| 2-5 | 30 | 31% | £+2.25 |
-| 6-8 | 59 | 37% | £+17.25 |
-| 9-12 | 44 | 30% | £+4.25 |
+| 2-5 | 31 | 30% | £+1.25 |
+| 6-8 | 64 | 34% | £+12.25 |
+| 9-12 | 46 | 29% | £+2.25 |
 
 **Winners:**
 
@@ -453,6 +465,7 @@ Dataset: 2334 rows | 1759 with results
 
 | Horse | Date | Pos | SP | VP | Class | FS |
 |---|---|---|---|---|---|---|
+| Forever Glamorous | 2026-07-27 | 3 | 3.8 | 0.746 | CL4 | 6 |
 | Second Fiddle | 2026-07-17 | 3 | 3.8 | 0.738 | CL4 | 5 |
 | Stoneacre Joe | 2026-06-19 | 5 | 3.2 | 0.704 | CL4 | 8 |
 | Spirit Above | 2026-06-19 | 4 | 3.5 | 0.701 | CL4 | 7 |
@@ -463,22 +476,21 @@ Dataset: 2334 rows | 1759 with results
 | Fractional | 2026-06-11 | 2 | 3.2 | 0.645 | CL4 | 4 |
 | Tupero | 2026-07-24 | 5 | 3.0 | 0.642 | CL4 | 5 |
 | Valley Of Flowers | 2026-06-22 | 4 | 4.0 | 0.608 | CL4 | 4 |
-| Theme Park | 2026-07-17 | 5 | 3.8 | 0.595 | CL4 | 8 |
-| So Smart | 2026-07-24 | 3 | 4.0 | 0.585 | CL4 | 7 |
+| Liamo | 2026-07-25 | 2 | 3.5 | 0.601 | CL4 | 10 |
 
 ## Promotion Gates
 
 | Lane | Gate | Needs n | Current n | Remaining | ROI gate | Frame gate |
 |---|---|---|---|---|---|---|
-| V1_BASE | WATCHLIST | 27 | 333 | REACHED | ≥0% | ≥75% |
-| V1_BASE | SHADOW_CANDIDATE | 50 | 333 | REACHED | ≥0% | ≥75% |
-| V1_BASE | PAPER_EXECUTION | 100 | 333 | REACHED | ≥0% | ≥75% |
-| V2_CLASS4_ONLY | WATCHLIST | 20 | 323 | REACHED | ≥0% | ≥0% |
-| V2_CLASS4_ONLY | SHADOW_CANDIDATE | 30 | 323 | REACHED | ≥0% | ≥75% |
-| V2_CLASS4_ONLY | PAPER_EXECUTION | 60 | 323 | REACHED | ≥0% | ≥75% |
-| V2_CLASS4_ONLY | LIVE_DISCUSSION | 100 | 323 | REACHED | ≥0% | ≥75% |
-| V6_GOLD_SEAM | SHADOW_CANDIDATE | 20 | 133 | REACHED | ≥0% | ≥0% |
-| V6_GOLD_SEAM | PAPER_EXECUTION | 50 | 133 | REACHED | ≥0% | ≥75% |
+| V1_BASE | WATCHLIST | 27 | 357 | REACHED | ≥0% | ≥75% |
+| V1_BASE | SHADOW_CANDIDATE | 50 | 357 | REACHED | ≥0% | ≥75% |
+| V1_BASE | PAPER_EXECUTION | 100 | 357 | REACHED | ≥0% | ≥75% |
+| V2_CLASS4_ONLY | WATCHLIST | 20 | 347 | REACHED | ≥0% | ≥0% |
+| V2_CLASS4_ONLY | SHADOW_CANDIDATE | 30 | 347 | REACHED | ≥0% | ≥75% |
+| V2_CLASS4_ONLY | PAPER_EXECUTION | 60 | 347 | REACHED | ≥0% | ≥75% |
+| V2_CLASS4_ONLY | LIVE_DISCUSSION | 100 | 347 | REACHED | ≥0% | ≥75% |
+| V6_GOLD_SEAM | SHADOW_CANDIDATE | 20 | 141 | REACHED | ≥0% | ≥0% |
+| V6_GOLD_SEAM | PAPER_EXECUTION | 50 | 141 | REACHED | ≥0% | ≥75% |
 
 ## Freeze Rules (always active)
 

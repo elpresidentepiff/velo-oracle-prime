@@ -403,6 +403,51 @@ def _build_dashboard_truth_panel(date_str: str) -> dict:
     }
 
 
+def _load_deep_race_agent_for_date(date_str: str) -> dict[str, dict]:
+    """Load deep race agent cards keyed by normalised horse name."""
+    date_tag = date_str.replace("-", "_")
+    for suffix in (f"{date_tag}_v1", f"{date_tag}_v2"):
+        path = ROOT / "data" / "reports" / f"deep_race_agent_v1_{suffix}.json"
+        if path.exists():
+            data = _load_json(path, {})
+            if data:
+                result = {}
+                for card in data.get("agent_cards") or []:
+                    h = str(card.get("horse") or "").strip().lower()
+                    if h:
+                        result[h] = card
+                return result
+    return {}
+
+
+def _load_old_velo_for_date(date_str: str) -> dict[str, dict]:
+    """Load old VÉLØ three-option card keyed by normalised horse name."""
+    date_tag = date_str.replace("-", "_")
+    path = ROOT / "data" / "reports" / f"old_velo_three_option_card_{date_tag}.json"
+    data = _load_json(path, {})
+    if not data:
+        return {}
+    result = {}
+    for race in data.get("races") or []:
+        for pick in race.get("picks") or []:
+            h = str(pick.get("horse") or "").strip().lower()
+            if not h:
+                continue
+            role = str(pick.get("role") or "").upper()
+            existing = result.get(h, {})
+            existing.setdefault("old_velo_slots", [])
+            if role and role not in existing["old_velo_slots"]:
+                existing["old_velo_slots"].append(role)
+            if role == "WIN":
+                existing["old_velo_vp"] = float(pick.get("velo_prime_prob") or 0)
+            existing["old_velo_race_id"] = race.get("race_id") or existing.get("old_velo_race_id")
+            existing["old_velo_off_time"] = race.get("off_time") or existing.get("old_velo_off_time")
+            existing["old_velo_course"] = race.get("course") or existing.get("old_velo_course")
+            existing["old_velo_tier"] = race.get("tier") or existing.get("old_velo_tier")
+            result[h] = existing
+    return result
+
+
 def _build_governed_card_from_two_lane_readiness(date_str: str) -> dict | None:
     """Build dashboard rows from New Build two-lane readiness artifacts.
 
@@ -428,11 +473,16 @@ def _build_governed_card_from_two_lane_readiness(date_str: str) -> dict | None:
             if horse_key:
                 score_by_race_horse[(race_id, horse_key)] = pick
 
+    shadow_map = _load_radical_shadow_for_date(date_str)
+    deep_agent_map = _load_deep_race_agent_for_date(date_str)
+    old_velo_map = _load_old_velo_for_date(date_str)
+
     verdicts = []
     for row in feed_rows:
         race_id = str(row.get("race_id") or "")
         horse = str(row.get("horse") or "")
-        pick = score_by_race_horse.get((race_id, horse.strip().lower()), {})
+        horse_key = horse.strip().lower()
+        pick = score_by_race_horse.get((race_id, horse_key), {})
         card = race_meta.get(race_id, {})
         prob = float(pick.get("prob") or 0.0)
         rank = int(pick.get("rank") or 99)
@@ -440,6 +490,19 @@ def _build_governed_card_from_two_lane_readiness(date_str: str) -> dict | None:
         reason_codes = list(row.get("reason_codes") or [])
         if row.get("missing_reason"):
             reason_codes.append(str(row.get("missing_reason")))
+
+        sh_race = shadow_map.get(race_id, {})
+        # shadow is per top-pick horse — only attach if this runner IS that horse
+        sh = sh_race if (sh_race.get("horse") or "").strip().lower() == horse_key else {}
+        radical = sh.get("radical", {})
+        sh_passport = sh.get("passport", {})
+
+        da = deep_agent_map.get(horse_key, {})
+        da_agent = da.get("agent") or {}
+        da_evidence = da.get("evidence") or {}
+
+        ov = old_velo_map.get(horse_key, {})
+
         verdicts.append({
             "race_id": race_id,
             "horse": horse,
@@ -471,6 +534,26 @@ def _build_governed_card_from_two_lane_readiness(date_str: str) -> dict | None:
             "missing_metadata": not (row.get("course") and row.get("off_time") and horse),
             "metadata_complete": bool(row.get("course") and row.get("off_time") and horse),
             "paper_only": True,
+            # Radical Shadow (Win + Frame gate)
+            "shadow_action": radical.get("action"),
+            "shadow_confidence": radical.get("confidence"),
+            "shadow_win_gate_probability": sh.get("win_gate_probability"),
+            "shadow_frame_gate_probability": sh.get("frame_gate_probability"),
+            "shadow_passport_available": sh_passport.get("passport_available"),
+            "shadow_warnings": radical.get("warnings") or [],
+            "shadow_reasons": radical.get("reasons") or [],
+            # Deep Race Agent (champion layer)
+            "deep_agent_verdict": da_agent.get("agent_verdict"),
+            "deep_agent_gate": da_agent.get("gate"),
+            "deep_agent_identity": (da_evidence.get("identity") or {}).get("overall_confidence"),
+            "deep_agent_support_score": da_agent.get("support_score"),
+            "deep_agent_risk_score": da_agent.get("risk_score"),
+            "deep_agent_support_tags": da.get("support_tags") or da_agent.get("support_tags") or [],
+            "deep_agent_risk_tags": da.get("risk_tags") or da_agent.get("risk_tags") or [],
+            "deep_agent_danger_horses": da.get("danger_horses") or [],
+            # Old VÉLØ
+            "old_velo_slots": ov.get("old_velo_slots") or [],
+            "old_velo_vp": ov.get("old_velo_vp"),
         })
 
     verdicts.sort(key=lambda x: (x.get("off_time") or "", x.get("course") or "", x.get("rank") or 99))
@@ -614,6 +697,8 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
     # Pre-build No-RPR top pick per race and shadow decisions
     no_rpr_map = _build_no_rpr_race_map(rows)
     shadow_map = _load_radical_shadow_for_date(date_str)
+    deep_agent_map = _load_deep_race_agent_for_date(date_str)
+    old_velo_map = _load_old_velo_for_date(date_str)
 
     # Load New Build two-lane Lane A top3 per race
     #
@@ -661,11 +746,17 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
             badges.append("PLACE_PROB_HIGH")
 
         rid = str(row.get("race_id") or "")
+        horse_key_snap = str(row.get("horse") or "").strip().lower()
         nr = no_rpr_map.get(rid, {})
-        sh = shadow_map.get(rid, {})
+        sh_race_snap = shadow_map.get(rid, {})
+        sh = sh_race_snap if (sh_race_snap.get("horse") or "").strip().lower() == horse_key_snap else {}
         nb = nb_lane_a_map.get(rid, {})
         radical = sh.get("radical", {})
         sh_passport = sh.get("passport", {})
+        da_snap = deep_agent_map.get(horse_key_snap, {})
+        da_agent_snap = da_snap.get("agent") or {}
+        da_evidence_snap = da_snap.get("evidence") or {}
+        ov_snap = old_velo_map.get(horse_key_snap, {})
 
         verdicts.append({
             "race_id": rid,
@@ -727,6 +818,19 @@ def _build_governed_card_from_live_snapshots(date_str: str) -> dict | None:
             "shadow_passport_available": sh_passport.get("passport_available"),
             "shadow_warnings": radical.get("warnings") or [],
             "shadow_reasons": radical.get("reasons") or [],
+            # Deep Race Agent (champion layer)
+            "deep_agent_verdict": da_agent_snap.get("agent_verdict"),
+            "deep_agent_gate": da_agent_snap.get("gate"),
+            "deep_agent_identity": (da_evidence_snap.get("identity") or {}).get("overall_confidence"),
+            "deep_agent_support_score": da_agent_snap.get("support_score"),
+            "deep_agent_risk_score": da_agent_snap.get("risk_score"),
+            "deep_agent_support_tags": da_snap.get("support_tags") or da_agent_snap.get("support_tags") or [],
+            "deep_agent_risk_tags": da_snap.get("risk_tags") or da_agent_snap.get("risk_tags") or [],
+            "deep_agent_danger_horses": da_snap.get("danger_horses") or [],
+            # Old VÉLØ
+            "old_velo_slots": ov_snap.get("old_velo_slots") or [],
+            "old_velo_vp": ov_snap.get("old_velo_vp"),
+            "old_velo_tier": ov_snap.get("old_velo_tier"),
         })
 
     verdicts.sort(key=lambda x: (x.get("off_time") or "", x.get("course") or "", x.get("rank") or 99))
@@ -1187,6 +1291,56 @@ async def old_velo_three_option_card():
     if not card_path.exists():
         raise HTTPException(status_code=404, detail="Three-option card not found")
     return FileResponse(str(card_path), media_type="application/json")
+
+
+@app.get("/api/deep-race-agent")
+async def deep_race_agent(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    date_tag = target.replace("-", "_")
+    # prefer _v1 then _v2
+    for suffix in (f"{date_tag}_v1", f"{date_tag}_v2"):
+        path = ROOT / "data" / "reports" / f"deep_race_agent_v1_{suffix}.json"
+        if path.exists():
+            data = _load_json(path, {})
+            if data:
+                cards = data.get("agent_cards") or []
+                upgrade = [c for c in cards if (c.get("agent") or {}).get("agent_verdict") == "UPGRADE_CANDIDATE_REVIEW"]
+                watch = [c for c in cards if (c.get("agent") or {}).get("agent_verdict") == "WATCH_ONLY"]
+                support = [c for c in cards if (c.get("agent") or {}).get("agent_verdict") == "PASS_WITH_SUPPORT_REVIEW"]
+                return JSONResponse({
+                    "date": target,
+                    "status": "OK",
+                    "source": str(path),
+                    "generated_at": data.get("generated_at"),
+                    "summary": data.get("summary") or {},
+                    "upgrade_candidates": upgrade,
+                    "watch_only": watch,
+                    "pass_with_support": support,
+                    "all_cards": cards,
+                })
+    return JSONResponse({"date": target, "status": "NOT_RUN", "upgrade_candidates": [], "watch_only": [], "pass_with_support": [], "all_cards": []}, status_code=200)
+
+
+@app.get("/api/radical-shadow")
+async def radical_shadow(date: str = Query(default=None)):
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    date_tag = target.replace("-", "_")
+    path = ROOT / "data" / "reports" / f"radical_shadow_{date_tag}.json"
+    data = _load_json(path, {})
+    if not data:
+        return JSONResponse({"date": target, "status": "NOT_RUN", "decisions": []})
+    decisions = data.get("decisions") or []
+    top = sorted([d for d in decisions if d.get("decision") in ("WIN_CANDIDATE_SHADOW", "CASH_RUN")],
+                 key=lambda x: float(x.get("win_gate") or 0), reverse=True)
+    return JSONResponse({
+        "date": target,
+        "status": "OK",
+        "generated_at": data.get("generated_at"),
+        "summary": data.get("decision_counts") or {},
+        "top_picks": top,
+        "all_decisions": decisions,
+    })
+
 
 @app.get("/api/health")
 async def health():

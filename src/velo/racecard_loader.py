@@ -24,10 +24,10 @@ from typing import Any
 
 # Known Irish venue codes — everything else is treated as GB
 _IRE_VENUE_CODES = frozenset({
-    "GOW", "LEO", "NAV", "CUR", "TIP", "GAL", "KIL", "BAL", "BEL",
+    "GOW", "LEO", "NAV", "CUR", "TIP", "GAL", "KIL", "KLN", "BAL", "BEL",
     "CLO", "DUN", "FAI", "LIM", "NAA", "PAR", "ROS", "SLI", "THU",
     "WEX", "NAS", "DRO", "MUS", "SAL", "CAR", "FFA", "GRA", "KIG",
-    "PTK",
+    "PTK", "DPT", "DOW",
 })
 
 

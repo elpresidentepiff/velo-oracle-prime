@@ -1004,6 +1004,25 @@ def save_output(merged: dict, venue: str, date: str, output_dir: Path):
     output_dir.mkdir(parents=True, exist_ok=True)
     out_path = output_dir / f"racecard_{venue}_{date}.json"
 
+    # The PDF filename's venue code (e.g. "UTT") doesn't always match the venue
+    # key Step 5.5 (build_racecard_merged_from_injection.py) derives from the
+    # real RP course name (e.g. "UTTOXETER") -- they come from independent
+    # abbreviation schemes. Writing straight to f"racecard_{venue}_{date}.json"
+    # in that case creates a second, unenriched file alongside the real
+    # RP-sourced one instead of merging into it, and the real file is what the
+    # scoring readiness gate and run_prime_today.py actually read. Before
+    # falling back to a brand-new file, check for exactly one existing
+    # same-date file whose venue code is a prefix/superstring match.
+    if not out_path.exists():
+        candidates = [
+            p for p in output_dir.glob(f"racecard_*_{date}.json")
+            if p.stem.split("_", 2)[1].upper().startswith(venue.upper())
+            or venue.upper().startswith(p.stem.split("_", 2)[1].upper())
+        ]
+        if len(candidates) == 1:
+            print(f"  Venue code {venue!r} has no exact file; resolved to existing {candidates[0].name} by name match.")
+            out_path = candidates[0]
+
     existing = None
     if out_path.exists():
         try:

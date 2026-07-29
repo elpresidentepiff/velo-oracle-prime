@@ -1,31 +1,47 @@
-# VFU-21: Pick SP Backfill — Operator Brief
+# VFU-21 — pick_sp Backfill — Operator Brief
 
-## S01 Mission
-Recover pick_sp for 2197 rows missing it in the VFU-20 ledger.
-
-## S02 Coverage
-| Source | Rows |
-|---|---|
-| Already had SP | 855 |
-| Recovered (results JSON) | 903 |
-| Recovered (sigma WIN) | 2 |
-| Unrecovered | 419 |
-| **Total with SP** | **2633/3052 (86.3%)** |
-
-## S03 EW P&L (on 2633 rows with SP)
+## Summary
 | Metric | Value |
 |---|---|
-| Total stake (units) | 5266 |
-| Total return (units) | 4607.98 |
-| Profit | -658.02 units |
-| **ROI** | **-12.5%** |
+| Total ledger rows | 3052 |
+| Backfill candidates (null / 0.0 / 10.0) | 2214 |
+| Recovered | 996 (45.0% of candidates with results files) |
+| Unrecoverable | 1218 |
+| Real pick_sp coverage after backfill | 1845/3052 (60.5%) |
 
-## S04 Governance
-- `blocked_from_live_use = True` on all output rows
-- NO VP threshold change
-- NO model change
+## Method Breakdown
+| Method | Count |
+|---|---|
+| RECOVERED_FROM_RP_RESULTS | 996 |
+| UNRECOVERABLE_NO_RESULTS_FILE | 931 |
+| ORIGINAL_PRESENT | 838 |
+| UNRECOVERABLE_SP_NOT_IN_FILE | 186 |
+| UNRECOVERABLE_HORSE_NOT_FOUND | 101 |
+
+## Evidence Tier Changes
+| Tier | Before | After |
+|---|---|---|
+| TIER_A_FULL | 107 | **430** |
+| TIER_B_GOOD | 0 | **12** |
+| TIER_B_GOOD_NO_PICK_SP | 800 | **465** |
+| TIER_C_LIMITED_IDENTITY | 62 | 62 |
+| high | 5 | 5 |
+| low | 290 | 290 |
+| normal | 31 | 31 |
+
+## Classifications
+- VFU_21_PICK_SP_BACKFILL_COMPLETE
+- SP_RECOVERED_FROM_RP_RESULTS
+- UNRECOVERABLE_CLASSIFIED_BY_REASON
+- EVIDENCE_TIER_UPGRADED_WHERE_POSSIBLE
+- NO_VP_THRESHOLD_CHANGE
+- NO_LIVE_SCORING_CHANGE
+- NO_SUPABASE_WRITES
+- REPORT_ONLY
+
+## Operating Lock (unchanged)
+- NO Passport mutation
+- NO Supabase writes
 - NO live scoring change
-- REPORT ONLY
-
-## STOP
-STOP — operator review required before VFU-22 (prospective validation).
+- NO model promotion
+- Validated by: VFU_21_PICK_SP_BACKFILL_V1

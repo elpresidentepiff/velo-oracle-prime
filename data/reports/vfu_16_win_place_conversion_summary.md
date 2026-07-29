@@ -1,7 +1,7 @@
 # VFU-16 — Win/Place Conversion Tribunal
 
 **Version:** VFU_16_WIN_PLACE_CONVERSION_TRIBUNAL_V1
-**Generated:** 2026-06-15T20:11:35.232288Z
+**Generated:** 2026-07-12T15:58:56.533198Z
 **VP_THRESHOLD:** 0.40 (UNCHANGED)
 
 ## Scope

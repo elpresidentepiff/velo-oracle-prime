@@ -59,6 +59,7 @@ class PlaybookGShadowAdapter:
             "shadow_state_touched": False,
             "supabase_backup_attempted": False,
             "hfs_read_attempted": False,
+            "doctrines_fired_dropped": 0,  # regression guard, see _prepare_engine_inputs
             "processed_keys": list(self.processed_keys),
             "verdict": "UNKNOWN"
         }
@@ -82,7 +83,7 @@ class PlaybookGShadowAdapter:
         prediction = {
             "power_anchor": pred_snap.get("horse_id"),
             "confidence": float(pred_snap.get("velo_prime_prob") or 0),
-            "doctrines_fired": []
+            "doctrines_fired": pred_snap.get("doctrines_fired") or []
         }
         
         actual_result = {
@@ -138,6 +139,20 @@ class PlaybookGShadowAdapter:
                 
                 # 3. Execution
                 race_data, pred, res = self._prepare_engine_inputs(event)
+
+                # Regression guard: if the raw event actually carried doctrine
+                # data but the prepared prediction dropped it, that's exactly
+                # the 2026-04-25..2026-07-26 "doctrines_fired: []" hardcode
+                # bug class recurring silently. Never let it pass quietly again.
+                raw_doctrines = event.get("prediction_snapshot", {}).get("doctrines_fired") or []
+                if raw_doctrines and not pred.get("doctrines_fired"):
+                    self.audit["doctrines_fired_dropped"] += 1
+                    logger.error(
+                        "REGRESSION: raw event %s had doctrines_fired=%s but prepared "
+                        "prediction dropped it to empty -- doctrine_strengths will not "
+                        "learn from this event.", event.get("race_id"), raw_doctrines,
+                    )
+
                 try:
                     self.engine.observe_race_outcome(race_data, pred, res)
                     self.audit["engine_updates_applied"] += 1
@@ -156,6 +171,9 @@ class PlaybookGShadowAdapter:
             self.audit["verdict"] = "PASS_EVOLVED"
         else:
             self.audit["verdict"] = "FAIL"
+
+        if self.audit["doctrines_fired_dropped"] > 0:
+            self.audit["verdict"] = "FAIL_DOCTRINE_REGRESSION"
 
         # Check for live state pollution
         self.audit["live_state_touched"] = False 

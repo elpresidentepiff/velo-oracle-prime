@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-07-11T00:07:44.185184+00:00",
+  "generated_at": "2026-07-11T14:05:26.188185+00:00",
   "date": "2026-07-11",
   "status": "SHADOW_ONLY_NOT_LIVE",
   "live_writes": false,
   "source_path": "/mnt/c/Users/puror/velo-oracle-prime/data/velo_prime_verdicts_2026_07_11.json",
   "decision_counts": {
     "WIN_CANDIDATE_SHADOW": 3,
-    "CASH_RUN": 16,
-    "WATCHLIST_SHADOW": 5,
-    "PASS_OR_WATCH": 13,
+    "CASH_RUN": 19,
+    "WATCHLIST_SHADOW": 6,
+    "PASS_OR_WATCH": 16,
     "NO_BET_SHADOW": 3,
-    "PASS": 17
+    "PASS": 18
   },
   "gate_status": {
     "win_gate_loaded": true,
@@ -29,8 +29,8 @@
       "loaded": true,
       "error": null
     },
-    "passport_matches": 57,
-    "passport_available_on_top_picks": 57
+    "passport_matches": 65,
+    "passport_available_on_top_picks": 65
   },
   "obstacles": [],
   "decisions": [
@@ -289,6 +289,91 @@
         "warnings": [],
         "midprice_shadow_action": "MIDPRICE_CLEAN",
         "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:3|TOP_SP:2.00|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|VP:0.781|MDS:0.3014"
+      }
+    },
+    {
+      "race_id": "922378",
+      "course": "Newmarket (July)",
+      "off_time": "1.40",
+      "race_name": "Rossdales British EBF Maiden Stakes (Colts) (IRE Incentive Race)",
+      "horse": "Haffner",
+      "tier": "A",
+      "field_size": 7,
+      "class_num": 3,
+      "sp_decimal": 1.1,
+      "velo_prime_prob": 0.6121,
+      "old_velo_top": {
+        "horse": "Haffner",
+        "velo_prime_prob": 0.6121,
+        "sqpe_v17_prob": 0.6433,
+        "sqpe_no_rpr_shadow_prob": 0.1319,
+        "market_deception_score": 0.3425,
+        "place_prob": 0.8724,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_CLEAN",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:3|TOP_SP:1.10|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|VP:0.612|MDS:0.3425",
+        "midprice_shadow_field_band": "FS_6_8",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": true,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Haffner",
+        "rp_uid": "9326708",
+        "race_class": "3",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Good To Firm",
+        "forecast_odds": 0.909,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.6121,
+        "sp_decimal": 1.1,
+        "implied_probability": 0.9090909090909091,
+        "edge": -0.2969909090909091,
+        "field_size": 7.0,
+        "class_num": 3.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.9071,
+      "frame_gate_probability": 0.9656,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "ODDS_ON_LT_1_5",
+        "vp_band": "VP_55_PLUS",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_3",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": [],
+        "midprice_shadow_action": "MIDPRICE_CLEAN",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:3|TOP_SP:1.10|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|VP:0.612|MDS:0.3425"
       }
     },
     {
@@ -976,6 +1061,179 @@
         "warnings": [],
         "midprice_shadow_action": "MIDPRICE_CLEAN",
         "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:4|TOP_SP:3.00|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|VP:0.294|MDS:0.0532"
+      }
+    },
+    {
+      "race_id": "922377",
+      "course": "Newmarket (July)",
+      "off_time": "5.45",
+      "race_name": "HKJC World Pool Handicap (GBBPlus Race)",
+      "horse": "Parisian Scholar",
+      "tier": "C",
+      "field_size": 6,
+      "class_num": 4,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.2943,
+      "old_velo_top": {
+        "horse": "Parisian Scholar",
+        "velo_prime_prob": 0.2943,
+        "sqpe_v17_prob": 0.1749,
+        "sqpe_no_rpr_shadow_prob": 0.1454,
+        "market_deception_score": 0.0532,
+        "place_prob": 0.7537,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_CLEAN",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:4|TOP_SP:3.00|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|VP:0.294|MDS:0.0532",
+        "midprice_shadow_field_band": "FS_6_8",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 0.0,
+        "weak_profile_runner": true,
+        "reason_codes": [
+          "UNEXPOSED_PROFILE"
+        ],
+        "horse": "Parisian Scholar",
+        "rp_uid": "7852216",
+        "race_class": "4",
+        "race_type": "Flat",
+        "distance_furlongs": 12,
+        "going": "Good To Firm",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 0,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.0,
+          "pp_days_since_last": null,
+          "pp_avg_sp_last5": null,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": null,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2943,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.03903333333333331,
+        "field_size": 6.0,
+        "class_num": 4.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.6037,
+      "frame_gate_probability": 0.7016,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_4",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8",
+          "EDGE_REGIME:CLASS_4_FS_6_8",
+          "WIN_GATE_HIGH_BUT_PASSPORT_NOT_SUPPORTIVE",
+          "FRAME_GATE_HIGH_WIN_GATE_NOT_HIGH"
+        ],
+        "warnings": [],
+        "midprice_shadow_action": "MIDPRICE_CLEAN",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:4|TOP_SP:3.00|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|VP:0.294|MDS:0.0532"
+      }
+    },
+    {
+      "race_id": "922373",
+      "course": "Newmarket (July)",
+      "off_time": "4.00",
+      "race_name": "Boodles Superlative Stakes (Group 2)",
+      "horse": "Al Hudaiba",
+      "tier": "A",
+      "field_size": 7,
+      "class_num": 2,
+      "sp_decimal": 2.25,
+      "velo_prime_prob": 0.513,
+      "old_velo_top": {
+        "horse": "Al Hudaiba",
+        "velo_prime_prob": 0.513,
+        "sqpe_v17_prob": 0.8205,
+        "sqpe_no_rpr_shadow_prob": 0.1641,
+        "market_deception_score": 0.1902,
+        "place_prob": 0.9914,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_SPLIT_RACE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:1|TOP_SP:2.25|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|TIER_A|VP_HIGH:0.513|MDS_WEAK:0.1902|IMP_WEAK:0.1362",
+        "midprice_shadow_field_band": "FS_6_8",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": true,
+        "candidate_execution_lane": "CL4_STRUCTURE_VP0.51"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 3.7334,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING"
+        ],
+        "horse": "Al Hudaiba",
+        "rp_uid": "9244720",
+        "race_class": "1",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Good To Firm",
+        "forecast_odds": 2.25,
+        "passport_live_features": {
+          "pp_career_runs": 3,
+          "pp_win_rate": 0.6667,
+          "pp_place_rate": 0.6667,
+          "pp_days_since_last": 21.0,
+          "pp_avg_sp_last5": 3.04,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 18.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.513,
+        "sp_decimal": 2.25,
+        "implied_probability": 0.4444444444444444,
+        "edge": 0.06855555555555559,
+        "field_size": 7.0,
+        "class_num": 2.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5834,
+      "frame_gate_probability": 0.8449,
+      "radical": {
+        "action": "CASH_RUN",
+        "confidence": "medium",
+        "odds_band": "EVS_TO_6_4",
+        "vp_band": "VP_45_55",
+        "field_band": "FS_6_8",
+        "class_band": "CLASS_2",
+        "reasons": [
+          "EDGE_REGIME:field_size_6_8"
+        ],
+        "warnings": [
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "midprice_shadow_action": "MIDPRICE_SPLIT_RACE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:1|TOP_SP:2.25|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|TIER_A|VP_HIGH:0.513|MDS_WEAK:0.1902|IMP_WEAK:0.1362"
       }
     },
     {
@@ -1834,6 +2092,91 @@
       }
     },
     {
+      "race_id": "922375",
+      "course": "Newmarket (July)",
+      "off_time": "2.15",
+      "race_name": "HKJC Worldpool Fillies' Handicap",
+      "horse": "Shallow",
+      "tier": "A",
+      "field_size": 9,
+      "class_num": 2,
+      "sp_decimal": 7.0,
+      "velo_prime_prob": 0.4269,
+      "old_velo_top": {
+        "horse": "Shallow",
+        "velo_prime_prob": 0.4269,
+        "sqpe_v17_prob": 0.2232,
+        "sqpe_no_rpr_shadow_prob": 0.0753,
+        "market_deception_score": 0.0419,
+        "place_prob": 0.6348,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_SPLIT_RACE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:2|TOP_SP:7.00|TIER_A|VP_HIGH:0.427|MDS_WEAK:0.0419|IMP_WEAK:0.0855",
+        "midprice_shadow_field_band": "FS_9_12",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": true,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 3.42,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "STRONG_PLACE_PROFILE",
+          "OR_RISING"
+        ],
+        "horse": "Shallow",
+        "rp_uid": "4827145",
+        "race_class": "2",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Good To Firm",
+        "forecast_odds": 7,
+        "passport_live_features": {
+          "pp_career_runs": 25,
+          "pp_win_rate": 0.2,
+          "pp_place_rate": 0.56,
+          "pp_days_since_last": 15.0,
+          "pp_avg_sp_last5": 6.6,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 9.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.4269,
+        "sp_decimal": 7.0,
+        "implied_probability": 0.14285714285714285,
+        "edge": 0.28404285714285715,
+        "field_size": 9.0,
+        "class_num": 2.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.225,
+      "frame_gate_probability": 0.553,
+      "radical": {
+        "action": "WATCHLIST_SHADOW",
+        "confidence": "low",
+        "odds_band": "FIVE_TO_EIGHT",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_2",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_SPLIT_RACE:frame_possible_win_uncertain"
+        ],
+        "midprice_shadow_action": "MIDPRICE_SPLIT_RACE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:2|TOP_SP:7.00|TIER_A|VP_HIGH:0.427|MDS_WEAK:0.0419|IMP_WEAK:0.0855"
+      }
+    },
+    {
       "race_id": "924497",
       "course": "Limerick",
       "off_time": "8.30",
@@ -2347,6 +2690,93 @@
       }
     },
     {
+      "race_id": "919071",
+      "course": "Newmarket (July)",
+      "off_time": "4.35",
+      "race_name": "Al Basti Equiworld, Dubai July Cup Stakes (Group 1)",
+      "horse": "Venetian Sun",
+      "tier": "D",
+      "field_size": 11,
+      "class_num": 1,
+      "sp_decimal": 3.0,
+      "velo_prime_prob": 0.2097,
+      "old_velo_top": {
+        "horse": "Venetian Sun",
+        "velo_prime_prob": 0.2097,
+        "sqpe_v17_prob": 0.4491,
+        "sqpe_no_rpr_shadow_prob": 0.0895,
+        "market_deception_score": 0.0305,
+        "place_prob": 0.4011,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_NO_EDGE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:1|TOP_SP:3.00|VP_BORDERLINE:0.210|MDS_NEAR_ZERO:0.0305|IMP_ABSENT:0.0100",
+        "midprice_shadow_field_band": "FS_9_12",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 3.95,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING"
+        ],
+        "horse": "Venetian Sun",
+        "rp_uid": "7556688",
+        "race_class": "1",
+        "race_type": "Flat",
+        "distance_furlongs": 6,
+        "going": "Good To Firm",
+        "forecast_odds": 3,
+        "passport_live_features": {
+          "pp_career_runs": 4,
+          "pp_win_rate": 0.5,
+          "pp_place_rate": 0.75,
+          "pp_days_since_last": 49.0,
+          "pp_avg_sp_last5": 3.29,
+          "pp_jockey_continuity": 1.0,
+          "pp_or_change_3": 17.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.2097,
+        "sp_decimal": 3.0,
+        "implied_probability": 0.3333333333333333,
+        "edge": -0.12363333333333332,
+        "field_size": 11.0,
+        "class_num": 1.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5939,
+      "frame_gate_probability": 0.6604,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_1",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "midprice_shadow_action": "MIDPRICE_NO_EDGE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:1|TOP_SP:3.00|VP_BORDERLINE:0.210|MDS_NEAR_ZERO:0.0305|IMP_ABSENT:0.0100"
+      }
+    },
+    {
       "race_id": "922417",
       "course": "York",
       "off_time": "2.02",
@@ -2599,6 +3029,173 @@
         ],
         "midprice_shadow_action": "MIDPRICE_NO_EDGE",
         "midprice_shadow_evidence": "FIELD_BAND:FS_13_PLUS|CLASS:2|TOP_SP:3.33|J19_FIELD_BAND_RISK:FS_13_PLUS_LOW_FRAME|VP_BORDERLINE:0.244|MDS_NEAR_ZERO:0.0216|IMP_ABSENT:0.0162"
+      }
+    },
+    {
+      "race_id": "920248",
+      "course": "Newmarket (July)",
+      "off_time": "3.25",
+      "race_name": "Betway Bunbury Cup (Heritage Handicap)",
+      "horse": "Aalto",
+      "tier": "C",
+      "field_size": 13,
+      "class_num": 2,
+      "sp_decimal": 3.33,
+      "velo_prime_prob": 0.244,
+      "old_velo_top": {
+        "horse": "Aalto",
+        "velo_prime_prob": 0.244,
+        "sqpe_v17_prob": 0.2382,
+        "sqpe_no_rpr_shadow_prob": 0.0577,
+        "market_deception_score": 0.0216,
+        "place_prob": 0.3485,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_NO_EDGE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_13_PLUS|CLASS:2|TOP_SP:3.33|J19_FIELD_BAND_RISK:FS_13_PLUS_LOW_FRAME|VP_BORDERLINE:0.244|MDS_NEAR_ZERO:0.0216|IMP_ABSENT:0.0162",
+        "midprice_shadow_field_band": "FS_13_PLUS",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": false,
+        "candidate_execution_lane": "ATTACK_LANE_MISS"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 1.825,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "OR_RISING"
+        ],
+        "horse": "Aalto",
+        "rp_uid": "4705204",
+        "race_class": "2",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Good To Firm",
+        "forecast_odds": 3.333,
+        "passport_live_features": {
+          "pp_career_runs": 20,
+          "pp_win_rate": 0.05,
+          "pp_place_rate": 0.25,
+          "pp_days_since_last": 16.0,
+          "pp_avg_sp_last5": 21.7,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 3.0,
+          "pp_class_moved_up": 0.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.244,
+        "sp_decimal": 3.33,
+        "implied_probability": 0.3003003003003003,
+        "edge": -0.05630030030030031,
+        "field_size": 13.0,
+        "class_num": 2.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.5268,
+      "frame_gate_probability": 0.5847,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "TWO_TO_THREE",
+        "vp_band": "VP_15_25",
+        "field_band": "FS_13_PLUS",
+        "class_band": "CLASS_2",
+        "reasons": [],
+        "warnings": [
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "midprice_shadow_action": "MIDPRICE_NO_EDGE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_13_PLUS|CLASS:2|TOP_SP:3.33|J19_FIELD_BAND_RISK:FS_13_PLUS_LOW_FRAME|VP_BORDERLINE:0.244|MDS_NEAR_ZERO:0.0216|IMP_ABSENT:0.0162"
+      }
+    },
+    {
+      "race_id": "922376",
+      "course": "Newmarket (July)",
+      "off_time": "5.10",
+      "race_name": "Debenhams Handicap",
+      "horse": "Leadman",
+      "tier": "C",
+      "field_size": 11,
+      "class_num": 3,
+      "sp_decimal": 4.5,
+      "velo_prime_prob": 0.27,
+      "old_velo_top": {
+        "horse": "Leadman",
+        "velo_prime_prob": 0.27,
+        "sqpe_v17_prob": 0.0695,
+        "sqpe_no_rpr_shadow_prob": 0.0797,
+        "market_deception_score": 0.0171,
+        "place_prob": 0.2529,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_NO_EDGE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:3|TOP_SP:4.50|VP_BORDERLINE:0.270|MDS_NEAR_ZERO:0.0171|IMP_ABSENT:0.0165",
+        "midprice_shadow_field_band": "FS_9_12",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": false,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 2.9709,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "OR_RISING"
+        ],
+        "horse": "Leadman",
+        "rp_uid": "4429421",
+        "race_class": "3",
+        "race_type": "Flat",
+        "distance_furlongs": 7,
+        "going": "Good To Firm",
+        "forecast_odds": 4.5,
+        "passport_live_features": {
+          "pp_career_runs": 24,
+          "pp_win_rate": 0.125,
+          "pp_place_rate": 0.4167,
+          "pp_days_since_last": 21.0,
+          "pp_avg_sp_last5": 6.97,
+          "pp_jockey_continuity": 0.0,
+          "pp_or_change_3": 24.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.27,
+        "sp_decimal": 4.5,
+        "implied_probability": 0.2222222222222222,
+        "edge": 0.04777777777777781,
+        "field_size": 11.0,
+        "class_num": 3.0,
+        "candidate_stake": 0.0,
+        "router_v1_shadow_pass": 0.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.4327,
+      "frame_gate_probability": 0.5186,
+      "radical": {
+        "action": "PASS_OR_WATCH",
+        "confidence": "medium",
+        "odds_band": "THREE_TO_FIVE",
+        "vp_band": "VP_25_35",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_3",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "MIDPRICE_NO_EDGE:top_pick_lacks_win_edge"
+        ],
+        "midprice_shadow_action": "MIDPRICE_NO_EDGE",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:3|TOP_SP:4.50|VP_BORDERLINE:0.270|MDS_NEAR_ZERO:0.0171|IMP_ABSENT:0.0165"
       }
     },
     {
@@ -4291,6 +4888,93 @@
         ],
         "midprice_shadow_action": "MIDPRICE_SUPPRESS_TOP",
         "midprice_shadow_evidence": "FIELD_BAND:FS_6_8|CLASS:4|TOP_SP:10.00|J19_FIELD_BAND_RISK:FS_6_8_WIN_LIGHT_FRAME_HEAVY|VP_ABOVE_GATE:0.370|MDS_BELOW_GATE:0.0253|MDS_NEAR_ZERO"
+      }
+    },
+    {
+      "race_id": "922374",
+      "course": "Newmarket (July)",
+      "off_time": "2.52",
+      "race_name": "Weatherbys Handicap",
+      "horse": "Alfaraz",
+      "tier": "A",
+      "field_size": 9,
+      "class_num": 2,
+      "sp_decimal": 6.0,
+      "velo_prime_prob": 0.3722,
+      "old_velo_top": {
+        "horse": "Alfaraz",
+        "velo_prime_prob": 0.3722,
+        "sqpe_v17_prob": 0.2369,
+        "sqpe_no_rpr_shadow_prob": 0.0909,
+        "market_deception_score": 0.0281,
+        "place_prob": 0.5837,
+        "cash_run_flag": false,
+        "setup_run_flag": false,
+        "midprice_shadow_action": "MIDPRICE_SUPPRESS_TOP",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:2|TOP_SP:6.00|VP_ABOVE_GATE:0.372|MDS_BELOW_GATE:0.0281|MDS_NEAR_ZERO",
+        "midprice_shadow_field_band": "FS_9_12",
+        "midprice_shadow_rule_version": "midprice_hunter_v2_2026_06_19",
+        "execution_allowed": true,
+        "candidate_execution_lane": "NO_BET"
+      },
+      "passport": {
+        "matched": true,
+        "passport_available": true,
+        "passport_strength_score": 2.4834,
+        "weak_profile_runner": false,
+        "reason_codes": [
+          "JOCKEY_CONTINUITY",
+          "STRONG_PLACE_PROFILE",
+          "HISTORICAL_MARKET_RESPECT",
+          "OR_RISING"
+        ],
+        "horse": "Alfaraz",
+        "rp_uid": "8013561",
+        "race_class": "2",
+        "race_type": "Flat",
+        "distance_furlongs": 8,
+        "going": "Good To Firm",
+        "forecast_odds": 6,
+        "passport_live_features": {
+          "pp_career_runs": 3,
+          "pp_win_rate": 0.0,
+          "pp_place_rate": 0.6667,
+          "pp_days_since_last": 85.0,
+          "pp_avg_sp_last5": 4.33,
+          "pp_jockey_continuity": 1.0,
+          "pp_or_change_3": 18.0,
+          "pp_class_moved_up": 1.0,
+          "pp_class_moved_down": 0.0
+        }
+      },
+      "sigma_features": {
+        "model_probability": 0.3722,
+        "sp_decimal": 6.0,
+        "implied_probability": 0.16666666666666666,
+        "edge": 0.20553333333333332,
+        "field_size": 9.0,
+        "class_num": 2.0,
+        "candidate_stake": 1.0,
+        "router_v1_shadow_pass": 1.0,
+        "router_v2_class4_shadow_pass": 0.0,
+        "router_v6_gold_seam_watchlist": 0.0
+      },
+      "win_gate_probability": 0.2633,
+      "frame_gate_probability": 0.5952,
+      "radical": {
+        "action": "PASS",
+        "confidence": "high",
+        "odds_band": "FIVE_TO_EIGHT",
+        "vp_band": "VP_35_45",
+        "field_band": "FS_9_12",
+        "class_band": "CLASS_2",
+        "reasons": [],
+        "warnings": [
+          "TOXIC_REGIME:field_size_9_12",
+          "HARD_PASS:midprice_suppress_top"
+        ],
+        "midprice_shadow_action": "MIDPRICE_SUPPRESS_TOP",
+        "midprice_shadow_evidence": "FIELD_BAND:FS_9_12|CLASS:2|TOP_SP:6.00|VP_ABOVE_GATE:0.372|MDS_BELOW_GATE:0.0281|MDS_NEAR_ZERO"
       }
     },
     {

@@ -546,6 +546,12 @@ class SentientLoopbackEngine:
                 if isinstance(appetite[key], float):
                     appetite[key] = max(0.0, min(1.0, appetite[key]))
 
+    # Minimum doctrine strength floor — prevents adversarial decay into uselessness.
+    # Trainer deception (high-MDS environments) causes legitimate losses that do not
+    # mean the doctrine is wrong; they mean the environment is adversarial.
+    # At floor=0.25: discount = 0.7 + (0.25 * 0.67) = 0.868x — bounded and mild.
+    _DOCTRINE_STRENGTH_FLOOR = 0.25
+
     def _update_doctrine_strengths(self, prediction: dict[str, Any], error_vector: dict[str, float]):
         """Update doctrine effectiveness scores using exponential moving average"""
         doctrines_fired = prediction.get("doctrines_fired", [])
@@ -554,7 +560,8 @@ class SentientLoopbackEngine:
         for doctrine in doctrines_fired:
             if doctrine in self.state["doctrine_strengths"]:
                 current = self.state["doctrine_strengths"][doctrine]
-                self.state["doctrine_strengths"][doctrine] = 0.9 * current + 0.1 * correct
+                new_val = 0.9 * current + 0.1 * correct
+                self.state["doctrine_strengths"][doctrine] = max(self._DOCTRINE_STRENGTH_FLOOR, new_val)
 
     def _get_recent_doctrine_adjustments(self) -> dict[str, float]:
         """Get recent doctrine strength changes"""

@@ -102,13 +102,59 @@ class NightlyEODRunner:
         prob = float(top_pick.get("velo_prime_prob") or 0)
         fav_won = result.get("favourite_won", False)
         
-        if prob > 0.35: return "CALIBRATION_ERROR"
+        if prob > 0.55: return "CALIBRATION_ERROR"  # raised from 0.35 — VP>0.35 caught normal picks; VP>0.55 = genuinely overconfident
         if fav_won and prob < 0.2: return "MARKET_LIED"
         return "WRONG_HORSE"
 
     def run(self):
         logger.info(f"Starting Nightly EOD Runner for {self.date_str} [Run: {self.run_id}]")
-        
+
+        # 0. Learning Admission Gate pre-flight (LEARNING_ADMISSION_GATE.md conditions 8, 11, MC)
+        # Condition 12 (operator approval) is not automatable — operator must not invoke
+        # this script on a blocked day. All other automatable conditions checked here.
+        _gate_blocks = []
+
+        _sigma_path = ROOT / "data" / "sigma_results" / f"sigma_results_{self.date_tag}.json"
+        if not _sigma_path.exists():
+            _gate_blocks.append("SIGMA_ARTIFACT_MISSING")
+        else:
+            try:
+                _sigma_status = json.loads(_sigma_path.read_text()).get("sigma_status", "UNKNOWN")
+                if _sigma_status != "PASS":
+                    _gate_blocks.append(f"SIGMA_NOT_PASS:{_sigma_status}")
+            except Exception as _e:
+                _gate_blocks.append(f"SIGMA_READ_ERROR:{_e}")
+
+        _council_path = ROOT / "data" / "council_runs" / f"council_run_{self.date_str}.json"
+        if not _council_path.exists():
+            _gate_blocks.append("COUNCIL_RUN_MISSING")
+        else:
+            try:
+                _cv = json.loads(_council_path.read_text()).get("council_verdict", "NOT_RUN")
+                if _cv != "PASS_TO_LEARNING":
+                    _gate_blocks.append(f"COUNCIL_VERDICT:{_cv}")
+            except Exception as _e:
+                _gate_blocks.append(f"COUNCIL_READ_ERROR:{_e}")
+
+        _mc_path = ROOT / "data" / "mission_control" / f"{self.date_str}_mission_control.json"
+        if not _mc_path.exists():
+            _gate_blocks.append("MISSION_CONTROL_MISSING")
+        else:
+            try:
+                _lg = json.loads(_mc_path.read_text()).get("learning_gate", "UNKNOWN")
+                if _lg != "OPEN":
+                    _gate_blocks.append(f"LEARNING_GATE:{_lg}")
+            except Exception as _e:
+                _gate_blocks.append(f"MC_READ_ERROR:{_e}")
+
+        if _gate_blocks:
+            logger.error("GATE BLOCKED — learning cannot proceed: %s", _gate_blocks)
+            for _block in _gate_blocks:
+                self.failures.append({"type": "GATE_BLOCKED", "reason": _block})
+            return self._finalize("FAIL_GATE_BLOCKED")
+
+        logger.info("Gate pre-flight PASS — sigma=PASS, council=PASS_TO_LEARNING, learning_gate=OPEN")
+
         # 1. Data Integrity Check
         if not self.pred_file.exists():
             self.failures.append({"type": "MISSING_PREDICTIONS", "file": str(self.pred_file)})
@@ -286,6 +332,15 @@ class NightlyEODRunner:
             self.failures.append({"type": "DUPLICATE_REPLAY_MUTATED_STATE", "updates": updates_2})
             return self._finalize("FAIL")
 
+        if audit_1.get("doctrines_fired_dropped", 0) > 0 or audit_2.get("doctrines_fired_dropped", 0) > 0:
+            self.failures.append({
+                "type": "DOCTRINE_REGRESSION",
+                "detail": "Raw events carried doctrines_fired that the adapter dropped -- "
+                          "this is the 2026-04-25..2026-07-26 hardcoded-[] bug class recurring. "
+                          "Fix scripts/playbook_g_shadow_adapter.py before trusting doctrine_strengths.",
+            })
+            return self._finalize("FAIL")
+
         live_hash_after = self._get_file_hash(self.live_state_path)
         if live_hash_before != live_hash_after:
             self.failures.append({"type": "LIVE_STATE_TOUCHED"})
@@ -295,8 +350,34 @@ class NightlyEODRunner:
         self.stats["updates_1"] = updates_1
         self.stats["updates_2"] = updates_2
         self.stats["dups"] = duplicates_skipped
-        
+
         verdict = self._finalize("PASS")
+
+        # 4b. Apply the SAME night's events to the LIVE state.
+        # Authorized 2026-07-26 (operator sign-off) after the doctrines_fired
+        # bug was fixed and both the shadow backfill and a full live catch-up
+        # (2026-04-26..2026-07-26, 1714 races) were run and cross-checked for
+        # consistency. Only runs after the shadow pass above has PASSED and
+        # proven idempotency + no doctrine-drop regression on tonight's own
+        # events, using the identical event file -- so this is not a blind
+        # extra write, it's gated behind tonight's own shadow verification.
+        if verdict == "PASS":
+            try:
+                from scripts.playbook_g_live_adapter import PlaybookGLiveAdapter
+                live_audit_path = ROOT / "data" / f"playbook_g_live_nightly_audit_{self.date_tag}.json"
+                live_adapter = PlaybookGLiveAdapter(
+                    str(self.events_path), str(self.live_state_path), str(live_audit_path),
+                    authorized=True,
+                )
+                live_adapter.run()
+                live_audit = json.loads(live_audit_path.read_text())
+                if live_audit.get("doctrines_fired_dropped", 0) > 0:
+                    logger.error("LIVE playbook G update had doctrine-drop regression -- see %s", live_audit_path)
+                else:
+                    logger.info("LIVE playbook G state updated: verdict=%s updates=%s",
+                                live_audit.get("verdict"), live_audit.get("engine_updates_applied"))
+            except Exception as e:
+                logger.error(f"LIVE playbook G update failed (shadow state is unaffected): {e}")
         
         # 5. Trigger Study Layer
         if verdict == "PASS":
@@ -347,11 +428,20 @@ class NightlyEODRunner:
         self.status_path.write_text(json.dumps(status, indent=2))
         self.failures_path.write_text(json.dumps(self.failures, indent=2))
         
-        # Create Council Audit
+        # Create Council Audit — read actual Step 16b output, never copy runner verdict
+        _council_run_path = ROOT / "data" / "council_runs" / f"council_run_{self.date_str}.json"
+        _actual_council_verdict = "NOT_RUN"
+        if _council_run_path.exists():
+            try:
+                _actual_council_verdict = json.loads(_council_run_path.read_text()).get("council_verdict", "NOT_RUN")
+            except Exception:
+                _actual_council_verdict = "READ_ERROR"
+
         council = {
             "date": self.date_str,
             "runner_verdict": verdict,
-            "council_verdict": verdict, # Default to runner
+            "council_verdict": _actual_council_verdict,
+            "council_source": str(_council_run_path),
             "files_verified": [str(self.status_path), str(self.failures_path), str(self.events_path)],
             "forbidden_files_changed": False,
             "live_sentient_state_touched": status["live_sentient_state_touched"],

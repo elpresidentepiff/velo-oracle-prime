@@ -16,11 +16,11 @@
 - trigger_source: `manual`
 - status: `PASS`
 - run_state: `completed`
-- started_at: `2026-06-29T22:57:29.278585+00:00`
-- finished_at: `2026-06-29T22:58:18.303313+00:00`
+- started_at: `2026-07-01T03:51:21.639226+00:00`
+- finished_at: `2026-07-01T03:53:01.45415+00:00`
 - races_processed: `46`
 - runners_processed: `424`
-- commit_sha: `ede88e6e38e1c8dd017ead68f8f877da6384f446`
+- commit_sha: `a8b3e8aca059900f6cf71b85cf4c7657bf72f5ce`
 
 ## Verdicts
 - supabase_verdict_count: `0`

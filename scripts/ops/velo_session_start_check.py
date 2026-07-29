@@ -255,6 +255,91 @@ def check_no_go_rules() -> dict:
     }
 
 
+def check_rp_session_health() -> dict:
+    """11. Live RP browser-session login probe.
+
+    Root cause of the 2026-07-08 passport-bank capture failure (146 attempts,
+    92% HTTP 406) was a logged-out browser session that nothing checked for
+    until the scrape queue had already been burned through mid-run. This
+    catches that at session start instead, in ~2 seconds via one cheap
+    profile-page fetch, rather than after hundreds of failed captures.
+    WARN not CRITICAL: a dead session blocks browser-based capture (live
+    racecard capture, results capture, passport scraping) but not manually
+    supplied PDF intake days.
+    """
+    try:
+        from scripts.ops.check_rp_session_health import probe, DEFAULT_PROFILE_DIR
+        result = probe(DEFAULT_PROFILE_DIR, timeout_s=15)
+    except Exception as e:
+        return {
+            "check": "11. RP Session Health",
+            "value": "PROBE_ERROR",
+            "status": WARN,
+            "detail": f"Health probe itself failed: {e}",
+        }
+    if result["status"] == "PASS":
+        return {
+            "check": "11. RP Session Health",
+            "value": "LOGGED_IN",
+            "status": OK,
+            "detail": f"account_is_logged=True, role={result.get('user_role')}",
+        }
+    return {
+        "check": "11. RP Session Health",
+        "value": f"SESSION_DEAD ({result.get('reason')})",
+        "status": WARN,
+        "detail": (
+            f"http_status={result.get('http_status')}. Browser-based capture (live racecard, "
+            "results, passport scraping) will fail until profile is re-authenticated via "
+            "`racing_post_account_collector.py init-login` (interactive, operator must log in)."
+        ),
+    }
+
+
+def check_todays_raceday_ran() -> dict:
+    """12. Did today's morning raceday pipeline actually fire?
+
+    Root cause: on 2026-07-28 the WSL crontab fired zero times (machine/WSL
+    not awake at 07:00) and nothing noticed — the whole day was permanently
+    lost because RP's live racecards index drops each course once it has
+    finished racing. This check makes a missed morning scream at the first
+    session of the day while the cards are still capturable.
+    Accepts either the run_full_raceday report OR the day's verdicts file as
+    proof (manually driven days produce verdicts without the report).
+    """
+    today = date.today()
+    tag = today.strftime("%Y_%m_%d")
+    report = DATA / "reports" / f"run_full_raceday_{tag}.json"
+    verdicts = DATA / f"velo_prime_verdicts_{tag}.json"
+    if report.exists() or verdicts.exists():
+        via = "report" if report.exists() else "verdicts only (manual run)"
+        return {
+            "check": "12. Today's Raceday Run",
+            "value": "RAN",
+            "status": OK,
+            "detail": f"Evidence: {via}.",
+        }
+    now = datetime.now()
+    if now.hour < 8:
+        return {
+            "check": "12. Today's Raceday Run",
+            "value": "NOT_YET",
+            "status": INFO,
+            "detail": "Before 08:00 — scheduled run window still open.",
+        }
+    return {
+        "check": "12. Today's Raceday Run",
+        "value": "MISSING",
+        "status": CRITICAL,
+        "detail": (
+            "No raceday report or verdicts for today and it is past 08:00. "
+            "Courses vanish from RP's live index once they finish racing — run NOW: "
+            "PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py "
+            f"--date {today.isoformat()} --execute"
+        ),
+    }
+
+
 # ── Runner ────────────────────────────────────────────────────────────────────
 
 def run_checks() -> list[dict]:
@@ -269,6 +354,8 @@ def run_checks() -> list[dict]:
         check_worktree_status(),
         check_next_safe_command(),
         check_no_go_rules(),
+        check_rp_session_health(),
+        check_todays_raceday_ran(),
     ]
 
 
