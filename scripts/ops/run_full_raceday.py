@@ -122,11 +122,8 @@ def main() -> int:
     # ── Steps 1-3: live racecard capture ─────────────────────────────────
     if not args.skip_capture:
         if not run(
-            "Step 1: Capture racecard index",
-            [PY, "scripts/ops/racing_post_account_collector.py", "manual-capture",
-             "--date", date, "--start-url", f"https://www.racingpost.com/racecards/{date}",
-             "--label", "racecard_index", "--profile-dir", str(FIREFOX_PROFILE),
-             "--headless", "--execute"],
+            "Step 1: Capture racecard index (headless — gets ALL UK venues)",
+            [PY, "scripts/ops/capture_index_headless.py", "--date", date],
             critical=True, results=results,
         ):
             return 1
