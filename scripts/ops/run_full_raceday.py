@@ -404,6 +404,13 @@ def main() -> int:
     run("Sidecar Stack Operator Card",
         [PY, "scripts/audit/sidecar_stack_operator_card.py", "--date", date], critical=False, results=results)
 
+    # ── LLM morning suggestions brief (2026-07-29) ───────────────────────
+    # DeepSeek-powered, ARCHIVE_CONTEXT_ONLY. Skips cleanly (exit 0) when
+    # DEEPSEEK_API_KEY is not set in .env; non-critical either way.
+    run("LLM Morning Suggestions Brief",
+        [PY, "scripts/ops/run_llm_intel_brief.py", "--date", date, "--mode", "suggestions"],
+        critical=False, results=results)
+
     # ── Summary ───────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY SUMMARY — {date}\n{'='*70}")
     n_ok = sum(1 for r in results if r["ok"])

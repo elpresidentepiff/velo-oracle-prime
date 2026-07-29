@@ -210,6 +210,16 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 16c: LLM end-of-day report (2026-07-29) ─────────────────────
+    # DeepSeek-powered, ARCHIVE_CONTEXT_ONLY. Reads sigma + ledger + council
+    # + trainer-intent + mission control. Skips cleanly (exit 0) when
+    # DEEPSEEK_API_KEY is not set in .env; non-critical either way.
+    run(
+        "Step 16c: LLM End-of-Day Report",
+        [PY, "scripts/ops/run_llm_intel_brief.py", "--date", date, "--mode", "eod"],
+        critical=False, results=results,
+    )
+
     # ── Step 17: paper execution bridge close (SIM only) ──────────────────
     run(
         "Step 17: Execution bridge shadow (paper close)",
