@@ -2,7 +2,7 @@
 
 > **IF THIS FILE CONFLICTS WITH ANY OTHER DOC, THIS FILE WINS UNTIL OPERATOR SAYS OTHERWISE.**
 
-**Effective:** 2026-07-25 (post audit/local-01-truth-reconciliation merge to main; prior baseline 2026-07-08) · **Branch:** `main` · **Verified against code, not docs.**
+**Effective:** 2026-07-29 (post one-truth consolidation PR #155 + branch sweep; prior baseline 2026-07-25) · **Branch:** `main` — THE only branch, local and remote; the sweep deleted 97 remote + 72 local branches, every non-bot unmerged tip preserved at `archive/2026-07-29/*` tags (see `docs/current/BRANCH_SWEEP_2026_07_29.md`) · **Verified against code, not docs.**
 
 **This file supersedes:** `THE_NEW_TRUTH.md`, `CURRENT_RUNTIME_TRUTH.md`, root `CLAUDE.md` state claims, all numbered docs in `docs/` flat directory.
 **This file defers to:** root `THE_ONE_TRUTH.md` for step-by-step command detail (Steps 1–20), `docs/current/RACE_DAY_RUNBOOK.md` for the lifecycle.
@@ -73,6 +73,18 @@ fallback only), a tripwire hard-fails the run instead of writing a ledger where 
 loaded model joins zero races, and 13 dates (May 30 – Jul 27) were backfilled.
 First honest cumulative table: Old VELO 25.9% (n=1527) · No-RPR 25.3% (n=1167) ·
 New Build 15.8% (n=1152) · Champion 22.2% (n=383).
+
+## SUBSYSTEM TRUTH BOARD (audited 2026-07-29, all claims reproduced not assumed)
+
+| Subsystem | Truth |
+|---|---|
+| Mid-price misses | 170 of 263 classified misses (65%) are `mid_priced_won` (median winner SP 4.8). Snapshot-verified on 152 of them: winner at VELO rank 2-3 in only 38%; **62% ranked 4th or deeper, median VP gap 0.234** — a genuine model blind spot on mid-priced runners, NOT a near-miss selection issue. Fix path is model/feature work (midprice specialist staging model exists at `models/sqpe_v17_midprice_specialist_staging/`, issues #78/#80, Track A module at tag `archive/2026-07-29/feature/issue-78-midprice-hunter-module`), not a pick-2 tweak. |
+| LLM Council | **The council contains zero LLM calls** — `src/velo/council/agents.py` is deterministic rules (by design, Block 3 audit). It works when run: Jul 24 PASS_TO_LEARNING, Jul 25/26/27 WATCH_ONLY (SR below baseline those days — honest). Gap found+fixed 2026-07-29: council never ran Jul 19-26 (EOD Step 16b is non-critical and EOD didn't run); Jul 24-27 backfilled. Adding real LLM deliberation = new feature, operator decision (API cost + doctrine). |
+| Deep Race Agent | Rule-based (no LLM). WORKING — produced v1+v2 for 2026-07-29 after the `7fc1da2` PDF-dir fix. |
+| Mission Control | WORKING and honest. 2026-07-27: `source_truth=RP_MERGED_CLEAN`, `learning_gate_status=BLOCKED` (reasons: `GATE_COUNCIL_WATCH_ONLY`, `GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY`). The field is `learning_gate_status`, not `learning_gate`. |
+| Sidecars | Stack builder is `scripts/audit/sidecar_stack_operator_card.py` (Step 9.x, non-critical in `run_full_raceday.py`) — goes stale whenever mornings run manually/partially. Refreshed 2026-07-29 (6 stacks, OPERATOR_VISIBILITY_ONLY). Calibration pipeline blockers unchanged: course_id mapping + dist_f format. |
+| Training | Live = sqpe_v17.1 (frozen). Staging, unpromoted: `sqpe_v17_midprice_specialist_staging`, `rpdc_specialist_staging`, `sqpe_v17_staging`. New Build Lane C (soft-label challenger, backtest AUC 0.7028 / SR +3.4ppts) is wired in the two-lane scorer and scoring daily; **promotion = operator decision, still open**. Honest ledger says New Build lane A = 15.8% vs Old VELO 25.9% (n=1152/1527). |
+| Learning loop | Fixes 1-5+7 live; Fix 6 (G live flip) blocked until ≥2026-10-28 pending 3 months post-reset sigma. Gate pre-flight (Fix 3) now genuinely blocks: needs sigma PASS + council PASS_TO_LEARNING + MC OPEN. VCP-03 burn-in at 2/10, next append via Step 20B tonight. |
 
 ## CANONICAL MODEL TRUTH SPINE (added 2026-07-06, MODEL-TRUTH-01..04)
 
